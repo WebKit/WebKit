@@ -1,3 +1,30 @@
+2019-03-12  Rob Buis  <rbuis@igalia.com>
+
+        Implement further CORS restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=188644
+
+        Reviewed by Darin Adler.
+
+        Verify that header value length is not greater than 128 [1]. Also implement
+        Step 5 of [2] to append values to existing header value when calling
+        Headers.append.
+
+        Tests: fetch/api/cors/cors-preflight-not-cors-safelisted.any.html
+               fetch/api/cors/cors-preflight-not-cors-safelisted.any.worker.html
+               fetch/api/headers/headers-no-cors.window.html
+
+        [1] https://fetch.spec.whatwg.org/#cors-safelisted-request-header
+        [2] https://fetch.spec.whatwg.org/#concept-headers-append
+
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::canWriteHeader):
+        (WebCore::appendToHeaderMap):
+        (WebCore::FetchHeaders::remove):
+        (WebCore::FetchHeaders::set):
+        (WebCore::FetchHeaders::filterAndFill):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::isCrossOriginSafeRequestHeader): verify that header length is not greater than 128
+
 2019-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove OS X Server QuickTime plugin quirks

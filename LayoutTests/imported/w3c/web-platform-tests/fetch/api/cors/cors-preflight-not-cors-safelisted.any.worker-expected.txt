@@ -1,12 +1,12 @@
 
 PASS Loading data… 
 PASS Need CORS-preflight for accept/" header 
-FAIL Need CORS-preflight for accept/012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678 header assert_equals: Preflight request has been made expected "1" but got "0"
+PASS Need CORS-preflight for accept/012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678 header 
 PASS Need CORS-preflight for accept-language/ header 
 PASS Need CORS-preflight for accept-language/@ header 
 PASS Need CORS-preflight for content-language/ header 
 PASS Need CORS-preflight for content-language/@ header 
 PASS Need CORS-preflight for content-type/text/html header 
-FAIL Need CORS-preflight for content-type/text/plain; long=0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901 header assert_equals: Preflight request has been made expected "1" but got "0"
+PASS Need CORS-preflight for content-type/text/plain; long=0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901 header 
 PASS Need CORS-preflight for test/hi header 
 

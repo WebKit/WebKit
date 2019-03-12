@@ -859,19 +859,26 @@ bool isCrossOriginSafeRequestHeader(HTTPHeaderName name, const String& value)
 {
     switch (name) {
     case HTTPHeaderName::Accept:
-        return isValidAcceptHeaderValue(value);
+        if (!isValidAcceptHeaderValue(value))
+            return false;
+        break;
     case HTTPHeaderName::AcceptLanguage:
     case HTTPHeaderName::ContentLanguage:
-        return isValidLanguageHeaderValue(value);
+        if (!isValidLanguageHeaderValue(value))
+            return false;
+        break;
     case HTTPHeaderName::ContentType: {
         // Preflight is required for MIME types that can not be sent via form submission.
         String mimeType = extractMIMETypeFromMediaType(value);
-        return equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain");
+        if (!(equalLettersIgnoringASCIICase(mimeType, "application/x-www-form-urlencoded") || equalLettersIgnoringASCIICase(mimeType, "multipart/form-data") || equalLettersIgnoringASCIICase(mimeType, "text/plain")))
+            return false;
+        break;
     }
     default:
         // FIXME: Should we also make safe other headers (DPR, Downlink, Save-Data...)? That would require validating their values.
         return false;
     }
+    return value.length() <= 128;
 }
 
 // Implements <https://fetch.spec.whatwg.org/#concept-method-normalize>.
