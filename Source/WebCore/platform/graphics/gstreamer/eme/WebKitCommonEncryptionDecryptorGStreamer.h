@@ -27,6 +27,7 @@
 #include <CDMInstance.h>
 #include <gst/base/gstbasetransform.h>
 #include <gst/gst.h>
+#include <wtf/RefPtr.h>
 
 G_BEGIN_DECLS
 
