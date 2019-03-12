@@ -1,3 +1,18 @@
+2019-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        WTF::Expected should use std::addressof instead of operator&
+        https://bugs.webkit.org/show_bug.cgi?id=195604
+
+        Reviewed by Myles Maxfield.
+
+        The latter was causing problems with types that do tricky things with constructors and operator&,
+        specifically UniqueRef but I made a reduced test case.  When it used operator&, it would get the contained
+        type and call the constructor that takes a contained type instead of the move constructor.
+
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::__expected_detail::base::base):
+        (std::experimental::fundamentals_v3::expected::swap):
+
 2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add Optional to Forward.h.

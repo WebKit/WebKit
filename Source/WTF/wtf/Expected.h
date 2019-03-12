@@ -334,17 +334,17 @@ struct base {
         : has(o.has)
     {
         if (has)
-            ::new (&s.val) value_type(o.s.val);
+            ::new (std::addressof(s.val)) value_type(o.s.val);
         else
-            ::new (&s.err) error_type(o.s.err);
+            ::new (std::addressof(s.err)) error_type(o.s.err);
     }
     base(base&& o)
         : has(o.has)
     {
         if (has)
-            ::new (&s.val) value_type(std::move(o.s.val));
+            ::new (std::addressof(s.val)) value_type(std::move(o.s.val));
         else
-            ::new (&s.err) error_type(std::move(o.s.err));
+            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
     }
     ~base()
     {
@@ -386,13 +386,13 @@ struct base<void, E> {
         : has(o.has)
     {
         if (!has)
-            ::new (&s.err) error_type(o.s.err);
+            ::new (std::addressof(s.err)) error_type(o.s.err);
     }
     base(base&& o)
         : has(o.has)
     {
         if (!has)
-            ::new (&s.err) error_type(std::move(o.s.err));
+            ::new (std::addressof(s.err)) error_type(std::move(o.s.err));
     }
     ~base()
     {
@@ -461,16 +461,16 @@ public:
         else if (base::has && !o.has) {
             error_type e(std::move(o.s.err));
             __expected_detail::destroy(o.s.err);
-            ::new (&o.s.val) value_type(std::move(base::s.val));
+            ::new (std::addressof(o.s.val)) value_type(std::move(base::s.val));
             __expected_detail::destroy(base::s.val);
-            ::new (&base::s.err) error_type(std::move(e));
+            ::new (std::addressof(base::s.err)) error_type(std::move(e));
             swap(base::has, o.has);
         } else if (!base::has && o.has) {
             value_type v(std::move(o.s.val));
             __expected_detail::destroy(o.s.val);
-            ::new (&o.s.err) error_type(std::move(base::s.err));
+            ::new (std::addressof(o.s.err)) error_type(std::move(base::s.err));
             __expected_detail::destroy(base::s.err);
-            ::new (&base::s.val) value_type(std::move(v));
+            ::new (std::addressof(base::s.val)) value_type(std::move(v));
             swap(base::has, o.has);
         } else
             swap(base::s.err, o.s.err);
@@ -536,10 +536,10 @@ public:
             // Do nothing.
         } else if (base::has && !o.has) {
             error_type e(std::move(o.s.err));
-            ::new (&base::s.err) error_type(e);
+            ::new (std::addressof(base::s.err)) error_type(e);
             swap(base::has, o.has);
         } else if (!base::has && o.has) {
-            ::new (&o.s.err) error_type(std::move(base::s.err));
+            ::new (std::addressof(o.s.err)) error_type(std::move(base::s.err));
             swap(base::has, o.has);
         } else
             swap(base::s.err, o.s.err);

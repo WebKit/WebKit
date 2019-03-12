@@ -1,3 +1,15 @@
+2019-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        WTF::Expected should use std::addressof instead of operator&
+        https://bugs.webkit.org/show_bug.cgi?id=195604
+
+        Reviewed by Myles Maxfield.
+
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        (TestWebKitAPI::Unique::Unique):
+        (TestWebKitAPI::Unique::operator&):
+        (TestWebKitAPI::TEST):
+
 2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add Optional to Forward.h.

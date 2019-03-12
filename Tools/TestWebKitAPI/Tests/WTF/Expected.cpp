@@ -472,4 +472,23 @@ TEST(WTF_Expected, Ref)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
+class NeedsStdAddress {
+public:
+    NeedsStdAddress(NeedsStdAddress&& other)
+        : m_ptr(WTFMove(other.m_ptr)) { }
+    NeedsStdAddress(int& other)
+        : m_ptr(&other) { }
+    int* operator&() { ASSERT_NOT_REACHED(); return nullptr; }
+private:
+    std::unique_ptr<int> m_ptr;
+};
+
+TEST(WTF_Expected, Address)
+{
+    NeedsStdAddress a(*new int(3));
+    Expected<NeedsStdAddress, float> b(WTFMove(a));
+    Expected<NeedsStdAddress, float> c(WTFMove(b));
+    (void)c;
+}
+
 } // namespace TestWebkitAPI
