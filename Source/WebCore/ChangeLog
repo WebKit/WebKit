@@ -1,3 +1,27 @@
+2019-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove OS X Server QuickTime plugin quirks
+        https://bugs.webkit.org/show_bug.cgi?id=195607
+
+        Reviewed by Brent Fulgham.
+
+        r87244 added a site specific quirk for Mac OS X Sever wiki pages.
+        However, the issue has since been resolved as of OS X Mountain Lion,
+        of which Apple has ended the support in September 2015.
+
+        Because the latest versions of Safari no longer supports non-Flash plugins,
+        the only scenario in which this quirk comes into play is when a third party app
+        which embeds WKWebView or WebKitLegacy loaded web pages on a OS X Server
+        running OS X Mountain Lion or earlier.
+
+        Given these observations, it's probably safe to remove this quirk from WebKit.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasFallbackContent const):
+        (WebCore::HTMLObjectElement::hasValidClassId):
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk): Deleted.
+        * html/HTMLObjectElement.h:
+
 2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed speculative WPE build fix after r195586.

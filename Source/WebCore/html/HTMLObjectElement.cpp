@@ -224,36 +224,10 @@ bool HTMLObjectElement::hasFallbackContent() const
     }
     return false;
 }
-    
-bool HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk()
-{
-    // This site-specific hack maintains compatibility with Mac OS X Wiki Server,
-    // which embeds QuickTime movies using an object tag containing QuickTime's
-    // ActiveX classid. Treat this classid as valid only if OS X Server's unique
-    // 'generator' meta tag is present. Only apply this quirk if there is no
-    // fallback content, which ensures the quirk will disable itself if Wiki
-    // Server is updated to generate an alternate embed tag as fallback content.
 
-    if (!document().page()
-        || !document().page()->settings().needsSiteSpecificQuirks()
-        || hasFallbackContent()
-        || !equalLettersIgnoringASCIICase(attributeWithoutSynchronization(classidAttr), "clsid:02bf25d5-8c17-4b23-bc80-d3488abddc6b"))
-        return false;
-
-    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(document())) {
-        if (equalLettersIgnoringASCIICase(metaElement.name(), "generator") && startsWithLettersIgnoringASCIICase(metaElement.content(), "mac os x server web services server"))
-            return true;
-    }
-
-    return false;
-}
-    
 bool HTMLObjectElement::hasValidClassId()
 {
     if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && protocolIs(attributeWithoutSynchronization(classidAttr), "java"))
-        return true;
-    
-    if (shouldAllowQuickTimeClassIdQuirk())
         return true;
 
     // HTML5 says that fallback content should be rendered if a non-empty
