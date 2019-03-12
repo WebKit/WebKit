@@ -445,6 +445,9 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 
     _toggleRecordingOnSpacebar(event)
     {
+        if (WI.timelineManager.activeRecording.readonly)
+            return;
+
         if (WI.isEventTargetAnEditableField(event))
             return;
 
@@ -480,6 +483,9 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
     _recordButtonClicked(event)
     {
         let shouldCreateNewRecording = window.event ? window.event.shiftKey : false;
+        if (WI.timelineManager.activeRecording.readonly)
+            shouldCreateNewRecording = true;
+
         this._recordButton.toggled = !WI.timelineManager.isCapturing();
         this._toggleRecording(shouldCreateNewRecording);
     }

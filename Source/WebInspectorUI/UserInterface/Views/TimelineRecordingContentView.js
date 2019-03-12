@@ -564,6 +564,9 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     _clearTimeline(event)
     {
+        if (this._recording.readonly)
+            return;
+
         if (WI.timelineManager.activeRecording === this._recording && WI.timelineManager.isCapturing())
             WI.timelineManager.stopCapturing();
 
