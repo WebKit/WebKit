@@ -121,6 +121,9 @@ public:
     void reset(const Transaction::Token&);
 
     bool isLoading() const;
+    bool isProvisional() const { return m_committedState.state == State::Provisional; }
+    bool isCommitted() const { return m_committedState.state == State::Committed; }
+    bool isFinished() const { return m_committedState.state == State::Finished; }
 
     const String& provisionalURL() const { return m_committedState.provisionalURL; }
     const String& url() const { return m_committedState.url; }

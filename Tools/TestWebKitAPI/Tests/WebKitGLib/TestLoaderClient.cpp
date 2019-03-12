@@ -240,6 +240,34 @@ static void testWebViewLoadTwiceAndReload(LoadTwiceAndReloadTest* test, gconstpo
     test->waitUntilFinished();
 }
 
+static void uriChanged(WebKitWebView* webView, GParamSpec*, LoadTrackingTest* test)
+{
+    const char* uri = webkit_web_view_get_uri(webView);
+    if (g_str_has_suffix(uri, "/normal"))
+        test->m_activeURI = uri;
+}
+
+static void testUnfinishedSubresourceLoad(LoadTrackingTest* test, gconstpointer)
+{
+    // Verify that LoadFinished occurs even if the next load starts before the
+    // previous load actually finishes.
+    test->loadURI(kServer->getURIForPath("/unfinished-subresource-load").data());
+    auto signalID = g_signal_connect(test->m_webView, "notify::uri", G_CALLBACK(uriChanged), test);
+    test->waitUntilLoadFinished();
+    test->waitUntilLoadFinished();
+    g_signal_handler_disconnect(test->m_webView, signalID);
+
+    Vector<LoadTrackingTest::LoadEvents>& events = test->m_loadEvents;
+    g_assert_cmpint(events.size(), ==, 7);
+    g_assert_cmpint(events[0], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(events[1], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(events[2], ==, LoadTrackingTest::LoadFailed);
+    g_assert_cmpint(events[3], ==, LoadTrackingTest::LoadFinished);
+    g_assert_cmpint(events[4], ==, LoadTrackingTest::ProvisionalLoadStarted);
+    g_assert_cmpint(events[5], ==, LoadTrackingTest::LoadCommitted);
+    g_assert_cmpint(events[6], ==, LoadTrackingTest::LoadFinished);
+}
+
 class ViewURITrackingTest: public LoadTrackingTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ViewURITrackingTest);
@@ -590,6 +618,16 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!</body></html>";
 
+    static const char* unfinishedSubresourceLoadResponseString = "<html><body>"
+        "<img src=\"/stall\"/>"
+        "<script>"
+        "  function run() {"
+        "      location = '/normal';"
+        "  }"
+        "  setInterval(run(), 50);"
+        "</script>"
+        "</body></html>";
+
     if (message->method != SOUP_METHOD_GET) {
         soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
         return;
@@ -625,6 +663,12 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/redirect-to-data")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "data:text/plain;charset=utf-8,data-uri");
+    } else if (g_str_equal(path, "/unfinished-subresource-load")) {
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, unfinishedSubresourceLoadResponseString, strlen(unfinishedSubresourceLoadResponseString));
+    } else if (g_str_equal(path, "/stall")) {
+        // This request is never unpaused and stalls forever.
+        soup_server_pause_message(server, message);
+        return;
     } else
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
 
@@ -655,6 +699,7 @@ void beforeAll()
     LoadTrackingTest::add("WebKitWebView", "reload", testWebViewReload);
     LoadTrackingTest::add("WebKitWebView", "history-load", testWebViewHistoryLoad);
     LoadTwiceAndReloadTest::add("WebKitWebView", "load-twice-and-reload", testWebViewLoadTwiceAndReload);
+    LoadTrackingTest::add("WebKitWebView", "unfinished-subresource-load", testUnfinishedSubresourceLoad);
 
     // This test checks that web view notify::uri signal is correctly emitted
     // and the uri is already updated when loader client signals are emitted.

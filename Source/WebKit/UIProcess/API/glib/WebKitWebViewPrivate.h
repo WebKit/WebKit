@@ -41,6 +41,7 @@
 
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
 WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
+void webkitWebViewWillStartLoad(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);

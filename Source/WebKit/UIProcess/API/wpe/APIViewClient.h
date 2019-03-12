@@ -43,6 +43,7 @@ public:
 
     virtual void frameDisplayed(WKWPE::View&) { }
     virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
+    virtual void willStartLoad(WKWPE::View&) { }
 };
 
 } // namespace API

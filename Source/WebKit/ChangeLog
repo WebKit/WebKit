@@ -1,3 +1,31 @@
+2019-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE][GTK] Load events may occur in unexpected order when JS redirects page before subresource load finishes
+        https://bugs.webkit.org/show_bug.cgi?id=194131
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure we emit the load-failed and load-changed with finished event when there's still an ongoing load when a
+        new provisional load strarts. Previous load fails with cancelled error.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewWillStartLoad): Call webkitWebViewLoadFailed() if current page load state is not finished.
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame): Call webkitWebViewWillStartLoad().
+        * UIProcess/API/wpe/APIViewClient.h:
+        (API::ViewClient::willStartLoad): Add willStartLoad() to API::ViewClient
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::didStartProvisionalLoadForMainFrame): Call WPEView::willStartLoad().
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::willStartLoad): Call API::ViewClient::willStartLoad().
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/PageLoadState.h:
+        (WebKit::PageLoadState::isProvisional const):
+        (WebKit::PageLoadState::isCommitted const):
+        (WebKit::PageLoadState::isFinished const):
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242763.
