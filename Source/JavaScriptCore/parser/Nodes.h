@@ -2039,10 +2039,10 @@ namespace JSC {
         unsigned m_constructorKind : 2;
         unsigned m_isArrowFunctionBodyExpression : 1;
         SourceParseMode m_parseMode;
+        FunctionMode m_functionMode;
         Identifier m_ident;
         Identifier m_ecmaName;
         Identifier m_inferredName;
-        FunctionMode m_functionMode;
         unsigned m_startColumn;
         unsigned m_endColumn;
         int m_functionKeywordStart;

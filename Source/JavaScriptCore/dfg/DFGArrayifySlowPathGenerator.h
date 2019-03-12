@@ -43,8 +43,8 @@ public:
         GPRReg propertyGPR, GPRReg tempGPR, GPRReg structureGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_op(node->op())
-        , m_arrayMode(node->arrayMode())
         , m_structure(node->op() == ArrayifyToStructure ? node->structure() : RegisteredStructure())
+        , m_arrayMode(node->arrayMode())
         , m_baseGPR(baseGPR)
         , m_propertyGPR(propertyGPR)
         , m_tempGPR(tempGPR)
@@ -134,8 +134,8 @@ protected:
     
 private:
     NodeType m_op;
-    ArrayMode m_arrayMode;
     RegisteredStructure m_structure;
+    ArrayMode m_arrayMode;
     GPRReg m_baseGPR;
     GPRReg m_propertyGPR;
     GPRReg m_tempGPR;

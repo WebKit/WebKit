@@ -48,8 +48,8 @@ public:
     JSValue toJS(ExecState*) const;
 
 private:
-    unsigned m_id;
     OriginStack m_origin;
+    unsigned m_id;
     ExitKind m_exitKind;
     bool m_isWatchpoint;
     uint64_t m_counter;

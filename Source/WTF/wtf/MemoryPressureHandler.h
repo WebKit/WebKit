@@ -181,19 +181,19 @@ private:
 
     unsigned m_pageCount { 0 };
 
-    bool m_installed { false };
     LowMemoryHandler m_lowMemoryHandler;
 
     std::atomic<bool> m_underMemoryPressure;
+    bool m_installed { false };
     bool m_isSimulatingMemoryPressure { false };
     bool m_shouldLogMemoryMemoryPressureEvents { true };
+    bool m_hasInvokedDidExceedInactiveLimitWhileActiveCallback { false };
 
     std::unique_ptr<RunLoop::Timer<MemoryPressureHandler>> m_measurementTimer;
     MemoryUsagePolicy m_memoryUsagePolicy { MemoryUsagePolicy::Unrestricted };
     WTF::Function<void()> m_memoryKillCallback;
     WTF::Function<void(bool)> m_memoryPressureStatusChangedCallback;
     WTF::Function<void()> m_didExceedInactiveLimitWhileActiveCallback;
-    bool m_hasInvokedDidExceedInactiveLimitWhileActiveCallback { false };
 
 #if OS(WINDOWS)
     void windowsMeasurementTimerFired();

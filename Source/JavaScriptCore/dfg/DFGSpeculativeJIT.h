@@ -1652,12 +1652,6 @@ public:
     
     void cageTypedArrayStorage(GPRReg);
     
-    // It is possible, during speculative generation, to reach a situation in which we
-    // can statically determine a speculation will fail (for example, when two nodes
-    // will make conflicting speculations about the same operand). In such cases this
-    // flag is cleared, indicating no further code generation should take place.
-    bool m_compileOkay;
-    
     void recordSetLocal(
         VirtualRegister bytecodeReg, VirtualRegister machineReg, DataFormat format)
     {
@@ -1699,6 +1693,12 @@ public:
     Vector<GenerationInfo, 32> m_generationInfo;
     RegisterBank<GPRInfo> m_gprs;
     RegisterBank<FPRInfo> m_fprs;
+
+    // It is possible, during speculative generation, to reach a situation in which we
+    // can statically determine a speculation will fail (for example, when two nodes
+    // will make conflicting speculations about the same operand). In such cases this
+    // flag is cleared, indicating no further code generation should take place.
+    bool m_compileOkay;
 
     Vector<MacroAssembler::Label> m_osrEntryHeads;
     

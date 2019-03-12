@@ -148,11 +148,11 @@ protected:
         *numElements = std::min(remainingElements, *numElements);
     }
 
-    // This is the address of the ArrayBuffer's storage, plus the byte offset.
-    CagedPtr<Gigacage::Primitive, void> m_baseAddress;
-
     unsigned m_byteOffset : 31;
     bool m_isNeuterable : 1;
+
+    // This is the address of the ArrayBuffer's storage, plus the byte offset.
+    CagedPtr<Gigacage::Primitive, void> m_baseAddress;
 
 private:
     friend class ArrayBuffer;

@@ -27,6 +27,6 @@
 
 namespace JSC {
 
-enum SpillRegistersMode { NeedToSpill, DontSpill };
+enum SpillRegistersMode : uint8_t { NeedToSpill, DontSpill };
 
 }

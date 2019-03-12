@@ -128,7 +128,10 @@ private:
     LargeRange splitAndAllocate(std::unique_lock<Mutex>&, LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
-    
+
+    bool m_hasPendingDecommits { false };
+    std::condition_variable_any m_condition;
+
     size_t m_vmPageSizePhysical;
     Vector<LineMetadata> m_smallLineMetadata;
     std::array<size_t, sizeClassCount> m_pageClasses;
@@ -146,9 +149,6 @@ private:
 
     size_t m_footprint { 0 };
     size_t m_freeableMemory { 0 };
-
-    bool m_hasPendingDecommits { false };
-    std::condition_variable_any m_condition;
 
 #if ENABLE_PHYSICAL_PAGE_MAP 
     PhysicalPageMap m_physicalPageMap;

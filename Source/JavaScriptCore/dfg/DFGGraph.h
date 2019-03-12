@@ -1022,16 +1022,6 @@ public:
     // So argumentFormats[0] are the argument formats for the normal call entrypoint.
     Vector<Vector<FlushFormat>> m_argumentFormats;
 
-    // This maps an entrypoint index to a particular op_catch bytecode offset. By convention,
-    // it'll never have zero as a key because we use zero to mean the op_enter entrypoint.
-    HashMap<unsigned, unsigned> m_entrypointIndexToCatchBytecodeOffset;
-
-    // This is the number of logical entrypoints that we're compiling. This is only used
-    // in SSA. Each EntrySwitch node must have m_numberOfEntrypoints cases. Note, this is
-    // not the same as m_roots.size(). m_roots.size() represents the number of roots in
-    // the CFG. In SSA, m_roots.size() == 1 even if we're compiling more than one entrypoint.
-    unsigned m_numberOfEntrypoints { UINT_MAX };
-
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
     Bag<Transition> m_transitions;
@@ -1064,7 +1054,17 @@ public:
     unsigned m_localVars;
     unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;
-    
+
+    // This is the number of logical entrypoints that we're compiling. This is only used
+    // in SSA. Each EntrySwitch node must have m_numberOfEntrypoints cases. Note, this is
+    // not the same as m_roots.size(). m_roots.size() represents the number of roots in
+    // the CFG. In SSA, m_roots.size() == 1 even if we're compiling more than one entrypoint.
+    unsigned m_numberOfEntrypoints { UINT_MAX };
+
+    // This maps an entrypoint index to a particular op_catch bytecode offset. By convention,
+    // it'll never have zero as a key because we use zero to mean the op_enter entrypoint.
+    HashMap<unsigned, unsigned> m_entrypointIndexToCatchBytecodeOffset;
+
     HashSet<String> m_localStrings;
     HashMap<const StringImpl*, String> m_copiedStrings;
 

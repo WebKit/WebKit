@@ -277,12 +277,12 @@ private:
 };
 
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
-    : m_vm(vm)
+    : m_isPaused(false)
+    , m_isShutDown(false)
+    , m_vm(vm)
     , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(Seconds::fromMicroseconds(Options::sampleInterval()))
-    , m_isPaused(false)
-    , m_isShutDown(false)
 {
     if (sReportStats) {
         sNumTotalWalks = 0;

@@ -71,13 +71,13 @@ private:
     static Ref<StructureShape> merge(Ref<StructureShape>&&, Ref<StructureShape>&&);
     bool hasSamePrototypeChain(const StructureShape&);
 
+    bool m_final;
+    bool m_isInDictionaryMode;
     HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
     HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
     RefPtr<StructureShape> m_proto;
     std::unique_ptr<String> m_propertyHash;
     String m_constructorName;
-    bool m_final;
-    bool m_isInDictionaryMode;
 };
 
 class TypeSet : public ThreadSafeRefCounted<TypeSet> {

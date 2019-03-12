@@ -71,13 +71,13 @@
 namespace JSC { namespace DFG {
 
 SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
-    : m_compileOkay(true)
-    , m_jit(jit)
+    : m_jit(jit)
     , m_graph(m_jit.graph())
     , m_currentNode(0)
     , m_lastGeneratedNode(LastNodeType)
     , m_indexInBlock(0)
     , m_generationInfo(m_jit.graph().frameRegisterCount())
+    , m_compileOkay(true)
     , m_state(m_jit.graph())
     , m_interpreter(m_jit.graph(), m_state)
     , m_stream(&jit.jitCode()->variableEventStream)

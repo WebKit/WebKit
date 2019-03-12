@@ -51,9 +51,9 @@ public:
     bool isEmpty() const;
 
 private:
+    Deque<DataType> m_queue;
     mutable Lock m_lock;
     Condition m_condition;
-    Deque<DataType> m_queue;
     bool m_killed { false };
 };
 

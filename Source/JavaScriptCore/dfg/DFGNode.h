@@ -213,16 +213,16 @@ struct SwitchData {
     // constructing this should make sure to initialize everything they
     // care about manually.
     SwitchData()
-        : kind(static_cast<SwitchKind>(-1))
-        , switchTableIndex(UINT_MAX)
+        : switchTableIndex(UINT_MAX)
+        , kind(static_cast<SwitchKind>(-1))
         , didUseJumpTable(false)
     {
     }
     
     Vector<SwitchCase> cases;
     BranchTarget fallThrough;
-    SwitchKind kind;
     size_t switchTableIndex;
+    SwitchKind kind;
     bool didUseJumpTable;
 };
 

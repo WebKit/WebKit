@@ -93,10 +93,10 @@ public:
     LinkBuffer(MacroAssembler& macroAssembler, MacroAssemblerCodePtr<tag> code, size_t size, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
         : m_size(size)
         , m_didAllocate(false)
-        , m_code(code.template retagged<LinkBufferPtrTag>())
 #ifndef NDEBUG
         , m_completed(false)
 #endif
+        , m_code(code.template retagged<LinkBufferPtrTag>())
     {
 #if ENABLE(BRANCH_COMPACTION)
         m_shouldPerformBranchCompaction = shouldPerformBranchCompaction;
@@ -342,11 +342,11 @@ private:
     bool m_shouldPerformBranchCompaction { true };
 #endif
     bool m_didAllocate;
-    MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
 #ifndef NDEBUG
     bool m_completed;
 #endif
     bool m_alreadyDisassembled { false };
+    MacroAssemblerCodePtr<LinkBufferPtrTag> m_code;
     Vector<RefPtr<SharedTask<void(LinkBuffer&)>>> m_linkTasks;
 };
 

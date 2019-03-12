@@ -35,9 +35,9 @@ namespace JSC {
 struct CallFrameShuffleData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    unsigned numLocals { UINT_MAX };
     ValueRecovery callee;
     Vector<ValueRecovery> args;
+    unsigned numLocals { UINT_MAX };
     unsigned numPassedArgs { UINT_MAX };
 #if USE(JSVALUE64)
     RegisterMap<ValueRecovery> registers;

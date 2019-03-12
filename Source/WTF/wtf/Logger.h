@@ -252,8 +252,8 @@ private:
         return observers;
     }
 
-    const void* m_owner;
     bool m_enabled { true };
+    const void* m_owner;
 };
 
 template<> struct LogArgument<Logger::LogSiteIdentifier> {

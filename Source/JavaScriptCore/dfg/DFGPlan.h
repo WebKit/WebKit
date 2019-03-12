@@ -129,17 +129,21 @@ private:
     // Warning: pretty much all of the pointer fields in this object get nulled by cancel(). So, if
     // you're writing code that is callable on the cancel path, be sure to null check everything!
 
+    CompilationMode m_mode;
+
     VM* m_vm;
 
     // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledDFGCodeBlock;
 
-    CompilationMode m_mode;
-    const unsigned m_osrEntryBytecodeIndex;
     Operands<Optional<JSValue>> m_mustHandleValues;
     bool m_mustHandleValuesMayIncludeGarbage { true };
     Lock m_mustHandleValueCleaningLock;
+
+    bool m_willTryToTierUp { false };
+
+    const unsigned m_osrEntryBytecodeIndex;
 
     ThreadData* m_threadData;
 
@@ -154,8 +158,6 @@ private:
     DesiredTransitions m_transitions;
     DesiredGlobalProperties m_globalProperties;
     RecordedStatuses m_recordedStatuses;
-
-    bool m_willTryToTierUp { false };
 
     HashMap<unsigned, Vector<unsigned>> m_tierUpInLoopHierarchy;
     Vector<unsigned> m_tierUpAndOSREnterBytecodes;

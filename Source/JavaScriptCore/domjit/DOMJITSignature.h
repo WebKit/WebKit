@@ -43,19 +43,19 @@ public:
     constexpr Signature(uintptr_t unsafeFunction, const ClassInfo* classInfo, Effect effect, SpeculatedType result, Arguments... arguments)
         : unsafeFunction(unsafeFunction)
         , classInfo(classInfo)
-        , effect(effect)
         , result(result)
         , arguments {static_cast<SpeculatedType>(arguments)...}
         , argumentCount(sizeof...(Arguments))
+        , effect(effect)
     {
     }
 
     uintptr_t unsafeFunction;
     const ClassInfo* const classInfo;
-    const Effect effect;
     const SpeculatedType result;
     const SpeculatedType arguments[JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS];
     const unsigned argumentCount;
+    const Effect effect;
 };
 
 } }

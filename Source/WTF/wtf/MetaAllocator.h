@@ -179,8 +179,8 @@ private:
     WTF_EXPORT_PRIVATE void freeFreeSpaceNode(FreeSpaceNode*);
     
     size_t m_allocationGranule;
-    unsigned m_logAllocationGranule;
     size_t m_pageSize;
+    unsigned m_logAllocationGranule;
     unsigned m_logPageSize;
     
     Tree m_freeSpaceSizeMap;

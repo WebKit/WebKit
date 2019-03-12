@@ -42,8 +42,8 @@ public:
         , m_function(function)
         , m_resultGPR(resultGPR)
         , m_storageGPR(storageGPR)
-        , m_structure(structure)
         , m_size(size)
+        , m_structure(structure)
     {
         ASSERT(size < static_cast<size_t>(std::numeric_limits<int32_t>::max()));
         jit->silentSpillAllRegistersImpl(false, m_plans, resultGPR);
@@ -67,8 +67,8 @@ private:
     P_JITOperation_EStZB m_function;
     GPRReg m_resultGPR;
     GPRReg m_storageGPR;
-    RegisteredStructure m_structure;
     int m_size;
+    RegisteredStructure m_structure;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 
@@ -79,9 +79,9 @@ public:
         GPRReg resultGPR, RegisteredStructure contiguousStructure, RegisteredStructure arrayStorageStructure, GPRReg sizeGPR, GPRReg storageGPR)
         : JumpingSlowPathGenerator<MacroAssembler::JumpList>(from, jit)
         , m_function(function)
-        , m_resultGPR(resultGPR)
         , m_contiguousStructure(contiguousStructure)
         , m_arrayStorageOrContiguousStructure(arrayStorageStructure)
+        , m_resultGPR(resultGPR)
         , m_sizeGPR(sizeGPR)
         , m_storageGPR(storageGPR)
     {
@@ -113,9 +113,9 @@ protected:
     
 private:
     P_JITOperation_EStZB m_function;
-    GPRReg m_resultGPR;
     RegisteredStructure m_contiguousStructure;
     RegisteredStructure m_arrayStorageOrContiguousStructure;
+    GPRReg m_resultGPR;
     GPRReg m_sizeGPR;
     GPRReg m_storageGPR;
     Vector<SilentRegisterSavePlan, 2> m_plans;

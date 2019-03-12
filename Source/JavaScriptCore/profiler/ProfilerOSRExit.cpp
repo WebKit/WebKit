@@ -33,8 +33,8 @@
 namespace JSC { namespace Profiler {
 
 OSRExit::OSRExit(unsigned id, const OriginStack& origin, ExitKind kind, bool isWatchpoint)
-    : m_id(id)
-    , m_origin(origin)
+    : m_origin(origin)
+    , m_id(id)
     , m_exitKind(kind)
     , m_isWatchpoint(isWatchpoint)
     , m_counter(0)

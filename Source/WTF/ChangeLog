@@ -1,3 +1,16 @@
+2019-03-12  Robin Morisset  <rmorisset@apple.com>
+
+        A lot more classes have padding that can be reduced by reordering their fields
+        https://bugs.webkit.org/show_bug.cgi?id=195579
+
+        Reviewed by Mark Lam.
+
+        * wtf/CrossThreadQueue.h:
+        * wtf/Logger.h:
+        * wtf/MemoryPressureHandler.h:
+        * wtf/MetaAllocator.h:
+        * wtf/Threading.cpp:
+
 2019-03-11  Alex Christensen  <achristensen@webkit.org>
 
         WTF::Expected should use std::addressof instead of operator&

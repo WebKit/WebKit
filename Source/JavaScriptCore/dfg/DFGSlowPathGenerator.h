@@ -66,8 +66,8 @@ public:
 
 protected:
     virtual void generateInternal(SpeculativeJIT*) = 0;
-    MacroAssembler::Label m_label;
     Node* m_currentNode;
+    MacroAssembler::Label m_label;
     unsigned m_streamIndex;
     NodeOrigin m_origin;
 };
@@ -97,7 +97,7 @@ protected:
     MacroAssembler::Label m_to;
 };
 
-enum class ExceptionCheckRequirement {
+enum class ExceptionCheckRequirement : uint8_t {
     CheckNeeded,
     CheckNotNeeded
 };
@@ -109,10 +109,10 @@ public:
         JumpType from, SpeculativeJIT* jit, FunctionType function,
         SpillRegistersMode spillMode, ExceptionCheckRequirement requirement, ResultType result)
         : JumpingSlowPathGenerator<JumpType>(from, jit)
-        , m_function(function)
         , m_spillMode(spillMode)
         , m_exceptionCheckRequirement(requirement)
         , m_result(result)
+        , m_function(function)
     {
         if (m_spillMode == NeedToSpill)
             jit->silentSpillAllRegistersImpl(false, m_plans, extractResult(result));
@@ -149,11 +149,11 @@ protected:
         this->jumpTo(jit);
     }
 
-    FunctionType m_function;
+    MacroAssembler::Call m_call;
     SpillRegistersMode m_spillMode;
     ExceptionCheckRequirement m_exceptionCheckRequirement;
     ResultType m_result;
-    MacroAssembler::Call m_call;
+    FunctionType m_function;
     Vector<SilentRegisterSavePlan, 2> m_plans;
 };
 

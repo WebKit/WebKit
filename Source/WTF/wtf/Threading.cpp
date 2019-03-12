@@ -54,12 +54,12 @@ public:
     {
     }
 
+    enum class Stage { Start, EstablishedHandle, Initialized };
+    Stage stage { Stage::Start };
     const char* name;
     Function<void()> entryPoint;
     Ref<Thread> thread;
     Mutex mutex;
-    enum class Stage { Start, EstablishedHandle, Initialized };
-    Stage stage { Stage::Start };
 
 #if !HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
     ThreadCondition condition;

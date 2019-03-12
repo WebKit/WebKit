@@ -97,8 +97,8 @@ private:
     Vector<unsigned, 32> m_toExecuteSequentially;
     Lock m_lock;
     Condition m_condition;
-    unsigned m_numThreadsThatMayProduceWork { 0 };
     bool m_pickNextIsStillActive { true };
+    unsigned m_numThreadsThatMayProduceWork { 0 };
     Vector<VisitCounter, 16> m_visitCounters;
 };
 

@@ -1,3 +1,13 @@
+2019-03-12  Robin Morisset  <rmorisset@apple.com>
+
+        A lot more classes have padding that can be reduced by reordering their fields
+        https://bugs.webkit.org/show_bug.cgi?id=195579
+
+        Reviewed by Mark Lam.
+
+        * bmalloc/Heap.h:
+        * bmalloc/Scavenger.h:
+
 2019-03-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Bmalloc DebugHeap should have dump and scavenge features

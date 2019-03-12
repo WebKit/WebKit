@@ -95,6 +95,7 @@ private:
     std::atomic<State> m_state { State::Sleep };
     size_t m_scavengerBytes { 0 };
     bool m_isProbablyGrowing { false };
+    bool m_isInMiniMode { false };
     
     Mutex m_mutex;
     Mutex m_scavengingMutex;
@@ -110,8 +111,6 @@ private:
 #endif
     
     Vector<DeferredDecommit> m_deferredDecommits;
-
-    bool m_isInMiniMode { false };
 };
 
 } // namespace bmalloc

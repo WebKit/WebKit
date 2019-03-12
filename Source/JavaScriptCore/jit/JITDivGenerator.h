@@ -70,8 +70,8 @@ private:
     FPRReg m_rightFPR;
     GPRReg m_scratchGPR;
     FPRReg m_scratchFPR;
-    ArithProfile* m_arithProfile;
     bool m_didEmitFastPath { false };
+    ArithProfile* m_arithProfile;
 
     CCallHelpers::JumpList m_endJumpList;
     CCallHelpers::JumpList m_slowPathJumpList;
