@@ -244,7 +244,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void accessibilityProcessSuspendedNotification(bool);
-    float backlightLevel() const { return m_backlightLevel; }
 #endif
 
 #if PLATFORM(COCOA)
@@ -410,10 +409,6 @@ private:
 #endif
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    void backlightLevelDidChange(float backlightLevel);
-#endif
-
 #if ENABLE(VIDEO)
     void suspendAllMediaBuffering();
     void resumeAllMediaBuffering();
@@ -510,10 +505,6 @@ private:
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    float m_backlightLevel { 0 };
 #endif
 };
 
