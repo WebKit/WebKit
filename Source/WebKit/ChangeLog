@@ -1,3 +1,25 @@
+2019-03-12  Jennifer Moore  <jennifer.moore@apple.com>
+
+        Check whether to launch a default action instead of action sheet
+        https://bugs.webkit.org/show_bug.cgi?id=195225
+        <rdar://problem/47715544>
+
+        Reviewed by Daniel Bates and Tim Horton.
+
+        Notify DataDetectors at the start of a touch on a link, and check whether to immediately
+        launch the default action instead of an action sheet.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant interactionDidStart]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:defaultTitle:showLinkTitle:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+:
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

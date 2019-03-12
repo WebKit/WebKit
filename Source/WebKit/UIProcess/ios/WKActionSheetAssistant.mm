@@ -166,6 +166,19 @@ static LSAppLink *appLinkForURL(NSURL *url)
     return [self superviewForSheet];
 }
 
+- (_WKElementAction *)_elementActionForDDAction:(DDAction *)action
+{
+    auto retainedSelf = retainPtr(self);
+    _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:action.localizedName actionHandler:^(_WKActivatedElementInfo *actionInfo) {
+        retainedSelf->_isPresentingDDUserInterface = action.hasUserInterface;
+        [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
+    }];
+    elementAction.dismissalHandler = ^BOOL {
+        return !action.hasUserInterface;
+    };
+    return elementAction;
+}
+
 static const CGFloat presentationElementRectPadding = 15;
 
 - (CGRect)presentationRectForElementUsingClosestIndicatedRect
@@ -269,6 +282,25 @@ static const CGFloat presentationElementRectPadding = 15;
     return _interactionSheet != nil;
 }
 
+- (void)interactionDidStartWithPositionInformation:(const WebKit::InteractionInformationAtPosition&)information
+{
+#if ENABLE(DATA_DETECTION)
+    if (!_delegate)
+        return;
+
+    if (!WebCore::DataDetection::canBePresentedByDataDetectors(information.url))
+        return;
+
+    NSURL *targetURL = information.url;
+    if (!targetURL)
+        return;
+
+    auto *controller = [getDDDetectionControllerClass() sharedController];
+    if ([controller respondsToSelector:@selector(interactionDidStartForURL:)])
+        [controller interactionDidStartForURL:targetURL];
+#endif
+}
+
 - (NSArray *)currentAvailableActionTitles
 {
     if (!_interactionSheet)
@@ -282,7 +314,7 @@ static const CGFloat presentationElementRectPadding = 15;
     return array;
 }
 
-- (void)_createSheetWithElementActions:(NSArray *)actions showLinkTitle:(BOOL)showLinkTitle
+- (void)_createSheetWithElementActions:(NSArray *)actions defaultTitle:(NSString *)defaultTitle showLinkTitle:(BOOL)showLinkTitle
 {
     auto delegate = _delegate.get();
     if (!delegate)
@@ -309,7 +341,9 @@ static const CGFloat presentationElementRectPadding = 15;
             titleString = WTF::userVisibleString(targetURL);
             titleIsURL = YES;
         }
-    } else
+    } else if (defaultTitle)
+        titleString = defaultTitle;
+    else
         titleString = _positionInformation->title;
 
     if ([titleString length]) {
@@ -370,7 +404,7 @@ static const CGFloat presentationElementRectPadding = 15;
             return;
         }
 
-        [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
+        [self _createSheetWithElementActions:actions.get() defaultTitle:nil showLinkTitle:YES];
         if (!_interactionSheet)
             return;
 
@@ -516,9 +550,7 @@ static const CGFloat presentationElementRectPadding = 15;
 - (void)showLinkSheet
 {
     ASSERT(!_elementInfo);
-
-    auto delegate = _delegate.get();
-    if (!delegate)
+    if (!_delegate)
         return;
 
     _needsLinkIndicator = YES;
@@ -532,21 +564,21 @@ static const CGFloat presentationElementRectPadding = 15;
     }
 
     auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get()]);
-    if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
+    if ([_delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [_delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
         _needsLinkIndicator = NO;
         return;
     }
 
     auto defaultActions = [self defaultActionsForLinkSheet:elementInfo.get()];
 
-    RetainPtr<NSArray> actions = [delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
+    RetainPtr<NSArray> actions = [_delegate actionSheetAssistant:self decideActionsForElement:elementInfo.get() defaultActions:WTFMove(defaultActions)];
 
     if (![actions count]) {
         _needsLinkIndicator = NO;
         return;
     }
 
-    [self _createSheetWithElementActions:actions.get() showLinkTitle:YES];
+    [self _createSheetWithElementActions:actions.get() defaultTitle:nil showLinkTitle:YES];
     if (!_interactionSheet) {
         _needsLinkIndicator = NO;
         return;
@@ -561,8 +593,7 @@ static const CGFloat presentationElementRectPadding = 15;
 - (void)showDataDetectorsSheet
 {
 #if ENABLE(DATA_DETECTION)
-    auto delegate = _delegate.get();
-    if (!delegate)
+    if (!_delegate)
         return;
 
     if (![self synchronouslyRetrievePositionInformation])
@@ -580,10 +611,10 @@ static const CGFloat presentationElementRectPadding = 15;
     NSString *textAtSelection = nil;
     RetainPtr<NSMutableDictionary> extendedContext;
 
-    if ([delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
-        context = [delegate dataDetectionContextForActionSheetAssistant:self];
-    if ([delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
-        textAtSelection = [delegate selectedTextForActionSheetAssistant:self];
+    if ([_delegate respondsToSelector:@selector(dataDetectionContextForActionSheetAssistant:)])
+        context = [_delegate dataDetectionContextForActionSheetAssistant:self];
+    if ([_delegate respondsToSelector:@selector(selectedTextForActionSheetAssistant:)])
+        textAtSelection = [_delegate selectedTextForActionSheetAssistant:self];
     if (!_positionInformation->textBefore.isEmpty() || !_positionInformation->textAfter.isEmpty()) {
         extendedContext = adoptNS([@{
             getkDataDetectorsLeadingText() : _positionInformation->textBefore,
@@ -594,6 +625,14 @@ static const CGFloat presentationElementRectPadding = 15;
             [extendedContext addEntriesFromDictionary:context];
         context = extendedContext.get();
     }
+
+    if ([controller respondsToSelector:@selector(shouldImmediatelyLaunchDefaultActionForURL:)] && [controller shouldImmediatelyLaunchDefaultActionForURL:targetURL]) {
+        auto action = [controller defaultActionForURL:targetURL results:nil context:context];
+        auto *elementAction = [self _elementActionForDDAction:action];
+        [elementAction _runActionWithElementInfo:_elementInfo.get() forActionSheetAssistant:self];
+        return;
+    }
+
     NSArray *dataDetectorsActions = [controller actionsForURL:targetURL identifier:_positionInformation->dataDetectorIdentifier selectedText:textAtSelection results:_positionInformation->dataDetectorResults.get() context:context];
     if ([dataDetectorsActions count] == 0)
         return;
@@ -601,18 +640,12 @@ static const CGFloat presentationElementRectPadding = 15;
     NSMutableArray *elementActions = [NSMutableArray array];
     for (NSUInteger actionNumber = 0; actionNumber < [dataDetectorsActions count]; actionNumber++) {
         DDAction *action = [dataDetectorsActions objectAtIndex:actionNumber];
-        RetainPtr<WKActionSheetAssistant> retainedSelf = self;
-        _WKElementAction *elementAction = [_WKElementAction elementActionWithTitle:[action localizedName] actionHandler:^(_WKActivatedElementInfo *actionInfo) {
-            retainedSelf.get()->_isPresentingDDUserInterface = action.hasUserInterface;
-            [[getDDDetectionControllerClass() sharedController] performAction:action fromAlertController:retainedSelf.get()->_interactionSheet.get() interactionDelegate:retainedSelf.get()];
-        }];
-        elementAction.dismissalHandler = ^{
-            return (BOOL)!action.hasUserInterface;
-        };
+        auto *elementAction = [self _elementActionForDDAction:action];
         [elementActions addObject:elementAction];
     }
 
-    [self _createSheetWithElementActions:elementActions showLinkTitle:NO];
+    NSString *title = [controller titleForURL:targetURL results:nil context:context];
+    [self _createSheetWithElementActions:elementActions defaultTitle:title showLinkTitle:NO];
     if (!_interactionSheet)
         return;
 

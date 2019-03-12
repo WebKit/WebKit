@@ -1220,6 +1220,10 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
     if (lastTouchEvent->type == UIWebTouchEventTouchBegin) {
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
+
+        [self doAfterPositionInformationUpdate:[assistant = WeakObjCPtr<WKActionSheetAssistant>(_actionSheetAssistant.get())] (WebKit::InteractionInformationAtPosition information) {
+            [assistant interactionDidStartWithPositionInformation:information];
+        } forRequest:WebKit::InteractionInformationRequest(WebCore::IntPoint(_lastInteractionLocation))];
     }
 
 #if ENABLE(TOUCH_EVENTS)
