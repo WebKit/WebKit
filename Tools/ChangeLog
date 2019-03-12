@@ -1,3 +1,19 @@
+2019-03-12  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Show status bubbles while the patch is waiting in queue
+        https://bugs.webkit.org/show_bug.cgi?id=195618
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Added ALL_QUEUES and ENABLED_QUEUES. Only certain queues are 
+        enabled in initial deployment.
+        (StatusBubble._build_bubble): Display bubble even when build hasn't started.
+        (StatusBubble.get_latest_build_for_queue): Get latest build for a given queue.
+        (StatusBubble.get_builds_for_queue): Get all builds for a given queue.
+        (StatusBubble._should_show_bubble_for): Display bubble for only ENABLED_QUEUES for now.
+        (StatusBubble._build_bubbles_for_patch):
+
 2019-03-12  Robin Morisset  <rmorisset@apple.com>
 
         Alter Tools/Scripts/dump-class-layout to be able to dump all classes with suspicious padding
