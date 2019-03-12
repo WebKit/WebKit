@@ -181,6 +181,9 @@ private:
     RefPtr<IDBCursor> m_pendingCursor;
 
     Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+
+    bool m_dispatchingEvent { false };
+    bool m_hasUncaughtException { false };
 };
 
 } // namespace WebCore

@@ -304,6 +304,7 @@ void IDBRequest::dispatchEvent(Event& event)
     ASSERT(!m_contextStopped);
 
     auto protectedThis = makeRef(*this);
+    m_dispatchingEvent = true;
 
     if (event.type() != eventNames().blockedEvent)
         m_readyState = ReadyState::Done;
@@ -331,13 +332,17 @@ void IDBRequest::dispatchEvent(Event& event)
     if (m_transaction && !m_pendingCursor && event.type() != eventNames().blockedEvent)
         m_transaction->removeRequest(*this);
 
-    if (!event.defaultPrevented() && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {
+    if (m_hasUncaughtException)
+        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
+    else if (!event.defaultPrevented() && event.type() == eventNames().errorEvent && m_transaction && !m_transaction->isFinishedOrFinishing()) {
         ASSERT(m_domError);
         m_transaction->abortDueToFailedRequest(*m_domError);
     }
 
     if (m_transaction)
         m_transaction->finishedDispatchEventForRequest(*this);
+
+    m_dispatchingEvent = false;
 }
 
 void IDBRequest::uncaughtExceptionInEventHandler()
@@ -346,6 +351,11 @@ void IDBRequest::uncaughtExceptionInEventHandler()
 
     ASSERT(&originThread() == &Thread::current());
 
+    if (m_dispatchingEvent) {
+        ASSERT(!m_hasUncaughtException);
+        m_hasUncaughtException = true;
+        return;
+    }
     if (m_transaction && m_idbError.code() != AbortError)
         m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, "IDBTransaction will abort due to uncaught exception in an event handler"_s));
 }
