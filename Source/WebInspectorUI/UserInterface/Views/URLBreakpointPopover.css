@@ -36,20 +36,11 @@
 
 .popover .url-breakpoint-content > .editor-wrapper > .editor {
     width: 180px;
+    -webkit-margin-start: 4px;
     padding: 4px 0 2px 0;
     -webkit-appearance: textfield;
     border: 1px solid hsl(0, 0%, 78%);
     background: var(--background-color-code);
-
-    --editor-margin-start: 4px;
-}
-
-body[dir=ltr] .popover .url-breakpoint-content > .editor-wrapper > .editor {
-    margin-left: var(--editor-margin-start);
-}
-
-body[dir=rtl] .popover .url-breakpoint-content > .editor-wrapper > .editor {
-    margin-right: var(--editor-margin-start);
 }
 
 .popover .url-breakpoint-content > .editor-wrapper > .editor > .CodeMirror {

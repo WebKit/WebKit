@@ -31,9 +31,6 @@
 
     font-size: 11px;
     font-family: -webkit-system-font, sans-serif;
-
-    --path-component-icon-margin-start: 4px;
-    --path-component-icon-margin-end: 3px;
 }
 
 .hierarchical-path-component.show-selector-arrows {
@@ -65,16 +62,8 @@
 .hierarchical-path-component > :matches(.icon, .selector-arrows) {
     margin-top: 2px;
     margin-bottom: 2px;
-}
-
-body[dir=ltr] .hierarchical-path-component > :matches(.icon, .selector-arrows) {
-    margin-left: var(--path-component-icon-margin-start);
-    margin-right: var(--path-component-icon-margin-end);
-}
-
-body[dir=rtl] .hierarchical-path-component > :matches(.icon, .selector-arrows) {
-    margin-left: var(--path-component-icon-margin-end);
-    margin-right: var(--path-component-icon-margin-start);
+    -webkit-margin-start: 4px;
+    -webkit-margin-end: 3px;
 }
 
 .hierarchical-path-component > .selector-arrows {
@@ -133,52 +122,32 @@ body[dir=rtl] .hierarchical-path-component > select {
 
 .hierarchical-path-component > .separator {
     display: inline-block;
+    width: 7px;
+    height: 20px;
+    -webkit-margin-start: 3px;
     vertical-align: top;
-
     background-image: url(../Images/HierarchicalNavigationItemChevron.svg);
     background-repeat: no-repeat;
     background-position-y: center;
-
     opacity: 0.75;
-
-    width: 7px;
-    height: 20px;
-
-    --path-component-separator-margin-start: 3px;
-}
-
-body[dir=ltr] .hierarchical-path-component > .separator {
-    margin-left: var(--path-component-separator-margin-start);
 }
 
 body[dir=rtl] .hierarchical-path-component > .separator {
-    margin-right: var(--path-component-separator-margin-start);
-    /* Flip the icon horizontally. */
     transform: scaleX(-1);
 }
 
 .hierarchical-path-component.text-only {
-    --text-only-path-component-padding-start: 5px;
-    --text-only-path-component-padding-end: 1px;
+    -webkit-padding-start: 5px;
+    -webkit-padding-end: 1px;
+
+    /* Positions so the text in the menu aligns with the text in .title for text-only path components. */
     --text-only-path-component-select-offset-start: -8px;
 }
 
-body[dir=ltr] .hierarchical-path-component.text-only {
-    padding-left: var(--text-only-path-component-padding-start);
-    padding-right: var(--text-only-path-component-padding-end);
-}
-
-body[dir=rtl] .hierarchical-path-component.text-only {
-    padding-left: var(--text-only-path-component-padding-end);
-    padding-right: var(--text-only-path-component-padding-start);
-}
-
 body[dir=ltr] .hierarchical-path-component.text-only > select {
- /* Positions so the text in the menu aligns with the text in .title for text only path components. */
     left: var(--text-only-path-component-select-offset-start);
 }
 
 body[dir=rtl] .hierarchical-path-component.text-only > select {
- /* Positions so the text in the menu aligns with the text in .title for text only path components. */
     right: var(--text-only-path-component-select-offset-start);
 }

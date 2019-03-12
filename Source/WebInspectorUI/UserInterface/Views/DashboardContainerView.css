@@ -54,21 +54,9 @@ body:not(.web) .toolbar .dashboard-container {
     bottom: 0;
     left: 0;
     right: 0;
-
+    -webkit-padding-start: 10px;
+    -webkit-padding-end: 5px;
     animation-duration: 0.4s;
-
-    --dashboard-padding-start: 10px;
-    --dashboard-padding-end: 5px;
-}
-
-body[dir=ltr] .toolbar .dashboard {
-    padding-left: var(--dashboard-padding-start);
-    padding-right: var(--dashboard-padding-end);
-}
-
-body[dir=rtl] .toolbar .dashboard {
-    padding-left: var(--dashboard-padding-end);
-    padding-right: var(--dashboard-padding-start);
 }
 
 .toolbar .dashboard.visible {

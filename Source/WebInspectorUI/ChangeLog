@@ -1,5 +1,52 @@
 2019-03-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: use -webkit-{margin,padding}-{start,end} instead of [dir={ltr/rtl}] rules
+        https://bugs.webkit.org/show_bug.cgi?id=195569
+        <rdar://problem/48778727>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Debug/UncaughtExceptionReporter.css:
+        * UserInterface/Views/BoxModelDetailsSectionRow.css:
+        * UserInterface/Views/BreakpointActionView.css:
+        * UserInterface/Views/BreakpointPopoverController.css:
+        * UserInterface/Views/CPUTimelineView.css:
+        * UserInterface/Views/CallFrameTreeElement.css:
+        * UserInterface/Views/CallFrameView.css:
+        * UserInterface/Views/DOMTreeContentView.css:
+        * UserInterface/Views/DOMTreeOutline.css:
+        * UserInterface/Views/DashboardContainerView.css:
+        * UserInterface/Views/DataGrid.css:
+        * UserInterface/Views/DebuggerDashboardView.css:
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        * UserInterface/Views/DefaultDashboardView.css:
+        * UserInterface/Views/DetailsSection.css:
+        * UserInterface/Views/FilterBar.css:
+        * UserInterface/Views/FindBanner.css:
+        * UserInterface/Views/FontResourceContentView.css:
+        * UserInterface/Views/GeneralStyleDetailsSidebarPanel.css:
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        * UserInterface/Views/LayerTreeDetailsSidebarPanel.css:
+        * UserInterface/Views/Main.css:
+        * UserInterface/Views/NetworkTableContentView.css:
+        * UserInterface/Views/OpenResourceDialog.css:
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        * UserInterface/Views/ScopeRadioButtonNavigationItem.css:
+        * UserInterface/Views/SettingsTabContentView.css:
+        * UserInterface/Views/ThreadTreeElement.css:
+        * UserInterface/Views/Toolbar.css:
+        * UserInterface/Views/TreeOutline.css:
+        * UserInterface/Views/TypeTreeElement.css:
+        * UserInterface/Views/TypeTreeView.css:
+        * UserInterface/Views/URLBreakpointPopover.css:
+        * UserInterface/Views/WebSocketContentView.css:
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement.static _getClassNames):
+        Replace class `.action` with `.recording-action` for better uniqueness/clarity.
+
+2019-03-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: DOMDebugger: protocol error on first open
         https://bugs.webkit.org/show_bug.cgi?id=195248
         <rdar://problem/48538465>

@@ -114,14 +114,16 @@ body[dir=rtl] .network-table .cell.dom-node.name .disclosure {
     filter: invert();
 }
 
+.network-table .cell.name > .status {
+    -webkit-margin-start: 4px;
+}
+
 body[dir=ltr] .network-table .cell.name > .status {
     float: right;
-    margin-left: 4px;
 }
 
 body[dir=rtl] .network-table .cell.name > .status {
     float: left;
-    margin-right: 4px;
 }
 
 .network-table .cell.name > .status .indeterminate-progress-spinner {

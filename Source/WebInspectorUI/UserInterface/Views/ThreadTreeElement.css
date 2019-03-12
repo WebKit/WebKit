@@ -52,38 +52,16 @@
 }
 
 .tree-outline > .item.thread + ol > .item.truncated-call-frames {
+    -webkit-margin-start: 31px;
+    -webkit-margin-end: 6px;
+    -webkit-padding-start: 0;
     color: var(--text-color-gray-medium);
     border-top: dashed 0.5px var(--border-color);
     cursor: default;
-
-    --truncated-call-frames-margin-start: 31px;
-    --truncated-call-frames-margin-end: 6px;
-    --truncated-call-frames-padding-start: 0;
-}
-
-body[dir=ltr] .tree-outline > .item.thread + ol > .item.truncated-call-frames {
-    margin-right: var(--truncated-call-frames-margin-end);
-    margin-left: var(--truncated-call-frames-margin-start);
-    padding-left: var(--truncated-call-frames-padding-start);
-}
-
-body[dir=rtl] .tree-outline > .item.thread + ol > .item.truncated-call-frames {
-    margin-right: var(--truncated-call-frames-margin-start);
-    margin-left: var(--truncated-call-frames-margin-end);
-    padding-right: var(--truncated-call-frames-padding-start);
 }
 
 .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
+    -webkit-margin-start: 0;
     content: url(../Images/Function.svg);
     opacity: 0.6;
-
-    --truncated-call-frames-icon-margin-start: 0;
-}
-
-body[dir=ltr] .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
-    margin-left: var(--truncated-call-frames-icon-margin-start);
-}
-
-body[dir=rtl] .tree-outline > .item.thread + ol > .item.truncated-call-frames .icon {
-    margin-right: var(--truncated-call-frames-icon-margin-start);
 }

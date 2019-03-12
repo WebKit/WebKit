@@ -60,28 +60,12 @@ body.mac-platform:not(.docked) {
 
 .toolbar .control-section {
     display: flex;
-
     flex-direction: row;
     align-items: center;
     justify-content: center;
-
-    padding-left: 6px;
-    padding-right: 2px;
-
     min-width: -webkit-min-content;
-
-    --toolbar-control-section-padding-start: 6px;
-    --toolbar-control-section-padding-end: 2px;
-}
-
-body[dir=ltr] .toolbar .control-section {
-    padding-left: var(--toolbar-control-section-padding-start);
-    padding-right: var(--toolbar-control-section-padding-end);
-}
-
-body[dir=rtl] .toolbar .control-section {
-    padding-left: var(--toolbar-control-section-padding-end);
-    padding-right: var(--toolbar-control-section-padding-start);
+    -webkit-padding-start: 6px;
+    -webkit-padding-end: 2px;
 }
 
 .toolbar .item-section {

@@ -26,21 +26,18 @@
 .tree-outline .item.call-frame .status {
     position: absolute;
     float: none;
+    -webkit-margin-start: 1px;
 
     --call-frame-status-start: 1px;
-    --call-frame-status-margin-start: 1px;
 }
 
 body[dir=ltr] .tree-outline .item.call-frame .status {
     left: var(--call-frame-status-start);
-    margin-left: var(--call-frame-status-margin-start);
 }
 
 body[dir=rtl] .tree-outline .item.call-frame .status {
-    transform: scaleX(-1);
-
     right: var(--call-frame-status-start);
-    margin-right: var(--call-frame-status-margin-start);
+    transform: scaleX(-1);
 }
 
 .tree-outline .item.call-frame .status > .status-image {
@@ -60,34 +57,16 @@ body[dir=rtl] .tree-outline .item.call-frame .status {
 .tree-outline .item.call-frame.async-boundary {
     cursor: default;
     color: var(--text-color-gray-medium);
-
-    --call-frame-async-boundary-padding-start: 5px;
-    --call-frame-async-boundary-leading-rule-margin-start: -5px;
-    --call-frame-async-boundary-leading-rule-margin-end: 1px;
-    --call-frame-async-bonudary-trailing-rule-margin-start: 2px;
 }
 
-body[dir=ltr] .tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
-    padding-left: var(--call-frame-async-boundary-padding-start);
-}
-
-body[dir=rtl] .tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
-    padding-right: var(--call-frame-async-boundary-padding-start);
+.tree-outline:not(.single-thread) > .children > .item.call-frame.async-boundary {
+    -webkit-padding-start: 5px;
 }
 
 .tree-outline .item.call-frame.async-boundary .icon {
-    float: none;
     display: inline-block;
-
-    --call-frame-async-boundary-icon-margin-start: 0;
-}
-
-body[dir=ltr] .tree-outline .item.call-frame.async-boundary .icon {
-    margin-left: var(--call-frame-async-boundary-icon-margin-start) !important;
-}
-
-body[dir=rtl] .tree-outline .item.call-frame.async-boundary .icon {
-    margin-right: var(--call-frame-async-boundary-icon-margin-start) !important;
+    float: none;
+    -webkit-margin-start: 0 !important;
 }
 
 .tree-outline .item.call-frame.async-boundary::before,
@@ -102,28 +81,13 @@ body[dir=rtl] .tree-outline .item.call-frame.async-boundary .icon {
 
 .tree-outline .item.call-frame.async-boundary::after {
     width: 100%;
-}
-
-body[dir=ltr] .tree-outline .item.call-frame.async-boundary::after {
-    margin-left: var(--call-frame-async-bonudary-trailing-rule-margin-start);
-}
-
-body[dir=rtl] .tree-outline .item.call-frame.async-boundary::after {
-    margin-right: var(--call-frame-async-bonudary-trailing-rule-margin-start);
+    -webkit-margin-start: 2px;
 }
 
 .tree-outline .item.call-frame.async-boundary::before {
     width: 30px;
-}
-
-body[dir=ltr] .tree-outline .item.call-frame.async-boundary::before {
-    margin-left: var(--call-frame-async-boundary-leading-rule-margin-start);
-    margin-right: var(--call-frame-async-boundary-leading-rule-margin-end);
-}
-
-body[dir=rtl] .tree-outline .item.call-frame.async-boundary::before {
-    margin-left: var(--call-frame-async-boundary-leading-rule-margin-end);
-    margin-right: var(--call-frame-async-boundary-leading-rule-margin-start);
+    -webkit-margin-start: -5px;
+    -webkit-margin-end: 1px;
 }
 
 .tree-outline.single-thread .item.call-frame.async-boundary::before {

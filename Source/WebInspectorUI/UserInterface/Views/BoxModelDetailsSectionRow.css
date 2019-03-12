@@ -35,14 +35,6 @@
     padding: 0 2px;
 }
 
-body[dir=ltr] .details-section .row.box-model .label {
-    margin-left: 3px;
-}
-
-body[dir=rtl] .details-section .row.box-model .label {
-    margin-right: 16px;
-}
-
 .details-section .row.box-model :matches(.position, .margin, .border, .padding, .content) {
     border: 1px solid grey;
     background-color: white;

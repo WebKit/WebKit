@@ -40,19 +40,10 @@ body[dir=rtl] .breakpoint-action-button-container {
     width: 13px;
     height: 13px;
     margin-top: 2px;
+    -webkit-margin-start: 5px;
     background-color: transparent;
     border: none;
     opacity: 0.6;
-
-    --breakpoint-action-button-margin-start: 5px;
-}
-
-body[dir=ltr] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
-    margin-left: var(--breakpoint-action-button-margin-start);
-}
-
-body[dir=rtl] :matches(.breakpoint-action-append-button, .breakpoint-action-remove-button) {
-    margin-right: var(--breakpoint-action-button-margin-start);
 }
 
 .breakpoint-action-append-button {
@@ -74,19 +65,10 @@ body[dir=rtl] :matches(.breakpoint-action-append-button, .breakpoint-action-remo
 }
 
 .breakpoint-action-block-body > .description {
-    color: var(--text-color-gray-medium);
-    text-align: right;
     margin-top: 6px;
-
-    --breakpoint-action-block-body-description-margin-end: 2px;
-}
-
-body[dir=ltr] .breakpoint-action-block-body > .description {
-    margin-right: var(--breakpoint-action-block-body-description-margin-end);
-}
-
-body[dir=rtl] .breakpoint-action-block-body > .description {
-    margin-left: var(--breakpoint-action-block-body-description-margin-end);
+    -webkit-margin-end: 2px;
+    text-align: right;
+    color: var(--text-color-gray-medium);
 }
 
 .breakpoint-action-block-body > input {

@@ -23,13 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.item.action > .icon {
+.item.recording-action > .icon {
     content: url("../Images/Source.svg");
 }
 
-.item.action:not(.initial-state)::before {
+.item.recording-action:not(.initial-state)::before {
     position: relative;
     top: 3px;
+    -webkit-margin-end: var(--tree-outline-icon-margin-end);
+    -webkit-margin-start: 0;
     content: attr(data-index);
     font-family: -webkit-system-font, sans-serif;
     font-size: 9px;
@@ -40,211 +42,203 @@
     --data-indent: calc(var(--tree-outline-icon-margin-start) - var(--tree-outline-icon-margin-end));
 }
 
-body[dir=ltr] .item.action::before {
+body[dir=ltr] .item.recording-action::before {
     float: left;
-    margin-right: var(--tree-outline-icon-margin-end);
-    margin-left: 0;
 }
 
-body[dir=rtl] .item.action::before {
+body[dir=rtl] .item.recording-action::before {
     float: right;
-    margin-right: 0;
-    margin-left: var(--tree-outline-icon-margin-end);
 }
 
-.tree-outline:focus .item.action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon {
+.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon {
     filter: invert();
     opacity: 1;
 }
 
-.item.action > .titles .parameter.swizzled {
+.item.recording-action > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
 }
 
-.item.action > .titles .parameter.constant {
+.item.recording-action > .titles .parameter.constant {
     font-size: calc(100% - 1px);
     font-family: Menlo, monospace;
     font-style: italic;
 }
 
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.action.selected > .titles .parameter.swizzled,
-body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.action.selected::before {
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.recording-action.selected::before {
     color: var(--selected-secondary-text-color);
 }
 
-.tree-outline[data-indent="1"] .item.action::before,
-.tree-outline[data-indent="2"] .item.action::before {
+.tree-outline[data-indent="1"] .item.recording-action::before,
+.tree-outline[data-indent="2"] .item.recording-action::before {
     min-width: var(--data-indent);
 }
 
-.tree-outline[data-indent="3"] .item.action::before {
+.tree-outline[data-indent="3"] .item.recording-action::before {
     min-width: calc(var(--data-indent) * 1.5);
 }
 
-.tree-outline[data-indent="4"] .item.action::before {
+.tree-outline[data-indent="4"] .item.recording-action::before {
     min-width: calc(var(--data-indent) * 2);
 }
 
-.tree-outline[data-indent="5"] .item.action::before {
+.tree-outline[data-indent="5"] .item.recording-action::before {
     min-width: calc(var(--data-indent) * 2.5);
 }
 
-.tree-outline[data-indent="6"] .item.action::before {
+.tree-outline[data-indent="6"] .item.recording-action::before {
     min-width: calc(var(--data-indent) * 3);
 }
 
-.tree-outline[data-indent="7"] .item.action::before {
+.tree-outline[data-indent="7"] .item.recording-action::before {
     min-width: calc(var(--data-indent) * 3.5);
 }
 
-body[dir=ltr] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
-    margin-left: 0;
+.tree-outline:not(.hide-disclosure-buttons) .item.recording-action:not(.initial-state, .parent) > .icon {
+    -webkit-margin-start: 0;
 }
 
-body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
-    margin-right: 0;
-}
-
-.item.action.visual:not(.selected, .invalid) {
+.item.recording-action.visual:not(.selected, .invalid) {
     background-color: var(--value-changed-highlight);
 }
 
-.item.action > .titles .context-replacer::after {
+.item.recording-action > .titles .context-replacer::after {
     content: ".";
 }
 
-.item.action.attribute > .titles .parameters::before {
+.item.recording-action.attribute > .titles .parameters::before {
     content: " = ";
 }
 
-.item.action:not(.attribute) > .titles .parameters::before {
+.item.recording-action:not(.attribute) > .titles .parameters::before {
     content: "(";
 }
 
-.item.action:not(.attribute) > .titles .parameters::after {
+.item.recording-action:not(.attribute) > .titles .parameters::after {
     content: ")";
 }
 
-.item.action > .titles .parameter:not(:last-child)::after {
+.item.recording-action > .titles .parameter:not(:last-child)::after {
     content: ", ";
 }
 
-.item.action:not(.selected) > .titles .parameter.swizzled {
+.item.recording-action:not(.selected) > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
 }
 
-.item.action > .titles .parameters > .inline-swatch {
+.item.recording-action > .titles .parameters > .inline-swatch {
     vertical-align: -1px;
 }
 
-.item.action.has-context-replacer > .icon {
+.item.recording-action.has-context-replacer > .icon {
     content: url("../Images/Source.svg");
 }
 
-.item.action.composite > .icon {
+.item.recording-action.composite > .icon {
     content: url(../Images/Composite.svg);
 }
 
-.item.action.fill > .icon {
+.item.recording-action.fill > .icon {
     content: url(../Images/Fill.svg);
 }
 
-.item.action.image > .icon {
+.item.recording-action.image > .icon {
     content: url(../Images/Pixels.svg);
 }
 
-.item.action.line-style > .icon {
+.item.recording-action.line-style > .icon {
     content: url(../Images/LineStyle.svg);
 }
 
-.item.action.shadow > .icon {
+.item.recording-action.shadow > .icon {
     content: url(../Images/Shadow.svg);
 }
 
-.item.action.stroke > .icon {
+.item.recording-action.stroke > .icon {
     content: url(../Images/Stroke.svg);
 }
 
-.item.action.style > .icon {
+.item.recording-action.style > .icon {
     content: url(../Images/Palette.svg);
 }
 
-.item.action.text > .icon {
+.item.recording-action.text > .icon {
     content: url(../Images/Text.svg);
 }
 
-.item.action.transform > .icon {
+.item.recording-action.transform > .icon {
     content: url(../Images/Transform.svg);
 }
 
-.item.action.arc > .icon {
+.item.recording-action.arc > .icon {
     content: url(../Images/PathArc.svg);
 }
 
-.item.action.clip > .icon {
+.item.recording-action.clip > .icon {
     content: url(../Images/Clip.svg);
 }
 
-.item.action.curve > .icon {
+.item.recording-action.curve > .icon {
     content: url(../Images/PathCurve.svg);
 }
 
-.item.action.ellipse > .icon {
+.item.recording-action.ellipse > .icon {
     content: url(../Images/PathEllipse.svg);
 }
 
-.item.action.line-to > .icon {
+.item.recording-action.line-to > .icon {
     content: url(../Images/PathLineTo.svg);
 }
 
-.item.action.move-to > .icon {
+.item.recording-action.move-to > .icon {
     content: url(../Images/PathMoveTo.svg);
 }
 
-.item.action.point-in-path > .icon {
+.item.recording-action.point-in-path > .icon {
     content: url(../Images/PointInPath.svg);
 }
 
-.item.action.point-in-stroke > .icon {
+.item.recording-action.point-in-stroke > .icon {
     content: url(../Images/PointInStroke.svg);
 }
 
-.item.action.rect > .icon {
+.item.recording-action.rect > .icon {
     content: url(../Images/PathRect.svg);
 }
 
-.item.action.restore > .icon {
+.item.recording-action.restore > .icon {
     content: url(../Images/StepOut.svg);
 }
 
-.item.action.save > .icon {
+.item.recording-action.save > .icon {
     content: url(../Images/StepInto.svg);
 }
 
-.item.action.invalid > .icon {
+.item.recording-action.invalid > .icon {
     top: 2px;
     width: 16px;
     height: 12px;
     content: url(../Images/Error.svg);
 }
 
-.item.action.warning:not(.invalid) > .status > .warning {
+.item.recording-action.warning:not(.invalid) > .status > .warning {
     width: 12px;
     height: 12px;
     margin-top: 2px;
 }
 
 @media (prefers-color-scheme: dark) {
-    .item.action:not(.initial-state)::before {
+    .item.recording-action:not(.initial-state)::before {
         color: unset;
         opacity: 0.4;
     }
 
-    .tree-outline .item.action.visual:not(.selected, .invalid) {
+    .tree-outline .item.recording-action.visual:not(.selected, .invalid) {
         color: var(--green-highlight-text-color);
     }
 
-    .item.action:not(.invalid, .initial-state, .has-context-replacer) > .icon {
+    .item.recording-action:not(.invalid, .initial-state, .has-context-replacer) > .icon {
         filter: invert();
         opacity: 0.8;
     }

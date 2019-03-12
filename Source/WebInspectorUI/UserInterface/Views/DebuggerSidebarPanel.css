@@ -71,15 +71,7 @@
 }
 
 .sidebar > .panel.navigation.debugger .tree-outline.single-thread {
-    --tree-outline-single-thread-margin-start: -10px;
-}
-
-body[dir=ltr] .sidebar > .panel.navigation.debugger .tree-outline.single-thread {
-    margin-left: var(--tree-outline-single-thread-margin-start);
-}
-
-body[dir=rtl] .sidebar > .panel.navigation.debugger .tree-outline.single-thread {
-    margin-right: var(--tree-outline-single-thread-margin-start);
+    -webkit-margin-start: -10px;
 }
 
 .sidebar > .panel.navigation.debugger .warning-banner > a {

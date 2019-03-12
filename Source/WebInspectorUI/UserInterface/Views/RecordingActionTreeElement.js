@@ -226,7 +226,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     static _getClassNames(recordingAction)
     {
-        let classNames = ["action"];
+        let classNames = ["recording-action"];
 
         if (recordingAction instanceof WI.RecordingInitialStateAction) {
             classNames.push("initial-state");

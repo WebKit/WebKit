@@ -26,8 +26,6 @@
 .popover .edit-breakpoint-popover-content {
     width: 420px;
     padding: 5px 15px;
-
-    --edit-breakpoint-popover-option-margin-end: 4px;
 }
 
 .popover .edit-breakpoint-popover-content.wide {
@@ -79,14 +77,10 @@
     width: 40px;
 }
 
-body[dir=ltr] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue) {
-    margin-right: var(--edit-breakpoint-popover-option-margin-end);
-    margin-left: 0;
-}
-
-body[dir=rtl] :matches(#edit-breakpoint-popover-ignore, #edit-breakpoint-popover-auto-continue) {
-    margin-right: 0;
-    margin-left: var(--edit-breakpoint-popover-option-margin-end);
+#edit-breakpoint-popover-ignore,
+#edit-breakpoint-popover-auto-continue {
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 4px;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -92,17 +92,8 @@ body:not(.web) .toolbar .dashboard.default > :matches(.resourcesCount, .resource
 .toolbar .dashboard.default > .item > div {
     display: flex;
     flex: 1;
-
+    -webkit-padding-start: 2px;
     color: hsla(0, 0%, 0%, 0.2);
-    --dashboard-item-padding-start: 2px;
-}
-
-body[dir=ltr] .toolbar .dashboard.default > .item > div {
-    padding-left: var(--dashboard-item-padding-start);
-}
-
-body[dir=rtl] .toolbar .dashboard.default > .item > div {
-    padding-right: var(--dashboard-item-padding-start);
 }
 
 .toolbar .dashboard.default > .item.enabled > div {

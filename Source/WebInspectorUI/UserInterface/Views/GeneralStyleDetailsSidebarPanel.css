@@ -87,18 +87,10 @@
     width: 15px;
     min-width: 15px;
     height: 15px;
+    -webkit-margin-start: 6px;
     content: url(../Images/Plus15.svg);
     opacity: 0.7;
 
-    --panel-details-css-style-content-options-container-new-rule-margin-start: 6px;
-}
-
-body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
-    margin-left: var(--panel-details-css-style-content-options-container-new-rule-margin-start);
-}
-
-body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .new-rule {
-    margin-right: var(--panel-details-css-style-content-options-container-new-rule-margin-start);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .filter-bar {
@@ -108,6 +100,7 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
     margin: 0 0 1px;
+    -webkit-margin-end: 5px;
     padding: 2px 4px 3px;
     color: var(--text-color);
     background: none;
@@ -115,16 +108,6 @@ body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-containe
     border-radius: 3px;
     white-space: nowrap;
     -webkit-appearance: none;
-
-    --panel-details-css-style-content-options-container-toggle-class-toggle-margin-end: 5px;
-}
-
-body[dir=ltr] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
-    margin-right: var(--panel-details-css-style-content-options-container-toggle-class-toggle-margin-end);
-}
-
-body[dir=rtl] .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
-    margin-left: var(--panel-details-css-style-content-options-container-toggle-class-toggle-margin-end);
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected {

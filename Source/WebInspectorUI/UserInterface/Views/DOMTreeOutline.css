@@ -38,15 +38,7 @@
     background-color: transparent !important;
     color: var(--text-color);
 
-    --item-parent-margin-start: -15px;
-
-    --item-parent-before-padding-end: 2px;
-
-    --item-parent-shadow-after-margin-start: -2px;
-
     --item-pseudo-class-enabled-selection-before-start: 2px;
-
-    --single-item-padding-start: 2px;
 
     --sublist-margin-start: 4px;
     --sublist-padding-start: 1px;
@@ -92,14 +84,7 @@
 .tree-outline.dom ol {
     list-style-type: none;
     margin: 0;
-}
-
-body[dir=ltr] .tree-outline.dom ol {
-    padding-left: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
-}
-
-body[dir=rtl] .tree-outline.dom ol {
-    padding-right: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
+    -webkit-padding-start: calc(var(--sublist-margin-start) + var(--sublist-padding-start) + var(--sublist-border-width-start));
 }
 
 .tree-outline.dom ol.children {
@@ -111,18 +96,16 @@ body[dir=rtl] .tree-outline.dom ol {
 }
 
 .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
+    -webkit-margin-start: var(--sublist-margin-start);
+    -webkit-padding-start: var(--sublist-padding-start);
     border: 0 solid hsla(0, 0%, 83%, 0.5);
 }
 
 body[dir=ltr] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
-    margin-left: var(--sublist-margin-start);
-    padding-left: var(--sublist-padding-start);
     border-left-width: var(--sublist-border-width-start);
 }
 
 body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.expanded {
-    margin-right: var(--sublist-margin-start);
-    padding-right: var(--sublist-padding-start);
     border-right-width: var(--sublist-border-width-start);
 }
 
@@ -159,10 +142,6 @@ body[dir=rtl] .tree-outline.dom li:matches(.hovered, .selected) + ol.children.ex
     border-radius: 50%;
 }
 
-.content-view.dom-tree.show-gutter .tree-outline.dom {
-    --item-pseudo-class-enabled-selection-before-start: 17px;
-}
-
 body[dir=ltr] .tree-outline.dom li.pseudo-class-enabled > .selection-area::before {
     left: var(--item-pseudo-class-enabled-selection-before-start);
 }
@@ -171,12 +150,8 @@ body[dir=rtl] .tree-outline.dom li.pseudo-class-enabled > .selection-area::befor
     right: var(--item-pseudo-class-enabled-selection-before-start);
 }
 
-body[dir=ltr] .tree-outline.dom.single-node li {
-    padding-left: var(--single-item-padding-start);
-}
-
-body[dir=rtl] .tree-outline.dom.single-node li {
-    padding-right: var(--single-item-padding-start);
+.tree-outline.dom.single-node li {
+    -webkit-padding-start: 2px;
 }
 
 .tree-outline.dom:focus li.selected {
@@ -192,23 +167,12 @@ body[dir=rtl] .tree-outline.dom.single-node li {
 }
 
 .tree-outline.dom li.parent {
+    -webkit-margin-start: -15px;
     line-height: 13px;
 }
 
-body[dir=ltr] .tree-outline.dom li.parent {
-    margin-left: var(--item-parent-margin-start);
-}
-
-body[dir=rtl] .tree-outline.dom li.parent {
-    margin-right: var(--item-parent-margin-start);
-}
-
-body[dir=ltr] .tree-outline.dom li .html-tag.close {
-    margin-left: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
-}
-
-body[dir=rtl] .tree-outline.dom li .html-tag.close {
-    margin-right: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
+.tree-outline.dom li .html-tag.close {
+    -webkit-margin-start: calc(-1 * var(--sublist-margin-start) - var(--sublist-border-width-start));
 }
 
 .tree-outline.dom li.parent::before {
@@ -216,24 +180,20 @@ body[dir=rtl] .tree-outline.dom li .html-tag.close {
     z-index: 20;
     width: 13px;
     height: 13px;
+    -webkit-padding-end: 2px;
     content: "";
     background-image: url(../Images/DisclosureTriangles.svg#closed-normal);
     background-size: 13px 13px;
     background-repeat: no-repeat;
 }
 
-body[dir=rtl] .tree-outline.dom li.parent::before {
-    transform: scaleX(-1);
-}
-
 body[dir=ltr] .tree-outline.dom li.parent::before {
     float: left;
-    padding-right: var(--item-parent-before-padding-end);
 }
 
 body[dir=rtl] .tree-outline.dom li.parent::before {
     float: right;
-    padding-left: var(--item-parent-before-padding-end);
+    transform: scaleX(-1);
 }
 
 .tree-outline.dom:focus li.parent.selected::before {
@@ -269,16 +229,9 @@ body[dir=rtl] .tree-outline.dom li.parent::before {
     width: calc(100% + 8px);
     height: 1.2em;
     margin-top: -13px;
+    -webkit-margin-start: -2px;
     content: "";
     background-color: hsla(0, 0%, 90%, 0.5);
-}
-
-body[dir=ltr] .tree-outline.dom li.parent.shadow::after {
-    margin-left: var(--item-parent-shadow-after-margin-start);
-}
-
-body[dir=rtl] .tree-outline.dom li.parent.shadow::after {
-    margin-right: var(--item-parent-shadow-after-margin-start);
 }
 
 .tree-outline.dom li.parent.shadow + ol.children.expanded {

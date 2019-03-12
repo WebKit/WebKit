@@ -25,9 +25,6 @@
 
 .scope-radio-button-navigation-item {
     position: relative;
-
-    --scope-radio-button-navigation-item-select-offset-start: 0;
-    --scope-radio-button-navigation-item-arrows-margin-start: 4px;
 }
 
 .scope-radio-button-navigation-item > .scope-radio-button-item-select {
@@ -40,6 +37,8 @@
     background: transparent;
     color: transparent;
     outline: none;
+
+    --scope-radio-button-navigation-item-select-offset-start: 0;
 }
 
 body[dir=ltr] .scope-radio-button-navigation-item > .scope-radio-button-item-select {
@@ -59,16 +58,9 @@ body[dir=rtl] .scope-radio-button-navigation-item > .scope-radio-button-item-sel
 .scope-radio-button-navigation-item > .arrows {
     width: 5px;
     height: 11px;
+    -webkit-margin-start: 4px;
     pointer-events: none;
     transform: translateY(1px);
-}
-
-body[dir=ltr] .scope-radio-button-navigation-item > .arrows {
-    margin-left: var(--scope-radio-button-navigation-item-arrows-margin-start);
-}
-
-body[dir=rtl] .scope-radio-button-navigation-item > .arrows {
-    margin-right: var(--scope-radio-button-navigation-item-arrows-margin-start);
 }
 
 .scope-radio-button-navigation-item.selected > .arrows {

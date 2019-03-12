@@ -28,8 +28,6 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     cursor: pointer;
-
-    --icon-margin-end: 3px;
 }
 
 .call-frame .icon {
@@ -37,14 +35,7 @@
     vertical-align: top;
     width: 16px;
     height: 16px;
-}
-
-body[dir=ltr] .call-frame .icon {
-    margin-right: var(--icon-margin-end);
-}
-
-body[dir=rtl] .call-frame .icon {
-    margin-left: var(--icon-margin-end);
+    -webkit-margin-end: 3px;
 }
 
 .call-frame .titles {

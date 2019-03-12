@@ -28,19 +28,13 @@
 }
 
 .content-view.dom-tree .tree-outline.dom {
-    --gutter-padding-start: 7px;
+    -webkit-padding-start: 7px;
 }
 
 .content-view.dom-tree.show-gutter .tree-outline.dom {
-    --gutter-padding-start: 20px;
-}
+    -webkit-padding-start: 20px;
 
-body[dir=ltr] .content-view.dom-tree .tree-outline.dom {
-    padding-left: var(--gutter-padding-start);
-}
-
-body[dir=rtl] .content-view.dom-tree .tree-outline.dom {
-    padding-right: var(--gutter-padding-start);
+    --item-pseudo-class-enabled-selection-before-start: 17px;
 }
 
 .content-view.dom-tree .tree-outline.dom li .status-image {

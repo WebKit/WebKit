@@ -40,16 +40,7 @@
 
 .filter-bar > .navigation-bar > .item {
     padding: 0 0 3px;
-
-    --filter-bar-navigation-bar-item-padding-start: 8px;
-}
-
-body[dir=ltr] .filter-bar > .navigation-bar > .item {
-    padding-left: var(--filter-bar-navigation-bar-item-padding-start);
-}
-
-body[dir=rtl] .filter-bar > .navigation-bar > .item {
-    padding-right: var(--filter-bar-navigation-bar-item-padding-start);
+    -webkit-padding-start: 8px;
 }
 
 .filter-bar > input[type="search"] {

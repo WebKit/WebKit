@@ -27,12 +27,6 @@
     font-size: 10px;
     background-color: var(--panel-background-color);
     border-bottom: 1px solid var(--border-color);
-
-    --details-section-header-padding-end: 5px;
-    --details-section-header-label-checkbox-margin-start: 5px;
-    --details-section-header-go-to-margin-start: 3px;
-    --details-section-content-group-row-simple-padding-start: 6px;
-    --details-section-content-group-row-simple-value-go-to-margin-start: 5px;
 }
 
 .details-section .details-section {
@@ -53,6 +47,7 @@
     top: -1px;
     height: 23px;
     padding: 4px 0;
+    -webkit-padding-end: 5px;
     font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
@@ -63,14 +58,6 @@
 
     /* Ensure the headers are displayed above scrollbars. */
     z-index: var(--z-index-header);
-}
-
-body[dir=ltr] .details-section > .header {
-    padding-right: var(--details-section-header-padding-end);
-}
-
-body[dir=rtl] .details-section > .header {
-    padding-left: var(--details-section-header-padding-end);
 }
 
 .details-section > .header > .options > .navigation-bar {
@@ -146,29 +133,15 @@ body[dir=rtl] .details-section > .header::before {
 
 .details-section > .header > label > input[type="checkbox"] {
     margin: 0;
+    -webkit-margin-start: 5px;
     vertical-align: 1px;
     font-size: 10px;
-}
-
-body[dir=ltr] .details-section > .header > label > input[type="checkbox"] {
-    margin-left: var(--details-section-header-label-checkbox-margin-start);
-}
-
-body[dir=rtl] .details-section > .header > label > input[type="checkbox"] {
-    margin-right: var(--details-section-header-label-checkbox-margin-start);
 }
 
 .details-section > .header .go-to-arrow {
     width: 10px;
     height: 12px;
-}
-
-body[dir=ltr] .details-section > .header .go-to-arrow {
-    margin-left: var(--details-section-header-go-to-margin-start);
-}
-
-body[dir=rtl] .details-section > .header .go-to-arrow {
-    margin-right: var(--details-section-header-go-to-margin-start);
+    -webkit-margin-start: 3px;
 }
 
 .details-section > .content {
@@ -240,44 +213,23 @@ body[dir=rtl] .details-section > .header .go-to-arrow {
 
 .details-section > .content > .group > .row.simple > .label {
     width: 85px;
+    -webkit-padding-start: 6px;
     color: hsl(0, 0%, 20%);
     text-align: end;
 }
 
-body[dir=ltr] .details-section > .content > .group > .row.simple > .label {
-    padding-left: var(--details-section-content-group-row-simple-padding-start);
-}
-
-body[dir=rtl] .details-section > .content > .group > .row.simple > .label {
-    padding-right: var(--details-section-content-group-row-simple-padding-start);
-}
-
 .details-section > .content > .group > .row.simple > .value {
+    -webkit-padding-start: 6px;
     word-break: break-all;
     word-wrap: break-word;
     cursor: text;
     -webkit-user-select: text;
 }
 
-body[dir=ltr] .details-section > .content > .group > .row.simple > .value {
-    padding-right: var(--details-section-content-group-row-simple-padding-start);
-}
-
-body[dir=rtl] .details-section > .content > .group > .row.simple > .value {
-    padding-left: var(--details-section-content-group-row-simple-padding-start);
-}
-
 .details-section > .content > .group > .row.simple > .value .go-to-arrow {
     width: 10px;
     height: 12px;
-}
-
-body[dir=ltr] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
-    margin-left: var(--details-section-content-group-row-simple-value-go-to-margin-start);
-}
-
-body[dir=rtl] .details-section > .content > .group > .row.simple > .value .go-to-arrow {
-    margin-right: var(--details-section-content-group-row-simple-value-go-to-margin-start);
+    -webkit-margin-start: 5px;
 }
 
 .details-section > .content > .group > .row.simple.data > .value {

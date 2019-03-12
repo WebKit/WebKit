@@ -94,18 +94,8 @@
     margin: 10px 0 0;
     padding: 0;
 
-    --layer-tree-popover-ul-margin-start: 1em;
-    --layer-tree-popover-ul-padding-start: 1em;
-}
-
-body[dir=ltr] .layer-tree-popover ul {
-    margin-left: var(--layer-tree-popover-ul-margin-start);
-    padding-left: var(--layer-tree-popover-ul-padding-start);
-}
-
-body[dir=rtl] .layer-tree-popover ul {
-    margin-right: var(--layer-tree-popover-ul-margin-start);
-    padding-right: var(--layer-tree-popover-ul-padding-start);
+    -webkit-margin-start: 1em;
+    -webkit-padding-start: 1em;
 }
 
 .layer-tree-popover li {

@@ -73,28 +73,14 @@ body[dir=rtl] .item.type-tree-element.parent > .disclosure-button {
 
 .item.type-tree-element.prototype {
     display: inline-block;
-
-    /* Unusual order of values because of <webkit.org/b/192922>. */
-    border: hsla(0, 0%, var(--foreground-lightness), 0.06) solid 1px;
-    background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
-    border-radius: 3px;
-
-    padding-bottom: 1px;
     margin-top: 3px;
     margin-bottom: 2px;
-
-    --type-tree-element-prototype-padding-end: 10px;
-    --type-tree-element-prototype-margin-start: -1px;
-}
-
-body[dir=ltr] .item.type-tree-element.prototype {
-    padding-right: var(--type-tree-element-prototype-padding-end);
-    margin-left: var(--type-tree-element-prototype-margin-start);
-}
-
-body[dir=rtl] .item.type-tree-element.prototype {
-    padding-left: var(--type-tree-element-prototype-padding-end);
-    margin-right: var(--type-tree-element-prototype-margin-start);
+    -webkit-margin-start: -1px;
+    padding-bottom: 1px;
+    -webkit-padding-end: 10px;
+    background-color: hsla(0, 0%, var(--foreground-lightness), 0.03);
+    border: 1px solid hsla(0, 0%, var(--foreground-lightness), 0.06);
+    border-radius: 3px;
 }
 
 .item.type-tree-element.prototype:hover,

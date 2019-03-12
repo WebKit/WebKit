@@ -50,19 +50,8 @@
 .open-resource-dialog > .field {
     margin-top: 8px;
     margin-bottom: 8px;
-
-    --open-resource-dialog-field-margin-start: 32px;
-    --open-resource-dialog-field-margin-end: 3px;
-}
-
-body[dir=ltr] .open-resource-dialog > .field {
-    margin-left: var(--open-resource-dialog-field-margin-start);
-    margin-right: var(--open-resource-dialog-field-margin-end);
-}
-
-body[dir=rtl] .open-resource-dialog > .field {
-    margin-left: var(--open-resource-dialog-field-margin-end);
-    margin-right: var(--open-resource-dialog-field-margin-start);
+    -webkit-margin-start: 32px;
+    -webkit-margin-end: 3px;
 }
 
 .open-resource-dialog > .field::before {
@@ -86,27 +75,16 @@ body[dir=rtl] .open-resource-dialog > .field::before {
 .open-resource-dialog > .field > input {
     display: block;
     width: 100%;
-    border: none;
-    background-color: transparent;
+    padding-top: 0;
+    padding-bottom: 1px;
+    -webkit-padding-start: 7px;
+    -webkit-padding-end: 30px;
     font-size: 20px;
     color: hsl(0, 0%, 4%);
-    padding-top: 0px;
-    padding-bottom: 1px;
+    background-color: transparent;
+    border: none;
     outline: none;
     -webkit-appearance: none;
-
-    --open-resource-dialog-input-padding-start: 7px;
-    --open-resource-dialog-input-padding-end: 30px;
-}
-
-body[dir=ltr] .open-resource-dialog > .field > input {
-    padding-left: var(--open-resource-dialog-input-padding-start);
-    padding-right: var(--open-resource-dialog-input-padding-end);
-}
-
-body[dir=rtl] .open-resource-dialog > .field > input {
-    padding-left: var(--open-resource-dialog-input-padding-end);
-    padding-right: var(--open-resource-dialog-input-padding-start);
 }
 
 .open-resource-dialog > .field > input::placeholder {
@@ -157,10 +135,9 @@ body[dir=rtl] .open-resource-dialog > .field > img {
 }
 
 .open-resource-dialog > .tree-outline .item {
-    border: none;
     flex: none;
-
-    --open-resource-dialog-tree-outline-item-padding-start: 10px;
+    -webkit-padding-start: 10px;
+    border: none;
 }
 
 .open-resource-dialog > .tree-outline.large .item {
@@ -190,14 +167,6 @@ body[dir=rtl] .open-resource-dialog > .field > img {
 
 .open-resource-dialog .tree-outline.large .item .titles .subtitle {
     vertical-align: 2px;
-}
-
-body[dir=ltr] .open-resource-dialog > .tree-outline .item {
-    padding-left: var(--open-resource-dialog-tree-outline-item-padding-start);
-}
-
-body[dir=rtl] .open-resource-dialog > .tree-outline .item {
-    padding-right: var(--open-resource-dialog-tree-outline-item-padding-start);
 }
 
 .open-resource-dialog > .tree-outline .item.selected {

@@ -33,22 +33,12 @@
 }
 
 .tree-outline.type {
+    min-height: 18px;
     margin: 0;
     padding-bottom: 2px;
-    min-height: 18px;
-
+    -webkit-padding-end: 6px;
     list-style: none;
     outline: none;
-
-    --type-tree-outline-padding-end: 6px;
-}
-
-body[dir=ltr] .tree-outline.type {
-    padding-right: var(--type-tree-outline-padding-end);
-}
-
-body[dir=rtl] .tree-outline.type {
-    padding-left: var(--type-tree-outline-padding-end);
 }
 
 .tree-outline.type li {
@@ -72,15 +62,6 @@ body[dir=rtl] .tree-outline.type {
 }
 
 .tree-outline.type li .empty-message {
+    -webkit-margin-start: 13px;
     color: hsl(0, 0%, 60%);
-
-    --type-tree-outline-empty-message-margin-start: 13px;
-}
-
-body[dir=ltr] .tree-outline.type li .empty-message {
-    margin-left: var(--type-tree-outline-empty-message-margin-start);
-}
-
-body[dir=rtl] .tree-outline.type li .empty-message {
-    margin-right: var(--type-tree-outline-empty-message-margin-start);
 }
