@@ -713,7 +713,8 @@ WI._openDefaultTab = function(event)
 
 WI._showSettingsTab = function(event)
 {
-    this.tabBrowser.showTabForContentView(this.settingsTabContentView);
+    if (event.keyIdentifier === "U+002C") // ","
+        this.tabBrowser.showTabForContentView(this.settingsTabContentView);
 };
 
 WI._tryToRestorePendingTabs = function()

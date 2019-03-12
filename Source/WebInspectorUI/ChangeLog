@@ -1,3 +1,14 @@
+2019-03-12  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Keyboard shortcut for settings tab too greedy on non-US keyboards
+        https://bugs.webkit.org/show_bug.cgi?id=192947
+        <rdar://problem/46886779>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WI._showSettingsTab):
+
 2019-03-12  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Elements: provide node context menu items for event listeners sorted by node
