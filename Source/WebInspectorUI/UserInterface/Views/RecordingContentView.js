@@ -62,10 +62,10 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
 
             this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export-recording", WI.UIString("Export"), "Images/Export.svg", 15, 15);
-            this._exportButtonNavigationItem.toolTip = WI.UIString("Export recording (%s)").format(WI.saveKeyboardShortcut.displayName);
             this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
             this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
-            this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { this._exportRecording(); });
+            this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleExportNavigationItemClicked, this);
+            this._updateExportButton();
         }
     }
 
@@ -175,17 +175,29 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _exportRecording()
     {
-        if (!this.representedObject) {
-            InspectorFrontendHost.beep();
-            return;
-        }
-
         let filename = this.representedObject.displayName;
         let url = "web-inspector:///" + encodeURI(filename) + ".json";
 
         WI.FileUtilities.save({
             url,
             content: JSON.stringify(this.representedObject.toJSON()),
+            forceSaveAs: true,
+        });
+    }
+
+    _exportReduction()
+    {
+        if (!this.representedObject.ready) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let filename = this.representedObject.displayName;
+        let url = "web-inspector:///" + encodeURI(filename) + ".html";
+
+        WI.FileUtilities.save({
+            url,
+            content: this.representedObject.toHTML(),
             forceSaveAs: true,
         });
     }
@@ -423,6 +435,14 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
     }
 
+    _updateExportButton()
+    {
+        if (this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready)
+            this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)\nShift-click to export a HTML reduction").format(WI.saveKeyboardShortcut.displayName);
+        else
+            this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)").format(WI.saveKeyboardShortcut.displayName);
+    }
+
     _updateCanvasPath()
     {
         let activated = WI.settings.showCanvasPath.value;
@@ -472,6 +492,14 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._updateImageGrid();
     }
 
+    _handleExportNavigationItemClicked(event)
+    {
+        if (event.data.nativeEvent.shiftKey && this.representedObject.type === WI.Recording.Type.Canvas2D && this.representedObject.ready)
+            this._exportReduction();
+        else
+            this._exportRecording();
+    }
+
     _sliderChanged()
     {
         let index = 0;
@@ -485,6 +513,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _handleRecordingProcessedAction(event)
     {
+        this._updateExportButton();
+
         this._sliderElement.max = this.representedObject.visualActionIndexes.length;
         this._updateSliderValue();
 

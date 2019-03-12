@@ -1,0 +1,240 @@
+Tests for Recording.prototype.toHTML.
+
+
+== Running test suite: Recording.prototype.toHTML
+-- Running test case: Recording.prototype.toHTML.2D
+++++++++++ HTML ++++++++++
+<!DOCTYPE html>
+<head>
+<title>Recording 1</title>
+<style>
+    body {
+        margin: 0;
+    }
+    canvas {
+        max-width: calc(100% - 40px);
+        max-height: calc(100% - 40px);
+        padding: 20px;
+    }
+</style>
+</head>
+<body>
+<script>
+"use strict";
+
+let promises = [];
+let objects = {};
+
+let canvas = document.body.appendChild(document.createElement("canvas"));
+canvas.width = 2;
+canvas.height = 2;
+
+let context = canvas.getContext("2d");
+
+let frames = [
+    function initialState() {
+        context.drawImage(objects[0], 0, 0);
+
+        context.direction = "ltr";
+        context.fillStyle = "#000000";
+        context.font = "10px sans-serif";
+        context.globalAlpha = 1;
+        context.globalCompositeOperation = "source-over";
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "low";
+        context.lineCap = "butt";
+        context.lineDash = [];
+        context.lineDashOffset = 0;
+        context.lineJoin = "miter";
+        context.lineWidth = 1;
+        context.miterLimit = 10;
+        context.shadowBlur = 0;
+        context.shadowColor = "rgba(0, 0, 0, 0)";
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.strokeStyle = "#ff0000";
+        context.textAlign = "start";
+        context.textBaseline = "alphabetic";
+        context.transform(1, 0, 0, 1, 0, 0);
+        context.webkitImageSmoothingEnabled = true;
+        context.webkitLineDash = [];
+        context.webkitLineDashOffset = 0;
+        if ("setPath" in context)
+            context.setPath(objects[1]);
+        context.save();
+
+        context.direction = "ltr";
+        context.fillStyle = "#000000";
+        context.font = "10px sans-serif";
+        context.globalAlpha = 1;
+        context.globalCompositeOperation = "source-over";
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "low";
+        context.lineCap = "butt";
+        context.lineDash = [];
+        context.lineDashOffset = 0;
+        context.lineJoin = "miter";
+        context.lineWidth = 1;
+        context.miterLimit = 10;
+        context.shadowBlur = 0;
+        context.shadowColor = "rgba(0, 0, 0, 0)";
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.strokeStyle = "#0000ff";
+        context.textAlign = "start";
+        context.textBaseline = "alphabetic";
+        context.transform(1, 0, 0, 1, 0, 0);
+        context.webkitImageSmoothingEnabled = true;
+        context.webkitLineDash = [];
+        context.webkitLineDashOffset = 0;
+        if ("setPath" in context)
+            context.setPath(objects[2]);
+        context.save();
+
+        context.direction = "ltr";
+        context.fillStyle = "#000000";
+        context.font = "10px sans-serif";
+        context.globalAlpha = 1;
+        context.globalCompositeOperation = "source-over";
+        context.imageSmoothingEnabled = true;
+        context.imageSmoothingQuality = "low";
+        context.lineCap = "butt";
+        context.lineDash = [];
+        context.lineDashOffset = 0;
+        context.lineJoin = "miter";
+        context.lineWidth = 1;
+        context.miterLimit = 10;
+        context.shadowBlur = 0;
+        context.shadowColor = "rgba(0, 0, 0, 0)";
+        context.shadowOffsetX = 0;
+        context.shadowOffsetY = 0;
+        context.strokeStyle = "#008000";
+        context.textAlign = "start";
+        context.textBaseline = "alphabetic";
+        context.transform(1, 0, 0, 1, 0, 0);
+        context.webkitImageSmoothingEnabled = true;
+        context.webkitLineDash = [];
+        context.webkitLineDashOffset = 0;
+        if ("setPath" in context)
+            context.setPath(objects[3]);
+    },
+    function startRecording() {
+        if (typeof console.record === "function")
+            console.record(context, {name: "Recording 1"});
+    },
+    function frame1() {
+        context.fillStyle;
+        context.fillStyle = "test";
+        context.fillStyle = objects[4];
+        context.fillStyle = objects[5];
+        context.fillStyle = objects[6];
+    },
+    function frame2() {
+        context.beginPath();
+    },
+    function frame3() {
+        context.moveTo(1, 2);
+    },
+    function frame4() {
+        context.drawImage(objects[7], 11, 12);
+    },
+    function frame5() {
+        context.createImageData(objects[8]);
+    },
+    function frame6() {
+        context.drawImage(objects[9], 11, 12);
+    },
+    function frame7() {
+        context.setTransform(objects[10]);
+    },
+    function frame8() {
+        // context.drawFocusIfNeeded(objects[11], "Element");
+    },
+    function stopRecording() {
+        if (typeof console.recordEnd === "function")
+            console.recordEnd(context);
+    },
+];
+
+function rebuildCanvasGradient(key, data) {
+    let gradient = null;
+    if (data.type === "radial-gradient")
+        gradient = context.createRadialGradient(data.points[0], data.points[1], data.points[2], data.points[3], data.points[4], data.points[5]);
+    else
+        gradient = context.createLinearGradient(data.points[0], data.points[1], data.points[2], data.points[3]);
+    for (let stop of data.stops)
+        gradient.addColorStop(stop.offset, stop.color);
+    objects[key] = gradient;
+}
+function rebuildCanvasPattern(key, data) {
+    promises.push(new Promise(function(resolve, reject) {
+        let image = new Image;
+        function resolveWithImage(event) {
+            objects[key] = context.createPattern(image, data.repeat);
+            resolve();
+        }
+        image.addEventListener("load", resolveWithImage);
+        image.addEventListener("error", resolveWithImage);
+        image.src = data.image;
+    }));
+}
+function rebuildDOMMatrix(key, data) {
+    objects[key] = new DOMMatrix(data);
+}
+function rebuildImage(key, data) {
+    promises.push(new Promise(function(resolve, reject) {
+        let image = new Image;
+        function resolveWithImage(event) {
+            objects[key] = image;
+            resolve();
+        }
+        image.addEventListener("load", resolveWithImage);
+        image.addEventListener("error", resolveWithImage);
+        image.src = data;
+    }));
+}
+function rebuildImageBitmap(key, data) {
+    promises.push(new Promise(function(resolve, reject) {
+        let image = new Image;
+        function resolveWithImage(event) {
+            createImageBitmap(image).then(function(imageBitmap) {
+                objects[key] = imageBitmap;
+                resolve();
+            });
+        }
+        image.addEventListener("load", resolveWithImage);
+        image.addEventListener("error", resolveWithImage);
+        image.src = data;
+    }));
+}
+function rebuildImageData(key, data) {
+    objects[key] = new ImageData(new Uint8ClampedArray(data.data), parseInt(data.width), parseInt(data.height));
+}
+function rebuildPath2D(key, data) {
+    objects[key] = new Path2D(data);
+}
+
+rebuildImage(0, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAAAtJREFUCB1jYEAHAAASAAGAFMrMAAAAAElFTkSuQmCC");
+rebuildPath2D(1, "");
+rebuildPath2D(2, "");
+rebuildPath2D(3, "");
+rebuildCanvasGradient(4, {"type":"linear-gradient","points":[1,2,3,4],"stops":[{"offset":1,"color":"rgb(255, 0, 0)"},{"offset":1,"color":"rgb(0, 0, 255)"}]});
+rebuildCanvasGradient(5, {"type":"radial-gradient","points":[1,2,3,4,5,6],"stops":[]});
+rebuildCanvasPattern(6, {"image":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=","repeat":"no-repeat"});
+rebuildImage(7, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=");
+rebuildImageData(8, {"data":[0,0,0,0,0,0,0,0],"width":1,"height":2});
+rebuildImageBitmap(9, "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=");
+rebuildDOMMatrix(10, "matrix(1, 2, 3, 4, 5, 6)");
+rebuildPath2D(11, "M1 2");
+
+Promise.all(promises).then(function() {
+    window.requestAnimationFrame(function executeFrame() {
+        frames.shift()();
+        if (frames.length)
+            window.requestAnimationFrame(executeFrame);
+    });
+});
+</script>
+</body>
+++++++++++ HTML ++++++++++
+

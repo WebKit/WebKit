@@ -34,7 +34,7 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
         this.element.classList.add("heap-snapshot");
 
         this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
-        this._exportButtonNavigationItem.toolTip = WI.UIString("Export (%s)").format(WI.saveKeyboardShortcut.displayName);
+        this._exportButtonNavigationItem.tooltip = WI.UIString("Export (%s)").format(WI.saveKeyboardShortcut.displayName);
         this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
         this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { this._exportSnapshot(); });

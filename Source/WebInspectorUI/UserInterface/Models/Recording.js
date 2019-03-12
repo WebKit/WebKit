@@ -339,31 +339,57 @@ WI.Recording = class Recording extends WI.Object
 
                 case WI.Recording.Swizzle.Image:
                     this._swizzle[index][type] = await WI.ImageUtilities.promisifyLoad(data);
+                    this._swizzle[index][type].__data = data;
                     break;
 
-                case WI.Recording.Swizzle.ImageData:
-                    this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(data[0]), parseInt(data[1]), parseInt(data[2]));
+                case WI.Recording.Swizzle.ImageData: {
+                    let [object, width, height] = await Promise.all([
+                        this.swizzle(data[0], WI.Recording.Swizzle.Array),
+                        this.swizzle(data[1], WI.Recording.Swizzle.Number),
+                        this.swizzle(data[2], WI.Recording.Swizzle.Number),
+                    ]);
+
+                    object = await Promise.all(object.map((item) => this.swizzle(item, WI.Recording.Swizzle.Number)));
+
+                    this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(object), width, height);
+                    this._swizzle[index][type].__data = {data: object, width, height};
                     break;
+                }
 
                 case WI.Recording.Swizzle.Path2D:
                     this._swizzle[index][type] = new Path2D(data);
+                    this._swizzle[index][type].__data = data;
                     break;
 
-                case WI.Recording.Swizzle.CanvasGradient:
-                    var gradientType = await this.swizzle(data[0], WI.Recording.Swizzle.String);
+                case WI.Recording.Swizzle.CanvasGradient: {
+                    let [gradientType, points] = await Promise.all([
+                        this.swizzle(data[0], WI.Recording.Swizzle.String),
+                        this.swizzle(data[1], WI.Recording.Swizzle.Array),
+                    ]);
+
+                    points = await Promise.all(points.map((item) => this.swizzle(item, WI.Recording.Swizzle.Number)));
 
                     WI.ImageUtilities.scratchCanvasContext2D((context) => {
-                        this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
+                        this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...points) : context.createLinearGradient(...points);
                     });
 
+                    let stops = [];
                     for (let stop of data[2]) {
-                        let color = await this.swizzle(stop[1], WI.Recording.Swizzle.String);
-                        this._swizzle[index][type].addColorStop(stop[0], color);
-                    }
-                    break;
+                        let [offset, color] = await Promise.all([
+                            this.swizzle(stop[0], WI.Recording.Swizzle.Number),
+                            this.swizzle(stop[1], WI.Recording.Swizzle.String),
+                        ]);
+                        this._swizzle[index][type].addColorStop(offset, color);
 
-                case WI.Recording.Swizzle.CanvasPattern:
-                    var [image, repeat] = await Promise.all([
+                        stops.push({offset, color});
+                    }
+
+                    this._swizzle[index][type].__data = {type: gradientType, points, stops};
+                    break;
+                }
+
+                case WI.Recording.Swizzle.CanvasPattern: {
+                    let [image, repeat] = await Promise.all([
                         this.swizzle(data[0], WI.Recording.Swizzle.Image),
                         this.swizzle(data[1], WI.Recording.Swizzle.String),
                     ]);
@@ -372,12 +398,17 @@ WI.Recording = class Recording extends WI.Object
                         this._swizzle[index][type] = context.createPattern(image, repeat);
                         this._swizzle[index][type].__image = image;
                     });
-                    break;
 
-                case WI.Recording.Swizzle.ImageBitmap:
-                    var image = await this.swizzle(index, WI.Recording.Swizzle.Image);
-                    this._swizzle[index][type] = await createImageBitmap(image);
+                    this._swizzle[index][type].__data = {image: image.__data, repeat};
                     break;
+                }
+
+                case WI.Recording.Swizzle.ImageBitmap: {
+                    let image = await this.swizzle(index, WI.Recording.Swizzle.Image);
+                    this._swizzle[index][type] = await createImageBitmap(image);
+                    this._swizzle[index][type].__data = data;
+                    break;
+                }
 
                 case WI.Recording.Swizzle.CallStack: {
                     let array = await this.swizzle(data, WI.Recording.Swizzle.Array);
@@ -449,6 +480,274 @@ WI.Recording = class Recording extends WI.Object
             frames: this._frames.map((frame) => frame.toJSON()),
             data: this._data,
         };
+    }
+
+    toHTML()
+    {
+        console.assert(this._type === WI.Recording.Type.Canvas2D);
+        console.assert(this.ready);
+
+        let lines = [];
+        let objects = [];
+
+        function processObject(object) {
+            objects.push({object, index: objects.length});
+            return `objects[${objects.length - 1}]`;
+        }
+
+        function processValue(value) {
+            if (typeof value === "object" && !Array.isArray(value))
+                return processObject(value);
+            return JSON.stringify(value);
+        }
+
+        function escapeHTML(s) {
+            return s.replace(/[^0-9A-Za-z ]/g, (c) => {
+                return `&#${c.charCodeAt(0)};`;
+            });
+        }
+
+        lines.push(`<!DOCTYPE html>`);
+        lines.push(`<head>`);
+        lines.push(`<title>${escapeHTML(this._displayName)}</title>`);
+        lines.push(`<style>`);
+        lines.push(`    body {`);
+        lines.push(`        margin: 0;`);
+        lines.push(`    }`);
+        lines.push(`    canvas {`);
+        lines.push(`        max-width: calc(100% - 40px);`);
+        lines.push(`        max-height: calc(100% - 40px);`);
+        lines.push(`        padding: 20px;`);
+        lines.push(`    }`);
+        lines.push(`</style>`);
+        lines.push(`</head>`);
+        lines.push(`<body>`);
+        lines.push(`<script>`);
+        lines.push(`"use strict";`);
+
+        lines.push(``);
+
+        lines.push(`let promises = [];`);
+        lines.push(`let objects = {};`);
+
+        lines.push(``);
+
+        lines.push(`let canvas = document.body.appendChild(document.createElement("canvas"));`);
+        for (let [attribute, value] of Object.entries(this._initialState.attributes))
+            lines.push(`canvas.${attribute} = ${JSON.stringify(value)};`);
+
+        lines.push(``);
+
+        let parametersString = this._initialState.parameters.map(processValue).join(`, `);
+        lines.push(`let context = canvas.getContext("2d"${parametersString ? ", " + parametersString : ""});`);
+
+        lines.push(``);
+
+        lines.push(`let frames = [`);
+
+        lines.push(`    function initialState() {`);
+        if (this._initialState.content) {
+            let image = new Image;
+            image.__data = this._initialState.content;
+            lines.push(`        context.drawImage(${processObject(image)}, 0, 0);`);
+            lines.push(``);
+        }
+        for (let state of this._actions[0].states) {
+            for (let [name, value] of state) {
+                if (name === "getPath" || name === "currentX" || name === "currentY")
+                    continue;
+
+                let contextString = `context`;
+                if (name === "setPath") {
+                    lines.push(`        if (${JSON.stringify(name)} in context)`);
+                    contextString = `    ` + contextString;
+                }
+
+                let callString = ``;
+                if (WI.RecordingAction.isFunctionForType(this._type, name))
+                    callString = `(` + value.map(processValue).join(`, `) + `)`;
+                else
+                    callString = ` = ${processValue(value)}`;
+
+                lines.push(`        ${contextString}.${name}${callString};`);
+            }
+
+            if (state !== this._actions[0].states.lastValue) {
+                lines.push(`        context.save();`);
+                lines.push(``);
+            }
+        }
+        lines.push(`    },`);
+
+        lines.push(`    function startRecording() {`);
+        lines.push(`        if (typeof console.record === "function")`);
+        lines.push(`            console.record(context, {name: ${JSON.stringify(this._displayName)}});`);
+        lines.push(`    },`);
+
+        for (let i = 0; i < this._frames.length; ++i) {
+            lines.push(`    function frame${i + 1}() {`);
+
+            for (let action of this._frames[i].actions) {
+                let contextString = `context`;
+                if (action.contextReplacer)
+                    contextString += `.${action.contextReplacer}`;
+
+                if (!action.valid)
+                    contextString = `// ` + contextString;
+
+                let callString = ``;
+                if (action.isFunction)
+                    callString += `(` + action.parameters.map(processValue).join(`, `) + `)`;
+                else if (!action.isGetter)
+                    callString += ` = ` + processValue(action.parameters[0]);
+
+                lines.push(`        ${contextString}.${action.name}${callString};`);
+            }
+
+            lines.push(`    },`);
+        }
+
+        lines.push(`    function stopRecording() {`);
+        lines.push(`        if (typeof console.recordEnd === "function")`);
+        lines.push(`            console.recordEnd(context);`);
+        lines.push(`    },`);
+
+        lines.push(`];`);
+
+        lines.push(``);
+
+        if (objects.length) {
+            if (objects.some(({object}) => object instanceof CanvasGradient)) {
+                lines.push(`function rebuildCanvasGradient(key, data) {`);
+                lines.push(`    let gradient = null;`);
+                lines.push(`    if (data.type === "radial-gradient")`);
+                lines.push(`        gradient = context.createRadialGradient(data.points[0], data.points[1], data.points[2], data.points[3], data.points[4], data.points[5]);`);
+                lines.push(`    else`);
+                lines.push(`        gradient = context.createLinearGradient(data.points[0], data.points[1], data.points[2], data.points[3]);`);
+                lines.push(`    for (let stop of data.stops)`);
+                lines.push(`        gradient.addColorStop(stop.offset, stop.color);`);
+                lines.push(`    objects[key] = gradient;`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof CanvasPattern)) {
+                lines.push(`function rebuildCanvasPattern(key, data) {`);
+                lines.push(`    promises.push(new Promise(function(resolve, reject) {`);
+                lines.push(`        let image = new Image;`);
+                lines.push(`        function resolveWithImage(event) {`);
+                lines.push(`            objects[key] = context.createPattern(image, data.repeat);`);
+                lines.push(`            resolve();`);
+                lines.push(`        }`);
+                lines.push(`        image.addEventListener("load", resolveWithImage);`);
+                lines.push(`        image.addEventListener("error", resolveWithImage);`);
+                lines.push(`        image.src = data.image;`);
+                lines.push(`    }));`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof DOMMatrix)) {
+                lines.push(`function rebuildDOMMatrix(key, data) {`);
+                lines.push(`    objects[key] = new DOMMatrix(data);`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof Image)) {
+                lines.push(`function rebuildImage(key, data) {`);
+                lines.push(`    promises.push(new Promise(function(resolve, reject) {`);
+                lines.push(`        let image = new Image;`);
+                lines.push(`        function resolveWithImage(event) {`);
+                lines.push(`            objects[key] = image;`);
+                lines.push(`            resolve();`);
+                lines.push(`        }`);
+                lines.push(`        image.addEventListener("load", resolveWithImage);`);
+                lines.push(`        image.addEventListener("error", resolveWithImage);`);
+                lines.push(`        image.src = data;`);
+                lines.push(`    }));`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof ImageBitmap)) {
+                lines.push(`function rebuildImageBitmap(key, data) {`);
+                lines.push(`    promises.push(new Promise(function(resolve, reject) {`);
+                lines.push(`        let image = new Image;`);
+                lines.push(`        function resolveWithImage(event) {`);
+                lines.push(`            createImageBitmap(image).then(function(imageBitmap) {`);
+                lines.push(`                objects[key] = imageBitmap;`);
+                lines.push(`                resolve();`);
+                lines.push(`            });`);
+                lines.push(`        }`);
+                lines.push(`        image.addEventListener("load", resolveWithImage);`);
+                lines.push(`        image.addEventListener("error", resolveWithImage);`);
+                lines.push(`        image.src = data;`);
+                lines.push(`    }));`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof ImageData)) {
+                lines.push(`function rebuildImageData(key, data) {`);
+                lines.push(`    objects[key] = new ImageData(new Uint8ClampedArray(data.data), parseInt(data.width), parseInt(data.height));`);
+                lines.push(`}`);
+            }
+
+            if (objects.some(({object}) => object instanceof Path2D)) {
+                lines.push(`function rebuildPath2D(key, data) {`);
+                lines.push(`    objects[key] = new Path2D(data);`);
+                lines.push(`}`);
+            }
+
+            lines.push(``);
+
+            for (let {object, index} of objects) {
+                if (object instanceof CanvasGradient) {
+                    lines.push(`rebuildCanvasGradient(${index}, ${JSON.stringify(object.__data)});`);
+                    continue;
+                }
+
+                if (object instanceof CanvasPattern) {
+                    lines.push(`rebuildCanvasPattern(${index}, ${JSON.stringify(object.__data)});`);
+                    continue;
+                }
+
+                if (object instanceof DOMMatrix) {
+                    lines.push(`rebuildDOMMatrix(${index}, ${JSON.stringify(object.toString())});`)
+                    continue;
+                }
+
+                if (object instanceof Image) {
+                    lines.push(`rebuildImage(${index}, ${JSON.stringify(object.__data)});`)
+                    continue;
+                }
+
+                if (object instanceof ImageBitmap) {
+                    lines.push(`rebuildImageBitmap(${index}, ${JSON.stringify(object.__data)});`)
+                    continue;
+                }
+
+                if (object instanceof ImageData) {
+                    lines.push(`rebuildImageData(${index}, ${JSON.stringify(object.__data)});`);
+                    continue;
+                }
+
+                if (object instanceof Path2D) {
+                    lines.push(`rebuildPath2D(${index}, ${JSON.stringify(object.__data || "")});`)
+                    continue;
+                }
+            }
+
+            lines.push(``);
+        }
+
+        lines.push(`Promise.all(promises).then(function() {`);
+        lines.push(`    window.requestAnimationFrame(function executeFrame() {`);
+        lines.push(`        frames.shift()();`);
+        lines.push(`        if (frames.length)`);
+        lines.push(`            window.requestAnimationFrame(executeFrame);`);
+        lines.push(`    });`);
+        lines.push(`});`);
+
+        lines.push(`</script>`);
+        lines.push(`</body>`);
+        return lines.join(`\n`);
     }
 
     // Private

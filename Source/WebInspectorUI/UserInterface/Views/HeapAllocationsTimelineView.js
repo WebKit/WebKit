@@ -60,7 +60,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         };
 
         this._importButtonNavigationItem = new WI.ButtonNavigationItem("import", WI.UIString("Import"), "Images/Import.svg", 15, 15);
-        this._importButtonNavigationItem.toolTip = WI.UIString("Import");
+        this._importButtonNavigationItem.tooltip = WI.UIString("Import");
         this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._importButtonNavigationItemClicked, this);
 

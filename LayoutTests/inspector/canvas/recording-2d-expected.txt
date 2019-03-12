@@ -29,7 +29,7 @@ initialState:
     fillStyle: "#000000"
     imageSmoothingEnabled: true
     imageSmoothingQuality: "low"
-    setPath: [{}]
+    setPath: [""]
   parameters:
   content: <filtered>
 frames:
@@ -88,7 +88,7 @@ initialState:
     fillStyle: "#000000"
     imageSmoothingEnabled: true
     imageSmoothingQuality: "low"
-    setPath: [{}]
+    setPath: [""]
   parameters:
   content: <filtered>
 frames:
@@ -1115,7 +1115,7 @@ initialState:
     fillStyle: "#000000"
     imageSmoothingEnabled: true
     imageSmoothingQuality: "low"
-    setPath: [{}]
+    setPath: [""]
   parameters:
   content: <filtered>
 frames:

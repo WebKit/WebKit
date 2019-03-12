@@ -63,7 +63,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         }
 
         this._importButtonNavigationItem = new WI.ButtonNavigationItem("import-recording", WI.UIString("Import"), "Images/Import.svg", 15, 15);
-        this._importButtonNavigationItem.toolTip = WI.UIString("Import");
+        this._importButtonNavigationItem.tooltip = WI.UIString("Import");
         this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh-all", WI.UIString("Refresh all"), "Images/ReloadFull.svg", 13, 13);

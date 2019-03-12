@@ -448,6 +448,7 @@ localizedStrings["Export HAR"] = "Export HAR";
 localizedStrings["Export Result"] = "Export Result";
 localizedStrings["Export Test"] = "Export Test";
 localizedStrings["Export recording (%s)"] = "Export recording (%s)";
+localizedStrings["Export recording (%s)\nShift-click to export a HTML reduction"] = "Export recording (%s)\nShift-click to export a HTML reduction";
 localizedStrings["Export result (%s)"] = "Export result (%s)";
 localizedStrings["Expression"] = "Expression";
 localizedStrings["Extension Scripts"] = "Extension Scripts";

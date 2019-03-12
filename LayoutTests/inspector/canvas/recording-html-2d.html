@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script>
+let context = null;
+
+let canvas = document.createElement("canvas");
+canvas.width = 2;
+canvas.height = 2;
+
+// 2x2 red square
+let image = document.createElement("img");
+image.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+
+let linearGradient = null;
+
+let radialGradient = null;
+
+let pattern = null;
+
+let path2D = new Path2D("M 1 2");
+
+let imageData = new ImageData(1, 2);
+
+let imageBitmap = null;
+
+async function load() {
+    context = canvas.getContext("2d");
+
+    linearGradient = context.createLinearGradient(1, 2, 3, 4);
+    linearGradient.addColorStop(1, "red");
+
+    radialGradient = context.createRadialGradient(1, 2, 3, 4, 5, 6);
+    linearGradient.addColorStop(1, "blue");
+
+    pattern = context.createPattern(image, "no-repeat");
+
+    imageBitmap = await createImageBitmap(image);
+
+    document.body.appendChild(canvas);
+
+    context.strokeStyle = "red";
+    context.save();
+    context.strokeStyle = "blue";
+    context.save();
+    context.strokeStyle = "green";
+
+    runTest();
+}
+
+function ignoreException(func){
+    try {
+        func();
+    } catch (e) { }
+}
+
+function cancelActions() {
+}
+
+function performActions() {
+    let frames = [
+        () => {
+            context.fillStyle;
+            context.fillStyle = "test";
+            context.fillStyle = linearGradient;
+            context.fillStyle = radialGradient;
+            context.fillStyle = pattern;
+        },
+        () => {
+            context.beginPath();
+        },
+        () => {
+            ignoreException(() => context.moveTo(1, 2));
+        },
+        () => {
+            ignoreException(() => context.drawImage(image, 11, 12));
+        },
+        () => {
+            ignoreException(() => context.createImageData(imageData));
+        },
+        () => {
+            ignoreException(() => context.drawImage(imageBitmap, 11, 12));
+        },
+        () => {
+            ignoreException(() => context.setTransform(new DOMMatrix([1, 2, 3, 4, 5, 6])));
+        },
+        () => {
+            context.drawFocusIfNeeded(path2D, document.body);
+        },
+        () => {
+            TestPage.dispatchEventToFrontend("LastFrame");
+        },
+    ];
+    let index = 0;
+    function executeFrameFunction() {
+        frames[index++]();
+        if (index < frames.length)
+            timeoutID = setTimeout(executeFrameFunction, 0);
+    };
+    executeFrameFunction();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Recording.prototype.toHTML");
+
+    suite.addTestCase({
+        name: "Recording.prototype.toHTML.2D",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {
+                callback(recording) {
+                    let promise = new WI.WrappedPromise;
+
+                    let listener = recording.addEventListener(WI.Recording.Event.ProcessedAction, (event) => {
+                        if (!recording.ready)
+                            return;
+
+                        InspectorTest.log("++++++++++ HTML ++++++++++");
+                        InspectorTest.log(recording.toHTML());
+                        InspectorTest.log("++++++++++ HTML ++++++++++");
+
+                        recording.removeEventListener(WI.Recording.Event.ProcessedAction, listener);
+                        promise.resolve();
+                    });
+
+                    recording.startProcessing();
+
+                    return promise.promise;
+                },
+            });
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Tests for Recording.prototype.toHTML.</p>
+</body>
+</html>

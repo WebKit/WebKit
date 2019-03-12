@@ -1,5 +1,38 @@
 2019-03-12  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: export recording as HTML
+        https://bugs.webkit.org/show_bug.cgi?id=195311
+        <rdar://problem/48588673>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.prototype.async swizzle):
+        (WI.Recording.prototype.toHTML): Added.
+        (WI.Recording.prototype.toHTML.escapeHTML): Added.
+        (WI.Recording.prototype.toHTML.processObject): Added.
+        (WI.Recording.prototype.toHTML.processValue): Added.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype._exportRecording):
+        (WI.RecordingContentView.prototype._exportReduction): Added.
+        (WI.RecordingContentView.prototype._updateExportButton): Added.
+        (WI.RecordingContentView.prototype._handleExportNavigationItemClicked): Added.
+        (WI.RecordingContentView.prototype._handleRecordingProcessedAction):
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView):
+        Drive-by: s/`toolTip`/`tooltip`.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-03-12  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Audit: there should be a centralized place for reusable code
         https://bugs.webkit.org/show_bug.cgi?id=195265
         <rdar://problem/47040673>

@@ -3,8 +3,12 @@ TestPage.registerInitializer(() => {
         for (let [name, value] of object) {
             if (typeof value === "string")
                 value = sanitizeURL(value);
-            else if (Array.isArray(value) && value[0] instanceof DOMMatrix)
-                value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
+            else if (Array.isArray(value)) {
+                if (value[0] instanceof DOMMatrix)
+                    value[0] = [value[0].a, value[0].b, value[0].c, value[0].d, value[0].e, value[0].f];
+                else if (value[0] instanceof Path2D)
+                    value[0] = value[0].__data;
+            }
             InspectorTest.log(indent + name + ": " + JSON.stringify(value));
         }
     }
@@ -89,7 +93,7 @@ TestPage.registerInitializer(() => {
         return canvases[0];
     };
 
-    window.startRecording = function(type, resolve, reject, {frameCount, memoryLimit, checkForContentChange} = {}) {
+    window.startRecording = function(type, resolve, reject, {frameCount, memoryLimit, checkForContentChange, callback} = {}) {
         let canvas = getCanvas(type);
         if (!canvas) {
             reject(`Missing canvas with type "${type}".`);
@@ -143,7 +147,7 @@ TestPage.registerInitializer(() => {
             Promise.all(recording.actions.map((action) => action.swizzle(recording))).then(() => {
                 swizzled = true;
 
-                logRecording(recording, {checkForContentChange})
+                (callback ? callback(recording) : logRecording(recording, {checkForContentChange}))
                 .then(() => {
                     if (lastFrame) {
                         InspectorTest.evaluateInPage(`cancelActions()`)

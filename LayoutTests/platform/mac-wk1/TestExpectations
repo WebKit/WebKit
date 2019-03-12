@@ -291,6 +291,9 @@ inspector/heap/getRemoteObject.html [ Skip ]
 inspector/unit-tests/heap-snapshot.html [ Skip ]
 inspector/unit-tests/heap-snapshot-collection-event.html [ Skip ]
 
+# WK1 Inspector cannot leverage InspectorAdditions runtime enabled features
+inspector/canvas/recording-html-2d.html
+
 webkit.org/b/188708 inspector/dom-debugger/event-breakpoint-with-navigation.html [ Pass Timeout ]
 
 # These tests check ScrollAnimator events for main frame scrollbars that use native widgets in WK1.

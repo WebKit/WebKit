@@ -1998,3 +1998,6 @@ fast/css-custom-paint [ Skip ]
 css-typedom [ Skip ]
 
 webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html [ ImageOnlyFailure ]
+
+# WK1 Inspector cannot leverage InspectorAdditions runtime enabled features
+inspector/canvas/recording-html-2d.html
