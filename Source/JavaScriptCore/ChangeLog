@@ -1,3 +1,32 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add Optional to Forward.h.
+        https://bugs.webkit.org/show_bug.cgi?id=195586
+
+        Reviewed by Darin Adler.
+
+        * b3/B3Common.cpp:
+        * b3/B3Common.h:
+        * debugger/DebuggerParseData.cpp:
+        * debugger/DebuggerParseData.h:
+        * heap/HeapSnapshot.cpp:
+        * heap/HeapSnapshot.h:
+        * jit/PCToCodeOriginMap.cpp:
+        * jit/PCToCodeOriginMap.h:
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/AbstractModuleRecord.h:
+        * wasm/WasmInstance.h:
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmSectionParser.cpp:
+        * wasm/WasmSectionParser.h:
+        * wasm/WasmStreamingParser.cpp:
+        * wasm/WasmStreamingParser.h:
+        * yarr/YarrFlags.cpp:
+        * yarr/YarrFlags.h:
+        * yarr/YarrUnicodeProperties.cpp:
+        * yarr/YarrUnicodeProperties.h:
+        Remove unnecessary includes from headers.
+
 2019-03-11  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext

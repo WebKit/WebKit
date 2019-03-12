@@ -53,6 +53,7 @@
 #include "StyleRule.h"
 #include "StyledElement.h"
 #include "VisibleUnits.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

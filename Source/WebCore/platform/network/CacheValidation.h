@@ -27,10 +27,7 @@
 
 #include <pal/SessionID.h>
 #include <wtf/Markable.h>
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
 #include <wtf/WallTime.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

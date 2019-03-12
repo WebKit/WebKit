@@ -28,7 +28,7 @@
 #if ENABLE(MATHML)
 
 #include <unicode/utypes.h>
-#include <wtf/Optional.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

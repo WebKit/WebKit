@@ -31,7 +31,6 @@
 #include "GPRInfo.h"
 #include "JSExportMacros.h"
 #include "Options.h"
-#include <wtf/Optional.h>
 
 namespace JSC { namespace B3 {
 

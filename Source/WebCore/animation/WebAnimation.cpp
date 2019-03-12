@@ -36,6 +36,7 @@
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

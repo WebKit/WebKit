@@ -31,7 +31,6 @@
 #include "WebsitePopUpPolicy.h"
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {

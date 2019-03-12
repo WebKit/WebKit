@@ -27,11 +27,7 @@
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
 #include "SearchPopupMenu.h"
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

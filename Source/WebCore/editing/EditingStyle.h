@@ -35,10 +35,7 @@
 #include "CSSValueKeywords.h"
 #include "StyleProperties.h"
 #include "WritingDirection.h"
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/TriState.h>
 #include <wtf/text/WTFString.h>
 

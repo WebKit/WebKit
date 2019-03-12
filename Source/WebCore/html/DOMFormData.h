@@ -32,8 +32,6 @@
 
 #include "File.h"
 #include "TextEncoding.h"
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>

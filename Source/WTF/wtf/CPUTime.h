@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 namespace WTF {

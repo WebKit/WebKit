@@ -45,7 +45,9 @@
 #include "RenderElement.h"
 #include "SharedBuffer.h"
 #include "TypedOMCSSImageValue.h"
+#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 

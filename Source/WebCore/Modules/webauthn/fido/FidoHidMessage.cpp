@@ -33,6 +33,8 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoParsingUtils.h"
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
 namespace fido {
 

@@ -28,7 +28,6 @@
 #include "GraphicsTypes.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

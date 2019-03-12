@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
-
 namespace WTF {
 
 WTF_EXPORT_PRIVATE size_t memoryFootprint();

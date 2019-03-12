@@ -31,6 +31,7 @@
 #include "B3PCToOriginMap.h"
 #include "DFGNode.h"
 #include "LinkBuffer.h"
+#include <wtf/Optional.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/4wz07268.aspx

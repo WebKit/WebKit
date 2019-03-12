@@ -31,8 +31,6 @@
 #include "WasmMemory.h"
 #include "WasmModule.h"
 #include "WasmTable.h"
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

@@ -46,7 +46,7 @@
 #include "WHLSLSynthesizeConstructors.h"
 #include "WHLSLSynthesizeEnumerationFunctions.h"
 #include "WHLSLSynthesizeStructureAccessors.h"
-#include <wtf/Variant.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

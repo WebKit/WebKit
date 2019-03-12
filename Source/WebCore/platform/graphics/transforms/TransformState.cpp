@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TransformState.h"
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 TransformState& TransformState::operator=(const TransformState& other)

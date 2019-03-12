@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "JSDOMPromiseDeferred.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

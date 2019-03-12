@@ -31,6 +31,8 @@
 #include "DeprecatedGlobalSettings.h"
 #include "HashTools.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/Optional.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 

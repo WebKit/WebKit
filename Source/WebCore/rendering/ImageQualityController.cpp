@@ -31,6 +31,7 @@
 #include "Page.h"
 #include "RenderBoxModelObject.h"
 #include "RenderView.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

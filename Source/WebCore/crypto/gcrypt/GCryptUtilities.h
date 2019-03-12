@@ -34,7 +34,6 @@
 #include <pal/crypto/CryptoDigest.h>
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

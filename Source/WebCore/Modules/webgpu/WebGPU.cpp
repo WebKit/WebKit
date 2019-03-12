@@ -30,6 +30,7 @@
 
 #include "GPURequestAdapterOptions.h"
 #include "JSWebGPUAdapter.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -30,8 +30,6 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 namespace URLHelpers {

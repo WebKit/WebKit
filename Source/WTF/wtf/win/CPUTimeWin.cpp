@@ -27,6 +27,7 @@
 #include <wtf/CPUTime.h>
 
 #include <windows.h>
+#include <wtf/Optional.h>
 
 namespace WTF {
 

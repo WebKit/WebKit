@@ -28,9 +28,7 @@
 #include "DOMPasteAccess.h"
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -31,7 +31,7 @@
 #include <array>
 #include <string.h> //for memcpy
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
+#include <wtf/Forward.h>
 
 #if USE(CA)
 typedef struct CATransform3D CATransform3D;

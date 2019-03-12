@@ -1,3 +1,18 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add Optional to Forward.h.
+        https://bugs.webkit.org/show_bug.cgi?id=195586
+
+        Reviewed by Darin Adler.
+
+        * Shared/RTCNetwork.cpp:
+        * Shared/RTCNetwork.h:
+        * Shared/RTCPacketOptions.cpp:
+        * Shared/RTCPacketOptions.h:
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        Remove unnecessary includes from headers.
+
 2019-03-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r242745 and r242756.

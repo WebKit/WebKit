@@ -27,7 +27,6 @@
 
 #include "HeapSnapshotBuilder.h"
 #include "TinyBloomFilter.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

@@ -29,7 +29,9 @@
 #include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>
+#include <wtf/Optional.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/dtoa.h>
 
 namespace WebCore {

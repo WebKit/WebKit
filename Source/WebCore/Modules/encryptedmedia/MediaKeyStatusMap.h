@@ -33,8 +33,6 @@
 #include "BufferSource.h"
 #include "MediaKeyStatus.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

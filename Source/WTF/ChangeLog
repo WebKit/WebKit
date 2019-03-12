@@ -1,3 +1,25 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add Optional to Forward.h.
+        https://bugs.webkit.org/show_bug.cgi?id=195586
+
+        Reviewed by Darin Adler.
+
+        * wtf/Forward.h:
+        Add forward declaration for Optional.
+
+        * wtf/CPUTime.h:
+        * wtf/Expected.h:
+        * wtf/MainThread.h:
+        * wtf/MemoryFootprint.h:
+        * wtf/URLHelpers.cpp:
+        * wtf/URLHelpers.h:
+        * wtf/cocoa/CPUTimeCocoa.cpp:
+        * wtf/fuchsia/CPUTimeFuchsia.cpp:
+        * wtf/unix/CPUTimeUnix.cpp:
+        * wtf/win/CPUTimeWin.cpp:
+        Remove unnecessary includes from headers.
+
 2019-03-11  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Use PKPaymentAuthorizationController to present the Apple Pay UI remotely from the Networking service on iOS

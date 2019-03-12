@@ -35,7 +35,6 @@
 #include "SQLValue.h"
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

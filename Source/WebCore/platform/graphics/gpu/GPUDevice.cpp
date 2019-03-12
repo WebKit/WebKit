@@ -44,6 +44,7 @@
 #include "GPUSwapChain.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

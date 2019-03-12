@@ -28,6 +28,8 @@
 #include "config.h"
 #include "GCryptUtilities.h"
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)

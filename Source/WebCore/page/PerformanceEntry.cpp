@@ -32,6 +32,7 @@
 #include "PerformanceEntry.h"
 
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

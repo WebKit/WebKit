@@ -1,3 +1,14 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add Optional to Forward.h.
+        https://bugs.webkit.org/show_bug.cgi?id=195586
+
+        Reviewed by Darin Adler.
+
+        * pal/crypto/tasn1/Utilities.cpp:
+        * pal/crypto/tasn1/Utilities.h:
+        Remove unnecessary includes from headers.
+
 2019-03-11  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Use PKPaymentAuthorizationController to present the Apple Pay UI remotely from the Networking service on iOS

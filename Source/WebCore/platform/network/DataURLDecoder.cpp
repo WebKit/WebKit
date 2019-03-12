@@ -32,6 +32,7 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include <wtf/MainThread.h>
+#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/URL.h>
 #include <wtf/WorkQueue.h>

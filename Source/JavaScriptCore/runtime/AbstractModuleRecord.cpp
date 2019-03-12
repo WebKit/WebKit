@@ -35,6 +35,7 @@
 #include "JSModuleRecord.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "WebAssemblyModuleRecord.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 namespace AbstractModuleRecordInternal {

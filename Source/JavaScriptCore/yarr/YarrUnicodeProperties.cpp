@@ -28,6 +28,8 @@
 
 #include "Yarr.h"
 #include "YarrPattern.h"
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 

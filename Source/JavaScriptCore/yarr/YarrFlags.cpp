@@ -27,6 +27,7 @@
 #include "YarrFlags.h"
 
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringView.h>
 
 namespace JSC { namespace Yarr {

@@ -28,6 +28,7 @@
 #include "SQLiteFileSystem.h"
 #include "SQLiteTransaction.h"
 #include <wtf/FileSystem.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

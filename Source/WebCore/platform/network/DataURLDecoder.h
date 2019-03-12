@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(RUNLOOP_TIMER)

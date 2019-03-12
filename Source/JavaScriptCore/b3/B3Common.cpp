@@ -31,6 +31,7 @@
 #include "DFGCommon.h"
 #include "FTLState.h"
 #include "Options.h"
+#include <wtf/Optional.h>
 
 namespace JSC { namespace B3 {
 

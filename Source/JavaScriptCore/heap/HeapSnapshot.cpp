@@ -27,6 +27,7 @@
 #include "HeapSnapshot.h"
 
 #include "JSCInlines.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 

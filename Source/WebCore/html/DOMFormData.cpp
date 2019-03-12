@@ -33,6 +33,7 @@
 
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

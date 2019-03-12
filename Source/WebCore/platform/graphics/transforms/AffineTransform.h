@@ -29,7 +29,7 @@
 
 #include <array>
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
+#include <wtf/Forward.h>
 
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;

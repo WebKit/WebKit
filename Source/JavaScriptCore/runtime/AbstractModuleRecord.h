@@ -27,9 +27,7 @@
 
 #include "Identifier.h"
 #include "JSDestructibleObject.h"
-#include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

@@ -39,6 +39,7 @@
 #include "UserVerificationRequirement.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
+#include <wtf/Optional.h>
 
 namespace fido {
 using namespace WebCore;

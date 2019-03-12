@@ -32,7 +32,6 @@
 #pragma once
 
 #include "Performance.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

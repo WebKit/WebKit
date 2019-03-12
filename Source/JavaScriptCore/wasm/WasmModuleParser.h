@@ -30,8 +30,6 @@
 #include "WasmFormat.h"
 #include "WasmOps.h"
 #include "WasmParser.h"
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
 
 namespace JSC { namespace Wasm {
 

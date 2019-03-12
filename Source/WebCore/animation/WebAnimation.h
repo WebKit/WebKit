@@ -30,12 +30,8 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
 #include <wtf/Markable.h>
-#include <wtf/Optional.h>
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>

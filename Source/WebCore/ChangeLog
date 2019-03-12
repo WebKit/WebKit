@@ -1,3 +1,97 @@
+2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add Optional to Forward.h.
+        https://bugs.webkit.org/show_bug.cgi?id=195586
+
+        Reviewed by Darin Adler.
+
+        * Modules/encryptedmedia/MediaKeyStatusMap.cpp:
+        * Modules/encryptedmedia/MediaKeyStatusMap.h:
+        * Modules/webauthn/apdu/ApduCommand.cpp:
+        * Modules/webauthn/apdu/ApduCommand.h:
+        * Modules/webauthn/apdu/ApduResponse.cpp:
+        * Modules/webauthn/apdu/ApduResponse.h:
+        * Modules/webauthn/fido/FidoHidMessage.cpp:
+        * Modules/webauthn/fido/FidoHidMessage.h:
+        * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+        * Modules/webauthn/fido/U2fCommandConstructor.h:
+        * Modules/webdatabase/SQLTransaction.cpp:
+        * Modules/webdatabase/SQLTransaction.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp:
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.h:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        * Modules/webgpu/WebGPU.cpp:
+        * Modules/webgpu/WebGPU.h:
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        * animation/WebAnimation.cpp:
+        * animation/WebAnimation.h:
+        * crypto/gcrypt/GCryptUtilities.cpp:
+        * crypto/gcrypt/GCryptUtilities.h:
+        * css/CSSStyleDeclaration.cpp:
+        * css/CSSStyleDeclaration.h:
+        * dom/TextDecoder.cpp:
+        * dom/TextDecoder.h:
+        * dom/UserGestureIndicator.cpp:
+        * dom/UserGestureIndicator.h:
+        * editing/ChangeListTypeCommand.cpp:
+        * editing/ChangeListTypeCommand.h:
+        * editing/EditingStyle.cpp:
+        * editing/EditingStyle.h:
+        * html/DOMFormData.cpp:
+        * html/DOMFormData.h:
+        * html/HTMLAllCollection.cpp:
+        * html/HTMLAllCollection.h:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        * html/ImageBitmap.cpp:
+        * html/ImageBitmap.h:
+        * html/canvas/Path2D.h:
+        * html/canvas/WebMetalEnums.cpp:
+        * html/canvas/WebMetalEnums.h:
+        * html/parser/HTMLParserIdioms.cpp:
+        * html/parser/HTMLParserIdioms.h:
+        * loader/ResourceCryptographicDigest.cpp:
+        * loader/ResourceCryptographicDigest.h:
+        * mathml/MathMLOperatorDictionary.cpp:
+        * mathml/MathMLOperatorDictionary.h:
+        * page/PerformanceEntry.cpp:
+        * page/PerformanceEntry.h:
+        * page/ResourceUsageData.h:
+        * platform/ReferrerPolicy.cpp:
+        * platform/ReferrerPolicy.h:
+        * platform/Theme.cpp:
+        * platform/Theme.h:
+        * platform/encryptedmedia/CDMInstance.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/transforms/AffineTransform.cpp:
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/graphics/transforms/TransformState.cpp:
+        * platform/graphics/transforms/TransformState.h:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        * platform/mediacapabilities/AudioConfiguration.h:
+        * platform/network/CacheValidation.cpp:
+        * platform/network/CacheValidation.h:
+        * platform/network/DataURLDecoder.cpp:
+        * platform/network/DataURLDecoder.h:
+        * platform/network/HTTPParsers.cpp:
+        * platform/network/HTTPParsers.h:
+        * platform/network/curl/CookieJarDB.cpp:
+        * platform/network/curl/CookieJarDB.h:
+        * platform/win/SearchPopupMenuDB.cpp:
+        * platform/win/SearchPopupMenuDB.h:
+        * rendering/ImageQualityController.cpp:
+        * rendering/ImageQualityController.h:
+        * svg/SVGToOTFFontConversion.cpp:
+        * svg/SVGToOTFFontConversion.h:
+        Remove unnecessary includes from headers.
+
 2019-03-11  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r236281): YouTube Movies fail with "video format" error

@@ -33,6 +33,7 @@
 
 #include <WebCore/ApduCommand.h>
 #include <WebCore/ApduResponse.h>
+#include <wtf/Optional.h>
 
 namespace TestWebKitAPI {
 

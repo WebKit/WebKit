@@ -35,6 +35,8 @@
 #include <unicode/uidna.h>
 #include <unicode/unorm.h>
 #include <unicode/uscript.h>
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 namespace URLHelpers {

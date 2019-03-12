@@ -35,6 +35,7 @@
 #include "WasmOps.h"
 #include "WasmSections.h"
 #include "WasmSignatureInlines.h"
+#include <wtf/Optional.h>
 
 namespace JSC { namespace Wasm {
 

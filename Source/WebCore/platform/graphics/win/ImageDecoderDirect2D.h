@@ -29,7 +29,6 @@
 
 #include "COMPtr.h"
 #include "ImageDecoder.h"
-#include <wtf/Optional.h>
 
 interface ID2D1RenderTarget;
 interface IWICBitmapDecoder;

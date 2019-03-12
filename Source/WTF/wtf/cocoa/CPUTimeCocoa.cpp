@@ -33,6 +33,7 @@
 #import <mach/task_info.h>
 #import <mach/thread_info.h>
 #import <sys/time.h>
+#import <wtf/Optional.h>
 
 namespace WTF {
 

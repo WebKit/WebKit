@@ -28,6 +28,8 @@
 #include "Utilities.h"
 
 #include <mutex>
+#include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
 namespace PAL {
 namespace TASN1 {

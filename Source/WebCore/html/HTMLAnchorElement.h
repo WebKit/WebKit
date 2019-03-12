@@ -28,7 +28,6 @@
 #include "SharedStringHash.h"
 #include "URLUtils.h"
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

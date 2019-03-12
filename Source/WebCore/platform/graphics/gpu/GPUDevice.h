@@ -29,9 +29,7 @@
 
 #include "GPUQueue.h"
 #include "GPUSwapChainDescriptor.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 

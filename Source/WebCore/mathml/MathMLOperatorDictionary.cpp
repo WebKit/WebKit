@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "MathMLOperatorDictionary.h"
+#include <wtf/Optional.h>
 
 #if ENABLE(MATHML)
 

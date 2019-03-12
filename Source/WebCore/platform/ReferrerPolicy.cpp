@@ -26,6 +26,7 @@
 #include "ReferrerPolicy.h"
 
 #include "HTTPParsers.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

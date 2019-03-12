@@ -37,9 +37,8 @@
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
+#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 

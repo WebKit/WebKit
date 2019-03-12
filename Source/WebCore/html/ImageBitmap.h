@@ -27,9 +27,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptWrappable.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

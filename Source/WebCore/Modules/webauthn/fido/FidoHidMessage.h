@@ -34,8 +34,6 @@
 #include "FidoConstants.h"
 #include "FidoHidPacket.h"
 #include <wtf/Deque.h>
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
 
 namespace fido {
 

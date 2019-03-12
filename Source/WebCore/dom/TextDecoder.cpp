@@ -26,6 +26,7 @@
 #include "TextDecoder.h"
 
 #include "HTMLParserIdioms.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

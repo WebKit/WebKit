@@ -26,8 +26,7 @@
 #pragma once
 
 #include "Yarr.h"
-#include <wtf/Optional.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace JSC { namespace Yarr {
 

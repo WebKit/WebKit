@@ -31,7 +31,6 @@
 #include "FloatQuad.h"
 #include "LayoutSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

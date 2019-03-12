@@ -23,9 +23,6 @@
 #include "CSSPropertyNames.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

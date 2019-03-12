@@ -30,8 +30,6 @@
 #include "WasmModuleInformation.h"
 #include "WasmParser.h"
 #include "WasmSections.h"
-#include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/SHA1.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

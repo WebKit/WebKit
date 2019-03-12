@@ -36,8 +36,8 @@
 #include "WHLSLStageInOutSemantic.h"
 #include "WHLSLStructureDefinition.h"
 #include "WHLSLTypeNamer.h"
+#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

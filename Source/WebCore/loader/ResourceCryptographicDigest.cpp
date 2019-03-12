@@ -28,6 +28,7 @@
 
 #include "ParsingUtilities.h"
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

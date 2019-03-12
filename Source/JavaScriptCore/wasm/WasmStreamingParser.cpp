@@ -30,6 +30,7 @@
 
 #include "WasmModuleParser.h"
 #include "WasmSectionParser.h"
+#include <wtf/Optional.h>
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC { namespace Wasm {

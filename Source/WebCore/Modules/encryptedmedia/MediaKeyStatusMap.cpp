@@ -34,6 +34,7 @@
 #include "JSMediaKeyStatusMap.h"
 #include "MediaKeySession.h"
 #include "SharedBuffer.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

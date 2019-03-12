@@ -26,9 +26,6 @@
 
 #include <unicode/uchar.h>
 #include <wtf/Expected.h>
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

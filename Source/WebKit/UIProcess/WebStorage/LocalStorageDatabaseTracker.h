@@ -26,14 +26,11 @@
 #pragma once
 
 #include <WebCore/SecurityOriginData.h>
-#include <wtf/HashSet.h>
 #include <wtf/Markable.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

@@ -32,7 +32,6 @@
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {

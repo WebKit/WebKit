@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/CPUTime.h>
 
+#include <wtf/Optional.h>
 #include <zircon/syscalls.h>
 
 namespace WTF {

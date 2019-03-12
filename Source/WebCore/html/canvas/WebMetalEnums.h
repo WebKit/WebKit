@@ -28,7 +28,6 @@
 #if ENABLE(WEBMETAL)
 
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
