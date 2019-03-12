@@ -1,5 +1,16 @@
 2019-03-12  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Change urls from uat to production
+        https://bugs.webkit.org/show_bug.cgi?id=195566
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/config.py:
+        * BuildSlaveSupport/ews-build/events.py:
+        * BuildSlaveSupport/ews-build/steps.py:
+
+2019-03-12  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] change max_builds for local-worker to 1
         https://bugs.webkit.org/show_bug.cgi?id=195568
 

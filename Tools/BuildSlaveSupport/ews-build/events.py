@@ -71,7 +71,7 @@ class JSONProducer(object):
 
 class Events(service.BuildbotService):
 
-    EVENT_SERVER_ENDPOINT = 'http://ews.webkit-uat.org/results/'
+    EVENT_SERVER_ENDPOINT = 'http://ews.webkit.org/results/'
 
     def __init__(self, master_hostname, type_prefix='', name='Events'):
         """
