@@ -1,3 +1,20 @@
+2019-03-12  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/48795264
+
+    2019-03-12  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION(r236281): YouTube Movies fail with "video format" error
+            https://bugs.webkit.org/show_bug.cgi?id=195598
+            <rdar://problem/48782842>
+
+            Reviewed by Eric Carlson.
+
+            Enable just this quirk by default on iOS, where quirks in general aren't enabled.
+
+            * page/Quirks.cpp:
+            (WebCore::Quirks::hasBrokenEncryptedMediaAPISupportQuirk const):
+
 2019-03-11  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r242770. rdar://problem/48795264
