@@ -77,12 +77,14 @@ function test()
                 name: "validWithInvalidOptionals group name",
                 description: null,
                 supports: WI.AuditTestBase.Version + 1,
+                setup: null,
                 tests: [
                     {
                         type: WI.AuditTestCase.TypeIdentifier,
                         name: "validWithInvalidOptionals test name",
                         description: null,
                         supports: WI.AuditTestBase.Version + 2,
+                        setup: null,
                         test: "validWithInvalidOptionals test function",
                     },
                 ],
@@ -95,12 +97,14 @@ function test()
                 name: "validWithValidOptionals group name",
                 description: "validWithValidOptionals group description",
                 supports: WI.AuditTestBase.Version - 1,
+                setup: "validWithValidOptionals group setup",
                 tests: [
                     {
                         type: WI.AuditTestCase.TypeIdentifier,
                         name: "validWithValidOptionals test name",
                         description: "validWithValidOptionals test description",
                         supports: WI.AuditTestBase.Version - 2,
+                        setup: "validWithValidOptionals test setup",
                         test: "validWithValidOptionals test function",
                     },
                 ],
@@ -113,18 +117,21 @@ function test()
                 name: "validNested group name",
                 description: "validNested group description",
                 supports: WI.AuditTestBase.Version - 1,
+                setup: "validNested group setup",
                 tests: [
                     {
                         type: WI.AuditTestGroup.TypeIdentifier,
                         name: "validNested nested group name",
                         description: "validNested nested group description",
                         supports: WI.AuditTestBase.Version - 2,
+                        setup: "validNested nested group setup",
                         tests: [
                             {
                                 type: WI.AuditTestCase.TypeIdentifier,
                                 name: "validNested nested test name",
                                 description: "validNested nested test description",
                                 supports: WI.AuditTestBase.Version - 3,
+                                setup: "validNested nested test setup",
                                 test: "validNested nested test function",
                             },
                         ],
@@ -134,6 +141,7 @@ function test()
                         name: "validNested test name",
                         description: "validNested test description",
                         supports: WI.AuditTestBase.Version - 4,
+                        setup: "validNested test setup",
                         test: "validNested test function",
                     },
                 ],

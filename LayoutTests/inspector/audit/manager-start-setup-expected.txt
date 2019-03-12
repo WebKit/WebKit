@@ -1,0 +1,20 @@
+Tests for the AuditManager.prototype.start functionality.
+
+
+== Running test suite: AuditManager.prototype.start
+-- Running test case: AuditManager.prototype.start.SyncSetup
+PASS: The setup function should have set __test to 42.
+
+-- Running test case: AuditManager.prototype.start.AsyncSetup
+PASS: The setup function should have set __test to 42.
+
+-- Running test case: AuditManager.prototype.start.SubLevelSetup
+PASS: The setup function should have set __test to undefined.
+
+-- Running test case: AuditManager.prototype.start.OverriddenSetup
+PASS: The setup function should have set __test to B.
+
+-- Running test case: AuditManager.prototype.start.MultipleTopLevel
+PASS: The setup function should have set __test to A.
+PASS: The setup function should have set __test to B.
+

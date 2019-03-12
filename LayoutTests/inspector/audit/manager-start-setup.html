@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    const auditTestString = (function() {
+        return {
+            level: "pass",
+            __test: WebInspectorAudit.__test,
+        };
+    }).toString();
+
+    async function wrapTest(audit, expected, {getResultCallback} = {}) {
+        WI.auditManager._addTest(audit);
+
+        let [result] = await WI.auditManager.start([audit]);
+        if (getResultCallback)
+            result = getResultCallback(result);
+
+        InspectorTest.assert(result.didPass, "The test should pass.");
+        InspectorTest.assert(!result.data.errors, "There should be no errors.");
+        InspectorTest.expectEqual(result.data.__test.value, expected, `The setup function should have set __test to ${expected}.`);
+
+        WI.auditManager.removeTest(audit);
+    }
+
+    let suite = InspectorTest.createAsyncSuite("AuditManager.prototype.start");
+
+    suite.addTestCase({
+        name: "AuditManager.prototype.start.SyncSetup",
+        description: "Check that the setup of an audit is actually run.",
+        async test() {
+            const setup = (function() {
+                WebInspectorAudit.__test = 42;
+            }).toString();
+
+            let audit = new WI.AuditTestCase("AuditManager.prototype.start.SyncSetup", auditTestString, {setup});
+
+            await wrapTest(audit, 42);
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditManager.prototype.start.AsyncSetup",
+        description: "Check that the setup of an audit can be asynchronous.",
+        async test() {
+            const setup = (async function() {
+                await new Promise((resolve, reject) => {
+                    setTimeout(resolve, 10);
+                });
+
+                WebInspectorAudit.__test = 42;
+            }).toString();
+
+            let audit = new WI.AuditTestCase("AuditManager.prototype.start.AsyncSetup", auditTestString, {setup});
+
+            await wrapTest(audit, 42);
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditManager.prototype.start.SubLevelSetup",
+        description: "Check that the setup of a non-top-level audit is not run.",
+        async test() {
+            const setup = (function() {
+                WebInspectorAudit.__test = 42;
+            }).toString();
+
+            let audit = new WI.AuditTestGroup("AuditManager.prototype.start.SubLevelSetup.Group", [
+                new WI.AuditTestCase("AuditManager.prototype.start.SubLevelSetup.Test", auditTestString, {setup}),
+            ]);
+
+            await wrapTest(audit, undefined, {
+                getResultCallback(result) {
+                    return result.results[0];
+                },
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditManager.prototype.start.OverriddenSetup",
+        description: "Check that only the setup of top-level audits is run.",
+        async test() {
+            const setupA = (function() {
+                if (!WebInspectorAudit.__test)
+                    WebInspectorAudit.__test = "";
+                WebInspectorAudit.__test += "A";
+            }).toString();
+
+            const setupB = (function() {
+                if (!WebInspectorAudit.__test)
+                    WebInspectorAudit.__test = "";
+                WebInspectorAudit.__test += "B";
+            }).toString();
+
+            let audit = new WI.AuditTestGroup("AuditManager.prototype.start.OverriddenLevelSetup.Group", [
+                new WI.AuditTestCase("AuditManager.prototype.start.OverriddenLevelSetup.Test", auditTestString, {setup: setupA}),
+            ], {setup: setupB});
+
+            await wrapTest(audit, "B", {
+                getResultCallback(result) {
+                    return result.results[0];
+                },
+            });
+        },
+    });
+
+    suite.addTestCase({
+        name: "AuditManager.prototype.start.MultipleTopLevel",
+        description: "Test that a new WebInspectorAudit object is created for each setup call.",
+        async test() {
+            const setupA = (function() {
+                if (!WebInspectorAudit.__test)
+                    WebInspectorAudit.__test = "";
+                WebInspectorAudit.__test += "A";
+            }).toString();
+
+            let auditA = new WI.AuditTestCase("AuditManager.prototype.start.MultipleTopLevel.A", auditTestString, {setup: setupA});
+
+            await wrapTest(auditA, "A");
+
+            const setupB = (function() {
+                if (!WebInspectorAudit.__test)
+                    WebInspectorAudit.__test = "";
+                WebInspectorAudit.__test += "B";
+            }).toString();
+
+            let auditB = new WI.AuditTestCase("AuditManager.prototype.start.MultipleTopLevel.B", auditTestString, {setup: setupB});
+
+            await wrapTest(auditB, "B");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the AuditManager.prototype.start functionality.</p>
+</body>
+</html>

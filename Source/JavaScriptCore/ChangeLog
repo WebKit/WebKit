@@ -1,3 +1,14 @@
+2019-03-12  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: there should be a centralized place for reusable code
+        https://bugs.webkit.org/show_bug.cgi?id=195265
+        <rdar://problem/47040673>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/Audit.json:
+        Increment version.
+
 2019-03-12  Robin Morisset  <rmorisset@apple.com>
 
         blocksInPreOrder and blocksInPostOrder should reserve the right capacity for their result vector

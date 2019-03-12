@@ -127,7 +127,7 @@ WI.AuditManager = class AuditManager extends WI.Object
     {
         console.assert(this._runningState === WI.AuditManager.RunningState.Inactive);
         if (this._runningState !== WI.AuditManager.RunningState.Inactive)
-            return;
+            return null;
 
         if (tests && tests.length)
             tests = tests.filter((test) => typeof test === "object" && test instanceof WI.AuditTestBase);
@@ -136,7 +136,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         console.assert(tests.length);
         if (!tests.length)
-            return;
+            return null;
 
         let mainResource = WI.networkManager.mainFrame.mainResource;
 
@@ -153,6 +153,11 @@ WI.AuditManager = class AuditManager extends WI.Object
 
             if (InspectorBackend.domains.Audit)
                 await AuditAgent.setup();
+
+            let topLevelTest = this._topLevelTestForTest(test);
+            console.assert(topLevelTest || window.InspectorTest, "No matching top-level test found", test);
+            if (topLevelTest)
+                await topLevelTest.setup();
 
             await test.start();
 
@@ -172,6 +177,8 @@ WI.AuditManager = class AuditManager extends WI.Object
             for (let test of this._tests)
                 test.clearResult();
         }
+
+        return this._results.lastValue === result ? result : null;
     }
 
     stop()
@@ -285,6 +292,28 @@ WI.AuditManager = class AuditManager extends WI.Object
             result,
             index: this._results.length - 1,
         });
+    }
+
+    _topLevelTestForTest(test)
+    {
+        function walk(group) {
+            if (group === test)
+                return true;
+            if (group instanceof WI.AuditTestGroup) {
+                for (let subtest of group.tests) {
+                    if (walk(subtest))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        for (let topLevelTest of this._tests) {
+            if (walk(topLevelTest))
+                return topLevelTest;
+        }
+
+        return null;
     }
 
     _handleFrameMainResourceDidChange(event)

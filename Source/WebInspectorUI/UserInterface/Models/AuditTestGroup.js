@@ -106,6 +106,11 @@ WI.AuditTestGroup = class AuditTestGroup extends WI.AuditTestBase
         else if ("supports" in payload)
             WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 has a non-number \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("supports")));
 
+        if (typeof payload.setup === "string")
+            options.setup = payload.setup;
+        else if ("setup" in payload)
+            WI.AuditManager.synthesizeWarning(WI.UIString("\u0022%s\u0022 has a non-string \u0022%s\u0022 value").format(payload.name, WI.unlocalizedString("setup")));
+
         if (typeof payload.disabled === "boolean")
             options.disabled = payload.disabled;
 
