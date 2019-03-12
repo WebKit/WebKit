@@ -56,6 +56,21 @@ WI.ResourceCookiesContentView = class ResourceCookiesContentView extends WI.Cont
         table.reloadData();
     }
 
+    tableIndexForRepresentedObject(table, object)
+    {
+        let cookies = this._dataSourceForTable(table);
+        let index = cookies.indexOf(object);
+        console.assert(index >= 0);
+        return index;
+    }
+
+    tableRepresentedObjectForIndex(table, index)
+    {
+        let cookies = this._dataSourceForTable(table);
+        console.assert(index >= 0 && index < cookies.length);
+        return cookies[index];
+    }
+
     // Table delegate
 
     tableShouldSelectRow(table, cell, column, rowIndex)
