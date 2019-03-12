@@ -838,6 +838,11 @@ void WebPageProxy::handleTap(const FloatPoint& location, OptionSet<WebEvent::Mod
     process().send(Messages::WebPage::HandleTap(roundedIntPoint(location), modifiers, layerTreeTransactionIdAtLastTouchStart), m_pageID);
 }
 
+void WebPageProxy::didRecognizeLongPress()
+{
+    process().send(Messages::WebPage::DidRecognizeLongPress(), m_pageID);
+}
+
 void WebPageProxy::inspectorNodeSearchMovedToPosition(const WebCore::FloatPoint& position)
 {
     process().send(Messages::WebPage::InspectorNodeSearchMovedToPosition(position), m_pageID);

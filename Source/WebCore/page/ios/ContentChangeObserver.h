@@ -46,6 +46,7 @@ public:
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
     WEBCORE_EXPORT void willNotProceedWithClick();
+    WEBCORE_EXPORT static void didRecognizeLongPress(Frame& mainframe);
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
@@ -103,6 +104,8 @@ private:
 
     void mouseMovedDidStart();
     void mouseMovedDidFinish();
+
+    void didRecognizeLongPress();
 
     void contentVisibilityDidChange();
 

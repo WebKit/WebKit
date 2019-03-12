@@ -56,6 +56,7 @@ messages -> WebPage LegacyReceiver {
     CommitPotentialTap(OptionSet<WebKit::WebEvent::Modifier> modifiers, uint64_t lastLayerTreeTransactionId)
     CancelPotentialTap()
     TapHighlightAtPosition(uint64_t requestID, WebCore::FloatPoint point)
+    DidRecognizeLongPress()
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
     InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
     BlurFocusedElement()

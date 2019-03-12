@@ -1,3 +1,23 @@
+2019-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Stop content change observation when the touch event turns into long press
+        https://bugs.webkit.org/show_bug.cgi?id=195601
+        <rdar://problem/48796324>
+
+        Reviewed by Wenson Hsieh.
+
+        Add didRecognizeLongPress() message to be able to cancel content observation (started at touchStart).
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _longPressRecognized:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didRecognizeLongPress):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::didRecognizeLongPress):
+
 2019-03-11  Andy Estes  <aestes@apple.com>
 
         [Mac] Ensure Apple Pay is unavailable when PassKit.framework is missing

@@ -44,6 +44,15 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 {
 }
 
+void ContentChangeObserver::didRecognizeLongPress(Frame& mainframe)
+{
+    LOG(ContentObservation, "didRecognizeLongPress: cancel ongoing content change observing.");
+    for (auto* frame = &mainframe; frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->contentChangeObserver().willNotProceedWithClick();
+    }
+}
+
 void ContentChangeObserver::startContentObservationForDuration(Seconds duration)
 {
     if (!m_document.settings().contentChangeObserverEnabled())
@@ -92,7 +101,7 @@ void ContentChangeObserver::willNotProceedWithClick()
 {
     LOG(ContentObservation, "willNotProceedWithClick: click will not happen.");
     setIsBetweenTouchEndAndMouseMoved(false);
-    // FIXME: Add support for preventDefault() and long press.
+    // FIXME: Add support for preventDefault().
 }
 
 void ContentChangeObserver::domTimerExecuteDidStart(const DOMTimer& timer)

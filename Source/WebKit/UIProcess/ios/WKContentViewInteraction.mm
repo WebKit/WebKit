@@ -2175,6 +2175,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     ASSERT(gestureRecognizer == _longPressGestureRecognizer);
     [self _resetIsDoubleTapPending];
     [self _cancelTouchEventGestureRecognizer];
+    _page->didRecognizeLongPress();
 
     _lastInteractionLocation = gestureRecognizer.startPoint;
 

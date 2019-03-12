@@ -890,6 +890,11 @@ void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
     m_potentialTapSecurityOrigin = nullptr;
 }
 
+void WebPage::didRecognizeLongPress()
+{
+    ContentChangeObserver::didRecognizeLongPress(m_page->mainFrame());
+}
+
 void WebPage::tapHighlightAtPosition(uint64_t requestID, const FloatPoint& position)
 {
     Frame& mainframe = m_page->mainFrame();
