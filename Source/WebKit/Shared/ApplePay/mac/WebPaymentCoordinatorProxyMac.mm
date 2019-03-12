@@ -37,6 +37,9 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
+    if (!PAL::isPassKitFrameworkAvailable())
+        return completionHandler(false);
+
     auto paymentRequest = platformPaymentRequest(originatingURL, linkIconURLStrings, sessionID, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;

@@ -54,11 +54,21 @@ namespace WebKit {
 
 bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 {
+#if PLATFORM(MAC)
+    if (!PAL::isPassKitFrameworkAvailable())
+        return false;
+#endif
+
     return [PAL::getPKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID sessionID, WTF::Function<void(bool)>&& completionHandler)
 {
+#if PLATFORM(MAC)
+    if (!PAL::isPassKitFrameworkAvailable())
+        return completionHandler(false);
+#endif
+
 #if HAVE(PASSKIT_GRANULAR_ERRORS)
     PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_client.paymentCoordinatorSourceApplicationSecondaryIdentifier(*this, sessionID), makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
@@ -82,6 +92,11 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler)
 {
+#if PLATFORM(MAC)
+    if (!PAL::isPassKitFrameworkAvailable())
+        return completionHandler(false);
+#endif
+
     auto passLibrary = adoptNS([PAL::allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:makeBlockPtr([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result] {
@@ -344,6 +359,11 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Op
 
 Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()
 {
+#if PLATFORM(MAC)
+    if (!PAL::isPassKitFrameworkAvailable())
+        return { };
+#endif
+
     NSArray<PKPaymentNetwork> *availableNetworks = [PAL::getPKPaymentRequestClass() availableNetworks];
     Vector<String> result;
     result.reserveInitialCapacity(availableNetworks.count);
