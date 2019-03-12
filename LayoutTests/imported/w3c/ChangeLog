@@ -1,3 +1,14 @@
+2019-03-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/IndexedDB/transaction-abort-request-error.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=195570
+
+        Reviewed by Brady Eidson.
+
+        Updated test expectation to PASS.
+
+        * web-platform-tests/IndexedDB/transaction-abort-request-error-expected.txt:
+
 2019-03-12  Rob Buis  <rbuis@igalia.com>
 
         Implement further CORS restrictions

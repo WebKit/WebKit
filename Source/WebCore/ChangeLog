@@ -1,3 +1,15 @@
+2019-03-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/IndexedDB/transaction-abort-request-error.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=195570
+
+        Reviewed by Brady Eidson.
+
+        IDBRequest result should be undefined if it is never set.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+
 2019-03-12  Youenn Fablet  <youenn@apple.com>
 
         Rename originsMatch in originSerializationsMatch
