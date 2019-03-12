@@ -1,3 +1,67 @@
+2019-03-11  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] BindGroups/Argument buffers: Move MTLBuffer creation from and GPUBindGroup validation to GPUDevice.createBindGroup
+        https://bugs.webkit.org/show_bug.cgi?id=195519
+        <rdar://problem/48781297>
+
+        Reviewed by Myles C. Maxfield.
+
+        Metal's Argument Buffers should not be tied directly to GPUBindGroupLayout; rather, create the MTLBuffer 
+        in GPUBindGroup creation process.
+        Move GPUBindGroup validation out of setBindGroup and to GPUBindGroup creation for performance.
+
+        Covered by existing tests. No behavior change.
+
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBindGroup const):
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUBindGroup.cpp: Removed.
+        * platform/graphics/gpu/GPUBindGroup.h:
+        (WebCore::GPUBindGroup::vertexArgsBuffer): A buffer that arguments will be encoded into during setBindGroup.
+        (WebCore::GPUBindGroup::fragmentArgsBuffer): Ditto.
+        (WebCore::GPUBindGroup::boundBuffers const): A list of resources that are bound by this GPUBindGroup.
+        (WebCore::GPUBindGroup::boundTextures const): Ditto.
+        (WebCore::GPUBindGroup::layout const): Deleted.
+        (WebCore::GPUBindGroup::bindings const): Deleted.
+        * platform/graphics/gpu/GPUBindGroupLayout.h: No longer creating and retaining MTLBuffers.
+        (WebCore::GPUBindGroupLayout::vertexEncoder const):
+        (WebCore::GPUBindGroupLayout::fragmentEncoder const):
+        (WebCore::GPUBindGroupLayout::computeEncoder const):
+        (WebCore::GPUBindGroupLayout::ArgumentEncoderBuffer::isValid const): Deleted.
+        (WebCore::GPUBindGroupLayout::vertexArguments const): Deleted.
+        (WebCore::GPUBindGroupLayout::fragmentArguments const): Deleted.
+        (WebCore::GPUBindGroupLayout::computeArguments const): Deleted.
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::tryCreateMtlArgumentEncoder):
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        (WebCore::GPUBindGroupLayout::GPUBindGroupLayout):
+        (WebCore::tryCreateArgumentEncoderAndBuffer): Deleted.
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm: Added.
+        (WebCore::tryCreateArgumentBuffer): Create and associate the MTLBuffer that backs the MTLArgumentEncoder.
+        (WebCore::tryGetResourceAsBufferBinding): Validate a GPUBindingResource.
+        (WebCore::trySetBufferOnEncoder): Encodes a GPUBufferBinding's MTLBuffer on a MTLArgumentEncoder.
+        (WebCore::tryGetResourceAsSampler): Ditto, for GPUSamplers.
+        (WebCore::trySetSamplerOnEncoder):
+        (WebCore::tryGetResourceAsTexture): Ditto, for GPUTextures.
+        (WebCore::trySetTextureOnEncoder):
+        (WebCore::GPUBindGroup::tryCreate): Most setBindGroup validation moved here.
+        (WebCore::GPUBindGroup::GPUBindGroup): Retains the resource references needed for setBindGroup. 
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm:
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup): Most validation moved to GPUBindGroup::tryCreate().
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsBufferOnEncoder): Deleted.
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsSamplerOnEncoder): Deleted.
+        (WebCore::GPUProgrammablePassEncoder::setResourceAsTextureOnEncoder): Deleted.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::useResource):
+        (WebCore::GPURenderPassEncoder::setVertexBuffer):
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer):
+
+        Misc:
+        * platform/graphics/gpu/GPUCommandBuffer.cpp/h: Move missing includes to header.
+
 2019-03-11  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

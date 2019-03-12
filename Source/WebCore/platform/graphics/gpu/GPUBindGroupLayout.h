@@ -50,24 +50,18 @@ public:
     using BindingsMapType = HashMap<unsigned long long, GPUBindGroupLayoutBinding, WTF::IntHash<unsigned long long>, WTF::UnsignedWithZeroKeyHashTraits<unsigned long long>>;
     const BindingsMapType& bindingsMap() const { return m_bindingsMap; }
 #if USE(METAL)
-    struct ArgumentEncoderBuffer {
-        RetainPtr<MTLArgumentEncoder> encoder;
-        RetainPtr<MTLBuffer> buffer;
-
-        bool isValid() const { return encoder && buffer; }
-    };
-    const ArgumentEncoderBuffer& vertexArguments() const { return m_vertexArguments; }
-    const ArgumentEncoderBuffer& fragmentArguments() const { return m_fragmentArguments; }
-    const ArgumentEncoderBuffer& computeArguments() const { return m_computeArguments; }
+    MTLArgumentEncoder *vertexEncoder() const { return m_vertexEncoder.get(); }
+    MTLArgumentEncoder *fragmentEncoder() const { return m_fragmentEncoder.get(); }
+    MTLArgumentEncoder *computeEncoder() const { return m_computeEncoder.get(); }
 #endif // USE(METAL)
 
 private:
 #if USE(METAL)
-    GPUBindGroupLayout(BindingsMapType&&, ArgumentEncoderBuffer&& vertex, ArgumentEncoderBuffer&& fragment, ArgumentEncoderBuffer&& compute);
+    GPUBindGroupLayout(BindingsMapType&&, RetainPtr<MTLArgumentEncoder>&& vertex, RetainPtr<MTLArgumentEncoder>&& fragment, RetainPtr<MTLArgumentEncoder>&& compute);
 
-    ArgumentEncoderBuffer m_vertexArguments;
-    ArgumentEncoderBuffer m_fragmentArguments;
-    ArgumentEncoderBuffer m_computeArguments;
+    RetainPtr<MTLArgumentEncoder> m_vertexEncoder;
+    RetainPtr<MTLArgumentEncoder> m_fragmentEncoder;
+    RetainPtr<MTLArgumentEncoder> m_computeEncoder;
 #endif // USE(METAL)
     const BindingsMapType m_bindingsMap;
 };

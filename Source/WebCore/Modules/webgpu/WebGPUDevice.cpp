@@ -116,7 +116,7 @@ Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(WebGPUBindGroupDescriptor&& d
     if (!gpuDescriptor)
         return WebGPUBindGroup::create(nullptr);
 
-    auto bindGroup = GPUBindGroup::create(WTFMove(*gpuDescriptor));
+    auto bindGroup = GPUBindGroup::tryCreate(*gpuDescriptor);
     return WebGPUBindGroup::create(WTFMove(bindGroup));
 }
 

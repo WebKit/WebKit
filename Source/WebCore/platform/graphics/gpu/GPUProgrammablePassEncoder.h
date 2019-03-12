@@ -30,12 +30,11 @@
 #include "GPUBindGroupBinding.h"
 #include <wtf/RefCounted.h>
 
-OBJC_PROTOCOL(MTLArgumentEncoder);
 #if USE(METAL)
 OBJC_PROTOCOL(MTLBuffer);
 OBJC_PROTOCOL(MTLCommandEncoder);
 OBJC_PROTOCOL(MTLResource);
-#endif // USE(METAL)
+#endif
 
 namespace WebCore {
 
@@ -61,9 +60,6 @@ protected:
 
 private:
 #if USE(METAL)
-    void setResourceAsBufferOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
-    void setResourceAsSamplerOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
-    void setResourceAsTextureOnEncoder(MTLArgumentEncoder *, const GPUBindGroupBinding&, const char* const);
     virtual void useResource(MTLResource *, unsigned) = 0;
 
     // Render command encoder methods.

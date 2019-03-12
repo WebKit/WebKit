@@ -277,8 +277,9 @@ void GPURenderPassEncoder::useResource(MTLResource *resource, unsigned usage)
         LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
         return;
     }
-
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder useResource:resource usage:usage];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void GPURenderPassEncoder::setVertexBuffer(MTLBuffer *buffer, unsigned offset, unsigned index)
@@ -287,8 +288,9 @@ void GPURenderPassEncoder::setVertexBuffer(MTLBuffer *buffer, unsigned offset, u
         LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
         return;
     }
-
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder setVertexBuffer:buffer offset:offset atIndex:index];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void GPURenderPassEncoder::setFragmentBuffer(MTLBuffer *buffer, unsigned offset, unsigned index)
@@ -297,8 +299,9 @@ void GPURenderPassEncoder::setFragmentBuffer(MTLBuffer *buffer, unsigned offset,
         LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
         return;
     }
-
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder setFragmentBuffer:buffer offset:offset atIndex:index];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 #endif // USE(METAL)

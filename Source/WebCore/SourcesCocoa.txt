@@ -317,6 +317,7 @@ platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/TextureCacheCV.mm
 platform/graphics/cv/VideoTextureCopierCV.cpp
 
+platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm
 platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm
 platform/graphics/gpu/cocoa/GPUBufferMetal.mm
 platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm
