@@ -888,6 +888,7 @@ void Graph::substituteGetLocal(BasicBlock& block, unsigned startIndexInBlock, Va
 BlockList Graph::blocksInPreOrder()
 {
     BlockList result;
+    result.reserveInitialCapacity(m_blocks.size());
     BlockWorklist worklist;
     for (BasicBlock* entrypoint : m_roots)
         worklist.push(entrypoint);
@@ -926,6 +927,7 @@ BlockList Graph::blocksInPreOrder()
 BlockList Graph::blocksInPostOrder(bool isSafeToValidate)
 {
     BlockList result;
+    result.reserveInitialCapacity(m_blocks.size());
     PostOrderBlockWorklist worklist;
     for (BasicBlock* entrypoint : m_roots)
         worklist.push(entrypoint);

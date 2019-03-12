@@ -257,7 +257,7 @@ private:
     BlockNodeList m_nodes;
 };
 
-typedef Vector<BasicBlock*, 5> BlockList;
+typedef Vector<BasicBlock*> BlockList;
     
 static inline unsigned getBytecodeBeginForBlock(BasicBlock** basicBlock)
 {

@@ -1,3 +1,17 @@
+2019-03-12  Robin Morisset  <rmorisset@apple.com>
+
+        blocksInPreOrder and blocksInPostOrder should reserve the right capacity for their result vector
+        https://bugs.webkit.org/show_bug.cgi?id=195595
+
+        Reviewed by Saam Barati.
+
+        Also change BlockList from being Vector<BasicBlock*, 5> to Vector<BasicBlock*>
+
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::blocksInPreOrder):
+        (JSC::DFG::Graph::blocksInPostOrder):
+
 2019-03-11  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add Optional to Forward.h.
