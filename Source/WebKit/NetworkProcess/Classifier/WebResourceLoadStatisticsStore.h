@@ -59,6 +59,7 @@ class WebFrameProxy;
 class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
+enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:

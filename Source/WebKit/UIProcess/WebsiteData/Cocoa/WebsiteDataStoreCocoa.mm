@@ -30,12 +30,15 @@
 #import "StorageManager.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
+#import <WebCore/RegistrableDomain.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/FileSystem.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ProcessPrivilege.h>
+#import <wtf/URL.h>
+#import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIApplication.h>
@@ -61,12 +64,28 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     resolveDirectoriesIfNecessary();
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-#if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
-    static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
-    bool shouldLogCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
-#else
     bool shouldLogCookieInformation = false;
+    bool enableResourceLoadStatisticsDebugMode = false;
+    WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    enableResourceLoadStatisticsDebugMode = [defaults boolForKey:@"ITPDebugMode"];
+    auto* manualPrevalentResource = [defaults stringForKey:@"ITPManualPrevalentResource"];
+    if (manualPrevalentResource) {
+        URL url { URL(), manualPrevalentResource };
+        if (!url.isValid()) {
+            StringBuilder builder;
+            builder.appendLiteral("http://");
+            builder.append(manualPrevalentResource);
+            url = { URL(), builder.toString() };
+        }
+        if (url.isValid())
+            resourceLoadStatisticsManualPrevalentResource = WebCore::RegistrableDomain { url };
+    }
+#if !RELEASE_LOG_DISABLED
+    static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
+    shouldLogCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
+#endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
     URL httpProxy = m_configuration->httpProxy();
     URL httpsProxy = m_configuration->httpsProxy();
@@ -88,6 +107,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     if (!resourceLoadStatisticsDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
 
+    bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;
     WebsiteDataStoreParameters parameters;
     parameters.networkSessionParameters = {
         m_sessionID,
@@ -103,7 +123,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
         false,
-        isSafari
+        shouldIncludeLocalhostInResourceLoadStatistics,
+        enableResourceLoadStatisticsDebugMode,
+        WTFMove(resourceLoadStatisticsManualPrevalentResource)
     };
     finalizeApplicationIdentifiers();
 

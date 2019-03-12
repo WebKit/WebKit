@@ -3569,7 +3569,6 @@
 		7AB6EA461EEAB6B000037B2B /* APIGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeolocationProvider.h; sourceTree = "<group>"; };
 		7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsStore.h; path = Classifier/ResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		7ACE82E8221CAE07000DA94C /* ResourceLoadStatisticsStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsStore.cpp; path = Classifier/ResourceLoadStatisticsStore.cpp; sourceTree = "<group>"; };
-		7ACE82E9221DE722000DA94C /* ResourceLoadStatisticsStoreCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = ResourceLoadStatisticsStoreCocoa.mm; path = Classifier/ResourceLoadStatisticsStoreCocoa.mm; sourceTree = "<group>"; };
 		7AF2361E1E79A3B400438A05 /* WebErrors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebErrors.cpp; sourceTree = "<group>"; };
 		7AF2361F1E79A3D800438A05 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
 		7AF236221E79A43100438A05 /* WebErrorsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebErrorsCocoa.mm; sourceTree = "<group>"; };
@@ -6977,7 +6976,6 @@
 				7AFBD36821E542E8005DBACB /* ResourceLoadStatisticsPersistentStorage.h */,
 				7ACE82E8221CAE07000DA94C /* ResourceLoadStatisticsStore.cpp */,
 				7ACE82E7221CAE06000DA94C /* ResourceLoadStatisticsStore.h */,
-				7ACE82E9221DE722000DA94C /* ResourceLoadStatisticsStoreCocoa.mm */,
 				7A41E9FA21F81DAC00B88CDB /* ShouldGrandfatherStatistics.h */,
 				7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */,
 				7A843A1A21E41FB200DEF663 /* WebResourceLoadStatisticsStore.cpp */,

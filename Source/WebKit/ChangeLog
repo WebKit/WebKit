@@ -1,3 +1,51 @@
+2019-03-11  John Wilander  <wilander@apple.com>
+
+        Move NetworkProcess/Classifier/ResourceLoadStatisticsStoreCocoa.mm functionality into UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
+        https://bugs.webkit.org/show_bug.cgi?id=195117
+        <rdar://problem/48448715>
+
+        Reviewed by Brent Fulgham.
+
+        Reading of user defaults on Cocoa platforms should be done in the UI process and
+        forwarded to Resource Load Statistics in the network process through the
+        WebKit::NetworkSessionCreationParameters struct.
+
+        This patch does away with some old user defaults we don't use anymore. It also
+        changes the developer-facing default name to ITPManualPrevalentResource.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+            Removed the call to the old registerUserDefaultsIfNeeded().
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore):
+            Removed the call to the old registerUserDefaultsIfNeeded().
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+            Removed the declaration of the old registerUserDefaultsIfNeeded().
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStoreCocoa.mm: Removed.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            Added an enum class EnableResourceLoadStatisticsDebugMode.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+           The struct now has two new fields:
+           - enableResourceLoadStatisticsDebugMode
+           - resourceLoadStatisticsManualPrevalentResource
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            Forwarding of the parameters.
+        * SourcesCocoa.txt:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+            Forwarding of the parameters.
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+            This is where user defaults for Resource Load Statistics are now read.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-11  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

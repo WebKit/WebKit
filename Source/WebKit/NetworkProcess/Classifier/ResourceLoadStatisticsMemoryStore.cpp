@@ -72,10 +72,6 @@ ResourceLoadStatisticsMemoryStore::ResourceLoadStatisticsMemoryStore(WebResource
 {
     ASSERT(!RunLoop::isMain());
 
-#if PLATFORM(COCOA)
-    registerUserDefaultsIfNeeded();
-#endif
-
     workQueue.dispatchAfter(5_s, [weakThis = makeWeakPtr(*this)] {
         if (weakThis)
             weakThis->calculateAndSubmitTelemetry();

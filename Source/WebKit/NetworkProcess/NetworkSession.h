@@ -93,6 +93,8 @@ protected:
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };
+    EnableResourceLoadStatisticsDebugMode m_enableResourceLoadStatisticsDebugMode { EnableResourceLoadStatisticsDebugMode::No };
+    WebCore::RegistrableDomain m_resourceLoadStatisticsManualPrevalentResource;
 #endif
     UniqueRef<NetworkAdClickAttribution> m_adClickAttribution;
 };

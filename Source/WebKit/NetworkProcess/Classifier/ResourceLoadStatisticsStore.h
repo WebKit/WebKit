@@ -190,9 +190,6 @@ protected:
 
     bool hasStatisticsExpired(const ResourceLoadStatistics&) const;
     bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime) const;
-#if PLATFORM(COCOA)
-    void registerUserDefaultsIfNeeded();
-#endif
     void scheduleStatisticsProcessingRequestIfNecessary();
     void mergeOperatingDates(Vector<OperatingDate>&&);
     virtual Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() = 0;

@@ -575,16 +575,30 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     bool enableResourceLoadStatistics = false;
     bool shouldIncludeLocalhost = true;
+    bool enableResourceLoadStatisticsDebugMode = false;
+    WebCore::RegistrableDomain manualPrevalentResource { };
     if (withWebsiteDataStore) {
         enableResourceLoadStatistics = withWebsiteDataStore->resourceLoadStatisticsEnabled();
-        shouldIncludeLocalhost = withWebsiteDataStore->parameters().networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+        if (enableResourceLoadStatistics) {
+            auto networkSessionParameters = withWebsiteDataStore->parameters().networkSessionParameters;
+            shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+            enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
+            manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
+        }
     } else if (m_websiteDataStore) {
         enableResourceLoadStatistics = m_websiteDataStore->resourceLoadStatisticsEnabled();
-        shouldIncludeLocalhost = m_websiteDataStore->websiteDataStore().parameters().networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+        if (enableResourceLoadStatistics) {
+            auto networkSessionParameters = m_websiteDataStore->websiteDataStore().parameters().networkSessionParameters;
+            shouldIncludeLocalhost = networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics;
+            enableResourceLoadStatisticsDebugMode = networkSessionParameters.enableResourceLoadStatisticsDebugMode;
+            manualPrevalentResource = networkSessionParameters.resourceLoadStatisticsManualPrevalentResource;
+        }
     }
 
     parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatistics = enableResourceLoadStatistics;
     parameters.defaultDataStoreParameters.networkSessionParameters.shouldIncludeLocalhostInResourceLoadStatistics = shouldIncludeLocalhost;
+    parameters.defaultDataStoreParameters.networkSessionParameters.enableResourceLoadStatisticsDebugMode = enableResourceLoadStatisticsDebugMode;
+    parameters.defaultDataStoreParameters.networkSessionParameters.resourceLoadStatisticsManualPrevalentResource = manualPrevalentResource;
 
     // Add any platform specific parameters
     platformInitializeNetworkProcess(parameters);

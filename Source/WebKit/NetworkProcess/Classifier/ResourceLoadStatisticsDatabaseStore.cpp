@@ -194,10 +194,6 @@ ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebReso
 {
     ASSERT(!RunLoop::isMain());
 
-#if PLATFORM(COCOA)
-    registerUserDefaultsIfNeeded();
-#endif
-
     if (!m_database.open(m_storageDirectoryPath)) {
         RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::open failed, error message: %{public}s, database path: %{public}s", this, m_database.lastErrorMsg(), m_storageDirectoryPath.utf8().data());
         ASSERT_NOT_REACHED();

@@ -100,6 +100,12 @@ void NetworkSession::setResourceLoadStatisticsEnabled(bool enable)
         return;
 
     m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(*this, m_resourceLoadStatisticsDirectory, m_shouldIncludeLocalhostInResourceLoadStatistics);
+
+    if (m_enableResourceLoadStatisticsDebugMode == EnableResourceLoadStatisticsDebugMode::Yes)
+        m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(true, [] { });
+    // This should always be forwarded since debug mode may be enabled at runtime.
+    if (!m_resourceLoadStatisticsManualPrevalentResource.isEmpty())
+        m_resourceLoadStatistics->setPrevalentResourceForDebugMode(m_resourceLoadStatisticsManualPrevalentResource, [] { });
 }
 
 void NetworkSession::notifyResourceLoadStatisticsProcessed()

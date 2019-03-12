@@ -966,6 +966,8 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsDirectory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.shouldIncludeLocalhostInResourceLoadStatistics ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
+    m_enableResourceLoadStatisticsDebugMode = parameters.enableResourceLoadStatisticsDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
+    m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsManualPrevalentResource;
     setResourceLoadStatisticsEnabled(parameters.enableResourceLoadStatistics);
 #endif
 
