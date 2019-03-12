@@ -1,3 +1,13 @@
+2019-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] REGRESSION (r242687): Programmatic scroll of overflow scroll results in bad rendering
+        https://bugs.webkit.org/show_bug.cgi?id=195584
+        
+        Unreviewed test gardening. Mark compositing/ios/overflow-scroll-update-overlap.html as failing
+        since I want to unskip and land a fix with additional tests.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-03-11  Dean Jackson  <dino@apple.com>
 
         [iOS] Implement a faster click detection that intercepts double-tap-to-zoom if possible
