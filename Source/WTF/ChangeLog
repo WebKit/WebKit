@@ -1,3 +1,19 @@
+2019-03-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r242747.
+        https://bugs.webkit.org/show_bug.cgi?id=195641
+
+        Performance measurement is difficult in this period, rolling
+        out it and rolling in later to isolate it from the other
+        sensitive patches (Requested by yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "[JSC] Make StaticStringImpl & StaticSymbolImpl actually
+        static"
+        https://bugs.webkit.org/show_bug.cgi?id=194212
+        https://trac.webkit.org/changeset/242747
+
 2019-03-12  Robin Morisset  <rmorisset@apple.com>
 
         A lot more classes have padding that can be reduced by reordering their fields

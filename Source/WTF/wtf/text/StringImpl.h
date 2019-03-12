@@ -1064,8 +1064,6 @@ inline void StringImpl::ref()
 {
     STRING_STATS_REF_STRING(*this);
 
-    if (UNLIKELY(isStatic()))
-        return;
     m_refCount += s_refCountIncrement;
 }
 
@@ -1073,8 +1071,6 @@ inline void StringImpl::deref()
 {
     STRING_STATS_DEREF_STRING(*this);
 
-    if (UNLIKELY(isStatic()))
-        return;
     unsigned tempRefCount = m_refCount - s_refCountIncrement;
     if (!tempRefCount) {
         StringImpl::destroy(this);
