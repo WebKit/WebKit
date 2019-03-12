@@ -1,3 +1,22 @@
+2019-03-12  Robin Morisset  <rmorisset@apple.com>
+
+        Alter Tools/Scripts/dump-class-layout to be able to dump all classes with suspicious padding
+        https://bugs.webkit.org/show_bug.cgi?id=195573
+
+        Reviewed by Simon Fraser.
+
+        Also modified the script so that when multiple types match a given name it shows them all and not arbitrarily pick one.
+
+        * Scripts/dump-class-layout:
+        (main):
+        * lldb/lldb_dump_class_layout.py:
+        (ClassLayout.__init__):
+        (ClassLayout._compute_padding_recursive):
+        (LLDBDebuggerInstance.dump_layout_for_classname):
+        (LLDBDebuggerInstance):
+        (LLDBDebuggerInstance.dump_all_wasteful_layouts):
+        (LLDBDebuggerInstance.layout_for_classname): Deleted.
+
 2019-03-12  Chris Dumez  <cdumez@apple.com>
 
         Device Orientation access permission should be denied unless explicitly granted by the client
