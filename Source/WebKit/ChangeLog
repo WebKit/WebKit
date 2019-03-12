@@ -1,3 +1,25 @@
+2019-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        API test WebKit.RequestTextInputContext fails on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=195585
+
+        Reviewed by Wenson Hsieh and Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _convertRectFromRootViewCoordinates:]):
+        (-[WKWebView _convertRectToRootViewCoordinates:]):
+        (-[WKWebView _requestTextInputContextsInRect:completionHandler:]):
+        (-[WKWebView _focusTextInputContext:completionHandler:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::elementRectInRootViewCoordinates):
+        (WebKit::WebPage::textInputContextsInRect):
+        (WebKit::elementRectInWindowCoordinates): Deleted.
+        Text input context SPI should be in terms of WKWebView coordinates,
+        for consistency's sake. This is a bit irritating; WebPage(Proxy) continue
+        to operate in "root view" coordinates, which means different things
+        depending on if delegatesScrolling is true or not. So, WKWebView does
+        the conversion, re-creating objects as needed.
+
 2019-03-09  Jiewen Tan  <jiewen_tan@apple.com>
 
         Optimizing loads when creating new pages

@@ -71,7 +71,7 @@
 
 static NSString *applyStyle(NSString *HTMLString)
 {
-    return [@"<style>body { margin: 0; } iframe { border: none; }</style>" stringByAppendingString:HTMLString];
+    return [@"<style>body { margin: 0; } iframe { border: none; }</style><meta name='viewport' content='initial-scale=1'>" stringByAppendingString:HTMLString];
 }
 
 static NSString *applyIframe(NSString *HTMLString)
@@ -140,16 +140,22 @@ TEST(WebKit, RequestTextInputContext)
     // Inputs scrolled outside the requested rect; should not be included.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px;'><br><div style='width: 100px; height: 5000px;'></div>")];
+#if PLATFORM(MAC)
     [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 5000);"];
-    [webView waitForNextPresentationUpdate];
+#else
+    [webView scrollView].contentOffset = CGPointMake(0, 5000);
+#endif
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(0UL, contexts.count);
 
     // Inputs scrolled into the requested rect.
 
     [webView synchronouslyLoadHTMLString:applyStyle(@"<input type='text' style='width: 50px; height: 50px; position: absolute; top: 5000px;'><br><div style='width: 100px; height: 10000px;'></div>")];
+#if PLATFORM(MAC)
     [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 5000);"];
-    [webView waitForNextPresentationUpdate];
+#else
+    [webView scrollView].contentOffset = CGPointMake(0, 5000);
+#endif
     contexts = [webView synchronouslyRequestTextInputContextsInRect:[webView frame]];
     EXPECT_EQ(1UL, contexts.count);
     EXPECT_RECT_EQ(0, 0, 50, 50, contexts[0].boundingRect);

@@ -6468,7 +6468,7 @@ WebCore::IntRect WebPage::rectForElementAtInteractionLocation() const
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-static IntRect elementRectInWindowCoordinates(const Element& element, const Frame& frame)
+static IntRect elementRectInRootViewCoordinates(const Element& element, const Frame& frame)
 {
     auto* view = frame.view();
     if (!view)
@@ -6478,7 +6478,7 @@ static IntRect elementRectInWindowCoordinates(const Element& element, const Fram
     if (!renderer)
         return { };
 
-    return view->contentsToWindow(renderer->absoluteBoundingBoxRect());
+    return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
 static bool isEditableTextInputElement(Element& element)
@@ -6516,7 +6516,7 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
 
             auto& element = downcast<Element>(*node);
 
-            IntRect elementRect = elementRectInWindowCoordinates(element, *frame);
+            IntRect elementRect = elementRectInRootViewCoordinates(element, *frame);
             if (!searchRect.intersects(elementRect))
                 continue;
 

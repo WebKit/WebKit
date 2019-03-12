@@ -4838,13 +4838,47 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     }
 }
 
-- (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+- (CGRect)_convertRectFromRootViewCoordinates:(CGRect)rectInRootViewCoordinates
 {
-    _page->textInputContextsInRect(rect, [capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::TextInputContext>& contexts) {
+    // FIXME: It should be easier to talk about WKWebView coordinates in a consistent and cross-platform way.
+    // Currently, neither "root view" nor "window" mean "WKWebView coordinates" on both platforms.
+    // See https://webkit.org/b/193649 and related bugs.
+#if PLATFORM(IOS_FAMILY)
+    return [self convertRect:rectInRootViewCoordinates fromView:_contentView.get()];
+#else
+    return rectInRootViewCoordinates;
+#endif
+}
+
+- (CGRect)_convertRectToRootViewCoordinates:(CGRect)rectInWebViewCoordinates
+{
+#if PLATFORM(IOS_FAMILY)
+    return [self convertRect:rectInWebViewCoordinates toView:_contentView.get()];
+#else
+    return rectInWebViewCoordinates;
+#endif
+}
+
+- (void)_requestTextInputContextsInRect:(CGRect)rectInWebViewCoordinates completionHandler:(void(^)(NSArray<_WKTextInputContext *> *))completionHandler
+{
+#if PLATFORM(IOS_FAMILY)
+    if (![self usesStandardContentView]) {
+        completionHandler(@[]);
+        return;
+    }
+#endif
+
+    CGRect rectInRootViewCoordinates = [self _convertRectToRootViewCoordinates:rectInWebViewCoordinates];
+    auto weakSelf = WeakObjCPtr<WKWebView>(self);
+    _page->textInputContextsInRect(rectInRootViewCoordinates, [weakSelf, capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::TextInputContext>& contexts) {
         RetainPtr<NSMutableArray> elements = adoptNS([[NSMutableArray alloc] initWithCapacity:contexts.size()]);
 
-        for (const auto& context : contexts)
-            [elements addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:context]).get()];
+        auto strongSelf = weakSelf.get();
+        for (const auto& context : contexts) {
+            WebKit::TextInputContext contextWithWebViewBoundingRect = context;
+            contextWithWebViewBoundingRect.boundingRect = [strongSelf _convertRectFromRootViewCoordinates:context.boundingRect];
+            [elements addObject:adoptNS([[_WKTextInputContext alloc] _initWithTextInputContext:contextWithWebViewBoundingRect]).get()];
+        }
 
         capturedCompletionHandler(elements.get());
     });
@@ -4852,6 +4886,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_focusTextInputContext:(_WKTextInputContext *)textInputContext completionHandler:(void(^)(BOOL))completionHandler
 {
+#if PLATFORM(IOS_FAMILY)
+    if (![self usesStandardContentView]) {
+        completionHandler(NO);
+        return;
+    }
+#endif
+
     auto webContext = [textInputContext _textInputContext];
     if (webContext.webPageIdentifier != _page->pageID())
         [NSException raise:NSInvalidArgumentException format:@"The provided _WKTextInputContext was not created by this WKWebView."];
