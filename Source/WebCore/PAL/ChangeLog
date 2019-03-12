@@ -1,3 +1,14 @@
+2019-03-12  Timothy Hatcher  <timothy@apple.com>
+
+        Expose document attributes and body background color through HTMLConverter.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cocoa/NSAttributedStringSPI.h:
+        (NSBackgroundColorDocumentAttribute): Added.
+
 2019-03-12  Jennifer Moore  <jennifer.moore@apple.com>
 
         Check whether to launch a default action instead of action sheet

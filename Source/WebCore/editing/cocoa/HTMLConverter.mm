@@ -276,9 +276,9 @@ class HTMLConverter {
 public:
     HTMLConverter(const Position&, const Position&);
     ~HTMLConverter();
-    
-    NSAttributedString* convert();
-    
+
+    NSAttributedString* convert(NSDictionary** documentAttributes = nullptr);
+
 private:
     Position m_start;
     Position m_end;
@@ -396,7 +396,7 @@ HTMLConverter::~HTMLConverter()
     [_writingDirectionArray release];
 }
 
-NSAttributedString *HTMLConverter::convert()
+NSAttributedString *HTMLConverter::convert(NSDictionary** documentAttributes)
 {
     if (comparePositions(m_start, m_end) > 0)
         return nil;
@@ -408,10 +408,19 @@ NSAttributedString *HTMLConverter::convert()
     if (!m_dataSource)
         return nil;
 
+    Document& document = commonAncestorContainer->document();
+    if (auto* body = document.bodyOrFrameset()) {
+        if (PlatformColor *backgroundColor = _colorForElement(*body, CSSPropertyBackgroundColor))
+            [_documentAttrs setObject:backgroundColor forKey:NSBackgroundColorDocumentAttribute];
+    }
+
     _domRangeStartIndex = 0;
     _traverseNode(*commonAncestorContainer, 0, false /* embedded */);
     if (_domRangeStartIndex > 0 && _domRangeStartIndex <= [_attrStr length])
         [_attrStr deleteCharactersInRange:NSMakeRange(0, _domRangeStartIndex)];
+
+    if (documentAttributes)
+        *documentAttributes = [[_documentAttrs retain] autorelease];
 
     return [[_attrStr retain] autorelease];
 }
@@ -2375,23 +2384,23 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(HTMLImageElement& element)
 #endif
 
 namespace WebCore {
-    
+
 // This function supports more HTML features than the editing variant below, such as tables.
-NSAttributedString *attributedStringFromRange(Range& range)
+NSAttributedString *attributedStringFromRange(Range& range, NSDictionary** documentAttributes)
 {
-    return HTMLConverter { range.startPosition(), range.endPosition() }.convert();
+    return HTMLConverter { range.startPosition(), range.endPosition() }.convert(documentAttributes);
 }
 
-NSAttributedString *attributedStringFromSelection(const VisibleSelection& selection)
+NSAttributedString *attributedStringFromSelection(const VisibleSelection& selection, NSDictionary** documentAttributes)
 {
-    return attributedStringBetweenStartAndEnd(selection.start(), selection.end());
+    return attributedStringBetweenStartAndEnd(selection.start(), selection.end(), documentAttributes);
 }
 
-NSAttributedString *attributedStringBetweenStartAndEnd(const Position& start, const Position& end)
+NSAttributedString *attributedStringBetweenStartAndEnd(const Position& start, const Position& end, NSDictionary** documentAttributes)
 {
-    return HTMLConverter { start, end }.convert();
+    return HTMLConverter { start, end }.convert(documentAttributes);
 }
-    
+
 #if !PLATFORM(IOS_FAMILY)
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
