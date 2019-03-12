@@ -145,7 +145,6 @@ class ClassLayout(ClassLayoutBase):
         self.total_byte_size = self.type.GetByteSize()
         self.pointer_size = self.target.GetAddressByteSize()
         self.total_pad_bytes = 0
-        self.top_level_pad_bytes = 0
         self.data_members = []
         self.virtual_base_classes = self._virtual_base_classes_dictionary()
         self._parse(containerClass, derivedClass)
@@ -320,8 +319,6 @@ class ClassLayout(ClassLayoutBase):
 
                     self.data_members.insert(i, padding_member)
                     padding_bytes += padding_size
-                    if depth == 0 and padding_size < 8:
-                        self.top_level_pad_bytes += padding_size
                     i += 1
 
                 if self.MEMBER_IS_BITFIELD in data_member:
@@ -367,7 +364,6 @@ class ClassLayout(ClassLayoutBase):
                 }
                 self.data_members.append(padding_member)
                 padding_bytes += padding_size
-                self.top_level_pad_bytes += padding_size
 
         return [padding_bytes, current_offset]
 
@@ -415,22 +411,11 @@ class LLDBDebuggerInstance:
 
         return lldb.LLDB_ARCH_DEFAULT
 
-    def dump_layout_for_classname(self, classname):
+    def layout_for_classname(self, classname):
         types = self.module.FindTypes(classname)
-        if not types.GetSize():
-            print 'error: no type matches "%s" in "%s"' % (classname, self.module.file)
-            return None
-        for t in types:
-            ClassLayout(self.target, t).dump()
+        if types.GetSize():
+            # There can be more that one type with a given name, but for now just return the first one.
+            return ClassLayout(self.target, types.GetTypeAtIndex(0))
 
-    def dump_all_wasteful_layouts(self):
-        types = self.module.GetTypes(lldb.eTypeClassClass | lldb.eTypeClassStruct)
-        seenTypes = set()
-        for t in types:
-            if t.GetName() in seenTypes:
-                continue
-            seenTypes.add(t.GetName())
-            classLayout = ClassLayout(self.target, t)
-            if classLayout.top_level_pad_bytes >= 8:
-                classLayout.dump()
-                print ""
+        print 'error: no type matches "%s" in "%s"' % (classname, self.module.file)
+        return None

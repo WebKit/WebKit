@@ -51,7 +51,7 @@ def main():
     parser = argparse.ArgumentParser(description='Dumps the in-memory layout of the given class or classes, showing padding holes.')
     parser.add_argument('framework', metavar='framework',
         help='name of the framework containing the class (e.g. "WebCore")')
-    parser.add_argument('classname', metavar='classname', nargs='?',
+    parser.add_argument('classname', metavar='classname',
         help='name of the class or struct to dump')
 
     parser.add_argument('-b', '--build-directory', dest='build_directory', action='store',
@@ -65,9 +65,6 @@ def main():
 
     parser.add_argument('-t', '--target-path', dest='target_path', action='store',
         help='Path to the target')
-
-    parser.add_argument('-w', '--all-wasteful', dest='all_wasteful', action='store_true',
-        help='Exclusive with classname, dumps the layout of all classes with at least 8 bytes of padding at the top-level')
 
     args = parser.parse_args()
     build_dir = webkit_build_dir()
@@ -84,14 +81,9 @@ def main():
         target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
     
     lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
-    if args.all_wasteful and (args.classname is not None):
-        print "The -w/--all-wasteful option is incompatible with providing a class name"
-    elif args.all_wasteful:
-        lldb_instance.dump_all_wasteful_layouts()
-    elif args.classname is not None:
-        lldb_instance.dump_layout_for_classname(args.classname)
-    else:
-        print "You must either provide a class name or the -w/--all-wasteful option"
+    class_layout = lldb_instance.layout_for_classname(args.classname)
+    class_layout.dump()
+
 
 if __name__ == "__main__":
     main()

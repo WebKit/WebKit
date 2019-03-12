@@ -1,3 +1,19 @@
+2019-03-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r242825.
+        https://bugs.webkit.org/show_bug.cgi?id=195648
+
+        "Broke webkitpy tests with my change to
+        lldb_dump_class_layout.py" (Requested by rmorisset on
+        #webkit).
+
+        Reverted changeset:
+
+        "Alter Tools/Scripts/dump-class-layout to be able to dump all
+        classes with suspicious padding"
+        https://bugs.webkit.org/show_bug.cgi?id=195573
+        https://trac.webkit.org/changeset/242825
+
 2019-03-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Show status bubbles while the patch is waiting in queue
