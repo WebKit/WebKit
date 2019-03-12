@@ -1,3 +1,16 @@
+2019-03-11  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: (r242181) API test DragAndDropTests.ExternalSourcePlainTextToIFrame is Timing out
+        https://bugs.webkit.org/show_bug.cgi?id=195362
+
+        Reviewed by Alexey Proskuryakov.
+
+        Covered by API test no longer crashing.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::originsMatch):
+        String representation should only match if originsMatch returns true.
+
 2019-03-11  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext

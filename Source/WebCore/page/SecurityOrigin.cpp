@@ -496,7 +496,7 @@ bool originsMatch(const SecurityOrigin& origin1, const SecurityOrigin& origin2)
     if (&origin1 == &origin2)
         return true;
 
-    ASSERT(areOriginsMatching(origin1, origin2) == (origin1.toString() == origin2.toString()));
+    ASSERT(!areOriginsMatching(origin1, origin2) || (origin1.toString() == origin2.toString()));
     return areOriginsMatching(origin1, origin2);
 }
 
