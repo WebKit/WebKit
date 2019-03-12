@@ -1,3 +1,14 @@
+2019-03-12  Dean Jackson  <dino@apple.com>
+
+        [WebGL] WebGLBuffer can be too large
+        https://bugs.webkit.org/show_bug.cgi?id=195068
+        <rdar://problem/48414289>
+
+        Reviewed by Antoine Quint.
+
+        * fast/canvas/webgl/largeBuffer-expected.txt: Added.
+        * fast/canvas/webgl/largeBuffer.html: Added.
+
 2019-03-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix a typo in TestExpecations.
