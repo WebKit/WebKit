@@ -1408,7 +1408,7 @@ ServiceWorkersEnabled:
 
 AsyncFrameScrollingEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_ASYNC_FRAME_SCROLLING_ENABLED
   humanReadableName: "Async Frame Scrolling"
   humanReadableDescription: "Perform frame scrolling off the main thread"
   category: internal
