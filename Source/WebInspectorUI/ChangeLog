@@ -1,3 +1,18 @@
+2019-03-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOMDebugger: protocol error on first open
+        https://bugs.webkit.org/show_bug.cgi?id=195248
+        <rdar://problem/48538465>
+
+        Unreviewed followup of r242743 to fix test inspector/dom-debugger/dom-breakpoints.html.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype._resolveDOMBreakpoint):
+        Still attempt to resolve the DOM breakpoint if it already has a `domNodeIdentifier` so that
+        it will get added to the node's frame's DOM breakpoint map. Without this, some breakpoints
+        might get "missed" when calling `WI.domDebuggerManager.removeDOMBreakpointsForNode`.
+
 2019-03-11  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext

@@ -175,11 +175,8 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         this._domBreakpointURLMap.add(breakpoint.url, breakpoint);
 
-        if (!breakpoint.disabled) {
-            let target = WI.assumingMainTarget();
-            if (target && target.DOMDebuggerAgent)
-                this._updateDOMBreakpoint(breakpoint, target);
-        }
+        if (breakpoint.domNodeIdentifier)
+            this._resolveDOMBreakpoint(breakpoint, breakpoint.domNodeIdentifier);
 
         this.dispatchEventToListeners(WI.DOMDebuggerManager.Event.DOMBreakpointAdded, {breakpoint});
 
@@ -456,10 +453,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         breakpoint.domNodeIdentifier = nodeIdentifier;
 
-        // We should get the target associated with the nodeIdentifier of this breakpoint.
-        let target = WI.assumingMainTarget();
-        if (target && target.DOMDebuggerAgent)
-            this._updateDOMBreakpoint(breakpoint, target);
+        if (!breakpoint.disabled) {
+            // We should get the target associated with the nodeIdentifier of this breakpoint.
+            let target = WI.assumingMainTarget();
+            if (target && target.DOMDebuggerAgent)
+                this._updateDOMBreakpoint(breakpoint, target);
+        }
     }
 
     _updateDOMBreakpoint(breakpoint, target)
