@@ -1,3 +1,13 @@
+2019-03-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Sandbox must allow mach lookup required to compress video
+        https://bugs.webkit.org/show_bug.cgi?id=195627
+        <rdar://problem/48811072>
+
+        Reviewed by Youenn Fablet.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-03-12  Jennifer Moore  <jennifer.moore@apple.com>
 
         Check whether to launch a default action instead of action sheet

@@ -498,7 +498,6 @@
     (global-name "com.apple.coremedia.assetcacheinspector")
     (global-name "com.apple.coremedia.audiodeviceclock")
     (global-name "com.apple.coremedia.audioprocessingtap.xpc")
-    (global-name "com.apple.coremedia.compressionsession")
     (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.sandboxserver")
