@@ -246,6 +246,10 @@ public:
     void accessibilityProcessSuspendedNotification(bool);
 #endif
 
+#if PLATFORM(IOS)
+    float backlightLevel() const { return m_backlightLevel; }
+#endif
+
 #if PLATFORM(COCOA)
     void setMediaMIMETypes(const Vector<String>);
 #endif
@@ -409,6 +413,10 @@ private:
 #endif
 #endif
 
+#if PLATFORM(IOS)
+    void backlightLevelDidChange(float backlightLevel);
+#endif
+
 #if ENABLE(VIDEO)
     void suspendAllMediaBuffering();
     void resumeAllMediaBuffering();
@@ -505,6 +513,10 @@ private:
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(SANDBOX_EXTENSIONS)
     HashMap<String, RefPtr<SandboxExtension>> m_mediaCaptureSandboxExtensions;
+#endif
+
+#if PLATFORM(IOS)
+    float m_backlightLevel { 0 };
 #endif
 };
 

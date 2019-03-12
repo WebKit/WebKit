@@ -1124,6 +1124,10 @@ typedef NSInteger UICompositingMode;
 @end
 #endif
 
+@interface UIDevice ()
+@property (nonatomic, setter=_setBacklightLevel:) float _backlightLevel;
+@end
+
 static inline bool currentUserInterfaceIdiomIsPad()
 {
     // This inline function exists to thwart unreachable code
@@ -1186,5 +1190,7 @@ extern NSString * const UIPreviewDataAttachmentListIsContentManaged;
 #endif
 
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
+
+extern NSString *const UIBacklightLevelChangedNotification;
 
 WTF_EXTERN_C_END

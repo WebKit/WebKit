@@ -74,6 +74,10 @@
 #import <wtf/FileSystem.h>
 #import <wtf/cocoa/NSURLExtras.h>
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "WKAccessibilityWebPageObjectIOS.h"
 #import <UIKit/UIAccessibility.h>
@@ -695,6 +699,26 @@ void WebProcess::displayConfigurationChanged(CGDirectDisplayID displayID, CGDisp
 void WebProcess::displayWasRefreshed(CGDirectDisplayID displayID)
 {
     DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+}
+#endif
+
+#if PLATFORM(IOS)
+static float currentBacklightLevel()
+{
+    return WebProcess::singleton().backlightLevel();
+}
+
+void WebProcess::backlightLevelDidChange(float backlightLevel)
+{
+    m_backlightLevel = backlightLevel;
+
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            Method methodToPatch = class_getInstanceMethod([UIDevice class], @selector(_backlightLevel));
+            method_setImplementation(methodToPatch, reinterpret_cast<IMP>(currentBacklightLevel));
+        });
 }
 #endif
 

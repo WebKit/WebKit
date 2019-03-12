@@ -572,6 +572,11 @@ private:
 
     void updateMaxSuspendedPageCount();
 
+#if PLATFORM(IOS)
+    static float displayBrightness();
+    static void backlightLevelDidChangeCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo);    
+#endif
+
     Ref<API::ProcessPoolConfiguration> m_configuration;
 
     IPC::MessageReceiverMap m_messageReceiverMap;

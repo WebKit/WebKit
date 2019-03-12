@@ -77,6 +77,11 @@ static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKi
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
+#if PLATFORM(IOS)
+SOFT_LINK_PRIVATE_FRAMEWORK(BackBoardServices)
+SOFT_LINK(BackBoardServices, BKSDisplayBrightnessGetCurrent, float, (), ());
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -381,6 +386,19 @@ bool WebProcessPool::networkProcessHasEntitlementForTesting(const String& entitl
     return WTF::hasEntitlement(ensureNetworkProcess().connection()->xpcConnection(), entitlement.utf8().data());
 }
 
+#if PLATFORM(IOS)
+float WebProcessPool::displayBrightness()
+{
+    return BKSDisplayBrightnessGetCurrent();
+}
+    
+void WebProcessPool::backlightLevelDidChangeCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    WebProcessPool* pool = reinterpret_cast<WebProcessPool*>(observer);
+    pool->sendToAllProcesses(Messages::WebProcess::BacklightLevelDidChange(BKSDisplayBrightnessGetCurrent()));
+}
+#endif
+
 void WebProcessPool::registerNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
@@ -427,14 +445,15 @@ void WebProcessPool::registerNotificationObservers()
     m_deactivationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidResignActiveNotification object:NSApp queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         setApplicationIsActive(false);
     }];
-
+#elif PLATFORM(IOS)
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, backlightLevelDidChangeCallback, static_cast<CFStringRef>(UIBacklightLevelChangedNotification), nullptr, CFNotificationSuspensionBehaviorCoalesce);
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
 void WebProcessPool::unregisterNotificationObservers()
 {
 #if !PLATFORM(IOS_FAMILY)
-    [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];    
+    [[NSNotificationCenter defaultCenter] removeObserver:m_enhancedAccessibilityObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticTextReplacementNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticSpellingCorrectionNotificationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_automaticQuoteSubstitutionNotificationObserver.get()];
@@ -445,6 +464,8 @@ void WebProcessPool::unregisterNotificationObservers()
 #endif
     [[NSNotificationCenter defaultCenter] removeObserver:m_activationObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
+#elif PLATFORM(IOS)
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
 #endif // !PLATFORM(IOS_FAMILY)
 }
 

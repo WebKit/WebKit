@@ -450,6 +450,10 @@
     (global-name "com.apple.coremedia.decompressionsession")
     (global-name "com.apple.coremedia.videoqueue"))
 
+;; FIXME: remove the send-signal when this rule is no longer generating crashes.
+(deny mach-lookup (with send-signal SIGKILL)
+    (global-name "com.apple.backboard.hid.services"))
+
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
 ;; FIXME: remove overridden rules once the final list has been
