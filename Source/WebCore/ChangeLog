@@ -1,3 +1,26 @@
+2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove MediaWiki site specific quirks
+        https://bugs.webkit.org/show_bug.cgi?id=195597
+
+        Reviewed by Simon Fraser.
+
+        r47383 added a site specific quirk for the KHTML workaround in MediaWiki.
+
+        Blink since removed this workaround:
+        https://github.com/chromium/chromium/commit/ecf84fc9c1a51c8ede7adfd0b0cba446d9a8caa0
+
+        Given Chrome has been shipping without this quirk for six years, it's safe to assume
+        this site specific quirk is no longer neeed for Web compatibility.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+
 2019-03-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove OpenCube QuickMenu quirks from navigator.appVersion
