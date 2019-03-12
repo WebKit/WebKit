@@ -92,6 +92,7 @@ public:
         EdgeAntialiasingMaskChanged     = 1LLU << 35,
         CustomAppearanceChanged         = 1LLU << 36,
         UserInteractionEnabledChanged   = 1LLU << 37,
+        EventRegionChanged              = 1LLU << 38,
     };
 
     struct LayerCreationProperties {
@@ -171,6 +172,7 @@ public:
         bool opaque;
         bool contentsHidden;
         bool userInteractionEnabled;
+        std::unique_ptr<WebCore::Region> eventRegion;
     };
 
     explicit RemoteLayerTreeTransaction();

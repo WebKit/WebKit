@@ -32,6 +32,7 @@
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/LengthFunctions.h>
+#import <WebCore/Region.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
@@ -154,6 +155,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
 
     if (other.filters)
         filters = std::make_unique<WebCore::FilterOperations>(*other.filters);
+
+    if (other.eventRegion)
+        eventRegion = std::make_unique<WebCore::Region>(*other.eventRegion);
+
 }
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
@@ -276,6 +281,12 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 
     if (changedProperties & UserInteractionEnabledChanged)
         encoder << userInteractionEnabled;
+
+    if (changedProperties & EventRegionChanged) {
+        encoder << !!eventRegion;
+        if (eventRegion)
+            encoder << *eventRegion;
+    }
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, LayerProperties& result)
@@ -497,6 +508,18 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     if (result.changedProperties & UserInteractionEnabledChanged) {
         if (!decoder.decode(result.userInteractionEnabled))
             return false;
+    }
+
+    if (result.changedProperties & EventRegionChanged) {
+        bool hasEventRegion = false;
+        if (!decoder.decode(hasEventRegion))
+            return false;
+        if (hasEventRegion) {
+            auto eventRegion = std::make_unique<WebCore::Region>();
+            if (!decoder.decode(*eventRegion))
+                return false;
+            result.eventRegion = WTFMove(eventRegion);
+        }
     }
 
     return true;

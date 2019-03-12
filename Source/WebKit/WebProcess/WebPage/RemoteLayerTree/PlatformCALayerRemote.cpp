@@ -38,6 +38,7 @@
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/TiledBacking.h>
+#import <wtf/PointerComparison.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -868,6 +869,21 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
 {
     m_properties.customAppearance = customAppearance;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
+}
+
+const Region* PlatformCALayerRemote::eventRegion() const
+{
+    return m_properties.eventRegion.get();
+}
+
+void PlatformCALayerRemote::setEventRegion(const WebCore::Region* eventRegion)
+{
+    const auto* oldEventRegion = m_properties.eventRegion.get();
+    if (arePointingToEqualData(oldEventRegion, eventRegion))
+        return;
+
+    m_properties.eventRegion = eventRegion ? std::make_unique<WebCore::Region>(*eventRegion) : nullptr;
+    m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EventRegionChanged);
 }
 
 GraphicsLayer::EmbeddedViewID PlatformCALayerRemote::embeddedViewID() const

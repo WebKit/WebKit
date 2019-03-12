@@ -53,10 +53,10 @@ public:
     // Returns true if the query region is a subset of this region.
     WEBCORE_EXPORT bool contains(const Region&) const;
 
-    bool contains(const IntPoint&) const;
+    WEBCORE_EXPORT bool contains(const IntPoint&) const;
 
     // Returns true if the query region intersects any part of this region.
-    bool intersects(const Region&) const;
+    WEBCORE_EXPORT bool intersects(const Region&) const;
 
     WEBCORE_EXPORT unsigned totalArea() const;
 

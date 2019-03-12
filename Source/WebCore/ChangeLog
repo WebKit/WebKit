@@ -1,3 +1,52 @@
+2019-03-12  Antti Koivisto  <antti@apple.com>
+
+        Compositing layer that renders two positioned elements should not hit test
+        https://bugs.webkit.org/show_bug.cgi?id=195371
+        <rdar://problem/48649586>
+
+        Reviewed by Simon Fraser.
+
+        Compute and pass an event region for layers if it differs from layer bounds.
+
+        This patch fixes various block overflow and layer expansion cases. It does not handle
+        overflowing line boxes yet (it adds tests for those too).
+
+        Test: fast/scrolling/ios/overflow-scroll-overlap-2.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setEventRegion):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::eventRegion):
+        * platform/graphics/Region.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setEventRegion):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateEventRegion):
+
+        Pass the region via the main platform layer of the graphics layer.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * rendering/PaintInfo.h:
+        * rendering/PaintPhase.h:
+
+        Add EventRegion paint phase that computes the region instead of painting anything.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        (WebCore::RenderLayer::paintForegroundForFragmentsWithPhase):
+
+        Invoke EventRegion paint phase.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
+        Request event region when pointing a layer.
+
 2019-03-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][v4l2] Synchronous video texture flushing support

@@ -1,3 +1,14 @@
+2019-03-12  Antti Koivisto  <antti@apple.com>
+
+        Compositing layer that renders two positioned elements should not hit test
+        https://bugs.webkit.org/show_bug.cgi?id=195371
+        <rdar://problem/48649586>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-2-expected.txt: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-2.html: Added.
+
 2019-03-12  Enrique Ocaña González  <eocanha@igalia.com>
 
         [Media][MSE] Don't emit timeUpdate after play() if currentTime hasn't changed

@@ -1240,6 +1240,17 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (paintInfo.paintRootBackgroundOnly())
         return;
 
+    if (paintPhase == PaintPhase::EventRegion) {
+        // FIXME: Handle inlines, lineboxes, SVG too.
+        // FIXME: Transforms?
+        if (style().pointerEvents() != PointerEvents::None)
+            paintInfo.eventRegion->unite(enclosingIntRect(LayoutRect(paintOffset, size())));
+
+        // No need to check descendants if we don't have overflow.
+        if (!hasVisualOverflow())
+            return;
+    }
+
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
     LayoutPoint scrolledOffset = paintOffset;
     scrolledOffset.moveBy(-scrollPosition());

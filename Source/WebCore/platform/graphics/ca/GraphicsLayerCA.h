@@ -124,6 +124,8 @@ public:
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
 
+    WEBCORE_EXPORT void setEventRegion(std::unique_ptr<Region>&&) override;
+
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
 
@@ -413,6 +415,7 @@ private:
     void updateContentsColorLayer();
     void updateContentsRects();
     void updateMasksToBoundsRect();
+    void updateEventRegion();
     void updateMaskLayer();
     void updateReplicatedLayers();
 
@@ -531,6 +534,7 @@ private:
         WindRuleChanged                         = 1LLU << 37,
         UserInteractionEnabledChanged           = 1LLU << 38,
         NeedsComputeVisibleAndCoverageRect      = 1LLU << 39,
+        EventRegionChanged                      = 1LLU << 40,
     };
     typedef uint64_t LayerChangeFlags;
     void addUncommittedChanges(LayerChangeFlags);

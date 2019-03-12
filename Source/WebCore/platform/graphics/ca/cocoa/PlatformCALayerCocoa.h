@@ -168,6 +168,9 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance) override;
 
+    const Region* eventRegion() const override { return nullptr; }
+    void setEventRegion(const Region*) override { }
+
     GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
 
     TiledBacking* tiledBacking() override;

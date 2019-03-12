@@ -53,18 +53,29 @@ public:
     UIView *uiView() const { return m_uiView.get(); }
 #endif
 
+    WebCore::GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
+
+    const WebCore::Region* eventRegion() const { return m_eventRegion.get(); }
+    void setEventRegion(std::unique_ptr<WebCore::Region>&&);
+
     void detachFromParent();
 
     static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
+    static RemoteLayerTreeNode* forCALayer(CALayer *);
+
     static NSString *appendLayerDescription(NSString *description, CALayer *);
 
 private:
-    void setLayerID(WebCore::GraphicsLayer::PlatformLayerID);
+    void initializeLayer();
+
+    WebCore::GraphicsLayer::PlatformLayerID m_layerID;
 
     RetainPtr<CALayer> m_layer;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;
 #endif
+
+    std::unique_ptr<WebCore::Region> m_eventRegion;
 };
 
 }

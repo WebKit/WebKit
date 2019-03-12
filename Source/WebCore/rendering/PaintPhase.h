@@ -49,7 +49,8 @@ enum class PaintPhase : uint8_t {
     CollapsedTableBorders,
     TextClip,
     Mask,
-    ClippingMask
+    ClippingMask,
+    EventRegion,
 };
 
 enum class PaintBehavior : uint16_t {

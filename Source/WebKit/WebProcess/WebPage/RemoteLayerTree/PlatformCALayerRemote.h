@@ -174,6 +174,9 @@ public:
     WebCore::GraphicsLayer::CustomAppearance customAppearance() const override;
     void updateCustomAppearance(WebCore::GraphicsLayer::CustomAppearance) override;
 
+    const WebCore::Region* eventRegion() const override;
+    void setEventRegion(const WebCore::Region*) override;
+
     WebCore::GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
 
     WebCore::TiledBacking* tiledBacking() override { return nullptr; }

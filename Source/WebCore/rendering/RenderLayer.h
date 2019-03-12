@@ -66,6 +66,7 @@ class ClipRectsCache;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
+class Region;
 class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayerBacking;
@@ -905,6 +906,7 @@ private:
         OptionSet<PaintBehavior> paintBehavior;
         bool requireSecurityOriginAccessForWidgets;
         bool clipToDirtyRect { true };
+        Region* eventRegion { nullptr };
     };
 
     // Compute, cache and return clip rects computed with the given layer as the root.

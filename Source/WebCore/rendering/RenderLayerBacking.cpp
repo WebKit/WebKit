@@ -51,6 +51,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
+#include "Region.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
@@ -2573,9 +2574,21 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     if (m_owningLayer.isRenderViewLayer())
         renderer().view().frameView().willPaintContents(context, paintDirtyRect, paintingState);
 
-    // FIXME: GraphicsLayers need a way to split for RenderFragmentContainers.
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
+
+    auto eventRegion = std::make_unique<Region>();
+    paintingInfo.eventRegion = eventRegion.get();
+
     m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags);
+
+    paintingInfo.eventRegion = nullptr;
+    // Use null event region to indicate the entire layer is sensitive to events (the common case).
+    // FIXME: We could optimize Region so it doesn't use lots of memory if it contains a single rect only.
+    if (eventRegion->contains(roundedIntRect(compositedBounds())))
+        eventRegion = nullptr;
+    else
+        eventRegion->translate(roundedIntSize(contentOffsetInCompositingLayer()));
+    m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
 
     if (m_owningLayer.containsDirtyOverlayScrollbars())
         m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);

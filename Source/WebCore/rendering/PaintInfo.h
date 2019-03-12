@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class OverlapTestRequestClient;
+class Region;
 class RenderInline;
 class RenderLayer;
 class RenderLayerModelObject;
@@ -129,6 +130,7 @@ struct PaintInfo {
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     bool requireSecurityOriginAccessForWidgets { false };
     const RenderLayer* m_enclosingSelfPaintingLayer { nullptr };
+    Region* eventRegion { nullptr }; // For PaintPhase::EventRegion.
 
 private:
     GraphicsContext* m_context;

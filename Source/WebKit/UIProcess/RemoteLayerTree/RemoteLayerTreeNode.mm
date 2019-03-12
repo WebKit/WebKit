@@ -45,23 +45,30 @@
 
 namespace WebKit {
 
+static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
+
 RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<CALayer> layer)
-    : m_layer(WTFMove(layer))
+    : m_layerID(layerID)
+    , m_layer(WTFMove(layer))
 {
-    setLayerID(layerID);
+    initializeLayer();
     [m_layer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 }
 
 #if PLATFORM(IOS_FAMILY)
 RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<UIView> uiView)
-    : m_layer([uiView.get() layer])
+    : m_layerID(layerID)
+    , m_layer([uiView.get() layer])
     , m_uiView(WTFMove(uiView))
 {
-    setLayerID(layerID);
+    initializeLayer();
 }
 #endif
 
-RemoteLayerTreeNode::~RemoteLayerTreeNode() = default;
+RemoteLayerTreeNode::~RemoteLayerTreeNode()
+{
+    [layer() setValue:nil forKey:WKRemoteLayerTreeNodePropertyKey];
+}
 
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
@@ -80,16 +87,25 @@ void RemoteLayerTreeNode::detachFromParent()
     [layer() removeFromSuperlayer];
 }
 
-static NSString *const WKLayerIDPropertyKey = @"WKLayerID";
-
-void RemoteLayerTreeNode::setLayerID(WebCore::GraphicsLayer::PlatformLayerID layerID)
+void RemoteLayerTreeNode::setEventRegion(std::unique_ptr<WebCore::Region>&& eventRegion)
 {
-    [layer() setValue:@(layerID) forKey:WKLayerIDPropertyKey];
+    m_eventRegion = WTFMove(eventRegion);
+}
+
+void RemoteLayerTreeNode::initializeLayer()
+{
+    [layer() setValue:[NSValue valueWithPointer:this] forKey:WKRemoteLayerTreeNodePropertyKey];
 }
 
 WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer *layer)
 {
-    return [[layer valueForKey:WKLayerIDPropertyKey] unsignedLongLongValue];
+    auto* node = forCALayer(layer);
+    return node ? node->layerID() : 0;
+}
+
+RemoteLayerTreeNode* RemoteLayerTreeNode::forCALayer(CALayer *layer)
+{
+    return static_cast<RemoteLayerTreeNode*>([[layer valueForKey:WKRemoteLayerTreeNodePropertyKey] pointerValue]);
 }
 
 NSString *RemoteLayerTreeNode::appendLayerDescription(NSString *description, CALayer *layer)

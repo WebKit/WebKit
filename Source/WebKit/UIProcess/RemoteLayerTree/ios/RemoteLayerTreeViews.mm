@@ -29,10 +29,14 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "RemoteLayerTreeHost.h"
+#import "RemoteLayerTreeNode.h"
 #import "UIKitSPI.h"
 #import "WKDrawingView.h"
+#import <WebCore/Region.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
+
+namespace WebKit {
 
 static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UIView *parent, CGPoint point, UIEvent *event)
 {
@@ -53,14 +57,20 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
             return true;
         }();
 
-        if (!isTransparent && [view pointInside:subviewPoint withEvent:event])
-            viewsAtPoint.append(view);
+        if (!isTransparent && [view pointInside:subviewPoint withEvent:event]) {
+            auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
+            auto* eventRegion = node ? node->eventRegion() : nullptr;
+            if (!eventRegion || eventRegion->contains(WebCore::IntPoint(subviewPoint)))
+                viewsAtPoint.append(view);
+        }
 
         if (![view subviews])
             return;
 
         collectDescendantViewsAtPoint(viewsAtPoint, view, subviewPoint, event);
     };
+}
+
 }
 
 @interface UIView (WKHitTesting)
@@ -72,7 +82,7 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
 - (UIView *)_web_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event
 {
     Vector<UIView *, 16> viewsAtPoint;
-    collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
+    WebKit::collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
 
     for (auto i = viewsAtPoint.size(); i--;) {
         auto *view = viewsAtPoint[i];
