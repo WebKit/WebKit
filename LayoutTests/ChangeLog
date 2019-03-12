@@ -1,3 +1,16 @@
+2019-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Add testing API to hit-test and scroll overflow scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=195278
+
+        Reviewed by Antti Koivisto.
+        
+        The test loads a scaled page with accelerated overflow:scroll, and hit-tests
+        near the top-left and bottom-right corners to test the point conversion logic.
+
+        * scrollingcoordinator/ios/scroll-element-at-point-expected.txt: Added.
+        * scrollingcoordinator/ios/scroll-element-at-point.html: Added.
+
 2019-03-11  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

@@ -52,7 +52,7 @@ interface UIScriptController {
 
     // Interaction.
     // These functions post events asynchronously. The callback is fired when the events have been dispatched, but any
-    // resulting behavior may also be asynchronous.
+    // resulting behavior may also be asynchronous. Points are in "global" (WKWebView) coordinates.
     void touchDownAtPoint(long x, long y, long touchCount, object callback);
     void liftUpAtPoint(long x, long y, long touchCount, object callback);
     void singleTapAtPoint(long x, long y, object callback);
@@ -249,6 +249,9 @@ interface UIScriptController {
 
     void immediateScrollToOffset(long x, long y); // Set the scroll position in the UI process without animation.
     void immediateZoomToScale(double scale); // Set the zoom scale in the UI process without animation.
+
+    // Find the scroller for the given point in content ("absolute") coordinates, and do an immediate scroll.
+    void immediateScrollElementAtContentPointToOffset(long x, long y, long xOffset, long yOffset);
 
     // View state
     readonly attribute double zoomScale;

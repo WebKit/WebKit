@@ -558,6 +558,24 @@ void UIScriptController::immediateScrollToOffset(long x, long y)
     [webView.scrollView setContentOffset:contentOffsetBoundedInValidRange(webView.scrollView, CGPointMake(x, y)) animated:NO];
 }
 
+static UIScrollView *enclosingScrollViewIncludingSelf(UIView *view)
+{
+    do {
+        if ([view isKindOfClass:[UIScrollView self]])
+            return static_cast<UIScrollView *>(view);
+    } while ((view = [view superview]));
+
+    return nil;
+}
+
+void UIScriptController::immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset)
+{
+    UIView *contentView = platformContentView();
+    UIView *hitView = [contentView hitTest:CGPointMake(x, y) withEvent:nil];
+    UIScrollView *enclosingScrollView = enclosingScrollViewIncludingSelf(hitView);
+    [enclosingScrollView setContentOffset:CGPointMake(xScrollOffset, yScrollOffset)];
+}
+
 void UIScriptController::immediateZoomToScale(double scale)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

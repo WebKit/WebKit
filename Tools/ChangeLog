@@ -1,3 +1,25 @@
+2019-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Add testing API to hit-test and scroll overflow scrollers
+        https://bugs.webkit.org/show_bug.cgi?id=195278
+
+        Reviewed by Antti Koivisto.
+        
+        Add UIScriptController::immediateScrollElementAtContentPointToOffset() to enable
+        testing of the view hit-testing code path, and immediate scrolling of overflow:scroll.
+        
+        Tests: scrollingcoordinator/ios/scroll-element-at-point.html
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::immediateScrollElementAtContentPointToOffset):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::immediateScrollElementAtContentPointToOffset):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::enclosingScrollViewIncludingSelf):
+        (WTR::UIScriptController::immediateScrollElementAtContentPointToOffset):
+
 2019-03-11  Tim Horton  <timothy_horton@apple.com>
 
         API test WebKit.RequestTextInputContext fails on iOS

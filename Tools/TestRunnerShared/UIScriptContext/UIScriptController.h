@@ -128,6 +128,7 @@ public:
     void scrollToOffset(long x, long y);
 
     void immediateScrollToOffset(long x, long y);
+    void immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset);
     void immediateZoomToScale(double scale);
 
     void beginBackSwipe(JSValueRef callback);

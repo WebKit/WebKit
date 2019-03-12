@@ -393,6 +393,10 @@ void UIScriptController::immediateScrollToOffset(long x, long y)
 {
 }
 
+void UIScriptController::immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset)
+{
+}
+
 void UIScriptController::immediateZoomToScale(double scale)
 {
 }

@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <!--Trigger some scaling -->
+    <meta name="viewport" content="width=500"> 
+    
+    <style>
+        body {
+            height: 2000px;
+            margin: 0;
+        }
+        
+        #scroller {
+            margin: 10px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            box-sizing: border-box;
+            overflow: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+        .content {
+            height: 1000px;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        async function tryScrollAt(x, y, xScrollOffset, yScrollOffset)
+        {
+            await new Promise(resolve => {
+                testRunner.runUIScript(`
+                    uiController.immediateScrollElementAtContentPointToOffset(${x}, ${y}, ${xScrollOffset}, ${yScrollOffset}, true);`, resolve);
+            });
+        }
+
+        let scrollTopAfterOutsideTopLeft;
+        let scrollTopAfterInsideTopLeft;
+        let scrollTopAfterOutsideBottomRight;
+        let scrollTopAfterInsideBottomRight;
+
+        async function doTest()
+        {
+            if (!testRunner.runUIScript)
+                return
+
+            // Test near the corners to exercise the point conversion logic.
+            // Don't call shouldBe() until the end because it inserts content, offsetting the scroller.
+            await tryScrollAt(9, 9, 0, 100);
+            scrollTopAfterOutsideTopLeft = scroller.scrollTop;
+
+            await tryScrollAt(12, 12, 0, 200);
+            scrollTopAfterInsideTopLeft = scroller.scrollTop;
+
+            await tryScrollAt(311, 311, 0, 300);
+            scrollTopAfterOutsideBottomRight = scroller.scrollTop;
+
+            await tryScrollAt(308, 308, 0, 400);
+            scrollTopAfterInsideBottomRight = scroller.scrollTop;
+
+            shouldBe('scrollTopAfterOutsideTopLeft', '0');
+            shouldBe('scrollTopAfterInsideTopLeft', '200');
+            shouldBe('scrollTopAfterOutsideBottomRight', '200');
+            shouldBe('scrollTopAfterInsideBottomRight', '400');
+
+            finishJSTest(); 
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="content">
+        </div>
+    </div>
+    <script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

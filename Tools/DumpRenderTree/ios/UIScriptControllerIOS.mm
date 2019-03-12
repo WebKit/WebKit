@@ -248,6 +248,10 @@ void UIScriptController::immediateScrollToOffset(long x, long y)
     [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:NO];
 }
 
+void UIScriptController::immediateScrollElementAtContentPointToOffset(long x, long y, long xScrollOffset, long yScrollOffset)
+{
+}
+
 void UIScriptController::immediateZoomToScale(double scale)
 {
     [gWebScrollView setZoomScale:scale animated:NO];
