@@ -34,6 +34,7 @@
 #import <PencilKit/PencilKit.h>
 
 #import <PencilKit/PKDrawing_Private.h>
+#import <PencilKit/PKInk_Private.h>
 #import <PencilKit/PKStroke_Private.h>
 
 #else
