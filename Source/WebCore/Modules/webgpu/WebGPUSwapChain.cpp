@@ -28,38 +28,41 @@
 
 #if ENABLE(WEBGPU)
 
+#include "Logging.h"
+#include "WebGPUSwapChainDescriptor.h"
+
 namespace WebCore {
 
-WebGPUSwapChain::~WebGPUSwapChain() = default;
-
-void WebGPUSwapChain::configure(Descriptor&& descriptor)
+Ref<WebGPUSwapChain> WebGPUSwapChain::create(RefPtr<GPUSwapChain>&& swapChain)
 {
-    if (descriptor.device)
-        m_swapChain->setDevice(descriptor.device->device());
-
-    m_swapChain->setFormat(descriptor.format);
-
-    reshape(descriptor.width, descriptor.height);
+    return adoptRef(*new WebGPUSwapChain(WTFMove(swapChain)));
 }
 
-RefPtr<WebGPUTexture> WebGPUSwapChain::getNextTexture()
+WebGPUSwapChain::WebGPUSwapChain(RefPtr<GPUSwapChain>&& swapChain)
+    : m_swapChain(WTFMove(swapChain))
 {
-    return WebGPUTexture::create(m_swapChain->getNextTexture());
 }
 
-void WebGPUSwapChain::present()
+Ref<WebGPUTexture> WebGPUSwapChain::getCurrentTexture()
 {
-    markLayerComposited();
+    if (!m_swapChain) {
+        LOG(WebGPU, "GPUSwapChain::getCurrentTexture(): Invalid operation!");
+        return WebGPUTexture::create(nullptr);
+    }
+    m_currentTexture = WebGPUTexture::create(m_swapChain->tryGetCurrentTexture());
+    return m_currentTexture.releaseNonNull();
 }
 
-void WebGPUSwapChain::reshape(int width, int height)
+void WebGPUSwapChain::destroy()
 {
-    m_swapChain->reshape(width, height);
-}
+    if (!m_swapChain)
+        return;
 
-void WebGPUSwapChain::markLayerComposited()
-{
-    m_swapChain->present();
+    m_swapChain->destroy();
+    m_swapChain = nullptr;
+
+    if (m_currentTexture && m_currentTexture->texture())
+        m_currentTexture->destroy();
 }
 
 } // namespace WebCore

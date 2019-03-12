@@ -1,3 +1,16 @@
+2019-03-11  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=194406
+        <rdar://problem/47892466>
+
+        Reviewed by Myles C. Maxfield.
+
+        Added WebGPU to inspector context types.
+
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
 2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Reduce # of structures in JSGlobalObject initialization

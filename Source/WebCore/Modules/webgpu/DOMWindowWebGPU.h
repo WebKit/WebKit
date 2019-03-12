@@ -41,13 +41,13 @@ public:
     explicit DOMWindowWebGPU(DOMWindow*);
     virtual ~DOMWindowWebGPU() = default;
     static DOMWindowWebGPU* from(DOMWindow*);
-    static WebGPU* webgpu(DOMWindow&);
-    WebGPU* webgpu() const;
+    static WebGPU* gpu(DOMWindow&);
+    WebGPU* gpu() const;
 
 private:
     static const char* supplementName();
 
-    mutable RefPtr<WebGPU> m_webgpu;
+    mutable RefPtr<WebGPU> m_gpu;
 };
 
 } // namespace WebCore

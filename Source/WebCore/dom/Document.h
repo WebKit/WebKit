@@ -195,7 +195,7 @@ class VisitedLinkState;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
-class WebGPURenderingContext;
+class GPUCanvasContext;
 class WebMetalRenderingContext;
 class WindowProxy;
 class Worklet;
@@ -321,7 +321,7 @@ using RenderingContext = Variant<
     RefPtr<WebGL2RenderingContext>,
 #endif
 #if ENABLE(WEBGPU)
-    RefPtr<WebGPURenderingContext>,
+    RefPtr<GPUCanvasContext>,
 #endif
 #if ENABLE(WEBMETAL)
     RefPtr<WebMetalRenderingContext>,

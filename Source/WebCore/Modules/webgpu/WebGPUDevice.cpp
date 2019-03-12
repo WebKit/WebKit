@@ -57,6 +57,7 @@
 #include "WebGPUSampler.h"
 #include "WebGPUShaderModule.h"
 #include "WebGPUShaderModuleDescriptor.h"
+#include "WebGPUSwapChain.h"
 #include "WebGPUTexture.h"
 
 namespace WebCore {
@@ -159,7 +160,21 @@ RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const
     return nullptr;
 }
 
-RefPtr<WebGPUQueue> WebGPUDevice::getQueue()
+Ref<WebGPUSwapChain> WebGPUDevice::createSwapChain(const WebGPUSwapChainDescriptor& descriptor) const
+{
+    if (!descriptor.context) {
+        LOG(WebGPU, "GPUSwapChain::create(): Invalid GPUCanvasContext!");
+        return WebGPUSwapChain::create(nullptr);
+    }
+
+    auto gpuSwapChain = m_device->tryCreateSwapChain(descriptor, descriptor.context->canvasBase().width(), descriptor.context->canvasBase().height());
+    auto newSwapChain = WebGPUSwapChain::create(gpuSwapChain.copyRef());
+    if (gpuSwapChain)
+        descriptor.context->replaceSwapChain(newSwapChain.copyRef());
+    return newSwapChain;
+}
+
+RefPtr<WebGPUQueue> WebGPUDevice::getQueue() const
 {
     if (!m_queue)
         m_queue = WebGPUQueue::create(m_device->getQueue());

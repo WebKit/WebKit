@@ -113,6 +113,14 @@ static bool populateMtlDepthStencilAttachment(MTLRenderPassDepthAttachmentDescri
     return true;
 }
 
+static void useAttachments(GPUCommandBuffer& buffer, GPURenderPassDescriptor&& descriptor)
+{
+    for (auto& colorAttachment : descriptor.colorAttachments)
+        buffer.useTexture(WTFMove(colorAttachment.attachment));
+    if (descriptor.depthStencilAttachment)
+        buffer.useTexture(WTFMove((*descriptor.depthStencilAttachment).attachment));
+}
+
 RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::tryCreate(Ref<GPUCommandBuffer>&& buffer, GPURenderPassDescriptor&& descriptor)
 {
     const char* const functionName = "GPURenderPassEncoder::tryCreate()";
@@ -157,6 +165,9 @@ RefPtr<GPURenderPassEncoder> GPURenderPassEncoder::tryCreate(Ref<GPUCommandBuffe
         LOG(WebGPU, "%s: Unable to create MTLRenderCommandEncoder!", functionName);
         return nullptr;
     }
+
+    // All is well; ensure GPUCommandBuffer is aware of new attachments.
+    useAttachments(buffer, WTFMove(descriptor));
     
     return adoptRef(new GPURenderPassEncoder(WTFMove(buffer), WTFMove(mtlEncoder)));
 }

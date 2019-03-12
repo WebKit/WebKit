@@ -9,12 +9,12 @@
 'use strict';
 
 promise_test(async t => {
-    assert_not_equals(window.webgpu, undefined, "window.webgpu exists");
+    assert_not_equals(window.gpu, undefined, "window.gpu exists");
 
-    const swapChain = document.createElement("canvas").getContext("webgpu");
-    assert_true(swapChain instanceof WebGPUSwapChain, "getContext returned a WebGPUSwapChain.");
+    const context = document.createElement("canvas").getContext("gpu");
+    assert_true(context instanceof GPUCanvasContext, "getContext returned a GPUCanvasContext.");
 
-    const adapter = await window.webgpu.requestAdapter({});
+    const adapter = await window.gpu.requestAdapter({});
     assert_true(adapter instanceof WebGPUAdapter, "requestAdapter returned a WebGPUAdapter.");
 
     const device = adapter.createDevice();

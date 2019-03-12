@@ -82,7 +82,9 @@ namespace WebCore {
     macro(GamepadButton) \
     macro(GamepadEvent) \
     macro(GPUBufferUsage) \
+    macro(GPUCanvasContext) \
     macro(GPUShaderStageBit) \
+    macro(GPUSwapChain) \
     macro(GPUTextureUsage) \
     macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
@@ -205,12 +207,10 @@ namespace WebCore {
     macro(WebGPUQueue) \
     macro(WebGPUPipelineLayout) \
     macro(WebGPUProgrammablePassEncoder) \
-    macro(WebGPURenderingContext) \
     macro(WebGPURenderPassEncoder) \
     macro(WebGPURenderPipeline) \
     macro(WebGPUSampler) \
     macro(WebGPUShaderModule) \
-    macro(WebGPUSwapChain) \
     macro(WebGPUTexture) \
     macro(WebGPUTextureView) \
     macro(WebGPUVertexFormat) \
@@ -280,6 +280,7 @@ namespace WebCore {
     macro(frames) \
     macro(getTracks) \
     macro(getUserMedia) \
+    macro(gpu) \
     macro(header) \
     macro(href) \
     macro(indexedDB) \
@@ -363,7 +364,6 @@ namespace WebCore {
     macro(webkitIDBRequest) \
     macro(webkitIDBTransaction) \
     macro(webkitIndexedDB) \
-    macro(webgpu) \
     macro(window) \
     macro(writing) \
     WEBCORE_ADDITIONAL_PRIVATE_IDENTIFIERS(macro) \

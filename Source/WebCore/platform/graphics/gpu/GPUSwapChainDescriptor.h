@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,10 +22,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] interface WebGPURenderingContext : WebGPUSwapChain {
+#pragma once
+
+#if ENABLE(WEBGPU)
+
+#include "GPUTextureFormat.h"
+#include "GPUTextureUsage.h"
+
+namespace WebCore {
+
+struct GPUSwapChainDescriptor {
+    GPUTextureFormat format;
+    GPUTextureUsageFlags usage { static_cast<GPUTextureUsageFlags>(GPUTextureUsage::Flags::OutputAttachment) };
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

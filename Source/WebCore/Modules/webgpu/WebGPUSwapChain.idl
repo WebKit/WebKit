@@ -27,23 +27,8 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
+    InterfaceName=GPUSwapChain,
     SkipVTableValidation
 ] interface WebGPUSwapChain {
-    void configure(WebGPUSwapChainDescriptor descriptor);
-    WebGPUTexture getNextTexture();
-    void present();
+    WebGPUTexture getCurrentTexture();
 };
-
-typedef unsigned long u32;
-
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary WebGPUSwapChainDescriptor {
-    WebGPUDevice? device;
-    // WebGPUTextureUsageFlags usage;
-    GPUTextureFormat format;
-    u32 width;
-    u32 height;
-};
-

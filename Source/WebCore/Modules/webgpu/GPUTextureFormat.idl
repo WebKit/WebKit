@@ -30,5 +30,7 @@
     "r8g8b8a8-unorm",
     "r8g8b8a8-uint",
     "b8g8r8a8-unorm",
-    "d32-float-s8-uint"
+    "d32-float-s8-uint",
+    "bgra8unorm-srgb",
+    "rgba16float"
 };

@@ -27,10 +27,12 @@
 
 #if ENABLE(WEBGPU)
 
+#include "DeferrableTask.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_PROTOCOL(MTLCommandQueue);
 
@@ -44,7 +46,7 @@ class GPUDevice;
 
 class GPUQueue : public RefCounted<GPUQueue> {
 public:
-    static RefPtr<GPUQueue> create(const GPUDevice&);
+    static RefPtr<GPUQueue> tryCreate(const GPUDevice&);
 
     PlatformQueue* platformQueue() const { return m_platformQueue.get(); }
 
@@ -54,9 +56,11 @@ public:
     void setLabel(const String&) const;
 
 private:
-    GPUQueue(PlatformQueueSmartPtr&&);
+    GPUQueue(PlatformQueueSmartPtr&&, const GPUDevice&);
 
     PlatformQueueSmartPtr m_platformQueue;
+    WeakPtr<const GPUDevice> m_device;
+    DeferrableTask<Timer> m_presentTask;
 };
 
 } // namespace WebCore

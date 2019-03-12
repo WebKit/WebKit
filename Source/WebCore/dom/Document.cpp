@@ -316,7 +316,7 @@
 #include "WebGL2RenderingContext.h"
 #endif
 #if ENABLE(WEBGPU)
-#include "WebGPURenderingContext.h"
+#include "GPUCanvasContext.h"
 #endif
 #if ENABLE(WEBMETAL)
 #include "WebMetalRenderingContext.h"
@@ -6074,8 +6074,8 @@ Optional<RenderingContext> Document::getCSSCanvasContext(const String& type, con
         return RenderingContext { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
 #endif
 #if ENABLE(WEBGPU)
-    if (is<WebGPURenderingContext>(*context))
-        return RenderingContext { RefPtr<WebGPURenderingContext> { &downcast<WebGPURenderingContext>(*context) } };
+    if (is<GPUCanvasContext>(*context))
+        return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
 #endif
 #if ENABLE(WEBMETAL)
     if (is<WebMetalRenderingContext>(*context))

@@ -306,6 +306,7 @@ Modules/websockets/WebSocketHandshake.cpp
 Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 
 Modules/webgpu/DOMWindowWebGPU.cpp
+Modules/webgpu/GPUCanvasContext.cpp
 Modules/webgpu/WHLSL/WHLSLInferTypes.cpp
 Modules/webgpu/WHLSL/WHLSLLexer.cpp
 Modules/webgpu/WHLSL/WHLSLParser.cpp
@@ -359,7 +360,6 @@ Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
 Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
-Modules/webgpu/WebGPURenderingContext.cpp
 Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
@@ -2776,6 +2776,7 @@ JSFillMode.cpp
 JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
+JSGPUCanvasContext.cpp
 JSGPUColor.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
@@ -3341,7 +3342,6 @@ JSWebGPUPipelineLayout.cpp
 JSWebGPUPipelineLayoutDescriptor.cpp
 JSWebGPUPipelineStageDescriptor.cpp
 JSWebGPUProgrammablePassEncoder.cpp
-JSWebGPURenderingContext.cpp
 JSWebGPURenderPassDescriptor.cpp
 JSWebGPURenderPassEncoder.cpp
 JSWebGPURenderPipeline.cpp

@@ -88,7 +88,7 @@ function drawAndSubmitCommands(device, pipeline, attachment, vertexBuffer, color
 async function test() {
     const device = await getBasicDevice();
     const canvas = document.querySelector("canvas");
-    const context = createBasicContext(canvas, device);
+    const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const inputStateDescriptor = createInputStateDescriptor();
@@ -107,7 +107,7 @@ async function test() {
     colorBuffer.setSubData(0, greenArray.buffer);
 
     const attachment = {
-        attachment: context.getNextTexture().createDefaultTextureView(),
+        attachment: swapChain.getCurrentTexture().createDefaultTextureView(),
         loadOp: "load",
         storeOp: "store",
         clearColor: { r: 1, g: 0, b: 0, a: 1 }
@@ -148,8 +148,6 @@ async function test() {
     upperLeftBuffer.destroy();
     middleBuffer.destroy();
     upperRightBuffer.destroy();
-    
-    context.present();
 
     if (window.testRunner)
         testRunner.notifyDone();

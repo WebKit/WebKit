@@ -55,18 +55,18 @@ DOMWindowWebGPU* DOMWindowWebGPU::from(DOMWindow* window)
     return supplement;
 }
 
-WebGPU* DOMWindowWebGPU::webgpu(DOMWindow& window)
+WebGPU* DOMWindowWebGPU::gpu(DOMWindow& window)
 {
-    return DOMWindowWebGPU::from(&window)->webgpu();
+    return DOMWindowWebGPU::from(&window)->gpu();
 }
 
-WebGPU* DOMWindowWebGPU::webgpu() const
+WebGPU* DOMWindowWebGPU::gpu() const
 {
     ASSERT(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled());
 
-    if (!m_webgpu && frame())
-        m_webgpu = WebGPU::create();
-    return m_webgpu.get();
+    if (!m_gpu && frame())
+        m_gpu = WebGPU::create();
+    return m_gpu.get();
 }
 
 } // namespace WebCore

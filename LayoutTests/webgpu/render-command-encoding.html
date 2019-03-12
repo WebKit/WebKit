@@ -4,50 +4,45 @@
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
-<script src="../resources/js-test-pre.js"></script>
-<script src="js/basic-webgpu-functions.js"></script>
+<script src="js/webgpu-functions.js"></script>
 <script>
-'use strict';
+const shaders = `
+#include <metal_stdlib>
+    
+using namespace metal;
 
-let commandBuffer, renderPassEncoder;
+struct Vertex
+{
+    float4 position [[position]];
+};
 
-function beginPass() {
-    const colorAttachmentDescriptor = {
-        attachment: context.getNextTexture().createDefaultTextureView(),
-        loadOp: "clear",
-        storeOp: "store",
-        clearColor: { r: 0.35, g: 0.65, b: 0.85, a: 1.0 }
-    }
-
-    let renderPassDescriptor = {
-        colorAttachments : [colorAttachmentDescriptor]
-    }
-
-    renderPassEncoder = commandBuffer.beginRenderPass(renderPassDescriptor);
-    assert_true(renderPassEncoder instanceof WebGPURenderPassEncoder, "beginRenderPass returned a WebGPURenderPassEncoder");
+vertex Vertex vertex_main()
+{
+    return Vertex { float4(0, 0, 0, 1) };
 }
 
-function setUpCommandBuffer() {
-    commandBuffer = defaultDevice.createCommandBuffer();
-    assert_true(commandBuffer instanceof WebGPUCommandBuffer, "createCommandBuffer returned a WebGPUCommandBuffer");
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return vertexIn.position;
 }
-
-function endRenderPass() {
-    renderPassEncoder.setPipeline(renderPipeline);
-
-    const commandBufferEnd = renderPassEncoder.endPass();
-    assert_true(commandBufferEnd instanceof WebGPUCommandBuffer, "endPass() returned a WebGPUCommandBuffer");
-
-    // FIXME: Should commandBufferEnd === commandBuffer?
-}
-
+`
 promise_test(async () => {
+    const device = await getBasicDevice();
+
     const canvas = document.createElement("canvas");
-    await setUpContexts(canvas);
-    setUpPipeline();
-    setUpCommandBuffer();
-    beginPass();
-    endRenderPass();
+    const swapChain = createBasicSwapChain(canvas, device);
+    const shaderModule = device.createShaderModule({ code: shaders });
+    const pipeline = createBasicPipeline(shaderModule, device);
+
+    const commandBuffer = device.createCommandBuffer();
+    assert_true(commandBuffer instanceof WebGPUCommandBuffer, "createCommandBuffer returned a WebGPUCommandBuffer");
+
+    const encoder = beginBasicRenderPass(swapChain, commandBuffer);
+    assert_true(encoder instanceof WebGPURenderPassEncoder, "beginRenderPass() returned a WebGPURenderPassEncoder");
+
+    encoder.setPipeline(pipeline);
+    const commandBufferEnd = encoder.endPass();
+    assert_true(commandBufferEnd instanceof WebGPUCommandBuffer, "endPass() returned a WebGPUCommandBuffer");
 }, "WebGPURenderPassEncoder created and successfully ended");
 
 </script>

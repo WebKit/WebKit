@@ -30,8 +30,8 @@
 
 #import "GPUCommandBuffer.h"
 #import "GPUDevice.h"
+#import "GPUSwapChain.h"
 #import "Logging.h"
-
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/WTFString.h>
@@ -41,14 +41,14 @@ namespace WebCore {
 static NSString * const commandQueueDefaultLabel = @"com.apple.WebKit";
 static NSString * const commandQueueLabelPrefix = @"com.apple.WebKit.";
 
-RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
+RefPtr<GPUQueue> GPUQueue::tryCreate(const GPUDevice& device)
 {
     if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUQueue::create(): Invalid GPUDevice!");
+        LOG(WebGPU, "GPUQueue::tryCreate(): Invalid GPUDevice!");
         return nullptr;
     }
 
-    PlatformQueueSmartPtr queue;
+    RetainPtr<MTLCommandQueue> queue;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -58,44 +58,58 @@ RefPtr<GPUQueue> GPUQueue::create(const GPUDevice& device)
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!queue) {
-        LOG(WebGPU, "GPUQueue::create(): Unable to create MTLCommandQueue!");
+        LOG(WebGPU, "GPUQueue::tryCreate(): Unable to create MTLCommandQueue!");
         return nullptr;
     }
 
-    return adoptRef(new GPUQueue(WTFMove(queue)));
+    return adoptRef(new GPUQueue(WTFMove(queue), device));
 }
 
-GPUQueue::GPUQueue(PlatformQueueSmartPtr&& queue)
+GPUQueue::GPUQueue(RetainPtr<MTLCommandQueue>&& queue, const GPUDevice& device)
     : m_platformQueue(WTFMove(queue))
+    , m_device(makeWeakPtr(device))
 {
 }
 
 void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-
     for (auto& commandBuffer : commandBuffers) {
-        commandBuffer->endBlitEncoding();
-        // Prevent any buffer mapping callbacks from executing until command buffer is complete.
+        // Validate resource integrity.
         for (auto& buffer : commandBuffer->usedBuffers()) {
             if (buffer->state() != GPUBuffer::State::Unmapped) {
                 LOG(WebGPU, "GPUQueue::submit(): Invalid GPUBuffer set on a GPUCommandBuffer!");
                 return;
             }
-            buffer->commandBufferCommitted(commandBuffer->platformCommandBuffer());
         }
-        // Also ensure textures are still valid.
         for (auto& texture : commandBuffer->usedTextures()) {
             if (!texture->platformTexture()) {
                 LOG(WebGPU, "GPUQueue::submit(): Invalid GPUTexture set on a GPUCommandBuffer!");
                 return;
             }
         }
-
+        commandBuffer->endBlitEncoding();
+        // Okay to commit; prevent any buffer mapping callbacks from executing until command buffer is complete.
+        for (auto& buffer : commandBuffer->usedBuffers())
+            buffer->commandBufferCommitted(commandBuffer->platformCommandBuffer());
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [commandBuffer->platformCommandBuffer() commit];
+        END_BLOCK_OBJC_EXCEPTIONS;
     }
 
-    END_BLOCK_OBJC_EXCEPTIONS;
+    if (m_presentTask.hasPendingTask() || !m_device->swapChain())
+        return;
+
+    // If a GPUSwapChain exists, ensure that a present is scheduled after all command buffers.
+    m_presentTask.scheduleTask([this, protectedThis = makeRef(*this), swapChain = makeRef(*m_device->swapChain())] () {
+        auto currentDrawable = swapChain->takeDrawable();
+        // If the GPUSwapChain has no drawable, it was invalidated between command submission and this task.
+        if (!currentDrawable)
+            return;
+
+        auto presentCommandBuffer = [m_platformQueue commandBuffer];
+        [presentCommandBuffer presentDrawable:static_cast<id<MTLDrawable>>(currentDrawable.get())];
+        [presentCommandBuffer commit];
+    });
 }
 
 String GPUQueue::label() const

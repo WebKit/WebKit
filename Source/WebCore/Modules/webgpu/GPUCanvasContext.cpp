@@ -24,27 +24,51 @@
  */
 
 #include "config.h"
-#include "WebGPURenderingContext.h"
+#include "GPUCanvasContext.h"
 
 #if ENABLE(WEBGPU)
 
 namespace WebCore {
 
-std::unique_ptr<WebGPURenderingContext> WebGPURenderingContext::create(CanvasBase& canvas)
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
 {
-    auto swapChain = GPUSwapChain::create();
-
-    if (!swapChain)
-        return nullptr;
-
-    auto context = std::unique_ptr<WebGPURenderingContext>(new WebGPURenderingContext(canvas, WTFMove(swapChain)));
+    auto context = std::unique_ptr<GPUCanvasContext>(new GPUCanvasContext(canvas));
     context->suspendIfNeeded();
     return context;
 }
 
-WebGPURenderingContext::WebGPURenderingContext(CanvasBase& canvas, RefPtr<GPUSwapChain>&& swapChain)
-    : WebGPUSwapChain(canvas, WTFMove(swapChain))
+GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
+    : GPUBasedCanvasRenderingContext(canvas)
 {
+}
+
+void GPUCanvasContext::replaceSwapChain(Ref<WebGPUSwapChain>&& newSwapChain)
+{
+    ASSERT(newSwapChain->swapChain());
+
+    if (m_swapChain)
+        m_swapChain->destroy();
+
+    m_swapChain = WTFMove(newSwapChain);
+}
+
+CALayer* GPUCanvasContext::platformLayer() const
+{
+    if (m_swapChain && m_swapChain->swapChain())
+        return m_swapChain->swapChain()->platformLayer();
+    return nullptr;
+}
+
+void GPUCanvasContext::reshape(int width, int height)
+{
+    if (m_swapChain && m_swapChain->swapChain())
+        m_swapChain->swapChain()->reshape(width, height);
+}
+
+void GPUCanvasContext::markLayerComposited()
+{
+    if (m_swapChain && m_swapChain->swapChain())
+        m_swapChain->swapChain()->present();
 }
 
 } // namespace WebCore

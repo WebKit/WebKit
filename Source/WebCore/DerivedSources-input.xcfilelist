@@ -325,6 +325,7 @@ $(PROJECT_DIR)/Modules/webgpu/GPUBindGroupLayoutBinding.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBufferUsage.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl

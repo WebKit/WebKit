@@ -51,7 +51,7 @@ class ImageData;
 class MediaSample;
 class MediaStream;
 class WebGLRenderingContextBase;
-class WebGPURenderingContext;
+class GPUCanvasContext;
 class WebMetalRenderingContext;
 struct UncachedString;
 
@@ -100,8 +100,8 @@ public:
 #endif
 #if ENABLE(WEBGPU)
     static bool isWebGPUType(const String&);
-    WebGPURenderingContext* createContextWebGPU(const String&);
-    WebGPURenderingContext* getContextWebGPU(const String&);
+    GPUCanvasContext* createContextWebGPU(const String&);
+    GPUCanvasContext* getContextWebGPU(const String&);
 #endif
 #if ENABLE(WEBMETAL)
     static bool isWebMetalType(const String&);

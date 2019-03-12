@@ -22,20 +22,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef unsigned long GPUTextureUsageFlags;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary GPUTextureDescriptor {
-    GPUExtent3D size;
-    u32 arrayLayerCount;
-    u32 mipLevelCount;
-    u32 sampleCount;
-    GPUTextureDimension dimension;
-    GPUTextureFormat format;
-    GPUTextureUsageFlags usage;
+#if ENABLE(WEBGPU)
+
+#include "GPUCanvasContext.h"
+#include "GPUSwapChainDescriptor.h"
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+
+struct WebGPUSwapChainDescriptor : GPUSwapChainDescriptor {
+    RefPtr<GPUCanvasContext> context;
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

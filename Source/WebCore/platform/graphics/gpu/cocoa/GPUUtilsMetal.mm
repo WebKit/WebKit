@@ -43,6 +43,10 @@ PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat 
         return MTLPixelFormatBGRA8Unorm;
     case GPUTextureFormat::D32FloatS8Uint:
         return MTLPixelFormatDepth32Float_Stencil8;
+    case GPUTextureFormat::Bgra8unormSRGB:
+        return MTLPixelFormatBGRA8Unorm_sRGB;
+    case GPUTextureFormat::Rgba16float:
+        return MTLPixelFormatRGBA16Float;
     }
 
     ASSERT_NOT_REACHED();

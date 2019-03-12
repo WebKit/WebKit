@@ -6,21 +6,21 @@
 <script src="../resources/testharnessreport.js"></script>
 <script>
 promise_test(async () => {
-    const defaultAdapter = await webgpu.requestAdapter();
+    const defaultAdapter = await gpu.requestAdapter();
     const device = defaultAdapter.createDevice();
 
     assert_true(device instanceof WebGPUDevice, "Default device successfully created.");
 }, "Create the default device.");
 
 promise_test(async () => {
-    const lowPowerAdapter = await webgpu.requestAdapter({ powerPreference: "low-power" });
+    const lowPowerAdapter = await gpu.requestAdapter({ powerPreference: "low-power" });
     const device = lowPowerAdapter.createDevice();
 
     assert_true(device instanceof WebGPUDevice, "Device successfully created using low-power option.");
 }, "Create a device with a low-power option.");
 
 promise_test(async () => {
-    const highPerfAdapter = await webgpu.requestAdapter({ powerPreference: "high-performance" });
+    const highPerfAdapter = await gpu.requestAdapter({ powerPreference: "high-performance" });
     const device = highPerfAdapter.createDevice();
 
     assert_true(device instanceof WebGPUDevice, "Device successfully created using high-performance option.");

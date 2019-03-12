@@ -1,3 +1,43 @@
+2019-03-11  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=194406
+        <rdar://problem/47892466>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update all tests for new WebGPUSwapChain and GPUCanvasContext, and window object name change from 'webgpu' to 'gpu'.
+        In addition, all tests have been updated to WPT style. 
+
+        * webgpu/adapter-options.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/command-buffers-expected.txt:
+        * webgpu/command-buffers.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/js/basic-webgpu-functions.js: Removed. No longer needed.
+        * webgpu/js/webgpu-functions.js:
+        (async.getBasicDevice):
+        (createBasicSwapChain): Renamed from createBasicContext.
+        (beginBasicRenderPass):
+        (createBasicContext): Deleted.
+        (createBasicDepthStateDescriptor): Deleted.
+        * webgpu/queue-creation.html:
+        * webgpu/render-command-encoding-expected.txt:
+        * webgpu/render-command-encoding.html:
+        * webgpu/render-passes-expected.txt: Removed.
+        * webgpu/render-passes.html: Removed for redundancy with other tests.
+        * webgpu/shader-modules-expected.txt:
+        * webgpu/shader-modules.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/webgpu-basics-expected.txt: Removed.
+        * webgpu/webgpu-basics.html: Removed for redundancy with other tests.
+        * webgpu/webgpu-enabled-expected.txt:
+        * webgpu/webgpu-enabled.html:
+
 2019-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] REGRESSION (r242687): Programmatic scroll of overflow scroll results in bad rendering

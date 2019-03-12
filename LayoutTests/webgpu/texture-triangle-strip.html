@@ -84,7 +84,7 @@ function createInputStateDescriptor() {
 async function test() {
     const device = await getBasicDevice();
     const canvas = document.querySelector("canvas");
-    const context = createBasicContext(canvas, device);
+    const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
@@ -201,7 +201,7 @@ async function test() {
         origin: { x: 0, y: 0, z: 0 }
     };
     commandBuffer.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
-    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
     passEncoder.setPipeline(pipeline);
     passEncoder.setBindGroup(bindGroupIndex, bindGroup);
     passEncoder.setVertexBuffers(positionBufferIndex, [positionBuffer, textureCoordBuffer], [0, 0]);
@@ -213,7 +213,6 @@ async function test() {
     positionBuffer.destroy();
     textureCoordBuffer.destroy();
     texture.destroy();
-    context.present();
 
     if (window.testRunner)
         testRunner.notifyDone();

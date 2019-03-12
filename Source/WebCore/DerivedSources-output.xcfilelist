@@ -589,6 +589,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp

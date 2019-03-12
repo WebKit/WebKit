@@ -1,9 +1,0 @@
-PASS [object WebGPU] is defined.
-PASS Successfully created basic WebGPURenderPassEncoder.
-PASS WebGPURenderPassEncoder with invalid WebGPURenderPassDescriptor was not created.
-PASS WebGPURenderPassEncoder with invalid WebGPURenderPassDescriptor was not created.
-All tests complete.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

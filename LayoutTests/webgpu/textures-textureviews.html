@@ -28,9 +28,9 @@ let texDescriptor = {
 
 promise_test(async () => {
     device = await getBasicDevice();
-    context = createBasicContext(canvas, device);
+    swapChain = createBasicSwapChain(canvas, device);
 
-    const texture = context.getNextTexture();
+    const texture = swapChain.getCurrentTexture();
     assert_true(texture instanceof WebGPUTexture, "Successfully acquired next texture.");
 
     const textureView = texture.createDefaultTextureView();

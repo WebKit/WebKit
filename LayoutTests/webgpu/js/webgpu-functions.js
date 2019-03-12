@@ -1,14 +1,12 @@
 async function getBasicDevice() {
-    const adapter = await window.webgpu.requestAdapter({ powerPreference: "low-power" });
+    const adapter = await gpu.requestAdapter({ powerPreference: "low-power" });
     const device = adapter.createDevice();
     return device;
 }
 
-function createBasicContext(canvas, device) {
-    const context = canvas.getContext("webgpu");
-    // FIXME: Implement and specify a WebGPUTextureUsageEnum.
-    context.configure({ device: device, format:"b8g8r8a8-unorm", width: canvas.width, height: canvas.height });
-    return context;
+function createBasicSwapChain(canvas, device) {
+    const context = canvas.getContext("gpu");
+    return device.createSwapChain({ context: context, format: "b8g8r8a8-unorm" });
 }
 
 function createBasicDepthStateDescriptor() {
@@ -65,9 +63,9 @@ function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDes
     return device.createRenderPipeline(pipelineDescriptor);
 }
 
-function beginBasicRenderPass(context, commandBuffer) {
+function beginBasicRenderPass(swapChain, commandBuffer) {
     const basicAttachment = {
-        attachment: context.getNextTexture().createDefaultTextureView(),
+        attachment: swapChain.getCurrentTexture().createDefaultTextureView(),
         loadOp: "clear",
         storeOp: "store",
         clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }

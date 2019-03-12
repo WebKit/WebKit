@@ -33,7 +33,9 @@ enum class GPUTextureFormat {
     R8g8b8a8Unorm,
     R8g8b8a8Uint,
     B8g8r8a8Unorm,
-    D32FloatS8Uint
+    D32FloatS8Uint,
+    Bgra8unormSRGB,
+    Rgba16float
 };
 
 using PlatformTextureFormat = unsigned long;

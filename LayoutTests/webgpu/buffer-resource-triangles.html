@@ -118,7 +118,7 @@ function createBufferBinding(buffer) {
 async function test() {
     const device = await getBasicDevice();
     const canvas = document.querySelector("canvas");
-    const context = createBasicContext(canvas, device);
+    const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
 
@@ -195,7 +195,7 @@ async function test() {
 
     Promise.all(bufferPromises).then(() => {
         const commandBuffer = device.createCommandBuffer();
-        const passEncoder = beginBasicRenderPass(context, commandBuffer);
+        const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
         passEncoder.setPipeline(pipeline);
 
         // Vertex data for upper triangles.
@@ -208,7 +208,6 @@ async function test() {
         const endCommandBuffer = passEncoder.endPass();
         const queue = device.getQueue();
         queue.submit([endCommandBuffer]);
-        context.present();
 
         if (window.testRunner)
             testRunner.notifyDone();

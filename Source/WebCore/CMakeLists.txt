@@ -466,6 +466,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
     Modules/webgpu/GPUBufferDescriptor.idl
     Modules/webgpu/GPUBufferUsage.idl
+    Modules/webgpu/GPUCanvasContext.idl
     Modules/webgpu/GPUColor.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
@@ -503,7 +504,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPURenderPassEncoder.idl
     Modules/webgpu/WebGPURenderPipeline.idl
     Modules/webgpu/WebGPURenderPipelineDescriptor.idl
-    Modules/webgpu/WebGPURenderingContext.idl
     Modules/webgpu/WebGPUSampler.idl
     Modules/webgpu/WebGPUShaderModule.idl
     Modules/webgpu/WebGPUShaderModuleDescriptor.idl

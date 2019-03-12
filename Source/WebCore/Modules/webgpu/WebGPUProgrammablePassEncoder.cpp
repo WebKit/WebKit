@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUProgrammablePassEncoder.h"
+#include "Logging.h"
 #include "WebGPUBindGroup.h"
 #include "WebGPURenderPipeline.h"
 

@@ -28,5 +28,5 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] partial interface DOMWindow {
-    [Replaceable, SameObject] readonly attribute WebGPU webgpu;
+    [Replaceable, SameObject] readonly attribute WebGPU gpu;
 };

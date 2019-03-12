@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,20 +22,42 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef unsigned long GPUTextureUsageFlags;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary GPUTextureDescriptor {
-    GPUExtent3D size;
-    u32 arrayLayerCount;
-    u32 mipLevelCount;
-    u32 sampleCount;
-    GPUTextureDimension dimension;
-    GPUTextureFormat format;
-    GPUTextureUsageFlags usage;
+#if ENABLE(WEBGPU)
+
+#include "GPUBasedCanvasRenderingContext.h"
+#include "WebGPUSwapChain.h"
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+
+class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
+public:
+    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
+
+    void replaceSwapChain(Ref<WebGPUSwapChain>&&);
+
+private:
+    GPUCanvasContext(CanvasBase&);
+
+    // GPUBasedCanvasRenderingContext
+    bool isWebGPU() const final { return true; }
+    PlatformLayer* platformLayer() const final;
+    void reshape(int width, int height) final;
+    void markLayerComposited() final;
+    const char* activeDOMObjectName() const final { return "GPUCanvasContext"; }
+    // FIXME: Stubs.
+    bool hasPendingActivity() const final { return false; }
+    void stop() final { }
+    bool canSuspendForDocumentSuspension() const final { return false; }
+
+    RefPtr<WebGPUSwapChain> m_swapChain;
 };
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::GPUCanvasContext, isWebGPU())
+
+#endif // ENABLE(WEBGPU)

@@ -41,6 +41,7 @@
 #include "GPUSamplerDescriptor.h"
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
+#include "GPUSwapChain.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 
@@ -86,10 +87,16 @@ RefPtr<GPUCommandBuffer> GPUDevice::createCommandBuffer()
     return GPUCommandBuffer::create(*this);
 }
 
-RefPtr<GPUQueue> GPUDevice::getQueue()
+RefPtr<GPUSwapChain> GPUDevice::tryCreateSwapChain(const GPUSwapChainDescriptor& descriptor, int width, int height) const
+{
+    m_swapChain = GPUSwapChain::tryCreate(*this, descriptor, width, height);
+    return m_swapChain;
+}
+
+RefPtr<GPUQueue> GPUDevice::getQueue() const
 {
     if (!m_queue)
-        m_queue = GPUQueue::create(*this);
+        m_queue = GPUQueue::tryCreate(*this);
 
     return m_queue;
 }

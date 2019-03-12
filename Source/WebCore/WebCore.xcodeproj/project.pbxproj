@@ -14111,9 +14111,9 @@
 		D08AA032220D0D0B0058C502 /* GPUStoreOp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUStoreOp.h; sourceTree = "<group>"; };
 		D08AA036220D19DA0058C502 /* WebGPURenderPassDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderPassDescriptor.idl; sourceTree = "<group>"; };
 		D08AA037220D1D050058C502 /* WebGPURenderPassDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderPassDescriptor.cpp; sourceTree = "<group>"; };
-		D093D225217951D400329217 /* WebGPURenderingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPURenderingContext.h; sourceTree = "<group>"; };
-		D093D227217951D400329217 /* WebGPURenderingContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPURenderingContext.idl; sourceTree = "<group>"; };
-		D093D2292179541600329217 /* WebGPURenderingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPURenderingContext.cpp; sourceTree = "<group>"; };
+		D093D225217951D400329217 /* GPUCanvasContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUCanvasContext.h; sourceTree = "<group>"; };
+		D093D227217951D400329217 /* GPUCanvasContext.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUCanvasContext.idl; sourceTree = "<group>"; };
+		D093D2292179541600329217 /* GPUCanvasContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUCanvasContext.cpp; sourceTree = "<group>"; };
 		D0A20D542092A0A600E0C259 /* WebGLCompressedTextureASTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLCompressedTextureASTC.h; sourceTree = "<group>"; };
 		D0A20D562092A0A600E0C259 /* WebGLCompressedTextureASTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGLCompressedTextureASTC.cpp; sourceTree = "<group>"; };
 		D0A3A7301405A39800FB8ED3 /* ResourceLoaderOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoaderOptions.h; sourceTree = "<group>"; };
@@ -14124,6 +14124,8 @@
 		D0ADB26C2230BB8E00A22935 /* WebGPUSampler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSampler.h; sourceTree = "<group>"; };
 		D0ADB26D2230BB8E00A22935 /* WebGPUSampler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSampler.cpp; sourceTree = "<group>"; };
 		D0ADB26F2230C1F100A22935 /* WebGPUSampler.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSampler.idl; sourceTree = "<group>"; };
+		D0ADB27E2232F0C000A22935 /* WebGPUSwapChainDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainDescriptor.h; sourceTree = "<group>"; };
+		D0ADB27F2232F17300A22935 /* GPUSwapChainDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GPUSwapChainDescriptor.h; path = platform/graphics/gpu/GPUSwapChainDescriptor.h; sourceTree = SOURCE_ROOT; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
 		D0B8BB0121C46E78000C7681 /* GPUBindGroupLayoutBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayoutBinding.h; sourceTree = "<group>"; };
@@ -26111,6 +26113,9 @@
 				D0D69C9D222E00C20032927E /* GPUBindGroupLayoutDescriptor.idl */,
 				D01B811922135EB900627B6C /* GPUBufferDescriptor.idl */,
 				D01B811C2213627300627B6C /* GPUBufferUsage.idl */,
+				D093D2292179541600329217 /* GPUCanvasContext.cpp */,
+				D093D225217951D400329217 /* GPUCanvasContext.h */,
+				D093D227217951D400329217 /* GPUCanvasContext.idl */,
 				D01B811222125AFC00627B6C /* GPUColor.idl */,
 				D03C849E21FFCF000002227F /* GPUCompareFunction.idl */,
 				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
@@ -26123,6 +26128,7 @@
 				D0DE8FB8222E09E200882550 /* GPUShaderStageBit.h */,
 				D0DE8FB9222E09E200882550 /* GPUShaderStageBit.idl */,
 				D08AA031220D0CE60058C502 /* GPUStoreOp.idl */,
+				D0ADB27F2232F17300A22935 /* GPUSwapChainDescriptor.h */,
 				D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */,
 				D026F489220A539800AC5F49 /* GPUTextureDimension.idl */,
 				D0EACFAE219E30FD000FA75C /* GPUTextureFormat.idl */,
@@ -26176,9 +26182,6 @@
 				312FF93C21A61CA100EB199D /* WebGPUQueue.cpp */,
 				312FF93921A61C9F00EB199D /* WebGPUQueue.h */,
 				312FF93B21A61CA000EB199D /* WebGPUQueue.idl */,
-				D093D2292179541600329217 /* WebGPURenderingContext.cpp */,
-				D093D225217951D400329217 /* WebGPURenderingContext.h */,
-				D093D227217951D400329217 /* WebGPURenderingContext.idl */,
 				D08AA037220D1D050058C502 /* WebGPURenderPassDescriptor.cpp */,
 				D0EACF8C219403C9000FA75C /* WebGPURenderPassDescriptor.h */,
 				D08AA036220D19DA0058C502 /* WebGPURenderPassDescriptor.idl */,
@@ -26201,6 +26204,7 @@
 				D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */,
 				D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */,
 				D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */,
+				D0ADB27E2232F0C000A22935 /* WebGPUSwapChainDescriptor.h */,
 				D0EACF852193B02E000FA75C /* WebGPUTexture.cpp */,
 				D0EACF842193B02E000FA75C /* WebGPUTexture.h */,
 				D0EACF862193B02E000FA75C /* WebGPUTexture.idl */,

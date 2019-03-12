@@ -63,6 +63,9 @@
 #if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 #endif
+#if ENABLE(WEBGPU)
+#include "GPUCanvasContext.h"
+#endif
 #if ENABLE(WEBMETAL)
 #include "WebMetalRenderingContext.h"
 #endif
@@ -243,6 +246,10 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
 #if ENABLE(WEBGL2)
     else if (is<WebGL2RenderingContext>(m_context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL2;
+#endif
+#if ENABLE(WEBGPU)
+    else if (is<GPUCanvasContext>(m_context))
+        contextType = Inspector::Protocol::Canvas::ContextType::WebGPU;
 #endif
 #if ENABLE(WEBMETAL)
     else if (is<WebMetalRenderingContext>(m_context))

@@ -7,6 +7,9 @@
 <canvas width="400" height="400"></canvas>
 <script src="js/webgpu-functions.js"></script>
 <script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 const shaderCode = `
 #include <metal_stdlib>
     
@@ -45,17 +48,21 @@ fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
 async function test() {
     const device = await getBasicDevice();
     const canvas = document.querySelector("canvas");
-    const context = createBasicContext(canvas, device);
+    const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const pipeline = createBasicPipeline(shaderModule, device);
     const commandBuffer = device.createCommandBuffer();
-    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
     const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline);
     const queue = device.getQueue();
 
     queue.submit([endCommandBuffer]);
-    context.present();
+
+    requestAnimationFrame(() => { 
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
 }
 
 test();

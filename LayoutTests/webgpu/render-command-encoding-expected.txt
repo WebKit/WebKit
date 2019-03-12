@@ -1,4 +1,3 @@
-PASS [object WebGPU] is defined.
 
 PASS WebGPURenderPassEncoder created and successfully ended 
 

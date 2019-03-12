@@ -1,3 +1,127 @@
+2019-03-11  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Update GPUSwapChainDescriptor, GPUSwapChain and implement GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=194406
+        <rdar://problem/47892466>
+
+        Reviewed by Myles C. Maxfield.
+
+        GPUSwapChain no longer inherits from GPUBasedRenderingContext, and is now created from a GPUDevice. 
+        WebGPURenderingContext is now GPUCanvasContext and delegates functionality to the GPUSwapChain, if it exists. 
+        GPUQueue now implicitly presents the GPUSwapChain's current drawable at the task boundary, if one exists.
+        Creating a new GPUSwapChain with the same GPUCanvasContext invalidates the previous one and its drawable and pipeline attachments.
+        Calling GPUSwapChain::getCurrentTexture returns the same drawable within one task cycle. 
+        Some mentions of "WebGPU" have been renamed to "Web GPU" and "gpu".
+
+        All Web GPU tests updated to match.
+
+        Add new files and symbols.
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Rename some mentions of "webgpu" to "gpu".
+        * Modules/webgpu/DOMWindowWebGPU.cpp:
+        (WebCore::DOMWindowWebGPU::gpu):
+        (WebCore::DOMWindowWebGPU::gpu const):
+        * Modules/webgpu/DOMWindowWebGPU.h:
+        * Modules/webgpu/DOMWindowWebGPU.idl:
+
+        Replace WebGPURenderingContext with GPUCanvasContext.
+        * Modules/webgpu/GPUCanvasContext.cpp: Renamed from Source/WebCore/Modules/webgpu/WebGPURenderingContext.cpp.
+        (WebCore::GPUCanvasContext::create):
+        (WebCore::GPUCanvasContext::GPUCanvasContext):
+        (WebCore::GPUCanvasContext::replaceSwapChain):
+        (WebCore::GPUCanvasContext::platformLayer const):
+        (WebCore::GPUCanvasContext::reshape):
+        (WebCore::GPUCanvasContext::markLayerComposited):
+        * Modules/webgpu/GPUCanvasContext.h: Renamed from Source/WebCore/Modules/webgpu/WebGPURenderingContext.h.
+        * Modules/webgpu/GPUCanvasContext.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPURenderingContext.idl.
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebGPUType):
+        (WebCore::HTMLCanvasElement::createContextWebGPU):
+        (WebCore::HTMLCanvasElement::getContextWebGPU):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::contextAsScriptValue):
+
+        Update WebGPUSwapChain.
+        * Modules/webgpu/GPUTextureDescriptor.idl:
+        * Modules/webgpu/GPUTextureFormat.idl: Add the other two texture formats supported by CAMetalLayer.
+        * Modules/webgpu/WebGPUDevice.cpp: Implement createSwapChain.
+        (WebCore::WebGPUDevice::createSwapChain const):
+        (WebCore::WebGPUDevice::getQueue const):
+        (WebCore::WebGPUDevice::getQueue): Deleted.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUSwapChain.cpp:
+        (WebCore::WebGPUSwapChain::create):
+        (WebCore::WebGPUSwapChain::WebGPUSwapChain):
+        (WebCore::WebGPUSwapChain::getCurrentTexture): Renamed from getNextTexture. Only returns the next drawable if the last was presented.
+        (WebCore::WebGPUSwapChain::destroy): Invalidate this GPUSwapChain and its textures and views.
+        (WebCore::WebGPUSwapChain::configure): Deleted.
+        (WebCore::WebGPUSwapChain::getNextTexture): Deleted.
+        (WebCore::WebGPUSwapChain::present): Deleted.
+        (WebCore::WebGPUSwapChain::reshape): Deleted.
+        (WebCore::WebGPUSwapChain::markLayerComposited): Deleted.
+        * Modules/webgpu/WebGPUSwapChain.h: Now a device-based object rather than a rendering context.
+        (WebCore::WebGPUSwapChain::swapChain const):
+        (WebCore::WebGPUSwapChain::WebGPUSwapChain): Deleted.
+        * Modules/webgpu/WebGPUSwapChain.idl:
+        * Modules/webgpu/WebGPUSwapChainDescriptor.h: Added.
+        * platform/graphics/gpu/GPUDevice.cpp: Implement tryCreateSwapChain.
+        (WebCore::GPUDevice::tryCreateSwapChain const):
+        (WebCore::GPUDevice::getQueue const):
+        (WebCore::GPUDevice::getQueue): Deleted.
+        * platform/graphics/gpu/GPUDevice.h: Retain a reference to the current GPUSwapChain, if one exists.
+        (WebCore::GPUDevice::swapChain const):
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/graphics/gpu/GPUSwapChain.h:
+        (WebCore::GPUSwapChain::destroy):
+        * platform/graphics/gpu/GPUSwapChainDescriptor.h: Added.
+        * platform/graphics/gpu/GPUTextureFormat.h: Add the other two texture formats supported by CAMetalLayer.
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::commandBufferCommitted):
+        * platform/graphics/gpu/cocoa/GPUQueueMetal.mm:
+        (WebCore::GPUQueue::tryCreate): Renamed from create to better fit functionality. Now retain a reference to the GPUDevice.
+        (WebCore::GPUQueue::GPUQueue):
+        (WebCore::GPUQueue::submit): Now checks state of all resources before marking them as committed or committing any resource.
+                In addition, schedules the current drawable to be presented after all commands have been submitted during this task cycle.
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::useAttachments): Ensure that the command buffer is aware of any texture resources used as attachments.
+        (WebCore::GPURenderPassEncoder::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUSwapChainMetal.mm:
+        (WebCore::tryGetSupportedPixelFormat): Supported texture formats are the intersection of Web GPU's texture formats and CAMetalLayer's.
+        (WebCore::setLayerShape):
+        (WebCore::tryCreateSwapLayer): Create and configure the CAMetalLayer backing the swap chain.
+        (WebCore::GPUSwapChain::tryCreate):
+        (WebCore::GPUSwapChain::GPUSwapChain):
+        (WebCore::GPUSwapChain::tryGetCurrentTexture): Renamed from getNextTexture. Only returns a texture if the last one was presented.
+        (WebCore::GPUSwapChain::present):
+        (WebCore::GPUSwapChain::reshape):
+        (WebCore::GPUSwapChain::takeDrawable): Swaps out the current drawable so that it can be presented. The GPUSwapChain thus releases its reference to it.
+        (WebCore::GPUSwapChain::create): Deleted.
+        (WebCore::GPUSwapChain::setDevice): Deleted.
+        (WebCore::GPUSwapChain::setFormat): Deleted.
+        (WebCore::GPUSwapChain::getNextTexture): Deleted.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm:
+        (WebCore::platformTextureFormatForGPUTextureFormat):
+
+        Misc:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp: Missing include.
+
 2019-03-11  Chris Dumez  <cdumez@apple.com>
 
         Update device orientation & motion permission native SPI as per latest proposal

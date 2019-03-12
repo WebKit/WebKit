@@ -27,54 +27,30 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUBasedCanvasRenderingContext.h"
 #include "GPUSwapChain.h"
-#include "GPUTextureFormat.h"
-#include "WebGPUDevice.h"
 #include "WebGPUTexture.h"
-
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebGPUSwapChain : public GPUBasedCanvasRenderingContext {
+struct WebGPUSwapChainDescriptor;
+
+class WebGPUSwapChain : public RefCounted<WebGPUSwapChain> {
 public:
-    struct Descriptor {
-        const WebGPUDevice* device = nullptr;
-        // FIXME: More texture properties.
-        GPUTextureFormat format;
-        unsigned long width;
-        unsigned long height;
-    };
+    static Ref<WebGPUSwapChain> create(RefPtr<GPUSwapChain>&&);
 
-    virtual ~WebGPUSwapChain() = 0;
+    GPUSwapChain* swapChain() const { return m_swapChain.get(); }
 
-    void configure(Descriptor&&);
-    RefPtr<WebGPUTexture> getNextTexture();
-    void present();
+    Ref<WebGPUTexture> getCurrentTexture();
 
-protected:
-    WebGPUSwapChain(CanvasBase& canvas, RefPtr<GPUSwapChain>&& swapChain)
-        : GPUBasedCanvasRenderingContext(canvas)
-        , m_swapChain(WTFMove(swapChain))
-    {
-    }
-
-    const char* activeDOMObjectName() const override { return "WebGPUSwapChain"; }
-    PlatformLayer* platformLayer() const final { return m_swapChain->platformLayer(); };
+    void destroy();
 
 private:
-    // GPUBasedRenderingContext
-    void reshape(int width, int height) final;
-    void markLayerComposited() final;
-
-    // ActiveDOMObject
-    // FIXME: Stubs.
-    bool hasPendingActivity() const override { return false; }
-    void stop() override { }
-    bool canSuspendForDocumentSuspension() const override { return false; }
+    WebGPUSwapChain(RefPtr<GPUSwapChain>&&);
 
     RefPtr<GPUSwapChain> m_swapChain;
+    RefPtr<WebGPUTexture> m_currentTexture;
 };
 
 } // namespace WebCore

@@ -1,37 +1,22 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <html>
-<script src="../resources/js-test-pre.js"></script>
-
+<meta charset=utf-8>
+<title>Test if WebGPU is enabled.</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+promise_test(async () => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("gpu");
+    assert_true(context instanceof GPUCanvasContext, "Created GPUCanvasContext.");
 
-function runTest() {
-    let canvas = document.createElement("canvas");
-    let context = canvas.getContext("webgpu");
-    if (!context)
-        testFailed("Could not create WebGPU context!");
+    assert_not_equals(window.gpu, undefined, "window.gpu is defined.");
 
-    shouldBeDefined(window.webgpu);
-    window.webgpu.requestAdapter({ powerPreference: "default" }).then(adapter => {
-        if (!adapter) {
-            testFailed("Could not create default WebGPUAdapter!")
-            return;
-        }
-        let defaultDevice = adapter.createDevice();
-        if (!defaultDevice) {
-            testFailed("Could not create WebGPUDevice!");
-            return;
-        }
-    }).catch(error => {
-        testFailed(error);
-    });
-}
-
-runTest();
-
-var successfullyParsed = true;
+    const adapter = await window.gpu.requestAdapter();
+    assert_true(adapter instanceof WebGPUAdapter, "Created default GPUAdapter.");
+    
+    const device = adapter.createDevice();
+    assert_true(device instanceof WebGPUDevice, "Created GPUDevice.");
+}, "Web GPU is enabled.");
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </html>

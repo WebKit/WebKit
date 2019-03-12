@@ -32,7 +32,7 @@ typedef (
     WebGL2RenderingContext or
 #endif
 #if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
-    WebGPURenderingContext or
+    GPUCanvasContext or
 #endif
 #if defined(ENABLE_WEBMETAL) && ENABLE_WEBMETAL
     WebMetalRenderingContext or

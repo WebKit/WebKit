@@ -28,10 +28,12 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUQueue.h"
+#include "GPUSwapChainDescriptor.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_PROTOCOL(MTLDevice);
 
@@ -47,6 +49,7 @@ class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUSampler;
 class GPUShaderModule;
+class GPUSwapChain;
 class GPUTexture;
 
 struct GPUBindGroupLayoutDescriptor;
@@ -58,7 +61,7 @@ struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
 struct GPUTextureDescriptor;
 
-class GPUDevice : public RefCounted<GPUDevice> {
+class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:
     static RefPtr<GPUDevice> create(Optional<GPURequestAdapterOptions>&&);
 
@@ -74,14 +77,18 @@ public:
 
     RefPtr<GPUCommandBuffer> createCommandBuffer();
 
-    RefPtr<GPUQueue> getQueue();
+    RefPtr<GPUSwapChain> tryCreateSwapChain(const GPUSwapChainDescriptor&, int width, int height) const;
+
+    RefPtr<GPUQueue> getQueue() const;
     PlatformDevice* platformDevice() const { return m_platformDevice.get(); }
+    GPUSwapChain* swapChain() const { return m_swapChain.get(); }
 
 private:
     GPUDevice(PlatformDeviceSmartPtr&&);
 
     PlatformDeviceSmartPtr m_platformDevice;
-    RefPtr<GPUQueue> m_queue;
+    mutable RefPtr<GPUQueue> m_queue;
+    mutable RefPtr<GPUSwapChain> m_swapChain;
 };
 
 } // namespace WebCore

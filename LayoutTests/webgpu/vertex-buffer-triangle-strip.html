@@ -85,19 +85,18 @@ function createInputStateDescriptor() {
 async function test() {
     const device = await getBasicDevice();
     const canvas = document.querySelector("canvas");
-    const context = createBasicContext(canvas, device);
+    const swapChain = createBasicSwapChain(canvas, device);
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const vertexBuffer = createVertexBuffer(device);
     const inputStateDescriptor = createInputStateDescriptor();
     const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
     const commandBuffer = device.createCommandBuffer();
-    const passEncoder = beginBasicRenderPass(context, commandBuffer);
+    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
     const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline, vertexBuffer);
     const queue = device.getQueue();
     queue.submit([endCommandBuffer]);
     vertexBuffer.destroy();
-    context.present();
 
     if (window.testRunner)
         testRunner.notifyDone();

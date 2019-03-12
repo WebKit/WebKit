@@ -50,6 +50,7 @@ _ENUM_IDENTIFIER_RENAME_MAP = {
     'canvas-webgl': 'CanvasWebGL',  # Recording.Type.canvas-webgl
     'webgl': 'WebGL',  # Canvas.ContextType.webgl
     'webgl2': 'WebGL2',  # Canvas.ContextType.webgl2
+    'webgpu': 'WebGPU',  # Canvas.ContextType.gpu
     'webmetal': 'WebMetal',  # Canvas.ContextType.webmetal
     'bitmaprenderer': 'BitmapRenderer',  # Canvas.ContextType.bitmaprenderer
     'webrtc': 'WebRTC',  # Console.ChannelSource.webrtc

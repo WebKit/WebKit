@@ -30,7 +30,7 @@
 #include "GPUDevice.h"
 #include "WebGPUAdapter.h"
 #include "WebGPUQueue.h"
-
+#include "WebGPUSwapChainDescriptor.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -46,6 +46,7 @@ class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
 class WebGPUSampler;
 class WebGPUShaderModule;
+class WebGPUSwapChain;
 class WebGPUTexture;
 
 struct GPUBindGroupLayoutDescriptor;
@@ -76,14 +77,17 @@ public:
     RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
 
     RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
-    RefPtr<WebGPUQueue> getQueue();
+
+    Ref<WebGPUSwapChain> createSwapChain(const WebGPUSwapChainDescriptor&) const;
+
+    RefPtr<WebGPUQueue> getQueue() const;
 
 private:
     WebGPUDevice(Ref<WebGPUAdapter>&&, Ref<GPUDevice>&&);
 
     Ref<WebGPUAdapter> m_adapter;
     Ref<GPUDevice> m_device;
-    RefPtr<WebGPUQueue> m_queue;
+    mutable RefPtr<WebGPUQueue> m_queue;
 };
 
 } // namespace WebCore

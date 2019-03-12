@@ -180,9 +180,11 @@ void GPUBuffer::commandBufferCommitted(MTLCommandBuffer *commandBuffer)
     ++m_numScheduledCommandBuffers;
 
     auto protectedThis = makeRefPtr(this);
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer>) {
         protectedThis->commandBufferCompleted();
     }];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void GPUBuffer::commandBufferCompleted()

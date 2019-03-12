@@ -1,74 +1,62 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:WebGPUEnabled=true ] -->
 <html>
-<script src="../resources/js-test-pre.js"></script>
-<script src="js/basic-webgpu-functions.js"></script>
-<script id="library_incomplete" type="x-shader/x-metal">
-    #include <metal_stdlib>
-    
-    using namespace metal;
-    
-    vertex Vertex vertex_main(uint vid [[vertex_id]])
-    {
-        Vertex v;
-        switch (vid) {
-        case 0:
-            v.position = float4(-.75, -.75, 0, 1);
-            break;
-        case 1:
-            v.position = float4(.75, -.75, 0, 1);
-            break;
-        case 2:
-            v.position = float4(0, .75, 0, 1);
-            break;
-        default:
-            v.position = float4(0, 0, 0, 1);
-        }
-        return v;
-    }
-    
-    fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
-    {
-        return float4(1.0, 0.0, 0.0, 1.0);
-    }
-</script>
+<meta charset=utf-8>
+<title>Test shader validation.</title>
+<script src="js/webgpu-functions.js"></script>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
-
-function setUpShaders() {
-    let shaderDescriptor0 = {
-        code : "Hello World"
-    };
-    let shaderModule = defaultDevice.createShaderModule(shaderDescriptor0);
-    if (!shaderModule)
-        testPassed("Bad shader code should not create a module.");
-    else
-        testFailed("Bad shader code created a valid module!");
-
-    let shaderDescriptor1 = {
-        code : document.getElementById("library_incomplete").text
-    };
-
-    shaderModule = defaultDevice.createShaderModule(shaderDescriptor1);
-    if (!shaderModule)
-        testPassed("Incomplete shader code should not create a module.");
-    else
-        testFailed("Incomplete shader code created a valid module!");
+const shaders = `
+#include <metal_stdlib>
     
-    let shaderDescriptor2 = {
-        code : shaderCode
-    };
+using namespace metal;
 
-    shaderModule = defaultDevice.createShaderModule(shaderDescriptor2);
-    if (shaderModule)
-        testPassed("Shader module created successfully.");
-    else 
-        testFailed("Shader module not created successfully!");
+struct Vertex
+{
+    float4 position [[position]];
+};
+
+vertex Vertex vertex_main()
+{
+    return Vertex { float4(0, 0, 0, 1) };
 }
 
-runWebGPUTests([setUpShaders]);
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    return vertexIn.position;
+}
+`
 
-successfullyParsed = true;
+const incompleteShaders = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+vertex Vertex vertex_main(uint vid [[vertex_id]])
+{
+    return Vertex { float4(0, 0, 0, 1) };
+}
+
+fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
+{
+    rreturn vertexIn.position;
+}
+`
+
+promise_test(async () => {
+    const device = await getBasicDevice();
+
+    const shaderDescriptor0 = {
+        code : "Hello World"
+    };
+    let shaderModule = device.createShaderModule(shaderDescriptor0);
+    assert_equals(shaderModule, null, "Bad shader code did not create a module.");
+
+    shaderModule = device.createShaderModule({ code: incompleteShaders });
+    assert_equals(shaderModule, null, "Incomplete shader code did not create a module.");
+
+    shaderModule = device.createShaderModule({ code: shaders });
+    assert_true(shaderModule instanceof WebGPUShaderModule, "Shader module created successfully.");
+}, "Test shader code validation when creating modules.");
 </script>
-<script src="../resources/js-test-post.js"></script>
 </html>

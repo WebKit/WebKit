@@ -103,7 +103,7 @@ WI.Canvas = class Canvas extends WI.Object
         case WI.Canvas.ContextType.WebGL2:
             return WI.unlocalizedString("WebGL2");
         case WI.Canvas.ContextType.WebGPU:
-            return WI.unlocalizedString("WebGPU");
+            return WI.unlocalizedString("Web GPU");
         case WI.Canvas.ContextType.WebMetal:
             return WI.unlocalizedString("WebMetal");
         default:
@@ -412,7 +412,7 @@ WI.Canvas.ContextType = {
     BitmapRenderer: "bitmaprenderer",
     WebGL: "webgl",
     WebGL2: "webgl2",
-    WebGPU: "webgpu",
+    WebGPU: "gpu",
     WebMetal: "webmetal",
 };
 

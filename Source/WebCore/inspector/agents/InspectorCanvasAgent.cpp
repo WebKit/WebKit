@@ -58,6 +58,10 @@
 #include "JSWebGL2RenderingContext.h"
 #endif
 
+#if ENABLE(WEBGPU)
+#include "JSGPUCanvasContext.h"
+#endif
+
 #if ENABLE(WEBMETAL)
 #include "JSWebMetalRenderingContext.h"
 #endif
@@ -243,6 +247,10 @@ static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingC
 #if ENABLE(WEBGL2)
     if (is<WebGL2RenderingContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebGL2RenderingContext>(context));
+#endif
+#if ENABLE(WEBGPU)
+    if (is<GPUCanvasContext>(context))
+        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<GPUCanvasContext>(context));
 #endif
 #if ENABLE(WEBMETAL)
     if (is<WebMetalRenderingContext>(context))

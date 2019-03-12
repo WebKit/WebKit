@@ -22,29 +22,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-#pragma once
-
-#if ENABLE(WEBGPU)
-
-#include "WebGPUSwapChain.h"
-
-namespace WebCore {
-
-class WebGPURenderingContext final : public WebGPUSwapChain {
-public:
-    static std::unique_ptr<WebGPURenderingContext> create(CanvasBase&);
-
-private:
-    WebGPURenderingContext(CanvasBase&, RefPtr<GPUSwapChain>&&);
-    // CanvasRenderingContext
-    bool isWebGPU() const final { return true; }
-    // ActiveDOMObject
-    const char* activeDOMObjectName() const final { return "WebGPURenderingContext"; }
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU
+] interface GPUCanvasContext {
 };
-
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGPURenderingContext, isWebGPU())
-
-#endif // ENABLE(WEBGPU)

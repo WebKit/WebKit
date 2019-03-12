@@ -1,5 +1,3 @@
-PASS [object WebGPU] is defined.
-PASS successfullyParsed is true
 
-TEST COMPLETE
+PASS Web GPU is enabled. 
 

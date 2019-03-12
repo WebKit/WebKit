@@ -76,7 +76,7 @@
 #endif
 
 #if ENABLE(WEBGPU)
-#include "WebGPURenderingContext.h"
+#include "GPUCanvasContext.h"
 #endif
 
 #if ENABLE(WEBMETAL)
@@ -246,7 +246,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecS
         if (m_context->isWebGPU()) {
             if (!isWebGPUType(contextId))
                 return Optional<RenderingContext> { WTF::nullopt };
-            return Optional<RenderingContext> { RefPtr<WebGPURenderingContext> { &downcast<WebGPURenderingContext>(*m_context) } };
+            return Optional<RenderingContext> { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } };
         }
 #endif
 
@@ -304,7 +304,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecS
         auto context = createContextWebGPU(contextId);
         if (!context)
             return Optional<RenderingContext> { WTF::nullopt };
-        return Optional<RenderingContext> { RefPtr<WebGPURenderingContext> { context } };
+        return Optional<RenderingContext> { RefPtr<GPUCanvasContext> { context } };
     }
 #endif
 
@@ -467,10 +467,10 @@ WebGLRenderingContextBase* HTMLCanvasElement::getContextWebGL(const String& type
 
 bool HTMLCanvasElement::isWebGPUType(const String& type)
 {
-    return type == "webgpu";
+    return type == "gpu";
 }
 
-WebGPURenderingContext* HTMLCanvasElement::createContextWebGPU(const String& type)
+GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
     ASSERT(!m_context);
@@ -478,16 +478,16 @@ WebGPURenderingContext* HTMLCanvasElement::createContextWebGPU(const String& typ
     if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
         return nullptr;
 
-    m_context = WebGPURenderingContext::create(*this);
+    m_context = GPUCanvasContext::create(*this);
     if (m_context) {
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
         invalidateStyleAndLayerComposition();
     }
 
-    return static_cast<WebGPURenderingContext*>(m_context.get());
+    return static_cast<GPUCanvasContext*>(m_context.get());
 }
 
-WebGPURenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
+GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
 
@@ -499,7 +499,7 @@ WebGPURenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 
     if (!m_context)
         return createContextWebGPU(type);
-    return static_cast<WebGPURenderingContext*>(m_context.get());
+    return static_cast<GPUCanvasContext*>(m_context.get());
 }
 
 #endif // ENABLE(WEBGPU)
