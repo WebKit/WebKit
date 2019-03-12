@@ -1,3 +1,14 @@
+2019-03-12  Jer Noble  <jer.noble@apple.com>
+
+        Flaky API Test TestWebKitAPI.WebKitLegacy.ScrollingDoesNotPauseMedia
+        https://bugs.webkit.org/show_bug.cgi?id=195137
+        <rdar://problem/48810307>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/ScrollingDoesNotPauseMedia.mm:
+        (TestWebKitAPI::TEST):
+
 2019-03-12  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Change urls from uat to production
