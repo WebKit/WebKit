@@ -135,6 +135,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebPageProxyAdditions.h>
+#endif
+
 #if ENABLE(MEDIA_SESSION)
 namespace WebCore {
 class MediaSessionMetadata;
@@ -1481,6 +1485,10 @@ public:
     void removeObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
 
+#if HAVE(LOAD_OPTIMIZER)
+WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_1
+#endif
+
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -2187,6 +2195,10 @@ private:
 
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
+
+#if HAVE(LOAD_OPTIMIZER)
+WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
+#endif
 
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
