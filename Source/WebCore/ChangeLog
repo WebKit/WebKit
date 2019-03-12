@@ -1,3 +1,14 @@
+2019-03-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME] generateRequest was not using the sanitized init data
+        https://bugs.webkit.org/show_bug.cgi?id=195555
+
+        Reviewed by Jer Noble.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::generateRequest): Use sanitized init
+        data instead of the original one.
+
 2019-03-12  Rob Buis  <rbuis@igalia.com>
 
         Implement further CORS restrictions
