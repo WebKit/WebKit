@@ -990,7 +990,7 @@ void GraphicsLayerCA::setEventRegion(std::unique_ptr<Region>&& eventRegion)
         return;
 
     GraphicsLayer::setEventRegion(WTFMove(eventRegion));
-    noteLayerPropertyChanged(EventRegionChanged, DontScheduleFlush);
+    noteLayerPropertyChanged(EventRegionChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
 }
 
 bool GraphicsLayerCA::shouldRepaintOnSizeChange() const

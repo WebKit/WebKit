@@ -2576,11 +2576,14 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
 
+#if PLATFORM(IOS_FAMILY)
     auto eventRegion = std::make_unique<Region>();
     paintingInfo.eventRegion = eventRegion.get();
+#endif
 
     m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags);
 
+#if PLATFORM(IOS_FAMILY)
     paintingInfo.eventRegion = nullptr;
     // Use null event region to indicate the entire layer is sensitive to events (the common case).
     // FIXME: We could optimize Region so it doesn't use lots of memory if it contains a single rect only.
@@ -2589,6 +2592,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     else
         eventRegion->translate(roundedIntSize(contentOffsetInCompositingLayer()));
     m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
+#endif
 
     if (m_owningLayer.containsDirtyOverlayScrollbars())
         m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
