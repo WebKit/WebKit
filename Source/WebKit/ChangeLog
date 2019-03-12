@@ -1,3 +1,20 @@
+2019-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Device Orientation access permission should be denied unless explicitly granted by the client
+        https://bugs.webkit.org/show_bug.cgi?id=195625
+
+        Reviewed by Youenn Fablet.
+
+        Device Orientation access permission should be denied unless explicitly granted by the client.
+        Previously, it was granted by default.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+
 2019-03-12  Antti Koivisto  <antti@apple.com>
 
         [iOS] Enable asynchronous frame scrolling by default

@@ -174,7 +174,7 @@ public:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    virtual void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebKit::WebFrameProxy& webFrameProxy, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebKit::WebFrameProxy& webFrameProxy, const WebCore::SecurityOriginData&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
 #endif
 
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, Object*) { }

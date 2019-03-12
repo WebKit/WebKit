@@ -1903,7 +1903,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         void shouldAllowDeviceOrientationAndMotionAccess(WebPageProxy& page, WebFrameProxy&, const WebCore::SecurityOriginData& originData, CompletionHandler<void(bool)>&& completionHandler) final
         {
             if (!m_client.shouldAllowDeviceOrientationAndMotionAccess)
-                return completionHandler(true);
+                return completionHandler(false);
 
             auto origin = API::SecurityOrigin::create(originData.securityOrigin());
             completionHandler(m_client.shouldAllowDeviceOrientationAndMotionAccess(toAPI(&page), toAPI(origin.ptr()), m_client.base.clientInfo));

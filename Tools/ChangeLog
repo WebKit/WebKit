@@ -1,3 +1,22 @@
+2019-03-12  Chris Dumez  <cdumez@apple.com>
+
+        Device Orientation access permission should be denied unless explicitly granted by the client
+        https://bugs.webkit.org/show_bug.cgi?id=195625
+
+        Reviewed by Youenn Fablet.
+
+        add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm: Added.
+        (-[DeviceOrientationMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[DeviceOrientationPermissionUIDelegate initWithHandler:]):
+        (-[DeviceOrientationPermissionUIDelegate _webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:]):
+        (runDeviceOrientationTest):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesDeviceOrientationUIDelegate _webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:]):
+
 2019-03-12  Jer Noble  <jer.noble@apple.com>
 
         Flaky API Test TestWebKitAPI.WebKitLegacy.ScrollingDoesNotPauseMedia

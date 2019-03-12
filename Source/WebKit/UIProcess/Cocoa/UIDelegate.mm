@@ -847,11 +847,11 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy& webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler)
-        return completionHandler(true);
+        return completionHandler(false);
 
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
-        return completionHandler(true);
+        return completionHandler(false);
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:wrapper(API::FrameInfo::create(webFrameProxy, securityOriginData.securityOrigin())) decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL granted) mutable {

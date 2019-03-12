@@ -191,6 +191,7 @@
 		466C3843210637DE006A88DE /* notify-resourceLoadObserver.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */; };
 		467C565321B5ED130057516D /* GetSessionCookie.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 467C565121B5ECDF0057516D /* GetSessionCookie.html */; };
 		467C565421B5ED130057516D /* SetSessionCookie.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 467C565221B5ECDF0057516D /* SetSessionCookie.html */; };
+		46918EFC2237283C00468DFE /* DeviceOrientation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46918EFB2237283500468DFE /* DeviceOrientation.mm */; };
 		46A911592108E6780078D40D /* CustomUserAgent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46A911582108E66B0078D40D /* CustomUserAgent.mm */; };
 		46AE5A3720F9066D00E0873E /* SimpleServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4656A75720F9054F0002E21F /* SimpleServiceWorkerRegistrations-4.sqlite3 */; };
 		46C519DA1D355AB200DAA51A /* LocalStorageNullEntries.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */; };
@@ -1561,6 +1562,7 @@
 		466C3842210637CE006A88DE /* notify-resourceLoadObserver.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "notify-resourceLoadObserver.html"; sourceTree = "<group>"; };
 		467C565121B5ECDF0057516D /* GetSessionCookie.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GetSessionCookie.html; sourceTree = "<group>"; };
 		467C565221B5ECDF0057516D /* SetSessionCookie.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SetSessionCookie.html; sourceTree = "<group>"; };
+		46918EFB2237283500468DFE /* DeviceOrientation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DeviceOrientation.mm; sourceTree = "<group>"; };
 		46A911582108E66B0078D40D /* CustomUserAgent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomUserAgent.mm; sourceTree = "<group>"; };
 		46C519D81D355A7300DAA51A /* LocalStorageNullEntries.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalStorageNullEntries.mm; sourceTree = "<group>"; };
 		46C519E21D35629600DAA51A /* LocalStorageNullEntries.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = LocalStorageNullEntries.html; sourceTree = "<group>"; };
@@ -2503,6 +2505,7 @@
 				46A911582108E66B0078D40D /* CustomUserAgent.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
 				518EE51C20A78D3300E024F3 /* DecidePolicyForNavigationAction.mm */,
+				46918EFB2237283500468DFE /* DeviceOrientation.mm */,
 				CEA7F57B20895F5B0078EF6E /* DidResignInputElementStrongPasswordAppearance.mm */,
 				518EE51A20A78CFB00E024F3 /* DoAfterNextPresentationUpdateAfterCrash.mm */,
 				518EE51620A78CDF00E024F3 /* DoubleDefersLoading.mm */,
@@ -4006,6 +4009,7 @@
 				2DC4CF771D2D9DD800ECCC94 /* DataDetection.mm in Sources */,
 				518EE51D20A78D3600E024F3 /* DecidePolicyForNavigationAction.mm in Sources */,
 				2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */,
+				46918EFC2237283C00468DFE /* DeviceOrientation.mm in Sources */,
 				7CCE7EB91A411A7E00447C4C /* DeviceScaleFactorInDashboardRegions.mm in Sources */,
 				7CCE7EBA1A411A7E00447C4C /* DeviceScaleFactorOnBack.mm in Sources */,
 				7C83E04D1D0A641800FEBCF3 /* DFACombiner.cpp in Sources */,

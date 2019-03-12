@@ -1275,6 +1275,19 @@ addEventListener("deviceorientation", (event) => {
 
 @end
 
+@interface WebsitePoliciesDeviceOrientationUIDelegate : NSObject <WKUIDelegatePrivate> {
+}
+@end
+
+@implementation WebsitePoliciesDeviceOrientationUIDelegate
+
+- (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    decisionHandler(YES);
+}
+
+@end
+
 static void runWebsitePoliciesDeviceOrientationEventTest(bool websitePolicyValue)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -1287,6 +1300,8 @@ static void runWebsitePoliciesDeviceOrientationEventTest(bool websitePolicyValue
 
     auto delegate = adoptNS([[WebsitePoliciesDeviceOrientationDelegate alloc] initWithDeviceOrientationEventEnabled:websitePolicyValue]);
     [webView setNavigationDelegate:delegate.get()];
+    auto uiDelegate = adoptNS([[WebsitePoliciesDeviceOrientationUIDelegate alloc] init]);
+    [webView setUIDelegate:uiDelegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"test://localhost/main.html"]];
     [webView loadRequest:request];
