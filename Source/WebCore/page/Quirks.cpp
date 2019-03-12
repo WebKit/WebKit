@@ -27,9 +27,21 @@
 #include "Quirks.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
+#include "HTMLMetaElement.h"
+#include "HTMLObjectElement.h"
 #include "Settings.h"
 
 namespace WebCore {
+
+static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
+{
+    auto* loader = document.loader();
+    if (!loader)
+        return { };
+
+    return loader->allowedAutoplayQuirks();
+}
 
 Quirks::Quirks(Document& document)
     : m_document(makeWeakPtr(document))
@@ -38,9 +50,75 @@ Quirks::Quirks(Document& document)
 
 Quirks::~Quirks() = default;
 
+inline bool Quirks::needsQuirks() const
+{
+    return m_document && m_document->settings().needsSiteSpecificQuirks();
+}
+
+bool Quirks::shouldIgnoreInvalidSignal() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
+}
+
+bool Quirks::needsFormControlToBeMouseFocusable() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->url().host();
+    return equalLettersIgnoringASCIICase(host, "ceac.state.gov") || host.endsWithIgnoringASCIICase(".ceac.state.gov");
+#else
+    return false;
+#endif
+}
+
+bool Quirks::needsAutoplayPlayPauseEvents() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::SynthesizedPauseEvents))
+        return true;
+
+    return allowedAutoplayQuirks(m_document->topDocument()).contains(AutoplayQuirk::SynthesizedPauseEvents);
+}
+
+bool Quirks::needsSeekingSupportDisabled() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "netflix.com") || host.endsWithIgnoringASCIICase(".netflix.com");
+}
+
+bool Quirks::needsPerDocumentAutoplayBehavior() const
+{
+#if PLATFORM(MAC)
+    ASSERT(m_document == &m_document->topDocument());
+    return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
+#else
+    return false;
+#endif
+}
+
+bool Quirks::shouldAutoplayForArbitraryUserGesture() const
+{
+#if PLATFORM(MAC)
+    return needsQuirks() && allowedAutoplayQuirks(*m_document).contains(AutoplayQuirk::ArbitraryUserGestures);
+#else
+    return false;
+#endif
+}
+
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
-    if (!m_document || !m_document->settings().needsSiteSpecificQuirks())
+    if (!needsQuirks())
         return false;
 
     if (m_hasBrokenEncryptedMediaAPISupportQuirk)
@@ -60,7 +138,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 
 bool Quirks::hasWebSQLSupportQuirk() const
 {
-    if (!m_document || !m_document->settings().needsSiteSpecificQuirks())
+    if (!needsQuirks())
         return false;
     
     if (m_hasWebSQLSupportQuirk)
@@ -69,9 +147,9 @@ bool Quirks::hasWebSQLSupportQuirk() const
     auto domain = m_document->securityOrigin().domain().convertToASCIILowercase();
     
     m_hasWebSQLSupportQuirk = domain == "bostonglobe.com"
-    || domain.endsWith(".bostonglobe.com")
-    || domain == "latimes.com"
-    || domain.endsWith(".latimes.com");
+        || domain.endsWith(".bostonglobe.com")
+        || domain == "latimes.com"
+        || domain.endsWith(".latimes.com");
     
     return m_hasWebSQLSupportQuirk.value();
 }

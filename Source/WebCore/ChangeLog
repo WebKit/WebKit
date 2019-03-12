@@ -1,3 +1,40 @@
+2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move the remaining code to decide whether site specific quirks are needed to Quirks class
+        https://bugs.webkit.org/show_bug.cgi?id=195610
+
+        Reviewed by Antti Koivisto.
+
+        Moved the remaining code scattered across WebCore to decide whether a site specific quirk
+        is needed or not to Quirks class introduced in r236818.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::needsSignalQuirk): Deleted.
+        (WebCore::processInvalidSignal):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::needsMouseFocusableQuirk const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::needsAutoplayPlayPauseEventsQuirk): Deleted.
+        (WebCore::HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks):
+        (WebCore::needsSeekingSupportQuirk): Deleted.
+        (WebCore::HTMLMediaElement::supportsSeeking const):
+        * html/MediaElementSession.cpp:
+        (WebCore::needsArbitraryUserGestureAutoplayQuirk): Deleted.
+        (WebCore::needsPerDocumentAutoplayBehaviorQuirk): Deleted.
+        (WebCore::MediaElementSession::playbackPermitted const):
+        * page/Quirks.cpp:
+        (WebCore::allowedAutoplayQuirks): Added.
+        (WebCore::Quirks::needsQuirks const): Added.
+        (WebCore::Quirks::shouldIgnoreInvalidSignal const): Added.
+        (WebCore::Quirks::needsFormControlToBeMouseFocusable const): Added.
+        (WebCore::Quirks::needsAutoplayPlayPauseEvents const): Added.
+        (WebCore::Quirks::needsSeekingSupportDisabled const): Addd.
+        (WebCore::Quirks::needsPerDocumentAutoplayBehavior const): Added.
+        (WebCore::Quirks::shouldAutoplayForArbitraryUserGesture const): Added.
+        (WebCore::Quirks::hasBrokenEncryptedMediaAPISupportQuirk const): Added.
+        (WebCore::Quirks::hasWebSQLSupportQuirk const): Fixed the coding style.
+        * page/Quirks.h:
+
 2019-03-12  Enrique Ocaña González  <eocanha@igalia.com>
 
         [Media][MSE] Don't emit timeUpdate after play() if currentTime hasn't changed

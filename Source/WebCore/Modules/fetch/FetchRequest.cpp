@@ -33,6 +33,7 @@
 #include "HTTPParsers.h"
 #include "JSAbortSignal.h"
 #include "Logging.h"
+#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -144,25 +145,12 @@ ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
     return { };
 }
 
-static inline bool needsSignalQuirk(ScriptExecutionContext& context)
-{
-    if (!is<Document>(context))
-        return false;
-
-    auto& document = downcast<Document>(context);
-    if (!document.settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto host = document.topDocument().url().host();
-    return equalLettersIgnoringASCIICase(host, "www.thrivepatientportal.com");
-}
-
 static inline Optional<Exception> processInvalidSignal(ScriptExecutionContext& context)
 {
     ASCIILiteral message { "FetchRequestInit.signal should be undefined, null or an AbortSignal object."_s };
     context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
 
-    if (needsSignalQuirk(context))
+    if (is<Document>(context) && downcast<Document>(context).quirks().shouldIgnoreInvalidSignal())
         return { };
 
     RELEASE_LOG_ERROR(ResourceLoading, "FetchRequestInit.signal should be undefined, null or an AbortSignal object.");

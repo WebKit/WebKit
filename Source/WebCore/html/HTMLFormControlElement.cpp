@@ -38,6 +38,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLegendElement.h"
 #include "HTMLTextAreaElement.h"
+#include "Quirks.h"
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "Settings.h"
@@ -672,15 +673,7 @@ AutofillData HTMLFormControlElement::autofillData() const
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.
 bool HTMLFormControlElement::needsMouseFocusableQuirk() const
 {
-#if PLATFORM(MAC)
-    if (!document().settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto host = document().url().host();
-    return equalLettersIgnoringASCIICase(host, "ceac.state.gov") || host.endsWithIgnoringASCIICase(".ceac.state.gov");
-#else
-    return false;
-#endif
+    return document().quirks().needsFormControlToBeMouseFocusable();
 }
 
 } // namespace Webcore

@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "Page.h"
 #include "PlatformMediaSessionManager.h"
+#include "Quirks.h"
 #include "RenderMedia.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -244,26 +245,6 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-#if PLATFORM(MAC)
-static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
-{
-    if (!document.settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto loader = makeRefPtr(document.loader());
-    return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::ArbitraryUserGestures);
-}
-#endif // PLATFORM(MAC)
-
-static bool needsPerDocumentAutoplayBehaviorQuirk(const Document& document)
-{
-    if (!document.settings().needsSiteSpecificQuirks())
-        return false;
-
-    auto loader = makeRefPtr(document.loader());
-    return loader && loader->allowedAutoplayQuirks().contains(AutoplayQuirk::PerDocumentAutoplayBehavior);
-}
-
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() const
 {
     if (m_element.isSuspended()) {
@@ -301,14 +282,13 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted() co
     }
 #endif
 
+    // FIXME: Why are we checking top-level document only for PerDocumentAutoplayBehavior?
     const auto& topDocument = document.topDocument();
-    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && needsPerDocumentAutoplayBehaviorQuirk(topDocument))
+    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
-#if PLATFORM(MAC)
-    if (document.hasHadUserInteraction() && needsArbitraryUserGestureAutoplayQuirk(document))
+    if (document.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture())
         return { };
-#endif
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for video rate change restriction");

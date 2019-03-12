@@ -37,10 +37,18 @@ public:
     Quirks(Document&);
     ~Quirks();
 
+    bool shouldIgnoreInvalidSignal() const;
+    bool needsFormControlToBeMouseFocusable() const;
+    bool needsAutoplayPlayPauseEvents() const;
+    bool needsSeekingSupportDisabled() const;
+    bool needsPerDocumentAutoplayBehavior() const;
+    bool shouldAutoplayForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
     bool hasWebSQLSupportQuirk() const;
 
 private:
+    bool needsQuirks() const;
+
     WeakPtr<Document> m_document;
 
     mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
