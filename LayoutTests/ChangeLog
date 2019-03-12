@@ -1,3 +1,15 @@
+2019-03-12  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Add test to ensure that a web page can prevent the default for Command + A
+        https://bugs.webkit.org/show_bug.cgi?id=192425
+
+        Reviewed by Wenson Hsieh. 
+
+        Skip the test until we have the UIKit fix for <rdar://problem/46430796>.
+
+        * fast/events/ios/key-command-select-all-prevent-default.html: Added.
+        * platform/ios/TestExpectations:
+
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

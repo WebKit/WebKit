@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+let testElement;
+
+function handleKeyDown(event)
+{
+    if (!event.metaKey || event.key !== "a")
+        return;
+
+    event.preventDefault();
+    testElement.removeEventListener("keydown", handleKeyDown, true);
+
+    shouldBeEqualToString("window.getSelection().type", "Caret");
+    document.body.removeChild(testElement); // To make the output pretty.
+    finishJSTest();
+}
+
+function handleFocus()
+{
+    testElement.addEventListener("keydown", handleKeyDown, true);
+    if (window.testRunner)
+        UIHelper.keyDown("a", ["metaKey"]);
+}
+
+function runTest()
+{
+    testElement = document.getElementById("test");
+
+    description("Tests that preventDefault() when Command + A is pressed prevents selection.");
+
+    testElement.addEventListener("focus", handleFocus, { once: true });
+    if (window.testRunner)
+        UIHelper.activateFormControl(testElement);
+    else
+        testElement.focus();
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="test" contenteditable="true">Press Command + A to select all this text.</div>
+</body>
+</html>

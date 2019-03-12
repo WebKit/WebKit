@@ -3237,4 +3237,7 @@ fast/events/ios/activating-radio-button-should-not-scroll-page.html [ Skip ]
 fast/events/ios/activating-reset-button-should-not-scroll-page.html [ Skip ]
 fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
 
+# FIXME: Unskip the following test once we have the fix for <rdar://problem/45892362>.
+fast/events/ios/key-command-select-all-prevent-default.html [ Skip ]
+
 webkit.org/b/195433 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
