@@ -1,3 +1,19 @@
+2019-03-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove OpenCube QuickMenu quirks from navigator.appVersion
+        https://bugs.webkit.org/show_bug.cgi?id=195600
+
+        Reviewed by Simon Fraser.
+
+        Remove the site specific quirk added in r35050 for OpenCube QuickMenu library for nwa.com
+
+        Blink removed this code back in 2013. The fact Chrome has been shipping successfully without
+        this quirk for six years is a good evidence that it's no longer needed for the Web compatibility.
+
+        * page/Navigator.cpp:
+        (WebCore::Navigator::appVersion const):
+        (WebCore::shouldHideFourDot): Deleted.
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242763.

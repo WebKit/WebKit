@@ -56,20 +56,6 @@ Navigator::Navigator(ScriptExecutionContext* context, DOMWindow& window)
 
 Navigator::~Navigator() = default;
 
-// If this function returns true, we need to hide the substring "4." that would otherwise
-// appear in the appVersion string. This is to avoid problems with old versions of a
-// library called OpenCube QuickMenu, which as of this writing is still being used on
-// sites such as nwa.com -- the library thinks Safari is Netscape 4 if we don't do this!
-static bool shouldHideFourDot(Frame& frame)
-{
-    auto* sourceURL = frame.script().sourceURL();
-    if (!sourceURL)
-        return false;
-    if (!(sourceURL->endsWith("/dqm_script.js") || sourceURL->endsWith("/dqm_loader.js") || sourceURL->endsWith("/tdqm_loader.js")))
-        return false;
-    return frame.settings().needsSiteSpecificQuirks();
-}
-
 String Navigator::appVersion() const
 {
     auto* frame = this->frame();
@@ -77,10 +63,7 @@ String Navigator::appVersion() const
         return String();
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logNavigatorAPIAccessed(*frame->document(), ResourceLoadStatistics::NavigatorAPI::AppVersion);
-    String appVersion = NavigatorBase::appVersion();
-    if (shouldHideFourDot(*frame))
-        appVersion.replace("4.", "4_");
-    return appVersion;
+    return NavigatorBase::appVersion();
 }
 
 const String& Navigator::userAgent() const
