@@ -72,6 +72,11 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     // Public
 
+    get hasBreakpoint()
+    {
+        return this._breakpointStatus !== WI.DOMTreeElement.BreakpointStatus.None || this._subtreeBreakpointCount > 0;
+    }
+
     get breakpointStatus()
     {
         return this._breakpointStatus;

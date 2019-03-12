@@ -771,15 +771,15 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         }
 
         let breakpoints = WI.domDebuggerManager.domBreakpointsForNode(domNode);
-        if (!breakpoints.length) {
+        if (breakpoints.length) {
+            if (breakpoints.some((item) => item.disabled))
+                treeElement.breakpointStatus = WI.DOMTreeElement.BreakpointStatus.DisabledBreakpoint;
+            else
+                treeElement.breakpointStatus = WI.DOMTreeElement.BreakpointStatus.Breakpoint;
+        } else
             treeElement.breakpointStatus = WI.DOMTreeElement.BreakpointStatus.None;
-            return;
-        }
 
-        this.breakpointGutterEnabled = true;
-
-        let disabled = breakpoints.some((item) => item.disabled);
-        treeElement.breakpointStatus = disabled ? WI.DOMTreeElement.BreakpointStatus.DisabledBreakpoint : WI.DOMTreeElement.BreakpointStatus.Breakpoint;
+        this.breakpointGutterEnabled = this._domTreeOutline.children.some((child) => child.hasBreakpoint);
     }
 
     _restoreBreakpointsAfterUpdate()
