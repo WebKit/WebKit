@@ -515,6 +515,11 @@ static bool frameHasPlatformWidget(const Frame& frame)
     return false;
 }
 
+void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformMouseEvent)
+{
+    updateMouseEventTargetNode(nullptr, platformMouseEvent, FireMouseOverOut::Yes);
+}
+
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     // WebKit1 code path.

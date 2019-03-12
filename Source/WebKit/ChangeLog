@@ -1,3 +1,14 @@
+2019-03-11  Zalan Bujtas  <zalan@apple.com>
+
+        [Synthetic Click] Dispatch mouseout soon after mouseup
+        https://bugs.webkit.org/show_bug.cgi?id=195575
+        <rdar://problem/47093049>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
 2019-03-11  Tim Horton  <timothy_horton@apple.com>
 
         API test WebKit.RequestTextInputContext fails on iOS
