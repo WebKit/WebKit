@@ -240,8 +240,8 @@ private:
 bool shouldTreatAsPotentiallyTrustworthy(const URL&);
 
 // Returns true if the Origin header values serialized from these two origins would be the same.
-bool originsMatch(const SecurityOrigin&, const SecurityOrigin&);
-bool originsMatch(const SecurityOrigin*, const SecurityOrigin*);
+bool serializedOriginsMatch(const SecurityOrigin&, const SecurityOrigin&);
+bool serializedOriginsMatch(const SecurityOrigin*, const SecurityOrigin*);
 
 template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) const
 {

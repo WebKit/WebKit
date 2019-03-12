@@ -311,7 +311,7 @@ ExceptionOr<Vector<MediaEndpointConfiguration::CertificatePEM>> RTCPeerConnectio
     Vector<MediaEndpointConfiguration::CertificatePEM> certificates;
     certificates.reserveInitialCapacity(configuration.certificates.size());
     for (auto& certificate : configuration.certificates) {
-        if (!originsMatch(origin, certificate->origin()))
+        if (!origin.isSameOriginAs(certificate->origin()))
             return Exception { InvalidAccessError, "Certificate does not have a valid origin" };
 
         if (currentMilliSeconds > certificate->expires())

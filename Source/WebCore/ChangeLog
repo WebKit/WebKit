@@ -1,3 +1,30 @@
+2019-03-12  Youenn Fablet  <youenn@apple.com>
+
+        Rename originsMatch in originSerializationsMatch
+        https://bugs.webkit.org/show_bug.cgi?id=195572
+
+        Reviewed by Jiewen Tan.
+
+        In addition to renaming, make use of SecurityOrigin::isSameOriginAs
+        where it makes more sense than to compare origin serialization.
+        The main difference is that isSameOriginAs will return false for two different unique origins
+        while originsSerializationsMatch will not.
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::doesHaveSameOriginAsItsAncestors):
+        * Modules/mediastream/RTCController.cpp:
+        (WebCore::matchDocumentOrigin):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::certificatesFromConfiguration):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::shouldOpenExternalURLsPolicyToPropagate const):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest):
+        * page/SecurityOrigin.cpp:
+        (WebCore::serializedOriginsMatch):
+        (WebCore::originsMatch): Deleted.
+        * page/SecurityOrigin.h:
+
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [Synthetic Click] Dispatch mouseout soon after mouseup

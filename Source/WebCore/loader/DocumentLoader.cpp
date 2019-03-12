@@ -2083,7 +2083,7 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
         return m_shouldOpenExternalURLsPolicy;
 
     if (auto* currentDocument = document()) {
-        if (originsMatch(currentDocument->securityOrigin(), currentDocument->topOrigin()))
+        if (currentDocument->securityOrigin().isSameOriginAs(currentDocument->topOrigin()))
             return m_shouldOpenExternalURLsPolicy;
     }
 

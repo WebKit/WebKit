@@ -54,7 +54,7 @@ bool CredentialsContainer::doesHaveSameOriginAsItsAncestors()
 
     auto& origin = m_document->securityOrigin();
     for (auto* document = m_document->parentDocument(); document; document = document->parentDocument()) {
-        if (!originsMatch(document->securityOrigin(), origin))
+        if (!origin.isSameOriginAs(document->securityOrigin()))
             return false;
     }
     return true;

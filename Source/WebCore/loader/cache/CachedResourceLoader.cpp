@@ -638,7 +638,7 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         break;
     }
 
-    if (resource.options().mode != request.options().mode || !originsMatch(request.origin(), resource.origin()))
+    if (resource.options().mode != request.options().mode || !serializedOriginsMatch(request.origin(), resource.origin()))
         return true;
 
     if (resource.options().redirect != request.options().redirect && resource.hasRedirections())
