@@ -658,6 +658,7 @@ public:
     void setFocusedElementValue(const String&);
     void setFocusedElementValueAsNumber(double);
     void setFocusedElementSelectedIndex(uint32_t index, bool allowMultipleSelection);
+    void setIsShowingInputViewForFocusedElement(bool);
     void updateSelectionAppearance();
     void getSelectionContext(CallbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
@@ -1527,6 +1528,8 @@ private:
 
     void cancelGesturesBlockedOnSynchronousReplies();
 
+    bool shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1724,7 +1727,6 @@ private:
     Optional<WebCore::IntSize> m_viewportSizeForCSSViewportUnits;
 
     bool m_userIsInteracting { false };
-    bool m_isFocusingElementDueToUserInteraction { false };
     bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
     bool m_needsHiddenContentEditableQuirk { false };
     bool m_needsPlainTextQuirk { false };
@@ -1735,7 +1737,7 @@ private:
 #endif
 
     RefPtr<WebCore::Element> m_focusedElement;
-    bool m_hasPendingBlurNotification { false };
+    RefPtr<WebCore::Element> m_recentlyBlurredElement;
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -1746,6 +1748,8 @@ private:
     RefPtr<WebCore::Range> m_currentWordRange;
     RefPtr<WebCore::Node> m_interactionNode;
     WebCore::IntPoint m_lastInteractionLocation;
+
+    bool m_isShowingInputViewForFocusedElement { false };
     
     enum SelectionAnchor { Start, End };
     SelectionAnchor m_selectionAnchor { Start };

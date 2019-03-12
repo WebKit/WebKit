@@ -898,6 +898,11 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
     pageClient().didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, nodeHasBuiltInClickHandling);
 }
 
+void WebPageProxy::setIsShowingInputViewForFocusedElement(bool showingInputView)
+{
+    process().send(Messages::WebPage::SetIsShowingInputViewForFocusedElement(showingInputView), m_pageID);
+}
+
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData& userData)
 {
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = true;

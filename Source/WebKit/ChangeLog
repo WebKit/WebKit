@@ -1,3 +1,77 @@
+2019-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Input view sometimes flickers when blurring and refocusing an element
+        https://bugs.webkit.org/show_bug.cgi?id=195639
+        <rdar://problem/48735337>
+
+        Reviewed by Tim Horton.
+
+        On iOS, if a focused element is blurred and immediately refocused in the scope of user interaction, we will end
+        up reloading interaction state (input views, autocorrection contexts, etc.) in the UI process. On certain well-
+        trafficked websites, this results in the input view and input accessory view flickering (or more egregiously,
+        scrolling to re-reveal the focused element) when changing selection.
+
+        To fix the issue, this patch refactors some focus management logic to suppress sending focused element updates
+        to the UI process in the case where the same element is being blurred and immediately refocused. To do this, we
+        track the most recently blurred element and bail when the recently blurred element is identical to the newly
+        focused element. See below for more detail.
+
+        Test: fast/forms/ios/keyboard-stability-when-refocusing-element.html
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+
+        Update the web process' notion of whether an input view is showing. Importantly, this accounts for decisions
+        made by _WKUIDelegate. See below for more details.
+
+        (isAssistableInputType): Deleted.
+
+        Removed this helper function; this was only used in one place as a sanity check that the focused element's type
+        is not none, right before attempting to show an input view. Instead, we can just check the focused element's
+        type directly against InputType::None in the if statement of the early return.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setIsShowingInputViewForFocusedElement):
+
+        Add a hook to notify the web process when an input view is showing or not (see below for more detail).
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::elementDidRefocus):
+        (WebKit::WebPage::shouldDispatchUpdateAfterFocusingElement const):
+
+        Add a helper to determine whether we notify the UI process about a newly focused element. On macOS, this is true
+        only when the new focused element is neither the currently focused element, nor the focused element that was
+        just blurred. On iOS, we have an additional constraint that when the input view is not showing, we still need to
+        notify the UI process, since the UI process might want to begin showing the keyboard for an element that has
+        only been programmatically focused, for which we aren't currently showing the input view.
+
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+
+        Replace a couple of existing member variables in WebPage used for focus management:
+        -   Replace m_hasPendingBlurNotification with m_recentlyBlurredElement, a RefPtr to the Element that is being
+            blurred. Behavior here is the same as before (i.e. having a pending blur notification is equivalent to
+            having recently blurred a focused element). However, this allows us to check newly focused elements against
+            the recently blurred element in WebPage::elementDidFocus().
+        -   Replace m_isFocusingElementDueToUserInteraction with m_isShowingInputViewForFocusedElement. The flag
+            m_isFocusingElementDueToUserInteraction was originally added to fix <webkit.org/b/146735>, by ensuring that
+            we don't send redundant ElementDidFocus (formerly, StartAssistingNode) messages to the UI process even when
+            the keyboard is already up. In these simpler times, user interaction when focusing an element was equivalent
+            to showing an input view for the focused element. However, in today's world, there are a variety of reasons
+            why we might or might not show an input view for a given element (including, but not limited to activity
+            state changes and decisions made by _WKInputDelegate). As such, it doesn't make sense to continue relying on
+            m_isFocusingElementDueToUserInteraction in this early return. Instead, have the UI process propagate a
+            message back to the web process, to let it know whether there is a keyboard showing, and use this flag
+            instead.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::setIsShowingInputViewForFocusedElement):
+
 2019-03-12  Tim Horton  <timothy_horton@apple.com>
 
         More attempts at build fixing.

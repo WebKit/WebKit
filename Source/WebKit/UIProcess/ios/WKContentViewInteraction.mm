@@ -4817,40 +4817,6 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     return selectionBoundingRect;
 }
 
-static bool isAssistableInputType(WebKit::InputType type)
-{
-    switch (type) {
-    case WebKit::InputType::ContentEditable:
-    case WebKit::InputType::Text:
-    case WebKit::InputType::Password:
-    case WebKit::InputType::TextArea:
-    case WebKit::InputType::Search:
-    case WebKit::InputType::Email:
-    case WebKit::InputType::URL:
-    case WebKit::InputType::Phone:
-    case WebKit::InputType::Number:
-    case WebKit::InputType::NumberPad:
-    case WebKit::InputType::Date:
-    case WebKit::InputType::DateTime:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Month:
-    case WebKit::InputType::Week:
-    case WebKit::InputType::Time:
-    case WebKit::InputType::Select:
-    case WebKit::InputType::Drawing:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case WebKit::InputType::Color:
-#endif
-        return true;
-
-    case WebKit::InputType::None:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 4;
 
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
@@ -4933,11 +4899,12 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
         [_drawingCoordinator installInkPickerForDrawing:information.embeddedViewID];
 #endif
 
-    if (!shouldShowInputView)
+    if (!shouldShowInputView || information.elementType == WebKit::InputType::None) {
+        _page->setIsShowingInputViewForFocusedElement(false);
         return;
+    }
 
-    if (!isAssistableInputType(information.elementType))
-        return;
+    _page->setIsShowingInputViewForFocusedElement(true);
 
     // FIXME: We should remove this check when we manage to send ElementDidFocus from the WebProcess
     // only when it is truly time to show the keyboard.
@@ -5056,6 +5023,7 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
         [_webView _scheduleVisibleContentRectUpdate];
 
     [_webView didEndFormControlInteraction];
+    _page->setIsShowingInputViewForFocusedElement(false);
 
     if (!_isChangingFocus) {
         [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];

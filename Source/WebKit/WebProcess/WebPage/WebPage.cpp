@@ -3124,7 +3124,6 @@ void WebPage::didStartPageTransition()
     bool hasPreviouslyFocusedDueToUserInteraction = m_hasEverFocusedElementDueToUserInteractionSincePageTransition;
 #endif
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition = false;
-    m_isFocusingElementDueToUserInteraction = false;
     m_lastEditorStateWasContentEditable = EditorStateIsContentEditable::Unset;
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
@@ -3137,6 +3136,9 @@ void WebPage::didStartPageTransition()
         m_needsPlainTextQuirk = false;
         send(Messages::WebPageProxy::SetNeedsPlainTextQuirk(m_needsPlainTextQuirk));
     }
+#endif
+#if PLATFORM(IOS_FAMILY)
+    m_isShowingInputViewForFocusedElement = false;
 #endif
 }
 
@@ -5303,18 +5305,32 @@ void WebPage::elementDidRefocus(WebCore::Element& element)
 {
     elementDidFocus(element);
 
-    if (m_isFocusingElementDueToUserInteraction)
+    if (m_userIsInteracting)
         scheduleFullEditorStateUpdate();
+}
+
+bool WebPage::shouldDispatchUpdateAfterFocusingElement(const Element& element) const
+{
+    if (m_focusedElement == &element || m_recentlyBlurredElement == &element) {
+#if PLATFORM(IOS_FAMILY)
+        return !m_isShowingInputViewForFocusedElement;
+#else
+        return false;
+#endif
+    }
+    return true;
 }
 
 void WebPage::elementDidFocus(WebCore::Element& element)
 {
-    if (m_focusedElement == &element && m_isFocusingElementDueToUserInteraction)
+    if (!shouldDispatchUpdateAfterFocusingElement(element)) {
+        m_focusedElement = &element;
+        m_recentlyBlurredElement = nullptr;
         return;
+    }
 
     if (element.hasTagName(WebCore::HTMLNames::selectTag) || element.hasTagName(WebCore::HTMLNames::inputTag) || element.hasTagName(WebCore::HTMLNames::textareaTag) || element.hasEditableStyle()) {
         m_focusedElement = &element;
-        m_isFocusingElementDueToUserInteraction |= m_userIsInteracting;
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -5330,35 +5346,30 @@ void WebPage::elementDidFocus(WebCore::Element& element)
 
         m_formClient->willBeginInputSession(this, &element, WebFrame::fromCoreFrame(*element.document().frame()), m_userIsInteracting, userData);
 
-        send(Messages::WebPageProxy::ElementDidFocus(information, m_userIsInteracting, m_hasPendingBlurNotification, m_changingActivityState, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        send(Messages::WebPageProxy::ElementDidFocus(information, m_userIsInteracting, m_recentlyBlurredElement, m_changingActivityState, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
-        if (element.hasTagName(WebCore::HTMLNames::selectTag))
-            send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
-        else
-            send(Messages::WebPageProxy::SetEditableElementIsFocused(true));
+        // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.
+        // This also doesn't take other noneditable controls into account, such as input type color.
+        send(Messages::WebPageProxy::SetEditableElementIsFocused(!element.hasTagName(WebCore::HTMLNames::selectTag)));
 #endif
-        m_hasPendingBlurNotification = false;
+        m_recentlyBlurredElement = nullptr;
     }
 }
 
 void WebPage::elementDidBlur(WebCore::Element& element)
 {
     if (m_focusedElement == &element) {
-        m_hasPendingBlurNotification = true;
-        RefPtr<WebPage> protectedThis(this);
-        callOnMainThread([protectedThis] {
-            if (protectedThis->m_hasPendingBlurNotification) {
+        m_recentlyBlurredElement = WTFMove(m_focusedElement);
+        callOnMainThread([protectedThis = makeRefPtr(this)] {
+            if (protectedThis->m_recentlyBlurredElement) {
 #if PLATFORM(IOS_FAMILY)
                 protectedThis->send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
                 protectedThis->send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
 #endif
             }
-            protectedThis->m_hasPendingBlurNotification = false;
+            protectedThis->m_recentlyBlurredElement = nullptr;
         });
-
-        m_isFocusingElementDueToUserInteraction = false;
-        m_focusedElement = nullptr;
     }
 }
 

@@ -1194,6 +1194,7 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurFocusedElement();
+    void setIsShowingInputViewForFocusedElement(bool);
 #endif
 
     void postMessageToInjectedBundle(const String& messageName, API::Object* messageBody);

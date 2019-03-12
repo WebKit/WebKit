@@ -930,6 +930,11 @@ void WebPage::blurFocusedElement()
     m_focusedElement->blur();
 }
 
+void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
+{
+    m_isShowingInputViewForFocusedElement = showingInputView;
+}
+
 void WebPage::setFocusedElementValue(const String& value)
 {
     // FIXME: should also handle the case of HTMLSelectElement.

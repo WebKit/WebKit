@@ -1,0 +1,9 @@
+Verifies that input view state doesn't thrash when script blurs and immediately refocuses an editable element. To manually run the test, tap the red editable box to focus it, and then tap the box again; check that the keyboard and input accessory view do not flicker, and that the scroll position remains the same.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS result is "Ended"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

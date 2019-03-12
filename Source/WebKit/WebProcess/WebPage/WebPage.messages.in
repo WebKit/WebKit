@@ -109,6 +109,7 @@ messages -> WebPage LegacyReceiver {
     CancelAutoscroll()
     RequestFocusedElementInformation(WebKit::CallbackID callbackID)
     HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
+    SetIsShowingInputViewForFocusedElement(bool showingInputView)
 #endif
 
     SetControlledByAutomation(bool controlled)
