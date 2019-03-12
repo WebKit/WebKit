@@ -50,6 +50,8 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 
     m_hasBrokenEncryptedMediaAPISupportQuirk = domain == "starz.com"
         || domain.endsWith(".starz.com")
+        || domain == "youtube.com"
+        || domain.endsWith(".youtube.com")
         || domain == "hulu.com"
         || domain.endsWith("hulu.com");
 

@@ -1,3 +1,16 @@
+2019-03-11  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r236281): YouTube Movies fail with "video format" error
+        https://bugs.webkit.org/show_bug.cgi?id=195598
+        <rdar://problem/48782842>
+
+        Reviewed by Jon Lee.
+
+        Partially revert r236281 for YouTube.com.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::hasBrokenEncryptedMediaAPISupportQuirk const):
+
 2019-03-11  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] BindGroups/Argument buffers: Move MTLBuffer creation from and GPUBindGroup validation to GPUDevice.createBindGroup
