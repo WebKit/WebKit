@@ -1,3 +1,19 @@
+2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        In CachedFrame's constructor, release-assert that DOMWindow still has a frame after page-caching subframes
+        https://bugs.webkit.org/show_bug.cgi?id=195609
+
+        Reviewed by Chris Dumez.
+
+        r242677 added release assertions to DOMWindow::suspendForPageCache. But when the first release assert in
+        that function is hit, we still can't tell whether active DOM objects are detaching frames, or if creating
+        CachedFrame's on one of subframes is causing the frame to go way.
+
+        Add a release assertion immediately after creating CachedFrame on subframes to detect this case.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Stop content change observation when the touch event turns into long press

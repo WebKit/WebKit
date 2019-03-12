@@ -147,6 +147,8 @@ CachedFrame::CachedFrame(Frame& frame)
     for (Frame* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         m_childFrames.append(std::make_unique<CachedFrame>(*child));
 
+    RELEASE_ASSERT(m_document->domWindow()->frame());
+
     // Active DOM objects must be suspended before we cache the frame script data.
     m_document->suspend(ReasonForSuspension::PageCache);
 
