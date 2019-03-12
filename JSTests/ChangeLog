@@ -1,3 +1,13 @@
+2019-03-12  Mark Lam  <mark.lam@apple.com>
+
+        The HasIndexedProperty node does GC.
+        https://bugs.webkit.org/show_bug.cgi?id=195559
+        <rdar://problem/48767923>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/HasIndexedProperty-does-gc.js: Added.
+
 2019-03-11  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement "~" unary operation
