@@ -241,7 +241,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void defaultTouchEventHandler(Node&, TouchEvent&);
-    WEBCORE_EXPORT void dispatchSyntheticMouseOut(const PlatformMouseEvent&);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -405,9 +404,9 @@ private:
 
     Node* nodeUnderMouse() const;
     
-    enum class FireMouseOverOut { No, Yes };
-    void updateMouseEventTargetNode(Node*, const PlatformMouseEvent&, FireMouseOverOut);
-
+    void updateMouseEventTargetNode(Node*, const PlatformMouseEvent&, bool fireMouseOverOut);
+    void fireMouseOverOut(bool fireMouseOver = true, bool fireMouseOut = true, bool updateLastNodeUnderMouse = true);
+    
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);
 
     bool dispatchMouseEvent(const AtomicString& eventType, Node* target, bool cancelable, int clickCount, const PlatformMouseEvent&, bool setUnder);

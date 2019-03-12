@@ -45,11 +45,7 @@ tapthis.addEventListener("mouseover", function( event ) {
         testRunner.notifyDone();
 }, false);
 
-tapthis.addEventListener("mouseout", function( event ) {
-    result.innerHTML = result.innerHTML + " mouseout should NOT be triggered ";
-}, false);
-
-becomesVisible.addEventListener("click", function( event ) {
+becomesVisible.addEventListener("click", function( event ) {   
     result.innerHTML = "clicked hidden";
 }, false);
 
