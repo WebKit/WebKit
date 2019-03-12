@@ -1,3 +1,10 @@
+2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline tests after r242757.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+
 2019-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Add testing API to hit-test and scroll overflow scrollers
