@@ -31,5 +31,7 @@
 	</array>
 	<key>com.apple.private.memorystatus</key>
 	<true/>
+	<key>com.apple.QuartzCore.webkit-end-points</key>
+	<true/>
 </dict>
 </plist>

@@ -1,3 +1,15 @@
+2019-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Add entitlement to enable use of graphics endpoint with limited capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=195582
+        <rdar://problem/36082379>
+
+        Reviewed by Brent Fulgham.
+
+        This is a QuartzCore endpoint with a minimal set of capabilities.
+
+        * Configurations/WebContent-iOS.entitlements:
+
 2019-03-11  John Wilander  <wilander@apple.com>
 
         Move NetworkProcess/Classifier/ResourceLoadStatisticsStoreCocoa.mm functionality into UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm
