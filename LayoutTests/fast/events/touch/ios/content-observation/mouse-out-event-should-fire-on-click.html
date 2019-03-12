@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>This tests the case when visible content change happens on touchstart</title>
+<title>This tests that we fire mouseout on synthetic click</title>
 <script src="../../../../../resources/basic-gestures.js"></script>
 <style>
 #tapthis {
@@ -10,7 +10,6 @@
 }
 
 #becomesVisible {
-    display: none;
     width: 100px;
     height: 100px;
     background-color: green;
@@ -35,26 +34,23 @@ async function test() {
 </script>
 </head>
 <body onload="test()">
-<div id=tapthis>PASS if 'clicked' text is not shown below.</div>
+<div id=tapthis>PASS if 'mouseout' text is shown below.</div>
 <div id=becomesVisible></div>
 <pre id=result></pre>
 <script>
-tapthis.addEventListener("mouseover", function( event ) {
-    becomesVisible.style.display = "block";
+
+becomesVisible.addEventListener("click", function( event ) {   
+    result.innerHTML = "clicked hidden";
+}, false);
+
+tapthis.addEventListener("mouseout", function( event ) {   
+    result.innerHTML = result.innerHTML + " mouseout triggered ";
     if (window.testRunner)
         testRunner.notifyDone();
 }, false);
 
-tapthis.addEventListener("mouseout", function( event ) {
-    result.innerHTML = result.innerHTML + " mouseout should NOT be triggered ";
-}, false);
-
-becomesVisible.addEventListener("click", function( event ) {
-    result.innerHTML = "clicked hidden";
-}, false);
-
 tapthis.addEventListener("click", function( event ) {   
-    result.innerHTML = "clicked";
+    result.innerHTML = result.innerHTML + " clicked ";
 }, false);
 </script>
 </body>

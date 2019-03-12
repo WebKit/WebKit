@@ -1,3 +1,19 @@
+2019-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        [Synthetic Click] Dispatch mouseout soon after mouseup
+        https://bugs.webkit.org/show_bug.cgi?id=195575
+        <rdar://problem/47093049>
+
+        Reviewed by Simon Fraser.
+
+        Let's fire a mouseout event when a click is submitted as the result of a tap. It helps to dismiss content which would otherwise require you to move the mouse (cases like control bar on youtube.com).
+
+        Test: fast/events/touch/ios/content-observation/mouse-out-event-should-fire-on-click.html
+
+        * page/EventHandler.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::dispatchFakeMouseOut):
+
 2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         In CachedFrame's constructor, release-assert that DOMWindow still has a frame after page-caching subframes

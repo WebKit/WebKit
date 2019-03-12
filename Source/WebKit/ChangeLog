@@ -1,5 +1,16 @@
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
+        [Synthetic Click] Dispatch mouseout soon after mouseup
+        https://bugs.webkit.org/show_bug.cgi?id=195575
+        <rdar://problem/47093049>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
+2019-03-12  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Stop content change observation when the touch event turns into long press
         https://bugs.webkit.org/show_bug.cgi?id=195601
         <rdar://problem/48796324>
