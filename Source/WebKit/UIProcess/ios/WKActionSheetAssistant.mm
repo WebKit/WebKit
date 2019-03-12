@@ -58,6 +58,8 @@ SOFT_LINK_FRAMEWORK(SafariServices)
 SOFT_LINK_CLASS(SafariServices, SSReadingList)
 #endif
 
+OBJC_CLASS DDAction;
+
 SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
 SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
 SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
