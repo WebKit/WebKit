@@ -393,17 +393,10 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                 if (!eventListenersForNode)
                     continue;
 
-                let nodeId = currentNode.id;
-
                 eventListenersForNode.sort((a, b) => a.type.toLowerCase().extendedLocaleCompare(b.type.toLowerCase()));
 
                 let section = createEventListenerSection(currentNode.displayName, eventListenersForNode, {hideNode: true});
-                section.titleElement.addEventListener("mouseover", (event) => {
-                    WI.domManager.highlightDOMNode(nodeId, "all");
-                });
-                section.titleElement.addEventListener("mouseout", (event) => {
-                    WI.domManager.hideDOMNodeHighlight();
-                });
+                WI.bindInteractionsForNodeToElement(currentNode, section.titleElement, {ignoreClick: true});
                 rows.push(section);
             } while (currentNode = currentNode.parentNode);
 

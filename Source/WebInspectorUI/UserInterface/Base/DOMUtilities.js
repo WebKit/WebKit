@@ -77,15 +77,30 @@ WI.linkifyNodeReferenceElement = function(node, element, options = {})
     if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
         element.classList.add("node-link");
 
-    element.addEventListener("click", WI.domManager.inspectElement.bind(WI.domManager, node.id));
-    element.addEventListener("mouseover", WI.domManager.highlightDOMNode.bind(WI.domManager, node.id, "all"));
-    element.addEventListener("mouseout", WI.domManager.hideDOMNodeHighlight.bind(WI.domManager));
+    WI.bindInteractionsForNodeToElement(node, element, options);
+
+    return element;
+};
+
+WI.bindInteractionsForNodeToElement = function(node, element, options = {}) {
+    if (!options.ignoreClick) {
+        element.addEventListener("click", (event) => {
+            WI.domManager.inspectElement(node.id);
+        });
+    }
+
+    element.addEventListener("mouseover", (event) => {
+        WI.domManager.highlightDOMNode(node.id, "all");
+    });
+
+    element.addEventListener("mouseout", (event) => {
+        WI.domManager.hideDOMNodeHighlight();
+    });
+
     element.addEventListener("contextmenu", (event) => {
         let contextMenu = WI.ContextMenu.createFromEvent(event);
         WI.appendContextMenuItemsForDOMNode(contextMenu, node, options);
     });
-
-    return element;
 };
 
 function createSVGElement(tagName)
