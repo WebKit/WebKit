@@ -2321,59 +2321,14 @@ GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 
     g_signal_connect_swapped(m_autoAudioSink.get(), "child-added", G_CALLBACK(setAudioStreamPropertiesCallback), this);
 
-    GstElement* audioSinkBin;
-
-    if (webkitGstCheckVersion(1, 4, 2)) {
 #if ENABLE(WEB_AUDIO)
-        audioSinkBin = gst_bin_new("audio-sink");
-        ensureAudioSourceProvider();
-        m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
-        return audioSinkBin;
-#else
-        return m_autoAudioSink.get();
-#endif
-    }
-
-    // Construct audio sink only if pitch preserving is enabled.
-    // If GStreamer 1.4.2 is used the audio-filter playbin property is used instead.
-    if (m_preservesPitch) {
-        GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
-        if (!scale) {
-            GST_WARNING("Failed to create scaletempo");
-            return m_autoAudioSink.get();
-        }
-
-        audioSinkBin = gst_bin_new("audio-sink");
-        gst_bin_add(GST_BIN(audioSinkBin), scale);
-        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(scale, "sink"));
-        gst_element_add_pad(audioSinkBin, gst_ghost_pad_new("sink", pad.get()));
-
-#if ENABLE(WEB_AUDIO)
-        ensureAudioSourceProvider();
-        m_audioSourceProvider->configureAudioBin(audioSinkBin, scale);
-#else
-        GstElement* convert = gst_element_factory_make("audioconvert", nullptr);
-        GstElement* resample = gst_element_factory_make("audioresample", nullptr);
-
-        gst_bin_add_many(GST_BIN(audioSinkBin), convert, resample, m_autoAudioSink.get(), nullptr);
-
-        if (!gst_element_link_many(scale, convert, resample, m_autoAudioSink.get(), nullptr)) {
-            GST_WARNING("Failed to link audio sink elements");
-            gst_object_unref(audioSinkBin);
-            return m_autoAudioSink.get();
-        }
-#endif
-        return audioSinkBin;
-    }
-
-#if ENABLE(WEB_AUDIO)
-    audioSinkBin = gst_bin_new("audio-sink");
+    GstElement* audioSinkBin = gst_bin_new("audio-sink");
     ensureAudioSourceProvider();
     m_audioSourceProvider->configureAudioBin(audioSinkBin, nullptr);
     return audioSinkBin;
+#else
+    return m_autoAudioSink.get();
 #endif
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 GstElement* MediaPlayerPrivateGStreamer::audioSink() const
@@ -2466,7 +2421,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
     ASSERT(m_textAppSinkPad);
 
     GRefPtr<GstCaps> textCaps;
-    if (webkitGstCheckVersion(1, 13, 0))
+    if (webkitGstCheckVersion(1, 14, 0))
         textCaps = adoptGRef(gst_caps_new_empty_simple("application/x-subtitle-vtt"));
     else
         textCaps = adoptGRef(gst_caps_new_empty_simple("text/vtt"));
@@ -2480,10 +2435,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
 
     configurePlaySink();
 
-    // On 1.4.2 and newer we use the audio-filter property instead.
-    // See https://bugzilla.gnome.org/show_bug.cgi?id=735748 for
-    // the reason for using >= 1.4.2 instead of >= 1.4.0.
-    if (m_preservesPitch && webkitGstCheckVersion(1, 4, 2)) {
+    if (m_preservesPitch) {
         GstElement* scale = gst_element_factory_make("scaletempo", nullptr);
 
         if (!scale)

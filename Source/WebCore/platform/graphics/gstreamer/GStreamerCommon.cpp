@@ -259,8 +259,7 @@ bool initializeGStreamerAndRegisterWebKitElements()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(ENCRYPTED_MEDIA)
-        if (webkitGstCheckVersion(1, 6, 1))
-            gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
+        gst_element_register(nullptr, "webkitclearkey", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_CK_DECRYPT);
 #endif
 
 #if ENABLE(MEDIA_STREAM) && GST_CHECK_VERSION(1, 10, 0)

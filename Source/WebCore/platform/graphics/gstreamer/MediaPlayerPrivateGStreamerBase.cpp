@@ -419,7 +419,7 @@ bool MediaPlayerPrivateGStreamerBase::ensureGstGLContext()
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
 
     // The floating ref removal support was added in https://bugzilla.gnome.org/show_bug.cgi?id=743062.
-    bool shouldAdoptRef = webkitGstCheckVersion(1, 13, 1);
+    bool shouldAdoptRef = webkitGstCheckVersion(1, 14, 0);
     if (!m_glDisplay) {
 #if PLATFORM(X11)
 #if USE(GLX)
