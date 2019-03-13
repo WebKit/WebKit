@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -184,8 +184,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
             return result;
     }
     
-    if (Options::stealEmptyBlocksFromOtherAllocators()
-        && (Options::tradeDestructorBlocks() || !m_directory->needsDestruction())) {
+    if (Options::stealEmptyBlocksFromOtherAllocators()) {
         if (MarkedBlock::Handle* block = m_directory->m_subspace->findEmptyBlockToSteal()) {
             RELEASE_ASSERT(block->alignedMemoryAllocator() == m_directory->m_subspace->alignedMemoryAllocator());
             

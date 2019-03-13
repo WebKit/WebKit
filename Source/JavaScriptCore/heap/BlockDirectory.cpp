@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -249,14 +249,9 @@ void BlockDirectory::endMarking()
     // know what kind of collection it is. That knowledge is already encoded in the m_markingXYZ
     // vectors.
     
-    if (!Options::tradeDestructorBlocks() && needsDestruction()) {
-        ASSERT(m_empty.isEmpty());
-        m_canAllocateButNotEmpty = m_live & ~m_markingRetired;
-    } else {
-        m_empty = m_live & ~m_markingNotEmpty;
-        m_canAllocateButNotEmpty = m_live & m_markingNotEmpty & ~m_markingRetired;
-    }
-    
+    m_empty = m_live & ~m_markingNotEmpty;
+    m_canAllocateButNotEmpty = m_live & m_markingNotEmpty & ~m_markingRetired;
+
     if (needsDestruction()) {
         // There are some blocks that we didn't allocate out of in the last cycle, but we swept them. This
         // will forget that we did that and we will end up sweeping them again and attempting to call their

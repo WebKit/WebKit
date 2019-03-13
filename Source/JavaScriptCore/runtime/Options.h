@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -252,7 +252,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, dumpSizeClasses, false, Normal, nullptr) \
     v(bool, useBumpAllocator, true, Normal, nullptr) \
     v(bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
-    v(bool, tradeDestructorBlocks, true, Normal, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     \
     v(bool, useOSREntryToDFG, true, Normal, nullptr) \

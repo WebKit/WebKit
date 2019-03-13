@@ -1,3 +1,30 @@
+2019-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Remove unneeded --tradeDestructorBlocks option.
+        https://bugs.webkit.org/show_bug.cgi?id=195698
+        <rdar://problem/39681388>
+
+        Reviewed by Yusuke Suzuki.
+
+        There's no reason why we would ever want --tradeDestructorBlocks to be false.
+
+        Also, there was an assertion in BlockDirectory::endMarking() for when
+        (!Options::tradeDestructorBlocks() && needsDestruction()).  This assertion is
+        outdated because the BlockDirectory's m_empty set used to mean the set of all
+        blocks that have no live (as in not reachable by GC) objects and dead objects
+        also do not require destructors to be called on them.  The current meaning of
+        m_empty is that it is the set of all blocks that have no live objects,
+        independent of whether they needs destructors to be called on them or not.
+        The assertion is no longer valid for the new meaning of m_empty as m_empty may
+        now contain destructible blocks.  This assertion is now removed as part of this
+        patch.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::endMarking):
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        * runtime/Options.h:
+
 2019-03-13  Dominik Infuehr  <dinfuehr@igalia.com>
 
         String overflow when using StringBuilder in JSC::createError
