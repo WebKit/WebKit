@@ -28,7 +28,7 @@
 #include "Color.h"
 #include "LayoutSize.h"
 #include "Length.h"
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,7 +47,7 @@ class FilterEffect;
 struct FloatComponents;
 struct ResourceLoaderOptions;
 
-class FilterOperation : public RefCounted<FilterOperation> {
+class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
 public:
     enum OperationType {
         REFERENCE, // url(#somefilter)
