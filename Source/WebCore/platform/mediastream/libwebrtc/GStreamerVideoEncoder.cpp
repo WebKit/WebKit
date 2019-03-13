@@ -62,6 +62,7 @@ typedef enum
   ENCODER_NONE = 0,
   ENCODER_X264,
   ENCODER_OPENH264,
+  ENCODER_OMXH264,
   ENCODER_VP8,
   ENCODER_LAST,
 } EncoderId;
@@ -283,10 +284,24 @@ setup_openh264enc (GObject *)
 }
 
 static void
+setup_omxh264enc (GObject * encoder)
+{
+  gst_util_set_object_arg (encoder, "control-rate", "constant");
+}
+
+
+static void
 set_bitrate_kbit_per_sec (GObject * encoder, const gchar * prop_name,
     gint bitrate)
 {
   g_object_set (encoder, prop_name, bitrate, NULL);
+}
+
+static void
+set_bitrate_bit_per_sec (GObject * encoder, const gchar * prop_name,
+    gint bitrate)
+{
+  g_object_set (encoder, prop_name, bitrate * KBIT_TO_BIT, NULL);
 }
 
 static void
@@ -324,6 +339,10 @@ gst_webrtc_video_encoder_class_init (GstWebrtcVideoEncoderClass * klass)
           (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS |
               G_PARAM_CONSTRUCT)));
 
+  register_known_encoder (ENCODER_OMXH264, "omxh264enc", "h264parse",
+      "video/x-h264",
+      "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
+      setup_omxh264enc, "target-bitrate", set_bitrate_bit_per_sec, "interval-intraframes");
   register_known_encoder (ENCODER_X264, "x264enc", "h264parse", "video/x-h264",
       "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
       setup_x264enc, "bitrate", set_bitrate_kbit_per_sec, "key-int-max");

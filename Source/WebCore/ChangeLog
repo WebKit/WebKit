@@ -1,3 +1,15 @@
+2019-03-13  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Add support for omxh264enc encoder
+        https://bugs.webkit.org/show_bug.cgi?id=195676
+
+        Reviewed by Philippe Normand.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        (setup_omxh264enc):
+        (set_bitrate_bit_per_sec):
+        (gst_webrtc_video_encoder_class_init):
+
 2019-03-13  Antoine Quint  <graouts@apple.com>
 
         REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key
