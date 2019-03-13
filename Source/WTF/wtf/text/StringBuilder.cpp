@@ -34,7 +34,7 @@
 
 namespace WTF {
 
-static constexpr unsigned maxCapacity = String::MaxLength + 1;
+static constexpr unsigned maxCapacity = String::MaxLength;
 
 static unsigned expandedCapacity(unsigned capacity, unsigned requiredLength)
 {

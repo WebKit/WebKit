@@ -193,7 +193,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
     String base = functionCallBase(sourceText);
     if (!base)
         return defaultApproximateSourceError(originalMessage, sourceText);
-    StringBuilder builder;
+    StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
     builder.append(base);
     builder.appendLiteral(" is not a function. (In '");
     builder.append(sourceText);
@@ -208,6 +208,9 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
         builder.append(displayValue);
     }
     builder.append(')');
+
+    if (builder.hasOverflowed())
+        return makeString("object is not a function."_s);
 
     return builder.toString();
 }

@@ -1,3 +1,16 @@
+2019-03-13  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        String overflow when using StringBuilder in JSC::createError
+        https://bugs.webkit.org/show_bug.cgi?id=194957
+
+        Reviewed by Mark Lam.
+
+        StringBuilder in notAFunctionSourceAppender didn't check
+        for overflows but just failed.
+
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::notAFunctionSourceAppender):
+
 2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Move species watchpoint installation from ArrayPrototype to JSGlobalObject

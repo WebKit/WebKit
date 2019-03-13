@@ -1,3 +1,18 @@
+2019-03-13  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        String overflow when using StringBuilder in JSC::createError
+        https://bugs.webkit.org/show_bug.cgi?id=194957
+
+        Reviewed by Mark Lam.
+
+        When calculating the new capacity of a StringBuilder object,
+        use a limit of MaxLength instead of MaxLength+1.  Allocating
+        a string of size MaxLength+1 always fails. This means that expanding
+        a StringBuilder only worked when the newly doubled capacity is less or
+        equal to MaxLength.
+
+        * wtf/text/StringBuilder.cpp:
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Better build fix after r242901.
