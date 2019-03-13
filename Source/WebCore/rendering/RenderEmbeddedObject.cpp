@@ -158,6 +158,8 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
         return insecurePluginVersionText();
     case RenderEmbeddedObject::UnsupportedPlugin:
         return unsupportedPluginText();
+    case RenderEmbeddedObject::PluginTooSmall:
+        return pluginTooSmallText();
     }
 
     ASSERT_NOT_REACHED();

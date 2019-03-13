@@ -45,8 +45,10 @@ public:
         PluginCrashed,
         PluginBlockedByContentSecurityPolicy,
         InsecurePluginVersion,
-        UnsupportedPlugin
+        UnsupportedPlugin,
+        PluginTooSmall
     };
+    PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };
     WEBCORE_EXPORT void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
 

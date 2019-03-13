@@ -1,3 +1,45 @@
+2019-03-13  Dean Jackson  <dino@apple.com>
+
+        Block all plugins smaller than 5x5px
+        https://bugs.webkit.org/show_bug.cgi?id=195702
+        <rdar://problem/28435204>
+
+        Reviewed by Sam Weinig.
+
+        Block all plugins that are smaller than a threshold, in this case
+        5px x 5px. Other browsers have implemented this for a while, and now
+        that we have Intersection Observers, small plugins are no longer
+        necessary.
+
+        Test: plugins/small-plugin-blocked.html
+
+        * en.lproj/Localizable.strings: New message for a small plugin.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::pluginTooSmallText):
+        * platform/LocalizedStrings.h:
+
+        * html/HTMLPlugInElement.cpp: Helper function for Internals testing.
+        (WebCore::HTMLPlugInElement::isBelowSizeThreshold const):
+        * html/HTMLPlugInElement.h:
+
+        * loader/EmptyClients.cpp: Removed an unused function.
+        (WebCore::EmptyFrameLoaderClient::recreatePlugin): Deleted.
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoaderClient.h:
+
+        * page/Settings.yaml: Add flag for new feature.
+
+        * rendering/RenderEmbeddedObject.cpp: New unavailability reason for
+        embedded objects.
+        (WebCore::unavailablePluginReplacementText):
+        * rendering/RenderEmbeddedObject.h:
+        (WebCore::RenderEmbeddedObject::pluginUnavailabilityReason const):
+
+        * testing/Internals.cpp: Helper function for testing.
+        (WebCore::Internals::pluginIsBelowSizeThreshold):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-03-13  Zalan Bujtas  <zalan@apple.com>
 
         Use RenderBox::previousSiblingBox/nextSiblingBox in RenderMultiColumnFlow

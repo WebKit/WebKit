@@ -559,6 +559,9 @@
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";
 
+/* Label text to be used when a plug-in was blocked from loading because it was too small */
+"Plug-In too small" = "Plug-In too small";
+
 /* Label text to be used if plugin host process has crashed */
 "Plug-in Failure" = "Plug-in Failure";
 

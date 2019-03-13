@@ -1561,22 +1561,6 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElem
 #endif
 }
 
-void WebFrameLoaderClient::recreatePlugin(Widget* widget)
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    ASSERT(widget);
-    ASSERT(widget->isPluginViewBase());
-    ASSERT(m_frame->page());
-
-    auto& pluginView = static_cast<PluginView&>(*widget);
-    String newMIMEType;
-    auto plugin = m_frame->page()->createPlugin(m_frame, pluginView.pluginElement(), pluginView.initialParameters(), newMIMEType);
-    pluginView.recreateAndInitialize(plugin.releaseNonNull());
-#else
-    UNUSED_PARAM(widget);
-#endif
-}
-
 void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 {
     m_pluginView = static_cast<PluginView*>(&pluginWidget);

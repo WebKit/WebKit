@@ -1,3 +1,33 @@
+2019-03-13  Dean Jackson  <dino@apple.com>
+
+        Block all plugins smaller than 5x5px
+        https://bugs.webkit.org/show_bug.cgi?id=195702
+        <rdar://problem/28435204>
+
+        Reviewed by Sam Weinig.
+
+        Block all plugins that are smaller than a threshold, in this case
+        5x5px. Other browsers have implemented this for a while, and now
+        that we have Intersection Observers, small plugins are no longer
+        necessary.
+
+        * Shared/WebPreferences.yaml: New setting for this feature.
+
+        * UIProcess/WebPageProxy.cpp: Handle new unavailability type.
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton const):
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp: Removed this function
+        as it was never being called.
+        (WebKit::WebFrameLoaderClient::recreatePlugin): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::pluginIsSmall): Checks the size of the plugin.
+        (WebKit::WebPage::createPlugin): If the plugin is too small, stop it from
+        launching.
+
 2019-03-13  Keith Rollin  <krollin@apple.com>
 
         Add support for new StagedFrameworks layout

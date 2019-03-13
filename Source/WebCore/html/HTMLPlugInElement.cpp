@@ -406,6 +406,15 @@ JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
     return nullptr;
 }
 
+bool HTMLPlugInElement::isBelowSizeThreshold() const
+{
+    auto* renderObject = renderer();
+    if (!is<RenderEmbeddedObject>(renderObject))
+        return true;
+    auto& renderEmbeddedObject = downcast<RenderEmbeddedObject>(*renderObject);
+    return renderEmbeddedObject.isPluginUnavailable() && renderEmbeddedObject.pluginUnavailabilityReason() == RenderEmbeddedObject::PluginTooSmall;
+}
+
 bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
 {
     if (!is<RenderEmbeddedObject>(renderer()))

@@ -550,6 +550,7 @@ enum CompositingPolicy {
     [MayThrowException] boolean isPluginUnavailabilityIndicatorObscured(Element element);
     [MayThrowException] DOMString unavailablePluginReplacementText(Element element);
     boolean isPluginSnapshotted(Element element);
+    boolean pluginIsBelowSizeThreshold(Element element);
 
     [MayThrowException] DOMRect selectionBounds();
     void setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);

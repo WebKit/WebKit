@@ -211,7 +211,6 @@ private:
         const WTF::String& referrer) final;
     RefPtr<WebCore::Widget> createPlugin(const WebCore::IntSize&, WebCore::HTMLPlugInElement&, const URL&,
     const Vector<WTF::String>&, const Vector<WTF::String>&, const WTF::String&, bool) final;
-    void recreatePlugin(WebCore::Widget*) final;
     void redirectDataToPlugin(WebCore::Widget&) final;
 
 #if ENABLE(WEBGL)

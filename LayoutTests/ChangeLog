@@ -1,3 +1,22 @@
+2019-03-13  Dean Jackson  <dino@apple.com>
+
+        Block all plugins smaller than 5x5px
+        https://bugs.webkit.org/show_bug.cgi?id=195702
+        <rdar://problem/28435204>
+
+        Reviewed by Sam Weinig.
+
+        New test for some small plugins. Updated existing tests
+        to create plugins bigger than a threshold if necessary.
+
+        * plugins/clicking-missing-plugin-fires-delegate.html:
+        * plugins/destroy-stream-twice.html:
+        * plugins/npruntime/npruntime.html:
+        * plugins/object-embed-plugin-scripting.html:
+        * plugins/small-plugin-blocked-expected.txt: Added.
+        * plugins/small-plugin-blocked.html: Added.
+        * platform/mac-wk1/TestExpectations: Skip new test on WK1.
+
 2019-03-13  Zalan Bujtas  <zalan@apple.com>
 
         Use RenderBox::previousSiblingBox/nextSiblingBox in RenderMultiColumnFlow

@@ -225,6 +225,7 @@ namespace WebCore {
     String blockedPluginByContentSecurityPolicyText();
     String insecurePluginVersionText();
     String unsupportedPluginText();
+    WEBCORE_EXPORT String pluginTooSmallText();
 
     String multipleFileUploadText(unsigned numberOfFiles);
     String unknownFileSizeText();

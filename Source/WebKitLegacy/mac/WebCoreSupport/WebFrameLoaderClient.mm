@@ -2037,10 +2037,6 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
     return nullptr;
 }
 
-void WebFrameLoaderClient::recreatePlugin(Widget*)
-{
-}
-
 void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

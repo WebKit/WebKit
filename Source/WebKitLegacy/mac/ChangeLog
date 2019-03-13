@@ -1,3 +1,17 @@
+2019-03-13  Dean Jackson  <dino@apple.com>
+
+        Block all plugins smaller than 5x5px
+        https://bugs.webkit.org/show_bug.cgi?id=195702
+        <rdar://problem/28435204>
+
+        Reviewed by Sam Weinig.
+
+        Removed a function that was never being called.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::recreatePlugin): Deleted.
+
 2019-03-13  Keith Rollin  <krollin@apple.com>
 
         Add support for new StagedFrameworks layout

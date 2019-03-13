@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<p>This tests that small plugins are blocked</p>
+<div id="result"></div>
+<script>
+function log(destination, msg)
+{
+    var t = document.createTextNode(msg);
+    var p = document.createElement("p");
+    p.appendChild(t);
+    destination.appendChild(p);
+}
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+    setTimeout(function () {
+        const result = document.getElementById("result");
+        for (id of ["0x0", "1x1", "4x4", "5x5", "6x6", "1x6", "6x1"]) {
+            const embed = document.getElementById(`plugin${id}`);
+            log(result, `${id} is ${internals.pluginIsBelowSizeThreshold(embed) ? "BLOCKED" : "RUNNING"}`);
+        }
+        testRunner.notifyDone();
+    }, 500);
+}
+</script>
+<embed id="plugin0x0" type="application/x-webkit-test-netscape" width="0" height="0"></embed>
+<embed id="plugin1x1" type="application/x-webkit-test-netscape" width="1" height="1"></embed>
+<embed id="plugin4x4" type="application/x-webkit-test-netscape" width="4" height="4"></embed>
+<embed id="plugin5x5" type="application/x-webkit-test-netscape" width="5" height="5"></embed>
+<embed id="plugin6x6" type="application/x-webkit-test-netscape" width="6" height="6"></embed>
+<embed id="plugin1x6" type="application/x-webkit-test-netscape" width="1" height="6"></embed>
+<embed id="plugin6x1" type="application/x-webkit-test-netscape" width="6" height="1"></embed>

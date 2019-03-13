@@ -811,6 +811,9 @@ editableImagesEnabled:
 adClickAttributionEnabled:
   initial: false
 
+blockingOfSmallPluginsEnabled:
+  initial: true
+
 # Deprecated
 
 iceCandidateFilteringEnabled:
