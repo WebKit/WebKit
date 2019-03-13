@@ -230,7 +230,7 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(const SecurityOrigi
         if (origin.isUnique())
             return true;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-        if (!registrableDomainsAreEqual(response.url(), ResourceRequest::partitionName(origin.host())))
+        if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(response.url()))
             return true;
 #endif
         if (origin.protocol() == "http" && response.url().protocol() == "https")

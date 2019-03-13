@@ -1944,7 +1944,7 @@ void DOMWindow::failedToRegisterDeviceMotionEventListener()
         return;
 
     // FIXME: This is a quirk for chase.com on iPad (<rdar://problem/48423023>).
-    if (toRegistrableDomain(document()->url()) == "chase.com") {
+    if (RegistrableDomain::uncheckedCreateFromRegistrableDomainString("chase.com"_s).matches(document()->url())) {
         // Fire a fake DeviceMotionEvent with acceleration data to unblock the site's login flow.
         document()->postTask([](auto& context) {
             if (auto* window = downcast<Document>(context).domWindow()) {

@@ -131,6 +131,11 @@ Optional<RegistrableDomain> RegistrableDomain::decode(Decoder& decoder)
     return registrableDomain;
 }
 
+inline bool areRegistrableDomainsEqual(const URL& a, const URL& b)
+{
+    return RegistrableDomain(a).matches(b);
+}
+
 } // namespace WebCore
 
 namespace WTF {

@@ -145,7 +145,7 @@ void NetworkDataTaskCocoa::applyCookieBlockingPolicy(bool shouldBlock)
 
 bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
 {
-    return !WebCore::registrableDomainsAreEqual(request.url(), request.firstPartyForCookies());
+    return !WebCore::areRegistrableDomainsEqual(request.url(), request.firstPartyForCookies());
 }
 
 static void updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionDataTask* task, const WebCore::ResourceRequest& request)

@@ -30,6 +30,7 @@
 
 #import "FormDataStreamMac.h"
 #import "HTTPHeaderNames.h"
+#import "RegistrableDomain.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import <Foundation/Foundation.h>
@@ -89,7 +90,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400) || (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000)
     URL siteForCookies { [m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"] };
-    m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
+    m_sameSiteDisposition = siteForCookies.isNull() ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies, m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
     m_isTopSite = static_cast<NSNumber*>([m_nsRequest.get() _propertyForKey:@"_kCFHTTPCookiePolicyPropertyIsTopLevelNavigation"]).boolValue;
 #endif

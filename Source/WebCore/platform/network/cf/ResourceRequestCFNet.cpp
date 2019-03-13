@@ -27,6 +27,7 @@
 #include "ResourceRequestCFNet.h"
 
 #include "HTTPHeaderNames.h"
+#include "RegistrableDomain.h"
 #include "ResourceRequest.h"
 #include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/cf/TypeCastsCF.h>
@@ -286,7 +287,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
 #if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
     RetainPtr<CFURLRef> siteForCookies = adoptCF(checked_cf_cast<CFURLRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertySiteForCookies"))));
-    m_sameSiteDisposition = !siteForCookies ? SameSiteDisposition::Unspecified : (registrableDomainsAreEqual(siteForCookies.get(), m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
+    m_sameSiteDisposition = !siteForCookies ? SameSiteDisposition::Unspecified : (areRegistrableDomainsEqual(siteForCookies.get(), m_url) ? SameSiteDisposition::SameSite : SameSiteDisposition::CrossSite);
 
     RetainPtr<CFNumberRef> isTopSiteCF = adoptCF(checked_cf_cast<CFNumber>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), CFSTR("_kCFHTTPCookiePolicyPropertyisTopSite"))));
     if (!isTopSiteCF)

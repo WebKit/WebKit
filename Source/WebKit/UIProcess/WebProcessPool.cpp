@@ -1313,7 +1313,7 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
         if (initiatingPage) {
             URL initiatingPageURL = URL { URL { }, initiatingPage->pageLoadState().url() };
             updatedRequest.setFirstPartyForCookies(initiatingPageURL);
-            updatedRequest.setIsSameSite(registrableDomainsAreEqual(initiatingPageURL, request.url()));
+            updatedRequest.setIsSameSite(areRegistrableDomainsEqual(initiatingPageURL, request.url()));
             if (!updatedRequest.hasHTTPHeaderField(HTTPHeaderName::UserAgent))
                 updatedRequest.setHTTPUserAgent(initiatingPage->userAgent());
         } else {
@@ -2212,14 +2212,14 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& pageSourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
     auto& targetURL = navigation.currentRequest().url();
-    auto registrableDomain = WebCore::RegistrableDomain { targetURL };
+    auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetURL, registrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
-        if (auto process = webProcessCache().takeProcess(registrableDomain, dataStore))
+    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetURL, targetRegistrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
+        if (auto process = webProcessCache().takeProcess(targetRegistrableDomain, dataStore))
             return process.releaseNonNull();
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (auto process = findReusableSuspendedPageProcess(registrableDomain, page, dataStore)) {
+        if (auto process = findReusableSuspendedPageProcess(targetRegistrableDomain, page, dataStore)) {
             RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
             return process.releaseNonNull();
         }
@@ -2300,15 +2300,15 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         RELEASE_LOG(ProcessSwapping, "Using related page %p's URL as source URL for process swap decision", page.configuration().relatedPage());
     }
 
-    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || registrableDomainsAreEqual(sourceURL, targetURL))
+    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || targetRegistrableDomain.matches(sourceURL))
         return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s);
 
     String reason = "Navigation is cross-site"_s;
     
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
-        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.string().utf8().data());
+        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", targetRegistrableDomain.string().utf8().data());
 
-        if (auto* process = m_swappedProcessesPerRegistrableDomain.get(registrableDomain)) {
+        if (auto* process = m_swappedProcessesPerRegistrableDomain.get(targetRegistrableDomain)) {
             if (&process->websiteDataStore() == dataStore.ptr()) {
                 LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
 

@@ -1,3 +1,16 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy WebCore::toRegistrableDomain() utility function
+        https://bugs.webkit.org/show_bug.cgi?id=195637
+
+        Reviewed by Geoffrey Garen.
+
+        Drop legacy toRegistrableDomain() / registrableDomainAreEqual() utility functions.
+        Update call sites to use modern RegistrableDomain type instead.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForNavigationInternal):
+
 2019-03-12  Brady Eidson  <beidson@apple.com>
 
         Take UnboundedNetworking assertion when a file upload is in progress.

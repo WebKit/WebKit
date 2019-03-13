@@ -3450,7 +3450,7 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(Frame& targ
 
     // Only prevent cross-site navigations.
     auto* targetDocument = targetFrame.document();
-    if (targetDocument && (targetDocument->securityOrigin().canAccess(SecurityOrigin::create(destinationURL)) || registrableDomainsAreEqual(targetDocument->url(), destinationURL)))
+    if (targetDocument && (targetDocument->securityOrigin().canAccess(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
         return false;
 
     return true;

@@ -1,3 +1,25 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy WebCore::toRegistrableDomain() utility function
+        https://bugs.webkit.org/show_bug.cgi?id=195637
+
+        Reviewed by Geoffrey Garen.
+
+        Drop legacy toRegistrableDomain() / registrableDomainAreEqual() utility functions.
+        Update call sites to use modern RegistrableDomain type instead.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::shouldCrossOriginResourcePolicyCancelLoad):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFirstPartyForCookies):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::failedToRegisterDeviceMotionEventListener):
+        * platform/RegistrableDomain.h:
+        (WebCore::registrableDomainsAreEqual):
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+
 2019-03-13  Alex Christensen  <achristensen@webkit.org>
 
         Prevent checked_cf_cast crashes in ResourceResponse::platformCertificateInfo

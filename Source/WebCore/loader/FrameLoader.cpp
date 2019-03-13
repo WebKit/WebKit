@@ -1107,9 +1107,9 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame))
         frame->document()->setFirstPartyForCookies(url);
 
-    String registrableDomain = ResourceRequest::partitionName(url.host().toString());
+    RegistrableDomain registrableDomain(url);
     for (Frame* frame = &m_frame; frame; frame = frame->tree().traverseNext(&m_frame)) {
-        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(frame->document()->url()) || registrableDomainsAreEqual(frame->document()->url(), registrableDomain))
+        if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(frame->document()->url()) || registrableDomain.matches(frame->document()->url()))
             frame->document()->setSiteForCookies(url);
     }
 }
@@ -2970,7 +2970,7 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
-    request.setIsSameSite(registrableDomainsAreEqual(initiator->siteForCookies(), request.url()));
+    request.setIsSameSite(areRegistrableDomainsEqual(initiator->siteForCookies(), request.url()));
 }
 
 void FrameLoader::addHTTPUpgradeInsecureRequestsIfNeeded(ResourceRequest& request)

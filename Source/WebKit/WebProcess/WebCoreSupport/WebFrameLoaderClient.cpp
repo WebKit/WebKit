@@ -395,7 +395,7 @@ void WebFrameLoaderClient::dispatchWillChangeDocument(const URL& currentUrl, con
     if (!webPage)
         return;
 
-    if (m_hasFrameSpecificStorageAccess && !WebCore::registrableDomainsAreEqual(currentUrl, newUrl)) {
+    if (m_hasFrameSpecificStorageAccess && !WebCore::areRegistrableDomainsEqual(currentUrl, newUrl)) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
     }
