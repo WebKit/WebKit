@@ -155,6 +155,7 @@ messages -> WebPage LegacyReceiver {
     TryRestoreScrollPosition()
 
     LoadURLInFrame(URL url, uint64_t frameID)
+    LoadDataInFrame(IPC::DataReference data, String MIMEType, String encodingName, URL baseURL, uint64_t frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadAlternateHTML(struct WebKit::LoadParameters loadParameters)

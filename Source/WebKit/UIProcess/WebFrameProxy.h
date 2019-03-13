@@ -81,6 +81,7 @@ public:
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
     void loadURL(const URL&);
+    void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const URL& baseURL);
     void stopLoading() const;
 
     const URL& url() const { return m_frameLoadState.url(); }

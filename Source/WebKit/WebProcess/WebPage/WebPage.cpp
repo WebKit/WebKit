@@ -1390,6 +1390,18 @@ void WebPage::loadURLInFrame(URL&& url, uint64_t frameID)
     frame->coreFrame()->loader().load(FrameLoadRequest(*frame->coreFrame(), ResourceRequest(url), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
 }
 
+void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, String&& encodingName, URL&& baseURL, uint64_t frameID)
+{
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(data.data()), data.size());
+    ResourceResponse response(baseURL, MIMEType, sharedBuffer->size(), encodingName);
+    SubstituteData substituteData(WTFMove(sharedBuffer), baseURL, WTFMove(response), SubstituteData::SessionHistoryVisibility::Hidden);
+    frame->coreFrame()->loader().load(FrameLoadRequest(*frame->coreFrame(), ResourceRequest(baseURL), ShouldOpenExternalURLsPolicy::ShouldNotAllow, WTFMove(substituteData)));
+}
+
 #if !PLATFORM(COCOA)
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParameters)
 {

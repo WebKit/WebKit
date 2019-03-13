@@ -1289,6 +1289,7 @@ private:
     static bool logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
     void loadURLInFrame(URL&&, uint64_t frameID);
+    void loadDataInFrame(IPC::DataReference&&, String&& MIMEType, String&& encodingName, URL&& baseURL, uint64_t frameID);
 
     enum class WasRestoredByAPIRequest { No, Yes };
     void restoreSessionInternal(const Vector<BackForwardListItemState>&, WasRestoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem);
