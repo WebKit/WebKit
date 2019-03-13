@@ -184,6 +184,9 @@ public:
         Vector<const NaturalLoop*> loopStack;
         bool changed = false;
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
+            if (!block->cfaHasVisited)
+                continue;
+
             const NaturalLoop* loop = m_graph.m_ssaNaturalLoops->innerMostLoopOf(block);
             if (!loop)
                 continue;
@@ -210,6 +213,8 @@ public:
             
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node*& nodeRef = block->at(nodeIndex);
+                if (nodeRef->op() == ForceOSRExit)
+                    break;
                 for (unsigned stackIndex = loopStack.size(); stackIndex--;)
                     changed |= attemptHoist(block, nodeRef, loopStack[stackIndex]);
             }
