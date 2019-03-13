@@ -41,6 +41,7 @@
 #include <WebCore/MessagePortChannelProvider.h>
 #include <WebCore/MessagePortIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
 #include <memory>
 #include <pal/SessionID.h>
@@ -114,7 +115,7 @@ public:
 
     WebProcessPool& processPool() const { ASSERT(m_processPool); return *m_processPool.get(); }
 
-    String registrableDomain() const { return m_registrableDomain.valueOr(String()); }
+    WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.valueOr(WebCore::RegistrableDomain { }); }
     void setIsInProcessCache(bool);
     bool isInProcessCache() const { return m_isInProcessCache; }
 
@@ -371,7 +372,7 @@ private:
 
     bool canTerminateAuxiliaryProcess();
 
-    void didCollectPrewarmInformation(const String& domain, const WebCore::PrewarmInformation&);
+    void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
     void logDiagnosticMessageForResourceLimitTermination(const String& limitKey);
 
@@ -434,7 +435,7 @@ private:
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
-    Optional<String> m_registrableDomain;
+    Optional<WebCore::RegistrableDomain> m_registrableDomain;
     bool m_isInProcessCache { false };
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;

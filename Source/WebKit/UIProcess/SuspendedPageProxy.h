@@ -29,7 +29,7 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/SecurityOriginData.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,7 +47,7 @@ public:
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy& process() { return m_process.get(); }
     uint64_t mainFrameID() const { return m_mainFrameID; }
-    const String& registrableDomain() const { return m_registrableDomain; }
+    const WebCore::RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
     bool failedToSuspend() const { return m_suspensionState == SuspensionState::FailedToSuspend; }
 
@@ -71,7 +71,7 @@ private:
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
-    String m_registrableDomain;
+    WebCore::RegistrableDomain m_registrableDomain;
     bool m_isClosed { false };
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };

@@ -55,6 +55,11 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
     if (!capacity())
         return false;
 
+    if (process.registrableDomain().isEmpty()) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because it does not have an associated registrable domain", this, process.processIdentifier());
+        return false;
+    }
+
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because we are under memory pressure", this, process.processIdentifier());
         return false;
@@ -69,9 +74,8 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
     return true;
 }
 
-bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&& process)
+bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
 {
-    ASSERT(!registrableDomain.isEmpty());
     ASSERT(!process->pageCount());
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
@@ -124,7 +128,7 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const String& registrableDomain, WebsiteDataStore& dataStore)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore)
 {
     auto it = m_processesPerRegistrableDomain.find(registrableDomain);
     if (it == m_processesPerRegistrableDomain.end())
@@ -180,7 +184,7 @@ void WebProcessCache::clear()
 
 void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 {
-    Vector<String> keysToRemove;
+    Vector<WebCore::RegistrableDomain> keysToRemove;
     for (auto& pair : m_processesPerRegistrableDomain) {
         if (pair.value->process().websiteDataStore().sessionID() == sessionID) {
             RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::clearAllProcessesForSession() evicting process %i because its session was destroyed", this, pair.value->process().processIdentifier());

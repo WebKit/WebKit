@@ -1575,7 +1575,7 @@ void WebProcess::processDidResume()
 
 void WebProcess::sendPrewarmInformation(const URL& url)
 {
-    auto registrableDomain = toRegistrableDomain(url);
+    auto registrableDomain = WebCore::RegistrableDomain { url };
     if (registrableDomain.isEmpty())
         return;
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCollectPrewarmInformation(registrableDomain, WebCore::ProcessWarming::collectPrewarmInformation()), 0);

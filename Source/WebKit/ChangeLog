@@ -1,3 +1,40 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Use new RegistrableDomain type in PSON code
+        https://bugs.webkit.org/show_bug.cgi?id=195634
+
+        Reviewed by Youenn Fablet.
+
+        Use new RegistrableDomain type in PSON code instead of more error-prone String type.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebProcessCache.cpp:
+        (WebKit::WebProcessCache::canCacheProcess const):
+        (WebKit::WebProcessCache::addProcessIfPossible):
+        (WebKit::WebProcessCache::takeProcess):
+        (WebKit::WebProcessCache::clearAllProcessesForSession):
+        * UIProcess/WebProcessCache.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::addProcessToOriginCacheSet):
+        (WebKit::WebProcessPool::removeProcessFromOriginCacheSet):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::findReusableSuspendedPageProcess):
+        (WebKit::WebProcessPool::didCollectPrewarmInformation):
+        (WebKit::WebProcessPool::tryPrewarmWithDomainInformation):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::canBeAddedToWebProcessCache const):
+        (WebKit::WebProcessProxy::maybeShutDown):
+        (WebKit::WebProcessProxy::didCollectPrewarmInformation):
+        (WebKit::WebProcessProxy::didStartProvisionalLoadForMainFrame):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::registrableDomain const):
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::sendPrewarmInformation):
+
 2019-03-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][PlayStation] Remove WebCore::standardUserAgentForURL

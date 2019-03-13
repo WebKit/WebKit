@@ -82,7 +82,7 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     : m_page(page)
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
-    , m_registrableDomain(toRegistrableDomain(URL(URL(), item.url())))
+    , m_registrableDomain(URL(URL(), item.url()))
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if PLATFORM(IOS_FAMILY)
     , m_suspensionToken(m_process->throttler().backgroundActivityToken())

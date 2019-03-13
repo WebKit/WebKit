@@ -2159,12 +2159,12 @@ ServiceWorkerProcessProxy* WebProcessPool::serviceWorkerProcessProxyFromPageID(u
 
 void WebProcessPool::addProcessToOriginCacheSet(WebProcessProxy& process, const URL& url)
 {
-    auto registrableDomain = toRegistrableDomain(url);
+    auto registrableDomain = WebCore::RegistrableDomain { url };
     auto result = m_swappedProcessesPerRegistrableDomain.add(registrableDomain, &process);
     if (!result.isNewEntry)
         result.iterator->value = &process;
 
-    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.utf8().data(), process.processIdentifier());
+    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.string().utf8().data(), process.processIdentifier());
     if (!result.isNewEntry)
         LOG(ProcessSwapping, "(ProcessSwapping) Note: It already had one saved");
 }
@@ -2174,7 +2174,7 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processIdentifier());
 
     // FIXME: This can be very inefficient as the number of remembered origins and processes grows
-    Vector<String> registrableDomainsToRemove;
+    Vector<WebCore::RegistrableDomain> registrableDomainsToRemove;
     for (auto entry : m_swappedProcessesPerRegistrableDomain) {
         if (entry.value == &process)
             registrableDomainsToRemove.append(entry.key);
@@ -2212,7 +2212,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API::Navigation& navigation, Ref<WebProcessProxy>&& sourceProcess, const URL& pageSourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, const String&)>&& completionHandler)
 {
     auto& targetURL = navigation.currentRequest().url();
-    auto registrableDomain = toRegistrableDomain(targetURL);
+    auto registrableDomain = WebCore::RegistrableDomain { targetURL };
 
     auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetURL, registrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
         if (auto process = webProcessCache().takeProcess(registrableDomain, dataStore))
@@ -2306,7 +2306,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     String reason = "Navigation is cross-site"_s;
     
     if (m_configuration->alwaysKeepAndReuseSwappedProcesses()) {
-        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.utf8().data());
+        LOG(ProcessSwapping, "(ProcessSwapping) Considering re-use of a previously cached process for domain %s", registrableDomain.string().utf8().data());
 
         if (auto* process = m_swappedProcessesPerRegistrableDomain.get(registrableDomain)) {
             if (&process->websiteDataStore() == dataStore.ptr()) {
@@ -2326,7 +2326,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     return completionHandler(createNewProcess(), nullptr, reason);
 }
 
-RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const String& registrableDomain, WebPageProxy& page, WebsiteDataStore& dataStore)
+RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const WebCore::RegistrableDomain& registrableDomain, WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
         return suspendedPage->registrableDomain() == registrableDomain && &suspendedPage->process().websiteDataStore() == &dataStore;
@@ -2450,7 +2450,7 @@ void WebProcessPool::sendDisplayConfigurationChangedMessageForTesting()
 #endif
 }
 
-void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomain, const WebCore::PrewarmInformation& prewarmInformation)
+void WebProcessPool::didCollectPrewarmInformation(const WebCore::RegistrableDomain& registrableDomain, const WebCore::PrewarmInformation& prewarmInformation)
 {
     static const size_t maximumSizeToPreventUnlimitedGrowth = 100;
     if (m_prewarmInformationPerRegistrableDomain.size() == maximumSizeToPreventUnlimitedGrowth)
@@ -2465,7 +2465,7 @@ void WebProcessPool::didCollectPrewarmInformation(const String& registrableDomai
 
 void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const URL& url)
 {
-    auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(toRegistrableDomain(url));
+    auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(RegistrableDomain { url });
     if (!prewarmInformation)
         return;
     process.send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);

@@ -467,13 +467,13 @@ public:
     void removeSuspendedPage(SuspendedPageProxy&);
     bool hasSuspendedPageFor(WebProcessProxy&, WebPageProxy&) const;
     unsigned maxSuspendedPageCount() const { return m_maxSuspendedPageCount; }
-    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const String&, WebPageProxy&, WebsiteDataStore&);
+    RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(const WebCore::RegistrableDomain&, WebPageProxy&, WebsiteDataStore&);
 
     void clearSuspendedPages(AllowProcessCaching);
 
     void didReachGoodTimeToPrewarm(WebsiteDataStore&);
 
-    void didCollectPrewarmInformation(const String& registrableDomain, const WebCore::PrewarmInformation&);
+    void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
     void screenPropertiesStateChanged();
 
@@ -756,9 +756,9 @@ private:
     unsigned m_maxSuspendedPageCount { 0 };
 
     UniqueRef<WebProcessCache> m_webProcessCache;
-    HashMap<String, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, RefPtr<WebProcessProxy>> m_swappedProcessesPerRegistrableDomain;
 
-    HashMap<String, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<WebCore::PrewarmInformation>> m_prewarmInformationPerRegistrableDomain;
 
 #if PLATFORM(MAC) && ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     Vector<std::unique_ptr<DisplayLink>> m_displayLinks;

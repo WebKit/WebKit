@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
@@ -42,8 +43,8 @@ class WebProcessCache {
 public:
     explicit WebProcessCache(WebProcessPool&);
 
-    bool addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&&);
-    RefPtr<WebProcessProxy> takeProcess(const String& registrableDomain, WebsiteDataStore&);
+    bool addProcessIfPossible(Ref<WebProcessProxy>&&);
+    RefPtr<WebProcessProxy> takeProcess(const WebCore::RegistrableDomain&, WebsiteDataStore&);
 
     void updateCapacity(WebProcessPool&);
     unsigned capacity() const { return m_capacity; }
@@ -85,7 +86,7 @@ private:
     unsigned m_capacity { 0 };
 
     HashMap<uint64_t, std::unique_ptr<CachedProcess>> m_pendingAddRequests;
-    HashMap<String, std::unique_ptr<CachedProcess>> m_processesPerRegistrableDomain;
+    HashMap<WebCore::RegistrableDomain, std::unique_ptr<CachedProcess>> m_processesPerRegistrableDomain;
     RunLoop::Timer<WebProcessCache> m_evictionTimer;
 };
 
