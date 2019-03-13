@@ -16,7 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 from __future__ import print_function
-from ConfigParser import SafeConfigParser
 
 import argparse
 import codecs
@@ -26,12 +25,18 @@ import logging
 import os.path
 import sys
 
+if sys.version_info < (3, 2):
+    from ConfigParser import SafeConfigParser as ConfigParser
+else:
+    from configparser import ConfigParser
+
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'glib'))
 import common
 
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
-sys.stderr = codecs.getwriter("utf-8")(sys.stderr)
+if sys.version_info.major == 2:
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr)
 
 def configure_logging(verbose):
     level = logging.DEBUG if verbose else logging.INFO
@@ -57,7 +62,7 @@ def get_gtkdoc_module_paths(cross_reference_deps):
 
     paths = []
     html_dir = os.path.join('share', 'gtk-doc', 'html')
-    for package, modules in dependent_packages.iteritems():
+    for package, modules in dependent_packages.items():
         prefix = common.prefix_of_pkg_config_file(package)
         if prefix is None:
             continue
@@ -109,7 +114,7 @@ def get_generator_for_config(config_file, virtual_root, cross_reference_deps = [
     if not os.path.isfile(config_file):
         return None
 
-    config = SafeConfigParser()
+    config = ConfigParser()
     config.read(config_file)
     module_name = config.sections()[0]
     pkgconfig_file = config.get(module_name, 'pkgconfig_file')
