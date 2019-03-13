@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 #pragma once
 
 #include "JSExportMacros.h"
+#include "PureNaN.h"
 #include <functional>
 #include <math.h>
 #include <stddef.h>
@@ -548,6 +549,7 @@ ALWAYS_INLINE JSValue jsDoubleNumber(double d)
 ALWAYS_INLINE JSValue jsNumber(double d)
 {
     ASSERT(JSValue(d).isNumber());
+    ASSERT(!isImpureNaN(d));
     return JSValue(d);
 }
 

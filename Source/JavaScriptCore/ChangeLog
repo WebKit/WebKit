@@ -1,5 +1,47 @@
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r242114. rdar://problem/48839372
+
+    wasmToJS() should purify incoming NaNs.
+    https://bugs.webkit.org/show_bug.cgi?id=194807
+    <rdar://problem/48189132>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * wasm/regress/wasmToJS-should-purify-NaNs.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    * runtime/JSCJSValue.h:
+    (JSC::jsNumber):
+    * runtime/TypedArrayAdaptors.h:
+    (JSC::IntegralTypedArrayAdaptor::toJSValue):
+    * wasm/js/WasmToJS.cpp:
+    (JSC::Wasm::wasmToJS):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242114 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+            wasmToJS() should purify incoming NaNs.
+            https://bugs.webkit.org/show_bug.cgi?id=194807
+            <rdar://problem/48189132>
+
+            Reviewed by Saam Barati.
+
+            * runtime/JSCJSValue.h:
+            (JSC::jsNumber):
+            * runtime/TypedArrayAdaptors.h:
+            (JSC::IntegralTypedArrayAdaptor::toJSValue):
+            * wasm/js/WasmToJS.cpp:
+            (JSC::Wasm::wasmToJS):
+
+2019-03-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241615. rdar://problem/48839366
 
     SamplingProfiler::stackTracesAsJSON() should escape strings.
