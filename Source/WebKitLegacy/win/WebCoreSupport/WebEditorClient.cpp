@@ -521,9 +521,9 @@ private:
 };
 
 WebEditorUndoCommand::WebEditorUndoCommand(UndoStep& step, bool isUndo)
-    : m_step(step)
-    , m_isUndo(isUndo) 
-    , m_refCount(1)
+    : m_refCount(1)
+    , m_step(step)
+    , m_isUndo(isUndo)
 { 
 }
 
@@ -623,8 +623,8 @@ static String undoNameForEditAction(EditAction editAction)
     case EditAction::FormatBlock: return WEB_UI_STRING_KEY("Formatting", "Format Block (Undo action name)", "Undo action name");
     case EditAction::Indent: return WEB_UI_STRING_KEY("Indent", "Indent (Undo action name)", "Undo action name");
     case EditAction::Outdent: return WEB_UI_STRING_KEY("Outdent", "Outdent (Undo action name)", "Undo action name");
+    default: return String();
     }
-    return String();
 }
 
 void WebEditorClient::registerUndoStep(UndoStep& step)

@@ -189,8 +189,6 @@ HRESULT WebNotificationCenter::removeObserver(_In_opt_ IWebNotificationObserver*
         return E_FAIL;
 
     ObjectObserverList& observerList = it->value;
-    ObserverListIterator end = observerList.end();
-
     observerList.removeFirstMatching([anObject, anObserver] (const ObjectObserverPair& pair) {
         IUnknown* observedObject = pair.first.get();
         IWebNotificationObserver* observer = pair.second.get();

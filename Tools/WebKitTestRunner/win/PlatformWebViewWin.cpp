@@ -212,7 +212,6 @@ cairo_surface_t* PlatformWebView::windowSnapshotImage()
     auto memoryDC = adoptGDIObject(::CreateCompatibleDC(windowDC));
 
     BITMAPINFO bitmapInfo { };
-    WKRect wkFrame = windowFrame();
     bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
     bitmapInfo.bmiHeader.biWidth = width;
     bitmapInfo.bmiHeader.biHeight = -height;

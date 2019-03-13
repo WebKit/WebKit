@@ -107,9 +107,9 @@ public:
 };
 
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
-    : m_webFrame(webFrame)
+    : m_policyListenerPrivate(std::make_unique<WebFramePolicyListenerPrivate>())
+    , m_webFrame(webFrame)
     , m_manualLoader(0)
-    , m_policyListenerPrivate(std::make_unique<WebFramePolicyListenerPrivate>())
     , m_hasSentResponseToPlugin(false) 
 {
 }
@@ -744,8 +744,6 @@ void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebHistoryDelegate> historyDelegate;
     webView->historyDelegate(&historyDelegate);
-
-    WebHistory* history = WebHistory::sharedHistory();
 
     DocumentLoader* loader = core(m_webFrame)->loader().documentLoader();
     ASSERT(loader->unreachableURL().isEmpty());

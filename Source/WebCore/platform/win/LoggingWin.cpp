@@ -37,7 +37,7 @@ namespace WebCore {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    static char* const loggingEnvironmentVariable = "WebCoreLogging";
+    static const char* loggingEnvironmentVariable = "WebCoreLogging";
     DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
     if (!length)
         return emptyString();

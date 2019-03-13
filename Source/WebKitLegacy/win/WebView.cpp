@@ -389,8 +389,6 @@ static const int maxToolTipWidth = 250;
 
 static const int delayBeforeDeletingBackingStoreMsec = 5000;
 
-static ATOM registerWebView();
-
 static void initializeStaticObservers();
 
 static HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences*);
@@ -7107,8 +7105,6 @@ HRESULT WebView::historyDelegate(_COM_Outptr_opt_ IWebHistoryDelegate** historyD
 HRESULT WebView::addVisitedLinks(__inout_ecount_full(visitedURLCount) BSTR* visitedURLs, unsigned visitedURLCount)
 {
     auto& visitedLinkStore = m_webViewGroup->visitedLinkStore();
-    PageGroup& group = core(this)->group();
-    
     for (unsigned i = 0; i < visitedURLCount; ++i) {
         BSTR url = visitedURLs[i];
         unsigned length = SysStringLen(url);
@@ -7404,7 +7400,9 @@ class EnumTextMatches final : public IEnumTextMatches
     UINT m_index;
     Vector<IntRect> m_rects;
 public:
-    EnumTextMatches(Vector<IntRect>* rects) : m_index(0), m_ref(1)
+    EnumTextMatches(Vector<IntRect>* rects)
+        : m_ref(1)
+        , m_index(0)
     {
         m_rects = *rects;
     }

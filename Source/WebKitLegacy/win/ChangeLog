@@ -1,3 +1,39 @@
+2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Fix a slew of simple clang-cl warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=195652
+
+        Reviewed by Don Olmstead.
+
+        * Interfaces/AccessibleComparable.idl: -Wmissing-braces
+        * Plugins/PluginDatabaseWin.cpp: -Wunused-function
+        (WebCore::addJavaPluginDirectory): Deleted.
+        * WebCoreSupport/AcceleratedCompositingContext.cpp:
+        (AcceleratedCompositingContext::AcceleratedCompositingContext): -Wreorder
+        * WebCoreSupport/WebEditorClient.cpp:
+        (WebEditorUndoCommand::WebEditorUndoCommand): -Wreorder
+        (undoNameForEditAction): -Wswitch
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::WebFrameLoaderClient): -Wswitch
+        (WebFrameLoaderClient::updateGlobalHistoryRedirectLinks): -Wunused-variable
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::WebInspectorFrontendClient): -Wreorder
+        * WebCoreSupport/WebInspectorClient.h: -Winconsistent-missing-override
+        * WebError.cpp:
+        (WebError::WebError): -Wreorder
+        * WebFrame.cpp:
+        (WebFrame::stringByEvaluatingJavaScriptInScriptWorld): -Wlogical-op-parentheses
+        * WebHistory.cpp: -Wunused-function (x5)
+        (areEqualOrClose): Deleted.
+        (addDayToSystemTime): Deleted.
+        (getDayBoundaries): Deleted.
+        (beginningOfDay): Deleted.
+        (dateKey): Deleted.
+        * WebNotificationCenter.cpp:
+        (WebNotificationCenter::removeObserver): -Wunused-variable
+        * WebView.cpp: -Wunused-function, -Wreorder
+        (WebView::addVisitedLinks): -Wunused-variable
+
 2019-03-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242688, r242643, r242624.

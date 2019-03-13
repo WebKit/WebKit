@@ -42,8 +42,8 @@ using namespace WebCore;
 // WebError ---------------------------------------------------------------------
 
 WebError::WebError(const ResourceError& error, IPropertyBag* userInfo)
-    : m_error(error)
-    , m_userInfo(userInfo)
+    : m_userInfo(userInfo)
+    , m_error(error)
 {
     gClassCount++;
     gClassNameCount().add("WebError");

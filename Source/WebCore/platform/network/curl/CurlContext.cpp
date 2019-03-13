@@ -330,7 +330,7 @@ CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
         return CURLE_ABORTED_BY_CALLBACK;
 
     if (!m_sslVerifier)
-        m_sslVerifier = std::make_unique<CurlSSLVerifier>(*this, sslCtx);
+        m_sslVerifier = std::make_unique<CurlSSLVerifier>(sslCtx);
 
     return CURLE_OK;
 }
@@ -386,10 +386,8 @@ void CurlHandle::setUrl(const URL& url)
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
 {
     if (headers.size()) {
-        for (auto& entry : headers) {
-            auto& value = entry.value;
+        for (auto& entry : headers)
             appendRequestHeader(entry.key, entry.value);
-        }
     }
 }
 

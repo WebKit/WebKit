@@ -38,8 +38,7 @@ namespace WebKit {
 String logLevelString()
 {
 #if !LOG_DISABLED
-    static char* const loggingEnvironmentVariable = "WebKitLogging";
-
+    static const char* loggingEnvironmentVariable = "WebKitLogging";
     DWORD length = GetEnvironmentVariableA(loggingEnvironmentVariable, 0, 0);
     if (!length)
         return emptyString();

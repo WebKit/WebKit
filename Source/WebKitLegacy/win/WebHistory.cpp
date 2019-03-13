@@ -53,12 +53,6 @@
 
 using namespace WebCore;
 
-static bool areEqualOrClose(double d1, double d2)
-{
-    double diff = d1-d2;
-    return (diff < .000001 && diff > -.000001);
-}
-
 static COMPtr<IPropertyBag> createUserInfoFromArray(BSTR notificationStr, IWebHistoryItem** data, size_t size)
 {
 #if USE(CF)
@@ -89,65 +83,6 @@ static COMPtr<IPropertyBag> createUserInfoFromArray(BSTR notificationStr, IWebHi
 static inline COMPtr<IPropertyBag> createUserInfoFromHistoryItem(BSTR notificationStr, IWebHistoryItem* item)
 {
     return createUserInfoFromArray(notificationStr, &item, 1);
-}
-
-static inline void addDayToSystemTime(SYSTEMTIME& systemTime)
-{
-    systemTime.wDay += 1;
-    if (systemTime.wDay > 31) {
-        systemTime.wDay = 1;
-        systemTime.wMonth += 1;
-    }
-    if (systemTime.wMonth > 12) {
-        systemTime.wMonth = 1;
-        systemTime.wYear += 1;
-    }
-
-    // Convert to and from VariantTime to fix invalid dates like 2001-04-31.
-    DATE date = 0.0;
-    ::SystemTimeToVariantTime(&systemTime, &date);
-    ::VariantTimeToSystemTime(date, &systemTime);
-}
-
-static void getDayBoundaries(DATE day, DATE& beginningOfDay, DATE& beginningOfNextDay)
-{
-    SYSTEMTIME systemTime;
-    ::VariantTimeToSystemTime(day, &systemTime);
-
-    SYSTEMTIME beginningLocalTime;
-    ::SystemTimeToTzSpecificLocalTime(0, &systemTime, &beginningLocalTime);
-    beginningLocalTime.wHour = 0;
-    beginningLocalTime.wMinute = 0;
-    beginningLocalTime.wSecond = 0;
-    beginningLocalTime.wMilliseconds = 0;
-
-    SYSTEMTIME beginningOfNextDayLocalTime = beginningLocalTime;
-    addDayToSystemTime(beginningOfNextDayLocalTime);
-
-    SYSTEMTIME beginningSystemTime;
-    if (::TzSpecificLocalTimeToSystemTime(0, &beginningLocalTime, &beginningSystemTime))
-        ::SystemTimeToVariantTime(&beginningSystemTime, &beginningOfDay);
-
-    SYSTEMTIME beginningOfNextDaySystemTime;
-    if (::TzSpecificLocalTimeToSystemTime(0, &beginningOfNextDayLocalTime, &beginningOfNextDaySystemTime))
-        ::SystemTimeToVariantTime(&beginningOfNextDaySystemTime, &beginningOfNextDay);
-}
-
-static inline DATE beginningOfDay(DATE date)
-{
-    static DATE cachedBeginningOfDay = std::numeric_limits<DATE>::quiet_NaN();
-    static DATE cachedBeginningOfNextDay;
-    if (!(date >= cachedBeginningOfDay && date < cachedBeginningOfNextDay))
-        getDayBoundaries(date, cachedBeginningOfDay, cachedBeginningOfNextDay);
-    return cachedBeginningOfDay;
-}
-
-static inline WebHistory::DateKey dateKey(DATE date)
-{
-    // Converting from double (DATE) to int64_t (WebHistoryDateKey) is safe
-    // here because all sensible dates are in the range -2**48 .. 2**47 which
-    // safely fits in an int64_t.
-    return beginningOfDay(date) * secondsPerDay;
 }
 
 // WebHistory -----------------------------------------------------------------

@@ -1,3 +1,28 @@
+2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Fix a slew of simple clang-cl warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=195652
+
+        Reviewed by Don Olmstead.
+
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::handleMouseReleaseEvent): -Wswitch
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::willSetupSslCtx):
+        (WebCore::CurlHandle::appendRequestHeaders): -Wunused-variable
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::computeContentLength): -Wunused-variable
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::CurlRequest): -Wreorder
+        (WebCore::CurlRequest::setupTransfer): -Wunused-variable
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+        * platform/network/curl/CurlSSLVerifier.h: -Wunused-private-field
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString): -Wwritable-strings
+        * rendering/RenderThemeWin.cpp: -Wunused-const-variable (x2)
+        (WebCore::RenderThemeWin::getThemeData): -Wswitch
+
 2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move the code for determining the need for touch bar quirks to Quirks class

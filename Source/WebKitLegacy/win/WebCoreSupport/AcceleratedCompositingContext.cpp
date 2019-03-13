@@ -53,9 +53,9 @@ using namespace WebCore;
 
 AcceleratedCompositingContext::AcceleratedCompositingContext(WebView& webView)
     : m_webView(webView)
-    , m_layerFlushTimer(*this)
     , m_context(nullptr)
     , m_window(0)
+    , m_layerFlushTimer(*this)
 {
 }
 

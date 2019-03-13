@@ -230,7 +230,7 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             break;
         case PolicyAction::Ignore:
             break;
-        case PolicyAction::Download:
+        default:
             notImplemented();
             break;
         }

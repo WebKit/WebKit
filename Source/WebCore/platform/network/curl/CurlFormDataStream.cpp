@@ -97,8 +97,6 @@ unsigned long long CurlFormDataStream::totalSize()
 
 void CurlFormDataStream::computeContentLength()
 {
-    static auto maxCurlOffT = CurlHandle::maxCurlOffT();
-
     if (!m_formData || m_isContentLengthUpdated)
         return;
 

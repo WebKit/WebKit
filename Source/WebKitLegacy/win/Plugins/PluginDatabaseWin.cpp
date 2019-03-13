@@ -268,56 +268,6 @@ static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
     RegCloseKey(key);
 }
 
-static inline void addJavaPluginDirectory(Vector<String>& directories)
-{
-    HKEY key;
-    HRESULT result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("Software\\JavaSoft\\Java Plug-in"), 0, KEY_READ, &key);
-    if (result != ERROR_SUCCESS)
-        return;
-
-    WCHAR name[128];
-    FILETIME lastModified;
-
-    Vector<int> latestJavaVersion;
-    String latestJavaVersionString;
-
-    // Enumerate subkeys
-    for (int i = 0;; i++) {
-        DWORD nameLen = sizeof(name) / sizeof(WCHAR);
-        result = RegEnumKeyExW(key, i, name, &nameLen, 0, 0, 0, &lastModified);
-
-        if (result != ERROR_SUCCESS)
-            break;
-
-        Vector<int> javaVersion = parseVersionString(String(name, nameLen));
-        if (compareVersions(javaVersion, latestJavaVersion)) {
-            latestJavaVersion = javaVersion;
-            latestJavaVersionString = String(name, nameLen);
-        }
-    }
-
-    if (!latestJavaVersionString.isEmpty()) {
-        DWORD type;
-        WCHAR javaInstallPathStr[_MAX_PATH];
-        DWORD javaInstallPathSize = sizeof(javaInstallPathStr);
-        DWORD useNewPluginValue;
-        DWORD useNewPluginSize;
-
-        String javaPluginKeyPath = "Software\\JavaSoft\\Java Plug-in\\" + latestJavaVersionString;
-        result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.wideCharacters().data(), L"UseNewJavaPlugin", &type, &useNewPluginValue, &useNewPluginSize);
-
-        if (result == ERROR_SUCCESS && useNewPluginValue == 1) {
-            result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.wideCharacters().data(), L"JavaHome", &type, javaInstallPathStr, &javaInstallPathSize);
-            if (result == ERROR_SUCCESS) {
-                String javaPluginDirectory = String(javaInstallPathStr, javaInstallPathSize / sizeof(WCHAR) - 1) + "\\bin\\new_plugin";
-                directories.append(javaPluginDirectory);
-            }
-        }
-    }
-
-    RegCloseKey(key);
-}
-
 static inline String safariPluginsDirectory()
 {
     WCHAR moduleFileNameStr[_MAX_PATH];

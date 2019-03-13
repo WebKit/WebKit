@@ -1,3 +1,19 @@
+2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Fix a slew of simple clang-cl warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=195652
+
+        Reviewed by Don Olmstead.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        (WebKit::NetworkDataTaskCurl::invokeDidReceiveResponse): -Wswitch
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::readEventHandler): -Wunused-variable
+        * Platform/win/LoggingWin.cpp:
+        (WebKit::logLevelString): -Wwritable-strings
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess): -Wunused-variable
+
 2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Move the code for determining the need for touch bar quirks to Quirks class

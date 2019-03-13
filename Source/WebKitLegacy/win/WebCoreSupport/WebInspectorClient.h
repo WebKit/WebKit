@@ -128,7 +128,7 @@ private:
     LRESULT onClose(WPARAM, LPARAM);
     LRESULT onSetFocus();
 
-    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
+    void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM) override;
 
     void onWebViewWindowPosChanging(WPARAM, LPARAM);
 

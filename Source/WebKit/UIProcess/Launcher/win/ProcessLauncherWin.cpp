@@ -98,7 +98,6 @@ void ProcessLauncher::launchProcess()
 
     if (!result) {
         // FIXME: What should we do here?
-        DWORD error = ::GetLastError();
         ASSERT_NOT_REACHED();
     }
 

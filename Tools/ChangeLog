@@ -1,3 +1,13 @@
+2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [Win] Fix a slew of simple clang-cl warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=195652
+
+        Reviewed by Don Olmstead.
+
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage): -Wunused-variable
+
 2019-03-12  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Update GPURenderPipelineDescriptor and add GPUColorStateDescriptor.format

@@ -163,8 +163,6 @@ namespace WebCore {
 // This is the fixed width IE and Firefox use for buttons on dropdown menus
 static const int dropDownButtonWidth = 17;
 
-static const int shell32MagnifierIconIndex = 22;
-
 // Default font size to match Firefox.
 static const float defaultControlFontPixelSize = 13;
 
@@ -612,6 +610,8 @@ ThemeData RenderThemeWin::getThemeData(const RenderObject& o, ControlSubPart sub
             result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
             result.m_state = determineSpinButtonState(o, subPart);
             break;
+        default:
+            break;
     }
 
     return result;
@@ -1021,8 +1021,6 @@ Color RenderThemeWin::systemColor(CSSValueID cssValueId, OptionSet<StyleColor::O
 }
 
 #if ENABLE(VIDEO)
-static const size_t maximumReasonableBufferSize = 32768;
-
 static void fillBufferWithContentsOfFile(FileSystem::PlatformFileHandle file, long long filesize, Vector<char>& buffer)
 {
     // Load the file content into buffer

@@ -199,6 +199,8 @@ void AutoscrollController::handleMouseReleaseEvent(const PlatformMouseEvent& mou
     case AutoscrollForPanCanStop:
         stopAutoscrollTimer();
         break;
+    default:
+        break;
     }
 }
 

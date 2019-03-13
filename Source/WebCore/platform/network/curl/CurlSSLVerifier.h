@@ -50,15 +50,13 @@ public:
         SSL_CERTIFICATE_GENERIC_ERROR = (1 << 6) // Some other error occurred validating the certificate
     };
 
-    CurlSSLVerifier(CurlHandle&, void* sslCtx);
+    CurlSSLVerifier(void* sslCtx);
 
     int sslErrors() { return m_sslErrors; }
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
 
 private:
     static int verifyCallback(int, X509StoreCTX*);
-
-    CurlHandle& m_curlHandle;
 
     int m_sslErrors { 0 };
     CertificateInfo m_certificateInfo;

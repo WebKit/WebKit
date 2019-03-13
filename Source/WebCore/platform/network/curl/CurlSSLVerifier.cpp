@@ -37,8 +37,7 @@ namespace WebCore {
 static Vector<CertificateInfo::Certificate> pemDataFromCtx(X509StoreCTX*);
 static CurlSSLVerifier::SSLCertificateFlags convertToSSLCertificateFlags(unsigned);
 
-CurlSSLVerifier::CurlSSLVerifier(CurlHandle& curlHandle, void* sslCtx)
-    : m_curlHandle(curlHandle)
+CurlSSLVerifier::CurlSSLVerifier(void* sslCtx)
 {
     auto* ctx = static_cast<SSL_CTX*>(sslCtx);
     const auto& sslHandle = CurlContext::singleton().sslHandle();

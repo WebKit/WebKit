@@ -123,7 +123,6 @@ void Connection::readEventHandler()
 
                 m_readBuffer.grow(m_readBuffer.size() + bytesToRead);
                 if (!::ReadFile(m_connectionPipe, m_readBuffer.data() + numberOfBytesRead, bytesToRead, 0, &m_readListener.state())) {
-                    DWORD error = ::GetLastError();
                     ASSERT_NOT_REACHED();
                     return;
                 }

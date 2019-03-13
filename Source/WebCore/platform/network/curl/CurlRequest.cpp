@@ -39,12 +39,12 @@
 namespace WebCore {
 
 CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics, MessageQueue<Function<void()>>* messageQueue)
-    : m_request(request.isolatedCopy())
-    , m_client(client)
+    : m_client(client)
+    , m_messageQueue(messageQueue)
+    , m_request(request.isolatedCopy())
     , m_shouldSuspend(shouldSuspend == ShouldSuspend::Yes)
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
     , m_formDataStream(m_request.httpBody())
-    , m_messageQueue(messageQueue)
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
     ASSERT(isMainThread());
@@ -186,8 +186,6 @@ void CurlRequest::runOnWorkerThreadIfRequired(Function<void()>&& task)
 
 CURL* CurlRequest::setupTransfer()
 {
-    auto& sslHandle = CurlContext::singleton().sslHandle();
-
     auto httpHeaderFields = m_request.httpHeaderFields();
     appendAcceptLanguageHeader(httpHeaderFields);
 
