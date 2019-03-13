@@ -1,3 +1,43 @@
+2019-03-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r241608. rdar://problem/48839277
+
+    [WebVTT] Inline WebVTT styles should start with '::cue'
+    https://bugs.webkit.org/show_bug.cgi?id=194227
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    The original fix in r241203 is not sufficient, since it only checks if the CSS string starts
+    with '::cue'. Before accepting a CSS string from a WebVTT file, it should be checked that
+    all selectors starts with '::cue'.
+    
+    Test: media/track/track-cue-css.html
+    
+    * html/track/WebVTTParser.cpp:
+    (WebCore::WebVTTParser::checkAndStoreStyleSheet):
+    
+    LayoutTests:
+    
+    Add invalid 'STYLE' blocks which the WebVTT parser should reject.
+    
+    * media/track/captions-webvtt/css-styling.vtt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241608 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Per Arne Vollan  <pvollan@apple.com>
+
+            [WebVTT] Inline WebVTT styles should start with '::cue'
+            https://bugs.webkit.org/show_bug.cgi?id=194227
+
+            Reviewed by Eric Carlson.
+
+            Add invalid 'STYLE' blocks which the WebVTT parser should reject.
+
+            * media/track/captions-webvtt/css-styling.vtt:
+
 2019-03-01  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r242248. rdar://problem/48503715

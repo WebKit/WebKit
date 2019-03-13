@@ -31,6 +31,39 @@ color: blue;
 font-size: 25px;
 }
 
+NOTE the following style block should be discarded since it has a 'video::cue' selector.
+
+STYLE
+::cue {
+color: blue
+font-size: 25px;
+}
+video::cue {
+color: blue;
+font-size: 25px;
+}
+
+NOTE the following style blocks should be discarded since they are invalid in WebVTT files.
+
+STYLE
+::cue,video::cue {
+color: blue;
+font-size: 25px;
+}
+
+STYLE
+color: yellow;
+
+NOTE @import and @namespace CSS rules should not be allowed in WebVTT files.
+NOTE TODO: create a proper testcase for this, see https://bugs.webkit.org/show_bug.cgi?id=194708.
+
+STYLE
+@import url('test.css');
+
+STYLE
+@namespace Foo "test";
+
+
 hello
 00:00:00.000 --> 00:00:10.000
 <b>Hello</b> first cue.
