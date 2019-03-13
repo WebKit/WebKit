@@ -72,7 +72,7 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
     if (sessionID.isEphemeral()) {
         auto result = m_idbEphemeralConnectionMap.add(sessionID.sessionID(), nullptr);
         if (result.isNewEntry)
-            result.iterator->value = WebCore::InProcessIDBServer::create();
+            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID);
 
         return result.iterator->value->connectionToServer();
     }

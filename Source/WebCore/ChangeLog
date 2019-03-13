@@ -1,3 +1,110 @@
+2019-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Check IDB quota usage through QuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=195302
+
+        Reviewed by Chris Dumez.
+
+        For every write operation, compute an estimate size and check for quota before proceeding.
+        When proceeding, store the estimate size in a map.
+        If size of the database is to be computed when the task is not done,
+        the estimate size will be added to the current size of the databases.
+        At the end of the task, the estimate size is removed from the map,
+        and the databases size is refreshed.
+
+        This patch implements size estimation for write tasks.
+        Put/add operations might overestimate the size
+        when an old value will be replaced by a new value.
+        In that case, we do not substract the old value size since we do not know it.
+
+        This patch implements database opening by adding a fixed small cost,
+        as we do not know whether the database is new or not.
+
+        For the first IDB request, we have not computed the size of the database.
+        To do so, we need to go to a background thread and do that file size computation.
+        For that purpose, we add support for being-initialized quota user.
+        Quota manager is calling whenInitialized on its quota user and will
+        delay any quota check requests until its quota user is answering this callback.
+
+        For in process IDB, use the default storage quota per origin and do not increase it.
+        Future work should move it to NetworkProcess and implement some quota checking.
+
+        Cache API and IDB quota management are not yet fully unified.
+        If IDB is used on start-up, we should check for Cache API storage size.
+        Conversely, on Cache API first wite task, even if IDB is not being used,
+        we should compute the size of the IDB data for the given origin.
+
+        Test: http/tests/IndexedDB/storage-limit.https.html
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::create):
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::m_quotaManagerGetter):
+        (WebCore::IDBServer::IDBServer::QuotaUser::QuotaUser):
+        (WebCore::IDBServer::IDBServer::QuotaUser::~QuotaUser):
+        (WebCore::IDBServer::IDBServer::QuotaUser::clearSpaceUsed):
+        (WebCore::IDBServer::IDBServer::QuotaUser::whenInitialized):
+        (WebCore::IDBServer::IDBServer::QuotaUser::initializeSpaceUsed):
+        (WebCore::IDBServer::IDBServer::quotaUser):
+        (WebCore::IDBServer::IDBServer::startComputingSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::computeSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::finishComputingSpaceUsedForOrigin):
+        (WebCore::IDBServer::IDBServer::requestSpace):
+        (WebCore::IDBServer::IDBServer::clearSpaceUsed):
+        (WebCore::IDBServer::IDBServer::setSpaceUsed):
+        (WebCore::IDBServer::IDBServer::increasePotentialSpaceUsed):
+        (WebCore::IDBServer::IDBServer::decreasePotentialSpaceUsed):
+        * Modules/indexeddb/server/IDBServer.h:
+        (WebCore::IDBServer::IDBServer::create):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::databasesSizeForOrigin const):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForFolder):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databasesSizeForOrigin const):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maximumSize const):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::estimateSize):
+        (WebCore::IDBServer::UniqueIDBDatabase::UniqueIDBDatabase):
+        (WebCore::IDBServer::quotaErrorMessageName):
+        (WebCore::IDBServer::UniqueIDBDatabase::requestSpace):
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::storeCallbackOrFireError):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStoreAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStoreAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndexAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndexAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAddAfterQuotaCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::updateSpaceUsedIfNeeded):
+        (WebCore::IDBServer::UniqueIDBDatabase::performErrorCallback):
+        (WebCore::IDBServer::UniqueIDBDatabase::performKeyDataCallback):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        (WebCore::IDBServer::UniqueIDBDatabase::server):
+        * Modules/indexeddb/shared/InProcessIDBServer.cpp:
+        (WebCore::InProcessIDBServer::create):
+        (WebCore::InProcessIDBServer::quotaManager):
+        (WebCore::storageQuotaManagerGetter):
+        (WebCore::InProcessIDBServer::InProcessIDBServer):
+        * Modules/indexeddb/shared/InProcessIDBServer.h:
+        * loader/EmptyClients.cpp:
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::addUser):
+        (WebCore::StorageQuotaManager::requestSpace):
+        * storage/StorageQuotaManager.h:
+        (WebCore::StorageQuotaManager::defaultQuota):
+        (WebCore::StorageQuotaManager::removeUser):
+        * storage/StorageQuotaUser.h:
+        (WebCore::StorageQuotaUser::whenInitialized):
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Better build fix after r242901.

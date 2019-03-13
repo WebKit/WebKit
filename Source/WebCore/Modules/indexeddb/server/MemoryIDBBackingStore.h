@@ -80,6 +80,7 @@ public:
     bool isEphemeral() final { return true; }
 
     void setQuota(uint64_t quota) final { UNUSED_PARAM(quota); };
+    uint64_t databasesSizeForOrigin() const final;
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);

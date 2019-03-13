@@ -850,6 +850,21 @@ uint64_t SQLiteIDBBackingStore::quotaForOrigin() const
     return std::min(diskFreeSpaceSize / 2, m_quota);
 }
 
+uint64_t SQLiteIDBBackingStore::databasesSizeForFolder(const String& folder)
+{
+    uint64_t diskUsage = 0;
+    for (auto& directory : FileSystem::listDirectory(folder, "*")) {
+        for (auto& file : FileSystem::listDirectory(directory, "*.sqlite3"_s))
+            diskUsage += SQLiteFileSystem::getDatabaseFileSize(file);
+    }
+    return diskUsage;
+}
+
+uint64_t SQLiteIDBBackingStore::databasesSizeForOrigin() const
+{
+    return databasesSizeForFolder(m_absoluteDatabaseDirectory);
+}
+
 uint64_t SQLiteIDBBackingStore::maximumSize() const
 {
     ASSERT(!isMainThread());
@@ -859,11 +874,7 @@ uint64_t SQLiteIDBBackingStore::maximumSize() const
     uint64_t databaseFileSize = SQLiteFileSystem::getDatabaseFileSize(fullDatabasePath());
     uint64_t quota = quotaForOrigin();
 
-    uint64_t diskUsage = 0;
-    for (auto& directory : FileSystem::listDirectory(m_absoluteDatabaseDirectory, "*")) {
-        for (auto& file : FileSystem::listDirectory(directory, "*.sqlite3"_s))
-            diskUsage += SQLiteFileSystem::getDatabaseFileSize(file);
-    }
+    uint64_t diskUsage = databasesSizeForOrigin();
     ASSERT(diskUsage >= databaseFileSize);
 
     if (quota < diskUsage)

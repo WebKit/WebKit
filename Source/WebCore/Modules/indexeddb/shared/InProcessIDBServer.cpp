@@ -44,30 +44,46 @@
 
 namespace WebCore {
 
-Ref<InProcessIDBServer> InProcessIDBServer::create()
+Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID)
 {
-    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer);
+    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer(sessionID));
     server->m_server->registerConnection(server->connectionToClient());
     return server;
 }
 
-Ref<InProcessIDBServer> InProcessIDBServer::create(const String& databaseDirectoryPath)
+Ref<InProcessIDBServer> InProcessIDBServer::create(PAL::SessionID sessionID, const String& databaseDirectoryPath)
 {
-    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer(databaseDirectoryPath));
+    Ref<InProcessIDBServer> server = adoptRef(*new InProcessIDBServer(sessionID, databaseDirectoryPath));
     server->m_server->registerConnection(server->connectionToClient());
     return server;
 }
 
-InProcessIDBServer::InProcessIDBServer()
-    : m_server(IDBServer::IDBServer::create(*this))
+StorageQuotaManager* InProcessIDBServer::quotaManager(const ClientOrigin& origin)
+{
+    return m_quotaManagers.ensure(origin, [] {
+        return std::make_unique<StorageQuotaManager>(StorageQuotaManager::defaultQuota(), [](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+            callback(quota + currentSpace + spaceIncrease);
+        });
+    }).iterator->value.get();
+}
+
+static inline IDBServer::IDBServer::QuotaManagerGetter storageQuotaManagerGetter(InProcessIDBServer& server)
+{
+    return [&server, weakServer = makeWeakPtr(server)](PAL::SessionID, const auto& origin) {
+        return weakServer ? server.quotaManager(origin) : nullptr;
+    };
+}
+
+InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID)
+    : m_server(IDBServer::IDBServer::create(sessionID, *this, storageQuotaManagerGetter(*this)))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
     m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
 }
 
-InProcessIDBServer::InProcessIDBServer(const String& databaseDirectoryPath)
-    : m_server(IDBServer::IDBServer::create(databaseDirectoryPath, *this))
+InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath)
+    : m_server(IDBServer::IDBServer::create(sessionID, databaseDirectoryPath, *this, storageQuotaManagerGetter(*this)))
 {
     relaxAdoptionRequirement();
     m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);

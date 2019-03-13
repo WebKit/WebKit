@@ -1,3 +1,19 @@
+2019-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Check IDB quota usage through QuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=195302
+
+        Reviewed by Chris Dumez.
+
+        Set the quota manager getter for IDBServer at creation time.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createIDBServer):
+        (WebKit::NetworkProcess::idbServer):
+        * NetworkProcess/NetworkProcess.h:
+        * WebProcess/Databases/WebDatabaseProvider.cpp:
+        (WebKit::WebDatabaseProvider::idbConnectionToServerForSession):
+
 2019-03-13  Timothy Hatcher  <timothy@apple.com>
 
         Consolidate ArgumentCodersMac and ArgumentCodersCocoa.

@@ -1,3 +1,13 @@
+2019-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Check IDB quota usage through QuotaManager
+        https://bugs.webkit.org/show_bug.cgi?id=195302
+
+        Reviewed by Chris Dumez.
+
+        * Storage/WebDatabaseProvider.cpp:
+        (WebDatabaseProvider::idbConnectionToServerForSession):
+
 2019-03-06  Sam Weinig  <sam@webkit.org>
 
         WebKitLegacy does not need to generate an export file for i386 anymore

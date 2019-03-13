@@ -44,9 +44,23 @@ uint64_t StorageQuotaManager::spaceUsage() const
     return usage;
 }
 
+void StorageQuotaManager::addUser(StorageQuotaUser& user)
+{
+    ASSERT(!m_pendingInitializationUsers.contains(&user));
+    ASSERT(!m_users.contains(&user));
+    m_pendingInitializationUsers.add(&user);
+    user.whenInitialized([this, &user, weakThis = makeWeakPtr(this)]() {
+        if (!weakThis)
+            return;
+        m_pendingInitializationUsers.remove(&user);
+        m_users.add(&user);
+        processPendingRequests({ });
+    });
+}
+
 void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&& callback)
 {
-    if (!m_pendingRequests.isEmpty()) {
+    if (!m_pendingRequests.isEmpty() || !m_pendingInitializationUsers.isEmpty()) {
         m_pendingRequests.append({ spaceIncrease, WTFMove(callback) });
         return;
     }

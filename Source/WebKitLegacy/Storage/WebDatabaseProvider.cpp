@@ -48,9 +48,9 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
     auto result = m_idbServerMap.add(sessionID.sessionID(), nullptr);
     if (result.isNewEntry) {
         if (sessionID.isEphemeral())
-            result.iterator->value = WebCore::InProcessIDBServer::create();
+            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID);
         else
-            result.iterator->value = WebCore::InProcessIDBServer::create(indexedDatabaseDirectoryPath());
+            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID, indexedDatabaseDirectoryPath());
     }
 
     result.iterator->value->idbServer().setPerOriginQuota(m_idbPerOriginQuota);

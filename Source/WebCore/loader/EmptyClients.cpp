@@ -118,9 +118,9 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
-    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) final
+    IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID& sessionID) final
     {
-        static auto& sharedConnection = InProcessIDBServer::create().leakRef();
+        static auto& sharedConnection = InProcessIDBServer::create(sessionID).leakRef();
         return sharedConnection.connectionToServer();
     }
 #endif

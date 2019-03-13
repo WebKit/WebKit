@@ -99,6 +99,7 @@ public:
     virtual bool supportsSimultaneousTransactions() = 0;
     virtual bool isEphemeral() = 0;
 
+    virtual uint64_t databasesSizeForOrigin() const = 0;
     virtual void setQuota(uint64_t) = 0;
 protected:
     IDBBackingStore() { RELEASE_ASSERT(!isMainThread()); }

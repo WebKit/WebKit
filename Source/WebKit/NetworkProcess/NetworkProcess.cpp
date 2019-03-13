@@ -2035,24 +2035,31 @@ void NetworkProcess::didSyncAllCookies()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
+Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID sessionID)
 {
-    auto addResult = m_idbServers.add(sessionID, nullptr);
-    if (!addResult.isNewEntry) {
-        ASSERT(addResult.iterator->value);
-        return *addResult.iterator->value;
-    }
-    
     auto path = m_idbDatabasePaths.get(sessionID);
     // There should already be a registered path for this PAL::SessionID.
     // If there's not, then where did this PAL::SessionID come from?
     ASSERT(!path.isEmpty());
-    
-    addResult.iterator->value = IDBServer::IDBServer::create(path, *this, [this](bool isHoldingLockedFiles) {
-        notifyHoldingLockedFiles(isHoldingLockedFiles);
+
+    auto server = IDBServer::IDBServer::create(sessionID, path, *this, [this, weakThis = makeWeakPtr(this)](PAL::SessionID sessionID, const auto& origin) -> StorageQuotaManager* {
+        if (!weakThis)
+            return nullptr;
+        return &this->storageQuotaManager(sessionID, origin);
+    }, [this, weakThis = makeWeakPtr(this)](bool isHoldingLockedFiles) {
+        if (!weakThis)
+            return;
+        this->notifyHoldingLockedFiles(isHoldingLockedFiles);
     });
-    addResult.iterator->value->setPerOriginQuota(m_idbPerOriginQuota);
-    return *addResult.iterator->value;
+    server->setPerOriginQuota(m_idbPerOriginQuota);
+    return server;
+}
+
+IDBServer::IDBServer& NetworkProcess::idbServer(PAL::SessionID sessionID)
+{
+    return *m_idbServers.ensure(sessionID, [this, sessionID] {
+        return this->createIDBServer(sessionID);
+    }).iterator->value;
 }
 
 void NetworkProcess::ensurePathExists(const String& path)

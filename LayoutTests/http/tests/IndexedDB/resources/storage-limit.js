@@ -1,29 +1,30 @@
-if (this.importScripts) {
-    importScripts('../../../resources/js-test.js');
-    importScripts('shared.js');
-}
-
 if (window.testRunner)
     testRunner.setAllowStorageQuotaIncrease(false);
 
-var quota = 400 * 1024; // default quota for testing.
 description("This test makes sure that storage of indexedDB does not grow unboundedly.");
 
-indexedDBTest(prepareDatabase, onOpenSuccess);
+window.caches.open("test").then(cache => {
+    return cache.put(new Request("/test"), new Response(new Uint8Array(204800)));
+}).then(() => {
+    indexedDBTest(prepareDatabase, onOpenSuccess, {'suffix': '-1'});
+}).catch(e => {
+    testFailed("Cache API store operation failed: " + e);
+    finishJSTest();
+});
 
 function prepareDatabase(event)
 {
-    preamble(event);
     evalAndLog("db = event.target.result");
     evalAndLog("store = db.createObjectStore('store')");
 }
 
-function onOpenSuccess(event)
+// Quota for test is 400ko, but IDB is eating some of it when initializing files.
+// Let's make sure that 200ko is fine but 200ko after 200ko is not fine.
+async function onOpenSuccess(event)
 {
-    preamble(event);
     evalAndLog("db = event.target.result");
     evalAndLog("store = db.transaction('store', 'readwrite').objectStore('store')");
-    evalAndLog("request = store.add(new Uint8Array(" + (quota + 1) + "), 0)");
+    evalAndLog("request = store.add(new Uint8Array(204800), 'key')");
     request.onerror = function(event) {
         shouldBeTrue("'error' in request");
         shouldBe("request.error.code", "DOMException.QUOTA_EXCEEDED_ERR");

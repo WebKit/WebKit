@@ -82,6 +82,7 @@ public:
     void deleteBackingStore() final;
 
     void setQuota(uint64_t quota) final { m_quota = quota; }
+    uint64_t databasesSizeForOrigin() const final;
 
     bool supportsSimultaneousTransactions() final { return false; }
     bool isEphemeral() final { return false; }
@@ -95,6 +96,7 @@ public:
     IDBError getBlobRecordsForObjectStoreRecord(int64_t objectStoreRecord, Vector<String>& blobURLs, PAL::SessionID&, Vector<String>& blobFilePaths);
 
     static String databaseNameFromEncodedFilename(const String&);
+    static uint64_t databasesSizeForFolder(const String& folder);
 
 private:
     String filenameForDatabaseName() const;

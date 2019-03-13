@@ -46,15 +46,13 @@ public:
     }
     WEBCORE_EXPORT ~StorageQuotaManager();
 
-    void addUser(StorageQuotaUser& user)
-    {
-        ASSERT(!m_users.contains(&user));
-        m_users.add(&user);
-    }
+    static constexpr uint64_t defaultQuota() { return 500 * MB; }
 
+    WEBCORE_EXPORT void addUser(StorageQuotaUser&);
     void removeUser(StorageQuotaUser& user)
     {
-        ASSERT(m_users.contains(&user));
+        ASSERT(m_users.contains(&user) || m_pendingInitializationUsers.contains(&user));
+        m_pendingInitializationUsers.remove(&user);
         m_users.remove(&user);
     }
 
@@ -69,6 +67,7 @@ private:
 
     uint64_t m_quota { 0 };
     SpaceIncreaseRequester m_spaceIncreaseRequester;
+    HashSet<const StorageQuotaUser*> m_pendingInitializationUsers;
     HashSet<const StorageQuotaUser*> m_users;
 
     struct PendingRequest {

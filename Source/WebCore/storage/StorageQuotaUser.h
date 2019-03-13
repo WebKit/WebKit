@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/CompletionHandler.h>
+
 namespace WebCore {
 
 class StorageQuotaUser {
@@ -32,6 +34,7 @@ public:
     virtual ~StorageQuotaUser() = default;
 
     virtual uint64_t spaceUsed() const = 0;
+    virtual void whenInitialized(CompletionHandler<void()>&& callback) { callback(); }
 };
 
 } // namespace WebCore

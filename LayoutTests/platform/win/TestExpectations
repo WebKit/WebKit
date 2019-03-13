@@ -2373,6 +2373,9 @@ http/tests/xmlhttprequest/response-special-characters.html [ Failure ]
 http/tests/xmlhttprequest/web-apps/012.html
 http/tests/xmlhttprequest/web-apps/013.html
 
+storage/indexeddb/storage-limit.html [ Skip ]
+http/tests/IndexedDB/storage-limit.https.html [ Skip ]
+
 # Assertion failures: Not investigated
 [ Debug ] http/tests/security/isolatedWorld/storage-properties.html [ Skip ]
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html [ Skip ]

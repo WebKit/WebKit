@@ -7,15 +7,11 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-
-prepareDatabase():
 db = event.target.result
 store = db.createObjectStore('store')
-
-onOpenSuccess():
 db = event.target.result
 store = db.transaction('store', 'readwrite').objectStore('store')
-request = store.add(new Uint8Array(409601), 0)
+request = store.add(new Uint8Array(204800), 'key')
 PASS 'error' in request is true
 PASS request.error.code is DOMException.QUOTA_EXCEEDED_ERR
 PASS request.error.name is "QuotaExceededError"

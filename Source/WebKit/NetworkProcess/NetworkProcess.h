@@ -430,6 +430,7 @@ private:
 #if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
     HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
+    Ref<WebCore::IDBServer::IDBServer> createIDBServer(PAL::SessionID);
 #endif
 
 #if ENABLE(SERVICE_WORKER)
@@ -524,7 +525,7 @@ private:
 #endif
 
     struct StorageQuotaManagers {
-        uint64_t defaultQuota { 0 };
+        uint64_t defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
         HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> managersPerOrigin;
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
