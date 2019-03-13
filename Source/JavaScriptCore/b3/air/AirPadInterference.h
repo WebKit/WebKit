@@ -32,11 +32,11 @@ namespace JSC { namespace B3 { namespace Air {
 class Code;
 
 // This isn't a phase - it's meant to be a utility that other phases use. Air reasons about liveness by
-// reasoning about interference at boundaries between instructions. This can go wrong - for example, a
+// reasoning about interference at boundaries between instructions. This is convenient because it works
+// great in the most common case: early uses and late defs. However, this can go wrong - for example, a
 // late use in one instruction doesn't actually interfere with an early def of the next instruction, but
-// Air thinks that it does. This is convenient because it works great in the most common case: early uses
-// and late defs. In practice, only the register allocators need to use this, since only they need to be
-// able to color the interference graph using a bounded number of colors.
+// Air thinks that it does. It can also go wrong by having liveness incorrectly report that something is
+// dead when it isn't.
 //
 // See https://bugs.webkit.org/show_bug.cgi?id=163548#c2 for more info.
 
