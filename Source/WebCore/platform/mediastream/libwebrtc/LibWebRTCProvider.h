@@ -115,6 +115,8 @@ public:
 
     void clearFactory() { m_factory = nullptr; }
 
+    void setEnableLogging(bool);
+
 protected:
     LibWebRTCProvider() = default;
 
@@ -131,6 +133,7 @@ protected:
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
     bool m_disableNonLocalhostConnections { false };
     bool m_supportsVP8 { false };
+    bool m_enableLogging { true };
 #endif
 };
 

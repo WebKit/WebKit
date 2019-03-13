@@ -430,6 +430,9 @@ class LogMessage {
   // These are the available logging channels
   //  Debug: Debug console on Windows, otherwise stderr
   static void LogToDebug(LoggingSeverity min_sev);
+
+  typedef void (*LogOutputCallback)(LoggingSeverity severity, const char*);
+  static void SetLogOutput(LoggingSeverity min_sev, LogOutputCallback);
   static LoggingSeverity GetLogToDebug();
 
   // Sets whether logs will be directed to stderr in debug mode.

@@ -70,8 +70,10 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
         peerConnection->m_pendingActivity = peerConnection->makePendingActivity(peerConnection.get());
-        if (auto* page = downcast<Document>(context).page())
+        if (auto* page = downcast<Document>(context).page()) {
             peerConnection->registerToController(page->rtcController());
+            page->libWebRTCProvider().setEnableLogging(!context.sessionID().isEphemeral());
+        }
     }
     return peerConnection;
 }

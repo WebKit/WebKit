@@ -52,6 +52,8 @@ static LoggingSeverity g_dbg_sev = LS_INFO;
 static LoggingSeverity g_min_sev = LS_NONE;
 static LoggingSeverity g_dbg_sev = LS_NONE;
 #endif
+static LogMessage::LogOutputCallback g_log_output_callback = nullptr;
+
 
 // Return the filename portion of the string (that following the last slash).
 const char* FilenameFromPath(const char* file) {
@@ -269,6 +271,14 @@ void LogMessage::LogToDebug(LoggingSeverity min_sev) {
   UpdateMinLogSeverity();
 }
 
+void LogMessage::SetLogOutput(LoggingSeverity min_sev, LogOutputCallback callback)
+{
+  g_dbg_sev = min_sev;
+  CritScope cs(&logCriticalScope());
+  UpdateMinLogSeverity();
+  g_log_output_callback = callback;
+}
+
 void LogMessage::SetLogToStderr(bool log_to_stderr) {
   log_to_stderr_ = log_to_stderr;
 }
@@ -456,6 +466,8 @@ void LogMessage::OutputToDebug(const std::string& str,
   }
 #endif  // WEBRTC_ANDROID
   if (log_to_stderr) {
+    if (g_log_output_callback)
+      g_log_output_callback(severity, str.c_str());
     fprintf(stderr, "%s", str.c_str());
     fflush(stderr);
   }

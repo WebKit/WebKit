@@ -1,3 +1,18 @@
+2019-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Enable libwebrtc logging control through WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=195658
+
+        Reviewed by Eric Carlson.
+
+        Add a callback to get access to libwebrtc log messages.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/rtc_base/logging.cc:
+        * Source/webrtc/rtc_base/logging.h:
+
 2019-03-07  Youenn Fablet  <youenn@apple.com>
 
         Skip compilation of unused audio device files for Mac and iOS

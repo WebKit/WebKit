@@ -120,19 +120,48 @@ private:
     void OnMessage(rtc::Message*);
 };
 
+static void doReleaseLogging(rtc::LoggingSeverity severity, const char* message)
+{
+    if (severity == rtc::LS_ERROR)
+        RELEASE_LOG_ERROR(WebRTC, "LibWebRTC error: %{public}s", message);
+    else
+        RELEASE_LOG(WebRTC, "LibWebRTC message: %{public}s", message);
+}
+
+static void setLogging(rtc::LoggingSeverity level)
+{
+    rtc::LogMessage::SetLogOutput(level, (level == rtc::LS_NONE) ? nullptr : doReleaseLogging);
+}
+
+static rtc::LoggingSeverity computeLogLevel()
+{
+#if defined(NDEBUG)
+#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+    if (LogWebRTC.state != WTFLogChannelOn)
+        return rtc::LS_ERROR;
+
+    switch (LogWebRTC.level) {
+    case WTFLogLevelAlways:
+    case WTFLogLevelError:
+        return rtc::LS_ERROR;
+    case WTFLogLevelWarning:
+        return rtc::LS_WARNING;
+    case WTFLogLevelInfo:
+        return rtc::LS_INFO;
+    case WTFLogLevelDebug:
+        return rtc::LS_VERBOSE;
+    }
+#else
+    return rtc::LS_NONE;
+#endif
+#else
+    return (LogWebRTC.state != WTFLogChannelOn) ? rtc::LS_WARNING : rtc::LS_INFO;
+#endif
+}
+
 static void initializePeerConnectionFactoryAndThreads(PeerConnectionFactoryAndThreads& factoryAndThreads)
 {
     ASSERT(!factoryAndThreads.networkThread);
-
-#if defined(NDEBUG)
-#if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_NONE : rtc::LS_INFO);
-#else
-    rtc::LogMessage::LogToDebug(rtc::LS_NONE);
-#endif
-#else
-    rtc::LogMessage::LogToDebug(LogWebRTC.state != WTFLogChannelOn ? rtc::LS_WARNING : rtc::LS_INFO);
-#endif
 
     factoryAndThreads.networkThread = factoryAndThreads.networkThreadWithSocketServer ? rtc::Thread::CreateWithSocketServer() : rtc::Thread::Create();
     factoryAndThreads.networkThread->SetName("WebKitWebRTCNetwork", nullptr);
@@ -192,6 +221,14 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
 {
     PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
     threads.signalingThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
+}
+
+void LibWebRTCProvider::setEnableLogging(bool enableLogging)
+{
+    if (!m_enableLogging)
+        return;
+    m_enableLogging = enableLogging;
+    setLogging(enableLogging ? computeLogLevel() : rtc::LS_NONE);
 }
 
 webrtc::PeerConnectionFactoryInterface* LibWebRTCProvider::factory()

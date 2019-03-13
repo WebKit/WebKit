@@ -1,3 +1,26 @@
+2019-03-13  Youenn Fablet  <youenn@apple.com>
+
+        Enable libwebrtc logging control through WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=195658
+
+        Reviewed by Eric Carlson.
+
+        Add support for WebCore logging of libwebrtc messages.
+        This is controlled by WebRTC log channel state and level.
+        In case of private browsing mode, any logging is disabled.
+        This will stay for the lifetime of the process.
+        No change of behavior.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::doReleaseLogging):
+        (WebCore::setLogging):
+        (WebCore::computeLogLevel):
+        (WebCore::initializePeerConnectionFactoryAndThreads):
+        (WebCore::LibWebRTCProvider::setEnableLogging):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2019-03-13  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Do not sync encoder on the clock
