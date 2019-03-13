@@ -54,6 +54,8 @@ class GStreamerVideoDecoder : public webrtc::VideoDecoder {
 public:
     GStreamerVideoDecoder()
         : m_pictureId(0)
+        , m_width(0)
+        , m_height(0)
         , m_firstBufferPts(GST_CLOCK_TIME_NONE)
         , m_firstBufferDts(GST_CLOCK_TIME_NONE)
     {
@@ -80,12 +82,17 @@ public:
         return gst_element_factory_make(factoryName, name.get());
     }
 
-    int32_t InitDecode(const webrtc::VideoCodec*, int32_t) override
+    int32_t InitDecode(const webrtc::VideoCodec* codecSettings, int32_t) override
     {
         m_src = makeElement("appsrc");
 
         auto capsfilter = CreateFilter();
         auto decoder = makeElement("decodebin");
+
+        if (codecSettings) {
+            m_width = codecSettings->width;
+            m_height = codecSettings->height;
+        }
 
         // Make the decoder output "parsed" frames only and let the main decodebin
         // do the real decoding. This allows us to have optimized decoding/rendering
@@ -193,8 +200,8 @@ public:
     {
         if (!m_caps) {
             m_caps = adoptGRef(gst_caps_new_simple(Caps(),
-                "width", G_TYPE_INT, image._encodedWidth,
-                "height", G_TYPE_INT, image._encodedHeight,
+                "width", G_TYPE_INT, image._encodedWidth ? image._encodedWidth : m_width,
+                "height", G_TYPE_INT, image._encodedHeight ? image._encodedHeight : m_height,
                 nullptr));
         }
 
@@ -269,6 +276,8 @@ public:
 protected:
     GRefPtr<GstCaps> m_caps;
     gint m_pictureId;
+    gint m_width;
+    gint m_height;
 
 private:
     static GstFlowReturn newSampleCallbackTramp(GstElement* sink, GStreamerVideoDecoder* enc)
@@ -327,10 +336,8 @@ public:
     {
         if (!m_caps) {
             m_caps = adoptGRef(gst_caps_new_simple(Caps(),
-                "width", G_TYPE_INT, image._encodedWidth,
-                "height", G_TYPE_INT, image._encodedHeight,
-                "profile", G_TYPE_STRING, m_profile ? m_profile : "baseline",
-                "stream-format", G_TYPE_STRING, "byte-stream",
+                "width", G_TYPE_INT, image._encodedWidth ? image._encodedWidth : m_width,
+                "height", G_TYPE_INT, image._encodedHeight ? image._encodedHeight : m_height,
                 "alignment", G_TYPE_STRING, "au",
                 nullptr));
         }

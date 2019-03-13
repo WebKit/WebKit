@@ -1,3 +1,18 @@
+2019-03-13  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC]: Use codec setting video height/width as fallback
+        https://bugs.webkit.org/show_bug.cgi?id=195675
+
+        Reviewed by Philippe Normand.
+
+        In some cases the frame height and width is not set (not sure why/ in
+        what conditions but it happens) so make sure to get the information from
+        the VideoCodec when configuring the encoder.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::GStreamerVideoDecoder::GStreamerVideoDecoder):
+        (WebCore::GStreamerVideoDecoder::GetCapsForFrame):
+
 2019-03-13  Miguel Gomez  <magomez@igalia.com>
 
         [CoordinatedGraphics] Null dereference in CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded
