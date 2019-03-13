@@ -1,3 +1,40 @@
+2019-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] OSR entry should respect abstract values in addition to flush formats
+        https://bugs.webkit.org/show_bug.cgi?id=195653
+
+        Reviewed by Mark Lam.
+
+        Let's consider the following graph.
+
+        Block #0
+            ...
+            27:< 2:loc13> JSConstant(JS|UseAsOther, StringIdent, Strong:String (atomic) (identifier): , StructureID: 42679, bc#10, ExitValid)
+            ...
+            28:< 2:loc13> ArithPow(DoubleRep:@437<Double>, Int32:@27, Double|UseAsOther, BytecodeDouble, Exits, bc#10, ExitValid)
+            29:<!0:->     MovHint(DoubleRep:@28<Double>, MustGen, loc7, W:SideState, ClobbersExit, bc#10, ExitValid)
+            30:< 1:->     SetLocal(DoubleRep:@28<Double>, loc7(M<Double>/FlushedDouble), machine:loc6, W:Stack(-8), bc#10, exit: bc#14, ExitValid)  predicting BytecodeDouble
+            ...
+            73:<!0:->     Jump(MustGen, T:#1, W:SideState, bc#71, ExitValid)
+
+        Block #1 (bc#71): (OSR target) pred, #0
+            ...
+           102:<!2:loc15> GetLocal(Check:Untyped:@400, Double|MustGen|PureInt, BytecodeDouble, loc7(M<Double>/FlushedDouble), machine:loc6, R:Stack(-8), bc#120, ExitValid)  predicting BytecodeDouble
+            ...
+
+        CFA at @28 says it is invalid since there are type contradiction (Int32:@27 v.s. StringIdent). So, of course, we do not propagate #0's type information to #1 since we become invalid state.
+        However, #1 is still reachable since it is an OSR target. Since #0 was only the predecessor of #1, loc7's type information becomes None at the head of #1.
+        Since loc7's AbstractValue is None, @102 GetLocal emits breakpoint. It is OK as long as OSR entry fails because AbstractValue validation requires the given value is None type.
+
+        The issue here is that we skipped AbstractValue validation when we have FlushFormat information. Since loc7 has FlushedDouble format, DFG OSR entry code does not validate it against AbstractValue,
+        which is None. Then, we hit the breakpoint emitted by @102.
+
+        This patch performs AbstractValue validation against values even if we have FlushFormat. We should correctly configure AbstractValue for OSR entry's locals too to avoid unnecessary OSR entry
+        failures in the future but anyway validating locals with AbstractValue is correct behavior here since DFGSpeculativeJIT relies on that.
+
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+
 2019-03-12  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (iOS 12.2): Webpage using CoffeeScript crashes

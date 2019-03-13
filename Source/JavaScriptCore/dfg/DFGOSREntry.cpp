@@ -203,37 +203,38 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         int localOffset = virtualRegisterForLocal(local).offset();
+        JSValue value = exec->registers()[localOffset].asanUnsafeJSValue();
+        if (!entry->m_expectedValues.local(local).validate(value)) {
+            if (Options::verboseOSR()) {
+                dataLog(
+                    "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
+                    value, ", expected ",
+                    entry->m_expectedValues.local(local), ".\n");
+            }
+            return 0;
+        }
         if (entry->m_localsForcedDouble.get(local)) {
-            if (!exec->registers()[localOffset].asanUnsafeJSValue().isNumber()) {
+            if (!value.isNumber()) {
                 if (Options::verboseOSR()) {
                     dataLog(
                         "    OSR failed because variable ", localOffset, " is ",
-                        exec->registers()[localOffset].asanUnsafeJSValue(), ", expected number.\n");
+                        value, ", expected number.\n");
                 }
                 return 0;
             }
             continue;
         }
         if (entry->m_localsForcedAnyInt.get(local)) {
-            if (!exec->registers()[localOffset].asanUnsafeJSValue().isAnyInt()) {
+            if (!value) {
                 if (Options::verboseOSR()) {
                     dataLog(
                         "    OSR failed because variable ", localOffset, " is ",
-                        exec->registers()[localOffset].asanUnsafeJSValue(), ", expected ",
+                        value, ", expected ",
                         "machine int.\n");
                 }
                 return 0;
             }
             continue;
-        }
-        if (!entry->m_expectedValues.local(local).validate(exec->registers()[localOffset].asanUnsafeJSValue())) {
-            if (Options::verboseOSR()) {
-                dataLog(
-                    "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
-                    exec->registers()[localOffset].asanUnsafeJSValue(), ", expected ",
-                    entry->m_expectedValues.local(local), ".\n");
-            }
-            return 0;
         }
     }
 
