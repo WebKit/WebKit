@@ -96,36 +96,28 @@ const char* GLContextEGL::lastErrorString()
 
 bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType)
 {
+    std::array<EGLint, 4> rgbaSize = { 8, 8, 8, 8 };
+    if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
+        if (!strcmp(environmentVariable, "RGB565"))
+            rgbaSize = { 5, 6, 5, 0 };
+        else
+            WTFLogAlways("Unknown pixel layout %s, falling back to RGBA8888", environmentVariable);
+    }
+
     EGLint attributeList[] = {
 #if USE(OPENGL_ES)
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 #else
         EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
 #endif
-        EGL_RED_SIZE, 1,
-        EGL_GREEN_SIZE, 1,
-        EGL_BLUE_SIZE, 1,
-        EGL_ALPHA_SIZE, 1,
+        EGL_RED_SIZE, rgbaSize[0],
+        EGL_GREEN_SIZE, rgbaSize[1],
+        EGL_BLUE_SIZE, rgbaSize[2],
+        EGL_ALPHA_SIZE, rgbaSize[3],
         EGL_STENCIL_SIZE, 8,
         EGL_SURFACE_TYPE, EGL_NONE,
         EGL_NONE
     };
-
-    bool isRGB565 = false;
-    if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
-        if (!strcmp(environmentVariable, "RGB565")) {
-            isRGB565 = true;
-            // EGL_RED_SIZE
-            attributeList[3] = 5;
-            // EGL_GREEN_SIZE
-            attributeList[5] = 6;
-            // EGL_BLUE_SIZE
-            attributeList[7] = 5;
-            // EGL_ALPHA_SIZE
-            attributeList[9] = 0;
-        } else
-            WTFLogAlways("Unknown pixel layout %s, falling back to RGBA8888", environmentVariable);
-    }
 
     switch (surfaceType) {
     case GLContextEGL::PbufferSurface:
@@ -146,11 +138,8 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
 
     EGLint numberConfigsReturned;
     Vector<EGLConfig> configs(count);
-    if (!eglChooseConfig(display, attributeList, isRGB565 ? reinterpret_cast<EGLConfig*>(configs.data()) : config, isRGB565 ? count : 1, &numberConfigsReturned) || !numberConfigsReturned)
+    if (!eglChooseConfig(display, attributeList, reinterpret_cast<EGLConfig*>(configs.data()), count, &numberConfigsReturned) || !numberConfigsReturned)
         return false;
-
-    if (!isRGB565)
-        return true;
 
     auto index = configs.findMatching([&](EGLConfig value) {
         EGLint redSize, greenSize, blueSize, alphaSize;
@@ -158,7 +147,8 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
         eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);
         eglGetConfigAttrib(display, value, EGL_BLUE_SIZE, &blueSize);
         eglGetConfigAttrib(display, value, EGL_ALPHA_SIZE, &alphaSize);
-        return (redSize == 5 && greenSize == 6 && blueSize == 5 && !alphaSize);
+        return redSize == rgbaSize[0] && greenSize == rgbaSize[1]
+            && blueSize == rgbaSize[2] && alphaSize == rgbaSize[3];
     });
 
     if (index != notFound) {
