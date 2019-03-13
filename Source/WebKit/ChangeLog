@@ -1,3 +1,13 @@
+2019-03-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][PlayStation] Remove WebCore::standardUserAgentForURL
+        https://bugs.webkit.org/show_bug.cgi?id=195662
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::platformUserAgent const): Return an empty string as well as mac/ios ports.
+
 2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Fix a slew of simple clang-cl warnings.

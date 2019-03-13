@@ -49,10 +49,4 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     return uaString.toString();
 }
 
-String standardUserAgentForURL(const URL& url)
-{
-    // The null string means we don't need a specific UA for the given URL.
-    return { };
-}
-
 } // namespace WebCore

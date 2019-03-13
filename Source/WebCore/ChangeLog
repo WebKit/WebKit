@@ -1,3 +1,19 @@
+2019-03-13  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][PlayStation] Remove WebCore::standardUserAgentForURL
+        https://bugs.webkit.org/show_bug.cgi?id=195662
+
+        Reviewed by Ryosuke Niwa.
+
+        WebCore::standardUserAgentForURL is just a stub in Windows port.
+
+        No new tests because there is no behavior change.
+
+        * platform/win/UserAgentWin.cpp:
+        (WebCore::standardUserAgentForURL): Deleted.
+        * platform/playstation/UserAgentPlayStation.cpp:
+        (WebCore::standardUserAgentForURL): Deleted.
+
 2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Fix a slew of simple clang-cl warnings.

@@ -113,12 +113,9 @@ bool WebPage::platformCanHandleRequest(const ResourceRequest&)
     return false;
 }
 
-String WebPage::platformUserAgent(const URL& url) const
+String WebPage::platformUserAgent(const URL&) const
 {
-    if (url.isNull() || !m_page->settings().needsSiteSpecificQuirks())
-        return String();
-
-    return WebCore::standardUserAgentForURL(url);
+    return { };
 }
 
 static const unsigned CtrlKey = 1 << 0;
