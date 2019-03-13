@@ -519,7 +519,7 @@ platform/network/cocoa/NetworkLoadMetrics.mm
 platform/network/cocoa/NetworkStorageSessionCocoa.mm
 platform/network/cocoa/ProtectionSpaceCocoa.mm
 platform/network/cocoa/ResourceRequestCocoa.mm
-platform/network/cocoa/ResourceResponseCocoa.mm
+platform/network/cocoa/ResourceResponseCocoa.mm @no-unify // Unsafe to unify until rdar://problem/48853137 is resolved
 platform/network/cocoa/WebCoreNSURLSession.mm @no-unify
 
 platform/network/ios/NetworkStateNotifierIOS.mm

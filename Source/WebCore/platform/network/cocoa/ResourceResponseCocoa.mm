@@ -111,10 +111,6 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
 #endif
 }
 
-static CFStringRef const commonHeaderFields[] = {
-    CFSTR("Age"), CFSTR("Cache-Control"), CFSTR("Content-Type"), CFSTR("Date"), CFSTR("Etag"), CFSTR("Expires"), CFSTR("Last-Modified"), CFSTR("Pragma")
-};
-
 NSURLResponse *ResourceResponse::nsURLResponse() const
 {
     if (!m_nsResponse && !m_isNull)
