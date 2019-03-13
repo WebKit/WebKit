@@ -1,3 +1,20 @@
+2019-03-13  Sam Weinig  <sam@webkit.org>
+
+        Fix testbmalloc build
+        https://bugs.webkit.org/show_bug.cgi?id=195660
+
+        Reviewed by Geoffrey Garen.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        Link Foundation in when building testbmalloc. Since bmalloc requires Foundation, and is a static
+        library, all clients of bmalloc are required to link it themselves.
+        
+        * bmalloc/IsoPageInlines.h:
+        * bmalloc/StdLibExtras.h: Added.
+        (bmalloc::bitwise_cast):
+        Add bitwise_cast implementation, and use it in IsoPageInlines.h. It is a layering violation
+        to expect the one from WTF to be available, as seems to have been the case.
+
 2019-03-12  Robin Morisset  <rmorisset@apple.com>
 
         A lot more classes have padding that can be reduced by reordering their fields

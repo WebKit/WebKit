@@ -28,6 +28,7 @@
 #include "CryptoRandom.h"
 #include "IsoDirectory.h"
 #include "IsoPage.h"
+#include "StdLibExtras.h"
 #include "VMAllocate.h"
 
 namespace bmalloc {
