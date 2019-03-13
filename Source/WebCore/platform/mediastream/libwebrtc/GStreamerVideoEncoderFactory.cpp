@@ -142,6 +142,7 @@ public:
         auto sink = makeElement("appsink");
         gst_app_sink_set_emit_signals(GST_APP_SINK(sink), TRUE);
         g_signal_connect(sink, "new-sample", G_CALLBACK(newSampleCallbackTramp), this);
+        g_object_set(sink, "sync", FALSE, nullptr);
 
         auto name = makeString(Name(), "_enc_rawcapsfilter_0x", hex(reinterpret_cast<uintptr_t>(this)));
         m_capsFilter = gst_element_factory_make("capsfilter", name.utf8().data());
