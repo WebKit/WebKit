@@ -29,6 +29,7 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include "TextureMapperGLHeaders.h"
+#include <wtf/Condition.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
@@ -69,7 +70,7 @@ public:
     WEBCORE_EXPORT void invalidate();
 
     WEBCORE_EXPORT void swapBuffer();
-    void dropCurrentBufferWhilePreservingTexture();
+    void dropCurrentBufferWhilePreservingTexture(bool shouldWait = false);
 
     bool scheduleUpdateOnCompositorThread(Function<void()>&&);
 
@@ -85,6 +86,10 @@ private:
     std::unique_ptr<TextureMapperPlatformLayerBuffer> m_pendingBuffer;
 
     Lock m_lock;
+
+    Lock m_wasBufferDroppedLock;
+    Condition m_wasBufferDroppedCondition;
+    bool m_wasBufferDropped { false };
 
     Vector<std::unique_ptr<TextureMapperPlatformLayerBuffer>> m_usedBuffers;
     std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxy>> m_releaseUnusedBuffersTimer;
