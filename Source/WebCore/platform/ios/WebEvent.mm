@@ -149,7 +149,6 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
         return @"\x1B";
     case kHIDUsage_KeypadNumLock: // Num Lock / Clear
         return makeNSStringWithCharacter(NSClearLineFunctionKey);
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     case kHIDUsage_KeyboardDeleteForward:
         return makeNSStringWithCharacter(NSDeleteFunctionKey);
     case kHIDUsage_KeyboardEnd:
@@ -158,14 +157,11 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
         return makeNSStringWithCharacter(NSInsertFunctionKey);
     case kHIDUsage_KeyboardHome:
         return makeNSStringWithCharacter(NSHomeFunctionKey);
-#endif
     }
-#if USE(UIKIT_KEYBOARD_ADDITIONS)
     if (keyCode >= kHIDUsage_KeyboardF1 && keyCode <= kHIDUsage_KeyboardF12)
         return makeNSStringWithCharacter(NSF1FunctionKey + (keyCode - kHIDUsage_KeyboardF1));
     if (keyCode >= kHIDUsage_KeyboardF13 && keyCode <= kHIDUsage_KeyboardF24)
         return makeNSStringWithCharacter(NSF13FunctionKey + (keyCode - kHIDUsage_KeyboardF13));
-#endif
     return characters;
 }
 

@@ -1,3 +1,21 @@
+2019-03-13  Daniel Bates  <dabates@apple.com>
+
+        Remove some unnecessary !USE(UIKIT_KEYBOARD_ADDITIONS) guards
+        https://bugs.webkit.org/show_bug.cgi?id=195703
+
+        Reviewed by Tim Horton.
+
+        Remove out-of-date comment and unncessary !USE(UIKIT_KEYBOARD_ADDITIONS) guards. Following
+        r240604 we now make use of WebCore::windowsKeyCodeForCharCode() even for hardware key events
+        when USE(UIKIT_KEYBOARD_ADDITIONS) is enabled.
+
+        No functionality changed. So, no new tests.
+
+        * platform/ios/KeyEventIOS.mm:
+        (WebCore::windowsKeyCodeForCharCode):
+        * platform/ios/WebEvent.mm:
+        (normalizedStringWithAppKitCompatibilityMapping):
+
 2019-03-13  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tree should reposition non-stacking order descendents of overflow:scroll
