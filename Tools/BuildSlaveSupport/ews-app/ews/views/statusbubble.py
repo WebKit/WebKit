@@ -28,6 +28,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
+from ews.common.buildbot import Buildbot
 from ews.models.patch import Patch
 import ews.config as config
 
@@ -57,17 +58,17 @@ class StatusBubble(View):
         bubble["details_message"] = '{}\n{}'.format(builder_full_name, build.state_string)
         if build.result is None:
             bubble["state"] = "started"
-        elif build.result == 0:  # SUCCESS
+        elif build.result == Buildbot.SUCCESS:
             bubble["state"] = "pass"
-        elif build.result == 1:  # WARNINGS
+        elif build.result == Buildbot.WARNINGS:
             bubble["state"] = "pass"
-        elif build.result == 2:  # FAILURE
+        elif build.result == Buildbot.FAILURE:
             bubble["state"] = "fail"
-        elif build.result == 3:  # SKIPPED
+        elif build.result == Buildbot.SKIPPED:
             bubble["state"] = "none"
-        elif build.result == 4:  # EXCEPTION
+        elif build.result == Buildbot.EXCEPTION:
             bubble["state"] = "error"
-        elif build.result == 5:  # RETRY
+        elif build.result == Buildbot.RETRY:
             bubble["state"] = "provisional-fail"
         else:
             bubble["state"] = "fail"
@@ -85,7 +86,7 @@ class StatusBubble(View):
         return [build for build in patch.build_set.all() if build.builder_display_name == queue]
 
     def _should_show_bubble_for_build(self, build):
-        if build and build.result == 3 and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
+        if build and build.result == Buildbot.SKIPPED and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
             return False
         return True
 

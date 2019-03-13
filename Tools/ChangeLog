@@ -1,3 +1,15 @@
+2019-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Use Buildbot result code variables
+        https://bugs.webkit.org/show_bug.cgi?id=195668
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py:
+        (Buildbot): Added Buildbot result code variables.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Used Buildbot result code variables.
+
 2019-03-13  Thibault Saunier  <tsaunier@igalia.com>
 
         [Flatpak] Expand submodule recursively
