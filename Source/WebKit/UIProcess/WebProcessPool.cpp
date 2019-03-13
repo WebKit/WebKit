@@ -2511,4 +2511,47 @@ void WebProcessPool::committedCrossSiteLoadWithLinkDecoration(PAL::SessionID ses
 #endif
 }
 
+void WebProcessPool::setWebProcessHasUploads(ProcessIdentifier processID)
+{
+    auto* process = WebProcessProxy::processForIdentifier(processID);
+    ASSERT(process);
+
+    RELEASE_LOG(ProcessSuspension, "Web process pid %u now has uploads in progress", (unsigned)process->processIdentifier());
+
+    if (m_processesWithUploads.isEmpty()) {
+        RELEASE_LOG(ProcessSuspension, "The number of uploads in progress is now one. Taking Networking and UI process assertions.");
+
+        ASSERT(m_networkProcess);
+        m_networkProcess->takeUploadAssertion();
+        
+        ASSERT(!m_uiProcessUploadAssertion);
+        m_uiProcessUploadAssertion = std::make_unique<ProcessAssertion>(getCurrentProcessID(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+    }
+    
+    auto result = m_processesWithUploads.add(processID, nullptr);
+    ASSERT(result.isNewEntry);
+    result.iterator->value = std::make_unique<ProcessAssertion>(process->processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+}
+
+void WebProcessPool::clearWebProcessHasUploads(ProcessIdentifier processID)
+{
+    auto result = m_processesWithUploads.take(processID);
+    ASSERT_UNUSED(result, result);
+
+    auto* process = WebProcessProxy::processForIdentifier(processID);
+    ASSERT(process);
+    RELEASE_LOG(ProcessSuspension, "Web process pid %u no longer has uploads in progress", (unsigned)process->processIdentifier());
+
+    if (m_processesWithUploads.isEmpty()) {
+        RELEASE_LOG(ProcessSuspension, "The number of uploads in progress is now zero. Releasing Networking and UI process assertions.");
+
+        if (m_networkProcess)
+            m_networkProcess->clearUploadAssertion();
+        
+        ASSERT(m_uiProcessUploadAssertion);
+        m_uiProcessUploadAssertion = nullptr;
+    }
+    
+}
+
 } // namespace WebKit

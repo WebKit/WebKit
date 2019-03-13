@@ -924,6 +924,7 @@
 		51217461164C20E30037A5C1 /* ShareableResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 5121745F164C20E30037A5C1 /* ShareableResource.h */; };
 		5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 5123CF1A133D260A0056F800 /* WKIconDatabaseCG.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51240EBA220A08D2005CFC63 /* DownloadMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 51240EB8220A08CA005CFC63 /* DownloadMap.h */; };
+		51240EC0220B694C005CFC63 /* NetworkResourceLoadMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 51240EBE220B6947005CFC63 /* NetworkResourceLoadMap.h */; };
 		512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935D61288D19400A4B695 /* WebContextMenuItem.h */; };
 		512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3169,6 +3170,8 @@
 		5123CF1A133D260A0056F800 /* WKIconDatabaseCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKIconDatabaseCG.h; path = cg/WKIconDatabaseCG.h; sourceTree = "<group>"; };
 		51240EB8220A08CA005CFC63 /* DownloadMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadMap.h; sourceTree = "<group>"; };
 		51240EB9220A08CA005CFC63 /* DownloadMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadMap.cpp; sourceTree = "<group>"; };
+		51240EBE220B6947005CFC63 /* NetworkResourceLoadMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoadMap.h; sourceTree = "<group>"; };
+		51240EBF220B6948005CFC63 /* NetworkResourceLoadMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoadMap.cpp; sourceTree = "<group>"; };
 		512935D51288D19400A4B695 /* WebContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuItem.cpp; sourceTree = "<group>"; };
 		512935D61288D19400A4B695 /* WebContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItem.h; sourceTree = "<group>"; };
 		512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageContextMenuClient.cpp; sourceTree = "<group>"; };
@@ -6512,6 +6515,8 @@
 				51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */,
 				51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */,
 				E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */,
+				51240EBF220B6948005CFC63 /* NetworkResourceLoadMap.cpp */,
+				51240EBE220B6947005CFC63 /* NetworkResourceLoadMap.h */,
 				5C1426E51C23F80500D41183 /* NetworkResourceLoadParameters.cpp */,
 				5C1426E61C23F80500D41183 /* NetworkResourceLoadParameters.h */,
 				532159521DBAE6FC0054AA3C /* NetworkSession.cpp */,
@@ -9262,6 +9267,7 @@
 				A11455B0211FD25200CA935B /* NetworkProximityManager.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
+				51240EC0220B694C005CFC63 /* NetworkResourceLoadMap.h in Headers */,
 				5C1426F01C23F80900D41183 /* NetworkResourceLoadParameters.h in Headers */,
 				413075AC1DE85F370039EC69 /* NetworkRTCMonitor.h in Headers */,
 				41DC45961E3D6E2200B11F51 /* NetworkRTCProvider.h in Headers */,

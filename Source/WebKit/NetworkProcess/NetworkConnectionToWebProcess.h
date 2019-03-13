@@ -32,8 +32,10 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkMDNSRegister.h"
 #include "NetworkRTCProvider.h"
+#include "NetworkResourceLoadMap.h"
 #include "WebPaymentCoordinatorProxy.h"
 #include <WebCore/NetworkLoadInformation.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
 
@@ -134,6 +136,10 @@ public:
     WebCore::BlobRegistryImpl& blobRegistry();
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const URL&);
     Vector<RefPtr<WebCore::BlobDataFileReference>> resolveBlobReferences(const NetworkResourceLoadParameters&);
+
+    void setWebProcessIdentifier(WebCore::ProcessIdentifier);
+    void setConnectionHasUploads();
+    void clearConnectionHasUploads();
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, IPC::Connection::Identifier);
@@ -268,7 +274,7 @@ private:
     Ref<NetworkProcess> m_networkProcess;
 
     HashMap<uint64_t, RefPtr<NetworkSocketStream>> m_networkSocketStreams;
-    HashMap<ResourceLoadIdentifier, Ref<NetworkResourceLoader>> m_networkResourceLoaders;
+    NetworkResourceLoadMap m_networkResourceLoaders;
     HashMap<String, RefPtr<WebCore::BlobDataFileReference>> m_blobDataFileReferences;
     Vector<ResourceNetworkActivityTracker> m_networkActivityTrackers;
 
@@ -297,6 +303,9 @@ private:
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     std::unique_ptr<WebPaymentCoordinatorProxy> m_paymentCoordinator;
 #endif
+
+    WebCore::ProcessIdentifier m_webProcessIdentifier;
+    bool m_connectionHasUploads { false };
 };
 
 } // namespace WebKit

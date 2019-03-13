@@ -37,6 +37,9 @@ messages -> WebProcessPool {
 
     ReportWebContentCPUTime(Seconds cpuTime, uint64_t activityState)
 
+    SetWebProcessHasUploads(WebCore::ProcessIdentifier processID)
+    ClearWebProcessHasUploads(WebCore::ProcessIdentifier processID)
+
 #if ENABLE(SERVICE_WORKER)
     PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientIdentifier source, WebCore::SWServerConnectionIdentifier connectionIdentifier)

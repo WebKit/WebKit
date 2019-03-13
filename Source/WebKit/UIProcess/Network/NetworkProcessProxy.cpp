@@ -1201,6 +1201,18 @@ void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const We
     store->client().requestStorageSpace(origin.topOrigin, origin.clientOrigin, quota, currentSize, spaceRequired, WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::takeUploadAssertion()
+{
+    ASSERT(!m_uploadAssertion);
+    m_uploadAssertion = std::make_unique<ProcessAssertion>(processIdentifier(), "WebKit uploads"_s, AssertionState::UnboundedNetworking);
+}
+
+void NetworkProcessProxy::clearUploadAssertion()
+{
+    ASSERT(m_uploadAssertion);
+    m_uploadAssertion = nullptr;
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

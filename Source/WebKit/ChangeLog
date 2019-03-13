@@ -1,3 +1,57 @@
+2019-03-12  Brady Eidson  <beidson@apple.com>
+
+        Take UnboundedNetworking assertion when a file upload is in progress.
+        https://bugs.webkit.org/show_bug.cgi?id=195497
+
+        Reviewed by Geoff Garen.
+
+        This patch implements whole bunch of bookkeeping in both the Networking and UI processes.
+
+        The TLDR of that bookkeeping is:
+        - Whenever any uploads are in progress, take an assertion for both Networking and UI processes.
+        - Whenever a particular WebProcess has an upload in progress, take an assertion for it.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::setProcessIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::setConnectionHasUploads):
+        (WebKit::NetworkConnectionToWebProcess::clearConnectionHasUploads):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkResourceLoadMap.cpp: Added.
+        (WebKit::NetworkResourceLoadMap::add):
+        (WebKit::NetworkResourceLoadMap::remove):
+        (WebKit::NetworkResourceLoadMap::get const):
+        * NetworkProcess/NetworkResourceLoadMap.h: Added.
+        (WebKit::NetworkResourceLoadMap::NetworkResourceLoadMap):
+        (WebKit::NetworkResourceLoadMap::isEmpty const):
+        (WebKit::NetworkResourceLoadMap::contains const):
+        (WebKit::NetworkResourceLoadMap::begin):
+        (WebKit::NetworkResourceLoadMap::values):
+
+        * NetworkProcess/NetworkSession.cpp:
+ 
+       * Scripts/webkit/messages.py:
+
+        * Sources.txt:
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::takeUploadAssertion):
+        (WebKit::NetworkProcessProxy::clearUploadAssertion):
+        * UIProcess/Network/NetworkProcessProxy.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setWebProcessHasUploads):
+        (WebKit::WebProcessPool::clearWebProcessHasUploads):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessPool.messages.in:
+ 
+       * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Use new RegistrableDomain type in PSON code

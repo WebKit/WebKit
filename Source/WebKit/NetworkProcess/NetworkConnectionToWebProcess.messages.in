@@ -83,4 +83,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) LegacySync
 #endif
+
+    SetWebProcessIdentifier(WebCore::ProcessIdentifier processIdentifier)
 }

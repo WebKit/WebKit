@@ -29,6 +29,8 @@
 #include "NetworkAdClickAttribution.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
+#include "WebPageProxy.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>

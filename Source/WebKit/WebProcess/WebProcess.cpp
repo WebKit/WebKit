@@ -1230,6 +1230,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
             CRASH();
 
         m_networkProcessConnection = NetworkProcessConnection::create(connectionIdentifier);
+        m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::SetWebProcessIdentifier(Process::identifier()), 0);
     }
     
     return *m_networkProcessConnection;

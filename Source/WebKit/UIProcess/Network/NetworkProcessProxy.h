@@ -173,6 +173,9 @@ public:
 
     void addSession(Ref<WebsiteDataStore>&&);
     void removeSession(PAL::SessionID);
+    
+    void takeUploadAssertion();
+    void clearUploadAssertion();
 
 private:
     // AuxiliaryProcessProxy
@@ -261,6 +264,8 @@ private:
 #endif
 
     HashMap<PAL::SessionID, RefPtr<WebsiteDataStore>> m_websiteDataStores;
+    
+    std::unique_ptr<ProcessAssertion> m_uploadAssertion;
 };
 
 } // namespace WebKit

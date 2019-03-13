@@ -44,6 +44,7 @@
 #include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
 #include "WebProcessProxy.h"
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/SharedStringHash.h>
@@ -52,7 +53,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryPressureHandler.h>
-#include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -495,6 +495,9 @@ public:
     const HashMap<CString, SandboxPermission>& sandboxPaths() const { return m_extraSandboxPaths; };
     bool sandboxEnabled() const { return m_sandboxEnabled; };
 #endif
+    
+    void setWebProcessHasUploads(WebCore::ProcessIdentifier);
+    void clearWebProcessHasUploads(WebCore::ProcessIdentifier);
 
 private:
     void platformInitialize();
@@ -768,6 +771,9 @@ private:
     bool m_sandboxEnabled { false };
     HashMap<CString, SandboxPermission> m_extraSandboxPaths;
 #endif
+
+    HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesWithUploads;
+    std::unique_ptr<ProcessAssertion> m_uiProcessUploadAssertion;
 };
 
 template<typename T>
