@@ -262,7 +262,12 @@ WI.HARBuilder = class HARBuilder
                 result.connect = ((connectEnd || requestStart) - connectStart) * 1000;
             if (secureConnectionStart)
                 result.ssl = ((connectEnd || requestStart) - secureConnectionStart) * 1000;
-            result.send = (requestStart - (connectEnd || domainLookupEnd || startTime)) * 1000;
+
+            // If all the time before requestStart was included in blocked, then make send time zero
+            // as send time is essentially just blocked time after dns / connection time, and we
+            // do not want to double count it.
+            result.send = (domainLookupEnd || connectEnd) ? (requestStart - (connectEnd || domainLookupEnd)) * 1000 : 0;
+
             result.wait = (responseStart - requestStart) * 1000;
             result.receive = (responseEnd - responseStart) * 1000;
         }

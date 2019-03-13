@@ -1,3 +1,14 @@
+2019-03-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network - HAR Export duplicates blocked/send time if there was no dns/connect block
+        https://bugs.webkit.org/show_bug.cgi?id=195655
+        <rdar://problem/48831152>
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/inspector/network/har/har-basic-expected.txt:
+        * http/tests/inspector/network/har/har-basic.html:
+
 2019-03-13  Antoine Quint  <graouts@apple.com>
 
         REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key

@@ -15,6 +15,26 @@ function test()
         return value;
     }
 
+    const timingFilterSet = new Set(["creator", "browser", "request", "response"]);
+    function HARJSONTimingFilter(key, value) {
+        if (timingFilterSet.has(key))
+            return "<filtered>";
+        return value;
+    }
+
+    const url = "https://example.com/fake.js";
+    const mimeType = "text/javascript";
+    const type = WI.Resource.Type.Script;
+    const requestMethod = "GET";
+    const requestHeaders = {"Test-Request-Header": "Test Request Header Value"};
+    const responseHeaders = {"Test-Response-Header": "Test Response Header Value"};
+    const statusCode = 200;
+    const statusText = "OK";
+    const source = "network";
+    const requestSentWalltime = 1508723752694 / 1000; // Sun Oct 22 2017 18:55:52 GMT-0700, when this test was written.
+    const timestamp = undefined;
+    const size = 1234;
+
     let suite = InspectorTest.createAsyncSuite("HAR.Basic");
 
     suite.addTestCase({
@@ -31,18 +51,6 @@ function test()
         description: "Should be able to generate a HAR with resources.",
         async test() {
             // FIXME: We should have an easier way to construct a Resource with mock data.
-            const url = "https://example.com/fake.js";
-            const mimeType = "text/javascript";
-            const type = WI.Resource.Type.Script;
-            const requestMethod = "GET";
-            const requestHeaders = {"Test-Request-Header": "Test Request Header Value"};
-            const responseHeaders = {"Test-Response-Header": "Test Response Header Value"};
-            const statusCode = 200;
-            const statusText = "OK";
-            const source = "network";
-            const requestSentWalltime = 1508723752694 / 1000; // Sun Oct 22 2017 18:55:52 GMT-0700, when this test was written.
-            const timestamp = undefined;
-            const size = 1234;
             const timingData = {
                 startTime: 1,
                 domainLookupStart: 100,
@@ -78,6 +86,77 @@ function test()
 
             let har = await WI.HARBuilder.buildArchive([bareResource, fullResource]);
             InspectorTest.json(har, HARJSONFilter);
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Basic.Timing",
+        description: "Test for HAR timing data when various dns/connect sections are empty.",
+        async test() {
+            function resourceWithTimingData(timingData) {
+                let resource = new WI.Resource(url, {mimeType, type, requestMethod, requestHeaders, requestSentWalltime});
+                resource.updateForResponse(url, mimeType, type, responseHeaders, statusCode, statusText, timestamp, timingData, source);
+                resource.increaseSize(size);
+                resource.markAsFinished(1.7);
+                return resource;
+            }
+
+            let resource1 = resourceWithTimingData({
+                startTime: 1,
+                domainLookupStart: NaN,
+                domainLookupEnd: NaN,
+                connectStart: NaN,
+                connectEnd: NaN,
+                secureConnectionStart: NaN,
+                requestStart: 500,
+                responseStart: 600,
+                responseEnd: 700,
+            });
+
+            let resource2 = resourceWithTimingData({
+                startTime: 1,
+                domainLookupStart: 100,
+                domainLookupEnd: 200,
+                connectStart: NaN,
+                connectEnd: NaN,
+                secureConnectionStart: NaN,
+                requestStart: 500,
+                responseStart: 600,
+                responseEnd: 700,
+            });
+
+            let resource3 = resourceWithTimingData({
+                startTime: 1,
+                domainLookupStart: NaN,
+                domainLookupEnd: NaN,
+                connectStart: 300,
+                connectEnd: 400,
+                secureConnectionStart: NaN,
+                requestStart: 500,
+                responseStart: 600,
+                responseEnd: 700,
+            });
+
+            function sumTimingDataTillWait(entry) {
+                let {blocked, dns, connect, send} = entry.timings;
+                let sum = 0;
+                if (blocked > 0)
+                    sum += blocked;
+                if (dns > 0)
+                    sum += dns;
+                if (connect > 0)
+                    sum += connect;
+                if (send > 0)
+                    sum += send;
+                return sum;
+            }
+
+            let har = await WI.HARBuilder.buildArchive([resource1, resource2, resource3]);
+            let {log: {entries: [entry1, entry2, entry3]}} = har;
+            InspectorTest.expectEqualWithAccuracy(sumTimingDataTillWait(entry1), 500, 0.001, `HAR Timings for entry1 should add up to ~500ms before wait.`);
+            InspectorTest.expectEqualWithAccuracy(sumTimingDataTillWait(entry2), 500, 0.001, `HAR Timings for entry2 should add up to ~500ms before wait.`);
+            InspectorTest.expectEqualWithAccuracy(sumTimingDataTillWait(entry3), 500, 0.001, `HAR Timings for entry3 should add up to ~500ms before wait.`);
+            InspectorTest.json(har, HARJSONTimingFilter);
         }
     });
 

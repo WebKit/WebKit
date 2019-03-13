@@ -142,3 +142,78 @@ Basic tests for HAR.
   }
 }
 
+-- Running test case: HAR.Basic.Timing
+PASS: HAR Timings for entry1 should add up to ~500ms before wait.
+PASS: HAR Timings for entry2 should add up to ~500ms before wait.
+PASS: HAR Timings for entry3 should add up to ~500ms before wait.
+{
+  "log": {
+    "version": "1.2",
+    "creator": "<filtered>",
+    "pages": [
+      {
+        "startedDateTime": "",
+        "id": "page_0",
+        "title": "http://127.0.0.1:8000/inspector/network/har/har-basic.html",
+        "pageTimings": {}
+      }
+    ],
+    "entries": [
+      {
+        "pageref": "page_0",
+        "startedDateTime": "2017-10-23T01:55:52.694Z",
+        "time": 700,
+        "request": "<filtered>",
+        "response": "<filtered>",
+        "cache": {},
+        "timings": {
+          "blocked": 500,
+          "dns": -1,
+          "connect": -1,
+          "ssl": -1,
+          "send": 0,
+          "wait": 100.00000000000009,
+          "receive": 99.99999999999987
+        },
+        "_fetchType": "Network Load"
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "2017-10-23T01:55:52.694Z",
+        "time": 700,
+        "request": "<filtered>",
+        "response": "<filtered>",
+        "cache": {},
+        "timings": {
+          "blocked": 100.00000000000009,
+          "dns": 99.99999999999987,
+          "connect": -1,
+          "ssl": -1,
+          "send": 300.00000000000006,
+          "wait": 100.00000000000009,
+          "receive": 99.99999999999987
+        },
+        "_fetchType": "Network Load"
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "2017-10-23T01:55:52.694Z",
+        "time": 700,
+        "request": "<filtered>",
+        "response": "<filtered>",
+        "cache": {},
+        "timings": {
+          "blocked": 300.00000000000006,
+          "dns": -1,
+          "connect": 99.99999999999987,
+          "ssl": -1,
+          "send": 100.00000000000009,
+          "wait": 100.00000000000009,
+          "receive": 99.99999999999987
+        },
+        "_fetchType": "Network Load"
+      }
+    ]
+  }
+}
+
