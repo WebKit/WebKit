@@ -1,0 +1,3 @@
+This test verifies that the type of an input with an associated datalist can be changed immediately after the datalist suggestions menu is closed. To test manually, load this page and check that it does not crash.
+
+
