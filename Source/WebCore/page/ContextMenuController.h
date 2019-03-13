@@ -93,6 +93,7 @@ private:
     std::unique_ptr<ContextMenu> m_contextMenu;
     RefPtr<ContextMenuProvider> m_menuProvider;
     ContextMenuContext m_context;
+    bool m_isHandlingContextMenuEvent { false };
 };
 
 } // namespace WebCore
