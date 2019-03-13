@@ -57,26 +57,26 @@ fragment float4 fragment_main(VertexOut v [[stage_in]], const device TextureSamp
 
 function createInputStateDescriptor() {
     return {
-        indexFormat: WebGPUIndexFormat.UINT32,
+        indexFormat: "uint32",
         attributes: [{
             shaderLocation: positionAttributeNum,
             inputSlot: positionBufferIndex,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+            format: "float4"
         }, {
             shaderLocation: texCoordsAttributeNum,
             inputSlot: texCoordsBufferIndex,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32
+            format: "float2"
         }],
         inputs: [{
             inputSlot: positionBufferIndex,
             stride: 4 * 4,
-            stepMode: WebGPUInputStepMode.VERTEX
+            stepMode: "vertex"
         }, {
             inputSlot: texCoordsBufferIndex,
             stride: 4 * 2,
-            stepMode: WebGPUInputStepMode.VERTEX
+            stepMode: "vertex"
         }]
     }
 }
@@ -146,7 +146,7 @@ async function test() {
         mipLevelCount: 1,
         sampleCount: 1,
         dimension: "2d",
-        format: "r8g8b8a8-unorm",
+        format: "rgba8unorm",
         usage: GPUTextureUsage.TRANSFER_DST | GPUTextureUsage.SAMPLED
     };
     const texture = device.createTexture(textureDescriptor);

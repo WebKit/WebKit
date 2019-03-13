@@ -78,22 +78,19 @@ static RetainPtr<MTLDepthStencilState> tryCreateMtlDepthStencilState(const char*
     return state;
 }
 
-static bool setFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
+static bool trySetFunctionsForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
-    // Metal requires a vertex shader in all render pipelines.
     const auto& vertexStage = descriptor.vertexStage;
     auto mtlLibrary = vertexStage.module->platformShaderModule();
-
     if (!mtlLibrary) {
         LOG(WebGPU, "%s: MTLLibrary for vertex stage does not exist!", functionName);
         return false;
     }
 
     auto function = adoptNS([mtlLibrary newFunctionWithName:vertexStage.entryPoint]);
-
     if (!function) {
         LOG(WebGPU, "%s: Vertex MTLFunction \"%s\" not found!", functionName, vertexStage.entryPoint.utf8().data());
         return false;
@@ -101,66 +98,57 @@ static bool setFunctionsForPipelineDescriptor(const char* const functionName, MT
 
     [mtlDescriptor setVertexFunction:function.get()];
 
-    // However, fragment shaders are optional.
-    const auto fragmentStage = descriptor.fragmentStage;
-    if (!fragmentStage.module || !fragmentStage.entryPoint)
-        return true;
-
-    mtlLibrary = fragmentStage.module->platformShaderModule();
-
-    if (!mtlLibrary) {
+    const auto& fragmentStage = descriptor.fragmentStage;
+    if (!(mtlLibrary = fragmentStage.module->platformShaderModule())) {
         LOG(WebGPU, "%s: MTLLibrary for fragment stage does not exist!", functionName);
         return false;
     }
 
-    function = adoptNS([mtlLibrary newFunctionWithName:fragmentStage.entryPoint]);
-
-    if (!function) {
+    if (!(function = adoptNS([mtlLibrary newFunctionWithName:fragmentStage.entryPoint]))) {
         LOG(WebGPU, "%s: Fragment MTLFunction \"%s\" not found!", functionName, fragmentStage.entryPoint.utf8().data());
         return false;
     }
 
     [mtlDescriptor setFragmentFunction:function.get()];
-
     return true;
 }
 
-static Optional<MTLVertexFormat> validateAndConvertVertexFormatToMTLVertexFormat(GPUVertexFormatEnum format)
+static MTLVertexFormat mtlVertexFormatForGPUVertexFormat(GPUVertexFormat format)
 {
     switch (format) {
-    case GPUVertexFormat::FloatR32G32B32A32:
-        return MTLVertexFormatFloat4;
-    case GPUVertexFormat::FloatR32G32B32:
-        return MTLVertexFormatFloat3;
-    case GPUVertexFormat::FloatR32G32:
-        return MTLVertexFormatFloat2;
-    case GPUVertexFormat::FloatR32:
+    case GPUVertexFormat::Float:
         return MTLVertexFormatFloat;
-    default:
-        return WTF::nullopt;
+    case GPUVertexFormat::Float2:
+        return MTLVertexFormatFloat2;
+    case GPUVertexFormat::Float3:
+        return MTLVertexFormatFloat3;
+    case GPUVertexFormat::Float4:
+        return MTLVertexFormatFloat4;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
-static Optional<MTLVertexStepFunction> validateAndConvertStepModeToMTLStepFunction(GPUInputStepModeEnum mode)
+static MTLVertexStepFunction mtlStepFunctionForGPUInputStepMode(GPUInputStepMode mode)
 {
     switch (mode) {
     case GPUInputStepMode::Vertex:
         return MTLVertexStepFunctionPerVertex;
     case GPUInputStepMode::Instance:
         return MTLVertexStepFunctionPerInstance;
-    default:
-        return WTF::nullopt;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
-static bool setInputStateForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPURenderPipelineDescriptor& descriptor)
+static bool trySetInputStateForPipelineDescriptor(const char* const functionName, MTLRenderPipelineDescriptor *mtlDescriptor, const GPUInputStateDescriptor& descriptor)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
     auto mtlVertexDescriptor = adoptNS([MTLVertexDescriptor new]);
 
-    const auto& attributes = descriptor.inputState.attributes;
+    const auto& attributes = descriptor.attributes;
 
     auto attributeArray = retainPtr(mtlVertexDescriptor.get().attributes);
 
@@ -175,19 +163,14 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
             LOG(WebGPU, "%s: Invalid inputSlot %lu for vertex attribute %lu!", functionName, attributes[i].inputSlot, location);
             return false;
         }
-        auto mtlFormat = validateAndConvertVertexFormatToMTLVertexFormat(attributes[i].format);
-        if (!mtlFormat) {
-            LOG(WebGPU, "%s: Invalid WebGPUVertexFormatEnum for vertex attribute %lu!", functionName, location);
-            return false;
-        }
 
         auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
-        [mtlAttributeDesc setFormat:*mtlFormat];
+        [mtlAttributeDesc setFormat:mtlVertexFormatForGPUVertexFormat(attributes[i].format)];
         [mtlAttributeDesc setOffset:attributes[i].offset]; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
         [mtlAttributeDesc setBufferIndex:WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot)];
     }
 
-    const auto& inputs = descriptor.inputState.inputs;
+    const auto& inputs = descriptor.inputs;
 
     auto layoutArray = retainPtr(mtlVertexDescriptor.get().layouts);
 
@@ -198,19 +181,22 @@ static bool setInputStateForPipelineDescriptor(const char* const functionName, M
             return false;
         }
 
-        auto mtlStepFunction = validateAndConvertStepModeToMTLStepFunction(inputs[j].stepMode);
-        if (!mtlStepFunction) {
-            LOG(WebGPU, "%s: Invalid WebGPUInputStepMode for vertex buffer at slot %lu!", functionName, slot);
-            return false;
-        }
-
         auto convertedSlot = WHLSL::Metal::calculateVertexBufferIndex(slot);
         auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedSlot]);
-        [mtlLayoutDesc setStepFunction:*mtlStepFunction];
+        [mtlLayoutDesc setStepFunction:mtlStepFunctionForGPUInputStepMode(inputs[j].stepMode)];
         [mtlLayoutDesc setStride:inputs[j].stride];
     }
 
     [mtlDescriptor setVertexDescriptor:mtlVertexDescriptor.get()];
+
+    return true;
+}
+
+static bool trySetColorStatesForColorAttachmentArray(MTLRenderPipelineColorAttachmentDescriptorArray* array, const Vector<GPUColorStateDescriptor>& colorStates)
+{
+    // FIXME: Implement and validate the rest of GPUColorStateDescriptor.
+    for (unsigned i = 0; i < colorStates.size(); ++i)
+        [array[i] setPixelFormat:static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(colorStates[i].format))];
 
     return true;
 }
@@ -230,20 +216,18 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const c
         return nullptr;
     }
 
-    bool didSetFunctions = false, didSetInputState = false;
+    bool didSetFunctions = false, didSetInputState = false, didSetColorStates = false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    didSetFunctions = setFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor);
-    didSetInputState = setInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor);
+    didSetFunctions = trySetFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor);
+    didSetInputState = trySetInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor.inputState);
+    didSetColorStates = trySetColorStatesForColorAttachmentArray(mtlDescriptor.get().colorAttachments, descriptor.colorStates);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!didSetFunctions || !didSetInputState)
+    if (!didSetFunctions || !didSetInputState || !didSetColorStates)
         return nullptr;
-
-    // FIXME: Get the pixelFormat as configured for the context/CAMetalLayer.
-    mtlDescriptor.get().colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
 
     RetainPtr<MTLRenderPipelineState> pipeline;
 
@@ -268,11 +252,10 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
         return nullptr;
     }
 
-    // Depth Stencil state is optional and separate from the render pipeline state in Metal.
     RetainPtr<MTLDepthStencilState> depthStencil;
 
-    if (descriptor.depthStencilState)
-        depthStencil = tryCreateMtlDepthStencilState(functionName, *descriptor.depthStencilState, device);
+    if (descriptor.depthStencilState && !(depthStencil = tryCreateMtlDepthStencilState(functionName, *descriptor.depthStencilState, device)))
+        return nullptr;
 
     auto pipeline = tryCreateMtlRenderPipelineState(functionName, descriptor, device);
     if (!pipeline)

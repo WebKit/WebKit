@@ -27,10 +27,10 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] enum GPUTextureFormat {
-    "r8g8b8a8-unorm",
-    "r8g8b8a8-uint",
-    "b8g8r8a8-unorm",
-    "d32-float-s8-uint",
+    "rgba8unorm",
+    "rgba8uint",
+    "bgra8unorm",
+    "depth32float-stencil8",
     "bgra8unorm-srgb",
     "rgba16float"
 };

@@ -468,9 +468,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUBufferUsage.idl
     Modules/webgpu/GPUCanvasContext.idl
     Modules/webgpu/GPUColor.idl
+    Modules/webgpu/GPUColorStateDescriptor.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
     Modules/webgpu/GPUExtent3D.idl
+    Modules/webgpu/GPUInputStateDescriptor.idl
     Modules/webgpu/GPULoadOp.idl
     Modules/webgpu/GPUOrigin3D.idl
     Modules/webgpu/GPURequestAdapterOptions.idl
@@ -481,6 +483,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUTextureDimension.idl
     Modules/webgpu/GPUTextureFormat.idl
     Modules/webgpu/GPUTextureUsage.idl
+    Modules/webgpu/GPUVertexAttributeDescriptor.idl
+    Modules/webgpu/GPUVertexInputDescriptor.idl
     Modules/webgpu/WebGPU.idl
     Modules/webgpu/WebGPUAdapter.idl
     Modules/webgpu/WebGPUBindGroup.idl
@@ -491,9 +495,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUBufferBinding.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUDevice.idl
-    Modules/webgpu/WebGPUIndexFormat.idl
-    Modules/webgpu/WebGPUInputStateDescriptor.idl
-    Modules/webgpu/WebGPUInputStepMode.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineLayout.idl
     Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl
@@ -510,9 +511,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUSwapChain.idl
     Modules/webgpu/WebGPUTexture.idl
     Modules/webgpu/WebGPUTextureView.idl
-    Modules/webgpu/WebGPUVertexAttributeDescriptor.idl
-    Modules/webgpu/WebGPUVertexFormat.idl
-    Modules/webgpu/WebGPUVertexInputDescriptor.idl
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl

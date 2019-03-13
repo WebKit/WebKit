@@ -27,23 +27,21 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUDepthStencilStateDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
-#include "WebGPUInputStateDescriptor.h"
 #include "WebGPUPipelineDescriptorBase.h"
 #include "WebGPUPipelineStageDescriptor.h"
 #include <wtf/Optional.h>
 
 namespace WebCore {
 
-struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
-    using PrimitiveTopology = GPURenderPipelineDescriptor::PrimitiveTopology;
+struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
+    using GPUPrimitiveTopology = GPUPrimitiveTopology;
+    using GPUColorStateDescriptor = GPUColorStateDescriptor;
+
+    Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor() const;
 
     WebGPUPipelineStageDescriptor vertexStage;
     WebGPUPipelineStageDescriptor fragmentStage;
-    PrimitiveTopology primitiveTopology;
-    Optional<GPUDepthStencilStateDescriptor> depthStencilState;
-    WebGPUInputStateDescriptor inputState;
 };
 
 } // namespace WebCore

@@ -35,13 +35,13 @@ namespace WebCore {
 PlatformTextureFormat platformTextureFormatForGPUTextureFormat(GPUTextureFormat format)
 {
     switch (format) {
-    case GPUTextureFormat::R8g8b8a8Unorm:
+    case GPUTextureFormat::Rgba8unorm:
         return MTLPixelFormatRGBA8Unorm;
-    case GPUTextureFormat::R8g8b8a8Uint:
+    case GPUTextureFormat::Rgba8uint:
         return MTLPixelFormatRGBA8Uint;
-    case GPUTextureFormat::B8g8r8a8Unorm:
+    case GPUTextureFormat::Bgra8unorm:
         return MTLPixelFormatBGRA8Unorm;
-    case GPUTextureFormat::D32FloatS8Uint:
+    case GPUTextureFormat::Depth32floatStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
     case GPUTextureFormat::Bgra8unormSRGB:
         return MTLPixelFormatBGRA8Unorm_sRGB;

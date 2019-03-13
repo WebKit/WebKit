@@ -60,7 +60,7 @@ static bool validateBufferBindingType(const GPUBuffer* buffer, const GPUBindGrou
     }
 }
 
-Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::asGPUBindGroupDescriptor() const
+Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor() const
 {
     const char* const functionName = "GPUDevice::createBindGroup()";
 

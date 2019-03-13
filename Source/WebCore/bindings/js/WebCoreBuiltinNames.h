@@ -83,6 +83,7 @@ namespace WebCore {
     macro(GamepadEvent) \
     macro(GPUBufferUsage) \
     macro(GPUCanvasContext) \
+    macro(GPUShaderModule) \
     macro(GPUShaderStageBit) \
     macro(GPUSwapChain) \
     macro(GPUTextureUsage) \
@@ -210,7 +211,6 @@ namespace WebCore {
     macro(WebGPURenderPassEncoder) \
     macro(WebGPURenderPipeline) \
     macro(WebGPUSampler) \
-    macro(WebGPUShaderModule) \
     macro(WebGPUTexture) \
     macro(WebGPUTextureView) \
     macro(WebGPUVertexFormat) \

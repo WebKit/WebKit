@@ -137,17 +137,17 @@ async function test() {
 
     // Create vertex input state.
     const inputState = {
-        indexFormat: WebGPUIndexFormat.UINT32,
+        indexFormat: "uint32",
         attributes: [{
             shaderLocation: 0,
             inputSlot: 0,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+            format: "float4"
         }],
         inputs: [{
             inputSlot: 0,
             stride: vertexSize,
-            stepMode: WebGPUInputStepMode.VERTEX
+            stepMode: "vertex"
         }]
     };
 
@@ -165,7 +165,7 @@ async function test() {
 
     // WebGPUPipelineLayout and WebGPURenderPipeline
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [leftTriangleBGLayout, rightTriangleBGLayout] });
-    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputState, null, "triangleList");
+    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputState, null, "triangle-list");
 
     // WebGPUBufferBindings
     const bindingUL = createBufferBinding(upperLeft);

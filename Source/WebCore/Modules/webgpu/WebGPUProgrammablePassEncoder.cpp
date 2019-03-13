@@ -61,9 +61,13 @@ void WebGPUProgrammablePassEncoder::setBindGroup(unsigned index, WebGPUBindGroup
     passEncoder().setBindGroup(index, *bindGroup.bindGroup());
 }
 
-void WebGPUProgrammablePassEncoder::setPipeline(Ref<WebGPURenderPipeline>&& pipeline)
+void WebGPUProgrammablePassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
 {
-    passEncoder().setPipeline(pipeline->renderPipeline());
+    if (!pipeline.renderPipeline()) {
+        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid pipeline!");
+        return;
+    }
+    passEncoder().setPipeline(makeRef(*pipeline.renderPipeline()));
 }
 
 } // namespace WebCore

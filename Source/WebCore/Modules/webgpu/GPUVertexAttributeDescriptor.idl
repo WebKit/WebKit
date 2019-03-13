@@ -25,13 +25,21 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
+typedef unsigned long long u64;
+
+enum GPUVertexFormat {
+    "float",
+    "float2",
+    "float3",
+    "float4"
+};
 
 [
     Conditional=WEBGPU,
-    DoNotCheckConstants,
-    EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
-] interface WebGPUInputStepMode {
-    const u32 VERTEX = 0;
-    const u32 INSTANCE = 1;
+    EnabledAtRuntime=WebGPU
+] dictionary GPUVertexAttributeDescriptor {
+    u32 shaderLocation;
+    u32 inputSlot;
+    u64 offset;
+    GPUVertexFormat format;
 };

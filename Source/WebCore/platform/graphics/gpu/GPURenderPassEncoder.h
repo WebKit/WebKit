@@ -52,7 +52,7 @@ public:
     static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
     void endPass() final;
-    void setPipeline(Ref<GPURenderPipeline>&&) final;
+    void setPipeline(Ref<const GPURenderPipeline>&&) final;
 
     void setVertexBuffers(unsigned long, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
@@ -71,7 +71,7 @@ private:
 #endif // USE(METAL)
 
     PlatformRenderPassEncoderSmartPtr m_platformRenderPassEncoder;
-    RefPtr<GPURenderPipeline> m_pipeline;
+    RefPtr<const GPURenderPipeline> m_pipeline;
 };
 
 } // namespace WebCore

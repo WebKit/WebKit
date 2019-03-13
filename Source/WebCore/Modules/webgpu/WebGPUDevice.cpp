@@ -102,7 +102,6 @@ Ref<WebGPUBindGroupLayout> WebGPUDevice::createBindGroupLayout(const GPUBindGrou
 
 Ref<WebGPUPipelineLayout> WebGPUDevice::createPipelineLayout(WebGPUPipelineLayoutDescriptor&& descriptor) const
 {
-    // FIXME: Is an empty pipelineLayout an error?
     auto bindGroupLayouts = descriptor.bindGroupLayouts.map([] (const auto& layout) -> RefPtr<const GPUBindGroupLayout> {
         return layout->bindGroupLayout();
     });
@@ -112,7 +111,7 @@ Ref<WebGPUPipelineLayout> WebGPUDevice::createPipelineLayout(WebGPUPipelineLayou
 
 Ref<WebGPUBindGroup> WebGPUDevice::createBindGroup(WebGPUBindGroupDescriptor&& descriptor) const
 {
-    auto gpuDescriptor = descriptor.asGPUBindGroupDescriptor();
+    auto gpuDescriptor = descriptor.tryCreateGPUBindGroupDescriptor();
     if (!gpuDescriptor)
         return WebGPUBindGroup::create(nullptr);
 
@@ -128,29 +127,14 @@ RefPtr<WebGPUShaderModule> WebGPUDevice::createShaderModule(WebGPUShaderModuleDe
     return nullptr;
 }
 
-static Optional<GPUPipelineStageDescriptor> validateAndConvertPipelineStage(const WebGPUPipelineStageDescriptor& descriptor)
+Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderPipelineDescriptor& descriptor) const
 {
-    if (!descriptor.module || !descriptor.module->module() || descriptor.entryPoint.isEmpty())
-        return WTF::nullopt;
+    auto gpuDescriptor = descriptor.tryCreateGPURenderPipelineDescriptor();
+    if (!gpuDescriptor)
+        return WebGPURenderPipeline::create(nullptr);
 
-    return GPUPipelineStageDescriptor { descriptor.module->module(), descriptor.entryPoint };
-}
-
-RefPtr<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(WebGPURenderPipelineDescriptor&& descriptor) const
-{
-    auto pipelineLayout = descriptor.layout ? descriptor.layout->pipelineLayout() : nullptr;
-
-    auto vertexStage = validateAndConvertPipelineStage(descriptor.vertexStage);
-    auto fragmentStage = validateAndConvertPipelineStage(descriptor.fragmentStage);
-
-    if (!vertexStage || !fragmentStage) {
-        LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): Invalid WebGPUPipelineStageDescriptor!");
-        return nullptr;
-    }
-
-    if (auto pipeline = m_device->createRenderPipeline(GPURenderPipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*vertexStage), WTFMove(*fragmentStage), descriptor.primitiveTopology, WTFMove(descriptor.depthStencilState), WTFMove(descriptor.inputState) }))
-        return WebGPURenderPipeline::create(pipeline.releaseNonNull());
-    return nullptr;
+    auto pipeline = m_device->createRenderPipeline(WTFMove(*gpuDescriptor));
+    return WebGPURenderPipeline::create(WTFMove(pipeline));
 }
 
 RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const

@@ -50,7 +50,7 @@ public:
 
     virtual void endPass();
     void setBindGroup(unsigned, GPUBindGroup&);
-    virtual void setPipeline(Ref<GPURenderPipeline>&&) = 0;
+    virtual void setPipeline(Ref<const GPURenderPipeline>&&) = 0;
 
 protected:
     GPUProgrammablePassEncoder(Ref<GPUCommandBuffer>&&);

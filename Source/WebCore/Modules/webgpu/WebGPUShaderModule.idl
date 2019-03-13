@@ -27,6 +27,7 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable
+    ImplementationLacksVTable,
+    InterfaceName=GPUShaderModule
 ] interface WebGPUShaderModule {
 };

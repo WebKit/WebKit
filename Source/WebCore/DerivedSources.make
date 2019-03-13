@@ -374,6 +374,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/DOMWindowWebGPU.idl \
     $(WebCore)/Modules/webgpu/GPUCanvasContext.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
+    $(WebCore)/Modules/webgpu/GPUColorStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutBinding.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBufferDescriptor.idl \
@@ -382,6 +383,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUExtent3D.idl \
     $(WebCore)/Modules/webgpu/GPULoadOp.idl \
+    $(WebCore)/Modules/webgpu/GPUInputStateDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUOrigin3D.idl \
     $(WebCore)/Modules/webgpu/GPURequestAdapterOptions.idl \
     $(WebCore)/Modules/webgpu/GPUSamplerDescriptor.idl \
@@ -391,6 +393,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUTextureDimension.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
+    $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \
+	$(WebCore)/Modules/webgpu/GPUVertexInputDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPU.idl \
     $(WebCore)/Modules/webgpu/WebGPUAdapter.idl \
     $(WebCore)/Modules/webgpu/WebGPUBindGroup.idl \
@@ -401,9 +405,6 @@ JS_BINDING_IDLS = \
 	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
-    $(WebCore)/Modules/webgpu/WebGPUIndexFormat.idl \
-    $(WebCore)/Modules/webgpu/WebGPUInputStateDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUInputStepMode.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineLayout.idl \
@@ -420,9 +421,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/WebGPUSwapChain.idl \
     $(WebCore)/Modules/webgpu/WebGPUTexture.idl \
     $(WebCore)/Modules/webgpu/WebGPUTextureView.idl \
-	$(WebCore)/Modules/webgpu/WebGPUVertexAttributeDescriptor.idl \
-    $(WebCore)/Modules/webgpu/WebGPUVertexFormat.idl \
-	$(WebCore)/Modules/webgpu/WebGPUVertexInputDescriptor.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
     $(WebCore)/Modules/webvr/DOMWindowWebVR.idl \

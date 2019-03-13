@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPURenderPipelineDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUVertexAttributeDescriptor.h"
-
 namespace WebCore {
 
-using WebGPUVertexFormat = GPUVertexFormat;
+Optional<GPUPipelineStageDescriptor> WebGPUPipelineStageDescriptor::tryCreateGPUPipelineStageDescriptor() const
+{
+    if (!module || !module->module() || entryPoint.isEmpty())
+        return WTF::nullopt;
+
+    return GPUPipelineStageDescriptor { makeRef(*module->module()), *this };
+}
+
+Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor() const
+{
+    auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
+
+    auto vertex = vertexStage.tryCreateGPUPipelineStageDescriptor();
+    auto fragment = fragmentStage.tryCreateGPUPipelineStageDescriptor();
+
+    if (!vertex || !fragment) {
+        LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): Invalid GPUPipelineStageDescriptor!");
+        return WTF::nullopt;
+    }
+
+    // FIXME: Web GPU validation, e.g. fail if colorStates is larger than (max number of supported color states).
+
+    return GPURenderPipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*vertex), WTFMove(*fragment), *this };
+}
 
 } // namespace WebCore
 

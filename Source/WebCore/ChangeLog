@@ -1,3 +1,91 @@
+2019-03-12  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Update GPURenderPipelineDescriptor and add GPUColorStateDescriptor.format
+        https://bugs.webkit.org/show_bug.cgi?id=195518
+        <rdar://problem/46322356>
+
+        Reviewed by Myles C. Maxfield.
+
+        Upgrade the implementation of GPURenderPipelineDescriptor and GPURenderPipeline and match the updated Web GPU API.
+        Add stubs for GPUColorStateDescriptor so attachment format can be provided by GPURenderPipelineDescriptor.
+
+        All affected Web GPU tests updated to cover existing behavior.
+
+        Update file names and symbols:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Updates to GPURenderPipeline, GPURenderPipelineDescriptor, and its components:
+        * Modules/webgpu/GPUColorStateDescriptor.idl: Added. Provide the expected texture format of the render pipeline's color attachments.
+        * Modules/webgpu/GPUInputStateDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUInputStateDescriptor.idl.
+        * Modules/webgpu/GPUTextureFormat.idl: Update the existing values to match the new style.
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUVertexAttributeDescriptor.idl.
+        * Modules/webgpu/GPUVertexInputDescriptor.idl: Renamed from Source/WebCore/Modules/webgpu/WebGPUVertexInputDescriptor.idl.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createPipelineLayout const): Remove unnecessary comment.
+        (WebCore::WebGPUDevice::createRenderPipeline const): Descriptor validation and conversion moved into WebGPURenderPipelineDescriptor.
+        (WebCore::validateAndConvertPipelineStage): Deleted.
+        * Modules/webgpu/WebGPUDevice.h: create* functions should not return nullable.
+        * Modules/webgpu/WebGPUIndexFormat.h: Removed. Moved into GPUInputStateDescriptor.idl.
+        * Modules/webgpu/WebGPUInputStateDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUInputStepMode.idl: Removed. Moved into GPUVertexInputDescriptor.idl.
+        * Modules/webgpu/WebGPUPipelineLayout.h:
+        (WebCore::WebGPUPipelineLayout::pipelineLayout): Getters should return raw references.
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.h: Now shares a common base with GPUPipelineStageDescriptor.
+        * Modules/webgpu/WebGPURenderPipeline.cpp:
+        (WebCore::WebGPURenderPipeline::create):
+        (WebCore::WebGPURenderPipeline::WebGPURenderPipeline):
+        * Modules/webgpu/WebGPURenderPipeline.h:  Now internally nullable.
+        (WebCore::WebGPURenderPipeline::renderPipeline const):
+        (WebCore::WebGPURenderPipeline::renderPipeline): Deleted.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPUPipelineStageDescriptor::asGPUPipelineStageDescriptor const): Validate and convert a WebGPUPipelineStageDescriptor to GPU version.
+        (WebCore::WebGPURenderPipelineDescriptor::asGPURenderPipelineDescriptor const): Ditto for WebGPURenderPipelineDescriptor.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h: Now shares a base class and some instance variables with GPURenderPipelineDescriptor.
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl: Update GPUPrimitiveTopology for new style and add colorStates.
+        * Modules/webgpu/WebGPUShaderModule.idl: Small pilot to test using InterfaceName to easily rename DOM-facing interfaces.
+        * Modules/webgpu/WebGPUVertexAttributeDescriptor.h: Removed.
+        * Modules/webgpu/WebGPUVertexFormat.idl: Removed. Moved and updated in GPUVertexAttributeDescriptor.idl.
+        * Modules/webgpu/WebGPUVertexInputDescriptor.h: Removed.
+        * platform/graphics/gpu/GPUInputStateDescriptor.h:
+        * platform/graphics/gpu/GPUPipelineStageDescriptor.h:
+        (WebCore::GPUPipelineStageDescriptor::GPUPipelineStageDescriptor):
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h: Add shared base class for Web/GPURenderPipelineDescriptor.
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/GPUTextureFormat.h:
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h:
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::setFunctionsForPipelineDescriptor): Make fragment required since descriptor validation fails if fragment function is not found right now.
+        (WebCore::mtlVertexFormatForGPUVertexFormat): Renamed from validateAndConvertVertexFormatToMTLVertexFormat.
+        (WebCore::mtlStepFunctionForGPUInputStepMode): Renamed from validateAndConvertStepModeToMTLStepFunction
+        (WebCore::trySetInputStateForPipelineDescriptor):
+        (WebCore::trySetColorStatesForColorAttachmentArray):
+        (WebCore::tryCreateMtlRenderPipelineState):
+        (WebCore::GPURenderPipeline::create):
+        (WebCore::validateAndConvertVertexFormatToMTLVertexFormat): Deleted.
+        (WebCore::validateAndConvertStepModeToMTLStepFunction): Deleted.
+        * platform/graphics/gpu/cocoa/GPUUtilsMetal.mm:
+        (WebCore::platformTextureFormatForGPUTextureFormat):
+        * platform/graphics/gpu/GPUColorStateDescriptor.h: Added.
+
+        Misc:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setPipeline):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::primitiveTopology const):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setPipeline):
+        (WebCore::primitiveTypeForGPUPrimitiveTopology):
+       
 2019-03-12  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Reset state when touchStart does not turn into click.

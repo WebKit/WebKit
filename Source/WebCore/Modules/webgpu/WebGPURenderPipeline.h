@@ -36,14 +36,14 @@ namespace WebCore {
 
 class WebGPURenderPipeline : public RefCounted<WebGPURenderPipeline> {
 public:
-    static Ref<WebGPURenderPipeline> create(Ref<GPURenderPipeline>&&);
+    static Ref<WebGPURenderPipeline> create(RefPtr<GPURenderPipeline>&&);
 
-    Ref<GPURenderPipeline> renderPipeline() { return m_renderPipeline.copyRef(); }
+    const GPURenderPipeline* renderPipeline() const { return m_renderPipeline.get(); }
 
 private:
-    WebGPURenderPipeline(Ref<GPURenderPipeline>&&);
+    WebGPURenderPipeline(RefPtr<GPURenderPipeline>&&);
 
-    Ref<GPURenderPipeline> m_renderPipeline;
+    RefPtr<GPURenderPipeline> m_renderPipeline;
 };
 
 } // namespace WebCore

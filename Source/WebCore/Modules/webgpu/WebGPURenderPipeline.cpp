@@ -32,15 +32,14 @@
 
 namespace WebCore {
 
-Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(Ref<GPURenderPipeline>&& pipeline)
+Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(RefPtr<GPURenderPipeline>&& pipeline)
 {
     return adoptRef(*new WebGPURenderPipeline(WTFMove(pipeline)));
 }
 
-WebGPURenderPipeline::WebGPURenderPipeline(Ref<GPURenderPipeline>&& pipeline)
+WebGPURenderPipeline::WebGPURenderPipeline(RefPtr<GPURenderPipeline>&& pipeline)
     : m_renderPipeline(WTFMove(pipeline))
 {
-    UNUSED_PARAM(m_renderPipeline);
 }
 
 } // namespace WebCore

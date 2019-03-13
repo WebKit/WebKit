@@ -22,7 +22,7 @@ let texDescriptor = {
     mipLevelCount: 1,
     sampleCount: 1,
     dimension: "2d",
-    format: "d32-float-s8-uint",
+    format: "depth32float-stencil8",
     usage: GPUTextureUsage.OUTPUT_ATTACHMENT
 };
 
@@ -44,7 +44,7 @@ promise_test(async () => {
 
 promise_test(async () => {
     texDescriptor.sampleCount = 4;
-    texDescriptor.format = "r8g8b8a8-unorm";
+    texDescriptor.format = "rgba8unorm";
     texDescriptor.usage = GPUTextureUsage.SAMPLED | GPUTextureUsage.TRANSFER_SRC
 
     const multisampledTexture = device.createTexture(texDescriptor);

@@ -74,7 +74,7 @@ public:
     Ref<WebGPUBindGroup> createBindGroup(WebGPUBindGroupDescriptor&&) const;
 
     RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
-    RefPtr<WebGPURenderPipeline> createRenderPipeline(WebGPURenderPipelineDescriptor&&) const;
+    Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&) const;
 
     RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
 

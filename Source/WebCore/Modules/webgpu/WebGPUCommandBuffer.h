@@ -41,13 +41,13 @@ struct GPUExtent3D;
 struct WebGPURenderPassDescriptor;
 
 struct WebGPUBufferCopyView : GPUBufferCopyViewBase {
-    Optional<GPUBufferCopyView> asGPUBufferCopyView() const;
+    Optional<GPUBufferCopyView> tryCreateGPUBufferCopyView() const;
 
     RefPtr<WebGPUBuffer> buffer;
 };
 
 struct WebGPUTextureCopyView : GPUTextureCopyViewBase {
-    Optional<GPUTextureCopyView> asGPUTextureCopyView() const;
+    Optional<GPUTextureCopyView> tryCreateGPUTextureCopyView() const;
 
     RefPtr<WebGPUTexture> texture;
 };

@@ -56,7 +56,7 @@ promise_test(async () => {
     assert_equals(shaderModule, null, "Incomplete shader code did not create a module.");
 
     shaderModule = device.createShaderModule({ code: shaders });
-    assert_true(shaderModule instanceof WebGPUShaderModule, "Shader module created successfully.");
+    assert_true(shaderModule instanceof GPUShaderModule, "Shader module created successfully.");
 }, "Test shader code validation when creating modules.");
 </script>
 </html>

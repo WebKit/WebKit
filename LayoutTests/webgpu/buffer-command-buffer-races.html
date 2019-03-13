@@ -44,26 +44,26 @@ fragment float4 fragment_main(VertexOut v [[stage_in]])
 
 function createInputStateDescriptor() {
     return {
-        indexFormat: WebGPUIndexFormat.UINT32,
+        indexFormat: "uint32",
         attributes: [{
             shaderLocation: 0,
             inputSlot: 0,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32
+            format: "float2"
         }, {
             shaderLocation: 1,
             inputSlot: 1,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32_B32
+            format: "float3"
         }],
         inputs: [{
             inputSlot: 0,
             stride: 4 * 2,
-            stepMode: WebGPUInputStepMode.VERTEX
+            stepMode: "vertex"
         }, {
             inputSlot: 1,
             stride: 4 * 3,
-            stepMode: WebGPUInputStepMode.INSTANCE
+            stepMode: "instance"
         }]
     }
 }

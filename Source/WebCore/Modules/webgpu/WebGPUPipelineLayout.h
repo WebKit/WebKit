@@ -38,7 +38,7 @@ class WebGPUPipelineLayout : public RefCounted<WebGPUPipelineLayout> {
 public:
     static Ref<WebGPUPipelineLayout> create(Ref<GPUPipelineLayout>&&);
 
-    RefPtr<GPUPipelineLayout> pipelineLayout() { return m_pipelineLayout.copyRef(); }
+    GPUPipelineLayout& pipelineLayout() { return m_pipelineLayout.get(); }
 
 private:
     explicit WebGPUPipelineLayout(Ref<GPUPipelineLayout>&&);

@@ -50,49 +50,5 @@ promise_test(async () => {
     const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout);
     assert_true(pipeline instanceof WebGPURenderPipeline, "Successfully created WebGPURenderPipeline");
 }, "Create basic WebGPURenderPipeline");
-
-function checkBadRenderPipeline(device, descriptor, testSubjectName) {
-    assert_true(!device.createRenderPipeline(descriptor), `WebGPURenderPipeline with invalid ${testSubjectName} was not created.`);
-}
-
-promise_test(async() => {
-    const device = await getBasicDevice();
-    const shaderModule = device.createShaderModule({ code: shaderCode });
-    checkBadRenderPipeline(device, {}, "WebGPURenderPipelineDescriptor");
-
-    const noModuleVertexDescriptor = {
-        entryPoint: "vertex_main"
-    }
-
-    const fragmentStageDescriptor = {
-        module: shaderModule,
-        entryPoint: "fragment_main"
-    };
-
-    const noModulePipelineDescriptor = {
-        vertexStage: noModuleVertexDescriptor, 
-        fragmentStage: fragmentStageDescriptor,
-        primitiveTopology: "triangleList"
-    }
-    checkBadRenderPipeline(device, noModulePipelineDescriptor, "shader module");
-
-    // A (Metal) renderpipeline must have a vertex function.
-    const noVertexPipelineDescriptor = {
-        fragmentStage: fragmentStageDescriptor,
-        primitiveTopology: "triangleList"
-    }
-    checkBadRenderPipeline(device, noVertexPipelineDescriptor, "vertex shader stage")
-
-    const badEntryPointDescriptor = { 
-        module: shaderModule,
-        entryPoint: "Vertex_Main" 
-    };
-    const badEntryPointPipelineDescsriptor = {
-        vertexStage: badEntryPointDescriptor, 
-        fragmentStage: fragmentStageDescriptor,
-        primitiveTopology: "triangleList"
-    }
-    checkBadRenderPipeline(device, badEntryPointPipelineDescsriptor, "vertex shader entry point");
-}, "Bad pipelines were not created");
 </script>
 </html>

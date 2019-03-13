@@ -1,3 +1,27 @@
+2019-03-12  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Update GPURenderPipelineDescriptor and add GPUColorStateDescriptor.format
+        https://bugs.webkit.org/show_bug.cgi?id=195518
+        <rdar://problem/46322356>
+
+        Reviewed by Myles C. Maxfield.
+
+        Update all tests with new enum styles and re-namings, and specify the format of the color attachment.
+
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/js/webgpu-functions.js:
+        (createBasicSwapChain):
+        (createBasicDepthTexture):
+        * webgpu/render-pipelines-expected.txt:
+        * webgpu/render-pipelines.html: Remove error cases, as createRenderPipeline no longer returns a null value on failure.
+        * webgpu/shader-modules.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+
 2019-03-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Input view sometimes flickers when blurring and refocusing an element

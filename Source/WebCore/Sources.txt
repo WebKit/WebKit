@@ -363,6 +363,7 @@ Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
 Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp
 Modules/webgpu/WebGPURenderPipeline.cpp
+Modules/webgpu/WebGPURenderPipelineDescriptor.cpp
 Modules/webgpu/WebGPUSampler.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
 Modules/webgpu/WebGPUSwapChain.cpp
@@ -2777,6 +2778,7 @@ JSFontFace.cpp
 JSFontFaceSet.cpp
 JSGPUCanvasContext.cpp
 JSGPUColor.cpp
+JSGPUColorStateDescriptor.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
 JSGPUBufferDescriptor.cpp
@@ -2784,6 +2786,7 @@ JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp
 JSGPUDepthStencilStateDescriptor.cpp
 JSGPUExtent3D.cpp
+JSGPUInputStateDescriptor.cpp
 JSGPULoadOp.cpp
 JSGPUOrigin3D.cpp
 JSGPURequestAdapterOptions.cpp
@@ -2794,6 +2797,8 @@ JSGPUTextureDescriptor.cpp
 JSGPUTextureDimension.cpp
 JSGPUTextureFormat.cpp
 JSGPUTextureUsage.cpp
+JSGPUVertexAttributeDescriptor.cpp
+JSGPUVertexInputDescriptor.cpp
 JSGainNode.cpp
 JSGeolocation.cpp
 JSGeoposition.cpp
@@ -3332,9 +3337,6 @@ JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
 JSWebGPUCommandBuffer.cpp
 JSWebGPUDevice.cpp
-JSWebGPUIndexFormat.cpp
-JSWebGPUInputStateDescriptor.cpp
-JSWebGPUInputStepMode.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp
 JSWebGPUPipelineLayout.cpp
@@ -3351,9 +3353,6 @@ JSWebGPUShaderModuleDescriptor.cpp
 JSWebGPUSwapChain.cpp
 JSWebGPUTexture.cpp
 JSWebGPUTextureView.cpp
-JSWebGPUVertexAttributeDescriptor.cpp
-JSWebGPUVertexFormat.cpp
-JSWebGPUVertexInputDescriptor.cpp
 JSWebMetalBuffer.cpp
 JSWebMetalCommandBuffer.cpp
 JSWebMetalCommandQueue.cpp

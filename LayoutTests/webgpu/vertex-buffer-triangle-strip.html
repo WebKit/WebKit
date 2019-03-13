@@ -62,22 +62,22 @@ function createVertexBuffer(device) {
 
 function createInputStateDescriptor() {
     return {
-        indexFormat: WebGPUIndexFormat.UINT32,
+        indexFormat: "uint32",
         attributes: [{
             shaderLocation: 0,
             inputSlot: 0,
             offset: 0,
-            format: WebGPUVertexFormat.FLOAT_R32_G32_B32_A32
+            format: "float4"
         }, {
             shaderLocation: 1,
             inputSlot: 0,
             offset: 4 * 4,
-            format: WebGPUVertexFormat.FLOAT_R32
+            format: "float"
         }],
         inputs: [{
             inputSlot: 0,
             stride: 4 * 5,
-            stepMode: WebGPUInputStepMode.VERTEX
+            stepMode: "vertex"
         }]
     }
 }

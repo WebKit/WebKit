@@ -27,24 +27,19 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-using GPUInputStepModeEnum = unsigned long;
-
-class GPUInputStepMode : public RefCounted<GPUInputStepMode> {
-public:
-    enum Enum : GPUInputStepModeEnum {
-        Vertex = 0,
-        Instance = 1
-    };
+enum class GPUInputStepMode {
+    Vertex,
+    Instance,
 };
 
 struct GPUVertexInputDescriptor {
-    unsigned long inputSlot;
-    unsigned long long stride;
-    GPUInputStepModeEnum stepMode;
+    using InputStepMode = GPUInputStepMode;
+
+    unsigned inputSlot;
+    unsigned long stride;
+    InputStepMode stepMode;
 };
 
 } // namespace WebCore

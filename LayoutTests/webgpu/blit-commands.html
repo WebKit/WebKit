@@ -54,7 +54,7 @@ async function test(image) {
         mipLevelCount: 1,
         sampleCount: 1,
         dimension: "2d",
-        format: "r8g8b8a8-unorm",
+        format: "rgba8unorm",
         usage: GPUTextureUsage.TRANSFER_SRC | GPUTextureUsage.TRANSFER_DST
     };
     const textureA = device.createTexture(textureDescriptor);

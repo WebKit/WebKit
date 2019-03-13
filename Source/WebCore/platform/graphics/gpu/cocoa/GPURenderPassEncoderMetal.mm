@@ -191,12 +191,14 @@ void GPURenderPassEncoder::endPass()
     m_platformRenderPassEncoder = nullptr;
 }
 
-void GPURenderPassEncoder::setPipeline(Ref<GPURenderPipeline>&& pipeline)
+void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
 {
     if (!m_platformRenderPassEncoder) {
         LOG(WebGPU, "GPURenderPassEncoder::setPipeline(): Invalid operation: Encoding is ended!");
         return;
     }
+
+    // FIXME: Metal throws an error if the MTLPipelineState's attachment formats do not match the MTLCommandEncoder's attachment formats. Does this have to be validated at the Web GPU level?
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -233,20 +235,22 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<GPUB
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(PrimitiveTopology type)
+static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(GPUPrimitiveTopology type)
 {
     switch (type) {
-    case PrimitiveTopology::PointList:
+    case GPUPrimitiveTopology::PointList:
         return MTLPrimitiveTypePoint;
-    case PrimitiveTopology::LineList:
+    case GPUPrimitiveTopology::LineList:
         return MTLPrimitiveTypeLine;
-    case PrimitiveTopology::LineStrip:
+    case GPUPrimitiveTopology::LineStrip:
         return MTLPrimitiveTypeLineStrip;
-    case PrimitiveTopology::TriangleList:
+    case GPUPrimitiveTopology::TriangleList:
         return MTLPrimitiveTypeTriangle;
-    case PrimitiveTopology::TriangleStrip:
+    case GPUPrimitiveTopology::TriangleStrip:
         return MTLPrimitiveTypeTriangleStrip;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void GPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance)

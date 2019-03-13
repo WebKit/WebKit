@@ -27,15 +27,17 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUPipelineStageDescriptor.h"
 #include "WebGPUShaderModule.h"
-
-#include <wtf/text/WTFString.h>
+#include <wtf/Optional.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct WebGPUPipelineStageDescriptor {
-    const WebGPUShaderModule* module = nullptr;
-    String entryPoint;
+struct WebGPUPipelineStageDescriptor : GPUPipelineStageDescriptorBase {
+    Optional<GPUPipelineStageDescriptor> tryCreateGPUPipelineStageDescriptor() const;
+
+    RefPtr<const WebGPUShaderModule> module;
 };
 
 } // namespace WebCore

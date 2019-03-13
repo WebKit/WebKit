@@ -45,7 +45,7 @@ GPURenderPassDepthStencilAttachmentDescriptor::GPURenderPassDepthStencilAttachme
 {
 }
 
-Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::asGPURenderPassDescriptor() const
+Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURenderPassDescriptor() const
 {
     // FIXME: Improve error checking as WebGPURenderPassDescriptor is added to spec.
     if (colorAttachments.isEmpty()) {

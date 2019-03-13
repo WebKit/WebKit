@@ -28,14 +28,23 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUShaderModule.h"
-
+#include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct GPUPipelineStageDescriptor {
-    const GPUShaderModule* module = nullptr;
+struct GPUPipelineStageDescriptorBase {
     String entryPoint;
+};
+
+struct GPUPipelineStageDescriptor : GPUPipelineStageDescriptorBase {
+    GPUPipelineStageDescriptor(Ref<const GPUShaderModule>&& module, const GPUPipelineStageDescriptorBase& base)
+        : GPUPipelineStageDescriptorBase(base)
+        , module { WTFMove(module) }
+    {
+    }
+
+    Ref<const GPUShaderModule> module;
 };
 
 } // namespace WebCore

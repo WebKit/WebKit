@@ -30,15 +30,15 @@
 namespace WebCore {
 
 enum class GPUTextureFormat {
-    R8g8b8a8Unorm,
-    R8g8b8a8Uint,
-    B8g8r8a8Unorm,
-    D32FloatS8Uint,
+    Rgba8unorm,
+    Rgba8uint,
+    Bgra8unorm,
+    Depth32floatStencil8,
     Bgra8unormSRGB,
-    Rgba16float
+    Rgba16float,
 };
 
-using PlatformTextureFormat = unsigned long;
+using PlatformTextureFormat = unsigned;
 
 }
 

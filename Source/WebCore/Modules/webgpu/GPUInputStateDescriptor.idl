@@ -25,15 +25,18 @@
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
 typedef unsigned long u32;
-typedef unsigned long long u64;
-typedef u32 WebGPUVertexFormatEnum;
+
+enum GPUIndexFormat {
+    "uint16",
+    "uint32"
+};
 
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
-] dictionary WebGPUVertexAttributeDescriptor {
-    u32 shaderLocation;
-    u32 inputSlot;
-    u64 offset;
-    WebGPUVertexFormatEnum format;
+] dictionary GPUInputStateDescriptor {
+    GPUIndexFormat indexFormat;
+
+    sequence<GPUVertexAttributeDescriptor> attributes;
+    sequence<GPUVertexInputDescriptor> inputs;
 };

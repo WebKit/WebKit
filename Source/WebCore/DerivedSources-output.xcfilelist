@@ -593,12 +593,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUExtent3D.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUInputStateDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUInputStateDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPULoadOp.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUOrigin3D.cpp
@@ -619,6 +623,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUTextureUsage.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexAttributeDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexInputDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUVertexInputDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGainNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGainNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGamepad.cpp
@@ -1759,6 +1767,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEventInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIEventInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIScriptController.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUIScriptController.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSURLSearchParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSUndoItem.cpp

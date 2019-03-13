@@ -24,12 +24,12 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-enum WebGPUPrimitiveTopology {
-    "pointList",
-    "lineList",
-    "lineStrip",
-    "triangleList",
-    "triangleStrip"
+enum GPUPrimitiveTopology {
+    "point-list",
+    "line-list",
+    "line-strip",
+    "triangle-list",
+    "triangle-strip"
 };
 
 [
@@ -39,12 +39,8 @@ enum WebGPUPrimitiveTopology {
     WebGPUPipelineStageDescriptor vertexStage;
     WebGPUPipelineStageDescriptor fragmentStage;
 
-    WebGPUPrimitiveTopology primitiveTopology;
+    GPUPrimitiveTopology primitiveTopology;
+    sequence<GPUColorStateDescriptor> colorStates;
     GPUDepthStencilStateDescriptor? depthStencilState;
-    WebGPUInputStateDescriptor inputState;
-/* To Be Implemented:
-    sequence<WebGPUBlendStateDescriptor> blendStates;
-    WebGPUAttachmentsStateDescriptor attachmentsState;
-    // TODO other properties
-*/
+    GPUInputStateDescriptor inputState;
 };

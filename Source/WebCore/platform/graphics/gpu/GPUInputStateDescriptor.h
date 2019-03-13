@@ -29,24 +29,19 @@
 
 #include "GPUVertexAttributeDescriptor.h"
 #include "GPUVertexInputDescriptor.h"
-
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-using GPUIndexFormatEnum = unsigned long;
-
-class GPUIndexFormat : public RefCounted<GPUIndexFormat> {
-public:
-    enum Enum : GPUIndexFormatEnum {
-        Uint16 = 0,
-        Uint32 = 1
-    };
+enum class GPUIndexFormat {
+    Uint16,
+    Uint32,
 };
 
 struct GPUInputStateDescriptor {
-    GPUIndexFormatEnum indexFormat;
+    using IndexFormat = GPUIndexFormat;
+
+    IndexFormat indexFormat;
 
     Vector<GPUVertexAttributeDescriptor> attributes;
     Vector<GPUVertexInputDescriptor> inputs;
