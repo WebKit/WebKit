@@ -45,6 +45,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
+
 namespace IPC {
 class FormDataReference;
 }
@@ -376,6 +380,10 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     NetworkContentRuleListManager m_NetworkContentRuleListManager;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
 
     Ref<WorkQueue> m_storageTaskQueue;

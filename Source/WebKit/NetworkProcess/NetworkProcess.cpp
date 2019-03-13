@@ -127,6 +127,9 @@ NetworkProcess::NetworkProcess()
 #if PLATFORM(COCOA)
     , m_clearCacheDispatchGroup(0)
 #endif
+#if PLATFORM(IOS_FAMILY)
+    , m_webSQLiteDatabaseTracker(*this)
+#endif
     , m_storageTaskQueue(WorkQueue::create("com.apple.WebKit.StorageTask"))
 #if ENABLE(INDEXED_DATABASE)
     , m_idbPerOriginQuota(IDBServer::defaultPerOriginQuota)
