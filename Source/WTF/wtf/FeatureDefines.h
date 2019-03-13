@@ -189,6 +189,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #define HAVE_PASSKIT_GRANULAR_ERRORS 1
 #endif
 
+#if !defined(HAVE_PASSKIT_API_TYPE)
+#define HAVE_PASSKIT_API_TYPE 1
+#endif
+
 #endif /* PLATFORM(IOS_FAMILY) */
 
 /* --------- Apple WATCHOS port --------- */
@@ -277,6 +281,10 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 
 #if !defined(HAVE_PASSKIT_GRANULAR_ERRORS)
 #define HAVE_PASSKIT_GRANULAR_ERRORS __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#endif
+
+#if !defined(HAVE_PASSKIT_API_TYPE)
+#define HAVE_PASSKIT_API_TYPE HAVE(PASSKIT_GRANULAR_ERRORS) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304
 #endif
 
 #endif /* PLATFORM(MAC) */
