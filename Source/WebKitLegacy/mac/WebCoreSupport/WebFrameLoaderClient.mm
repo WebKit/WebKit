@@ -1920,29 +1920,13 @@ RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugI
     int errorCode = 0;
 
     WebView *webView = getWebView(m_webFrame.get());
-#if !PLATFORM(IOS_FAMILY)
-    SEL selector = @selector(webView:plugInViewWithArguments:);
-#endif
-
     Document* document = core(m_webFrame.get())->document();
     NSURL *baseURL = document->baseURL();
     NSURL *pluginURL = url;
-    
-    // <rdar://problem/8366089>: AppleConnect has a bug where it does not
-    // understand the parameter names specified in the <object> element that
-    // embeds its plug-in. This site-specific hack works around the issue by
-    // converting the parameter names to lowercase before passing them to the
-    // plug-in.
-#if !PLATFORM(IOS_FAMILY)
-    Frame* frame = core(m_webFrame.get());
-#endif
     NSMutableArray *attributeKeys = kit(paramNames);
+
 #if !PLATFORM(IOS_FAMILY)
-    if (frame && frame->settings().needsSiteSpecificQuirks() && equalLettersIgnoringASCIICase(mimeType, "application/x-snkp")) {
-        for (NSUInteger i = 0; i < [attributeKeys count]; ++i)
-            [attributeKeys replaceObjectAtIndex:i withObject:[[attributeKeys objectAtIndex:i] lowercaseString]];
-    }
-    
+    SEL selector = @selector(webView:plugInViewWithArguments:);
     if ([[webView UIDelegate] respondsToSelector:selector]) {
         NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjects:kit(paramValues) forKeys:attributeKeys];
         NSDictionary *arguments = [[NSDictionary alloc] initWithObjectsAndKeys:
