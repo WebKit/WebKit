@@ -213,7 +213,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
             UNUSED_PARAM(error);
 #else
             if (error)
-                ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error ", error);
+                ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error ", static_cast<uint32_t>(error));
 #endif
         });
 
@@ -268,7 +268,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
-        ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error ", error);
+        ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error ", static_cast<uint32_t>(error));
 #endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());
