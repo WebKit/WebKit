@@ -7,6 +7,6 @@
 - name: wpebackend-fdo
   buildsystem: cmake-ninja
   sources:
-    - type: archive
-      url: https://wpewebkit.org/releases/wpebackend-fdo-1.1.0.tar.xz
-      sha256: f6c72130d16e50860cb83eb0f6e109c76f1826d2c6bee39025fb3651941761e7
+    - type: git
+      url: https://github.com/Igalia/wpebackend-fdo.git
+      commit: fa227dac7c6a133d62b35d7a6af0332582b64d4d

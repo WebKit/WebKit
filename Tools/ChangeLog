@@ -1,3 +1,18 @@
+2019-03-13  Thibault Saunier  <tsaunier@igalia.com>
+
+        [Flatpak] Expand submodule recursively
+        https://bugs.webkit.org/show_bug.cgi?id=195672
+
+        Building WPE with flatpak was impossible without that as it was raising an exception.
+        Also update wpebackend-fdo to match what is built in jhbuild
+
+        Reviewed by Philippe Normand.
+
+        * flatpak/flatpakutils.py:
+        (expand_submodules_recurse):
+        (expand_manifest):
+        * flatpak/org.webkit.WPEModules.yaml:
+
 2019-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] status bubble should be hidden for certain builds

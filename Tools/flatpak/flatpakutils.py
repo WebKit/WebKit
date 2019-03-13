@@ -164,6 +164,24 @@ def load_manifest(manifest_path, port_name=None, command=None):
     return manifest
 
 
+def expand_submodules_recurse(modules, manifest_path, port_name, command):
+    all_modules = []
+    if type(modules) is str:
+        submanifest_path = os.path.join(os.path.dirname(manifest_path), modules)
+        submanifest = load_manifest(submanifest_path, port_name=port_name, command=command)
+        all_modules.extend(expand_submodules_recurse(submanifest, submanifest_path, port_name, command))
+        return all_modules
+
+    for module in modules:
+        if type(module) is str:
+            submanifest_path = os.path.join(os.path.dirname(manifest_path), module)
+            submanifest = load_manifest(submanifest_path, port_name=port_name, command=command)
+            all_modules.extend(expand_submodules_recurse(submanifest, submanifest_path, port_name, command))
+        else:
+            all_modules.append(module)
+
+    return all_modules
+
 def expand_manifest(manifest_path, outfile, port_name, source_root, command):
     """Creates the manifest file."""
     try:
@@ -188,10 +206,7 @@ def expand_manifest(manifest_path, outfile, port_name, source_root, command):
         if not overriden_modules:
             overriden_modules = []
     for modules in manifest["modules"]:
-        submanifest_path = None
-        if type(modules) is str:
-            submanifest_path = os.path.join(os.path.dirname(manifest_path), modules)
-            modules = load_manifest(submanifest_path, port_name=port_name, command=command)
+        modules = expand_submodules_recurse(modules, manifest_path, port_name, command)
 
         if not isinstance(modules, list):
             modules = [modules]
