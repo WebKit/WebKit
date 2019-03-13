@@ -1,3 +1,15 @@
+2019-03-12  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (iOS 12.2): Webpage using CoffeeScript crashes
+        https://bugs.webkit.org/show_bug.cgi?id=195613
+
+        Reviewed by Mark Lam.
+
+        New regression test.
+
+        * stress/regexp-backref-inbounds.js: Added.
+        (testRegExp):
+
 2019-03-12  Mark Lam  <mark.lam@apple.com>
 
         The HasIndexedProperty node does GC.

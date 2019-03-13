@@ -1,3 +1,27 @@
+2019-03-12  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (iOS 12.2): Webpage using CoffeeScript crashes
+        https://bugs.webkit.org/show_bug.cgi?id=195613
+
+        Reviewed by Mark Lam.
+
+        The bug here is in Yarr JIT backreference matching code.  We are incorrectly
+        using a checkedOffset / inputPosition correction when checking for the available
+        length left in a string.  It is improper to do these corrections as a backreference's
+        match length is based on what was matched in the referenced capture group and not
+        part of the checkedOffset and inputPosition computed when we compiled the RegExp.
+        In some cases, the resulting incorrect calculation would allow us to go past
+        the subject string's length.  Removed these adjustments.
+
+        After writing tests for the first bug, found another bug where the non-greedy
+        backreference backtracking code didn't do an "are we at the end of the input?" check.
+        This caused an infinite loop as we'd jump from the backtracking code back to
+        try matching one more backreference, fail and then backtrack.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateBackReference):
+        (JSC::Yarr::YarrGenerator::backtrackBackReference):
+
 2019-03-12  Robin Morisset  <rmorisset@apple.com>
 
         A lot more classes have padding that can be reduced by reordering their fields
