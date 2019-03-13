@@ -58,6 +58,11 @@
     return self;
 }
 
+- (BOOL)usesCopiedMemory
+{
+    return _contentRuleList->_contentRuleList->usesCopiedMemory();
+}
+
 @end
 
 #endif // WK_API_ENABLED

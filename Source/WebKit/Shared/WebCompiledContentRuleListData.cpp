@@ -29,14 +29,38 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ArgumentCoders.h"
+#include "SharedBufferDataReference.h"
 
 namespace WebKit {
 
+size_t WebCompiledContentRuleListData::size() const
+{
+    return WTF::switchOn(data, [] (const auto& sharedMemoryOrBuffer) {
+        return sharedMemoryOrBuffer->size();
+    });
+}
+
+const void* WebCompiledContentRuleListData::dataPointer() const
+{
+    return WTF::switchOn(data, [] (const auto& sharedMemoryOrBuffer) -> const void* {
+        return sharedMemoryOrBuffer->data();
+    });
+}
+
 void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
-    SharedMemory::Handle handle;
-    data->createHandle(handle, SharedMemory::Protection::ReadOnly);
-    encoder << handle;
+    if (auto sharedMemory = WTF::get_if<RefPtr<SharedMemory>>(data)) {
+        encoder << true;
+        SharedMemory::Handle handle;
+        sharedMemory->get()->createHandle(handle, SharedMemory::Protection::ReadOnly);
+        encoder << handle;
+    } else {
+        encoder << false;
+        encoder << IPC::SharedBufferDataReference { *WTF::get<RefPtr<WebCore::SharedBuffer>>(data) };
+    }
+
+    // fileData needs to be kept in the UIProcess, but it does not need to be serialized.
+    // FIXME: Move it to API::ContentRuleList
 
     encoder << conditionsApplyOnlyToDomainOffset;
     encoder << actionsOffset;
@@ -52,10 +76,22 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
     WebCompiledContentRuleListData compiledContentRuleListData;
-    SharedMemory::Handle handle;
-    if (!decoder.decode(handle))
+
+    Optional<bool> hasSharedMemory;
+    decoder >> hasSharedMemory;
+    if (!hasSharedMemory)
         return WTF::nullopt;
-    compiledContentRuleListData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
+    if (*hasSharedMemory) {
+        SharedMemory::Handle handle;
+        if (!decoder.decode(handle))
+            return WTF::nullopt;
+        compiledContentRuleListData.data = { SharedMemory::map(handle, SharedMemory::Protection::ReadOnly) };
+    } else {
+        IPC::DataReference dataReference;
+        if (!decoder.decode(dataReference))
+            return WTF::nullopt;
+        compiledContentRuleListData.data = { RefPtr<WebCore::SharedBuffer>(WebCore::SharedBuffer::create(dataReference.data(), dataReference.size())) };
+    }
 
     if (!decoder.decode(compiledContentRuleListData.conditionsApplyOnlyToDomainOffset))
         return WTF::nullopt;

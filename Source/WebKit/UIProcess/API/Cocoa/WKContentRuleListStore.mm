@@ -30,6 +30,7 @@
 #if WK_API_ENABLED
 
 #import "APIContentRuleListStore.h"
+#import "NetworkCacheFilesystem.h"
 #import "WKErrorInternal.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -126,6 +127,11 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 @implementation WKContentRuleListStore (WKPrivate)
 
 // For testing only.
+
++ (void)_registerPathAsUnsafeToMemoryMapForTesting:(NSString *)filename
+{
+    WebKit::NetworkCache::registerPathAsUnsafeToMemoryMapForTesting(filename);
+}
 
 - (void)_removeAllContentRuleLists
 {

@@ -49,7 +49,7 @@ public:
     void contentExtensionsBackend(UserContentControllerIdentifier, BackendCallback&&);
 
 private:
-    void addContentRuleLists(UserContentControllerIdentifier, const Vector<std::pair<String, WebCompiledContentRuleListData>>&);
+    void addContentRuleLists(UserContentControllerIdentifier, Vector<std::pair<String, WebCompiledContentRuleListData>>&&);
     void removeContentRuleList(UserContentControllerIdentifier, const String& name);
     void removeAllContentRuleLists(UserContentControllerIdentifier);
     void remove(UserContentControllerIdentifier);
