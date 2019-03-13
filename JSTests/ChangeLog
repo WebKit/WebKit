@@ -1,5 +1,38 @@
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r242667. rdar://problem/48839311
+
+    Stack overflow crash in JSC::JSObject::hasInstance.
+    https://bugs.webkit.org/show_bug.cgi?id=195458
+    <rdar://problem/48710195>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/stack-overflow-in-custom-hasInstance.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    * runtime/JSObject.cpp:
+    (JSC::JSObject::hasInstance):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242667 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-08  Mark Lam  <mark.lam@apple.com>
+
+            Stack overflow crash in JSC::JSObject::hasInstance.
+            https://bugs.webkit.org/show_bug.cgi?id=195458
+            <rdar://problem/48710195>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/stack-overflow-in-custom-hasInstance.js: Added.
+
+2019-03-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r242569. rdar://problem/48839273
 
     Air::reportUsedRegisters must padInterference
