@@ -201,7 +201,6 @@ bool doesGC(Graph& graph, Node* node)
     case GetByOffset:
     case GetGetterSetterByOffset:
     case GetEnumerableLength:
-    case HasIndexedProperty:
     case FiatInt52:
     case BooleanToNumber:
     case CheckBadCell:
@@ -288,6 +287,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetDynamicVar:
     case GetMapBucket:
     case HasGenericProperty:
+    case HasIndexedProperty:
     case HasOwnProperty:
     case HasStructureProperty:
     case InById:
