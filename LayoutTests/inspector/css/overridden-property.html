@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test() {
+    let nodeStyles = null;
+
+    let suite = InspectorTest.createAsyncSuite("OverriddenProperty");
+
+    function logProperty(property) {
+        let text = property.formattedText || "REMOVED";
+        if (property.overridden)
+            text += " overridden";
+        InspectorTest.log(text);
+    }
+
+    suite.addTestCase({
+        name: "OverriddenProperty.effectivePropertyRemoved",
+        test(resolve, reject) {
+            let inlineStyle = nodeStyles.inlineStyle;
+            let styleRule = nodeStyles.matchedRules[0];
+            let inlineStyleProperty = inlineStyle.enabledProperties[0];
+            let styleRuleProperty = styleRule.style.enabledProperties[0];
+
+            function log() {
+                logProperty(inlineStyleProperty);
+                logProperty(styleRuleProperty);
+                InspectorTest.log("");
+            }
+
+            log();
+
+            inlineStyleProperty.remove();
+
+            styleRuleProperty.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, (event) => {
+                // FIXME: <https://webkit.org/b/195651> OverriddenStatusChanged may fire more than once.
+                if (styleRuleProperty.overridden)
+                    return;
+
+                InspectorTest.log("OverriddenStatusChanged event fired.");
+                log();
+                resolve();
+            });
+        }
+    });
+
+    WI.domManager.requestDocument((documentNode) => {
+        WI.domManager.querySelector(documentNode.id, "div#x", (contentNodeId) => {
+            if (!contentNodeId) {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            let domNode = WI.domManager.nodeForId(contentNodeId);
+            nodeStyles = WI.cssManager.stylesForNode(domNode);
+
+            if (nodeStyles.needsRefresh) {
+                nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                    suite.runTestCasesAndFinish();
+                });
+            } else
+                suite.runTestCasesAndFinish();
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CSSProperty.prototype.overridden is cleared when the overriding (effective) property is removed.</p>
+    <style>
+    #x {
+        color: red;
+    }
+    </style>
+    <div id="x" style="color: green"></div>
+</body>
+</html>

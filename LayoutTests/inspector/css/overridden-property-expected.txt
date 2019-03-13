@@ -1,0 +1,13 @@
+Test that CSSProperty.prototype.overridden is cleared when the overriding (effective) property is removed.
+
+
+== Running test suite: OverriddenProperty
+-- Running test case: OverriddenProperty.effectivePropertyRemoved
+color: green;
+color: red; overridden
+
+OverriddenStatusChanged event fired.
+REMOVED
+color: red;
+
+

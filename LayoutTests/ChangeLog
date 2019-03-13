@@ -1,3 +1,14 @@
+2019-03-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION(r240946): Web Inspector: Styles: removing selected property doesn't update overridden status
+        https://bugs.webkit.org/show_bug.cgi?id=195389
+        <rdar://problem/48658929>
+
+        Reviewed by Matt Baker.
+
+        * inspector/css/overridden-property-expected.txt: Added.
+        * inspector/css/overridden-property.html: Added.
+
 2019-03-13  Simon Fraser  <simon.fraser@apple.com>
 
         Scrolling tree should reposition non-stacking order descendents of overflow:scroll

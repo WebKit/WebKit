@@ -464,7 +464,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
                 return;
             }
 
-            this.refresh().then(callback);
+            callback();
+            this.refresh();
         };
 
         CSSAgent.setStyleText(style.id, text, didSetStyleText);
