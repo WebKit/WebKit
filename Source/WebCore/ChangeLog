@@ -1,3 +1,19 @@
+2019-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        Use RenderBox::previousSiblingBox/nextSiblingBox in RenderMultiColumnFlow
+        https://bugs.webkit.org/show_bug.cgi?id=195701
+        <rdar://problem/48448658>
+
+        Reviewed by Simon Fraser.
+
+        It's safer to use existing RenderBox functions to get sibling boxes.
+
+        Test: fast/ruby/crash-when-paginated-ruby.html
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf):
+
 2019-03-13  Keith Rollin  <krollin@apple.com>
 
         Add support for new StagedFrameworks layout
