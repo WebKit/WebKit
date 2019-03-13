@@ -1,3 +1,17 @@
+2019-03-13  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] status bubble should be hidden for certain builds
+        https://bugs.webkit.org/show_bug.cgi?id=194597
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble):
+        (StatusBubble._should_show_bubble_for_build): Hide bubble for builds which were skipped
+        because the patch didn't have relevant changes.
+        (StatusBubble._should_show_bubble_for_queue): Hide bubbles for queues which are not deployed
+        in production yet.
+
 2019-03-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         [Win] Fix a slew of simple clang-cl warnings.

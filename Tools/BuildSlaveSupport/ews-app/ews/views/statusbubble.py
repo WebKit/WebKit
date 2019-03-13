@@ -22,6 +22,8 @@
 
 from __future__ import unicode_literals
 
+import re
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views import View
@@ -42,6 +44,9 @@ class StatusBubble(View):
             "name": queue,
         }
         build = self.get_latest_build_for_queue(patch, queue)
+        if not self._should_show_bubble_for_build(build):
+            return None
+
         if not build:
             bubble["state"] = "none"
             bubble["details_message"] = 'Waiting in queue, processing has not started yet.'
@@ -79,8 +84,12 @@ class StatusBubble(View):
     def get_builds_for_queue(self, patch, queue):
         return [build for build in patch.build_set.all() if build.builder_display_name == queue]
 
-    def _should_show_bubble_for(self, patch, queue):
-        # TODO: https://bugs.webkit.org/show_bug.cgi?id=194597
+    def _should_show_bubble_for_build(self, build):
+        if build and build.result == 3 and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
+            return False
+        return True
+
+    def _should_show_bubble_for_queue(self, queue):
         return queue in StatusBubble.ENABLED_QUEUES
 
     def _build_bubbles_for_patch(self, patch):
@@ -92,7 +101,7 @@ class StatusBubble(View):
             return (None, show_submit_to_ews, failed_to_apply)
 
         for queue in StatusBubble.ALL_QUEUES:
-            if not self._should_show_bubble_for(patch, queue):
+            if not self._should_show_bubble_for_queue(queue):
                 continue
 
             bubble = self._build_bubble(patch, queue)
