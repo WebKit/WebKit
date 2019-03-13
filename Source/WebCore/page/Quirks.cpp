@@ -154,4 +154,45 @@ bool Quirks::hasWebSQLSupportQuirk() const
     return m_hasWebSQLSupportQuirk.value();
 }
 
+bool Quirks::isTouchBarUpdateSupressedForHiddenContentEditable() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    auto host = m_document->topDocument().url().host();
+    return equalLettersIgnoringASCIICase(host, "docs.google.com");
+#else
+    return false;
+#endif
+}
+
+bool Quirks::isNeverRichlyEditableForTouchBar() const
+{
+#if PLATFORM(MAC)
+    if (!needsQuirks())
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    auto host = url.host();
+
+    if (equalLettersIgnoringASCIICase(host, "twitter.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "onedrive.live.com"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "trix-editor.org"))
+        return true;
+
+    if (equalLettersIgnoringASCIICase(host, "www.icloud.com")) {
+        auto path = url.path();
+        if (path.contains("notes") || url.fragmentIdentifier().contains("notes"))
+            return true;
+    }
+#endif
+
+    return false;
+}
+
 }

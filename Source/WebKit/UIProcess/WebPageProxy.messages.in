@@ -250,8 +250,8 @@ messages -> WebPageProxy {
     EditorStateChanged(struct WebKit::EditorState editorState)
     CompositionWasCanceled()
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
-    SetNeedsHiddenContentEditableQuirk(bool needsHiddenContentEditableQuirk)
-    SetNeedsPlainTextQuirk(bool needsPlainTextQuirk)
+    SetIsTouchBarUpdateSupressedForHiddenContentEditable(bool isTouchBarUpdateSupressed)
+    SetIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
     RequestDOMPasteAccess(WebCore::IntRect elementRect, String originIdentifier) -> (enum:uint8_t WebCore::DOMPasteAccessResponse response) Delayed
 
     # Find messages

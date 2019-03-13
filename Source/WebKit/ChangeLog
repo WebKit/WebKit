@@ -1,3 +1,40 @@
+2019-03-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Move the code for determining the need for touch bar quirks to Quirks class
+        https://bugs.webkit.org/show_bug.cgi?id=195654
+
+        Reviewed by Brent Fulgham.
+
+        Moved the code to determine whether touch bar quirks are needed or not to WebCore.
+
+        Also renamed HiddenContentEditableQuirk to IsTouchBarUpdateSupressedForHiddenContentEditable
+        and PlainTextQuirk to NeverRichlyEditableForTouchBar.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::isRichlyEditableForTouchBar): Renamed.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateTouchBar):
+        (WebKit::WebViewImpl::candidateListTouchBarItem const):
+        (WebKit::WebViewImpl::isRichlyEditableForTouchBar const): Renamed from isRichlyEditable.
+        (WebKit::WebViewImpl::textTouchBar const):
+        (WebKit::WebViewImpl::updateTextTouchBar):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setIsTouchBarUpdateSupressedForHiddenContentEditable): Renamed from
+        setNeedsHiddenContentEditableQuirk.
+        (WebKit::WebPageProxy::setIsNeverRichlyEditableForTouchBar): Renamed from setNeedsPlainTextQuirk.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isTouchBarUpdateSupressedForHiddenContentEditable const): Renamed from
+        needsHiddenContentEditableQuirk.
+        (WebKit::WebPageProxy::isNeverRichlyEditableForTouchBar const): Renamed from needsPlainTextQuirk.
+        * UIProcess/WebPageProxy.messages.in: Renamed the IPC messages.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::needsHiddenContentEditableQuirk): Deleted. Moved to WebCore.
+        (WebKit::needsPlainTextQuirk): Deleted. Moved to WebCore.
+        (WebKit::WebPage::didStartPageTransition):
+        (WebKit::WebPage::didChangeSelection):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage):
+
 2019-03-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add WebFrameProxy::loadData

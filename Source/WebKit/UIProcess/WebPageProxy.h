@@ -1378,8 +1378,8 @@ public:
     void setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection);
 
     bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
-    bool needsHiddenContentEditableQuirk() const { return m_needsHiddenContentEditableQuirk; }
-    bool needsPlainTextQuirk() const { return m_needsPlainTextQuirk; }
+    bool isTouchBarUpdateSupressedForHiddenContentEditable() const { return m_isTouchBarUpdateSupressedForHiddenContentEditable; }
+    bool isNeverRichlyEditableForTouchBar() const { return m_isNeverRichlyEditableForTouchBar; }
 
     bool isAlwaysOnLoggingAllowed() const;
 
@@ -1690,8 +1690,8 @@ private:
 
     void compositionWasCanceled();
     void setHasHadSelectionChangesFromUserInteraction(bool);
-    void setNeedsHiddenContentEditableQuirk(bool);
-    void setNeedsPlainTextQuirk(bool);
+    void setIsTouchBarUpdateSupressedForHiddenContentEditable(bool);
+    void setIsNeverRichlyEditableForTouchBar(bool);
 
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&);
 
@@ -2369,8 +2369,8 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     bool m_isResourceCachingDisabled { false };
 
     bool m_hasHadSelectionChangesFromUserInteraction { false };
-    bool m_needsHiddenContentEditableQuirk { false };
-    bool m_needsPlainTextQuirk { false };
+    bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
+    bool m_isNeverRichlyEditableForTouchBar { false };
 
 #if ENABLE(MEDIA_SESSION)
     bool m_hasMediaSessionWithActiveMediaElements { false };

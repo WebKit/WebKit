@@ -5560,14 +5560,14 @@ void WebPageProxy::setHasHadSelectionChangesFromUserInteraction(bool hasHadUserS
     m_hasHadSelectionChangesFromUserInteraction = hasHadUserSelectionChanges;
 }
 
-void WebPageProxy::setNeedsHiddenContentEditableQuirk(bool needsHiddenContentEditableQuirk)
+void WebPageProxy::setIsTouchBarUpdateSupressedForHiddenContentEditable(bool ignoreTouchBarUpdate)
 {
-    m_needsHiddenContentEditableQuirk = needsHiddenContentEditableQuirk;
+    m_isTouchBarUpdateSupressedForHiddenContentEditable = ignoreTouchBarUpdate;
 }
 
-void WebPageProxy::setNeedsPlainTextQuirk(bool needsPlainTextQuirk)
+void WebPageProxy::setIsNeverRichlyEditableForTouchBar(bool isNeverRichlyEditable)
 {
-    m_needsPlainTextQuirk = needsPlainTextQuirk;
+    m_isNeverRichlyEditableForTouchBar = isNeverRichlyEditable;
 }
 
 void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completionHandler)

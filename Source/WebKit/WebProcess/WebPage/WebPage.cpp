@@ -194,6 +194,7 @@
 #include <WebCore/PointerCaptureController.h>
 #include <WebCore/PrintContext.h>
 #include <WebCore/PromisedAttachmentInfo.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/Range.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteDOMWindow.h>
@@ -3140,13 +3141,13 @@ void WebPage::didStartPageTransition()
 #if PLATFORM(MAC)
     if (hasPreviouslyFocusedDueToUserInteraction)
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));
-    if (m_needsHiddenContentEditableQuirk) {
-        m_needsHiddenContentEditableQuirk = false;
-        send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
+    if (m_isTouchBarUpdateSupressedForHiddenContentEditable) {
+        m_isTouchBarUpdateSupressedForHiddenContentEditable = false;
+        send(Messages::WebPageProxy::SetIsTouchBarUpdateSupressedForHiddenContentEditable(m_isTouchBarUpdateSupressedForHiddenContentEditable));
     }
-    if (m_needsPlainTextQuirk) {
-        m_needsPlainTextQuirk = false;
-        send(Messages::WebPageProxy::SetNeedsPlainTextQuirk(m_needsPlainTextQuirk));
+    if (m_isNeverRichlyEditableForTouchBar) {
+        m_isNeverRichlyEditableForTouchBar = false;
+        send(Messages::WebPageProxy::SetIsNeverRichlyEditableForTouchBar(m_isNeverRichlyEditableForTouchBar));
     }
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -5209,39 +5210,6 @@ void WebPage::cancelComposition()
 }
 #endif
 
-#if PLATFORM(MAC)
-static bool needsHiddenContentEditableQuirk(bool needsQuirks, const URL& url)
-{
-    if (!needsQuirks)
-        return false;
-
-    return equalLettersIgnoringASCIICase(url.host(), "docs.google.com");
-}
-
-static bool needsPlainTextQuirk(bool needsQuirks, const URL& url)
-{
-    if (!needsQuirks)
-        return false;
-
-    auto host = url.host();
-
-    if (equalLettersIgnoringASCIICase(host, "twitter.com"))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "onedrive.live.com"))
-        return true;
-
-    String path = url.path();
-    if (equalLettersIgnoringASCIICase(host, "www.icloud.com") && (path.contains("notes") || url.fragmentIdentifier().contains("notes")))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "trix-editor.org"))
-        return true;
-
-    return false;
-}
-#endif
-
 void WebPage::didApplyStyle()
 {
     sendEditorStateUpdate();
@@ -5271,14 +5239,14 @@ void WebPage::didChangeSelection()
     m_hasEverFocusedElementDueToUserInteractionSincePageTransition |= m_userIsInteracting;
 
     if (!hasPreviouslyFocusedDueToUserInteraction && m_hasEverFocusedElementDueToUserInteractionSincePageTransition) {
-        if (needsHiddenContentEditableQuirk(m_page->settings().needsSiteSpecificQuirks(), m_page->mainFrame().document()->url())) {
-            m_needsHiddenContentEditableQuirk = true;
-            send(Messages::WebPageProxy::SetNeedsHiddenContentEditableQuirk(m_needsHiddenContentEditableQuirk));
+        if (frame.document()->quirks().isTouchBarUpdateSupressedForHiddenContentEditable()) {
+            m_isTouchBarUpdateSupressedForHiddenContentEditable = true;
+            send(Messages::WebPageProxy::SetIsTouchBarUpdateSupressedForHiddenContentEditable(m_isTouchBarUpdateSupressedForHiddenContentEditable));
         }
 
-        if (needsPlainTextQuirk(m_page->settings().needsSiteSpecificQuirks(), m_page->mainFrame().document()->url())) {
-            m_needsPlainTextQuirk = true;
-            send(Messages::WebPageProxy::SetNeedsPlainTextQuirk(m_needsPlainTextQuirk));
+        if (frame.document()->quirks().isNeverRichlyEditableForTouchBar()) {
+            m_isNeverRichlyEditableForTouchBar = true;
+            send(Messages::WebPageProxy::SetIsNeverRichlyEditableForTouchBar(m_isNeverRichlyEditableForTouchBar));
         }
 
         send(Messages::WebPageProxy::SetHasHadSelectionChangesFromUserInteraction(m_hasEverFocusedElementDueToUserInteractionSincePageTransition));

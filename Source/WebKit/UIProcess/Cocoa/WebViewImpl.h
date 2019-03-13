@@ -608,7 +608,7 @@ private:
     void updateMediaTouchBar();
 
     bool useMediaPlaybackControlsView() const;
-    bool isRichlyEditable() const;
+    bool isRichlyEditableForTouchBar() const;
 
     bool m_clientWantsMediaPlaybackControlsView { false };
     bool m_canCreateTouchBars { false };
