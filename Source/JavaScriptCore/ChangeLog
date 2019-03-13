@@ -1,3 +1,33 @@
+2019-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Move species watchpoint installation from ArrayPrototype to JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=195593
+
+        Reviewed by Keith Miller.
+
+        This patch moves watchpoints installation and watchpoints themselves from ArrayPrototype to JSGlobalObject because of the following two reasons.
+
+        1. ArrayPrototype configures finalizer because of std::unique_ptr<> for watchpoints. If we move them from ArrayPrototype to JSGlobalObject, we do
+           not need to set finalizer. And we can avoid unnecessary WeakBlock allocation.
+
+        2. This code lazily configures watchpoints instead of setting watchpoints eagerly in JSGlobalObject::init. We would like to expand this mechanism
+           to other watchpoints which are eagerly configured in JSGlobalObject::init. Putting these code in JSGlobalObject instead of scattering them in
+           each XXXPrototype / XXXConstructor can encourage the reuse of the code.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        (JSC::speciesWatchpointIsValid):
+        (JSC::ArrayPrototype::destroy): Deleted.
+        (JSC::ArrayPrototype::tryInitializeSpeciesWatchpoint): Deleted.
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::ArrayPrototypeAdaptiveInferredPropertyWatchpoint): Deleted.
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire): Deleted.
+        * runtime/ArrayPrototype.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint): Instead of using ArrayPrototypeAdaptiveInferredPropertyWatchpoint,
+        we use ObjectPropertyChangeAdaptiveWatchpoint. We create watchpoints after touching WatchpointSet since ObjectPropertyChangeAdaptiveWatchpoint
+        requires WatchpointSet is IsWatched state.
+        * runtime/JSGlobalObject.h:
+
 2019-03-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] OSR entry should respect abstract values in addition to flush formats

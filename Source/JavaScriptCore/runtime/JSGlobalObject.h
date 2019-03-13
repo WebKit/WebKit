@@ -473,6 +473,8 @@ public:
     InlineWatchpointSet m_setAddWatchpoint;
     InlineWatchpointSet m_arraySpeciesWatchpoint;
     InlineWatchpointSet m_numberToStringWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayConstructorSpeciesWatchpoint;
+    std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayPrototypeConstructorWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayPrototypeSymbolIteratorWatchpoint;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_arrayIteratorPrototypeNext;
     std::unique_ptr<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>> m_mapPrototypeSymbolIteratorWatchpoint;
@@ -1007,6 +1009,8 @@ public:
     WrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
     void setWrapperMap(std::unique_ptr<WrapperMap>&&);
 #endif
+
+    void tryInstallArraySpeciesWatchpoint(ExecState*);
 
 protected:
     struct GlobalPropertyInfo {

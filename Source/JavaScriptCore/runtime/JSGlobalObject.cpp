@@ -1821,6 +1821,77 @@ void JSGlobalObject::clearRareData(JSCell* cell)
     jsCast<JSGlobalObject*>(cell)->m_rareData = nullptr;
 }
 
+void JSGlobalObject::tryInstallArraySpeciesWatchpoint(ExecState* exec)
+{
+    RELEASE_ASSERT(!m_arrayPrototypeConstructorWatchpoint);
+    RELEASE_ASSERT(!m_arrayConstructorSpeciesWatchpoint);
+
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // First we need to make sure that the Array.prototype.constructor property points to Array
+    // and that Array[Symbol.species] is the primordial GetterSetter.
+    ArrayPrototype* arrayPrototype = this->arrayPrototype();
+
+    // We only initialize once so flattening the structures does not have any real cost.
+    Structure* prototypeStructure = arrayPrototype->structure(vm);
+    if (prototypeStructure->isDictionary())
+        prototypeStructure = prototypeStructure->flattenDictionaryStructure(vm, arrayPrototype);
+    RELEASE_ASSERT(!prototypeStructure->isDictionary());
+
+    ArrayConstructor* arrayConstructor = this->arrayConstructor();
+
+    auto invalidateWatchpoint = [&] {
+        m_arraySpeciesWatchpoint.invalidate(vm, StringFireDetail("Was not able to set up array species watchpoint."));
+    };
+
+    PropertySlot constructorSlot(arrayPrototype, PropertySlot::InternalMethodType::VMInquiry);
+    arrayPrototype->getOwnPropertySlot(arrayPrototype, exec, vm.propertyNames->constructor, constructorSlot);
+    scope.assertNoException();
+    if (constructorSlot.slotBase() != arrayPrototype
+        || !constructorSlot.isCacheableValue()
+        || constructorSlot.getValue(exec, vm.propertyNames->constructor) != arrayConstructor) {
+        invalidateWatchpoint();
+        return;
+    }
+
+    Structure* constructorStructure = arrayConstructor->structure(vm);
+    if (constructorStructure->isDictionary())
+        constructorStructure = constructorStructure->flattenDictionaryStructure(vm, arrayConstructor);
+
+    PropertySlot speciesSlot(arrayConstructor, PropertySlot::InternalMethodType::VMInquiry);
+    arrayConstructor->getOwnPropertySlot(arrayConstructor, exec, vm.propertyNames->speciesSymbol, speciesSlot);
+    scope.assertNoException();
+    if (speciesSlot.slotBase() != arrayConstructor
+        || !speciesSlot.isCacheableGetter()
+        || speciesSlot.getterSetter() != speciesGetterSetter()) {
+        invalidateWatchpoint();
+        return;
+    }
+
+    // Now we need to setup the watchpoints to make sure these conditions remain valid.
+    prototypeStructure->startWatchingPropertyForReplacements(vm, constructorSlot.cachedOffset());
+    constructorStructure->startWatchingPropertyForReplacements(vm, speciesSlot.cachedOffset());
+
+    ObjectPropertyCondition constructorCondition = ObjectPropertyCondition::equivalence(vm, arrayPrototype, arrayPrototype, vm.propertyNames->constructor.impl(), arrayConstructor);
+    ObjectPropertyCondition speciesCondition = ObjectPropertyCondition::equivalence(vm, arrayPrototype, arrayConstructor, vm.propertyNames->speciesSymbol.impl(), speciesGetterSetter());
+
+    if (!constructorCondition.isWatchable() || !speciesCondition.isWatchable()) {
+        invalidateWatchpoint();
+        return;
+    }
+
+    // We only watch this from the DFG, and the DFG makes sure to only start watching if the watchpoint is in the IsWatched state.
+    RELEASE_ASSERT(!m_arraySpeciesWatchpoint.isBeingWatched());
+    m_arraySpeciesWatchpoint.touch(vm, "Set up array species watchpoint.");
+
+    m_arrayPrototypeConstructorWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(constructorCondition, m_arraySpeciesWatchpoint);
+    m_arrayPrototypeConstructorWatchpoint->install(vm);
+
+    m_arrayConstructorSpeciesWatchpoint = std::make_unique<ObjectPropertyChangeAdaptiveWatchpoint<InlineWatchpointSet>>(speciesCondition, m_arraySpeciesWatchpoint);
+    m_arrayConstructorSpeciesWatchpoint->install(vm);
+}
+
 void slowValidateCell(JSGlobalObject* globalObject)
 {
     RELEASE_ASSERT(globalObject->isGlobalObject());
