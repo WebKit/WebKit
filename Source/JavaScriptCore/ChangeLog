@@ -1,44 +1,61 @@
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
-        Cherry-pick r242114. rdar://problem/48839372
+        Cherry-pick r242276. rdar://problem/48839389
 
-    wasmToJS() should purify incoming NaNs.
-    https://bugs.webkit.org/show_bug.cgi?id=194807
-    <rdar://problem/48189132>
+    DFG: Loop-invariant code motion (LICM) should not hoist dead code
+    https://bugs.webkit.org/show_bug.cgi?id=194945
+    <rdar://problem/48311657>
     
     Reviewed by Saam Barati.
     
-    JSTests:
-    
-    * wasm/regress/wasmToJS-should-purify-NaNs.js: Added.
-    
-    Source/JavaScriptCore:
-    
-    * runtime/JSCJSValue.h:
-    (JSC::jsNumber):
-    * runtime/TypedArrayAdaptors.h:
-    (JSC::IntegralTypedArrayAdaptor::toJSValue):
-    * wasm/js/WasmToJS.cpp:
-    (JSC::Wasm::wasmToJS):
+    * dfg/DFGLICMPhase.cpp:
+    (JSC::DFG::LICMPhase::run):
     
     
     
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242114 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242276 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-    2019-02-26  Mark Lam  <mark.lam@apple.com>
+    2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
-            wasmToJS() should purify incoming NaNs.
-            https://bugs.webkit.org/show_bug.cgi?id=194807
-            <rdar://problem/48189132>
+            Cherry-pick r242114. rdar://problem/48839372
 
-            Reviewed by Saam Barati.
+        wasmToJS() should purify incoming NaNs.
+        https://bugs.webkit.org/show_bug.cgi?id=194807
+        <rdar://problem/48189132>
 
-            * runtime/JSCJSValue.h:
-            (JSC::jsNumber):
-            * runtime/TypedArrayAdaptors.h:
-            (JSC::IntegralTypedArrayAdaptor::toJSValue):
-            * wasm/js/WasmToJS.cpp:
-            (JSC::Wasm::wasmToJS):
+        Reviewed by Saam Barati.
+
+        JSTests:
+
+        * wasm/regress/wasmToJS-should-purify-NaNs.js: Added.
+
+        Source/JavaScriptCore:
+
+        * runtime/JSCJSValue.h:
+        (JSC::jsNumber):
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
+
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242114 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-02-26  Mark Lam  <mark.lam@apple.com>
+
+                wasmToJS() should purify incoming NaNs.
+                https://bugs.webkit.org/show_bug.cgi?id=194807
+                <rdar://problem/48189132>
+
+                Reviewed by Saam Barati.
+
+                * runtime/JSCJSValue.h:
+                (JSC::jsNumber):
+                * runtime/TypedArrayAdaptors.h:
+                (JSC::IntegralTypedArrayAdaptor::toJSValue):
+                * wasm/js/WasmToJS.cpp:
+                (JSC::Wasm::wasmToJS):
 
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
@@ -414,6 +431,17 @@
             Nodes that rely on being dominated by CheckInBounds should have a child edge to it
             https://bugs.webkit.org/show_bug.cgi?id=194334
             <rdar://problem/47844327>
+
+2019-02-27  Robin Morisset  <rmorisset@apple.com>
+
+        DFG: Loop-invariant code motion (LICM) should not hoist dead code
+        https://bugs.webkit.org/show_bug.cgi?id=194945
+        <rdar://problem/48311657>
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
 
             Reviewed by Mark Lam.
 
