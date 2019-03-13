@@ -1,5 +1,38 @@
 2019-03-12  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r242502. rdar://problem/48591282
+
+    Cherry-pick r242394. rdar://problem/48591281
+    
+        Unreviewed build fix after r242378
+    
+        * UIProcess/ios/EditableImageController.mm:
+        (WebKit::EditableImageController::associateWithAttachment):
+    
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242394 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/branches/safari-607.1.40.0-branch@242502 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-05  Kocsen Chung  <kocsen_chung@apple.com>
+
+            Cherry-pick r242394. rdar://problem/48591281
+
+        Unreviewed build fix after r242378
+
+        * UIProcess/ios/EditableImageController.mm:
+        (WebKit::EditableImageController::associateWithAttachment):
+
+        git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242394 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+        2019-03-04  Brent Fulgham  <bfulgham@apple.com>
+
+                Unreviewed build fix after r242378
+
+                * UIProcess/ios/EditableImageController.mm:
+                (WebKit::EditableImageController::associateWithAttachment):
+
+2019-03-12  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r242501. rdar://problem/48591282
 
     Cherry-pick r242378. rdar://problem/48591281
