@@ -955,7 +955,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
             childrenSubstring += i === maximumTreeDepth ? " .children" : " > .children";
             styleText += `.${WI.TreeOutline.ElementStyleClassName}:not(.${WI.TreeOutline.CustomIndentStyleClassName})${childrenSubstring} > .item { `;
             styleText += `-webkit-padding-start: calc(var(--tree-outline-item-padding) + ${depthPadding * i}px);`;
-            styleText += ` };\n`;
+            styleText += ` }\n`;
         }
 
         WI.TreeOutline._styleElement.textContent = styleText;
