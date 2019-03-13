@@ -1,3 +1,16 @@
+2019-03-13  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key
+        https://bugs.webkit.org/show_bug.cgi?id=195683
+        <rdar://problem/48659950>
+
+        Reviewed by Alex Christensen.
+
+        Add a new test which would crash in debug builds prior to this fix.
+
+        * pointerevents/pointer-id-crash-expected.txt: Added.
+        * pointerevents/pointer-id-crash.html: Added.
+
 2019-03-13  Shawn Roberts  <sroberts@apple.com>
 
         http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html is a flaky failure on Mac WK2

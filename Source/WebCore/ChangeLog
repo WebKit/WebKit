@@ -1,3 +1,19 @@
+2019-03-13  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key
+        https://bugs.webkit.org/show_bug.cgi?id=195683
+        <rdar://problem/48659950>
+
+        Reviewed by Alex Christensen.
+
+        While PointerID is defined as int32_t, we now use int64_t as the key of the HashMap mapping PointerID to CapturingData so that we use
+        a value outside of the int32_t range as a safe empty and removed values, allowing any int32_t to be provided through the API for
+        lookup in this HashMap.
+
+        Test: pointerevents/pointer-id-crash.html
+
+        * page/PointerCaptureController.h:
+
 2019-03-12  Brady Eidson  <beidson@apple.com>
 
         Take UnboundedNetworking assertion when a file upload is in progress.
