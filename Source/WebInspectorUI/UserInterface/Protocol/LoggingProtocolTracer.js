@@ -121,9 +121,12 @@ WI.LoggingProtocolTracer = class LoggingProtocolTracer extends WI.ProtocolTracer
                 return;
 
             let prefix = `${entry.type} (${targetId})`;
-            if (!window.InspectorTest && InspectorFrontendHost.isBeingInspected())
-                this._logToConsole(prefix, entry.message);
-            else
+            if (!window.InspectorTest && InspectorFrontendHost.isBeingInspected()) {
+                if (entry.type === "request" || entry.type === "exception")
+                    console.trace(prefix, entry.message);
+                else
+                    this._logToConsole(prefix, entry.message);
+            } else
                 this._logToConsole(`${prefix}: ${JSON.stringify(entry.message)}`);
 
             if (entry.exception) {
