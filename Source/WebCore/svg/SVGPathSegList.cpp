@@ -85,7 +85,14 @@ bool SVGPathSegList::processIncomingListItemValue(const ListItemType& newItem, u
     bool livesInOtherList = animatedPropertyOfItem != m_animatedProperty;
     RefPtr<SVGAnimatedPathSegListPropertyTearOff> propertyTearOff = static_pointer_cast<SVGAnimatedPathSegListPropertyTearOff>(animatedPropertyOfItem);
     int indexToRemove = propertyTearOff->findItem(newItem.get());
-    ASSERT(indexToRemove != -1);
+
+    // If newItem does not exist in the propertyTearOff baseVal() list, it has to be
+    // in its animVal() list and it has to be animating.
+    if (indexToRemove == -1) {
+        ASSERT(propertyTearOff->isAnimating());
+        ASSERT(propertyTearOff->animVal()->findItem(newItem.get()) != -1);
+        return false;
+    }
 
     // Do not remove newItem if already in this list at the target index.
     if (!livesInOtherList && indexToModify && static_cast<unsigned>(indexToRemove) == *indexToModify)
