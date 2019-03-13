@@ -48,6 +48,10 @@
 #define BOS_LINUX 1
 #endif
 
+#if defined(__FreeBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
+#define BOS_FREEBSD 1
+#endif
+
 #if defined(WIN32) || defined(_WIN32)
 #define BOS_WINDOWS 1
 #endif

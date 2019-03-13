@@ -1,3 +1,21 @@
+2019-03-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
+
+        [bmalloc] Use MADV_FREE on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=195665
+
+        Reviewed by Geoffrey Garen.
+
+        * bmalloc/BPlatform.h:
+
+        Introduce BOS_FREEBSD, which is equivalent to WTF_OS_FREEBSD
+
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmDeallocatePhysicalPages):
+
+        Use MADV_FREE instead of MADV_DONTNEED if BOS(FREEBSD), since on FreeBSD,
+        unlike on Linux, MADV_DONTNEED doesn't let the OS discard the contents of
+        the pages.
+
 2019-03-13  Sam Weinig  <sam@webkit.org>
 
         Fix testbmalloc build
