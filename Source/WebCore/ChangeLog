@@ -1,3 +1,13 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        Better build fix after r242901.
+
+        Reviewed by Jer Noble.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (MediaSessionManagerCocoa::sessionWillBeginPlayback):
+        (MediaSessionManagerCocoa::updateNowPlayingInfo):
+
 2019-03-13  Timothy Hatcher  <timothy@apple.com>
 
         Consolidate ArgumentCodersMac and ArgumentCodersCocoa.
