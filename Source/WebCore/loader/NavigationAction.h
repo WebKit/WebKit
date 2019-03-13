@@ -129,6 +129,9 @@ public:
     void setTargetBackForwardItem(HistoryItem&);
     const Optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const { return m_targetBackForwardItemIdentifier; }
 
+    void setSourceBackForwardItem(HistoryItem*);
+    const Optional<BackForwardItemIdentifier>& sourceBackForwardItemIdentifier() const { return m_sourceBackForwardItemIdentifier; }
+
     LockHistory lockHistory() const { return m_lockHistory; }
     void setLockHistory(LockHistory lockHistory) { m_lockHistory = lockHistory; }
 
@@ -154,6 +157,7 @@ private:
     bool m_hasOpenedFrames { false };
     bool m_openedByDOMWithOpener { false };
     Optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
+    Optional<BackForwardItemIdentifier> m_sourceBackForwardItemIdentifier;
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
     Optional<AdClickAttribution> m_adClickAttribution;

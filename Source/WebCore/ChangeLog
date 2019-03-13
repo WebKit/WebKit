@@ -1,3 +1,40 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(PSON, r240660): Navigation over process boundary is flashy when using Cmd-left/right arrow to navigate
+        https://bugs.webkit.org/show_bug.cgi?id=195684
+        <rdar://problem/48294714>
+
+        Reviewed by Antti Koivisto.
+
+        The issue was caused by us failing to suspend the current page on navigation because the source and
+        target WebBackForwardListItem are identical. The source WebBackForwardListItem was wrong.
+
+        When a navigation is triggered by the WebContent process (and not the UIProcess), we create the Navigation
+        object in WebPageProxy::decidePolicyForNavigationAction(). For the navigation's targetItem, we use the
+        target item identifier provided by the WebContent process via the NavigationActionData. However,
+        for the source item, we would use the WebBackForwardList's currentItem in the UIProcess. The issue
+        is that the WebBackForwardList's currentItem usually has already been updated to be the target
+        item via a WebPageProxy::BackForwardGoToItem() synchronous IPC.
+
+        To avoid raciness and given that the current history management is fragile (as it is managed by
+        both the UIProcess and the WebProcess), I am now passing the source item identifier in
+        addition to the target item identifier in the NavigationActionData that is sent by the WebProcess.
+        This is a lot less error prone, the WebProcess knows more accurately which history items it is going
+        from and to.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::loadItem):
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+        * loader/FrameLoader.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::recursiveGoToItem):
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::setSourceBackForwardItem):
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::sourceBackForwardItemIdentifier const):
+
 2019-03-13  Jer Noble  <jer.noble@apple.com>
 
         Add AggregateLogger, a Logger specialization for singleton classes.

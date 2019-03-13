@@ -880,6 +880,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     if (auto& requester = navigationAction.requester())
         navigationActionData.requesterOrigin = requester->securityOrigin().data();
     navigationActionData.targetBackForwardItemIdentifier = navigationAction.targetBackForwardItemIdentifier();
+    navigationActionData.sourceBackForwardItemIdentifier = navigationAction.sourceBackForwardItemIdentifier();
     navigationActionData.lockHistory = navigationAction.lockHistory();
     navigationActionData.lockBackForwardList = navigationAction.lockBackForwardList();
     navigationActionData.adClickAttribution = navigationAction.adClickAttribution();

@@ -133,7 +133,7 @@ public:
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);
-    void loadItem(HistoryItem&, FrameLoadType, ShouldTreatAsContinuingLoad);
+    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
     HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     void retryAfterFailedCacheOnlyMainResourceLoad();
@@ -335,7 +335,7 @@ private:
     void checkCompletenessNow();
 
     void loadSameDocumentItem(HistoryItem&);
-    void loadDifferentDocumentItem(HistoryItem&, FrameLoadType, FormSubmissionCacheLoadPolicy, ShouldTreatAsContinuingLoad);
+    void loadDifferentDocumentItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, FormSubmissionCacheLoadPolicy, ShouldTreatAsContinuingLoad);
 
     void loadProvisionalItemFromCachedPage();
 

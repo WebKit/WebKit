@@ -1,5 +1,23 @@
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION(PSON, r240660): Navigation over process boundary is flashy when using Cmd-left/right arrow to navigate
+        https://bugs.webkit.org/show_bug.cgi?id=195684
+        <rdar://problem/48294714>
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode const):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::backForwardAddItem):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
         Drop legacy WebCore::toRegistrableDomain() utility function
         https://bugs.webkit.org/show_bug.cgi?id=195637
 

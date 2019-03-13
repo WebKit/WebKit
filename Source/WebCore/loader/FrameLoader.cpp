@@ -974,7 +974,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
     if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType()) && !m_frame.document()->loadEventFinished()) {
         if (auto* childItem = parentItem->childItemWithTarget(childFrame->tree().uniqueName())) {
             childFrame->loader().m_requestedHistoryItem = childItem;
-            childFrame->loader().loadDifferentDocumentItem(*childItem, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
+            childFrame->loader().loadDifferentDocumentItem(*childItem, nullptr, loadType(), MayAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
             return;
         }
     }
@@ -3686,7 +3686,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
-void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
+void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType loadType, FormSubmissionCacheLoadPolicy cacheLoadPolicy, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
     RELEASE_LOG_IF_ALLOWED("loadDifferentDocumentItem: frame load started (frame = %p, main = %d)", &m_frame, m_frame.isMainFrame());
 
@@ -3706,6 +3706,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
         auto action = NavigationAction { *m_frame.document(), documentLoader->request(), initiatedByMainFrame, loadType, false };
         action.setTargetBackForwardItem(item);
+        action.setSourceBackForwardItem(fromItem);
         documentLoader->setTriggeringAction(WTFMove(action));
 
         documentLoader->setLastCheckedRequest(ResourceRequest());
@@ -3796,12 +3797,13 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
     }
 
     action.setTargetBackForwardItem(item);
+    action.setSourceBackForwardItem(fromItem);
 
     loadWithNavigationAction(request, WTFMove(action), LockHistory::No, loadType, { }, AllowNavigationToInvalidURL::Yes);
 }
 
 // Loads content into this frame, as specified by history item
-void FrameLoader::loadItem(HistoryItem& item, FrameLoadType loadType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
+void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType loadType, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
     m_requestedHistoryItem = &item;
     HistoryItem* currentItem = history().currentItem();
@@ -3810,7 +3812,7 @@ void FrameLoader::loadItem(HistoryItem& item, FrameLoadType loadType, ShouldTrea
     if (sameDocumentNavigation)
         loadSameDocumentItem(item);
     else
-        loadDifferentDocumentItem(item, loadType, MayAttemptCacheOnlyLoadForFormSubmissionItem, shouldTreatAsContinuingLoad);
+        loadDifferentDocumentItem(item, fromItem, loadType, MayAttemptCacheOnlyLoadForFormSubmissionItem, shouldTreatAsContinuingLoad);
 }
 
 void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
@@ -3825,7 +3827,7 @@ void FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad()
     HistoryItem& item = *history().provisionalItem();
 
     stopAllLoaders(ShouldNotClearProvisionalItem);
-    loadDifferentDocumentItem(item, loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
+    loadDifferentDocumentItem(item, history().currentItem(), loadType, MayNotAttemptCacheOnlyLoadForFormSubmissionItem, ShouldTreatAsContinuingLoad::No);
 }
 
 ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const

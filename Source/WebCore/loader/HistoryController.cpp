@@ -751,7 +751,7 @@ void HistoryController::recursiveSetProvisionalItem(HistoryItem& item, HistoryIt
 void HistoryController::recursiveGoToItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadType type, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad)
 {
     if (!itemsAreClones(item, fromItem)) {
-        m_frame.loader().loadItem(item, type, shouldTreatAsContinuingLoad);
+        m_frame.loader().loadItem(item, fromItem, type, shouldTreatAsContinuingLoad);
         return;
     }
 

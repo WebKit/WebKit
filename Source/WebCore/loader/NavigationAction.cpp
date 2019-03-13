@@ -144,4 +144,9 @@ void NavigationAction::setTargetBackForwardItem(HistoryItem& item)
     m_targetBackForwardItemIdentifier = item.identifier();
 }
 
+void NavigationAction::setSourceBackForwardItem(HistoryItem* item)
+{
+    m_sourceBackForwardItemIdentifier = item ? makeOptional(item->identifier()) : WTF::nullopt;
+}
+
 }

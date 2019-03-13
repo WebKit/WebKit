@@ -4515,8 +4515,13 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     if (!navigation) {
         if (auto targetBackForwardItemIdentifier = navigationActionData.targetBackForwardItemIdentifier) {
-            if (auto* item = m_backForwardList->itemForID(*targetBackForwardItemIdentifier))
-                navigation = m_navigationState->createBackForwardNavigation(*item, m_backForwardList->currentItem(), FrameLoadType::IndexedBackForward);
+            if (auto* item = m_backForwardList->itemForID(*targetBackForwardItemIdentifier)) {
+                auto* fromItem = navigationActionData.sourceBackForwardItemIdentifier ? m_backForwardList->itemForID(*navigationActionData.sourceBackForwardItemIdentifier) : nullptr;
+                if (!fromItem)
+                    fromItem = m_backForwardList->currentItem();
+                WTFLogAlways("WebPageProxy::decidePolicyForNavigationAction() creates back/forward navigation from item %s", fromItem ? fromItem->url().utf8().data() : "null");
+                navigation = m_navigationState->createBackForwardNavigation(*item, fromItem, FrameLoadType::IndexedBackForward);
+            }
         }
         if (!navigation)
             navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
@@ -5579,7 +5584,8 @@ void WebPageProxy::requestDOMPasteAccess(const WebCore::IntRect& elementRect, co
 
 void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
 {
-    m_backForwardList->addItem(WebBackForwardListItem::create(WTFMove(itemState), pageID()));
+    auto item = WebBackForwardListItem::create(WTFMove(itemState), pageID());
+    m_backForwardList->addItem(WTFMove(item));
 }
 
 void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, SandboxExtension::Handle& sandboxExtensionHandle)

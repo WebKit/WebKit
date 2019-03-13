@@ -50,6 +50,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << openedByDOMWithOpener;
     encoder << requesterOrigin;
     encoder << targetBackForwardItemIdentifier;
+    encoder << sourceBackForwardItemIdentifier;
     encoder.encodeEnum(lockHistory);
     encoder.encodeEnum(lockBackForwardList);
     encoder << clientRedirectSourceForHistory;
@@ -127,6 +128,11 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!targetBackForwardItemIdentifier)
         return WTF::nullopt;
 
+    Optional<Optional<WebCore::BackForwardItemIdentifier>> sourceBackForwardItemIdentifier;
+    decoder >> sourceBackForwardItemIdentifier;
+    if (!sourceBackForwardItemIdentifier)
+        return WTF::nullopt;
+
     WebCore::LockHistory lockHistory;
     if (!decoder.decodeEnum(lockHistory))
         return WTF::nullopt;
@@ -148,7 +154,7 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     return {{ WTFMove(navigationType), modifiers, WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),
         WTFMove(*isRedirect), *treatAsSameOriginNavigation, *hasOpenedFrames, *openedByDOMWithOpener, WTFMove(*requesterOrigin),
-        WTFMove(*targetBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), WTFMove(*adClickAttribution) }};
+        WTFMove(*targetBackForwardItemIdentifier), WTFMove(*sourceBackForwardItemIdentifier), lockHistory, lockBackForwardList, WTFMove(*clientRedirectSourceForHistory), WTFMove(*adClickAttribution) }};
 }
 
 } // namespace WebKit

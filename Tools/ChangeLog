@@ -1,3 +1,15 @@
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(PSON, r240660): Navigation over process boundary is flashy when using Cmd-left/right arrow to navigate
+        https://bugs.webkit.org/show_bug.cgi?id=195684
+        <rdar://problem/48294714>
+
+        Reviewed by Antti Koivisto.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-03-13  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Remove unused patch view
