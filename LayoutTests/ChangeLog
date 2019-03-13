@@ -1,3 +1,17 @@
+2019-03-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling tree should reposition non-stacking order descendents of overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=195608
+
+        Reviewed by Zalan Bujtas.
+
+        The results of this test will change when we enable positioned nodes. It tests various
+        combinations of overflow and stacking.
+        
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/positioned-nodes.html: Added.
+
 2019-03-13  Youenn Fablet  <youenn@apple.com>
 
         Check IDB quota usage through QuotaManager

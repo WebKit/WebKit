@@ -214,6 +214,12 @@ enum class SelectionRevealMode : uint8_t  {
     DoNotReveal
 };
 
+enum class ScrollPositioningBehavior : uint8_t {
+    None,
+    Moves,
+    Stationary
+};
+
 using ScrollbarControlState = unsigned;
 using ScrollbarControlPartMask = unsigned;
 using ScrollingNodeID = uint64_t;

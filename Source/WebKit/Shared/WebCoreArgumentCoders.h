@@ -82,6 +82,7 @@ class IntSize;
 class KeyframeValueList;
 class LayoutSize;
 class LayoutPoint;
+class LayoutConstraints;
 class LinearTimingFunction;
 class Notification;
 class Path;
@@ -541,6 +542,11 @@ template<> struct ArgumentCoder<WebCore::FixedPositionViewportConstraints> {
 template<> struct ArgumentCoder<WebCore::StickyPositionViewportConstraints> {
     static void encode(Encoder&, const WebCore::StickyPositionViewportConstraints&);
     static bool decode(Decoder&, WebCore::StickyPositionViewportConstraints&);
+};
+
+template<> struct ArgumentCoder<WebCore::LayoutConstraints> {
+    static void encode(Encoder&, const WebCore::LayoutConstraints&);
+    static bool decode(Decoder&, WebCore::LayoutConstraints&);
 };
 
 #if !USE(COORDINATED_GRAPHICS)

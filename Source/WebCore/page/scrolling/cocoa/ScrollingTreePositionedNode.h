@@ -35,26 +35,29 @@ OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingTreeStickyNode : public ScrollingTreeNode {
+class ScrollingTreePositionedNode : public ScrollingTreeNode {
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeStickyNode> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreePositionedNode> create(ScrollingTree&, ScrollingNodeID);
 
-    virtual ~ScrollingTreeStickyNode();
+    virtual ~ScrollingTreePositionedNode();
 
 private:
-    ScrollingTreeStickyNode(ScrollingTree&, ScrollingNodeID);
+    ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    void relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
+
     void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
-    StickyPositionViewportConstraints m_constraints;
+    Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
+    LayoutConstraints m_constraints;
     RetainPtr<CALayer> m_layer;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreeStickyNode, isStickyNode())
+SPECIALIZE_TYPE_TRAITS_SCROLLING_NODE(ScrollingTreePositionedNode, isPositionedNode())
 
 #endif // ENABLE(ASYNC_SCROLLING)

@@ -464,6 +464,9 @@ TextStream& operator<<(TextStream& ts, ScrollingNodeType nodeType)
     case ScrollingNodeType::Sticky:
         ts << "sticky";
         break;
+    case ScrollingNodeType::Positioned:
+        ts << "positioned";
+        break;
     }
     return ts;
 }

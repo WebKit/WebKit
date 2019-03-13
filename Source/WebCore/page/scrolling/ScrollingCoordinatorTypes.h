@@ -37,7 +37,8 @@ enum class ScrollingNodeType : uint8_t {
     FrameHosting,
     Overflow,
     Fixed,
-    Sticky
+    Sticky,
+    Positioned,
 };
 
 enum ScrollingStateTreeAsTextBehaviorFlags {

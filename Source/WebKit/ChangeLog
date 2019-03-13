@@ -1,3 +1,52 @@
+2019-03-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling tree should reposition non-stacking order descendents of overflow:scroll.
+        https://bugs.webkit.org/show_bug.cgi?id=195608
+
+        Reviewed by Zalan Bujtas.
+
+        Step 1: add scrolling tree positioning nodes classes (but don't create them yet).
+
+        Add Scrolling{State,Tree}PositionedNode to track composited layers that have to be repositioned when
+        an async overflow:scroll scrolls. There are two instances in which this is necessary, reflected by
+        the values of ScrollPositioningBehavior:
+
+        ScrollPositioningBehavior::Moves - a composited layer whose containing block chain includes an
+            async overflow scroller, but whose composited (i.e. z-order) parent is outside of the overflow.
+            When the overflow scrolls, this layer has to move along with the overflow.
+
+        ScrollPositioningBehavior::Stationary - a composited layer whose containing block chain skips the
+            overflow scroller, but whose compositing (z-order) parent is the scroller, or inside the scroller.
+            This only applies to position:absolute, on, for example, an overflow:scroll ith opacity.
+
+        PositionedNodes are modeled after Fixed/Sticky nodes, with a new type of layout constraint just called LayoutConstraints.
+        
+        This patch adds support for PositionedNodes in the scrolling trees, but RenderLayerCompositor::computeCoordinatedPositioningForLayer()
+        is just a stub so the new node types aren't created yet.
+        
+        RenderLayerBacking stores a ScrollingNodeID for the positioning role (just like the other roles). Since the Positioning
+        role is about position relative to ancestors, a node with both Positioning and FrameHosting or Scrolling roles treats
+        the Positioning node as the parent of the other types. A node should never have both Positioning and ViewportConstrained roles.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode):
+        (ArgumentCoder<ScrollingStatePositionedNode>::encode):
+        (ArgumentCoder<ScrollingStatePositionedNode>::decode):
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<LayoutConstraints>::encode):
+        (IPC::ArgumentCoder<LayoutConstraints>::decode):
+        (IPC::ArgumentCoder<StickyPositionViewportConstraints>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+
 2019-03-13  Youenn Fablet  <youenn@apple.com>
 
         Check IDB quota usage through QuotaManager

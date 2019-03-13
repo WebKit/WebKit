@@ -32,6 +32,7 @@
 #include "RemoteScrollingCoordinatorProxy.h"
 #include <WebCore/ScrollingTreeFixedNode.h>
 #include <WebCore/ScrollingTreeFrameHostingNode.h>
+#include <WebCore/ScrollingTreePositionedNode.h>
 #include <WebCore/ScrollingTreeStickyNode.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -132,6 +133,8 @@ Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNod
         return ScrollingTreeFixedNode::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
         return ScrollingTreeStickyNode::create(*this, nodeID);
+    case ScrollingNodeType::Positioned:
+        return ScrollingTreePositionedNode::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();
     return ScrollingTreeFixedNode::create(*this, nodeID);

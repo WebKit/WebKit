@@ -2869,6 +2869,17 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     return false;
 }
 
+ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningForLayer(const RenderLayer& layer) const
+{
+    if (layer.isRenderViewLayer())
+        return ScrollPositioningBehavior::None;
+
+    // FIXME: This will look at the containing block and stacking context ancestor chains and determine
+    // whether this layer needs to be repositioned when a composited overflow scroll scrolls.
+
+    return ScrollPositioningBehavior::None;
+}
+
 bool RenderLayerCompositor::isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer& layer) const
 {
     if (!is<RenderWidget>(layer.renderer()))
@@ -3766,6 +3777,8 @@ static inline ScrollCoordinationRole scrollCoordinationRoleForNodeType(Scrolling
     case ScrollingNodeType::Fixed:
     case ScrollingNodeType::Sticky:
         return ScrollCoordinationRole::ViewportConstrained;
+    case ScrollingNodeType::Positioned:
+        return ScrollCoordinationRole::Positioning;
     }
     ASSERT_NOT_REACHED();
     return ScrollCoordinationRole::Scrolling;
@@ -3871,17 +3884,25 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
 
     auto newNodeID = treeState.parentNodeID.valueOr(0);
 
-    ScrollingTreeState viewportConstrainedChildTreeState;
+    ScrollingTreeState childTreeState;
     ScrollingTreeState* currentTreeState = &treeState;
 
-    // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling/frame hosting.
+    // If is fixed or sticky, it's the parent scrolling node for scrolling/frame hosting.
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained)) {
         newNodeID = updateScrollingNodeForViewportConstrainedRole(layer, *currentTreeState, changes);
         // ViewportConstrained nodes are the parent of same-layer scrolling nodes, so adjust the ScrollingTreeState.
-        viewportConstrainedChildTreeState.parentNodeID = newNodeID;
-        currentTreeState = &viewportConstrainedChildTreeState;
+        childTreeState.parentNodeID = newNodeID;
+        currentTreeState = &childTreeState;
     } else
         detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::ViewportConstrained);
+
+    // If there's a positioning node, it's the parent scrolling node for scrolling/frame hosting.
+    if (roles.contains(ScrollCoordinationRole::Positioning)) {
+        newNodeID = updateScrollingNodeForPositioningRole(layer, *currentTreeState, changes);
+        childTreeState.parentNodeID = newNodeID;
+        currentTreeState = &childTreeState;
+    } else
+        detachScrollCoordinatedLayer(layer, ScrollCoordinationRole::Positioning);
 
     if (roles.contains(ScrollCoordinationRole::Scrolling))
         newNodeID = updateScrollingNodeForScrollingRole(layer, *currentTreeState, changes);
@@ -3925,10 +3946,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
         case ScrollingNodeType::Sticky:
             scrollingCoordinator->setViewportConstraintedNodeConstraints(newNodeID, computeStickyViewportConstraints(layer));
             break;
-        case ScrollingNodeType::MainFrame:
-        case ScrollingNodeType::Subframe:
-        case ScrollingNodeType::FrameHosting:
-        case ScrollingNodeType::Overflow:
+        default:
             break;
         }
     }
@@ -3970,8 +3988,9 @@ void RenderLayerCompositor::updateScrollingNodeLayers(ScrollingNodeID nodeID, Re
             fixedRootBackgroundLayer(), clipLayer(), rootContentsLayer(),
             frameView.layerForHorizontalScrollbar(), frameView.layerForVerticalScrollbar() });
     } else {
-        scrollingCoordinator.setNodeLayers(nodeID, { layer.backing()->graphicsLayer(),
-            layer.backing()->scrollContainerLayer(), layer.backing()->scrolledContentsLayer(),
+        auto& backing = *layer.backing();
+        scrollingCoordinator.setNodeLayers(nodeID, { backing.graphicsLayer(),
+            backing.scrollContainerLayer(), backing.scrolledContentsLayer(),
             nullptr, nullptr, nullptr,
             layer.layerForHorizontalScrollbar(), layer.layerForVerticalScrollbar() });
     }
@@ -4038,6 +4057,37 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
     if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
         RenderLayer* scrollingAncestorLayer = m_scrollingNodeToLayerMap.get(treeState.parentNodeID.value());
         scrollingCoordinator->setRectRelativeToParentNode(newNodeID, parentRelativeScrollableRect(layer, scrollingAncestorLayer));
+    }
+
+    return newNodeID;
+}
+
+ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForPositioningRole(RenderLayer& layer, ScrollingTreeState& treeState, OptionSet<ScrollingNodeChangeFlags> changes)
+{
+    auto* scrollingCoordinator = this->scrollingCoordinator();
+
+    auto newNodeID = attachScrollingNode(layer, ScrollingNodeType::Positioned, treeState);
+    if (!newNodeID) {
+        ASSERT_NOT_REACHED();
+        return treeState.parentNodeID.valueOr(0);
+    }
+
+    if (changes & ScrollingNodeChangeFlags::Layer) {
+        auto& backing = *layer.backing();
+        scrollingCoordinator->setNodeLayers(newNodeID, { backing.graphicsLayer() });
+    }
+
+    if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
+        Vector<ScrollingNodeID> relatedNodeIDs; // FIXME: This will do a tree walk to figure out which composited overflows affect this positioned node.
+        scrollingCoordinator->setRelatedOverflowScrollingNodes(newNodeID, WTFMove(relatedNodeIDs));
+
+        auto* graphicsLayer = layer.backing()->graphicsLayer();
+        LayoutConstraints constraints;
+        constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
+        constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
+        // Would be nice to avoid calling computeCoordinatedPositioningForLayer() again.
+        constraints.setScrollPositioningBehavior(computeCoordinatedPositioningForLayer(layer));
+        scrollingCoordinator->setPositionedNodeGeometry(newNodeID, constraints);
     }
 
     return newNodeID;

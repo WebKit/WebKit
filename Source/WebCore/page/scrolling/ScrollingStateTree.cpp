@@ -75,6 +75,8 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
         return ScrollingStateFixedNode::create(*this, nodeID);
     case ScrollingNodeType::Sticky:
         return ScrollingStateStickyNode::create(*this, nodeID);
+    case ScrollingNodeType::Positioned:
+        return ScrollingStatePositionedNode::create(*this, nodeID);
     }
     ASSERT_NOT_REACHED();
     return ScrollingStateFixedNode::create(*this, nodeID);

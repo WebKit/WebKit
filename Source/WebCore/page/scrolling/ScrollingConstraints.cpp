@@ -100,6 +100,24 @@ FloatPoint StickyPositionViewportConstraints::layerPositionForConstrainingRect(c
     return m_layerPositionAtLastLayout + offset - m_stickyOffsetAtLastLayout;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollPositioningBehavior behavior)
+{
+    switch (behavior) {
+    case ScrollPositioningBehavior::None: ts << "none"; break;
+    case ScrollPositioningBehavior::Stationary: ts << "stationary"; break;
+    case ScrollPositioningBehavior::Moves: ts << "moves"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, const LayoutConstraints& constraints)
+{
+    ts.dumpProperty("layer-position-at-last-layout", constraints.layerPositionAtLastLayout());
+    ts.dumpProperty("positioning-behavior", constraints.scrollPositioningBehavior());
+
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const FixedPositionViewportConstraints& constraints)
 {
     ts.dumpProperty("viewport-rect-at-last-layout", constraints.viewportRectAtLastLayout());
