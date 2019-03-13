@@ -1,3 +1,50 @@
+2019-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        Consolidate ArgumentCodersMac and ArgumentCodersCocoa.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Ryosuke Niwa.
+
+        Merge the two similar encoders and decoders. This avoids issues where
+        one encoder could be used and the other decoder, which caused a crash.
+        It also stops handling NSAttributedString specifically and just uses
+        the NSSecureCoding path to handle more complex attributes.
+
+        Some WebCore encoders code needed to move to platform files, since
+        ArgumentCodersCocoa.h requires an ObjectiveC++ implementation to work.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.h:
+        (IPC::encode):
+        (IPC::decode):
+        (IPC::ArgumentCoder<RetainPtr<T>>::encode):
+        (IPC::ArgumentCoder<RetainPtr<T>>::decode):
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::typeFromObject):
+        (IPC::isSerializableFont):
+        (IPC::isSerializableValue):
+        (IPC::encodeObject):
+        (IPC::decodeObject):
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::DictionaryPopupInfo>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::DictionaryPopupInfo>::decodePlatformData):
+        (IPC::ArgumentCoder<WebCore::FontAttributes>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::FontAttributes>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DictionaryPopupInfo>::encode):
+        (IPC::ArgumentCoder<DictionaryPopupInfo>::decode):
+        (IPC::ArgumentCoder<FontAttributes>::encode):
+        (IPC::ArgumentCoder<FontAttributes>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/ArgumentCodersMac.h: Removed.
+        * Shared/mac/ArgumentCodersMac.mm: Removed.
+        * Shared/mac/AttributedString.mm:
+        (WebKit::AttributedString::encode const):
+        * Shared/mac/ObjCObjectGraph.mm:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Use a ServiceWorker process per registrable domain

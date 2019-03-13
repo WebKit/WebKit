@@ -174,7 +174,6 @@ Shared/ios/WebIOSEventFactory.mm
 Shared/ios/WebPlatformTouchPointIOS.cpp
 Shared/ios/WebTouchEventIOS.cpp
 
-Shared/mac/ArgumentCodersMac.mm
 Shared/mac/AttributedString.mm
 Shared/mac/AuxiliaryProcessMac.mm
 Shared/mac/CodeSigning.mm

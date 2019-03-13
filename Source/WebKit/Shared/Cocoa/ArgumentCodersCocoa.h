@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +31,14 @@
 
 namespace IPC {
 
-void encodeObject(Encoder&, id <NSSecureCoding>);
-Optional<RetainPtr<id <NSSecureCoding>>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
+void encodeObject(Encoder&, id);
+Optional<RetainPtr<id>> decodeObject(Decoder&, NSArray<Class> *allowedClasses);
 
-template<typename T> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
-template<typename T> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T *, id>::value, T *>;
 
-template<typename T>
-Optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
-{
-    return decode<T>(decoder, @[ allowedClass ]);
-}
+template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
+template<typename T, typename = IsObjCObject<T>> bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 
 #ifndef NDEBUG
 
@@ -56,25 +53,35 @@ static inline bool isObjectClassAllowed(id object, NSArray<Class> *allowedClasse
 
 #endif
 
-template<typename T>
+template<typename T, typename>
+void encode(Encoder& encoder, T *object)
+{
+    encodeObject(encoder, object);
+}
+
+template<typename T, typename>
+bool decode(Decoder& decoder, RetainPtr<T>& result, NSArray<Class> *allowedClasses)
+{
+    auto object = decodeObject(decoder, allowedClasses);
+    if (!object)
+        return false;
+    result = *object;
+    ASSERT(!*object || isObjectClassAllowed((*object).get(), allowedClasses));
+    return true;
+}
+
+template<typename T, typename>
 Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     auto result = decodeObject(decoder, allowedClasses);
     if (!result)
         return WTF::nullopt;
-
-    if (!*result)
-        return { nullptr };
-
-    id object = result->leakRef();
-    ASSERT(isObjectClassAllowed(object, allowedClasses));
-    return { adoptNS(static_cast<T *>(object)) };
+    ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
+    return { *result };
 }
 
-template<typename T> using ConformsToSecureCoding = std::is_convertible<T *, id <NSSecureCoding>>;
-
 template<typename T> struct ArgumentCoder<T *> {
-    template<typename U = T, std::enable_if_t<ConformsToSecureCoding<U>::value>* = nullptr>
+    template<typename U = T, typename = IsObjCObject<U>>
     static void encode(Encoder& encoder, U *object)
     {
         encodeObject(encoder, object);
@@ -82,13 +89,13 @@ template<typename T> struct ArgumentCoder<T *> {
 };
 
 template<typename T> struct ArgumentCoder<RetainPtr<T>> {
-    template <typename U = T, std::enable_if_t<ConformsToSecureCoding<U>::value>* = nullptr>
+    template<typename U = T, typename = IsObjCObject<U>>
     static void encode(Encoder& encoder, const RetainPtr<U>& object)
     {
         ArgumentCoder<U *>::encode(encoder, object.get());
     }
 
-    template <typename U = T, std::enable_if_t<ConformsToSecureCoding<U>::value>* = nullptr>
+    template<typename U = T, typename = IsObjCObject<U>>
     static Optional<RetainPtr<U>> decode(Decoder& decoder)
     {
         return IPC::decode<U>(decoder);

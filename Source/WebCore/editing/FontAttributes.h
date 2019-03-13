@@ -79,7 +79,11 @@ struct FontAttributes {
     enum class HorizontalAlignment : uint8_t { Left, Center, Right, Justify, Natural };
 
 #if PLATFORM(COCOA)
+    bool encodingRequiresPlatformData() const { return true; }
+
     WEBCORE_EXPORT RetainPtr<NSDictionary> createDictionary() const;
+#else
+    bool encodingRequiresPlatformData() const { return false; }
 #endif
 
 #if PLATFORM(MAC)

@@ -90,7 +90,6 @@
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
-#include "ArgumentCodersMac.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2599,17 +2598,13 @@ void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::Encoder& encoder, const Dic
     encoder << info.origin;
     encoder << info.textIndicator;
 
-#if PLATFORM(COCOA)
-    bool hadOptions = info.options;
-    encoder << hadOptions;
-    if (hadOptions)
-        IPC::encode(encoder, info.options.get());
+    if (info.encodingRequiresPlatformData()) {
+        encoder << true;
+        encodePlatformData(encoder, info);
+        return;
+    }
 
-    bool hadAttributedString = info.attributedString;
-    encoder << hadAttributedString;
-    if (hadAttributedString)
-        IPC::encode(encoder, info.attributedString.get());
-#endif
+    encoder << false;
 }
 
 bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::Decoder& decoder, DictionaryPopupInfo& result)
@@ -2623,25 +2618,11 @@ bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::Decoder& decoder, Dictionar
         return false;
     result.textIndicator = WTFMove(*textIndicator);
 
-#if PLATFORM(COCOA)
-    bool hadOptions;
-    if (!decoder.decode(hadOptions))
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
         return false;
-    if (hadOptions) {
-        if (!IPC::decode(decoder, result.options))
-            return false;
-    } else
-        result.options = nullptr;
-
-    bool hadAttributedString;
-    if (!decoder.decode(hadAttributedString))
-        return false;
-    if (hadAttributedString) {
-        if (!IPC::decode(decoder, result.attributedString))
-            return false;
-    } else
-        result.attributedString = nullptr;
-#endif
+    if (hasPlatformData)
+        return decodePlatformData(decoder, result);
     return true;
 }
 
@@ -3045,12 +3026,12 @@ void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttribute
     encoder << attributes.backgroundColor << attributes.foregroundColor << attributes.fontShadow << attributes.hasUnderline << attributes.hasStrikeThrough << attributes.textLists;
     encoder.encodeEnum(attributes.horizontalAlignment);
     encoder.encodeEnum(attributes.subscriptOrSuperscript);
-#if PLATFORM(COCOA)
-    bool hasFont = attributes.font;
-    encoder << hasFont;
-    if (hasFont)
-        IPC::encode(encoder, attributes.font.get());
-#endif
+
+    if (attributes.encodingRequiresPlatformData()) {
+        encoder << true;
+        encodePlatformData(encoder, attributes);
+        return;
+    }
 }
 
 Optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
@@ -3081,14 +3062,11 @@ Optional<FontAttributes> ArgumentCoder<FontAttributes>::decode(Decoder& decoder)
     if (!decoder.decodeEnum(attributes.subscriptOrSuperscript))
         return WTF::nullopt;
 
-#if PLATFORM(COCOA)
-    bool hasFont = false;
-    if (!decoder.decode(hasFont))
+    bool hasPlatformData;
+    if (!decoder.decode(hasPlatformData))
         return WTF::nullopt;
-
-    if (hasFont && !IPC::decode(decoder, attributes.font))
-        return WTF::nullopt;
-#endif
+    if (hasPlatformData)
+        return decodePlatformData(decoder, attributes);
 
     return attributes;
 }

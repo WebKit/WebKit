@@ -1,3 +1,16 @@
+2019-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        Consolidate ArgumentCodersMac and ArgumentCodersCocoa.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/DictionaryPopupInfo.h:
+        (WebCore::DictionaryPopupInfo::encodingRequiresPlatformData const): Added.
+        * editing/FontAttributes.h:
+        (WebCore::FontAttributes::encodingRequiresPlatformData const): Added.
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r242901.

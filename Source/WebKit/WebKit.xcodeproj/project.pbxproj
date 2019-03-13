@@ -1598,7 +1598,6 @@
 		E164A2F2191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = E164A2F0191AF14E0010737D /* BlobDataFileReferenceWithSandboxExtension.h */; };
 		E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */; };
 		E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
-		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */; };
 		E18E690C169B563F009B6670 /* SecItemShimProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E690A169B563F009B6670 /* SecItemShimProxy.h */; };
 		E18E6917169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */; };
@@ -4471,8 +4470,6 @@
 		E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistryProxy.cpp; path = WebProcess/FileAPI/BlobRegistryProxy.cpp; sourceTree = "<group>"; };
 		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
 		E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkBlobRegistry.cpp; sourceTree = "<group>"; };
-		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
-		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.NetworkProcess.sb.in; sourceTree = "<group>"; };
 		E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.NetworkProcess.sb; path = DerivedSources/WebKit2/com.apple.WebKit.NetworkProcess.sb; sourceTree = BUILT_PRODUCTS_DIR; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
@@ -7860,8 +7857,6 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				E179FD9B134D38060015B883 /* ArgumentCodersMac.h */,
-				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
 				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
 				9F54F88E16488E87007DF81A /* AuxiliaryProcessMac.mm */,
@@ -9060,7 +9055,6 @@
 				1AEFD2F711D1807B008219D3 /* ArgumentCoders.h in Headers */,
 				1AAF0C4A12B16334008E49E2 /* ArgumentCodersCF.h in Headers */,
 				A175C44A21AA3171000037D0 /* ArgumentCodersCocoa.h in Headers */,
-				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 				CE1A0BD21A48E6C60054EF74 /* AssertionServicesSPI.h in Headers */,
 				515E7728183DD6F60007203F /* AsyncRequest.h in Headers */,
 				BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */,

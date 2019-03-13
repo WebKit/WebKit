@@ -26,16 +26,23 @@
 #import "config.h"
 #import "WebCoreArgumentCoders.h"
 
+#import "ArgumentCodersCocoa.h"
+#import <WebCore/DictionaryPopupInfo.h>
+#import <WebCore/FontAttributes.h>
+
 #if ENABLE(APPLE_PAY)
 
-#import "ArgumentCodersCocoa.h"
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
+#endif
+
 namespace IPC {
 using namespace WebCore;
+
+#if ENABLE(APPLE_PAY)
 
 void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Payment& payment)
 {
@@ -408,5 +415,32 @@ Optional<WebCore::ShippingMethodUpdate> ArgumentCoder<WebCore::ShippingMethodUpd
     return {{ WTFMove(*newTotalAndLineItems) }};
 }
 
+#endif // ENABLE(APPLEPAY)
+
+void ArgumentCoder<WebCore::DictionaryPopupInfo>::encodePlatformData(Encoder& encoder, const WebCore::DictionaryPopupInfo& info)
+{
+    encoder << info.options << info.attributedString;
 }
-#endif
+
+bool ArgumentCoder<WebCore::DictionaryPopupInfo>::decodePlatformData(Decoder& decoder, WebCore::DictionaryPopupInfo& result)
+{
+    if (!IPC::decode(decoder, result.options))
+        return false;
+    if (!IPC::decode(decoder, result.attributedString))
+        return false;
+    return true;
+}
+
+void ArgumentCoder<WebCore::FontAttributes>::encodePlatformData(Encoder& encoder, const WebCore::FontAttributes& attributes)
+{
+    encoder << attributes.font;
+}
+
+Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformData(Decoder& decoder, WebCore::FontAttributes& attributes)
+{
+    if (!IPC::decode(decoder, attributes.font))
+        return WTF::nullopt;
+    return attributes;
+}
+
+} // namespace IPC

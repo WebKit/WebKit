@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ObjCObjectGraph.h"
 
-#import "ArgumentCodersMac.h"
+#import "ArgumentCodersCocoa.h"
 #import "Decoder.h"
 #import "Encoder.h"
 #import "UserData.h"

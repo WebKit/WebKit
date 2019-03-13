@@ -30,6 +30,8 @@
 #include "WebCoreArgumentCoders.h"
 
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/DictionaryPopupInfo.h>
+#include <WebCore/FontAttributes.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -222,6 +224,28 @@ void ArgumentCoder<Credential>::encodePlatformData(Encoder&, const Credential&)
 }
 
 bool ArgumentCoder<Credential>::decodePlatformData(Decoder&, Credential&)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttributes&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
+{
+    ASSERT_NOT_REACHED();
+    return WTF::nullopt;
+}
+
+void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, DictionaryPopupInfo&)
 {
     ASSERT_NOT_REACHED();
     return false;

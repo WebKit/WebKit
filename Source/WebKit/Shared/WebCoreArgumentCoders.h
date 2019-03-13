@@ -582,6 +582,8 @@ template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
 template<> struct ArgumentCoder<WebCore::DictionaryPopupInfo> {
     static void encode(Encoder&, const WebCore::DictionaryPopupInfo&);
     static bool decode(Decoder&, WebCore::DictionaryPopupInfo&);
+    static void encodePlatformData(Encoder&, const WebCore::DictionaryPopupInfo&);
+    static bool decodePlatformData(Decoder&, WebCore::DictionaryPopupInfo&);
 };
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -744,6 +746,8 @@ template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
 template<> struct ArgumentCoder<WebCore::FontAttributes> {
     static void encode(Encoder&, const WebCore::FontAttributes&);
     static Optional<WebCore::FontAttributes> decode(Decoder&);
+    static void encodePlatformData(Encoder&, const WebCore::FontAttributes&);
+    static Optional<WebCore::FontAttributes> decodePlatformData(Decoder&, WebCore::FontAttributes&);
 };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
