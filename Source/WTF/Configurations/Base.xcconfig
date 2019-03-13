@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2019 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -110,8 +110,6 @@ TARGET_MAC_OS_X_VERSION_MAJOR_15 = 101500;
 TARGET_MAC_OS_X_VERSION_MAJOR_16 = 101600;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
-
-JAVASCRIPTCORE_FRAMEWORKS_DIR = $(SYSTEM_LIBRARY_DIR)/Frameworks;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

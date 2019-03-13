@@ -1,3 +1,15 @@
+2019-03-13  Keith Rollin  <krollin@apple.com>
+
+        Add support for new StagedFrameworks layout
+        https://bugs.webkit.org/show_bug.cgi?id=195543
+
+        Reviewed by Alexey Proskuryakov.
+
+        Opportunistic cleanup: remove unused JAVASCRIPTCORE_FRAMEWORKS_DIR
+        variable.
+
+        * Configurations/Base.xcconfig:
+
 2019-03-13  Dominik Infuehr  <dinfuehr@igalia.com>
 
         String overflow when using StringBuilder in JSC::createError

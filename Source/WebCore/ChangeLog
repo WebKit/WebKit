@@ -1,3 +1,17 @@
+2019-03-13  Keith Rollin  <krollin@apple.com>
+
+        Add support for new StagedFrameworks layout
+        https://bugs.webkit.org/show_bug.cgi?id=195543
+
+        Reviewed by Alexey Proskuryakov.
+
+        When creating the WebKit layout for out-of-band Safari/WebKit updates,
+        use an optional path prefix when called for.
+
+        No new tests since there should be no observable behavior difference.
+
+        * Configurations/WebCore.xcconfig:
+
 2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix an edge case where HTMLFormElement::removeFormElement is invoked twice with the same element
