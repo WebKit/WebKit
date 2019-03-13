@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "SecurityOriginData.h"
+#include "RegistrableDomain.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
@@ -76,18 +76,18 @@ public:
     WEBCORE_EXPORT void claim(uint64_t requestIdentifier, ServiceWorkerIdentifier);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType);
 
-    static SWServerToContextConnection* connectionForOrigin(const SecurityOriginData&);
+    static SWServerToContextConnection* connectionForRegistrableDomain(const RegistrableDomain&);
 
-    const SecurityOriginData& securityOrigin() const { return m_securityOrigin; }
+    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
     virtual void connectionMayNoLongerBeNeeded() = 0;
 
 protected:
-    WEBCORE_EXPORT explicit SWServerToContextConnection(const SecurityOriginData&);
+    WEBCORE_EXPORT explicit SWServerToContextConnection(const RegistrableDomain&);
 
 private:
     SWServerToContextConnectionIdentifier m_identifier;
-    SecurityOriginData m_securityOrigin;
+    RegistrableDomain m_registrableDomain;
 };
 
 } // namespace WebCore

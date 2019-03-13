@@ -39,8 +39,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, const SecurityOriginData& securityOrigin, Ref<IPC::Connection>&& connection)
-    : SWServerToContextConnection(securityOrigin)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkProcess& networkProcess, const RegistrableDomain& registrableDomain, Ref<IPC::Connection>&& connection)
+    : SWServerToContextConnection(registrableDomain)
     , m_ipcConnection(WTFMove(connection))
     , m_networkProcess(networkProcess)
 {

@@ -287,8 +287,8 @@ public:
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if ENABLE(SERVICE_WORKER)
-    WebSWServerToContextConnection* serverToContextConnectionForOrigin(const WebCore::SecurityOriginData&);
-    void createServerToContextConnection(const WebCore::SecurityOriginData&, Optional<PAL::SessionID>);
+    WebSWServerToContextConnection* serverToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&);
+    void createServerToContextConnection(const WebCore::RegistrableDomain&, Optional<PAL::SessionID>);
     
     WebCore::SWServer& swServerForSession(PAL::SessionID);
     void registerSWServerConnection(WebSWServerConnection&);
@@ -370,7 +370,7 @@ private:
     // Message Handlers
     void didReceiveSyncNetworkProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
     void initializeNetworkProcess(NetworkProcessCreationParameters&&);
-    void createNetworkConnectionToWebProcess(bool isServiceWorkerProcess, WebCore::SecurityOriginData&&);
+    void createNetworkConnectionToWebProcess(bool isServiceWorkerProcess, WebCore::RegistrableDomain&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, uint64_t callbackID);
     void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, uint64_t callbackID);
@@ -442,7 +442,7 @@ private:
     
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
     WebSWOriginStore* existingSWOriginStoreForSession(PAL::SessionID) const;
-    bool needsServerToContextConnectionForOrigin(const WebCore::SecurityOriginData&) const;
+    bool needsServerToContextConnectionForRegistrableDomain(const WebCore::RegistrableDomain&) const;
 
     void addServiceWorkerSession(PAL::SessionID, String& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
@@ -511,7 +511,7 @@ private:
     Lock m_storageTaskMutex;
     
 #if ENABLE(SERVICE_WORKER)
-    HashMap<WebCore::SecurityOriginData, RefPtr<WebSWServerToContextConnection>> m_serverToContextConnections;
+    HashMap<WebCore::RegistrableDomain, RefPtr<WebSWServerToContextConnection>> m_serverToContextConnections;
     bool m_waitingForServerToContextProcessConnection { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };
     HashMap<PAL::SessionID, String> m_swDatabasePaths;

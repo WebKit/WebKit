@@ -1,5 +1,46 @@
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
+        Use a ServiceWorker process per registrable domain
+        https://bugs.webkit.org/show_bug.cgi?id=195649
+
+        Reviewed by Youenn Fablet.
+
+        Use a ServiceWorker process per registrable domain instead of one per security origin. This is
+        more in line with PSON and avoids launching too many processes.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::connectionToContextProcessWasClosed):
+        (WebKit::NetworkProcess::needsServerToContextConnectionForRegistrableDomain const):
+        (WebKit::NetworkProcess::serverToContextConnectionForRegistrableDomain):
+        (WebKit::NetworkProcess::createServerToContextConnection):
+        (WebKit::NetworkProcess::swContextConnectionMayNoLongerBeNeeded):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::WebSWServerToContextConnection):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::NetworkProcessProxy::establishWorkerContextConnectionToNetworkProcessForExplicitSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::create):
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        (WebKit::ServiceWorkerProcessProxy::getLaunchOptions):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::disconnectProcess):
+        (WebKit::WebProcessPool::updateProcessAssertions):
+        * UIProcess/WebProcessPool.h:
+
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION(PSON, r240660): Navigation over process boundary is flashy when using Cmd-left/right arrow to navigate
         https://bugs.webkit.org/show_bug.cgi?id=195684
         <rdar://problem/48294714>

@@ -72,7 +72,7 @@ public:
     void didReceiveFetchTaskMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
-    WebSWServerToContextConnection(NetworkProcess&, const WebCore::SecurityOriginData&, Ref<IPC::Connection>&&);
+    WebSWServerToContextConnection(NetworkProcess&, const WebCore::RegistrableDomain&, Ref<IPC::Connection>&&);
     ~WebSWServerToContextConnection();
 
     // IPC::MessageSender

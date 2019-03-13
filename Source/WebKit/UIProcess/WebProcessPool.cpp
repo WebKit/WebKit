@@ -666,11 +666,11 @@ void WebProcessPool::getNetworkProcessConnection(WebProcessProxy& webProcessProx
 }
 
 #if ENABLE(SERVICE_WORKER)
-void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, SecurityOriginData&& securityOrigin, Optional<PAL::SessionID> sessionID)
+void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkProcessProxy& proxy, RegistrableDomain&& registrableDomain, Optional<PAL::SessionID> sessionID)
 {
     ASSERT_UNUSED(proxy, &proxy == m_networkProcess.get());
 
-    if (m_serviceWorkerProcesses.contains(securityOrigin))
+    if (m_serviceWorkerProcesses.contains(registrableDomain))
         return;
 
     m_mayHaveRegisteredServiceWorkers.clear();
@@ -688,8 +688,8 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     if (m_serviceWorkerProcesses.isEmpty())
         sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { });
 
-    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, securityOrigin, *websiteDataStore);
-    m_serviceWorkerProcesses.add(WTFMove(securityOrigin), serviceWorkerProcessProxy.ptr());
+    auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, registrableDomain, *websiteDataStore);
+    m_serviceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcessProxy.ptr());
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy, *websiteDataStore);
@@ -1115,7 +1115,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 
 #if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerProcessProxy>(*process)) {
-        auto* removedProcess = m_serviceWorkerProcesses.take(downcast<ServiceWorkerProcessProxy>(*process).securityOrigin());
+        auto* removedProcess = m_serviceWorkerProcesses.take(downcast<ServiceWorkerProcessProxy>(*process).registrableDomain());
         ASSERT_UNUSED(removedProcess, removedProcess == process);
         updateProcessAssertions();
     }
@@ -2071,9 +2071,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_foregroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& securityOrigin = serviceWorkerProcess->securityOrigin();
-                if (!m_foregroundTokensForServiceWorkerProcesses.contains(securityOrigin))
-                    m_foregroundTokensForServiceWorkerProcesses.add(securityOrigin, serviceWorkerProcess->throttler().foregroundActivityToken());
+                auto& registrableDomain = serviceWorkerProcess->registrableDomain();
+                if (!m_foregroundTokensForServiceWorkerProcesses.contains(registrableDomain))
+                    m_foregroundTokensForServiceWorkerProcesses.add(registrableDomain, serviceWorkerProcess->throttler().foregroundActivityToken());
             }
             m_backgroundTokensForServiceWorkerProcesses.clear();
             return;
@@ -2081,9 +2081,9 @@ void WebProcessPool::updateProcessAssertions()
         if (!m_serviceWorkerProcesses.isEmpty() && m_backgroundWebProcessCounter.value()) {
             // FIXME: We can do better than this once we have process per origin.
             for (auto* serviceWorkerProcess : m_serviceWorkerProcesses.values()) {
-                auto& securityOrigin = serviceWorkerProcess->securityOrigin();
-                if (!m_backgroundTokensForServiceWorkerProcesses.contains(securityOrigin))
-                    m_backgroundTokensForServiceWorkerProcesses.add(securityOrigin, serviceWorkerProcess->throttler().backgroundActivityToken());
+                auto& registrableDomain = serviceWorkerProcess->registrableDomain();
+                if (!m_backgroundTokensForServiceWorkerProcesses.contains(registrableDomain))
+                    m_backgroundTokensForServiceWorkerProcesses.add(registrableDomain, serviceWorkerProcess->throttler().backgroundActivityToken());
             }
             m_foregroundTokensForServiceWorkerProcesses.clear();
             return;

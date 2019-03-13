@@ -39,29 +39,29 @@ static SWServerToContextConnectionIdentifier generateServerToContextConnectionId
     return SWServerToContextConnectionIdentifier::generate();
 }
 
-static HashMap<SecurityOriginData, SWServerToContextConnection*>& allConnectionsByOrigin()
+static HashMap<RegistrableDomain, SWServerToContextConnection*>& allConnectionsByRegistrableDomain()
 {
-    static NeverDestroyed<HashMap<SecurityOriginData, SWServerToContextConnection*>> connectionsByOrigin;
+    static NeverDestroyed<HashMap<RegistrableDomain, SWServerToContextConnection*>> connectionsByOrigin;
     return connectionsByOrigin;
 }
 
-SWServerToContextConnection::SWServerToContextConnection(const SecurityOriginData& securityOrigin)
+SWServerToContextConnection::SWServerToContextConnection(const RegistrableDomain& registrableDomain)
     : m_identifier(generateServerToContextConnectionIdentifier())
-    , m_securityOrigin(securityOrigin)
+    , m_registrableDomain(registrableDomain)
 {
-    auto result = allConnectionsByOrigin().add(m_securityOrigin, this);
+    auto result = allConnectionsByRegistrableDomain().add(m_registrableDomain, this);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 SWServerToContextConnection::~SWServerToContextConnection()
 {
-    auto result = allConnectionsByOrigin().remove(m_securityOrigin);
+    auto result = allConnectionsByRegistrableDomain().remove(m_registrableDomain);
     ASSERT_UNUSED(result, result);
 }
 
-SWServerToContextConnection* SWServerToContextConnection::connectionForOrigin(const SecurityOriginData& securityOrigin)
+SWServerToContextConnection* SWServerToContextConnection::connectionForRegistrableDomain(const RegistrableDomain& registrableDomain)
 {
-    return allConnectionsByOrigin().get(securityOrigin);
+    return allConnectionsByRegistrableDomain().get(registrableDomain);
 }
 
 void SWServerToContextConnection::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& message)

@@ -180,7 +180,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerRegistrationIdentifier servi
         }
 
         if (!worker->contextConnection())
-            m_networkProcess->createServerToContextConnection(worker->securityOrigin(), server().sessionID());
+            m_networkProcess->createServerToContextConnection(worker->registrableDomain(), server().sessionID());
 
         server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](auto* contextConnection) {
             if (!weakThis)
@@ -223,7 +223,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
         return;
 
     if (!destinationWorker->contextConnection())
-        m_networkProcess->createServerToContextConnection(destinationWorker->securityOrigin(), server().sessionID());
+        m_networkProcess->createServerToContextConnection(destinationWorker->registrableDomain(), server().sessionID());
 
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
@@ -234,9 +234,9 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
 
 void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
-    auto securityOrigin = SecurityOriginData::fromURL(jobData.scriptURL);
-    if (!m_networkProcess->serverToContextConnectionForOrigin(securityOrigin))
-        m_networkProcess->createServerToContextConnection(securityOrigin, server().sessionID());
+    RegistrableDomain registrableDomain(jobData.scriptURL);
+    if (!m_networkProcess->serverToContextConnectionForRegistrableDomain(registrableDomain))
+        m_networkProcess->createServerToContextConnection(registrableDomain, server().sessionID());
 
     SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());

@@ -144,7 +144,7 @@ public:
     String serviceWorkerClientUserAgent(const ClientOrigin&) const;
     WEBCORE_EXPORT SWServerWorker* activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier);
 
-    WEBCORE_EXPORT void markAllWorkersForOriginAsTerminated(const SecurityOriginData&);
+    WEBCORE_EXPORT void markAllWorkersForRegistrableDomainAsTerminated(const RegistrableDomain&);
     
     WEBCORE_EXPORT void addConnection(std::unique_ptr<Connection>&&);
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
@@ -179,7 +179,7 @@ public:
     WEBCORE_EXPORT void getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
-    WEBCORE_EXPORT bool needsServerToContextConnectionForOrigin(const SecurityOriginData&) const;
+    WEBCORE_EXPORT bool needsServerToContextConnectionForRegistrableDomain(const RegistrableDomain&) const;
 
     void disableServiceWorkerProcessTerminationDelay() { m_shouldDisableServiceWorkerProcessTerminationDelay = true; }
 
@@ -217,7 +217,7 @@ private:
 
     HashMap<ServiceWorkerIdentifier, Ref<SWServerWorker>> m_runningOrTerminatingWorkers;
 
-    HashMap<SecurityOriginData, HashSet<ServiceWorkerClientIdentifier>> m_clientsBySecurityOrigin;
+    HashMap<RegistrableDomain, HashSet<ServiceWorkerClientIdentifier>> m_clientsByRegistrableDomain;
     struct Clients {
         Vector<ServiceWorkerClientIdentifier> identifiers;
         std::unique_ptr<Timer> terminateServiceWorkersTimer;
@@ -229,8 +229,8 @@ private:
 
     UniqueRef<SWOriginStore> m_originStore;
     std::unique_ptr<RegistrationStore> m_registrationStore;
-    HashMap<SecurityOriginData, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
-    HashMap<SecurityOriginData, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
+    HashMap<RegistrableDomain, Vector<ServiceWorkerContextData>> m_pendingContextDatas;
+    HashMap<RegistrableDomain, HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
     bool m_shouldDisableServiceWorkerProcessTerminationDelay { false };

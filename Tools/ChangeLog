@@ -1,5 +1,16 @@
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
+        Use a ServiceWorker process per registrable domain
+        https://bugs.webkit.org/show_bug.cgi?id=195649
+
+        Reviewed by Youenn Fablet.
+
+        Update API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
+2019-03-13  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION(PSON, r240660): Navigation over process boundary is flashy when using Cmd-left/right arrow to navigate
         https://bugs.webkit.org/show_bug.cgi?id=195684
         <rdar://problem/48294714>

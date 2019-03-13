@@ -37,6 +37,7 @@
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
 #include <WebCore/ScreenProperties.h>
 #endif
@@ -500,7 +501,7 @@ private:
     enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, CachedWebContent, WebContent };
     ProcessType m_processType { ProcessType::WebContent };
     String m_uiProcessName;
-    String m_securityOrigin;
+    WebCore::RegistrableDomain m_registrableDomain;
 #endif
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;

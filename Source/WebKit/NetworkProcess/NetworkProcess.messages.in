@@ -25,7 +25,7 @@ messages -> NetworkProcess LegacyReceiver {
     InitializeNetworkProcess(struct WebKit::NetworkProcessCreationParameters processCreationParameters)
 
     # Creates a connection for communication with a WebProcess
-    CreateNetworkConnectionToWebProcess(bool isServiceWorkerProcess, struct WebCore::SecurityOriginData origin)
+    CreateNetworkConnectionToWebProcess(bool isServiceWorkerProcess, WebCore::RegistrableDomain registrableDomain)
 
 #if USE(SOUP)
     SetIgnoreTLSErrors(bool ignoreTLSErrors)

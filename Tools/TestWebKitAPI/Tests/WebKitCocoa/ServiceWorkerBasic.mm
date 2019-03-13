@@ -1450,7 +1450,7 @@ void waitUntilServiceWorkerProcessCount(WKProcessPool *processPool, unsigned pro
     } while (true);
 }
 
-TEST(ServiceWorkers, ProcessPerOrigin)
+TEST(ServiceWorkers, ProcessPerSite)
 {
     ASSERT(mainBytes);
     ASSERT(scriptBytes);
@@ -1472,6 +1472,8 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     RetainPtr<SWSchemes> handler1 = adoptNS([[SWSchemes alloc] init]);
     handler1->resources.set("sw1://host/main.html", ResourceInfo { @"text/html", mainBytes });
     handler1->resources.set("sw1://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    handler1->resources.set("sw1://host2/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler1->resources.set("sw1://host2/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
     [configuration setURLSchemeHandler:handler1.get() forURLScheme:@"sw1"];
 
     RetainPtr<SWSchemes> handler2 = adoptNS([[SWSchemes alloc] init]);
@@ -1512,10 +1514,19 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     TestWebKitAPI::Util::run(&done);
     done = false;
 
+    EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
+
+    RetainPtr<WKWebView> webView4 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSURLRequest *request3 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw1://host2/main.html"]];
+    [webView4 loadRequest:request3];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
     EXPECT_EQ(2U, processPool._serviceWorkerProcessCount);
 
     NSURLRequest *aboutBlankRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
-    [webView3 loadRequest:aboutBlankRequest];
+    [webView4 loadRequest:aboutBlankRequest];
 
     waitUntilServiceWorkerProcessCount(processPool, 1);
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
@@ -1525,6 +1536,7 @@ TEST(ServiceWorkers, ProcessPerOrigin)
     EXPECT_EQ(1U, processPool._serviceWorkerProcessCount);
 
     [webView1 loadRequest:aboutBlankRequest];
+    [webView3 loadRequest:aboutBlankRequest];
     waitUntilServiceWorkerProcessCount(processPool, 0);
     EXPECT_EQ(0U, processPool._serviceWorkerProcessCount);
 }

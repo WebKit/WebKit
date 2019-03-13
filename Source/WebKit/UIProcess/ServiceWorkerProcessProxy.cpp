@@ -43,16 +43,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)
+Ref<ServiceWorkerProcessProxy> ServiceWorkerProcessProxy::create(WebProcessPool& pool, const RegistrableDomain& registrableDomain, WebsiteDataStore& store)
 {
-    auto proxy = adoptRef(*new ServiceWorkerProcessProxy { pool, securityOrigin, store });
+    auto proxy = adoptRef(*new ServiceWorkerProcessProxy { pool, registrableDomain, store });
     proxy->connect();
     return proxy;
 }
 
-ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const SecurityOriginData& securityOrigin, WebsiteDataStore& store)
+ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, const RegistrableDomain& registrableDomain, WebsiteDataStore& store)
     : WebProcessProxy { pool, store, IsPrewarmed::No }
-    , m_securityOrigin(securityOrigin)
+    , m_registrableDomain(registrableDomain)
     , m_serviceWorkerPageID(generatePageID())
 {
 }
@@ -72,7 +72,7 @@ void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions&
     WebProcessProxy::getLaunchOptions(launchOptions);
 
     launchOptions.extraInitializationData.add("service-worker-process"_s, "1"_s);
-    launchOptions.extraInitializationData.add("security-origin"_s, securityOrigin().toString());
+    launchOptions.extraInitializationData.add("registrable-domain"_s, registrableDomain().string());
 }
 
 void ServiceWorkerProcessProxy::start(const WebPreferencesStore& store, Optional<PAL::SessionID> initialSessionID)

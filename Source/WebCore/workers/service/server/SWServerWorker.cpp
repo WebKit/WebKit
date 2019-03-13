@@ -52,6 +52,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_script(script)
     , m_contentSecurityPolicy(contentSecurityPolicy)
     , m_referrerPolicy(WTFMove(referrerPolicy))
+    , m_registrableDomain(m_data.scriptURL)
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
 {
     m_data.scriptURL.removeFragmentIdentifier();
@@ -92,14 +93,9 @@ const ClientOrigin& SWServerWorker::origin() const
     return *m_origin;
 }
 
-const SecurityOriginData& SWServerWorker::securityOrigin() const
-{
-    return origin().clientOrigin;
-}
-
 SWServerToContextConnection* SWServerWorker::contextConnection()
 {
-    return SWServerToContextConnection::connectionForOrigin(securityOrigin());
+    return SWServerToContextConnection::connectionForRegistrableDomain(registrableDomain());
 }
 
 void SWServerWorker::scriptContextFailedToStart(const Optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, const String& message)
