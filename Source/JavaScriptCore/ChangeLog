@@ -1,3 +1,50 @@
+2019-03-13  Babak Shafiei  <bshafiei@apple.com>
+
+        Cherry-pick r241615. rdar://problem/48839366
+
+    SamplingProfiler::stackTracesAsJSON() should escape strings.
+    https://bugs.webkit.org/show_bug.cgi?id=194649
+    <rdar://problem/48072386>
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/sampling-profiler-stack-trace-with-double-quote-in-function-name.js: Added.
+    * stress/type-profiler-with-double-quote-in-constructor-name.js: Added.
+    * stress/type-profiler-with-double-quote-in-field-name.js: Added.
+    * stress/type-profiler-with-double-quote-in-optional-field-name.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Ditto for TypeSet::toJSONString() and TypeSet::toJSONString().
+    
+    * runtime/SamplingProfiler.cpp:
+    (JSC::SamplingProfiler::stackTracesAsJSON):
+    * runtime/TypeSet.cpp:
+    (JSC::TypeSet::toJSONString const):
+    (JSC::StructureShape::toJSONString const):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241615 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Mark Lam  <mark.lam@apple.com>
+
+            SamplingProfiler::stackTracesAsJSON() should escape strings.
+            https://bugs.webkit.org/show_bug.cgi?id=194649
+            <rdar://problem/48072386>
+
+            Reviewed by Saam Barati.
+
+            Ditto for TypeSet::toJSONString() and TypeSet::toJSONString().
+
+            * runtime/SamplingProfiler.cpp:
+            (JSC::SamplingProfiler::stackTracesAsJSON):
+            * runtime/TypeSet.cpp:
+            (JSC::TypeSet::toJSONString const):
+            (JSC::StructureShape::toJSONString const):
+
 2019-02-28  Andy Estes  <aestes@apple.com>
 
         [watchOS] Disable Parental Controls content filtering
