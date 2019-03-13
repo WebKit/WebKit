@@ -1,5 +1,15 @@
 2019-03-13  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Remove unused patch view
+        https://bugs.webkit.org/show_bug.cgi?id=195669
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/urls.py:
+        * BuildSlaveSupport/ews-app/ews/views/patch.py: Removed.
+
+2019-03-13  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Use Buildbot result code variables
         https://bugs.webkit.org/show_bug.cgi?id=195668
 
