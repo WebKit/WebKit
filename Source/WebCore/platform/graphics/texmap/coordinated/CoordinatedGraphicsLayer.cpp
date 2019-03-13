@@ -978,7 +978,7 @@ void CoordinatedGraphicsLayer::setCoordinator(CoordinatedGraphicsLayerClient* co
 
 void CoordinatedGraphicsLayer::setCoordinatorIncludingSubLayersIfNeeded(CoordinatedGraphicsLayerClient* coordinator)
 {
-    if (m_coordinator == coordinator)
+    if (!coordinator || m_coordinator == coordinator)
         return;
 
     // If the coordinators are different it means that we are attaching a layer that was created by a different
