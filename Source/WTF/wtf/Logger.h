@@ -223,6 +223,8 @@ public:
     }
 
 private:
+    friend class AggregateLogger;
+
     Logger(const void* owner)
         : m_owner { owner }
     {
@@ -258,6 +260,9 @@ private:
 
 template<> struct LogArgument<Logger::LogSiteIdentifier> {
     static String toString(const Logger::LogSiteIdentifier& value) { return value.toString(); }
+};
+template<> struct LogArgument<const void*> {
+    WTF_EXPORT static String toString(const void*);
 };
 
 } // namespace WTF

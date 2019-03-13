@@ -62,7 +62,11 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
-    LOG(Media, "PlatformMediaSessionManager::scheduleUpdateSessionState() - types: Video(%d), Audio(%d), WebAudio(%d)", count(PlatformMediaSession::Video), count(PlatformMediaSession::Audio), count(PlatformMediaSession::WebAudio));
+    ALWAYS_LOG(LOGIDENTIFIER, "types: "
+        "Video(", count(PlatformMediaSession::Video), "), "
+        "Audio(", count(PlatformMediaSession::Audio), "), "
+        "VideoAudio(", count(PlatformMediaSession::VideoAudio), "), "
+        "WebAudio(", count(PlatformMediaSession::WebAudio), ")");
 
     if (has(PlatformMediaSession::WebAudio))
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
@@ -136,7 +140,6 @@ bool MediaSessionManagerCocoa::sessionWillBeginPlayback(PlatformMediaSession& se
     if (!PlatformMediaSessionManager::sessionWillBeginPlayback(session))
         return false;
     
-    LOG(Media, "MediaSessionManagerCocoa::sessionWillBeginPlayback");
     scheduleUpdateNowPlayingInfo();
     return true;
 }
@@ -149,20 +152,18 @@ void MediaSessionManagerCocoa::sessionDidEndRemoteScrubbing(const PlatformMediaS
 void MediaSessionManagerCocoa::removeSession(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::removeSession(session);
-    LOG(Media, "MediaSessionManagerCocoa::removeSession");
     scheduleUpdateNowPlayingInfo();
 }
 
 void MediaSessionManagerCocoa::sessionWillEndPlayback(PlatformMediaSession& session)
 {
     PlatformMediaSessionManager::sessionWillEndPlayback(session);
-    LOG(Media, "MediaSessionManagerCocoa::sessionWillEndPlayback");
     updateNowPlayingInfo();
 }
 
-void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession&)
+void MediaSessionManagerCocoa::clientCharacteristicsChanged(PlatformMediaSession& session)
 {
-    LOG(Media, "MediaSessionManagerCocoa::clientCharacteristicsChanged");
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     scheduleUpdateNowPlayingInfo();
 }
 
@@ -190,13 +191,13 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     const PlatformMediaSession* currentSession = this->nowPlayingEligibleSession();
 
-    LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - currentSession = %p", currentSession);
+    ALWAYS_LOG(LOGIDENTIFIER, "currentSession: ", currentSession ? currentSession->logIdentifier() : nullptr);
 
     if (!currentSession) {
         if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility())
             MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
 
-        LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - clearing now playing info");
+        ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
 
         MRMediaRemoteSetCanBeNowPlayingApplication(false);
         m_registeredAsNowPlayingApplication = false;
@@ -212,7 +213,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
             UNUSED_PARAM(error);
 #else
             if (error)
-                LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error %ud", error);
+                ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(stopped) failed with error ", error);
 #endif
         });
 
@@ -255,8 +256,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
         m_lastUpdatedNowPlayingElapsedTime = currentTime;
     }
 
-    LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - title = \"%s\", rate = %f, duration = %f, now = %f",
-        title.utf8().data(), rate, duration, currentTime);
+    ALWAYS_LOG(LOGIDENTIFIER, "title = \"", title, "\", rate = ", rate, ", duration = ", duration, ", now = ", currentTime);
 
     String parentApplication = currentSession->sourceApplicationIdentifier();
     if (canLoad_MediaRemote_MRMediaRemoteSetParentApplication() && !parentApplication.isEmpty())
@@ -268,7 +268,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 #if LOG_DISABLED
         UNUSED_PARAM(error);
 #else
-        LOG(Media, "MediaSessionManagerCocoa::updateNowPlayingInfo - MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error %ud", error);
+        ALWAYS_LOG(LOGIDENTIFIER, "MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(playing) failed with error ", error);
 #endif
     });
     MRMediaRemoteSetNowPlayingInfo(info.get());

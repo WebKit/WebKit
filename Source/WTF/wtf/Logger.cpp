@@ -27,6 +27,7 @@
 #include "Logger.h"
 
 #include <wtf/HexNumber.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -42,6 +43,15 @@ String Logger::LogSiteIdentifier::toString() const
     builder.append('(');
     appendUnsignedAsHex(objectPtr, builder);
     builder.appendLiteral(") ");
+    return builder.toString();
+}
+
+String LogArgument<const void*>::toString(const void* argument)
+{
+    StringBuilder builder;
+    builder.append('(');
+    appendUnsignedAsHex(reinterpret_cast<uintptr_t>(argument), builder);
+    builder.append(')');
     return builder.toString();
 }
 

@@ -63,6 +63,10 @@ protected:
     PlatformMediaSession* nowPlayingEligibleSession();
 
 private:
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "MediaSessionManagerCocoa"; }
+#endif
+
     bool m_nowPlayingActive { false };
     bool m_registeredAsNowPlayingApplication { false };
 

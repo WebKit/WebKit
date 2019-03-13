@@ -59,6 +59,9 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 
 PlatformMediaSessionManager::PlatformMediaSessionManager()
     : m_systemSleepListener(PAL::SystemSleepListener::create(*this))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(AggregateLogger::create(this))
+#endif
 {
     resetRestrictions();
 }
@@ -110,7 +113,7 @@ int PlatformMediaSessionManager::count(PlatformMediaSession::MediaType type) con
 
 void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::InterruptionType type)
 {
-    LOG(Media, "PlatformMediaSessionManager::beginInterruption");
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_interrupted = true;
     forEachSession([type] (PlatformMediaSession& session, size_t) {
@@ -121,7 +124,7 @@ void PlatformMediaSessionManager::beginInterruption(PlatformMediaSession::Interr
 
 void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInterruptionFlags flags)
 {
-    LOG(Media, "PlatformMediaSessionManager::endInterruption");
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     m_interrupted = false;
     forEachSession([flags] (PlatformMediaSession& session, size_t) {
@@ -131,7 +134,7 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
-    LOG(Media, "PlatformMediaSessionManager::addSession - %p", &session);
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     
     m_sessions.append(&session);
     if (m_interrupted)
@@ -143,12 +146,16 @@ void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
     if (!m_audioHardwareListener)
         m_audioHardwareListener = AudioHardwareListener::create(*this);
 
+#if !RELEASE_LOG_DISABLED
+    m_logger->addLogger(session.logger());
+#endif
+
     updateSessionState();
 }
 
 void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
 {
-    LOG(Media, "PlatformMediaSessionManager::removeSession - %p", &session);
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     
     size_t index = m_sessions.find(&session);
     if (index == notFound)
@@ -169,6 +176,10 @@ void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
         }
 #endif
     }
+
+#if !RELEASE_LOG_DISABLED
+    m_logger->removeLogger(session.logger());
+#endif
 
     updateSessionState();
 }
@@ -193,7 +204,7 @@ PlatformMediaSessionManager::SessionRestrictions PlatformMediaSessionManager::re
 
 bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
-    LOG(Media, "PlatformMediaSessionManager::sessionWillBeginPlayback - %p", &session);
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     
     setCurrentSession(session);
 
@@ -226,7 +237,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     
 void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session)
 {
-    LOG(Media, "PlatformMediaSessionManager::sessionWillEndPlayback - %p", &session);
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     
     if (m_sessions.size() < 2)
         return;
@@ -253,7 +264,7 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
     m_sessions.remove(pausingSessionIndex);
     m_sessions.insert(lastPlayingSessionIndex, &session);
     
-    LOG(Media, "PlatformMediaSessionManager::sessionWillEndPlayback - session moved from index %zu to %zu", pausingSessionIndex, lastPlayingSessionIndex);
+    ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", pausingSessionIndex, " to ", lastPlayingSessionIndex);
 }
 
 void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
@@ -263,7 +274,7 @@ void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)
 {
-    LOG(Media, "PlatformMediaSessionManager::setCurrentSession - %p", &session);
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
     
     if (m_sessions.size() < 2)
         return;
@@ -278,7 +289,7 @@ void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& sessio
     if (m_remoteCommandListener)
         m_remoteCommandListener->updateSupportedCommands();
     
-    LOG(Media, "PlatformMediaSessionManager::setCurrentSession - session moved from index %zu to 0", index);
+    ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", index, " to 0");
 }
     
 PlatformMediaSession* PlatformMediaSessionManager::currentSession() const
@@ -301,7 +312,7 @@ Vector<PlatformMediaSession*> PlatformMediaSessionManager::currentSessionsMatchi
 
 void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationWillBecomeInactive");
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
@@ -311,7 +322,7 @@ void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 
 void PlatformMediaSessionManager::applicationDidBecomeActive() const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationDidBecomeActive");
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     forEachSession([&] (PlatformMediaSession& session, size_t) {
         if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
@@ -321,7 +332,7 @@ void PlatformMediaSessionManager::applicationDidBecomeActive() const
 
 void PlatformMediaSessionManager::applicationDidEnterBackground(bool suspendedUnderLock) const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterBackground - suspendedUnderLock(%d)", suspendedUnderLock);
+    ALWAYS_LOG(LOGIDENTIFIER, "suspendedUnderLock: ", suspendedUnderLock);
 
     if (m_isApplicationInBackground)
         return;
@@ -338,7 +349,7 @@ void PlatformMediaSessionManager::applicationDidEnterBackground(bool suspendedUn
 
 void PlatformMediaSessionManager::applicationWillEnterForeground(bool suspendedUnderLock) const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationWillEnterForeground - suspendedUnderLock(%d)", suspendedUnderLock);
+    ALWAYS_LOG(LOGIDENTIFIER, "suspendedUnderLock: ", suspendedUnderLock);
 
     if (!m_isApplicationInBackground)
         return;
@@ -517,5 +528,12 @@ void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 }
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& PlatformMediaSessionManager::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 } // namespace WebCore

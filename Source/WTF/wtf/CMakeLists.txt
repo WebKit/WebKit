@@ -1,5 +1,6 @@
 set(WTF_PUBLIC_HEADERS
     ASCIICType.h
+    AggregateLogger.h
     Algorithms.h
     Assertions.h
     Atomics.h

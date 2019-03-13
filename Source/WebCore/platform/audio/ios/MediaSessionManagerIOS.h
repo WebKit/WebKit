@@ -58,6 +58,10 @@ private:
     void configureWireLessTargetMonitoring() override;
     void providePresentingApplicationPIDIfNecessary() final;
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "MediaSessionManageriOS"; }
+#endif
+
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 #if HAVE(CELESTIAL)
     bool m_havePresentedApplicationPID { false };

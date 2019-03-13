@@ -31,6 +31,7 @@
 #include "RemoteCommandListener.h"
 #include "Timer.h"
 #include <pal/system/SystemSleepListener.h>
+#include <wtf/AggregateLogger.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,7 +41,14 @@ class HTMLMediaElement;
 class PlatformMediaSession;
 class RemoteCommandListener;
 
-class PlatformMediaSessionManager : private RemoteCommandListenerClient, private PAL::SystemSleepListener::Client, private AudioHardwareListener::Client {
+class PlatformMediaSessionManager
+    : private RemoteCommandListenerClient
+    , private PAL::SystemSleepListener::Client
+    , private AudioHardwareListener::Client
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static PlatformMediaSessionManager* sharedManagerIfExists();
@@ -133,6 +141,13 @@ protected:
 
     AudioHardwareListener* audioHardwareListener() { return m_audioHardwareListener.get(); }
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger; }
+    const void* logIdentifier() const final { return nullptr; }
+    const char* logClassName() const override { return "PlatformMediaSessionManager"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 private:
     friend class Internals;
 
@@ -171,6 +186,10 @@ private:
 
 #if USE(AUDIO_SESSION)
     bool m_becameActive { false };
+#endif
+
+#if !RELEASE_LOG_DISABLED
+    Ref<AggregateLogger> m_logger;
 #endif
 };
 
