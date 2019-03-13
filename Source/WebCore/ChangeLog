@@ -1,3 +1,18 @@
+2019-03-12  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Reset state when touchStart does not turn into click.
+        https://bugs.webkit.org/show_bug.cgi?id=195603
+        <rdar://problem/48796582>
+
+        Reviewed by Simon Fraser.
+
+        Add reset() function to assert and reset the current state.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::willNotProceedWithClick):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+
 2019-03-12  Timothy Hatcher  <timothy@apple.com>
 
         Expose document attributes and body background color through HTMLConverter.

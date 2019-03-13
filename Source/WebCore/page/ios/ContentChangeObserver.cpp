@@ -100,7 +100,7 @@ void ContentChangeObserver::didRemoveDOMTimer(const DOMTimer& timer)
 void ContentChangeObserver::willNotProceedWithClick()
 {
     LOG(ContentObservation, "willNotProceedWithClick: click will not happen.");
-    setIsBetweenTouchEndAndMouseMoved(false);
+    adjustObservedState(Event::WillNotProceedWithClick);
     // FIXME: Add support for preventDefault().
 }
 
@@ -236,6 +236,16 @@ bool ContentChangeObserver::hasDeterminateState() const
 
 void ContentChangeObserver::adjustObservedState(Event event)
 {
+    auto reset = [&] {
+        setHasNoChangeState();
+        clearObservedDOMTimers();
+        setIsBetweenTouchEndAndMouseMoved(false);
+        ASSERT(!m_isObservingDOMTimerScheduling);
+        ASSERT(!m_isWaitingForStyleRecalc);
+        ASSERT(!m_isInObservedStyleRecalc);
+        ASSERT(!m_observedDomTimerIsBeingExecuted);
+    };
+
     auto adjustStateAndNotifyContentChangeIfNeeded = [&] {
         // Demote to "no change" when there's no pending activity anymore.
         if (observedContentChange() == WKContentIndeterminateChange && !hasPendingActivity())
@@ -258,13 +268,15 @@ void ContentChangeObserver::adjustObservedState(Event event)
 
     switch (event) {
     case Event::StartedTouchStartEventDispatching:
-        setHasNoChangeState();
-        clearObservedDOMTimers();
+        reset();
         setShouldObserveDOMTimerScheduling(true);
         break;
     case Event::EndedTouchStartEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
         setIsBetweenTouchEndAndMouseMoved(true);
+        break;
+    case Event::WillNotProceedWithClick:
+        reset();
         break;
     case Event::StartedMouseMovedEventDispatching:
         ASSERT(!m_document.hasPendingStyleRecalc());

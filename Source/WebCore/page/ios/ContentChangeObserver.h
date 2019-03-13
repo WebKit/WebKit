@@ -146,6 +146,7 @@ private:
     enum class Event {
         StartedTouchStartEventDispatching,
         EndedTouchStartEventDispatching,
+        WillNotProceedWithClick,
         StartedMouseMovedEventDispatching,
         EndedMouseMovedEventDispatching,
         InstalledDOMTimer,
