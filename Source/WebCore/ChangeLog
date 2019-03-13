@@ -1,5 +1,35 @@
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
+        Cherry-pick r241632. rdar://problem/48839379
+
+    Sample domainsVisited diagnostic logging
+    https://bugs.webkit.org/show_bug.cgi?id=194657
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Sample domainsVisited diagnostic logging, we are getting a lot of data from
+    this key and this is hurting our other keys.
+    
+    * page/Page.cpp:
+    (WebCore::Page::logNavigation):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@241632 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-15  Chris Dumez  <cdumez@apple.com>
+
+            Sample domainsVisited diagnostic logging
+            https://bugs.webkit.org/show_bug.cgi?id=194657
+
+            Reviewed by Ryosuke Niwa.
+
+            Sample domainsVisited diagnostic logging, we are getting a lot of data from
+            this key and this is hurting our other keys.
+
+            * page/Page.cpp:
+            (WebCore::Page::logNavigation):
+
+2019-03-13  Babak Shafiei  <bshafiei@apple.com>
+
         Cherry-pick r241608. rdar://problem/48839277
 
     [WebVTT] Inline WebVTT styles should start with '::cue'
