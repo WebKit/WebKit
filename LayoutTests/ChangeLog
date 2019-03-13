@@ -1,3 +1,16 @@
+2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix an edge case where HTMLFormElement::removeFormElement is invoked twice with the same element
+        https://bugs.webkit.org/show_bug.cgi?id=195663
+        <rdar://problem/48576391>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a layout test to exercise the scenario described in the WebCore ChangeLog.
+
+        * fast/forms/remove-associated-element-after-gc-expected.txt: Added.
+        * fast/forms/remove-associated-element-after-gc.html: Added.
+
 2019-03-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r240946): Web Inspector: Styles: removing selected property doesn't update overridden status
