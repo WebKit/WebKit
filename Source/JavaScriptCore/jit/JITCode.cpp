@@ -32,8 +32,9 @@
 
 namespace JSC {
 
-JITCode::JITCode(JITType jitType)
+JITCode::JITCode(JITType jitType, ShareAttribute shareAttribute)
     : m_jitType(jitType)
+    , m_shareAttribute(shareAttribute)
 {
 }
 
@@ -95,8 +96,8 @@ JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
 {
 }
 
-JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef<JSEntryPtrTag> ref, JITType jitType)
-    : JITCode(jitType)
+JITCodeWithCodeRef::JITCodeWithCodeRef(CodeRef<JSEntryPtrTag> ref, JITType jitType, JITCode::ShareAttribute shareAttribute)
+    : JITCode(jitType, shareAttribute)
     , m_ref(ref)
 {
 }
@@ -151,16 +152,16 @@ DirectJITCode::DirectJITCode(JITType jitType)
 {
 }
 
-DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck, JITType jitType)
-    : JITCodeWithCodeRef(ref, jitType)
+DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck, JITType jitType, JITCode::ShareAttribute shareAttribute)
+    : JITCodeWithCodeRef(ref, jitType, shareAttribute)
     , m_withArityCheck(withArityCheck)
 {
     ASSERT(m_ref);
     ASSERT(m_withArityCheck);
 }
 
-DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck, JITType jitType, Intrinsic intrinsic)
-    : JITCodeWithCodeRef(ref, jitType)
+DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, JITCode::CodePtr<JSEntryPtrTag> withArityCheck, JITType jitType, Intrinsic intrinsic, JITCode::ShareAttribute shareAttribute)
+    : JITCodeWithCodeRef(ref, jitType, shareAttribute)
     , m_withArityCheck(withArityCheck)
 {
     m_intrinsic = intrinsic;
@@ -200,8 +201,8 @@ NativeJITCode::NativeJITCode(JITType jitType)
 {
 }
 
-NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType, Intrinsic intrinsic)
-    : JITCodeWithCodeRef(ref, jitType)
+NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType, Intrinsic intrinsic, JITCode::ShareAttribute shareAttribute)
+    : JITCodeWithCodeRef(ref, jitType, shareAttribute)
 {
     m_intrinsic = intrinsic;
 }

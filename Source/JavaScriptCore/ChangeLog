@@ -1,3 +1,59 @@
+2019-03-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] CodeBlock::visitChildren is reporting extra memory even when its JITCode is singleton
+        https://bugs.webkit.org/show_bug.cgi?id=195638
+
+        Reviewed by Mark Lam.
+
+        This patch introduces a m_isShared flag to track whether the
+        JITCode is shared between many CodeBlocks. This flag is used in
+        `CodeBlock::setJITCode` and `CodeBlock::visitChildren` to avoid
+        reporting duplicated extra memory for singleton JITCodes.
+        With those changes, we now stop counting singleton LLIntEntrypoints
+        as extra memory, since they are declared as static variables. This
+        change can potentially avoid unecessary GC pressure, because
+        extra memory is used by Heap::updateAllocationLimits() to update Heap
+        limits.
+        Even though it is hard to show performance difference for this change
+        (see results below), it is important to keep extra memory usage
+        correct. Otherwise, it can be a source of a complicated bug on
+        GC in the future.
+
+        Results from last run of Speedometer 2 comparing ToT and changes. We
+        collected those numbers running Minibrowser on a MacBook Pro 15-inch
+        with 2,6 GHz Intel Core i7. Both versions are with JIT disabled,
+        since these singleton JITCode are only used by this configuration:
+
+        Speedometer2 Run #1
+            ToT: 58.2 +- 1.1
+            changes: 57.9 +- 0.99
+
+        Speedometer2 Run #2
+            ToT: 58.5 +- 1.7
+            changes: 58.0 +- 1.5
+
+        Speedometer2 Run #2
+            ToT: 58.5 +- 0.99
+            changes: 57.1 +- 1.5
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::estimatedSize):
+        (JSC::CodeBlock::visitChildren):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setJITCode):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::JITCode):
+        (JSC::JITCodeWithCodeRef::JITCodeWithCodeRef):
+        (JSC::DirectJITCode::DirectJITCode):
+        (JSC::NativeJITCode::NativeJITCode):
+        * jit/JITCode.h:
+        (JSC::JITCode::isShared const):
+        * llint/LLIntEntrypoint.cpp:
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+
 2019-03-13  Keith Rollin  <krollin@apple.com>
 
         Add support for new StagedFrameworks layout

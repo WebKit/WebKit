@@ -392,11 +392,14 @@ public:
     void setJITCode(Ref<JITCode>&& code)
     {
         ASSERT(heap()->isDeferred());
-        heap()->reportExtraMemoryAllocated(code->size());
+        if (!code->isShared())
+            heap()->reportExtraMemoryAllocated(code->size());
+
         ConcurrentJSLocker locker(m_lock);
         WTF::storeStoreFence(); // This is probably not needed because the lock will also do something similar, but it's good to be paranoid.
         m_jitCode = WTFMove(code);
     }
+
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     static ptrdiff_t jitCodeOffset() { return OBJECT_OFFSETOF(CodeBlock, m_jitCode); }
     JITCode::JITType jitType() const

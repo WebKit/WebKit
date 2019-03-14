@@ -158,8 +158,13 @@ public:
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }
     
+    enum class ShareAttribute : uint8_t {
+        NotShared,
+        Shared
+    };
+
 protected:
-    JITCode(JITType);
+    JITCode(JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
     
 public:
     virtual ~JITCode();
@@ -205,8 +210,11 @@ public:
 
     Intrinsic intrinsic() { return m_intrinsic; }
 
+    bool isShared() const { return m_shareAttribute == ShareAttribute::Shared; }
+
 private:
     JITType m_jitType;
+    ShareAttribute m_shareAttribute;
 protected:
     Intrinsic m_intrinsic { NoIntrinsic }; // Effective only in NativeExecutable.
 };
@@ -214,7 +222,7 @@ protected:
 class JITCodeWithCodeRef : public JITCode {
 protected:
     JITCodeWithCodeRef(JITType);
-    JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType);
+    JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);
 
 public:
     virtual ~JITCodeWithCodeRef();
@@ -232,8 +240,8 @@ protected:
 class DirectJITCode : public JITCodeWithCodeRef {
 public:
     DirectJITCode(JITType);
-    DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType);
-    DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, Intrinsic); // For generated thunk.
+    DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
+    DirectJITCode(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared); // For generated thunk.
     virtual ~DirectJITCode();
     
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
@@ -248,7 +256,7 @@ private:
 class NativeJITCode : public JITCodeWithCodeRef {
 public:
     NativeJITCode(JITType);
-    NativeJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic);
+    NativeJITCode(CodeRef<JSEntryPtrTag>, JITType, Intrinsic, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
     virtual ~NativeJITCode();
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;

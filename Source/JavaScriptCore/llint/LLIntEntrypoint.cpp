@@ -61,14 +61,14 @@ static void setFunctionEntrypoint(VM& vm, CodeBlock* codeBlock)
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_call_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_call_arity_check), JITCode::InterpreterThunk);
+            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_call_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_call_arity_check), JITCode::InterpreterThunk, JITCode::ShareAttribute::Shared);
         });
         codeBlock->setJITCode(makeRef(*jitCode));
     } else {
         static DirectJITCode* jitCode;
         static std::once_flag onceKey;
         std::call_once(onceKey, [&] {
-            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_construct_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_construct_arity_check), JITCode::InterpreterThunk);
+            jitCode = new DirectJITCode(getCodeRef<JSEntryPtrTag>(llint_function_for_construct_prologue), getCodePtr<JSEntryPtrTag>(llint_function_for_construct_arity_check), JITCode::InterpreterThunk, JITCode::ShareAttribute::Shared);
         });
         codeBlock->setJITCode(makeRef(*jitCode));
     }
@@ -89,7 +89,7 @@ static void setEvalEntrypoint(VM& vm, CodeBlock* codeBlock)
     static NativeJITCode* jitCode;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_eval_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_eval_prologue), JITCode::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
     });
     codeBlock->setJITCode(makeRef(*jitCode));
 }
@@ -109,7 +109,7 @@ static void setProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     static NativeJITCode* jitCode;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_program_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_program_prologue), JITCode::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
     });
     codeBlock->setJITCode(makeRef(*jitCode));
 }
@@ -129,7 +129,7 @@ static void setModuleProgramEntrypoint(VM& vm, CodeBlock* codeBlock)
     static NativeJITCode* jitCode;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_module_program_prologue), JITCode::InterpreterThunk, NoIntrinsic);
+        jitCode = new NativeJITCode(getCodeRef<JSEntryPtrTag>(llint_module_program_prologue), JITCode::InterpreterThunk, Intrinsic::NoIntrinsic, JITCode::ShareAttribute::Shared);
     });
     codeBlock->setJITCode(makeRef(*jitCode));
 }
