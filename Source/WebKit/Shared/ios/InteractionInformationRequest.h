@@ -42,6 +42,11 @@ struct InteractionInformationRequest {
     bool includeSnapshot { false };
     bool includeLinkIndicator { false };
 
+    // FIXME: This readonly flag ought to be true by default, but there are a number of interactions (e.g. selection) that currently
+    // rely on the fact that interaction information requests additionally change the focused frame. We should explicitly turn the
+    // readonly bit off in these scenarios, and make sure that all other position information requests don't move focus around.
+    bool readonly { false };
+
     InteractionInformationRequest() { }
     explicit InteractionInformationRequest(WebCore::IntPoint point)
     {

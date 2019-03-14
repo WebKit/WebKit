@@ -38,6 +38,7 @@ void InteractionInformationRequest::encode(IPC::Encoder& encoder) const
     encoder << point;
     encoder << includeSnapshot;
     encoder << includeLinkIndicator;
+    encoder << readonly;
 }
 
 bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInformationRequest& result)
@@ -49,6 +50,9 @@ bool InteractionInformationRequest::decode(IPC::Decoder& decoder, InteractionInf
         return false;
 
     if (!decoder.decode(result.includeLinkIndicator))
+        return false;
+
+    if (!decoder.decode(result.readonly))
         return false;
 
     return true;
@@ -65,6 +69,9 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
     if (other.includeLinkIndicator && !includeLinkIndicator)
         return false;
 
+    if (!other.readonly && readonly)
+        return false;
+
     return true;
 }
     
@@ -74,6 +81,9 @@ bool InteractionInformationRequest::isApproximatelyValidForRequest(const Interac
         return false;
     
     if (other.includeLinkIndicator && !includeLinkIndicator)
+        return false;
+
+    if (!other.readonly && readonly)
         return false;
     
     return (other.point - point).diagonalLengthSquared() <= 4;

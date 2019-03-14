@@ -1221,9 +1221,11 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
         [self _handleDOMPasteRequestWithResult:WebCore::DOMPasteAccessResponse::DeniedForGesture];
         _layerTreeTransactionIdAtLastTouchStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
 
+        WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_lastInteractionLocation) };
+        positionInformationRequest.readonly = true;
         [self doAfterPositionInformationUpdate:[assistant = WeakObjCPtr<WKActionSheetAssistant>(_actionSheetAssistant.get())] (WebKit::InteractionInformationAtPosition information) {
             [assistant interactionDidStartWithPositionInformation:information];
-        } forRequest:WebKit::InteractionInformationRequest(WebCore::IntPoint(_lastInteractionLocation))];
+        } forRequest:positionInformationRequest];
     }
 
 #if ENABLE(TOUCH_EVENTS)

@@ -1,3 +1,17 @@
+2019-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r242801): [iOS] preventDefault() on touchstart in a subframe does not prevent focusing the subframe
+        https://bugs.webkit.org/show_bug.cgi?id=195749
+        <rdar://problem/48892367>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that tapping a subframe doesn't move focus into it subframe if the page prevents default
+        on touchstart.
+
+        * fast/events/touch/ios/no-focus-change-when-preventing-default-on-touchstart-expected.txt: Added.
+        * fast/events/touch/ios/no-focus-change-when-preventing-default-on-touchstart.html: Added.
+
 2019-03-14  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r242931.

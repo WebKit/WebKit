@@ -2376,7 +2376,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
         if (hitNode && hitNode->renderer()) {
             RenderObject* renderer = hitNode->renderer();
-            m_page->focusController().setFocusedFrame(result.innerNodeFrame());
+            if (!request.readonly)
+                m_page->focusController().setFocusedFrame(result.innerNodeFrame());
             info.bounds = renderer->absoluteBoundingBoxRect(true);
             // We don't want to select blocks that are larger than 97% of the visible area of the document.
             if (is<HTMLAttachmentElement>(*hitNode)) {

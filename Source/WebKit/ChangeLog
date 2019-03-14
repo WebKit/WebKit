@@ -1,3 +1,46 @@
+2019-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r242801): [iOS] preventDefault() on touchstart in a subframe does not prevent focusing the subframe
+        https://bugs.webkit.org/show_bug.cgi?id=195749
+        <rdar://problem/48892367>
+
+        Reviewed by Tim Horton.
+
+        r242801 added logic to fetch interaction information at the touch location upon touch start. However this,
+        combined with an existing behavior where the process of computing InteractionInformationAtPosition in WebPage
+        moves focus into the frame of the hit-tested node below the touch location, means that we'll always trigger a
+        blur event on the window and move focus into the subframe when performing a touch inside a subframe, even if the
+        page prevents default on touchstart.
+
+        To fix this, add a "readonly" flag to InteractionInformationRequest, and only change focus when requesting
+        position information in the case where the request is not readonly. For now, this readonly flag is false by
+        default; in a future patch, we should identify the (hopefully few) places that rely on position information
+        requests to move focus, explicitly turn this bit off in those places, and otherwise send readonly position
+        information requests by default.
+
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::encode const):
+        (WebKit::InteractionInformationRequest::decode):
+        (WebKit::InteractionInformationRequest::isValidForRequest):
+        (WebKit::InteractionInformationRequest::isApproximatelyValidForRequest):
+
+        Ensure that a readonly request is not valid for a non-readonly request.
+
+        * Shared/ios/InteractionInformationRequest.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _requestActivatedElementAtPosition:completionBlock:]):
+
+        Send a readonly position information request in the case where a WebKit SPI client is querying for element
+        information at the given location.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _webTouchEventsRecognized:]):
+
+        Send a readonly position information request on touchstart.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::positionInformation):
+
 2019-03-14  Chris Dumez  <cdumez@apple.com>
 
         Add WebsitePolicy for the client to specify the device orientation & motion access policy
