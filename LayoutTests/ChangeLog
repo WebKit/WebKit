@@ -1,3 +1,14 @@
+2019-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup inline boxes when list marker gets blockified
+        https://bugs.webkit.org/show_bug.cgi?id=195746
+        <rdar://problem/48049175>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/float/list-marker-is-float-crash-expected.txt: Added.
+        * fast/block/float/list-marker-is-float-crash.html: Added.
+
 2019-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening, rebaseline tests after r241934.

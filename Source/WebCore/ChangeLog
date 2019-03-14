@@ -1,3 +1,21 @@
+2019-03-14  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup inline boxes when list marker gets blockified
+        https://bugs.webkit.org/show_bug.cgi?id=195746
+        <rdar://problem/48049175>
+
+        Reviewed by Antti Koivisto.
+
+        Normally when an element gets blockified (inline -> block) we destroy its renderer and construct a new one (RenderInline -> RenderBlock).
+        During this process the associated inline boxtree gets destroyed as well. Since RenderListMarker is just a generic RenderBox, the blockifying
+        change does not require a new renderer.
+        This patch takes care of destroying the inline boxtree when the marker gains block display type. 
+
+        Test: fast/block/float/list-marker-is-float-crash.html
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::styleDidChange):
+
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: provide a way to get the contents of resources
