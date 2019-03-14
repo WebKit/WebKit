@@ -116,11 +116,9 @@ static UIImage *emptyImage()
 
     __block RetainPtr<UIImage> resultImage;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_renderer renderDrawing:[_pencilView drawing] completion:^(UIImage *image) {
+    [_renderer renderDrawing:[_pencilView nonNullDrawing] completion:^(UIImage *image) {
         resultImage = image;
     }];
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     // FIXME: Ideally we would not synchronously wait for this rendering,
     // but NSFileWrapper requires data synchronously, and our clients expect
@@ -136,9 +134,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<UIImage> image = [self renderedDrawing];
     RetainPtr<NSMutableData> PNGData = adoptNS([[NSMutableData alloc] init]);
     RetainPtr<CGImageDestinationRef> imageDestination = adoptCF(CGImageDestinationCreateWithData((__bridge CFMutableDataRef)PNGData.get(), kUTTypePNG, 1, nil));
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSString *base64Drawing = [[[_pencilView drawing] serialize] base64EncodedStringWithOptions:0];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    NSString *base64Drawing = [[[_pencilView nonNullDrawing] serialize] base64EncodedStringWithOptions:0];
     NSDictionary *properties = nil;
     if (base64Drawing) {
         // FIXME: We should put this somewhere less user-facing than the EXIF User Comment field.
@@ -166,9 +162,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     RetainPtr<NSData> drawingData = adoptNS([[NSData alloc] initWithBase64EncodedString:base64Drawing options:0]);
     RetainPtr<PKDrawing> drawing = adoptNS([WebKit::allocPKDrawingInstance() initWithData:drawingData.get() error:nil]);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_pencilView setDrawing:drawing.get()];
-ALLOW_DEPRECATED_DECLARATIONS_END
+    [_pencilView setNonNullDrawing:drawing.get()];
 }
 
 - (void)canvasViewDrawingDidChange:(PKCanvasView *)canvasView
