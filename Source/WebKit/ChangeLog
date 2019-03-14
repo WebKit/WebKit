@@ -1,3 +1,14 @@
+2019-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Stop content observation when content calls preventDefault() on touch events
+        https://bugs.webkit.org/show_bug.cgi?id=195724
+        <rdar://problem/48873456>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::didPreventDefaultForEvent):
+
 2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Make -[_WKAttachment setFileWrapper:contentType:completion:] robust when given a nil completion handler

@@ -44,13 +44,24 @@ ContentChangeObserver::ContentChangeObserver(Document& document)
 {
 }
 
-void ContentChangeObserver::didRecognizeLongPress(Frame& mainframe)
+static void willNotProceedWithClick(Frame& mainFrame)
 {
-    LOG(ContentObservation, "didRecognizeLongPress: cancel ongoing content change observing.");
-    for (auto* frame = &mainframe; frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext()) {
         if (auto* document = frame->document())
             document->contentChangeObserver().willNotProceedWithClick();
     }
+}
+
+void ContentChangeObserver::didRecognizeLongPress(Frame& mainFrame)
+{
+    LOG(ContentObservation, "didRecognizeLongPress: cancel ongoing content change observing.");
+    WebCore::willNotProceedWithClick(mainFrame);
+}
+
+void ContentChangeObserver::didPreventDefaultForEvent(Frame& mainFrame)
+{
+    LOG(ContentObservation, "didPreventDefaultForEvent: cancel ongoing content change observing.");
+    WebCore::willNotProceedWithClick(mainFrame);
 }
 
 void ContentChangeObserver::startContentObservationForDuration(Seconds duration)
