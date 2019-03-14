@@ -1,3 +1,12 @@
+2019-03-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening, rebaseline tests after r241934.
+
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-block-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-and-passive-observer-on-document-scrolling-state-expected.txt:
+        * fast/events/touch/ios/block-without-overflow-scroll-scrolling-state-expected.txt:
+        * fast/events/touch/ios/tap-with-active-touch-end-listener-expected.txt:
+
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: provide a way to get the contents of resources
