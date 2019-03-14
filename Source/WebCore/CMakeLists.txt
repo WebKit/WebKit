@@ -902,6 +902,7 @@ set(WebCore_NON_SVG_IDL_FILES
     inspector/CommandLineAPIHost.idl
     inspector/InspectorAuditAccessibilityObject.idl
     inspector/InspectorAuditDOMObject.idl
+    inspector/InspectorAuditResourcesObject.idl
     inspector/InspectorFrontendHost.idl
 
     loader/appcache/DOMApplicationCache.idl

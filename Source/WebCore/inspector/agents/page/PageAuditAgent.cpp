@@ -28,8 +28,10 @@
 
 #include "InspectorAuditAccessibilityObject.h"
 #include "InspectorAuditDOMObject.h"
+#include "InspectorAuditResourcesObject.h"
 #include "JSInspectorAuditAccessibilityObject.h"
 #include "JSInspectorAuditDOMObject.h"
+#include "JSInspectorAuditResourcesObject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include <JavaScriptCore/CallFrame.h>
@@ -83,11 +85,14 @@ void PageAuditAgent::populateAuditObject(JSC::ExecState* execState, JSC::Strong<
     if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(execState->lexicalGlobalObject())) {
         JSC::JSLockHolder lock(execState);
 
-        if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(execState, globalObject, InspectorAuditAccessibilityObject::create(*this))) \
+        if (JSC::JSValue jsInspectorAuditAccessibilityObject = toJSNewlyCreated(execState, globalObject, InspectorAuditAccessibilityObject::create(*this)))
             auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Accessibility"), jsInspectorAuditAccessibilityObject);
 
-        if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(execState, globalObject, InspectorAuditDOMObject::create(*this))) \
+        if (JSC::JSValue jsInspectorAuditDOMObject = toJSNewlyCreated(execState, globalObject, InspectorAuditDOMObject::create(*this)))
             auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "DOM"), jsInspectorAuditDOMObject);
+
+        if (JSC::JSValue jsInspectorAuditResourcesObject = toJSNewlyCreated(execState, globalObject, InspectorAuditResourcesObject::create(*this)))
+            auditObject->putDirect(execState->vm(), JSC::Identifier::fromString(execState, "Resources"), jsInspectorAuditResourcesObject);
     }
 }
 

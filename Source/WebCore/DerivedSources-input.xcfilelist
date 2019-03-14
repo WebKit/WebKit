@@ -872,6 +872,7 @@ $(PROJECT_DIR)/inspector/CommandLineAPIHost.idl
 $(PROJECT_DIR)/inspector/CommandLineAPIModuleSource.js
 $(PROJECT_DIR)/inspector/InspectorAuditAccessibilityObject.idl
 $(PROJECT_DIR)/inspector/InspectorAuditDOMObject.idl
+$(PROJECT_DIR)/inspector/InspectorAuditResourcesObject.idl
 $(PROJECT_DIR)/inspector/InspectorFrontendHost.idl
 $(PROJECT_DIR)/loader/appcache/DOMApplicationCache.idl
 $(PROJECT_DIR)/make-hash-tools.pl

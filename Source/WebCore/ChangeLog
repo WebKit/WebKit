@@ -1,5 +1,45 @@
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Audit: provide a way to get the contents of resources
+        https://bugs.webkit.org/show_bug.cgi?id=195266
+        <rdar://problem/48550911>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/audit/run-resources.html
+
+        * inspector/InspectorAuditResourcesObject.idl: Added.
+        * inspector/InspectorAuditResourcesObject.h: Added.
+        (WebCore::InspectorAuditResourcesObject::create):
+        (WebCore::InspectorAuditResourcesObject::Resource):
+        (WebCore::InspectorAuditResourcesObject::ResourceContent):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedResourceClient):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedFontClient):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedImageClient):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedRawResourceClient):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedStyleSheetClient):
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditCachedSVGDocumentClient):
+        * inspector/InspectorAuditResourcesObject.cpp: Added.
+        (WebCore::InspectorAuditResourcesObject::InspectorAuditResourcesObject):
+        (WebCore::InspectorAuditResourcesObject::getResources):
+        (WebCore::InspectorAuditResourcesObject::getResourceContent):
+        (WebCore::InspectorAuditResourcesObject::clientForResource):
+
+        * inspector/agents/InspectorPageAgent.h:
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourcesForFrame): Added.
+        (WebCore::allResourcesURLsForFrame):
+        Moved a file static function to be a class static function so it can be used elsewhere.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-03-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Console: getEventListeners should work for any EventTarget
         https://bugs.webkit.org/show_bug.cgi?id=195713
 

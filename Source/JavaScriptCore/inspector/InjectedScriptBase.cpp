@@ -119,7 +119,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
         jsFunction = JSC::JSNativeStdFunction::create(vm, scriptState->lexicalGlobalObject(), 1, String(), [&, callback = WTFMove(callback)] (JSC::ExecState* exec) {
             if (!exec)
                 checkAsyncCallResult(JSON::Value::create("Exception while making a call."), callback);
-            if (auto resultJSONValue = toInspectorValue(*exec, exec->argument(0)))
+            else if (auto resultJSONValue = toInspectorValue(*exec, exec->argument(0)))
                 checkAsyncCallResult(resultJSONValue, callback);
             else
                 checkAsyncCallResult(JSON::Value::create(makeString("Object has too long reference chain (must not be longer than ", JSON::Value::maxDepth, ')')), callback);
