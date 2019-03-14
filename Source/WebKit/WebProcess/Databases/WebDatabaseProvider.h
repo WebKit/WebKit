@@ -44,10 +44,6 @@ public:
 private:
     explicit WebDatabaseProvider(uint64_t identifier);
 
-#if ENABLE(INDEXED_DATABASE)
-    HashMap<uint64_t, RefPtr<WebCore::InProcessIDBServer>> m_idbEphemeralConnectionMap;
-#endif
-
     const uint64_t m_identifier;
 };
 

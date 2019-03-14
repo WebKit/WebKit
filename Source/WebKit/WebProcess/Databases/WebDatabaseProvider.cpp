@@ -69,14 +69,6 @@ WebDatabaseProvider::~WebDatabaseProvider()
 #if ENABLE(INDEXED_DATABASE)
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
-    if (sessionID.isEphemeral()) {
-        auto result = m_idbEphemeralConnectionMap.add(sessionID.sessionID(), nullptr);
-        if (result.isNewEntry)
-            result.iterator->value = WebCore::InProcessIDBServer::create(sessionID);
-
-        return result.iterator->value->connectionToServer();
-    }
-
     return WebProcess::singleton().ensureNetworkProcessConnection().idbConnectionToServerForSession(sessionID).coreConnectionToServer();
 }
 #endif

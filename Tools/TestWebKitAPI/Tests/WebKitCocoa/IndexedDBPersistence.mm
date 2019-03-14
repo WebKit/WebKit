@@ -31,6 +31,7 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
 #import <wtf/RetainPtr.h>
@@ -86,6 +87,50 @@ TEST(IndexedDB, IndexedDBPersistence)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     receivedScriptMessage = false;
     RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+
+    EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
+    EXPECT_WK_STREQ(@"Success", string2.get());
+    EXPECT_WK_STREQ(@"2 TestObjectStore", string3.get());
+}
+
+TEST(IndexedDB, IndexedDBPersistencePrivate)
+{
+    RetainPtr<IndexedDBMessageHandler> handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    auto ephemeralStore = [WKWebsiteDataStore nonPersistentDataStore];
+    configuration.get().websiteDataStore = ephemeralStore;
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    RetainPtr<NSString> string1 = (NSString *)[lastScriptMessage body];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    RetainPtr<NSString> string2 = (NSString *)[lastScriptMessage body];
+
+    auto webViewPid1 = [webView _webProcessIdentifier];
+    // Ditch this web view (ditching its web process)
+    webView = nil;
+
+    // Make a new web view to finish the test
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBPersistence-2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    RetainPtr<NSString> string3 = (NSString *)[lastScriptMessage body];
+
+    auto webViewPid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(webViewPid1, webViewPid2);
 
     EXPECT_WK_STREQ(@"UpgradeNeeded", string1.get());
     EXPECT_WK_STREQ(@"Success", string2.get());

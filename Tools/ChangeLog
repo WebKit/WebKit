@@ -1,3 +1,13 @@
+2019-03-14  Youenn Fablet  <youenn@apple.com>
+
+        Move IDB storage in private browsing mode to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=195602
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBPersistence.mm:
+        (TEST):
+
 2019-03-14  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Make descriptionDone messages more readable

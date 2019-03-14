@@ -2052,10 +2052,11 @@ void NetworkProcess::didSyncAllCookies()
 #if ENABLE(INDEXED_DATABASE)
 Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID sessionID)
 {
-    auto path = m_idbDatabasePaths.get(sessionID);
-    // There should already be a registered path for this PAL::SessionID.
-    // If there's not, then where did this PAL::SessionID come from?
-    ASSERT(!path.isEmpty());
+    String path;
+    if (!sessionID.isEphemeral()) {
+        ASSERT(m_idbDatabasePaths.contains(sessionID));
+        path = m_idbDatabasePaths.get(sessionID);
+    }
 
     auto server = IDBServer::IDBServer::create(sessionID, path, *this, [this, weakThis = makeWeakPtr(this)](PAL::SessionID sessionID, const auto& origin) -> StorageQuotaManager* {
         if (!weakThis)
