@@ -153,7 +153,7 @@ static void encodeArrayInternal(Encoder& encoder, NSArray *array)
     }
 }
 
-static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder)
+static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -161,7 +161,7 @@ static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder)
 
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
     for (uint64_t i = 0; i < size; ++i) {
-        auto value = decodeObject(decoder, nil);
+        auto value = decodeObject(decoder, allowedClasses);
         if (!value)
             return WTF::nullopt;
         [array addObject:value.value().get()];
@@ -251,7 +251,7 @@ static void encodeDictionaryInternal(Encoder& encoder, NSDictionary *dictionary)
     }
 }
 
-static Optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder)
+static Optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -259,11 +259,11 @@ static Optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder)
 
     RetainPtr<NSMutableDictionary> dictionary = adoptNS([[NSMutableDictionary alloc] initWithCapacity:size]);
     for (uint64_t i = 0; i < size; ++i) {
-        auto key = decodeObject(decoder, nil);
+        auto key = decodeObject(decoder, allowedClasses);
         if (!key)
             return WTF::nullopt;
 
-        auto value = decodeObject(decoder, nil);
+        auto value = decodeObject(decoder, allowedClasses);
         if (!value)
             return WTF::nullopt;
 
@@ -434,13 +434,13 @@ Optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedCl
 
     switch (type) {
     case NSType::Array:
-        return decodeArrayInternal(decoder);
+        return decodeArrayInternal(decoder, allowedClasses);
 #if USE(APPKIT)
     case NSType::Color:
         return decodeColorInternal(decoder);
 #endif
     case NSType::Dictionary:
-        return decodeDictionaryInternal(decoder);
+        return decodeDictionaryInternal(decoder, allowedClasses);
     case NSType::Font:
         return decodeFontInternal(decoder);
     case NSType::Number:

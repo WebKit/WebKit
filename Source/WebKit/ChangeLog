@@ -1,3 +1,15 @@
+2019-03-14  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r242908): TestWebKitAPI.WebKit.AddAndRemoveDataDetectors Crashed
+        https://bugs.webkit.org/show_bug.cgi?id=195751
+
+        Reviewed by Wenson Hsieh.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeArrayInternal): Added allowedClasses, pass to internal decodeObject for values.
+        (IPC::decodeDictionaryInternal): Ditto for keys and values.
+        (IPC::decodeObject): Pass allowedClasses to array and dictionary decoders.
+
 2019-03-14  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Make sure the WebProcessCache is leverage when relaunching a process after termination
