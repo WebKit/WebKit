@@ -1,3 +1,46 @@
+2019-03-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: we should show artificial context menus on mousedown instead of click
+        https://bugs.webkit.org/show_bug.cgi?id=195494
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ContextMenu.js:
+        (WI.ContextMenu):
+        (WI.ContextMenu.prototype.show):
+        (WI.ContextMenu.prototype.addBeforeShowCallback): Added.
+        (WI.ContextMenu.prototype.handleEvent):
+        Provide a way to register a callback that will be called right as the "contextmenu" event is
+        handled, but before the context menu is actually shown. Since "mousedown" events are also
+        fired when/before a "contextmenu" event is fired, each of the below callers has to maintain
+        some state indicating "we are about to show a context menu, so ignore all "mousedown" events
+        until that time". Without this, the below callers wouldn't be able to tell when the context
+        menu is finally shown.
+
+        * UserInterface/Base/SearchUtilities.js:
+        (WI.SearchUtilities.createSettingsButton):
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype._handleCanvasElementButtonMouseDown): Added.
+        (WI.CanvasContentView.prototype._handleViewShaderButtonMouseDown): Added.
+        (WI.CanvasContentView.prototype._handleViewRecordingButtonMouseDown): Added.
+        (WI.CanvasContentView.prototype._canvasElementButtonClicked): Deleted.
+        (WI.CanvasContentView.prototype._handleViewShaderButtonClicked): Deleted.
+        (WI.CanvasContentView.prototype._handleViewRecordingButtonClicked): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointMouseDown): Added.
+        (WI.DebuggerSidebarPanel.prototype._handleCreateBreakpointClicked): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCreateBreakpointMouseDown): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCreateBreakpointClicked): Deleted.
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype._handleMouseDown):
+        * UserInterface/Views/LegacyTabBar.js:
+        (WI.LegacyTabBar.prototype._handleMouseDown):
+
 2019-03-13  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: pausing in an inline script on a page with a URL query creates an Extra Script

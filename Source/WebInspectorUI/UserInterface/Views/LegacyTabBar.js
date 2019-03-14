@@ -608,9 +608,21 @@ WI.LegacyTabBar = class LegacyTabBar extends WI.View
             if (!this._hiddenTabBarItems.length)
                 return;
 
+            if (this._ignoreTabPickerMouseDown)
+                return;
+
+            this._ignoreTabPickerMouseDown = true;
+
             let contextMenu = WI.ContextMenu.createFromEvent(event);
-            for (let item of this._hiddenTabBarItems)
-                contextMenu.appendItem(item.title, () => this.selectedTabBarItem = item);
+            contextMenu.addBeforeShowCallback(() => {
+                this._ignoreTabPickerMouseDown = false;
+            });
+
+            for (let item of this._hiddenTabBarItems) {
+                contextMenu.appendItem(item.title, () => {
+                    this.selectedTabBarItem = item;
+                });
+            }
 
             contextMenu.show();
             return;
