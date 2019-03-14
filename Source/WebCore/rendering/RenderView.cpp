@@ -864,7 +864,7 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
         images.removeFirst(&image);
 }
 
-void RenderView::resumePausedImageAnimationsIfNeeded(IntRect visibleRect)
+void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
     Vector<std::pair<RenderElement*, CachedImage*>, 10> toRemove;
     for (auto& it : m_renderersWithPausedImageAnimation) {

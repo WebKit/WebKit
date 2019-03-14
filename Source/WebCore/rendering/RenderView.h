@@ -166,7 +166,7 @@ public:
     void updateVisibleViewportRect(const IntRect&);
     void registerForVisibleInViewportCallback(RenderElement&);
     void unregisterForVisibleInViewportCallback(RenderElement&);
-    void resumePausedImageAnimationsIfNeeded(IntRect visibleRect);
+    void resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect);
     void addRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
