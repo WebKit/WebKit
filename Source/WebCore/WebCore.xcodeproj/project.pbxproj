@@ -14001,8 +14001,6 @@
 		D026F480220A2B7000AC5F49 /* GPUExtent3D.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUExtent3D.idl; sourceTree = "<group>"; };
 		D026F483220A472F00AC5F49 /* GPUTextureUsage.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUTextureUsage.idl; sourceTree = "<group>"; };
 		D026F485220A477200AC5F49 /* GPUTextureUsage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTextureUsage.h; sourceTree = "<group>"; };
-		D026F486220A505900AC5F49 /* GPUTextureDimension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTextureDimension.h; sourceTree = "<group>"; };
-		D026F489220A539800AC5F49 /* GPUTextureDimension.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUTextureDimension.idl; sourceTree = "<group>"; };
 		D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUTextureDescriptor.idl; sourceTree = "<group>"; };
 		D026F48C220A5BAD00AC5F49 /* GPUTextureDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUTextureDescriptor.h; sourceTree = "<group>"; };
 		D02C26922181416D00D818E4 /* GPURequestAdapterOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPURequestAdapterOptions.idl; sourceTree = "<group>"; };
@@ -18547,7 +18545,6 @@
 				312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */,
 				312FF8C521A4C2F400EB199D /* GPUTexture.h */,
 				D026F48C220A5BAD00AC5F49 /* GPUTextureDescriptor.h */,
-				D026F486220A505900AC5F49 /* GPUTextureDimension.h */,
 				312FF8C321A4C2F300EB199D /* GPUTextureFormat.h */,
 				D026F485220A477200AC5F49 /* GPUTextureUsage.h */,
 				D06EF552220BA26A0018724E /* GPUUtils.h */,
@@ -26149,7 +26146,6 @@
 				D08AA031220D0CE60058C502 /* GPUStoreOp.idl */,
 				D0ADB27F2232F17300A22935 /* GPUSwapChainDescriptor.h */,
 				D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */,
-				D026F489220A539800AC5F49 /* GPUTextureDimension.idl */,
 				D0EACFAE219E30FD000FA75C /* GPUTextureFormat.idl */,
 				D026F483220A472F00AC5F49 /* GPUTextureUsage.idl */,
 				D0D8649621BA18F4003C983C /* GPUVertexAttributeDescriptor.idl */,

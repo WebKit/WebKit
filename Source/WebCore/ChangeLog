@@ -1,3 +1,48 @@
+2019-03-14  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Enum cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=195766
+
+        Reviewed by Myles C. Maxfield.
+
+        Clean up enum implementations in Web GPU. Enums referenced by only one class now share implementation files with that class to reduce clutter.
+        
+        No change in behavior.
+
+        * DerivedSources.make:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl:
+        * Modules/webgpu/GPUInputStateDescriptor.idl:
+        * Modules/webgpu/GPURequestAdapterOptions.idl:
+        * Modules/webgpu/GPUSamplerDescriptor.idl:
+        * Modules/webgpu/GPUTextureDescriptor.idl:
+        * Modules/webgpu/GPUTextureDimension.idl: Removed.
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl:
+        * Modules/webgpu/GPUVertexInputDescriptor.idl:
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::validateBufferBindingType):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUInputStateDescriptor.h:
+        * platform/graphics/gpu/GPURequestAdapterOptions.h:
+        * platform/graphics/gpu/GPUSamplerDescriptor.h:
+        * platform/graphics/gpu/GPUTextureDescriptor.h:
+        * platform/graphics/gpu/GPUTextureDimension.h: Removed.
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h:
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::MTLDataTypeForBindingType):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::GPUBindGroup::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::create):
+        * platform/graphics/gpu/cocoa/GPUSamplerMetal.mm:
+        (WebCore::mtlAddressModeForAddressMode):
+        (WebCore::mtlMinMagFilterForFilterMode):
+        (WebCore::mtlMipFilterForFilterMode):
+
 2019-03-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Use enum class for AnimationMode

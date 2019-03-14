@@ -35,9 +35,6 @@
 namespace WebCore {
 
 struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
-    using GPUPrimitiveTopology = GPUPrimitiveTopology;
-    using GPUColorStateDescriptor = GPUColorStateDescriptor;
-
     Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor() const;
 
     WebGPUPipelineStageDescriptor vertexStage;

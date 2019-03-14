@@ -42,13 +42,13 @@ static bool validateBufferBindingType(const GPUBuffer* buffer, const GPUBindGrou
 #endif
 
     switch (binding.type) {
-    case GPUBindGroupLayoutBinding::BindingType::UniformBuffer:
+    case GPUBindingType::UniformBuffer:
         if (!buffer->isUniform()) {
             LOG(WebGPU, "%s: GPUBuffer resource for binding %lu does not have UNIFORM usage!", functionName, binding.binding);
             return false;
         }
         return true;
-    case GPUBindGroupLayoutBinding::BindingType::StorageBuffer:
+    case GPUBindingType::StorageBuffer:
         if (!buffer->isStorage()) {
             LOG(WebGPU, "%s: GPUBuffer resource for binding %lu does not have STORAGE usage!", functionName, binding.binding);
             return false;

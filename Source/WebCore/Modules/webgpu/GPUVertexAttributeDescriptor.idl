@@ -27,7 +27,9 @@
 typedef unsigned long u32;
 typedef unsigned long long u64;
 
-enum GPUVertexFormat {
+[
+    ImplementedAs=GPUVertexFormat
+] enum GPUVertexFormat {
     "float",
     "float2",
     "float3",

@@ -35,11 +35,9 @@ enum class GPUInputStepMode {
 };
 
 struct GPUVertexInputDescriptor {
-    using InputStepMode = GPUInputStepMode;
-
     unsigned inputSlot;
     unsigned long stride;
-    InputStepMode stepMode;
+    GPUInputStepMode stepMode;
 };
 
 } // namespace WebCore

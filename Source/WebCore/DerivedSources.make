@@ -390,7 +390,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUShaderStageBit.idl \
     $(WebCore)/Modules/webgpu/GPUStoreOp.idl \
     $(WebCore)/Modules/webgpu/GPUTextureDescriptor.idl \
-    $(WebCore)/Modules/webgpu/GPUTextureDimension.idl \
     $(WebCore)/Modules/webgpu/GPUTextureFormat.idl \
     $(WebCore)/Modules/webgpu/GPUTextureUsage.idl \
     $(WebCore)/Modules/webgpu/GPUVertexAttributeDescriptor.idl \

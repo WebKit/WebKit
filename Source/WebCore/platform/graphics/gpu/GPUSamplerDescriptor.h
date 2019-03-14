@@ -31,24 +31,24 @@
 
 namespace WebCore {
 
+enum class GPUAddressMode {
+    ClampToEdge,
+    Repeat,
+    MirrorRepeat,
+};
+
+enum class GPUFilterMode {
+    Nearest,
+    Linear,
+};
+
 struct GPUSamplerDescriptor {
-    enum class AddressMode {
-        ClampToEdge,
-        Repeat,
-        MirrorRepeat,
-    };
-
-    enum class FilterMode {
-        Nearest,
-        Linear,
-    };
-
-    AddressMode addressModeU { AddressMode::ClampToEdge };
-    AddressMode addressModeV { AddressMode::ClampToEdge };
-    AddressMode addressModeW { AddressMode::ClampToEdge };
-    FilterMode magFilter { FilterMode::Nearest };
-    FilterMode minFilter { FilterMode::Nearest };
-    FilterMode mipmapFilter { FilterMode::Nearest };
+    GPUAddressMode addressModeU { GPUAddressMode::ClampToEdge };
+    GPUAddressMode addressModeV { GPUAddressMode::ClampToEdge };
+    GPUAddressMode addressModeW { GPUAddressMode::ClampToEdge };
+    GPUFilterMode magFilter { GPUFilterMode::Nearest };
+    GPUFilterMode minFilter { GPUFilterMode::Nearest };
+    GPUFilterMode mipmapFilter { GPUFilterMode::Nearest };
     float lodMinClamp { 0 };
     float lodMaxClamp { 0xffffffff };
     unsigned maxAnisotropy { 1 };

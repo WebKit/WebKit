@@ -480,7 +480,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/GPUShaderStageBit.idl
     Modules/webgpu/GPUStoreOp.idl
     Modules/webgpu/GPUTextureDescriptor.idl
-    Modules/webgpu/GPUTextureDimension.idl
     Modules/webgpu/GPUTextureFormat.idl
     Modules/webgpu/GPUTextureUsage.idl
     Modules/webgpu/GPUVertexAttributeDescriptor.idl

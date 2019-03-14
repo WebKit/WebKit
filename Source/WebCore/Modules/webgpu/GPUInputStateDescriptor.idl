@@ -26,7 +26,9 @@
 
 typedef unsigned long u32;
 
-enum GPUIndexFormat {
+[
+    ImplementedAs=GPUIndexFormat
+] enum GPUIndexFormat {
     "uint16",
     "uint32"
 };

@@ -26,13 +26,17 @@
 
 typedef unsigned long u32;
 
-enum GPUAddressMode {
+[
+    ImplementedAs=GPUAddressMode
+] enum GPUAddressMode {
     "clamp-to-edge",
     "repeat",
     "mirror-repeat"
 };
 
-enum GPUFilterMode {
+[
+    ImplementedAs=GPUFilterMode
+] enum GPUFilterMode {
     "nearest",
     "linear"
 };

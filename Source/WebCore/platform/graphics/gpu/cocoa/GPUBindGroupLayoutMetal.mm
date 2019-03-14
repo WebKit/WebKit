@@ -37,17 +37,17 @@
 
 namespace WebCore {
 
-static MTLDataType MTLDataTypeForBindingType(GPUBindGroupLayoutBinding::BindingType type)
+static MTLDataType MTLDataTypeForBindingType(GPUBindingType type)
 {
     switch (type) {
-    case GPUBindGroupLayoutBinding::BindingType::Sampler:
+    case GPUBindingType::Sampler:
         return MTLDataTypeSampler;
-    case GPUBindGroupLayoutBinding::BindingType::SampledTexture:
+    case GPUBindingType::SampledTexture:
         return MTLDataTypeTexture;
-    case GPUBindGroupLayoutBinding::BindingType::UniformBuffer:
-    case GPUBindGroupLayoutBinding::BindingType::DynamicUniformBuffer:
-    case GPUBindGroupLayoutBinding::BindingType::StorageBuffer:
-    case GPUBindGroupLayoutBinding::BindingType::DynamicStorageBuffer:
+    case GPUBindingType::UniformBuffer:
+    case GPUBindingType::DynamicUniformBuffer:
+    case GPUBindingType::StorageBuffer:
+    case GPUBindingType::DynamicStorageBuffer:
         return MTLDataTypePointer;
     }
 }

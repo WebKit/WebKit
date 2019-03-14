@@ -28,11 +28,16 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUExtent3D.h"
-#include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 
 namespace WebCore {
+
+enum class GPUTextureDimension {
+    _1d,
+    _2d,
+    _3d
+};
     
 struct GPUTextureDescriptor {
     GPUExtent3D size;

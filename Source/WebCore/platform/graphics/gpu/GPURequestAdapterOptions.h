@@ -29,13 +29,13 @@
 
 namespace WebCore {
 
+enum class GPUPowerPreference {
+    LowPower,
+    HighPerformance
+};
+
 struct GPURequestAdapterOptions {
-    enum class PowerPreference {
-        LowPower,
-        HighPerformance
-    };
-    
-    PowerPreference powerPreference;
+    GPUPowerPreference powerPreference;
 };
     
 } // namespace WebCore

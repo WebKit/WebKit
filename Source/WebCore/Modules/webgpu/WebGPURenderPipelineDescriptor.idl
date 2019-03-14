@@ -24,7 +24,9 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-enum GPUPrimitiveTopology {
+[
+    ImplementedAs=GPUPrimitiveTopology
+] enum GPUPrimitiveTopology {
     "point-list",
     "line-list",
     "line-strip",

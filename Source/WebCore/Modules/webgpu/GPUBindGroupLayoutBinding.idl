@@ -28,8 +28,7 @@ typedef unsigned long u32;
 typedef u32 GPUShaderStageFlags;
 
 [
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    ImplementedAs=GPUBindingType
 ] enum GPUBindingType {
     "uniform-buffer",
     "dynamic-uniform-buffer",

@@ -37,38 +37,38 @@
 
 namespace WebCore {
 
-static MTLSamplerAddressMode mtlAddressModeForAddressMode(GPUSamplerDescriptor::AddressMode mode)
+static MTLSamplerAddressMode mtlAddressModeForAddressMode(GPUAddressMode mode)
 {
     switch (mode) {
-    case GPUSamplerDescriptor::AddressMode::ClampToEdge:
+    case GPUAddressMode::ClampToEdge:
         return MTLSamplerAddressModeClampToEdge;
-    case GPUSamplerDescriptor::AddressMode::Repeat:
+    case GPUAddressMode::Repeat:
         return MTLSamplerAddressModeRepeat;
-    case GPUSamplerDescriptor::AddressMode::MirrorRepeat:
+    case GPUAddressMode::MirrorRepeat:
         return MTLSamplerAddressModeMirrorRepeat;
     }
 
     ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMinMagFilter mtlMinMagFilterForFilterMode(GPUSamplerDescriptor::FilterMode mode)
+static MTLSamplerMinMagFilter mtlMinMagFilterForFilterMode(GPUFilterMode mode)
 {
     switch (mode) {
-    case GPUSamplerDescriptor::FilterMode::Nearest:
+    case GPUFilterMode::Nearest:
         return MTLSamplerMinMagFilterNearest;
-    case GPUSamplerDescriptor::FilterMode::Linear:
+    case GPUFilterMode::Linear:
         return MTLSamplerMinMagFilterLinear;
     }
 
     ASSERT_NOT_REACHED();
 }
 
-static MTLSamplerMipFilter mtlMipFilterForFilterMode(GPUSamplerDescriptor::FilterMode mode)
+static MTLSamplerMipFilter mtlMipFilterForFilterMode(GPUFilterMode mode)
 {
     switch (mode) {
-    case GPUSamplerDescriptor::FilterMode::Nearest:
+    case GPUFilterMode::Nearest:
         return MTLSamplerMipFilterNearest;
-    case GPUSamplerDescriptor::FilterMode::Linear:
+    case GPUFilterMode::Linear:
         return MTLSamplerMipFilterLinear;
     }
 

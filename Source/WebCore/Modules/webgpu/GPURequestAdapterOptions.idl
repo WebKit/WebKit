@@ -24,7 +24,9 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-enum GPUPowerPreference {
+[
+    ImplementedAs=GPUPowerPreference
+] enum GPUPowerPreference {
     "low-power",
     "high-performance"
 };

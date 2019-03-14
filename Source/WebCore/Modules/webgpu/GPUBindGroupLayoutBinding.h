@@ -31,19 +31,19 @@
 
 namespace WebCore {
 
-struct GPUBindGroupLayoutBinding {
-    enum class BindingType {
-        UniformBuffer,
-        DynamicUniformBuffer,
-        Sampler,
-        SampledTexture,
-        StorageBuffer,
-        DynamicStorageBuffer
-    };
+enum class GPUBindingType {
+    UniformBuffer,
+    DynamicUniformBuffer,
+    Sampler,
+    SampledTexture,
+    StorageBuffer,
+    DynamicStorageBuffer,
+};
 
+struct GPUBindGroupLayoutBinding {
     unsigned long binding;
     GPUShaderStageFlags visibility;
-    BindingType type;
+    GPUBindingType type;
 };
 
 } // namespace WebCore

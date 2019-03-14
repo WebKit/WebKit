@@ -43,7 +43,7 @@ RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
 #if PLATFORM(MAC)
-    if (options && options->powerPreference == GPURequestAdapterOptions::PowerPreference::LowPower) {
+    if (options && options->powerPreference == GPUPowerPreference::LowPower) {
         auto devices = adoptNS(MTLCopyAllDevices());
         
         for (id <MTLDevice> device : devices.get()) {

@@ -2796,7 +2796,6 @@ JSGPUSamplerDescriptor.cpp
 JSGPUShaderStageBit.cpp
 JSGPUStoreOp.cpp
 JSGPUTextureDescriptor.cpp
-JSGPUTextureDimension.cpp
 JSGPUTextureFormat.cpp
 JSGPUTextureUsage.cpp
 JSGPUVertexAttributeDescriptor.cpp

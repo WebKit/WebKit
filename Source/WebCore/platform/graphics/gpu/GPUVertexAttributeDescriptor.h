@@ -39,12 +39,10 @@ enum class GPUVertexFormat {
 };
 
 struct GPUVertexAttributeDescriptor {
-    using Format = GPUVertexFormat;
-
     unsigned shaderLocation;
     unsigned inputSlot;
     unsigned long offset;
-    Format format;
+    GPUVertexFormat format;
 };
 
 } // namespace WebCore
