@@ -1,3 +1,32 @@
+2019-03-13  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Test freshness page should improve the ability to correlating issues from same builder.
+        https://bugs.webkit.org/show_bug.cgi?id=195242
+
+        Reviewed by Ryosuke Niwa.
+
+        Added the ability to highlight indicators with same builder when mouse is hovering over one indicator.
+        This is a very useful visualization for correlating issues specific to a builder.
+        Added tooltip with latest build link when hovering over an indicator.
+
+        * public/v3/components/freshness-indicator.js:
+        (FreshnessIndicator): Removed 'summary' field as it's no longer needed.
+        Added 'highlighted' field.
+        (FreshnessIndicator.prototype.update): Added 'highlighted' argument.
+        (FreshnessIndicator.prototype.didConstructShadowTree): Make indicator to dispatch mouse enter and leave
+        messages so that UI can highlight corresponding cells.
+        (FreshnessIndicator.prototype.render):
+        (FreshnessIndicator.cssTemplate):
+        * public/v3/pages/test-freshness-page.js: Added tooltip to show latest build time and build link.
+        Added logic to manually compute table body height.
+        (TestFreshnessPage):
+        (TestFreshnessPage.prototype.didConstructShadowTree):
+        (TestFreshnessPage.prototype._fetchTestResults):
+        (TestFreshnessPage.prototype.render):
+        (TestFreshnessPage.prototype._renderTooltip):
+        (TestFreshnessPage.prototype._constructTableCell):
+        (TestFreshnessPage.cssTemplate):
+
 2019-02-26  Dewei Zhu  <dewei_zhu@apple.com>
 
         The table head of test freshness page should not scroll with the page.
