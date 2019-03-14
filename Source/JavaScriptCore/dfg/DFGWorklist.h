@@ -96,7 +96,9 @@ private:
 
     void dump(const AbstractLocker&, PrintStream&) const;
     
+    unsigned m_numberOfActiveThreads { 0 };
     CString m_threadName;
+    Vector<std::unique_ptr<ThreadData>> m_threads;
     
     // Used to inform the thread about what work there is left to do.
     Deque<RefPtr<Plan>> m_queue;
@@ -111,15 +113,11 @@ private:
     // Used to quickly find which plans have been compiled and are ready to
     // be completed.
     Vector<RefPtr<Plan>, 16> m_readyPlans;
-
-    Lock m_suspensionLock;
-    
-    Box<Lock> m_lock;
     Ref<AutomaticThreadCondition> m_planEnqueued;
     Condition m_planCompiled;
-    
-    Vector<std::unique_ptr<ThreadData>> m_threads;
-    unsigned m_numberOfActiveThreads;
+
+    Lock m_suspensionLock;
+    Box<Lock> m_lock;
 };
 
 JS_EXPORT_PRIVATE unsigned setNumberOfDFGCompilerThreads(unsigned);

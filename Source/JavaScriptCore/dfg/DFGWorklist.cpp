@@ -185,9 +185,8 @@ static CString createWorklistName(CString&& tierName)
 
 Worklist::Worklist(CString&& tierName)
     : m_threadName(createWorklistName(WTFMove(tierName)))
-    , m_lock(Box<Lock>::create())
     , m_planEnqueued(AutomaticThreadCondition::create())
-    , m_numberOfActiveThreads(0)
+    , m_lock(Box<Lock>::create())
 {
 }
 
