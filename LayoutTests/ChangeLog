@@ -1,3 +1,11 @@
+2019-03-13  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=195717
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-03-13  Dean Jackson  <dino@apple.com>
 
         Block all plugins smaller than 5x5px
