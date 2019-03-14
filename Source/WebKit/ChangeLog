@@ -1,3 +1,15 @@
+2019-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r242908):  'NSInvalidArgumentException', reason: '+[PKPaymentMerchantSession count]: unrecognized selector sent to class 0x1c0fae060'
+        https://bugs.webkit.org/show_bug.cgi?id=195720
+
+        Reviewed by Andy Estes.
+
+        Add back decode(Decoder& decoder, Class allowedClass) for Apple Pay code.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.h:
+        (IPC::decode): Added.
+
 2019-03-13  Tim Horton  <timothy_horton@apple.com>
 
         Stop using some deprecated SPI in WKDrawingView

@@ -39,6 +39,7 @@ template<typename T> using IsObjCObject = std::enable_if_t<std::is_convertible<T
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
 template<typename T, typename = IsObjCObject<T>> bool decode(Decoder&, RetainPtr<T>&, NSArray<Class> *allowedClasses = @[ [T class] ]);
 template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, NSArray<Class> *allowedClasses = @[ [T class] ]);
+template<typename T, typename = IsObjCObject<T>> Optional<RetainPtr<T>> decode(Decoder&, Class allowedClass);
 
 #ifndef NDEBUG
 
@@ -78,6 +79,12 @@ Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
         return WTF::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
     return { *result };
+}
+
+template<typename T, typename>
+Optional<RetainPtr<T>> decode(Decoder& decoder, Class allowedClass)
+{
+    return decode<T>(decoder, @[ allowedClass ]);
 }
 
 template<typename T> struct ArgumentCoder<T *> {
