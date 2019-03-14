@@ -276,6 +276,13 @@ WI.Script = class Script extends WI.SourceCode
             }
         } catch { }
 
+        if (!this.isMainResource()) {
+            for (let frame of WI.networkManager.frames) {
+                if (frame.mainResource.type === WI.Resource.Type.Document && frame.mainResource.url.startsWith(this._url))
+                    return frame.mainResource;
+            }
+        }
+
         return null;
     }
 
