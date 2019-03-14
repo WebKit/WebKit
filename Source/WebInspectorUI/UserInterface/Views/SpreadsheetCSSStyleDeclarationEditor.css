@@ -166,7 +166,7 @@ body:matches(.window-docked-inactive, .window-inactive) .spreadsheet-style-decla
     color: var(--syntax-highlight-string-color);
 }
 
-.spreadsheet-style-declaration-editor .property.overridden .select-effective-property {
+.spreadsheet-style-declaration-editor .property .select-effective-property {
     display: none;
     height: 10px;
     line-height: 10px;

@@ -1,3 +1,16 @@
+2019-03-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Jump to effective property button doesn't hide after overridden property become effective
+        https://bugs.webkit.org/show_bug.cgi?id=195770
+        <rdar://problem/48903634>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property .select-effective-property): Added.
+        (.spreadsheet-style-declaration-editor .property.overridden .select-effective-property): Deleted.
+        Hide `.select-effective-property` element for properties that aren't overridden.
+
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION: Canvas: the first processed action should be selected as soon as it's available if no previous selected action exists
