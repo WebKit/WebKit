@@ -1,3 +1,13 @@
+2019-03-14  Keith Miller  <keith_miller@apple.com>
+
+        DFG liveness can't skip tail caller inline frames
+        https://bugs.webkit.org/show_bug.cgi?id=195715
+
+        Reviewed by Saam Barati.
+
+        * stress/dfg-scan-inlined-tail-caller-frames-liveness.js:
+        (i.foo):
+
 2019-03-13  Mark Lam  <mark.lam@apple.com>
 
         Gardening: reducing the variants on 2 tests to avoid timing out on JSC Debug queue.

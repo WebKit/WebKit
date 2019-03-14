@@ -1166,15 +1166,10 @@ bool Graph::isLiveInBytecode(VirtualRegister operand, CodeOrigin codeOrigin)
                 dataLog("Argument is live.\n");
             return true;
         }
-        
-        codeOriginPtr = inlineCallFrame->getCallerSkippingTailCalls();
 
-        // The first inline call frame could be an inline tail call
-        if (!codeOriginPtr) {
-            if (verbose)
-                dataLog("Dead because of tail inlining.\n");
-            return false;
-        }
+        // We need to handle tail callers because we may decide to exit to the
+        // the return bytecode following the tail call.
+        codeOriginPtr = &inlineCallFrame->directCaller;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

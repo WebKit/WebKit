@@ -1,3 +1,23 @@
+2019-03-14  Keith Miller  <keith_miller@apple.com>
+
+        DFG liveness can't skip tail caller inline frames
+        https://bugs.webkit.org/show_bug.cgi?id=195715
+        <rdar://problem/46221598>
+
+        Reviewed by Saam Barati.
+
+        In order to simplify OSR exit/DFG bytecode parsing our bytecode
+        generator always emits an op_ret after any tail call. However, the
+        DFG when computing the liveness of locals, would skip any tail
+        caller inline frames. This mean that if we ended up inserting a
+        Check that would OSR to the op_ret we wouldn't have kept
+        availability data around for it.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+
 2019-03-14  Robin Morisset  <rmorisset@apple.com>
 
         DFG::Worklist can be shrunk by 16 bytes

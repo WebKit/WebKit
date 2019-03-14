@@ -865,12 +865,10 @@ public:
 
             for (VirtualRegister reg = exclusionStart; reg < exclusionEnd; reg += 1)
                 functor(reg);
-            
-            codeOriginPtr = inlineCallFrame->getCallerSkippingTailCalls();
 
-            // The first inline call frame could be an inline tail call
-            if (!codeOriginPtr)
-                break;
+            // We need to handle tail callers because we may decide to exit to the
+            // the return bytecode following the tail call.
+            codeOriginPtr = &inlineCallFrame->directCaller;
         }
     }
     
