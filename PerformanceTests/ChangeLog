@@ -1,3 +1,112 @@
+2019-03-14  Jon Davis  <jond@apple.com>
+
+        Implement a new design for JetStream2
+        https://bugs.webkit.org/show_bug.cgi?id=195492
+
+        Reviewed by Saam Barati.
+
+        * JetStream2/JetStream.css:
+        (html):
+        (body):
+        (::selection):
+        (main):
+        (.logo):
+        (.logo .logo-image):
+        (#jetstreams):
+        (#jetstreams svg):
+        (.summary):
+        (.summary + .summary):
+        (.summary:empty):
+        (article, .summary):
+        (h1):
+        (h2, h3, h4, h5, h6):
+        (h4, h5, h6):
+        (p):
+        (h5, h6):
+        (h6):
+        (a:link,):
+        (a:hover,):
+        (#status):
+        (#status label,):
+        (a.button):
+        (#status.loading):
+        (#status.error):
+        (.error h2, .error p):
+        (.error h2):
+        (#result-summary):
+        (#result-summary label):
+        (#result-summary .score):
+        (#result-summary .score .interval):
+        (#results):
+        (.benchmark):
+        (.benchmark h3, .benchmark h4, .benchmark .result, .benchmark label):
+        (.benchmark-running h4, .benchmark-running .result, .benchmark-running label):
+        (.benchmark-done h3, .benchmark-done h4, .benchmark-done .result, .benchmark-done label):
+        (.benchmark h3):
+        (.benchmark-running h3):
+        (.benchmark-done h3):
+        (.benchmark h3 a,):
+        (.benchmark-done h3 a:hover):
+        (.benchmark h4):
+        (.benchmark-done h4):
+        (.benchmark p,):
+        (.benchmark .result):
+        (.benchmark-done .result):
+        (.benchmark label):
+        (.benchmark-done label):
+        (@keyframes fadein):
+        (to):
+        (@keyframes scaledown):
+        (@keyframes shine):
+        (100%):
+        (@keyframes swingin):
+        (@media (max-width: 415px)):
+        (#logo): Deleted.
+        (p.summary): Deleted.
+        (p.summary + p.summary): Deleted.
+        (p.summary:empty): Deleted.
+        (p:first-of-type): Deleted.
+        (#status a:link): Deleted.
+        (.interval): Deleted.
+        (a:link, a:visited): Deleted.
+        (a:link:hover): Deleted.
+        (table): Deleted.
+        (td, th): Deleted.
+        (th): Deleted.
+        (tr:first-child > th:nth-child(even)): Deleted.
+        (tr:nth-child(even):not(:first-child, .benchmark-running)): Deleted.
+        (.result): Deleted.
+        (.benchmark-running): Deleted.
+        (:not(.benchmark-running) .result): Deleted.
+        (.benchmark-running .result): Deleted.
+        (.benchmark-name): Deleted.
+        (.result.category,): Deleted.
+        (.benchmark-name:not(.category):not(.geometric-mean)): Deleted.
+        (.geometric-mean): Deleted.
+        (.benchmark-name:not(:first-child)): Deleted.
+        (.benchmark-name a:link,): Deleted.
+        (.highlighted-result): Deleted.
+        * JetStream2/JetStream2Logo.svg: Added.
+        * JetStream2/JetStreamDriver.js:
+        (updateUI):
+        (Driver.prototype.async.start):
+        (Driver.prototype.prepareToRun.text.div.id.string_appeared_here.h3):
+        (Driver.prototype.prepareToRun.text.span):
+        (Driver.prototype.prepareToRun.a.h3.h4):
+        (Driver.prototype.prepareToRun.text.div):
+        (Driver.prototype.async.initialize):
+        (Driver.prototype.async.fetchResources.prototype.statusElement.onclick):
+        (prototype.fetchResources):
+        (prototype.updateUIBeforeRun):
+        (prototype.updateUIAfterRun):
+        (Driver.prototype.async.fetchResources.statusElement.innerHTML.a.href.string_appeared_here):
+        (Driver.prototype.async.fetchResources):
+        (Driver.prototype.prepareToRun.text.tr.id.string_appeared_here.FIXME.link.to.benchmark.explanation.td): Deleted.
+        * JetStream2/clouds.svg: Added.
+        * JetStream2/in-depth.html:
+        * JetStream2/index.html:
+        * JetStream2/jetstreams.svg: Added.
+
 2019-03-11  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement "~" unary operation

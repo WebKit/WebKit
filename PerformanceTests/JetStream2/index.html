@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2018 Apple Inc. All rights reserved.
+ Copyright (C) 2019 Apple Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
     <title>JetStream 2</title>
 
     <link rel="stylesheet" href="JetStream.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes, viewport-fit=cover">
 
     <script>
     const isInBrowser = true;
@@ -39,8 +40,12 @@
     async function initialize() {
         if (allIsGood)
             await JetStream.initialize();
-        else
-            document.getElementById("body").innerHTML = "<h1>ERROR</h1><p>Encountered errors during page load. Refusing to run a partial benchmark suite.</p>";
+        else {
+            let statusElement = document.getElementById("status");
+            statusElement.classList.remove('loading');
+            statusElement.classList.add('error');
+            statusElement.innerHTML = "<h2>ERROR</h2><p>Errors were encountered during page load. Refusing to run a partial benchmark suite.</p>";
+        }
     }
     </script>
 
@@ -48,17 +53,20 @@
 
 </head>
 <body onload="initialize()">
-<main>
-<!-- <a href="index.html"><img id="logo" src="JetStream-Logo.png" alt="JetStream"></a> -->
+<h1 class="logo">
+    <div id="jetstreams">
+        <a href="index.html" class="logo-image">JetStream 2</a>
+    </div>
+</h1>
 
-    <h1>JetStream 2</h1>
+<main>
     <p class="summary">JetStream 2 is a JavaScript benchmark suite focused on the most advanced web applications. For more information, read the <a href="in-depth.html">in-depth analysis</a>. Higher scores are better.</p>
     <p class="summary" id="mode-description"></p>
 
     <div id="result-summary"></div>
-    <div id="status">Loading Benchmark...</div>
+    <div id="status" class="loading">Loading Benchmark...</div>
 
-    <table id="results"></table>
+    <div id="results"></div>
 </main>
 <iframe id="magic"></iframe>
 </body>

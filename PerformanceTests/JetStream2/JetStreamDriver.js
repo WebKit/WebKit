@@ -83,7 +83,7 @@ function toScore(timeValue) {
 }
 
 function updateUI() {
-    return new Promise((resolve) => { 
+    return new Promise((resolve) => {
         if (isInBrowser)
             requestAnimationFrame(() => setTimeout(resolve, 0));
         else
@@ -151,10 +151,13 @@ class Driver {
     }
 
     async start() {
-        if (isInBrowser)
-            document.getElementById("status").innerHTML = `Running...`;
-        else
+        if (isInBrowser) {
+            let statusElement = document.getElementById("status");
+            let summaryElement = document.getElementById("result-summary");
+            statusElement.innerHTML = `<label>Running...</label>`;
+        } else {
             console.log("Starting JetStream2");
+        }
 
         await updateUI();
 
@@ -188,8 +191,9 @@ class Driver {
             allScores.push(benchmark.score);
 
         if (isInBrowser) {
-            document.getElementById("result-summary").innerHTML = "<label>Score</label><br><span class=\"score\">" + uiFriendlyNumber(geomean(allScores)) + "</span>";
-            document.getElementById("status").innerHTML = `Done`;
+            summaryElement.classList.add('done');
+            summaryElement.innerHTML = "<div class=\"score\">" + uiFriendlyNumber(geomean(allScores)) + "</div><label>Score</label>";
+            statusElement.innerHTML = '';
         } else
             console.log("\nTotal Score: ", uiFriendlyNumber(geomean(allScores)), "\n");
 
@@ -226,59 +230,46 @@ class Driver {
     {
         this.benchmarks.sort((a, b) => a.plan.name.toLowerCase() < b.plan.name.toLowerCase() ? 1 : -1);
 
-        let groups = new Map;
-        let names = new Set;
-        for (let benchmark of this.benchmarks) {
-            names.add(benchmark.name);
-            let identifier = JSON.stringify(benchmark.constructor.scoreDescription());
-            if (!groups.has(identifier))
-                groups.set(identifier, []);
-            groups.get(identifier).push(benchmark);
-        }
-
-        if (names.size !== this.benchmarks.length)
-            throw new Error("Names of benchmarks must be unique");
-
         let text = "";
         let newBenchmarks = [];
-        for (let [id, benchmarks] of groups) {
+        for (let benchmark of this.benchmarks) {
+            let id = JSON.stringify(benchmark.constructor.scoreDescription());
             let description = JSON.parse(id);
-            if (isInBrowser) {
-                text += `<tr> <th> Benchmark </th>`;
-                for (let score of description)
-                    text += `<th> ${score} </th>`;
-            }
-            for (let benchmark of benchmarks) {
-                newBenchmarks.push(benchmark);
 
-                if (isInBrowser) {
-                    text +=
-                        `<tr id="row-for-${benchmark.name}">
-                        <!-- FIXME: link to benchmark explanation -->
-                        <td class="benchmark-name"> ${benchmark.name} </td>`;
-                    for (let id of benchmark.scoreIdentifiers())
-                        text += `<td class="result" id="${id}">&mdash;</td>`
-                    text += `</tr>`;
+            newBenchmarks.push(benchmark);
+            let scoreIds = benchmark.scoreIdentifiers()
+            let overallScoreId = scoreIds.pop();
+
+            if (isInBrowser) {
+                text +=
+                    `<div class="benchmark" id="benchmark-${benchmark.name}">
+                    <h3 class="benchmark-name"><a href="about.html#${benchmark.name}">${benchmark.name}</a></h3>
+                    <h4 class="score" id="${overallScoreId}">___</h4><p>`;
+                for (let i = 0; i < scoreIds.length; i++) {
+                    let id = scoreIds[i];
+                    let label = description[i];
+                    text += `<span class="result"><span id="${id}">___</span><label>${label}</label></span>`
                 }
+                text += `</p></div>`;
             }
         }
 
-        if (measureTotalTimeAsSubtest) {
-            if (isInBrowser) {
-                text += 
-                    `<tr>
-                        <td class="benchmark-name"> Total time </td>
-                        <td class="result" id="benchmark-total-time-score">&mdash;</td>
-                    </tr>`;
-            }
-        }
+        if (!isInBrowser)
+            return;
 
-        if (isInBrowser) {
-            let resultsTable = document.getElementById("results");
-            resultsTable.innerHTML = text;
+        for (let f = 0; f < 5; f++)
+            text += `<div class="benchmark fill"></div>`;
 
-            document.getElementById("magic").textContent = "";
-        }
+        let timestamp = Date.now();
+        document.getElementById('jetstreams').style.backgroundImage = `url('jetstreams.svg?${timestamp}')`;
+        let resultsTable = document.getElementById("results");
+        resultsTable.innerHTML = text;
+
+        document.getElementById("magic").textContent = "";
+        document.addEventListener('keypress', function (e) {
+            if (e.which === 13)
+                JetStream.start();
+        });
     }
 
     reportError(benchmark)
@@ -291,7 +282,7 @@ class Driver {
         await this.fetchResources();
         this.prepareToRun();
         if (isInBrowser && window.location.search == '?report=true') {
-            setTimeout(() => this.start(), 1000);
+            setTimeout(() => this.start(), 2000);
         }
     }
 
@@ -302,10 +293,11 @@ class Driver {
         if (!isInBrowser)
             return;
 
-        let status = document.getElementById("status");
-        status.innerHTML = `<a href="javascript:JetStream.start()">Start Test</a>`;
-        status.onclick = () => {
-            status.onclick = null;
+        let statusElement = document.getElementById("status");
+        statusElement.classList.remove('loading');
+        statusElement.innerHTML = `<a href="javascript:JetStream.start()" class="button">Start Test</a>`;
+        statusElement.onclick = () => {
+            statusElement.onclick = null;
             JetStream.start();
             return false;
         }
@@ -351,7 +343,7 @@ class Driver {
 };
 
 class Benchmark {
-    constructor(plan) 
+    constructor(plan)
     {
         this.plan = plan;
         this.iterations = testIterationCount || plan.iterations || defaultIterationCount;
@@ -536,7 +528,7 @@ class Benchmark {
                     blob = new Blob([item], {type : 'application/octet-stream'});
                 } else
                     throw new Error("Unexpected item!");
-                
+
                 this.blobs.push(blob);
                 this.preloads.push([preloadVariableNames[i], URL.createObjectURL(blob)]);
             }
@@ -555,7 +547,10 @@ class Benchmark {
             return;
         }
 
-        document.getElementById(`row-for-${this.name}`).classList.add("benchmark-running");
+        let containerUI = document.getElementById("results");
+        let resultsBenchmarkUI = document.getElementById(`benchmark-${this.name}`);
+        containerUI.insertBefore(resultsBenchmarkUI, containerUI.firstChild);
+        resultsBenchmarkUI.classList.add("benchmark-running");
 
         for (let id of this.scoreIdentifiers())
             document.getElementById(id).innerHTML = "...";
@@ -565,7 +560,10 @@ class Benchmark {
         if (!isInBrowser)
             return;
 
-        document.getElementById(`row-for-${this.name}`).classList.remove("benchmark-running");
+        let benchmarkResultsUI = document.getElementById(`benchmark-${this.name}`);
+        benchmarkResultsUI.classList.remove("benchmark-running");
+        benchmarkResultsUI.classList.add("benchmark-done");
+
     }
 };
 
@@ -812,7 +810,7 @@ class WasmBenchmark extends Benchmark {
         return str;
     }
 
-    get runnerCode() { 
+    get runnerCode() {
         let str = "";
         if (isInBrowser) {
             str += `
@@ -1294,7 +1292,7 @@ let testPlans = [
             "./wasm/tsf.js"
         ],
         preload: {
-            wasmBlobURL: "./wasm/tsf.wasm" 
+            wasmBlobURL: "./wasm/tsf.wasm"
         },
         benchmarkClass: WasmBenchmark,
         testGroup: WasmGroup
