@@ -36,6 +36,8 @@ namespace bmalloc {
 
 DebugHeap* debugHeapCache { nullptr };
     
+DEFINE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
+
 #if BOS(DARWIN)
 
 DebugHeap::DebugHeap(std::lock_guard<Mutex>&)

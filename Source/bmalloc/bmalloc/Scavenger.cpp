@@ -65,9 +65,11 @@ struct PrintTime {
     bool printed { false };
 };
 
+DEFINE_STATIC_PER_PROCESS_STORAGE(Scavenger);
+
 Scavenger::Scavenger(std::lock_guard<Mutex>&)
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
 
 #if BOS(DARWIN)
     auto queue = dispatch_queue_create("WebKit Malloc Memory Pressure Handler", DISPATCH_QUEUE_SERIAL);
@@ -165,8 +167,8 @@ inline void dumpStats()
     }
 #endif
 
-    dump("bmalloc-freeable", PerProcess<Scavenger>::get()->freeableMemory());
-    dump("bmalloc-footprint", PerProcess<Scavenger>::get()->footprint());
+    dump("bmalloc-freeable", Scavenger::get()->freeableMemory());
+    dump("bmalloc-footprint", Scavenger::get()->footprint());
 }
 
 std::chrono::milliseconds Scavenger::timeSinceLastFullScavenge()
@@ -230,7 +232,7 @@ void Scavenger::scavenge()
 
     {
         RELEASE_BASSERT(!m_deferredDecommits.size());
-        PerProcess<AllIsoHeaps>::get()->forEach(
+        AllIsoHeaps::get()->forEach(
             [&] (IsoHeapImplBase& heap) {
                 heap.scavenge(m_deferredDecommits);
             });
@@ -297,7 +299,7 @@ void Scavenger::partialScavenge()
 
     {
         RELEASE_BASSERT(!m_deferredDecommits.size());
-        PerProcess<AllIsoHeaps>::get()->forEach(
+        AllIsoHeaps::get()->forEach(
             [&] (IsoHeapImplBase& heap) {
                 heap.scavengeToHighWatermark(m_deferredDecommits);
             });
@@ -329,7 +331,7 @@ size_t Scavenger::freeableMemory()
         }
     }
 
-    PerProcess<AllIsoHeaps>::get()->forEach(
+    AllIsoHeaps::get()->forEach(
         [&] (IsoHeapImplBase& heap) {
             result += heap.freeableMemory();
         });
@@ -339,7 +341,7 @@ size_t Scavenger::freeableMemory()
 
 size_t Scavenger::footprint()
 {
-    RELEASE_BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    RELEASE_BASSERT(!Environment::get()->isDebugHeapEnabled());
 
     size_t result = 0;
     for (unsigned i = numHeaps; i--;) {
@@ -348,7 +350,7 @@ size_t Scavenger::footprint()
         result += PerProcess<PerHeapKind<Heap>>::get()->at(i).footprint();
     }
 
-    PerProcess<AllIsoHeaps>::get()->forEach(
+    AllIsoHeaps::get()->forEach(
         [&] (IsoHeapImplBase& heap) {
             result += heap.footprint();
         });

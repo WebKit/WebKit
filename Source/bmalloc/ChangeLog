@@ -1,3 +1,90 @@
+2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Add StaticPerProcess for known types to save pages
+        https://bugs.webkit.org/show_bug.cgi?id=195691
+
+        Reviewed by Mark Lam.
+
+        As initial memory footprint of VM + JSGlobalObject becomes 488KB dirty size in fast malloc memory (w/ JSC_useJIT=0 and Malloc=1), pages for PerProcess is costly.
+        For example, under Malloc=1 mode, we still need to allocate PerProcess<DebugHeap> and PerProcess<Environment>. And sizeof(Environment) is only 1 (bool flag), and
+        sizeof(DebugHeap) is 120. But we are allocating 1 pages for them. Since page size in iOS is 16KB, this 121B consumes 16KB dirty memory, and it is not negligible
+        size if we keep in mind that the current fast malloc heap size is 488KB. Putting them into the __DATA section, close to the other mutable data, we can avoid allocating
+        this page.
+
+        This patch revives the SafePerProcess concept in r228107. We add "StaticPerProcess<T>", which allocates underlying storage statically in the __DATA section instead of
+        allocating it at runtime. And we use this StaticPerProcess<T> for types where (1) T is known a priori, and (2) sizeof(T) is not huge.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AllIsoHeaps.cpp:
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::Allocator):
+        * bmalloc/Cache.cpp:
+        (bmalloc::Cache::Cache):
+        * bmalloc/CryptoRandom.cpp:
+        (bmalloc::cryptoRandom):
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::Deallocator):
+        * bmalloc/DebugHeap.cpp:
+        * bmalloc/DebugHeap.h:
+        (bmalloc::DebugHeap::tryGet):
+        * bmalloc/Environment.cpp:
+        * bmalloc/Environment.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::Callback::Callback):
+        (Gigacage::Callback::function):
+        (bmalloc::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        (Gigacage::removePrimitiveDisableCallback):
+        (Gigacage::shouldBeEnabled):
+        (Gigacage::bmalloc::Callback::Callback): Deleted.
+        (Gigacage::bmalloc::Callback::function): Deleted.
+        (Gigacage::bmalloc::PrimitiveDisableCallbacks::PrimitiveDisableCallbacks): Deleted.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        (bmalloc::Heap::tryAllocateLarge):
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        * bmalloc/IsoHeapImpl.cpp:
+        (bmalloc::IsoHeapImplBase::addToAllIsoHeaps):
+        * bmalloc/IsoPage.cpp:
+        (bmalloc::IsoPageBase::allocatePageMemory):
+        * bmalloc/IsoTLS.cpp:
+        (bmalloc::IsoTLS::IsoTLS):
+        (bmalloc::IsoTLS::ensureEntries):
+        (bmalloc::IsoTLS::forEachEntry):
+        * bmalloc/IsoTLSEntry.cpp:
+        (bmalloc::IsoTLSEntry::IsoTLSEntry):
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::allocateSlow):
+        (bmalloc::IsoTLS::deallocateSlow):
+        * bmalloc/IsoTLSLayout.cpp:
+        * bmalloc/IsoTLSLayout.h:
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::dumpStats):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::partialScavenge):
+        (bmalloc::Scavenger::freeableMemory):
+        (bmalloc::Scavenger::footprint):
+        * bmalloc/Scavenger.h:
+        * bmalloc/StaticPerProcess.h: Added.
+        * bmalloc/VMHeap.cpp:
+        * bmalloc/VMHeap.h:
+        * bmalloc/Zone.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::scavenge):
+        (bmalloc::api::isEnabled):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        (bmalloc::api::enableMiniMode):
+        * test/testbmalloc.cpp:
+        (assertEmptyPointerSet):
+        (assertHasObjects):
+        (assertHasOnlyObjects):
+        (assertClean):
+
 2019-03-13  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         [bmalloc] Use MADV_FREE on FreeBSD

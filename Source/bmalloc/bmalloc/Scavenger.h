@@ -28,7 +28,7 @@
 #include "BPlatform.h"
 #include "DeferredDecommit.h"
 #include "Mutex.h"
-#include "PerProcess.h"
+#include "StaticPerProcess.h"
 #include "Vector.h"
 #include <chrono>
 #include <condition_variable>
@@ -40,7 +40,7 @@
 
 namespace bmalloc {
 
-class Scavenger {
+class Scavenger : public StaticPerProcess<Scavenger> {
 public:
     BEXPORT Scavenger(std::lock_guard<Mutex>&);
     
@@ -112,6 +112,7 @@ private:
     
     Vector<DeferredDecommit> m_deferredDecommits;
 };
+DECLARE_STATIC_PER_PROCESS_STORAGE(Scavenger);
 
 } // namespace bmalloc
 

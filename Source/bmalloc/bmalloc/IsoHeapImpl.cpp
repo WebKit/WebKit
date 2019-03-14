@@ -41,7 +41,7 @@ IsoHeapImplBase::~IsoHeapImplBase()
 
 void IsoHeapImplBase::addToAllIsoHeaps()
 {
-    PerProcess<AllIsoHeaps>::get()->add(this);
+    AllIsoHeaps::get()->add(this);
 }
 
 void IsoHeapImplBase::scavengeNow()

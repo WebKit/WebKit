@@ -143,6 +143,7 @@
 		AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = AD14AD27202529A600890E3B /* ProcessCheck.h */; };
 		AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD14AD28202529B000890E3B /* ProcessCheck.mm */; };
 		DE8B13B321CC5D9F00A63FCD /* BVMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = DE8B13B221CC5D9F00A63FCD /* BVMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E31E747F2238CA5B005D084A /* StaticPerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -309,6 +310,7 @@
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
 		AD14AD28202529B000890E3B /* ProcessCheck.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessCheck.mm; path = bmalloc/ProcessCheck.mm; sourceTree = "<group>"; };
 		DE8B13B221CC5D9F00A63FCD /* BVMTags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BVMTags.h; path = bmalloc/BVMTags.h; sourceTree = "<group>"; };
+		E31E747F2238CA5B005D084A /* StaticPerProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticPerProcess.h; path = bmalloc/StaticPerProcess.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -552,6 +554,7 @@
 				144469FD17A61F1F00F9EA1D /* PerThread.h */,
 				145F6878179E3A4400D65598 /* Range.h */,
 				148EFAE61D6B953B008E721E /* ScopeExit.h */,
+				E31E747F2238CA5B005D084A /* StaticPerProcess.h */,
 				7C571F0022388B840077A3C7 /* StdLibExtras.h */,
 				1417F64F18B7280C0076FA3F /* Syscall.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
@@ -665,6 +668,7 @@
 				14DD789018F48CEB00950702 /* Sizes.h in Headers */,
 				14DD78BC18F48D6B00950702 /* SmallLine.h in Headers */,
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
+				E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */,
 				7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */,
 				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,

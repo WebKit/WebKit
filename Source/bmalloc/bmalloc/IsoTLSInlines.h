@@ -96,7 +96,7 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFa
     }
     
     // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
     
     IsoTLS* tls = ensureHeapAndEntries(handle);
     
@@ -139,7 +139,7 @@ BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
     }
     
     // If debug heap is enabled, s_mallocFallbackState becomes MallocFallbackState::FallBackToMalloc.
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
     
     RELEASE_BASSERT(handle.isInitialized());
     

@@ -33,7 +33,7 @@
 #include "BAssert.h"
 #include "BPlatform.h"
 #include "Mutex.h"
-#include "PerProcess.h"
+#include "StaticPerProcess.h"
 #include "VMAllocate.h"
 #include <mutex>
 
@@ -59,7 +59,7 @@ public:
     uint8_t s[256];
 };
 
-class ARC4RandomNumberGenerator {
+class ARC4RandomNumberGenerator : public StaticPerProcess<ARC4RandomNumberGenerator> {
 public:
     ARC4RandomNumberGenerator(const std::lock_guard<Mutex>&);
 
@@ -76,6 +76,8 @@ private:
     int m_count;
     Mutex m_mutex;
 };
+DECLARE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
+DEFINE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
 
 ARC4Stream::ARC4Stream()
 {
@@ -176,7 +178,7 @@ void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 
 void cryptoRandom(void* buffer, size_t length)
 {
-    PerProcess<ARC4RandomNumberGenerator>::get()->randomValues(buffer, length);
+    ARC4RandomNumberGenerator::get()->randomValues(buffer, length);
 }
 
 } // namespace bmalloc

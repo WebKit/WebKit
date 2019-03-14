@@ -27,7 +27,7 @@
 
 #include "Environment.h"
 #include "Mutex.h"
-#include "PerProcess.h"
+#include "StaticPerProcess.h"
 #include <mutex>
 #include <unordered_map>
 
@@ -37,7 +37,7 @@
 
 namespace bmalloc {
     
-class DebugHeap {
+class DebugHeap : private StaticPerProcess<DebugHeap> {
 public:
     DebugHeap(std::lock_guard<Mutex>&);
     
@@ -64,14 +64,15 @@ private:
     std::mutex m_lock;
     std::unordered_map<void*, size_t> m_sizeMap;
 };
+DECLARE_STATIC_PER_PROCESS_STORAGE(DebugHeap);
 
 extern BEXPORT DebugHeap* debugHeapCache;
 BINLINE DebugHeap* DebugHeap::tryGet()
 {
     if (debugHeapCache)
         return debugHeapCache;
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
-        debugHeapCache = PerProcess<DebugHeap>::get();
+    if (Environment::get()->isDebugHeapEnabled()) {
+        debugHeapCache = DebugHeap::get();
         return debugHeapCache;
     }
     return nullptr;

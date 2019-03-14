@@ -54,7 +54,7 @@ Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
     initializeLineMetadata();
     initializePageMetadata();
     
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
 
     Gigacage::ensureGigacage();
 #if GIGACAGE_ENABLED
@@ -69,7 +69,7 @@ Heap::Heap(HeapKind kind, std::lock_guard<Mutex>&)
     }
 #endif
     
-    m_scavenger = PerProcess<Scavenger>::get();
+    m_scavenger = Scavenger::get();
 }
 
 bool Heap::usingGigacage()
@@ -574,7 +574,7 @@ void* Heap::tryAllocateLarge(std::unique_lock<Mutex>& lock, size_t alignment, si
         if (usingGigacage())
             return nullptr;
 
-        range = PerProcess<VMHeap>::get()->tryAllocateLargeChunk(alignment, size);
+        range = VMHeap::get()->tryAllocateLargeChunk(alignment, size);
         if (!range)
             return nullptr;
         

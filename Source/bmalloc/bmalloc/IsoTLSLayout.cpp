@@ -29,6 +29,8 @@
 
 namespace bmalloc {
 
+DEFINE_STATIC_PER_PROCESS_STORAGE(IsoTLSLayout);
+
 IsoTLSLayout::IsoTLSLayout(const std::lock_guard<Mutex>&)
 {
 }

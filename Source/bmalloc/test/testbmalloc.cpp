@@ -73,7 +73,7 @@ static std::set<void*> toptrset(const std::vector<void*>& ptrs)
 
 static void assertEmptyPointerSet(const std::set<void*>& pointers)
 {
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+    if (Environment::get()->isDebugHeapEnabled()) {
         printf("    skipping checks because DebugHeap.\n");
         return;
     }
@@ -90,7 +90,7 @@ static void assertEmptyPointerSet(const std::set<void*>& pointers)
 template<typename heapType>
 static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 {
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+    if (Environment::get()->isDebugHeapEnabled()) {
         printf("    skipping checks because DebugHeap.\n");
         return;
     }
@@ -106,7 +106,7 @@ static void assertHasObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 template<typename heapType>
 static void assertHasOnlyObjects(IsoHeap<heapType>& heap, std::set<void*> pointers)
 {
-    if (PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+    if (Environment::get()->isDebugHeapEnabled()) {
         printf("    skipping checks because DebugHeap.\n");
         return;
     }
@@ -123,7 +123,7 @@ template<typename heapType>
 static void assertClean(IsoHeap<heapType>& heap)
 {
     scavengeThisThread();
-    if (!PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+    if (!Environment::get()->isDebugHeapEnabled()) {
         auto& impl = heap.impl();
         {
             std::lock_guard<Mutex> locker(impl.lock);
@@ -131,7 +131,7 @@ static void assertClean(IsoHeap<heapType>& heap)
         }
     }
     heap.scavenge();
-    if (!PerProcess<Environment>::get()->isDebugHeapEnabled()) {
+    if (!Environment::get()->isDebugHeapEnabled()) {
         auto& impl = heap.impl();
         std::lock_guard<Mutex> locker(impl.lock);
         CHECK(!impl.numCommittedPages());

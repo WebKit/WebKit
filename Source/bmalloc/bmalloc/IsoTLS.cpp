@@ -54,7 +54,7 @@ void IsoTLS::scavenge()
 
 IsoTLS::IsoTLS()
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
 }
 
 IsoTLS* IsoTLS::ensureEntries(unsigned offset)
@@ -77,7 +77,7 @@ IsoTLS* IsoTLS::ensureEntries(unsigned offset)
         });
     
     IsoTLS* tls = get();
-    IsoTLSLayout& layout = *PerProcess<IsoTLSLayout>::get();
+    IsoTLSLayout& layout = *IsoTLSLayout::get();
 
     IsoTLSEntry* oldLastEntry = tls ? tls->m_lastEntry : nullptr;
     RELEASE_BASSERT(!oldLastEntry || oldLastEntry->offset() < offset);
@@ -167,7 +167,7 @@ void IsoTLS::forEachEntry(const Func& func)
 {
     if (!m_lastEntry)
         return;
-    PerProcess<IsoTLSLayout>::get()->head()->walkUpToInclusive(
+    IsoTLSLayout::get()->head()->walkUpToInclusive(
         m_lastEntry,
         [&] (IsoTLSEntry* entry) {
             func(entry, m_data + entry->offset());

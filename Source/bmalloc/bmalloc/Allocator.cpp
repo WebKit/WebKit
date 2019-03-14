@@ -40,7 +40,7 @@ Allocator::Allocator(Heap& heap, Deallocator& deallocator)
     : m_heap(heap)
     , m_deallocator(deallocator)
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
     for (size_t sizeClass = 0; sizeClass < sizeClassCount; ++sizeClass)
         m_bumpAllocators[sizeClass].init(objectSize(sizeClass));
 }

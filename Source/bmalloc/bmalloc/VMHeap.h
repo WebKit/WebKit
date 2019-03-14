@@ -31,6 +31,7 @@
 #include "HeapKind.h"
 #include "LargeRange.h"
 #include "Map.h"
+#include "StaticPerProcess.h"
 #include "Vector.h"
 #if BOS(DARWIN)
 #include "Zone.h"
@@ -44,12 +45,13 @@ class Heap;
 
 typedef enum { Sync, Async } ScavengeMode;
 
-class VMHeap {
+class VMHeap : public StaticPerProcess<VMHeap> {
 public:
     VMHeap(std::lock_guard<Mutex>&);
     
     LargeRange tryAllocateLargeChunk(size_t alignment, size_t);
 };
+DECLARE_STATIC_PER_PROCESS_STORAGE(VMHeap);
 
 } // namespace bmalloc
 

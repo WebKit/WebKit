@@ -53,7 +53,7 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
 
     m_highWatermark = std::max(pageIndex, m_highWatermark);
     
-    Scavenger& scavenger = *PerProcess<Scavenger>::get();
+    Scavenger& scavenger = *Scavenger::get();
     scavenger.didStartGrowing();
     
     IsoPage<Config>* page = m_pages[pageIndex];
@@ -108,7 +108,7 @@ void IsoDirectory<Config, passedNumPages>::didBecome(IsoPage<Config>* page, IsoP
         BASSERT(!!m_committed[pageIndex]);
         this->m_heap.isNowFreeable(page, IsoPageBase::pageSize);
         m_empty[pageIndex] = true;
-        PerProcess<Scavenger>::get()->schedule(IsoPageBase::pageSize);
+        Scavenger::get()->schedule(IsoPageBase::pageSize);
         return;
     }
     BCRASH();

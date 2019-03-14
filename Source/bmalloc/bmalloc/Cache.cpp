@@ -48,7 +48,7 @@ Cache::Cache(HeapKind heapKind)
     : m_deallocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind))
     , m_allocator(PerProcess<PerHeapKind<Heap>>::get()->at(heapKind), m_deallocator)
 {
-    BASSERT(!PerProcess<Environment>::get()->isDebugHeapEnabled());
+    BASSERT(!Environment::get()->isDebugHeapEnabled());
 }
 
 BNO_INLINE void* Cache::tryAllocateSlowCaseNullCache(HeapKind heapKind, size_t size)

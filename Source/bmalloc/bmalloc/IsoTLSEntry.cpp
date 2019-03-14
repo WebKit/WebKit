@@ -37,7 +37,7 @@ IsoTLSEntry::IsoTLSEntry(size_t alignment, size_t size)
     , m_alignment(alignment)
     , m_size(size)
 {
-    PerProcess<IsoTLSLayout>::get()->add(this);
+    IsoTLSLayout::get()->add(this);
     RELEASE_BASSERT(m_offset != UINT_MAX);
 }
 

@@ -32,7 +32,7 @@ namespace bmalloc {
 
 void* IsoPageBase::allocatePageMemory()
 {
-    return PerProcess<VMHeap>::get()->tryAllocateLargeChunk(pageSize, pageSize).begin();
+    return VMHeap::get()->tryAllocateLargeChunk(pageSize, pageSize).begin();
 }
 
 } // namespace bmalloc

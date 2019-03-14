@@ -95,12 +95,12 @@ void scavenge()
     if (DebugHeap* debugHeap = DebugHeap::tryGet())
         debugHeap->scavenge();
     else
-        PerProcess<Scavenger>::get()->scavenge();
+        Scavenger::get()->scavenge();
 }
 
 bool isEnabled(HeapKind)
 {
-    return !PerProcess<Environment>::get()->isDebugHeapEnabled();
+    return !Environment::get()->isDebugHeapEnabled();
 }
 
 #if BOS(DARWIN)
@@ -109,7 +109,7 @@ void setScavengerThreadQOSClass(qos_class_t overrideClass)
     if (DebugHeap::tryGet())
         return;
     std::unique_lock<Mutex> lock(Heap::mutex());
-    PerProcess<Scavenger>::get()->setScavengerThreadQOSClass(overrideClass);
+    Scavenger::get()->setScavengerThreadQOSClass(overrideClass);
 }
 #endif
 
@@ -132,7 +132,7 @@ void decommitAlignedPhysical(void* object, size_t size, HeapKind kind)
 void enableMiniMode()
 {
     if (!DebugHeap::tryGet())
-        PerProcess<Scavenger>::get()->enableMiniMode();
+        Scavenger::get()->enableMiniMode();
 }
 
 } } // namespace bmalloc::api

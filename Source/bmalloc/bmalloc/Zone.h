@@ -29,6 +29,7 @@
 #include "FixedVector.h"
 #include "Mutex.h"
 #include "Range.h"
+#include "StaticPerProcess.h"
 #include <malloc/malloc.h>
 #include <mutex>
 

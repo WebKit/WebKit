@@ -27,6 +27,8 @@
 
 namespace bmalloc {
 
+DEFINE_STATIC_PER_PROCESS_STORAGE(AllIsoHeaps);
+
 AllIsoHeaps::AllIsoHeaps(const std::lock_guard<Mutex>&)
 {
 }

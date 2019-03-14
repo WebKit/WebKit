@@ -26,13 +26,14 @@
 #pragma once
 
 #include "Mutex.h"
+#include "StaticPerProcess.h"
 #include <mutex>
 
 namespace bmalloc {
 
 class IsoTLSEntry;
 
-class IsoTLSLayout {
+class IsoTLSLayout : public StaticPerProcess<IsoTLSLayout> {
 public:
     IsoTLSLayout(const std::lock_guard<Mutex>&);
     
@@ -44,6 +45,7 @@ private:
     IsoTLSEntry* m_head { nullptr };
     IsoTLSEntry* m_tail { nullptr };
 };
+DECLARE_STATIC_PER_PROCESS_STORAGE(IsoTLSLayout);
 
 } // namespace bmalloc
 
