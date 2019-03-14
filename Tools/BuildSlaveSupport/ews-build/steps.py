@@ -40,7 +40,7 @@ Interpolate = properties.Interpolate
 class ConfigureBuild(buildstep.BuildStep):
     name = "configure-build"
     description = ["configuring build"]
-    descriptionDone = ["configured build"]
+    descriptionDone = ["Configured build"]
 
     def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments):
         super(ConfigureBuild, self).__init__()
@@ -99,7 +99,7 @@ class CheckOutSource(git.Git):
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'
     description = ['clean-working-directory running']
-    descriptionDone = ['clean-working-directory']
+    descriptionDone = ['Cleaned working directory']
     flunkOnFailure = True
     haltOnFailure = True
     command = ['Tools/Scripts/clean-webkit']
@@ -108,7 +108,7 @@ class CleanWorkingDirectory(shell.ShellCommand):
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     name = 'apply-patch'
     description = ['applying-patch']
-    descriptionDone = ['apply-patch']
+    descriptionDone = ['Applied patch']
     flunkOnFailure = True
     haltOnFailure = True
     command = ['Tools/Scripts/svn-apply', '--force', '.buildbot-diff']
@@ -133,7 +133,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
 class CheckPatchRelevance(buildstep.BuildStep):
     name = 'check-patch-relevance'
     description = ['check-patch-relevance running']
-    descriptionDone = ['check-patch-relevance']
+    descriptionDone = ['Checked patch relevance']
     flunkOnFailure = True
     haltOnFailure = True
 
@@ -224,7 +224,7 @@ class CheckPatchRelevance(buildstep.BuildStep):
 class ValidatePatch(buildstep.BuildStep):
     name = 'validate-patch'
     description = ['validate-patch running']
-    descriptionDone = ['validate-patch']
+    descriptionDone = ['Validated patch']
     flunkOnFailure = True
     haltOnFailure = True
     bug_open_statuses = ["UNCONFIRMED", "NEW", "ASSIGNED", "REOPENED"]
@@ -362,6 +362,7 @@ class ValidatePatch(buildstep.BuildStep):
 
 class UnApplyPatchIfRequired(CleanWorkingDirectory):
     name = 'unapply-patch'
+    descriptionDone = ['Unapplied patch']
 
     def doStepIf(self, step):
         return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedJSCTests')
@@ -473,7 +474,7 @@ def appendCustomBuildFlags(step, platform, fullPlatform):
 class CompileWebKit(shell.Compile):
     name = "compile-webkit"
     description = ["compiling"]
-    descriptionDone = ["compiled"]
+    descriptionDone = ["Compiled WebKit"]
     env = {'MFLAGS': ''}
     warningPattern = ".*arning: .*"
     haltOnFailure = False
@@ -522,6 +523,7 @@ class CompileWebKitToT(CompileWebKit):
 
 class CompileJSCOnly(CompileWebKit):
     name = "build-jsc"
+    descriptionDone = ["Compiled JSC"]
     command = ["perl", "Tools/Scripts/build-jsc", WithProperties("--%(configuration)s")]
 
 
@@ -584,14 +586,14 @@ class RunJavaScriptCoreTestsToT(RunJavaScriptCoreTests):
 class CleanBuild(shell.Compile):
     name = "delete-WebKitBuild-directory"
     description = ["deleting WebKitBuild directory"]
-    descriptionDone = ["deleted WebKitBuild directory"]
+    descriptionDone = ["Deleted WebKitBuild directory"]
     command = ["python", "Tools/BuildSlaveSupport/clean-build", WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 
 class KillOldProcesses(shell.Compile):
     name = "kill-old-processes"
     description = ["killing old processes"]
-    descriptionDone = ["killed old processes"]
+    descriptionDone = ["Killed old processes"]
     command = ["python", "Tools/BuildSlaveSupport/kill-old-processes", "buildbot"]
 
     def __init__(self, **kwargs):
@@ -636,7 +638,7 @@ class ArchiveBuiltProduct(shell.ShellCommand):
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'archive']
     name = 'archive-built-product'
     description = ['archiving built product']
-    descriptionDone = ['archived built product']
+    descriptionDone = ['Archived built product']
     haltOnFailure = True
 
 
@@ -660,7 +662,7 @@ class DownloadBuiltProduct(shell.ShellCommand):
         WithProperties(EWS_URL + 'archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')]
     name = 'download-built-product'
     description = ['downloading built product']
-    descriptionDone = ['downloaded built product']
+    descriptionDone = ['Downloaded built product']
     haltOnFailure = True
     flunkOnFailure = True
 
@@ -670,7 +672,7 @@ class ExtractBuiltProduct(shell.ShellCommand):
                WithProperties('--platform=%(fullPlatform)s'), WithProperties('--%(configuration)s'), 'extract']
     name = 'extract-built-product'
     description = ['extracting built product']
-    descriptionDone = ['extracted built product']
+    descriptionDone = ['Extracted built product']
     haltOnFailure = True
     flunkOnFailure = True
 
@@ -703,12 +705,13 @@ class ArchiveTestResults(shell.ShellCommand):
                Interpolate('--platform=%(prop:platform)s'), Interpolate('--%(prop:configuration)s'), 'archive']
     name = 'archive-test-results'
     description = ['archiving test results']
-    descriptionDone = ['archived test results']
+    descriptionDone = ['Archived test results']
     haltOnFailure = True
 
 
 class UploadTestResults(transfer.FileUpload):
     name = 'upload-test-results'
+    descriptionDone = ['Uploaded test results']
     workersrc = 'layout-test-results.zip'
     masterdest = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
     haltOnFailure = True
@@ -726,7 +729,7 @@ class ExtractTestResults(master.MasterShellCommand):
     zipFile = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s.zip')
     resultDirectory = Interpolate('public_html/results/%(prop:buildername)s/r%(prop:patch_id)s-%(prop:buildnumber)s')
 
-    descriptionDone = ['uploaded results']
+    descriptionDone = ['Extracted test results']
     command = ['unzip', zipFile, '-d', resultDirectory]
     renderables = ['resultDirectory']
 

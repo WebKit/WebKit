@@ -397,7 +397,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='killed old processes')
+        self.expectOutcome(result=SUCCESS, state_string='Killed old processes')
         return self.runStep()
 
     def test_failure(self):
@@ -410,7 +410,7 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='killed old processes (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Killed old processes (failure)')
         return self.runStep()
 
 
@@ -432,7 +432,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='deleted WebKitBuild directory')
+        self.expectOutcome(result=SUCCESS, state_string='Deleted WebKitBuild directory')
         return self.runStep()
 
     def test_failure(self):
@@ -446,7 +446,7 @@ class TestCleanBuild(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected error.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='deleted WebKitBuild directory (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Deleted WebKitBuild directory (failure)')
         return self.runStep()
 
 
@@ -468,7 +468,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
         return self.runStep()
 
     def test_failure(self):
@@ -482,7 +482,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Compiled WebKit (failure)')
         return self.runStep()
 
 
@@ -505,7 +505,7 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
         return self.runStep()
 
     def test_failure(self):
@@ -520,7 +520,7 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Compiled WebKit (failure)')
         return self.runStep()
 
     def test_skip(self):
@@ -528,7 +528,7 @@ class TestCompileWebKitToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='compiled (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
         return self.runStep()
 
 
@@ -550,7 +550,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        self.expectOutcome(result=SUCCESS, state_string='Compiled JSC')
         return self.runStep()
 
     def test_failure(self):
@@ -564,7 +564,7 @@ class TestCompileJSCOnly(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Compiled JSC (failure)')
         return self.runStep()
 
 
@@ -587,7 +587,7 @@ class TestCompileJSCOnlyToT(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        self.expectOutcome(result=SUCCESS, state_string='Compiled JSC')
         return self.runStep()
 
     def test_failure(self):
@@ -602,7 +602,7 @@ class TestCompileJSCOnlyToT(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='1 error generated.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='compiled (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Compiled JSC (failure)')
         return self.runStep()
 
     def test_skip(self):
@@ -610,7 +610,7 @@ class TestCompileJSCOnlyToT(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'jsc-only')
         self.setProperty('configuration', 'debug')
         self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='compiled (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Compiled JSC (skipped)')
         return self.runStep()
 
 
@@ -841,7 +841,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='archived built product')
+        self.expectOutcome(result=SUCCESS, state_string='Archived built product')
         return self.runStep()
 
     def test_failure(self):
@@ -855,7 +855,7 @@ class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='archived built product (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Archived built product (failure)')
         return self.runStep()
 
 
@@ -907,7 +907,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='extracted built product')
+        self.expectOutcome(result=SUCCESS, state_string='Extracted built product')
         return self.runStep()
 
     def test_failure(self):
@@ -921,7 +921,7 @@ class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='extracted built product (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Extracted built product (failure)')
         return self.runStep()
 
 
@@ -1149,7 +1149,7 @@ class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
                         )
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='archived test results')
+        self.expectOutcome(result=SUCCESS, state_string='Archived test results')
         return self.runStep()
 
     def test_failure(self):
@@ -1164,7 +1164,7 @@ class TestArchiveTestResults(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout='Unexpected failure.')
             + 2,
         )
-        self.expectOutcome(result=FAILURE, state_string='archived test results (failure)')
+        self.expectOutcome(result=FAILURE, state_string='Archived test results (failure)')
         return self.runStep()
 
 
@@ -1195,7 +1195,7 @@ class TestUploadTestResults(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectUploadedFile('public_html/results/macOS-Sierra-Release-WK2-Tests-EWS/r1234-12.zip')
 
-        self.expectOutcome(result=SUCCESS, state_string='uploading layout-test-results.zip')
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded test results')
         return self.runStep()
 
 
@@ -1221,7 +1221,7 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
                                              ])
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='uploaded results')
+        self.expectOutcome(result=SUCCESS, state_string='Extracted test results')
         self.expectAddedURLs([call('view layout test results', '/results/test/r2468_ab1a28b4feee0d42973c7c05335b35bca927e974 (1)/results.html')])
         return self.runStep()
 
