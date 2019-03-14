@@ -1,3 +1,10 @@
+2019-03-14  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update xcfilelist files as they are out of sync.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+
 2019-03-14  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Updates to GPUCommandBuffer for new GPUCommandEncoder concept

@@ -1921,6 +1921,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUCommandBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUCommandBuffer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUCommandEncoder.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUCommandEncoder.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUDevice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGPUIndexFormat.cpp
