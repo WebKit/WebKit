@@ -4674,14 +4674,12 @@ private:
                 Output::StoreType storeType;
                 
                 Edge& element = m_graph.varArgChild(m_node, elementOffset);
+                speculate(element);
                 if (m_node->arrayMode().type() != Array::Double) {
                     value = lowJSValue(element, ManualOperandSpeculation);
-                    if (m_node->arrayMode().type() == Array::Int32)
-                        DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecInt32Only));
                     storeType = Output::Store64;
                 } else {
                     value = lowDouble(element);
-                    DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecDoubleReal));
                     storeType = Output::StoreDouble;
                 }
 
@@ -4720,6 +4718,11 @@ private:
                 return;
             }
 
+            for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+                Edge element = m_graph.varArgChild(m_node, elementIndex + elementOffset);
+                speculate(element);
+            }
+
             LValue prevLength = m_out.load32(storage, m_heaps.Butterfly_publicLength);
             LValue newLength = m_out.add(prevLength, m_out.constInt32(elementCount));
 
@@ -4756,12 +4759,9 @@ private:
                 Output::StoreType storeType;
                 if (m_node->arrayMode().type() != Array::Double) {
                     value = lowJSValue(element, ManualOperandSpeculation);
-                    if (m_node->arrayMode().type() == Array::Int32)
-                        DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecInt32Only));
                     storeType = Output::Store64;
                 } else {
                     value = lowDouble(element);
-                    DFG_ASSERT(m_graph, m_node, !m_interpreter.needsTypeCheck(element, SpecDoubleReal));
                     storeType = Output::StoreDouble;
                 }
 

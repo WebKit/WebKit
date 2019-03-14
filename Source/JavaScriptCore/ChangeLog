@@ -1,3 +1,27 @@
+2019-03-14  Saam barati  <sbarati@apple.com>
+
+        Fixup uses KnownInt32 incorrectly in some nodes
+        https://bugs.webkit.org/show_bug.cgi?id=195279
+        <rdar://problem/47915654>
+
+        Reviewed by Yusuke Suzuki.
+
+        Fixup was sometimes using KnownInt32 edges when it knew some
+        incoming value is an Int32 based on what the bytecode would return.
+        However, because bytecode may result in Int32 for some node does
+        not mean we'll pick Int32 as the value format for that local. For example,
+        we may choose for a value to be represented as a double. This patch
+        corrects such uses of KnownInt32.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayPush):
+        (JSC::DFG::SpeculativeJIT::compileGetDirectPname):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+
 2019-03-14  Keith Miller  <keith_miller@apple.com>
 
         DFG liveness can't skip tail caller inline frames

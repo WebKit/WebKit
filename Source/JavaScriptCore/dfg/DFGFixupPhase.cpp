@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1149,12 +1149,10 @@ private:
                 Edge& element = m_graph.varArgChild(node, i + elementOffset);
                 switch (node->arrayMode().type()) {
                 case Array::Int32:
-                    insertCheck<Int32Use>(element.node());
-                    fixEdge<KnownInt32Use>(element);
+                    fixEdge<Int32Use>(element);
                     break;
                 case Array::Double:
-                    insertCheck<DoubleRepRealUse>(element.node());
-                    fixEdge<DoubleRepUse>(element);
+                    fixEdge<DoubleRepRealUse>(element);
                     break;
                 case Array::Contiguous:
                 case Array::ArrayStorage:
@@ -1163,7 +1161,6 @@ private:
                 default:
                     break;
                 }
-                ASSERT(shouldNotHaveTypeCheck(element.useKind()));
             }
             break;
         }
@@ -1868,7 +1865,7 @@ private:
             
             blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
             fixEdge<CellUse>(m_graph.varArgChild(node, 0));
-            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 1));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
             break;
         }
         case GetDirectPname: {
@@ -1878,7 +1875,7 @@ private:
             Edge& enumerator = m_graph.varArgChild(node, 3);
             fixEdge<CellUse>(base);
             fixEdge<KnownCellUse>(property);
-            fixEdge<KnownInt32Use>(index);
+            fixEdge<Int32Use>(index);
             fixEdge<KnownCellUse>(enumerator);
             break;
         }
@@ -1889,16 +1886,16 @@ private:
         }
         case GetEnumeratorStructurePname: {
             fixEdge<KnownCellUse>(node->child1());
-            fixEdge<KnownInt32Use>(node->child2());
+            fixEdge<Int32Use>(node->child2());
             break;
         }
         case GetEnumeratorGenericPname: {
             fixEdge<KnownCellUse>(node->child1());
-            fixEdge<KnownInt32Use>(node->child2());
+            fixEdge<Int32Use>(node->child2());
             break;
         }
         case ToIndexString: {
-            fixEdge<KnownInt32Use>(node->child1());
+            fixEdge<Int32Use>(node->child1());
             break;
         }
         case ProfileType: {
@@ -1990,7 +1987,7 @@ private:
 
         case CreateRest: {
             watchHavingABadTime(node);
-            fixEdge<KnownInt32Use>(node->child1());
+            fixEdge<Int32Use>(node->child1());
             break;
         }
 
@@ -2154,7 +2151,7 @@ private:
             else
                 fixEdge<UntypedUse>(propertyEdge);
             fixEdge<UntypedUse>(m_graph.varArgChild(node, 2));
-            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 3));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 3));
             break;
         }
 
@@ -2204,7 +2201,7 @@ private:
                 fixEdge<UntypedUse>(propertyEdge);
             fixEdge<CellUse>(m_graph.varArgChild(node, 2));
             fixEdge<CellUse>(m_graph.varArgChild(node, 3));
-            fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 4));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 4));
             break;
         }
 
