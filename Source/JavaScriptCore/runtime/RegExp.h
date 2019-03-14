@@ -108,7 +108,7 @@ public:
 
     bool hasCode()
     {
-        return m_state != NotCompiled;
+        return m_state == JITCode || m_state == ByteCode;
     }
 
     bool hasCodeFor(Yarr::YarrCharSize);

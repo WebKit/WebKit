@@ -11274,7 +11274,6 @@ private:
         FrozenValue* regexp = m_node->cellOperand();
         LValue lastIndex = lowJSValue(m_node->child1());
         ASSERT(regexp->cell()->inherits<RegExp>(vm()));
-        ASSERT(m_node->castOperand<RegExp*>()->isValid());
 
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();

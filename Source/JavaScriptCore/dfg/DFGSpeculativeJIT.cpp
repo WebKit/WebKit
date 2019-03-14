@@ -9756,7 +9756,6 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 void SpeculativeJIT::compileNewRegexp(Node* node)
 {
     RegExp* regexp = node->castOperand<RegExp*>();
-    ASSERT(regexp->isValid());
 
     GPRTemporary result(this);
     GPRTemporary scratch1(this);

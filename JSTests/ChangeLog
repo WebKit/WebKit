@@ -1,3 +1,16 @@
+2019-03-13  Michael Saboff  <msaboff@apple.com>
+
+        ASSERTION FAILED: regexp->isValid() or ASSERTION FAILED: !isCompilationThread()
+        https://bugs.webkit.org/show_bug.cgi?id=195735
+
+        Reviewed by Mark Lam.
+
+        New regression test.
+
+        * stress/dont-strength-reduce-regexp-with-compile-error.js: Added.
+        (foo):
+        (bar):
+
 2019-03-14  Saam barati  <sbarati@apple.com>
 
         Fixup uses KnownInt32 incorrectly in some nodes
