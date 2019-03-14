@@ -81,7 +81,7 @@ void SVGAnimatedNumberListAnimator::calculateAnimatedValue(float percentage, uns
 {
     ASSERT(m_animationElement);
 
-    const auto& fromNumberList = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGNumberListValues>();
+    const auto& fromNumberList = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<SVGNumberListValues>();
     const auto& toNumberList = to->as<SVGNumberListValues>();
     const auto& toAtEndOfDurationNumberList = toAtEndOfDuration->as<SVGNumberListValues>();
     auto& animatedNumberList = animated->as<SVGNumberListValues>();

@@ -70,7 +70,7 @@ void SVGAnimatedBooleanAnimator::calculateAnimatedValue(float percentage, unsign
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto fromBoolean = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<bool>();
+    const auto fromBoolean = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<bool>();
     const auto toBoolean = to->as<bool>();
     auto& animatedBoolean = animated->as<bool>();
 

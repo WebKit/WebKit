@@ -31,7 +31,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGSetElement);
 inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document& document)
     : SVGAnimateElementBase(tagName, document)
 {
-    setAnimationMode(ToAnimation);
+    setAnimationMode(AnimationMode::To);
     ASSERT(hasTagName(SVGNames::setTag));
 }
 
@@ -42,7 +42,7 @@ Ref<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document&
 
 void SVGSetElement::updateAnimationMode()
 {
-    // No-op, as <set> has a constant animation mode of ToAnimation.
+    // No-op, as <set> has a constant animation mode of AnimationMode::To.
     // See: http://www.w3.org/TR/SVG/single-page.html#animate-SetElement
 }
 

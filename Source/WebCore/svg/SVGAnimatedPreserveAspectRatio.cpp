@@ -69,7 +69,7 @@ void SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue(float percen
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto& fromPreserveAspectRatio = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGPreserveAspectRatioValue>();
+    const auto& fromPreserveAspectRatio = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<SVGPreserveAspectRatioValue>();
     const auto& toPreserveAspectRatio = to->as<SVGPreserveAspectRatioValue>();
     auto& animatedPreserveAspectRatio = animated->as<SVGPreserveAspectRatioValue>();
 

@@ -1,3 +1,66 @@
+2019-03-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Use enum class for AnimationMode
+        https://bugs.webkit.org/show_bug.cgi?id=195762
+
+        Reviewed by Tim Horton.
+
+        Convert AnimationMode into an enum class.
+
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::calculateFromAndByValues):
+        (WebCore::SVGAnimateElementBase::isAdditive const):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateMotionElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateMotionElement::updateAnimationMode):
+        * svg/SVGAnimatedAngle.cpp:
+        (WebCore::SVGAnimatedAngleAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedBoolean.cpp:
+        (WebCore::SVGAnimatedBooleanAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedColor.cpp:
+        (WebCore::SVGAnimatedColorAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedEnumeration.cpp:
+        (WebCore::SVGAnimatedEnumerationAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedInteger.cpp:
+        (WebCore::SVGAnimatedIntegerAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp:
+        (WebCore::SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedLength.cpp:
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedLengthList.cpp:
+        (WebCore::SVGAnimatedLengthListAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedNumber.cpp:
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedNumberList.cpp:
+        (WebCore::SVGAnimatedNumberListAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedNumberOptionalNumber.cpp:
+        (WebCore::SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedPath.cpp:
+        (WebCore::SVGAnimatedPathAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedPointList.cpp:
+        (WebCore::SVGAnimatedPointListAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedPreserveAspectRatio.cpp:
+        (WebCore::SVGAnimatedPreserveAspectRatioAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedRect.cpp:
+        (WebCore::SVGAnimatedRectAnimator::calculateAnimatedValue):
+        * svg/SVGAnimatedTransformList.cpp:
+        (WebCore::SVGAnimatedTransformListAnimator::calculateAnimatedValue):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::updateAnimationMode):
+        (WebCore::SVGAnimationElement::isAdditive const):
+        (WebCore::SVGAnimationElement::isAccumulated const):
+        (WebCore::SVGAnimationElement::calculateKeyTimesForCalcModePaced):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        (WebCore::SVGAnimationElement::updateAnimation):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::adjustFromToListValues):
+        (WebCore::SVGAnimationElement::animateDiscreteType):
+        (WebCore::SVGAnimationElement::animateAdditiveNumber):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        (WebCore::SVGSetElement::updateAnimationMode):
+
 2019-03-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Storing a Node in Ref/RefPtr inside its destructor results in double delete

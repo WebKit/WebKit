@@ -268,13 +268,13 @@ void SVGAnimationElement::updateAnimationMode()
 {
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
     if (hasAttribute(SVGNames::valuesAttr))
-        setAnimationMode(ValuesAnimation);
+        setAnimationMode(AnimationMode::Values);
     else if (!toValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? ToAnimation : FromToAnimation);
+        setAnimationMode(fromValue().isEmpty() ? AnimationMode::To : AnimationMode::FromTo);
     else if (!byValue().isEmpty())
-        setAnimationMode(fromValue().isEmpty() ? ByAnimation : FromByAnimation);
+        setAnimationMode(fromValue().isEmpty() ? AnimationMode::By : AnimationMode::FromBy);
     else
-        setAnimationMode(NoAnimation);
+        setAnimationMode(AnimationMode::None);
 }
 
 void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
@@ -327,14 +327,14 @@ bool SVGAnimationElement::isAdditive() const
 {
     static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
     const AtomicString& value = attributeWithoutSynchronization(SVGNames::additiveAttr);
-    return value == sum || animationMode() == ByAnimation;
+    return value == sum || animationMode() == AnimationMode::By;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
     static NeverDestroyed<const AtomicString> sum("sum", AtomicString::ConstructFromLiteral);
     const AtomicString& value = attributeWithoutSynchronization(SVGNames::accumulateAttr);
-    return value == sum && animationMode() != ToAnimation;
+    return value == sum && animationMode() != AnimationMode::To;
 }
 
 bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* element, const QualifiedName& attributeName)
@@ -369,7 +369,7 @@ SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimat
 void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
 {
     ASSERT(calcMode() == CalcMode::Paced);
-    ASSERT(animationMode() == ValuesAnimation);
+    ASSERT(animationMode() == AnimationMode::Values);
 
     unsigned valuesCount = m_values.size();
     ASSERT(valuesCount >= 1);
@@ -554,7 +554,7 @@ void SVGAnimationElement::startedActiveInterval()
         unsigned splinesCount = m_keySplines.size();
         if (!splinesCount
             || (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && m_keyPoints.size() - 1 != splinesCount)
-            || (animationMode == ValuesAnimation && m_values.size() - 1 != splinesCount)
+            || (animationMode == AnimationMode::Values && m_values.size() - 1 != splinesCount)
             || (hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && m_keyTimes.size() - 1 != splinesCount))
             return;
     }
@@ -562,22 +562,22 @@ void SVGAnimationElement::startedActiveInterval()
     String from = fromValue();
     String to = toValue();
     String by = byValue();
-    if (animationMode == NoAnimation)
+    if (animationMode == AnimationMode::None)
         return;
-    if ((animationMode == FromToAnimation || animationMode == FromByAnimation || animationMode == ToAnimation || animationMode == ByAnimation)
+    if ((animationMode == AnimationMode::FromTo || animationMode == AnimationMode::FromBy || animationMode == AnimationMode::To || animationMode == AnimationMode::By)
         && (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && (m_keyTimes.size() < 2 || m_keyTimes.size() != m_keyPoints.size())))
         return;
-    if (animationMode == FromToAnimation)
+    if (animationMode == AnimationMode::FromTo)
         m_animationValid = calculateFromAndToValues(from, to);
-    else if (animationMode == ToAnimation) {
+    else if (animationMode == AnimationMode::To) {
         // For to-animations the from value is the current accumulated value from lower priority animations.
         // The value is not static and is determined during the animation.
         m_animationValid = calculateFromAndToValues(emptyString(), to);
-    } else if (animationMode == FromByAnimation)
+    } else if (animationMode == AnimationMode::FromBy)
         m_animationValid = calculateFromAndByValues(from, by);
-    else if (animationMode == ByAnimation)
+    else if (animationMode == AnimationMode::By)
         m_animationValid = calculateFromAndByValues(emptyString(), by);
-    else if (animationMode == ValuesAnimation) {
+    else if (animationMode == AnimationMode::Values) {
         m_animationValid = m_values.size() >= 1
             && (calcMode == CalcMode::Paced || !hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) || hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_values.size() == m_keyTimes.size()))
             && (calcMode == CalcMode::Discrete || !m_keyTimes.size() || m_keyTimes.last() == 1)
@@ -587,7 +587,7 @@ void SVGAnimationElement::startedActiveInterval()
             m_animationValid = calculateToAtEndOfDurationValue(m_values.last());
         if (calcMode == CalcMode::Paced && m_animationValid)
             calculateKeyTimesForCalcModePaced();
-    } else if (animationMode == PathAnimation)
+    } else if (animationMode == AnimationMode::Path)
         m_animationValid = calcMode == CalcMode::Paced || !hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_keyTimes.size() > 1 && m_keyTimes.size() == m_keyPoints.size());
 }
 
@@ -599,7 +599,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
     float effectivePercent;
     CalcMode calcMode = this->calcMode();
     AnimationMode animationMode = this->animationMode();
-    if (animationMode == ValuesAnimation) {
+    if (animationMode == AnimationMode::Values) {
         String from;
         String to;
         currentValuesForValuesAnimation(percent, effectivePercent, from, to);
@@ -614,7 +614,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
         effectivePercent = calculatePercentFromKeyPoints(percent);
     else if (m_keyPoints.isEmpty() && calcMode == CalcMode::Spline && m_keyTimes.size() > 1)
         effectivePercent = calculatePercentForSpline(percent, calculateKeyTimesIndex(percent));
-    else if (animationMode == FromToAnimation || animationMode == ToAnimation)
+    else if (animationMode == AnimationMode::FromTo || animationMode == AnimationMode::To)
         effectivePercent = calculatePercentForFromTo(percent);
     else
         effectivePercent = percent;

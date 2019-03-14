@@ -105,7 +105,7 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
         return;
 
     // Never resize the animatedTransformList to the toTransformList size, instead either clear the list or append to it.
-    if (!animatedTransformList.isEmpty() && (!m_animationElement->isAdditive() || m_animationElement->animationMode() == ToAnimation))
+    if (!animatedTransformList.isEmpty() && (!m_animationElement->isAdditive() || m_animationElement->animationMode() == AnimationMode::To))
         animatedTransformList.clear();
 
     auto fromTransformListSize = fromTransformList.size();

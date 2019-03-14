@@ -82,7 +82,7 @@ void SVGAnimatedIntegerAnimator::calculateAnimatedValue(float percentage, unsign
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto fromInteger = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<int>();
+    const auto fromInteger = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<int>();
     const auto toInteger = to->as<int>();
     const auto toAtEndOfDurationInteger = toAtEndOfDuration->as<int>();
     auto& animatedInteger = animated->as<int>();

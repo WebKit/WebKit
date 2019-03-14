@@ -80,7 +80,7 @@ void SVGAnimatedAngleAnimator::calculateAnimatedValue(float percentage, unsigned
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto& fromAngleAndEnumeration = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<std::pair<SVGAngleValue, unsigned>>();
+    const auto& fromAngleAndEnumeration = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<std::pair<SVGAngleValue, unsigned>>();
     auto& toAngleAndEnumeration = to->as<std::pair<SVGAngleValue, unsigned>>();
     auto& toAtEndOfDurationAngleAndEnumeration = toAtEndOfDuration->as<std::pair<SVGAngleValue, unsigned>>();
     auto& animatedAngleAndEnumeration = animated->as<std::pair<SVGAngleValue, unsigned>>();

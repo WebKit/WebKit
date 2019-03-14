@@ -163,11 +163,11 @@ bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, c
     if (!this->targetElement())
         return false;
 
-    if (animationMode() == ByAnimation && !isAdditive())
+    if (animationMode() == AnimationMode::By && !isAdditive())
         return false;
 
     // from-by animation may only be used with attributes that support addition (e.g. most numeric attributes).
-    if (animationMode() == FromByAnimation && !animatedPropertyTypeSupportsAddition())
+    if (animationMode() == AnimationMode::FromBy && !animatedPropertyTypeSupportsAddition())
         return false;
 
     ASSERT(!hasTagName(SVGNames::setTag));
@@ -412,7 +412,7 @@ bool SVGAnimateElementBase::animatedPropertyTypeSupportsAddition() const
 
 bool SVGAnimateElementBase::isAdditive() const
 {
-    if (animationMode() == ByAnimation || animationMode() == FromByAnimation) {
+    if (animationMode() == AnimationMode::By || animationMode() == AnimationMode::FromBy) {
         if (!animatedPropertyTypeSupportsAddition())
             return false;
     }

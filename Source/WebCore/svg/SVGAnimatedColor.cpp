@@ -70,7 +70,7 @@ void SVGAnimatedColorAnimator::calculateAnimatedValue(float percentage, unsigned
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    auto fromColor = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<Color>();
+    auto fromColor = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<Color>();
     auto toColor = to->as<Color>();
 
     // Apply CSS inheritance rules.

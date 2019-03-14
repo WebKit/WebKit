@@ -79,7 +79,7 @@ void SVGAnimatedNumberAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    auto fromNumber = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<float>();
+    auto fromNumber = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<float>();
     auto toNumber = to->as<float>();
     const auto toAtEndOfDurationNumber = toAtEndOfDuration->as<float>();
     auto& animatedNumber = animated->as<float>();

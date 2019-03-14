@@ -78,7 +78,7 @@ void SVGAnimatedIntegerOptionalIntegerAnimator::calculateAnimatedValue(float per
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto& fromIntegerPair = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<std::pair<int, int>>();
+    const auto& fromIntegerPair = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<std::pair<int, int>>();
     const auto& toIntegerPair = to->as<std::pair<int, int>>();
     const auto& toAtEndOfDurationIntegerPair = toAtEndOfDuration->as<std::pair<int, int>>();
     auto& animatedIntegerPair = animated->as<std::pair<int, int>>();

@@ -82,7 +82,7 @@ void SVGAnimatedPointListAnimator::calculateAnimatedValue(float percentage, unsi
 {
     ASSERT(m_animationElement);
 
-    const auto& fromPointList = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGPointListValues>();
+    const auto& fromPointList = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<SVGPointListValues>();
     const auto& toPointList = to->as<SVGPointListValues>();
     const auto& toAtEndOfDurationPointList = toAtEndOfDuration->as<SVGPointListValues>();
     auto& animatedPointList = animated->as<SVGPointListValues>();

@@ -86,7 +86,7 @@ void SVGAnimatedLengthAnimator::calculateAnimatedValue(float percentage, unsigne
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    auto fromSVGLength = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGLengthValue>();
+    auto fromSVGLength = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<SVGLengthValue>();
     auto toSVGLength = to->as<SVGLengthValue>();
     const auto& toAtEndOfDurationSVGLength = toAtEndOfDuration->as<SVGLengthValue>();
     auto& animatedSVGLength = animated->as<SVGLengthValue>();

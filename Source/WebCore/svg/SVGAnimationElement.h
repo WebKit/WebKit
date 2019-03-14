@@ -36,21 +36,21 @@ class ConditionEventListener;
 class SVGAnimatedType;
 class TimeContainer;
 
-enum AnimationMode {
-    NoAnimation,
-    FromToAnimation,
-    FromByAnimation,
-    ToAnimation,
-    ByAnimation,
-    ValuesAnimation,
-    PathAnimation // Used by AnimateMotion.
+enum class AnimationMode : uint8_t {
+    None,
+    FromTo,
+    FromBy,
+    To,
+    By,
+    Values,
+    Path // Used by AnimateMotion.
 };
 
 // If we have 'currentColor' or 'inherit' as animation value, we need to grab
 // the value during the animation since the value can be animated itself.
 enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, InheritValue };
 
-enum class CalcMode { Discrete, Linear, Paced, Spline };
+enum class CalcMode : uint8_t { Discrete, Linear, Paced, Spline };
 
 class SVGAnimationElement : public SVGSMILElement, public SVGExternalResourcesRequired, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
@@ -105,7 +105,7 @@ public:
         unsigned fromListSize = fromList.size();
         if (fromListSize != toListSize && fromListSize) {
             if (percentage < 0.5) {
-                if (animationMode() != ToAnimation)
+                if (animationMode() != AnimationMode::To)
                     animatedList = AnimatedType(fromList);
             } else
                 animatedList = AnimatedType(toList);
@@ -122,7 +122,7 @@ public:
 
     template<typename AnimatedType> void animateDiscreteType(float percentage, const AnimatedType& fromType, const AnimatedType& toType, AnimatedType& animatedType)
     {
-        if ((animationMode() == FromToAnimation && percentage > 0.5) || animationMode() == ToAnimation || percentage == 1) {
+        if ((animationMode() == AnimationMode::FromTo && percentage > 0.5) || animationMode() == AnimationMode::To || percentage == 1) {
             animatedType = AnimatedType(toType);
             return;
         }
@@ -140,7 +140,7 @@ public:
         if (isAccumulated() && repeatCount)
             number += toAtEndOfDurationNumber * repeatCount;
 
-        if (isAdditive() && animationMode() != ToAnimation)
+        if (isAdditive() && animationMode() != AnimationMode::To)
             animatedNumber += number;
         else
             animatedNumber = number;
@@ -220,7 +220,7 @@ private:
     String m_lastValuesAnimationTo;
     bool m_hasInvalidCSSAttributeType { false };
     CalcMode m_calcMode { CalcMode::Linear };
-    AnimationMode m_animationMode { NoAnimation };
+    AnimationMode m_animationMode { AnimationMode::None };
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
 };
 

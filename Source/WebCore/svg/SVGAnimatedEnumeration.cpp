@@ -148,7 +148,7 @@ void SVGAnimatedEnumerationAnimator::calculateAnimatedValue(float percentage, un
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto fromEnumeration = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<unsigned>();
+    const auto fromEnumeration = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<unsigned>();
     const auto toEnumeration = to->as<unsigned>();
     auto& animatedEnumeration = animated->as<unsigned>();
 

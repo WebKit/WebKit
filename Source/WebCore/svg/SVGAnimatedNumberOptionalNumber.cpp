@@ -78,7 +78,7 @@ void SVGAnimatedNumberOptionalNumberAnimator::calculateAnimatedValue(float perce
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    const auto& fromNumberPair = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<std::pair<float, float>>();
+    const auto& fromNumberPair = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<std::pair<float, float>>();
     const auto& toNumberPair = to->as<std::pair<float, float>>();
     const auto& toAtEndOfDurationNumberPair = toAtEndOfDuration->as<std::pair<float, float>>();
     auto& animatedNumberPair = animated->as<std::pair<float, float>>();

@@ -108,7 +108,7 @@ void SVGAnimatedPathAnimator::calculateAnimatedValue(float percentage, unsigned 
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    bool isToAnimation = m_animationElement->animationMode() == ToAnimation;
+    bool isToAnimation = m_animationElement->animationMode() == AnimationMode::To;
     auto& animatedPath = animated->as<SVGPathByteStream>();
 
     SVGPathByteStream underlyingPath;

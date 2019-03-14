@@ -90,7 +90,7 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
 
-    auto fromLengthList = (m_animationElement->animationMode() == ToAnimation ? animated : from)->as<SVGLengthListValues>();
+    auto fromLengthList = (m_animationElement->animationMode() == AnimationMode::To ? animated : from)->as<SVGLengthListValues>();
     auto toLengthList = to->as<SVGLengthListValues>();
     const auto& toAtEndOfDurationLengthList = toAtEndOfDuration->as<SVGLengthListValues>();
     auto& animatedLengthList = animated->as<SVGLengthListValues>();
