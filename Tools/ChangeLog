@@ -1,3 +1,16 @@
+2019-03-13  Sam Weinig  <sam@webkit.org>
+
+        Add utility function to allow easy reverse range-based iteration of a container
+        https://bugs.webkit.org/show_bug.cgi?id=195542
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/IteratorRange.cpp: Added.
+        (TestWebKitAPI::TEST):
+        Add test to ensure WTF::makeReversedRange() works correctly and uses the correct types.
+
 2019-03-13  Chris Dumez  <cdumez@apple.com>
 
         Use a ServiceWorker process per registrable domain
