@@ -1840,7 +1840,7 @@ DeviceMotionController* DOMWindow::deviceMotionController() const
 
 bool DOMWindow::isAllowedToUseDeviceMotionOrientation(String& message) const
 {
-    if (!frame() || !frame()->settings().deviceOrientationEventEnabled() || !document() || !document()->loader() || !document()->loader()->deviceOrientationEventEnabled()) {
+    if (!frame() || !frame()->settings().deviceOrientationEventEnabled()) {
         message = "API is disabled"_s;
         return false;
     }

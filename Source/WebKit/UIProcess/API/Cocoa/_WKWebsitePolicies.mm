@@ -57,16 +57,6 @@
     return _websitePolicies->contentBlockersEnabled();
 }
 
-- (void)setDeviceOrientationEventEnabled:(BOOL)deviceOrientationEventEnabled
-{
-    _websitePolicies->setDeviceOrientationEventEnabled(deviceOrientationEventEnabled);
-}
-
-- (BOOL)deviceOrientationEventEnabled
-{
-    return _websitePolicies->deviceOrientationEventEnabled();
-}
-
 - (void)setAllowedAutoplayQuirks:(_WKWebsiteAutoplayQuirk)allowedQuirks
 {
     OptionSet<WebKit::WebsiteAutoplayQuirk> quirks;
@@ -136,6 +126,28 @@
     case WebKit::WebsiteAutoplayPolicy::Deny:
         return _WKWebsiteAutoplayPolicyDeny;
     }
+}
+
+- (void)setDeviceOrientationAndMotionAccessPolicy:(_WKWebsiteDeviceOrientationAndMotionAccessPolicy)policy
+{
+    switch (policy) {
+    case _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk:
+        _websitePolicies->setDeviceOrientationAndMotionAccessState(WTF::nullopt);
+        break;
+    case _WKWebsiteDeviceOrientationAndMotionAccessPolicyGrant:
+        _websitePolicies->setDeviceOrientationAndMotionAccessState(true);
+        break;
+    case _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny:
+        _websitePolicies->setDeviceOrientationAndMotionAccessState(false);
+        break;
+    }
+}
+
+- (_WKWebsiteDeviceOrientationAndMotionAccessPolicy)deviceOrientationAndMotionAccessPolicy
+{
+    if (!_websitePolicies->deviceOrientationAndMotionAccessState())
+        return _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk;
+    return *_websitePolicies->deviceOrientationAndMotionAccessState() ? _WKWebsiteDeviceOrientationAndMotionAccessPolicyGrant : _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny;
 }
 
 - (void)setPopUpPolicy:(_WKWebsitePopUpPolicy)policy

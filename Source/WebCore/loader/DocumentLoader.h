@@ -262,8 +262,8 @@ public:
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
 
-    bool deviceOrientationEventEnabled() const { return m_deviceOrientationEventEnabled; }
-    void setDeviceOrientationEventEnabled(bool enabled) { m_deviceOrientationEventEnabled = enabled; }
+    const Optional<bool>& deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
+    void setDeviceOrientationAndMotionAccessState(const Optional<bool>& state) { m_deviceOrientationAndMotionAccessState = state; }
 
     AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
     void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
@@ -552,7 +552,7 @@ private:
     String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
-    bool m_deviceOrientationEventEnabled { true };
+    Optional<bool> m_deviceOrientationAndMotionAccessState;
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };

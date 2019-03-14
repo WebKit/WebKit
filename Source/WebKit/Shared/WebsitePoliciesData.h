@@ -47,9 +47,9 @@ struct WebsitePoliciesData {
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
     bool contentBlockersEnabled { true };
-    bool deviceOrientationEventEnabled { true };
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
+    Optional<bool> deviceOrientationAndMotionAccessState;
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;

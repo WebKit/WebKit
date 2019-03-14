@@ -45,6 +45,12 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsitePopUpPolicy) {
     _WKWebsitePopUpPolicyBlock,
 } WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
+typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy) {
+    _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk,
+    _WKWebsiteDeviceOrientationAndMotionAccessPolicyGrant,
+    _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny,
+} WK_API_AVAILABLE(macosx(10.14), ios(12.0));
+
 @class WKWebsiteDataStore;
 
 WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
@@ -59,6 +65,6 @@ WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 @property (nonatomic, copy) NSString *customUserAgent WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, copy) NSString *customJavaScriptUserAgentAsSiteSpecificQuirks WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, copy) NSString *customNavigatorPlatform WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL deviceOrientationEventEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) _WKWebsiteDeviceOrientationAndMotionAccessPolicy deviceOrientationAndMotionAccessPolicy WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

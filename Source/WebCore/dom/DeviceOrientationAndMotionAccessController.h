@@ -41,14 +41,13 @@ class DeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<DeviceO
 public:
     explicit DeviceOrientationAndMotionAccessController(Document&);
 
-    const Optional<bool>& accessState() const { return m_accessState; }
+    Optional<bool> accessState() const;
     void shouldAllowAccess(Function<void(ExceptionOr<bool> granted)>&&);
 
 private:
     void setAccessState(bool);
 
     Document& m_document;
-    Optional<bool> m_accessState;
     Vector<Function<void(bool)>> m_pendingRequests;
 };
 

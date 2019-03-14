@@ -1,5 +1,19 @@
 2019-03-14  Chris Dumez  <cdumez@apple.com>
 
+        Add WebsitePolicy for the client to specify the device orientation & motion access policy
+        https://bugs.webkit.org/show_bug.cgi?id=195750
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesDeviceOrientationDelegate initWithDeviceOrientationAccessPolicy:]):
+        (-[WebsitePoliciesDeviceOrientationDelegate _webView:decidePolicyForNavigationAction:userInfo:decisionHandler:]):
+        (-[WebsitePoliciesDeviceOrientationUIDelegate _webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:]):
+
+2019-03-14  Chris Dumez  <cdumez@apple.com>
+
         [PSON] Make sure the WebProcessCache is leverage when relaunching a process after termination
         https://bugs.webkit.org/show_bug.cgi?id=195747
 

@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
@@ -46,8 +47,9 @@ DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessCont
 
 void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void(ExceptionOr<bool> granted)>&& callback)
 {
-    if (m_accessState)
-        return callback(*m_accessState);
+    if (auto accessState = this->accessState())
+        return callback(*accessState);
+    ASSERT(m_document.frame());
 
     if (!UserGestureIndicator::processingUserGesture())
         return callback(Exception { NotAllowedError, "Requesting device orientation or motion access requires a user gesture"_s });
@@ -56,15 +58,11 @@ void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void
     if (!page)
         return callback(false);
 
-    auto* frame = m_document.frame();
-    if (!frame)
-        return callback(false);
-
     m_pendingRequests.append(WTFMove(callback));
     if (m_pendingRequests.size() > 1)
         return;
 
-    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(*frame, [this, weakThis = makeWeakPtr(*this)](bool granted) mutable {
+    page->chrome().client().shouldAllowDeviceOrientationAndMotionAccess(*m_document.frame(), [this, weakThis = makeWeakPtr(*this)](bool granted) mutable {
         if (weakThis)
             setAccessState(granted);
     });
@@ -72,9 +70,9 @@ void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void
 
 void DeviceOrientationAndMotionAccessController::setAccessState(bool granted)
 {
-    ASSERT(!m_accessState);
-
-    m_accessState = granted;
+    auto* frame = m_document.frame();
+    if (frame && frame->loader().documentLoader())
+        frame->loader().documentLoader()->setDeviceOrientationAndMotionAccessState(granted);
 
     auto pendingRequests = WTFMove(m_pendingRequests);
     for (auto& request : pendingRequests)
@@ -87,6 +85,12 @@ void DeviceOrientationAndMotionAccessController::setAccessState(bool granted)
         frame->window()->startListeningForDeviceOrientationIfNecessary();
         frame->window()->startListeningForDeviceMotionIfNecessary();
     }
+}
+
+Optional<bool> DeviceOrientationAndMotionAccessController::accessState() const
+{
+    auto* frame = m_document.frame();
+    return frame && frame->loader().documentLoader() ? frame->loader().documentLoader()->deviceOrientationAndMotionAccessState() : false;
 }
 
 } // namespace WebCore

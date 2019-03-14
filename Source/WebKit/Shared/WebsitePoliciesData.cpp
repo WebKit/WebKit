@@ -37,8 +37,8 @@ namespace WebKit {
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
     encoder << contentBlockersEnabled;
-    encoder << deviceOrientationEventEnabled;
     encoder << autoplayPolicy;
+    encoder << deviceOrientationAndMotionAccessState;
     encoder << allowedAutoplayQuirks;
     encoder << customHeaderFields;
     encoder << popUpPolicy;
@@ -54,15 +54,15 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     decoder >> contentBlockersEnabled;
     if (!contentBlockersEnabled)
         return WTF::nullopt;
-
-    Optional<bool> deviceOrientationEventEnabled;
-    decoder >> deviceOrientationEventEnabled;
-    if (!deviceOrientationEventEnabled)
-        return WTF::nullopt;
     
     Optional<WebsiteAutoplayPolicy> autoplayPolicy;
     decoder >> autoplayPolicy;
     if (!autoplayPolicy)
+        return WTF::nullopt;
+
+    Optional<Optional<bool>> deviceOrientationAndMotionAccessState;
+    decoder >> deviceOrientationAndMotionAccessState;
+    if (!deviceOrientationAndMotionAccessState)
         return WTF::nullopt;
     
     Optional<OptionSet<WebsiteAutoplayQuirk>> allowedAutoplayQuirks;
@@ -102,9 +102,9 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     
     return { {
         WTFMove(*contentBlockersEnabled),
-        WTFMove(*deviceOrientationEventEnabled),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
+        WTFMove(*deviceOrientationAndMotionAccessState),
         WTFMove(*customHeaderFields),
         WTFMove(*popUpPolicy),
         WTFMove(*websiteDataStoreParameters),
@@ -120,7 +120,7 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setCustomUserAgent(websitePolicies.customUserAgent);
     documentLoader.setCustomJavaScriptUserAgentAsSiteSpecificQuirks(websitePolicies.customJavaScriptUserAgentAsSiteSpecificQuirks);
     documentLoader.setCustomNavigatorPlatform(websitePolicies.customNavigatorPlatform);
-    documentLoader.setDeviceOrientationEventEnabled(websitePolicies.deviceOrientationEventEnabled);
+    documentLoader.setDeviceOrientationAndMotionAccessState(websitePolicies.deviceOrientationAndMotionAccessState);
     
     // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
     if (documentLoader.userContentExtensionsEnabled())
