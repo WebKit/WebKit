@@ -1,3 +1,17 @@
+2019-03-13  Mark Lam  <mark.lam@apple.com>
+
+        Gardening: reducing the variants on 2 tests to avoid timing out on JSC Debug queue.
+        https://bugs.webkit.org/show_bug.cgi?id=195415
+
+        Not reviewed.
+
+        Changed these tests to only run the default configuration.
+        The ftl-no-cjit-validate-sampling-profiler variant was timing out.
+        There's no strong need to run this test on that variant.
+
+        * stress/dfg-to-string-on-int-does-gc.js:
+        * stress/dfg-to-string-on-string-or-string-object-does-not-gc.js:
+
 2019-03-13  Dominik Infuehr  <dinfuehr@igalia.com>
 
         String overflow when using StringBuilder in JSC::createError
