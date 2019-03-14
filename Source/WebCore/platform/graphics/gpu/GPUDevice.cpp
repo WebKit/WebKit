@@ -83,9 +83,9 @@ RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescr
     return GPURenderPipeline::create(*this, WTFMove(descriptor));
 }
 
-RefPtr<GPUCommandBuffer> GPUDevice::createCommandBuffer()
+RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const
 {
-    return GPUCommandBuffer::create(*this);
+    return GPUCommandBuffer::tryCreate(*this);
 }
 
 RefPtr<GPUSwapChain> GPUDevice::tryCreateSwapChain(const GPUSwapChainDescriptor& descriptor, int width, int height) const

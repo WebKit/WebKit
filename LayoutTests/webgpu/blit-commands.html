@@ -85,12 +85,13 @@ async function test(image) {
         imageHeight: 0
     };
 
-    const commandBuffer = device.createCommandBuffer();
-    commandBuffer.copyBufferToBuffer(bufferA, 0, bufferB, 0, imageData.data.byteLength);
-    commandBuffer.copyBufferToTexture(bufferViewB, textureViewA, textureSize);
-    commandBuffer.copyTextureToTexture(textureViewA, textureViewB, textureSize);
-    commandBuffer.copyTextureToBuffer(textureViewB, readBufferView, textureSize);
-    device.getQueue().submit([commandBuffer]);
+    const commandEncoder = device.createCommandEncoder();
+    commandEncoder.copyBufferToBuffer(bufferA, 0, bufferB, 0, imageData.data.byteLength);
+    commandEncoder.copyBufferToTexture(bufferViewB, textureViewA, textureSize);
+    commandEncoder.copyBufferToTexture(bufferViewB, textureViewA, textureSize);
+    commandEncoder.copyTextureToTexture(textureViewA, textureViewB, textureSize);
+    commandEncoder.copyTextureToBuffer(textureViewB, readBufferView, textureSize);
+    device.getQueue().submit([commandEncoder.finish()]);
     bufferA.destroy();
     bufferB.destroy();
     textureA.destroy();

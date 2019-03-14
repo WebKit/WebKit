@@ -1,3 +1,87 @@
+2019-03-13  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Updates to GPUCommandBuffer for new GPUCommandQueue concept
+        https://bugs.webkit.org/show_bug.cgi?id=195083
+        <rdar://problem/48423591>
+
+        Reviewed by Dean Jackson.
+
+        WebGPUCommandBuffer now represents a completed GPUCommandBuffer that can only be used in queue submits. The previous WebGPUCommandBuffer
+        is now WebGPUCommandEncoder.
+
+        Affected Web GPU tests updated to match new API.
+
+        New files and symbols:
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Implement new WebGPUCommandBuffer, now just a DOM object carrier for a finished GPUCommandBuffer:
+        * Modules/webgpu/WebGPUCommandBuffer.cpp:
+        (WebCore::WebGPUCommandBuffer::create):
+        (WebCore::WebGPUCommandBuffer::WebGPUCommandBuffer):
+        (WebCore::WebGPUBufferCopyView::tryCreateGPUBufferCopyView const): Deleted.
+        (WebCore::WebGPUTextureCopyView::tryCreateGPUTextureCopyView const): Deleted.
+        (WebCore::WebGPUCommandBuffer::beginRenderPass): Deleted.
+        (WebCore::WebGPUCommandBuffer::copyBufferToBuffer): Deleted.
+        (WebCore::WebGPUCommandBuffer::copyBufferToTexture): Deleted.
+        (WebCore::WebGPUCommandBuffer::copyTextureToBuffer): Deleted.
+        (WebCore::WebGPUCommandBuffer::copyTextureToTexture): Deleted.
+        * Modules/webgpu/WebGPUCommandBuffer.h:
+        (WebCore::WebGPUCommandBuffer::commandBuffer):
+        (WebCore::WebGPUCommandBuffer::commandBuffer const): Deleted.
+        * Modules/webgpu/WebGPUCommandBuffer.idl:
+
+        Rename old WebGPUCommandBuffer to WebGPUCommandEncoder:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp: Copied from Source/WebCore/Modules/webgpu/WebGPUCommandBuffer.cpp.
+        (WebCore::WebGPUBufferCopyView::tryCreateGPUBufferCopyView const):
+        (WebCore::WebGPUTextureCopyView::tryCreateGPUTextureCopyView const):
+        (WebCore::WebGPUCommandEncoder::create):
+        (WebCore::WebGPUCommandEncoder::WebGPUCommandEncoder):
+        (WebCore::WebGPUCommandEncoder::beginRenderPass):
+        (WebCore::WebGPUCommandEncoder::copyBufferToBuffer):
+        (WebCore::WebGPUCommandEncoder::copyBufferToTexture):
+        (WebCore::WebGPUCommandEncoder::copyTextureToBuffer):
+        (WebCore::WebGPUCommandEncoder::copyTextureToTexture):
+        (WebCore::WebGPUCommandEncoder::finish): Added. "Completes" this and invalidates it. Returns its GPUCommandBuffer, ready for submission.
+        * Modules/webgpu/WebGPUCommandEncoder.h: Copied from Source/WebCore/Modules/webgpu/WebGPUCommandBuffer.h.
+        * Modules/webgpu/WebGPUCommandEncoder.idl: Copied from Source/WebCore/Modules/webgpu/WebGPUCommandBuffer.idl.
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createCommandEncoder const): Renamed fom createCommandBuffer. Now returns non-nullable.
+        (WebCore::WebGPUDevice::createCommandBuffer const): Deleted.
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder):
+        (WebCore::WebGPUProgrammablePassEncoder::endPass): No longer returns the original WebGPUCommandBuffer.
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const):
+        (WebCore::WebGPUProgrammablePassEncoder::setPipeline):
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPUQueue.cpp:
+        (WebCore::WebGPUQueue::submit): Replace unnecessary rvalue reference parameter.
+        * Modules/webgpu/WebGPUQueue.h:
+        * Modules/webgpu/WebGPUQueue.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::create):
+        (WebCore::WebGPURenderPassEncoder::WebGPURenderPassEncoder):
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers):
+        (WebCore::WebGPURenderPassEncoder::draw):
+        (WebCore::WebGPURenderPassEncoder::passEncoder const): Now returns a pointer since it is properly backed by a RefPtr.
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPUSwapChain.cpp:
+        (WebCore::WebGPUSwapChain::getCurrentTexture): No longer invalidates m_currentTexture. Doh!
+        * platform/graphics/gpu/GPUCommandBuffer.h: Missing includes for the *CopyView structs.
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateCommandBuffer const): Renamed from createCommandBuffer.
+        (WebCore::GPUDevice::createCommandBuffer): Deleted.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::tryCreate): Renamed from create.
+        (WebCore::GPUCommandBuffer::create): Deleted.
+
 2019-03-13  Zalan Bujtas  <zalan@apple.com>
 
         [WeakPtr] RenderListMarker::m_listItem should be a WeakPtr

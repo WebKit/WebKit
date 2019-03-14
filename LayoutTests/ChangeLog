@@ -1,3 +1,26 @@
+2019-03-13  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Updates to GPUCommandBuffer for new GPUCommandQueue concept
+        https://bugs.webkit.org/show_bug.cgi?id=195083
+        <rdar://problem/48423591>
+
+        Reviewed by Dean Jackson.
+
+        Update existing Web GPU tests for GPUCommandEncoder and new GPUCommandBuffer.
+
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/command-buffers-expected.txt:
+        * webgpu/command-buffers.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/js/webgpu-functions.js:
+        (beginBasicRenderPass):
+        * webgpu/render-command-encoding.html:
+        * webgpu/simple-triangle-strip.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+
 2019-03-13  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

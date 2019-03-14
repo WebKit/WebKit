@@ -34,15 +34,14 @@ promise_test(async () => {
     const shaderModule = device.createShaderModule({ code: shaders });
     const pipeline = createBasicPipeline(shaderModule, device);
 
-    const commandBuffer = device.createCommandBuffer();
-    assert_true(commandBuffer instanceof WebGPUCommandBuffer, "createCommandBuffer returned a WebGPUCommandBuffer");
+    const commandEncoder = device.createCommandEncoder();
+    assert_true(commandEncoder instanceof GPUCommandEncoder, "createCommandEncoder returned a GPUCommandEncoder");
 
-    const encoder = beginBasicRenderPass(swapChain, commandBuffer);
+    const encoder = beginBasicRenderPass(swapChain, commandEncoder);
     assert_true(encoder instanceof WebGPURenderPassEncoder, "beginRenderPass() returned a WebGPURenderPassEncoder");
 
     encoder.setPipeline(pipeline);
-    const commandBufferEnd = encoder.endPass();
-    assert_true(commandBufferEnd instanceof WebGPUCommandBuffer, "endPass() returned a WebGPUCommandBuffer");
+    encoder.endPass();
 }, "WebGPURenderPassEncoder created and successfully ended");
 
 </script>

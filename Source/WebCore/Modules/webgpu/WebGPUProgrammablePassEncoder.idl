@@ -31,7 +31,7 @@ typedef unsigned long u32;
     EnabledAtRuntime=WebGPU,
     SkipVTableValidation
 ] interface WebGPUProgrammablePassEncoder {
-    WebGPUCommandBuffer endPass();
+    void endPass();
     void setBindGroup(u32 index, WebGPUBindGroup bindGroup/*, optional sequence<u32> dynamicOffsets*/);
     void setPipeline(WebGPURenderPipeline pipeline); // FIXME: Support WebGPUComputePipelines.
 };

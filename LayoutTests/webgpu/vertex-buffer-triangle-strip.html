@@ -91,11 +91,11 @@ async function test() {
     const vertexBuffer = createVertexBuffer(device);
     const inputStateDescriptor = createInputStateDescriptor();
     const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
-    const commandBuffer = device.createCommandBuffer();
-    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
-    const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline, vertexBuffer);
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
+    encodeBasicCommands(passEncoder, pipeline, vertexBuffer);
     const queue = device.getQueue();
-    queue.submit([endCommandBuffer]);
+    queue.submit([commandEncoder.finish()]);
     vertexBuffer.destroy();
 
     if (window.testRunner)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,46 +28,21 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUCommandBuffer.h"
-
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebGPUBuffer;
-class WebGPURenderPassEncoder;
-class WebGPUTexture;
-
-struct GPUExtent3D;
-struct WebGPURenderPassDescriptor;
-
-struct WebGPUBufferCopyView : GPUBufferCopyViewBase {
-    Optional<GPUBufferCopyView> tryCreateGPUBufferCopyView() const;
-
-    RefPtr<WebGPUBuffer> buffer;
-};
-
-struct WebGPUTextureCopyView : GPUTextureCopyViewBase {
-    Optional<GPUTextureCopyView> tryCreateGPUTextureCopyView() const;
-
-    RefPtr<WebGPUTexture> texture;
-};
-
 class WebGPUCommandBuffer : public RefCounted<WebGPUCommandBuffer> {
 public:
-    static Ref<WebGPUCommandBuffer> create(Ref<GPUCommandBuffer>&&);
+    static Ref<WebGPUCommandBuffer> create(RefPtr<GPUCommandBuffer>&&);
 
-    GPUCommandBuffer& commandBuffer() const { return m_commandBuffer.get(); }
-
-    RefPtr<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
-    void copyBufferToBuffer(const WebGPUBuffer&, unsigned long srcOffset, const WebGPUBuffer&, unsigned long dstOffset, unsigned long size);
-    void copyBufferToTexture(const WebGPUBufferCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
-    void copyTextureToBuffer(const WebGPUTextureCopyView&, const WebGPUBufferCopyView&, const GPUExtent3D&);
-    void copyTextureToTexture(const WebGPUTextureCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
+    GPUCommandBuffer* commandBuffer() { return m_commandBuffer.get(); }
 
 private:
-    WebGPUCommandBuffer(Ref<GPUCommandBuffer>&&);
+    WebGPUCommandBuffer(RefPtr<GPUCommandBuffer>&&);
 
-    Ref<GPUCommandBuffer> m_commandBuffer;
+    RefPtr<GPUCommandBuffer> m_commandBuffer;
 };
 
 } // namespace WebCore

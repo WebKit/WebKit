@@ -50,7 +50,7 @@ Ref<WebGPUTexture> WebGPUSwapChain::getCurrentTexture()
         return WebGPUTexture::create(nullptr);
     }
     m_currentTexture = WebGPUTexture::create(m_swapChain->tryGetCurrentTexture());
-    return m_currentTexture.releaseNonNull();
+    return makeRef(*m_currentTexture);
 }
 
 void WebGPUSwapChain::destroy()

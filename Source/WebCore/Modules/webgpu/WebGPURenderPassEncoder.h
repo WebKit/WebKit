@@ -40,17 +40,17 @@ class WebGPUBuffer;
 
 class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
 public:
-    static Ref<WebGPURenderPassEncoder> create(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
+    static Ref<WebGPURenderPassEncoder> create(Ref<WebGPUCommandEncoder>&&, RefPtr<GPURenderPassEncoder>&&);
 
     void setVertexBuffers(unsigned long, Vector<RefPtr<WebGPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 
 private:
-    WebGPURenderPassEncoder(Ref<WebGPUCommandBuffer>&&, Ref<GPURenderPassEncoder>&&);
+    WebGPURenderPassEncoder(Ref<WebGPUCommandEncoder>&&, RefPtr<GPURenderPassEncoder>&&);
 
-    GPUProgrammablePassEncoder& passEncoder() const final;
+    GPUProgrammablePassEncoder* passEncoder() const final;
 
-    Ref<GPURenderPassEncoder> m_passEncoder;
+    RefPtr<GPURenderPassEncoder> m_passEncoder;
 };
 
 } // namespace WebCore
