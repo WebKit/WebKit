@@ -352,11 +352,10 @@ Modules/webgpu/WHLSL/WHLSLPrepare.cpp
 Modules/webgpu/WebGPU.cpp
 Modules/webgpu/WebGPUBindGroup.cpp
 Modules/webgpu/WebGPUBindGroupDescriptor.cpp
-Modules/webgpu/WebGPUCommandBuffer.cpp
-Modules/webgpu/WebGPUCommandEncoder.cpp
 Modules/webgpu/WebGPUAdapter.cpp
 Modules/webgpu/WebGPUBindGroupLayout.cpp
 Modules/webgpu/WebGPUBuffer.cpp
+Modules/webgpu/WebGPUCommandBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
@@ -3340,7 +3339,6 @@ JSWebGPUBindGroupLayout.cpp
 JSWebGPUBuffer.cpp
 JSWebGPUBufferBinding.cpp
 JSWebGPUCommandBuffer.cpp
-JSWebGPUCommandEncoder.cpp
 JSWebGPUDevice.cpp
 JSWebGPUQueue.cpp
 JSWebGPUPipelineDescriptorBase.cpp

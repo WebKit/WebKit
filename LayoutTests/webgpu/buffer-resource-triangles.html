@@ -194,8 +194,8 @@ async function test() {
     });
 
     Promise.all(bufferPromises).then(() => {
-        const commandEncoder = device.createCommandEncoder();
-        const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
+        const commandBuffer = device.createCommandBuffer();
+        const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
         passEncoder.setPipeline(pipeline);
 
         // Vertex data for upper triangles.
@@ -205,9 +205,9 @@ async function test() {
         passEncoder.setVertexBuffers(0, [verticesBuffer], [0]);
         passEncoder.draw(9, 1, 0, 0);
 
-        passEncoder.endPass();
+        const endCommandBuffer = passEncoder.endPass();
         const queue = device.getQueue();
-        queue.submit([commandEncoder.finish()]);
+        queue.submit([endCommandBuffer]);
 
         if (window.testRunner)
             testRunner.notifyDone();

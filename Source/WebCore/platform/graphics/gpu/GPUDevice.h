@@ -37,6 +37,9 @@ OBJC_PROTOCOL(MTLDevice);
 
 namespace WebCore {
 
+using PlatformDevice = MTLDevice;
+using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
+
 class GPUBindGroupLayout;
 class GPUBuffer;
 class GPUCommandBuffer;
@@ -55,9 +58,6 @@ struct GPURequestAdapterOptions;
 struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
 struct GPUTextureDescriptor;
-    
-using PlatformDevice = MTLDevice;
-using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:
@@ -73,7 +73,7 @@ public:
     RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;
     RefPtr<GPURenderPipeline> createRenderPipeline(GPURenderPipelineDescriptor&&) const;
 
-    RefPtr<GPUCommandBuffer> tryCreateCommandBuffer() const;
+    RefPtr<GPUCommandBuffer> createCommandBuffer();
 
     RefPtr<GPUSwapChain> tryCreateSwapChain(const GPUSwapChainDescriptor&, int width, int height) const;
 

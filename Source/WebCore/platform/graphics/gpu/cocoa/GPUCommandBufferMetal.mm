@@ -28,9 +28,11 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPUBuffer.h"
 #import "GPUDevice.h"
 #import "GPUExtent3D.h"
 #import "GPUQueue.h"
+#import "GPUTexture.h"
 #import "Logging.h"
 
 #import <Metal/Metal.h>
@@ -39,7 +41,7 @@
 
 namespace WebCore {
 
-RefPtr<GPUCommandBuffer> GPUCommandBuffer::tryCreate(const GPUDevice& device)
+RefPtr<GPUCommandBuffer> GPUCommandBuffer::create(GPUDevice& device)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUCommandBuffer::create(): Invalid GPUDevice!");

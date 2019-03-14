@@ -76,13 +76,13 @@ function createAndSetVertexBuffer(device, vertices) {
 }
 
 function drawAndSubmitCommands(device, pipeline, attachment, vertexBuffer, colorBuffer) {
-    const commandEncoder = device.createCommandEncoder();
-    const encoder = commandEncoder.beginRenderPass({ colorAttachments: [attachment] });
+    const commandBuffer = device.createCommandBuffer();
+    const encoder = commandBuffer.beginRenderPass({ colorAttachments: [attachment] });
     encoder.setVertexBuffers(0, [vertexBuffer, colorBuffer], [0, 0]);
     encoder.setPipeline(pipeline);
     encoder.draw(3, 1, 0, 0);
     encoder.endPass();
-    device.getQueue().submit([commandEncoder.finish()]);
+    device.getQueue().submit([commandBuffer]);
 }
 
 async function test() {

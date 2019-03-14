@@ -47,7 +47,7 @@
 #include "WebGPUBindGroupLayout.h"
 #include "WebGPUBuffer.h"
 #include "WebGPUBufferBinding.h"
-#include "WebGPUCommandEncoder.h"
+#include "WebGPUCommandBuffer.h"
 #include "WebGPUPipelineLayout.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUPipelineStageDescriptor.h"
@@ -137,10 +137,11 @@ Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderP
     return WebGPURenderPipeline::create(WTFMove(pipeline));
 }
 
-Ref<WebGPUCommandEncoder> WebGPUDevice::createCommandEncoder() const
+RefPtr<WebGPUCommandBuffer> WebGPUDevice::createCommandBuffer() const
 {
-    auto commandBuffer = m_device->tryCreateCommandBuffer();
-    return WebGPUCommandEncoder::create(WTFMove(commandBuffer));
+    if (auto commandBuffer = m_device->createCommandBuffer())
+        return WebGPUCommandBuffer::create(commandBuffer.releaseNonNull());
+    return nullptr;
 }
 
 Ref<WebGPUSwapChain> WebGPUDevice::createSwapChain(const WebGPUSwapChainDescriptor& descriptor) const

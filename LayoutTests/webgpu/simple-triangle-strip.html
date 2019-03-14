@@ -52,12 +52,12 @@ async function test() {
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const pipeline = createBasicPipeline(shaderModule, device);
-    const commandEncoder = device.createCommandEncoder();
-    const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
-    encodeBasicCommands(passEncoder, pipeline);
+    const commandBuffer = device.createCommandBuffer();
+    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
+    const endCommandBuffer = encodeBasicCommands(passEncoder, pipeline);
     const queue = device.getQueue();
 
-    queue.submit([commandEncoder.finish()]);
+    queue.submit([endCommandBuffer]);
 
     requestAnimationFrame(() => { 
         if (window.testRunner)

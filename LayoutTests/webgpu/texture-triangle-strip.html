@@ -186,7 +186,7 @@ async function test() {
 
     // Pipeline and render
     const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor);
-    const commandEncoder = device.createCommandEncoder();
+    const commandBuffer = device.createCommandBuffer();
 
     const bufferCopyView = {
         buffer: textureBuffer,
@@ -200,8 +200,8 @@ async function test() {
         arrayLayer: 0,
         origin: { x: 0, y: 0, z: 0 }
     };
-    commandEncoder.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
-    const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
+    commandBuffer.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
+    const passEncoder = beginBasicRenderPass(swapChain, commandBuffer);
     passEncoder.setPipeline(pipeline);
     passEncoder.setBindGroup(bindGroupIndex, bindGroup);
     passEncoder.setVertexBuffers(positionBufferIndex, [positionBuffer, textureCoordBuffer], [0, 0]);
@@ -209,7 +209,7 @@ async function test() {
     passEncoder.endPass();
 
     const queue = device.getQueue();
-    queue.submit([commandEncoder.finish()]);
+    queue.submit([commandBuffer]);
     positionBuffer.destroy();
     textureCoordBuffer.destroy();
     texture.destroy();

@@ -41,7 +41,7 @@ class ScriptExecutionContext;
 class WebGPUBindGroup;
 class WebGPUBindGroupLayout;
 class WebGPUBuffer;
-class WebGPUCommandEncoder;
+class WebGPUCommandBuffer;
 class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
 class WebGPUSampler;
@@ -76,7 +76,7 @@ public:
     RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
     Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&) const;
 
-    Ref<WebGPUCommandEncoder> createCommandEncoder() const;
+    RefPtr<WebGPUCommandBuffer> createCommandBuffer() const;
 
     Ref<WebGPUSwapChain> createSwapChain(const WebGPUSwapChainDescriptor&) const;
 

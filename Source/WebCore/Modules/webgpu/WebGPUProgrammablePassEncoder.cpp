@@ -35,50 +35,39 @@
 
 namespace WebCore {
 
-WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder(Ref<WebGPUCommandEncoder>&& creator)
+WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder(Ref<WebGPUCommandBuffer>&& creator)
     : m_commandBuffer(WTFMove(creator))
 {
 }
 
-void WebGPUProgrammablePassEncoder::endPass()
+Ref<WebGPUCommandBuffer> WebGPUProgrammablePassEncoder::endPass()
 {
-    if (!passEncoder()) {
-        LOG(WebGPU, "GPUProgrammablePassEncoder::endPass(): Invalid operation!");
-        return;
-    }
-    passEncoder()->endPass();
+    passEncoder().endPass();
+    return m_commandBuffer.copyRef();
 }
 
 void WebGPUProgrammablePassEncoder::setBindGroup(unsigned index, WebGPUBindGroup& bindGroup) const
 {
-    if (!passEncoder()) {
-        LOG(WebGPU, "GPUProgrammablePassEncoder::setBindGroup(): Invalid operation!");
-        return;
-    }
     // Maximum number of bind groups supported in Web GPU.
     if (index >= 4) {
-        LOG(WebGPU, "GPUProgrammablePassEncoder::setBindGroup(): Invalid index!");
+        LOG(WebGPU, "WebGPUProgrammablePassEncoder::setBindGroup(): Invalid index!");
         return;
     }
     if (!bindGroup.bindGroup()) {
-        LOG(WebGPU, "GPUProgrammablePassEncoder::setBindGroup(): Invalid WebGPUBindGroup!");
+        LOG(WebGPU, "WebGPUProgrammablePassEncoder::setBindGroup(): Invalid WebGPUBindGroup!");
         return;
     }
     // FIXME: Any validation (e.g. index duplicates, not in pipeline layout).
-    passEncoder()->setBindGroup(index, *bindGroup.bindGroup());
+    passEncoder().setBindGroup(index, *bindGroup.bindGroup());
 }
 
 void WebGPUProgrammablePassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
 {
-    if (!passEncoder()) {
-        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid operation!");
-        return;
-    }
     if (!pipeline.renderPipeline()) {
         LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid pipeline!");
         return;
     }
-    passEncoder()->setPipeline(makeRef(*pipeline.renderPipeline()));
+    passEncoder().setPipeline(makeRef(*pipeline.renderPipeline()));
 }
 
 } // namespace WebCore

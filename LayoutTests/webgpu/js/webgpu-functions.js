@@ -66,7 +66,7 @@ function createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDes
     return device.createRenderPipeline(pipelineDescriptor);
 }
 
-function beginBasicRenderPass(swapChain, commandEncoder) {
+function beginBasicRenderPass(swapChain, commandBuffer) {
     const basicAttachment = {
         attachment: swapChain.getCurrentTexture().createDefaultTextureView(),
         loadOp: "clear",
@@ -75,7 +75,7 @@ function beginBasicRenderPass(swapChain, commandEncoder) {
     }
 
     // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
-    return commandEncoder.beginRenderPass({ colorAttachments : [basicAttachment] });
+    return commandBuffer.beginRenderPass({ colorAttachments : [basicAttachment] });
 }
 
 function encodeBasicCommands(renderPassEncoder, renderPipeline, vertexBuffer) {
@@ -83,5 +83,5 @@ function encodeBasicCommands(renderPassEncoder, renderPipeline, vertexBuffer) {
         renderPassEncoder.setVertexBuffers(0, [vertexBuffer], [0]);
     renderPassEncoder.setPipeline(renderPipeline);
     renderPassEncoder.draw(4, 1, 0, 0);
-    renderPassEncoder.endPass();
+    return renderPassEncoder.endPass();
 }

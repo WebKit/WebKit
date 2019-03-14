@@ -84,8 +84,6 @@ namespace WebCore {
     macro(GPUBufferUsage) \
     macro(GPUCanvasContext) \
     macro(GPUShaderModule) \
-    macro(GPUCommandBuffer) \
-    macro(GPUCommandEncoder) \
     macro(GPUShaderStageBit) \
     macro(GPUSwapChain) \
     macro(GPUTextureUsage) \
@@ -203,6 +201,7 @@ namespace WebCore {
     macro(WebGPUBindGroup) \
     macro(WebGPUBindGroupLayout) \
     macro(WebGPUBuffer) \
+    macro(WebGPUCommandBuffer) \
     macro(WebGPUDevice) \
     macro(WebGPUIndexFormat) \
     macro(WebGPUInputStepMode) \
