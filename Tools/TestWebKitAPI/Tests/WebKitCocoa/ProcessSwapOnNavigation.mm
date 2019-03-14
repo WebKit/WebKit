@@ -3206,6 +3206,70 @@ TEST(ProcessSwap, PageCacheWhenNavigatingFromJS)
     EXPECT_EQ(2u, seenPIDs.size());
 }
 
+TEST(ProcessSwap, UseWebProcessCacheAfterTermination)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        done = true;
+    }];
+
+    int webkitPID = 0;
+
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+
+        [webView loadRequest:request];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        webkitPID = [webView _webProcessIdentifier];
+    }
+
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto applePID = [webView _webProcessIdentifier];
+
+    EXPECT_NE(webkitPID, applePID);
+
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    __block bool webProcessTerminated = false;
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+        webProcessTerminated = true;
+    }];
+
+    kill(applePID, 9);
+    TestWebKitAPI::Util::run(&webProcessTerminated);
+    webProcessTerminated = false;
+
+    EXPECT_EQ(0, [webView _webProcessIdentifier]);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+}
+
 TEST(ProcessSwap, NumberOfPrewarmedProcesses)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
