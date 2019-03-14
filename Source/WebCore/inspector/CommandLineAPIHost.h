@@ -46,11 +46,10 @@ class InspectorConsoleAgent;
 namespace WebCore {
 
 class Database;
-class InspectorDOMAgent;
+class EventTarget;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class JSDOMGlobalObject;
-class Node;
 class Storage;
 
 struct EventListenerInfo;
@@ -62,14 +61,12 @@ public:
 
     void init(Inspector::InspectorAgent* inspectorAgent
         , Inspector::InspectorConsoleAgent* consoleAgent
-        , InspectorDOMAgent* domAgent
         , InspectorDOMStorageAgent* domStorageAgent
         , InspectorDatabaseAgent* databaseAgent
         )
     {
         m_inspectorAgent = inspectorAgent;
         m_consoleAgent = consoleAgent;
-        m_domAgent = domAgent;
         m_domStorageAgent = domStorageAgent;
         m_databaseAgent = databaseAgent;
     }
@@ -97,7 +94,7 @@ public:
     };
 
     using EventListenersRecord = Vector<WTF::KeyValuePair<String, Vector<ListenerEntry>>>;
-    EventListenersRecord getEventListeners(JSC::ExecState&, Node*);
+    EventListenersRecord getEventListeners(JSC::ExecState&, EventTarget&);
 
     String databaseId(Database&);
     String storageId(Storage&);
@@ -110,7 +107,6 @@ private:
 
     Inspector::InspectorAgent* m_inspectorAgent { nullptr };
     Inspector::InspectorConsoleAgent* m_consoleAgent { nullptr };
-    InspectorDOMAgent* m_domAgent { nullptr };
     InspectorDOMStorageAgent* m_domStorageAgent { nullptr };
     InspectorDatabaseAgent* m_databaseAgent { nullptr };
 

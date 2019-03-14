@@ -272,12 +272,9 @@ CommandLineAPIImpl.prototype = {
         CommandLineAPIHost.clearConsoleMessages();
     },
 
-    /**
-     * @param {Node} node
-     */
-    getEventListeners: function(node)
+    getEventListeners: function(target)
     {
-        return CommandLineAPIHost.getEventListeners(node);
+        return CommandLineAPIHost.getEventListeners(target);
     },
 
     _inspectedObject: function()

@@ -43,6 +43,11 @@ function test()
     }
 
     addTestCase({
+        name: "Console.CommandLineAPI.getEventListeners.NoArguments",
+        expression: ``,
+    });
+
+    addTestCase({
         name: "Console.CommandLineAPI.getEventListeners.Undefined",
         expression: `undefined`,
     });
@@ -55,6 +60,11 @@ function test()
     addTestCase({
         name: "Console.CommandLineAPI.getEventListeners.String",
         expression: `"test"`,
+    });
+
+    addTestCase({
+        name: "Console.CommandLineAPI.getEventListeners.window",
+        expression: `window`,
     });
 
     addTestCase({

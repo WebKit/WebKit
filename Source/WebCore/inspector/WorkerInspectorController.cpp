@@ -80,7 +80,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_agents.append(WTFMove(heapAgent));
 
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(nullptr, m_instrumentingAgents->webConsoleAgent(), nullptr, nullptr, nullptr);
+        commandLineAPIHost->init(nullptr, m_instrumentingAgents->webConsoleAgent(), nullptr, nullptr);
 }
 
 WorkerInspectorController::~WorkerInspectorController()

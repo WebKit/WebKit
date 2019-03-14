@@ -33,7 +33,7 @@
 
 #include "Database.h"
 #include "Document.h"
-#include "InspectorDOMAgent.h"
+#include "EventTarget.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "JSCommandLineAPIHost.h"
@@ -71,7 +71,6 @@ void CommandLineAPIHost::disconnect()
 {
     m_inspectorAgent = nullptr;
     m_consoleAgent = nullptr;
-    m_domAgent = nullptr;
     m_domStorageAgent = nullptr;
     m_databaseAgent = nullptr;
 }
@@ -89,51 +88,38 @@ void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInsp
     m_inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
 }
 
-static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo(ExecState& state, Document& document, const EventListenerInfo& listenerInfo)
+CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(ExecState& state, EventTarget& target)
 {
-    VM& vm = state.vm();
-
-    Vector<CommandLineAPIHost::ListenerEntry> entries;
-    for (auto& eventListener : listenerInfo.eventListenerVector) {
-        if (!is<JSEventListener>(eventListener->callback())) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-
-        auto& jsListener = downcast<JSEventListener>(eventListener->callback());
-
-        // Hide listeners from other contexts.
-        if (&jsListener.isolatedWorld() != &currentWorld(state))
-            continue;
-
-        auto function = jsListener.jsFunction(document);
-        if (!function)
-            continue;
-
-        entries.append({ JSC::Strong<JSC::JSObject>(vm, function), eventListener->useCapture(), eventListener->isPassive(), eventListener->isOnce() });
-    }
-
-    return entries;
-}
-
-auto CommandLineAPIHost::getEventListeners(JSC::ExecState& state, Node* node) -> EventListenersRecord
-{
-    if (!m_domAgent)
+    auto* scriptExecutionContext = target.scriptExecutionContext();
+    if (!scriptExecutionContext)
         return { };
-
-    if (!node)
-        return { };
-
-    Vector<EventListenerInfo> listenerInfoArray;
-    m_domAgent->getEventListeners(node, listenerInfoArray, false);
 
     EventListenersRecord result;
 
-    for (auto& listenerInfo : listenerInfoArray) {
-        auto entries = listenerEntriesFromListenerInfo(state, node->document(), listenerInfo);
-        if (entries.isEmpty())
-            continue;
-        result.append({ listenerInfo.eventType, WTFMove(entries) });
+    VM& vm = state.vm();
+
+    for (auto& eventType : target.eventTypes()) {
+        Vector<CommandLineAPIHost::ListenerEntry> entries;
+
+        for (auto& eventListener : target.eventListeners(eventType)) {
+            if (!is<JSEventListener>(eventListener->callback()))
+                continue;
+
+            auto& jsListener = downcast<JSEventListener>(eventListener->callback());
+
+            // Hide listeners from other contexts.
+            if (&jsListener.isolatedWorld() != &currentWorld(state))
+                continue;
+
+            auto* function = jsListener.jsFunction(*scriptExecutionContext);
+            if (!function)
+                continue;
+
+            entries.append({ Strong<JSObject>(vm, function), eventListener->useCapture(), eventListener->isPassive(), eventListener->isOnce() });
+        }
+
+        if (!entries.isEmpty())
+            result.append({ eventType, WTFMove(entries) });
     }
 
     return result;

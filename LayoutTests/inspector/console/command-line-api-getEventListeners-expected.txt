@@ -2,14 +2,37 @@ Test for CommandLineAPI getEventListeners.
 
 
 == Running test suite: Console.CommandLineAPI.getEventListeners
+-- Running test case: Console.CommandLineAPI.getEventListeners.NoArguments
+TypeError: Argument 1 ('target') to CommandLineAPIHost.getEventListeners must be an instance of EventTarget
+
 -- Running test case: Console.CommandLineAPI.getEventListeners.Undefined
-{}
+TypeError: Argument 1 ('target') to CommandLineAPIHost.getEventListeners must be an instance of EventTarget
 
 -- Running test case: Console.CommandLineAPI.getEventListeners.Null
-{}
+TypeError: Argument 1 ('target') to CommandLineAPIHost.getEventListeners must be an instance of EventTarget
 
 -- Running test case: Console.CommandLineAPI.getEventListeners.String
-TypeError: Argument 1 ('node') to CommandLineAPIHost.getEventListeners must be an instance of Node
+TypeError: Argument 1 ('target') to CommandLineAPIHost.getEventListeners must be an instance of EventTarget
+
+-- Running test case: Console.CommandLineAPI.getEventListeners.window
+{
+  "error": [
+    {
+      "listener": "<function bound >",
+      "once": false,
+      "passive": false,
+      "useCapture": false
+    }
+  ],
+  "load": [
+    {
+      "listener": "<function onload>",
+      "once": false,
+      "passive": false,
+      "useCapture": false
+    }
+  ]
+}
 
 -- Running test case: Console.CommandLineAPI.getEventListeners.NodeNoListeners
 {}

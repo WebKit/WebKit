@@ -101,6 +101,8 @@ public:
     bool hasEventListeners(const AtomicString& eventType) const;
     bool hasCapturingEventListeners(const AtomicString& eventType);
     bool hasActiveEventListeners(const AtomicString& eventType) const;
+
+    Vector<AtomicString> eventTypes();
     const EventListenerVector& eventListeners(const AtomicString& eventType);
 
     enum class EventInvokePhase { Capturing, Bubbling };

@@ -148,7 +148,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_inspectorAgent, consoleAgent, m_domAgent, domStorageAgent, databaseAgent);
+        commandLineAPIHost->init(m_inspectorAgent, consoleAgent, domStorageAgent, databaseAgent);
 }
 
 InspectorController::~InspectorController()

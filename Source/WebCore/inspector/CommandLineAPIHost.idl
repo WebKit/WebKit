@@ -40,7 +40,7 @@
     [CallWith=ExecState] void inspect(any objectToInspect, any hints);
     [CallWith=ExecState] any inspectedObject();
 
-    [CallWith=ExecState] record<DOMString, sequence<ListenerEntry>> getEventListeners(Node? node);
+    [CallWith=ExecState] record<DOMString, sequence<ListenerEntry>> getEventListeners(EventTarget target);
 
     DOMString databaseId(Database database);
     DOMString storageId(Storage storage);

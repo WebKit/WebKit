@@ -319,6 +319,13 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie);
 }
 
+Vector<AtomicString> EventTarget::eventTypes()
+{
+    if (auto* data = eventTargetData())
+        return data->eventListenerMap.eventTypes();
+    return { };
+}
+
 const EventListenerVector& EventTarget::eventListeners(const AtomicString& eventType)
 {
     auto* data = eventTargetData();

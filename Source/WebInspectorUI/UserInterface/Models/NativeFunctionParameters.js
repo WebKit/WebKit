@@ -695,7 +695,7 @@ WI.NativePrototypeFunctionParameters = {
     CommandLineAPIHost: {
         copyText: "text",
         databaseId: "database",
-        getEventListeners: "node",
+        getEventListeners: "target",
         inspect: "objectId, hints",
         storageId: "storage",
         __proto__: null,
