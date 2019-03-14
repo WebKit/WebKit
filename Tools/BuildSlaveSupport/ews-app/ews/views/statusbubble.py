@@ -22,6 +22,7 @@
 
 from __future__ import unicode_literals
 
+import datetime
 import re
 
 from django.http import HttpResponse
@@ -42,38 +43,77 @@ class StatusBubble(View):
 
     def _build_bubble(self, patch, queue):
         bubble = {
-            "name": queue,
+            'name': queue,
         }
         build = self.get_latest_build_for_queue(patch, queue)
         if not self._should_show_bubble_for_build(build):
             return None
 
         if not build:
-            bubble["state"] = "none"
-            bubble["details_message"] = 'Waiting in queue, processing has not started yet.'
+            bubble['state'] = 'none'
+            bubble['details_message'] = 'Waiting in queue, processing has not started yet.'
             return bubble
 
-        bubble["url"] = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
-        builder_full_name = build.builder_name
-        bubble["details_message"] = '{}\n{}'.format(builder_full_name, build.state_string)
-        if build.result is None:
-            bubble["state"] = "started"
+        bubble['url'] = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
+        builder_full_name = build.builder_name.replace('-', ' ')
+
+        if build.result is None:  # In-progress build
+            bubble['state'] = 'started'
+            bubble['details_message'] = 'Recent messages:\n\n' + self._steps_messages(build) + '\n\n' + self._iso_time(build.step_set.last().started_at)
         elif build.result == Buildbot.SUCCESS:
-            bubble["state"] = "pass"
+            bubble['state'] = 'pass'
+            bubble['details_message'] = 'Pass\n\n' + self._iso_time(build.complete_at)
         elif build.result == Buildbot.WARNINGS:
-            bubble["state"] = "pass"
+            bubble['state'] = 'pass'
+            bubble['details_message'] = 'Warning\n\n' + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at)
         elif build.result == Buildbot.FAILURE:
-            bubble["state"] = "fail"
+            bubble['state'] = 'fail'
+            bubble['details_message'] = self._most_recent_step_message(build) + '\n\n' + self._iso_time(build.complete_at)
         elif build.result == Buildbot.SKIPPED:
-            bubble["state"] = "none"
+            bubble['state'] = 'none'
+            bubble['details_message'] = 'The patch is no longer eligible for processing.'
+            if re.search(r'Bug .* is already closed', build.state_string):
+                bubble['details_message'] += ' Bug was already closed when EWS attempted to process it.'
+            elif re.search(r'Patch .* is marked r-', build.state_string):
+                bubble['details_message'] += ' Patch was already marked r- when EWS attempted to process it.'
+            elif re.search(r'Patch .* is obsolete', build.state_string):
+                bubble['details_message'] += ' Patch was obsolete when EWS attempted to process it.'
+            bubble['details_message'] += '\nSome messages were logged while the patch was still eligible:\n\n'
+            bubble['details_message'] += self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at)
+
         elif build.result == Buildbot.EXCEPTION:
-            bubble["state"] = "error"
+            bubble['state'] = 'error'
+            bubble['details_message'] += ('An unexpected error occured. Recent messages:\n\n'
+                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
         elif build.result == Buildbot.RETRY:
-            bubble["state"] = "provisional-fail"
+            bubble['state'] = 'provisional-fail'
+            bubble['details_message'] += ('Build is being retried. Recent messages:\n\n'
+                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+        elif build.result == Buildbot.CANCELLED:
+            bubble['state'] = 'provisional-fail'
+            bubble['details_message'] += ('Build was cancelled. Recent messages:\n\n'
+                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
         else:
-            bubble["state"] = "fail"
+            bubble['state'] = 'error'
+            bubble['details_message'] += ('An unexpected error occured. Recent messages:\n\n'
+                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+
+        if 'details_message' in bubble:
+            bubble['details_message'] = builder_full_name + '\n\n' + bubble['details_message']
 
         return bubble
+
+    def _iso_time(self, time):
+        return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'
+
+    def _steps_messages(self, build):
+        return '\n'.join([step.state_string for step in build.step_set.all()])
+
+    def _most_recent_step_message(self, build):
+        recent_step = build.step_set.last()
+        if not recent_step:
+            return ''
+        return recent_step.state_string
 
     def get_latest_build_for_queue(self, patch, queue):
         builds = self.get_builds_for_queue(patch, queue)
@@ -119,9 +159,9 @@ class StatusBubble(View):
         bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_patch(patch)
 
         template_values = {
-            "bubbles": bubbles,
-            "patch_id": patch_id,
-            "show_submit_to_ews": show_submit_to_ews,
-            "show_failure_to_apply": show_failure_to_apply,
+            'bubbles': bubbles,
+            'patch_id': patch_id,
+            'show_submit_to_ews': show_submit_to_ews,
+            'show_failure_to_apply': show_failure_to_apply,
         }
         return render(request, 'statusbubble.html', template_values)

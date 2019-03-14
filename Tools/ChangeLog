@@ -1,5 +1,21 @@
 2019-03-14  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Generate status-bubble hover-over messages
+        https://bugs.webkit.org/show_bug.cgi?id=195680
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+        (StatusBubble._build_bubble): Generate bubble['details_message'] which would be displayed
+        on hover-over.
+        (StatusBubble._iso_time):
+        (StatusBubble._steps_messages): Returns status messages from steps to be displayed in
+        hover-over message.
+        (StatusBubble._most_recent_step_message): Returns status message from most recent step.
+
+2019-03-14  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Gracefully handle the case when state_string is None
         https://bugs.webkit.org/show_bug.cgi?id=195753
 
