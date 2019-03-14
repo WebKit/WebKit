@@ -1,3 +1,13 @@
+2019-03-14  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble display pending for currently running build step
+        https://bugs.webkit.org/show_bug.cgi?id=195744
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/events.py:
+        (Events.stepStarted): If state_string is pending, replace it with step name.
+
 2019-03-14  Chris Dumez  <cdumez@apple.com>
 
         Add WebsitePolicy for the client to specify the device orientation & motion access policy

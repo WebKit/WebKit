@@ -161,6 +161,10 @@ class Events(service.BuildbotService):
         self.sendData(data)
 
     def stepStarted(self, key, step):
+        state_string = step.get('state_string')
+        if state_string == 'pending':
+            state_string = 'Running {}'.format(step.get('name'))
+
         data = {
             "type": self.type_prefix + "step",
             "status": "started",
@@ -168,7 +172,7 @@ class Events(service.BuildbotService):
             "step_id": step.get('stepid'),
             "build_id": step.get('buildid'),
             "result": step.get('results'),
-            "state_string": step.get('state_string'),
+            "state_string": state_string,
             "started_at": step.get('started_at'),
             "complete_at": step.get('complete_at'),
         }
