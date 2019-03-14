@@ -1,3 +1,10 @@
+2019-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed speculative build fix for watchOS after r242908.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeObject):
+
 2019-03-13  Dean Jackson  <dino@apple.com>
 
         Block all plugins smaller than 5x5px

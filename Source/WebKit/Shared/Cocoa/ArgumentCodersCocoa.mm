@@ -38,12 +38,17 @@
 #import <WebCore/ColorMac.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIFont.h>
+#import <UIKit/UIFontDescriptor.h>
+#endif
+
 #if USE(APPKIT)
-#define PlatformFont NSFont
-#define PlatformFontDescriptor NSFontDescriptor
+using PlatformFont = NSFont;
+using PlatformFontDescriptor = NSFontDescriptor;
 #else
-#define PlatformFont UIFont
-#define PlatformFontDescriptor UIFontDescriptor
+using PlatformFont = UIFont;
+using PlatformFontDescriptor = UIFontDescriptor;
 #endif
 
 namespace IPC {
@@ -436,13 +441,8 @@ Optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedCl
 #endif
     case NSType::Dictionary:
         return decodeDictionaryInternal(decoder);
-#if USE(APPKIT)
     case NSType::Font:
         return decodeFontInternal(decoder);
-#else
-    case NSType::Font:
-        return decodeFontInternal(decoder);
-#endif
     case NSType::Number:
         return decodeNumberInternal(decoder);
     case NSType::SecureCoding:
