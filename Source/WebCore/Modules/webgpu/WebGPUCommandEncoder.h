@@ -27,30 +27,47 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WebGPUCommandEncoder.h"
+#include "GPUCommandBuffer.h"
+#include "WebGPUCommandBuffer.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class GPUProgrammablePassEncoder;
-class WebGPUBindGroup;
-class WebGPURenderPipeline;
+class WebGPUBuffer;
+class WebGPURenderPassEncoder;
+class WebGPUTexture;
 
-class WebGPUProgrammablePassEncoder : public RefCounted<WebGPUProgrammablePassEncoder> {
+struct GPUExtent3D;
+struct WebGPURenderPassDescriptor;
+
+struct WebGPUBufferCopyView : GPUBufferCopyViewBase {
+    Optional<GPUBufferCopyView> tryCreateGPUBufferCopyView() const;
+
+    RefPtr<WebGPUBuffer> buffer;
+};
+
+struct WebGPUTextureCopyView : GPUTextureCopyViewBase {
+    Optional<GPUTextureCopyView> tryCreateGPUTextureCopyView() const;
+
+    RefPtr<WebGPUTexture> texture;
+};
+
+class WebGPUCommandEncoder : public RefCounted<WebGPUCommandEncoder> {
 public:
-    virtual ~WebGPUProgrammablePassEncoder() = default;
+    static Ref<WebGPUCommandEncoder> create(RefPtr<GPUCommandBuffer>&&);
 
-    void endPass();
-    void setBindGroup(unsigned, WebGPUBindGroup&) const;
-    void setPipeline(const WebGPURenderPipeline&);
-
-protected:
-    WebGPUProgrammablePassEncoder(Ref<WebGPUCommandEncoder>&&);
-
-    virtual GPUProgrammablePassEncoder* passEncoder() const = 0;
+    Ref<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
+    void copyBufferToBuffer(const WebGPUBuffer&, unsigned long srcOffset, const WebGPUBuffer&, unsigned long dstOffset, unsigned long size);
+    void copyBufferToTexture(const WebGPUBufferCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
+    void copyTextureToBuffer(const WebGPUTextureCopyView&, const WebGPUBufferCopyView&, const GPUExtent3D&);
+    void copyTextureToTexture(const WebGPUTextureCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
+    Ref<WebGPUCommandBuffer> finish();
 
 private:
-    Ref<WebGPUCommandEncoder> m_commandBuffer;
+    WebGPUCommandEncoder(RefPtr<GPUCommandBuffer>&&);
+
+    RefPtr<GPUCommandBuffer> m_commandBuffer;
 };
 
 } // namespace WebCore

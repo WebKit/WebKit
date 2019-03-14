@@ -30,6 +30,7 @@
 
 #include "GPUCommandBuffer.h"
 #include "GPUQueue.h"
+#include "Logging.h"
 #include "WebGPUCommandBuffer.h"
 
 namespace WebCore {
@@ -44,11 +45,19 @@ WebGPUQueue::WebGPUQueue(Ref<GPUQueue>&& queue)
 {
 }
 
-void WebGPUQueue::submit(Vector<RefPtr<WebGPUCommandBuffer>>&& buffers)
+void WebGPUQueue::submit(const Vector<RefPtr<WebGPUCommandBuffer>>& buffers)
 {
-    auto gpuBuffers = buffers.map([] (auto& buffer) -> Ref<GPUCommandBuffer> {
-        return buffer->commandBuffer();
-    });
+    Vector<Ref<GPUCommandBuffer>> gpuBuffers;
+    gpuBuffers.reserveCapacity(buffers.size());
+    
+    for (auto& buffer : buffers) {
+        if (!buffer || !buffer->commandBuffer()) {
+            LOG(WebGPU, "GPUQueue::submit(): Invalid GPUCommandBuffer in list!");
+            return;
+        }
+        gpuBuffers.uncheckedAppend(makeRef(*buffer->commandBuffer()));
+    }
+
     m_queue->submit(WTFMove(gpuBuffers));
 }
 

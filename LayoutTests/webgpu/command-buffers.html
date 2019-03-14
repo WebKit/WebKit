@@ -6,10 +6,10 @@
 <script>
 promise_test(async () => {
     const device = await getBasicDevice();
-    const commandBuffer = device.createCommandBuffer();
-    assert_true(commandBuffer instanceof WebGPUCommandBuffer, "Successfully created GPUCommandBuffer.");
-}, "Create a default GPUCommandBuffer.");
+    const commandEncoder = device.createCommandEncoder();
+    assert_true(commandEncoder instanceof GPUCommandEncoder, "Successfully created GPUCommandEncoder.");
+}, "Create a default GPUCommandEncoder.");
 
-// FIXME: createCommandBuffer should take a GPUCommandBufferDescriptor, which is currently an empty dictionary.
+// FIXME: createCommandEncoder should take a GPUCommandEncoderDescriptor, which is currently an empty dictionary.
 </script>
 </html>

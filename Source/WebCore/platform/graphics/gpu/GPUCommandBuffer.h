@@ -27,7 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBuffer.h"
 #include "GPUOrigin3D.h"
+#include "GPUTexture.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -38,9 +40,7 @@ OBJC_PROTOCOL(MTLCommandBuffer);
 
 namespace WebCore {
 
-class GPUBuffer;
 class GPUDevice;
-class GPUTexture;
 
 struct GPUExtent3D;
 
@@ -81,7 +81,7 @@ struct GPUTextureCopyView final : GPUTextureCopyViewBase {
 
 class GPUCommandBuffer : public RefCounted<GPUCommandBuffer> {
 public:
-    static RefPtr<GPUCommandBuffer> create(GPUDevice&);
+    static RefPtr<GPUCommandBuffer> tryCreate(const GPUDevice&);
 
     PlatformCommandBuffer* platformCommandBuffer() const { return m_platformCommandBuffer.get(); }
     const Vector<Ref<GPUBuffer>>& usedBuffers() const { return m_usedBuffers; }

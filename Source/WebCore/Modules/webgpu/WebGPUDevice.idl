@@ -54,8 +54,8 @@ typedef unsigned long GPUTextureUsageFlags;
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
 
-    // FIXME: Currently, WebGPUCommandBufferDescriptor is an empty dictionary.
-    WebGPUCommandBuffer createCommandBuffer(/*WebGPUCommandBufferDescriptor descriptor*/);
+    // FIXME: Currently, GPUCommandEncoderDescriptor is an empty dictionary.
+    WebGPUCommandEncoder createCommandEncoder(/*GPUCommandEncoderDescriptor descriptor*/);
 
     WebGPUSwapChain createSwapChain(WebGPUSwapChainDescriptor descriptor);
 
