@@ -1,3 +1,16 @@
+2019-03-14  Jer Noble  <jer.noble@apple.com>
+
+        Certain videos are causing a crash when used as WebGL texture
+        https://bugs.webkit.org/show_bug.cgi?id=195700
+        <rdar://problem/48869347>
+
+        Reviewed by Eric Carlson.
+
+        CFEqual is not null-safe, so perform a null and type check before comparing.
+
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::transferFunctionFromString):
+
 2019-03-14  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup inline boxes when list marker gets blockified

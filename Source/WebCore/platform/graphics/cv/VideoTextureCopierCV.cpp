@@ -99,6 +99,8 @@ static PixelRange pixelRangeFromPixelFormat(OSType pixelFormat)
 
 static TransferFunction transferFunctionFromString(CFStringRef string)
 {
+    if (!string || CFGetTypeID(string) != CFStringGetTypeID())
+        return TransferFunction::Unknown;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_709_2))
         return TransferFunction::kITU_R_709_2;
     if (CFEqual(string, kCVImageBufferYCbCrMatrix_ITU_R_601_4))
