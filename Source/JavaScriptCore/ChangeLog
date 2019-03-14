@@ -1,3 +1,15 @@
+2019-03-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Styles: `::-webkit-scrollbar*` rules aren't shown
+        https://bugs.webkit.org/show_bug.cgi?id=195123
+        <rdar://problem/48450148>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/CSS.json:
+        Add `CSS.PseudoId` enum, rather than send a number, so that we have more knowledge about
+        which pseudo type the rule corresponds to (e.g. a string is more descriptive than a number).
+
 2019-03-13  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] CodeBlock::visitChildren is reporting extra memory even when its JITCode is singleton

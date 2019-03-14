@@ -37,7 +37,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._matchedRules = [];
         this._inheritedRules = [];
-        this._pseudoElements = {};
+        this._pseudoElements = new Map;
         this._inlineStyle = null;
         this._attributesStyle = null;
         this._computedStyle = null;
@@ -47,6 +47,33 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         this._pendingRefreshTask = null;
         this.refresh();
+    }
+
+    // Static
+
+    static uniqueOrderedStyles(orderedStyles)
+    {
+        let uniqueOrderedStyles = [];
+
+        for (let style of orderedStyles) {
+            let rule = style.ownerRule;
+            if (!rule) {
+                uniqueOrderedStyles.push(style);
+                continue;
+            }
+
+            let found = false;
+            for (let existingStyle of uniqueOrderedStyles) {
+                if (rule.isEqualTo(existingStyle.ownerRule)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                uniqueOrderedStyles.push(style);
+        }
+
+        return uniqueOrderedStyles;
     }
 
     // Public
@@ -125,10 +152,10 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             this._matchedRules = parseRuleMatchArrayPayload.call(this, matchedRulesPayload, this._node);
 
-            this._pseudoElements = {};
+            this._pseudoElements.clear();
             for (var pseudoElementRulePayload of pseudoElementRulesPayload) {
                 var pseudoElementRules = parseRuleMatchArrayPayload.call(this, pseudoElementRulePayload.matches, this._node);
-                this._pseudoElements[pseudoElementRulePayload.pseudoId] = {matchedRules: pseudoElementRules};
+                this._pseudoElements.set(pseudoElementRulePayload.pseudoId, {matchedRules: pseudoElementRules});
             }
 
             this._inheritedRules = [];
@@ -327,8 +354,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
         let rules = this._matchedRules.filter(ruleHasSelector);
 
-        for (let id in this._pseudoElements)
-            rules = rules.concat(this._pseudoElements[id].matchedRules.filter(ruleHasSelector));
+        for (let pseudoElementInfo of this._pseudoElements.values())
+            rules = rules.concat(pseudoElementInfo.matchedRules.filter(ruleHasSelector));
 
         return rules;
     }
@@ -370,27 +397,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
     get uniqueOrderedStyles()
     {
-        let uniqueStyles = [];
-
-        for (let style of this._orderedStyles) {
-            let rule = style.ownerRule;
-            if (!rule) {
-                uniqueStyles.push(style);
-                continue;
-            }
-
-            let found = false;
-            for (let existingStyle of uniqueStyles) {
-                if (rule.isEqualTo(existingStyle.ownerRule)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                uniqueStyles.push(style);
-        }
-
-        return uniqueStyles;
+        return WI.DOMNodeStyles.uniqueOrderedStyles(this._orderedStyles);
     }
 
     effectivePropertyForName(name)
@@ -846,8 +853,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         this._markOverriddenProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
         this._associateRelatedProperties(cascadeOrderedStyleDeclarations, this._propertyNameToEffectivePropertyMap);
 
-        for (var pseudoIdentifier in this._pseudoElements) {
-            var pseudoElementInfo = this._pseudoElements[pseudoIdentifier];
+        for (let pseudoElementInfo of this._pseudoElements.values()) {
             pseudoElementInfo.orderedStyles = this._collectStylesInCascadeOrder(pseudoElementInfo.matchedRules, null, null);
             this._markOverriddenProperties(pseudoElementInfo.orderedStyles);
             this._associateRelatedProperties(pseudoElementInfo.orderedStyles);

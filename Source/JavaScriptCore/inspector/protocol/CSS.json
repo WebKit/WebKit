@@ -32,11 +32,31 @@
             ]
         },
         {
+            "id": "PseudoId",
+            "type": "string",
+            "enum": [
+                "first-line",
+                "first-letter",
+                "marker",
+                "before",
+                "after",
+                "selection",
+                "scrollbar",
+                "scrollbar-thumb",
+                "scrollbar-button",
+                "scrollbar-track",
+                "scrollbar-track-piece",
+                "scrollbar-corner",
+                "resizer"
+            ],
+            "description": "Pseudo-style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."
+        },
+        {
             "id": "PseudoIdMatches",
             "type": "object",
             "description": "CSS rule collection for a single pseudo style.",
             "properties": [
-                { "name": "pseudoId", "type": "integer", "description": "Pseudo style identifier (see <code>enum PseudoId</code> in <code>RenderStyleConstants.h</code>)."},
+                { "name": "pseudoId", "$ref": "PseudoId" },
                 { "name": "matches", "type": "array", "items": { "$ref": "RuleMatch" }, "description": "Matches of CSS rules applicable to the pseudo style."}
             ]
         },

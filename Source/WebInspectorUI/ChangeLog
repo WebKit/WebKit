@@ -1,5 +1,37 @@
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Styles: `::-webkit-scrollbar*` rules aren't shown
+        https://bugs.webkit.org/show_bug.cgi?id=195123
+        <rdar://problem/48450148>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager.displayNameForPseudoId): Added.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.static uniqueOrderedStyles): Added.
+        (WI.DOMNodeStyles.prototype.get uniqueOrderedStyles):
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionFilterApplied):
+        Rather than iterate over the `WI.DOMNode`'s list of pseudo-elements (which is only ::before
+        and ::after), we iterate over the `WI.DOMNodeStyle`'s list of pseudo-element rules. This is
+        an object where the key is a `CSS.PseudoId` and the value is an object containing all the
+        matched rules and ordered styles for that pseudo-type. We can preserve the current
+        functionality by using the ::before/::after `WI.DOMNode` when we encounter one of those
+        pseudo-ids.
+
+        An additional benefit of this change is that `::before`/`::after` styles will still appear
+        in the Rules panel even if they don't have a `content` property set (e.g. when the
+        `::before`/`::after` pseudo-element doesn't exist). This is because the styles are no longer
+        fetched from those pseudo-element nodes directly, but rather as a matched style for the
+        parent node. As such, editing a `content` property to become invalid/disablde in a
+        `::before`/`::after` rule won't make the entire rule disappeaer.
+
+2019-03-14  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: we should show artificial context menus on mousedown instead of click
         https://bugs.webkit.org/show_bug.cgi?id=195494
 

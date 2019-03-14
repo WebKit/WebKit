@@ -98,6 +98,78 @@ WI.CSSManager = class CSSManager extends WI.Object
         }
     }
 
+    static displayNameForPseudoId(pseudoId)
+    {
+        // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
+        if (!InspectorBackend.domains.CSS.PseudoId) {
+            switch (pseudoId) {
+            case 1: // PseudoId.FirstLine
+                return WI.unlocalizedString("::first-line");
+            case 2: // PseudoId.FirstLetter
+                return WI.unlocalizedString("::first-letter");
+            case 3: // PseudoId.Marker
+                return WI.unlocalizedString("::marker");
+            case 4: // PseudoId.Before
+                return WI.unlocalizedString("::before");
+            case 5: // PseudoId.After
+                return WI.unlocalizedString("::after");
+            case 6: // PseudoId.Selection
+                return WI.unlocalizedString("::selection");
+            case 7: // PseudoId.Scrollbar
+                return WI.unlocalizedString("::scrollbar");
+            case 8: // PseudoId.ScrollbarThumb
+                return WI.unlocalizedString("::scrollbar-thumb");
+            case 9: // PseudoId.ScrollbarButton
+                return WI.unlocalizedString("::scrollbar-button");
+            case 10: // PseudoId.ScrollbarTrack
+                return WI.unlocalizedString("::scrollbar-track");
+            case 11: // PseudoId.ScrollbarTrackPiece
+                return WI.unlocalizedString("::scrollbar-track-piece");
+            case 12: // PseudoId.ScrollbarCorner
+                return WI.unlocalizedString("::scrollbar-corner");
+            case 13: // PseudoId.Resizer
+                return WI.unlocalizedString("::resizer");
+
+            default:
+                console.error("Unknown pseudo id", pseudoId);
+                return "";
+            }
+        }
+
+        switch (pseudoId) {
+        case InspectorBackend.domains.CSS.PseudoId.FirstLine:
+            return WI.unlocalizedString("::first-line");
+        case InspectorBackend.domains.CSS.PseudoId.FirstLetter:
+            return WI.unlocalizedString("::first-letter");
+        case InspectorBackend.domains.CSS.PseudoId.Marker:
+            return WI.unlocalizedString("::marker");
+        case InspectorBackend.domains.CSS.PseudoId.Before:
+            return WI.unlocalizedString("::before");
+        case InspectorBackend.domains.CSS.PseudoId.After:
+            return WI.unlocalizedString("::after");
+        case InspectorBackend.domains.CSS.PseudoId.Selection:
+            return WI.unlocalizedString("::selection");
+        case InspectorBackend.domains.CSS.PseudoId.Scrollbar:
+            return WI.unlocalizedString("::scrollbar");
+        case InspectorBackend.domains.CSS.PseudoId.ScrollbarThumb:
+            return WI.unlocalizedString("::scrollbar-thumb");
+        case InspectorBackend.domains.CSS.PseudoId.ScrollbarButton:
+            return WI.unlocalizedString("::scrollbar-button");
+        case InspectorBackend.domains.CSS.PseudoId.ScrollbarTrack:
+            return WI.unlocalizedString("::scrollbar-track");
+        case InspectorBackend.domains.CSS.PseudoId.ScrollbarTrackPiece:
+            return WI.unlocalizedString("::scrollbar-track-piece");
+        case InspectorBackend.domains.CSS.PseudoId.ScrollbarCorner:
+            return WI.unlocalizedString("::scrollbar-corner");
+        case InspectorBackend.domains.CSS.PseudoId.Resizer:
+            return WI.unlocalizedString("::resizer");
+
+        default:
+            console.error("Unknown pseudo id", pseudoId);
+            return "";
+        }
+    }
+
     // Public
 
     get preferredColorFormat()

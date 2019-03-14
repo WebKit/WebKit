@@ -220,16 +220,22 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this._headerMap.clear();
         this._sections = [];
 
-        let createHeader = (text, node) => {
+        let createHeader = (text, nodeOrPseudoId) => {
             let header = this.element.appendChild(document.createElement("h2"));
             header.classList.add("section-header");
             header.append(text);
-            header.append(" ", WI.linkifyNodeReference(node, {
-                maxLength: 100,
-                excludeRevealElement: true,
-            }));
 
-            this._headerMap.set(node, header);
+            if (nodeOrPseudoId) {
+                if (nodeOrPseudoId instanceof WI.DOMNode) {
+                    header.append(" ", WI.linkifyNodeReference(nodeOrPseudoId, {
+                        maxLength: 100,
+                        excludeRevealElement: true,
+                    }));
+                } else
+                    header.append(" ", WI.CSSManager.displayNameForPseudoId(nodeOrPseudoId));
+
+                this._headerMap.set(nodeOrPseudoId, header);
+            }
         };
 
         let createSection = (style) => {
@@ -249,6 +255,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             this._sections.push(section);
 
             previousStyle = style;
+
+            return section;
         };
 
         for (let style of this.nodeStyles.uniqueOrderedStyles) {
@@ -258,16 +266,35 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             createSection(style);
         }
 
-        let pseudoElements = Array.from(this.nodeStyles.node.pseudoElements().values());
-        Promise.all(pseudoElements.map((pseudoElement) => WI.cssManager.stylesForNode(pseudoElement).refreshIfNeeded()))
-        .then((pseudoNodeStyles) => {
-            for (let pseudoNodeStyle of pseudoNodeStyles) {
-                createHeader(WI.UIString("Pseudo Element"), pseudoNodeStyle.node);
+        let beforePseudoId = null;
+        let afterPseudoId = null;
+        if (InspectorBackend.domains.CSS.PseudoId) {
+            beforePseudoId = InspectorBackend.domains.CSS.PseudoId.Before;
+            afterPseudoId = InspectorBackend.domains.CSS.PseudoId.After;
+        } else {
+            // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
+            beforePseudoId = 4;
+            afterPseudoId = 5;
+        }
 
-                for (let style of pseudoNodeStyle.uniqueOrderedStyles)
-                    createSection(style);
+        for (let [pseudoId, pseudoElementInfo] of this.nodeStyles.pseudoElements) {
+            let nodeOrPseudoId = null;
+            if (pseudoId === beforePseudoId)
+                nodeOrPseudoId = this.nodeStyles.node.beforePseudoElement();
+            else if (pseudoId === afterPseudoId)
+                nodeOrPseudoId = this.nodeStyles.node.afterPseudoElement();
+            else
+                nodeOrPseudoId = pseudoId;
+
+            createHeader(WI.UIString("Pseudo-Element"), nodeOrPseudoId);
+
+            for (let style of WI.DOMNodeStyles.uniqueOrderedStyles(pseudoElementInfo.orderedStyles)) {
+                let section = createSection(style);
+
+                if (nodeOrPseudoId === pseudoId)
+                    section.__pseudoId = pseudoId;
             }
-        });
+        }
 
         this._newRuleSelector = null;
 
@@ -293,7 +320,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         this.element.classList.remove("filter-non-matching");
 
-        let header = this._headerMap.get(event.target.style.node);
+        let header = this._headerMap.get(event.target.__pseudoId || event.target.style.node);
         if (header)
             header.classList.remove(WI.GeneralStyleDetailsSidebarPanel.NoFilterMatchInSectionClassName);
     }

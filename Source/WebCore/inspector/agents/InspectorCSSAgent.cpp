@@ -49,6 +49,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
+#include "RenderStyleConstants.h"
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
 #include "ShadowRoot.h"
@@ -59,6 +60,7 @@
 #include "StyleScope.h"
 #include "StyleSheetList.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
@@ -432,6 +434,42 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     }
 }
 
+static Optional<Inspector::Protocol::CSS::PseudoId> protocolValueForPseudoId(PseudoId pseudoId)
+{
+    switch (pseudoId) {
+    case PseudoId::FirstLine:
+        return Inspector::Protocol::CSS::PseudoId::FirstLine;
+    case PseudoId::FirstLetter:
+        return Inspector::Protocol::CSS::PseudoId::FirstLetter;
+    case PseudoId::Marker:
+        return Inspector::Protocol::CSS::PseudoId::Marker;
+    case PseudoId::Before:
+        return Inspector::Protocol::CSS::PseudoId::Before;
+    case PseudoId::After:
+        return Inspector::Protocol::CSS::PseudoId::After;
+    case PseudoId::Selection:
+        return Inspector::Protocol::CSS::PseudoId::Selection;
+    case PseudoId::Scrollbar:
+        return Inspector::Protocol::CSS::PseudoId::Scrollbar;
+    case PseudoId::ScrollbarThumb:
+        return Inspector::Protocol::CSS::PseudoId::ScrollbarThumb;
+    case PseudoId::ScrollbarButton:
+        return Inspector::Protocol::CSS::PseudoId::ScrollbarButton;
+    case PseudoId::ScrollbarTrack:
+        return Inspector::Protocol::CSS::PseudoId::ScrollbarTrack;
+    case PseudoId::ScrollbarTrackPiece:
+        return Inspector::Protocol::CSS::PseudoId::ScrollbarTrackPiece;
+    case PseudoId::ScrollbarCorner:
+        return Inspector::Protocol::CSS::PseudoId::ScrollbarCorner;
+    case PseudoId::Resizer:
+        return Inspector::Protocol::CSS::PseudoId::Resizer;
+
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+}
+
 void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int nodeId, const bool* includePseudo, const bool* includeInherited, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>>& matchedCSSRules, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>>& pseudoIdMatches, RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>>& inheritedEntries)
 {
     Element* element = elementForId(errorString, nodeId);
@@ -458,13 +496,15 @@ void InspectorCSSAgent::getMatchedStylesForNode(ErrorString& errorString, int no
         if (!includePseudo || *includePseudo) {
             auto pseudoElements = JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>::create();
             for (PseudoId pseudoId = PseudoId::FirstPublicPseudoId; pseudoId < PseudoId::AfterLastInternalPseudoId; pseudoId = static_cast<PseudoId>(static_cast<unsigned>(pseudoId) + 1)) {
-                auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
-                if (!matchedRules.isEmpty()) {
-                    auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
-                        .setPseudoId(static_cast<int>(pseudoId))
-                        .setMatches(buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, pseudoId))
-                        .release();
-                    pseudoElements->addItem(WTFMove(matches));
+                if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {
+                    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, StyleResolver::AllCSSRules);
+                    if (!matchedRules.isEmpty()) {
+                        auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
+                            .setPseudoId(protocolPseudoId.value())
+                            .setMatches(buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, pseudoId))
+                            .release();
+                        pseudoElements->addItem(WTFMove(matches));
+                    }
                 }
             }
 
