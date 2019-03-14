@@ -103,14 +103,18 @@ WI.HARBuilder = class HARBuilder
 
         if (resource.timingData.startTime && resource.timingData.responseEnd)
             entry.time = (resource.timingData.responseEnd - resource.timingData.startTime) * 1000;
-        if (resource.remoteAddress)
+        if (resource.remoteAddress) {
             entry.serverIPAddress = HARBuilder.ipAddress(resource.remoteAddress);
+            // FIXME: <https://webkit.org/b/195695> Web Inspector: HAR Extension for `serverIPAddress` port number
+        }
         if (resource.connectionIdentifier)
             entry.connection = "" + resource.connectionIdentifier;
 
         // CFNetwork Custom Field `_fetchType`.
         if (resource.responseSource !== WI.Resource.ResponseSource.Unknown)
             entry._fetchType = HARBuilder.fetchType(resource.responseSource);
+
+        // FIXME: <https://webkit.org/b/195693> Web Inspector: HAR Extension for Resource Priority
 
         return entry;
     }
@@ -241,6 +245,7 @@ WI.HARBuilder = class HARBuilder
 
     static timings(resource)
     {
+        // FIXME: <https://webkit.org/b/195694> Web Inspector: HAR Extension for Redirect Timing Info
         // Chrome has Custom Fields `_blocked_queueing` and `_blocked_proxy`.
 
         let result = {
@@ -312,5 +317,50 @@ WI.HARBuilder = class HARBuilder
 
         console.assert(false);
         return undefined;
+    }
+
+    // Consuming.
+
+    static dateFromHARDate(isoString)
+    {
+        return Date.parse(isoString);
+    }
+
+    static protocolFromHARProtocol(protocol)
+    {
+        switch (protocol) {
+        case "HTTP/2":
+            return "h2";
+        case "HTTP/1.0":
+            return "http/1.0";
+        case "HTTP/1.1":
+            return "http/1.1";
+        case "SPDY/2":
+            return "spdy/2";
+        case "SPDY/3":
+            return "spdy/3";
+        case "SPDY/3.1":
+            return "spdy/3.1";
+        }
+
+        if (protocol)
+            console.warn("Unknown HAR Protocol value", protocol);
+        return null;
+    }
+
+    static responseSourceFromHARFetchType(fetchType)
+    {
+        switch (fetchType) {
+        case "Network Load":
+            return WI.Resource.ResponseSource.Network;
+        case "Memory Cache":
+            return WI.Resource.ResponseSource.MemoryCache;
+        case "Disk Cache":
+            return WI.Resource.ResponseSource.DiskCache;
+        }
+
+        if (fetchType)
+            console.warn("Unknown HAR Protocol _fetchType", fetchType);
+        return WI.Resource.ResponseSource.Other;
     }
 };

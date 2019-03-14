@@ -36,6 +36,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._pendingUpdates = [];
         this._pendingFilter = false;
         this._showingRepresentedObjectCookie = null;
+        this._showingImportedResources = false;
 
         this._table = null;
         this._nameColumnWidthSetting = new WI.Setting("network-table-content-view-name-column-width", 250);
@@ -108,15 +109,24 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._clearOnLoadNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, () => { WI.settings.clearNetworkOnNavigate.value = !WI.settings.clearNetworkOnNavigate.value; });
         WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._clearNetworkOnNavigateSettingChanged, this);
 
+        this._harImportNavigationItem = new WI.ButtonNavigationItem("har-import", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+        this._harImportNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._harImportNavigationItem.tooltip = WI.UIString("HAR Import");
+        this._harImportNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+            this._importHAR();
+        });
+
         this._harExportNavigationItem = new WI.ButtonNavigationItem("har-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
         this._harExportNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
         this._harExportNavigationItem.tooltip = WI.UIString("HAR Export (%s)").format(WI.saveKeyboardShortcut.displayName);
-        this._harExportNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { this._exportHAR(); });
+        this._harExportNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => {
+            this._exportHAR();
+        });
 
         this._checkboxesNavigationItemGroup = new WI.GroupNavigationItem([this._clearOnLoadNavigationItem, new WI.DividerNavigationItem]);
         this._checkboxesNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
-        this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harExportNavigationItem, new WI.DividerNavigationItem]);
+        this._buttonsNavigationItemGroup = new WI.GroupNavigationItem([this._harImportNavigationItem, this._harExportNavigationItem, new WI.DividerNavigationItem]);
         this._buttonsNavigationItemGroup.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
 
         // COMPATIBILITY (iOS 10.3): Network.setDisableResourceCaching did not exist.
@@ -299,6 +309,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             this._hidePopover();
             this._hideDetailView();
         }
+
+        this._showingImportedResources = false;
     }
 
     showRepresentedObject(representedObject, cookie)
@@ -1528,6 +1540,9 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _handleResourceAdded(event)
     {
+        if (this._showingImportedResources)
+            return;
+
         this._insertResourceAndReloadTable(event.data.resource);
     }
 
@@ -1938,6 +1953,23 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
                 content: JSON.stringify(har, null, 2),
                 forceSaveAs: true,
             });
+        });
+    }
+
+    _importHAR()
+    {
+        WI.FileUtilities.importJSON((result) => {
+            let resources = WI.networkManager.processHAR(result);
+            if (!resources)
+                return;
+
+            this.reset();
+
+            this._showingImportedResources = true;
+
+            for (let resource of resources)
+                this._insertResourceAndReloadTable(resource);
+            this.needsLayout();
         });
     }
 

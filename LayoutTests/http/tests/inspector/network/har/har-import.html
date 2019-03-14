@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("HAR.Import");
+
+    suite.addTestCase({
+        name: "HAR.Import.Empty",
+        description: "Should be able to import a HAR with no resources.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/empty.har";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectThat(localResources, "Should be able to import a HAR with no resources.");
+            InspectorTest.expectEqual(localResources.length, 0, "Should produce zero LocalResources.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Import.Full",
+        description: "Should be able to import a complex HAR with many resources.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/webkit.org.har";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectThat(localResources, "Should be able to import a HAR with many resources.");
+            InspectorTest.log(`Resources: ${localResources.length}`);
+            for (let resource of localResources) {
+                InspectorTest.assert(resource instanceof WI.LocalResource);
+                InspectorTest.log(resource.url);
+            }
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Import.Basic",
+        description: "Should be able to import a HAR with fake resources.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/basic.har";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectThat(localResources, "Should be able to import a HAR with fake resources.");
+            InspectorTest.expectEqual(localResources.length, 2, "Should produce two LocalResources.");
+
+            const url = "https://example.com/fake.js";
+            const mimeType = "text/javascript";
+            const type = WI.Resource.Type.Script;
+            const requestMethod = "GET";
+            const requestHeaders = {"Test-Request-Header": "Test Request Header Value"};
+            const responseHeaders = {"Test-Response-Header": "Test Response Header Value"};
+            const statusCode = 200;
+            const statusText = "OK";
+            const requestSentWalltime = 1508723752694 / 1000; // Sun Oct 22 2017 18:55:52 GMT-0700, when this test was written.
+            const size = 1234;
+            const timingData = {
+                startTime: 1 / 1000,
+                domainLookupStart: 100 / 1000,
+                domainLookupEnd: 200 / 1000,
+                connectStart: 200 / 1000, // HAR does not include ends, so this became the end of dns.
+                connectEnd: 300 / 1000,
+                secureConnectionStart: 250 / 1000,
+                requestStart: 400 / 1000,
+                responseStart: 500 / 1000,
+                responseEnd: 600 / 1000,
+            };
+            const responseSource = WI.Resource.ResponseSource.Network;
+            const metrics = {
+                protocol: "http/1.1",
+                priority: WI.Resource.NetworkPriority.Unknown, // Priority is not included in HAR.
+                remoteAddress: "12.34.56.78", // HAR Does not include port.
+                connectionIdentifier: 1,
+                requestHeaderBytesSent: 100,
+                requestBodyBytesSent: 0,
+                responseHeaderBytesReceived: 200,
+                responseBodyBytesReceived: 800,
+                responseBodyDecodedSize: 1234,
+                requestHeaders,
+            };
+
+            let bareResource = localResources[0];
+            InspectorTest.log("");
+            InspectorTest.expectEqual(bareResource.url, url, `Bare Resource URL should be '${url}'.`);
+            InspectorTest.expectEqual(bareResource.mimeType, mimeType, `Bare Resource MIME Type should be '${mimeType}'.`);
+            InspectorTest.expectEqual(bareResource.type, type, `Bare Resource type should be '${type}'.`);
+            InspectorTest.expectEqual(bareResource.requestMethod, requestMethod, `Bare Resource requestMethod should be '${requestMethod}'.`);
+            InspectorTest.expectEqual(bareResource.requestSentWalltime, requestSentWalltime, `Bare Resource requestSentWalltime should be '${requestSentWalltime}'.`);
+            InspectorTest.expectThat(isNaN(bareResource.statusCode), `Bare Resource does not have a statusCode`);
+            InspectorTest.expectNull(bareResource.statusText, `Bare Resource does not have statusText.`);
+
+            let fullResource = localResources[1];
+            InspectorTest.log("");
+            InspectorTest.expectEqual(fullResource.url, url, `Full Resource URL should be '${url}'.`);
+            InspectorTest.expectEqual(fullResource.mimeType, mimeType, `Full Resource MIME Type should be '${mimeType}'.`);
+            InspectorTest.expectEqual(fullResource.type, type, `Full Resource type should be '${type}'.`);
+            InspectorTest.expectEqual(fullResource.requestMethod, requestMethod, `Full Resource requestMethod should be '${requestMethod}'.`);
+            InspectorTest.expectEqual(fullResource.requestSentWalltime, requestSentWalltime, `Full Resource requestSentWalltime should be '${requestSentWalltime}'.`);
+            InspectorTest.expectEqual(fullResource.statusCode, statusCode, `Full Resource statusCode should be '${statusCode}'.`);
+            InspectorTest.expectEqual(fullResource.statusText, statusText, `Full Resource statusText should be '${statusText}'.`);                
+
+            InspectorTest.expectEqual(fullResource.responseSource, responseSource, `Full Resource responseSource should be '${String(responseSource)}'.`);
+            InspectorTest.expectEqual(fullResource.protocol, metrics.protocol, `Full Resource protocol should be '${metrics.protocol}'.`);
+            InspectorTest.expectEqual(fullResource.priority, metrics.priority, `Full Resource priority should be '${String(metrics.priority)}'.`);
+            InspectorTest.expectEqual(fullResource.remoteAddress, metrics.remoteAddress, `Full Resource remoteAddress should be '${metrics.remoteAddress}'.`);
+            InspectorTest.expectEqual(fullResource.connectionIdentifier, metrics.connectionIdentifier, `Full Resource connectionIdentifier should be '${metrics.connectionIdentifier}'.`);
+            InspectorTest.expectEqual(fullResource.requestHeadersTransferSize, metrics.requestHeaderBytesSent, `Full Resource requestHeadersTransferSize should be '${metrics.requestHeaderBytesSent}'.`);
+            InspectorTest.expectEqual(fullResource.requestBodyTransferSize, metrics.requestBodyBytesSent, `Full Resource requestBodyTransferSize should be '${metrics.requestBodyBytesSent}'.`);
+            InspectorTest.expectEqual(fullResource.responseHeadersTransferSize, metrics.responseHeaderBytesReceived, `Full Resource responseHeadersTransferSize should be '${metrics.responseHeaderBytesReceived}'.`);
+            InspectorTest.expectEqual(fullResource.responseBodyTransferSize, metrics.responseBodyBytesReceived, `Full Resource responseBodyTransferSize should be '${metrics.responseBodyBytesReceived}'.`);
+
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.startTime, timingData.startTime, 0.001, `Full Resource timing startTime should be '${timingData.startTime}'.`);
+            InspectorTest.expectThat(isNaN(fullResource.timingData.redirectStart), `Full Resource timing redirectStart should be NaN.`);
+            InspectorTest.expectThat(isNaN(fullResource.timingData.redirectEnd), `Full Resource timing redirectEnd should be NaN.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.fetchStart, timingData.startTime, 0.001, `Full Resource timing fetchStart should be '${timingData.startTime}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.domainLookupStart, timingData.domainLookupStart, 0.001, `Full Resource timing domainLookupStart should be '${timingData.domainLookupStart}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.domainLookupEnd, timingData.domainLookupEnd, 0.001, `Full Resource timing domainLookupEnd should be '${timingData.domainLookupEnd}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.connectStart, timingData.connectStart, 0.001, `Full Resource timing connectStart should be '${timingData.connectStart}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.connectEnd, timingData.connectEnd, 0.001, `Full Resource timing connectEnd should be '${timingData.connectEnd}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.secureConnectionStart, timingData.secureConnectionStart, 0.001, `Full Resource timing secureConnectionStart should be '${timingData.secureConnectionStart}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.requestStart, timingData.requestStart, 0.001, `Full Resource timing requestStart should be '${timingData.requestStart}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.responseStart, timingData.responseStart, 0.001, `Full Resource timing responseStart should be '${timingData.responseStart}'.`);
+            InspectorTest.expectEqualWithAccuracy(fullResource.timingData.responseEnd, timingData.responseEnd, 0.001, `Full Resource timing responseEnd should be '${timingData.responseEnd}'.`);
+
+            InspectorTest.log("");
+            InspectorTest.log("Request Headers:");
+            InspectorTest.json(fullResource.requestHeaders);
+
+            InspectorTest.log("");
+            InspectorTest.log("Response Headers:");
+            InspectorTest.json(fullResource.responseHeaders);
+
+            InspectorTest.log("");
+            InspectorTest.log("Content:");
+            let {content} = await fullResource.requestContent();
+            InspectorTest.log(content);
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Import.BadVersion",
+        description: "Attempt an import of an unsupported HAR version.",
+        async test() {
+            const harURL = "http://127.0.0.1:8000/inspector/network/har/resources/bad-version.har";
+            let {content: har} = await NetworkAgent.loadResource(WI.networkManager.mainFrame.id, harURL);
+            let localResources = WI.networkManager.processHAR({json: JSON.parse(har)});
+            InspectorTest.expectNull(localResources, "Should fail to import a HAR with an unsupported version.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "HAR.Import.Invalid",
+        description: "Attempt an import of invalid JSON.",
+        async test() {
+            function t(har) {
+                let localResources = WI.networkManager.processHAR({json: har});
+                InspectorTest.expectNull(localResources, `Should fail to import invalid JSON: ${JSON.stringify(har)}.`);
+            }
+
+            t(null);
+            t(123);
+            t([]);
+            t({});
+            t({pages: [], entries: []});
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for HAR import.</p>
+</body>
+</html>

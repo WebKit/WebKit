@@ -43,6 +43,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._sourceMapURLMap = new Map;
         this._downloadingSourceMaps = new Set;
 
+        this._localResourcesMap = new Map;
+
         WI.notifications.addEventListener(WI.Notification.ExtraDomainsActivated, this._extraDomainsActivated, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);
     }
@@ -52,6 +54,21 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     static supportsShowCertificate()
     {
         return InspectorFrontendHost.supportsShowCertificate && window.NetworkAgent && NetworkAgent.getSerializedCertificate;
+    }
+
+    static synthesizeImportError(message)
+    {
+        message = WI.UIString("HAR Import Error: %s").format(message);
+
+        if (window.InspectorTest) {
+            console.error(message);
+            return;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
+        consoleMessage.shouldRevealConsole = true;
+
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
     }
 
     // Target
@@ -590,6 +607,11 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         frame.addExecutionContext(executionContext);
     }
 
+    localResourceForURL(url)
+    {
+        return this._localResourcesMap.get(url);
+    }
+
     resourceForURL(url)
     {
         if (!this._mainFrame)
@@ -609,6 +631,50 @@ WI.NetworkManager = class NetworkManager extends WI.Object
 
         for (let resource of resources)
             target.adoptResource(resource);
+    }
+
+    processHAR({json, error})
+    {
+        if (error) {
+            WI.NetworkManager.synthesizeImportError(error);
+            return null;
+        }
+
+        if (typeof json !== "object" || json === null) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid JSON"));
+            return null;
+        }
+
+        if (typeof json.log !== "object" || typeof json.log.version !== "string") {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        if (json.log.version !== "1.2") {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("unsupported HAR version"));
+            return null;
+        }
+
+        if (!Array.isArray(json.log.entries) || !Array.isArray(json.log.pages) || !json.log.pages[0] || !json.log.pages[0].startedDateTime) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        let mainResourceSentWalltime = WI.HARBuilder.dateFromHARDate(json.log.pages[0].startedDateTime) / 1000;
+        if (isNaN(mainResourceSentWalltime)) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("invalid HAR"));
+            return null;
+        }
+
+        let localResources = [];
+
+        for (let entry of json.log.entries) {
+            let localResource = WI.LocalResource.fromHAREntry(entry, mainResourceSentWalltime);
+            this._localResourcesMap.set(localResource.url, localResource);
+            localResources.push(localResource);
+        }
+
+        return localResources;
     }
 
     // Private

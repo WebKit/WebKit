@@ -1,3 +1,47 @@
+2019-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network - HAR Import
+        https://bugs.webkit.org/show_bug.cgi?id=195642
+        <rdar://problem/34820974>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js
+        * UserInterface/Test.html:
+        * UserInterface/Test.html:
+        New strings and resources.
+
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.dateFromHARDate):
+        (WI.HARBuilder.protocolFromHARProtocol):
+        (WI.HARBuilder.responseSourceFromHARFetchType):
+        Reverse parsers from HAR to WI.Resource types.
+
+        * UserInterface/Models/LocalResource.js: Added.
+        (WI.LocalResource):
+        (WI.LocalResource.headersArrayToHeadersObject):
+        (WI.LocalResource.fromHAREntry):
+        (WI.LocalResource.prototype.hasContent):
+        (WI.LocalResource.prototype.setContent):
+        (WI.LocalResource.prototype.requestContentFromBackend):
+        A Resource subclass with data fully supplied in the frontend.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager):
+        (WI.NetworkManager.synthesizeImportError):
+        (WI.NetworkManager.prototype.localResourceForURL):
+        (WI.NetworkManager.prototype.processHAR):
+        Process a HAR and extract local resources.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype._handleResourceAdded):
+        (WI.NetworkTableContentView.prototype._importHAR):
+        Add an import button. When an import succeeds reset the
+        table and only show imported resources (ignoring page
+        loaded resources).
+
 2019-03-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Console: getEventListeners should work for any EventTarget

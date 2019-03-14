@@ -1,3 +1,21 @@
+2019-03-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network - HAR Import
+        https://bugs.webkit.org/show_bug.cgi?id=195642
+        <rdar://problem/34820974>
+
+        Reviewed by Devin Rousso.
+
+        * http/tests/inspector/network/har/har-import-expected.txt: Added.
+        * http/tests/inspector/network/har/har-import.html: Added.
+        HAR import tests.
+
+        * http/tests/inspector/network/har/resources/bad-version.har: Added.
+        * http/tests/inspector/network/har/resources/basic.har: Added.
+        * http/tests/inspector/network/har/resources/empty.har: Added.
+        * http/tests/inspector/network/har/resources/webkit.org.har: Added.
+        Sample HARs to test against.
+
 2019-03-14  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup inline boxes when list marker gets blockified
