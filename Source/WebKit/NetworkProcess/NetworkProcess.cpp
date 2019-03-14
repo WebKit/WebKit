@@ -1404,6 +1404,9 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+
+    if (websiteDataTypes.contains(WebsiteDataType::IndexedDBDatabases) || websiteDataTypes.contains(WebsiteDataType::DOMCache))
+        clearStorageQuota(sessionID);
 }
 
 static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
@@ -1468,6 +1471,18 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCacheEntries(cache(), originDatas, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
+
+    // FIXME: Implement storage quota clearing for these origins.
+}
+
+void NetworkProcess::clearStorageQuota(PAL::SessionID sessionID)
+{
+    auto iterator = m_storageQuotaManagers.find(sessionID);
+    if (iterator == m_storageQuotaManagers.end())
+        return;
+
+    for (auto& manager : iterator->value.managersPerOrigin.values())
+        manager->resetQuota(iterator->value.defaultQuota);
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

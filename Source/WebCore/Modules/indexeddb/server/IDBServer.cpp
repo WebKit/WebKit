@@ -648,6 +648,9 @@ void IDBServer::performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOr
 
 void IDBServer::didPerformCloseAndDeleteDatabases(uint64_t callbackID)
 {
+    for (auto& user : m_quotaUsers.values())
+        user->resetSpaceUsed();
+
     auto callback = m_deleteDatabaseCompletionHandlers.take(callbackID);
     ASSERT(callback);
     callback();

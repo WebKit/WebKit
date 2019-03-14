@@ -453,6 +453,8 @@ private:
     void performNextStorageTask();
     void ensurePathExists(const String& path);
 
+    void clearStorageQuota(PAL::SessionID);
+
     // Connections to WebProcesses.
     Vector<Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;
 

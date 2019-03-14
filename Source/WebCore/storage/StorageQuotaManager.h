@@ -59,6 +59,7 @@ public:
     enum class Decision { Deny, Grant };
     using RequestCallback = CompletionHandler<void(Decision)>;
     WEBCORE_EXPORT void requestSpace(uint64_t, RequestCallback&&);
+    void resetQuota(uint64_t newQuota) { m_quota = newQuota; }
 
 private:
     uint64_t spaceUsage() const;
