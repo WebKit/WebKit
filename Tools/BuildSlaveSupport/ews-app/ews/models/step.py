@@ -51,6 +51,9 @@ class Step(models.Model):
         if not Step.is_valid_result(step_id, build_id, result, state_string, started_at, complete_at):
             return ERR_UNEXPECTED
 
+        if state_string is None:
+            state_string = ''
+
         step_uid = BuildbotInstance.get_uid(hostname, step_id)
         build_uid = BuildbotInstance.get_uid(hostname, build_id)
 

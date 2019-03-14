@@ -55,6 +55,9 @@ class Build(models.Model):
         if not Build.is_valid_result(patch_id, build_id, builder_id, number, result, state_string, started_at, complete_at):
             return ERR_UNEXPECTED
 
+        if state_string is None:
+            state_string = ''
+
         uid = BuildbotInstance.get_uid(hostname, build_id)
         build = Build.get_existing_build(uid)
         if build:
