@@ -72,6 +72,7 @@ void Attachment::invalidate()
 #if PLATFORM(COCOA)
     m_fileWrapper.clear();
 #endif
+    m_insertionState = InsertionState::NotInserted;
 }
 
 #if !PLATFORM(COCOA)

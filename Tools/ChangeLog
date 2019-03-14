@@ -1,3 +1,17 @@
+2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Make -[_WKAttachment setFileWrapper:contentType:completion:] robust when given a nil completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=195725
+        <rdar://problem/48545062>
+
+        Reviewed by Tim Horton.
+
+        Test that we don't crash when changing the file wrapper of an invalid attachment, if the given completion
+        handler is nil.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-03-13  Sam Weinig  <sam@webkit.org>
 
         Add utility function to allow easy reverse range-based iteration of a container

@@ -1478,11 +1478,17 @@ TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
     auto webView = webViewForTestingAttachments();
     [webView evaluateJavaScript:@"document.body.appendChild()" completionHandler:nil];
     NSString *identifier = [webView stringByEvaluatingJavaScript:@"const i = document.createElement('img'); document.body.appendChild(i); HTMLAttachmentElement.getAttachmentIdentifier(i)"];
-    _WKAttachment *attachment = [webView _attachmentForIdentifier:identifier];
+    auto attachment = retainPtr([webView _attachmentForIdentifier:identifier]);
 
     auto pdfFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testPDFData()]);
     [attachment setFileWrapper:pdfFile.get() contentType:(__bridge NSString *)kUTTypePDF completion:nil];
     [webView waitForImageElementSizeToBecome:CGSizeMake(130, 29)];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    auto zipFile = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:testZIPData()]);
+    [attachment setFileWrapper:zipFile.get() contentType:(__bridge NSString *)kUTTypeZipArchive completion:nil];
+    EXPECT_FALSE([attachment isConnected]);
 }
 
 #pragma mark - Platform-specific tests
