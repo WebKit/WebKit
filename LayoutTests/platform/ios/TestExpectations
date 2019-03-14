@@ -3241,3 +3241,5 @@ fast/events/ios/activating-submit-button-should-not-scroll-page.html [ Skip ]
 fast/events/ios/key-command-select-all-prevent-default.html [ Skip ]
 
 webkit.org/b/195433 imported/w3c/web-platform-tests/webrtc/simplecall-no-ssrcs.https.html [ Skip ]
+
+webkit.org/b/191711 quicklook/numbers.html [ ImageOnlyFailure ]
