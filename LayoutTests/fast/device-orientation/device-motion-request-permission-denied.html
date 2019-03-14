@@ -18,12 +18,10 @@ internals.withUserGesture(() => {
 
         addEventListener("devicemotion", () => {});
 
-        internals.withUserGesture(() => {
-            DeviceMotionEvent.requestPermission().then((_result) => {
-                result = _result;
-                shouldBeEqualToString("result", "denied");
-                finishJSTest();
-            });
+        DeviceMotionEvent.requestPermission().then((_result) => {
+            result = _result;
+            shouldBeEqualToString("result", "denied");
+            finishJSTest();
         });
     });
 });

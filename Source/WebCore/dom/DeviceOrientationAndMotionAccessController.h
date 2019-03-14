@@ -27,6 +27,7 @@
 
 #if ENABLE(DEVICE_ORIENTATION)
 
+#include "ExceptionOr.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -41,7 +42,7 @@ public:
     explicit DeviceOrientationAndMotionAccessController(Document&);
 
     const Optional<bool>& accessState() const { return m_accessState; }
-    void shouldAllowAccess(Function<void(bool granted)>&&);
+    void shouldAllowAccess(Function<void(ExceptionOr<bool> granted)>&&);
 
 private:
     void setAccessState(bool);

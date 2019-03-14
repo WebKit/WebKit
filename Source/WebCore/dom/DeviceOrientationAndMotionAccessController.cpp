@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "Page.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -43,10 +44,13 @@ DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessCont
     ASSERT(&m_document.topDocument() == &m_document);
 }
 
-void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void(bool granted)>&& callback)
+void DeviceOrientationAndMotionAccessController::shouldAllowAccess(Function<void(ExceptionOr<bool> granted)>&& callback)
 {
     if (m_accessState)
         return callback(*m_accessState);
+
+    if (!UserGestureIndicator::processingUserGesture())
+        return callback(Exception { NotAllowedError, "Requesting device orientation or motion access requires a user gesture"_s });
 
     auto* page = m_document.page();
     if (!page)

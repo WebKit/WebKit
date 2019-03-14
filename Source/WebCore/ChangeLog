@@ -1,3 +1,25 @@
+2019-03-14  Chris Dumez  <cdumez@apple.com>
+
+        Device orientation's permission should only require a user gesture to prompt the user
+        https://bugs.webkit.org/show_bug.cgi?id=195731
+
+        Reviewed by Geoffrey Garen.
+
+        Device orientation's permission should only require a user gesture to prompt the user. If the
+        user already made a decision, we should resolve the promise with this decision, even without
+        user gesture.
+
+        This is useful for JS to figure out if they are access to device orientation or not because
+        showing UI for the user to give permission.
+
+        No new tests, updated existing tests.
+
+        * dom/DeviceOrientationAndMotionAccessController.cpp:
+        (WebCore::DeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        * dom/DeviceOrientationAndMotionAccessController.h:
+        * dom/DeviceOrientationOrMotionEvent.cpp:
+        (WebCore::DeviceOrientationOrMotionEvent::requestPermission):
+
 2019-03-14  Youenn Fablet  <youenn@apple.com>
 
         Reset storage quota when clearing IDB/Cache API entries

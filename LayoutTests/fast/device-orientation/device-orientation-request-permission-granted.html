@@ -18,12 +18,10 @@ internals.withUserGesture(() => {
 
         addEventListener("deviceorientation", () => {});
 
-        internals.withUserGesture(() => {
-            DeviceOrientationEvent.requestPermission().then((_result) => {
-                result = _result;
-                shouldBeEqualToString("result", "granted");
-                finishJSTest();
-            });
+        DeviceOrientationEvent.requestPermission().then((_result) => {
+            result = _result;
+            shouldBeEqualToString("result", "granted");
+            finishJSTest();
         });
     });
 });
