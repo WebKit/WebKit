@@ -96,7 +96,6 @@ private:
 
     MonotonicTime m_unalignedNextFireTime; // m_nextFireTime not considering alignment interval
     Seconds m_repeatInterval; // 0 if not repeating
-    bool m_wasDeleted { false };
 
     RefPtr<ThreadTimerHeapItem> m_heapItem;
     Ref<Thread> m_thread { Thread::current() };

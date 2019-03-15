@@ -254,7 +254,6 @@ static bool shouldSuppressThreadSafetyCheck()
 }
 
 TimerBase::TimerBase()
-    : m_wasDeleted(false)
 {
 }
 
@@ -264,11 +263,9 @@ TimerBase::~TimerBase()
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
     stop();
     ASSERT(!inHeap());
-    if (m_heapItem) {
+    if (m_heapItem)
         m_heapItem->clearTimer();
-        m_heapItem = nullptr;
-    }
-    m_wasDeleted = true;
+    m_unalignedNextFireTime = MonotonicTime::nan();
 }
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
@@ -467,10 +464,13 @@ void TimerBase::setNextFireTime(MonotonicTime newTime)
 {
     ASSERT(canAccessThreadLocalDataForThread(m_thread.get()));
     RELEASE_ASSERT(canAccessThreadLocalDataForThread(m_thread.get()) || shouldSuppressThreadSafetyCheck());
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_wasDeleted);
+    bool timerHasBeenDeleted = std::isnan(m_unalignedNextFireTime);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!timerHasBeenDeleted);
 
-    if (m_unalignedNextFireTime != newTime)
+    if (m_unalignedNextFireTime != newTime) {
+        RELEASE_ASSERT(!std::isnan(newTime));
         m_unalignedNextFireTime = newTime;
+    }
 
     // Keep heap valid while changing the next-fire time.
     MonotonicTime oldTime = nextFireTime();
@@ -517,7 +517,9 @@ void TimerBase::didChangeAlignmentInterval()
 Seconds TimerBase::nextUnalignedFireInterval() const
 {
     ASSERT(isActive());
-    return std::max(m_unalignedNextFireTime - MonotonicTime::now(), 0_s);
+    auto result = std::max(m_unalignedNextFireTime - MonotonicTime::now(), 0_s);
+    RELEASE_ASSERT(std::isfinite(result));
+    return result;
 }
 
 } // namespace WebCore
