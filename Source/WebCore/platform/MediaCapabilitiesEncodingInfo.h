@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledBySetting=MediaCapabilities,
-    ImplementationLacksVTable
-]
-interface MediaCapabilities {
-  Promise<MediaCapabilitiesDecodingInfo> decodingInfo(MediaDecodingConfiguration configuration);
-  Promise<MediaCapabilitiesEncodingInfo> encodingInfo(MediaEncodingConfiguration configuration);
+#pragma once
+
+#include "MediaCapabilitiesInfo.h"
+#include "MediaEncodingConfiguration.h"
+
+namespace WebCore {
+
+struct MediaCapabilitiesEncodingInfo : MediaCapabilitiesInfo {
+    // FIXME(C++17): remove the following constructors once all compilers support extended
+    // aggregate initialization:
+    // <http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0017r1.html>
+    MediaCapabilitiesEncodingInfo() = default;
+    MediaCapabilitiesEncodingInfo(MediaEncodingConfiguration&& supportedConfiguration)
+        : MediaCapabilitiesEncodingInfo({ }, WTFMove(supportedConfiguration))
+    {
+    }
+    MediaCapabilitiesEncodingInfo(MediaCapabilitiesInfo&& info, MediaEncodingConfiguration&& supportedConfiguration)
+        : MediaCapabilitiesInfo(WTFMove(info))
+        , supportedConfiguration(WTFMove(supportedConfiguration))
+    {
+    }
+
+    MediaEncodingConfiguration supportedConfiguration;
 };
+
+}

@@ -29,7 +29,7 @@
 #if PLATFORM(COCOA)
 
 #include "HEVCUtilitiesCocoa.h"
-#include "MediaCapabilitiesInfo.h"
+#include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaPlayer.h"
 
@@ -48,23 +48,23 @@ static CMVideoCodecType videoCodecTypeFromRFC4281Type(String type)
     return 0;
 }
 
-void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration& configuration, WTF::Function<void(MediaCapabilitiesInfo&&)>&& callback)
+void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& configuration, WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>&& callback)
 {
-    MediaCapabilitiesInfo info;
+    MediaCapabilitiesDecodingInfo info;
+
     if (configuration.video) {
         auto& videoConfiguration = configuration.video.value();
         MediaEngineSupportParameters parameters { };
         parameters.type = ContentType(videoConfiguration.contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::IsSupported) {
-            callback({ });
+            callback({{ }, WTFMove(configuration)});
             return;
         }
-        info.supported = true;
 
         auto codecs = parameters.type.codecs();
         if (codecs.size() != 1) {
-            callback({ });
+            callback({{ }, WTFMove(configuration)});
             return;
         }
 
@@ -72,18 +72,20 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration& con
         auto& codec = codecs[0];
         auto videoCodecType = videoCodecTypeFromRFC4281Type(codec);
         if (!videoCodecType) {
-            callback({ });
+            callback({{ }, WTFMove(configuration)});
             return;
         }
 
         if (videoCodecType == kCMVideoCodecType_HEVC) {
             auto parameters = parseHEVCCodecParameters(codec);
             if (!parameters || !validateHEVCParameters(parameters.value(), info)) {
-                callback({ });
+                callback({{ }, WTFMove(configuration)});
                 return;
             }
-        } else if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported())
+        } else if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported()) {
             info.powerEfficient = VTIsHardwareDecodeSupported(videoCodecType);
+            info.smooth = true;
+        }
     }
 
     if (configuration.audio) {
@@ -91,11 +93,13 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration& con
         parameters.type = ContentType(configuration.audio.value().contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::IsSupported) {
-            callback({ });
+            callback({{ }, WTFMove(configuration)});
             return;
         }
         info.supported = true;
     }
+
+    info.supportedConfiguration = WTFMove(configuration);
 
     callback(WTFMove(info));
 }

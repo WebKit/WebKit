@@ -28,7 +28,8 @@
 #include "config.h"
 #include "MediaEngineConfigurationFactory.h"
 
-#include "MediaCapabilitiesInfo.h"
+#include "MediaCapabilitiesDecodingInfo.h"
+#include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactoryMock.h"
@@ -52,8 +53,8 @@ static bool& mockEnabled()
 }
 
 struct MediaEngineFactory {
-    void(*createDecodingConfiguration)(MediaDecodingConfiguration&, MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
-    void(*createEncodingConfiguration)(MediaEncodingConfiguration&, MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
+    void(*createDecodingConfiguration)(MediaDecodingConfiguration&&, MediaEngineConfigurationFactory::DecodingConfigurationCallback&&);
+    void(*createEncodingConfiguration)(MediaEncodingConfiguration&&, MediaEngineConfigurationFactory::EncodingConfigurationCallback&&);
 };
 
 using FactoryVector = Vector<MediaEngineFactory>;
@@ -73,11 +74,11 @@ static const FactoryVector& factories()
 void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingConfiguration&& config, MediaEngineConfigurationFactory::DecodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
-        MediaEngineConfigurationFactoryMock::createDecodingConfiguration(config, WTFMove(callback));
+        MediaEngineConfigurationFactoryMock::createDecodingConfiguration(WTFMove(config), WTFMove(callback));
         return;
     }
 
-    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto config, auto&& callback) mutable {
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto&& config, auto&& callback) mutable {
         if (nextFactory == factories().end()) {
             callback({ });
             return;
@@ -89,13 +90,13 @@ void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingC
             return;
         }
 
-        factory.createDecodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
+        factory.createDecodingConfiguration(WTFMove(config), [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
             if (info.supported) {
                 callback(WTFMove(info));
                 return;
             }
 
-            factoryCallback(factoryCallback, ++nextFactory, config, WTFMove(callback));
+            factoryCallback(factoryCallback, ++nextFactory, WTFMove(info.supportedConfiguration), WTFMove(callback));
         });
     };
     factoryCallback(factoryCallback, factories().begin(), config, WTFMove(callback));
@@ -104,11 +105,11 @@ void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingC
 void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingConfiguration&& config, MediaEngineConfigurationFactory::EncodingConfigurationCallback&& callback)
 {
     if (mockEnabled()) {
-        MediaEngineConfigurationFactoryMock::createEncodingConfiguration(config, WTFMove(callback));
+        MediaEngineConfigurationFactoryMock::createEncodingConfiguration(WTFMove(config), WTFMove(callback));
         return;
     }
 
-    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto config, auto&& callback) mutable {
+    auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto&& config, auto&& callback) mutable {
         if (nextFactory == factories().end()) {
             callback({ });
             return;
@@ -120,16 +121,16 @@ void MediaEngineConfigurationFactory::createEncodingConfiguration(MediaEncodingC
             return;
         }
 
-        factory.createEncodingConfiguration(config, [factoryCallback, nextFactory, config, callback = WTFMove(callback)] (auto&& info) mutable {
+        factory.createEncodingConfiguration(WTFMove(config), [factoryCallback, nextFactory, callback = WTFMove(callback)] (auto&& info) mutable {
             if (info.supported) {
                 callback(WTFMove(info));
                 return;
             }
 
-            factoryCallback(factoryCallback, ++nextFactory, config, WTFMove(callback));
+            factoryCallback(factoryCallback, ++nextFactory, WTFMove(info.supportedConfiguration), WTFMove(callback));
         });
     };
-    factoryCallback(factoryCallback, factories().begin(), config, WTFMove(callback));
+    factoryCallback(factoryCallback, factories().begin(), WTFMove(config), WTFMove(callback));
 }
 
 void MediaEngineConfigurationFactory::enableMock()

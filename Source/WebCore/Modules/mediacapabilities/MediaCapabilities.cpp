@@ -27,7 +27,10 @@
 #include "MediaCapabilities.h"
 
 #include "ContentType.h"
-#include "JSMediaCapabilitiesInfo.h"
+#include "JSMediaCapabilitiesDecodingInfo.h"
+#include "JSMediaCapabilitiesEncodingInfo.h"
+#include "MediaCapabilitiesDecodingInfo.h"
+#include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactory.h"
@@ -187,7 +190,7 @@ void MediaCapabilities::decodingInfo(MediaDecodingConfiguration&& configuration,
             // consideration the current power source in order to determine the
             // decoding power efficiency unless the device’s power source has side
             // effects such as enabling different decoding modules.
-            promise->resolve<IDLDictionary<MediaCapabilitiesInfo>>(WTFMove(info));
+            promise->resolve<IDLDictionary<MediaCapabilitiesDecodingInfo>>(WTFMove(info));
         };
 
         MediaEngineConfigurationFactory::createDecodingConfiguration(WTFMove(configuration), WTFMove(callback));
@@ -228,7 +231,7 @@ void MediaCapabilities::encodingInfo(MediaEncodingConfiguration&& configuration,
             // order to determine the encoding power efficiency unless the
             // device’s power source has side effects such as enabling different
             // encoding modules.
-            promise->resolve<IDLDictionary<MediaCapabilitiesInfo>>(WTFMove(info));
+            promise->resolve<IDLDictionary<MediaCapabilitiesEncodingInfo>>(WTFMove(info));
         };
 
         MediaEngineConfigurationFactory::createEncodingConfiguration(WTFMove(configuration), WTFMove(callback));

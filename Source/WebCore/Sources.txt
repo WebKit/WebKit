@@ -2929,6 +2929,8 @@ JSKeyframeEffectOptions.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMediaCapabilities.cpp
+JSMediaCapabilitiesDecodingInfo.cpp
+JSMediaCapabilitiesEncodingInfo.cpp
 JSMediaCapabilitiesInfo.cpp
 JSMediaController.cpp
 JSMediaControlsHost.cpp

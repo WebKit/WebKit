@@ -132,6 +132,8 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
 $(PROJECT_DIR)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/AudioConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilities.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl
+$(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaCapabilitiesInfo.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/MediaDecodingConfiguration.idl

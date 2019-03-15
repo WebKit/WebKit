@@ -1,3 +1,52 @@
+2019-03-15  Jer Noble  <jer.noble@apple.com>
+
+        Add a "supportedConfiguration" dictionary to MediaCapabilitiesDecodingInfo and MediaCapabilitiesEncodingInfo
+        https://bugs.webkit.org/show_bug.cgi?id=195763
+
+        Reviewed by Jon Lee.
+
+        Test: media/mediacapabilities/mock-decodingInfo-supportedConfiguration.html
+
+        Add support for a proposed addition to the Media Capabilities spec that would future-proof additional changes
+        to Media Capabilities by allowing sites to check exactly what properties were queried by the browser when
+        answering a decodeInfo() or enocdeInfo() query.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/mediacapabilities/AudioConfiguration.idl:
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::MediaCapabilities::decodingInfo):
+        (WebCore::MediaCapabilities::encodingInfo):
+        * Modules/mediacapabilities/MediaCapabilities.idl:
+        * Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl:
+        * Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl:
+        * Modules/mediacapabilities/MediaCapabilitiesInfo.idl:
+        * Modules/mediacapabilities/MediaDecodingConfiguration.idl:
+        * Modules/mediacapabilities/MediaEncodingConfiguration.idl:
+        * Modules/mediacapabilities/VideoConfiguration.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MediaCapabilitiesDecodingInfo.h: Copied from Source/WebCore/platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.h.
+        (WebCore::MediaCapabilitiesDecodingInfo::MediaCapabilitiesDecodingInfo):
+        * platform/MediaCapabilitiesEncodingInfo.h: Copied from Source/WebCore/platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.h.
+        (WebCore::MediaCapabilitiesEncodingInfo::MediaCapabilitiesEncodingInfo):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.h:
+        * platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp:
+        (WebCore::createMediaPlayerDecodingConfigurationGStreamer):
+        * platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.h:
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp:
+        (WebCore::MediaEngineConfigurationFactory::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactory::createEncodingConfiguration):
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.h:
+        * platform/mock/MediaEngineConfigurationFactoryMock.cpp:
+        (WebCore::MediaEngineConfigurationFactoryMock::createDecodingConfiguration):
+        (WebCore::MediaEngineConfigurationFactoryMock::createEncodingConfiguration):
+        * platform/mock/MediaEngineConfigurationFactoryMock.h:
+
 2019-03-15  Antti Koivisto  <antti@apple.com>
 
         Use Region for event region even when it is a rectangle

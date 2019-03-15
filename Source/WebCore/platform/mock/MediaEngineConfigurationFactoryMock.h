@@ -31,16 +31,17 @@
 
 namespace WebCore {
 
-struct MediaCapabilitiesInfo;
+struct MediaCapabilitiesDecodingInfo;
+struct MediaCapabilitiesEncodingInfo;
 struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 struct MediaEngineConfigurationFactoryMock {
-    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
-    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesInfo&&)>;
+    using DecodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesDecodingInfo&&)>;
+    using EncodingConfigurationCallback = WTF::Function<void(MediaCapabilitiesEncodingInfo&&)>;
 
-    static void createDecodingConfiguration(MediaDecodingConfiguration&, DecodingConfigurationCallback&&);
-    static void createEncodingConfiguration(MediaEncodingConfiguration&, EncodingConfigurationCallback&&);
+    static void createDecodingConfiguration(MediaDecodingConfiguration&&, DecodingConfigurationCallback&&);
+    static void createEncodingConfiguration(MediaEncodingConfiguration&&, EncodingConfigurationCallback&&);
 };
 
 }

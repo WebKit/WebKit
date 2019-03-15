@@ -282,6 +282,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/mediacapabilities/AudioConfiguration.idl
     Modules/mediacapabilities/MediaCapabilities.idl
+    Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl
+    Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl
     Modules/mediacapabilities/MediaCapabilitiesInfo.idl
     Modules/mediacapabilities/MediaConfiguration.idl
     Modules/mediacapabilities/MediaDecodingConfiguration.idl

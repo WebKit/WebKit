@@ -196,6 +196,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilities.idl \
+	$(WebCore)/Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl \
+	$(WebCore)/Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl \
     $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesInfo.idl \
     $(WebCore)/Modules/mediacapabilities/MediaConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/MediaDecodingConfiguration.idl \

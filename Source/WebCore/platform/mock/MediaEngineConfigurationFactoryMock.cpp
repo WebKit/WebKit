@@ -29,7 +29,8 @@
 #include "MediaEngineConfigurationFactoryMock.h"
 
 #include "ContentType.h"
-#include "MediaCapabilitiesInfo.h"
+#include "MediaCapabilitiesDecodingInfo.h"
+#include "MediaCapabilitiesEncodingInfo.h"
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 
@@ -125,22 +126,23 @@ static bool canPowerEfficientlyEncodeMedia(const MediaEncodingConfiguration& con
     return true;
 }
 
-void MediaEngineConfigurationFactoryMock::createDecodingConfiguration(MediaDecodingConfiguration& configuration, DecodingConfigurationCallback&& callback)
+void MediaEngineConfigurationFactoryMock::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
 {
     if (!canDecodeMedia(configuration)) {
-        callback({ });
+        MediaCapabilitiesDecodingInfo info { WTFMove(configuration) };
+        callback(WTFMove(info));
         return;
     }
-    callback({ true, canSmoothlyDecodeMedia(configuration), canPowerEfficientlyDecodeMedia(configuration) });
+    callback({{ true, canSmoothlyDecodeMedia(configuration), canPowerEfficientlyDecodeMedia(configuration) }, WTFMove(configuration)});
 }
 
-void MediaEngineConfigurationFactoryMock::createEncodingConfiguration(MediaEncodingConfiguration& configuration, EncodingConfigurationCallback&& callback)
+void MediaEngineConfigurationFactoryMock::createEncodingConfiguration(MediaEncodingConfiguration&& configuration, EncodingConfigurationCallback&& callback)
 {
     if (!canEncodeMedia(configuration)) {
-        callback({ });
+        callback({{ }, WTFMove(configuration) });
         return;
     }
-    callback({ true, canSmoothlyEncodeMedia(configuration), canPowerEfficientlyEncodeMedia(configuration) });
+    callback({{ true, canSmoothlyEncodeMedia(configuration), canPowerEfficientlyEncodeMedia(configuration) }, WTFMove(configuration)});
 }
 
 } // namespace WebCore
