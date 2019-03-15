@@ -1,3 +1,22 @@
+2019-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow Scrolling] Update positioned node layers when overflows are scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=195733
+        rdar://problem/11642295
+
+        Reviewed by Antti Koivisto.
+
+        New tests that use uiController.scrollUpdatesDisabled, and are the two move/stationary
+        cases.
+
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt:
+        * scrollingcoordinator/ios/absolute-layer-should-not-move-with-scroll-expected.html: Added.
+        * scrollingcoordinator/ios/absolute-layer-should-not-move-with-scroll.html: Added.
+        * scrollingcoordinator/ios/relative-layer-should-move-with-scroll-expected.html: Added.
+        * scrollingcoordinator/ios/relative-layer-should-move-with-scroll.html: Added.
+        * scrollingcoordinator/ios/ui-scrolling-tree-expected.txt: Fixed the last paren showing up.
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-expected.txt: We make positioned nodes now.
+
 2019-03-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed test gardening for WinCairo port

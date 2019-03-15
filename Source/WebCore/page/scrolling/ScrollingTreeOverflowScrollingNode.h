@@ -37,6 +37,8 @@ public:
 
 protected:
     WEBCORE_EXPORT ScrollingTreeOverflowScrollingNode(ScrollingTree&, ScrollingNodeID);
+    
+    WEBCORE_EXPORT void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const;
 };
 
 } // namespace WebCore

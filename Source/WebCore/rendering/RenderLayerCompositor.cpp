@@ -2869,15 +2869,115 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     return false;
 }
 
+// Is this layer's containingBlock an ancestor of scrollable overflow, and is the layer's compositing ancestor inside that overflow?
+static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
+{
+    ASSERT(layer.isComposited());
+    ASSERT(layer.renderer().style().position() == PositionType::Absolute);
+
+    bool sawCompositingAncestor = false;
+    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
+        if (currLayer->renderer().canContainAbsolutelyPositionedObjects())
+            return false;
+
+        if (currLayer == &compositedAncestor)
+            sawCompositingAncestor = true;
+
+        if (currLayer->hasCompositedScrollableOverflow())
+            return sawCompositingAncestor;
+    }
+
+    return false;
+}
+
+// Is there scrollable overflow between this layer and its composited ancestor?
+static bool layerParentedAcrossCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
+{
+    ASSERT(layer.isComposited());
+
+    for (const auto* currLayer = layer.parent(); currLayer != &compositedAncestor; currLayer = currLayer->parent()) {
+        if (currLayer->hasCompositedScrollableOverflow())
+            return true;
+    }
+
+    return false;
+}
+
 ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningForLayer(const RenderLayer& layer) const
 {
     if (layer.isRenderViewLayer())
         return ScrollPositioningBehavior::None;
 
-    // FIXME: This will look at the containing block and stacking context ancestor chains and determine
-    // whether this layer needs to be repositioned when a composited overflow scroll scrolls.
+    auto* scrollingCoordinator = this->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return ScrollPositioningBehavior::None;
+
+    // There are two cases we have to deal with here:
+    // 1. There's a composited overflow:scroll in the parent chain between the renderer and its containing block, and the layer's
+    //    composited (z-order) ancestor is inside the scroller or is the scroller. In this case, we have to compensate for scroll position
+    //    changes to make the positioned layer stay in the same place. This only applies to position:absolute (since we handle fixed elsewhere).
+    auto* compositedAncestor = layer.ancestorCompositingLayer();
+
+    auto& renderer = layer.renderer();
+    if (renderer.isOutOfFlowPositioned() && renderer.style().position() == PositionType::Absolute) {
+        if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositedAncestor))
+            return ScrollPositioningBehavior::Stationary;
+
+        return ScrollPositioningBehavior::None;
+    }
+
+    // 2. The layer's containing block is the overflow or inside the overflow:scroll, but its z-order ancestor is
+    //    outside the overflow:scroll. In that case, we have to move the layer via the scrolling tree to make
+    //    it move along with the overflow scrolling.
+    if (layerParentedAcrossCoordinatedScrollingBoundary(layer, *compositedAncestor))
+        return ScrollPositioningBehavior::Moves;
 
     return ScrollPositioningBehavior::None;
+}
+
+static Vector<ScrollingNodeID> collectRelatedCoordinatedScrollingNodes(const RenderLayer& layer, ScrollPositioningBehavior positioningBehavior)
+{
+    Vector<ScrollingNodeID> overflowNodeData;
+
+    switch (positioningBehavior) {
+    case ScrollPositioningBehavior::Moves: {
+        // Collect all the composited scrollers between this layer and its composited ancestor.
+        auto* compositedAncestor = layer.ancestorCompositingLayer();
+        for (const auto* currLayer = layer.parent(); currLayer != compositedAncestor; currLayer = currLayer->parent()) {
+            if (currLayer->hasCompositedScrollableOverflow()) {
+                auto scrollingNodeID = currLayer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+                if (scrollingNodeID)
+                    overflowNodeData.append(scrollingNodeID);
+                else
+                    LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &layer);
+            }
+        }
+        break;
+    }
+    case ScrollPositioningBehavior::Stationary: {
+        // Collect all the composited scrollers between this layer and its containing block.
+        ASSERT(layer.renderer().style().position() == PositionType::Absolute);
+        for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
+            if (currLayer->renderer().canContainAbsolutelyPositionedObjects())
+                break;
+
+            if (currLayer->hasCompositedScrollableOverflow()) {
+                auto scrollingNodeID = currLayer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+                if (scrollingNodeID)
+                    overflowNodeData.append(scrollingNodeID);
+                else
+                    LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &layer);
+            }
+        }
+        // Don't need to do anything because the layer is a descendant of the overflow in stacking.
+        break;
+    }
+    case ScrollPositioningBehavior::None:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return overflowNodeData;
 }
 
 bool RenderLayerCompositor::isLayerForIFrameWithScrollCoordinatedContents(const RenderLayer& layer) const
@@ -4078,15 +4178,16 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForPositioningRole(Ren
     }
 
     if (changes & ScrollingNodeChangeFlags::LayerGeometry && treeState.parentNodeID) {
-        Vector<ScrollingNodeID> relatedNodeIDs; // FIXME: This will do a tree walk to figure out which composited overflows affect this positioned node.
+        // Would be nice to avoid calling computeCoordinatedPositioningForLayer() again.
+        auto positioningBehavior = computeCoordinatedPositioningForLayer(layer);
+        auto relatedNodeIDs = collectRelatedCoordinatedScrollingNodes(layer, positioningBehavior);
         scrollingCoordinator->setRelatedOverflowScrollingNodes(newNodeID, WTFMove(relatedNodeIDs));
 
         auto* graphicsLayer = layer.backing()->graphicsLayer();
         LayoutConstraints constraints;
         constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
         constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
-        // Would be nice to avoid calling computeCoordinatedPositioningForLayer() again.
-        constraints.setScrollPositioningBehavior(computeCoordinatedPositioningForLayer(layer));
+        constraints.setScrollPositioningBehavior(positioningBehavior);
         scrollingCoordinator->setPositionedNodeGeometry(newNodeID, constraints);
     }
 

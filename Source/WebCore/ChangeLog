@@ -1,3 +1,47 @@
+2019-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow Scrolling] Update positioned node layers when overflows are scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=195733
+        rdar://problem/11642295
+
+        Reviewed by Antti Koivisto.
+
+        Make ScrollingTree positioned nodes in the two cases where we need them, as
+        detected by RenderLayerCompositor::computeCoordinatedPositioningForLayer().
+
+        For "Moves" layers we know that the overflow is not in the z-order ancestor chain,
+        so ScrollingTree needs a map of overflow node -> affected positioned nodes which
+        notifyRelatedNodesAfterScrollPositionChange() uses to find nodes to update after
+        a scroll. Computing these dependent nodes in RenderLayerCompositor() would require
+        correct dependency analysis between an overflow layers and "positioned" layers which
+        is hard. It's easier to have "positioned" layers figure out which overflow nodes
+        affect them, then compute the inverse relationship when the scrolling tree is updated
+        which happens in ScrollingTreePositionedNode::commitStateBeforeChildren().
+
+        Tests: scrollingcoordinator/ios/absolute-layer-should-not-move-with-scroll.html
+               scrollingcoordinator/ios/relative-layer-should-move-with-scroll.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        (WebCore::ScrollingTree::applyLayerPositions):
+        (WebCore::ScrollingTree::notifyRelatedNodesAfterScrollPositionChange):
+        (WebCore::ScrollingTree::scrollingTreeAsText):
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::overflowRelatedNodes):
+        * page/scrolling/ScrollingTreeOverflowScrollingNode.cpp:
+        (WebCore::ScrollingTreeOverflowScrollingNode::dumpProperties const):
+        * page/scrolling/ScrollingTreeOverflowScrollingNode.h:
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::commitStateBeforeChildren):
+        (WebCore::ScrollingTreePositionedNode::applyLayerPositions):
+        (WebCore::ScrollingTreePositionedNode::relatedNodeScrollPositionDidChange):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::layerContainingBlockCrossesCoordinatedScrollingBoundary):
+        (WebCore::layerParentedAcrossCoordinatedScrollingBoundary):
+        (WebCore::RenderLayerCompositor::computeCoordinatedPositioningForLayer const):
+        (WebCore::collectRelatedCoordinatedScrollingNodes):
+        (WebCore::RenderLayerCompositor::updateScrollingNodeForPositioningRole):
+
 2019-03-15  Antti Koivisto  <antti@apple.com>
 
         Optimize Region for single rectangle case

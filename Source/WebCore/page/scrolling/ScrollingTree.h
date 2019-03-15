@@ -144,8 +144,13 @@ public:
         ASSERT(m_fixedOrStickyNodeCount);
         --m_fixedOrStickyNodeCount;
     }
-    
-    WEBCORE_EXPORT String scrollingTreeAsText();
+
+    // A map of overflow scrolling nodes to positioned nodes which need to be updated
+    // when the scroller changes, but are not descendants.
+    using RelatedNodesMap = HashMap<ScrollingNodeID, Vector<ScrollingNodeID>>;
+    RelatedNodesMap& overflowRelatedNodes() { return m_overflowRelatedNodesMap; }
+
+    WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
     
 protected:
     void setMainFrameScrollPosition(FloatPoint);
@@ -166,6 +171,8 @@ private:
 
     using ScrollingTreeNodeMap = HashMap<ScrollingNodeID, ScrollingTreeNode*>;
     ScrollingTreeNodeMap m_nodeMap;
+
+    RelatedNodesMap m_overflowRelatedNodesMap;
 
     struct TreeState {
         ScrollingNodeID latchedNodeID { 0 };

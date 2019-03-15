@@ -49,7 +49,7 @@ private:
 
     void applyLayerPositions(const FloatRect& layoutViewport, FloatSize& cumulativeDelta) override;
 
-    void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
+    WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
     Vector<ScrollingNodeID> m_relatedOverflowScrollingNodes;
     LayoutConstraints m_constraints;

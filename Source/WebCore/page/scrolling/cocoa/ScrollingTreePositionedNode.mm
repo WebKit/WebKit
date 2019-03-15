@@ -31,6 +31,7 @@
 #import "Logging.h"
 #import "ScrollingStatePositionedNode.h"
 #import "ScrollingTree.h"
+#import "ScrollingTreeOverflowScrollingNode.h"
 #import "ScrollingTreeScrollingNode.h"
 #import <QuartzCore/CALayer.h>
 #import <wtf/text/TextStream.h>
@@ -61,30 +62,51 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
 
     if (positionedStateNode.hasChangedProperty(ScrollingStatePositionedNode::LayoutConstraintData))
         m_constraints = positionedStateNode.layoutConstraints();
+
+    // Tell the ScrollingTree about non-ancestor overflow nodes which affect this node.
+    if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Moves) {
+        auto& relatedNodes = scrollingTree().overflowRelatedNodes();
+        for (auto overflowNodeID : m_relatedOverflowScrollingNodes) {
+            relatedNodes.ensure(overflowNodeID, [] {
+                return Vector<ScrollingNodeID>();
+            }).iterator->value.append(scrollingNodeID());
+        }
+    }
 }
 
 void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSize& cumulativeDelta)
 {
-    FloatSize layerOffset; // FIXME: layerOffset needs to be computed by looking at scrolling tree deltas
-    // in the overflow nodes that affect this node. Some of that may come in via cumulativeDelta.
+    // Note that we ignore cumulativeDelta because it will contain the delta for ancestor scrollers,
+    // but not non-ancestor ones, so it's simpler to just recompute from the scrollers we know about here.
+    FloatSize scrollOffsetSinceLastCommit;
+    for (auto nodeID : m_relatedOverflowScrollingNodes) {
+        if (auto* node = scrollingTree().nodeForID(nodeID)) {
+            if (is<ScrollingTreeOverflowScrollingNode>(node)) {
+                auto& overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(*node);
+                scrollOffsetSinceLastCommit += overflowNode.lastCommittedScrollPosition() - overflowNode.currentScrollPosition();
+            }
+        }
+    }
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: total overflow delta " << layerOffset);
-
-    layerOffset += cumulativeDelta;
-    // Stationary nodes move in the opposite direction.
-    if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Stationary)
+    auto layerOffset = -scrollOffsetSinceLastCommit;
+    if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Stationary) {
+        // Stationary nodes move in the opposite direction.
         layerOffset = -layerOffset;
+    }
 
     FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() - layerOffset;
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 
-    cumulativeDelta += layerPosition - m_constraints.layerPositionAtLastLayout();
+    // FIXME: Should our scroller deltas propagate to descendants?
+    cumulativeDelta = layerPosition - m_constraints.layerPositionAtLastLayout();
 }
 
 void ScrollingTreePositionedNode::relatedNodeScrollPositionDidChange(const ScrollingTreeScrollingNode& changedNode, const FloatRect& layoutViewport, FloatSize& cumulativeDelta)
 {
-    UNUSED_PARAM(changedNode);
-    // FIXME: This will avoid doing work if we can determine that changedNode doesn't affect this positioned node.
+    if (!m_relatedOverflowScrollingNodes.contains(changedNode.scrollingNodeID()))
+        return;
+
     applyLayerPositions(layoutViewport, cumulativeDelta);
 }
 

@@ -18,7 +18,7 @@ Scrolling content
   (min layout viewport origin (0,0))
   (max layout viewport origin (0,141))
   (behavior for fixed 0)
-  (children 4
+  (children 5
     (Overflow scrolling node
       (scrollable area size 205 155)
       (contents size 205 1020)
@@ -54,6 +54,12 @@ Scrolling content
             (has enabled vertical scrollbar 1))
         )
       )
+    )
+    (Positioned node
+      (layout constraints 
+        (layer-position-at-last-layout (10,28))
+        (positioning-behavior moves))
+      (related overflow nodes 1)
     )
     (Overflow scrolling node
       (scrollable area size 205 155)
