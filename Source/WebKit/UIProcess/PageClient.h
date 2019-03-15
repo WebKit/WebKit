@@ -423,8 +423,10 @@ public:
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;
+
     virtual void pinnedStateWillChange() { }
     virtual void pinnedStateDidChange() { }
+    virtual bool scrollingUpdatesDisabledForTesting() { return false; }
 
     virtual bool hasSafeBrowsingWarning() const { return false; }
     

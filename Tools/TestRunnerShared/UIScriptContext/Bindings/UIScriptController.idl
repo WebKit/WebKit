@@ -244,6 +244,8 @@ interface UIScriptController {
     readonly attribute double contentOffsetX;
     readonly attribute double contentOffsetY;
 
+    attribute boolean scrollUpdatesDisabled; // Turns off notifications back to the web process after scrolls (used for testing scrolling tree).
+
     void scrollToOffset(long x, long y); // Initiate an animated scroll in the UI process.
     attribute object didEndScrollingCallback;
 

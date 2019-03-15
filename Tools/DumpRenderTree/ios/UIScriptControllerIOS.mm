@@ -238,6 +238,15 @@ double UIScriptController::contentOffsetY() const
     return [gWebScrollView contentOffset].y;
 }
 
+bool UIScriptController::scrollUpdatesDisabled() const
+{
+    return false;
+}
+
+void UIScriptController::setScrollUpdatesDisabled(bool)
+{
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
     [gWebScrollView setContentOffset:contentOffsetBoundedInValidRange(gWebScrollView, CGPointMake(x, y)) animated:YES];

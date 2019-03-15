@@ -47,7 +47,8 @@
 
 @interface TestRunnerWKWebView () <WKUIDelegatePrivate> {
     RetainPtr<NSNumber> m_stableStateOverride;
-    BOOL m_isInteractingWithFormControl;
+    BOOL _isInteractingWithFormControl;
+    BOOL _scrollingUpdatesDisabled;
 }
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
@@ -108,7 +109,7 @@ IGNORE_WARNINGS_END
 
 - (void)didStartFormControlInteraction
 {
-    m_isInteractingWithFormControl = YES;
+    _isInteractingWithFormControl = YES;
 
     if (self.didStartFormControlInteractionCallback)
         self.didStartFormControlInteractionCallback();
@@ -116,7 +117,7 @@ IGNORE_WARNINGS_END
 
 - (void)didEndFormControlInteraction
 {
-    m_isInteractingWithFormControl = NO;
+    _isInteractingWithFormControl = NO;
 
     if (self.didEndFormControlInteractionCallback)
         self.didEndFormControlInteractionCallback();
@@ -124,7 +125,7 @@ IGNORE_WARNINGS_END
 
 - (BOOL)isInteractingWithFormControl
 {
-    return m_isInteractingWithFormControl;
+    return _isInteractingWithFormControl;
 }
 
 - (void)_didShowForcePressPreview
@@ -232,6 +233,16 @@ IGNORE_WARNINGS_END
 {
     m_stableStateOverride = overrideBoolean;
     [self _scheduleVisibleContentRectUpdate];
+}
+
+- (BOOL)_scrollingUpdatesDisabledForTesting
+{
+    return _scrollingUpdatesDisabled;
+}
+
+- (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
+{
+    _scrollingUpdatesDisabled = disabled;
 }
 
 - (void)_didEndRotation

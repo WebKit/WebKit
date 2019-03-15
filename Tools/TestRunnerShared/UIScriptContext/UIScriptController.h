@@ -125,6 +125,9 @@ public:
     double contentOffsetX() const;
     double contentOffsetY() const;
 
+    bool scrollUpdatesDisabled() const;
+    void setScrollUpdatesDisabled(bool);
+
     void scrollToOffset(long x, long y);
 
     void immediateScrollToOffset(long x, long y);

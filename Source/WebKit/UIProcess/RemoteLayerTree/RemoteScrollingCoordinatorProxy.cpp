@@ -204,6 +204,9 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID
     if (!m_propagatesMainFrameScrolls && scrolledNodeID == rootScrollingNodeID())
         return;
 
+    if (m_webPageProxy.scrollingUpdatesDisabledForTesting())
+        return;
+
 #if PLATFORM(IOS_FAMILY)
     m_webPageProxy.scrollingNodeScrollViewDidScroll();
 #endif

@@ -546,6 +546,18 @@ double UIScriptController::contentOffsetY() const
     return webView.scrollView.contentOffset.y;
 }
 
+bool UIScriptController::scrollUpdatesDisabled() const
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    return webView._scrollingUpdatesDisabledForTesting;
+}
+
+void UIScriptController::setScrollUpdatesDisabled(bool disabled)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    webView._scrollingUpdatesDisabledForTesting = disabled;
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

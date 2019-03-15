@@ -135,6 +135,11 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
     }
 }
 
+bool WebPageProxy::scrollingUpdatesDisabledForTesting()
+{
+    return pageClient().scrollingUpdatesDisabledForTesting();
+}
+
 #if ENABLE(DRAG_SUPPORT)
 
 void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)

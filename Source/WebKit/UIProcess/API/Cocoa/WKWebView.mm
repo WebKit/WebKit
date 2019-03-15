@@ -7113,6 +7113,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     });
 }
 
+- (BOOL)_scrollingUpdatesDisabledForTesting
+{
+    // For subclasses to override;
+    return NO;
+}
+
+- (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled
+{
+}
+
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {

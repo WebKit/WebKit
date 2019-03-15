@@ -1,3 +1,39 @@
+2019-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Make it possible to test scrolling tree layer manipulation more easily
+        https://bugs.webkit.org/show_bug.cgi?id=195780
+
+        Reviewed by Tim Horton.
+        
+        Add a boolean attribute 'scrollUpdatesDisabled' on UIScriptController that
+        cuts off communication of scrolling tree scrolls back to the web process
+        (in RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll()). This
+        allows tests to trigger scrolls which run the scrolling tree layer positioning
+        logic, but never get another commit from the web process that might mask
+        scrolling tree bugs.
+        
+        WKWebView's testing protocol get @property _scrollingUpdatesDisabledForTesting,
+        whose getters and setters are overridden by TestRunnerWKWebView. Plumbing
+        via PageClient and WebPageProxy makes this flag reachable by RemoteScrollingCoordinatorProxy.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::scrollUpdatesDisabled const):
+        (WTR::UIScriptController::setScrollUpdatesDisabled):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::scrollUpdatesDisabled const):
+        (WTR::UIScriptController::setScrollUpdatesDisabled):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _scrollingUpdatesDisabledForTesting]):
+        (-[TestRunnerWKWebView _setScrollingUpdatesDisabledForTesting:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::scrollUpdatesDisabled const):
+        (WTR::UIScriptController::setScrollUpdatesDisabled):
+
 2019-03-14  Youenn Fablet  <youenn@apple.com>
 
         Move IDB storage in private browsing mode to NetworkProcess

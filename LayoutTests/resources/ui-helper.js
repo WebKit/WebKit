@@ -222,32 +222,32 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static async delayFor(ms)
+    static delayFor(ms)
     {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     
-    static async immediateScrollTo(x, y)
+    static immediateScrollTo(x, y)
     {
         if (!this.isWebKit2()) {
             window.scrollTo(x, y);
             return Promise.resolve();
         }
 
-        await new Promise(resolve => {
+        return new Promise(resolve => {
             testRunner.runUIScript(`
                 uiController.immediateScrollToOffset(${x}, ${y});`, resolve);
         });
     }
 
-    static async immediateUnstableScrollTo(x, y)
+    static immediateUnstableScrollTo(x, y)
     {
         if (!this.isWebKit2()) {
             window.scrollTo(x, y);
             return Promise.resolve();
         }
 
-        await new Promise(resolve => {
+        return new Promise(resolve => {
             testRunner.runUIScript(`
                 uiController.stableStateOverride = false;
                 uiController.immediateScrollToOffset(${x}, ${y});`, resolve);

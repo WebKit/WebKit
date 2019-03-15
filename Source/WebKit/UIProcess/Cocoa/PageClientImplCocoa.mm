@@ -41,6 +41,11 @@ void PageClientImplCocoa::isPlayingAudioDidChange()
     [m_webView didChangeValueForKey:NSStringFromSelector(@selector(_isPlayingAudio))];
 }
 
+bool PageClientImplCocoa::scrollingUpdatesDisabledForTesting()
+{
+    return [m_webView _scrollingUpdatesDisabledForTesting];
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void PageClientImplCocoa::didInsertAttachment(API::Attachment& attachment, const String& source)

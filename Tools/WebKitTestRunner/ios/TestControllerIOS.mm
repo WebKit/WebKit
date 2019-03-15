@@ -146,6 +146,7 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
     if (PlatformWebView* platformWebView = mainWebView()) {
         TestRunnerWKWebView *webView = platformWebView->platformView();
         webView._stableStateOverride = nil;
+        webView._scrollingUpdatesDisabledForTesting = NO;
         webView.usesSafariLikeRotation = NO;
         webView.overrideSafeAreaInsets = UIEdgeInsetsZero;
         [webView _clearOverrideLayoutParameters];

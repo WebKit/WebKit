@@ -385,6 +385,15 @@ double UIScriptController::contentOffsetY() const
     return 0;
 }
 
+bool UIScriptController::scrollUpdatesDisabled() const
+{
+    return false;
+}
+
+void UIScriptController::setScrollUpdatesDisabled(bool)
+{
+}
+
 void UIScriptController::scrollToOffset(long x, long y)
 {
 }

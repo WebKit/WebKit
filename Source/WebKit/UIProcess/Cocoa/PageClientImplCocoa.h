@@ -43,6 +43,8 @@ public:
     void isPlayingAudioWillChange() final;
     void isPlayingAudioDidChange() final;
 
+    bool scrollingUpdatesDisabledForTesting() final;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void didInsertAttachment(API::Attachment&, const String& source) final;
     void didRemoveAttachment(API::Attachment&) final;

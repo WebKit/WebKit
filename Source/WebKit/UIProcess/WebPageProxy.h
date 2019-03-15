@@ -1309,6 +1309,8 @@ public:
     void setFooterBannerHeightForTesting(int);
 #endif
 
+    bool scrollingUpdatesDisabledForTesting();
+
     void installActivityStateChangeCompletionHandler(Function<void()>&&);
 
 #if USE(UNIFIED_TEXT_CHECKING)

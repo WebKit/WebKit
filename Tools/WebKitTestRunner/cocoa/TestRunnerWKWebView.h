@@ -61,5 +61,6 @@
 #endif
 
 @property (nonatomic, retain, setter=_setStableStateOverride:) NSNumber *_stableStateOverride;
+@property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
 
 @end
