@@ -158,6 +158,7 @@
     (global-name "com.apple.ist.ds.appleconnect2.service.kdctunnelcontroller")
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
+    (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/47598758>
 )
 
 ;; Security framework
