@@ -305,7 +305,7 @@ public:
 
     void allowSpecificHTTPSCertificateForHost(const WebCertificateInfo*, const String& host);
 
-    WebProcessProxy& processForRegistrableDomain(WebsiteDataStore&, WebPageProxy*, const WebCore::RegistrableDomain&); // Will return an existing one if limit is met or due to caching.
+    WebProcessProxy& createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore&); // Will return an existing one if limit is met.
 
     enum class MayCreateDefaultDataStore { No, Yes };
     void prewarmProcess(WebsiteDataStore*, MayCreateDefaultDataStore);
@@ -571,7 +571,7 @@ private:
     void addProcessToOriginCacheSet(WebProcessProxy&, const URL&);
     void removeProcessFromOriginCacheSet(WebProcessProxy&);
 
-    void tryPrewarmWithDomainInformation(WebProcessProxy&, const WebCore::RegistrableDomain&);
+    void tryPrewarmWithDomainInformation(WebProcessProxy&, const URL&);
 
     void updateMaxSuspendedPageCount();
 

@@ -1142,26 +1142,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
 #endif
 }
 
-WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
+WebProcessProxy& WebProcessPool::createNewWebProcessRespectingProcessCountLimit(WebsiteDataStore& websiteDataStore)
 {
-    if (!registrableDomain.isEmpty()) {
-        if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore))
-            return *process;
-
-        // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (auto process = page ? findReusableSuspendedPageProcess(registrableDomain, *page, websiteDataStore) : nullptr) {
-            RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
-            return *process;
-        }
-    }
-
-    if (auto process = tryTakePrewarmedProcess(websiteDataStore)) {
-        RELEASE_LOG(ProcessSwapping, "Using prewarmed process %i", process->processIdentifier());
-        if (!registrableDomain.isEmpty())
-            tryPrewarmWithDomainInformation(*process, registrableDomain);
-        return *process;
-    }
-
     if (!usesSingleWebProcess())
         return createNewWebProcess(websiteDataStore);
 
@@ -1210,9 +1192,10 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
     } else {
-        process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
+        process = tryTakePrewarmedProcess(pageConfiguration->websiteDataStore()->websiteDataStore());
+        if (!process)
+            process = &createNewWebProcessRespectingProcessCountLimit(pageConfiguration->websiteDataStore()->websiteDataStore());
     }
-    ASSERT(process);
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));
 
@@ -2231,8 +2214,24 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     auto& targetURL = navigation.currentRequest().url();
     auto targetRegistrableDomain = WebCore::RegistrableDomain { targetURL };
 
-    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetRegistrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
-        return processForRegistrableDomain(dataStore, page.ptr(), targetRegistrableDomain);
+    auto createNewProcess = [this, protectedThis = makeRef(*this), page = makeRef(page), targetURL, targetRegistrableDomain, dataStore = dataStore.copyRef()] () -> Ref<WebProcessProxy> {
+        if (auto process = webProcessCache().takeProcess(targetRegistrableDomain, dataStore))
+            return process.releaseNonNull();
+
+        // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
+        if (auto process = findReusableSuspendedPageProcess(targetRegistrableDomain, page, dataStore)) {
+            RELEASE_LOG(ProcessSwapping, "Using WebProcess %i from a SuspendedPage", process->processIdentifier());
+            return process.releaseNonNull();
+        }
+
+        if (auto process = tryTakePrewarmedProcess(dataStore)) {
+            RELEASE_LOG(ProcessSwapping, "Using prewarmed process %i", process->processIdentifier());
+            tryPrewarmWithDomainInformation(*process, targetURL);
+            return process.releaseNonNull();
+        }
+
+        RELEASE_LOG(ProcessSwapping, "Launching a new process");
+        return createNewWebProcess(dataStore);
     };
 
     if (usesSingleWebProcess())
@@ -2248,7 +2247,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         return completionHandler(WTFMove(sourceProcess), nullptr, "An automation session is active"_s);
 
     if (!sourceProcess->hasCommittedAnyProvisionalLoads()) {
-        tryPrewarmWithDomainInformation(sourceProcess, targetRegistrableDomain);
+        tryPrewarmWithDomainInformation(sourceProcess, targetURL);
         return completionHandler(WTFMove(sourceProcess), nullptr, "Process has not yet committed any provisional loads"_s);
     }
 
@@ -2464,9 +2463,9 @@ void WebProcessPool::didCollectPrewarmInformation(const WebCore::RegistrableDoma
     *value = prewarmInformation;
 }
 
-void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const RegistrableDomain& registrableDomain)
+void WebProcessPool::tryPrewarmWithDomainInformation(WebProcessProxy& process, const URL& url)
 {
-    auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(registrableDomain);
+    auto* prewarmInformation = m_prewarmInformationPerRegistrableDomain.get(RegistrableDomain { url });
     if (!prewarmInformation)
         return;
     process.send(Messages::WebProcess::PrewarmWithDomainInformation(*prewarmInformation), 0);
