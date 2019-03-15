@@ -1,3 +1,14 @@
+2019-03-15  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [CMake] Move test .js files into testapiScripts
+        https://bugs.webkit.org/show_bug.cgi?id=195565
+
+        Reviewed by Yusuke Suzuki.
+
+        testapi expect .js file in the testapiScripts-directory.
+
+        * shell/CMakeLists.txt:
+
 2019-03-15  Mark Lam  <mark.lam@apple.com>
 
         Gardening: add a missing exception check after r242991.
