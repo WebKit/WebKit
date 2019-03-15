@@ -2237,6 +2237,41 @@ static void testCanCacheManyFilesWithTheSameVM()
     checkResult(@"Removed all cache files", removedAll);
 }
 
+static void testIsUsingBytecodeCacheAccessor()
+{
+    NSURL* cachePath = tempFile(@"foo.program.cache");
+    NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
+    NSString *source = @"function foo() { return 1337; } foo();";
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        checkResult(@"Should not yet be using the bytecode cache", ![script isUsingBytecodeCache]);
+        checkResult(@"Should be able to cache the script", [script cacheBytecodeWithError:nil]);
+        checkResult(@"Should now using the bytecode cache", [script isUsingBytecodeCache]);
+        JSC::Options::forceDiskCache() = true;
+        JSValue *result = [context evaluateJSScript:script];
+        JSC::Options::forceDiskCache() = false;
+        checkResult(@"Result should be 1337", [result isNumber] && [result toInt32] == 1337);
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
+        RELEASE_ASSERT(script);
+        checkResult(@"Should be using the bytecode cache", [script isUsingBytecodeCache]);
+        JSValue *result = [context evaluateJSScript:script];
+        checkResult(@"Result should be 1337", [result isNumber] && [result toInt32] == 1337);
+    }
+
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
+    checkResult(@"Successfully removed cache file", removedAll);
+}
+
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
 
 + (instancetype)newContext;
@@ -2446,6 +2481,7 @@ void testObjectiveCAPI(const char* filter)
     RUN(testProgramJSScriptException());
     RUN(testCacheFileFailsWhenItsAlreadyCached());
     RUN(testCanCacheManyFilesWithTheSameVM());
+    RUN(testIsUsingBytecodeCacheAccessor());
 
     RUN(testLoaderRejectsNilScriptURL());
     RUN(testLoaderRejectsFailedFetch());

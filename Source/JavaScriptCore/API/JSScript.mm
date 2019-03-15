@@ -220,6 +220,11 @@ static JSScript *createError(NSString *message, NSError** error)
     return YES;
 }
 
+- (BOOL)isUsingBytecodeCache
+{
+    return !!m_cachedBytecode.size();
+}
+
 - (NSURL *)sourceURL
 {
     return m_sourceURL.get();

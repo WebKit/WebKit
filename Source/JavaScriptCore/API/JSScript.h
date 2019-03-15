@@ -100,6 +100,12 @@ JSC_CLASS_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA))
 
 /*!
  @method
+ @abstract Returns true when evaluating this JSScript will use the bytecode cache. Returns false otherwise.
+ */
+- (BOOL)isUsingBytecodeCache;
+
+/*!
+ @method
  @abstract Returns the JSScriptType of this JSScript.
  */
 - (JSScriptType)type;
