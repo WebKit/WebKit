@@ -1,3 +1,16 @@
+2019-03-14  Saam barati  <sbarati@apple.com>
+
+        We can't remove code after ForceOSRExit until after FixupPhase
+        https://bugs.webkit.org/show_bug.cgi?id=186916
+        <rdar://problem/41396612>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/movhint-backwards-propagation-must-merge-use-as-value-add.js: Added.
+        (foo):
+        * stress/movhint-backwards-propagation-must-merge-use-as-value.js: Added.
+        (foo):
+
 2019-03-13  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: regexp->isValid() or ASSERTION FAILED: !isCompilationThread()

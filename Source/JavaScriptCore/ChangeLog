@@ -1,5 +1,26 @@
 2019-03-14  Saam barati  <sbarati@apple.com>
 
+        We can't remove code after ForceOSRExit until after FixupPhase
+        https://bugs.webkit.org/show_bug.cgi?id=186916
+        <rdar://problem/41396612>
+
+        Reviewed by Yusuke Suzuki.
+
+        There was an optimization in the bytecode parser I added in r232742 that converted blocks
+        with ForceOSRExit in them to remove all IR after the ForceOSRExit. However,
+        this is incorrect because it breaks backwards propagation. For example, it
+        could incorrectly lead us to think it's safe to not check for overflow in
+        an Add because such Add has no non-int uses. Backwards propagation relies on
+        having a view over bytecode uses, and this optimization broke that. This patch
+        rolls out that optimization, as initial perf data shows it may no longer be
+        needed.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parse):
+
+2019-03-14  Saam barati  <sbarati@apple.com>
+
         JSScript should have an accessor saying if it's cached or not
         https://bugs.webkit.org/show_bug.cgi?id=195783
 
