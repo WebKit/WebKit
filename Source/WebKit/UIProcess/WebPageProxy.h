@@ -973,6 +973,7 @@ public:
     void didFindStringMatches(const String&, const Vector<Vector<WebCore::IntRect>>& matchRects, int32_t firstIndexAfterSelection);
 
     void getContentsAsString(WTF::Function<void (const String&, CallbackBase::Error)>&&);
+    void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
     void getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&&);
     void getSamplingProfilerOutput(WTF::Function<void (const String&, CallbackBase::Error)>&&);
 

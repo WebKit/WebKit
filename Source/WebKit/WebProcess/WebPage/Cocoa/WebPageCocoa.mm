@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 
+#import "AttributedString.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
 #import "WebPageProxyMessages.h"
@@ -42,6 +43,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
+#import <WebCore/TextIterator.h>
 
 #if PLATFORM(COCOA)
 
@@ -200,6 +202,21 @@ WebPaymentCoordinator* WebPage::paymentCoordinator()
     return is<WebPaymentCoordinator>(client) ? downcast<WebPaymentCoordinator>(&client) : nullptr;
 }
 #endif
+
+void WebPage::getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&& completionHandler)
+{
+    Frame& frame = m_page->mainFrame();
+
+    RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame.document()->documentElement(), 0, INT_MAX);
+
+    NSDictionary* documentAttributes = nil;
+
+    AttributedString result;
+    result.string = attributedStringFromRange(*range, &documentAttributes);
+    result.documentAttributes = documentAttributes;
+
+    completionHandler({ result });
+}
 
 } // namespace WebKit
 

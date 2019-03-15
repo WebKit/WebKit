@@ -1,3 +1,27 @@
+2019-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support to WebPage for getting the contents as an attributed string.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Tim Horton.
+
+        * Shared/mac/AttributedString.h:
+        (WebKit::AttributedString::AttributedString):
+        * Shared/mac/AttributedString.mm:
+        (IPC::ArgumentCoder<WebKit::AttributedString>::encode):
+        (IPC::ArgumentCoder<WebKit::AttributedString>::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _getContentsAsAttributedStringWithCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getContentsAsAttributedString):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::getContentsAsAttributedString):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violation

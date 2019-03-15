@@ -34,7 +34,7 @@ namespace IPC {
 
 void ArgumentCoder<WebKit::AttributedString>::encode(Encoder& encoder, const WebKit::AttributedString& attributedString)
 {
-    encoder << attributedString.string;
+    encoder << attributedString.string << attributedString.documentAttributes;
 }
 
 Optional<WebKit::AttributedString> ArgumentCoder<WebKit::AttributedString>::decode(Decoder& decoder)
@@ -42,7 +42,10 @@ Optional<WebKit::AttributedString> ArgumentCoder<WebKit::AttributedString>::deco
     RetainPtr<NSAttributedString> attributedString;
     if (!IPC::decode(decoder, attributedString))
         return WTF::nullopt;
-    return WebKit::AttributedString { attributedString.get() };
+    RetainPtr<NSDictionary> documentAttributes;
+    if (!IPC::decode(decoder, documentAttributes))
+        return WTF::nullopt;
+    return WebKit::AttributedString { attributedString.get(), documentAttributes.get() };
 }
 
 }

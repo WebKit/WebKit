@@ -182,6 +182,9 @@ messages -> WebPage LegacyReceiver {
 
     # Callbacks.
     GetContentsAsString(WebKit::CallbackID callbackID)
+#if PLATFORM(COCOA)
+    GetContentsAsAttributedString() -> (struct WebKit::AttributedString result) Async
+#endif
 #if ENABLE(MHTML)
     GetContentsAsMHTMLData(WebKit::CallbackID callbackID)
 #endif

@@ -1,3 +1,14 @@
+2019-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Add support to WebPage for getting the contents as an attributed string.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewGetContents.mm:
+        (TEST(WKWebView, GetContentsShouldReturnAttributedString): Added.
+
 2019-03-15  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Make sure the WebProcessCache is leverage when relaunching a process after termination

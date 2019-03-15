@@ -38,8 +38,9 @@ struct AttributedString {
     }
 
 #if defined(__OBJC__)
-    AttributedString(NSAttributedString *attributedString)
+    AttributedString(NSAttributedString *attributedString, NSDictionary *documentAttributes = nil)
         : string(attributedString)
+        , documentAttributes(documentAttributes)
     {
     }
 
@@ -48,8 +49,9 @@ struct AttributedString {
         return string.get();
     }
 #endif
-    
+
     RetainPtr<NSAttributedString> string;
+    RetainPtr<NSDictionary> documentAttributes;
 };
 
 }

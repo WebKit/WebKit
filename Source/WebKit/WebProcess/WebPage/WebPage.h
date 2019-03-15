@@ -1315,6 +1315,9 @@ private:
     void viewWillEndLiveResize();
 
     void getContentsAsString(CallbackID);
+#if PLATFORM(COCOA)
+    void getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&&);
+#endif
 #if ENABLE(MHTML)
     void getContentsAsMHTMLData(CallbackID);
 #endif

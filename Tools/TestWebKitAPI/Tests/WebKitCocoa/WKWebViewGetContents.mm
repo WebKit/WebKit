@@ -48,3 +48,48 @@ TEST(WKWebView, GetContentsShouldReturnString)
 
     TestWebKitAPI::Util::run(&finished);
 }
+
+TEST(WKWebView, GetContentsShouldReturnAttributedString)
+{
+    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadHTMLString:@"<body bgcolor='red'>Hello <b>World!</b>"];
+
+    __block bool finished = false;
+
+#if USE(APPKIT)
+    using PlatformFont = NSFont;
+    using PlatformColor = NSColor;
+#else
+    using PlatformFont = UIFont;
+    using PlatformColor = UIColor;
+#endif
+
+    [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
+        EXPECT_NOT_NULL(attributedString);
+        EXPECT_NOT_NULL(documentAttributes);
+        EXPECT_NULL(error);
+
+        __block size_t i = 0;
+        [attributedString enumerateAttributesInRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(NSDictionary *attributes, NSRange attributeRange, BOOL *stop) {
+            auto* substring = [attributedString attributedSubstringFromRange:attributeRange];
+
+            if (!i) {
+                EXPECT_WK_STREQ(@"Hello ", substring.string);
+                EXPECT_WK_STREQ(@"Times-Roman", dynamic_objc_cast<PlatformFont>(attributes[NSFontAttributeName]).fontName);
+            } else if (i == 1) {
+                EXPECT_WK_STREQ(@"World!", substring.string);
+                EXPECT_WK_STREQ(@"Times-Bold", dynamic_objc_cast<PlatformFont>(attributes[NSFontAttributeName]).fontName);
+            } else
+                ASSERT_NOT_REACHED();
+
+            ++i;
+        }];
+
+        EXPECT_WK_STREQ(@"sRGB IEC61966-2.1 colorspace 1 0 0 1", dynamic_objc_cast<PlatformColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+}
