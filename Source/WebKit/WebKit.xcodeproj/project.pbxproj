@@ -1531,6 +1531,7 @@
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
 		C11A9ECC214035F800CFB20A /* WebSwitchingGPUClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C11A9ECB214035F800CFB20A /* WebSwitchingGPUClient.h */; };
 		C11E1694212B87C500985FF6 /* WKMockDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = C11E1692212B87C500985FF6 /* WKMockDisplay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
@@ -4347,6 +4348,9 @@
 		C11A9ED021403B4000CFB20A /* WebSwitchingGPUClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSwitchingGPUClient.cpp; sourceTree = "<group>"; };
 		C11E1692212B87C500985FF6 /* WKMockDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockDisplay.h; sourceTree = "<group>"; };
 		C11E1693212B87C500985FF6 /* WKMockDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockDisplay.cpp; sourceTree = "<group>"; };
+		C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisClient.h; sourceTree = "<group>"; };
+		C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechSynthesisClient.cpp; sourceTree = "<group>"; };
+		C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSpeechSynthesisVoice.h; sourceTree = "<group>"; };
 		C181735E205839F600DFDA65 /* DrawingAreaMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMac.cpp; sourceTree = "<group>"; };
 		C18173602058424700DFDA65 /* DisplayLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayLink.h; sourceTree = "<group>"; };
 		C1817362205844A900DFDA65 /* DisplayLink.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayLink.cpp; sourceTree = "<group>"; };
@@ -7297,6 +7301,9 @@
 				1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */,
 				D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */,
 				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
+				C149380322341DF7000CD707 /* WebSpeechSynthesisClient.cpp */,
+				C149380222341C60000CD707 /* WebSpeechSynthesisClient.h */,
+				C149380A223853BE000CD707 /* WebSpeechSynthesisVoice.h */,
 				4A410F4819AF7B80002EBAB5 /* WebUserMediaClient.cpp */,
 				4A410F4919AF7B80002EBAB5 /* WebUserMediaClient.h */,
 				83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */,
@@ -9645,6 +9652,7 @@
 				1A53C2AA1A325730004E8C70 /* WebsiteDataStore.h in Headers */,
 				511F7D411EB1BCF500E47B83 /* WebsiteDataStoreParameters.h in Headers */,
 				0EDE85032004E75D00030560 /* WebsitePopUpPolicy.h in Headers */,
+				C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
 				9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */,

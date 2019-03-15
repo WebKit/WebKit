@@ -244,4 +244,40 @@ void WebPageProxy::paymentCoordinatorRemoveMessageReceiver(WebPaymentCoordinator
 
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+void WebPageProxy::didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+}
+
+void WebPageProxy::didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+    m_speechSynthesisData->speakingFinishedCompletionHandler();
+}
+
+void WebPageProxy::didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+    m_speechSynthesisData->speakingPausedCompletionHandler();
+}
+
+void WebPageProxy::didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+    m_speechSynthesisData->speakingResumedCompletionHandler();
+}
+
+void WebPageProxy::speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&)
+{
+    process().send(Messages::WebPage::SpeakingErrorOccurred(), m_pageID);
+}
+
+void WebPageProxy::boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary speechBoundary, unsigned charIndex)
+{
+    process().send(Messages::WebPage::BoundaryEventOccurred(speechBoundary == WebCore::SpeechBoundary::SpeechWordBoundary, charIndex), m_pageID);
+}
+
+void WebPageProxy::voicesDidChange()
+{
+    process().send(Messages::WebPage::VoicesDidChange(), m_pageID);
+}
+#endif // ENABLE(SPEECH_SYNTHESIS)
+
 } // namespace WebKit

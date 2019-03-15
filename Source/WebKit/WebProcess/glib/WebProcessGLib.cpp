@@ -42,6 +42,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
     WebCore::MemoryCache::singleton().setDisabled(cacheModel == CacheModel::DocumentViewer);

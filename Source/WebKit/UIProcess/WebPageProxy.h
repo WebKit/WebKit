@@ -82,6 +82,8 @@
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PlatformEvent.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/PlatformSpeechSynthesisUtterance.h>
+#include <WebCore/PlatformSpeechSynthesizer.h>
 #include <WebCore/PointerID.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ScrollTypes.h>
@@ -361,6 +363,10 @@ class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
     , public WebPopupMenuProxy::Client
     , public IPC::MessageReceiver
     , public IPC::MessageSender
+#if ENABLE(SPEECH_SYNTHESIS)
+    , public WebCore::PlatformSpeechSynthesisUtteranceClient
+    , public WebCore::PlatformSpeechSynthesizerClient
+#endif
     , public CanMakeWeakPtr<WebPageProxy> {
 public:
     static Ref<WebPageProxy> create(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
@@ -1485,6 +1491,14 @@ public:
     void dumpAdClickAttribution(CompletionHandler<void(const String&)>&&);
     void clearAdClickAttribution(CompletionHandler<void()>&&);
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    void speechSynthesisVoiceList(Vector<WebSpeechSynthesisVoice>& result);
+    void speechSynthesisSpeak(const String&, const String&, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&&);
+    void speechSynthesisCancel();
+    void speechSynthesisPause(CompletionHandler<void()>&&);
+    void speechSynthesisResume(CompletionHandler<void()>&&);
+#endif
+
     void addObserver(WebViewDidMoveToWindowObserver&);
     void removeObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
@@ -2013,6 +2027,19 @@ private:
     NSWindow *paymentCoordinatorPresentingWindow(const WebPaymentCoordinatorProxy&) final;
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    void didStartSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
+    void didFinishSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
+    void didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
+    void didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) override;
+    void speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&) override;
+    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned charIndex) override;
+    void voicesDidChange() override;
+
+    struct SpeechSynthesisData;
+    SpeechSynthesisData& speechSynthesisData();
+#endif
+
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 
@@ -2432,6 +2459,17 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
 #endif
 
     HashMap<WebViewDidMoveToWindowObserver*, WeakPtr<WebViewDidMoveToWindowObserver>> m_webViewDidMoveToWindowObservers;
+    
+#if ENABLE(SPEECH_SYNTHESIS)
+    struct SpeechSynthesisData {
+        std::unique_ptr<WebCore::PlatformSpeechSynthesizer> synthesizer;
+        RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
+        CompletionHandler<void()> speakingFinishedCompletionHandler;
+        CompletionHandler<void()> speakingPausedCompletionHandler;
+        CompletionHandler<void()> speakingResumedCompletionHandler;
+    };
+    Optional<SpeechSynthesisData> m_speechSynthesisData;
+#endif
 };
 
 } // namespace WebKit

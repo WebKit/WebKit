@@ -120,6 +120,7 @@
 #include "WebProcessProxyMessages.h"
 #include "WebProgressTrackerClient.h"
 #include "WebSocketProvider.h"
+#include "WebSpeechSynthesisClient.h"
 #include "WebStorageNamespaceProvider.h"
 #include "WebURLSchemeHandlerProxy.h"
 #include "WebUndoStep.h"
@@ -451,6 +452,10 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     pageConfiguration.webGLStateTracker = std::make_unique<WebGLStateTracker>([this](bool isUsingHighPerformanceWebGL) {
         send(Messages::WebPageProxy::SetIsUsingHighPerformanceWebGL(isUsingHighPerformanceWebGL));
     });
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    pageConfiguration.speechSynthesisClient = std::make_unique<WebSpeechSynthesisClient>(*this);
+#endif
 
 #if PLATFORM(COCOA)
     pageConfiguration.validationMessageClient = std::make_unique<WebValidationMessageClient>(*this);
@@ -6405,6 +6410,23 @@ void WebPage::simulateDeviceOrientationChange(double alpha, double beta, double 
     frame->document()->simulateDeviceOrientationChange(alpha, beta, gamma);
 #endif
 }
+
+#if ENABLE(SPEECH_SYNTHESIS)
+void WebPage::speakingErrorOccurred()
+{
+    corePage()->speechSynthesisClient()->observer()->speakingErrorOccurred();
+}
+
+void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex)
+{
+    corePage()->speechSynthesisClient()->observer()->boundaryEventOccurred(wordBoundary, charIndex);
+}
+
+void WebPage::voicesDidChange()
+{
+    corePage()->speechSynthesisClient()->observer()->voicesChanged();
+}
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 

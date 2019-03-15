@@ -225,7 +225,7 @@ SOFT_LINK_CONSTANT(AVFoundation, AVSpeechUtteranceMaximumSpeechRate, float)
         return;
 
     // iOS only supports word boundaries.
-    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
+    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechBoundary::SpeechWordBoundary, characterRange.location);
 }
 
 @end

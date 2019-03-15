@@ -603,7 +603,6 @@
        (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.mobileassetd")
        (global-name "com.apple.powerlog.plxpclogger.xpc")
-       (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.system.logger")
        (global-name "com.apple.tccd")
        (global-name "com.apple.tccd.system")

@@ -549,6 +549,12 @@ messages -> WebPage LegacyReceiver {
     UpdateCurrentModifierState(OptionSet<WebCore::PlatformEvent::Modifier> modifiers)
     SimulateDeviceOrientationChange(double alpha, double beta, double gamma)
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeakingErrorOccurred()
+    BoundaryEventOccurred(bool wordBoundary, unsigned charIndex)
+    VoicesDidChange()
+#endif
+
     TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebKit::TextInputContext> contexts) Async
     FocusTextInputContext(struct WebKit::TextInputContext context) -> (bool success) Async
 }

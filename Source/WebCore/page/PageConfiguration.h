@@ -62,6 +62,7 @@ class UserContentProvider;
 class ValidationMessageClient;
 class VisitedLinkStore;
 class WebGLStateTracker;
+class SpeechSynthesisClient;
 
 class PageConfiguration {
     WTF_MAKE_NONCOPYABLE(PageConfiguration); WTF_MAKE_FAST_ALLOCATED;
@@ -102,6 +103,9 @@ public:
     std::unique_ptr<DiagnosticLoggingClient> diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> performanceLoggingClient;
     std::unique_ptr<WebGLStateTracker> webGLStateTracker;
+#if ENABLE(SPEECH_SYNTHESIS)
+    std::unique_ptr<SpeechSynthesisClient> speechSynthesisClient;
+#endif
 
     RefPtr<ApplicationCacheStorage> applicationCacheStorage;
     RefPtr<DatabaseProvider> databaseProvider;

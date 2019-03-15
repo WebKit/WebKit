@@ -1504,6 +1504,12 @@ private:
 
     void simulateDeviceOrientationChange(double alpha, double beta, double gamma);
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    void speakingErrorOccurred();
+    void boundaryEventOccurred(bool wordBoundary, unsigned charIndex);
+    void voicesDidChange();
+#endif
+
     void frameBecameRemote(uint64_t frameID, WebCore::GlobalFrameIdentifier&& remoteFrameIdentifier, WebCore::GlobalWindowIdentifier&& remoteWindowIdentifier);
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);

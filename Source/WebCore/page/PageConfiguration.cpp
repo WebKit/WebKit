@@ -36,6 +36,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginInfoProvider.h"
 #include "SocketProvider.h"
+#include "SpeechSynthesisClient.h"
 #include "StorageNamespaceProvider.h"
 #include "UserContentController.h"
 #include "ValidationMessageClient.h"

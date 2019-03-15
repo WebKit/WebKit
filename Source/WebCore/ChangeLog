@@ -1,3 +1,56 @@
+2019-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Broker access to Speech Synthesis
+        https://bugs.webkit.org/show_bug.cgi?id=195645
+        <rdar://problem/35369026>
+
+        Reviewed by Brent Fulgham.
+
+        To be able to close the connection to the speech synthesis daemon in the WebContent process,
+        speech synthesis should be performed in the UI process. This patch forwards speech synthesis
+        requests to the UI process by sending messages. On the UI process side, the speech synthesis
+        is performed by simply using the existing platform speech synthesizer. Speech synthesis
+        events are sent back to the WebContent process. All messages are async, except for the
+        message to get the list of available voices.
+
+        No new tests, covered by existing tests.
+
+        * Modules/speech/DOMWindowSpeechSynthesis.cpp:
+        (WebCore::DOMWindowSpeechSynthesis::speechSynthesis):
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::SpeechSynthesis::create):
+        (WebCore::SpeechSynthesis::SpeechSynthesis):
+        (WebCore::SpeechSynthesis::setPlatformSynthesizer):
+        (WebCore::SpeechSynthesis::getVoices):
+        (WebCore::SpeechSynthesis::startSpeakingImmediately):
+        (WebCore::SpeechSynthesis::cancel):
+        (WebCore::SpeechSynthesis::pause):
+        (WebCore::SpeechSynthesis::resume):
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+        (WebCore::SpeechSynthesis::didStartSpeaking):
+        (WebCore::SpeechSynthesis::didFinishSpeaking):
+        (WebCore::SpeechSynthesis::didPauseSpeaking):
+        (WebCore::SpeechSynthesis::didResumeSpeaking):
+        (WebCore::SpeechSynthesis::speakingErrorOccurred):
+        (WebCore::SpeechSynthesis::voicesChanged):
+        * Modules/speech/SpeechSynthesis.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::speechSynthesisClient const):
+        * page/PageConfiguration.cpp:
+        * page/PageConfiguration.h:
+        * page/SpeechSynthesisClient.h: Added.
+        * platform/PlatformSpeechSynthesisUtterance.h:
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:willSpeakRangeOfSpeechString:utterance:]):
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:willSpeakWord:ofString:]):
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        (WebCore::PlatformSpeechSynthesizerMock::speak):
+
 2019-03-15  Antti Koivisto  <antti@apple.com>
 
         Try to fix watchOS build.

@@ -1,3 +1,59 @@
+2019-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Broker access to Speech Synthesis
+        https://bugs.webkit.org/show_bug.cgi?id=195645
+        <rdar://problem/35369026>
+
+        Reviewed by Brent Fulgham.
+
+        To be able to close the connection to the speech synthesis daemon in the WebContent process,
+        speech synthesis should be performed in the UI process. This patch forwards speech synthesis
+        requests to the UI process by sending messages. On the UI process side, the speech synthesis
+        is performed by simply using the existing platform speech synthesizer. Speech synthesis
+        events are sent back to the WebContent process. All messages are async, except for the
+        message to get the list of available voices.
+
+        * Sources.txt:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didStartSpeaking):
+        (WebKit::WebPageProxy::didFinishSpeaking):
+        (WebKit::WebPageProxy::didPauseSpeaking):
+        (WebKit::WebPageProxy::didResumeSpeaking):
+        (WebKit::WebPageProxy::speakingErrorOccurred):
+        (WebKit::WebPageProxy::boundaryEventOccurred):
+        (WebKit::WebPageProxy::voicesDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::ensureSpeechSynthesisData):
+        (WebKit::WebPageProxy::speechSynthesisVoiceList):
+        (WebKit::WebPageProxy::speechSynthesisSpeak):
+        (WebKit::WebPageProxy::speechSynthesisCancel):
+        (WebKit::WebPageProxy::speechSynthesisPause):
+        (WebKit::WebPageProxy::speechSynthesisResume):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.cpp: Added.
+        (WebKit::WebSpeechSynthesisClient::voiceList):
+        (WebKit::WebSpeechSynthesisClient::speak):
+        (WebKit::WebSpeechSynthesisClient::cancel):
+        (WebKit::WebSpeechSynthesisClient::pause):
+        (WebKit::WebSpeechSynthesisClient::resume):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisClient.h: Added.
+        (WebKit::WebSpeechSynthesisClient::WebSpeechSynthesisClient):
+        (WebKit::WebSpeechSynthesisClient::~WebSpeechSynthesisClient):
+        * WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.h: Added.
+        (WebKit::WebSpeechSynthesisVoice::encode const):
+        (WebKit::WebSpeechSynthesisVoice::decode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_hostFileDescriptor):
+        (WebKit::WebPage::speakingErrorOccurred):
+        (WebKit::WebPage::boundaryEventOccurred):
+        (WebKit::WebPage::voicesDidChange):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        * WebProcess/glib/WebProcessGLib.cpp:
+
 2019-03-15  Antti Koivisto  <antti@apple.com>
 
         Optimize Region for single rectangle case

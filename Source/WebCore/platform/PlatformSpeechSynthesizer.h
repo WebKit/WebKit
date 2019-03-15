@@ -38,7 +38,7 @@ OBJC_CLASS WebSpeechSynthesisWrapper;
 
 namespace WebCore {
 
-enum SpeechBoundary {
+enum class SpeechBoundary : uint8_t {
     SpeechWordBoundary,
     SpeechSentenceBoundary
 };

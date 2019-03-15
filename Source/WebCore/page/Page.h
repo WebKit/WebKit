@@ -145,6 +145,7 @@ class ValidationMessageClient;
 class ActivityStateChangeObserver;
 class VisitedLinkStore;
 class WebGLStateTracker;
+class SpeechSynthesisClient;
 class WheelEventDeltaFilter;
 
 typedef uint64_t SharedStringHash;
@@ -682,6 +683,10 @@ public:
 
     WebGLStateTracker* webGLStateTracker() const { return m_webGLStateTracker.get(); }
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    SpeechSynthesisClient* speechSynthesisClient() const { return m_speechSynthesisClient.get(); }
+#endif
+
     bool isOnlyNonUtilityPage() const;
     bool isUtilityPage() const { return m_isUtilityPage; }
 
@@ -777,6 +782,10 @@ private:
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
     
     std::unique_ptr<WebGLStateTracker> m_webGLStateTracker;
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    std::unique_ptr<SpeechSynthesisClient> m_speechSynthesisClient;
+#endif
 
     UniqueRef<LibWebRTCProvider> m_libWebRTCProvider;
     RTCController m_rtcController;

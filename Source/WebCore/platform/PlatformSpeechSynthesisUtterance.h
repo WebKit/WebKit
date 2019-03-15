@@ -37,7 +37,7 @@ class PlatformSpeechSynthesisUtteranceClient {
     
 class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
 public:
-    static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient&);
+    WEBCORE_EXPORT static Ref<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient&);
 
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }

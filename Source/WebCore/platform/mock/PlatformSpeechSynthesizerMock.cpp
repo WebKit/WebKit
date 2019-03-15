@@ -62,8 +62,8 @@ void PlatformSpeechSynthesizerMock::speak(RefPtr<PlatformSpeechSynthesisUtteranc
     client()->didStartSpeaking(*m_utterance);
 
     // Fire a fake word and then sentence boundary event.
-    client()->boundaryEventOccurred(*m_utterance, SpeechWordBoundary, 0);
-    client()->boundaryEventOccurred(*m_utterance, SpeechSentenceBoundary, m_utterance->text().length());
+    client()->boundaryEventOccurred(*m_utterance, SpeechBoundary::SpeechWordBoundary, 0);
+    client()->boundaryEventOccurred(*m_utterance, SpeechBoundary::SpeechSentenceBoundary, m_utterance->text().length());
 
     // Give the fake speech job some time so that pause and other functions have time to be called.
     m_speakingFinishedTimer.startOneShot(100_ms);
