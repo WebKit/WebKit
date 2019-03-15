@@ -1,3 +1,13 @@
+2019-03-15  Jon Davis  <jond@apple.com>
+
+        Fixed a bug preventing the overall sore to be displayed on JetStream2
+        https://bugs.webkit.org/show_bug.cgi?id=195817
+
+        Rubber-stamped by Saam Barati.
+
+        * JetStream2/JetStreamDriver.js:
+        (Driver.prototype.async.start):
+
 2019-03-14  Jon Davis  <jond@apple.com>
 
         Implement a new design for JetStream2

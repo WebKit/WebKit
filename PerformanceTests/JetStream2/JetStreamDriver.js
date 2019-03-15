@@ -151,9 +151,11 @@ class Driver {
     }
 
     async start() {
+        let statusElement = false;
+        let summaryElement = false;
         if (isInBrowser) {
-            let statusElement = document.getElementById("status");
-            let summaryElement = document.getElementById("result-summary");
+            statusElement = document.getElementById("status");
+            summaryElement = document.getElementById("result-summary");
             statusElement.innerHTML = `<label>Running...</label>`;
         } else {
             console.log("Starting JetStream2");
@@ -177,6 +179,7 @@ class Driver {
 
             benchmark.updateUIAfterRun();
         }
+
         let totalTime = Date.now() - start;
         if (measureTotalTimeAsSubtest) {
             if (isInBrowser)
