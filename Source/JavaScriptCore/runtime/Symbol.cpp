@@ -100,12 +100,12 @@ void Symbol::destroy(JSCell* cell)
 
 String Symbol::descriptiveString() const
 {
-    return makeString("Symbol(", String(privateName().uid()), ')');
+    return makeString("Symbol(", String(m_privateName.uid()), ')');
 }
 
 String Symbol::description() const
 {
-    auto& uid = privateName().uid();
+    auto& uid = m_privateName.uid();
     return uid.isNullSymbol() ? String() : uid;
 }
 

@@ -109,7 +109,8 @@ EncodedJSValue JSC_HOST_CALL symbolConstructorKeyFor(ExecState* exec)
     if (!symbolValue.isSymbol())
         return JSValue::encode(throwTypeError(exec, scope, SymbolKeyForTypeError));
 
-    SymbolImpl& uid = asSymbol(symbolValue)->privateName().uid();
+    PrivateName privateName = asSymbol(symbolValue)->privateName();
+    SymbolImpl& uid = privateName.uid();
     if (!uid.symbolRegistry())
         return JSValue::encode(jsUndefined());
 

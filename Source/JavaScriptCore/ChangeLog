@@ -1,5 +1,66 @@
 2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Retain PrivateName of Symbol before passing it to operations potentially incurring GC
+        https://bugs.webkit.org/show_bug.cgi?id=195791
+        <rdar://problem/48806130>
+
+        Reviewed by Mark Lam.
+
+        Consider the following example:
+
+            void putByVal(JSObject*, PropertyName propertyName, ...);
+
+            putByVal(object, symbol->privateName(), ...);
+
+        PropertyName does not retain the passed UniquedStringImpl*. It just holds the pointer to UniquedStringImpl*.
+        It means that since `Symbol::privateName()` returns `const PrivateName&` instead of `PrivateName`, putByVal
+        and its caller does not retain UniquedStringImpl* held in PropertyName. The problem happens when the putByVal
+        incurs GC, and when the `symbol` is missing in the conservative GC scan. The underlying UniquedStringImpl* of
+        PropertyName can be accidentally destroyed in the middle of the putByVal operation. We should retain PrivateName
+        before passing it to operations which takes it as PropertyName.
+
+        1. We use the code pattern like this.
+
+            auto propertyName = symbol->privateName();
+            someOperation(..., propertyName);
+
+        This pattern is well aligned to existing `JSValue::toPropertyKey(exec)` and `JSString::toIdentifier(exec)` code patterns.
+
+            auto propertyName = value.toPropertyKey(exec);
+            RETURN_IF_EXCEPTION(scope, { });
+            someOperation(..., propertyName);
+
+        2. We change `Symbol::privateName()` to returning `PrivateName` instead of `const PrivateName&` to avoid
+           potential dangerous use cases. This is OK because the code using `Symbol::privateName()` is not a critical path,
+           and they typically need to retain PrivateName.
+
+        3. We audit similar functions `toPropertyKey(exec)` and `toIdentifier(exec)` for needed but missing exception checks.
+           BTW, these functions are safe to the problem fixed in this patch since they return `Identifier` instead
+           of `const Identifier&`.
+
+        Mark and Robin investigated and offered important data to understand what went wrong. And figured out the reason behind
+        the mysterious behavior shown in the data, and now, we confirm that this is the right fix for this bug.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITOperations.cpp:
+        (JSC::tryGetByValOptimize):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::setFunctionName):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::printableModuleKey):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        * runtime/Symbol.cpp:
+        (JSC::Symbol::descriptiveString const):
+        (JSC::Symbol::description const):
+        * runtime/Symbol.h:
+        * runtime/SymbolConstructor.cpp:
+        (JSC::symbolConstructorKeyFor):
+        * tools/JSDollarVM.cpp:
+        (JSC::functionGetGetterSetter):
+
+2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
         REGRESSION(r242841): Fix conservative DFG OSR entry validation to accept values which will be stored in AnyInt / Double flush formats
         https://bugs.webkit.org/show_bug.cgi?id=195752
 

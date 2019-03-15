@@ -247,8 +247,11 @@ Stringifier::Stringifier(ExecState* exec, JSValue replacer, JSValue space)
                             continue;
                     } else if (!name.isNumber() && !name.isString())
                         continue;
-                    m_arrayReplacerPropertyNames.add(name.toString(exec)->toIdentifier(exec));
+                    JSString* propertyNameString = name.toString(exec);
                     RETURN_IF_EXCEPTION(scope, );
+                    auto propertyName = propertyNameString->toIdentifier(exec);
+                    RETURN_IF_EXCEPTION(scope, );
+                    m_arrayReplacerPropertyNames.add(WTFMove(propertyName));
                 }
             }
         }

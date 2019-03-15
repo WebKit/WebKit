@@ -1,3 +1,14 @@
+2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Retain PrivateName of Symbol before passing it to operations potentially incurring GC
+        https://bugs.webkit.org/show_bug.cgi?id=195791
+        <rdar://problem/48806130>
+
+        Reviewed by Mark Lam.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::setupModuleScriptHandlers):
+
 2019-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         Move CoreCrypto SPI declarations to an appropriate PAL/spi header

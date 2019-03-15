@@ -278,8 +278,11 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
 
     RefPtr<LoadableModuleScript> moduleScript(&moduleScriptRef);
 
-    auto& fulfillHandler = *JSNativeStdFunction::create(state.vm(), proxy.window(), 1, String(), [moduleScript](ExecState* exec) {
+    auto& fulfillHandler = *JSNativeStdFunction::create(state.vm(), proxy.window(), 1, String(), [moduleScript](ExecState* exec) -> JSC::EncodedJSValue {
+        VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         Identifier moduleKey = jsValueToModuleKey(exec, exec->argument(0));
+        RETURN_IF_EXCEPTION(scope, { });
         moduleScript->notifyLoadCompleted(*moduleKey.impl());
         return JSValue::encode(jsUndefined());
     });

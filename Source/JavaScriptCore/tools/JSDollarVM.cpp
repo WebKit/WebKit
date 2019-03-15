@@ -2103,6 +2103,9 @@ static EncodedJSValue JSC_HOST_CALL functionGlobalObjectForObject(ExecState* exe
 
 static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSValue value = exec->argument(0);
     if (!value.isObject())
         return JSValue::encode(jsUndefined());
@@ -2111,8 +2114,11 @@ static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
     if (!property.isString())
         return JSValue::encode(jsUndefined());
 
+    auto propertyName = asString(property)->toIdentifier(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
     PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
-    value.getPropertySlot(exec, asString(property)->toIdentifier(exec), slot);
+    value.getPropertySlot(exec, propertyName, slot);
 
     JSValue result;
     if (slot.isCacheableGetter())

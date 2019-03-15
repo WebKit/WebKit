@@ -1,3 +1,14 @@
+2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Retain PrivateName of Symbol before passing it to operations potentially incurring GC
+        https://bugs.webkit.org/show_bug.cgi?id=195791
+        <rdar://problem/48806130>
+
+        Reviewed by Mark Lam.
+
+        * stress/symbol-is-destructed-before-refing-underlying-symbol-impl.js: Added.
+        (foo):
+
 2019-03-14  Saam barati  <sbarati@apple.com>
 
         We can't remove code after ForceOSRExit until after FixupPhase
