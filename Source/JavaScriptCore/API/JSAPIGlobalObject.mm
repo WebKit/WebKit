@@ -204,7 +204,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
                 return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
         } else {
             [jsScript setSourceURL:[NSURL URLWithString:static_cast<NSString *>(moduleKey.string())]];
-            source = [jsScript forceRecreateJSSourceCode];
+            source = [jsScript jsSourceCode];
         }
 
         args.append(source);

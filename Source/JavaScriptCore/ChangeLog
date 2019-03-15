@@ -1,3 +1,46 @@
+2019-03-14  Saam barati  <sbarati@apple.com>
+
+        Remove retain cycle from JSScript and also don't keep the cache file descriptor open so many JSScripts can be cached in a loop
+        https://bugs.webkit.org/show_bug.cgi?id=195782
+        <rdar://problem/48880625>
+
+        Reviewed by Michael Saboff.
+
+        This patch fixes two issues with JSScript API:
+        
+        1. There was a retain cycle causing us to never destroy a JSScript once it
+        created a JSSourceCode. The reason for this is that JSScript had a 
+        Strong<JSSourceCode> field. And JSSourceCode transitively had RetainPtr<JSScript>.
+        
+        This patch fixes this issue by making the "jsSourceCode" accessor return a transient object.
+        
+        2. r242585 made it so that JSScript would keep the cache file descriptor open
+        (and locked) for the duration of the lifetime of the JSScript itself. Our
+        anticipation here is that it would make implementing iterative cache updates
+        easier. However, this made using the API super limiting in other ways. For
+        example, if a program had a loop that cached 3000 different JSScripts, it's
+        likely that such a program would exhaust the open file count limit. This patch
+        reverts to the behavior prior to r242585 where we just keep open the file descriptor
+        while we read or write it.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSContext.mm:
+        (-[JSContext evaluateJSScript:]):
+        * API/JSScript.mm:
+        (-[JSScript dealloc]):
+        (-[JSScript readCache]):
+        (-[JSScript init]):
+        (-[JSScript sourceCode]):
+        (-[JSScript jsSourceCode]):
+        (-[JSScript writeCache:]):
+        (-[JSScript forceRecreateJSSourceCode]): Deleted.
+        * API/JSScriptInternal.h:
+        * API/tests/testapi.mm:
+        (testCanCacheManyFilesWithTheSameVM):
+        (testObjectiveCAPI):
+        (testCacheFileIsExclusive): Deleted.
+
 2019-03-14  Michael Saboff  <msaboff@apple.com>
 
         ASSERTION FAILED: regexp->isValid() or ASSERTION FAILED: !isCompilationThread()

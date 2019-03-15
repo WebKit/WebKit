@@ -39,6 +39,7 @@
 #import "Symbol.h"
 #include <sys/stat.h>
 #include <wtf/FileSystem.h>
+#include <wtf/Scope.h>
 
 #if JSC_OBJC_API_ENABLED
 
@@ -50,8 +51,6 @@
     RetainPtr<NSURL> m_sourceURL;
     RetainPtr<NSURL> m_cachePath;
     JSC::CachedBytecode m_cachedBytecode;
-    JSC::Strong<JSC::JSSourceCode> m_jsSourceCode;
-    int m_cacheFileDescriptor;
 }
 
 + (instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm
@@ -175,9 +174,6 @@ static JSScript *createError(NSString *message, NSError** error)
     if (m_cachedBytecode.size() && !m_cachedBytecode.owned())
         munmap(const_cast<void*>(m_cachedBytecode.data()), m_cachedBytecode.size());
 
-    if (m_cacheFileDescriptor != -1)
-        close(m_cacheFileDescriptor);
-
     [super dealloc];
 }
 
@@ -186,27 +182,30 @@ static JSScript *createError(NSString *message, NSError** error)
     if (!m_cachePath)
         return;
 
-    m_cacheFileDescriptor = open([m_cachePath path].UTF8String, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0666);
-    if (m_cacheFileDescriptor == -1)
+    int fd = open([m_cachePath path].UTF8String, O_RDONLY | O_EXLOCK | O_NONBLOCK, 0666);
+    if (fd == -1)
         return;
+    auto closeFD = makeScopeExit([&] {
+        close(fd);
+    });
 
     struct stat sb;
-    int res = fstat(m_cacheFileDescriptor, &sb);
+    int res = fstat(fd, &sb);
     size_t size = static_cast<size_t>(sb.st_size);
     if (res || !size)
         return;
 
-    void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, m_cacheFileDescriptor, 0);
+    void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     JSC::CachedBytecode cachedBytecode { buffer, size };
 
     JSC::VM& vm = m_virtualMachine.vm;
-    const JSC::SourceCode& sourceCode = [self jsSourceCode]->sourceCode();
+    JSC::SourceCode sourceCode = [self sourceCode];
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode, key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
         m_cachedBytecode = WTFMove(cachedBytecode);
     else
-        ftruncate(m_cacheFileDescriptor, 0);
+        ftruncate(fd, 0);
 }
 
 - (BOOL)cacheBytecodeWithError:(NSError **)error
@@ -241,7 +240,6 @@ static JSScript *createError(NSString *message, NSError** error)
     if (!self)
         return nil;
 
-    m_cacheFileDescriptor = -1;
     return self;
 }
 
@@ -260,12 +258,25 @@ static JSScript *createError(NSString *message, NSError** error)
     return &m_cachedBytecode;
 }
 
+- (JSC::SourceCode)sourceCode
+{
+    JSC::VM& vm = m_virtualMachine.vm;
+    JSC::JSLockHolder locker(vm);
+
+    TextPosition startPosition { };
+    String url = String { [[self sourceURL] absoluteString] };
+    auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
+    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, JSC::SourceOrigin(url), URL({ }, url), startPosition, type);
+    JSC::SourceCode sourceCode(WTFMove(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
+    return sourceCode;
+}
+
 - (JSC::JSSourceCode*)jsSourceCode
 {
-    if (m_jsSourceCode)
-        return m_jsSourceCode.get();
-
-    return [self forceRecreateJSSourceCode];
+    JSC::VM& vm = m_virtualMachine.vm;
+    JSC::JSLockHolder locker(vm);
+    JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, [self sourceCode]);
+    return jsSourceCode;
 }
 
 - (BOOL)writeCache:(String&)error
@@ -275,21 +286,28 @@ static JSScript *createError(NSString *message, NSError** error)
         return NO;
     }
 
-    if (m_cacheFileDescriptor == -1) {
-        if (!m_cachePath)
-            error = "No cache was path provided during construction of this JSScript."_s;
-        else
-            error = "Could not lock the bytecode cache file. It's likely another VM or process is already using it."_s;
+    if (!m_cachePath) {
+        error = "No cache path was provided during construction of this JSScript."_s;
         return NO;
     }
 
+    int fd = open([m_cachePath path].UTF8String, O_CREAT | O_RDWR | O_EXLOCK | O_NONBLOCK, 0666);
+    if (fd == -1) {
+        error = makeString("Could not open or lock the bytecode cache file. It's likely another VM or process is already using it. Error: ", strerror(errno));
+        return NO;
+    }
+    auto closeFD = makeScopeExit([&] {
+        close(fd);
+    });
+
     JSC::ParserError parserError;
+    JSC::SourceCode sourceCode = [self sourceCode];
     switch (m_type) {
     case kJSScriptTypeModule:
-        m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
+        m_cachedBytecode = JSC::generateModuleBytecode(m_virtualMachine.vm, sourceCode, parserError);
         break;
     case kJSScriptTypeProgram:
-        m_cachedBytecode = JSC::generateProgramBytecode(m_virtualMachine.vm, [self jsSourceCode]->sourceCode(), parserError);
+        m_cachedBytecode = JSC::generateProgramBytecode(m_virtualMachine.vm, sourceCode, parserError);
         break;
     }
 
@@ -299,14 +317,14 @@ static JSScript *createError(NSString *message, NSError** error)
         return NO;
     }
 
-    ssize_t bytesWritten = write(m_cacheFileDescriptor, m_cachedBytecode.data(), m_cachedBytecode.size());
+    ssize_t bytesWritten = write(fd, m_cachedBytecode.data(), m_cachedBytecode.size());
     if (bytesWritten == -1) {
         error = makeString("Could not write cache file to disk: ", strerror(errno));
         return NO;
     }
 
     if (static_cast<size_t>(bytesWritten) != m_cachedBytecode.size()) {
-        ftruncate(m_cacheFileDescriptor, 0);
+        ftruncate(fd, 0);
         error = makeString("Could not write the full cache file to disk. Only wrote ", String::number(bytesWritten), " of the expected ", String::number(m_cachedBytecode.size()), " bytes.");
         return NO;
     }
@@ -317,22 +335,6 @@ static JSScript *createError(NSString *message, NSError** error)
 - (void)setSourceURL:(NSURL *)url
 {
     m_sourceURL = url;
-}
-
-- (JSC::JSSourceCode*)forceRecreateJSSourceCode
-{
-    JSC::VM& vm = m_virtualMachine.vm;
-    JSC::JSLockHolder locker(vm);
-
-    TextPosition startPosition { };
-
-    String url = String { [[self sourceURL] absoluteString] };
-    auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
-    Ref<JSScriptSourceProvider> sourceProvider = JSScriptSourceProvider::create(self, JSC::SourceOrigin(url), URL({ }, url), startPosition, type);
-    JSC::SourceCode sourceCode(WTFMove(sourceProvider), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt());
-    JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, WTFMove(sourceCode));
-    m_jsSourceCode.set(vm, jsSourceCode);
-    return jsSourceCode;
 }
 
 @end

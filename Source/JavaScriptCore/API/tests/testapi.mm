@@ -2159,31 +2159,6 @@ static void testProgramJSScriptException()
     }
 }
 
-static void testCacheFileIsExclusive()
-{
-    NSURL* cachePath = tempFile(@"foo.program.cache");
-
-    @autoreleasepool {
-        NSString *source = @"function foo() { return 42; } foo();";
-        NSURL* sourceURL = [NSURL URLWithString:@"my-path"];
-        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
-
-        JSScript *script1 = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
-        RELEASE_ASSERT(script1);
-        checkResult(@"Should be able to cache the first file", [script1 cacheBytecodeWithError:nil]);
-
-        JSScript *script2 = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:cachePath inVirtualMachine:vm error:nil];
-        RELEASE_ASSERT(script2);
-        NSError* error = nil;
-        checkResult(@"Should NOT be able to cache the second file", ![script2 cacheBytecodeWithError:&error]);
-        checkResult(@"Should NOT be able to cache the second file has the correct error message", [[error description] containsString:@"Could not lock the bytecode cache file. It's likely another VM or process is already using it"]);
-    }
-
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
-    checkResult(@"Successfully removed cache file", removedAll);
-}
-
 static void testCacheFileFailsWhenItsAlreadyCached()
 {
     NSURL* cachePath = tempFile(@"foo.program.cache");
@@ -2218,6 +2193,48 @@ static void testCacheFileFailsWhenItsAlreadyCached()
     NSFileManager* fileManager = [NSFileManager defaultManager];
     BOOL removedAll = [fileManager removeItemAtURL:cachePath error:nil];
     checkResult(@"Successfully removed cache file", removedAll);
+}
+
+static void testCanCacheManyFilesWithTheSameVM()
+{
+    NSMutableArray *cachePaths = [[NSMutableArray alloc] init];
+    NSMutableArray *scripts = [[NSMutableArray alloc] init];
+
+    for (unsigned i = 0; i < 10000; ++i)
+        [cachePaths addObject:tempFile([NSString stringWithFormat:@"cache-%d.cache", i])];
+
+    JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+    bool cachedAll = true;
+    for (NSURL *path : cachePaths) {
+        @autoreleasepool {
+            NSURL *sourceURL = [NSURL URLWithString:@"id"];
+            NSString *source = @"function foo() { return 42; } foo();";
+            JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:source andSourceURL:sourceURL andBytecodeCache:path inVirtualMachine:vm error:nil];
+            RELEASE_ASSERT(script);
+
+            [scripts addObject:script];
+            cachedAll &= [script cacheBytecodeWithError:nil];
+        }
+    }
+    checkResult(@"Cached all 10000 scripts", cachedAll);
+
+    JSContext *context = [[JSContext alloc] init];
+    bool all42 = true;
+    for (JSScript *script : scripts) {
+        @autoreleasepool {
+            JSValue *result = [context evaluateJSScript:script];
+            RELEASE_ASSERT(result);
+            all42 &= [result isNumber] && [result toInt32] == 42;
+        }
+    }
+    checkResult(@"All scripts returned 42", all42);
+
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    bool removedAll = true;
+    for (NSURL *path : cachePaths)
+        removedAll &= [fileManager removeItemAtURL:path error:nil];
+
+    checkResult(@"Removed all cache files", removedAll);
 }
 
 @interface JSContextFileLoaderDelegate : JSContext <JSModuleLoaderDelegate>
@@ -2427,8 +2444,8 @@ void testObjectiveCAPI(const char* filter)
     RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(false));
     RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(true));
     RUN(testProgramJSScriptException());
-    RUN(testCacheFileIsExclusive());
     RUN(testCacheFileFailsWhenItsAlreadyCached());
+    RUN(testCanCacheManyFilesWithTheSameVM());
 
     RUN(testLoaderRejectsNilScriptURL());
     RUN(testLoaderRejectsFailedFetch());

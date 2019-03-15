@@ -124,7 +124,8 @@
 
     if (script.type == kJSScriptTypeProgram) {
         JSValueRef exceptionValue = nullptr;
-        JSValueRef result = JSEvaluateScriptInternal(locker, exec, m_context, nullptr, [script jsSourceCode]->sourceCode(), &exceptionValue);
+        JSC::SourceCode sourceCode = [script sourceCode];
+        JSValueRef result = JSEvaluateScriptInternal(locker, exec, m_context, nullptr, sourceCode, &exceptionValue);
 
         if (exceptionValue)
             return [self valueFromNotifyException:exceptionValue];

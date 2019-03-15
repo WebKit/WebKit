@@ -49,9 +49,9 @@ class String;
 - (const WTF::String&)source;
 - (nullable const JSC::CachedBytecode*)cachedBytecode;
 - (JSC::JSSourceCode*)jsSourceCode;
-// FIXME: Remove this once we require sourceURL upon creation: https://bugs.webkit.org/show_bug.cgi?id=194909
-- (JSC::JSSourceCode*)forceRecreateJSSourceCode;
+- (JSC::SourceCode)sourceCode;
 - (BOOL)writeCache:(String&)error;
+// FIXME: Remove this once we require sourceURL upon creation: https://bugs.webkit.org/show_bug.cgi?id=194909
 - (void)setSourceURL:(NSURL *)url;
 
 @end
