@@ -1,3 +1,11 @@
+2019-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed speculative build fix for non-Cocoa ports after r243012.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getContentsAsAttributedString):
+        * UIProcess/WebPageProxy.h:
+
 2019-03-15  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r243008.

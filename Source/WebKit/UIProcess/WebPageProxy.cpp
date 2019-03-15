@@ -52,7 +52,6 @@
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "APIWebsitePolicies.h"
-#include "AttributedString.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "DataReference.h"
@@ -188,6 +187,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "AttributedString.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "TouchBarMenuData.h"
@@ -3602,20 +3602,17 @@ void WebPageProxy::getContentsAsString(WTF::Function<void (const String&, Callba
     m_process->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
+#if PLATFORM(COCOA)
 void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const AttributedString&)>&& completionHandler)
 {
-#if PLATFORM(COCOA)
     if (!isValid()) {
         completionHandler(AttributedString());
         return;
     }
 
     m_process->connection()->sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedString(), WTFMove(completionHandler), m_pageID);
-#else
-    ASSERT_NOT_REACHED();
-    completionHandler(AttributedString());
-#endif
 }
+#endif
 
 void WebPageProxy::getBytecodeProfile(WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
