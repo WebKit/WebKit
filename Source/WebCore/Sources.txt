@@ -2424,8 +2424,8 @@ svg/graphics/filters/SVGFilter.cpp
 svg/graphics/filters/SVGFilterBuilder.cpp
 
 svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
-svg/properties/SVGAnimatedProperty.cpp
 svg/properties/SVGAttributeOwnerProxy.cpp
+svg/properties/SVGLegacyAnimatedProperty.cpp
 
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp

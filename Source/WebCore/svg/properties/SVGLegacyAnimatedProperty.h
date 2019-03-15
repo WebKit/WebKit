@@ -29,11 +29,11 @@
 namespace WebCore {
 
 class SVGElement;
-class SVGProperty;
+class SVGLegacyProperty;
 
-class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
+class SVGLegacyAnimatedProperty : public RefCounted<SVGLegacyAnimatedProperty> {
 public:
-    virtual ~SVGAnimatedProperty();
+    virtual ~SVGLegacyAnimatedProperty();
     virtual bool isAnimating() const { return false; }
     virtual bool isAnimatedListTearOff() const { return false; }
 
@@ -46,7 +46,7 @@ public:
     void commitChange();
 
     template<typename TearOffType, typename PropertyType, AnimatedPropertyType animatedType>
-    static RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(SVGElement& element, const QualifiedName& attributeName, const AtomicString& identifier, PropertyType& property, AnimatedPropertyState animatedState)
+    static RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(SVGElement& element, const QualifiedName& attributeName, const AtomicString& identifier, PropertyType& property, AnimatedPropertyState animatedState)
     {
         SVGAnimatedPropertyDescription key(&element, identifier);
 
@@ -61,21 +61,21 @@ public:
         // Cache the raw pointer but return a RefPtr<>. This will break the cyclic reference
         // between SVGAnimatedProperty and SVGElement once the property pointer is not needed.
         result.iterator->value = wrapper.ptr();
-        return static_reference_cast<SVGAnimatedProperty>(wrapper);
+        return static_reference_cast<SVGLegacyAnimatedProperty>(wrapper);
     }
 
-    static RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGElement& element, const AtomicString& identifier)
+    static RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGElement& element, const AtomicString& identifier)
     {
         SVGAnimatedPropertyDescription key(const_cast<SVGElement*>(&element), identifier);
         return animatedPropertyCache().get(key);
     }
 
 protected:
-    SVGAnimatedProperty(SVGElement*, const QualifiedName&, AnimatedPropertyType);
+    SVGLegacyAnimatedProperty(SVGElement*, const QualifiedName&, AnimatedPropertyType);
 
 private:
     // Caching facilities.
-    using Cache = HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits>;
+    using Cache = HashMap<SVGAnimatedPropertyDescription, SVGLegacyAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits>;
     static Cache& animatedPropertyCache()
     {
         static NeverDestroyed<Cache> cache;

@@ -120,7 +120,7 @@ private:
 
     bool isValid() const final { return SVGTests::isValid(); }
     bool supportsMarkers() const final { return true; }
-    RefPtr<SVGAnimatedProperty> lookupOrCreateDWrapper();
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateDWrapper();
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 

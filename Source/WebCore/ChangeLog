@@ -1,3 +1,104 @@
+2019-03-14  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rename SVGProperty to SVGLegacyProperty and rename SVGAnimatedProperty to SVGLegacyAnimatedProperty
+        https://bugs.webkit.org/show_bug.cgi?id=195767
+
+        Reviewed by Tim Horton.
+
+        This is a step towards removing the SVG properties tear off objects.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::create):
+        (WebCore::SVGAngle::SVGAngle):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::castAnimatedPropertyToActualType):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::lookupAnimatedProperty const):
+        (WebCore::SVGElement::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGElement::lookupOrCreateAnimatedProperties):
+        * svg/SVGLength.h:
+        (WebCore::SVGLength::create):
+        (WebCore::SVGLength::SVGLength):
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::create):
+        (WebCore::SVGMatrix::SVGMatrix):
+        * svg/SVGNumber.h:
+        (WebCore::SVGNumber::create):
+        (WebCore::SVGNumber::SVGNumber):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper):
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::processIncomingListItemValue):
+        * svg/SVGPathSegWithContext.h:
+        (WebCore::SVGPathSegWithContext::animatedProperty const):
+        * svg/SVGPoint.h:
+        (WebCore::SVGPoint::create):
+        (WebCore::SVGPoint::SVGPoint):
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::create):
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio):
+        * svg/SVGRect.h:
+        (WebCore::SVGRect::create):
+        (WebCore::SVGRect::SVGRect):
+        * svg/SVGTransform.h:
+        (WebCore::SVGTransform::create):
+        (WebCore::SVGTransform::SVGTransform):
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::findItem):
+        (WebCore::SVGAnimatedListPropertyTearOff::SVGAnimatedListPropertyTearOff):
+        * svg/properties/SVGAnimatedProperty.cpp: Removed.
+        * svg/properties/SVGAnimatedProperty.h: Removed.
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::SVGAnimatedStaticPropertyTearOff):
+        * svg/properties/SVGAttributeAccessor.h:
+        (WebCore::SVGAttributeAccessor::lookupOrCreateAnimatedProperty const):
+        (WebCore::SVGAttributeAccessor::lookupAnimatedProperty const):
+        (WebCore::SVGAttributeAccessor::lookupOrCreateAnimatedProperties const):
+        (WebCore::SVGAnimatedAttributeAccessor::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGAnimatedAttributeAccessor::lookupAnimatedProperty):
+        * svg/properties/SVGAttributeOwnerProxy.h:
+        * svg/properties/SVGAttributeOwnerProxyImpl.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedProperty const):
+        (WebCore::SVGAttributeRegistry::lookupAnimatedProperty const):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedProperties const):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedPropertyBaseTypes):
+        (WebCore::SVGAttributeRegistry::lookupAnimatedPropertyBaseTypes):
+        (WebCore::SVGAttributeRegistry::lookupOrCreateAnimatedPropertiesBaseTypes):
+        * svg/properties/SVGLegacyAnimatedProperty.cpp: Copied from Source/WebCore/svg/properties/SVGAnimatedProperty.cpp.
+        (WebCore::SVGLegacyAnimatedProperty::SVGLegacyAnimatedProperty):
+        (WebCore::SVGLegacyAnimatedProperty::~SVGLegacyAnimatedProperty):
+        (WebCore::SVGLegacyAnimatedProperty::commitChange):
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty): Deleted.
+        (WebCore::SVGAnimatedProperty::~SVGAnimatedProperty): Deleted.
+        (WebCore::SVGAnimatedProperty::commitChange): Deleted.
+        * svg/properties/SVGLegacyAnimatedProperty.h: Copied from Source/WebCore/svg/properties/SVGAnimatedProperty.h.
+        (WebCore::SVGLegacyAnimatedProperty::lookupOrCreateAnimatedProperty):
+        (WebCore::SVGLegacyAnimatedProperty::lookupAnimatedProperty):
+        (WebCore::SVGAnimatedProperty::isAnimating const): Deleted.
+        (WebCore::SVGAnimatedProperty::isAnimatedListTearOff const): Deleted.
+        (WebCore::SVGAnimatedProperty::contextElement const): Deleted.
+        (WebCore::SVGAnimatedProperty::attributeName const): Deleted.
+        (WebCore::SVGAnimatedProperty::animatedPropertyType const): Deleted.
+        (WebCore::SVGAnimatedProperty::isReadOnly const): Deleted.
+        (WebCore::SVGAnimatedProperty::setIsReadOnly): Deleted.
+        (WebCore::SVGAnimatedProperty::lookupOrCreateAnimatedProperty): Deleted.
+        (WebCore::SVGAnimatedProperty::lookupAnimatedProperty): Deleted.
+        (WebCore::SVGAnimatedProperty::animatedPropertyCache): Deleted.
+        * svg/properties/SVGLegacyProperty.h: Copied from Source/WebCore/svg/properties/SVGProperty.h.
+        * svg/properties/SVGListProperty.h:
+        * svg/properties/SVGProperty.h: Removed.
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::create):
+        (WebCore::SVGPropertyTearOff::animatedProperty const):
+        (WebCore::SVGPropertyTearOff::setAnimatedProperty):
+        (WebCore::SVGPropertyTearOff::SVGPropertyTearOff):
+
 2019-03-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r242963.

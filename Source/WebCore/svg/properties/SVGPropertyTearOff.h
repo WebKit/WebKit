@@ -21,15 +21,15 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "SVGAnimatedProperty.h"
-#include "SVGProperty.h"
+#include "SVGLegacyAnimatedProperty.h"
+#include "SVGLegacyProperty.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class SVGElement;
 
-class SVGPropertyTearOffBase : public SVGProperty {
+class SVGPropertyTearOffBase : public SVGLegacyProperty {
 public:
     virtual void detachWrapper() = 0;
 };
@@ -42,7 +42,7 @@ public:
 
     // Used for child types (baseVal/animVal) of a SVGAnimated* property (for example: SVGAnimatedLength::baseVal()).
     // Also used for list tear offs (for example: text.x.baseVal.getItem(0)).
-    static Ref<Self> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, PropertyType& value)
+    static Ref<Self> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, PropertyType& value)
     {
         return adoptRef(*new Self(animatedProperty, role, value));
     }
@@ -61,7 +61,7 @@ public:
     }
 
     virtual PropertyType& propertyReference() { return *m_value; }
-    SVGAnimatedProperty* animatedProperty() const { return m_animatedProperty.get(); }
+    SVGLegacyAnimatedProperty* animatedProperty() const { return m_animatedProperty.get(); }
 
     virtual void setValue(PropertyType& value)
     {
@@ -73,7 +73,7 @@ public:
         m_value = &value;
     }
 
-    void setAnimatedProperty(SVGAnimatedProperty* animatedProperty)
+    void setAnimatedProperty(SVGLegacyAnimatedProperty* animatedProperty)
     {
         m_animatedProperty = animatedProperty;
     }
@@ -126,7 +126,7 @@ public:
     }
 
 protected:
-    SVGPropertyTearOff(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, PropertyType& value)
+    SVGPropertyTearOff(SVGLegacyAnimatedProperty* animatedProperty, SVGPropertyRole role, PropertyType& value)
         : m_animatedProperty(animatedProperty)
         , m_role(role)
         , m_value(&value)
@@ -164,7 +164,7 @@ protected:
         m_childTearOffs.clear();
     }
 
-    RefPtr<SVGAnimatedProperty> m_animatedProperty;
+    RefPtr<SVGLegacyAnimatedProperty> m_animatedProperty;
     SVGPropertyRole m_role;
     PropertyType* m_value;
     Vector<WeakPtr<SVGPropertyTearOffBase>> m_childTearOffs;

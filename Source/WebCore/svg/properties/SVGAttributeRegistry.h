@@ -34,11 +34,11 @@
 #include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedProperty.h"
 #include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
+#include "SVGLegacyAnimatedProperty.h"
 #include "SVGStringListValues.h"
 #include "SVGZoomAndPanType.h"
 #include <wtf/HashMap.h>
@@ -201,21 +201,21 @@ public:
         return synchronizeAttributeBaseTypes(owner, element, attributeName);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const
     {
         if (const auto* attributeAccessor = findAttributeAccessor(owner, attribute))
             return attributeAccessor->lookupOrCreateAnimatedProperty(owner, element, attribute, animatedState);
         return lookupOrCreateAnimatedPropertyBaseTypes(owner, element, attribute, animatedState);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute) const
+    RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute) const
     {
         if (const auto* attributeAccessor = findAttributeAccessor(owner, attribute))
             return attributeAccessor->lookupAnimatedProperty(owner, element, attribute);
         return lookupAnimatedPropertyBaseTypes(owner, element, attribute);
     }
 
-    Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, const QualifiedName& attributeName, AnimatedPropertyState animatedState) const
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, const QualifiedName& attributeName, AnimatedPropertyState animatedState) const
     {
         if (const auto* attributeAccessor = findAttributeAccessor(attributeName))
             return attributeAccessor->lookupOrCreateAnimatedProperties(owner, element, animatedState);
@@ -274,10 +274,10 @@ private:
     }
 
     template<size_t I = 0>
-    static typename std::enable_if<I == sizeof...(BaseTypes), RefPtr<SVGAnimatedProperty>>::type lookupOrCreateAnimatedPropertyBaseTypes(OwnerType&, SVGElement&, const SVGAttribute&, AnimatedPropertyState) { return nullptr; }
+    static typename std::enable_if<I == sizeof...(BaseTypes), RefPtr<SVGLegacyAnimatedProperty>>::type lookupOrCreateAnimatedPropertyBaseTypes(OwnerType&, SVGElement&, const SVGAttribute&, AnimatedPropertyState) { return nullptr; }
 
     template<size_t I = 0>
-    static typename std::enable_if<I < sizeof...(BaseTypes), RefPtr<SVGAnimatedProperty>>::type lookupOrCreateAnimatedPropertyBaseTypes(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState)
+    static typename std::enable_if<I < sizeof...(BaseTypes), RefPtr<SVGLegacyAnimatedProperty>>::type lookupOrCreateAnimatedPropertyBaseTypes(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState)
     {
         using BaseType = typename std::tuple_element<I, typename std::tuple<BaseTypes...>>::type;
         if (auto animatedProperty = BaseType::attributeRegistry().lookupOrCreateAnimatedProperty(owner, element, attribute, animatedState))
@@ -286,10 +286,10 @@ private:
     }
 
     template<size_t I = 0>
-    static typename std::enable_if<I == sizeof...(BaseTypes), RefPtr<SVGAnimatedProperty>>::type lookupAnimatedPropertyBaseTypes(const OwnerType&, const SVGElement&, const SVGAttribute&) { return nullptr; }
+    static typename std::enable_if<I == sizeof...(BaseTypes), RefPtr<SVGLegacyAnimatedProperty>>::type lookupAnimatedPropertyBaseTypes(const OwnerType&, const SVGElement&, const SVGAttribute&) { return nullptr; }
 
     template<size_t I = 0>
-    static typename std::enable_if<I < sizeof...(BaseTypes), RefPtr<SVGAnimatedProperty>>::type lookupAnimatedPropertyBaseTypes(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute)
+    static typename std::enable_if<I < sizeof...(BaseTypes), RefPtr<SVGLegacyAnimatedProperty>>::type lookupAnimatedPropertyBaseTypes(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute)
     {
         using BaseType = typename std::tuple_element<I, typename std::tuple<BaseTypes...>>::type;
         if (auto animatedProperty = BaseType::attributeRegistry().lookupAnimatedProperty(owner, element, attribute))
@@ -298,10 +298,10 @@ private:
     }
 
     template<size_t I = 0>
-    static typename std::enable_if<I == sizeof...(BaseTypes), Vector<RefPtr<SVGAnimatedProperty>>>::type lookupOrCreateAnimatedPropertiesBaseTypes(OwnerType&, SVGElement&, const QualifiedName&, AnimatedPropertyState) { return { }; }
+    static typename std::enable_if<I == sizeof...(BaseTypes), Vector<RefPtr<SVGLegacyAnimatedProperty>>>::type lookupOrCreateAnimatedPropertiesBaseTypes(OwnerType&, SVGElement&, const QualifiedName&, AnimatedPropertyState) { return { }; }
 
     template<size_t I = 0>
-    static typename std::enable_if<I < sizeof...(BaseTypes), Vector<RefPtr<SVGAnimatedProperty>>>::type lookupOrCreateAnimatedPropertiesBaseTypes(OwnerType& owner, SVGElement& element, const QualifiedName& attributeName, AnimatedPropertyState animatedState)
+    static typename std::enable_if<I < sizeof...(BaseTypes), Vector<RefPtr<SVGLegacyAnimatedProperty>>>::type lookupOrCreateAnimatedPropertiesBaseTypes(OwnerType& owner, SVGElement& element, const QualifiedName& attributeName, AnimatedPropertyState animatedState)
     {
         using BaseType = typename std::tuple_element<I, typename std::tuple<BaseTypes...>>::type;
         auto animatedProperties = BaseType::attributeRegistry().lookupOrCreateAnimatedProperties(owner, element, attributeName, animatedState);

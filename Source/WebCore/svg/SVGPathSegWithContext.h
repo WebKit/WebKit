@@ -31,7 +31,7 @@ public:
     {
     }
 
-    RefPtr<SVGAnimatedProperty> animatedProperty() const
+    RefPtr<SVGLegacyAnimatedProperty> animatedProperty() const
     {
         if (!m_element)
             return nullptr;

@@ -37,7 +37,7 @@ template<typename PropertyType>
 class SVGAnimatedListPropertyTearOff;
 
 template<typename PropertyType>
-class SVGListProperty : public SVGProperty, public CanMakeWeakPtr<SVGListProperty<PropertyType>> {
+class SVGListProperty : public SVGLegacyProperty, public CanMakeWeakPtr<SVGListProperty<PropertyType>> {
 public:
     typedef SVGListProperty<PropertyType> Self;
 

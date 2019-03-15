@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-class SVGAnimatedProperty;
 class SVGAttribute;
 class SVGElement;
+class SVGLegacyAnimatedProperty;
 
 class SVGAttributeOwnerProxy {
 public:
@@ -47,9 +47,9 @@ public:
 
     virtual Vector<AnimatedPropertyType> animatedTypes(const QualifiedName&) const = 0;
 
-    virtual RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
+    virtual RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute&) const = 0;
+    virtual RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute&) const = 0;
+    virtual Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
 
 protected:
     WeakPtr<SVGElement> m_element;

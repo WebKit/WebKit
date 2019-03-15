@@ -283,7 +283,7 @@ Path SVGPathElement::pathForByteStream() const
     return buildPathFromByteStream(pathByteStreamToUse);
 }
 
-RefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper()
+RefPtr<SVGLegacyAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper()
 {
     return m_pathSegList.animatedProperty(attributeOwnerProxy());
 }

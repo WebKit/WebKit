@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SVGTransform : public SVGPropertyTearOff<SVGTransformValue> {
 public:
-    static Ref<SVGTransform> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGTransformValue& value)
+    static Ref<SVGTransform> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGTransformValue& value)
     {
         return adoptRef(*new SVGTransform(animatedProperty, role, value));
     }
@@ -129,7 +129,7 @@ public:
     }
 
 private:
-    SVGTransform(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGTransformValue& value)
+    SVGTransform(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGTransformValue& value)
         : SVGPropertyTearOff<SVGTransformValue>(&animatedProperty, role, value)
     {
     }

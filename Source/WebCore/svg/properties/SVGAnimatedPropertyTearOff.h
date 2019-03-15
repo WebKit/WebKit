@@ -20,13 +20,13 @@
 
 #pragma once
 
-#include "SVGAnimatedProperty.h"
+#include "SVGLegacyAnimatedProperty.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
 
 template<typename T>
-class SVGAnimatedPropertyTearOff final : public SVGAnimatedProperty {
+class SVGAnimatedPropertyTearOff final : public SVGLegacyAnimatedProperty {
 public:
     using PropertyTearOff = T;
     using PropertyType = typename PropertyTearOff::PropertyType;
@@ -105,7 +105,7 @@ public:
 
 private:
     SVGAnimatedPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
-        : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
+        : SVGLegacyAnimatedProperty(contextElement, attributeName, animatedPropertyType)
         , m_property(property)
     {
     }

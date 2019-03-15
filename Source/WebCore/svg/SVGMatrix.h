@@ -33,7 +33,7 @@ namespace WebCore {
 // FIXME: Remove this class once SVGMatrix becomes an alias to DOMMatrix.
 class SVGMatrix : public SVGPropertyTearOff<SVGMatrixValue> {
 public:
-    static Ref<SVGMatrix> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
+    static Ref<SVGMatrix> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
     {
         return adoptRef(*new SVGMatrix(animatedProperty, role, value));
     }
@@ -272,7 +272,7 @@ public:
     }
 
 protected:
-    SVGMatrix(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
+    SVGMatrix(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGMatrixValue& value)
         : SVGPropertyTearOff<SVGMatrixValue>(&animatedProperty, role, value)
     {
     }

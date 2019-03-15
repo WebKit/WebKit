@@ -47,7 +47,7 @@ public:
         SVG_LENGTHTYPE_PC = LengthTypePC
     };
 
-    static Ref<SVGLength> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGLengthValue& value)
+    static Ref<SVGLength> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGLengthValue& value)
     {
         return adoptRef(*new SVGLength(animatedProperty, role, value));
     }
@@ -148,7 +148,7 @@ public:
     }
 
 private:
-    SVGLength(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGLengthValue& value)
+    SVGLength(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGLengthValue& value)
         : SVGPropertyTearOff<SVGLengthValue>(&animatedProperty, role, value)
     {
     }

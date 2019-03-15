@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "SVGAnimatedProperty.h"
+#include "SVGLegacyAnimatedProperty.h"
 #include "SVGListPropertyTearOff.h"
 #include "SVGStaticListPropertyTearOff.h"
 
@@ -30,7 +30,7 @@ template<typename PropertyType>
 class SVGPropertyTearOff;
 
 template<typename PropertyType>
-class SVGAnimatedListPropertyTearOff : public SVGAnimatedProperty {
+class SVGAnimatedListPropertyTearOff : public SVGLegacyAnimatedProperty {
 public:
     using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
     using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
@@ -68,7 +68,7 @@ public:
     bool isAnimating() const override { return m_animatedProperty; }
     bool isAnimatedListTearOff() const override { return true; }
 
-    int findItem(SVGProperty* property)
+    int findItem(SVGLegacyProperty* property)
     {
         // This should ever be called for our baseVal, as animVal can't modify the list.
         return baseVal()->findItem(static_cast<ListItemTearOff*>(property));
@@ -162,7 +162,7 @@ public:
 
 protected:
     SVGAnimatedListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& values)
-        : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
+        : SVGLegacyAnimatedProperty(contextElement, attributeName, animatedPropertyType)
         , m_values(values)
     {
         if (!values.isEmpty())

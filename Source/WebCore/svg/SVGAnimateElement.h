@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class SVGAnimatedProperty;
+class SVGLegacyAnimatedProperty;
 
 class SVGAnimateElement final : public SVGAnimateElementBase {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimateElement);

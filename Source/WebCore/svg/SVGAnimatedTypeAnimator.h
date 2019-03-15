@@ -21,15 +21,15 @@
 
 #pragma once
 
-#include "SVGAnimatedProperty.h"
 #include "SVGAnimatedType.h"
+#include "SVGLegacyAnimatedProperty.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 struct SVGElementAnimatedProperties {
     SVGElement* element;
-    Vector<RefPtr<SVGAnimatedProperty>> properties;
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> properties;
 };
 typedef Vector<SVGElementAnimatedProperties> SVGElementAnimatedPropertyList;
 
@@ -166,7 +166,7 @@ protected:
     }
 
     template<typename AnimValType>
-    AnimValType* castAnimatedPropertyToActualType(SVGAnimatedProperty* property)
+    AnimValType* castAnimatedPropertyToActualType(SVGLegacyAnimatedProperty* property)
     {
         ASSERT(property);
         ASSERT(property->contextElement());

@@ -32,7 +32,7 @@ namespace WebCore {
 
 class SVGPreserveAspectRatio : public SVGPropertyTearOff<SVGPreserveAspectRatioValue> {
 public:
-    static Ref<SVGPreserveAspectRatio> create(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+    static Ref<SVGPreserveAspectRatio> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
     {
         return adoptRef(*new SVGPreserveAspectRatio(animatedProperty, role, value));
     }
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    SVGPreserveAspectRatio(SVGAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
+    SVGPreserveAspectRatio(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGPreserveAspectRatioValue& value)
         : SVGPropertyTearOff<SVGPreserveAspectRatioValue>(&animatedProperty, role, value)
     {
     }

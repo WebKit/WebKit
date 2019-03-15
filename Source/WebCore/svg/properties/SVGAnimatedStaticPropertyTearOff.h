@@ -21,12 +21,12 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "SVGAnimatedProperty.h"
+#include "SVGLegacyAnimatedProperty.h"
 
 namespace WebCore {
 
 template<typename PropertyType>
-class SVGAnimatedStaticPropertyTearOff : public SVGAnimatedProperty {
+class SVGAnimatedStaticPropertyTearOff : public SVGLegacyAnimatedProperty {
 public:
     typedef PropertyType ContentType;
 
@@ -100,7 +100,7 @@ public:
 
 protected:
     SVGAnimatedStaticPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType, PropertyType& property)
-        : SVGAnimatedProperty(contextElement, attributeName, animatedPropertyType)
+        : SVGLegacyAnimatedProperty(contextElement, attributeName, animatedPropertyType)
         , m_property(property)
         , m_animatedProperty(nullptr)
     {

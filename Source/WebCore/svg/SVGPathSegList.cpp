@@ -67,7 +67,7 @@ SVGPathElement* SVGPathSegList::contextElement() const
 bool SVGPathSegList::processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify)
 {
     SVGPathSegWithContext* newItemWithContext = static_cast<SVGPathSegWithContext*>(newItem.get());
-    RefPtr<SVGAnimatedProperty> animatedPropertyOfItem = newItemWithContext->animatedProperty();
+    RefPtr<SVGLegacyAnimatedProperty> animatedPropertyOfItem = newItemWithContext->animatedProperty();
 
     // Alter the role, after calling animatedProperty(), as that may influence the returned animated property.
     newItemWithContext->setContextAndRole(contextElement(), m_pathSegRole);

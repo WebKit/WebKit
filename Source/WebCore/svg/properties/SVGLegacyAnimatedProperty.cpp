@@ -20,20 +20,20 @@
  */
 
 #include "config.h"
-#include "SVGAnimatedProperty.h"
+#include "SVGLegacyAnimatedProperty.h"
 
 #include "SVGElement.h"
 
 namespace WebCore {
 
-SVGAnimatedProperty::SVGAnimatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType)
+SVGLegacyAnimatedProperty::SVGLegacyAnimatedProperty(SVGElement* contextElement, const QualifiedName& attributeName, AnimatedPropertyType animatedPropertyType)
     : m_contextElement(contextElement)
     , m_attributeName(attributeName)
     , m_animatedPropertyType(animatedPropertyType)
 {
 }
 
-SVGAnimatedProperty::~SVGAnimatedProperty()
+SVGLegacyAnimatedProperty::~SVGLegacyAnimatedProperty()
 {
     // Assure that animationEnded() was called, if animationStarted() was called before.
     ASSERT(!isAnimating());
@@ -49,7 +49,7 @@ SVGAnimatedProperty::~SVGAnimatedProperty()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void SVGAnimatedProperty::commitChange()
+void SVGLegacyAnimatedProperty::commitChange()
 {
     ASSERT(m_contextElement);
     ASSERT(!m_contextElement->m_deletionHasBegun);

@@ -27,9 +27,9 @@
 
 #include "Element.h"
 #include "QualifiedName.h"
-#include "SVGAnimatedProperty.h"
 #include "SVGAnimatedPropertyType.h"
 #include "SVGAttribute.h"
+#include "SVGLegacyAnimatedProperty.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include "SVGPropertyTraits.h"
@@ -58,9 +58,9 @@ public:
     virtual AnimatedPropertyType animatedType() const { return AnimatedUnknown; }
     virtual Vector<AnimatedPropertyType> animatedTypes() const { return { animatedType() }; }
 
-    virtual RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType&, SVGElement&, const SVGAttribute&, AnimatedPropertyState) const { return nullptr; };
-    virtual RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const OwnerType&, const SVGElement&, const SVGAttribute&) const { return nullptr; };
-    virtual Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType&, SVGElement&, AnimatedPropertyState) const { return { }; }
+    virtual RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType&, SVGElement&, const SVGAttribute&, AnimatedPropertyState) const { return nullptr; };
+    virtual RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const OwnerType&, const SVGElement&, const SVGAttribute&) const { return nullptr; };
+    virtual Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType&, SVGElement&, AnimatedPropertyState) const { return { }; }
 
 protected:
     const QualifiedName m_attributeName;
@@ -136,31 +136,31 @@ public:
 
 protected:
     template<typename PropertyTearOff = PropertyTearOffType, typename Property = PropertyType, AnimatedPropertyType animatedType = type>
-    static RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(SVGElement& element, const QualifiedName& attributeName, const AtomicString& identifier, Property& property, AnimatedPropertyState animatedState)
+    static RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(SVGElement& element, const QualifiedName& attributeName, const AtomicString& identifier, Property& property, AnimatedPropertyState animatedState)
     {
-        return SVGAnimatedProperty::lookupOrCreateAnimatedProperty<PropertyTearOff, Property, animatedType>(element, attributeName, identifier, property, animatedState);
+        return SVGLegacyAnimatedProperty::lookupOrCreateAnimatedProperty<PropertyTearOff, Property, animatedType>(element, attributeName, identifier, property, animatedState);
     }
 
-    static RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGElement& element, const AtomicString& identifier)
+    static RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGElement& element, const AtomicString& identifier)
     {
-        return SVGAnimatedProperty::lookupAnimatedProperty(element, identifier);
+        return SVGLegacyAnimatedProperty::lookupAnimatedProperty(element, identifier);
     }
 
     bool isAnimatedLengthAttribute() const override { return std::is_same<PropertyType, SVGLengthValue>::value; }
     AnimatedPropertyType animatedType() const override { return type; }
 
-    RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const override
     {
         ASSERT_UNUSED(attribute, isMatched(owner, attribute));
         return lookupOrCreateAnimatedProperty(element, m_attributeName, m_identifier, this->attribute(owner).value(), animatedState);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const OwnerType&, const SVGElement& element, const SVGAttribute&) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const OwnerType&, const SVGElement& element, const SVGAttribute&) const override
     {
         return lookupAnimatedProperty(element, m_identifier);
     }
 
-    Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, AnimatedPropertyState animatedState) const override
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, AnimatedPropertyState animatedState) const override
     {
         return { lookupOrCreateAnimatedProperty(element, m_attributeName, m_identifier, attribute(owner).value(), animatedState) };
     }
@@ -214,7 +214,7 @@ private:
 
     Vector<AnimatedPropertyType> animatedTypes() const override { return { type, secondType }; }
 
-    RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(OwnerType& owner, SVGElement& element, const SVGAttribute& attribute, AnimatedPropertyState animatedState) const override
     {
         if (Base::isMatched(owner, attribute))
             return lookupOrCreateAnimatedProperty(element, m_attributeName, m_identifier, this->attribute(owner).value(), animatedState);
@@ -222,7 +222,7 @@ private:
         return Base::template lookupOrCreateAnimatedProperty<SecondPropertyTearOffType, SecondPropertyType, secondType>(element, m_attributeName, m_secondIdentifier, secondAttribute(owner).value(), animatedState);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const OwnerType& owner, const SVGElement& element, const SVGAttribute& attribute) const override
     {
         if (Base::isMatched(owner, attribute))
             return lookupAnimatedProperty(element, m_identifier);
@@ -230,7 +230,7 @@ private:
         return lookupAnimatedProperty(element, m_secondIdentifier);
     }
 
-    Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, AnimatedPropertyState animatedState) const override
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(OwnerType& owner, SVGElement& element, AnimatedPropertyState animatedState) const override
     {
         return {
             lookupOrCreateAnimatedProperty(element, m_attributeName, m_identifier, attribute(owner).value(), animatedState),

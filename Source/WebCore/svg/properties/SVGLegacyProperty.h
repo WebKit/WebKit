@@ -29,9 +29,9 @@ enum SVGPropertyRole {
     AnimValRole
 };
 
-class SVGProperty : public RefCounted<SVGProperty> {
+class SVGLegacyProperty : public RefCounted<SVGLegacyProperty> {
 public:
-    virtual ~SVGProperty() = default;
+    virtual ~SVGLegacyProperty() = default;
 
     virtual bool isReadOnly() const = 0;
     virtual void commitChange() = 0;

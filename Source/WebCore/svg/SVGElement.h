@@ -146,9 +146,9 @@ public:
     void synchronizeAttribute(const QualifiedName& name) { attributeOwnerProxy().synchronizeAttribute(name); }
     void synchronizeAttributes() { attributeOwnerProxy().synchronizeAttributes(); }
     Vector<AnimatedPropertyType> animatedTypes(const QualifiedName& attributeName) const { return attributeOwnerProxy().animatedTypes(attributeName); }
-    RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGAttribute& attribute) const { return attributeOwnerProxy().lookupAnimatedProperty(attribute); }
-    RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) { return attributeOwnerProxy().lookupOrCreateAnimatedProperty(attribute); }
-    Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& name) { return attributeOwnerProxy().lookupOrCreateAnimatedProperties(name); }
+    RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute& attribute) const { return attributeOwnerProxy().lookupAnimatedProperty(attribute); }
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) { return attributeOwnerProxy().lookupOrCreateAnimatedProperty(attribute); }
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& name) { return attributeOwnerProxy().lookupOrCreateAnimatedProperties(name); }
 
     // These are needed for the RenderTree, animation and DOM.
     const auto& className() const { return m_className.currentValue(attributeOwnerProxy()); }

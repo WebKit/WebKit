@@ -81,17 +81,17 @@ private:
         return attributeRegistry().animatedTypes(attributeName);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) const override
     {
         return attributeRegistry().lookupOrCreateAnimatedProperty(m_owner, *m_element, attribute, m_animatedState);
     }
 
-    RefPtr<SVGAnimatedProperty> lookupAnimatedProperty(const SVGAttribute& attribute) const override
+    RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute& attribute) const override
     {
         return attributeRegistry().lookupAnimatedProperty(m_owner, *m_element, attribute);
     }
 
-    Vector<RefPtr<SVGAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& attributeName) const override
+    Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& attributeName) const override
     {
         return attributeRegistry().lookupOrCreateAnimatedProperties(m_owner, *m_element, attributeName, m_animatedState);
     }
