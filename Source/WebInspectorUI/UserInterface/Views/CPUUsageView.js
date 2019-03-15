@@ -38,6 +38,8 @@ WI.CPUUsageView = class CPUUsageView extends WI.View
             let detailsNameElement = this._detailsElement.appendChild(document.createElement("span"));
             detailsNameElement.classList.add("name");
             detailsNameElement.textContent = displayName;
+            if (displayName.length >= 20)
+                detailsNameElement.title = displayName;
             this._detailsElement.appendChild(document.createElement("br"));
         }
 
