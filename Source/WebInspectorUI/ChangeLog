@@ -1,5 +1,16 @@
 2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: CPU Usage Timeline - Reduce the intensity of the orange overlay color in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=195772
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/Variables.css:
+        (@media (prefers-color-scheme: dark)):
+        (:root):
+
+2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Timelines - Import / Export Timeline Recordings
         https://bugs.webkit.org/show_bug.cgi?id=195709
         <rdar://problem/23188921>

@@ -300,7 +300,7 @@ body.window-inactive * {
         --network-pseudo-header-color: hsl(312, 55%, 61%);
         --network-error-color: hsl(0, 54%, 55%);
 
-        --cpu-overlay-color: hsl(36, 98%, 50%);
+        --cpu-overlay-color: hsl(35, 88%, 45%);
 
         --cpu-low-color: hsl(110, 52%, 56%);
         --cpu-medium-color: hsl(46, 91%, 62%);
