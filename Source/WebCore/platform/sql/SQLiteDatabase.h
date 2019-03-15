@@ -155,7 +155,9 @@ private:
 #ifndef NDEBUG
     bool m_sharable { false };
 #endif
-    
+
+    bool m_useWAL { false };
+
     Lock m_authorizerLock;
     RefPtr<DatabaseAuthorizer> m_authorizer;
 

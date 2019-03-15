@@ -30,6 +30,7 @@
 #include "DatabaseAuthorizer.h"
 #include "Logging.h"
 #include "MemoryRelease.h"
+#include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include <mutex>
@@ -133,6 +134,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
 
 void SQLiteDatabase::useWALJournalMode()
 {
+    m_useWAL = true;
     {
         SQLiteStatement walStatement(*this, "PRAGMA journal_mode=WAL;"_s);
         if (walStatement.prepareAndStep() == SQLITE_ROW) {
@@ -146,6 +148,7 @@ void SQLiteDatabase::useWALJournalMode()
     }
 
     {
+        SQLiteTransactionInProgressAutoCounter transactionCounter;
         SQLiteStatement checkpointStatement(*this, "PRAGMA wal_checkpoint(TRUNCATE)"_s);
         if (checkpointStatement.prepareAndStep() == SQLITE_ROW) {
             if (checkpointStatement.getColumnInt(0))
@@ -165,7 +168,11 @@ void SQLiteDatabase::close()
             LockHolder locker(m_databaseClosingMutex);
             m_db = 0;
         }
-        sqlite3_close(db);
+        if (m_useWAL) {
+            SQLiteTransactionInProgressAutoCounter transactionCounter;
+            sqlite3_close(db);
+        } else
+            sqlite3_close(db);
     }
 
     m_openingThread = nullptr;
