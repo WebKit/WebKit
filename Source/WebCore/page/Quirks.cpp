@@ -40,13 +40,8 @@ Quirks::~Quirks() = default;
 
 bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 {
-    if (!m_document)
+    if (!m_document || !m_document->settings().needsSiteSpecificQuirks())
         return false;
-
-#if !PLATFORM(IOS)
-    if (!m_document->settings().needsSiteSpecificQuirks())
-        return false;
- #endif
 
     if (m_hasBrokenEncryptedMediaAPISupportQuirk)
         return m_hasBrokenEncryptedMediaAPISupportQuirk.value();

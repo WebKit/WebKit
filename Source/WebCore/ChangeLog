@@ -1,3 +1,7 @@
+2019-03-15  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r242822. rdar://problem/48795264
+
 2019-03-12  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/48795264
