@@ -27,6 +27,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -46,6 +47,7 @@ public:
     enum class Type {
         ReadOnly,
         ReadWrite,
+        Mach,
         Generic,
     };
 
@@ -101,6 +103,7 @@ public:
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
+    static bool createHandleForMachLookupByPid(const String& service, ProcessID, Handle&);
     ~SandboxExtension();
 
     bool consume();

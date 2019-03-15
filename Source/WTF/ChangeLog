@@ -1,3 +1,14 @@
+2019-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Block the accessibility server when accessibility is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=195342
+
+        Reviewed by Brent Fulgham.
+
+        Add SPI to issue a mach extension to a process by pid.
+
+        * wtf/spi/darwin/SandboxSPI.h:
+
 2019-03-13  Sam Weinig  <sam@webkit.org>
 
         Add utility function to allow easy reverse range-based iteration of a container

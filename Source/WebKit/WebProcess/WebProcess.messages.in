@@ -157,4 +157,8 @@ messages -> WebProcess LegacyReceiver {
 #endif
 
     ClearCurrentModifierStateForTesting()
+
+#if PLATFORM(IOS_FAMILY)
+    UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
+#endif
 }

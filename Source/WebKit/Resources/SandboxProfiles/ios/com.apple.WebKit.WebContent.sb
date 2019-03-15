@@ -187,7 +187,6 @@
     (global-name "com.apple.backboard.hid.focus")
     (global-name "com.apple.backboard.hid.services")
     (global-name "com.apple.iohideventsystem")
-    (global-name "com.apple.iphone.axserver-systemwide")
     (global-name "com.apple.frontboard.workspace")
     (global-name "com.apple.frontboard.systemappservices"))
 
@@ -453,6 +452,8 @@
 ;; FIXME: remove the send-signal when this rule is no longer generating crashes.
 (deny mach-lookup (with send-signal SIGKILL)
     (global-name "com.apple.backboard.hid.services"))
+
+(allow mach-lookup (extension "com.apple.webkit.extension.mach"))
 
 ;; These services have been identified as unused during living-on.
 ;; This list overrides some definitions above and in common.sb.
