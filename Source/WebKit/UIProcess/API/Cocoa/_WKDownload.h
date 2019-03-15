@@ -30,7 +30,7 @@
 @class WKWebView;
 
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface _WKDownload : NSObject
+@interface _WKDownload : NSObject <NSCopying>
 
 - (void)cancel;
 

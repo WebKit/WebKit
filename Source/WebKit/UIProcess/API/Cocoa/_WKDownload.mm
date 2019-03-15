@@ -83,6 +83,11 @@
     return WebKit::wrapper(_download->resumeData());
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject

@@ -1,3 +1,16 @@
+2019-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        _WKDownload should conform to NSCopying protocol
+        https://bugs.webkit.org/show_bug.cgi?id=195718
+
+        Reviewed by Tim Horton.
+
+        This will allow us to use it as keys in NSMutableDictionaries, which Safari already kind of does.
+
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload copyWithZone:]):
+
 2019-03-15  Dean Jackson  <dino@apple.com>
 
         Provide an option for an always-on fast click mode in iOS
