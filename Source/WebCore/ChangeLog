@@ -1,3 +1,10 @@
+2019-03-15  Antti Koivisto  <antti@apple.com>
+
+        Try to fix watchOS build.
+
+        * platform/graphics/Region.h:
+        (WebCore::Region::Span::decode):
+
 2019-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         [Async overflow Scrolling] Update positioned node layers when overflows are scrolled

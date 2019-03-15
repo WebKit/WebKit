@@ -227,7 +227,7 @@ Optional<Region::Span> Region::Span::decode(Decoder& decoder)
     if (!segmentIndex)
         return { };
 
-    return { { *y, *segmentIndex } };
+    return { { *y, static_cast<size_t>(*segmentIndex) } };
 }
 
 template<class Encoder>
