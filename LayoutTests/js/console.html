@@ -47,7 +47,7 @@ for (property in console) {
 debug("");
 shouldBe("Object.getOwnPropertyNames(console).length", "enumerablePropertyCount");
 
-const consoleRecordArguments = [
+const fuzzingArguments = [
 	`undefined`,
 	`null`,
 	`1`,
@@ -61,18 +61,18 @@ const consoleRecordArguments = [
 debug("");
 debug("fuzzing of target for console.record");
 shouldNotThrow(`console.record()`);
-for (let argument of consoleRecordArguments)
+for (let argument of fuzzingArguments)
 	shouldNotThrow(`console.record(${argument})`);
 
 debug("");
 debug("fuzzing of options for console.record");
-for (let argument of consoleRecordArguments)
+for (let argument of fuzzingArguments)
 	shouldNotThrow(`console.record({}, ${argument})`);
 
 debug("");
 debug("fuzzing of target for console.recordEnd");
 shouldNotThrow(`console.recordEnd()`);
-for (let argument of consoleRecordArguments)
+for (let argument of fuzzingArguments)
 	shouldNotThrow(`console.recordEnd(${argument})`);
 
 debug("");
@@ -83,6 +83,14 @@ shouldNotThrow(`console.recordEnd(window.canvas)`);
 shouldNotThrow(`console.record(window.canvas)`);
 shouldNotThrow(`console.record(window.canvas)`);
 shouldNotThrow(`console.record(window.canvas)`);
+
+debug("");
+debug("fuzzing of target for console.screenshot");
+shouldNotThrow(`console.screenshot()`);
+for (let argument of fuzzingArguments)
+    shouldNotThrow(`console.screenshot(${argument})`);
+
+debug("");
 
 </script>
 <script src="../resources/js-test-post.js"></script>

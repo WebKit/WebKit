@@ -64,6 +64,7 @@ public:
     virtual void timeStamp(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void record(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
     virtual void recordEnd(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
+    virtual void screenshot(ExecState*, Ref<Inspector::ScriptArguments>&&) = 0;
 
 private:
     enum ArgumentRequirement { ArgumentRequired, ArgumentNotRequired };

@@ -864,6 +864,7 @@ localizedStrings["SVG"] = "SVG";
 localizedStrings["Samples"] = "Samples";
 localizedStrings["Save %d"] = "Save %d";
 localizedStrings["Save File"] = "Save File";
+localizedStrings["Save Image"] = "Save Image";
 localizedStrings["Save Selected"] = "Save Selected";
 localizedStrings["Save configuration"] = "Save configuration";
 localizedStrings["Saved States"] = "Saved States";

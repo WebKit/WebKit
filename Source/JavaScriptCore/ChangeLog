@@ -1,3 +1,34 @@
+2019-03-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to capture a screenshot of a node from within the page
+        https://bugs.webkit.org/show_bug.cgi?id=194279
+        <rdar://problem/10731573>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add `console.screenshot` functionality, which displays a screenshot of a given object (if
+        able) within Web Inspector's Console tab. From there, it can be viewed and saved.
+
+        Currently, `console.screenshot` will
+         - capture an image of a `Node` (if provided)
+         - capture an image of the viewport if nothing is provided
+
+        * inspector/protocol/Console.json:
+        Add `Image` enum value to `ConsoleMessage` type.
+        * runtime/ConsoleTypes.h:
+        * inspector/ConsoleMessage.h:
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::messageTypeValue):
+
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        (JSC::consoleProtoFuncScreenshot): Added.
+
+        * inspector/JSGlobalObjectConsoleClient.h:
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::screenshot): Added.
+
 2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Retain PrivateName of Symbol before passing it to operations potentially incurring GC

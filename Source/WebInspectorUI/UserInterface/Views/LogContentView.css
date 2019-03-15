@@ -226,7 +226,7 @@ body[dir=rtl] .console-group-title::before {
     background-color: hsla(53, 83%, 53%, 0.75);
 }
 
-.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-text .highlighted {
+.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-body .highlighted {
     color: var(--selected-foreground-color);
     background-color: var(--selected-background-color-highlight);
 

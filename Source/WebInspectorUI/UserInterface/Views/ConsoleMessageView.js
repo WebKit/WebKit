@@ -88,16 +88,20 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         // FIXME: The location link should include stack trace information.
         this._appendLocationLink();
 
-        this._messageTextElement = this._element.appendChild(document.createElement("span"));
-        this._messageTextElement.classList.add("console-top-level-message");
-        this._messageTextElement.classList.add("console-message-text");
-        this._appendMessageTextAndArguments(this._messageTextElement);
+        this._messageBodyElement = this._element.appendChild(document.createElement("span"));
+        this._messageBodyElement.classList.add("console-top-level-message", "console-message-body");
+        this._appendMessageTextAndArguments(this._messageBodyElement);
         this._appendSavedResultIndex();
 
         this._appendExtraParameters();
         this._appendStackTrace();
 
         this._renderRepeatCount();
+
+        if (this._message.type === WI.ConsoleMessage.MessageType.Image) {
+            this._element.classList.add("console-image-container");
+            this._element.addEventListener("contextmenu", this._handleContextMenu.bind(this));
+        }
     }
 
     get element()
@@ -197,7 +201,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
     toClipboardString(isPrefixOptional)
     {
-        let clipboardString = this._messageTextElement.innerText.removeWordBreakCharacters();
+        let clipboardString = this._messageBodyElement.innerText.removeWordBreakCharacters();
         if (this._message.savedResultIndex)
             clipboardString = clipboardString.replace(/\s*=\s*(\$\d+)$/, "");
 
@@ -284,6 +288,20 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                 this._extraParameters = null;
                 break;
 
+            case WI.ConsoleMessage.MessageType.Image: {
+                let img = element.appendChild(document.createElement("img"));
+                img.classList.add("console-image", "show-grid");
+                img.src = this._message.messageText;
+                img.setAttribute("filename", WI.FileUtilities.screenshotString() + ".png");
+                img.addEventListener("load", (event) => {
+                    if (img.width >= img.height)
+                        img.width = img.width / window.devicePixelRatio;
+                    else
+                        img.height = img.height / window.devicePixelRatio;
+                });
+                break;
+            }
+
             default:
                 var args = this._message.parameters || [this._message.messageText];
                 this._appendFormattedArguments(element, args);
@@ -313,7 +331,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         if (this._objectTree)
             this._objectTree.appendTitleSuffix(savedVariableElement);
         else
-            this._messageTextElement.appendChild(savedVariableElement);
+            this._messageBodyElement.appendChild(savedVariableElement);
     }
 
     _appendLocationLink()
@@ -403,7 +421,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
             this.expand();
 
         this._stackTraceElement = this._element.appendChild(document.createElement("div"));
-        this._stackTraceElement.classList.add("console-message-text", "console-message-stack-trace-container");
+        this._stackTraceElement.classList.add("console-message-body", "console-message-stack-trace-container");
 
         var callFramesElement = new WI.StackTraceView(this._message.stackTrace).element;
         this._stackTraceElement.appendChild(callFramesElement);
@@ -920,6 +938,26 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         this._element.classList.add("expandable");
 
         this._boundClickHandler = this.toggle.bind(this);
-        this._messageTextElement.addEventListener("click", this._boundClickHandler);
+        this._messageBodyElement.addEventListener("click", this._boundClickHandler);
+    }
+
+    _handleContextMenu(event)
+    {
+        let image = event.target.closest(".console-image");
+        if (!image)
+            return;
+
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        contextMenu.appendItem(WI.UIString("Save Image"), () => {
+            const forceSaveAs = true;
+            WI.FileUtilities.save({
+                url: encodeURI("web-inspector:///" + image.getAttribute("filename")),
+                content: parseDataURL(this._message.messageText).data,
+                base64Encoded: true,
+            }, forceSaveAs);
+        });
+
+        contextMenu.appendSeparator();
     }
 };

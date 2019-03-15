@@ -55,6 +55,7 @@ protected:
     void timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) override;
     void record(JSC::ExecState*, Ref<ScriptArguments>&&) override;
     void recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) override;
+    void screenshot(JSC::ExecState*, Ref<ScriptArguments>&&) override;
 
 private:
     void warnUnimplemented(const String& method);

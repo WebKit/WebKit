@@ -1,3 +1,77 @@
+2019-03-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to capture a screenshot of a node from within the page
+        https://bugs.webkit.org/show_bug.cgi?id=194279
+        <rdar://problem/10731573>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add `console.screenshot` functionality, which displays a screenshot of a given object (if
+        able) within Web Inspector's Console tab. From there, it can be viewed and saved.
+
+        Currently, `console.screenshot` will
+         - capture an image of a `Node` (if provided)
+         - capture an image of the viewport if nothing is provided
+
+        * UserInterface/Models/ConsoleMessage.js:
+        (WI.ConsoleMessage):
+        * UserInterface/Views/ConsoleCommandView.js:
+        (WI.ConsoleCommandView.prototype.render):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype.render):
+        (WI.ConsoleMessageView.prototype.toClipboardString):
+        (WI.ConsoleMessageView.prototype._appendMessageTextAndArguments):
+        (WI.ConsoleMessageView.prototype._appendSavedResultIndex):
+        (WI.ConsoleMessageView.prototype._appendStackTrace):
+        (WI.ConsoleMessageView.prototype._makeExpandable):
+        (WI.ConsoleMessageView.prototype._handleContextMenu): Added.
+        * UserInterface/Views/ConsoleMessageView.css:
+        (.console-user-command.special-user-log > .console-message-body): Added.
+        (.console-message-body): Added.
+        (.console-message-body > span): Added.
+        (.console-message-body > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider)): Added.
+        (.console-message-body > .console-image): Added.
+        (.console-message-body > .show-grid): Added.
+        (.console-error-level .console-message-body): Added.
+        (.console-warning-level .console-message-body): Added.
+        (.console-log-level.console-image-container::before): Added.
+        (.console-user-command > .console-message-body): Added.
+        (.console-warning-level .console-message-body): Added.
+        (.console-error-level .console-message-body): Added.
+        (.console-user-command > .console-message-body): Added.
+        (.console-user-command.special-user-log > .console-message-text): Deleted.
+        (.console-message-text): Deleted.
+        (.console-message-text > span): Deleted.
+        (.console-message-text > span > :matches(.console-message-enclosed, .console-message-preview, .console-message-preview-divider)): Deleted.
+        (.console-error-level .console-message-text): Deleted.
+        (.console-warning-level .console-message-text): Deleted.
+        (.console-user-command > .console-message-text): Deleted.
+        (.console-warning-level .console-message-text): Deleted.
+        (.console-error-level .console-message-text): Deleted.
+        (.console-user-command > .console-message-text): Deleted.
+        * UserInterface/Views/LogContentView.css:
+        (.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-text .highlighted): Added.
+        (.search-in-progress .console-item:not(.filtered-out-by-search).special-user-log .console-message-body .highlighted): Deleted.
+        Renamed variables/classes to be more semantically correct when the content is an image.
+         - `_messageTextElement` to `_messageBodyElement` (JS)
+         - `.console-message-text` to `.console-message-body` (CSS)
+
+        * UserInterface/Controllers/JavaScriptLogViewController.js:
+        (WI.JavaScriptLogViewController.prototype.renderPendingMessages):
+
+        * UserInterface/Views/Main.css:
+        (:matches(img, canvas).show-grid):
+        (@media (prefers-color-scheme: dark) :matches(img, canvas).show-grid):
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.screenshotString): Added.
+
+        * UserInterface/Models/NativeFunctionParameters.js:
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+
+        * UserInterface/Images/ConsoleImage.svg: Copied from UserInterface/Images/Canvas.svg.
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-03-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Jump to effective property button doesn't hide after overridden property become effective

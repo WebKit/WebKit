@@ -76,6 +76,7 @@ protected:
     void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
     void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
     void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
+    void screenshot(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) override;
 
 private:
     Page& m_page;

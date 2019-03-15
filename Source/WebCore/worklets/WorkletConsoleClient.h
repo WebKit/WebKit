@@ -54,6 +54,7 @@ private:
     void timeStamp(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void record(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
     void recordEnd(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
+    void screenshot(JSC::ExecState*, Ref<Inspector::ScriptArguments>&&) final;
 
     WorkletGlobalScope& m_workletGlobalScope;
 };

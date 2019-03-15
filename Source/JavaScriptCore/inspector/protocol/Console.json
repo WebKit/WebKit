@@ -31,7 +31,7 @@
                 { "name": "source", "$ref": "ChannelSource"},
                 { "name": "level", "type": "string", "enum": ["log", "info", "warning", "error", "debug"], "description": "Message severity." },
                 { "name": "text", "type": "string", "description": "Message text." },
-                { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "table", "trace", "clear", "startGroup", "startGroupCollapsed", "endGroup", "assert", "timing", "profile", "profileEnd"], "description": "Console message type." },
+                { "name": "type", "type": "string", "optional": true, "enum": ["log", "dir", "dirxml", "table", "trace", "clear", "startGroup", "startGroupCollapsed", "endGroup", "assert", "timing", "profile", "profileEnd", "image"], "description": "Console message type." },
                 { "name": "url", "type": "string", "optional": true, "description": "URL of the message origin." },
                 { "name": "line", "type": "integer", "optional": true, "description": "Line number in the resource that generated this message." },
                 { "name": "column", "type": "integer", "optional": true, "description": "Column number on the line in the resource that generated this message." },

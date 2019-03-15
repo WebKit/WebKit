@@ -191,6 +191,7 @@ static Protocol::Console::ConsoleMessage::Type messageTypeValue(MessageType type
     case MessageType::Timing: return Protocol::Console::ConsoleMessage::Type::Timing;
     case MessageType::Profile: return Protocol::Console::ConsoleMessage::Type::Profile;
     case MessageType::ProfileEnd: return Protocol::Console::ConsoleMessage::Type::ProfileEnd;
+    case MessageType::Image: return Protocol::Console::ConsoleMessage::Type::Image;
     }
     return Protocol::Console::ConsoleMessage::Type::Log;
 }

@@ -250,18 +250,8 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                     return;
                 }
 
-                let date = new Date;
-                let values = [
-                    date.getFullYear(),
-                    Number.zeroPad(date.getMonth() + 1, 2),
-                    Number.zeroPad(date.getDate(), 2),
-                    Number.zeroPad(date.getHours(), 2),
-                    Number.zeroPad(date.getMinutes(), 2),
-                    Number.zeroPad(date.getSeconds(), 2),
-                ];
-                let filename = WI.UIString("Screen Shot %s-%s-%s at %s.%s.%s").format(...values);
                 WI.FileUtilities.save({
-                    url: encodeURI(`web-inspector:///${filename}.png`),
+                    url: encodeURI(`web-inspector:///${WI.FileUtilities.screenshotString()}.png`),
                     content: parseDataURL(dataURL).data,
                     base64Encoded: true,
                 });

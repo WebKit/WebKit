@@ -98,7 +98,7 @@ enum class StorageType;
 
 struct WebSocketFrame;
 
-#define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!hasFrontends())) return value;
+#define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!InspectorInstrumentation::hasFrontends())) return value;
 
 class InspectorInstrumentation {
 public:

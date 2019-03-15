@@ -66,5 +66,7 @@ void WorkletConsoleClient::timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) { 
 void WorkletConsoleClient::record(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 void WorkletConsoleClient::recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
+void WorkletConsoleClient::screenshot(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+
 } // namespace WebCore
 #endif

@@ -76,4 +76,6 @@ void WorkerConsoleClient::timeStamp(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 void WorkerConsoleClient::record(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 void WorkerConsoleClient::recordEnd(JSC::ExecState*, Ref<ScriptArguments>&&) { }
 
+void WorkerConsoleClient::screenshot(JSC::ExecState*, Ref<ScriptArguments>&&) { }
+
 } // namespace WebCore

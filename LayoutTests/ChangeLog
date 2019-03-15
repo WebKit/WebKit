@@ -1,3 +1,17 @@
+2019-03-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: provide a way to capture a screenshot of a node from within the page
+        https://bugs.webkit.org/show_bug.cgi?id=194279
+        <rdar://problem/10731573>
+
+        Reviewed by Joseph Pecoraro.
+
+        * js/console.html:
+        * js/console-expected.txt:
+        * inspector/console/console-screenshot.html: Added.
+        * inspector/console/console-screenshot-expected.txt: Added.
+        * http/tests/inspector/dom/cross-domain-inspected-node-access-expected.txt:
+
 2019-03-14  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: re-enable some leak tests

@@ -175,6 +175,7 @@ WI.NativeConstructorFunctionParameters = {
         profileEnd: "name",
         record: "object, [options]",
         recordEnd: "object",
+        screenshot: "[node]",
         table: "data, [columns]",
         takeHeapSnapshot: "[label]",
         time: "name = \"default\"",

@@ -83,6 +83,7 @@ CommandLineAPI.methods = [
     "profile",
     "profileEnd",
     "queryObjects",
+    "screenshot",
     "table",
     "unmonitorEvents",
     "values",
@@ -198,6 +199,11 @@ CommandLineAPIImpl.prototype = {
     table: function()
     {
         return inspectedWindow.console.table.apply(inspectedWindow.console, arguments)
+    },
+
+    screenshot: function()
+    {
+        return inspectedWindow.console.screenshot.apply(inspectedWindow.console, arguments)
     },
 
     /**

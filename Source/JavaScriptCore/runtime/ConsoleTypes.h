@@ -60,6 +60,7 @@ enum class MessageType {
     Timing,
     Profile,
     ProfileEnd,
+    Image,
 };
 
 enum class MessageLevel : uint8_t {

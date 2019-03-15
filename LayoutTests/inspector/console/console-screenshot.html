@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function createDetachedTest3()
+{
+    let div = document.createElement("div");
+    div.id = "test3";
+    return div;
+}
+
+function test()
+{
+    InspectorTest.debug();
+
+    // 2x2 red square
+    const redSquareDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=";
+
+    // 2x2 blue square
+    const blueSquareDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABRJREFUCB1jZGD4/58BCJhABAgAAB0ZAgJSPDJ6AAAAAElFTkSuQmCC";
+
+    // 2x2 green square
+    const greenSquareDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1jZGhg+M8ABEwgAgQAFigBgxp1H6oAAAAASUVORK5CYII=";
+
+    let suite = InspectorTest.createAsyncSuite("console.screenshot");
+
+    function addTest({name, expression, imageMessageAddedCallback, shouldError}) {
+        suite.addTestCase({
+            name,
+            test(resolve, reject) {
+                let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, async (event) => {
+                    let {message} = event.data;
+
+                    let isError = message.level === WI.ConsoleMessage.MessageLevel.Error;
+                    if (isError || message.type === WI.ConsoleMessage.MessageType.Image) {
+                        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+
+                        if (isError)
+                            InspectorTest.expectThat(shouldError, message.messageText);
+                        else
+                            InspectorTest.expectEqual(message.type, WI.ConsoleMessage.MessageType.Image, "The added message should be an image.");
+
+                        if (imageMessageAddedCallback)
+                            await imageMessageAddedCallback(message);
+
+                        resolve();
+                        return;
+                    }
+                });
+
+                InspectorTest.evaluateInPage(expression)
+                .catch(reject);
+            },
+        });
+    }
+
+    addTest({
+        name: "console.screenshot.SingleNode",
+        expression: `console.screenshot(document.querySelector("#test1"))`,
+        imageMessageAddedCallback(message) {
+            InspectorTest.expectEqual(message.messageText, redSquareDataURL, "The image should be a 2x2 red square.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.MultipleNodes", 
+        expression: `console.screenshot(document.querySelector("#test2"), document.querySelector("#test1"))`,
+        imageMessageAddedCallback(message) {
+            InspectorTest.expectEqual(message.messageText, blueSquareDataURL, "The image should be a 2x2 blue square.");
+        },
+    });
+
+    addTest({
+        name: "console.screenshot.DetachedNode",  
+        expression: `console.screenshot(createDetachedTest3())`,
+        shouldError: true,
+    });
+
+    addTest({
+        name: "console.screenshot.NoArguments", 
+        expression: `console.screenshot()`,
+        async imageMessageAddedCallback(message) {
+            InspectorTest.assert(message.messageText !== redSquareDataURL, "The imag should not be a 2x2 red square.");
+            InspectorTest.assert(message.messageText !== blueSquareDataURL, "The imag should not be a 2x2 blue square.");
+            InspectorTest.assert(message.messageText !== greenSquareDataURL, "The imag should not be a 2x2 green square.");
+
+            let img = await WI.ImageUtilities.promisifyLoad(message.messageText);
+            InspectorTest.expectGreaterThan(img.width, 2, "The image width should be greater than 2px.");
+            InspectorTest.expectGreaterThan(img.height, 2, "The image height should be greater than 2px.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for the console.screenshot API.</p>
+    <div id="test1"></div>
+    <div id="test2"></div>
+    <div id="test3"></div>
+    <style>
+    #test1 {
+        width: 2px;
+        height: 2px;
+        background-color: red;
+    }
+    #test2 {
+        width: 2px;
+        height: 2px;
+        background-color: blue;
+    }
+    #test3 {
+        width: 2px;
+        height: 2px;
+        background-color: green;
+    }
+    </style>
+</body>
+</html>

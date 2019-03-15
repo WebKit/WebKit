@@ -177,6 +177,13 @@ PASS descriptor.configurable is true
 PASS descriptor.writable is true
 PASS descriptor.enumerable is true
 
+console.screenshot
+PASS typeof console.screenshot is "function"
+PASS console.screenshot.length is 0
+PASS descriptor.configurable is true
+PASS descriptor.writable is true
+PASS descriptor.enumerable is true
+
 PASS Object.getOwnPropertyNames(console).length is enumerablePropertyCount
 
 fuzzing of target for console.record
@@ -218,6 +225,18 @@ PASS console.recordEnd(window.canvas) did not throw exception.
 PASS console.record(window.canvas) did not throw exception.
 PASS console.record(window.canvas) did not throw exception.
 PASS console.record(window.canvas) did not throw exception.
+
+fuzzing of target for console.screenshot
+PASS console.screenshot() did not throw exception.
+PASS console.screenshot(undefined) did not throw exception.
+PASS console.screenshot(null) did not throw exception.
+PASS console.screenshot(1) did not throw exception.
+PASS console.screenshot("test") did not throw exception.
+PASS console.screenshot([]) did not throw exception.
+PASS console.screenshot({}) did not throw exception.
+PASS console.screenshot(window) did not throw exception.
+PASS console.screenshot(console) did not throw exception.
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
