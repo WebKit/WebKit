@@ -1,3 +1,31 @@
+2019-03-15  Chris Dumez  <cdumez@apple.com>
+
+        [PSON] Make sure the WebProcessCache is leverage when relaunching a process after termination
+        https://bugs.webkit.org/show_bug.cgi?id=195747
+
+        Reviewed by Geoff Garen.
+
+        Make sure the WebProcessCache and the prewarmed process are used when relaunching a process
+        after termination (e.g. crash).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::reattachToWebProcessForReload):
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::loadRequest):
+        (WebKit::WebPageProxy::loadFile):
+        (WebKit::WebPageProxy::loadData):
+        (WebKit::WebPageProxy::loadAlternateHTML):
+        (WebKit::WebPageProxy::loadWebArchiveData):
+        (WebKit::WebPageProxy::navigateToPDFLinkWithSimulatedClick):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::processForNavigationInternal):
+        (WebKit::WebProcessPool::tryPrewarmWithDomainInformation):
+        * UIProcess/WebProcessPool.h:
+
 2019-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Block the accessibility server when accessibility is not enabled.

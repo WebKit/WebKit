@@ -1671,7 +1671,7 @@ private:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
-    void reattachToWebProcess();
+    void reattachToWebProcess(const WebCore::RegistrableDomain&);
     void swapToWebProcess(Ref<WebProcessProxy>&&, std::unique_ptr<DrawingAreaProxy>&&, RefPtr<WebFrameProxy>&& mainFrame);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();

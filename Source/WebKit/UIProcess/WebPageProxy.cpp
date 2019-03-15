@@ -734,7 +734,7 @@ void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const S
     returnUserData = UserData(m_process->transformObjectsToHandles(returnData.get()));
 }
 
-void WebPageProxy::reattachToWebProcess()
+void WebPageProxy::reattachToWebProcess(const RegistrableDomain& registrableDomain)
 {
     ASSERT(!m_isClosed);
     ASSERT(!isValid());
@@ -745,7 +745,7 @@ void WebPageProxy::reattachToWebProcess()
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     auto& processPool = m_process->processPool();
-    m_process = processPool.createNewWebProcessRespectingProcessCountLimit(m_websiteDataStore.get());
+    m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), this, registrableDomain);
     m_isValid = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
@@ -895,7 +895,8 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessForReload()
     }
     
     ASSERT(!isValid());
-    reattachToWebProcess();
+    auto registrableDomain = m_backForwardList->currentItem() ? RegistrableDomain { URL(URL(), m_backForwardList->currentItem()->url()) } : RegistrableDomain { };
+    reattachToWebProcess(registrableDomain);
 
     if (!m_backForwardList->currentItem()) {
         RELEASE_LOG_IF_ALLOWED(Loading, "reattachToWebProcessForReload: no current item to reload: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
@@ -921,7 +922,7 @@ RefPtr<API::Navigation> WebPageProxy::reattachToWebProcessWithItem(WebBackForwar
     }
 
     ASSERT(!isValid());
-    reattachToWebProcess();
+    reattachToWebProcess(RegistrableDomain { URL(URL(), item.url()) });
 
     if (&item != m_backForwardList->currentItem())
         m_backForwardList->goToItem(item);
@@ -1095,7 +1096,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
     RELEASE_LOG_IF_ALLOWED(Loading, "loadRequest: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess(RegistrableDomain { request.url() });
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     loadRequestWithNavigationShared(m_process.copyRef(), navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
@@ -1143,7 +1144,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     }
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess({ });
 
     URL fileURL = URL(URL(), fileURLString);
     if (!fileURL.isLocalFile()) {
@@ -1195,7 +1196,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     }
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess({ });
 
     auto navigation = m_navigationState->createLoadDataNavigation(std::make_unique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
     loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No);
@@ -1244,7 +1245,7 @@ void WebPageProxy::loadAlternateHTML(const IPC::DataReference& htmlData, const S
         m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = true;
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess(RegistrableDomain { baseURL });
 
     auto transaction = m_pageLoadState.transaction();
 
@@ -1281,7 +1282,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     }
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess({ });
 
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setPendingAPIRequestURL(transaction, WTF::blankURL().string());
@@ -1298,7 +1299,7 @@ void WebPageProxy::loadWebArchiveData(API::Data* webArchiveData, API::Object* us
     m_process->responsivenessTimer().start();
 }
 
-void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint documentPoint, IntPoint screenPoint)
+void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
 {
     RELEASE_LOG_IF_ALLOWED(Loading, "navigateToPDFLinkWithSimulatedClick: webPID = %i, pageID = %" PRIu64, m_process->processIdentifier(), m_pageID);
 
@@ -1307,13 +1308,13 @@ void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoi
         return;
     }
 
-    if (WTF::protocolIsJavaScript(url))
+    if (WTF::protocolIsJavaScript(urlString))
         return;
 
     if (!isValid())
-        reattachToWebProcess();
+        reattachToWebProcess(RegistrableDomain { URL(URL(), urlString) });
 
-    m_process->send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(url, documentPoint, screenPoint), m_pageID);
+    m_process->send(Messages::WebPage::NavigateToPDFLinkWithSimulatedClick(urlString, documentPoint, screenPoint), m_pageID);
     m_process->responsivenessTimer().start();
 }
 
