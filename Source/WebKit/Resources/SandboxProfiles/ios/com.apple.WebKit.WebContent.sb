@@ -694,5 +694,8 @@
         (syscall-number SYS_os_fault_with_payload)
         (syscall-number SYS_persona)
         (syscall-number SYS_work_interval_ctl)
+        (syscall-number SYS_open_dprotected_np)
+        (syscall-number SYS_pread_nocancel)
+        (syscall-number SYS___semwait_signal_nocancel)
     )
 )
