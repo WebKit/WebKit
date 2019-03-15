@@ -673,10 +673,6 @@ private:
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<NSObject> m_accessibilityEnabledObserver;
-#endif
-
     bool m_shouldUseTestingNetworkSession { false };
 
     bool m_processTerminationEnabled { true };

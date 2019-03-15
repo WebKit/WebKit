@@ -245,8 +245,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     void accessibilityProcessSuspendedNotification(bool);
-    
-    void unblockAccessibilityServer(const SandboxExtension::Handle&);
 #endif
 
 #if PLATFORM(IOS)

@@ -41,8 +41,6 @@ WTF_EXTERN_C_BEGIN
 #if PLATFORM(IOS_FAMILY)
 extern Boolean _AXSKeyRepeatEnabled();
 extern CFTimeInterval _AXSKeyRepeatDelay();
-extern Boolean _AXSApplicationAccessibilityEnabled();
-extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 #endif
 
 #if ENABLE(ACCESSIBILITY_EVENTS)

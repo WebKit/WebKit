@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebProcessPool.h"
 
-#import "AccessibilitySupportSPI.h"
 #import "CookieStorageUtilsCF.h"
 #import "LegacyCustomProtocolManagerClient.h"
 #import "NetworkProcessCreationParameters.h"
@@ -448,10 +447,6 @@ void WebProcessPool::registerNotificationObservers()
     }];
 #elif PLATFORM(IOS)
     CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, backlightLevelDidChangeCallback, static_cast<CFStringRef>(UIBacklightLevelChangedNotification), nullptr, CFNotificationSuspensionBehaviorCoalesce);
-    m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
-        for (size_t i = 0; i < m_processes.size(); ++i)
-            m_processes[i]->unblockAccessibilityServerIfNeeded();
-    }];
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
@@ -471,7 +466,6 @@ void WebProcessPool::unregisterNotificationObservers()
     [[NSNotificationCenter defaultCenter] removeObserver:m_deactivationObserver.get()];
 #elif PLATFORM(IOS)
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), this, static_cast<CFStringRef>(UIBacklightLevelChangedNotification) , nullptr);
-    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
 #endif // !PLATFORM(IOS_FAMILY)
 }
 
