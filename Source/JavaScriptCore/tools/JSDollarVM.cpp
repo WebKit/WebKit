@@ -2119,6 +2119,7 @@ static EncodedJSValue JSC_HOST_CALL functionGetGetterSetter(ExecState* exec)
 
     PropertySlot slot(value, PropertySlot::InternalMethodType::VMInquiry);
     value.getPropertySlot(exec, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, { });
 
     JSValue result;
     if (slot.isCacheableGetter())
