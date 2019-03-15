@@ -40,12 +40,9 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const Crypt
     CCDigestAlgorithm digestAlgorithm;
     getCommonCryptoDigestAlgorithm(parameters.hashIdentifier, digestAlgorithm);
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     // <rdar://problem/32439455> Currently, when key data is empty, CCKeyDerivationHMac will bail out.
     if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, key.key().data(), key.key().size(), 0, 0, parameters.infoVector().data(), parameters.infoVector().size(), 0, 0, parameters.saltVector().data(), parameters.saltVector().size(), result.data(), result.size()))
         return Exception { OperationError };
-#pragma clang diagnostic pop
     return WTFMove(result);
 }
 
