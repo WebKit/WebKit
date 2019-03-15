@@ -284,6 +284,18 @@ WI.Quad = class Quad
         this.height = Math.round(Math.sqrt(Math.pow(quad[0] - quad[6], 2) + Math.pow(quad[1] - quad[7], 2)));
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        return new WI.Quad(json);
+    }
+
+    toJSON()
+    {
+        return this.toProtocol();
+    }
+
     // Public
 
     toProtocol()

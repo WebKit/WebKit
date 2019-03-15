@@ -2736,7 +2736,7 @@ WI.elementDragEnd = function(event)
 
 WI.createMessageTextView = function(message, isError)
 {
-    var messageElement = document.createElement("div");
+    let messageElement = document.createElement("div");
     messageElement.className = "message-text-view";
     if (isError)
         messageElement.classList.add("error");

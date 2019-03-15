@@ -48,6 +48,32 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         }
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload} = json;
+
+        if (typeof details === "object" && details.__type === "GarbageCollection")
+            details = WI.GarbageCollection.fromJSON(details);
+
+        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload);
+    }
+
+    toJSON()
+    {
+        // FIXME: CallFrames
+        // FIXME: SourceCodeLocation
+
+        return {
+            type: this.type,
+            eventType: this._eventType,
+            startTime: this.startTime,
+            endTime: this.endTime,
+            details: this._details,
+        };
+    }
+
     // Public
 
     get eventType()
@@ -183,20 +209,20 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 };
 
 WI.ScriptTimelineRecord.EventType = {
-    ScriptEvaluated: "script-timeline-record-script-evaluated",
-    APIScriptEvaluated: "script-timeline-record-api-script-evaluated",
-    MicrotaskDispatched: "script-timeline-record-microtask-dispatched",
-    EventDispatched: "script-timeline-record-event-dispatched",
-    ProbeSampleRecorded: "script-timeline-record-probe-sample-recorded",
-    TimerFired: "script-timeline-record-timer-fired",
-    TimerInstalled: "script-timeline-record-timer-installed",
-    TimerRemoved: "script-timeline-record-timer-removed",
-    AnimationFrameFired: "script-timeline-record-animation-frame-fired",
-    AnimationFrameRequested: "script-timeline-record-animation-frame-requested",
-    AnimationFrameCanceled: "script-timeline-record-animation-frame-canceled",
-    ObserverCallback: "script-timeline-record-observer-callback",
-    ConsoleProfileRecorded: "script-timeline-record-console-profile-recorded",
-    GarbageCollected: "script-timeline-record-garbage-collected",
+    ScriptEvaluated: "script-evaluated",
+    APIScriptEvaluated: "api-script-evaluated",
+    MicrotaskDispatched: "microtask-dispatched",
+    EventDispatched: "event-dispatched",
+    ProbeSampleRecorded: "probe-sample-recorded",
+    TimerFired: "timer-fired",
+    TimerInstalled: "timer-installed",
+    TimerRemoved: "timer-removed",
+    AnimationFrameFired: "animation-frame-fired",
+    AnimationFrameRequested: "animation-frame-requested",
+    AnimationFrameCanceled: "animation-frame-canceled",
+    ObserverCallback: "observer-callback",
+    ConsoleProfileRecorded: "console-profile-recorded",
+    GarbageCollected: "garbage-collected",
 };
 
 WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, includeDetailsInMainTitle)

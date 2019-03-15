@@ -116,8 +116,26 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this._viewModeDidChange();
 
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.RecordingImported, this._recordingImported, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+    }
+
+    // Import / Export
+
+    exportData()
+    {
+        let json = {
+            secondsPerPixel: this.secondsPerPixel,
+            scrollStartTime: this.scrollStartTime,
+            selectionStartTime: this.selectionStartTime,
+            selectionDuration: this.selectionDuration,
+        };
+
+        if (this._selectedTimeline)
+            json.selectedTimelineType = this._selectedTimeline.type;
+
+        return json;
     }
 
     // Public
@@ -657,6 +675,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             overviewGraph.hidden();
             treeElement.hidden = true;
         }
+
+        this.needsLayout();
     }
 
     _instrumentRemoved(event)
@@ -1012,13 +1032,36 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._editingInstrumentsDidChange();
     }
 
-    _capturingStarted()
+    _recordingImported(event)
+    {
+        let {overviewData} = event.data;
+
+        if (overviewData.secondsPerPixel !== undefined)
+            this.secondsPerPixel = overviewData.secondsPerPixel;
+        if (overviewData.scrollStartTime !== undefined)
+            this.scrollStartTime = overviewData.scrollStartTime;
+        if (overviewData.selectionStartTime !== undefined)
+            this.selectionStartTime = overviewData.selectionStartTime;
+        if (overviewData.selectionDuration !== undefined) {
+            if (overviewData.selectionDuration === Number.MAX_VALUE)
+                this._timelineRuler.selectEntireRange();
+            else
+                this.selectionDuration = overviewData.selectionDuration;
+        }
+        if (overviewData.selectedTimelineType !== undefined) {
+            let timeline = this._recording.timelineForRecordType(overviewData.selectedTimelineType);
+            if (timeline)
+                this.selectedTimeline = timeline;
+        }
+    }
+
+    _capturingStarted(event)
     {
         this._editInstrumentsButton.enabled = false;
         this._stopEditingInstruments();
     }
 
-    _capturingStopped()
+    _capturingStopped(event)
     {
         this._editInstrumentsButton.enabled = true;
     }

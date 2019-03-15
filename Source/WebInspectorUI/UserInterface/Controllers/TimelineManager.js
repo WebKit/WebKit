@@ -136,6 +136,21 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         return types;
     }
 
+    static synthesizeImportError(message)
+    {
+        message = WI.UIString("Timeline Recording Import Error: %s").format(message);
+
+        if (window.InspectorTest) {
+            console.error(message);
+            return;
+        }
+
+        let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Error, message);
+        consoleMessage.shouldRevealConsole = true;
+
+        WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+    }
+
     // Public
 
     reset()
@@ -257,6 +272,52 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
         this._activeRecording.unloaded();
         this._activeRecording = null;
+    }
+
+    processJSON({filename, json, error})
+    {
+        if (error) {
+            WI.TimelineManager.synthesizeImportError(error);
+            return;
+        }
+
+        if (typeof json !== "object" || json === null) {
+            WI.TimelineManager.synthesizeImportError(WI.UIString("invalid JSON"));
+            return;
+        }
+
+        if (!json.recording  || typeof json.recording !== "object" || !json.overview || typeof json.overview !== "object" || typeof json.version !== "number") {
+            WI.TimelineManager.synthesizeImportError(WI.UIString("invalid JSON"));
+            return;
+        }
+
+        if (json.version !== WI.TimelineRecording.SerializationVersion) {
+            WI.NetworkManager.synthesizeImportError(WI.UIString("unsupported version"));
+            return;
+        }
+
+        let recordingData = json.recording;
+        let overviewData = json.overview;
+
+        let identifier = this._nextRecordingIdentifier++;
+        let newRecording = WI.TimelineRecording.import(identifier, recordingData, filename);
+        this._recordings.push(newRecording);
+
+        this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingCreated, {recording: newRecording});
+
+        if (this._isCapturing)
+            this.stopCapturing();
+
+        let oldRecording = this._activeRecording;
+        if (oldRecording) {
+            const importing = true;
+            oldRecording.unloaded(importing);
+        }
+
+        this._activeRecording = newRecording;
+
+        this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingLoaded, {oldRecording});
+        this.dispatchEventToListeners(WI.TimelineManager.Event.RecordingImported, {overviewData});
     }
 
     computeElapsedTime(timestamp)
@@ -1026,9 +1087,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         if (samples) {
             let {stackTraces} = samples;
             let topDownCallingContextTree = this.activeRecording.topDownCallingContextTree;
-            let bottomUpCallingContextTree = this.activeRecording.bottomUpCallingContextTree;
-            let topFunctionsTopDownCallingContextTree = this.activeRecording.topFunctionsTopDownCallingContextTree;
-            let topFunctionsBottomUpCallingContextTree = this.activeRecording.topFunctionsBottomUpCallingContextTree;
 
             // Calculate a per-sample duration.
             let timestampIndex = 0;
@@ -1062,12 +1120,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
             if (timestampIndex < timestampCount)
                 sampleDurations.fill(defaultDuration, sampleDurationIndex);
 
-            for (let i = 0; i < stackTraces.length; i++) {
-                topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-                bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-                topFunctionsTopDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-                topFunctionsBottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-            }
+            this.activeRecording.initializeCallingContextTrees(stackTraces, sampleDurations);
 
             // FIXME: This transformation should not be needed after introducing ProfileView.
             // Once we eliminate ProfileNodeTreeElements and ProfileNodeDataGridNodes.
@@ -1213,6 +1266,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 WI.TimelineManager.Event = {
     RecordingCreated: "timeline-manager-recording-created",
     RecordingLoaded: "timeline-manager-recording-loaded",
+    RecordingImported: "timeline-manager-recording-imported",
     CapturingWillStart: "timeline-manager-capturing-will-start",
     CapturingStarted: "timeline-manager-capturing-started",
     CapturingStopped: "timeline-manager-capturing-stopped"

@@ -136,6 +136,9 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
 
         this._pendingRecords = [];
         this._resourceDataGridNodeMap = new Map;
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Public
@@ -267,11 +270,16 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
 
     _networkTimelineRecordAdded(event)
     {
-        var resourceTimelineRecord = event.data.record;
+        let resourceTimelineRecord = event.data.record;
         console.assert(resourceTimelineRecord instanceof WI.ResourceTimelineRecord);
 
-        this._pendingRecords.push(resourceTimelineRecord);
+        this._processRecord(resourceTimelineRecord);
 
         this.needsLayout();
+    }
+
+    _processRecord(resourceTimelineRecord)
+    {
+        this._pendingRecords.push(resourceTimelineRecord);
     }
 };

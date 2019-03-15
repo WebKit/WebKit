@@ -1,5 +1,183 @@
 2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Timelines - Import / Export Timeline Recordings
+        https://bugs.webkit.org/show_bug.cgi?id=195709
+        <rdar://problem/23188921>
+
+        Reviewed by Devin Rousso.
+
+        Timeline exporting saves TimelineRecording and TimelineOverview state.
+        The TimelineRecording includes all kinds of model objects, such as
+        records, markers, memory pressure events, etc. It also includes raw
+        protocol data, such as script profiler samples. TimelineOverview
+        includes some of the view state to restore, such as the selected
+        time range, zoom level, and selected timeline.
+
+        Timeline importing constructs a new TimelineRecording by replaying
+        the records, markers, and other events, as well as re-initializing
+        more state. To finally display the imported recording, the content
+        view will immediately initialize start/current/end times and the
+        overview will restore the view state.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New strings.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.synthesizeImportError):
+        (WI.TimelineManager.prototype.importRecording):
+        Import API.
+
+        (WI.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        Initialize the samples on the recording via a different path
+        so that the data can be saved for exporting.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording):
+        (WI.TimelineRecording.import):
+        (WI.TimelineRecording.prototype.exportData):
+        (WI.TimelineRecording.prototype.get capturing):
+        (WI.TimelineRecording.prototype.get imported):
+        (WI.TimelineRecording.prototype.unloaded):
+        (WI.TimelineRecording.prototype.reset):
+        (WI.TimelineRecording.prototype.addEventMarker):
+        (WI.TimelineRecording.prototype.addRecord):
+        (WI.TimelineRecording.prototype.addMemoryPressureEvent):
+        (WI.TimelineRecording.prototype.initializeCallingContextTrees):
+        (WI.TimelineRecording.prototype.canExport):
+        Save data at the TimelineRecording level that can be used for export.
+        We only allow exporting a TimelineRecording that has started/stopped
+        at least once and is not currently capturing.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype.get navigationItems):
+        (WI.TimelineRecordingContentView.prototype.get supportsSave):
+        (WI.TimelineRecordingContentView.prototype.get saveData):
+        (WI.TimelineRecordingContentView.prototype.shown):
+        (WI.TimelineRecordingContentView.prototype._capturingStarted):
+        (WI.TimelineRecordingContentView.prototype._capturingStopped):
+        (WI.TimelineRecordingContentView.prototype._initializeImportedRecording):
+        (WI.TimelineRecordingContentView.prototype._exportTimelineRecording):
+        (WI.TimelineRecordingContentView.prototype._importButtonNavigationItemClicked):
+        (WI.TimelineRecordingContentView.prototype._recordingReset):
+        Add Import and Export buttons in the Timeline navigation bar.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        (WI.TimelineOverview.prototype.exportData):
+        (WI.TimelineOverview.prototype._instrumentAdded):
+        (WI.TimelineOverview.prototype._recordingImported):
+        When importing a recording update the TimelineOverview state
+        soon afterwards.
+
+        * UserInterface/Models/CPUTimelineRecord.js:
+        (WI.CPUTimelineRecord.fromJSON):
+        (WI.CPUTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/GarbageCollection.js:
+        (WI.GarbageCollection.fromJSON):
+        (WI.GarbageCollection.prototype.toJSON):
+        * UserInterface/Models/Geometry.js:
+        (WI.Quad.fromJSON):
+        (WI.Quad.prototype.toJSON):
+        * UserInterface/Models/HeapAllocationsTimelineRecord.js:
+        (WI.HeapAllocationsTimelineRecord.fromJSON):
+        (WI.HeapAllocationsTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/LayoutTimelineRecord.js:
+        (WI.LayoutTimelineRecord.fromJSON):
+        (WI.LayoutTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/MediaTimelineRecord.js:
+        (WI.MediaTimelineRecord.fromJSON):
+        (WI.MediaTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/MemoryPressureEvent.js:
+        (WI.MemoryPressureEvent.fromJSON):
+        (WI.MemoryPressureEvent.prototype.toJSON):
+        * UserInterface/Models/MemoryTimelineRecord.js:
+        (WI.MemoryTimelineRecord):
+        (WI.MemoryTimelineRecord.fromJSON):
+        (WI.MemoryTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/RenderingFrameTimelineRecord.js:
+        (WI.RenderingFrameTimelineRecord.fromJSON):
+        (WI.RenderingFrameTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/ResourceTimelineRecord.js:
+        (WI.ResourceTimelineRecord.fromJSON):
+        (WI.ResourceTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.fromJSON):
+        (WI.ScriptTimelineRecord.prototype.toJSON):
+        * UserInterface/Models/TimelineMarker.js:
+        (WI.TimelineMarker.fromJSON):
+        (WI.TimelineMarker.prototype.toJSON):
+        (WI.TimelineMarker.prototype.get type):
+        (WI.TimelineMarker.prototype.get details):
+        (WI.TimelineMarker.prototype.set time):
+        (WI.TimelineMarker):
+        * UserInterface/Models/TimelineRecord.js:
+        (WI.TimelineRecord.fromJSON):
+        (WI.TimelineRecord.prototype.toJSON):
+        Import / Export toJSON / fromJSON implementations.
+        
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph):
+        (WI.CPUTimelineOverviewGraph.prototype._cpuTimelineRecordAdded):
+        (WI.CPUTimelineOverviewGraph.prototype._processRecord):
+        * UserInterface/Views/LayoutTimelineOverviewGraph.js:
+        (WI.LayoutTimelineOverviewGraph):
+        (WI.LayoutTimelineOverviewGraph.prototype._layoutTimelineRecordAdded):
+        (WI.LayoutTimelineOverviewGraph.prototype._processRecord):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView):
+        (WI.LayoutTimelineView.prototype._layoutTimelineRecordAdded):
+        (WI.LayoutTimelineView.prototype._processRecord):
+        * UserInterface/Views/MediaTimelineView.js:
+        (WI.MediaTimelineView):
+        (WI.MediaTimelineView.prototype._handleRecordAdded):
+        (WI.MediaTimelineView.prototype._processRecord):
+        * UserInterface/Views/MemoryTimelineOverviewGraph.js:
+        (WI.MemoryTimelineOverviewGraph):
+        (WI.MemoryTimelineOverviewGraph.prototype._memoryTimelineRecordAdded):
+        (WI.MemoryTimelineOverviewGraph.prototype._processRecord):
+        * UserInterface/Views/MemoryTimelineView.js:
+        (WI.MemoryTimelineView):
+        (WI.MemoryTimelineView.prototype._memoryTimelineRecordAdded):
+        (WI.MemoryTimelineView.prototype._processRecord):
+        * UserInterface/Views/NetworkTimelineOverviewGraph.js:
+        (WI.NetworkTimelineOverviewGraph):
+        (WI.NetworkTimelineOverviewGraph.prototype.reset):
+        (WI.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded):
+        (WI.NetworkTimelineOverviewGraph.prototype._processRecord):
+        (WI.NetworkTimelineOverviewGraph.prototype._networkTimelineRecordAdded.compareByStartTime): Deleted.
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView):
+        (WI.NetworkTimelineView.prototype._networkTimelineRecordAdded):
+        (WI.NetworkTimelineView.prototype._processRecord):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WI.RenderingFrameTimelineView):
+        (WI.RenderingFrameTimelineView.prototype._renderingFrameTimelineRecordAdded):
+        (WI.RenderingFrameTimelineView.prototype._processRecord):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView):
+        (WI.ScriptDetailsTimelineView.prototype._scriptTimelineRecordAdded):
+        (WI.ScriptDetailsTimelineView.prototype._processRecord):
+        Add common _processRecord path to each timeline OverviewGraph and TimelineView.
+        By calling this in construction we populate graphs with TimelineRecords that
+        may have already existed. This is necessary for imports, but this also fixes
+        the case where you enable a timeline that had data and it didn't show data.
+
+        * UserInterface/Views/LayoutTimelineOverviewGraph.css:
+        (.timeline-overview-graph.layout-overview > .graph-row):
+        (.timeline-overview-graph.layout-overview > .graph-row > .timeline-record-bar):
+        (.timeline-overview-graph.layout-overview > .graph-row > .timeline-record-bar > .segment):
+        (.timeline-overview-graph.layout > .graph-row): Deleted.
+        (.timeline-overview-graph.layout > .graph-row > .timeline-record-bar): Deleted.
+        (.timeline-overview-graph.layout > .graph-row > .timeline-record-bar > .segment): Deleted.
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-layout.paint > .segment,):
+        (.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment,): Deleted.
+        We simplified some of the sub-record type enum strings. To do this we needed to change
+        "layout" to "layout-overview" to avoid a conflict.
+
+2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Network - Toggle Between Live Activity and Imported HAR resource collections
         https://bugs.webkit.org/show_bug.cgi?id=195734
 

@@ -34,6 +34,7 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
 
         this._timestamp = timestamp;
         this._categories = WI.MemoryTimelineRecord.memoryCategoriesFromProtocol(categories);
+        this._exportCategories = categories;
 
         this._totalSize = 0;
         for (let {size} of categories)
@@ -77,6 +78,23 @@ WI.MemoryTimelineRecord = class MemoryTimelineRecord extends WI.TimelineRecord
             {type: WI.MemoryCategory.Type.Layers, size: layersSize},
             {type: WI.MemoryCategory.Type.Page, size: pageSize},
         ];
+    }
+
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {timestamp, categories} = json;
+        return new WI.MemoryTimelineRecord(timestamp, categories);
+    }
+
+    toJSON()
+    {
+        return {
+            type: this.type,
+            timestamp: this.startTime,
+            categories: this._exportCategories,
+        };
     }
 
     // Public

@@ -51,6 +51,9 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         this._lastSelectedRecordInLayout = null;
 
         this.reset();
+
+        for (let record of this._cpuTimeline.records)
+            this._processRecord(record);
     }
 
     // Static
@@ -212,8 +215,13 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
     {
         let cpuTimelineRecord = event.data.record;
 
-        this._maxUsage = Math.max(this._maxUsage, cpuTimelineRecord.usage);
+        this._processRecord(cpuTimelineRecord);
 
         this.needsLayout();
+    }
+
+    _processRecord(cpuTimelineRecord)
+    {
+        this._maxUsage = Math.max(this._maxUsage, cpuTimelineRecord.usage);
     }
 };

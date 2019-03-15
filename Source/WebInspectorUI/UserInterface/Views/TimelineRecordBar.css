@@ -111,8 +111,8 @@ body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segm
 }
 
 
-.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-paint > .segment,
-.timeline-record-bar.timeline-record-type-layout.layout-timeline-record-composite > .segment {
+.timeline-record-bar.timeline-record-type-layout.paint > .segment,
+.timeline-record-bar.timeline-record-type-layout.composite > .segment {
     background-color: hsl(76, 49%, 60%);
     border-color: hsl(79, 45%, 51%);
 }
@@ -122,7 +122,7 @@ body[dir=rtl] :focus .selected .timeline-record-bar.has-inactive-segment > .segm
     border-color: hsl(273, 33%, 58%);
 }
 
-.timeline-record-bar.timeline-record-type-script.script-timeline-record-garbage-collected > .segment {
+.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment {
     background-color: hsl(23, 69%, 73%);
     border-color: hsl(11, 54%, 62%);    
 }

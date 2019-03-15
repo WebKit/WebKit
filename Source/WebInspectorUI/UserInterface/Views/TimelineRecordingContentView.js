@@ -64,6 +64,19 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             WI.settings.timelinesAutoStop.addEventListener(WI.Setting.Event.Changed, this._handleTimelinesAutoStopSettingChanged, this);
         }
 
+        this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export", WI.UIString("Export"), "Images/Export.svg", 15, 15);
+        this._exportButtonNavigationItem.toolTip = WI.UIString("Export (%s)").format(WI.saveKeyboardShortcut.displayName);
+        this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._exportButtonNavigationItemClicked, this);
+        this._exportButtonNavigationItem.enabled = false;
+
+        this._importButtonNavigationItem = new WI.ButtonNavigationItem("import", WI.UIString("Import"), "Images/Import.svg", 15, 15);
+        this._importButtonNavigationItem.toolTip = WI.UIString("Import");
+        this._importButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+        this._importButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._importButtonNavigationItemClicked, this);
+
         this._clearTimelineNavigationItem = new WI.ButtonNavigationItem("clear-timeline", WI.UIString("Clear Timeline (%s)").format(WI.clearKeyboardShortcut.displayName), "Images/NavigationItemTrash.svg", 15, 15);
         this._clearTimelineNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         this._clearTimelineNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._clearTimeline, this);
@@ -73,6 +86,9 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._progressView = new WI.TimelineRecordingProgressView;
         this._timelineContentBrowser.addSubview(this._progressView);
+
+        this._importedView = new WI.TimelineRecordingImportedView;
+        this._timelineContentBrowser.addSubview(this._importedView);
 
         this._timelineViewMap = new Map;
         this._pathComponentMap = new Map;
@@ -109,6 +125,11 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             this._instrumentAdded(instrument);
 
         this.showOverviewTimelineView();
+
+        if (this._recording.imported) {
+            let {startTime, endTime} = this._recording;
+            this._updateTimes(startTime, endTime, endTime);
+        }
     }
 
     // Public
@@ -167,6 +188,9 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         if (this._autoStopCheckboxNavigationItem)
             navigationItems.push(this._autoStopCheckboxNavigationItem);
         navigationItems.push(new WI.DividerNavigationItem);
+        navigationItems.push(this._importButtonNavigationItem);
+        navigationItems.push(this._exportButtonNavigationItem);
+        navigationItems.push(new WI.DividerNavigationItem);
         navigationItems.push(this._clearTimelineNavigationItem);
         return navigationItems;
     }
@@ -179,14 +203,12 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
     get supportsSave()
     {
-        let currentContentView = this._timelineContentBrowser.currentContentView;
-        return currentContentView && currentContentView.supportsSave;
+        return this._recording.canExport();
     }
 
     get saveData()
     {
-        let currentContentView = this._timelineContentBrowser.currentContentView;
-        return currentContentView && currentContentView.saveData || null;
+        return {customSaveHandler: () => { this._exportTimelineRecording(); }};
     }
 
     get currentTimelineView()
@@ -200,7 +222,9 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
 
         this._timelineOverview.shown();
         this._timelineContentBrowser.shown();
+
         this._clearTimelineNavigationItem.enabled = !this._recording.readonly && !isNaN(this._recording.startTime);
+        this._exportButtonNavigationItem.enabled = this._recording.canExport();
 
         this._currentContentViewDidChange();
 
@@ -292,6 +316,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._timelineOverview.viewMode = newViewMode;
         this._updateTimelineOverviewHeight();
         this._updateProgressView();
+        this._updateImportedView();
         this._updateFilterBar();
 
         if (timelineView) {
@@ -497,6 +522,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         if (!this._updating)
             this._startUpdatingCurrentTime(startTime);
         this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
+        this._exportButtonNavigationItem.enabled = false;
 
         // A discontinuity occurs when the recording is stopped and resumed at
         // a future time. Capturing started signals the end of the current
@@ -518,6 +544,8 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             this._updateTimelineViewTimes(this.currentTimelineView);
 
         this._discontinuityStartTime = event.data.endTime || this._currentTime;
+
+        this._exportButtonNavigationItem.enabled = this._recording.canExport();
     }
 
     _debuggerPaused(event)
@@ -560,6 +588,42 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     _handleTimelinesAutoStopSettingChanged(event)
     {
         this._autoStopCheckboxNavigationItem.checked = WI.settings.timelinesAutoStop.value;
+    }
+
+    _exportTimelineRecording()
+    {
+        let json = {
+            version: WI.TimelineRecording.SerializationVersion,
+            recording: this._recording.exportData(),
+            overview: this._timelineOverview.exportData(),
+        };
+        if (!json.recording || !json.overview) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let frameName = null;
+        let mainFrame = WI.networkManager.mainFrame;
+        if (mainFrame)
+            frameName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName;
+
+        let filename = frameName ? `${frameName}-recording` : this._recording.displayName;
+        let url = "web-inspector:///" + encodeURI(filename) + ".json";
+        WI.FileUtilities.save({
+            url,
+            content: JSON.stringify(json),
+            forceSaveAs: true,
+        });
+    }
+
+    _exportButtonNavigationItemClicked(event)
+    {
+        this._exportTimelineRecording();
+    }
+
+    _importButtonNavigationItemClicked(event)
+    {
+        WI.FileUtilities.importJSON((result) => WI.timelineManager.processJSON(result));
     }
 
     _clearTimeline(event)
@@ -664,6 +728,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._timelineOverview.reset();
         this._overviewTimelineView.reset();
         this._clearTimelineNavigationItem.enabled = false;
+        this._exportButtonNavigationItem.enabled = false;
     }
 
     _recordingUnloaded(event)
@@ -875,6 +940,11 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         let isCapturing = WI.timelineManager.isCapturing();
         this._progressView.visible = isCapturing && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
+    }
+
+    _updateImportedView()
+    {
+        this._importedView.visible = this._recording.imported && this.currentTimelineView && this.currentTimelineView.showsImportedRecordingMessage;
     }
 
     _updateFilterBar()

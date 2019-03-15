@@ -96,6 +96,9 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
 
         this.element.addEventListener("mousemove", this._handleGraphMouseMove.bind(this));
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Static
@@ -452,12 +455,17 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
         let memoryTimelineRecord = event.data.record;
         console.assert(memoryTimelineRecord instanceof WI.MemoryTimelineRecord);
 
+        this._processRecord(memoryTimelineRecord);
+
+        if (memoryTimelineRecord.startTime >= this.startTime && memoryTimelineRecord.endTime <= this.endTime)
+            this.needsLayout();
+    }
+
+    _processRecord(memoryTimelineRecord)
+    {
         if (!this._didInitializeCategories)
             this._initializeCategoryViews(memoryTimelineRecord);
 
         this._maxSize = Math.max(this._maxSize, memoryTimelineRecord.totalSize);
-
-        if (memoryTimelineRecord.startTime >= this.startTime && memoryTimelineRecord.endTime <= this.endTime)
-            this.needsLayout();
     }
 };

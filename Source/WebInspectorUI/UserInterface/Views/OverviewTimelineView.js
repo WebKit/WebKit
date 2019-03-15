@@ -52,7 +52,8 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         this._timelineRuler.addMarker(this._currentTimeMarker);
 
         this.element.classList.add("overview");
-        this.addSubview(this._dataGrid);
+        if (!this._recording.imported)
+            this.addSubview(this._dataGrid);
 
         this._networkTimeline = recording.timelines.get(WI.TimelineRecord.Type.Network);
         if (this._networkTimeline)
@@ -125,6 +126,11 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
 
     // Protected
 
+    get showsImportedRecordingMessage()
+    {
+        return true;
+    }
+
     dataGridNodePathComponentSelected(event)
     {
         let dataGridNode = event.data.pathComponent.timelineDataGridNode;
@@ -135,6 +141,9 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
 
     layout()
     {
+        if (this._recording.imported)
+            return;
+
         let oldZeroTime = this._timelineRuler.zeroTime;
         let oldStartTime = this._timelineRuler.startTime;
         let oldEndTime = this._timelineRuler.endTime;

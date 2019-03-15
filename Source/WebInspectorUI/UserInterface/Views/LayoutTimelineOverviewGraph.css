@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.timeline-overview-graph.layout > .graph-row {
+.timeline-overview-graph.layout-overview > .graph-row {
     height: 16px;
 }
 
-.timeline-overview-graph.layout > .graph-row > .timeline-record-bar {
+.timeline-overview-graph.layout-overview > .graph-row > .timeline-record-bar {
     height: 12px;
     margin-top: 4px;
 }
 
-.timeline-overview-graph.layout > .graph-row > .timeline-record-bar > .segment {
+.timeline-overview-graph.layout-overview > .graph-row > .timeline-record-bar > .segment {
     border-radius: 2px;
 }

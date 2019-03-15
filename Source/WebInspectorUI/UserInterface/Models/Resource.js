@@ -66,6 +66,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._statusText = null;
         this._cached = false;
         this._canceled = false;
+        this._finished = false;
         this._failed = false;
         this._failureReasonText = null;
         this._receivedNetworkLoadMetrics = false;

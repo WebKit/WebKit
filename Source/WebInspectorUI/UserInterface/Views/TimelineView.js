@@ -56,6 +56,12 @@ WI.TimelineView = class TimelineView extends WI.ContentView
         return true;
     }
 
+    get showsImportedRecordingMessage()
+    {
+        // Implemented by sub-classes if needed.
+        return false;
+    }
+
     get showsFilterBar()
     {
         // Implemented by sub-classes if needed.

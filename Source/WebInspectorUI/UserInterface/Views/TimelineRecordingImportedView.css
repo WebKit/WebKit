@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends WI.View
-{
-    constructor()
-    {
-        super();
-
-        this.element.classList.add("recording-progress");
-
-        let statusElement = document.createElement("div");
-        statusElement.classList.add("status");
-        statusElement.textContent = WI.UIString("Recording Timeline Data");
-        this.element.append(statusElement);
-
-        let spinner = new WI.IndeterminateProgressSpinner;
-        statusElement.append(spinner.element);
-
-        this._stopRecordingButtonElement = document.createElement("button");
-        this._stopRecordingButtonElement.textContent = WI.UIString("Stop Recording");
-        this._stopRecordingButtonElement.addEventListener("click", () => WI.timelineManager.stopCapturing());
-        this.element.append(this._stopRecordingButtonElement);
-    }
-
-    // Public
-
-    get visible()
-    {
-        return this._visible;
-    }
-
-    set visible(x)
-    {
-        if (this._visible === x)
-            return;
-
-        // FIXME: remove once <https://webkit.org/b/150741> is fixed.
-        this._visible = x;
-        this.element.classList.toggle("hidden", !this._visible);
-    }
-};
+.content-view.timeline-recording > .content-browser .recording-imported .message-text-view > .message {
+    font-size: var(--message-text-view-large-font-size);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}

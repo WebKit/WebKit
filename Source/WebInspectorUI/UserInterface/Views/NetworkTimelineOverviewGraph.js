@@ -36,6 +36,9 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
         timeline.addEventListener(WI.Timeline.Event.TimesUpdated, this.needsLayout, this);
 
         this.reset();
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Public
@@ -47,12 +50,12 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
         this._nextDumpRow = 0;
         this._timelineRecordGridRows = [];
 
-        for (var i = 0; i < WI.NetworkTimelineOverviewGraph.MaximumRowCount; ++i)
+        for (let i = 0; i < WI.NetworkTimelineOverviewGraph.MaximumRowCount; ++i)
             this._timelineRecordGridRows.push([]);
 
         this.element.removeChildren();
 
-        for (var rowRecords of this._timelineRecordGridRows) {
+        for (let rowRecords of this._timelineRecordGridRows) {
             rowRecords.__element = document.createElement("div");
             rowRecords.__element.classList.add("graph-row");
             this.element.appendChild(rowRecords.__element);
@@ -106,21 +109,24 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
 
     _networkTimelineRecordAdded(event)
     {
-        var resourceTimelineRecord = event.data.record;
+        let resourceTimelineRecord = event.data.record;
         console.assert(resourceTimelineRecord instanceof WI.ResourceTimelineRecord);
 
-        function compareByStartTime(a, b)
-        {
-            return a.startTime - b.startTime;
-        }
+        this._processRecord(resourceTimelineRecord);
 
+        this.needsLayout();
+    }
+
+    _processRecord(resourceTimelineRecord)
+    {
+        let compareByStartTime = (a, b) => a.startTime - b.startTime;
         let minimumBarPaddingTime = WI.TimelineOverview.MinimumDurationPerPixel * (WI.TimelineRecordBar.MinimumWidthPixels + WI.TimelineRecordBar.MinimumMarginPixels);
 
         // Try to find a row that has room and does not overlap a previous record.
-        var foundRowForRecord = false;
-        for (var i = 0; i < this._timelineRecordGridRows.length; ++i) {
-            var rowRecords = this._timelineRecordGridRows[i];
-            var lastRecord = rowRecords.lastValue;
+        let foundRowForRecord = false;
+        for (let i = 0; i < this._timelineRecordGridRows.length; ++i) {
+            let rowRecords = this._timelineRecordGridRows[i];
+            let lastRecord = rowRecords.lastValue;
 
             if (!lastRecord || lastRecord.endTime + minimumBarPaddingTime <= resourceTimelineRecord.startTime) {
                 insertObjectIntoSortedArray(resourceTimelineRecord, rowRecords, compareByStartTime);
@@ -132,9 +138,9 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
 
         if (!foundRowForRecord) {
             // Try to find a row that does not overlap a previous record's active time, but it can overlap the inactive time.
-            for (var i = 0; i < this._timelineRecordGridRows.length; ++i) {
-                var rowRecords = this._timelineRecordGridRows[i];
-                var lastRecord = rowRecords.lastValue;
+            for (let i = 0; i < this._timelineRecordGridRows.length; ++i) {
+                let rowRecords = this._timelineRecordGridRows[i];
+                let lastRecord = rowRecords.lastValue;
                 console.assert(lastRecord);
 
                 if (lastRecord.activeStartTime + minimumBarPaddingTime <= resourceTimelineRecord.startTime) {
@@ -152,8 +158,6 @@ WI.NetworkTimelineOverviewGraph = class NetworkTimelineOverviewGraph extends WI.
                 this._nextDumpRow = 0;
             insertObjectIntoSortedArray(resourceTimelineRecord, this._timelineRecordGridRows[this._nextDumpRow++], compareByStartTime);
         }
-
-        this.needsLayout();
     }
 };
 

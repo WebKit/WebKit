@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.TimelineRecordingProgressView = class TimelineRecordingProgressView extends WI.View
+WI.TimelineRecordingImportedView = class TimelineRecordingImportedView extends WI.View
 {
     constructor()
     {
         super();
 
-        this.element.classList.add("recording-progress");
-
-        let statusElement = document.createElement("div");
-        statusElement.classList.add("status");
-        statusElement.textContent = WI.UIString("Recording Timeline Data");
-        this.element.append(statusElement);
-
-        let spinner = new WI.IndeterminateProgressSpinner;
-        statusElement.append(spinner.element);
-
-        this._stopRecordingButtonElement = document.createElement("button");
-        this._stopRecordingButtonElement.textContent = WI.UIString("Stop Recording");
-        this._stopRecordingButtonElement.addEventListener("click", () => WI.timelineManager.stopCapturing());
-        this.element.append(this._stopRecordingButtonElement);
+        this.element.classList.add("recording-imported");
+        this.element.appendChild(WI.createMessageTextView(WI.UIString("Imported Timeline Recording")));
     }
 
     // Public

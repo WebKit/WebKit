@@ -45,6 +45,24 @@ WI.GarbageCollection = class GarbageCollection
         return new WI.GarbageCollection(type, payload.startTime, payload.endTime);
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {type, startTime, endTime} = json;
+        return new WI.GarbageCollection(type, startTime, endTime);
+    }
+
+    toJSON()
+    {
+        return {
+            __type: "GarbageCollection",
+            type: this.type,
+            startTime: this.startTime,
+            endTime: this.endTime,
+        };
+    }
+
     // Public
 
     get type() { return this._type; }
@@ -58,6 +76,6 @@ WI.GarbageCollection = class GarbageCollection
 };
 
 WI.GarbageCollection.Type = {
-    Partial: Symbol("Partial"),
-    Full: Symbol("Full")
+    Partial: "partial",
+    Full: "full",
 };

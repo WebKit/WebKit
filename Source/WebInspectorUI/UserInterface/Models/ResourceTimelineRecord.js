@@ -33,6 +33,26 @@ WI.ResourceTimelineRecord = class ResourceTimelineRecord extends WI.TimelineReco
         this._resource.addEventListener(WI.Resource.Event.TimestampsDidChange, this._dispatchUpdatedEvent, this);
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {entry, archiveStartTime} = json;
+        let localResource = WI.LocalResource.fromHAREntry(entry, archiveStartTime);
+        return new WI.ResourceTimelineRecord(localResource);
+    }
+
+    toJSON()
+    {
+        const content = "";
+
+        return {
+            type: this.type,
+            archiveStartTime: this._resource.requestSentWalltime - this.startTime,
+            entry: WI.HARBuilder.entry(this._resource, content),
+        };
+    }
+
     // Public
 
     get resource()

@@ -61,6 +61,29 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
         }
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {eventType, startTime, endTime, callFrames, sourceCodeLocation, quad} = json;
+        quad = quad ? WI.Quad.fromJSON(quad) : null;
+        return new WI.LayoutTimelineRecord(eventType, startTime, endTime, callFrames, sourceCodeLocation, quad);
+    }
+
+    toJSON()
+    {
+        // FIXME: CallFrames
+        // FIXME: SourceCodeLocation
+
+        return {
+            type: this.type,
+            eventType: this._eventType,
+            startTime: this.startTime,
+            endTime: this.endTime,
+            quad: this._quad || undefined,
+        }
+    }
+
     // Public
 
     get eventType()
@@ -97,13 +120,13 @@ WI.LayoutTimelineRecord = class LayoutTimelineRecord extends WI.TimelineRecord
 };
 
 WI.LayoutTimelineRecord.EventType = {
-    InvalidateStyles: "layout-timeline-record-invalidate-styles",
-    RecalculateStyles: "layout-timeline-record-recalculate-styles",
-    InvalidateLayout: "layout-timeline-record-invalidate-layout",
-    ForcedLayout: "layout-timeline-record-forced-layout",
-    Layout: "layout-timeline-record-layout",
-    Paint: "layout-timeline-record-paint",
-    Composite: "layout-timeline-record-composite"
+    InvalidateStyles: "invalidate-styles",
+    RecalculateStyles: "recalculate-styles",
+    InvalidateLayout: "invalidate-layout",
+    ForcedLayout: "forced-layout",
+    Layout: "layout",
+    Paint: "paint",
+    Composite: "composite"
 };
 
 WI.LayoutTimelineRecord.TypeIdentifier = "layout-timeline-record";

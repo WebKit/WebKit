@@ -98,6 +98,9 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._layoutTimelineRecordAdded, this);
 
         this._pendingRecords = [];
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Public
@@ -231,16 +234,21 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
     _layoutTimelineRecordAdded(event)
     {
-        var layoutTimelineRecord = event.data.record;
+        let layoutTimelineRecord = event.data.record;
         console.assert(layoutTimelineRecord instanceof WI.LayoutTimelineRecord);
 
+        this._processRecord(layoutTimelineRecord);
+
+        this.needsLayout();
+    }
+
+    _processRecord(layoutTimelineRecord)
+    {
         // Only add top-level records, to avoid processing child records multiple times.
         if (layoutTimelineRecord.parent instanceof WI.LayoutTimelineRecord)
             return;
 
         this._pendingRecords.push(layoutTimelineRecord);
-
-        this.needsLayout();
     }
 
     _updateHighlight()

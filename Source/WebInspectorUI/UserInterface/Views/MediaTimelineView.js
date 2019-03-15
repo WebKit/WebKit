@@ -79,6 +79,9 @@ WI.MediaTimelineView = class MediaTimelineView extends WI.TimelineView
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._handleRecordAdded, this);
 
         this._pendingRecords = [];
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Public
@@ -191,12 +194,17 @@ WI.MediaTimelineView = class MediaTimelineView extends WI.TimelineView
 
     _handleRecordAdded(event)
     {
-        let record = event.data.record;
-        console.assert(record instanceof WI.MediaTimelineRecord);
+        let mediaTimelineRecord = event.data.record;
+        console.assert(mediaTimelineRecord instanceof WI.MediaTimelineRecord);
 
-        this._pendingRecords.push(record);
+        this._processRecord(mediaTimelineRecord);
 
         this.needsLayout();
+    }
+
+    _processRecord(mediaTimelineRecord)
+    {
+        this._pendingRecords.push(mediaTimelineRecord);
     }
 
     _handleSelectionPathComponentSiblingSelected(event)

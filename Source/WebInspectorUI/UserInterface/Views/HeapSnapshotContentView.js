@@ -65,16 +65,6 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
         return [];
     }
 
-    get supportsSave()
-    {
-        return this.representedObject instanceof WI.HeapSnapshotProxy;
-    }
-
-    get saveData()
-    {
-        return {customSaveHandler: () => { this._exportSnapshot(); }};
-    }
-
     shown()
     {
         super.shown();

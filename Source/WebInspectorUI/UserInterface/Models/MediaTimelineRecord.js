@@ -37,6 +37,27 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
         this._isLowPower = isLowPower || false;
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {eventType, timestamp} = json;
+        return new WI.MediaTimelineRecord(eventType, timestamp, json);
+    }
+
+    toJSON()
+    {
+        // FIXME: DOMNode
+
+        return {
+            type: this.type,
+            eventType: this._eventType,
+            timestamp: this.startTime,
+            domEvent: this._domEvent,
+            isLowPower: this._isLowPower,
+        };
+    }
+
     // Public
 
     get eventType() { return this._eventType; }

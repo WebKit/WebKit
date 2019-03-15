@@ -74,7 +74,7 @@ WI.SourceMapResource = class SourceMapResource extends WI.Resource
         return resourceURLComponents.path.substring(sourceMappingBasePathURLComponents.path.length, resourceURLComponents.length);
     }
 
-    requestContentFromBackend(callback)
+    requestContentFromBackend()
     {
         // Revert the markAsFinished that was done in the constructor.
         this.revertMarkAsFinished();

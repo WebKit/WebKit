@@ -52,6 +52,9 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
         this._memoryPressureMarkerElements = [];
 
         this.reset();
+
+        for (let record of this._memoryTimeline.records)
+            this._processRecord(record);
     }
 
     // Protected
@@ -244,7 +247,15 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
     _memoryTimelineRecordAdded(event)
     {
         let memoryTimelineRecord = event.data.record;
+        console.assert(memoryTimelineRecord instanceof WI.MemoryTimelineRecord);
 
+        this._processRecord(memoryTimelineRecord);
+
+        this.needsLayout();
+    }
+
+    _processRecord(memoryTimelineRecord)
+    {
         this._maxSize = Math.max(this._maxSize, memoryTimelineRecord.totalSize);
 
         if (!this._didInitializeCategories) {
@@ -254,8 +265,6 @@ WI.MemoryTimelineOverviewGraph = class MemoryTimelineOverviewGraph extends WI.Ti
                 types.push(category.type);
             this._chart.initializeSections(types);
         }
-
-        this.needsLayout();
     }
 
     _memoryTimelineMemoryPressureEventAdded(event)

@@ -87,6 +87,9 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         timeline.addEventListener(WI.Timeline.Event.Refreshed, this._scriptTimelineRecordRefreshed, this);
 
         this._pendingRecords = [];
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     // Public
@@ -224,12 +227,17 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
 
     _scriptTimelineRecordAdded(event)
     {
-        var scriptTimelineRecord = event.data.record;
+        let scriptTimelineRecord = event.data.record;
         console.assert(scriptTimelineRecord instanceof WI.ScriptTimelineRecord);
 
-        this._pendingRecords.push(scriptTimelineRecord);
+        this._processRecord(scriptTimelineRecord);
 
         this.needsLayout();
+    }
+
+    _processRecord(scriptTimelineRecord)
+    {
+        this._pendingRecords.push(scriptTimelineRecord);
     }
 
     _scriptTimelineRecordRefreshed(event)

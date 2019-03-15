@@ -219,22 +219,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         return components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
     }
 
-    get supportsSave()
-    {
-        if (this._showingSnapshotList)
-            return false;
-
-        if (!this._contentViewContainer.currentContentView)
-            return false;
-
-        return this._contentViewContainer.currentContentView.supportsSave;
-    }
-
-    get saveData()
-    {
-        return this._contentViewContainer.currentContentView.saveData;
-    }
-
     selectRecord(record)
     {
         if (record)

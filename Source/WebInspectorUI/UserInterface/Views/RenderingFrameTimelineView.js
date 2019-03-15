@@ -90,6 +90,9 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._renderingFrameTimelineRecordAdded, this);
 
         this._pendingRecords = [];
+
+        for (let record of timeline.records)
+            this._processRecord(record);
     }
 
     static displayNameForDurationFilter(filter)
@@ -277,13 +280,18 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
 
     _renderingFrameTimelineRecordAdded(event)
     {
-        var renderingFrameTimelineRecord = event.data.record;
+        let renderingFrameTimelineRecord = event.data.record;
         console.assert(renderingFrameTimelineRecord instanceof WI.RenderingFrameTimelineRecord);
         console.assert(renderingFrameTimelineRecord.children.length, "Missing child records for rendering frame.");
 
-        this._pendingRecords.push(renderingFrameTimelineRecord);
+        this._processRecord(renderingFrameTimelineRecord);
 
         this.needsLayout();
+    }
+
+    _processRecord(renderingFrameTimelineRecord)
+    {
+        this._pendingRecords.push(renderingFrameTimelineRecord);
     }
 
     _scopeBarSelectionDidChange()

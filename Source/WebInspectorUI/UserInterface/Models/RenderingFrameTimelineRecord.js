@@ -69,6 +69,27 @@ WI.RenderingFrameTimelineRecord = class RenderingFrameTimelineRecord extends WI.
         }
     }
 
+    // Import / Export
+
+    static fromJSON(json)
+    {
+        let {startTime, endTime} = json;
+        let record = new WI.RenderingFrameTimelineRecord(startTime, endTime);
+        record.setupFrameIndex();
+        return record;
+    }
+
+    toJSON()
+    {
+        // FIXME: durationByTaskType data cannot be calculated if this does not have children.
+
+        return {
+            type: this.type,
+            startTime: this.startTime,
+            endTime: this.endTime,
+        };
+    }
+
     // Public
 
     get frameIndex()

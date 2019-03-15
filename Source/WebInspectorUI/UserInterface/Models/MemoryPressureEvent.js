@@ -52,6 +52,23 @@ WI.MemoryPressureEvent = class MemoryPressureEvent
         return new WI.MemoryPressureEvent(timestamp, severity);
     }
 
+    // Import / Export
+
+
+    static fromJSON(json)
+    {
+        let {timestamp, severity} = json;
+        return new WI.MemoryPressureEvent(timestamp, severity);
+    }
+
+    toJSON()
+    {
+        return {
+            timestamp: this._timestamp,
+            severity: this._severity,
+        };
+    }
+
     // Public
 
     get timestamp() { return this._timestamp; }
@@ -59,6 +76,6 @@ WI.MemoryPressureEvent = class MemoryPressureEvent
 };
 
 WI.MemoryPressureEvent.Severity = {
-    Critical: Symbol("Critical"),
-    NonCritical: Symbol("NonCritical"),
+    Critical: "critical",
+    NonCritical: "non-critical",
 };
