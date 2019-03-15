@@ -711,8 +711,6 @@ void JSGlobalObject::init(VM& vm)
     
     FOR_EACH_LAZY_BUILTIN_TYPE(CREATE_PROTOTYPE_FOR_LAZY_TYPE)
     
-#undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
-    
     // Constructors
 
     ObjectConstructor* objectConstructor = ObjectConstructor::create(vm, this, ObjectConstructor::createStructure(vm, this, m_functionPrototype.get()), m_objectPrototype.get());
@@ -825,7 +823,10 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         FOR_BIG_INT_BUILTIN_TYPE_WITH_CONSTRUCTOR(PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE)
 
 #undef PUT_CONSTRUCTOR_FOR_SIMPLE_TYPE
-    m_iteratorResultObjectStructure.set(vm, this, createIteratorResultObjectStructure(vm, *this));
+    m_iteratorResultObjectStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(createIteratorResultObjectStructure(init.vm, *init.owner));
+        });
     
     m_evalFunction.initLater(
         [] (const Initializer<JSFunction>& init) {
@@ -1043,33 +1044,40 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
 #if ENABLE(WEBASSEMBLY)
     if (Options::useWebAssembly()) {
         auto* webAssemblyPrototype = WebAssemblyPrototype::create(vm, this, WebAssemblyPrototype::createStructure(vm, this, m_objectPrototype.get()));
-        m_webAssemblyStructure.set(vm, this, JSWebAssembly::createStructure(vm, this, webAssemblyPrototype));
-        m_webAssemblyModuleRecordStructure.set(vm, this, WebAssemblyModuleRecord::createStructure(vm, this, m_objectPrototype.get()));
-        m_webAssemblyFunctionStructure.set(vm, this, WebAssemblyFunction::createStructure(vm, this, m_functionPrototype.get()));
-        m_webAssemblyWrapperFunctionStructure.set(vm, this, WebAssemblyWrapperFunction::createStructure(vm, this, m_functionPrototype.get()));
-        m_webAssemblyToJSCalleeStructure.set(vm, this, WebAssemblyToJSCallee::createStructure(vm, this, jsNull()));
-        auto* webAssembly = JSWebAssembly::create(vm, this, m_webAssemblyStructure.get());
+        m_webAssemblyModuleRecordStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(WebAssemblyModuleRecord::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
+            });
+        m_webAssemblyFunctionStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(WebAssemblyFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+            });
+        m_webAssemblyWrapperFunctionStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
+            });
+        m_webAssemblyToJSCalleeStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(WebAssemblyToJSCallee::createStructure(init.vm, init.owner, jsNull()));
+            });
+        auto* webAssembly = JSWebAssembly::create(vm, this, JSWebAssembly::createStructure(vm, this, webAssemblyPrototype));
         putDirectWithoutTransition(vm, Identifier::fromString(exec, "WebAssembly"), webAssembly, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
-#define CREATE_WEBASSEMBLY_CONSTRUCTOR(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) do { \
-        typedef capitalName ## Prototype Prototype; \
-        typedef capitalName ## Constructor Constructor; \
-        typedef JS ## capitalName JSObj; \
-        auto* base = prototypeBase ## Prototype(); \
-        auto* prototype = Prototype::create(vm, this, Prototype::createStructure(vm, this, base)); \
-        auto* structure = JSObj::createStructure(vm, this, prototype); \
-        auto* constructor = Constructor::create(vm, Constructor::createStructure(vm, this, this->functionPrototype()), prototype); \
-        prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
-        m_ ## lowerName ## Prototype.set(vm, this, prototype); \
-        m_ ## properName ## Structure.set(vm, this, structure); \
-        webAssembly->putDirectWithoutTransition(vm, Identifier::fromString(this->globalExec(), #jsName), constructor, static_cast<unsigned>(PropertyAttribute::DontEnum)); \
-    } while (0);
+#define CREATE_WEBASSEMBLY_PROTOTYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
+    m_ ## properName ## Structure.initLater(\
+        [] (LazyClassStructure::Initializer& init) { \
+            init.setPrototype(capitalName##Prototype::create(init.vm, init.global, capitalName##Prototype::createStructure(init.vm, init.global, init.global->prototypeBase ## Prototype()))); \
+            init.setStructure(instanceType::createStructure(init.vm, init.global, init.prototype)); \
+            init.setConstructor(capitalName ## Constructor::create(init.vm, capitalName ## Constructor::createStructure(init.vm, init.global, init.global->functionPrototype()), jsCast<capitalName ## Prototype*>(init.prototype))); \
+        });
 
-        FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(CREATE_WEBASSEMBLY_CONSTRUCTOR)
+        FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(CREATE_WEBASSEMBLY_PROTOTYPE)
 
 #undef CREATE_WEBASSEMBLY_CONSTRUCTOR
     }
 #endif // ENABLE(WEBASSEMBLY)
+
+#undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
 
     auto setupAdaptiveWatchpoint = [&] (JSObject* base, const Identifier& ident) -> ObjectPropertyCondition {
         // Performing these gets should not throw.
@@ -1710,7 +1718,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_generatorFunctionStructure);
     visitor.append(thisObject->m_asyncFunctionStructure);
     visitor.append(thisObject->m_asyncGeneratorFunctionStructure);
-    visitor.append(thisObject->m_iteratorResultObjectStructure);
+    thisObject->m_iteratorResultObjectStructure.visit(visitor);
     visitor.append(thisObject->m_regExpMatchesArrayStructure);
     visitor.append(thisObject->m_regExpMatchesArrayWithGroupsStructure);
     thisObject->m_moduleRecordStructure.visit(visitor);
@@ -1729,27 +1737,25 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         visitor.append(thisObject->m_ ## properName ## Structure); \
     } while (0);
 
+#define VISIT_LAZY_TYPE(CapitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
+    thisObject->m_ ## properName ## Structure.visit(visitor);
+
     FOR_EACH_SIMPLE_BUILTIN_TYPE(VISIT_SIMPLE_TYPE)
     if (UNLIKELY(Options::useBigInt()))
         FOR_BIG_INT_BUILTIN_TYPE_WITH_CONSTRUCTOR(VISIT_SIMPLE_TYPE)
     FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(VISIT_SIMPLE_TYPE)
+
+    FOR_EACH_LAZY_BUILTIN_TYPE(VISIT_LAZY_TYPE)
     
 #if ENABLE(WEBASSEMBLY)
-    visitor.append(thisObject->m_webAssemblyStructure);
-    visitor.append(thisObject->m_webAssemblyModuleRecordStructure);
-    visitor.append(thisObject->m_webAssemblyFunctionStructure);
-    visitor.append(thisObject->m_webAssemblyWrapperFunctionStructure);
-    visitor.append(thisObject->m_webAssemblyToJSCalleeStructure);
-    FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_SIMPLE_TYPE)
+    thisObject->m_webAssemblyModuleRecordStructure.visit(visitor);
+    thisObject->m_webAssemblyFunctionStructure.visit(visitor);
+    thisObject->m_webAssemblyWrapperFunctionStructure.visit(visitor);
+    thisObject->m_webAssemblyToJSCalleeStructure.visit(visitor);
+    FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_LAZY_TYPE)
 #endif // ENABLE(WEBASSEMBLY)
 
 #undef VISIT_SIMPLE_TYPE
-
-#define VISIT_LAZY_TYPE(CapitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
-    thisObject->m_ ## properName ## Structure.visit(visitor);
-    
-    FOR_EACH_LAZY_BUILTIN_TYPE(VISIT_LAZY_TYPE)
-
 #undef VISIT_LAZY_TYPE
 
     for (unsigned i = NumberOfTypedArrayTypes; i--;)

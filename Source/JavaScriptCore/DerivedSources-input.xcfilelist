@@ -173,6 +173,7 @@ $(PROJECT_DIR)/wasm/generateWasm.py
 $(PROJECT_DIR)/wasm/generateWasmB3IRGeneratorInlinesHeader.py
 $(PROJECT_DIR)/wasm/generateWasmOpsHeader.py
 $(PROJECT_DIR)/wasm/generateWasmValidateInlinesHeader.py
+$(PROJECT_DIR)/wasm/js/JSWebAssembly.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyCompileErrorPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyInstanceConstructor.cpp

@@ -160,6 +160,7 @@ OBJECT_LUT_HEADERS = \
     JSONObject.lut.h \
     JSPromiseConstructor.lut.h \
     JSPromisePrototype.lut.h \
+    JSWebAssembly.lut.h \
     MapPrototype.lut.h \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \

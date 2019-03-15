@@ -98,6 +98,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/SymbolConstructor.cpp
     runtime/SymbolPrototype.cpp
 
+    wasm/js/JSWebAssembly.cpp
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
     wasm/js/WebAssemblyInstanceConstructor.cpp

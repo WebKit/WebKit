@@ -34,7 +34,37 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSWebAssembly);
 
-const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssembly) };
+#define DEFINE_CALLBACK_FOR_CONSTRUCTOR(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
+static JSValue create##capitalName(VM& vm, JSObject* object) \
+{ \
+    JSWebAssembly* webAssembly = jsCast<JSWebAssembly*>(object); \
+    JSGlobalObject* globalObject = webAssembly->globalObject(vm); \
+    return globalObject->properName##Constructor(); \
+}
+
+FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_CALLBACK_FOR_CONSTRUCTOR)
+
+#undef DEFINE_CALLBACK_FOR_CONSTRUCTOR
+
+}
+
+#include "JSWebAssembly.lut.h"
+
+namespace JSC {
+
+const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, &jsWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(JSWebAssembly) };
+
+/* Source for JSWebAssembly.lut.h
+@begin jsWebAssemblyTable
+  CompileError    createWebAssemblyCompileError  DontEnum|PropertyCallback
+  Instance        createWebAssemblyInstance      DontEnum|PropertyCallback
+  LinkError       createWebAssemblyLinkError     DontEnum|PropertyCallback
+  Memory          createWebAssemblyMemory        DontEnum|PropertyCallback
+  Module          createWebAssemblyModule        DontEnum|PropertyCallback
+  RuntimeError    createWebAssemblyRuntimeError  DontEnum|PropertyCallback
+  Table           createWebAssemblyTable         DontEnum|PropertyCallback
+@end
+*/
 
 JSWebAssembly* JSWebAssembly::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

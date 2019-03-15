@@ -58,7 +58,8 @@ namespace JSC {
 
 class JSWebAssembly final : public JSNonFinalObject {
 public:
-    typedef JSNonFinalObject Base;
+    using Base = JSNonFinalObject;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static JSWebAssembly* create(VM&, JSGlobalObject*, Structure*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

@@ -39,6 +39,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSModuleLoader.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSONObject.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromiseConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSPromisePrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JSWebAssembly.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h
