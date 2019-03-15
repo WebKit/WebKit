@@ -172,7 +172,7 @@ public:
         bool opaque;
         bool contentsHidden;
         bool userInteractionEnabled;
-        std::unique_ptr<WebCore::Region> eventRegion;
+        WebCore::Region eventRegion;
     };
 
     explicit RemoteLayerTreeTransaction();

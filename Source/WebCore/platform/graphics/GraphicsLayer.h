@@ -35,6 +35,7 @@
 #include "GraphicsLayerClient.h"
 #include "Path.h"
 #include "PlatformLayer.h"
+#include "Region.h"
 #include "ScrollableArea.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
@@ -54,7 +55,6 @@ namespace WebCore {
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
-class Region;
 class TiledBacking;
 class TimingFunction;
 class TransformationMatrix;
@@ -454,8 +454,8 @@ public:
     virtual void setShapeLayerWindRule(WindRule);
 
     // Non-null if the event sensitive region of the layer differs from the layer bounds.
-    const Region* eventRegion() const { return m_eventRegion.get(); }
-    virtual void setEventRegion(std::unique_ptr<Region>&&);
+    const Region& eventRegion() const { return m_eventRegion; }
+    virtual void setEventRegion(Region&&);
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
@@ -731,7 +731,7 @@ protected:
     FloatRoundedRect m_backdropFiltersRect;
     Optional<FloatRect> m_animationExtent;
 
-    std::unique_ptr<Region> m_eventRegion;
+    Region m_eventRegion;
 
 #if USE(CA)
     WindRule m_shapeLayerWindRule { WindRule::NonZero };

@@ -143,6 +143,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , opaque(other.opaque)
     , contentsHidden(other.contentsHidden)
     , userInteractionEnabled(other.userInteractionEnabled)
+    , eventRegion(other.eventRegion)
 {
     // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
     // FIXME: LayerProperties shouldn't be copyable; PlatformCALayerRemote::clone should copy the relevant properties.
@@ -155,10 +156,6 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
 
     if (other.filters)
         filters = std::make_unique<WebCore::FilterOperations>(*other.filters);
-
-    if (other.eventRegion)
-        eventRegion = std::make_unique<WebCore::Region>(*other.eventRegion);
-
 }
 
 void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) const
@@ -282,11 +279,8 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
     if (changedProperties & UserInteractionEnabledChanged)
         encoder << userInteractionEnabled;
 
-    if (changedProperties & EventRegionChanged) {
-        encoder << !!eventRegion;
-        if (eventRegion)
-            encoder << *eventRegion;
-    }
+    if (changedProperties & EventRegionChanged)
+        encoder << eventRegion;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, LayerProperties& result)
@@ -511,16 +505,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & EventRegionChanged) {
-        bool hasEventRegion = false;
-        if (!decoder.decode(hasEventRegion))
+        Optional<WebCore::Region> eventRegion;
+        decoder >> eventRegion;
+        if (!eventRegion)
             return false;
-        if (hasEventRegion) {
-            Optional<WebCore::Region> eventRegion;
-            decoder >> eventRegion;
-            if (!eventRegion)
-                return false;
-            result.eventRegion = std::make_unique<Region>(WTFMove(*eventRegion));
-        }
+        result.eventRegion = WTFMove(*eventRegion);
     }
 
     return true;

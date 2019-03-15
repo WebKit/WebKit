@@ -55,8 +55,8 @@ public:
 
     WebCore::GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
-    const WebCore::Region* eventRegion() const { return m_eventRegion.get(); }
-    void setEventRegion(std::unique_ptr<WebCore::Region>&&);
+    const WebCore::Region& eventRegion() const { return m_eventRegion; }
+    void setEventRegion(const WebCore::Region&);
 
     void detachFromParent();
 
@@ -75,7 +75,7 @@ private:
     RetainPtr<UIView> m_uiView;
 #endif
 
-    std::unique_ptr<WebCore::Region> m_eventRegion;
+    WebCore::Region m_eventRegion;
 };
 
 }

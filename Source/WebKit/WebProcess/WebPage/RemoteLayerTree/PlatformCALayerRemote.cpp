@@ -871,18 +871,12 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
-const Region* PlatformCALayerRemote::eventRegion() const
+void PlatformCALayerRemote::setEventRegion(const WebCore::Region& eventRegion)
 {
-    return m_properties.eventRegion.get();
-}
-
-void PlatformCALayerRemote::setEventRegion(const WebCore::Region* eventRegion)
-{
-    const auto* oldEventRegion = m_properties.eventRegion.get();
-    if (arePointingToEqualData(oldEventRegion, eventRegion))
+    if (m_properties.eventRegion == eventRegion)
         return;
 
-    m_properties.eventRegion = eventRegion ? std::make_unique<WebCore::Region>(*eventRegion) : nullptr;
+    m_properties.eventRegion = eventRegion;
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::EventRegionChanged);
 }
 

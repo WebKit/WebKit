@@ -46,23 +46,19 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
     for (UIView *view in [parent subviews]) {
         CGPoint subviewPoint = [view convertPoint:point fromView:parent];
 
-        // FIXME: This doesn't cover all possible cases yet.
-        auto isTransparent = [&] {
+        auto handlesEvent = [&] {
+            if (![view pointInside:subviewPoint withEvent:event])
+                return false;
             if ([view isKindOfClass:[WKTiledBackingView class]])
-                return false;
+                return true;
             if (![view isKindOfClass:[WKCompositingView class]])
-                return false;
-            if (view.layer.contents)
-                return false;
-            return true;
+                return true;
+            auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
+            return node->eventRegion().contains(WebCore::IntPoint(subviewPoint));
         }();
 
-        if (!isTransparent && [view pointInside:subviewPoint withEvent:event]) {
-            auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
-            auto* eventRegion = node ? node->eventRegion() : nullptr;
-            if (!eventRegion || eventRegion->contains(WebCore::IntPoint(subviewPoint)))
-                viewsAtPoint.append(view);
-        }
+        if (handlesEvent)
+            viewsAtPoint.append(view);
 
         if (![view subviews])
             return;

@@ -87,9 +87,9 @@ void RemoteLayerTreeNode::detachFromParent()
     [layer() removeFromSuperlayer];
 }
 
-void RemoteLayerTreeNode::setEventRegion(std::unique_ptr<WebCore::Region>&& eventRegion)
+void RemoteLayerTreeNode::setEventRegion(const WebCore::Region& eventRegion)
 {
-    m_eventRegion = WTFMove(eventRegion);
+    m_eventRegion = eventRegion;
 }
 
 void RemoteLayerTreeNode::initializeLayer()

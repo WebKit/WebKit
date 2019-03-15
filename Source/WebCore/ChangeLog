@@ -1,3 +1,24 @@
+2019-03-15  Antti Koivisto  <antti@apple.com>
+
+        Use Region for event region even when it is a rectangle
+        https://bugs.webkit.org/show_bug.cgi?id=195803
+
+        Reviewed by Simon Fraser.
+
+        Region type is now optimized for the common single-rectangle case so we can simplify code.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setEventRegion):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::eventRegion const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setEventRegion):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2019-03-15  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed unified build fix: GPUBindGroup has a default public constructor and destructor, so all its member

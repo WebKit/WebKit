@@ -984,9 +984,9 @@ void GraphicsLayerCA::setShapeLayerWindRule(WindRule windRule)
     noteLayerPropertyChanged(WindRuleChanged);
 }
 
-void GraphicsLayerCA::setEventRegion(std::unique_ptr<Region>&& eventRegion)
+void GraphicsLayerCA::setEventRegion(Region&& eventRegion)
 {
-    if (arePointingToEqualData(eventRegion, m_eventRegion))
+    if (eventRegion == m_eventRegion)
         return;
 
     GraphicsLayer::setEventRegion(WTFMove(eventRegion));

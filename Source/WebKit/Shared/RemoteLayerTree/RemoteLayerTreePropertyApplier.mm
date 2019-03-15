@@ -262,7 +262,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     updateMask(node, properties, relatedLayers);
 
     if (properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged)
-        node.setEventRegion(properties.eventRegion ? std::make_unique<WebCore::Region>(*properties.eventRegion) : nullptr);
+        node.setEventRegion(properties.eventRegion);
 
 #if PLATFORM(IOS_FAMILY)
     applyPropertiesToUIView(node.uiView(), properties, relatedLayers);

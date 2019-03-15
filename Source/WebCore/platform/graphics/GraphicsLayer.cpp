@@ -31,7 +31,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "LayoutRect.h"
-#include "Region.h"
 #include "RotateTransformOperation.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -412,9 +411,9 @@ void GraphicsLayer::setShapeLayerWindRule(WindRule windRule)
 #endif
 }
 
-void GraphicsLayer::setEventRegion(std::unique_ptr<Region>&& eventRegion)
+void GraphicsLayer::setEventRegion(Region&& eventRegion)
 {
-    m_eventRegion = WTFMove(eventRegion);
+    m_eventRegion = eventRegion;
 }
 
 void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
