@@ -47,6 +47,7 @@
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
 
+- (void)resetInteractionCallbacks;
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)_didEndRotation;

@@ -88,18 +88,7 @@ IGNORE_WARNINGS_END
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    self.didStartFormControlInteractionCallback = nil;
-    self.didEndFormControlInteractionCallback = nil;
-    self.didShowForcePressPreviewCallback = nil;
-    self.didDismissForcePressPreviewCallback = nil;
-    self.willBeginZoomingCallback = nil;
-    self.didEndZoomingCallback = nil;
-    self.didShowKeyboardCallback = nil;
-    self.didHideKeyboardCallback = nil;
-    self.didShowMenuCallback = nil;
-    self.didHideMenuCallback = nil;
-    self.didEndScrollingCallback = nil;
-    self.rotationDidEndCallback = nil;
+    [self resetInteractionCallbacks];
 
     self.zoomToScaleCompletionHandler = nil;
     self.retrieveSpeakSelectionContentCompletionHandler = nil;
@@ -138,6 +127,22 @@ IGNORE_WARNINGS_END
 {
     if (self.didDismissForcePressPreviewCallback)
         self.didDismissForcePressPreviewCallback();
+}
+
+- (void)resetInteractionCallbacks
+{
+    self.didStartFormControlInteractionCallback = nil;
+    self.didEndFormControlInteractionCallback = nil;
+    self.didShowForcePressPreviewCallback = nil;
+    self.didDismissForcePressPreviewCallback = nil;
+    self.willBeginZoomingCallback = nil;
+    self.didEndZoomingCallback = nil;
+    self.didShowKeyboardCallback = nil;
+    self.didHideKeyboardCallback = nil;
+    self.didShowMenuCallback = nil;
+    self.didHideMenuCallback = nil;
+    self.didEndScrollingCallback = nil;
+    self.rotationDidEndCallback = nil;
 }
 
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler

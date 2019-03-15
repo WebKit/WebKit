@@ -1,3 +1,27 @@
+2019-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Crash under -[TestRunnerWKWebView _didShowMenu] while running layout tests on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=195810
+
+        Reviewed by Tim Horton.
+
+        Ensure that the process of resetting web view state between tests doesn't also invoke testing callbacks
+        registered by the previous layout test. This fixes an occasional crash when hiding the callout menu after
+        ending certain layout tests.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView dealloc]):
+        (-[TestRunnerWKWebView resetInteractionCallbacks]):
+
+        Pull logic to reset all of TestRunnerWKWebView's callback handler blocks into a separate helper method; use this
+        helper method when destroying the web view, and when resetting state between tests.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Hide the callout menu *after* clearing out interaction callbacks registered on the web view.
+
 2019-03-15  Sihui Liu  <sihui_liu@apple.com>
 
         [ Mojave WK1 ] Layout Test storage/indexeddb/database-odd-names.html is failing
