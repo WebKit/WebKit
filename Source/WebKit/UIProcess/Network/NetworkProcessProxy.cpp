@@ -1063,8 +1063,12 @@ void NetworkProcessProxy::addSession(Ref<WebsiteDataStore>&& store)
     if (canSendMessage())
         send(Messages::NetworkProcess::AddWebsiteDataStore { store->parameters() }, 0);
     auto sessionID = store->sessionID();
-    if (!sessionID.isEphemeral())
+    if (!sessionID.isEphemeral()) {
+#if ENABLE(INDEXED_DATABASE)
+        createSymLinkForFileUpgrade(store->resolvedIndexedDatabaseDirectory());
+#endif
         m_websiteDataStores.set(sessionID, WTFMove(store));
+    }
 }
 
 void NetworkProcessProxy::removeSession(PAL::SessionID sessionID)
@@ -1212,6 +1216,19 @@ void NetworkProcessProxy::clearUploadAssertion()
     ASSERT(m_uploadAssertion);
     m_uploadAssertion = nullptr;
 }
+
+#if ENABLE(INDEXED_DATABASE)
+void NetworkProcessProxy::createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory)
+{
+    if (indexedDatabaseDirectory.isEmpty())
+        return;
+
+    String oldVersionDirectory = FileSystem::pathByAppendingComponent(indexedDatabaseDirectory, "v0");
+    FileSystem::deleteEmptyDirectory(oldVersionDirectory);
+    if (!FileSystem::fileExists(oldVersionDirectory))
+        FileSystem::createSymbolicLink(indexedDatabaseDirectory, oldVersionDirectory);
+}
+#endif
 
 } // namespace WebKit
 

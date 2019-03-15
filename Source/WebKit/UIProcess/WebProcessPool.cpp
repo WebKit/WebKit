@@ -551,6 +551,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         parameters.defaultDataStoreParameters.indexedDatabaseDirectory = API::WebsiteDataStore::defaultDataStore()->websiteDataStore().parameters().indexedDatabaseDirectory;
     
     SandboxExtension::createHandleForReadWriteDirectory(parameters.defaultDataStoreParameters.indexedDatabaseDirectory, parameters.defaultDataStoreParameters.indexedDatabaseDirectoryExtensionHandle);
+    m_networkProcess->createSymLinkForFileUpgrade(parameters.defaultDataStoreParameters.indexedDatabaseDirectory);
 #endif
 
 #if ENABLE(SERVICE_WORKER)

@@ -2121,23 +2121,33 @@ void NetworkProcess::accessToTemporaryFileComplete(const String& path)
     FileSystem::deleteFile(path);
 }
 
+void NetworkProcess::collectIndexedDatabaseOriginsForVersion(const String& path, HashSet<WebCore::SecurityOriginData>& securityOrigins)
+{
+    if (path.isEmpty())
+        return;
+
+    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
+        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
+        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier)) {
+            securityOrigins.add(WTFMove(*securityOrigin));
+        
+            for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
+                databaseIdentifier = FileSystem::pathGetFileName(originPath);
+                if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
+                    securityOrigins.add(WTFMove(*securityOrigin));
+            }
+        }
+    }
+}
+
 HashSet<WebCore::SecurityOriginData> NetworkProcess::indexedDatabaseOrigins(const String& path)
 {
     if (path.isEmpty())
         return { };
     
     HashSet<WebCore::SecurityOriginData> securityOrigins;
-    for (auto& topOriginPath : FileSystem::listDirectory(path, "*")) {
-        auto databaseIdentifier = FileSystem::pathGetFileName(topOriginPath);
-        if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-            securityOrigins.add(WTFMove(*securityOrigin));
-        
-        for (auto& originPath : FileSystem::listDirectory(topOriginPath, "*")) {
-            databaseIdentifier = FileSystem::pathGetFileName(originPath);
-            if (auto securityOrigin = SecurityOriginData::fromDatabaseIdentifier(databaseIdentifier))
-                securityOrigins.add(WTFMove(*securityOrigin));
-        }
-    }
+    collectIndexedDatabaseOriginsForVersion(FileSystem::pathByAppendingComponent(path, "v0"), securityOrigins);
+    collectIndexedDatabaseOriginsForVersion(FileSystem::pathByAppendingComponent(path, "v1"), securityOrigins);
 
     return securityOrigins;
 }

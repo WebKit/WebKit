@@ -176,6 +176,10 @@ public:
     
     void takeUploadAssertion();
     void clearUploadAssertion();
+    
+#if ENABLE(INDEXED_DATABASE)
+    void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
+#endif
 
 private:
     // AuxiliaryProcessProxy

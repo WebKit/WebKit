@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<script>
+var request = window.indexedDB.open("IndexedDBOther");
+request.onsuccess = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("Success");
+}
+
+request.onerror = () => {
+    window.webkit.messageHandlers.testHandler.postMessage("Error");
+}
+</script>

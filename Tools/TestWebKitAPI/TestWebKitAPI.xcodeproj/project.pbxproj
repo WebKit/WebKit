@@ -774,6 +774,9 @@
 		CA5B94D72191005B0059FE38 /* IndexedDBTempFileSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA5B94D62191005B0059FE38 /* IndexedDBTempFileSize.mm */; };
 		CA97B394219366600045DF6F /* IndexedDBUserDelete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA97B3922193663B0045DF6F /* IndexedDBUserDelete.mm */; };
 		CA97B3952193667A0045DF6F /* IndexedDBUserDelete.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CA97B393219366470045DF6F /* IndexedDBUserDelete.html */; };
+		CAB0FF5222332407006CA5B0 /* IndexedDBFileName-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CAB0FF51223323F6006CA5B0 /* IndexedDBFileName-1.html */; };
+		CAB0FF5322332407006CA5B0 /* IndexedDBFileName-2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CAB0FF50223323F6006CA5B0 /* IndexedDBFileName-2.html */; };
+		CAB0FF5522332C57006CA5B0 /* IndexedDBFileName.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */; };
 		CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */; };
 		CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */; };
 		CD227E44211A4D5D00D285AF /* PreferredAudioBufferSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD227E43211A4D5D00D285AF /* PreferredAudioBufferSize.mm */; };
@@ -1143,6 +1146,8 @@
 				935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */,
 				935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */,
 				51A587851D2739E3004BA9AF /* IndexedDBDatabaseProcessKill-1.html in Copy Resources */,
+				CAB0FF5222332407006CA5B0 /* IndexedDBFileName-1.html in Copy Resources */,
+				CAB0FF5322332407006CA5B0 /* IndexedDBFileName-2.html in Copy Resources */,
 				51BCEE4E1C84F53B0042C82E /* IndexedDBMultiProcess-1.html in Copy Resources */,
 				51BCEE4F1C84F53B0042C82E /* IndexedDBMultiProcess-2.html in Copy Resources */,
 				51A5877D1D1B49CD004BA9AF /* IndexedDBMultiProcess-3.html in Copy Resources */,
@@ -2097,6 +2102,9 @@
 		CA5B94D62191005B0059FE38 /* IndexedDBTempFileSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBTempFileSize.mm; sourceTree = "<group>"; };
 		CA97B3922193663B0045DF6F /* IndexedDBUserDelete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBUserDelete.mm; sourceTree = "<group>"; };
 		CA97B393219366470045DF6F /* IndexedDBUserDelete.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IndexedDBUserDelete.html; sourceTree = "<group>"; };
+		CAB0FF50223323F6006CA5B0 /* IndexedDBFileName-2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBFileName-2.html"; sourceTree = "<group>"; };
+		CAB0FF51223323F6006CA5B0 /* IndexedDBFileName-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "IndexedDBFileName-1.html"; sourceTree = "<group>"; };
+		CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBFileName.mm; sourceTree = "<group>"; };
 		CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuImgWithVideo.mm; sourceTree = "<group>"; };
 		CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = ContextMenuImgWithVideo.html; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
@@ -2532,6 +2540,7 @@
 				510477751D298E03009747EB /* IDBDeleteRecovery.mm */,
 				5110FCEF1E01CBAA006F8D0B /* IDBIndexUpgradeToV2.mm */,
 				51A587841D272EF3004BA9AF /* IndexedDBDatabaseProcessKill.mm */,
+				CAB0FF5422332C3A006CA5B0 /* IndexedDBFileName.mm */,
 				51BCEE491C84F4AF0042C82E /* IndexedDBMultiProcess.mm */,
 				51B1EE8D1C80F5880064FB98 /* IndexedDBPersistence.mm */,
 				57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */,
@@ -2922,6 +2931,8 @@
 				934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */,
 				934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */,
 				51A587821D272EB5004BA9AF /* IndexedDBDatabaseProcessKill-1.html */,
+				CAB0FF51223323F6006CA5B0 /* IndexedDBFileName-1.html */,
+				CAB0FF50223323F6006CA5B0 /* IndexedDBFileName-2.html */,
 				51BCEE4C1C84F52C0042C82E /* IndexedDBMultiProcess-1.html */,
 				51BCEE4D1C84F52C0042C82E /* IndexedDBMultiProcess-2.html */,
 				51A5877C1D1B3D8D004BA9AF /* IndexedDBMultiProcess-3.html */,
@@ -4106,6 +4117,7 @@
 				510477781D29923B009747EB /* IDBDeleteRecovery.mm in Sources */,
 				5110FCFA1E01CDB8006F8D0B /* IDBIndexUpgradeToV2.mm in Sources */,
 				51A587861D273AA9004BA9AF /* IndexedDBDatabaseProcessKill.mm in Sources */,
+				CAB0FF5522332C57006CA5B0 /* IndexedDBFileName.mm in Sources */,
 				7C83E0BE1D0A651300FEBCF3 /* IndexedDBMultiProcess.mm in Sources */,
 				7C83E0BF1D0A652200FEBCF3 /* IndexedDBPersistence.mm in Sources */,
 				57599E211F07191900A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm in Sources */,

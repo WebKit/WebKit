@@ -1,3 +1,46 @@
+2019-03-15  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mojave WK1 ] Layout Test storage/indexeddb/database-odd-names.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190350
+        <rdar://problem/45089503>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::collectIndexedDatabaseOriginsForVersion):
+        (WebKit::NetworkProcess::indexedDatabaseOrigins):
+        * NetworkProcess/NetworkProcess.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::createSymLinkForFileUpgrade): For efficientcy and atomicity, we choose to use
+        symlink to create v0 folder. Because network process does not have the permission to create a symlink, we need 
+        to do this in UI process. UI process would create v0 folder inside the IndexedDB directory if there isn't one.
+        Also if there is a v0 directory but it doesn't have content, it means it's not a correct symlink and we need to 
+        delete it and create again.
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
+2019-03-15  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mojave WK1 ] Layout Test storage/indexeddb/database-odd-names.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190350
+        <rdar://problem/45089503>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::collectIndexedDatabaseOriginsForVersion):
+        (WebKit::NetworkProcess::indexedDatabaseOrigins):
+        * NetworkProcess/NetworkProcess.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::addSession):
+        (WebKit::NetworkProcessProxy::createSymLinkForFileUpgrade):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2019-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Restrict iokit-user-client-class "IOHIDLibUserClient" from WebKit

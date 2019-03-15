@@ -33,6 +33,7 @@
 
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
+#include <pal/crypto/CryptoDigest.h>
 #include <sqlite3.h>
 #include <wtf/FileSystem.h>
 
@@ -111,6 +112,24 @@ Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName
 Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
     return FileSystem::getFileModificationTime(fileName);
+}
+    
+String SQLiteFileSystem::computeHashForFileName(const String& fileName)
+{
+    auto cryptoDigest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    cryptoDigest->addBytes(fileName.utf8().data(), fileName.utf8().length());
+    auto digest = cryptoDigest->computeHash();
+    
+    // Convert digest to hex.
+    char* start = 0;
+    unsigned digestLength = digest.size();
+    CString result = CString::newUninitialized(digestLength * 2, start);
+    char* buffer = start;
+    for (size_t i = 0; i < digestLength; ++i) {
+        snprintf(buffer, 3, "%02X", digest.at(i));
+        buffer += 2;
+    }
+    return String::fromUTF8(result);
 }
 
 } // namespace WebCore

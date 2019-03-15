@@ -87,7 +87,7 @@ IDBError SQLiteIDBTransaction::commit()
 
 void SQLiteIDBTransaction::moveBlobFilesIfNecessary()
 {
-    String databaseDirectory = m_backingStore.fullDatabaseDirectory();
+    String databaseDirectory = m_backingStore.databaseDirectory();
     for (auto& entry : m_blobTemporaryAndStoredFilenames) {
         if (!FileSystem::hardLinkOrCopyFile(entry.first, FileSystem::pathByAppendingComponent(databaseDirectory, entry.second)))
             LOG_ERROR("Failed to link/copy temporary blob file '%s' to location '%s'", entry.first.utf8().data(), FileSystem::pathByAppendingComponent(databaseDirectory, entry.second).utf8().data());
@@ -103,7 +103,7 @@ void SQLiteIDBTransaction::deleteBlobFilesIfNecessary()
     if (m_blobRemovedFilenames.isEmpty())
         return;
 
-    String databaseDirectory = m_backingStore.fullDatabaseDirectory();
+    String databaseDirectory = m_backingStore.databaseDirectory();
     for (auto& entry : m_blobRemovedFilenames) {
         String fullPath = FileSystem::pathByAppendingComponent(databaseDirectory, entry);
         m_backingStore.temporaryFileHandler().accessToTemporaryFileComplete(fullPath);

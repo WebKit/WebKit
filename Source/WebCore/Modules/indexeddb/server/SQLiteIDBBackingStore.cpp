@@ -232,10 +232,11 @@ static const String& blobFilesTableSchemaAlternate()
 
 SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseRootDirectory, IDBBackingStoreTemporaryFileHandler& fileHandler, uint64_t quota)
     : m_identifier(identifier)
+    , m_databaseRootDirectory(databaseRootDirectory)
     , m_temporaryFileHandler(fileHandler)
     , m_quota(quota)
 {
-    m_absoluteDatabaseDirectory = identifier.databaseDirectoryRelativeToRoot(databaseRootDirectory);
+    m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
 
 SQLiteIDBBackingStore::~SQLiteIDBBackingStore()
@@ -764,18 +765,50 @@ String SQLiteIDBBackingStore::filenameForDatabaseName() const
     return filename;
 }
 
-String SQLiteIDBBackingStore::fullDatabaseDirectory() const
+String SQLiteIDBBackingStore::fullDatabasePathForDirectory(const String& fullDatabaseDirectory)
 {
-    ASSERT(!m_identifier.databaseName().isNull());
-
-    return FileSystem::pathByAppendingComponent(m_absoluteDatabaseDirectory, filenameForDatabaseName());
+    return FileSystem::pathByAppendingComponent(fullDatabaseDirectory, "IndexedDB.sqlite3");
 }
 
 String SQLiteIDBBackingStore::fullDatabasePath() const
 {
-    ASSERT(!m_identifier.databaseName().isNull());
+    return fullDatabasePathForDirectory(m_databaseDirectory);
+}
 
-    return FileSystem::pathByAppendingComponent(fullDatabaseDirectory(), "IndexedDB.sqlite3");
+String SQLiteIDBBackingStore::databaseNameFromFile(const String& databasePath)
+{
+    SQLiteDatabase database;
+    if (!database.open(databasePath)) {
+        LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8().data());
+        return { };
+    }
+    if (!database.tableExists("IDBDatabaseInfo"_s)) {
+        LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
+        database.close();
+        return { };
+    }
+    SQLiteStatement sql(database, "SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';");
+    auto databaseName = sql.getColumnText(0);
+    database.close();
+    return databaseName;
+}
+
+String SQLiteIDBBackingStore::fullDatabaseDirectoryWithUpgrade()
+{
+    String oldOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v0");
+    String oldDatabaseDirectory = FileSystem::pathByAppendingComponent(oldOriginDirectory, filenameForDatabaseName());
+    String newOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
+    String fileNameHash = SQLiteFileSystem::computeHashForFileName(m_identifier.databaseName());
+    Vector<String> directoriesWithSameHash = FileSystem::listDirectory(newOriginDirectory, fileNameHash + "*");
+    String newDatabaseDirectory = FileSystem::pathByAppendingComponent(newOriginDirectory, fileNameHash);
+    FileSystem::makeAllDirectories(newDatabaseDirectory);
+
+    if (FileSystem::fileExists(oldDatabaseDirectory)) {
+        FileSystem::moveFile(oldDatabaseDirectory, newDatabaseDirectory);
+        FileSystem::deleteEmptyDirectory(oldOriginDirectory);
+    }
+
+    return newDatabaseDirectory;
 }
 
 IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info)
@@ -787,7 +820,6 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { };
     }
 
-    FileSystem::makeAllDirectories(fullDatabaseDirectory());
     String dbFilename = fullDatabasePath();
 
     m_sqliteDB = std::make_unique<SQLiteDatabase>();
@@ -846,7 +878,7 @@ uint64_t SQLiteIDBBackingStore::quotaForOrigin() const
 {
     ASSERT(!isMainThread());
     uint64_t diskFreeSpaceSize = 0;
-    FileSystem::getVolumeFreeSpace(m_absoluteDatabaseDirectory, diskFreeSpaceSize);
+    FileSystem::getVolumeFreeSpace(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory), diskFreeSpaceSize);
     return std::min(diskFreeSpaceSize / 2, m_quota);
 }
 
@@ -862,7 +894,9 @@ uint64_t SQLiteIDBBackingStore::databasesSizeForFolder(const String& folder)
 
 uint64_t SQLiteIDBBackingStore::databasesSizeForOrigin() const
 {
-    return databasesSizeForFolder(m_absoluteDatabaseDirectory);
+    String oldVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v0");
+    String newVersionOriginDirectory = m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory, "v1");
+    return databasesSizeForFolder(oldVersionOriginDirectory) + databasesSizeForFolder(newVersionOriginDirectory);
 }
 
 uint64_t SQLiteIDBBackingStore::maximumSize() const
@@ -1909,7 +1943,6 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
     }
 
     ASSERT(!blobURLSet.isEmpty());
-    String databaseDirectory = fullDatabaseDirectory();
     for (auto& blobURL : blobURLSet) {
         auto* sql = cachedStatement(SQL::BlobFilenameForBlobURL, "SELECT fileName FROM BlobFiles WHERE blobURL = ?;"_s);
         if (!sql
@@ -1926,7 +1959,7 @@ IDBError SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord(int64_t objec
         blobURLs.append(blobURL);
 
         String fileName = sql->getColumnText(0);
-        blobFilePaths.append(FileSystem::pathByAppendingComponent(databaseDirectory, fileName));
+        blobFilePaths.append(FileSystem::pathByAppendingComponent(m_databaseDirectory, fileName));
     }
     sessionID = m_identifier.sessionID();
 
@@ -2605,9 +2638,8 @@ void SQLiteIDBBackingStore::deleteBackingStore()
             LOG_ERROR("Error getting all blob filenames to be deleted");
     }
 
-    String databaseDirectory = fullDatabaseDirectory();
     for (auto& file : blobFiles) {
-        String fullPath = FileSystem::pathByAppendingComponent(databaseDirectory, file);
+        String fullPath = FileSystem::pathByAppendingComponent(m_databaseDirectory, file);
         if (!FileSystem::deleteFile(fullPath))
             LOG_ERROR("Error deleting blob file %s", fullPath.utf8().data());
     }
@@ -2616,8 +2648,8 @@ void SQLiteIDBBackingStore::deleteBackingStore()
         closeSQLiteDB();
 
     SQLiteFileSystem::deleteDatabaseFile(dbFilename);
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(fullDatabaseDirectory());
-    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_absoluteDatabaseDirectory);
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_databaseDirectory);
+    SQLiteFileSystem::deleteEmptyDatabaseDirectory(m_identifier.databaseDirectoryRelativeToRoot(m_databaseRootDirectory));
 }
 
 void SQLiteIDBBackingStore::unregisterCursor(SQLiteIDBCursor& cursor)

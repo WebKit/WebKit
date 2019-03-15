@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -63,7 +64,10 @@ TEST(IndexedDB, IndexUpgradeToV2)
     NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
     NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"IndexUpgrade" withExtension:@"blob" subdirectory:@"TestWebKitAPI.resources"];
 
-    NSURL *targetURL = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/file__0/index-upgrade-test" stringByExpandingTildeInPath]];
+    NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test");
+    NSString *originDirectory = @"~/Library/WebKit/TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
+    NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash] stringByExpandingTildeInPath];
+    NSURL *targetURL = [NSURL fileURLWithPath:databaseDirectory];
     [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
     [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
 

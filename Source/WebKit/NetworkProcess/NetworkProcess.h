@@ -429,6 +429,7 @@ private:
 
 #if ENABLE(INDEXED_DATABASE)
     void addIndexedDatabaseSession(PAL::SessionID, String&, SandboxExtension::Handle&);
+    void collectIndexedDatabaseOriginsForVersion(const String&, HashSet<WebCore::SecurityOriginData>&);
     HashSet<WebCore::SecurityOriginData> indexedDatabaseOrigins(const String& path);
     Ref<WebCore::IDBServer::IDBServer> createIDBServer(PAL::SessionID);
 #endif

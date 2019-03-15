@@ -1,3 +1,29 @@
+2019-03-15  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Mojave WK1 ] Layout Test storage/indexeddb/database-odd-names.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=190350
+        <rdar://problem/45089503>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/IDBIndexUpgradeToV2.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDB.sqlite3:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDB.sqlite3-shm:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDB.sqlite3-wal:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName-1.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName-2.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBFileName.mm: Added.
+        (-[IndexedDBFileNameMessageHandler userContentController:didReceiveScriptMessage:]):
+        (runTest):
+        (createDirectories):
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBTempFileSize.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/StoreBlobThenDelete.mm:
+        (TEST):
+
 2019-03-15  Timothy Hatcher  <timothy@apple.com>
 
         Add support to WebPage for getting the contents as an attributed string.

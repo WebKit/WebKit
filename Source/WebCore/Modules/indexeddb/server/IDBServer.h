@@ -138,6 +138,10 @@ private:
     void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
     void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 
+    void upgradeFilesIfNecessary();
+    void removeDatabasesModifiedSinceForVersion(WallTime, const String&);
+    void removeDatabasesWithOriginsForVersion(const Vector<SecurityOriginData>&, const String&);
+
     class QuotaUser final : public StorageQuotaUser {
         WTF_MAKE_FAST_ALLOCATED;
     public:

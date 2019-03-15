@@ -80,6 +80,8 @@ public:
     // fileName - The file name.
     WEBCORE_EXPORT static bool deleteDatabaseFile(const String& fileName);
 
+    WEBCORE_EXPORT static String computeHashForFileName(const String& fileName);
+
 #if PLATFORM(IOS_FAMILY)
     // Truncates a database file. Used when MobileSafariSettings deletes a database file,
     // since deleting the file nukes the POSIX file locks which would potentially cause Safari
