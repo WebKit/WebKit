@@ -952,7 +952,12 @@ http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
 
-http/tests/ssl [ Skip ]
+http/tests/ssl/iframe-upgrade.https.html [ Skip ]
+http/tests/ssl/mixedContent/insecure-websocket.html [ Failure ]
+webkit.org/b/195741 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]
+http/tests/ssl/upgrade-origin-usage.html [ Failure ]
+
+http/tests/ssl/media-stream [ Skip ]
 
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
 

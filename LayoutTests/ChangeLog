@@ -1,3 +1,9 @@
+2019-03-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for WinCairo port
+
+        * platform/wincairo/TestExpectations: Unskipped http/tests/ssl and Marked them the current results.
+
 2019-03-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to capture a screenshot of a node from within the page
