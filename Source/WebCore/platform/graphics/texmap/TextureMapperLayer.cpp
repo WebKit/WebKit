@@ -335,7 +335,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
     }
 
     nonOverlapRegion.translate(options.offset);
-    Vector<IntRect> rects = nonOverlapRegion.rects();
+    auto rects = nonOverlapRegion.rects();
 
     for (auto& rect : rects) {
         if (!rect.intersects(options.textureMapper.clipBounds()))

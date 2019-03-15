@@ -324,12 +324,6 @@ template<> struct ArgumentCoder<WebCore::Path> {
     static Optional<WebCore::Path> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::Region> {
-    static void encode(Encoder&, const WebCore::Region&);
-    static bool decode(Decoder&, WebCore::Region&);
-    static Optional<WebCore::Region> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
     static bool decode(Decoder&, WebCore::Length&);

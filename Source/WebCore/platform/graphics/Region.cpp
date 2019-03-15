@@ -42,19 +42,54 @@ Region::Region()
 
 Region::Region(const IntRect& rect)
     : m_bounds(rect)
-    , m_shape(rect)
 {
 }
 
-Vector<IntRect> Region::rects() const
+Region::Region(const Region& other)
+    : m_bounds(other.m_bounds)
+    , m_shape(other.copyShape())
 {
-    Vector<IntRect> rects;
+}
 
-    for (Shape::SpanIterator span = m_shape.spans_begin(), end = m_shape.spans_end(); span != end && span + 1 != end; ++span) {
+Region::Region(Region&& other)
+    : m_bounds(WTFMove(other.m_bounds))
+    , m_shape(WTFMove(other.m_shape))
+{
+}
+
+Region::~Region()
+{
+}
+
+Region& Region::operator=(const Region& other)
+{
+    m_bounds = other.m_bounds;
+    m_shape = other.copyShape();
+    return *this;
+}
+
+Region& Region::operator=(Region&& other)
+{
+    m_bounds = WTFMove(other.m_bounds);
+    m_shape = WTFMove(other.m_shape);
+    return *this;
+}
+
+Vector<IntRect, 1> Region::rects() const
+{
+    Vector<IntRect, 1> rects;
+
+    if (!m_shape) {
+        if (!m_bounds.isEmpty())
+            rects.uncheckedAppend(m_bounds);
+        return rects;
+    }
+
+    for (Shape::SpanIterator span = m_shape->spans_begin(), end = m_shape->spans_end(); span != end && span + 1 != end; ++span) {
         int y = span->y;
         int height = (span + 1)->y - y;
 
-        for (Shape::SegmentIterator segment = m_shape.segments_begin(span), end = m_shape.segments_end(span); segment != end && segment + 1 != end; segment += 2) {
+        for (Shape::SegmentIterator segment = m_shape->segments_begin(span), end = m_shape->segments_end(span); segment != end && segment + 1 != end; segment += 2) {
             int x = *segment;
             int width = *(segment + 1) - x;
 
@@ -70,7 +105,10 @@ bool Region::contains(const Region& region) const
     if (!m_bounds.contains(region.m_bounds))
         return false;
 
-    return Shape::compareShapes<Shape::CompareContainsOperation>(m_shape, region.m_shape);
+    if (!m_shape)
+        return true;
+
+    return Shape::compareShapes<Shape::CompareContainsOperation>(*m_shape, region.m_shape ? *region.m_shape : Shape(region.m_bounds));
 }
 
 bool Region::contains(const IntPoint& point) const
@@ -78,7 +116,10 @@ bool Region::contains(const IntPoint& point) const
     if (!m_bounds.contains(point))
         return false;
 
-    for (Shape::SpanIterator span = m_shape.spans_begin(), end = m_shape.spans_end(); span != end && span + 1 != end; ++span) {
+    if (!m_shape)
+        return true;
+
+    for (Shape::SpanIterator span = m_shape->spans_begin(), end = m_shape->spans_end(); span != end && span + 1 != end; ++span) {
         int y = span->y;
         int maxY = (span + 1)->y;
 
@@ -87,7 +128,7 @@ bool Region::contains(const IntPoint& point) const
         if (maxY <= point.y())
             continue;
 
-        for (Shape::SegmentIterator segment = m_shape.segments_begin(span), end = m_shape.segments_end(span); segment != end && segment + 1 != end; segment += 2) {
+        for (Shape::SegmentIterator segment = m_shape->segments_begin(span), end = m_shape->segments_end(span); segment != end && segment + 1 != end; segment += 2) {
             int x = *segment;
             int maxX = *(segment + 1);
 
@@ -106,19 +147,18 @@ bool Region::intersects(const Region& region) const
     if (!m_bounds.intersects(region.m_bounds))
         return false;
 
-    return Shape::compareShapes<Shape::CompareIntersectsOperation>(m_shape, region.m_shape);
+    if (!m_shape && !region.m_shape)
+        return true;
+
+    return Shape::compareShapes<Shape::CompareIntersectsOperation>(m_shape ? *m_shape : m_bounds, region.m_shape ? *region.m_shape : region.m_bounds);
 }
 
-unsigned Region::totalArea() const
+uint64_t Region::totalArea() const
 {
-    Vector<IntRect> rects = this->rects();
-    size_t size = rects.size();
-    unsigned totalArea = 0;
+    uint64_t totalArea = 0;
 
-    for (size_t i = 0; i < size; ++i) {
-        IntRect rect = rects[i];
+    for (auto& rect : rects())
         totalArea += (rect.width() * rect.height());
-    }
 
     return totalArea;
 }
@@ -221,21 +261,15 @@ struct Region::Shape::CompareIntersectsOperation {
     inline static bool aOverlapsB(bool& result) { result = true; return true; }
 };
 
-Region::Shape::Shape()
-{
-}
-
 Region::Shape::Shape(const IntRect& rect)
+    : m_segments({ rect.x(), rect.maxX() })
+    , m_spans({ { rect.y(), 0 }, { rect.maxY(), 2 } })
 {
-    appendSpan(rect.y());
-    appendSegment(rect.x());
-    appendSegment(rect.maxX());
-    appendSpan(rect.maxY());
 }
 
 void Region::Shape::appendSpan(int y)
 {
-    m_spans.append(Span(y, m_segments.size()));
+    m_spans.append({ y, m_segments.size() });
 }
 
 bool Region::Shape::canCoalesce(SegmentIterator begin, SegmentIterator end)
@@ -331,27 +365,6 @@ void Region::Shape::dump() const
 }
 #endif
 
-bool Region::Shape::isValid() const
-{
-    for (auto span = spans_begin(), end = spans_end(); span != end && span + 1 != end; ++span) {
-        int y = span->y;
-        int height = (span + 1)->y - y;
-        
-        if (height < 0)
-            return false;
-
-        for (auto segment = segments_begin(span), end = segments_end(span); segment != end && segment + 1 != end; segment += 2) {
-            int x = *segment;
-            int width = *(segment + 1) - x;
-            
-            if (width < 0)
-                return false;
-        }
-    }
-
-    return true;
-}
-
 IntRect Region::Shape::bounds() const
 {
     if (isEmpty())
@@ -395,12 +408,6 @@ void Region::Shape::translate(const IntSize& offset)
         m_segments[i] += offset.width();
     for (size_t i = 0; i < m_spans.size(); ++i)
         m_spans[i].y += offset.height();
-}
-
-void Region::Shape::swap(Shape& other)
-{
-    m_segments.swap(other.m_segments);
-    m_spans.swap(other.m_spans);
 }
 
 enum {
@@ -567,71 +574,81 @@ void Region::dump() const
 {
     printf("Bounds: (%d, %d, %d, %d)\n",
            m_bounds.x(), m_bounds.y(), m_bounds.width(), m_bounds.height());
-    m_shape.dump();
+    if (m_shape)
+        m_shape->dump();
 }
 #endif
-
-void Region::updateBoundsFromShape()
-{
-    m_bounds = m_shape.bounds();
-}
 
 void Region::intersect(const Region& region)
 {
     if (m_bounds.isEmpty())
         return;
     if (!m_bounds.intersects(region.m_bounds)) {
-        m_shape = Shape();
+        m_shape = nullptr;
         m_bounds = IntRect();
         return;
     }
+    if (!m_shape && !region.m_shape) {
+        m_bounds = intersection(m_bounds, region.m_bounds);
+        return;
+    }
 
-    Shape intersectedShape = Shape::intersectShapes(m_shape, region.m_shape);
-
-    m_shape.swap(intersectedShape);
-    m_bounds = m_shape.bounds();
+    setShape(Shape::intersectShapes(m_shape ? *m_shape : m_bounds, region.m_shape ? *region.m_shape : region.m_bounds));
 }
 
 void Region::unite(const Region& region)
 {
     if (region.isEmpty())
         return;
-    if (isRect() && m_bounds.contains(region.m_bounds))
-        return;
-    if (region.isRect() && region.m_bounds.contains(m_bounds)) {
-        m_shape = region.m_shape;
+    if (isEmpty()) {
         m_bounds = region.m_bounds;
+        m_shape = region.copyShape();
         return;
     }
-    // FIXME: We may want another way to construct a Region without doing this test when we expect it to be false.
-    if (!isRect() && contains(region))
+    if (region.isRect() && region.m_bounds.contains(m_bounds)) {
+        m_bounds = region.m_bounds;
+        m_shape = nullptr;
+        return;
+    }
+    if (contains(region))
         return;
 
-    Shape unitedShape = Shape::unionShapes(m_shape, region.m_shape);
-
-    m_shape.swap(unitedShape);
-    m_bounds.unite(region.m_bounds);
+    setShape(Shape::unionShapes(m_shape ? *m_shape : m_bounds, region.m_shape ? *region.m_shape : region.m_bounds));
 }
 
 void Region::subtract(const Region& region)
 {
-    if (m_bounds.isEmpty())
+    if (isEmpty())
         return;
     if (region.isEmpty())
         return;
     if (!m_bounds.intersects(region.m_bounds))
         return;
 
-    Shape subtractedShape = Shape::subtractShapes(m_shape, region.m_shape);
-
-    m_shape.swap(subtractedShape);
-    m_bounds = m_shape.bounds();
+    setShape(Shape::subtractShapes(m_shape ? *m_shape : m_bounds, region.m_shape ? *region.m_shape : region.m_bounds));
 }
 
 void Region::translate(const IntSize& offset)
 {
     m_bounds.move(offset);
-    m_shape.translate(offset);
+    if (m_shape)
+        m_shape->translate(offset);
 }
+
+void Region::setShape(Shape&& shape)
+{
+    m_bounds = shape.bounds();
+
+    if (shape.isRect()) {
+        m_shape = nullptr;
+        return;
+    }
+
+    if (!m_shape)
+        m_shape = std::make_unique<Shape>(WTFMove(shape));
+    else
+        *m_shape = WTFMove(shape);
+}
+
 
 } // namespace WebCore

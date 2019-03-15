@@ -676,7 +676,7 @@ void DrawingAreaCoordinatedGraphics::display()
     m_isWaitingForDidUpdate = true;
 }
 
-static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& rects)
+static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect, 1>& rects)
 {
     const size_t rectThreshold = 10;
     const double wastedSpaceThreshold = 0.75;
@@ -728,7 +728,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     if (!bitmap->createHandle(updateInfo.bitmapHandle))
         return;
 
-    Vector<IntRect> rects = m_dirtyRegion.rects();
+    auto rects = m_dirtyRegion.rects();
     if (shouldPaintBoundsRect(bounds, rects)) {
         rects.clear();
         rects.append(bounds);

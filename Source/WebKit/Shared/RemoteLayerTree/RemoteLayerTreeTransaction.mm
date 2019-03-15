@@ -515,10 +515,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(hasEventRegion))
             return false;
         if (hasEventRegion) {
-            auto eventRegion = std::make_unique<WebCore::Region>();
-            if (!decoder.decode(*eventRegion))
+            Optional<WebCore::Region> eventRegion;
+            decoder >> eventRegion;
+            if (!eventRegion)
                 return false;
-            result.eventRegion = WTFMove(eventRegion);
+            result.eventRegion = std::make_unique<Region>(WTFMove(*eventRegion));
         }
     }
 

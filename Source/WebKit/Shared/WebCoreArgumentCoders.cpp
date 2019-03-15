@@ -367,8 +367,9 @@ void ArgumentCoder<EventTrackingRegions>::encode(Encoder& encoder, const EventTr
 
 bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTrackingRegions& eventTrackingRegions)
 {
-    Region asynchronousDispatchRegion;
-    if (!decoder.decode(asynchronousDispatchRegion))
+    Optional<Region> asynchronousDispatchRegion;
+    decoder >> asynchronousDispatchRegion;
+    if (!asynchronousDispatchRegion)
         return false;
     HashMap<String, Region> eventSpecificSynchronousDispatchRegions;
     if (!decoder.decode(eventSpecificSynchronousDispatchRegions))
@@ -378,7 +379,7 @@ bool ArgumentCoder<EventTrackingRegions>::decode(Decoder& decoder, EventTracking
     if (!decoder.decode(touchActionData))
         return false;
 #endif
-    eventTrackingRegions.asynchronousDispatchRegion = WTFMove(asynchronousDispatchRegion);
+    eventTrackingRegions.asynchronousDispatchRegion = WTFMove(*asynchronousDispatchRegion);
     eventTrackingRegions.eventSpecificSynchronousDispatchRegions = WTFMove(eventSpecificSynchronousDispatchRegions);
 #if ENABLE(POINTER_EVENTS)
     eventTrackingRegions.touchActionData = WTFMove(touchActionData);
@@ -902,66 +903,6 @@ Optional<RecentSearch> ArgumentCoder<RecentSearch>::decode(Decoder& decoder)
     return {{ WTFMove(*string), WTFMove(*time) }};
 }
 
-template<> struct ArgumentCoder<Region::Span> {
-    static void encode(Encoder&, const Region::Span&);
-    static Optional<Region::Span> decode(Decoder&);
-};
-
-void ArgumentCoder<Region::Span>::encode(Encoder& encoder, const Region::Span& span)
-{
-    encoder << span.y;
-    encoder << (uint64_t)span.segmentIndex;
-}
-
-Optional<Region::Span> ArgumentCoder<Region::Span>::decode(Decoder& decoder)
-{
-    Region::Span span;
-    if (!decoder.decode(span.y))
-        return WTF::nullopt;
-    
-    uint64_t segmentIndex;
-    if (!decoder.decode(segmentIndex))
-        return WTF::nullopt;
-    
-    span.segmentIndex = segmentIndex;
-    return WTFMove(span);
-}
-
-void ArgumentCoder<Region>::encode(Encoder& encoder, const Region& region)
-{
-    encoder.encode(region.shapeSegments());
-    encoder.encode(region.shapeSpans());
-}
-
-bool ArgumentCoder<Region>::decode(Decoder& decoder, Region& region)
-{
-    Vector<int> segments;
-    if (!decoder.decode(segments))
-        return false;
-
-    Vector<Region::Span> spans;
-    if (!decoder.decode(spans))
-        return false;
-    
-    region.setShapeSegments(segments);
-    region.setShapeSpans(spans);
-    region.updateBoundsFromShape();
-    
-    if (!region.isValid())
-        return false;
-
-    return true;
-}
-
-Optional<Region> ArgumentCoder<Region>::decode(Decoder& decoder)
-{
-    Region region;
-    if (!decode(decoder, region))
-        return WTF::nullopt;
-
-    return region;
-}
-
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
     SimpleArgumentCoder<Length>::encode(encoder, length);
@@ -971,7 +912,6 @@ bool ArgumentCoder<Length>::decode(Decoder& decoder, Length& length)
 {
     return SimpleArgumentCoder<Length>::decode(decoder, length);
 }
-
 
 void ArgumentCoder<ViewportAttributes>::encode(Encoder& encoder, const ViewportAttributes& viewportAttributes)
 {

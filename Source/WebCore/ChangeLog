@@ -1,3 +1,66 @@
+2019-03-15  Antti Koivisto  <antti@apple.com>
+
+        Optimize Region for single rectangle case
+        https://bugs.webkit.org/show_bug.cgi?id=195743
+
+        Reviewed by Simon Fraser.
+
+        Instrumentation shows vast majority of Region objects consist of a single rectangle. However it always allocates
+        the large Shape data structure. This makes it unsuitable to use as a member in any popular objects.
+
+        This patch optimizes the single rectangle case by using only the bounds rectangle to describe it.
+        Shape is allocated on demand. This makes it safe to use Region as a data member where a rectangle is the common case.
+
+        The patch also modernizes Region encoding/decoding support.
+
+        * platform/graphics/Region.cpp:
+        (WebCore::Region::Region):
+        (WebCore::Region::~Region):
+        (WebCore::Region::operator=):
+        (WebCore::Region::rects const):
+        (WebCore::Region::contains const):
+        (WebCore::Region::intersects const):
+        (WebCore::Region::Shape::Shape):
+        (WebCore::Region::Shape::appendSpan):
+        (WebCore::Region::dump const):
+        (WebCore::Region::intersect):
+        (WebCore::Region::unite):
+        (WebCore::Region::subtract):
+        (WebCore::Region::translate):
+        (WebCore::Region::setShape):
+        (WebCore::Region::Shape::isValid const): Deleted.
+        (WebCore::Region::Shape::swap): Deleted.
+        (WebCore::Region::updateBoundsFromShape): Deleted.
+
+        Remove some now unused function.
+
+        * platform/graphics/Region.h:
+        (WebCore::Region::isRect const):
+        (WebCore::Region::gridSize const):
+        (WebCore::Region::copyShape const):
+        (WebCore::operator==):
+        (WebCore::Region::Span::encode const):
+        (WebCore::Region::Span::decode):
+        (WebCore::Region::Shape::encode const):
+        (WebCore::Region::Shape::decode):
+        (WebCore::Region::encode const):
+        (WebCore::Region::decode):
+
+        This is now part of type.
+
+        (WebCore::Region::isValid const): Deleted.
+        (WebCore::Region::Span::Span): Deleted.
+        (WebCore::Region::shapeSegments const): Deleted.
+        (WebCore::Region::shapeSpans const): Deleted.
+        (WebCore::Region::setShapeSegments): Deleted.
+        (WebCore::Region::setShapeSpans): Deleted.
+        (WebCore::Region::Shape::segments const): Deleted.
+        (WebCore::Region::Shape::spans const): Deleted.
+        (WebCore::Region::Shape::setSegments): Deleted.
+        (WebCore::Region::Shape::setSpans): Deleted.
+
+        No need to expose these for encoding anymore.
+
 2019-03-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to capture a screenshot of a node from within the page

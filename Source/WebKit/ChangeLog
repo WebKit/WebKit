@@ -1,3 +1,20 @@
+2019-03-15  Antti Koivisto  <antti@apple.com>
+
+        Optimize Region for single rectangle case
+        https://bugs.webkit.org/show_bug.cgi?id=195743
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<EventTrackingRegions>::decode):
+        (IPC::ArgumentCoder<Region::Span>::encode): Deleted.
+        (IPC::ArgumentCoder<Region::Span>::decode): Deleted.
+        (IPC::ArgumentCoder<Region>::encode): Deleted.
+        (IPC::ArgumentCoder<Region>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2019-03-14  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] WebKit crashes when opening pages documents
