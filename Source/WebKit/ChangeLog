@@ -1,3 +1,17 @@
+2019-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=195387
+        <rdar://problem/48442387>
+
+        Reviewed by Brent Fulgham.
+
+        The sandbox on iOS and macOS needs to allow mach lookup to the "com.apple.nesessionmanager.content-filter"
+        mach service. Also, mach lookups to "com.apple.nehelper" should be allowed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-03-15  Chris Dumez  <cdumez@apple.com>
 
         [PSON] Make sure the WebProcessCache is leverage when relaunching a process after termination

@@ -121,6 +121,7 @@
 ;; Network Extensions / VPN helper.
 (allow mach-lookup
     (global-name "com.apple.nehelper")
+    (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/48442387>
     (global-name "com.apple.nesessionmanager"))
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
@@ -531,7 +532,6 @@
     (global-name "com.apple.marco")
     (global-name "com.apple.mediaserverd")
     (global-name "com.apple.mobile.usermanagerd.xpc")
-    (global-name "com.apple.nehelper")
     (global-name "com.apple.nesessionmanager")
     (global-name "com.apple.pegasus")
     (global-name "com.apple.pluginkit.pkd")
