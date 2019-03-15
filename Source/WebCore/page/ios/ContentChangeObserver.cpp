@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "DOMTimer.h"
 #include "Document.h"
+#include "HTMLImageElement.h"
 #include "Logging.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -393,13 +394,19 @@ bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
 {
     if (m_element.isInUserAgentShadowTree())
         return false;
-    if (!m_hadRenderer)
-        return const_cast<Element&>(m_element).willRespondToMouseClickEvents();
-    ASSERT(m_element.renderer());
-    if (const_cast<Element&>(m_element).willRespondToMouseClickEvents())
-        return true;
+
+    auto& element = const_cast<Element&>(m_element);
+    if (is<HTMLImageElement>(element)) {
+        // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
+        return element.Element::willRespondToMouseClickEvents();
+    }
+
+    auto willRespondToMouseClickEvents = element.willRespondToMouseClickEvents();
+    if (!m_hadRenderer || willRespondToMouseClickEvents)
+        return willRespondToMouseClickEvents;
     // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
-    for (auto& descendant : descendantsOfType<RenderElement>(*m_element.renderer())) {
+    ASSERT(m_element.renderer());
+    for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
         if (descendant.element()->willRespondToMouseClickEvents())
             return true;
     }

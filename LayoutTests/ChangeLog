@@ -1,3 +1,14 @@
+2019-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] HTMLImageElement::willRespondToMouseClickEvents returns quirk value.
+        https://bugs.webkit.org/show_bug.cgi?id=195657
+        <rdar://problem/48834987>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/visibility-change-with-image-content-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/visibility-change-with-image-content.html: Added.
+
 2019-03-15  Dean Jackson  <dino@apple.com>
 
         Provide an option for an always-on fast click mode in iOS

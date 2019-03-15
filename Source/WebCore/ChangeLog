@@ -1,3 +1,18 @@
+2019-03-15  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] HTMLImageElement::willRespondToMouseClickEvents returns quirk value.
+        https://bugs.webkit.org/show_bug.cgi?id=195657
+        <rdar://problem/48834987>
+
+        Reviewed by Simon Fraser.
+
+        Images should not trigger hover by default (only when they actually respond to mouse events).
+
+        Test: fast/events/touch/ios/content-observation/visibility-change-with-image-content.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredClickable const):
+
 2019-03-15  Jer Noble  <jer.noble@apple.com>
 
         Add a "supportedConfiguration" dictionary to MediaCapabilitiesDecodingInfo and MediaCapabilitiesEncodingInfo
