@@ -1,3 +1,15 @@
+2019-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Restrict iokit-user-client-class "IOHIDLibUserClient" from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=195821
+        <rdar://problem/47606250>
+
+        Reviewed by Brent Fulgham.
+
+        This should be removed from the WebContent sandbox on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-03-15  Alex Christensen  <achristensen@webkit.org>
 
         _WKDownload should conform to NSCopying protocol

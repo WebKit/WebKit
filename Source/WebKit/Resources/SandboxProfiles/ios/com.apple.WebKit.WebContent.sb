@@ -276,10 +276,6 @@
     ;; Requires by UIView -> UITextMagnifierRenderer -> UIWindow
     (iokit-user-client-class "IOSurfaceRootUserClient"))
 
-;; <rdar://problem/12675621>
-(allow iokit-open
-    (iokit-user-client-class "IOHIDLibUserClient"))
-
 (framebuffer-access)
 
 ;; <rdar://problem/7822790>
