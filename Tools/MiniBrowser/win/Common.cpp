@@ -245,10 +245,10 @@ CommandLineOptions parseCommandLine()
         else if (!wcsicmp(argv[i], L"--performance"))
             options.pageLoadTesting = true;
         else if (!wcsicmp(argv[i], L"--wk1") || !wcsicmp(argv[i], L"--legacy"))
-            options.windowType = MainWindow::BrowserWindowType::WebKitLegacy;
+            options.windowType = BrowserWindowType::WebKitLegacy;
 #if ENABLE(WEBKIT)
         else if (!wcsicmp(argv[i], L"--wk2") || !wcsicmp(argv[i], L"--webkit"))
-            options.windowType = MainWindow::BrowserWindowType::WebKit;
+            options.windowType = BrowserWindowType::WebKit;
 #endif
         else if (!options.requestedURL)
             options.requestedURL = argv[i];

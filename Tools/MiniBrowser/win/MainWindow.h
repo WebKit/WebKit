@@ -26,20 +26,19 @@
 #pragma once
 
 #include "BrowserWindow.h"
+#include <functional>
 #include <memory>
 #include <string>
 #include <wtf/RefPtr.h>
 
 class MainWindow : public RefCounted<MainWindow> {
 public:
-    enum class BrowserWindowType {
-        WebKit,
-        WebKitLegacy
-    };
-    static Ref<MainWindow> create(BrowserWindowType);
+    using BrowserWindowFactory = std::function<Ref<BrowserWindow>(HWND mainWnd, HWND urlBarWnd, bool usesLayeredWebView, bool pageLoadTesting)>;
+
+    static Ref<MainWindow> create();
 
     ~MainWindow();
-    bool init(HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
+    bool init(BrowserWindowFactory, HINSTANCE hInstance, bool usesLayeredWebView = false, bool pageLoadTesting = false);
 
     void resizeSubViews();
     HWND hwnd() const { return m_hMainWnd; }
@@ -55,7 +54,7 @@ private:
     static std::wstring s_windowClass;
     static size_t s_numInstances;
 
-    MainWindow(BrowserWindowType);
+    MainWindow();
     bool toggleMenuItem(UINT menuID);
     void onURLBarEnter();
     void updateDeviceScaleFactor();
@@ -66,6 +65,5 @@ private:
     HWND m_hForwardButtonWnd { nullptr };
     HWND m_hCacheWnd { nullptr };
     HGDIOBJ m_hURLBarFont { nullptr };
-    BrowserWindowType m_browserWindowType;
     RefPtr<BrowserWindow> m_browserWindow;
 };

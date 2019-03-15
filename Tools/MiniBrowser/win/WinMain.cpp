@@ -32,7 +32,12 @@
 #include "Common.h"
 #include "MiniBrowserLibResource.h"
 #include "MiniBrowserReplace.h"
+#include "WebKitLegacyBrowserWindow.h"
 #include <WebKitLegacy/WebKitCOMAPI.h>
+
+#if ENABLE(WEBKIT)
+#include "WebKitBrowserWindow.h"
+#endif
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
 {
@@ -60,8 +65,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::SetProcessDPIAware();
 
-    auto& mainWindow = MainWindow::create(options.windowType).leakRef();
-    HRESULT hr = mainWindow.init(hInst, options.usesLayeredWebView, options.pageLoadTesting);
+    auto factory = WebKitLegacyBrowserWindow::create;
+#if ENABLE(WEBKIT)
+    if (options.windowType == BrowserWindowType::WebKit)
+        factory = WebKitBrowserWindow::create;
+#endif
+    auto& mainWindow = MainWindow::create().leakRef();
+    HRESULT hr = mainWindow.init(factory, hInst, options.usesLayeredWebView, options.pageLoadTesting);
     if (FAILED(hr))
         goto exit;
 

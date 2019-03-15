@@ -84,24 +84,24 @@ WKRetainPtr<WKURLRef> createWKURL(const std::wstring& str)
 
 Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool, bool)
 {
-    return adoptRef(*new WebKitBrowserWindow(mainWnd, urlBarWnd));
+    auto conf = WKPageConfigurationCreate();
+
+    auto prefs = WKPreferencesCreate();
+    WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
+    WKPageConfigurationSetPreferences(conf, prefs);
+
+    auto context = WKContextCreateWithConfiguration(nullptr);
+    WKPageConfigurationSetContext(conf, context);
+
+    return adoptRef(*new WebKitBrowserWindow(conf, mainWnd, urlBarWnd));
 }
 
-WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
+WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainWnd, HWND urlBarWnd)
     : m_hMainWnd(mainWnd)
     , m_urlBarWnd(urlBarWnd)
 {
     RECT rect = { };
-    auto conf = adoptWK(WKPageConfigurationCreate());
-
-    auto prefs = WKPreferencesCreate();
-    WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
-    WKPageConfigurationSetPreferences(conf.get(), prefs);
-
-    m_context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    WKPageConfigurationSetContext(conf.get(), m_context.get());
-
-    m_view = adoptWK(WKViewCreate(rect, conf.get(), mainWnd));
+    m_view = adoptWK(WKViewCreate(rect, conf, mainWnd));
     auto page = WKViewGetPage(m_view.get());
 
     WKPageNavigationClientV0 navigationClient = { };
@@ -112,12 +112,19 @@ WebKitBrowserWindow::WebKitBrowserWindow(HWND mainWnd, HWND urlBarWnd)
     navigationClient.didReceiveAuthenticationChallenge = didReceiveAuthenticationChallenge;
     WKPageSetPageNavigationClient(page, &navigationClient.base);
 
+    WKPageUIClientV13 uiClient = { };
+    uiClient.base.version = 13;
+    uiClient.base.clientInfo = this;
+    uiClient.createNewPage = createNewPage;
+    WKPageSetPageUIClient(page, &uiClient.base);
+
     updateProxySettings();
 }
 
 void WebKitBrowserWindow::updateProxySettings()
 {
-    auto store = WKContextGetWebsiteDataStore(m_context.get());
+    auto context = WKPageGetContext(WKViewGetPage(m_view.get()));
+    auto store = WKContextGetWebsiteDataStore(context);
 
     if (!m_proxy.enable) {
         WKWebsiteDataStoreDisableNetworkProxySettings(store);
@@ -290,4 +297,19 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
     }
 
     WKAuthenticationDecisionListenerUseCredential(decisionListener, nullptr);
+}
+
+WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
+{
+    auto& newWindow = MainWindow::create().leakRef();
+    auto factory = [configuration](HWND mainWnd, HWND urlBarWnd, bool, bool) -> auto {
+        return adoptRef(*new WebKitBrowserWindow(configuration, mainWnd, urlBarWnd));
+    };
+    bool ok = newWindow.init(factory, hInst);
+    if (!ok)
+        return nullptr;
+    ShowWindow(newWindow.hwnd(), SW_SHOW);
+    auto& newBrowserWindow = *static_cast<WebKitBrowserWindow*>(newWindow.browserWindow());
+    WKRetainPtr<WKPageRef> newPage = WKViewGetPage(newBrowserWindow.m_view.get());
+    return newPage.leakRef();
 }

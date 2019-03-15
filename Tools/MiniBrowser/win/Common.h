@@ -29,18 +29,23 @@
 #include "MainWindow.h"
 #include "WebKitLegacyBrowserWindow.h"
 
+enum class BrowserWindowType {
+    WebKit,
+    WebKitLegacy
+};
+
 struct CommandLineOptions {
     bool usesLayeredWebView { };
     bool useFullDesktop { };
     bool pageLoadTesting { };
-    MainWindow::BrowserWindowType windowType;
+    BrowserWindowType windowType;
     _bstr_t requestedURL;
 
     CommandLineOptions()
 #if ENABLE(WEBKIT)
-        : windowType(MainWindow::BrowserWindowType::WebKit)
+        : windowType(BrowserWindowType::WebKit)
 #else
-        : windowType(MainWindow::BrowserWindowType::WebKitLegacy)
+        : windowType(BrowserWindowType::WebKitLegacy)
 #endif
     {
     }

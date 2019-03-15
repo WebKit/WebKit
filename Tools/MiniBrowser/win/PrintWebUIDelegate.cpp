@@ -65,8 +65,8 @@ HRESULT PrintWebUIDelegate::createWebViewWithRequest(_In_opt_ IWebView*, _In_opt
     if (!request)
         return E_POINTER;
 
-    auto& newWindow = MainWindow::create(MainWindow::BrowserWindowType::WebKitLegacy).leakRef();
-    bool ok = newWindow.init(hInst);
+    auto& newWindow = MainWindow::create().leakRef();
+    bool ok = newWindow.init(WebKitLegacyBrowserWindow::create, hInst);
     if (!ok)
         return E_FAIL;
     ShowWindow(newWindow.hwnd(), SW_SHOW);
