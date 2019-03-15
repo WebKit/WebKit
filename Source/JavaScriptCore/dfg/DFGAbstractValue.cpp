@@ -344,14 +344,14 @@ void AbstractValue::filterValueByType()
     if (!!m_type) {
         // The type is still non-empty. It may be that the new type renders
         // the value empty because it contravenes the constant value we had.
-        if (m_value && !validateType(m_value))
+        if (m_value && !validateTypeAcceptingBoxedInt52(m_value))
             clear();
         return;
     }
     
     // The type has been rendered empty. That means that the value must now be invalid,
     // as well.
-    ASSERT(!m_value || !validateType(m_value));
+    ASSERT(!m_value || !validateTypeAcceptingBoxedInt52(m_value));
     m_value = JSValue();
 }
 

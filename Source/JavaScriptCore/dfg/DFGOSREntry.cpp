@@ -100,7 +100,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(!codeBlock->jitCodeMap());
 
     if (!Options::useOSREntryToDFG())
-        return 0;
+        return nullptr;
 
     if (Options::verboseOSR()) {
         dataLog(
@@ -137,7 +137,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         if (Options::verboseOSR())
             dataLog("    OSR failed because the target code block is not DFG.\n");
-        return 0;
+        return nullptr;
     }
     
     JITCode* jitCode = codeBlock->jitCode()->dfg();
@@ -146,7 +146,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (!entry) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because the entrypoint was optimized out.\n");
-        return 0;
+        return nullptr;
     }
     
     ASSERT(entry->m_bytecodeIndex == bytecodeIndex);
@@ -182,7 +182,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                 entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
                 dataLogF(".\n");
             }
-            return 0;
+            return nullptr;
         }
         
         JSValue value;
@@ -191,50 +191,50 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         else
             value = exec->argument(argument - 1);
         
-        if (!entry->m_expectedValues.argument(argument).validate(value)) {
+        if (!entry->m_expectedValues.argument(argument).validateOSREntryValue(value, FlushedJSValue)) {
             if (Options::verboseOSR()) {
                 dataLog(
                     "    OSR failed because argument ", argument, " is ", value,
                     ", expected ", entry->m_expectedValues.argument(argument), ".\n");
             }
-            return 0;
+            return nullptr;
         }
     }
     
     for (size_t local = 0; local < entry->m_expectedValues.numberOfLocals(); ++local) {
         int localOffset = virtualRegisterForLocal(local).offset();
         JSValue value = exec->registers()[localOffset].asanUnsafeJSValue();
-        if (!entry->m_expectedValues.local(local).validate(value)) {
-            if (Options::verboseOSR()) {
-                dataLog(
-                    "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
+        FlushFormat format = FlushedJSValue;
+
+        if (entry->m_localsForcedAnyInt.get(local)) {
+            if (!value.isAnyInt()) {
+                dataLogLnIf(Options::verboseOSR(),
+                    "    OSR failed because variable ", localOffset, " is ",
                     value, ", expected ",
-                    entry->m_expectedValues.local(local), ".\n");
+                    "machine int.");
+                return nullptr;
             }
-            return 0;
+            // Constant AnyInt value is stored as usual boxed value in AbstractValue.
+            format = FlushedInt52;
         }
+
         if (entry->m_localsForcedDouble.get(local)) {
             if (!value.isNumber()) {
-                if (Options::verboseOSR()) {
-                    dataLog(
-                        "    OSR failed because variable ", localOffset, " is ",
-                        value, ", expected number.\n");
-                }
-                return 0;
+                dataLogLnIf(Options::verboseOSR(),
+                    "    OSR failed because variable ", localOffset, " is ",
+                    value, ", expected number.");
+                return nullptr;
             }
-            continue;
+            value = jsDoubleNumber(value.asNumber());
+            format = FlushedDouble;
         }
-        if (entry->m_localsForcedAnyInt.get(local)) {
-            if (!value) {
-                if (Options::verboseOSR()) {
-                    dataLog(
-                        "    OSR failed because variable ", localOffset, " is ",
-                        value, ", expected ",
-                        "machine int.\n");
-                }
-                return 0;
-            }
-            continue;
+
+        if (!entry->m_expectedValues.local(local).validateOSREntryValue(value, format)) {
+            dataLogLnIf(Options::verboseOSR(),
+                "    OSR failed because variable ", VirtualRegister(localOffset), " is ",
+                value, ", expected ",
+                entry->m_expectedValues.local(local), ".");
+            return nullptr;
         }
     }
 
@@ -249,7 +249,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     if (UNLIKELY(!vm->ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck - 1).offset()]))) {
         if (Options::verboseOSR())
             dataLogF("    OSR failed because stack growth failed.\n");
-        return 0;
+        return nullptr;
     }
     
     if (Options::verboseOSR())

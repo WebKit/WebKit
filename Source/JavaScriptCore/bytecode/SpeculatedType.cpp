@@ -261,7 +261,7 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             isTop = false;
         
         if (value & SpecNonIntAsDouble)
-            strOut.print("NonIntAsdouble");
+            strOut.print("NonIntAsDouble");
         else
             isTop = false;
         

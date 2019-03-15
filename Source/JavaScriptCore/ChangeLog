@@ -1,3 +1,46 @@
+2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r242841): Fix conservative DFG OSR entry validation to accept values which will be stored in AnyInt / Double flush formats
+        https://bugs.webkit.org/show_bug.cgi?id=195752
+
+        Reviewed by Saam Barati.
+
+        We fixed the bug skipping AbstractValue validations when the flush format is Double or AnyInt. But it
+        was too conservative. While validating inputs with AbstractValue is mandatory (without it, whole CFA
+        falls into wrong condition), our validation does not care AnyInt and Double representations in lower
+        tiers. For example, if a value is stored in Double flush format in DFG, its AbstractValue becomes
+        SpecFullDouble. However, it does not include Int32 and OSR entry is rejected if Int32 comes for DoubleRep
+        OSR entry value. This is wrong since we later convert these numbers into DoubleRep representation
+        before entering DFG code.
+
+        This patch performs AbstractValue validation onto the correctly converted value with flush format hint.
+
+        And it still does not fix OSR entry failures in navier-stokes. This is because AbstractValue representation
+        in navier-stokes's lin_solve was too strict. Then, this patch reverts r242627. Instead of removing must handle
+        value handling in CFA, DFG OSR entry now correctly validates inputs with AbstractValues even if the flush format
+        is Double or AnyInt. As long as DFG OSR entry validates inputs, merging must handle values as proven constants is OK.
+
+        We can see that # of OSR entry failures in navier-stokes.js becomes the same to the previous count. And we can see
+        AnyInt OSR entry actually works in microbenchmarks/large-int.js. However, AnyInt effect is hard to observe because this
+        is super rare. Since we inject type prediction based on must handle value, the flush format tends to be SpecAnyIntAsDouble
+        and it accepts JSValues simply.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::filterValueByType):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::validateOSREntryValue const):
+        (JSC::DFG::AbstractValue::validateTypeAcceptingBoxedInt52 const):
+        (JSC::DFG::AbstractValue::validate const): Deleted.
+        (JSC::DFG::AbstractValue::validateType const): Deleted.
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        (JSC::DFG::CFAPhase::injectOSR):
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+
 2019-03-14  Saam barati  <sbarati@apple.com>
 
         We can't remove code after ForceOSRExit until after FixupPhase
