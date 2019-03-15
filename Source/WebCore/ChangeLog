@@ -1,3 +1,20 @@
+2019-03-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Move CoreCrypto SPI declarations to an appropriate PAL/spi header
+        https://bugs.webkit.org/show_bug.cgi?id=195754
+        <rdar://problem/48591957>
+
+        Reviewed by Jiewen Tan.
+
+        Move the forward declarations of various CoreCrypto SPI to an appropriate PAL/spi header.
+        Update the const correctness of one function call to match new SDK declaration.
+
+        No tests because there are no changes in behavior.
+
+        * crypto/CommonCryptoUtilities.h:
+        * crypto/mac/CryptoAlgorithmHKDFMac.cpp:
+        (WebCore::CryptoAlgorithmHKDF::platformDeriveBits):
+
 2019-03-14  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: re-enable some leak tests
