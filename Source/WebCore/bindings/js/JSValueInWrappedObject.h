@@ -36,9 +36,12 @@ namespace WebCore {
 class JSValueInWrappedObject {
 public:
     JSValueInWrappedObject(JSC::JSValue = { });
+    JSValueInWrappedObject(const JSValueInWrappedObject&);
     operator JSC::JSValue() const;
     explicit operator bool() const;
+    JSValueInWrappedObject& operator=(const JSValueInWrappedObject& other);
     void visit(JSC::SlotVisitor&) const;
+    void clear();
 
 private:
     // Use a weak pointer here so that if this code or client code has a visiting mistake,
@@ -66,6 +69,11 @@ inline auto JSValueInWrappedObject::makeValue(JSC::JSValue value) -> Value
 }
 
 inline JSValueInWrappedObject::JSValueInWrappedObject(JSC::JSValue value)
+    : m_value(makeValue(JSC::JSValue(value)))
+{
+}
+
+inline JSValueInWrappedObject::JSValueInWrappedObject(const JSValueInWrappedObject& value)
     : m_value(makeValue(value))
 {
 }
@@ -84,6 +92,12 @@ inline JSValueInWrappedObject::operator bool() const
     return JSC::JSValue { *this }.operator bool();
 }
 
+inline JSValueInWrappedObject& JSValueInWrappedObject::operator=(const JSValueInWrappedObject& other)
+{
+    m_value = makeValue(JSC::JSValue(other));
+    return *this;
+}
+
 inline void JSValueInWrappedObject::visit(JSC::SlotVisitor& visitor) const
 {
     return WTF::switchOn(m_value, [] (JSC::JSValue) {
@@ -91,6 +105,13 @@ inline void JSValueInWrappedObject::visit(JSC::SlotVisitor& visitor) const
     }, [&visitor] (const Weak& value) {
         visitor.append(value);
     });
+}
+
+inline void JSValueInWrappedObject::clear()
+{
+    WTF::switchOn(m_value, [] (Weak& value) {
+        value.clear();
+    }, [] (auto&) { });
 }
 
 inline JSC::JSValue cachedPropertyValue(JSC::ExecState& state, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const WTF::Function<JSC::JSValue()>& function)

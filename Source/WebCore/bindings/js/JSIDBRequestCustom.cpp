@@ -75,6 +75,7 @@ void JSIDBRequest::visitAdditionalChildren(SlotVisitor& visitor)
 {
     auto& request = wrapped();
     request.resultWrapper().visit(visitor);
+    request.cursorWrapper().visit(visitor);
 }
 
 }

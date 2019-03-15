@@ -277,6 +277,8 @@ void IDBRequest::stop()
 
     removeAllEventListeners();
 
+    clearWrappers();
+
     m_contextStopped = true;
 }
 
@@ -368,10 +370,6 @@ void IDBRequest::setResult(const IDBKeyData& keyData)
     if (!context)
         return;
 
-    auto* state = context->execState();
-    if (!state)
-        return;
-
     VM& vm = context->vm();
     JSLockHolder lock(vm);
     m_result = keyData;
@@ -384,10 +382,6 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
 
     auto* context = scriptExecutionContext();
     if (!context)
-        return;
-
-    auto* state = context->execState();
-    if (!state)
         return;
 
     VM& vm = context->vm();
@@ -404,10 +398,6 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
     if (!context)
         return;
 
-    auto* state = context->execState();
-    if (!state)
-        return;
-
     VM& vm = context->vm();
     JSLockHolder lock(vm);
     m_result = values;
@@ -422,6 +412,8 @@ void IDBRequest::setResult(uint64_t number)
     if (!context)
         return;
 
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
     m_result = number;
     m_resultWrapper = { };
 }
@@ -436,10 +428,6 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
     if (!context)
         return;
 
-    auto* state = context->execState();
-    if (!state)
-        return;
-
     VM& vm = context->vm();
     JSLockHolder lock(vm);
     m_result = value;
@@ -450,6 +438,12 @@ void IDBRequest::setResultToUndefined()
 {
     ASSERT(&originThread() == &Thread::current());
 
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
     m_result = NullResultType::Undefined;
     m_resultWrapper = { };
 }
@@ -476,6 +470,16 @@ void IDBRequest::willIterateCursor(IDBCursor& cursor)
     m_pendingCursor = &cursor;
     m_hasPendingActivity = true;
     m_result = NullResultType::Empty;
+
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+
+    if (m_resultWrapper)
+        m_cursorWrapper = m_resultWrapper;
     m_resultWrapper = { };
     m_readyState = ReadyState::Pending;
     m_domError = nullptr;
@@ -487,11 +491,19 @@ void IDBRequest::didOpenOrIterateCursor(const IDBResultData& resultData)
     ASSERT(&originThread() == &Thread::current());
     ASSERT(m_pendingCursor);
 
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+
     m_result = NullResultType::Empty;
     m_resultWrapper = { };
 
     if (resultData.type() == IDBResultType::IterateCursorSuccess || resultData.type() == IDBResultType::OpenCursorSuccess) {
-        m_pendingCursor->setGetResult(*this, resultData.getResult());
+        if (m_pendingCursor->setGetResult(*this, resultData.getResult()) && m_cursorWrapper)
+            m_resultWrapper = m_cursorWrapper;
         if (resultData.getResult().isDefined())
             m_result = m_pendingCursor;
     }
@@ -536,9 +548,34 @@ void IDBRequest::setResult(Ref<IDBDatabase>&& database)
 {
     ASSERT(&originThread() == &Thread::current());
 
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+
     m_result = RefPtr<IDBDatabase> { WTFMove(database) };
     m_resultWrapper = { };
 }
+
+void IDBRequest::clearWrappers()
+{
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+    VM& vm = context->vm();
+    JSLockHolder lock(vm);
+    
+    m_resultWrapper.clear();
+    m_cursorWrapper.clear();
+    
+    WTF::switchOn(m_result,
+        [] (RefPtr<IDBCursor>& cursor) { cursor->clearWrappers(); },
+        [] (const auto&) { }
+    );
+}
+
 
 } // namespace WebCore
 

@@ -78,6 +78,7 @@ public:
     using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, IDBKeyData, Vector<IDBKeyData>, IDBValue, Vector<IDBValue>, uint64_t, NullResultType>;
     ExceptionOr<Result> result() const;
     JSValueInWrappedObject& resultWrapper() { return m_resultWrapper; }
+    JSValueInWrappedObject& cursorWrapper() { return m_cursorWrapper; }
 
     using Source = Variant<RefPtr<IDBObjectStore>, RefPtr<IDBIndex>, RefPtr<IDBCursor>>;
     const Optional<Source>& source() const { return m_source; }
@@ -165,12 +166,15 @@ private:
     void onError();
     void onSuccess();
 
+    void clearWrappers();
+
     IDBCursor* resultCursor();
 
     IDBError m_idbError;
     IDBResourceIdentifier m_resourceIdentifier;
 
     JSValueInWrappedObject m_resultWrapper;
+    JSValueInWrappedObject m_cursorWrapper;
     Result m_result;
     Optional<Source> m_source;
 

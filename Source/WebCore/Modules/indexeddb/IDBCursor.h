@@ -74,9 +74,10 @@ public:
 
     void setRequest(IDBRequest& request) { m_request = makeWeakPtr(&request); }
     void clearRequest() { m_request.clear(); }
+    void clearWrappers();
     IDBRequest* request() { return m_request.get(); }
 
-    void setGetResult(IDBRequest&, const IDBGetResult&);
+    bool setGetResult(IDBRequest&, const IDBGetResult&);
 
     virtual bool isKeyCursorWithValue() const { return false; }
 

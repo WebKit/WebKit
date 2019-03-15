@@ -1,3 +1,37 @@
+2019-03-14  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: re-enable some leak tests
+        https://bugs.webkit.org/show_bug.cgi?id=194806
+
+        Reviewed by Geoffrey Garen.
+
+        Protected JSIDBCursor object when advance/continue request on IDBCursor is not finished, because after the 
+        advance operation completes on success, we need to return the same JSIDBCursor object as before the advance, 
+        and during the wait for advance operation to complete, we need to return error as the result. 
+ 
+        Covered by existing tests.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        (WebCore::IDBCursor::clearWrappers):
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        (WebCore::IDBRequest::setResultToUndefined):
+        (WebCore::IDBRequest::willIterateCursor):
+        (WebCore::IDBRequest::didOpenOrIterateCursor):
+        (WebCore::IDBRequest::clearWrappers):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::cursorWrapper):
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::visitAdditionalChildren):
+        * bindings/js/JSValueInWrappedObject.h:
+        (WebCore::JSValueInWrappedObject::JSValueInWrappedObject):
+        (WebCore::JSValueInWrappedObject::operator=):
+        (WebCore::JSValueInWrappedObject::clear):
+
 2019-03-14  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r242981.

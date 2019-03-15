@@ -66,6 +66,7 @@ function onOpen(evt)
         evalAndLog("cursor = null");
         evalAndLog("gc()");
         shouldBeFalse("cursorObservation.wasCollected");
+        shouldBeFalse("cursorRequestObservation.wasCollected");
 
         evalAndLog("finalRequest = store.get(0)");
         finalRequest.onsuccess = function finalRequestSuccess(evt) {

@@ -1531,18 +1531,6 @@ fast/history/page-cache-indexed-closed-db.html [ Failure ]
 # With Modern IDB and the in-memory backing store, that should change.
 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 
-# Relies on internals.observeGC
-storage/indexeddb/connection-leak-private.html [ Skip ]
-storage/indexeddb/connection-leak.html [ Skip ]
-storage/indexeddb/cursor-leak-private.html [ Failure ]
-storage/indexeddb/cursor-leak.html [ Skip ]
-storage/indexeddb/cursor-request-cycle-private.html [ Failure ]
-storage/indexeddb/cursor-request-cycle.html [ Skip ]
-storage/indexeddb/delete-closed-database-object-private.html [ Skip ]
-storage/indexeddb/delete-closed-database-object.html [ Skip ]
-storage/indexeddb/request-leak-private.html [ Failure ]
-storage/indexeddb/request-leak.html [ Failure ]
-
 webkit.org/b/154619 storage/indexeddb/odd-strings.html [ Skip ]
 
 # IDB workers test fails - The worker's attempt to open the database creates a new UniqueIDBDatabase
