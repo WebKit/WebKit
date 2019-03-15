@@ -1505,6 +1505,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!_potentialTapInProgress)
         return;
 
+    if (_page->preferences().fastClicksEverywhere()) {
+        RELEASE_LOG(ViewGestures, "Potential tap found an element and fast taps are forced on. Trigger click. (%p)", self);
+        [self _setDoubleTapGesturesEnabled:NO];
+        return;
+    }
+
     auto targetScale = _smartMagnificationController->zoomFactorForTargetRect(renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
 
     auto initialScale = [self _initialScaleFactor];

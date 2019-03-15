@@ -1486,6 +1486,15 @@ FasterClicksEnabled:
   webcoreBinding: none
   category: internal
 
+FastClicksEverywhere:
+  type: bool
+  defaultValue: false
+  condition: PLATFORM(IOS_FAMILY)
+  humanReadableName: "Fast clicks everywhere"
+  humanReadableDescription: "Force fast clicks on all pages"
+  webcoreBinding: none
+  category: internal
+
 InputTypeColorEnabled:
   type: bool
   defaultValue: DEFAULT_INPUT_TYPE_COLOR_ENABLED
