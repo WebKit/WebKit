@@ -1,3 +1,13 @@
+2019-03-15  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [ARM,MIPS] Skip slow tests
+        https://bugs.webkit.org/show_bug.cgi?id=195799
+
+        Unreviewed, test does not finish on ARM and MIPS within the
+        timeout limit.
+
+        * stress/symbol-is-destructed-before-refing-underlying-symbol-impl.js:
+
 2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Retain PrivateName of Symbol before passing it to operations potentially incurring GC
