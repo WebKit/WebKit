@@ -31,13 +31,12 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+#include "GPUBuffer.h"
+#include "GPUTexture.h"
 
 OBJC_PROTOCOL(MTLBuffer);
 
 namespace WebCore {
-
-class GPUBuffer;
-class GPUTexture;
 
 struct GPUBindGroupDescriptor;
 
