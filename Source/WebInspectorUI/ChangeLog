@@ -1,3 +1,62 @@
+2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network - Toggle Between Live Activity and Imported HAR resource collections
+        https://bugs.webkit.org/show_bug.cgi?id=195734
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Images/NetworkHAR.svg: Added.
+        * UserInterface/Images/NetworkOverview.svg: Added.
+        * UserInterface/Views/NetworkTableContentView.css:
+        (.content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon):
+        (.network-overview-icon > .icon):
+        (.network-har-icon > .icon):
+        (@media (prefers-color-scheme: dark)):
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.tableIndexForRepresentedObject):
+        (WI.NetworkTableContentView.prototype.tableRepresentedObjectForIndex):
+        (WI.NetworkTableContentView.prototype.tableNumberOfRows):
+        (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+        (WI.NetworkTableContentView.prototype.tableSelectionDidChange):
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype._addCollection):
+        (WI.NetworkTableContentView.prototype._setActiveCollection):
+        (WI.NetworkTableContentView.prototype._addCollectionPathComponent):
+        (WI.NetworkTableContentView.prototype._collectionsHierarchicalPathComponentWasSelected):
+        (WI.NetworkTableContentView.prototype._changeCollection):
+        (WI.NetworkTableContentView.prototype.handleClearShortcut):
+        (WI.NetworkTableContentView.prototype._updateWaterfallTimeRange):
+        (WI.NetworkTableContentView.prototype._updateWaterfallTimelineRuler):
+        (WI.NetworkTableContentView.prototype._canExportHAR):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._populateWithInitialResourcesIfNeeded):
+        (WI.NetworkTableContentView.prototype._rowIndexForRepresentedObject):
+        (WI.NetworkTableContentView.prototype._updateEntryForResource):
+        (WI.NetworkTableContentView.prototype._updateEmptyFilterResultsMessage):
+        (WI.NetworkTableContentView.prototype._mainResourceDidChange):
+        (WI.NetworkTableContentView.prototype._mainFrameDidChange):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        (WI.NetworkTableContentView.prototype._resourceTransferSizeDidChange):
+        (WI.NetworkTableContentView.prototype._handleResourceAdded):
+        (WI.NetworkTableContentView.prototype._runForMainCollection):
+        (WI.NetworkTableContentView.prototype._isShowingMainCollection):
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._handleNodeDidFireEvent):
+        (WI.NetworkTableContentView.prototype._handleNodeLowPowerChanged):
+        (WI.NetworkTableContentView.prototype._updateSort):
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._urlFilterDidChange):
+        (WI.NetworkTableContentView.prototype._HARResources):
+        (WI.NetworkTableContentView.prototype._importHAR):
+        Introduce the concept of collections that can be swapped in/out
+        to re-render the Network Table with different contents.
+
 2019-03-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: provide a way to capture a screenshot of a node from within the page

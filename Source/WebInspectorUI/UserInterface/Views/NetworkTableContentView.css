@@ -27,6 +27,19 @@
     background: none;
 }
 
+.content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon {
+    -webkit-margin-start: 8px;
+    -webkit-margin-end: 4px;
+}
+
+.network-overview-icon > .icon {
+    content: url(../Images/NetworkOverview.svg);
+}
+
+.network-har-icon > .icon {
+    content: url(../Images/NetworkHAR.svg);
+}
+
 .content-view.network .network-table .icon {
     position: relative;
     width: 16px;
@@ -303,6 +316,10 @@ body[dir=rtl] .waterfall .block {
 }
 
 @media (prefers-color-scheme: dark) {
+    .content-view.tab.network > .content-browser > .navigation-bar .hierarchical-path .icon {
+        filter: invert(88%);
+    }
+
     .network-table .cell.domain > .lock {
         filter: var(--filter-invert);
     }
