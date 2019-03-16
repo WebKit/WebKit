@@ -646,6 +646,12 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 - (void)_createAndConfigureDoubleTapGestureRecognizer
 {
+    if (_doubleTapGestureRecognizer) {
+        [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
+        [_doubleTapGestureRecognizer setDelegate:nil];
+        [_doubleTapGestureRecognizer setGestureFailedTarget:nil action:nil];
+    }
+
     _doubleTapGestureRecognizer = adoptNS([[WKSyntheticTapGestureRecognizer alloc] initWithTarget:self action:@selector(_doubleTapRecognized:)]);
     [_doubleTapGestureRecognizer setGestureFailedTarget:self action:@selector(_doubleTapDidFail:)];
     [_doubleTapGestureRecognizer setNumberOfTapsRequired:2];
@@ -3735,8 +3741,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (enabled && ![_doubleTapGestureRecognizer isEnabled]) {
         // The first tap recognized after re-enabling double tap gestures will not wait for the
         // second tap before committing. To fix this, we use a new double tap gesture recognizer.
-        [self removeGestureRecognizer:_doubleTapGestureRecognizer.get()];
-        [_doubleTapGestureRecognizer setDelegate:nil];
         [self _createAndConfigureDoubleTapGestureRecognizer];
     }
 

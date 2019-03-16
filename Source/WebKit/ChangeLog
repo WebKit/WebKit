@@ -1,3 +1,17 @@
+2019-03-16  Dean Jackson  <dino@apple.com>
+
+        ASSERT(gestureRecognizer == _doubleTapGestureRecognizer) in _doubleTapDidFail:
+        https://bugs.webkit.org/show_bug.cgi?id=195857
+        <rdar://problem/48954679>
+
+        Reviewed by Wenson Hsieh.
+
+        Reset an existing gesture recognizer before creating a new one.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _createAndConfigureDoubleTapGestureRecognizer]):
+        (-[WKContentView _setDoubleTapGesturesEnabled:]):
+
 2019-03-16  Jer Noble  <jer.noble@apple.com>
 
         Add a new MediaCapabilitiesExtensionsEnabled setting
