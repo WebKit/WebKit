@@ -148,7 +148,7 @@ void FrameViewLayoutContext::layout()
 {
     LOG_WITH_STREAM(Layout, stream << "FrameView " << &view() << " FrameViewLayoutContext::layout() with size " << view().layoutSize());
 
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate() || ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!frame().document()->inRenderTreeUpdate());
     ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(!view().isPainting());
     ASSERT(frame().view() == &view());

@@ -333,8 +333,6 @@ using namespace WTF::Unicode;
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;
 
-unsigned ScriptDisallowedScope::LayoutAssertionDisableScope::s_layoutAssertionDisableCount = 0;
-
 // DOM Level 2 says (letters added):
 //
 // a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
@@ -2031,8 +2029,7 @@ static bool isSafeToUpdateStyleOrLayout(const Document& document)
     bool isSafeToExecuteScript = ScriptDisallowedScope::InMainThread::isScriptAllowed();
     auto* frameView = document.view();
     bool isInFrameFlattening = frameView && frameView->isInChildFrameWithFrameFlattening();
-    bool isAssertionDisabled = ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable();
-    return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess() || isAssertionDisabled;
+    return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess();
 }
 
 bool Document::updateStyleIfNeeded()
