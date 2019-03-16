@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGAnimationAdditiveFunction.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+template<typename ValueType>
+class SVGAnimationAdditiveValueFunction : public SVGAnimationAdditiveFunction {
+public:
+    using SVGAnimationAdditiveFunction::SVGAnimationAdditiveFunction;
+    
+protected:
+    ValueType toAtEndOfDuration() const { return m_toAtEndOfDuration ? *m_toAtEndOfDuration : m_to; }
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+    ValueType m_from;
+    ValueType m_to;
+    Optional<ValueType> m_toAtEndOfDuration;
+};
 
 }

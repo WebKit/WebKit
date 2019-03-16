@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,34 @@
 
 #pragma once
 
-#include "QualifiedName.h"
-#include "SVGAnimatedPropertyType.h"
-#include <wtf/WeakPtr.h>
+#include "SVGAnimatedPropertyAnimator.h"
+#include "SVGAnimatedPropertyImpl.h"
+#include "SVGAnimationAdditiveValueFunctionImpl.h"
 
 namespace WebCore {
 
-class SVGAttribute;
-class SVGElement;
-class SVGLegacyAnimatedProperty;
+class SVGAnimatedIntegerPairAnimator;
 
-class SVGAttributeOwnerProxy {
+template<typename AnimatedPropertyAnimator1, typename AnimatedPropertyAnimator2>
+class SVGAnimatedPropertyPairAnimator;
+
+class SVGAnimatedIntegerAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedInteger, SVGAnimationIntegerFunction> {
+    friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator>;
+    friend class SVGAnimatedIntegerPairAnimator;
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedInteger, SVGAnimationIntegerFunction>;
+    using Base::Base;
+
 public:
-    SVGAttributeOwnerProxy(SVGElement&);
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedInteger>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::unique_ptr<SVGAnimatedIntegerAnimator>(new SVGAnimatedIntegerAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+    }
 
-    virtual ~SVGAttributeOwnerProxy() = default;
-
-    SVGElement& element() const;
-
-    virtual void synchronizeAttributes() const = 0;
-    virtual void synchronizeAttribute(const QualifiedName&) const = 0;
-
-    virtual Vector<AnimatedPropertyType> animatedTypes(const QualifiedName&) const = 0;
-
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
-
-protected:
-    WeakPtr<SVGElement> m_element;
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
+    }
 };
 
 }

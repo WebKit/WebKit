@@ -700,6 +700,14 @@ void SVGElement::synchronizeAllAnimatedSVGAttribute(SVGElement* svgElement)
 
     svgElement->synchronizeAttributes();
     svgElement->elementData()->setAnimatedSVGAttributesAreDirty(false);
+    
+    // FIXME: Delete the SVG tear off properties code from this function
+    
+    // SVGPropertyRegistry::synchronizeAllAttributes() returns the new values of
+    // the properties which have changed but not committed yet.
+    auto map = svgElement->propertyRegistry().synchronizeAllAttributes();
+    for (const auto& entry : map)
+        svgElement->setSynchronizedLazyAttribute(entry.key, entry.value);
 }
 
 void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) const
@@ -707,11 +715,46 @@ void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) cons
     if (!elementData() || !elementData()->animatedSVGAttributesAreDirty())
         return;
 
+    // FIXME: Delete the SVG tear off properties code from this function
+
     SVGElement* nonConstThis = const_cast<SVGElement*>(this);
     if (name == anyQName())
         synchronizeAllAnimatedSVGAttribute(nonConstThis);
-    else
+    else if (isAnimatedPropertyAttribute(name)) {
+        // If the value of the property has changed, serialize the new value to the attribute.
+        if (auto value = propertyRegistry().synchronize(name))
+            nonConstThis->setSynchronizedLazyAttribute(name, *value);
+    } else
         nonConstThis->synchronizeAttribute(name);
+}
+
+void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
+{
+    QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(animatedProperty);
+    setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
+
+    invalidateSVGAttributes();
+    svgAttributeChanged(attributeName);
+}
+
+bool SVGElement::isAnimatedPropertyAttribute(const QualifiedName& attributeName) const
+{
+    return propertyRegistry().isAnimatedPropertyAttribute(attributeName);
+}
+
+bool SVGElement::isAnimatedAttribute(const QualifiedName& attributeName) const
+{
+    return isAnimatedPropertyAttribute(attributeName);
+}
+
+std::unique_ptr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+{
+    auto animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
+    if (!animator)
+        return animator;
+    for (auto* instance : instances())
+        instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
+    return animator;
 }
 
 Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGAnimatedPropertyAccessor.h"
+#include "SVGAnimatedPropertyAnimatorImpl.h"
+#include "SVGAnimatedPropertyImpl.h"
+#include "SVGNames.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+template<typename OwnerType>
+class SVGAnimatedIntegerAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger>;
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+public:
+    using Base::Base;
+    using Base::property;
+    template<Ref<SVGAnimatedInteger> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedIntegerAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedIntegerAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
 
 }

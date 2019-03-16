@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,38 @@
 
 #pragma once
 
-#include "QualifiedName.h"
-#include "SVGAnimatedPropertyType.h"
-#include <wtf/WeakPtr.h>
-
 namespace WebCore {
 
-class SVGAttribute;
+class SVGAnimationElement;
 class SVGElement;
-class SVGLegacyAnimatedProperty;
+class SVGSMILElement;
 
-class SVGAttributeOwnerProxy {
+class SVGAttributeAnimationControllerBase {
 public:
-    SVGAttributeOwnerProxy(SVGElement&);
+    SVGAttributeAnimationControllerBase(SVGAnimationElement&, SVGElement&);
+    virtual ~SVGAttributeAnimationControllerBase() = default;
 
-    virtual ~SVGAttributeOwnerProxy() = default;
+    static AnimatedPropertyType determineAnimatedPropertyType(const SVGAnimationElement&, SVGElement&, const QualifiedName&);
 
-    SVGElement& element() const;
+    virtual bool isAdditive() const = 0;
+    virtual bool hasValidAttributeType() const = 0;
+    
+    virtual void resetAnimatedType() = 0;
+    virtual void clearAnimatedType(SVGElement* targetElement) = 0;
+    
+    virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
+    virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
+    virtual bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) = 0;
 
-    virtual void synchronizeAttributes() const = 0;
-    virtual void synchronizeAttribute(const QualifiedName&) const = 0;
-
-    virtual Vector<AnimatedPropertyType> animatedTypes(const QualifiedName&) const = 0;
-
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
-
+    virtual void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) = 0;
+    virtual void applyResultsToTarget() = 0;
+    
+    virtual float calculateDistance(const String& fromString, const String& toString) = 0;
+    
 protected:
-    WeakPtr<SVGElement> m_element;
+    SVGAnimationElement& m_animationElement;
+    SVGElement& m_targetElement;
 };
 
-}
+} // namespace WebCore
+

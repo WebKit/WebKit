@@ -27,7 +27,6 @@
 
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedInteger.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumber.h"
@@ -78,20 +77,6 @@ public:
     void registerAttribute()
     {
         registerAttribute(SVGAnimatedEnumerationAttributeAccessor<OwnerType, EnumType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedIntegerAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedIntegerAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName,
-        const AtomicString& (*identifier)(), SVGAnimatedIntegerAttribute OwnerType::*attribute,
-        const AtomicString& (*optionalIdentifier)(), SVGAnimatedIntegerAttribute OwnerType::*optionalAttribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedOptionalIntegerAttributeAccessor<OwnerType>::template singleton<attributeName, identifier, attribute, optionalIdentifier, optionalAttribute>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedLengthAttribute OwnerType::*attribute>

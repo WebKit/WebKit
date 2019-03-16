@@ -2499,8 +2499,6 @@ sub GenerateHeader
         }
     }
 
-    $headerIncludes{"$interfaceName.h"} = 1 if $hasParent && $interface->extendedAttributes->{JSGenerateToNativeObject};
-
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     my $implType = GetImplClassName($interface);
@@ -2512,8 +2510,9 @@ sub GenerateHeader
     push(@headerContent, "\nnamespace WebCore {\n\n");
 
     if ($codeGenerator->IsSVGAnimatedType($interface->type)) {
-        $headerIncludes{"$interfaceName.h"} = 1;
+        $headerIncludes{"SVGAnimatedPropertyImpl.h"} = 1;
     } else {
+        $headerIncludes{"$interfaceName.h"} = 1 if $hasParent && $interface->extendedAttributes->{JSGenerateToNativeObject};
         # Implementation class forward declaration
         if (IsDOMGlobalObject($interface)) {
             AddClassForwardIfNeeded($interface->type);
@@ -2563,7 +2562,9 @@ sub GenerateHeader
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");  
     } else {
-        AddIncludesForImplementationTypeInHeader($implType);
+        if (!$codeGenerator->IsSVGAnimatedType($interface->type)) {
+            AddIncludesForImplementationTypeInHeader($implType);
+        }
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<$implType>&& impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->vm().heap)) $className(structure, *globalObject, WTFMove(impl));\n");

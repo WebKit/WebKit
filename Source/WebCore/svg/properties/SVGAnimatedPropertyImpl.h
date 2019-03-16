@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGAnimatedAngle.h"
+#include "SVGAnimatedBoolean.h"
+#include "SVGAnimatedEnumeration.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedLengthList.h"
+#include "SVGAnimatedNumber.h"
+#include "SVGAnimatedNumberList.h"
+#include "SVGAnimatedPointList.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
+#include "SVGAnimatedPrimitiveProperty.h"
+#include "SVGAnimatedRect.h"
+#include "SVGAnimatedString.h"
+#include "SVGAnimatedTransformList.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
-
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
 
 }

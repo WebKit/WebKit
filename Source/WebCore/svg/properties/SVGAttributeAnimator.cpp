@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,35 @@
  */
 
 #include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#include "SVGAttributeAnimator.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSPropertyParser.h"
 #include "SVGElement.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
+void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* element, const QualifiedName& attributeName)
 {
+    ASSERT(!element->m_deletionHasBegun);
+    element->svgAttributeChanged(attributeName);
 }
 
-SVGElement& SVGAttributeOwnerProxy::element() const
+void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* targetElement)
 {
-    return *m_element;
+    ASSERT(targetElement);
+    ASSERT(m_attributeName != anyQName());
+
+    // FIXME: Do we really need to check both isConnected and !parentNode?
+    if (!targetElement->isConnected() || !targetElement->parentNode())
+        return;
+
+    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    applyAnimatedPropertyChange(targetElement, m_attributeName);
+
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    for (auto* instance : targetElement->instances())
+        applyAnimatedPropertyChange(instance, m_attributeName);
 }
 
 }

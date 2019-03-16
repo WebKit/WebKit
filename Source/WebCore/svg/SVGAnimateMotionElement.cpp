@@ -57,7 +57,7 @@ Ref<SVGAnimateMotionElement> SVGAnimateMotionElement::create(const QualifiedName
     return adoptRef(*new SVGAnimateMotionElement(tagName, document));
 }
 
-bool SVGAnimateMotionElement::hasValidAttributeType()
+bool SVGAnimateMotionElement::hasValidAttributeType() const
 {
     auto targetElement = makeRefPtr(this->targetElement());
     if (!targetElement)
@@ -90,7 +90,7 @@ bool SVGAnimateMotionElement::hasValidAttributeType()
     return false;
 }
 
-bool SVGAnimateMotionElement::hasValidAttributeName()
+bool SVGAnimateMotionElement::hasValidAttributeName() const
 {
     // AnimateMotion does not use attributeName so it is always valid.
     return true;

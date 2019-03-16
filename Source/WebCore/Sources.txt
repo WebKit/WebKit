@@ -2273,8 +2273,6 @@ svg/SVGAnimatedAngle.cpp
 svg/SVGAnimatedBoolean.cpp
 svg/SVGAnimatedColor.cpp
 svg/SVGAnimatedEnumeration.cpp
-svg/SVGAnimatedInteger.cpp
-svg/SVGAnimatedIntegerOptionalInteger.cpp
 svg/SVGAnimatedLength.cpp
 svg/SVGAnimatedLengthList.cpp
 svg/SVGAnimatedNumber.cpp
@@ -2288,6 +2286,8 @@ svg/SVGAnimatedString.cpp
 svg/SVGAnimatedTransformList.cpp
 svg/SVGAnimatedTypeAnimator.cpp
 svg/SVGAnimationElement.cpp
+svg/SVGAttributeAnimationController.cpp
+svg/SVGAttributeAnimationControllerBase.cpp
 svg/SVGCircleElement.cpp
 svg/SVGClipPathElement.cpp
 svg/SVGComponentTransferFunctionElement.cpp
@@ -2345,6 +2345,7 @@ svg/SVGHKernElement.cpp
 svg/SVGImageElement.cpp
 svg/SVGImageLoader.cpp
 svg/SVGLangSpace.cpp
+svg/SVGLegacyAttributeAnimationController.cpp
 svg/SVGLengthContext.cpp
 svg/SVGLengthListValues.cpp
 svg/SVGLengthValue.cpp
@@ -2424,6 +2425,8 @@ svg/graphics/filters/SVGFilter.cpp
 svg/graphics/filters/SVGFilterBuilder.cpp
 
 svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
+svg/properties/SVGAnimatedProperty.cpp
+svg/properties/SVGAttributeAnimator.cpp
 svg/properties/SVGAttributeOwnerProxy.cpp
 svg/properties/SVGLegacyAnimatedProperty.cpp
 

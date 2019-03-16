@@ -35,6 +35,11 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
 {
     ASSERT(hasTagName(SVGNames::feTurbulenceTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves>();
+    });
 }
 
 Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document& document)
@@ -62,7 +67,6 @@ void SVGFETurbulenceElement::registerAttributes()
     registry.registerAttribute<SVGNames::baseFrequencyAttr,
         &SVGFETurbulenceElement::baseFrequencyXIdentifier, &SVGFETurbulenceElement::m_baseFrequencyX,
         &SVGFETurbulenceElement::baseFrequencyYIdentifier, &SVGFETurbulenceElement::m_baseFrequencyY>();
-    registry.registerAttribute<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves>();
     registry.registerAttribute<SVGNames::seedAttr, &SVGFETurbulenceElement::m_seed>();
     registry.registerAttribute<SVGNames::stitchTilesAttr, SVGStitchOptions, &SVGFETurbulenceElement::m_stitchTiles>();
     registry.registerAttribute<SVGNames::typeAttr, TurbulenceType, &SVGFETurbulenceElement::m_type>();
@@ -99,7 +103,7 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::numOctavesAttr) {
-        m_numOctaves.setValue(value.string().toUIntStrict());
+        m_numOctaves->setBaseValInternal(value.string().toUIntStrict());
         return;
     }
 
@@ -126,7 +130,7 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (isKnownAttribute(attrName) || PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;

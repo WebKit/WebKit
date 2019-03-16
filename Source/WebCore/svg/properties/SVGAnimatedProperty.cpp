@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,22 @@
  */
 
 #include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#include "SVGAnimatedProperty.h"
 
 #include "SVGElement.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
+SVGPropertyOwner* SVGAnimatedProperty::owner() const
 {
+    return m_contextElement;
 }
 
-SVGElement& SVGAttributeOwnerProxy::element() const
+void SVGAnimatedProperty::commitPropertyChange()
 {
-    return *m_element;
+    if (!m_contextElement)
+        return;
+    m_contextElement->commitPropertyChange(*this);
 }
 
 }

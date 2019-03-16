@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGMemberAccessor.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+template<typename OwnerType, typename PropertyType>
+class SVGPointerMemberAccessor : public SVGMemberAccessor<OwnerType> {
+    using Base = SVGMemberAccessor<OwnerType>;
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+public:
+    SVGPointerMemberAccessor(Ref<PropertyType> OwnerType::*property)
+        : m_property(property)
+    {
+    }
+
+    Ref<PropertyType>& property(OwnerType& owner) const { return owner.*m_property; }
+    const Ref<PropertyType>& property(const OwnerType& owner) const { return owner.*m_property; }
+
+    void detach(const OwnerType& owner) const override
+    {
+        property(owner)->detach();
+    }
+
+    Optional<String> synchronize(const OwnerType& owner) const override
+    {
+        return property(owner)->synchronize();
+    }
+
+protected:
+    template<typename AccessorType, Ref<PropertyType> OwnerType::*property>
+    static const SVGMemberAccessor<OwnerType>& singleton()
+    {
+        static NeverDestroyed<AccessorType> propertyAccessor { property };
+        return propertyAccessor;
+    }
+
+    Ref<PropertyType> OwnerType::*m_property;
+};
 
 }

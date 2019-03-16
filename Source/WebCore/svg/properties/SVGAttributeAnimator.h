@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,35 +25,60 @@
 
 #pragma once
 
+#include "CSSPropertyNames.h"
 #include "QualifiedName.h"
-#include "SVGAnimatedPropertyType.h"
-#include <wtf/WeakPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-class SVGAttribute;
 class SVGElement;
-class SVGLegacyAnimatedProperty;
 
-class SVGAttributeOwnerProxy {
+enum class AnimationMode : uint8_t {
+    None,
+    FromTo,
+    FromBy,
+    To,
+    By,
+    Values,
+    Path
+};
+
+enum class CalcMode : uint8_t {
+    Discrete,
+    Linear,
+    Paced,
+    Spline
+};
+
+class SVGAttributeAnimator {
 public:
-    SVGAttributeOwnerProxy(SVGElement&);
+    SVGAttributeAnimator(const QualifiedName& attributeName)
+        : m_attributeName(attributeName)
+    {
+    }
 
-    virtual ~SVGAttributeOwnerProxy() = default;
+    virtual ~SVGAttributeAnimator() = default;
 
-    SVGElement& element() const;
+    virtual bool isDiscrete() const { return false; }
 
-    virtual void synchronizeAttributes() const = 0;
-    virtual void synchronizeAttribute(const QualifiedName&) const = 0;
+    virtual void setFromAndToValues(SVGElement*, const String&, const String&) { }
+    virtual void setFromAndByValues(SVGElement*, const String&, const String&) { }
+    virtual void setToAtEndOfDurationValue(const String&) { }
 
-    virtual Vector<AnimatedPropertyType> animatedTypes(const QualifiedName&) const = 0;
+    virtual void start(SVGElement*) = 0;
+    virtual void progress(SVGElement*, float, unsigned) = 0;
+    virtual void apply(SVGElement*) = 0;
+    virtual void stop(SVGElement* targetElement) = 0;
 
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual RefPtr<SVGLegacyAnimatedProperty> lookupAnimatedProperty(const SVGAttribute&) const = 0;
-    virtual Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName&) const = 0;
+    virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
 
 protected:
-    WeakPtr<SVGElement> m_element;
+    static void applyAnimatedPropertyChange(SVGElement*, const QualifiedName&);
+
+    void applyAnimatedPropertyChange(SVGElement*);
+
+    const QualifiedName& m_attributeName;
 };
 
 }

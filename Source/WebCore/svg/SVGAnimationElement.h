@@ -36,21 +36,9 @@ class ConditionEventListener;
 class SVGAnimatedType;
 class TimeContainer;
 
-enum class AnimationMode : uint8_t {
-    None,
-    FromTo,
-    FromBy,
-    To,
-    By,
-    Values,
-    Path // Used by AnimateMotion.
-};
-
 // If we have 'currentColor' or 'inherit' as animation value, we need to grab
 // the value during the animation since the value can be animated itself.
 enum AnimatedPropertyValueType { RegularPropertyValue, CurrentColorValue, InheritValue };
-
-enum class CalcMode : uint8_t { Discrete, Linear, Paced, Spline };
 
 class SVGAnimationElement : public SVGSMILElement, public SVGExternalResourcesRequired, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimationElement);
@@ -146,6 +134,12 @@ public:
             animatedNumber = number;
     }
 
+    enum class AttributeType : uint8_t { CSS, XML, Auto };
+    AttributeType attributeType() const { return m_attributeType; }
+
+    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
+    virtual void determinePropertyValueTypes(const String& from, const String& to);
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document&);
 
@@ -153,16 +147,11 @@ protected:
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
-    void computeCSSPropertyValue(SVGElement*, CSSPropertyID, String& value);
-    virtual void determinePropertyValueTypes(const String& from, const String& to);
-    virtual void resetAnimatedPropertyType();
+    virtual void resetAnimation();
 
     static bool isSupportedAttribute(const QualifiedName&);
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
-
-    enum class AttributeType { CSS, XML, Auto };
-    AttributeType attributeType() const { return m_attributeType; }
 
     String toValue() const;
     String byValue() const;
@@ -177,10 +166,7 @@ protected:
     AnimatedPropertyValueType m_fromPropertyValueType { RegularPropertyValue };
     AnimatedPropertyValueType m_toPropertyValueType { RegularPropertyValue };
 
-    void setTargetElement(SVGElement*) override;
     void setAttributeName(const QualifiedName&) override { }
-    bool hasInvalidCSSAttributeType() const { return m_hasInvalidCSSAttributeType; }
-    void checkInvalidCSSAttributeType(SVGElement*);
 
     virtual void updateAnimationMode();
     void setAnimationMode(AnimationMode animationMode) { m_animationMode = animationMode; }
@@ -218,7 +204,6 @@ private:
     Vector<UnitBezier> m_keySplines;
     String m_lastValuesAnimationFrom;
     String m_lastValuesAnimationTo;
-    bool m_hasInvalidCSSAttributeType { false };
     CalcMode m_calcMode { CalcMode::Linear };
     AnimationMode m_animationMode { AnimationMode::None };
     AttributeOwnerProxy m_attributeOwnerProxy { *this };

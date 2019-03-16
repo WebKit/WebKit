@@ -39,7 +39,7 @@ public:
 private:
     SVGAnimateTransformElement(const QualifiedName&, Document&);
     
-    bool hasValidAttributeType() final;
+    bool hasValidAttributeType() const final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     SVGTransformValue::SVGTransformType m_type;

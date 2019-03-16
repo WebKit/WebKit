@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGPointerMemberAccessor.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+template<typename OwnerType, typename AnimatedPropertyType>
+class SVGAnimatedPropertyAccessor : public SVGPointerMemberAccessor<OwnerType, AnimatedPropertyType> {
+    using Base = SVGPointerMemberAccessor<OwnerType, AnimatedPropertyType>;
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+public:
+    using Base::Base;
+    using Base::singleton;
+    using Base::property;
+    using AnimatedProperty = AnimatedPropertyType;
+
+    bool matches(const OwnerType& owner, const SVGAnimatedProperty& animatedProperty) const override
+    {
+        return property(owner).ptr() == &animatedProperty;
+    }
+
+private:
+    bool isAnimatedProperty() const override { return true; }
+};
 
 }

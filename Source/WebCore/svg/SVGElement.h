@@ -22,12 +22,13 @@
 
 #pragma once
 
-#include "SVGAnimatedString.h"
+#include "SVGAnimatedPropertyImpl.h"
 #include "SVGAttributeOwnerProxy.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"
 #include "SVGParsingError.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include "StyledElement.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -46,7 +47,7 @@ class SVGUseElement;
 
 void mapAttributeToCSSProperty(HashMap<AtomicStringImpl*, CSSPropertyID>* propertyNameToIdMap, const QualifiedName& attrName);
 
-class SVGElement : public StyledElement, public SVGLangSpace, public CanMakeWeakPtr<SVGElement> {
+class SVGElement : public StyledElement, public SVGLangSpace, public SVGPropertyOwner, public CanMakeWeakPtr<SVGElement> {
     WTF_MAKE_ISO_ALLOCATED(SVGElement);
 public:
     bool isOutermostSVGSVGElement() const;
@@ -150,6 +151,18 @@ public:
     RefPtr<SVGLegacyAnimatedProperty> lookupOrCreateAnimatedProperty(const SVGAttribute& attribute) { return attributeOwnerProxy().lookupOrCreateAnimatedProperty(attribute); }
     Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& name) { return attributeOwnerProxy().lookupOrCreateAnimatedProperties(name); }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGElement>;
+    virtual const SVGPropertyRegistry& propertyRegistry() const { return m_propertyRegistry; }
+
+    bool isAnimatedPropertyAttribute(const QualifiedName&) const;
+    bool isAnimatedAttribute(const QualifiedName&) const;
+
+    void commitPropertyChange() override { }
+    void commitPropertyChange(SVGAnimatedProperty&);
+
+    const SVGElement* attributeContextElement() const override { return this; }
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive);
+
     // These are needed for the RenderTree, animation and DOM.
     const auto& className() const { return m_className.currentValue(attributeOwnerProxy()); }
     auto classNameAnimated() { return m_className.animatedProperty(attributeOwnerProxy()); }
@@ -204,6 +217,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     SVGAnimatedStringAttribute m_className;
+    
+    PropertyRegistry m_propertyRegistry { *this };
 };
 
 class SVGElement::InstanceInvalidationGuard {

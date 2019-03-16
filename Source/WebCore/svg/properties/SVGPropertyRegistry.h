@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGAttributeAnimator.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+class SVGAnimatedProperty;
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+class SVGPropertyRegistry {
+public:
+    SVGPropertyRegistry() = default;
+    virtual ~SVGPropertyRegistry() = default;
+
+    virtual void detachAllProperties() const = 0;
+    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty&) const = 0;
+    virtual Optional<String> synchronize(const QualifiedName&) const = 0;
+    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+
+    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
+    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
+    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+};
 
 }

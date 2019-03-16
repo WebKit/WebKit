@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +40,13 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
 {
     ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::orderAttr, &SVGFEConvolveMatrixElement::m_orderX, &SVGFEConvolveMatrixElement::m_orderY>();
+        PropertyRegistry::registerProperty<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
+        PropertyRegistry::registerProperty<SVGNames::targetYAttr, &SVGFEConvolveMatrixElement::m_targetY>();
+    });
 }
 
 Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document& document)
@@ -59,32 +66,15 @@ const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
-const AtomicString& SVGFEConvolveMatrixElement::orderXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGOrderX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFEConvolveMatrixElement::orderYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGOrderY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
 void SVGFEConvolveMatrixElement::registerAttributes()
 {
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEConvolveMatrixElement::m_in1>();
-    registry.registerAttribute<SVGNames::orderAttr,
-        &SVGFEConvolveMatrixElement::orderXIdentifier, &SVGFEConvolveMatrixElement::m_orderX,
-        &SVGFEConvolveMatrixElement::orderYIdentifier, &SVGFEConvolveMatrixElement::m_orderY>();
     registry.registerAttribute<SVGNames::kernelMatrixAttr, &SVGFEConvolveMatrixElement::m_kernelMatrix>();
     registry.registerAttribute<SVGNames::divisorAttr, &SVGFEConvolveMatrixElement::m_divisor>();
     registry.registerAttribute<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
-    registry.registerAttribute<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
-    registry.registerAttribute<SVGNames::targetYAttr, &SVGFEConvolveMatrixElement::m_targetY>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
     registry.registerAttribute<SVGNames::kernelUnitLengthAttr,
         &SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier, &SVGFEConvolveMatrixElement::m_kernelUnitLengthX,
@@ -102,8 +92,8 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     if (name == SVGNames::orderAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y) && x >= 1 && y >= 1) {
-            m_orderX.setValue(x);
-            m_orderY.setValue(y);
+            m_orderX->setBaseValInternal(x);
+            m_orderY->setBaseValInternal(y);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing order=\"" + value + "\". Filtered element will not be displayed.");
         return;
@@ -141,12 +131,12 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::targetXAttr) {
-        m_targetX.setValue(value.string().toUIntStrict());
+        m_targetX->setBaseValInternal(value.string().toUIntStrict());
         return;
     }
 
     if (name == SVGNames::targetYAttr) {
-        m_targetY.setValue(value.string().toUIntStrict());
+        m_targetY->setBaseValInternal(value.string().toUIntStrict());
         return;
     }
 
@@ -197,8 +187,8 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, 
 
 void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
-    m_orderX.setValue(x);
-    m_orderY.setValue(y);
+    m_orderX->setBaseValInternal(x);
+    m_orderY->setBaseValInternal(y);
     invalidate();
 }
 

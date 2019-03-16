@@ -1,3 +1,287 @@
+2019-03-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG property tear off objects for SVGAnimatedInteger
+        https://bugs.webkit.org/show_bug.cgi?id=195722
+
+        Reviewed by Simon Fraser.
+
+        Instead of saving a raw integer value in the SVGElement and then wrapping
+        the pointer to this raw data in a tear off object, we will represent the
+        integer as Ref<SVGAnimatedInteger> in SVGElement. This will make the 
+        representation of the property in IDL file match the C++ header file.
+
+        When the DOM requests the SVGAnimatedInteger, we get return a reference
+        to the new animated property. When the rendering code asks for the current
+        value of the this animated property, we return the animVal() or the
+        baseVal() depending on whether the property is animating or not.
+
+        A pointer to a member in the SVGElement will be registered along with the
+        associated attribute name in SVGPropertyRegistry. Registering the property
+        creates an SVGMemberAccessor and links to the associated attribute. The
+        function of SVGMemberAccessor is to retrieve the value of the property
+        given a pointer to an SVGElement.
+
+        SVGPropertyRegistry manages all the properties of SVGElement. It takes
+        into account the inherited properties as well.
+
+        SVGElement will have a virtual method called propertyRegistry(). Every
+        superclass will override this method to return a reference to its registry
+        which includes all the registered properties of this class and its bases.
+
+        One important function of the SVGPropertyRegistry and SVGAccessor is they
+        create the appropriate SVGAttributeAnimator for this property.
+
+        SVGAttributeAnimator is just a connection between the animated property
+        and SVGAnimationFunction. SVGAnimationFunction calculates the values of
+        the animated property within a time interval. SVGAnimatedPropertyAnimator
+        updates animVal of the animated property and invalidates the associated
+        SVGElement and all the instances that references this element.
+
+        The plan is to remove all the SVG tear off objects like what this patch
+        does for SVGAnimatedInteger. So for a period of time the old code and the
+        new code will co-exist together. These things to consider when reviewing
+        this patch:
+
+        -- SVGAnimatedElementBase was re-factored to use SVGAttributeAnimationControllerBase
+        which is inherited by SVGLegacyAttributeAnimationController and
+        SVGAttributeAnimationController. The tear-off properties code which uses
+        SVGAnimatedType now lives in SVGLegacyAttributeAnimationController. The
+        new code was added to SVGAttributeAnimationController. The plan is to 
+        remove the three animation controllers and to move the code of
+        SVGAttributeAnimationController to SVGAnimatedElementBase when all the tear
+        off code is removed.
+
+        -- SVGElement now keeps two registries one for the tear-off world and the
+        other for the new world. Eventually we need to get rid of tear-off registry.
+
+        -- SVGElement will differentiate between the type of the property by the
+        the method isAnimatedAttribute().
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::SVGAnimateElementBase):
+        (WebCore::SVGAnimateElementBase::attributeAnimationController):
+        (WebCore::SVGAnimateElementBase::attributeAnimationControllerIfExists):
+        (WebCore::SVGAnimateElementBase::hasValidAttributeType const):
+        (WebCore::SVGAnimateElementBase::determineAnimatedPropertyType const):
+        (WebCore::SVGAnimateElementBase::calculateAnimatedValue):
+        (WebCore::SVGAnimateElementBase::calculateToAtEndOfDurationValue):
+        (WebCore::SVGAnimateElementBase::calculateFromAndToValues):
+        (WebCore::SVGAnimateElementBase::calculateFromAndByValues):
+        (WebCore::SVGAnimateElementBase::resetAnimatedType):
+        (WebCore::SVGAnimateElementBase::clearAnimatedType):
+        (WebCore::SVGAnimateElementBase::applyResultsToTarget):
+        (WebCore::SVGAnimateElementBase::isAdditive const):
+        (WebCore::SVGAnimateElementBase::calculateDistance):
+        (WebCore::SVGAnimateElementBase::setTargetElement):
+        (WebCore::SVGAnimateElementBase::setAttributeName):
+        (WebCore::SVGAnimateElementBase::resetAnimation):
+        (WebCore::SVGAnimateElementBase::hasInvalidCSSAttributeType const):
+        (WebCore::SVGAnimateElementBase::hasValidAttributeType): Deleted.
+        (WebCore::propertyTypesAreConsistent): Deleted.
+        (WebCore::applyCSSPropertyToTarget): Deleted.
+        (WebCore::removeCSSPropertyFromTarget): Deleted.
+        (WebCore::applyCSSPropertyToTargetAndInstances): Deleted.
+        (WebCore::removeCSSPropertyFromTargetAndInstances): Deleted.
+        (WebCore::notifyTargetAboutAnimValChange): Deleted.
+        (WebCore::notifyTargetAndInstancesAboutAnimValChange): Deleted.
+        (WebCore::SVGAnimateElementBase::animatedPropertyTypeSupportsAddition const): Deleted.
+        (WebCore::SVGAnimateElementBase::resetAnimatedPropertyType): Deleted.
+        (WebCore::SVGAnimateElementBase::ensureAnimator): Deleted.
+        * svg/SVGAnimateElementBase.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType const):
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeName const):
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeType): Deleted.
+        (WebCore::SVGAnimateMotionElement::hasValidAttributeName): Deleted.
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType const):
+        (WebCore::SVGAnimateTransformElement::hasValidAttributeType): Deleted.
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimatedInteger.cpp: Removed.
+        * svg/SVGAnimatedInteger.h: Removed.
+        * svg/SVGAnimatedIntegerOptionalInteger.cpp: Removed.
+        * svg/SVGAnimatedIntegerOptionalInteger.h: Removed.
+        * svg/SVGAnimatedPointList.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setAttributeType):
+        (WebCore::SVGAnimationElement::resetAnimation):
+        (WebCore::SVGAnimationElement::resetAnimatedPropertyType): Deleted.
+        (WebCore::SVGAnimationElement::setTargetElement): Deleted.
+        (WebCore::SVGAnimationElement::checkInvalidCSSAttributeType): Deleted.
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::attributeType const):
+        (WebCore::SVGAnimationElement::hasInvalidCSSAttributeType const): Deleted.
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGAttributeAnimationController.cpp: Added.
+        (WebCore::SVGAttributeAnimationController::SVGAttributeAnimationController):
+        (WebCore::SVGAttributeAnimationController::animator const):
+        (WebCore::SVGAttributeAnimationController::isDiscreteAnimator const):
+        (WebCore::SVGAttributeAnimationController::isAdditive const):
+        (WebCore::SVGAttributeAnimationController::hasValidAttributeType const):
+        (WebCore::SVGAttributeAnimationController::calculateFromAndToValues):
+        (WebCore::SVGAttributeAnimationController::calculateFromAndByValues):
+        (WebCore::SVGAttributeAnimationController::calculateToAtEndOfDurationValue):
+        (WebCore::SVGAttributeAnimationController::resetAnimatedType):
+        (WebCore::SVGAttributeAnimationController::calculateAnimatedValue):
+        (WebCore::SVGAttributeAnimationController::applyResultsToTarget):
+        (WebCore::SVGAttributeAnimationController::clearAnimatedType):
+        (WebCore::SVGAttributeAnimationController::calculateDistance):
+        * svg/SVGAttributeAnimationController.h: Added.
+        (WebCore::SVGAttributeAnimationController::animatorIfExists const):
+        * svg/SVGAttributeAnimationControllerBase.cpp: Added.
+        (WebCore::SVGAttributeAnimationControllerBase::SVGAttributeAnimationControllerBase):
+        (WebCore::SVGAttributeAnimationControllerBase::determineAnimatedPropertyType):
+        * svg/SVGAttributeAnimationControllerBase.h: Added.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeAllAnimatedSVGAttribute):
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute const):
+        (WebCore::SVGElement::commitPropertyChange):
+        (WebCore::SVGElement::isAnimatedPropertyAttribute const):
+        (WebCore::SVGElement::isAnimatedAttribute const):
+        (WebCore::SVGElement::createAnimator):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::propertyRegistry const):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::setOrder):
+        (WebCore::SVGFEConvolveMatrixElement::orderXIdentifier): Deleted.
+        (WebCore::SVGFEConvolveMatrixElement::orderYIdentifier): Deleted.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::registerAttributes):
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.h:
+        * svg/SVGLegacyAttributeAnimationController.cpp: Added.
+        (WebCore::SVGLegacyAttributeAnimationController::SVGLegacyAttributeAnimationController):
+        (WebCore::SVGLegacyAttributeAnimationController::animatedTypeAnimator):
+        (WebCore::SVGLegacyAttributeAnimationController::isAdditive const):
+        (WebCore::SVGLegacyAttributeAnimationController::hasValidAttributeType const):
+        (WebCore::SVGLegacyAttributeAnimationController::calculateFromAndToValues):
+        (WebCore::SVGLegacyAttributeAnimationController::calculateFromAndByValues):
+        (WebCore::SVGLegacyAttributeAnimationController::calculateToAtEndOfDurationValue):
+        (WebCore::propertyTypesAreConsistent):
+        (WebCore::SVGLegacyAttributeAnimationController::resetAnimatedType):
+        (WebCore::SVGLegacyAttributeAnimationController::calculateAnimatedValue):
+        (WebCore::applyCSSPropertyToTarget):
+        (WebCore::removeCSSPropertyFromTarget):
+        (WebCore::applyCSSPropertyToTargetAndInstances):
+        (WebCore::removeCSSPropertyFromTargetAndInstances):
+        (WebCore::notifyTargetAboutAnimValChange):
+        (WebCore::notifyTargetAndInstancesAboutAnimValChange):
+        (WebCore::SVGLegacyAttributeAnimationController::applyResultsToTarget):
+        (WebCore::SVGLegacyAttributeAnimationController::clearAnimatedType):
+        (WebCore::SVGLegacyAttributeAnimationController::calculateDistance):
+        * svg/SVGLegacyAttributeAnimationController.h: Added.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::hasValidAttributeName const):
+        (WebCore::SVGSMILElement::hasValidAttributeName): Deleted.
+        * svg/animation/SVGSMILElement.h:
+        * svg/properties/SVGAnimatedPrimitiveProperty.h: Added.
+        (WebCore::SVGAnimatedPrimitiveProperty::create):
+        (WebCore::SVGAnimatedPrimitiveProperty::setBaseVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::setBaseValInternal):
+        (WebCore::SVGAnimatedPrimitiveProperty::baseVal const):
+        (WebCore::SVGAnimatedPrimitiveProperty::setAnimVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::animVal const):
+        (WebCore::SVGAnimatedPrimitiveProperty::animVal):
+        (WebCore::SVGAnimatedPrimitiveProperty::currentValue const):
+        (WebCore::SVGAnimatedPrimitiveProperty::SVGAnimatedPrimitiveProperty):
+        * svg/properties/SVGAnimatedProperty.cpp: Added.
+        (WebCore::SVGAnimatedProperty::owner const):
+        (WebCore::SVGAnimatedProperty::commitPropertyChange):
+        * svg/properties/SVGAnimatedProperty.h: Added.
+        (WebCore::SVGAnimatedProperty::isAttached const):
+        (WebCore::SVGAnimatedProperty::detach):
+        (WebCore::SVGAnimatedProperty::contextElement const):
+        (WebCore::SVGAnimatedProperty::baseValAsString const):
+        (WebCore::SVGAnimatedProperty::animValAsString const):
+        (WebCore::SVGAnimatedProperty::isDirty const):
+        (WebCore::SVGAnimatedProperty::setDirty):
+        (WebCore::SVGAnimatedProperty::synchronize):
+        (WebCore::SVGAnimatedProperty::isAnimating const):
+        (WebCore::SVGAnimatedProperty::startAnimation):
+        (WebCore::SVGAnimatedProperty::stopAnimation):
+        (WebCore::SVGAnimatedProperty::instanceStartAnimation):
+        (WebCore::SVGAnimatedProperty::instanceStopAnimation):
+        (WebCore::SVGAnimatedProperty::SVGAnimatedProperty):
+        * svg/properties/SVGAnimatedPropertyAccessor.h: Added.
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h: Added.
+        * svg/properties/SVGAnimatedPropertyAnimator.h: Added.
+        (WebCore::SVGAnimatedPropertyAnimator::appendAnimatedInstance):
+        (WebCore::SVGAnimatedPropertyAnimator::SVGAnimatedPropertyAnimator):
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h: Added.
+        * svg/properties/SVGAnimatedPropertyImpl.h: Added.
+        * svg/properties/SVGAnimatedPropertyPairAccessor.h: Added.
+        (WebCore::SVGAnimatedPropertyPairAccessor::SVGAnimatedPropertyPairAccessor):
+        (WebCore::SVGAnimatedPropertyPairAccessor::singleton):
+        (WebCore::SVGAnimatedPropertyPairAccessor::property1 const):
+        (WebCore::SVGAnimatedPropertyPairAccessor::property2 const):
+        * svg/properties/SVGAnimatedPropertyPairAccessorImpl.h: Added.
+        * svg/properties/SVGAnimatedPropertyPairAnimator.h: Added.
+        (WebCore::SVGAnimatedPropertyPairAnimator::appendAnimatedInstance):
+        (WebCore::SVGAnimatedPropertyPairAnimator::SVGAnimatedPropertyPairAnimator):
+        * svg/properties/SVGAnimatedPropertyPairAnimatorImpl.h: Added.
+        * svg/properties/SVGAnimationAdditiveFunction.h: Added.
+        (WebCore::SVGAnimationAdditiveFunction::SVGAnimationAdditiveFunction):
+        (WebCore::SVGAnimationAdditiveFunction::progress):
+        * svg/properties/SVGAnimationAdditiveValueFunction.h: Added.
+        (WebCore::SVGAnimationAdditiveValueFunction::toAtEndOfDuration const):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h: Added.
+        (WebCore::SVGAnimationIntegerFunction::progress):
+        * svg/properties/SVGAnimationFunction.h: Added.
+        (WebCore::SVGAnimationFunction::isDiscrete const):
+        (WebCore::SVGAnimationFunction::calculateDistance const):
+        (WebCore::SVGAnimationFunction::SVGAnimationFunction):
+        (WebCore::SVGAnimationFunction::addFromAndToValues):
+        * svg/properties/SVGAttributeAnimator.cpp: Added.
+        (WebCore::SVGAttributeAnimator::applyAnimatedPropertyChange):
+        * svg/properties/SVGAttributeAnimator.h: Added.
+        (WebCore::SVGAttributeAnimator::SVGAttributeAnimator):
+        (WebCore::SVGAttributeAnimator::isDiscrete const):
+        (WebCore::SVGAttributeAnimator::setFromAndToValues):
+        (WebCore::SVGAttributeAnimator::setFromAndByValues):
+        (WebCore::SVGAttributeAnimator::setToAtEndOfDurationValue):
+        (WebCore::SVGAttributeAnimator::calculateDistance const):
+        * svg/properties/SVGAttributeOwnerProxy.cpp:
+        * svg/properties/SVGAttributeOwnerProxy.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGMemberAccessor.h: Added.
+        (WebCore::SVGMemberAccessor::detach const):
+        (WebCore::SVGMemberAccessor::isAnimatedProperty const):
+        (WebCore::SVGMemberAccessor::isAnimatedLength const):
+        (WebCore::SVGMemberAccessor::matches const):
+        (WebCore::SVGMemberAccessor::synchronize const):
+        (WebCore::SVGMemberAccessor::createAnimator const):
+        (WebCore::SVGMemberAccessor::appendAnimatedInstance const):
+        * svg/properties/SVGPointerMemberAccessor.h: Added.
+        (WebCore::SVGPointerMemberAccessor::SVGPointerMemberAccessor):
+        (WebCore::SVGPointerMemberAccessor::property const):
+        (WebCore::SVGPointerMemberAccessor::singleton):
+        * svg/properties/SVGProperty.h: Added.
+        * svg/properties/SVGPropertyOwner.h: Added.
+        (WebCore::SVGPropertyOwner::owner const):
+        (WebCore::SVGPropertyOwner::attributeContextElement const):
+        (WebCore::SVGPropertyOwner::commitPropertyChange):
+        * svg/properties/SVGPropertyOwnerRegistry.h: Added.
+        (WebCore::SVGPropertyOwnerRegistry::SVGPropertyOwnerRegistry):
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+        (WebCore::SVGPropertyOwnerRegistry::enumerateRecursively):
+        (WebCore::SVGPropertyOwnerRegistry::isKnownAttribute):
+        (WebCore::SVGPropertyOwnerRegistry::enumerateRecursivelyBaseTypes):
+        (WebCore::SVGPropertyOwnerRegistry::findAccessor):
+        * svg/properties/SVGPropertyRegistry.h: Added.
+
 2019-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove LayoutAssertionDisableScope after r241289

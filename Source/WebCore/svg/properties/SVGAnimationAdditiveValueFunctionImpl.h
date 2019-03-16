@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SVGAttributeOwnerProxy.h"
+#pragma once
 
-#include "SVGElement.h"
+#include "SVGAnimationAdditiveValueFunction.h"
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
-SVGAttributeOwnerProxy::SVGAttributeOwnerProxy(SVGElement& element)
-    : m_element(makeWeakPtr(element))
-{
-}
+class SVGAnimationIntegerFunction : public SVGAnimationAdditiveValueFunction<int> {
+    friend class SVGAnimatedIntegerPairAnimator;
 
-SVGElement& SVGAttributeOwnerProxy::element() const
-{
-    return *m_element;
-}
+public:
+    using Base = SVGAnimationAdditiveValueFunction<int>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPropertyTraits<int>::fromString(from);
+        m_to = SVGPropertyTraits<int>::fromString(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration = SVGPropertyTraits<int>::fromString(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, int& animated)
+    {
+        animated = static_cast<int>(roundf(Base::progress(percentage, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
+    }
+
+    float calculateDistance(SVGElement*, const String& from, const String& to) const override
+    {
+        return std::abs(to.toIntStrict() - from.toIntStrict());
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        m_to += m_from;
+    }
+};
 
 }

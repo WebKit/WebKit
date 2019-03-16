@@ -309,7 +309,7 @@ void SVGSMILElement::removedFromAncestor(RemovalType removalType, ContainerNode&
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 
-bool SVGSMILElement::hasValidAttributeName()
+bool SVGSMILElement::hasValidAttributeName() const
 {
     return attributeName() != anyQName();
 }

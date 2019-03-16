@@ -43,7 +43,7 @@ Ref<SVGAnimateTransformElement> SVGAnimateTransformElement::create(const Qualifi
     return adoptRef(*new SVGAnimateTransformElement(tagName, document));
 }
 
-bool SVGAnimateTransformElement::hasValidAttributeType()
+bool SVGAnimateTransformElement::hasValidAttributeType() const
 {
     if (!this->targetElement())
         return false;
@@ -51,7 +51,7 @@ bool SVGAnimateTransformElement::hasValidAttributeType()
     if (attributeType() == AttributeType::CSS)
         return false;
 
-    return m_animatedPropertyType == AnimatedTransformList;
+    return SVGAnimateElementBase::hasValidAttributeType();
 }
 
 void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

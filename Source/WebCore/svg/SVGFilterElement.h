@@ -24,7 +24,6 @@
 #pragma once
 
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedInteger.h"
 #include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"

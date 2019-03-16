@@ -22,6 +22,8 @@
 
 #include "SVGAnimatedListPropertyTearOff.h"
 #include "SVGAnimatedTypeAnimator.h"
+#include "SVGAttribute.h"
+#include "SVGAttributeAccessor.h"
 #include "SVGPointList.h"
 
 namespace WebCore {
