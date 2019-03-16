@@ -293,6 +293,10 @@ public:
     void revokeAudioCaptureExtension() { m_mediaCaptureSandboxExtensions &= ~Audio; }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void unblockAccessibilityServerIfNeeded();
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
@@ -431,6 +435,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
+    bool m_hasSentMessageToUnblockAccessibilityServer { false };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

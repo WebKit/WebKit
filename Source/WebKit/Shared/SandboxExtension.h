@@ -46,6 +46,7 @@ public:
     enum class Type {
         ReadOnly,
         ReadWrite,
+        Mach,
         Generic,
     };
 
@@ -101,6 +102,7 @@ public:
     static bool createHandleForReadWriteDirectory(const String& path, Handle&); // Will attempt to create the directory.
     static String createHandleForTemporaryFile(const String& prefix, Type, Handle&);
     static bool createHandleForGenericExtension(const String& extensionClass, Handle&);
+    static bool createHandleForMachLookupByPid(const String& service, pid_t, Handle&);
     ~SandboxExtension();
 
     bool consume();
