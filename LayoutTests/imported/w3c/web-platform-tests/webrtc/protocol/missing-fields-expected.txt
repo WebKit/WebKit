@@ -1,0 +1,4 @@
+
+PASS Offer description with no mid is accepted 
+PASS Answer description with no mid is accepted 
+

@@ -1,3 +1,14 @@
 
-FAIL getContributingSources() should return list of CSRC after connection is established assert_greater_than: Expect SSRCs to be available after RTP connection is established expected a number greater than 0 but got 0
+PASS [audio] getSynchronizationSources() eventually returns a non-empty list 
+PASS [audio] RTCRtpSynchronizationSource.timestamp is a number 
+PASS [audio] getSynchronizationSources() does not contain SSRCs older than 10 seconds 
+FAIL [audio] RTCRtpSynchronizationSource.timestamp is comparable to performance.timeOrigin + performance.now() assert_true: expected true got false
+PASS [audio] RTCRtpSynchronizationSource.source is a number 
+PASS [video] getSynchronizationSources() eventually returns a non-empty list 
+PASS [video] RTCRtpSynchronizationSource.timestamp is a number 
+PASS [video] getSynchronizationSources() does not contain SSRCs older than 10 seconds 
+FAIL [video] RTCRtpSynchronizationSource.timestamp is comparable to performance.timeOrigin + performance.now() assert_true: expected true got false
+PASS [video] RTCRtpSynchronizationSource.source is a number 
+FAIL [audio-only] RTCRtpSynchronizationSource.audioLevel is a number [0, 1] assert_less_than_equal: expected a number less than or equal to 1 but got 23
+FAIL [audio-only] RTCRtpSynchronizationSource.voiceActivityFlag is a boolean assert_equals: expected "boolean" but got "undefined"
 

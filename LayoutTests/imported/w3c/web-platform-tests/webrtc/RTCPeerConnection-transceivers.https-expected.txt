@@ -11,7 +11,7 @@ PASS addTrack: transceiver's currentDirection is null
 PASS setLocalDescription(offer): transceiver gets associated with an m-section 
 PASS setLocalDescription(offer): transceiver.mid matches the offer SDP 
 PASS setRemoteDescription(offer): ontrack fires with a track 
-PASS setRemoteDescription(offer): ontrack's track.id is the same as track.id 
+PASS setRemoteDescription(offer): ontrack's stream.id is the same as stream.id 
 PASS setRemoteDescription(offer): ontrack fires with a transceiver. 
 PASS setRemoteDescription(offer): transceiver.mid is the same on both ends 
 PASS setRemoteDescription(offer): "transceiver == {sender,receiver}" 

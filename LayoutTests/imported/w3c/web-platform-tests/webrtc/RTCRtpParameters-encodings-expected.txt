@@ -15,6 +15,8 @@ FAIL setParameters() with modified encoding.active should succeed with RTCRtpTra
 FAIL setParameters() with modified encoding.active should succeed without RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
 FAIL setParameters() with modified encoding.priority should succeed with RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
 FAIL setParameters() with modified encoding.priority should succeed without RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with modified encoding.networkPriority should succeed with RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with modified encoding.networkPriority should succeed without RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
 FAIL setParameters() with modified encoding.ptime should succeed with RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
 FAIL setParameters() with modified encoding.ptime should succeed without RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
 FAIL setParameters() with modified encoding.maxBitrate should succeed with RTCRtpTransceiverInit assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"

@@ -16,4 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/README.txt
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/jsep-initial-offer.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/missing-fields.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/msid-parse.html
+/LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html
 /LayoutTests/imported/w3c/web-platform-tests/webrtc/protocol/video-codecs.https.html

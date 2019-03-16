@@ -1340,8 +1340,15 @@ webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtc
 webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-answer.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-iceGatheringState.html [ Pass Failure ]
+
 # Skip timing out test
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription-tracks.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-remote-track-mute.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCDataChannel-bufferedAmount.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCTrackEvent-fire.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/iceGatheringState.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc/RTCIceConnectionState-candidate-pair.https.html [ Skip ]
 
 # Uses legacy WebRTC API.
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Skip ]

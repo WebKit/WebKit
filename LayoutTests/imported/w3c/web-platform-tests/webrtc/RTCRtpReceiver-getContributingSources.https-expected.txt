@@ -1,3 +1,4 @@
 
-FAIL getContributingSources() should return list of CSRC after connection is established assert_greater_than: Expect CSRCs to be available after RTP connection is established expected a number greater than 0 but got 0
+PASS [audio] getContributingSources() returns an empty list in loopback call 
+PASS [video] getContributingSources() returns an empty list in loopback call 
 

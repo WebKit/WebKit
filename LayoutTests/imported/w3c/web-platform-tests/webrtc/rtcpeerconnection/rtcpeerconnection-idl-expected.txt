@@ -3,6 +3,8 @@ Description
 This test verifies the availability of the RTCPeerConnection interface.
 
 
+Harness Error (FAIL), message = Not enough arguments
+
 PASS Partial interface RTCPeerConnection: original interface defined 
 PASS Partial interface RTCPeerConnection[2]: original interface defined 
 PASS Partial interface RTCPeerConnection[3]: original interface defined 
