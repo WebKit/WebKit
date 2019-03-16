@@ -45,12 +45,6 @@ WI.CSSRule = class CSSRule extends WI.Object
     get id() { return this._id; }
     get initialState() { return this._initialState; }
 
-    get stringId()
-    {
-        if (this._id)
-            return this._id.styleSheetId + "/" + this._id.ordinal;
-    }
-
     get ownerStyleSheet()
     {
         return this._ownerStyleSheet;
@@ -150,27 +144,6 @@ WI.CSSRule = class CSSRule extends WI.Object
             return false;
 
         return Object.shallowEqual(this._id, rule.id);
-    }
-
-    markModified()
-    {
-        if (this._initialState)
-            return;
-
-        let initialStyle = this._style.initialState || this._style;
-        this._initialState = new WI.CSSRule(
-            this._nodeStyles,
-            this._ownerStyleSheet,
-            this._id,
-            this._type,
-            this._sourceCodeLocation,
-            this._selectorText,
-            this._selectors,
-            this._matchedSelectorIndices,
-            initialStyle,
-            this._mediaList);
-
-        WI.cssManager.addModifiedCSSRule(this);
     }
 
     // Protected

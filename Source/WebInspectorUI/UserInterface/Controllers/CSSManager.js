@@ -45,7 +45,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._styleSheetIdentifierMap = new Map;
         this._styleSheetFrameURLMap = new Map;
         this._nodeStylesMap = {};
-        this._modifiedCSSRules = new Map;
+        this._modifiedStyles = new Map;
         this._defaultAppearance = null;
         this._forcedAppearance = null;
 
@@ -421,19 +421,14 @@ WI.CSSManager = class CSSManager extends WI.Object
         this.dispatchEventToListeners(WI.CSSManager.Event.DefaultAppearanceDidChange, {appearance});
     }
 
-    get modifiedCSSRules()
+    get modifiedStyles()
     {
-        return Array.from(this._modifiedCSSRules.values());
+        return Array.from(this._modifiedStyles.values());
     }
 
-    addModifiedCSSRule(cssRule)
+    addModifiedStyle(style)
     {
-        this._modifiedCSSRules.set(cssRule.stringId, cssRule);
-    }
-
-    removeModifiedCSSRule(cssRule)
-    {
-        this._modifiedCSSRules.delete(cssRule.stringId);
+        this._modifiedStyles.set(style.stringId, style);
     }
 
     // Protected
@@ -533,7 +528,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         this._fetchedInitialStyleSheets = InspectorBackend.domains.CSS.hasEvent("styleSheetAdded");
         this._styleSheetIdentifierMap.clear();
         this._styleSheetFrameURLMap.clear();
-        this._modifiedCSSRules.clear();
+        this._modifiedStyles.clear();
 
         this._nodeStylesMap = {};
     }

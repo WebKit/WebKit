@@ -81,55 +81,73 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
 
         this.element.removeChildren();
 
-        let cssRules = WI.cssManager.modifiedCSSRules;
+        let modifiedStyles = WI.cssManager.modifiedStyles;
 
         if (WI.settings.cssChangesPerNode.value) {
             if (this.domNode) {
-                let styles = WI.cssManager.stylesForNode(this.domNode);
-                cssRules = cssRules.filter((cssRule) => styles.matchedRules.some((matchedRule) => cssRule.isEqualTo(matchedRule)));
+                let stylesForNode = WI.cssManager.stylesForNode(this.domNode);
+                modifiedStyles = modifiedStyles.filter((style) => {
+                    if (style.node === this.domNode)
+                        return true;
+
+                    if (style.ownerRule)
+                        return stylesForNode.matchedRules.some((matchedRule) => style.ownerRule.isEqualTo(matchedRule))
+
+                    return false;
+                });
             } else
-                cssRules = [];
+                modifiedStyles = [];
         }
 
-        this.element.classList.toggle("empty", !cssRules.length);
-        if (!cssRules.length) {
+        this.element.classList.toggle("empty", !modifiedStyles.length);
+        if (!modifiedStyles.length) {
             this.element.textContent = WI.UIString("No CSS Changes");
             return;
         }
 
-        let rulesForStylesheet = new Map();
-        for (let cssRule of cssRules) {
-            let cssRules = rulesForStylesheet.get(cssRule.ownerStyleSheet);
-            if (!cssRules) {
-                cssRules = [];
-                rulesForStylesheet.set(cssRule.ownerStyleSheet, cssRules);
+        let declarationsForStyleSheet = new Map();
+        for (let style of modifiedStyles) {
+            let styleDeclarations = declarationsForStyleSheet.get(style.ownerStyleSheet);
+            if (!styleDeclarations) {
+                styleDeclarations = [];
+                declarationsForStyleSheet.set(style.ownerStyleSheet, styleDeclarations);
             }
-            cssRules.push(cssRule);
+            styleDeclarations.push(style);
         }
 
-        for (let [styleSheet, cssRules] of rulesForStylesheet) {
+        for (let [styleSheet, styles] of declarationsForStyleSheet) {
             let resourceSection = this.element.appendChild(document.createElement("section"));
             resourceSection.classList.add("resource-section");
 
             let resourceHeader = resourceSection.appendChild(document.createElement("div"));
             resourceHeader.classList.add("header");
-            resourceHeader.append(this._createLocationLink(styleSheet));
+            resourceHeader.append(styleSheet.isInlineStyleAttributeStyleSheet() ? styles[0].selectorText : this._createLocationLink(styleSheet));
 
-            for (let cssRule of cssRules)
-                resourceSection.append(this._createRuleElement(cssRule));
+            for (let style of styles)
+                resourceSection.append(this._createRuleElement(style));
         }
     }
 
     // Private
 
-    _createRuleElement(cssRule)
+    _createRuleElement(style)
     {
         let ruleElement = document.createElement("div");
         ruleElement.classList.add("css-rule");
 
-        let selectorElement = ruleElement.appendChild(document.createElement("span"));
-        selectorElement.classList.add("selector-line");
-        selectorElement.append(cssRule.selectorText, " {\n");
+        let selectorLineElement = ruleElement.appendChild(document.createElement("div"));
+        selectorLineElement.className = "selector-line";
+
+        let selectorElement = selectorLineElement.appendChild(document.createElement("span"));
+        selectorElement.className = "selector";
+
+        if (style.type === WI.CSSStyleDeclaration.Type.Inline) {
+            selectorElement.textContent = WI.UIString("Style Attribute");
+            selectorElement.classList.add("style-attribute");
+        } else
+            selectorElement.textContent = style.ownerRule.selectorText;
+
+        selectorLineElement.append(" {\n");
 
         let appendProperty = (cssProperty, className) => {
             let propertyLineElement = ruleElement.appendChild(document.createElement("div"));
@@ -138,8 +156,8 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
             propertyLineElement.append(WI.indentString(), stylePropertyView.element, "\n");
         };
 
-        let initialCSSProperties = cssRule.initialState.style.visibleProperties;
-        let cssProperties = cssRule.style.visibleProperties;
+        let initialCSSProperties = style.initialState.visibleProperties;
+        let cssProperties = style.visibleProperties;
 
         Array.diffArrays(initialCSSProperties, cssProperties, (cssProperty, action) => {
             if (action === 0) {

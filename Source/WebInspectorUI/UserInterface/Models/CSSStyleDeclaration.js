@@ -62,6 +62,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return this._id;
     }
 
+    get stringId()
+    {
+        if (this._id)
+            return this._id.styleSheetId + "/" + this._id.ordinal;
+        else
+            return "";
+    }
+
     get ownerStyleSheet()
     {
         return this._ownerStyleSheet;
@@ -374,8 +382,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         this._initialState.properties = properties.map((property) => { return property.initialState || property });
 
-        if (this._ownerRule)
-            this._ownerRule.markModified();
+        WI.cssManager.addModifiedStyle(this);
     }
 
     shiftPropertiesAfter(cssProperty, lineDelta, columnDelta, propertyWasRemoved)

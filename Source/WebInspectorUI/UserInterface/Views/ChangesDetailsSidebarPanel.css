@@ -29,10 +29,15 @@
 }
 
 .sidebar > .panel.changes-panel .css-rule {
-    padding-top: var(--css-declaration-vertical-padding);
+    padding: var(--css-declaration-vertical-padding) 0;
     font: 11px Menlo, monospace;
+    color: var(--text-color-secondary);
     background-color: var(--background-color-code);
     -webkit-user-select: text;
+}
+
+.sidebar > .panel.changes-panel .css-rule + .css-rule {
+    border-top: 0.5px solid var(--text-color-quaternary);
 }
 
 .sidebar > .panel.selected.changes-panel.empty {
@@ -66,12 +71,16 @@
     padding-left: var(--css-declaration-horizontal-padding);
 }
 
-.changes-panel .css-property-line > .property {
-    display: inline;
+.changes-panel .selector.style-attribute {
+    font: 12px sans-serif;
 }
 
-.changes-panel .css-property-line.unchanged {
-    opacity: 0.5;
+.changes-panel .selector:not(.style-attribute) {
+    color: var(--text-color);
+}
+
+.changes-panel .css-property-line > .property {
+    display: inline;
 }
 
 .changes-panel .css-property-line.added {

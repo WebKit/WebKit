@@ -1,3 +1,42 @@
+2019-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Changes: style attribute changes aren't being tracked
+        https://bugs.webkit.org/show_bug.cgi?id=193859
+        <rdar://problem/47568977>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/CSSManager.js:
+        (WI.CSSManager):
+        (WI.CSSManager.prototype.get modifiedStyles):
+        (WI.CSSManager.prototype.addModifiedStyle):
+        (WI.CSSManager.prototype._mainResourceDidChange):
+        (WI.CSSManager.prototype.get modifiedCSSRules): Deleted.
+        (WI.CSSManager.prototype.addModifiedCSSRule): Deleted.
+        (WI.CSSManager.prototype.removeModifiedCSSRule): Deleted.
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule.prototype.get stringId): Deleted.
+        (WI.CSSRule.prototype.markModified): Deleted.
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.get stringId):
+        (WI.CSSStyleDeclaration.prototype.markModified):
+        Inline styles weren't tracked because they didn't have owner rules.
+        Track style declarations instead of CSS rules.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.css:
+        (.sidebar > .panel.changes-panel .css-rule):
+        (.sidebar > .panel.changes-panel .css-rule + .css-rule):
+        (.changes-panel .selector.style-attribute):
+        (.changes-panel .selector:not(.style-attribute)):
+        (.changes-panel .css-property-line > .property):
+        (.changes-panel .css-property-line.unchanged): Deleted.
+        Drive-by: use text-color-secondary for unchanged properties instead of altering opacity.
+
+        * UserInterface/Views/ChangesDetailsSidebarPanel.js:
+        (WI.ChangesDetailsSidebarPanel.prototype.layout):
+        (WI.ChangesDetailsSidebarPanel.prototype._createRuleElement):
+        For an inline style declaration, instead of showing a CSS source file location show an appropriate selector for its DOM node.
+
 2019-03-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HAR Extension for Resource Priority
