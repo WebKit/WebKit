@@ -114,7 +114,9 @@ WI.HARBuilder = class HARBuilder
         if (resource.responseSource !== WI.Resource.ResponseSource.Unknown)
             entry._fetchType = HARBuilder.fetchType(resource.responseSource);
 
-        // FIXME: <https://webkit.org/b/195693> Web Inspector: HAR Extension for Resource Priority
+        // WebKit Custom Field `_priority`.
+        if (resource.priority !== WI.Resource.NetworkPriority.Unknown)
+            entry._priority = HARBuilder.priority(resource.priority);
 
         return entry;
     }
@@ -315,7 +317,22 @@ WI.HARBuilder = class HARBuilder
             return "Service Worker";
         }
 
-        console.assert(false);
+        console.assert();
+        return undefined;
+    }
+
+    static priority(priority)
+    {
+        switch (priority) {
+        case WI.Resource.NetworkPriority.Low:
+            return "low";
+        case WI.Resource.NetworkPriority.Medium:
+            return "medium";
+        case WI.Resource.NetworkPriority.High:
+            return "high";
+        }
+
+        console.assert();
         return undefined;
     }
 
@@ -344,7 +361,7 @@ WI.HARBuilder = class HARBuilder
         }
 
         if (protocol)
-            console.warn("Unknown HAR Protocol value", protocol);
+            console.warn("Unknown HAR protocol value", protocol);
         return null;
     }
 
@@ -360,7 +377,23 @@ WI.HARBuilder = class HARBuilder
         }
 
         if (fetchType)
-            console.warn("Unknown HAR Protocol _fetchType", fetchType);
+            console.warn("Unknown HAR _fetchType value", fetchType);
         return WI.Resource.ResponseSource.Other;
+    }
+
+    static networkPriorityFromHARPriority(priority)
+    {
+        switch (priority) {
+        case "low":
+            return WI.Resource.NetworkPriority.Low;
+        case "medium":
+            return WI.Resource.NetworkPriority.Medium;
+        case "high":
+            return WI.Resource.NetworkPriority.High;
+        }
+
+        if (priority)
+            console.warn("Unknown HAR priority value", priority);
+        return WI.Resource.NetworkPriority.Unknown;
     }
 };

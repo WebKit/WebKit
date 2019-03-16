@@ -61,7 +61,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -102,7 +103,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -143,7 +145,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "high"
       },
       {
         "pageref": "page_0",
@@ -191,7 +194,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -245,7 +249,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -298,7 +303,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -351,7 +357,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -404,7 +411,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -461,7 +469,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -524,7 +533,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -591,7 +601,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -662,7 +673,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       },
       {
         "pageref": "page_0",
@@ -737,7 +749,8 @@ HAR Page Test.
           "send": "<filtered>",
           "wait": "<filtered>",
           "receive": "<filtered>"
-        }
+        },
+        "_priority": "medium"
       }
     ]
   }

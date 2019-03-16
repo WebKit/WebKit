@@ -136,7 +136,8 @@ Basic tests for HAR.
         },
         "serverIPAddress": "12.34.56.78",
         "connection": "1",
-        "_fetchType": "Network Load"
+        "_fetchType": "Network Load",
+        "_priority": "medium"
       }
     ]
   }
