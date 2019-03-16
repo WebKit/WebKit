@@ -143,18 +143,7 @@ void InspectorCanvasAgent::disable(ErrorString&)
 {
     m_instrumentingAgents.setInspectorCanvasAgent(nullptr);
 
-#if ENABLE(WEBGL)
-    m_identifierToInspectorProgram.clear();
-#endif
-
-    m_identifierToInspectorCanvas.clear();
-    m_removedCanvasIdentifiers.clear();
-
-    if (m_canvasDestroyedTimer.isActive())
-        m_canvasDestroyedTimer.stop();
-
-    if (m_canvasRecordingTimer.isActive())
-        m_canvasRecordingTimer.stop();
+    clearCanvasData();
 
     m_recordingAutoCaptureFrameCount = WTF::nullopt;
 }
