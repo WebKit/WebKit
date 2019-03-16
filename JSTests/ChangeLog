@@ -1,3 +1,13 @@
+2019-03-15  Mark Lam  <mark.lam@apple.com>
+
+        Need to check ObjectPropertyCondition liveness before accessing it when firing watchpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=195827
+        <rdar://problem/48845513>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/check-object-property-condition-liveness-before-accessing-it-when-watchpoints-fire.js: Added.
+
 2019-03-15  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [ARM,MIPS] Skip slow tests

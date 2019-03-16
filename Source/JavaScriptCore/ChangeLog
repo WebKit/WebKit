@@ -1,3 +1,26 @@
+2019-03-15  Mark Lam  <mark.lam@apple.com>
+
+        Need to check ObjectPropertyCondition liveness before accessing it when firing watchpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=195827
+        <rdar://problem/48845513>
+
+        Reviewed by Filip Pizlo.
+
+        m_object in ObjectPropertyCondition may no longer be live by the time the watchpoint fires.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::fire):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::dumpInContext const):
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * runtime/StructureRareData.cpp:
+        (JSC::ObjectToStringAdaptiveStructureWatchpoint::fireInternal):
+
 2019-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make more properties lazily-allocated in JSGlobalObject, including properties only used in JIT mode
