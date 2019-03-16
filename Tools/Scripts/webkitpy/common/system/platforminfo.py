@@ -146,6 +146,11 @@ class PlatformInfo(object):
         except:
             return sys.maxint
 
+    def build_version(self):
+        if self.is_mac():
+            return self._executive.run_command(['/usr/bin/sw_vers', '-buildVersion'], return_stderr=False, ignore_errors=True).rstrip()
+        return None
+
     def xcode_sdk_version(self, sdk_name):
         if self.is_mac():
             # Assumes that xcrun does not write to standard output on failure (e.g. SDK does not exist).

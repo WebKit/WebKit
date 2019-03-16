@@ -1,3 +1,55 @@
+2019-03-15  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Upload test results
+        https://bugs.webkit.org/show_bug.cgi?id=195755
+        <rdar://problem/48896182>
+
+        Reviewed by Aakash Jain.
+
+        Establish a new format for uploading results that is not tied to layout tests, apply
+        that format to webkitpy tests.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.native_branch): Return what branch the current checkout is on.
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.native_branch): Ditto.
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.build_version): Return a build version for Mac.
+        * Scripts/webkitpy/common/system/platforminfo_mock.py:
+        (MockPlatformInfo.__init__):
+        (MockPlatformInfo.build_version):
+        * Scripts/webkitpy/results: Added.
+        * Scripts/webkitpy/results/__init__.py: Added.
+        * Scripts/webkitpy/results/options.py: Added.
+        (upload_options): OptParse list for upload options.
+        * Scripts/webkitpy/results/upload.py: Added.
+        (Upload): Class which enforces the upload format expected by the results server.
+        (Upload.Expectations):
+        (Upload.create_configuration):
+        (Upload.create_commit):
+        (Upload.create_details):
+        (Upload.create_run_stats):
+        (Upload.create_test_result):
+        (Upload.__init__):
+        (Upload.Encoder): Encode Upload object as json.
+        (Upload.upload): Upload results to the results server, returning 'True' if the upload is successful.
+        * Scripts/webkitpy/results/upload_unittest.py: Added.
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args): Add upload arguments.
+        (Tester._run_tests): Allow results to be uploaded.
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.__init__): Record which tests were run, rather than just counting them.
+        (Runner.handle):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.test_run):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.find_module): Add requests auto-install.
+        (AutoinstallImportHook._install_requests):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (PatchProcessingQueueTest.test_upload_results_archive_for_patch): Update os name for testing.
+
 2019-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Crash under -[TestRunnerWKWebView _didShowMenu] while running layout tests on iOS simulator

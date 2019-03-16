@@ -40,7 +40,7 @@ class Runner(object):
     def __init__(self, printer, loader):
         self.printer = printer
         self.loader = loader
-        self.tests_run = 0
+        self.tests_run = []
         self.errors = []
         self.failures = []
         self.worker_factory = lambda caller: _Worker(caller, self.loader)
@@ -60,7 +60,7 @@ class Runner(object):
             self.printer.print_started_test(source, test_name)
             return
 
-        self.tests_run += 1
+        self.tests_run.append(test_name)
         if failures:
             self.failures.append((test_name, failures))
         if errors:

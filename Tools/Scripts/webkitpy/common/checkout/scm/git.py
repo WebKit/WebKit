@@ -290,6 +290,14 @@ class Git(SCM, SVNRepository):
     def native_revision(self, path):
         return self._run_git(['-C', self.find_checkout_root(path), 'log', '-1', '--pretty=format:%H'])
 
+    def native_branch(self, path):
+        result = self._run_git(['-C', self.find_checkout_root(path), 'rev-parse', '--abbrev-ref', 'HEAD']).rstrip()
+
+        # For git-svn
+        if result.startswith('heads'):
+            return result[6:]
+        return result
+
     def svn_url(self):
         git_command = ['svn', 'info']
         status = self._run_git(git_command)
