@@ -520,6 +520,11 @@ void EventHandler::dispatchSyntheticMouseOut(const PlatformMouseEvent& platformM
     updateMouseEventTargetNode(nullptr, platformMouseEvent, FireMouseOverOut::Yes);
 }
 
+void EventHandler::dispatchSyntheticMouseMove(const PlatformMouseEvent& platformMouseEvent)
+{
+    mouseMoved(platformMouseEvent);
+}
+
 bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& mev, Frame* subframe)
 {
     // WebKit1 code path.

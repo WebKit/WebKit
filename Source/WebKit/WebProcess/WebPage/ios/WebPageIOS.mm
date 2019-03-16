@@ -543,21 +543,27 @@ void WebPage::updateSelectionAppearance()
         didChangeSelection();
 }
 
-void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
+static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
+    auto shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
+    auto ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
+    auto altKey = modifiers.contains(WebEvent::Modifier::AltKey);
+    auto metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
+    auto mouseEvent = PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
+}
+
+void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
+{
     auto& respondingDocument = nodeRespondingToClick.document();
+    auto& mainFrame = m_page->mainFrame();
     // FIXME: Pass caps lock state.
-    bool shiftKey = modifiers.contains(WebEvent::Modifier::ShiftKey);
-    bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
-    bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
-    bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
     {
         LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << &nodeRespondingToClick << ") " << location);
         ContentChangeObserver::MouseMovedScope observingScope(respondingDocument);
-        auto& mainframe = m_page->mainFrame();
-        mainframe.eventHandler().mouseMoved(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap));
-        mainframe.document()->updateStyleIfNeeded();
+        dispatchSyntheticMouseMove(mainFrame, location, modifiers);
+        mainFrame.document()->updateStyleIfNeeded();
     }
 
     if (m_isClosed)
@@ -566,7 +572,8 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     auto& contentChangeObserver = respondingDocument.contentChangeObserver();
     auto observedContentChange = contentChangeObserver.observedContentChange();
     if (observedContentChange == WKContentVisibilityChange) {
-        // The move event caused new contents to appear. Don't send the click event.
+        // The move event caused new contents to appear. Don't send the click event, but just ensure that the mouse is on the most recent content.
+        dispatchSyntheticMouseMove(mainFrame, location, modifiers);
         LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
         return;
     }
@@ -595,8 +602,11 @@ void WebPage::completePendingSyntheticClickForContentChangeObserver()
     if (observedContentChange == WKContentNoChange) {
         LOG(ContentObservation, "No chage was observed -> click.");
         completeSyntheticClick(*m_pendingSyntheticClickNode, m_pendingSyntheticClickLocation, m_pendingSyntheticClickModifiers, WebCore::OneFingerTap);
-    } else
+    } else {
+        // Ensure that the mouse is on the most recent content.
+        dispatchSyntheticMouseMove(m_page->mainFrame(), m_pendingSyntheticClickLocation, m_pendingSyntheticClickModifiers);
         LOG(ContentObservation, "Observed meaningful visible change -> hover.");
+    }
 
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = FloatPoint();

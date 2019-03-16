@@ -1,3 +1,24 @@
+2019-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unable to close trending window on naver.com.
+        https://bugs.webkit.org/show_bug.cgi?id=195842
+        <rdar://problem/48067338>
+
+        This patch issues a synthetic mouse move to the tap location after we decided to hover.
+        It ensures that the node under the mouse is up-to-date and when a new tap comes in we can
+        send the mouseout event to the correct node. It fixes the case when the hover content is positioned over
+        the tap target so that the tap target is no longer "under the mouse".
+        On desktop this "transition" happens automatically since the mouse is always present. 
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/events/touch/ios/content-observation/new-content-covers-tap-target.html
+               fast/events/touch/ios/content-observation/prevent-default-on-touch-start.html
+
+        * page/EventHandler.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::dispatchSyntheticMouseMove):
+
 2019-03-16  Sihui Liu  <sihui_liu@apple.com>
 
         Layout tests imported/w3c/web-platform-tests/IndexedDB/*-exception-order.html are failing

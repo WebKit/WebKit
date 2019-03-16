@@ -1,0 +1,2 @@
+PASS if 'mouseout' text is not shown below.
+mouseout

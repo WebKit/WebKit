@@ -1,3 +1,15 @@
+2019-03-16  Zalan Bujtas  <zalan@apple.com>
+
+        [iOS] Unable to close trending window on naver.com.
+        https://bugs.webkit.org/show_bug.cgi?id=195842
+        <rdar://problem/48067338>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/new-content-covers-tap-target-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/new-content-covers-tap-target.html: Added.
+        * fast/events/touch/ios/content-observation/prevent-default-on-touch-start.html: Added.
+
 2019-03-16  Youenn Fablet  <youenn@apple.com>
 
         Update WPT WebRTC tests up to a22a149
