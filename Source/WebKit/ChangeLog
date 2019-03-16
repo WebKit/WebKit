@@ -1,3 +1,46 @@
+2019-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Software keyboard never appears when editing on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=195824
+        <rdar://problem/48020610>
+
+        Reviewed by Ryosuke Niwa.
+
+        In the scenario where an element has already been programmatically focused but the UI process isn't showing an
+        input view for it, there are a couple of different ways in which an input view may still be shown for that
+        element:
+
+        1. If the page attempts to programmatically focus the element, we'll invoke elementDidRefocus to recompute
+        information about the focused element and propagate it to the UI process. By default, if programmatic focus was
+        triggered under the scope of user interaction, we'll allow the input view to appear.
+
+        2. In the case where page does not attempt to programmatically focus the element but a click is dispatched,
+        there is logic in WebPage::completeSyntheticClick to send information about the already-focused element.
+
+        On the web page relevant to this bug, focus is programmatically moved to hidden contenteditable areas upon page
+        load, and touchstart is also prevented; furthermore, the page does not attempt to programmatically refocus the
+        hidden editable area upon receiving touchstart. This means that the user will never be able to bring up the
+        keyboard, since the editable area is already programmatically focused and subsequent attempts to tap in the
+        page do nothing, because the page has already focused the hidden editable area (with the expectation that the
+        software keyboard should already be present).
+
+        To fix this, we bring some of the same logic in completeSyntheticClick over to dispatchTouchEvent, by sending
+        focused element information to the UI process if the focused element did not change over the course of
+        dispatching the touch event. Similar code was introduced in r167774 to fix the same type of issue (i.e.
+        inability to bring up the software keyboard), but this was later reverted in r188405 due to causing bugs such as
+        <rdar://problem/22204108>, wherein this logic to bring up the keyboard in dispatchTouchEvent would scroll and
+        zoom the page, such that the click event fired after touchend would be dispatched in the wrong location and (in
+        the case of <rdar://problem/22204108>) caused the focused element to immediately blur again.
+
+        To mitigate this issue, we add the additional constraint that we only send focused element info in the case
+        where the touch won't also generate a click later down the road, by requiring that the dispatched event was
+        handled by the page (i.e. prevented).
+
+        Test: fast/events/touch/ios/show-keyboard-after-preventing-touchstart.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchTouchEvent):
+
 2019-03-16  Zalan Bujtas  <zalan@apple.com>
 
         Unable to close trending window on naver.com.

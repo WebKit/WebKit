@@ -2817,10 +2817,20 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
 {
     SetForScope<bool> userIsInteractingChange { m_userIsInteracting, true };
 
+    auto oldFocusedFrame = makeRefPtr(m_page->focusController().focusedFrame());
+    auto oldFocusedElement = makeRefPtr(oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr);
+
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
     handled = handleTouchEvent(touchEvent, m_page.get());
     updatePotentialTapSecurityOrigin(touchEvent, handled);
+
+    if (handled && oldFocusedElement) {
+        auto newFocusedFrame = makeRefPtr(m_page->focusController().focusedFrame());
+        auto newFocusedElement = makeRefPtr(newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr);
+        if (oldFocusedElement == newFocusedElement)
+            elementDidRefocus(*newFocusedElement);
+    }
 }
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, CompletionHandler<void(bool)>&& reply)
