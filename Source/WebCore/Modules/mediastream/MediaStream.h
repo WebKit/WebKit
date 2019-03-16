@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@
 #include "Timer.h"
 #include "URLRegistry.h"
 #include <wtf/HashMap.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -55,6 +56,9 @@ class MediaStream final
     , public MediaStreamPrivate::Observer
     , private MediaCanStartListener
     , private PlatformMediaSessionClient
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
     , public RefCounted<MediaStream> {
 public:
     class Observer {
@@ -119,6 +123,13 @@ protected:
     MediaStream(ScriptExecutionContext&, const MediaStreamTrackVector&);
     MediaStream(ScriptExecutionContext&, Ref<MediaStreamPrivate>&&);
 
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+    const char* logClassName() const final { return "MediaStream"; }
+#endif
+
 private:
 
     // EventTarget
@@ -174,6 +185,11 @@ private:
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
     MediaProducer::MediaStateFlags m_state { MediaProducer::IsNotPlaying };
+
+#if !RELEASE_LOG_DISABLED
+    Ref<Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 
     bool m_isActive { false };
     bool m_isProducingData { false };

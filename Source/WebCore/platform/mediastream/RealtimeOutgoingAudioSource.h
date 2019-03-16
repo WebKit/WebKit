@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017-2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -69,10 +69,6 @@ public:
     bool setSource(Ref<MediaStreamTrackPrivate>&&);
     MediaStreamTrackPrivate& source() const { return m_audioSource.get(); }
 
-#if !RELEASE_LOG_DISABLED
-    void setLogger(Ref<const Logger>&& logger) { m_logger = WTFMove(logger); }
-#endif
-
 protected:
     explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
 
@@ -86,7 +82,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
-    const Logger& logger() const final;
+    const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "RealtimeOutgoingAudioSource"; }
     WTFLogChannel& logChannel() const final;
@@ -137,7 +133,7 @@ private:
     HashSet<webrtc::AudioTrackSinkInterface*> m_sinks;
 
 #if !RELEASE_LOG_DISABLED
-    mutable RefPtr<const Logger> m_logger;
+    mutable Ref<const Logger> m_logger;
     const void* m_logIdentifier;
     size_t m_chunksSent { 0 };
 #endif

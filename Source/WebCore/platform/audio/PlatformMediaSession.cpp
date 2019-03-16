@@ -31,19 +31,12 @@
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include "PlatformMediaSessionManager.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
 
 static const Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
 
 #if !RELEASE_LOG_DISABLED
-static uint64_t nextLogIdentifier()
-{
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
-    return ++logIdentifier;
-}
-
 String convertEnumerationToString(PlatformMediaSession::State state)
 {
     static const NeverDestroyed<String> values[] = {
@@ -126,7 +119,7 @@ PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionClient& client)
     , m_notifyingClient(false)
 #if !RELEASE_LOG_DISABLED
     , m_logger(client.hostingDocument()->logger())
-    , m_logIdentifier(nextLogIdentifier())
+    , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
     ASSERT(m_client.mediaType() >= None && m_client.mediaType() <= MediaStreamCapturingAudio);

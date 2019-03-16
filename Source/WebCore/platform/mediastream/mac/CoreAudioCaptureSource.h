@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,10 @@ private:
     bool interrupted() const final;
 
     void initializeToStartProducingData();
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "CoreAudioCaptureSource"; }
+#endif
 
     uint32_t m_captureDeviceID { 0 };
 

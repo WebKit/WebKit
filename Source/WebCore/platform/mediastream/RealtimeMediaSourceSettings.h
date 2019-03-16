@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,6 +134,8 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, RealtimeMediaSourceSettings&);
 
+    static String convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);
+
 private:
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
@@ -191,6 +193,8 @@ bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSe
         && decoder.decodeEnum(settings.m_facingMode);
 }
 
+String convertEnumerationToString(RealtimeMediaSourceSettings::VideoFacingMode);
+
 } // namespace WebCore
 
 namespace WTF {
@@ -206,6 +210,25 @@ template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::VideoFacingM
     >;
 };
 
-}
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RealtimeMediaSourceSettings::VideoFacingMode> {
+    static String toString(const WebCore::RealtimeMediaSourceSettings::VideoFacingMode mode)
+    {
+        return convertEnumerationToString(mode);
+    }
+};
+
+template <>
+struct LogArgument<OptionSet<WebCore::RealtimeMediaSourceSettings::Flag>> {
+    static String toString(const OptionSet<WebCore::RealtimeMediaSourceSettings::Flag> flags)
+    {
+        return WebCore::RealtimeMediaSourceSettings::convertFlagsToString(flags);
+    }
+};
+
+}; // namespace WTF
 
 #endif

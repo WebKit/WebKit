@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -115,15 +115,18 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
 {
     static const int screenQueueMaximumLength = 6;
 
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
     auto actualDisplayID = updateDisplayID(m_displayID);
     if (!actualDisplayID) {
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "invalid display ID: ", m_displayID);
         captureFailed();
         return false;
     }
 
     if (m_displayID != actualDisplayID.value()) {
         m_displayID = actualDisplayID.value();
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream: display ID changed to %d", static_cast<int>(m_displayID));
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "display ID changed to ", static_cast<int>(m_displayID));
         m_displayStream = nullptr;
     }
 
@@ -132,7 +135,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
         auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
         if (!screenWidth || !screenHeight) {
-            RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream: unable to get screen width/height");
+            ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to get screen width/height");
             captureFailed();
             return false;
         }
@@ -158,7 +161,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
 
         m_displayStream = adoptCF(CGDisplayStreamCreateWithDispatchQueue(m_displayID, screenWidth, screenHeight, preferedPixelBufferFormat(), (__bridge CFDictionaryRef)streamOptions, m_captureQueue.get(), frameAvailableBlock));
         if (!m_displayStream) {
-            RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::createDisplayStream: CGDisplayStreamCreate failed");
+            ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "CGDisplayStreamCreate failed");
             captureFailed();
             return false;
         }
@@ -174,6 +177,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
 
 void ScreenDisplayCaptureSourceMac::startProducingData()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     DisplayCaptureSourceCocoa::startProducingData();
 
     if (m_isRunning)
@@ -184,6 +188,7 @@ void ScreenDisplayCaptureSourceMac::startProducingData()
 
 void ScreenDisplayCaptureSourceMac::stopProducingData()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     DisplayCaptureSourceCocoa::stopProducingData();
 
     if (!m_isRunning)
@@ -214,7 +219,7 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
 
     if (m_displayID != actualDisplayID.value()) {
         m_displayID = actualDisplayID.value();
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::startDisplayStream: display ID changed to %d", static_cast<int>(m_displayID));
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "display ID changed to ", static_cast<int>(m_displayID));
     }
 
     if (!m_displayStream && !createDisplayStream())
@@ -222,7 +227,7 @@ void ScreenDisplayCaptureSourceMac::startDisplayStream()
 
     auto err = CGDisplayStreamStart(m_displayStream.get());
     if (err) {
-        RELEASE_LOG(Media, "ScreenDisplayCaptureSourceMac::startDisplayStream: CGDisplayStreamStart failed with error %d", static_cast<int>(err));
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "CGDisplayStreamStart failed with error ", static_cast<int>(err));
         captureFailed();
         return;
     }

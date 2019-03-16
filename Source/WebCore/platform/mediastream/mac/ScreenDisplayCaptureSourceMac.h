@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,11 @@ private:
 
     bool createDisplayStream();
     void startDisplayStream();
-    
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "ScreenDisplayCaptureSourceMac"; }
+#endif
+
     class DisplaySurface {
     public:
         DisplaySurface() = default;

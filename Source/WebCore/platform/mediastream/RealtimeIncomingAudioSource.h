@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,6 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
-#include <wtf/LoggerHelper.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -49,29 +48,18 @@ namespace WebCore {
 class RealtimeIncomingAudioSource
     : public RealtimeMediaSource
     , private webrtc::AudioTrackSinkInterface
-#if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
-#endif
 {
 public:
     static Ref<RealtimeIncomingAudioSource> create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
     void setSourceTrack(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&);
 
-#if !RELEASE_LOG_DISABLED
-    void setLogger(Ref<const Logger>&& logger) { m_logger = WTFMove(logger); }
-#endif
-
 protected:
     RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
     ~RealtimeIncomingAudioSource();
 
 #if !RELEASE_LOG_DISABLED
-    // LoggerHelper API
-    const Logger& logger() const final;
-    const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "RealtimeIncomingAudioSource"; }
-    WTFLogChannel& logChannel() const final;
 #endif
 
 private:

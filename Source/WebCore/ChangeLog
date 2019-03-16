@@ -1,3 +1,173 @@
+2019-03-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Add media stream release logging
+        https://bugs.webkit.org/show_bug.cgi?id=195823
+        <rdar://problem/48939406>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, no behavioral change.
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::clone):
+        (WebCore::MediaStream::addTrack):
+        (WebCore::MediaStream::removeTrack):
+        (WebCore::MediaStream::addTrackFromPlatform):
+        (WebCore::MediaStream::setIsActive):
+        (WebCore::MediaStream::mediaCanStart):
+        (WebCore::MediaStream::startProducingData):
+        (WebCore::MediaStream::stopProducingData):
+        (WebCore::MediaStream::endCaptureTracks):
+        (WebCore::MediaStream::stop):
+        (WebCore::MediaStream::logChannel const):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::logChannel const):
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        (WebCore::LibWebRTCMediaEndpoint::sourceFromNewReceiver):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::nextLogIdentifier): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::nextLogIdentifier): Deleted.
+        * html/HTMLMediaElement.h:
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        (WebCore::nextLogIdentifier): Deleted.
+        * platform/audio/PlatformMediaSession.h:
+        * platform/graphics/IntSize.cpp:
+        (WebCore::IntSize::toJSONObject const):
+        (WebCore::IntSize::toJSONString const):
+        * platform/graphics/IntSize.h:
+        (WTF::LogArgument<WebCore::IntSize>::toString):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::addTrack):
+        (WebCore::MediaStreamPrivate::removeTrack):
+        (WebCore::MediaStreamPrivate::startProducingData):
+        (WebCore::MediaStreamPrivate::stopProducingData):
+        (WebCore::MediaStreamPrivate::setCaptureTracksMuted):
+        (WebCore::MediaStreamPrivate::trackMutedChanged):
+        (WebCore::MediaStreamPrivate::trackEnabledChanged):
+        (WebCore::MediaStreamPrivate::trackStarted):
+        (WebCore::MediaStreamPrivate::trackEnded):
+        (WebCore::MediaStreamPrivate::setLogger):
+        (WebCore::MediaStreamPrivate::logChannel const):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::setLogger):
+        (WebCore::MediaStreamTrackPrivate::logChannel const):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::RealtimeIncomingAudioSource):
+        (WebCore::RealtimeIncomingAudioSource::logChannel const): Deleted.
+        (WebCore::RealtimeIncomingAudioSource::logger const): Deleted.
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        (WebCore::RealtimeIncomingAudioSource::setLogger): Deleted.
+        * platform/mediastream/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::RealtimeIncomingVideoSource):
+        (WebCore::RealtimeIncomingVideoSource::logChannel const): Deleted.
+        (WebCore::RealtimeIncomingVideoSource::logger const): Deleted.
+        * platform/mediastream/RealtimeIncomingVideoSource.h:
+        (WebCore::RealtimeIncomingVideoSource::setLogger): Deleted.
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::RealtimeMediaSource):
+        (WebCore::RealtimeMediaSource::setInterrupted):
+        (WebCore::RealtimeMediaSource::setMuted):
+        (WebCore::RealtimeMediaSource::notifyMutedChange):
+        (WebCore::RealtimeMediaSource::notifySettingsDidChangeObservers):
+        (WebCore::RealtimeMediaSource::videoSampleAvailable):
+        (WebCore::RealtimeMediaSource::start):
+        (WebCore::RealtimeMediaSource::stop):
+        (WebCore::RealtimeMediaSource::captureFailed):
+        (WebCore::RealtimeMediaSource::applyConstraint):
+        (WebCore::RealtimeMediaSource::supportsConstraints):
+        (WebCore::RealtimeMediaSource::applyConstraints):
+        (WebCore::RealtimeMediaSource::setSize):
+        (WebCore::RealtimeMediaSource::setIntrinsicSize):
+        (WebCore::RealtimeMediaSource::setFrameRate):
+        (WebCore::RealtimeMediaSource::setAspectRatio):
+        (WebCore::RealtimeMediaSource::setFacingMode):
+        (WebCore::RealtimeMediaSource::setVolume):
+        (WebCore::RealtimeMediaSource::setSampleRate):
+        (WebCore::RealtimeMediaSource::setSampleSize):
+        (WebCore::RealtimeMediaSource::setEchoCancellation):
+        (WebCore::RealtimeMediaSource::setLogger):
+        (WebCore::RealtimeMediaSource::logChannel const):
+        (WebCore::convertEnumerationToString):
+        * platform/mediastream/RealtimeMediaSource.h:
+        (WTF::LogArgument<WebCore::RealtimeMediaSource::Type>::toString):
+        * platform/mediastream/RealtimeMediaSourceSettings.cpp:
+        (WebCore::RealtimeMediaSourceSettings::convertFlagsToString):
+        (WebCore::convertEnumerationToString):
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WTF::LogArgument<WebCore::RealtimeMediaSourceSettings::VideoFacingMode>::toString):
+        (WTF::LogArgument<OptionSet<WebCore::RealtimeMediaSourceSettings::Flag>>::toString):
+        * platform/mediastream/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::logChannel const):
+        (WebCore::RealtimeOutgoingAudioSource::logger const): Deleted.
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        (WebCore::RealtimeOutgoingAudioSource::setLogger): Deleted.
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::sendOneBlackFrame):
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+        (WebCore::RealtimeOutgoingVideoSource::logChannel const):
+        (WebCore::RealtimeOutgoingVideoSource::logger const): Deleted.
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        (WebCore::RealtimeOutgoingVideoSource::setLogger): Deleted.
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        (WebCore::RealtimeVideoSource::setSizeAndFrameRate):
+        (WebCore::SizeAndFrameRate::toJSONObject const):
+        (WebCore::SizeAndFrameRate::toJSONString const):
+        * platform/mediastream/RealtimeVideoSource.h:
+        (WTF::LogArgument<WebCore::SizeAndFrameRate>::toString):
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::clearSession):
+        (WebCore::AVVideoCaptureSource::startProducingData):
+        (WebCore::AVVideoCaptureSource::stopProducingData):
+        (WebCore::AVVideoCaptureSource::setSizeAndFrameRateWithPreset):
+        (WebCore::AVVideoCaptureSource::setupSession):
+        (WebCore::AVVideoCaptureSource::frameDurationForFrameRate):
+        (WebCore::AVVideoCaptureSource::setupCaptureSession):
+        (WebCore::AVVideoCaptureSource::captureSessionIsRunningDidChange):
+        (WebCore::AVVideoCaptureSource::captureDeviceSuspendedDidChange):
+        (WebCore::AVVideoCaptureSource::captureSessionRuntimeError):
+        (WebCore::AVVideoCaptureSource::captureSessionBeginInterruption):
+        (WebCore::AVVideoCaptureSource::captureSessionEndInterruption):
+        (WebCore::AVVideoCaptureSource::deviceDisconnected):
+        (-[WebCoreAVVideoCaptureSourceObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVVideoCaptureSourceObserver deviceConnectedDidChange:]):
+        (-[WebCoreAVVideoCaptureSourceObserver sessionRuntimeError:]):
+        (-[WebCoreAVVideoCaptureSourceObserver beginSessionInterrupted:]):
+        (-[WebCoreAVVideoCaptureSourceObserver endSessionInterrupted:]):
+        (WebCore::AVVideoCaptureSource::initializeSession): Deleted.
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::verifyIsCapturing):
+        (WebCore::CoreAudioSharedUnit::captureFailed):
+        (WebCore::CoreAudioCaptureSource::initializeToStartProducingData):
+        (WebCore::CoreAudioCaptureSource::addEchoCancellationSource):
+        (WebCore::CoreAudioCaptureSource::removeEchoCancellationSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        (WebCore::CoreAudioCaptureSource::scheduleReconfiguration):
+        (WebCore::CoreAudioCaptureSource::beginInterruption):
+        (WebCore::CoreAudioCaptureSource::endInterruption):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h:
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm:
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        (WebCore::ScreenDisplayCaptureSourceMac::startProducingData):
+        (WebCore::ScreenDisplayCaptureSourceMac::stopProducingData):
+        (WebCore::ScreenDisplayCaptureSourceMac::startDisplayStream):
+
 2019-03-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Canvas: remove agent as observer when disabling

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,16 +35,12 @@
 
 #include "LibWebRTCAudioFormat.h"
 #include "Logging.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {
 
 RealtimeIncomingAudioSource::RealtimeIncomingAudioSource(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
     : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, "remote audio"_s, WTFMove(audioTrackId))
     , m_audioTrack(WTFMove(audioTrack))
-#if !RELEASE_LOG_DISABLED
-    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
-#endif
 {
     notifyMutedChange(!m_audioTrack);
 }
@@ -88,20 +84,6 @@ const RealtimeMediaSourceSettings& RealtimeIncomingAudioSource::settings()
 {
     return m_currentSettings;
 }
-
-#if !RELEASE_LOG_DISABLED
-WTFLogChannel& RealtimeIncomingAudioSource::logChannel() const
-{
-    return LogWebRTC;
-}
-
-const Logger& RealtimeIncomingAudioSource::logger() const
-{
-    if (!m_logger)
-        m_logger = Logger::create(this);
-    return *m_logger;
-}
-#endif
 
 }
 

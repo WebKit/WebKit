@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -202,15 +202,9 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
     clearSession();
 }
 
-void AVVideoCaptureSource::initializeSession()
-{
-    ASSERT(!m_session);
-    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
-    [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
-}
-
 void AVVideoCaptureSource::clearSession()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     ASSERT(m_session);
     [m_session removeObserver:m_objcObserver.get() forKeyPath:@"running"];
     m_session = nullptr;
@@ -226,6 +220,7 @@ void AVVideoCaptureSource::startProducingData()
     if ([m_session isRunning])
         return;
 
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     [m_objcObserver addNotificationObservers];
     [m_session startRunning];
 }
@@ -235,6 +230,7 @@ void AVVideoCaptureSource::stopProducingData()
     if (!m_session)
         return;
 
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     [m_objcObserver removeNotificationObservers];
 
     if ([m_session isRunning])
@@ -335,6 +331,8 @@ bool AVVideoCaptureSource::prefersPreset(VideoPreset& preset)
 
 void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, double requestedFrameRate, RefPtr<VideoPreset> preset)
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { requestedSize.width(), requestedSize.height(), requestedFrameRate });
+
     auto* avPreset = preset ? downcast<AVVideoPreset>(preset.get()) : nullptr;
 
     if (!m_session) {
@@ -363,6 +361,12 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
         if ([device() lockForConfiguration:&error]) {
             if (!m_currentPreset || ![m_currentPreset->format.get() isEqual:avPreset->format.get()]) {
                 [device() setActiveFormat:avPreset->format.get()];
+
+                frameRateRange = frameDurationForFrameRate(requestedFrameRate);
+                ASSERT(frameRateRange);
+                if (!frameRateRange)
+                    return;
+
 #if PLATFORM(MAC)
                 auto settingsDictionary = @{
                     (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(avVideoCapturePixelBufferFormat()),
@@ -373,19 +377,21 @@ void AVVideoCaptureSource::setSizeAndFrameRateWithPreset(IntSize requestedSize, 
                 [m_videoOutput setVideoSettings:settingsDictionary];
 #endif
             }
+
+            ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "setting frame rate ", CMTimeGetSeconds([frameRateRange minFrameDuration]), " .. ", CMTimeGetSeconds([frameRateRange maxFrameDuration]));
             [device() setActiveVideoMinFrameDuration:[frameRateRange minFrameDuration]];
             [device() setActiveVideoMaxFrameDuration:[frameRateRange maxFrameDuration]];
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {
-        RELEASE_LOG(Media, "AVVideoCaptureSource::setFrameRate - exception thrown configuring device: <%s> %s", [[exception name] UTF8String], [[exception reason] UTF8String]);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error configuring device ", [[exception name] UTF8String], ", reason : ", [[exception reason] UTF8String]);
+        return;
     }
     [m_session commitConfiguration];
 
     m_currentPreset = avPreset;
 
-    if (error)
-        RELEASE_LOG(Media, "AVVideoCaptureSource::setFrameRate - failed to lock video device for configuration: %s", [[error localizedDescription] UTF8String]);
+    ERROR_LOG_IF(error && loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
 }
 
 static inline int sensorOrientation(AVCaptureVideoOrientation videoOrientation)
@@ -426,7 +432,10 @@ bool AVVideoCaptureSource::setupSession()
     if (m_session)
         return true;
 
-    initializeSession();
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
+    m_session = adoptNS([allocAVCaptureSessionInstance() init]);
+    [m_session addObserver:m_objcObserver.get() forKeyPath:@"running" options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
     bool success = setupCaptureSession();
@@ -449,13 +458,15 @@ AVFrameRateRangeType* AVVideoCaptureSource::frameDurationForFrameRate(double rat
     }
 
     if (!bestFrameRateRange)
-        RELEASE_LOG(Media, "AVVideoCaptureSource::frameDurationForFrameRate, no frame rate range for rate %g", rate);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "no frame rate range for rate ", rate);
 
     return bestFrameRateRange;
 }
 
 bool AVVideoCaptureSource::setupCaptureSession()
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
 #if PLATFORM(IOS_FAMILY)
     RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
 #endif
@@ -463,12 +474,12 @@ bool AVVideoCaptureSource::setupCaptureSession()
     NSError *error = nil;
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
-        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), failed to allocate AVCaptureDeviceInput: %s", this, [[error localizedDescription] UTF8String]);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to allocate AVCaptureDeviceInput ", [[error localizedDescription] UTF8String]);
         return false;
     }
 
     if (![session() canAddInput:videoIn.get()]) {
-        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video input device", this);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to add video input device");
         return false;
     }
     [session() addInput:videoIn.get()];
@@ -481,7 +492,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     [m_videoOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaVideoCaptureSerialQueue()];
 
     if (![session() canAddOutput:m_videoOutput.get()]) {
-        RELEASE_LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "unable to add video output device");
         return false;
     }
     [session() addOutput:m_videoOutput.get()];
@@ -571,6 +582,7 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
 {
     scheduleDeferredTask([this, state] {
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, state);
         if ((state == m_isRunning) && (state == !muted()))
             return;
 
@@ -587,6 +599,7 @@ void AVVideoCaptureSource::captureDeviceSuspendedDidChange()
 #if !PLATFORM(IOS_FAMILY)
     scheduleDeferredTask([this] {
         auto isSuspended = [m_device isSuspended];
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, !!isSuspended);
         if (isSuspended == muted())
             return;
 
@@ -629,6 +642,8 @@ void AVVideoCaptureSource::generatePresets()
 #if PLATFORM(IOS_FAMILY)
 void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 {
+    ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, [[error localizedDescription] UTF8String]);
+
     if (!m_isRunning || error.get().code != AVErrorMediaServicesWereReset)
         return;
 
@@ -639,11 +654,14 @@ void AVVideoCaptureSource::captureSessionRuntimeError(RetainPtr<NSError> error)
 
 void AVVideoCaptureSource::captureSessionBeginInterruption(RetainPtr<NSNotification> notification)
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, [notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
     m_interruption = static_cast<AVVideoCaptureSource::InterruptionReason>([notification.get().userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
 }
 
 void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotification>)
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
+
     InterruptionReason reason = m_interruption;
 
     m_interruption = InterruptionReason::None;
@@ -657,6 +675,7 @@ void AVVideoCaptureSource::captureSessionEndInterruption(RetainPtr<NSNotificatio
 
 void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notification)
 {
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     if (this->device() == [notification object])
         captureFailed();
 }
@@ -724,13 +743,13 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     id newValue = [change valueForKey:NSKeyValueChangeNewKey];
 
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
-#if !LOG_DISABLED
 
-    if (willChange)
-        LOG(Media, "WebCoreAVVideoCaptureSourceObserver::observeValueForKeyPath(%p) - will change, keyPath = %s", self, [keyPath UTF8String]);
-    else {
+#if !RELEASE_LOG_DISABLED
+    if (m_callback->loggerPtr() && m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug)) {
+        auto identifier = Logger::LogSiteIdentifier("AVVideoCaptureSource", "observeValueForKeyPath", m_callback->logIdentifier());
+
         RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-        LOG(Media, "WebCoreAVVideoCaptureSourceObserver::observeValueForKeyPath(%p) - did change, keyPath = %s, value = %s", self, [keyPath UTF8String], [valueString.get() UTF8String]);
+        m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
     }
 #endif
 
@@ -742,8 +761,6 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 
 - (void)deviceConnectedDidChange:(NSNotification*)notification
 {
-    LOG(Media, "WebCoreAVVideoCaptureSourceObserver::deviceConnectedDidChange(%p)", self);
-
     if (m_callback)
         m_callback->deviceDisconnected(notification);
 }
@@ -752,24 +769,18 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
 - (void)sessionRuntimeError:(NSNotification*)notification
 {
     NSError *error = notification.userInfo[AVCaptureSessionErrorKey];
-    LOG(Media, "WebCoreAVVideoCaptureSourceObserver::sessionRuntimeError(%p) - error = %s", self, [[error localizedDescription] UTF8String]);
-
     if (m_callback)
         m_callback->captureSessionRuntimeError(error);
 }
 
 - (void)beginSessionInterrupted:(NSNotification*)notification
 {
-    LOG(Media, "WebCoreAVVideoCaptureSourceObserver::beginSessionInterrupted(%p) - reason = %d", self, [notification.userInfo[AVCaptureSessionInterruptionReasonKey] integerValue]);
-
     if (m_callback)
         m_callback->captureSessionBeginInterruption(notification);
 }
 
 - (void)endSessionInterrupted:(NSNotification*)notification
 {
-    LOG(Media, "WebCoreAVVideoCaptureSourceObserver::endSessionInterrupted(%p)", self);
-
     if (m_callback)
         m_callback->captureSessionEndInterruption(notification);
 }

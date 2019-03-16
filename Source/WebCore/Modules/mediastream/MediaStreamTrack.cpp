@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,10 +54,18 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document()->logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
     , m_taskQueue(context)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     suspendIfNeeded();
 
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
     m_private->addObserver(*this);
 
     if (auto document = this->document())
@@ -488,6 +496,13 @@ Document* MediaStreamTrack::document() const
 {
     return downcast<Document>(scriptExecutionContext());
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaStreamTrack::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2011, 2012, 2015 Ericsson AB. All rights reserved.
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,9 +78,18 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     : ActiveDOMObject(&context)
     , m_private(MediaStreamPrivate::create(createTrackPrivateVector(tracks)))
     , m_mediaSession(PlatformMediaSession::create(*this))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document()->logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
     // This constructor preserves MediaStreamTrack instances and must be used by calls originating
     // from the JavaScript MediaStream constructor.
+
+#if !RELEASE_LOG_DISABLED
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_private->setLogger(logger(), logIdentifier());
+#endif
 
     for (auto& track : tracks) {
         track->addObserver(*this);
@@ -97,7 +106,15 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
     : ActiveDOMObject(&context)
     , m_private(WTFMove(streamPrivate))
     , m_mediaSession(PlatformMediaSession::create(*this))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(document()->logger())
+    , m_logIdentifier(uniqueLogIdentifier())
+#endif
 {
+#if !RELEASE_LOG_DISABLED
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_private->setLogger(logger(), logIdentifier());
+#endif
     setIsActive(m_private->active());
     if (document()->page() && document()->page()->isMediaCaptureMuted())
         m_private->setCaptureTracksMuted(true);
@@ -129,6 +146,8 @@ MediaStream::~MediaStream()
 
 RefPtr<MediaStream> MediaStream::clone()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     MediaStreamTrackVector clonedTracks;
     clonedTracks.reserveInitialCapacity(m_trackSet.size());
 
@@ -140,6 +159,8 @@ RefPtr<MediaStream> MediaStream::clone()
 
 void MediaStream::addTrack(MediaStreamTrack& track)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
+
     if (!internalAddTrack(track, StreamModifier::DomAPI))
         return;
 
@@ -149,6 +170,8 @@ void MediaStream::addTrack(MediaStreamTrack& track)
 
 void MediaStream::removeTrack(MediaStreamTrack& track)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, track.logIdentifier());
+
     if (!internalRemoveTrack(track.id(), StreamModifier::DomAPI))
         return;
 
@@ -207,6 +230,8 @@ void MediaStream::didRemoveTrack(MediaStreamTrackPrivate& trackPrivate)
 
 void MediaStream::addTrackFromPlatform(Ref<MediaStreamTrack>&& track)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, track->logIdentifier());
+
     auto* privateTrack = &track->privateTrack();
     internalAddTrack(WTFMove(track), StreamModifier::Platform);
     m_private->addTrack(privateTrack, MediaStreamPrivate::NotifyClientOption::Notify);
@@ -255,12 +280,16 @@ void MediaStream::setIsActive(bool active)
     if (m_isActive == active)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, active);
+
     m_isActive = active;
     statusDidChange();
 }
 
 void MediaStream::mediaCanStart(Document& document)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     ASSERT_UNUSED(document, &document == this->document());
     ASSERT(m_isWaitingUntilMediaCanStart);
     if (m_isWaitingUntilMediaCanStart) {
@@ -275,9 +304,11 @@ void MediaStream::startProducingData()
     if (!document || !document->page())
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     // If we can't start a load right away, start it later.
     if (!document->page()->canStartMedia()) {
-        LOG(Media, "MediaStream::startProducingData(%p) - not allowed to start in background, waiting", this);
+        ALWAYS_LOG(LOGIDENTIFIER, "not allowed to start in background, waiting");
         if (m_isWaitingUntilMediaCanStart)
             return;
 
@@ -301,6 +332,9 @@ void MediaStream::stopProducingData()
 {
     if (!m_isProducingData)
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     m_isProducingData = false;
 
     m_mediaSession->canProduceAudioChanged();
@@ -310,6 +344,8 @@ void MediaStream::stopProducingData()
 
 void MediaStream::endCaptureTracks()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     for (auto& track : m_trackSet.values()) {
         if (track->isCaptureTrack())
             track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
@@ -482,6 +518,13 @@ bool MediaStream::hasPendingActivity() const
     return m_isActive;
 }
 
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaStream::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
+    
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

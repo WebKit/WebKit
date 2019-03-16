@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017-2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -40,7 +40,6 @@ ALLOW_UNUSED_PARAMETERS_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -49,7 +48,8 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPri
     : m_videoSource(WTFMove(videoSource))
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
 #if !RELEASE_LOG_DISABLED
-    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
+    , m_logger(m_videoSource->logger())
+    , m_logIdentifier(m_videoSource->logIdentifier())
 #endif
 {
 }
@@ -200,7 +200,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
 
 void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "test");
+    ALWAYS_LOG(LOGIDENTIFIER);
     sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>(m_blackFrame));
 }
 
@@ -208,6 +208,19 @@ void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFram
 {
     MonotonicTime timestamp = MonotonicTime::now();
     webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, static_cast<int64_t>(timestamp.secondsSinceEpoch().microseconds()));
+
+#if !RELEASE_LOG_DISABLED
+    ++m_frameCount;
+
+    auto delta = timestamp - m_lastFrameLogTime;
+    if (!m_lastFrameLogTime || delta >= 1_s) {
+        if (m_lastFrameLogTime) {
+            INFO_LOG(LOGIDENTIFIER, m_frameCount, " frames sent in ", delta.value(), " seconds");
+            m_frameCount = 0;
+        }
+        m_lastFrameLogTime = timestamp;
+    }
+#endif
 
     auto locker = holdLock(m_sinksLock);
     for (auto* sink : m_sinks)
@@ -218,13 +231,6 @@ void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFram
 WTFLogChannel& RealtimeOutgoingVideoSource::logChannel() const
 {
     return LogWebRTC;
-}
-
-const Logger& RealtimeOutgoingVideoSource::logger() const
-{
-    if (!m_logger)
-        m_logger = Logger::create(this);
-    return *m_logger;
 }
 #endif
 

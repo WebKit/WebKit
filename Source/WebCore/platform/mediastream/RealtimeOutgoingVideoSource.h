@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.
+ * Copyright (C) 2017-2019 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -72,10 +72,6 @@ public:
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
-#if !RELEASE_LOG_DISABLED
-    void setLogger(Ref<const Logger>&& logger) { m_logger = WTFMove(logger); }
-#endif
-
 protected:
     explicit RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&&);
 
@@ -89,7 +85,7 @@ protected:
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper API
-    const Logger& logger() const final;
+    const Logger& logger() const final { return m_logger.get(); }
     const void* logIdentifier() const final { return m_logIdentifier; }
     const char* logClassName() const final { return "RealtimeOutgoingVideoSource"; }
     WTFLogChannel& logChannel() const final;
@@ -145,8 +141,10 @@ private:
     uint32_t m_height { 0 };
 
 #if !RELEASE_LOG_DISABLED
-    mutable RefPtr<const Logger> m_logger;
+    Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+    MonotonicTime m_lastFrameLogTime;
+    unsigned m_frameCount { 0 };
 #endif
 };
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include <wtf/LoggerHelper.h>
 #include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
@@ -65,7 +66,13 @@ class RemoteVideoSample;
 
 struct CaptureSourceOrError;
 
-class WEBCORE_EXPORT RealtimeMediaSource : public ThreadSafeRefCounted<RealtimeMediaSource>, public CanMakeWeakPtr<RealtimeMediaSource> {
+class WEBCORE_EXPORT RealtimeMediaSource
+    : public ThreadSafeRefCounted<RealtimeMediaSource>
+    , public CanMakeWeakPtr<RealtimeMediaSource>
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     class Observer {
     public:
@@ -176,6 +183,15 @@ public:
     void setIsRemote(bool isRemote) { m_isRemote = isRemote; }
     bool isRemote() const { return m_isRemote; }
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(const Logger&, const void*);
+    const Logger* loggerPtr() const { return m_logger.get(); }
+    const Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const override { return "RealtimeMediaSource"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
     // Testing only
     virtual void delaySamples(Seconds) { };
     void setInterruptedForTesting(bool);
@@ -217,7 +233,12 @@ private:
 
     void forEachObserver(const WTF::Function<void(Observer&)>&) const;
 
-    bool m_muted { false };
+#if !RELEASE_LOG_DISABLED
+    RefPtr<const Logger> m_logger;
+    const void* m_logIdentifier;
+    MonotonicTime m_lastFrameLogTime;
+    unsigned m_frameCount { 0 };
+#endif
 
     String m_idHashSalt;
     String m_hashedID;
@@ -236,6 +257,7 @@ private:
     double m_fitnessScore { 0 };
     RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
 
+    bool m_muted { false };
     bool m_pendingSettingsDidChangeNotification { false };
     bool m_echoCancellation { false };
     bool m_isProducingData { false };
@@ -257,6 +279,23 @@ struct CaptureSourceOrError {
     String errorMessage;
 };
 
+String convertEnumerationToString(RealtimeMediaSource::Type);
+
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RealtimeMediaSource::Type> {
+    static String toString(const WebCore::RealtimeMediaSource::Type type)
+    {
+        return convertEnumerationToString(type);
+    }
+};
+
+}; // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Logger.h>
 
 namespace WTF {
@@ -45,16 +46,27 @@ public:
 #define ALWAYS_LOG(...)     logger().logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG(...)      logger().error(logChannel(), __VA_ARGS__)
 #define WARNING_LOG(...)    logger().warning(logChannel(), __VA_ARGS__)
-#define NOTICE_LOG(...)     logger().notice(logChannel(), __VA_ARGS__)
 #define INFO_LOG(...)       logger().info(logChannel(), __VA_ARGS__)
 #define DEBUG_LOG(...)      logger().debug(logChannel(), __VA_ARGS__)
 #define WILL_LOG(_level_)   logger().willLog(logChannel(), _level_)
+
+#define ALWAYS_LOG_IF(condition, ...)     if (condition) logger().logAlways(logChannel(), __VA_ARGS__)
+#define ERROR_LOG_IF(condition, ...)      if (condition) logger().error(logChannel(), __VA_ARGS__)
+#define WARNING_LOG_IF(condition, ...)    if (condition) logger().warning(logChannel(), __VA_ARGS__)
+#define INFO_LOG_IF(condition, ...)       if (condition) logger().info(logChannel(), __VA_ARGS__)
+#define DEBUG_LOG_IF(condition, ...)      if (condition) logger().debug(logChannel(), __VA_ARGS__)
 
     const void* childLogIdentifier(uint64_t identifier) const
     {
         static const int64_t parentMask = 0xffffffffffff0000l;
         static const int64_t maskLowerWord = 0xffffl;
         return reinterpret_cast<const void*>((reinterpret_cast<uint64_t>(logIdentifier()) & parentMask) | (identifier & maskLowerWord));
+    }
+
+    static const void* uniqueLogIdentifier()
+    {
+        static uint64_t logIdentifier = cryptographicallyRandomNumber();
+        return reinterpret_cast<const void*>(++logIdentifier);
     }
 #else
 

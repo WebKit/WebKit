@@ -416,14 +416,6 @@ static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionIn
     return true;
 }
 
-#if !RELEASE_LOG_DISABLED
-static uint64_t nextLogIdentifier()
-{
-    static uint64_t logIdentifier = cryptographicallyRandomNumber();
-    return ++logIdentifier;
-}
-#endif
-
 HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& document, bool createdByParser)
     : HTMLElement(tagName, document)
     , ActiveDOMObject(document)
@@ -474,7 +466,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
-    , m_logIdentifier(nextLogIdentifier())
+    , m_logIdentifier(uniqueLogIdentifier())
 #endif
 {
     allMediaElements().add(this);

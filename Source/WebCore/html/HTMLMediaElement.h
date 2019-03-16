@@ -561,7 +561,7 @@ public:
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return *m_logger.get(); }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -1176,7 +1176,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;
-    uint64_t m_logIdentifier;
+    const void* m_logIdentifier;
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

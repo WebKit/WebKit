@@ -1,6 +1,7 @@
 /*
- *  Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
- *  Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2015 Ericsson AB. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -269,11 +270,28 @@ void MediaStreamTrackPrivate::updateReadyState()
     if (state == m_readyState)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     m_readyState = state;
     forEachObserver([this](auto& observer) {
         observer.readyStateChanged(*this);
     });
 }
+
+#if !RELEASE_LOG_DISABLED
+void MediaStreamTrackPrivate::setLogger(const Logger& newLogger, const void* newLogIdentifier)
+{
+    m_logger = &newLogger;
+    m_logIdentifier = newLogIdentifier;
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_source->setLogger(newLogger, newLogIdentifier);
+}
+
+WTFLogChannel& MediaStreamTrackPrivate::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

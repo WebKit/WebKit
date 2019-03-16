@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,10 @@ private:
     Optional<CaptureSizeAndFrameRate> bestSupportedSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>);
     bool presetSupportsFrameRate(RefPtr<VideoPreset>, double);
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "RealtimeVideoSource"; }
+#endif
+
     Vector<Ref<VideoPreset>> m_presets;
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };
@@ -90,7 +94,27 @@ private:
 #endif
 };
 
+struct SizeAndFrameRate {
+    Optional<int> width;
+    Optional<int> height;
+    Optional<double> frameRate;
+
+    String toJSONString() const;
+    Ref<JSON::Object> toJSONObject() const;
+};
+
 } // namespace WebCore
+
+namespace WTF {
+template<typename Type> struct LogArgument;
+template <>
+struct LogArgument<WebCore::SizeAndFrameRate> {
+    static String toString(const WebCore::SizeAndFrameRate& size)
+    {
+        return size.toJSONString();
+    }
+};
+}; // namespace WTF
 
 #endif // ENABLE(MEDIA_STREAM)
 

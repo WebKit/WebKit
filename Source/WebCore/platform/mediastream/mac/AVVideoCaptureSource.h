@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,7 +73,6 @@ private:
     AVVideoCaptureSource(AVCaptureDevice*, String&& id, String&& hashSalt);
     virtual ~AVVideoCaptureSource();
 
-    void initializeSession();
     void clearSession();
 
     bool setupSession();
@@ -110,6 +109,10 @@ private:
     IntSize sizeForPreset(NSString*);
 
     AVCaptureDevice* device() const { return m_device.get(); }
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "AVVideoCaptureSource"; }
+#endif
 
     RefPtr<MediaSample> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;

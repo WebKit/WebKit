@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RemoteVideoSample.h"
+#include <wtf/JSONValues.h>
 
 #if PLATFORM(COCOA)
 #include "ImageTransferSessionVT.h"
@@ -352,7 +353,7 @@ Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> RealtimeVideoSource::best
 
 void RealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double> frameRate)
 {
-    Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> match;
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, SizeAndFrameRate { width, height, frameRate });
 
     auto size = this->size();
     if (!width && !height && !size.isEmpty()) {
@@ -360,7 +361,7 @@ void RealtimeVideoSource::setSizeAndFrameRate(Optional<int> width, Optional<int>
         height = size.height();
     }
 
-    match = bestSupportedSizeAndFrameRate(width, height, frameRate);
+    Optional<RealtimeVideoSource::CaptureSizeAndFrameRate> match = bestSupportedSizeAndFrameRate(width, height, frameRate);
     ASSERT(match);
     if (!match)
         return;
@@ -410,6 +411,24 @@ void RealtimeVideoSource::dispatchMediaSampleToObservers(MediaSample& sample)
 
     videoSampleAvailable(mediaSample.releaseNonNull());
 }
+
+#if !RELEASE_LOG_DISABLED
+Ref<JSON::Object> SizeAndFrameRate::toJSONObject() const
+{
+    auto object = JSON::Object::create();
+
+    object->setDouble("width"_s, width ? width.value() : 0);
+    object->setDouble("height"_s, height ? height.value() : 0);
+    object->setDouble("frameRate"_s, frameRate ? frameRate.value() : 0);
+
+    return object;
+}
+
+String SizeAndFrameRate::toJSONString() const
+{
+    return toJSONObject()->toJSONString();
+}
+#endif
 
 } // namespace WebCore
 
