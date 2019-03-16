@@ -1,3 +1,13 @@
+2019-03-16  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r242807): Unified sources build failure from missing imports.
+        https://bugs.webkit.org/show_bug.cgi?id=195852
+
+        Unreviewed speculative build fix.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        Include <wtf/SoftLinking.h> and "UIKitSPI.h" on iOS.
+
 2019-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Block the accessibility server when accessibility is not enabled.

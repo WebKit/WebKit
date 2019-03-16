@@ -61,6 +61,11 @@
 #import <QuartzCore/CARemoteLayerServer.h>
 #endif
 
+#if PLATFORM(IOS)
+#import "UIKitSPI.h"
+#import <wtf/SoftLinking.h>
+#endif
+
 NSString *WebServiceWorkerRegistrationDirectoryDefaultsKey = @"WebServiceWorkerRegistrationDirectory";
 NSString *WebKitLocalCacheDefaultsKey = @"WebKitLocalCache";
 NSString *WebKitJSCJITEnabledDefaultsKey = @"WebKitJSCJITEnabledDefaultsKey";
