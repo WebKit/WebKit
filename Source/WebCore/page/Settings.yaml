@@ -784,6 +784,10 @@ shouldEnableTextAutosizingBoost:
 mediaCapabilitiesEnabled:
   initial: false
 
+mediaCapabilitiesExtensionsEnabled:
+  type: bool
+  initial: false
+
 clientCoordinatesRelativeToLayoutViewport:
   initial: false
   onChange: setNeedsRecalcStyleInAllFrames

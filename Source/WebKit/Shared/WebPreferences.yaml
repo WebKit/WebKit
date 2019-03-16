@@ -1374,6 +1374,13 @@ ProcessSwapOnCrossSiteNavigationEnabled:
   category: experimental
   webcoreBinding: none
 
+MediaCapabilitiesExtensionsEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Media Capabilities Extensions"
+  humanReadableDescription: "Media Capabilities Extensions"
+  category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

@@ -181,7 +181,7 @@
             "values": ["*"]
         },
         "EnabledBySetting": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
+            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member"],
             "values": ["*"]
         },
         "DisabledByQuirk": {

@@ -28,5 +28,5 @@
     JSGenerateToJSObject,
 ]
 dictionary MediaCapabilitiesDecodingInfo : MediaCapabilitiesInfo {
-    MediaDecodingConfiguration supportedConfiguration;
+    [EnabledBySetting=MediaCapabilitiesExtensions] MediaDecodingConfiguration supportedConfiguration;
 };

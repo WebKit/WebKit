@@ -2403,19 +2403,30 @@ sub GenerateDictionaryImplementationContent
                     # 2. Let value be the result of converting idlValue to an ECMAScript value.
                     # 3. Perform ! CreateDataProperty(O, key, value).
 
+                my $needsRuntimeCheck = NeedsRuntimeCheck($dictionary, $member);
+                my $indent = "";
+                if ($needsRuntimeCheck) {
+                    my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($dictionary, $member, "true");
+                    $result .= "    if (${runtimeEnableConditionalString}) {\n";
+                    $indent = "    ";
+                }
+
                 if (!$member->isRequired && not defined $member->default) {
                     my $IDLType = GetIDLType($typeScope, $member->type);
                     my $conversionExpression = NativeToJSValueUsingReferences($member, $typeScope, "${IDLType}::extractValueFromNullable(${valueExpression})", "globalObject");
 
-                    $result .= "    if (!${IDLType}::isNullValue(${valueExpression})) {\n";
-                    $result .= "        auto ${key}Value = ${conversionExpression};\n";
-                    $result .= "        result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
-                    $result .= "    }\n";
+                    $result .= "${indent}    if (!${IDLType}::isNullValue(${valueExpression})) {\n";
+                    $result .= "${indent}        auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}        result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
+                    $result .= "${indent}    }\n";
                 } else {
                     my $conversionExpression = NativeToJSValueUsingReferences($member, $typeScope, $valueExpression, "globalObject");
 
-                    $result .= "    auto ${key}Value = ${conversionExpression};\n";
-                    $result .= "    result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
+                    $result .= "${indent}    auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}    result->putDirect(vm, JSC::Identifier::fromString(&vm, \"${key}\"), ${key}Value);\n";
+                }
+                if ($needsRuntimeCheck) {
+                    $result .= "    }\n";
                 }
             }
         }

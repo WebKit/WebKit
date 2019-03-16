@@ -1,3 +1,25 @@
+2019-03-16  Jer Noble  <jer.noble@apple.com>
+
+        Add a new MediaCapabilitiesExtensionsEnabled setting
+        https://bugs.webkit.org/show_bug.cgi?id=195843
+
+        Reviewed by Geoffrey Garen.
+
+        Add a new setting, MediaCapabilitiesExtensionsEnabled, which controls whether extensions
+        to the Media Capabilities API are available.
+
+        Drive-by fix: make sure that the configuration is passed through to MediaCapabilitiesInfo
+        when no factory can support the configuration.
+
+        * Modules/mediacapabilities/MediaCapabilitiesDecodingInfo.idl:
+        * Modules/mediacapabilities/MediaCapabilitiesEncodingInfo.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/IDLAttributes.json:
+        * page/Settings.yaml:
+        * platform/mediacapabilities/MediaEngineConfigurationFactory.cpp:
+        (WebCore::MediaEngineConfigurationFactory::createDecodingConfiguration):
+
 2019-03-16  Zalan Bujtas  <zalan@apple.com>
 
         [iOS] Unable to close trending window on naver.com.

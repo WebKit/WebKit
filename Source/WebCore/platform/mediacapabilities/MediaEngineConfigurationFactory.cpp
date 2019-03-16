@@ -80,13 +80,13 @@ void MediaEngineConfigurationFactory::createDecodingConfiguration(MediaDecodingC
 
     auto factoryCallback = [] (auto factoryCallback, auto nextFactory, auto&& config, auto&& callback) mutable {
         if (nextFactory == factories().end()) {
-            callback({ });
+            callback({{ }, WTFMove(config)});
             return;
         }
 
         auto& factory = *nextFactory;
         if (!factory.createDecodingConfiguration) {
-            callback({ });
+            callback({{ }, WTFMove(config)});
             return;
         }
 
