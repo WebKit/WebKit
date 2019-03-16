@@ -148,7 +148,7 @@ void IDBIndex::rollbackInfoForVersionChangeAbort()
     m_deleted = false;
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, IDBKeyRange* range, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenCursor(ExecState& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBIndex::openCursor");
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
@@ -159,7 +159,11 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, IDBKeyRa
     if (!m_objectStore.transaction().isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'openCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    IDBKeyRangeData rangeData = range;
+    auto keyRange = function();
+    if (keyRange.hasException())
+        return keyRange.releaseException();
+
+    IDBKeyRangeData rangeData = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
     if (rangeData.lowerKey.isNull())
         rangeData.lowerKey = IDBKeyData::minimum();
     if (rangeData.upperKey.isNull())
@@ -169,19 +173,25 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, IDBKeyRa
     return m_objectStore.transaction().requestOpenCursor(execState, *this, info);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
 {
-    LOG(IndexedDB, "IDBIndex::openCursor");
-    ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
-
-    auto keyRange = IDBKeyRange::only(execState, key);
-    if (keyRange.hasException())
-        return Exception { DataError, "Failed to execute 'openCursor' on 'IDBIndex': The parameter is not a valid key."_s };
-
-    return openCursor(execState, keyRange.releaseReturnValue().ptr(), direction);
+    return doOpenCursor(execState, direction, [range=WTFMove(range)]() {
+        return range;
+    });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(ExecState& execState, IDBKeyRange* range, IDBCursorDirection direction)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::openCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
+{
+    return doOpenCursor(execState, direction, [state=&execState, key]() {
+        auto onlyResult = IDBKeyRange::only(*state, key);
+        if (onlyResult.hasException())
+            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'openCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
+
+        return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
+    });
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doOpenKeyCursor(ExecState& execState, IDBCursorDirection direction, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBIndex::openKeyCursor");
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
@@ -192,18 +202,31 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(ExecState& execState, IDBKe
     if (!m_objectStore.transaction().isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    auto info = IDBCursorInfo::indexCursor(m_objectStore.transaction(), m_objectStore.info().identifier(), m_info.identifier(), range, direction, IndexedDB::CursorType::KeyOnly);
+    auto keyRange = function();
+    if (keyRange.hasException())
+        return keyRange.releaseException();
+
+    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    auto info = IDBCursorInfo::indexCursor(m_objectStore.transaction(), m_objectStore.info().identifier(), m_info.identifier(), keyRangePointer, direction, IndexedDB::CursorType::KeyOnly);
     return m_objectStore.transaction().requestOpenCursor(execState, *this, info);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(ExecState& execState, RefPtr<IDBKeyRange>&& range, IDBCursorDirection direction)
+{
+    return doOpenKeyCursor(execState, direction, [range=WTFMove(range)]() {
+        return range;
+    });
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::openKeyCursor(ExecState& execState, JSValue key, IDBCursorDirection direction)
 {
-    LOG(IndexedDB, "IDBIndex::openKeyCursor");
+    return doOpenKeyCursor(execState, direction, [state=&execState, key]() {
+        auto onlyResult = IDBKeyRange::only(*state, key);
+        if (onlyResult.hasException())
+            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The parameter is not a valid key."_s) };
 
-    auto keyRange = IDBKeyRange::only(execState, key);
-    if (keyRange.hasException())
-        return Exception { DataError, "Failed to execute 'openKeyCursor' on 'IDBIndex': The parameter is not a valid key."_s };
-    return openKeyCursor(execState, keyRange.releaseReturnValue().ptr(), direction);
+        return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
+    });
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::count(ExecState& execState, IDBKeyRange* range)
@@ -218,10 +241,9 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::count(ExecState& execState, JSValue key)
     LOG(IndexedDB, "IDBIndex::count");
 
     auto idbKey = scriptValueToIDBKey(execState, key);
-    if (!idbKey->isValid())
-        return Exception { DataError, "Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key."_s };
+    auto* idbKeyPointer = idbKey->isValid() ? idbKey.ptr() : nullptr;
 
-    return doCount(execState, IDBKeyRangeData(idbKey.ptr()));
+    return doCount(execState, IDBKeyRangeData(idbKeyPointer));
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::doCount(ExecState& execState, const IDBKeyRangeData& range)
@@ -231,12 +253,12 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::doCount(ExecState& execState, const IDBKe
     if (m_deleted || m_objectStore.isDeleted())
         return Exception { InvalidStateError, "Failed to execute 'count' on 'IDBIndex': The index or its object store has been deleted."_s };
 
-    if (!range.isValid())
-        return Exception { DataError };
-
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'count' on 'IDBIndex': The transaction is inactive or finished."_s };
+
+    if (!range.isValid())
+        return Exception { DataError, "Failed to execute 'count' on 'IDBIndex': The parameter is not a valid key."_s };
 
     return transaction.requestCount(execState, *this, range);
 }
@@ -254,26 +276,30 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::get(ExecState& execState, JSValue key)
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return Exception { DataError, "Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key."_s };
+        return doGet(execState, Exception(DataError, "Failed to execute 'get' on 'IDBIndex': The parameter is not a valid key."_s));
 
     return doGet(execState, IDBKeyRangeData(idbKey.ptr()));
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::doGet(ExecState& execState, const IDBKeyRangeData& range)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doGet(ExecState& execState, ExceptionOr<IDBKeyRangeData> range)
 {
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
 
     if (m_deleted || m_objectStore.isDeleted())
         return Exception { InvalidStateError, "Failed to execute 'get' on 'IDBIndex': The index or its object store has been deleted."_s };
 
-    if (range.isNull)
-        return Exception { DataError };
-
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'get' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    return transaction.requestGetValue(execState, *this, range);
+    if (range.hasException())
+        return range.releaseException();
+    auto keyRange = range.releaseReturnValue();
+
+    if (keyRange.isNull)
+        return Exception { DataError };
+
+    return transaction.requestGetValue(execState, *this, keyRange);
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::getKey(ExecState& execState, IDBKeyRange* range)
@@ -289,29 +315,33 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getKey(ExecState& execState, JSValue key)
 
     auto idbKey = scriptValueToIDBKey(execState, key);
     if (!idbKey->isValid())
-        return Exception { DataError, "Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key."_s };
+        return doGetKey(execState, Exception(DataError, "Failed to execute 'getKey' on 'IDBIndex': The parameter is not a valid key."_s));
 
     return doGetKey(execState, IDBKeyRangeData(idbKey.ptr()));
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExecState& execState, const IDBKeyRangeData& range)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetKey(ExecState& execState, ExceptionOr<IDBKeyRangeData> range)
 {
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
 
     if (m_deleted || m_objectStore.isDeleted())
         return Exception { InvalidStateError, "Failed to execute 'getKey' on 'IDBIndex': The index or its object store has been deleted."_s };
 
-    if (range.isNull)
-        return Exception { DataError };
-
     auto& transaction = m_objectStore.transaction();
     if (!transaction.isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'getKey' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    return transaction.requestGetKey(execState, *this, range);
+    if (range.hasException())
+        return range.releaseException();
+    auto keyRange = range.releaseReturnValue();
+    
+    if (keyRange.isNull)
+        return Exception { DataError };
+
+    return transaction.requestGetKey(execState, *this, keyRange);
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(ExecState& execState, RefPtr<IDBKeyRange> range, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAll(ExecState& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBIndex::getAll");
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
@@ -322,19 +352,33 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(ExecState& execState, RefPtr<IDBKe
     if (!m_objectStore.transaction().isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'getAll' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, range.get(), IndexedDB::GetAllType::Values, count);
+    auto keyRange = function();
+    if (keyRange.hasException())
+        return keyRange.releaseException();
+
+    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Values, count);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(ExecState& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
+{
+    return doGetAll(execState, count, [range = WTFMove(range)]() {
+        return range;
+    });
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::getAll(ExecState& execState, JSValue key, Optional<uint32_t> count)
 {
-    auto onlyResult = IDBKeyRange::only(execState, key);
-    if (onlyResult.hasException())
-        return Exception { DataError, "Failed to execute 'getAll' on 'IDBIndex': The parameter is not a valid key."_s };
+    return doGetAll(execState, count, [state=&execState, key]() {
+        auto onlyResult = IDBKeyRange::only(*state, key);
+        if (onlyResult.hasException())
+            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'getAll' on 'IDBIndex': The parameter is not a valid key."_s) };
 
-    return getAll(execState, onlyResult.releaseReturnValue(), count);
+        return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
+    });
 }
 
-ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(ExecState& execState, RefPtr<IDBKeyRange> range, Optional<uint32_t> count)
+ExceptionOr<Ref<IDBRequest>> IDBIndex::doGetAllKeys(ExecState& execState, Optional<uint32_t> count, WTF::Function<ExceptionOr<RefPtr<IDBKeyRange>>()>&& function)
 {
     LOG(IndexedDB, "IDBIndex::getAllKeys");
     ASSERT(&m_objectStore.transaction().database().originThread() == &Thread::current());
@@ -345,16 +389,30 @@ ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(ExecState& execState, RefPtr<I
     if (!m_objectStore.transaction().isActive())
         return Exception { TransactionInactiveError, "Failed to execute 'getAllKeys' on 'IDBIndex': The transaction is inactive or finished."_s };
 
-    return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, range.get(), IndexedDB::GetAllType::Keys, count);
+    auto keyRange = function();
+    if (keyRange.hasException())
+        return keyRange.releaseException();
+
+    auto* keyRangePointer = keyRange.returnValue() ? keyRange.releaseReturnValue().get() : nullptr;
+    return m_objectStore.transaction().requestGetAllIndexRecords(execState, *this, keyRangePointer, IndexedDB::GetAllType::Keys, count);
+}
+
+ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(ExecState& execState, RefPtr<IDBKeyRange>&& range, Optional<uint32_t> count)
+{
+    return doGetAllKeys(execState, count, [range = WTFMove(range)]() {
+        return range;
+    });
 }
 
 ExceptionOr<Ref<IDBRequest>> IDBIndex::getAllKeys(ExecState& execState, JSValue key, Optional<uint32_t> count)
 {
-    auto onlyResult = IDBKeyRange::only(execState, key);
-    if (onlyResult.hasException())
-        return Exception { DataError, "Failed to execute 'getAllKeys' on 'IDBIndex': The parameter is not a valid key."_s };
+    return doGetAllKeys(execState, count, [state=&execState, key]() {
+        auto onlyResult = IDBKeyRange::only(*state, key);
+        if (onlyResult.hasException())
+            return ExceptionOr<RefPtr<IDBKeyRange>>{ Exception(DataError, "Failed to execute 'getAllKeys' on 'IDBIndex': The parameter is not a valid key."_s) };
 
-    return getAllKeys(execState, onlyResult.releaseReturnValue(), count);
+        return ExceptionOr<RefPtr<IDBKeyRange>> { onlyResult.releaseReturnValue() };
+    });
 }
 
 void IDBIndex::markAsDeleted()

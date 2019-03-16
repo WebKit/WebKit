@@ -85,7 +85,7 @@ public:
                 sizeEstimate += key->m_sizeEstimate;
             }
         }
-        Ref<IDBKey> idbKey = adoptRef(*new IDBKey(result, sizeEstimate));
+        auto idbKey = adoptRef(*new IDBKey(result, sizeEstimate));
         ASSERT(idbKey->isValid());
         return idbKey;
     }

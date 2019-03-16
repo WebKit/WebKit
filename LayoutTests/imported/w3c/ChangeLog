@@ -1,3 +1,18 @@
+2019-03-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout tests imported/w3c/web-platform-tests/IndexedDB/*-exception-order.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=195650
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated test expectations to PASS.
+
+        * web-platform-tests/IndexedDB/idbdatabase-createObjectStore-exception-order-expected.txt:
+        * web-platform-tests/IndexedDB/idbdatabase-transaction-exception-order-expected.txt:
+        * web-platform-tests/IndexedDB/idbindex-query-exception-order-expected.txt:
+        * web-platform-tests/IndexedDB/idbobjectstore-delete-exception-order-expected.txt:
+        * web-platform-tests/IndexedDB/idbobjectstore-query-exception-order-expected.txt:
+
 2019-03-12  Sihui Liu  <sihui_liu@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/IndexedDB/fire-*-event-exception.html are failing

@@ -1,3 +1,72 @@
+2019-03-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Layout tests imported/w3c/web-platform-tests/IndexedDB/*-exception-order.html are failing
+        https://bugs.webkit.org/show_bug.cgi?id=195650
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix some exception orders in IDB.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        Step 6 of https://www.w3.org/TR/IndexedDB-2/#dom-idbdatabase-createobjectstore.
+
+        (WebCore::IDBDatabase::transaction):
+        Step 1 of https://www.w3.org/TR/IndexedDB-2/#dom-idbdatabase-transaction.
+
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::doOpenCursor):
+        (WebCore::IDBIndex::openCursor):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-opencursor.
+
+        (WebCore::IDBIndex::doOpenKeyCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-openkeycursor.
+
+        (WebCore::IDBIndex::count):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-count.
+
+        (WebCore::IDBIndex::doCount):
+        (WebCore::IDBIndex::get):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-get.
+
+        (WebCore::IDBIndex::doGet):
+        (WebCore::IDBIndex::getKey):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-getkey.
+
+        (WebCore::IDBIndex::doGetKey):
+        (WebCore::IDBIndex::doGetAll):
+        (WebCore::IDBIndex::getAll):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-getkey.
+        (WebCore::IDBIndex::doGetAllKeys):
+        (WebCore::IDBIndex::getAllKeys):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbindex-getallkeys.
+
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::doOpenCursor):
+        (WebCore::IDBObjectStore::openCursor):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbobjectstore-opencursor.
+
+        (WebCore::IDBObjectStore::doOpenKeyCursor):
+        (WebCore::IDBObjectStore::openKeyCursor):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbobjectstore-openkeycursor.
+
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::doDelete):
+        (WebCore::IDBObjectStore::count):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbobjectstore-count.
+
+        (WebCore::IDBObjectStore::doCount):
+        (WebCore::IDBObjectStore::doGetAll):
+        (WebCore::IDBObjectStore::getAll):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbobjectstore-getall.
+
+        (WebCore::IDBObjectStore::doGetAllKeys):
+        (WebCore::IDBObjectStore::getAllKeys):
+        Step 5 of https://www.w3.org/TR/IndexedDB-2/#dom-idbobjectstore-getallkeys.
+        * Modules/indexeddb/IDBObjectStore.h:
+
 2019-03-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reduce the size of Node::deref by eliminating an explicit parentNode check
