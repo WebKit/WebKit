@@ -35,6 +35,7 @@
 #import "GPUSampler.h"
 #import "GPUTexture.h"
 #import "Logging.h"
+#import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/Optional.h>
 

@@ -1,5 +1,11 @@
 2019-03-16  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed unified-build fix; GPUBindGroupMetal uses symbols from the Metal.framework; it should import it.
+
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+
+2019-03-16  Jer Noble  <jer.noble@apple.com>
+
         Add a new MediaCapabilitiesExtensionsEnabled setting
         https://bugs.webkit.org/show_bug.cgi?id=195843
 
