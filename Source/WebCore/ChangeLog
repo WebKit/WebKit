@@ -1,3 +1,43 @@
+2019-03-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reduce the size of Node::deref by eliminating an explicit parentNode check
+        https://bugs.webkit.org/show_bug.cgi?id=195776
+
+        Reviewed by Geoffrey Garen.
+
+        This patch eliminates the nullity check of m_parentNode in Node::deref as well as the store to
+        m_refCount in the case of invoking Node::removedLastRef() as done for RefCounted in r30042.
+        Together, this patch shrinks WebCore's size by 46KB or ~0.7%.
+
+        To do this, we take we take a similar approach as WTF::String by using the lowest bit of m_refCount
+        to indicate whether a node has a parent or not. Regular ref-counting is done on the upper 31 bits.
+        Node::setParentNode updates this flag, and Node::deref() would only `delete this` if m_refCount
+        is identically equal to 0.
+
+        For a Document, we set m_refCounted to 0 before in the case of non-zero m_referencingNodeCount
+        since decrementReferencingNodeCount needs to be able to tell if there is an outstanding Ref/RefPtr
+        or not when m_referencingNodeCount becomes 0.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        * dom/Document.h:
+        (WebCore::Document::decrementReferencingNodeCount):
+        * dom/Node.cpp:
+        (WebCore::Node::Node): Moved the initialization of m_refCount to the member variable declaration.
+        (WebCore::Node::~Node):
+        (WebCore::Node::removedLastRef):
+        * dom/Node.h:
+        (WebCore::Node): Changed the type of m_refCount from signed int to uint32_t. It was changed from
+        unsigned int to signed int back in r11492 but I don't think the signedness is needed.
+        (WebCore::Node::ref): Increment the ref count by 2 (upper 31-bit).
+        (WebCore::Node::deref): Implemented the optimization. This is what shrinks the WebCore binary size.
+        (WebCore::Node::hasOneRef const):
+        (WebCore::Node::refCount const): Ignore the lowest bit. Without this fix, the optimization in
+        replaceChildrenWithFragment to avoid replacing the text node is disabled whenever there is a parent.
+        (WebCore::Node::setParentNode): Sets the lowest bit to 1 if the node has a parent and 0 otherwise.
+
 2019-03-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG property tear off objects for SVGAnimatedInteger
