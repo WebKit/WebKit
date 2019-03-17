@@ -67,12 +67,6 @@ bool isJSString(JSCell*);
 bool isJSString(JSValue);
 JSString* asString(JSValue);
 
-struct StringViewWithUnderlyingString {
-    StringView view;
-    String underlyingString;
-};
-
-
 // In 64bit architecture, JSString and JSRopeString have the following memory layout to make sizeof(JSString) == 16 and sizeof(JSRopeString) == 32.
 // JSString has only one pointer. We use it for String. length() and is8Bit() queries go to StringImpl. In JSRopeString, we reuse the above pointer
 // place for the 1st fiber. JSRopeString has three fibers so its size is 48. To keep length and is8Bit flag information in JSRopeString, JSRopeString

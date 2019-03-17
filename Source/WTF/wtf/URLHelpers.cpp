@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,6 @@
 #include "URLParser.h"
 #include <mutex>
 #include <unicode/uidna.h>
-#include <unicode/unorm.h>
 #include <unicode/uscript.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
@@ -737,74 +736,56 @@ String mapHostNames(const String& string, const Optional<URLDecodeFunction>& dec
     return result;
 }
 
-static String createStringWithEscapedUnsafeCharacters(const String& sourceBuffer)
+static String escapeUnsafeCharacters(const String& sourceBuffer)
 {
-    Vector<UChar, urlBytesBufferLength> outBuffer;
-
-    const size_t length = sourceBuffer.length();
+    unsigned length = sourceBuffer.length();
 
     Optional<UChar32> previousCodePoint;
-    size_t i = 0;
-    while (i < length) {
-        UChar32 c = sourceBuffer.characterStartingAt(i);
 
+    unsigned i;
+    for (i = 0; i < length; ) {
+        UChar32 c = sourceBuffer.characterStartingAt(i);
+        if (isLookalikeCharacter(previousCodePoint, sourceBuffer.characterStartingAt(i)))
+            break;
+        previousCodePoint = c;
+        i += U16_LENGTH(c);
+    }
+
+    if (i == length)
+        return sourceBuffer;
+
+    Vector<UChar, urlBytesBufferLength> outBuffer;
+
+    outBuffer.grow(i);
+    if (sourceBuffer.is8Bit())
+        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.characters8(), i);
+    else
+        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.characters16(), i);
+
+    for (; i < length; ) {
+        UChar32 c = sourceBuffer.characterStartingAt(i);
+        unsigned characterLength = U16_LENGTH(c);
         if (isLookalikeCharacter(previousCodePoint, c)) {
             uint8_t utf8Buffer[4];
             size_t offset = 0;
             UBool failure = false;
             U8_APPEND(utf8Buffer, offset, 4, c, failure)
             ASSERT(!failure);
-            
+
             for (size_t j = 0; j < offset; ++j) {
                 outBuffer.append('%');
                 outBuffer.append(upperNibbleToASCIIHexDigit(utf8Buffer[j]));
                 outBuffer.append(lowerNibbleToASCIIHexDigit(utf8Buffer[j]));
             }
         } else {
-            UChar utf16Buffer[2];
-            size_t offset = 0;
-            UBool failure = false;
-            U16_APPEND(utf16Buffer, offset, 2, c, failure)
-            ASSERT(!failure);
-            for (size_t j = 0; j < offset; ++j)
-                outBuffer.append(utf16Buffer[j]);
+            for (unsigned j = 0; j < characterLength; ++j)
+                outBuffer.append(sourceBuffer[i + j]);
         }
         previousCodePoint = c;
-        i += U16_LENGTH(c);
+        i += characterLength;
     }
+
     return String::adopt(WTFMove(outBuffer));
-}
-
-static String toNormalizationFormC(const String& string)
-{
-    Vector<UChar> sourceBuffer = string.charactersWithNullTermination();
-    ASSERT(sourceBuffer.last() == '\0');
-    sourceBuffer.removeLast();
-
-    UErrorCode uerror = U_ZERO_ERROR;
-    const UNormalizer2* normalizer = unorm2_getNFCInstance(&uerror);
-    if (U_FAILURE(uerror))
-        return { };
-
-    UNormalizationCheckResult checkResult = unorm2_quickCheck(normalizer, sourceBuffer.data(), sourceBuffer.size(), &uerror);
-    if (U_FAILURE(uerror))
-        return { };
-
-    // No need to normalize if already normalized.
-    if (checkResult == UNORM_YES)
-        return string;
-
-    Vector<UChar, urlBytesBufferLength> normalizedCharacters(sourceBuffer.size());
-    auto normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedCharacters.size(), &uerror);
-    if (uerror == U_BUFFER_OVERFLOW_ERROR) {
-        uerror = U_ZERO_ERROR;
-        normalizedCharacters.resize(normalizedLength);
-        normalizedLength = unorm2_normalize(normalizer, sourceBuffer.data(), sourceBuffer.size(), normalizedCharacters.data(), normalizedLength, &uerror);
-    }
-    if (U_FAILURE(uerror))
-        return { };
-
-    return String(normalizedCharacters.data(), normalizedLength);
 }
 
 String userVisibleURL(const CString& url)
@@ -891,8 +872,7 @@ String userVisibleURL(const CString& url)
             result = mappedResult;
     }
 
-    auto normalized = toNormalizationFormC(result);
-    return createStringWithEscapedUnsafeCharacters(normalized);
+    return escapeUnsafeCharacters(normalizedNFC(result));
 }
 
 } // namespace URLHelpers

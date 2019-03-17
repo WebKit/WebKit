@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,6 +211,16 @@ inline bool operator!=(StringView a, const char* b) { return !equal(a, b); }
 inline bool operator!=(const LChar*a, StringView b) { return !equal(b, a); }
 inline bool operator!=(const char*a, StringView b) { return !equal(b, a); }
 
+struct StringViewWithUnderlyingString;
+
+// This returns a StringView of the normalized result, and a String that is either
+// null, if the input was already normalized, or contains the normalized result
+// and needs to be kept around so the StringView remains valid. Typically the
+// easiest way to use it correctly is to put it into a local and use the StringView.
+WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
+
+WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
+
 }
 
 #include <wtf/text/AtomicString.h>
@@ -218,12 +228,17 @@ inline bool operator!=(const char*a, StringView b) { return !equal(b, a); }
 
 namespace WTF {
 
+struct StringViewWithUnderlyingString {
+    StringView view;
+    String underlyingString;
+};
+
 inline StringView::StringView()
 {
-    // FIXME: It's peculiar that null strings are 16-bit and empty strings return 8-bit (according to the is8Bit function).
 }
 
 #if CHECK_STRINGVIEW_LIFETIME
+
 inline StringView::~StringView()
 {
     setUnderlyingString(nullptr);
@@ -280,6 +295,7 @@ inline StringView& StringView::operator=(const StringView& other)
 
     return *this;
 }
+
 #endif // CHECK_STRINGVIEW_LIFETIME
 
 inline void StringView::initialize(const LChar* characters, unsigned length)
@@ -996,3 +1012,4 @@ template<unsigned length> inline bool equalLettersIgnoringASCIICase(StringView s
 using WTF::append;
 using WTF::equal;
 using WTF::StringView;
+using WTF::StringViewWithUnderlyingString;

@@ -1,3 +1,32 @@
+2019-03-16  Darin Adler  <darin@apple.com>
+
+        Improve normalization code, including moving from unorm.h to unorm2.h
+        https://bugs.webkit.org/show_bug.cgi?id=195330
+
+        Reviewed by Michael Catanzaro.
+
+        * editing/TextIterator.cpp: Include unorm2.h.
+        (WebCore::normalizeCharacters): Rewrote to use unorm2_normalize rather than
+        unorm_normalize, but left the logic otherwise the same.
+
+        * platform/graphics/SurrogatePairAwareTextIterator.cpp: Include unorm2.h.
+        (WebCore::SurrogatePairAwareTextIterator::normalizeVoicingMarks):
+        Use unorm2_composePair instead of unorm_normalize.
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (characterSequenceIsEmoji): Changed to use existing SurrogatePairAwareTextIterator.
+        (FontCascade::fontForCombiningCharacterSequence): Use normalizedNFC instead of
+        calling unorm2_normalize directly.
+
+        * WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        Removed unneeded include of <unicode/normlzr.h>.
+
+        * platform/text/TextEncoding.cpp:
+        (WebCore::TextEncoding::encode const): Use normalizedNFC instead of the
+        code that was here. The normalizedNFC function is better in multiple ways,
+        but primarily it handles 8-bit strings and other already-normalized
+        strings much more efficiently.
+
 2019-03-16  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed unified-build fix; GPUBindGroupMetal uses symbols from the Metal.framework; it should import it.

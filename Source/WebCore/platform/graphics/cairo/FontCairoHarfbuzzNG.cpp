@@ -32,7 +32,6 @@
 #include "CharacterProperties.h"
 #include "FontCache.h"
 #include "SurrogatePairAwareTextIterator.h"
-#include <unicode/normlzr.h>
 
 namespace WebCore {
 
@@ -46,11 +45,10 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static bool characterSequenceIsEmoji(const Vector<UChar, 4>& normalizedCharacters, int32_t normalizedLength)
+static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, UChar32 firstCharacter, unsigned firstClusterLength)
 {
-    UChar32 character;
-    unsigned clusterLength = 0;
-    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
+    UChar32 character = firstCharacter;
+    unsigned clusterLength = firstClusterLength;
     if (!iterator.consume(character, clusterLength))
         return false;
 
@@ -100,36 +98,27 @@ static bool characterSequenceIsEmoji(const Vector<UChar, 4>& normalizedCharacter
     return false;
 }
 
-const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characters, size_t length) const
+const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* originalCharacters, size_t originalLength) const
 {
-    UErrorCode error = U_ZERO_ERROR;
-    Vector<UChar, 4> normalizedCharacters(length);
-    const auto* normalizer = unorm2_getNFCInstance(&error);
-    if (U_FAILURE(error))
-        return nullptr;
-    int32_t normalizedLength = unorm2_normalize(normalizer, characters, length, normalizedCharacters.data(), length, &error);
-    if (U_FAILURE(error)) {
-        if (error != U_BUFFER_OVERFLOW_ERROR)
-            return nullptr;
+    auto normalizedString = normalizedNFC(StringView { originalCharacters, static_cast<unsigned>(originalLength) });
 
-        error = U_ZERO_ERROR;
-        normalizedCharacters.resize(normalizedLength);
-        normalizedLength = unorm2_normalize(normalizer, characters, length, normalizedCharacters.data(), normalizedLength, &error);
-        if (U_FAILURE(error))
-            return nullptr;
-    }
+    // Code below relies on normalizedNFC never narrowing a 16-bit input string into an 8-bit output string.
+    // At the time of this writing, the function never does this, but in theory a future version could, and
+    // we would then need to add code paths here for the simpler 8-bit case.
+    auto characters = normalizedString.view.characters16();
+    auto length = normalizedString.view.length();
 
     UChar32 character;
     unsigned clusterLength = 0;
-    SurrogatePairAwareTextIterator iterator(normalizedCharacters.data(), 0, normalizedLength, normalizedLength);
+    SurrogatePairAwareTextIterator iterator(characters, 0, length, length);
     if (!iterator.consume(character, clusterLength))
         return nullptr;
 
-    bool isEmoji = characterSequenceIsEmoji(normalizedCharacters, normalizedLength);
+    bool isEmoji = characterSequenceIsEmoji(iterator, character, clusterLength);
 
     const Font* baseFont = glyphDataForCharacter(character, false, NormalVariant).font;
     if (baseFont
-        && (static_cast<int32_t>(clusterLength) == normalizedLength || baseFont->canRenderCombiningCharacterSequence(characters, length))
+        && (clusterLength == length || baseFont->canRenderCombiningCharacterSequence(characters, length))
         && (!isEmoji || baseFont->platformData().isColorBitmapFont()))
         return baseFont;
 

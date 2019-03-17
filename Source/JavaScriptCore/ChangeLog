@@ -1,3 +1,29 @@
+2019-03-16  Darin Adler  <darin@apple.com>
+
+        Improve normalization code, including moving from unorm.h to unorm2.h
+        https://bugs.webkit.org/show_bug.cgi?id=195330
+
+        Reviewed by Michael Catanzaro.
+
+        * runtime/JSString.h: Move StringViewWithUnderlyingString to StringView.h.
+
+        * runtime/StringPrototype.cpp: Include unorm2.h instead of unorm.h.
+        (JSC::normalizer): Added. Function to create normalizer object given
+        enumeration value indicating which is selected. Simplified because we
+        know the function will not fail and so we don't need error handling code.
+        (JSC::normalize): Changed this function to take a JSString* so we can
+        optimize the case where no normalization is needed. Added an early exit
+        if the string is stored as 8-bit and another if the string is already
+        normalized, using unorm2_isNormalized. Changed error handling to only
+        check cases that can actually fail in practice. Also did other small
+        optimizations like passing VM rather than ExecState.
+        (JSC::stringProtoFuncNormalize): Used smaller enumeration names that are
+        identical to the names used in the API and normalization parlance rather
+        than longer ones that expand the acronyms. Updated to pass JSString* to
+        the normalize function, so we can optimize 8-bit and already-normalized
+        cases, rather than callling the expensive String::upconvertedCharacters
+        function. Use throwVMRangeError.
+
 2019-03-15  Mark Lam  <mark.lam@apple.com>
 
         Need to check ObjectPropertyCondition liveness before accessing it when firing watchpoints.

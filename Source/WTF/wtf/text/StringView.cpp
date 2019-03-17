@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+Copyright (C) 2014-2019 Apple Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <mutex>
 #include <unicode/ubrk.h>
+#include <unicode/unorm2.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
@@ -238,6 +239,43 @@ String StringView::convertToASCIIUppercase() const
     if (m_is8Bit)
         return convertASCIICase<ASCIICase::Upper>(static_cast<const LChar*>(m_characters), m_length);
     return convertASCIICase<ASCIICase::Upper>(static_cast<const UChar*>(m_characters), m_length);
+}
+
+StringViewWithUnderlyingString normalizedNFC(StringView string)
+{
+    // Latin-1 characters are unaffected by normalization.
+    if (string.is8Bit())
+        return { string, { } };
+
+    UErrorCode status = U_ZERO_ERROR;
+    const UNormalizer2* normalizer = unorm2_getNFCInstance(&status);
+    ASSERT(U_SUCCESS(status));
+
+    // No need to normalize if already normalized.
+    UBool checkResult = unorm2_isNormalized(normalizer, string.characters16(), string.length(), &status);
+    if (checkResult)
+        return { string, { } };
+
+    unsigned normalizedLength = unorm2_normalize(normalizer, string.characters16(), string.length(), nullptr, 0, &status);
+    ASSERT(status == U_BUFFER_OVERFLOW_ERROR);
+
+    UChar* characters;
+    String result = String::createUninitialized(normalizedLength, characters);
+
+    status = U_ZERO_ERROR;
+    unorm2_normalize(normalizer, string.characters16(), string.length(), characters, normalizedLength, &status);
+    ASSERT(U_SUCCESS(status));
+
+    StringView view { result };
+    return { view, WTFMove(result) };
+}
+
+String normalizedNFC(const String& string)
+{
+    auto result = normalizedNFC(StringView { string });
+    if (result.underlyingString.isNull())
+        return string;
+    return result.underlyingString;
 }
 
 #if CHECK_STRINGVIEW_LIFETIME

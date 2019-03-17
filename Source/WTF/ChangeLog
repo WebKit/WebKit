@@ -1,3 +1,41 @@
+2019-03-16  Darin Adler  <darin@apple.com>
+
+        Improve normalization code, including moving from unorm.h to unorm2.h
+        https://bugs.webkit.org/show_bug.cgi?id=195330
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/URLHelpers.cpp: Removed unneeded include of unorm.h since the
+        normalization code is now in StringView.cpp.
+        (WTF::URLHelpers::escapeUnsafeCharacters): Renamed from
+        createStringWithEscapedUnsafeCharacters since it now only creates
+        a new string if one is needed. Use unsigned for string lengths, since
+        that's what WTF::String uses, not size_t. Added a first loop so that
+        we can return the string unmodified if no lookalike characters are
+        found. Removed unnecessary round trip from UTF-16 and then back in
+        the case where the character is not a lookalike.
+        (WTF::URLHelpers::toNormalizationFormC): Deleted. Moved this logic
+        into the WTF::normalizedNFC function in StringView.cpp.
+        (WTF::URLHelpers::userVisibleURL): Call escapeUnsafeCharacters and
+        normalizedNFC. The normalizedNFC function is better in multiple ways,
+        but primarily it handles 8-bit strings and other already-normalized
+        strings much more efficiently.
+
+        * wtf/text/StringView.cpp:
+        (WTF::normalizedNFC): Added. This has two overloads. One is for when
+        we already have a String, and want to re-use it if no normalization
+        is needed, and another is when we only have a StringView, and may need
+        to allocate a String to hold the result. Includes a fast special case
+        for 8-bit and already-normalized strings, and uses the same strategy
+        that JSC::normalize was already using: calls unorm2_normalize twice,
+        first just to determine the length.
+
+        * wtf/text/StringView.h: Added normalizedNFC, which can be called with
+        either a StringView or a String. Also moved StringViewWithUnderlyingString
+        here from JSString.h, here for use as the return value of normalizedNFC;
+        it is used for a similar purpose in the JavaScriptCore rope implementation.
+        Also removed an inaccurate comment.
+
 2019-03-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] [WPE] Fix compilation errors due to undefined ALWAYS_LOG_IF
