@@ -69,7 +69,6 @@ class BuildFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, triggers=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
         self.addStep(KillOldProcesses())
-        self.addStep(CleanBuild())
         self.addStep(CompileWebKit())
         self.addStep(UnApplyPatchIfRequired())
         self.addStep(CompileWebKitToT())
