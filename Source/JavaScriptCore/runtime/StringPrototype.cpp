@@ -1818,8 +1818,9 @@ static constexpr bool normalizationAffects8Bit(NormalizationForm form)
         return false;
     case NormalizationForm::NFKD:
         return true;
+    default:
+        ASSERT_NOT_REACHED();
     }
-    ASSERT_NOT_REACHED();
     return true;
 }
 

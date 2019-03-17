@@ -1,3 +1,13 @@
+2019-03-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        Fix WPE and GTK Debug builds after r243049
+        https://bugs.webkit.org/show_bug.cgi?id=195860
+
+        Unreviewed, build fix after r243049.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::normalizationAffects8Bit):
+
 2019-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION: !vm.isInitializingObject() void* JSC::tryAllocateCellHelper<JSC::Structure> JSC::Structure::create
