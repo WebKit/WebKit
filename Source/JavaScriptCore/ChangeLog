@@ -1,3 +1,63 @@
+2019-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION: !vm.isInitializingObject() void* JSC::tryAllocateCellHelper<JSC::Structure> JSC::Structure::create
+        https://bugs.webkit.org/show_bug.cgi?id=195858
+
+        Reviewed by Mark Lam.
+
+        r243011 changed WebAssembly related structures lazily-allocated. It means that this lazy allocation must not be done in the middle of
+        the other object allocations. This patch changes the signature of wasm related objects' ::create functions to taking Structure*.
+        This prevents us from materializing lazily-allocated structures while allocating wasm related objects, and this style is used in the
+        other places to fix the same problem. This bug is caught by existing debug tests for wasm.
+
+        * runtime/JSGlobalObject.h:
+        * wasm/js/JSWebAssemblyCompileError.cpp:
+        (JSC::createJSWebAssemblyCompileError):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyLinkError.cpp:
+        (JSC::createJSWebAssemblyLinkError):
+        * wasm/js/JSWebAssemblyModule.cpp:
+        (JSC::JSWebAssemblyModule::createStub):
+        (JSC::JSWebAssemblyModule::finishCreation):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJSException):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyCompileError):
+        (JSC::callJSWebAssemblyCompileError):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::create):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::constructJSWebAssemblyInstance):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyLinkError):
+        (JSC::callJSWebAssemblyLinkError):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::webAssemblyModuleValidateAsyncInternal):
+        (JSC::instantiate):
+        (JSC::compileAndInstantiate):
+        (JSC::webAssemblyModuleInstantinateAsyncInternal):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::constructJSWebAssemblyRuntimeError):
+        (JSC::callJSWebAssemblyRuntimeError):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::constructJSWebAssemblyTable):
+        * wasm/js/WebAssemblyToJSCallee.cpp:
+        (JSC::WebAssemblyToJSCallee::create):
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2019-03-16  Darin Adler  <darin@apple.com>
 
         Improve normalization code, including moving from unorm.h to unorm2.h

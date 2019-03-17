@@ -48,7 +48,7 @@ JSWebAssemblyModule* JSWebAssemblyModule::createStub(VM& vm, ExecState* exec, St
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (!result.has_value()) {
-        auto* error = JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->WebAssemblyCompileErrorStructure(), result.error());
+        auto* error = JSWebAssemblyCompileError::create(exec, vm, structure->globalObject()->webAssemblyCompileErrorStructure(), result.error());
         RETURN_IF_EXCEPTION(scope, nullptr);
         throwException(exec, scope, error);
         return nullptr;
@@ -86,7 +86,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
     }
 
     m_exportSymbolTable.set(vm, this, exportSymbolTable);
-    m_callee.set(vm, this, WebAssemblyToJSCallee::create(vm, this));
+    m_callee.set(vm, this, WebAssemblyToJSCallee::create(vm, globalObject(vm)->webAssemblyToJSCalleeStructure(), this));
 }
 
 void JSWebAssemblyModule::destroy(JSCell* cell)

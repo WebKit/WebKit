@@ -57,7 +57,7 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation, Wasm::SignatureIndex);
+    JS_EXPORT_PRIVATE static WebAssemblyFunction* create(VM&, JSGlobalObject*, Structure*, unsigned, const String&, JSWebAssemblyInstance*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     Wasm::SignatureIndex signatureIndex() const { return m_importableFunction.signatureIndex; }

@@ -96,7 +96,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyTable(ExecState* exec)
             createRangeError(exec, "couldn't create Table"_s)));
     }
 
-    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyTableStructure(), wasmTable.releaseNonNull())));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(JSWebAssemblyTable::create(exec, vm, exec->lexicalGlobalObject()->webAssemblyTableStructure(), wasmTable.releaseNonNull())));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyTable(ExecState* exec)

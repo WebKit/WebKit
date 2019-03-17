@@ -660,7 +660,7 @@ void* wasmToJSException(ExecState* exec, Wasm::ExceptionType type, Instance* was
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(exec, globalObject);
         else
-            error = JSWebAssemblyRuntimeError::create(exec, vm, globalObject->WebAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
+            error = JSWebAssemblyRuntimeError::create(exec, vm, globalObject->webAssemblyRuntimeErrorStructure(), Wasm::errorMessageForExceptionType(type));
         throwException(exec, throwScope, error);
     }
 

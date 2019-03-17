@@ -157,13 +157,13 @@ template<typename Watchpoint> class ObjectPropertyChangeAdaptiveWatchpoint;
 
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro) \
-    macro(WebAssemblyCompileError, webAssemblyCompileError, WebAssemblyCompileError, JSWebAssemblyCompileError, CompileError, error) \
-    macro(WebAssemblyInstance,     webAssemblyInstance,     WebAssemblyInstance,     JSWebAssemblyInstance,     Instance,     object) \
-    macro(WebAssemblyLinkError,    webAssemblyLinkError,    WebAssemblyLinkError,    JSWebAssemblyLinkError,    LinkError,    error) \
-    macro(WebAssemblyMemory,       webAssemblyMemory,       WebAssemblyMemory,       JSWebAssemblyMemory,       Memory,       object) \
-    macro(WebAssemblyModule,       webAssemblyModule,       WebAssemblyModule,       JSWebAssemblyModule,       Module,       object) \
-    macro(WebAssemblyRuntimeError, webAssemblyRuntimeError, WebAssemblyRuntimeError, JSWebAssemblyRuntimeError, RuntimeError, error) \
-    macro(WebAssemblyTable,        webAssemblyTable,        WebAssemblyTable,        JSWebAssemblyTable,        Table,        object)
+    macro(WebAssemblyCompileError, webAssemblyCompileError, webAssemblyCompileError, JSWebAssemblyCompileError, CompileError, error) \
+    macro(WebAssemblyInstance,     webAssemblyInstance,     webAssemblyInstance,     JSWebAssemblyInstance,     Instance,     object) \
+    macro(WebAssemblyLinkError,    webAssemblyLinkError,    webAssemblyLinkError,    JSWebAssemblyLinkError,    LinkError,    error) \
+    macro(WebAssemblyMemory,       webAssemblyMemory,       webAssemblyMemory,       JSWebAssemblyMemory,       Memory,       object) \
+    macro(WebAssemblyModule,       webAssemblyModule,       webAssemblyModule,       JSWebAssemblyModule,       Module,       object) \
+    macro(WebAssemblyRuntimeError, webAssemblyRuntimeError, webAssemblyRuntimeError, JSWebAssemblyRuntimeError, RuntimeError, error) \
+    macro(WebAssemblyTable,        webAssemblyTable,        webAssemblyTable,        JSWebAssemblyTable,        Table,        object)
 #else
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro)
 #endif // ENABLE(WEBASSEMBLY)

@@ -38,7 +38,7 @@ public:
     using Base = JSNonFinalObject;
     static const unsigned StructureFlags = Base::StructureFlags;
 
-    static WebAssemblyToJSCallee* create(VM&, JSWebAssemblyModule*);
+    static WebAssemblyToJSCallee* create(VM&, Structure*, JSWebAssemblyModule*);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_EXPORT_INFO;

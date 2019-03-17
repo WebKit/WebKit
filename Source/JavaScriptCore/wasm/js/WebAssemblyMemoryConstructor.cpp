@@ -98,7 +98,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
         }
     }
 
-    auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure());
+    auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->webAssemblyMemoryStructure());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
 
     RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(initialPageCount, maximumPageCount,

@@ -98,7 +98,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!wasmCodeBlock->runnable()) {
-        throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject(vm)->WebAssemblyLinkErrorStructure(), wasmCodeBlock->errorMessage()));
+        throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject(vm)->webAssemblyLinkErrorStructure(), wasmCodeBlock->errorMessage()));
         return;
     }
 
@@ -114,7 +114,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
     } else {
         jsCodeBlock = JSWebAssemblyCodeBlock::create(vm, WTFMove(wasmCodeBlock), module()->module().moduleInformation());
         if (UNLIKELY(!jsCodeBlock->runnable())) {
-            throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject(vm)->WebAssemblyLinkErrorStructure(), jsCodeBlock->errorMessage()));
+            throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject(vm)->webAssemblyLinkErrorStructure(), jsCodeBlock->errorMessage()));
             return;
         }
         m_codeBlock.set(vm, this, jsCodeBlock);
@@ -278,7 +278,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
             // We create a memory when it's a memory definition.
             RELEASE_ASSERT(!moduleInformation.memory.isImport());
 
-            auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->WebAssemblyMemoryStructure());
+            auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->webAssemblyMemoryStructure());
             RETURN_IF_EXCEPTION(throwScope, nullptr);
 
             RefPtr<Wasm::Memory> memory = Wasm::Memory::tryCreate(moduleInformation.memory.initial(), moduleInformation.memory.maximum(),
@@ -296,7 +296,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, co
     
     if (!jsInstance->memory()) {
         // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
-        auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->WebAssemblyMemoryStructure());
+        auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, globalObject->webAssemblyMemoryStructure());
         jsMemory->adopt(Wasm::Memory::create());
         jsInstance->setMemory(vm, jsMemory);
         RETURN_IF_EXCEPTION(throwScope, nullptr);

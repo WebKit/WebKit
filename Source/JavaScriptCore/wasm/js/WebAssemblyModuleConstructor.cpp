@@ -181,7 +181,7 @@ JSWebAssemblyModule* WebAssemblyModuleConstructor::createModule(ExecState* exec,
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyModuleStructure());
+    auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->webAssemblyModuleStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     RELEASE_AND_RETURN(scope, JSWebAssemblyModule::createStub(vm, exec, structure, Wasm::Module::validateSync(&vm.wasmContext, WTFMove(buffer))));

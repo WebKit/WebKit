@@ -74,7 +74,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyInstance(ExecState* ex
     if (!importArgument.isUndefined() && !importObject)
         return JSValue::encode(throwException(exec, scope, createTypeError(exec, "second argument to WebAssembly.Instance must be undefined or an Object"_s, defaultSourceAppender, runtimeTypeForValue(vm, importArgument))));
     
-    Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->WebAssemblyInstanceStructure());
+    Structure* instanceStructure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), exec->lexicalGlobalObject()->webAssemblyInstanceStructure());
     RETURN_IF_EXCEPTION(scope, { });
 
     JSWebAssemblyInstance* instance = JSWebAssemblyInstance::create(vm, exec, JSWebAssemblyInstance::createPrivateModuleKey(), module, importObject, instanceStructure, Ref<Wasm::Module>(module->module()), Wasm::CreationMode::FromJS);

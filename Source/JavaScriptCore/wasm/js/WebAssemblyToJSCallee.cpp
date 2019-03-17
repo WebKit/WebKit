@@ -35,9 +35,8 @@ namespace JSC {
 
 const ClassInfo WebAssemblyToJSCallee::s_info = { "WebAssemblyToJSCallee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyToJSCallee) };
 
-WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, JSWebAssemblyModule* module)
+WebAssemblyToJSCallee* WebAssemblyToJSCallee::create(VM& vm, Structure* structure, JSWebAssemblyModule* module)
 {
-    Structure* structure = module->globalObject(vm)->webAssemblyToJSCalleeStructure();
     WebAssemblyToJSCallee* callee = new (NotNull, allocateCell<WebAssemblyToJSCallee>(vm.heap)) WebAssemblyToJSCallee(vm, structure);
     callee->finishCreation(vm, module);
     return callee;

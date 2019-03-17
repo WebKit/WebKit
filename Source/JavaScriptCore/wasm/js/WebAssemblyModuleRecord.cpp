@@ -301,7 +301,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
             RefPtr<Wasm::Table> wasmTable = Wasm::Table::tryCreate(moduleInformation.tableInformation.initial(), moduleInformation.tableInformation.maximum());
             if (!wasmTable)
                 return exception(createJSWebAssemblyLinkError(exec, vm, "couldn't create Table"));
-            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, globalObject->WebAssemblyTableStructure(), wasmTable.releaseNonNull());
+            JSWebAssemblyTable* table = JSWebAssemblyTable::create(exec, vm, globalObject->webAssemblyTableStructure(), wasmTable.releaseNonNull());
             // We should always be able to allocate a JSWebAssemblyTable we've defined.
             // If it's defined to be too large, we should have thrown a validation error.
             scope.assertNoException();
@@ -343,7 +343,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                     exportedValue = functionImport;
                 else {
                     Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(functionIndex);
-                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, m_instance.get(), signatureIndex);
+                    exportedValue = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex);
                 }
             } else {
                 //   iii. Otherwise:
@@ -354,7 +354,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
                 Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(exp.kindIndex);
                 Wasm::SignatureIndex signatureIndex = module->signatureIndexFromFunctionIndexSpace(exp.kindIndex);
                 const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
-                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), String::fromUTF8(exp.field), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+                WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String::fromUTF8(exp.field), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
                 exportedValue = function;
             }
             break;
@@ -424,7 +424,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSValue, JSObject* importObj
         } else {
             Wasm::Callee& embedderEntrypointCallee = codeBlock->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = codeBlock->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, signature.argumentCount(), "start", m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start", m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
             m_startFunction.set(vm, this, function);
         }
     }
@@ -533,7 +533,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
                 }
 
                 table->setFunction(vm, tableIndex,
-                    WebAssemblyWrapperFunction::create(vm, globalObject, functionImport, functionIndex, m_instance.get(), signatureIndex));
+                    WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndex, m_instance.get(), signatureIndex));
                 ++tableIndex;
                 continue;
             }
@@ -546,7 +546,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
             // Does (new Instance(...)).exports.foo === table.get(0)?
             // https://bugs.webkit.org/show_bug.cgi?id=165825
             WebAssemblyFunction* function = WebAssemblyFunction::create(
-                vm, globalObject, signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
+                vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), String(), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, signatureIndex);
 
             table->setFunction(vm, tableIndex, function);
             ++tableIndex;

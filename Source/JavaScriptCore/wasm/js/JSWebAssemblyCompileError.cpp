@@ -53,7 +53,7 @@ JSObject* createJSWebAssemblyCompileError(ExecState* exec, VM& vm, const String&
 {
     ASSERT(!message.isEmpty());
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
-    return JSWebAssemblyCompileError::create(exec, vm, globalObject->WebAssemblyCompileErrorStructure(), message);
+    return JSWebAssemblyCompileError::create(exec, vm, globalObject->webAssemblyCompileErrorStructure(), message);
 }
 
 } // namespace JSC

@@ -55,12 +55,12 @@ WebAssemblyWrapperFunction::WebAssemblyWrapperFunction(VM& vm, JSGlobalObject* g
     , m_importableFunction(importableFunction)
 { }
 
-WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::SignatureIndex signatureIndex)
+WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* function, unsigned importIndex, JSWebAssemblyInstance* instance, Wasm::SignatureIndex signatureIndex)
 {
     ASSERT_WITH_MESSAGE(!function->inherits<WebAssemblyWrapperFunction>(vm), "We should never double wrap a wrapper function.");
     String name = "";
     NativeExecutable* executable = vm.getHostFunction(callWebAssemblyWrapperFunction, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), Wasm::WasmToWasmImportableFunction { signatureIndex, &instance->instance().importFunctionInfo(importIndex)->wasmToEmbedderStub } );
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm.heap)) WebAssemblyWrapperFunction(vm, globalObject, structure, Wasm::WasmToWasmImportableFunction { signatureIndex, &instance->instance().importFunctionInfo(importIndex)->wasmToEmbedderStub } );
     const Wasm::Signature& signature = Wasm::SignatureInformation::get(signatureIndex);
     result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
     return result;

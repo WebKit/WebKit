@@ -48,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::SignatureIndex);
+    static WebAssemblyWrapperFunction* create(VM&, JSGlobalObject*, Structure*, JSObject*, unsigned importIndex, JSWebAssemblyInstance*, Wasm::SignatureIndex);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     Wasm::SignatureIndex signatureIndex() const { return m_importableFunction.signatureIndex; }
