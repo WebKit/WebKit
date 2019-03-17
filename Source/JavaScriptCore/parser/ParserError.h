@@ -35,14 +35,14 @@ namespace JSC {
 
 class ParserError {
 public:
-    enum SyntaxErrorType {
+    enum SyntaxErrorType : uint8_t {
         SyntaxErrorNone,
         SyntaxErrorIrrecoverable,
         SyntaxErrorUnterminatedLiteral,
         SyntaxErrorRecoverable
     };
 
-    enum ErrorType {
+    enum ErrorType : uint8_t {
         ErrorNone,
         StackOverflow,
         EvalError,
