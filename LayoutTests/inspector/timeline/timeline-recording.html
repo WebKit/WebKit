@@ -67,6 +67,8 @@ function test()
             InspectorTest.json(exportData, (key, value) => {
                 if (filterKeys.has(key))
                     return "<filtered>";
+                if (key === "markers")
+                    return ["<filtered>"];
                 return value;
             });
         }

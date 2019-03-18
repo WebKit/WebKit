@@ -43,14 +43,7 @@ Export Data:
   ],
   "records": "<filtered>",
   "markers": [
-    {
-      "time": "<filtered>",
-      "type": "dom-content-event"
-    },
-    {
-      "time": "<filtered>",
-      "type": "load-event"
-    }
+    "<filtered>"
   ],
   "memoryPressureEvents": [],
   "sampleStackTraces": [],

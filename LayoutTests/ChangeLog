@@ -1,3 +1,11 @@
+2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening after r243024.
+
+        * inspector/timeline/timeline-recording-expected.txt:
+        * inspector/timeline/timeline-recording.html:
+        Filter out the markers, but keep the display as an array.
+
 2019-03-18  Daniel Bates  <dabates@apple.com>
 
         [iOS] No DOM keypress event emitted for cursor key commands when non-editable element is focused
