@@ -533,13 +533,17 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
     GST_INFO_OBJECT(pipeline(), "[Seek] seek attempt to %s", toString(mediaTime).utf8().data());
 
     // Avoid useless seeking.
-    if (mediaTime == currentMediaTime())
+    if (mediaTime == currentMediaTime()) {
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] seek to EOS position unhandled");
         return;
+    }
 
     MediaTime time = std::min(mediaTime, durationMediaTime());
 
-    if (isLiveStream())
+    if (isLiveStream()) {
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] Live stream seek unhandled");
         return;
+    }
 
     GST_INFO_OBJECT(pipeline(), "[Seek] seeking to %s", toString(time).utf8().data());
 
@@ -1196,7 +1200,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     // We ignore state changes from internal elements. They are forwarded to playbin2 anyway.
     bool messageSourceIsPlaybin = GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get());
 
-    GST_LOG("Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
+    GST_LOG_OBJECT(pipeline(), "Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
         if (m_resetPipeline || !m_missingPluginCallbacks.isEmpty() || m_errorOccured)
@@ -1342,14 +1346,33 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         }
 #endif
         else if (gst_structure_has_name(structure, "http-headers")) {
-            GstStructure* responseHeaders;
-            if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders, nullptr)) {
-                if (!gst_structure_has_field(responseHeaders, httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data())) {
-                    GST_INFO_OBJECT(pipeline(), "Live stream detected. Disabling on-disk buffering");
+            if (const char* uri = gst_structure_get_string(structure, "uri")) {
+                URL url(URL(), uri);
+                convertToInternalProtocol(url);
+                if (url != m_url) {
+                    GST_DEBUG_OBJECT(pipeline(), "Ignoring HTTP response headers for non-main URI.");
+                    break;
+                }
+            }
+            GUniqueOutPtr<GstStructure> responseHeaders;
+            if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
+                const char* contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data();
+                uint64_t contentLength = 0;
+                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName, &contentLength)) {
+                    // souphttpsrc sets a string for Content-Length, so
+                    // handle it here, until we remove the webkit+ protocol
+                    // prefix from webkitwebsrc.
+                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName)) {
+                        contentLength = g_ascii_strtoull(contentLengthAsString, nullptr, 10);
+                        if (contentLength == G_MAXUINT64)
+                            contentLength = 0;
+                    }
+                }
+                GST_INFO_OBJECT(pipeline(), "%s stream detected", !contentLength ? "Live" : "Non-live");
+                if (!contentLength) {
                     m_isStreaming = true;
                     setDownloadBuffering();
                 }
-                gst_structure_free(responseHeaders);
             }
         } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
             if (WEBKIT_IS_WEB_SRC(m_source.get()))
@@ -1647,7 +1670,11 @@ void MediaPlayerPrivateGStreamer::fillTimerFired()
 
 MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const
 {
+    GST_TRACE_OBJECT(pipeline(), "errorOccured: %s, isLiveStream: %s", boolForPrinting(m_errorOccured), boolForPrinting(isLiveStream()));
     if (m_errorOccured)
+        return MediaTime::zeroTime();
+
+    if (isLiveStream())
         return MediaTime::zeroTime();
 
     MediaTime duration = durationMediaTime();

@@ -1,3 +1,42 @@
+2019-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Rewrite HTTP source element using pushsrc base class
+        https://bugs.webkit.org/show_bug.cgi?id=195631
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        If we want to use webkitwebsrc in adaptivedemux (HLS, DASH, etc)
+        we need a source element that behaves like souphttpsrc, which is
+        implemented using pushsrc. This rewrite might also fix some seek
+        issues.
+
+        No new tests, existing http/tests/media tests cover this patch.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_class_init):
+        (webkitWebSrcReset):
+        (webkit_web_src_init):
+        (webKitWebSrcCreate):
+        (webKitWebSrcStart):
+        (webKitWebSrcCloseSession):
+        (webKitWebSrcStop):
+        (webKitWebSrcGetSize):
+        (webKitWebSrcIsSeekable):
+        (webKitWebSrcDoSeek):
+        (webKitWebSrcQuery):
+        (webKitWebSrcUnLock):
+        (webKitWebSrcUnLockStop):
+        (webKitWebSrcChangeState):
+        (CachedResourceStreamingClient::checkUpdateBlocksize):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h:
+
 2019-03-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         [WPE][GTK] Fix a build warning because of missing to handle an enum value
