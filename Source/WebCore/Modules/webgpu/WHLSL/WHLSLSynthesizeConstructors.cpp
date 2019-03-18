@@ -31,6 +31,7 @@
 #include "WHLSLArrayType.h"
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLEnumerationDefinition.h"
+#include "WHLSLInferTypes.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
 #include "WHLSLPointerType.h"

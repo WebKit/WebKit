@@ -16,7 +16,7 @@ fragment float4 fragmentShader(float4 position : SV_Position) : SV_Target 0 {
 `;
 async function start() {
     const adapter = await window.gpu.requestAdapter();
-    const device = adapter.createDevice();
+    const device = await adapter.requestDevice();
 
     const shaderModule = device.createShaderModule({code: shaderSource, isWHLSL: true});
     const vertexStage = {module: shaderModule, entryPoint: "vertexShader"};
@@ -93,7 +93,7 @@ async function start() {
     const swapChainDescriptor = {context, format: "bgra8unorm"};
     const swapChain = device.createSwapChain(swapChainDescriptor);
     const outputTexture = swapChain.getCurrentTexture();
-    const outputTextureView = outputTexture.createDefaultTextureView(); // createDefaultView()
+    const outputTextureView = outputTexture.createDefaultView(); // createDefaultView()
 
     const commandEncoder = device.createCommandEncoder(); // {}
     const red = {r: 0, g: 0, b: 1, a: 1};

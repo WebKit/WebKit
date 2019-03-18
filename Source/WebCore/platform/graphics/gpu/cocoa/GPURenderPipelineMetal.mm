@@ -259,8 +259,6 @@ static bool trySetWHLSLFunctionsForPipelineDescriptor(const char* const function
     if (!result)
         return false;
 
-    WTFLogAlways("Metal code: %s", result->metalSource.utf8().data());
-
     NSError *error = nil;
     auto library = adoptNS([device.platformDevice() newLibraryWithSource:result->metalSource options:nil error:&error]);
     ASSERT(library);
