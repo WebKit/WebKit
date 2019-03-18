@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,10 +51,17 @@ private:
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGLinearGradientElement, SVGGradientElement>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
     static void registerAttributes();
-
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGLinearGradientElement, SVGGradientElement>;
+    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
+
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
+
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -63,6 +70,7 @@ private:
     bool selfHasRelativeLengths() const override;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedLengthAttribute m_x1 { LengthModeWidth };
     SVGAnimatedLengthAttribute m_y1 { LengthModeHeight };
     SVGAnimatedLengthAttribute m_x2 { LengthModeWidth, "100%" };

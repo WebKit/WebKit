@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,8 @@ public:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGeometryElement, SVGGraphicsElement>;
     static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGeometryElement, SVGGraphicsElement>;
+
     auto pathLengthAnimated() { return m_pathLength.animatedProperty(attributeOwnerProxy()); }
 
 protected:
@@ -55,12 +57,19 @@ protected:
 
 private:
     bool isSVGGeometryElement() const override { return true; }
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
     static void registerAttributes();
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+
+    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
+
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedNumberAttribute m_pathLength;
 };
 

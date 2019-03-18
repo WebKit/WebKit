@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -216,9 +216,8 @@ private:
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
-    SVGAnimatedStringAttribute m_className;
-    
     PropertyRegistry m_propertyRegistry { *this };
+    SVGAnimatedStringAttribute m_className;
 };
 
 class SVGElement::InstanceInvalidationGuard {

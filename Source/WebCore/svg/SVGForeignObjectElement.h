@@ -48,10 +48,17 @@ private:
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGForeignObjectElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
     static void registerAttributes();
-
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGForeignObjectElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
+    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
+
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
+
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
 
@@ -63,6 +70,7 @@ private:
     bool selfHasRelativeLengths() const final { return true; }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedLengthAttribute m_x { LengthModeWidth };
     SVGAnimatedLengthAttribute m_y { LengthModeHeight };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth };

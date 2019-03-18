@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +47,8 @@ public:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFilterPrimitiveStandardAttributes, SVGElement>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
+
     const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
@@ -71,7 +73,14 @@ protected:
 
 private:
     static void registerAttributes();
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
+
+    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
+
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
 
     bool isFilterEffect() const override { return true; }
 
@@ -79,10 +88,8 @@ private:
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
-
+    PropertyRegistry m_propertyRegistry { *this };
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
     SVGAnimatedLengthAttribute m_x { LengthModeWidth, "0%" };

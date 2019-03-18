@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 
 #include "QualifiedName.h"
 #include "SVGAttributeOwnerProxyImpl.h"
+#include "SVGPropertyOwnerRegistry.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -47,6 +48,8 @@ public:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGExternalResourcesRequired>;
     static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGExternalResourcesRequired>;
+
     auto externalResourcesRequiredAnimated() { return m_externalResourcesRequired.animatedProperty(attributeOwnerProxy()); }
 
     bool externalResourcesRequired() const { return m_externalResourcesRequired.value(); }
@@ -55,7 +58,10 @@ public:
 protected:
     SVGExternalResourcesRequired(SVGElement* contextElement);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
 
     virtual void setHaveFiredLoadEvent(bool) { }
     virtual bool isParserInserted() const { return false; }

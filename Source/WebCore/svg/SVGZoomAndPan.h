@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,26 +37,20 @@ public:
         SVG_ZOOMANDPAN_MAGNIFY = SVGZoomAndPanMagnify
     };
 
-    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan.value(); }
-    void setZoomAndPan(SVGZoomAndPanType zoomAndPan) { m_zoomAndPan.setValue(zoomAndPan); }
+    SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
+    void setZoomAndPan(SVGZoomAndPanType zoomAndPan) { m_zoomAndPan = zoomAndPan; }
     ExceptionOr<void> setZoomAndPan(unsigned) { return Exception { NoModificationAllowedError }; }
-    void reset() { m_zoomAndPan.setValue(SVGZoomAndPanMagnify); }
-
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGZoomAndPan>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
+    void reset() { m_zoomAndPan = SVGPropertyTraits<SVGZoomAndPanType>::initialValue(); }
 
     void parseAttribute(const QualifiedName&, const AtomicString&);
 
 protected:
-    SVGZoomAndPan();
+    SVGZoomAndPan() = default;
 
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
     bool parseZoomAndPan(const UChar*&, const UChar*);
 
 private:
-    static void registerAttributes();
-
-    SVGPropertyAttribute<SVGZoomAndPanType> m_zoomAndPan;
+    SVGZoomAndPanType m_zoomAndPan { SVGPropertyTraits<SVGZoomAndPanType>::initialValue() };
 };
 
 } // namespace WebCore

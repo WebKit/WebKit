@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,13 +44,18 @@ private:
     SVGViewElement(const QualifiedName&, Document&);
 
     // FIXME: svgAttributeChanged missing.
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGZoomAndPan>;
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
+    const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
+
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
+    PropertyRegistry m_propertyRegistry { *this };
     SVGStringListValues m_viewTarget;
 };
 

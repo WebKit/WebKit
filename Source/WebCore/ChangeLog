@@ -1,3 +1,103 @@
+2019-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Define the type of SVGPropertyOwnerRegistry for all SVG elements
+        https://bugs.webkit.org/show_bug.cgi?id=195859
+
+        Reviewed by Simon Fraser.
+
+        SVGPropertyOwnerRegistry will eventually replace SVGAttributeOwnerProxyImpl.
+
+        * svg/SVGAElement.h:
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGComponentTransferFunctionElement::attributeRegistry):
+        (WebCore::SVGComponentTransferFunctionElement::isKnownAttribute):
+        * svg/SVGCursorElement.h:
+        * svg/SVGDefsElement.h:
+        * svg/SVGElement.h:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.h:
+        (WebCore::SVGExternalResourcesRequired::isKnownAttribute):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.h:
+        (WebCore::SVGFELightElement::attributeRegistry):
+        (WebCore::SVGFELightElement::isKnownAttribute):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isKnownAttribute):
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::isKnownAttribute):
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.h:
+        * svg/SVGGeometryElement.h:
+        (WebCore::SVGGeometryElement::isKnownAttribute):
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::isKnownAttribute):
+        * svg/SVGGraphicsElement.h:
+        (WebCore::SVGGraphicsElement::isKnownAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::attributeRegistry):
+        (WebCore::SVGPolyElement::isKnownAttribute):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.h:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.h:
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::isKnownAttribute):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.h:
+        (WebCore::SVGTextPositioningElement::isKnownAttribute):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.h:
+        * svg/SVGViewSpec.h:
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::parseZoomAndPan):
+        (WebCore::SVGZoomAndPan::parseAttribute):
+        (WebCore::SVGZoomAndPan::SVGZoomAndPan): Deleted.
+        (WebCore::SVGZoomAndPan::registerAttributes): Deleted.
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::zoomAndPan const):
+        (WebCore::SVGZoomAndPan::setZoomAndPan):
+        (WebCore::SVGZoomAndPan::reset):
+        (WebCore::SVGZoomAndPan::attributeRegistry): Deleted.
+        (WebCore::SVGZoomAndPan::isKnownAttribute): Deleted.
+
 2019-03-18  Timothy Hatcher  <timothy@apple.com>
 
         Add new NSAttributedString API for converting HTML.

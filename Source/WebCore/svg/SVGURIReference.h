@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008, 2009 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "QualifiedName.h"
 #include "SVGAnimatedString.h"
+#include "SVGPropertyOwnerRegistry.h"
 
 namespace WebCore {
 
@@ -65,6 +66,8 @@ public:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGURIReference>;
     using AttributeRegistry = SVGAttributeRegistry<SVGURIReference>;
     static AttributeRegistry& attributeRegistry();
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
 
     const String& href() const;
     RefPtr<SVGAnimatedString> hrefAnimated();

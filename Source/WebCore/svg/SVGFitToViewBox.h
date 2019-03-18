@@ -40,6 +40,8 @@ public:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFitToViewBox>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFitToViewBox>;
+
     const FloatRect& viewBox() const { return m_viewBox.currentValue(m_attributeOwnerProxy); }
     const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(m_attributeOwnerProxy); }
 
@@ -61,7 +63,10 @@ public:
 protected:
     SVGFitToViewBox(SVGElement* contextElement, AnimatedPropertyState = PropertyIsReadWrite);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
+    static bool isKnownAttribute(const QualifiedName& attributeName)
+    {
+        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
+    }
 
     void reset();
     bool parseAttribute(const QualifiedName&, const AtomicString&);

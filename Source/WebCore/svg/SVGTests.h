@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,9 @@ class SVGAttributeRegistry;
 template<typename OwnerType, typename... BaseTypes>
 class SVGAttributeOwnerProxyImpl;
 
+template<typename OwnerType, typename... BaseTypes>
+class SVGPropertyOwnerRegistry;
+
 class SVGTests {
     WTF_MAKE_NONCOPYABLE(SVGTests);
 public:
@@ -43,7 +46,10 @@ public:
 
     using AttributeRegistry = SVGAttributeRegistry<SVGTests>;
     static AttributeRegistry& attributeRegistry();
-    static bool isKnownAttribute(const QualifiedName& attributeName);
+
+    using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
+
+    static bool isKnownAttribute(const QualifiedName&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&);
     void svgAttributeChanged(const QualifiedName&);
