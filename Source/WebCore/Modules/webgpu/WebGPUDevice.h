@@ -60,7 +60,7 @@ struct WebGPUShaderModuleDescriptor;
 
 class WebGPUDevice : public RefCounted<WebGPUDevice> {
 public:
-    static RefPtr<WebGPUDevice> create(Ref<WebGPUAdapter>&&);
+    static RefPtr<WebGPUDevice> tryCreate(Ref<const WebGPUAdapter>&&);
 
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     const GPUDevice& device() const { return m_device.get(); }
@@ -83,9 +83,9 @@ public:
     RefPtr<WebGPUQueue> getQueue() const;
 
 private:
-    WebGPUDevice(Ref<WebGPUAdapter>&&, Ref<GPUDevice>&&);
+    WebGPUDevice(Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);
 
-    Ref<WebGPUAdapter> m_adapter;
+    Ref<const WebGPUAdapter> m_adapter;
     Ref<GPUDevice> m_device;
     mutable RefPtr<WebGPUQueue> m_queue;
 };

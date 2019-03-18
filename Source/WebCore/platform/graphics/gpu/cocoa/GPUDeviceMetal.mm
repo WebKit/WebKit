@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-RefPtr<GPUDevice> GPUDevice::create(Optional<GPURequestAdapterOptions>&& options)
+RefPtr<GPUDevice> GPUDevice::tryCreate(Optional<GPURequestAdapterOptions>&& options)
 {
     RetainPtr<MTLDevice> devicePtr;
 

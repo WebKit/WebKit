@@ -61,7 +61,7 @@ using PlatformDeviceSmartPtr = RetainPtr<MTLDevice>;
 
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:
-    static RefPtr<GPUDevice> create(Optional<GPURequestAdapterOptions>&&);
+    static RefPtr<GPUDevice> tryCreate(Optional<GPURequestAdapterOptions>&&);
 
     RefPtr<GPUBuffer> tryCreateBuffer(GPUBufferDescriptor&&);
     RefPtr<GPUTexture> tryCreateTexture(GPUTextureDescriptor&&) const;

@@ -1,5 +1,31 @@
 2019-03-18  Justin Fan  <justin_fan@apple.com>
 
+        [Web GPU] GPUAdapter.createDevice -> GPUAdapter.requestDevice
+        https://bugs.webkit.org/show_bug.cgi?id=195781
+
+        Reviewed by Myles C. Maxfield.
+
+        A Web GPU device is now acquired via a promise returned from GPUAdapter.requestDevice().
+
+        Existing tests updated for new behavior.
+
+        * Modules/webgpu/WebGPUAdapter.cpp:
+        (WebCore::WebGPUAdapter::requestDevice const):
+        (WebCore::WebGPUAdapter::createDevice): Deleted.
+        * Modules/webgpu/WebGPUAdapter.h:
+        * Modules/webgpu/WebGPUAdapter.idl:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::tryCreate):
+        (WebCore::WebGPUDevice::WebGPUDevice):
+        (WebCore::WebGPUDevice::create): Deleted.
+        * Modules/webgpu/WebGPUDevice.h:
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::tryCreate):
+        (WebCore::GPUDevice::create): Deleted.
+
+2019-03-18  Justin Fan  <justin_fan@apple.com>
+
         [Web GPU] API updates: GPUTexture.createDefaultView and type-safe GPURenderPassEncoder.setPipeline
         https://bugs.webkit.org/show_bug.cgi?id=195896
 

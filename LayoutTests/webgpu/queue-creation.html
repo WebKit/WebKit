@@ -17,8 +17,8 @@ promise_test(async t => {
     const adapter = await window.gpu.requestAdapter({});
     assert_true(adapter instanceof WebGPUAdapter, "requestAdapter returned a WebGPUAdapter.");
 
-    const device = adapter.createDevice();
-    assert_true(device instanceof WebGPUDevice, "createDevice returned a WebGPUDevice.");
+    const device = await adapter.requestDevice();
+    assert_true(device instanceof WebGPUDevice, "requestDevice returned a WebGPUDevice.");
 
     const queue = device.getQueue();
     assert_true(queue instanceof WebGPUQueue, "getQueue returned a WebGPUQueue.");

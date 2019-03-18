@@ -7,21 +7,21 @@
 <script>
 promise_test(async () => {
     const defaultAdapter = await gpu.requestAdapter();
-    const device = defaultAdapter.createDevice();
+    const device = await defaultAdapter.requestDevice();
 
     assert_true(device instanceof WebGPUDevice, "Default device successfully created.");
 }, "Create the default device.");
 
 promise_test(async () => {
     const lowPowerAdapter = await gpu.requestAdapter({ powerPreference: "low-power" });
-    const device = lowPowerAdapter.createDevice();
+    const device = await lowPowerAdapter.requestDevice();
 
     assert_true(device instanceof WebGPUDevice, "Device successfully created using low-power option.");
 }, "Create a device with a low-power option.");
 
 promise_test(async () => {
     const highPerfAdapter = await gpu.requestAdapter({ powerPreference: "high-performance" });
-    const device = highPerfAdapter.createDevice();
+    const device = await highPerfAdapter.requestDevice();
 
     assert_true(device instanceof WebGPUDevice, "Device successfully created using high-performance option.");
 }, "Create a device with a high-performance option.");

@@ -1,6 +1,6 @@
 async function getBasicDevice() {
     const adapter = await gpu.requestAdapter({ powerPreference: "low-power" });
-    const device = adapter.createDevice();
+    const device = await adapter.requestDevice();
     return device;
 }
 

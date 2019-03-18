@@ -63,18 +63,17 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUDevice> WebGPUDevice::create(Ref<WebGPUAdapter>&& adapter)
+RefPtr<WebGPUDevice> WebGPUDevice::tryCreate(Ref<const WebGPUAdapter>&& adapter)
 {
-    if (auto device = GPUDevice::create(adapter->options()))
+    if (auto device = GPUDevice::tryCreate(adapter->options()))
         return adoptRef(new WebGPUDevice(WTFMove(adapter), device.releaseNonNull()));
     return nullptr;
 }
 
-WebGPUDevice::WebGPUDevice(Ref<WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
+WebGPUDevice::WebGPUDevice(Ref<const WebGPUAdapter>&& adapter, Ref<GPUDevice>&& device)
     : m_adapter(WTFMove(adapter))
     , m_device(WTFMove(device))
 {
-    UNUSED_PARAM(m_adapter);
 }
 
 Ref<WebGPUBuffer> WebGPUDevice::createBuffer(GPUBufferDescriptor&& descriptor) const
