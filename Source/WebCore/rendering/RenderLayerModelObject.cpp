@@ -285,57 +285,57 @@ void RenderLayerModelObject::computeRepaintLayoutRects(const RenderLayerModelObj
 
 bool RenderLayerModelObject::startTransition(double timeOffset, CSSPropertyID propertyId, const RenderStyle* fromStyle, const RenderStyle* toStyle)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return false;
     return layer()->backing()->startTransition(timeOffset, propertyId, fromStyle, toStyle);
 }
 
 void RenderLayerModelObject::transitionPaused(double timeOffset, CSSPropertyID propertyId)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->transitionPaused(timeOffset, propertyId);
 }
 
 void RenderLayerModelObject::transitionFinished(CSSPropertyID propertyId)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->transitionFinished(propertyId);
 }
 
 bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation* animation, const KeyframeList& keyframes)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return false;
     return layer()->backing()->startAnimation(timeOffset, animation, keyframes);
 }
 
 void RenderLayerModelObject::animationPaused(double timeOffset, const String& name)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->animationPaused(timeOffset, name);
 }
 
 void RenderLayerModelObject::animationSeeked(double timeOffset, const String& name)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->animationSeeked(timeOffset, name);
 }
 
 void RenderLayerModelObject::animationFinished(const String& name)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->animationFinished(name);
 }
 
 void RenderLayerModelObject::suspendAnimations(MonotonicTime time)
 {
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
+    if (!layer() || !layer()->backing())
+        return;
     layer()->backing()->suspendAnimations(time);
 }
 

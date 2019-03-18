@@ -144,14 +144,14 @@ bool ImplicitAnimation::affectsAcceleratedProperty() const
 
 bool ImplicitAnimation::startAnimation(double timeOffset)
 {
-    if (auto* renderer = compositedRenderer())
+    if (auto* renderer = this->renderer())
         return renderer->startTransition(timeOffset, m_animatingProperty, m_fromStyle.get(), m_toStyle.get());
     return false;
 }
 
 void ImplicitAnimation::pauseAnimation(double timeOffset)
 {
-    if (auto* renderer = compositedRenderer())
+    if (auto* renderer = this->renderer())
         renderer->transitionPaused(timeOffset, m_animatingProperty);
     // Restore the original (unanimated) style
     if (!paused())
@@ -160,7 +160,7 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
 
 void ImplicitAnimation::endAnimation(bool)
 {
-    if (auto* renderer = compositedRenderer())
+    if (auto* renderer = this->renderer())
         renderer->transitionFinished(m_animatingProperty);
 }
 

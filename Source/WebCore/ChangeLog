@@ -1,3 +1,34 @@
+2019-03-18  Zalan Bujtas  <zalan@apple.com>
+
+        Call transition and animation callbacks on non-composited renderers too.
+        https://bugs.webkit.org/show_bug.cgi?id=195907
+
+        Reviewed by Simon Fraser.
+
+        These callbacks are not composited specific functions.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::compositedRenderer const): Deleted.
+        * page/animation/AnimationBase.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::startTransition):
+        (WebCore::RenderLayerModelObject::transitionPaused):
+        (WebCore::RenderLayerModelObject::transitionFinished):
+        (WebCore::RenderLayerModelObject::startAnimation):
+        (WebCore::RenderLayerModelObject::animationPaused):
+        (WebCore::RenderLayerModelObject::animationSeeked):
+        (WebCore::RenderLayerModelObject::animationFinished):
+        (WebCore::RenderLayerModelObject::suspendAnimations):
+
 2019-03-18  Jer Noble  <jer.noble@apple.com>
 
         Add experimental "alphaChannel" property to VideoConfiguration

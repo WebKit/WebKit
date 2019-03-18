@@ -69,14 +69,6 @@ RenderElement* AnimationBase::renderer() const
     return m_element ? m_element->renderer() : nullptr;
 }
 
-RenderLayerModelObject* AnimationBase::compositedRenderer() const
-{
-    auto* renderer = this->renderer();
-    if (!renderer || !renderer->isComposited())
-        return nullptr;
-    return downcast<RenderLayerModelObject>(renderer);
-}
-
 void AnimationBase::clear()
 {
     endAnimation();
@@ -679,7 +671,7 @@ void AnimationBase::freezeAtTime(double t)
     else
         m_pauseTime = m_startTime.valueOr(0) + t - m_animation->delay();
 
-    if (auto* renderer = compositedRenderer())
+    if (auto* renderer = this->renderer())
         renderer->suspendAnimations(MonotonicTime::fromRawSeconds(m_pauseTime.value()));
 }
 
