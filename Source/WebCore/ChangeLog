@@ -1,3 +1,25 @@
+2019-03-18  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] The network process sometimes gets killed for trying to suspend while holding locked files
+        https://bugs.webkit.org/show_bug.cgi?id=195890
+        <rdar://problem/48934338>
+
+        Reviewed by Geoffrey Garen.
+
+        The network process sometimes gets killed for trying to suspend while holding locked files while
+        under SQLiteDatabase::open(). The SQLiteDatabaseTracker normally keeps tracking of "transactions"
+        in progress so we know that we're holding locked files and the WebSQLiteDatabaseTracker takes
+        care of notifying the UIProcess via IPC that it should hold a background assertion on our behalf
+        to avoid trying to suspend while holding locked files.
+        However, we were missing a SQLiteTransactionInProgressAutoCounter when trying to execute the
+        PRAGMA statement.
+
+        Note that we have a similar SQLiteTransactionInProgressAutoCounter in SQLiteDatabase::useWALJournalMode()
+        when executing such PRAGMA statement already.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2019-03-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243037.

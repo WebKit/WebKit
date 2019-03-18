@@ -123,8 +123,11 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
     else
         m_openErrorMessage = "sqlite_open returned null";
 
-    if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;"_s).executeCommand())
-        LOG_ERROR("SQLite database could not set temp_store to memory");
+    {
+        SQLiteTransactionInProgressAutoCounter transactionCounter;
+        if (!SQLiteStatement(*this, "PRAGMA temp_store = MEMORY;"_s).executeCommand())
+            LOG_ERROR("SQLite database could not set temp_store to memory");
+    }
 
     if (openMode != OpenMode::ReadOnly)
         useWALJournalMode();
