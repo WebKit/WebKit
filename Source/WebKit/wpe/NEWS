@@ -1,4 +1,21 @@
 ==================
+WPE WebKit 2.23.91
+==================
+
+What's new in WPE WebKit 2.23.90?
+
+  - Add setting to configure the page background color.
+  - Add support for hole-punching using external media players.
+  - Add support for 16bpp rendering in RGB565 format.
+  - Add autocleanup definitions for g_autoptr and friends.
+  - Add WebKitUserContentFilterStore to the API docs.
+  - Change dependencies to use wpe-1.0 and wpe-fdo-1.0.
+  - Fix constructors returning a GObject in JSC GLib API.
+  - Fix build failure with Clang due to usage of wl_array_foreach.
+  - Fix build failure due to missing WebKitUserContentFilterStore.h header.
+  - Fix several crashes and rendering issues.
+
+==================
 WPE WebKit 2.23.90
 ==================
 
