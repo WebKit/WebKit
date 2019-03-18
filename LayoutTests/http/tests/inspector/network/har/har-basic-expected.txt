@@ -135,6 +135,7 @@ Basic tests for HAR.
           "receive": 99.99999999999987
         },
         "serverIPAddress": "12.34.56.78",
+        "_serverPort": 443,
         "connection": "1",
         "_fetchType": "Network Load",
         "_priority": "medium"

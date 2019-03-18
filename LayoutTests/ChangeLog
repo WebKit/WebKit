@@ -1,5 +1,15 @@
 2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: HAR Extension for `serverIPAddress` port number
+        https://bugs.webkit.org/show_bug.cgi?id=195695
+
+        Reviewed by Matt Baker.
+
+        * http/tests/inspector/network/har/har-basic-expected.txt:
+        * http/tests/inspector/network/har/har-page-expected.txt:
+
+2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
         Unreviewed test gardening after r243024.
 
         * inspector/timeline/timeline-recording-expected.txt:

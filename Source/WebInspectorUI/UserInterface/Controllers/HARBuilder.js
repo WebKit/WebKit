@@ -105,7 +105,10 @@ WI.HARBuilder = class HARBuilder
             entry.time = (resource.timingData.responseEnd - resource.timingData.startTime) * 1000;
         if (resource.remoteAddress) {
             entry.serverIPAddress = HARBuilder.ipAddress(resource.remoteAddress);
-            // FIXME: <https://webkit.org/b/195695> Web Inspector: HAR Extension for `serverIPAddress` port number
+
+            // WebKit Custom Field `_serverPort`.
+            if (entry.serverIPAddress)
+                entry._serverPort = HARBuilder.port(resource.remoteAddress);
         }
         if (resource.connectionIdentifier)
             entry.connection = "" + resource.connectionIdentifier;
@@ -293,6 +296,26 @@ WI.HARBuilder = class HARBuilder
         // NOTE: Resource.remoteAddress always includes the port at the end.
         // So this always strips the last part.
         return remoteAddress.replace(/:\d+$/, "");
+    }
+
+    static port(remoteAddress)
+    {
+        // IP Address, without port.
+        if (!remoteAddress)
+            return undefined;
+
+        // NOTE: Resource.remoteAddress always includes the port at the end.
+        // So this always matches the last part.
+        let index = remoteAddress.lastIndexOf(":");
+        if (!index)
+            return undefined;
+
+        let portString = remoteAddress.substr(index + 1);
+        let port = parseInt(portString);
+        if (isNaN(port))
+            return undefined;
+
+        return port;
     }
 
     static date(date)

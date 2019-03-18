@@ -97,7 +97,6 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
     static fromHAREntry(entry, archiveStartWalltime)
     {
-        // FIXME: <https://webkit.org/b/195695> Web Inspector: HAR Extension for `serverIPAddress` port number
         // FIXME: <https://webkit.org/b/195694> Web Inspector: HAR Extension for Redirect Timing Info
 
         let {request, response, startedDateTime, timings} = entry;
@@ -159,6 +158,10 @@ WI.LocalResource = class LocalResource extends WI.Resource
             finishedTimestamp = timing.responseEnd;
         }
 
+        let serverAddress = entry.serverIPAddress || null;
+        if (serverAddress && typeof entry._serverPort === "number")
+            serverAddress += ":" + entry._serverPort;
+
         return new WI.LocalResource({
             request: {
                 url: request.url,
@@ -182,7 +185,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
                 responseSource: WI.HARBuilder.responseSourceFromHARFetchType(entry._fetchType),
                 protocol: WI.HARBuilder.protocolFromHARProtocol(response.httpVersion),
                 priority: WI.HARBuilder.networkPriorityFromHARPriority(entry._priority),
-                remoteAddress: entry.serverIPAddress || null,
+                remoteAddress: serverAddress,
                 connectionIdentifier: entry.connection ? parseInt(entry.connection) : null,
                 requestHeaderBytesSent: request.headersSize >= 0 ? request.headersSize : NaN,
                 requestBodyBytesSent: request.bodySize >= 0 ? request.bodySize : NaN,

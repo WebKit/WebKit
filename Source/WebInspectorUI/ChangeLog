@@ -1,3 +1,16 @@
+2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: HAR Extension for `serverIPAddress` port number
+        https://bugs.webkit.org/show_bug.cgi?id=195695
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/HARBuilder.js:
+        (WI.HARBuilder.entry):
+        (WI.HARBuilder.port):
+        * UserInterface/Models/LocalResource.js:
+        (WI.LocalResource.fromHAREntry):
+
 2019-03-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Changes: style attribute changes aren't being tracked
