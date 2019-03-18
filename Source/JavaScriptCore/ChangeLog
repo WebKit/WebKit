@@ -1,5 +1,18 @@
 2019-03-18  Mark Lam  <mark.lam@apple.com>
 
+        Missing a ThrowScope release in JSObject::toString().
+        https://bugs.webkit.org/show_bug.cgi?id=195893
+        <rdar://problem/48970986>
+
+        Reviewed by Michael Saboff.
+
+        Placate the validator with a RELEASE_AND_RETURN().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toString const):
+
+2019-03-18  Mark Lam  <mark.lam@apple.com>
+
         Structure::flattenDictionary() should clear unused property slots.
         https://bugs.webkit.org/show_bug.cgi?id=195871
         <rdar://problem/48959497>

@@ -2435,7 +2435,7 @@ JSString* JSObject::toString(ExecState* exec) const
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue primitive = toPrimitive(exec, PreferString);
     RETURN_IF_EXCEPTION(scope, jsEmptyString(exec));
-    return primitive.toString(exec);
+    RELEASE_AND_RETURN(scope, primitive.toString(exec));
 }
 
 JSValue JSObject::toThis(JSCell* cell, ExecState*, ECMAMode)
