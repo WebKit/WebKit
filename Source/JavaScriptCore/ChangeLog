@@ -1,3 +1,54 @@
+2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] jsSubstring should resolve rope before calling JSRopeString::create
+        https://bugs.webkit.org/show_bug.cgi?id=195840
+
+        Reviewed by Geoffrey Garen.
+
+        jsSubstring always ends up resolving rope of the base string because substring JSRopeString only accepts non-rope JSString
+        as its base. Instead of resolving ropes in finishCreationSubstring, we should resolve before passing it to JSRopeString.
+        So that, we can access string data before creating JSRopeString, and we can introduce optimizations like avoiding creation
+        of single character substrings.
+
+        We can find that a lot of substrings for length = 1 are allocated in RAMification regexp tests. This patch avoids creation of these
+        strings to save memory.
+
+        This patch also strengthen error checks caused by rope resolution for base of substrings. Previously we sometimes miss this checks.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/JSString.cpp:
+        (JSC::JSString::dumpToStream):
+        * runtime/JSString.h:
+        (JSC::jsSubstring):
+        (JSC::jsSubstringOfResolved):
+        (JSC::jsSingleCharacterString):
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::lastResult): We no longer need to have length = 0 path since jsSubstring returns an empty string if length == 0.
+        (JSC::RegExpCachedResult::leftContext):
+        (JSC::RegExpCachedResult::rightContext):
+        (JSC::RegExpCachedResult::setInput):
+        * runtime/RegExpGlobalData.cpp:
+        (JSC::RegExpGlobalData::getBackref):
+        (JSC::RegExpGlobalData::getLastParen):
+        * runtime/StringObject.h:
+        (JSC::jsStringWithReuse):
+        (JSC::jsSubstring):
+        * runtime/StringPrototype.cpp:
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::replaceUsingStringSearch):
+        (JSC::stringProtoFuncSlice):
+        (JSC::splitStringByOneCharacterImpl):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstr):
+        (JSC::stringProtoFuncSubstring):
+        (JSC::stringProtoFuncToLowerCase):
+        (JSC::stringProtoFuncToUpperCase):
+        Some `const String& value = string->value(exec)` is dangerous if GC happens later. Changed to getting `String` instead of `const String&` here.
+
+        * runtime/StringPrototypeInlines.h:
+        (JSC::stringSlice):
+
 2019-03-18  Mark Lam  <mark.lam@apple.com>
 
         Missing a ThrowScope release in JSObject::toString().

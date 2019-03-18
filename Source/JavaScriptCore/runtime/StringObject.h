@@ -85,7 +85,7 @@ static inline JSString* jsStringWithReuse(ExecState* exec, JSValue originalValue
         ASSERT(asString(originalValue)->value(exec) == string);
         return asString(originalValue);
     }
-    return jsString(exec, string);
+    return jsString(&exec->vm(), string);
 }
 
 // Helper that tries to use the JSString substring sharing mechanism if 'originalValue' is a JSString.
@@ -99,7 +99,7 @@ static inline JSString* jsSubstring(ExecState* exec, JSValue originalValue, cons
         ASSERT(asString(originalValue)->value(exec) == string);
         return jsSubstring(exec, asString(originalValue), offset, length);
     }
-    return jsSubstring(exec, string, offset, length);
+    return jsSubstring(&exec->vm(), string, offset, length);
 }
 
 } // namespace JSC

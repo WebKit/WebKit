@@ -49,7 +49,6 @@ JSString* jsString(ExecState*, const String&); // returns empty string if passed
 JSString* jsSingleCharacterString(VM*, UChar);
 JSString* jsSingleCharacterString(ExecState*, UChar);
 JSString* jsSubstring(VM*, const String&, unsigned offset, unsigned length);
-JSString* jsSubstring(ExecState*, const String&, unsigned offset, unsigned length);
 
 // Non-trivial strings are two or more characters long.
 // These functions are faster than just calling jsString.
@@ -507,40 +506,10 @@ private:
         initializeIsSubstring(true);
         initializeLength(length);
         initializeIs8Bit(base->is8Bit());
-        if (base->isSubstring()) {
-            JSRopeString* baseRope = jsCast<JSRopeString*>(base);
-            initializeSubstringBase(baseRope->substringBase());
-            initializeSubstringOffset(baseRope->substringOffset() + offset);
-        } else {
-            initializeSubstringBase(base);
-            initializeSubstringOffset(offset);
-        }
-        ASSERT(length == this->length());
-    }
-
-    enum SubstringOfResolvedTag { SubstringOfResolved };
-    JSRopeString(SubstringOfResolvedTag, VM& vm, JSString* base, unsigned offset, unsigned length)
-        : JSString(vm)
-    {
-        RELEASE_ASSERT(!sumOverflows<int32_t>(offset, length));
-        RELEASE_ASSERT(offset + length <= base->length());
-        initializeIsSubstring(true);
-        initializeLength(length);
-        initializeIs8Bit(base->is8Bit());
         initializeSubstringBase(base);
         initializeSubstringOffset(offset);
         ASSERT(length == this->length());
-    }
-
-    ALWAYS_INLINE void finishCreationSubstring(VM& vm, ExecState* exec)
-    {
-        Base::finishCreation(vm);
-        JSString* updatedBase = substringBase();
-        // For now, let's not allow substrings with a rope base.
-        // Resolve non-substring rope bases so we don't have to deal with it.
-        // FIXME: Evaluate if this would be worth adding more branches.
-        if (updatedBase->isRope())
-            jsCast<JSRopeString*>(updatedBase)->resolveRope(exec);
+        ASSERT(!base->isRope());
     }
 
     ALWAYS_INLINE void finishCreationSubstringOfResolved(VM& vm)
@@ -591,18 +560,9 @@ private:
         return newString;
     }
 
-    static JSRopeString* create(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
-    {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap)) JSRopeString(vm, base, offset, length);
-        newString->finishCreationSubstring(vm, exec);
-        ASSERT(newString->length());
-        ASSERT(newString->isRope());
-        return newString;
-    }
-
     ALWAYS_INLINE static JSRopeString* createSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* base, unsigned offset, unsigned length)
     {
-        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap, deferralContext)) JSRopeString(SubstringOfResolved, vm, base, offset, length);
+        JSRopeString* newString = new (NotNull, allocateCell<JSRopeString>(vm.heap, deferralContext)) JSRopeString(vm, base, offset, length);
         newString->finishCreationSubstringOfResolved(vm);
         ASSERT(newString->length());
         ASSERT(newString->isRope());
@@ -844,16 +804,31 @@ inline JSString* jsString(VM* vm, const String& s)
     return JSString::create(*vm, *s.impl());
 }
 
-inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* s, unsigned offset, unsigned length)
+inline JSString* jsSubstring(VM& vm, ExecState* exec, JSString* base, unsigned offset, unsigned length)
 {
-    ASSERT(offset <= s->length());
-    ASSERT(length <= s->length());
-    ASSERT(offset + length <= s->length());
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(offset <= base->length());
+    ASSERT(length <= base->length());
+    ASSERT(offset + length <= base->length());
     if (!length)
         return vm.smallStrings.emptyString();
-    if (!offset && length == s->length())
-        return s;
-    return JSRopeString::create(vm, exec, s, offset, length);
+    if (!offset && length == base->length())
+        return base;
+
+    // For now, let's not allow substrings with a rope base.
+    // Resolve non-substring rope bases so we don't have to deal with it.
+    // FIXME: Evaluate if this would be worth adding more branches.
+    if (base->isSubstring()) {
+        JSRopeString* baseRope = jsCast<JSRopeString*>(base);
+        base = baseRope->substringBase();
+        offset = baseRope->substringOffset() + offset;
+        ASSERT(!base->isRope());
+    } else if (base->isRope()) {
+        jsCast<JSRopeString*>(base)->resolveRope(exec);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    }
+    return jsSubstringOfResolved(vm, nullptr, base, offset, length);
 }
 
 inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContext, JSString* s, unsigned offset, unsigned length)
@@ -861,10 +836,17 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
     ASSERT(offset <= s->length());
     ASSERT(length <= s->length());
     ASSERT(offset + length <= s->length());
+    ASSERT(!s->isRope());
     if (!length)
         return vm.smallStrings.emptyString();
     if (!offset && length == s->length())
         return s;
+    if (length == 1) {
+        auto& base = s->valueInternal();
+        UChar character = base.characterAt(offset);
+        if (character <= maxSingleCharacterString)
+            return vm.smallStrings.singleCharacterString(character);
+    }
     return JSRopeString::createSubstringOfResolved(vm, deferralContext, s, offset, length);
 }
 
@@ -912,7 +894,6 @@ inline JSString* jsOwnedString(VM* vm, const String& s)
 inline JSString* jsEmptyString(ExecState* exec) { return jsEmptyString(&exec->vm()); }
 inline JSString* jsString(ExecState* exec, const String& s) { return jsString(&exec->vm(), s); }
 inline JSString* jsSingleCharacterString(ExecState* exec, UChar c) { return jsSingleCharacterString(&exec->vm(), c); }
-inline JSString* jsSubstring(ExecState* exec, const String& s, unsigned offset, unsigned length) { return jsSubstring(&exec->vm(), s, offset, length); }
 inline JSString* jsNontrivialString(ExecState* exec, const String& s) { return jsNontrivialString(&exec->vm(), s); }
 inline JSString* jsNontrivialString(ExecState* exec, String&& s) { return jsNontrivialString(&exec->vm(), WTFMove(s)); }
 inline JSString* jsOwnedString(ExecState* exec, const String& s) { return jsOwnedString(&exec->vm(), s); }

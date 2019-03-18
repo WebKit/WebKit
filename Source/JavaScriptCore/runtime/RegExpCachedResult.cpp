@@ -46,14 +46,21 @@ void RegExpCachedResult::visitAggregate(SlotVisitor& visitor)
 JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     if (!m_reified) {
         m_reifiedInput.set(vm, owner, m_lastInput.get());
         if (!m_lastRegExp)
             m_lastRegExp.set(vm, owner, vm.regExpCache()->ensureEmptyRegExp(vm));
+
+        JSArray* result = nullptr;
         if (m_result)
-            m_reifiedResult.setWithoutWriteBarrier(createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start));
+            result = createRegExpMatchesArray(exec, exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get(), m_result.start);
         else
-            m_reifiedResult.setWithoutWriteBarrier(createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get()));
+            result = createEmptyRegExpMatchesArray(exec->lexicalGlobalObject(), m_lastInput.get(), m_lastRegExp.get());
+        RETURN_IF_EXCEPTION(scope, nullptr);
+
+        m_reifiedResult.setWithoutWriteBarrier(result);
         m_reifiedLeftContext.clear();
         m_reifiedRightContext.clear();
         m_reified = true;
@@ -65,19 +72,34 @@ JSArray* RegExpCachedResult::lastResult(ExecState* exec, JSObject* owner)
 JSString* RegExpCachedResult::leftContext(ExecState* exec, JSObject* owner)
 {
     // Make sure we're reified.
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     lastResult(exec, owner);
-    if (!m_reifiedLeftContext)
-        m_reifiedLeftContext.set(exec->vm(), owner, m_result.start ? jsSubstring(exec, m_reifiedInput.get(), 0, m_result.start) : jsEmptyString(exec));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    if (!m_reifiedLeftContext) {
+        JSString* leftContext = jsSubstring(exec, m_reifiedInput.get(), 0, m_result.start);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        m_reifiedLeftContext.set(vm, owner, leftContext);
+    }
     return m_reifiedLeftContext.get();
 }
 
 JSString* RegExpCachedResult::rightContext(ExecState* exec, JSObject* owner)
 {
     // Make sure we're reified.
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     lastResult(exec, owner);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
     if (!m_reifiedRightContext) {
         unsigned length = m_reifiedInput->length();
-        m_reifiedRightContext.set(exec->vm(), owner, m_result.end != length ? jsSubstring(exec, m_reifiedInput.get(), m_result.end, length - m_result.end) : jsEmptyString(exec));
+        JSString* rightContext = jsSubstring(exec, m_reifiedInput.get(), m_result.end, length - m_result.end);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        m_reifiedRightContext.set(vm, owner, rightContext);
     }
     return m_reifiedRightContext.get();
 }
@@ -85,11 +107,17 @@ JSString* RegExpCachedResult::rightContext(ExecState* exec, JSObject* owner)
 void RegExpCachedResult::setInput(ExecState* exec, JSObject* owner, JSString* input)
 {
     // Make sure we're reified, otherwise m_reifiedInput will be ignored.
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     lastResult(exec, owner);
+    RETURN_IF_EXCEPTION(scope, void());
     leftContext(exec, owner);
+    RETURN_IF_EXCEPTION(scope, void());
     rightContext(exec, owner);
+    RETURN_IF_EXCEPTION(scope, void());
     ASSERT(m_reified);
-    m_reifiedInput.set(exec->vm(), owner, input);
+    m_reifiedInput.set(vm, owner, input);
 }
 
 } // namespace JSC

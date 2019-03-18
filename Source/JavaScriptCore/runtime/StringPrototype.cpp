@@ -527,7 +527,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String& source = string->value(exec);
+    String source = string->value(exec);
     unsigned sourceLen = source.length();
     RETURN_IF_EXCEPTION(scope, nullptr);
     RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
@@ -656,8 +656,10 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 
                     if (matchStart < 0)
                         patternValue = jsUndefined();
-                    else
-                        patternValue = jsSubstring(exec, source, matchStart, matchLen);
+                    else {
+                        patternValue = jsSubstring(&vm, source, matchStart, matchLen);
+                        RETURN_IF_EXCEPTION(scope, nullptr);
+                    }
 
                     args.append(patternValue);
 
@@ -735,7 +737,7 @@ JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
         // ES5.1 15.5.4.10 step 8.a.
         searchValue->setLastIndex(exec, 0);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        const String& source = thisValue->value(exec);
+        String source = thisValue->value(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
         RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, exec, thisValue, source, regExp));
     }
@@ -778,7 +780,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec,
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const String& string = jsString->value(exec);
+    String string = jsString->value(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
     String searchString = searchValue.toWTFString(exec);
     RETURN_IF_EXCEPTION(scope, nullptr);
@@ -792,7 +794,9 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, ExecState* exec,
     CallType callType = getCallData(vm, replaceValue, callData);
     if (callType != CallType::None) {
         MarkedArgumentBuffer args;
-        args.append(jsSubstring(exec, string, matchStart, searchString.impl()->length()));
+        auto* substring = jsSubstring(&vm, string, matchStart, searchString.impl()->length());
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        args.append(substring);
         args.append(jsNumber(matchStart));
         args.append(jsString);
         ASSERT(!args.hasOverflowed());
@@ -1153,8 +1157,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double end = a1.isUndefined() ? len : a1.toInteger(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(stringSlice(exec, WTFMove(s), start, end));
+    return JSValue::encode(stringSlice(vm, WTFMove(s), start, end));
 }
 
 // Return true in case of early return (resultLength got to limitLength).
@@ -1176,7 +1179,9 @@ static ALWAYS_INLINE bool splitStringByOneCharacterImpl(ExecState* exec, JSArray
         //    through q (exclusive).
         // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
         //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-        result->putDirectIndex(exec, resultLength, jsSubstring(exec, originalValue, input, position, matchPosition - position));
+        auto* substring = jsSubstring(exec, originalValue, input, position, matchPosition - position);
+        RETURN_IF_EXCEPTION(scope, false);
+        result->putDirectIndex(exec, resultLength, substring);
         RETURN_IF_EXCEPTION(scope, false);
         // 3. Increment lengthA by 1.
         // 4. If lengthA == lim, return A.
@@ -1300,8 +1305,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
             // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
             //    through q (exclusive).
             // 2. Call CreateDataProperty(A, ToString(lengthA), T).
-            result->putDirectIndex(exec, resultLength, jsSubstring(exec, thisValue, input, position, matchPosition - position));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            auto* substring = jsSubstring(exec, thisValue, input, position, matchPosition - position);
+            RETURN_IF_EXCEPTION(scope, { });
+            result->putDirectIndex(exec, resultLength, substring);
+            RETURN_IF_EXCEPTION(scope, { });
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
             if (++resultLength == limit)
@@ -1316,8 +1323,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
     // 15. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
     //     through s (exclusive).
     // 16. Call CreateDataProperty(A, ToString(lengthA), T).
+    auto* substring = jsSubstring(exec, thisValue, input, position, input.length() - position);
+    RETURN_IF_EXCEPTION(scope, { });
     scope.release();
-    result->putDirectIndex(exec, resultLength++, jsSubstring(exec, thisValue, input, position, input.length() - position));
+    result->putDirectIndex(exec, resultLength++, substring);
 
     // 17. Return A.
     return JSValue::encode(result);
@@ -1361,9 +1370,10 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
         length = len - start;
     unsigned substringStart = static_cast<unsigned>(start);
     unsigned substringLength = static_cast<unsigned>(length);
+    scope.release();
     if (jsString)
         return JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength));
-    return JSValue::encode(jsSubstring(exec, uString, substringStart, substringLength));
+    return JSValue::encode(jsSubstring(&vm, uString, substringStart, substringLength));
 }
 
 EncodedJSValue JSC_HOST_CALL builtinStringSubstrInternal(ExecState* exec)
@@ -1421,7 +1431,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstring(ExecState* exec)
     }
     unsigned substringStart = static_cast<unsigned>(start);
     unsigned substringLength = static_cast<unsigned>(end) - substringStart;
-    return JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsSubstring(exec, jsString, substringStart, substringLength)));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
@@ -1434,7 +1444,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLowerCase(ExecState* exec)
         return throwVMTypeError(exec, scope);
     JSString* sVal = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    const String& s = sVal->value(exec);
+    String s = sVal->value(exec);
     String lowercasedString = s.convertToLowercaseWithoutLocale();
     if (lowercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
@@ -1451,7 +1461,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToUpperCase(ExecState* exec)
         return throwVMTypeError(exec, scope);
     JSString* sVal = thisValue.toString(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    const String& s = sVal->value(exec);
+    String s = sVal->value(exec);
     String uppercasedString = s.convertToUppercaseWithoutLocale();
     if (uppercasedString.impl() == s.impl())
         return JSValue::encode(sVal);
