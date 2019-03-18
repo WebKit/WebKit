@@ -1079,11 +1079,6 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     bool couldChangeSecureInputState = m_editorState.isInPasswordField != editorState.isInPasswordField || m_editorState.selectionIsNone;
     
     m_editorState = editorState;
-
-    if (m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement && !m_editorState.isMissingPostLayoutData) {
-        pageClient().didReceiveEditorStateUpdateAfterFocus();
-        m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
-    }
     
     // Selection being none is a temporary state when editing. Flipping secure input state too quickly was causing trouble (not fully understood).
     if (couldChangeSecureInputState && !editorState.selectionIsNone)
@@ -1096,6 +1091,11 @@ void WebPageProxy::editorStateChanged(const EditorState& editorState)
     // even during composition to support phrase boundary gesture.
     pageClient().selectionDidChange();
     updateFontAttributesAfterEditorStateChange();
+
+    if (m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement && !m_editorState.isMissingPostLayoutData) {
+        pageClient().didReceiveEditorStateUpdateAfterFocus();
+        m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = false;
+    }
 }
 
 void WebPageProxy::showValidationMessage(const IntRect& anchorClientRect, const String& message)

@@ -1,3 +1,17 @@
+2019-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Native selection views sometimes appear in hidden editable areas after losing focus
+        https://bugs.webkit.org/show_bug.cgi?id=195894
+        <rdar://problem/48849989>
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that moving focus away from a hidden editable element doesn't cause platform selection
+        views in the element to appear. See WebKit ChangeLog for more details.
+
+        * editing/selection/ios/hide-selection-in-non-focused-element-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-non-focused-element.html: Added.
+
 2019-03-18  Antti Koivisto  <antti@apple.com>
 
         Layer with no backing store should still hit-test over a scroller

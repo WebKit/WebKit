@@ -1,3 +1,79 @@
+2019-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Native selection views sometimes appear in hidden editable areas after losing focus
+        https://bugs.webkit.org/show_bug.cgi?id=195894
+        <rdar://problem/48849989>
+
+        Reviewed by Tim Horton.
+
+        On certain websites, focus is moved away from an editable element while maintaining a selection inside the
+        editable element. In the case where the editable element is hidden, this currently breaks our text interaction
+        suppression heuristics, which suppress text selection gestures and overlays inside focused hidden editable
+        elements. To fix this, we refactor our text interaction suppression heuristics, such that they are not dependent
+        on an editable element being focused. See changes below for more details.
+
+        Test: editing/selection/ios/hide-selection-in-non-focused-element.html
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::PostLayoutData::encode const):
+        (WebKit::EditorState::PostLayoutData::decode):
+        * Shared/EditorState.h:
+
+        Rename elementIsTransparentOrFullyClipped to editableRootIsTransparentOrFullyClipped, and additionally compute
+        this flag by checking whether the root editable element containing the selection is transparent or clipped,
+        instead of using the currently focused element.
+
+        * Shared/FocusedElementInformation.cpp:
+        (WebKit::FocusedElementInformation::encode const):
+        (WebKit::FocusedElementInformation::decode):
+        * Shared/FocusedElementInformation.h:
+
+        Remove the elementIsTransparentOrFullyClipped flag from FocusedElementInformation (see below for more detail).
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Rename FocusedElementIsTransparentOrFullyClipped to EditableRootIsTransparentOrFullyClipped.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        Remove logic that currently uses state on FocusedElementInformation to determine whether to suppress platform
+        text interactions; instead, only use EditorState to make this determination. This logic was originally added in
+        the initial implementation of the text interaction suppression heuristic as a way to begin suppressing text
+        selection state before zooming to reveal the focused element; however, since we now zoom to reveal the text
+        selection when focusing editable elements, zooming is deferred until the next complete EditorState update
+        arrives in the UI process so we don't need to worry about beginning to suppress text interactions prior to this
+        initial editor state update.
+
+        (-[WKContentView _elementDidBlur]):
+        (-[WKContentView _updateSelectionAssistantSuppressionState]):
+
+        Add a helper method that updates text selection suppression state using the current EditorState.
+
+        (-[WKContentView _selectionChanged]):
+        (-[WKContentView _updateChangedSelection:]):
+
+        Always update text suppression state when receiving an EditorState, instead of only doing so when processing a
+        text selection gesture.
+
+        (-[WKContentView _startSuppressingSelectionAssistantForReason:]):
+
+        Renamed from _beginSuppressingSelectionAssistantForReason:, to better match "start/end" terminology of
+        _endSuppressingSelectionAssistantForReason:.
+
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView _beginSuppressingSelectionAssistantForReason:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::editorStateChanged):
+
+        Ensure that we run logic to zoom to the focused element *after* updating text selection suppression state, so we
+        don't erroneously zoom to reveal hidden editable elements.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::getFocusedElementInformation):
+
 2019-03-18  Chris Dumez  <cdumez@apple.com>
 
         Delay WebProcess launch until a load is triggered in a Web view

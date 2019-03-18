@@ -124,7 +124,6 @@ struct FocusedElementInformation {
     String title;
     bool acceptsAutofilledLoginCredentials { false };
     bool isAutofillableUsernameField { false };
-    bool elementIsTransparentOrFullyClipped { false };
     URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
     String placeholder;

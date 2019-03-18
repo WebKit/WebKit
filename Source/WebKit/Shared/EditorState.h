@@ -109,7 +109,7 @@ struct EditorState {
         bool isStableStateUpdate { false };
         bool insideFixedPosition { false };
         bool hasPlainText { false };
-        bool elementIsTransparentOrFullyClipped { false };
+        bool editableRootIsTransparentOrFullyClipped { false };
         WebCore::Color caretColor;
         bool atStartOfSentence { false };
 #endif

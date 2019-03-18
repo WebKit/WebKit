@@ -1615,7 +1615,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
-    if (_suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTransparentOrFullyClipped) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
+    if (_suppressSelectionAssistantReasons.contains(WebKit::EditableRootIsTransparentOrFullyClipped) || _suppressSelectionAssistantReasons.contains(WebKit::FocusedElementIsTooSmall))
         return;
 
     SetForScope<BOOL> isZoomingToRevealFocusedElementForScope { _isZoomingToRevealFocusedElement, YES };
@@ -4843,8 +4843,6 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     return selectionBoundingRect;
 }
 
-static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 4;
-
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
@@ -4866,17 +4864,6 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
 
     if ([inputDelegate respondsToSelector:@selector(_webView:decidePolicyForFocusedElement:)])
         startInputSessionPolicy = [inputDelegate _webView:_webView decidePolicyForFocusedElement:focusedElementInfo.get()];
-
-    if (information.elementIsTransparentOrFullyClipped)
-        [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
-    else
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
-
-    auto elementArea = information.elementRect.area<RecordOverflow>();
-    if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
-        [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
-    else
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
 
     BOOL shouldShowInputView = [&] {
         switch (startInputSessionPolicy) {
@@ -5051,11 +5038,8 @@ static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 
     [_webView didEndFormControlInteraction];
     _page->setIsShowingInputViewForFocusedElement(false);
 
-    if (!_isChangingFocus) {
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
+    if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
-    }
 }
 
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode
@@ -5474,8 +5458,43 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [super _wheelChangedWithEvent:event];
 }
 
+- (void)_updateSelectionAssistantSuppressionState
+{
+    static const double minimumFocusedElementAreaForSuppressingSelectionAssistant = 4;
+
+    auto& editorState = _page->editorState();
+    if (editorState.isMissingPostLayoutData)
+        return;
+
+    BOOL editableRootIsTransparentOrFullyClipped = NO;
+    BOOL focusedElementIsTooSmall = NO;
+    if (!editorState.selectionIsNone) {
+        auto& postLayoutData = editorState.postLayoutData();
+        if (postLayoutData.editableRootIsTransparentOrFullyClipped)
+            editableRootIsTransparentOrFullyClipped = YES;
+
+        if (hasFocusedElement(_focusedElementInformation)) {
+            auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
+            if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
+                focusedElementIsTooSmall = YES;
+        }
+    }
+
+    if (editableRootIsTransparentOrFullyClipped)
+        [self _startSuppressingSelectionAssistantForReason:WebKit::EditableRootIsTransparentOrFullyClipped];
+    else
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::EditableRootIsTransparentOrFullyClipped];
+
+    if (focusedElementIsTooSmall)
+        [self _startSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
+    else
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
+}
+
 - (void)_selectionChanged
 {
+    [self _updateSelectionAssistantSuppressionState];
+
     _selectionNeedsUpdate = YES;
     // If we are changing the selection with a gesture there is no need
     // to wait to paint the selection.
@@ -5502,20 +5521,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         return;
 
     auto& postLayoutData = state.postLayoutData();
-    if (!state.selectionIsNone && hasFocusedElement(_focusedElementInformation)) {
-        if (postLayoutData.elementIsTransparentOrFullyClipped)
-            [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
-        else
-            [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTransparentOrFullyClipped];
-
-        auto elementArea = postLayoutData.focusedElementRect.area<RecordOverflow>();
-        if (!elementArea.hasOverflowed() && elementArea < minimumFocusedElementAreaForSuppressingSelectionAssistant)
-            [self _beginSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
-        else
-            [self _stopSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
-    }
-
-    WebKit::WKSelectionDrawingInfo selectionDrawingInfo(_page->editorState());
+    WebKit::WKSelectionDrawingInfo selectionDrawingInfo(state);
     if (force || selectionDrawingInfo != _lastSelectionDrawingInfo) {
         LOG_WITH_STREAM(Selection, stream << "_updateChangedSelection " << selectionDrawingInfo);
 
@@ -5552,7 +5558,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return !!_suppressSelectionAssistantReasons;
 }
 
-- (void)_beginSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason
+- (void)_startSuppressingSelectionAssistantForReason:(WebKit::SuppressSelectionAssistantReason)reason
 {
     bool wasSuppressingSelectionAssistant = !!_suppressSelectionAssistantReasons;
     _suppressSelectionAssistantReasons.add(reason);
@@ -6551,7 +6557,7 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         retainedSelf->_page->performDragOperation(capturedDragData, "data interaction pasteboard", WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
 
         retainedSelf->_visibleContentViewSnapshot = [retainedSelf snapshotViewAfterScreenUpdates:NO];
-        [retainedSelf _beginSuppressingSelectionAssistantForReason:WebKit::DropAnimationIsRunning];
+        [retainedSelf _startSuppressingSelectionAssistantForReason:WebKit::DropAnimationIsRunning];
         [UIView performWithoutAnimation:[retainedSelf] {
             [retainedSelf->_visibleContentViewSnapshot setFrame:[retainedSelf bounds]];
             [retainedSelf addSubview:retainedSelf->_visibleContentViewSnapshot.get()];
