@@ -33,7 +33,7 @@ promise_test(async () => {
     const texture = swapChain.getCurrentTexture();
     assert_true(texture instanceof WebGPUTexture, "Successfully acquired next texture.");
 
-    const textureView = texture.createDefaultTextureView();
+    const textureView = texture.createDefaultView();
     assert_true(textureView instanceof WebGPUTextureView, "Successfully created texture view from next texture.");
 }, "Create texture view from swap chain.");
 

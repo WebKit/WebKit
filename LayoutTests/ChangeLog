@@ -1,3 +1,19 @@
+2019-03-18  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] API updates: GPUTexture.createDefaultView and type-safe GPURenderPassEncoder.setPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=195896
+
+        Reviewed by Jon Lee.
+
+        Rename createDefaultTextureView -> createDefaultView.
+
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/js/webgpu-functions.js:
+        (beginBasicRenderPass):
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/textures-textureviews.html:
+
 2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HAR Extension for `serverIPAddress` port number

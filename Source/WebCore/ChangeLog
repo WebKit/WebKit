@@ -1,3 +1,30 @@
+2019-03-18  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] API updates: GPUTexture.createDefaultView and type-safe GPURenderPassEncoder.setPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=195896
+
+        Reviewed by Jon Lee.
+
+        Rename createDefaultTextureView -> createDefaultView and move setPipeline from GPUProgrammablePassEncoder to GPURenderPassEncoder.
+
+        Existing tests updated for createDefaultView name.
+
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setPipeline): Deleted.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setPipeline):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPUTexture.cpp:
+        (WebCore::WebGPUTexture::createDefaultView):
+        (WebCore::WebGPUTexture::createDefaultTextureView): Deleted.
+        * Modules/webgpu/WebGPUTexture.h:
+        * Modules/webgpu/WebGPUTexture.idl:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+
 2019-03-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] The network process sometimes gets killed for trying to suspend while holding locked files

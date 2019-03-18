@@ -92,14 +92,14 @@ async function test() {
     const commandEncoder = device.createCommandEncoder();
 
     const basicAttachment = {
-        attachment: swapChain.getCurrentTexture().createDefaultTextureView(),
+        attachment: swapChain.getCurrentTexture().createDefaultView(),
         loadOp: "clear",
         storeOp: "store",
         clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }
     };
 
     const depthAttachment = {
-        attachment: createBasicDepthTexture(canvas, device).createDefaultTextureView(),
+        attachment: createBasicDepthTexture(canvas, device).createDefaultView(),
         depthLoadOp: "clear",
         depthStoreOp: "store",
         clearDepth: 1.0

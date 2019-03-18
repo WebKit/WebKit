@@ -42,7 +42,6 @@ public:
 
     void endPass();
     void setBindGroup(unsigned, WebGPUBindGroup&) const;
-    void setPipeline(const WebGPURenderPipeline&);
 
 protected:
     WebGPUProgrammablePassEncoder(Ref<WebGPUCommandEncoder>&&);

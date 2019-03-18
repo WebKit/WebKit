@@ -42,10 +42,10 @@ WebGPUTexture::WebGPUTexture(RefPtr<GPUTexture>&& texture)
 {
 }
 
-Ref<WebGPUTextureView> WebGPUTexture::createDefaultTextureView()
+Ref<WebGPUTextureView> WebGPUTexture::createDefaultView()
 {
     if (!m_texture) {
-        LOG(WebGPU, "GPUTexture::createDefaultTextureView(): Invalid operation!");
+        LOG(WebGPU, "GPUTexture::createDefaultView(): Invalid operation!");
         return WebGPUTextureView::create(nullptr);
     }
 

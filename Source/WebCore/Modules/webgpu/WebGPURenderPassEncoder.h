@@ -42,6 +42,7 @@ class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
 public:
     static Ref<WebGPURenderPassEncoder> create(Ref<WebGPUCommandEncoder>&&, RefPtr<GPURenderPassEncoder>&&);
 
+    void setPipeline(const WebGPURenderPipeline&);
     void setVertexBuffers(unsigned long, Vector<RefPtr<WebGPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 

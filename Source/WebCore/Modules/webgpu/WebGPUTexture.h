@@ -41,7 +41,7 @@ public:
 
     RefPtr<GPUTexture> texture() const { return m_texture; }
 
-    Ref<WebGPUTextureView> createDefaultTextureView();
+    Ref<WebGPUTextureView> createDefaultView();
     void destroy();
 
 private:

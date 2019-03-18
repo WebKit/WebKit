@@ -29,7 +29,7 @@
     EnabledAtRuntime=WebGPU,
     ImplementationLacksVTable
 ] interface WebGPUTexture {
-    WebGPUTextureView createDefaultTextureView();
+    WebGPUTextureView createDefaultView();
     void destroy();
 
     // Not Yet Implemented:

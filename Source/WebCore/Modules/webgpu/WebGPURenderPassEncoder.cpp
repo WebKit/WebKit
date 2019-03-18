@@ -47,6 +47,19 @@ WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandEncoder>&& cre
 {
 }
 
+void WebGPURenderPassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid operation!");
+        return;
+    }
+    if (!pipeline.renderPipeline()) {
+        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid pipeline!");
+        return;
+    }
+    m_passEncoder->setPipeline(makeRef(*pipeline.renderPipeline()));
+}
+
 void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
 #if !LOG_DISABLED
