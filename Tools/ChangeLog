@@ -1,3 +1,21 @@
+2019-03-18  Xan Lopez  <xan@igalia.com>
+
+        [CMake] Prevent potential warning when determining $architecture
+        https://bugs.webkit.org/show_bug.cgi?id=195891
+
+        Reviewed by Michael Catanzaro.
+
+        It's possible for generateBuildSystemForCMakeProject to be called
+        before determineArchitecture() is ever called. This will make the
+        first eq check with $architecture to be bogus (and print a
+        warning). Change that to an eq check with architecture(), which
+        implicitly calls determineArchitecture() if needed, and change all
+        the other similar cases in the method in the same way to prevent
+        future bugs like this one.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Tarballs generated with “make dist” cannot build documentation
