@@ -32,7 +32,7 @@ from webkitpy.common.version_name_map import PUBLIC_TABLE, INTERNAL_TABLE, Versi
 
 
 class MockPlatformInfo(object):
-    def __init__(self, os_name='mac', os_version=Version.from_name('Snow Leopard')):
+    def __init__(self, os_name='mac', os_version=Version.from_name('High Sierra')):
         assert isinstance(os_version, Version)
         self.os_name = os_name
         self.os_version = os_version
@@ -77,6 +77,11 @@ class MockPlatformInfo(object):
 
     def terminal_width(self):
         return 80
+
+    def build_version(self):
+        if self.is_mac():
+            return '17A405'
+        return None
 
     def xcode_sdk_version(self, sdk_name):
         return Version(8, 1)

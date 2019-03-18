@@ -83,7 +83,7 @@ class SVN(SCM, SVNRepository):
         SCM.__init__(self, cwd, **kwargs)
         self._bogus_dir = None
         if patch_directories == []:
-            raise Exception(message='Empty list of patch directories passed to SCM.__init__')
+            raise Exception('Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
             self._patch_directories = [self._filesystem.relpath(cwd, self.checkout_root)]
         else:
@@ -277,6 +277,14 @@ class SVN(SCM, SVNRepository):
 
     def native_revision(self, path):
         return self.svn_revision(path)
+
+    def native_branch(self, path):
+        relative_url = self.value_from_svn_info(path, 'Relative URL')[2:]
+        if relative_url.startswith('trunk'):
+            return 'trunk'
+        elif relative_url.startswith('branch'):
+            return relative_url.split('/')[1]
+        raise Exception('{} is not a branch'.format(relative_url.split('/')[0]))
 
     def timestamp_of_revision(self, path, revision):
         # We use --xml to get timestamps like 2013-02-08T08:18:04.964409Z

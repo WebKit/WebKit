@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
+# Copyright (C) 2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -114,6 +115,8 @@ class AutoinstallImportHook(object):
             self._install_pytest_timeout()
         elif '.pytest' in fullname:
             self._install_pytest()
+        elif '.requests' in fullname:
+            self._install_requests()
 
     def _install_mechanize(self):
         self._install("https://files.pythonhosted.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
@@ -158,6 +161,21 @@ class AutoinstallImportHook(object):
                               "attrs-18.1.0/src/attr")
         self._install("https://files.pythonhosted.org/packages/a2/ec/415d0cccc1ed41cd7fdf69ad989da16a8d13057996371004cab4bafc48f3/pytest-3.6.2.tar.gz",
                               "pytest-3.6.2/src/_pytest")
+
+    def _install_requests(self):
+        self._ensure_autoinstalled_dir_is_in_sys_path()
+        self._install("https://files.pythonhosted.org/packages/06/b8/d1ea38513c22e8c906275d135818fee16ad8495985956a9b7e2bb21942a1/certifi-2019.3.9.tar.gz",
+                      "certifi-2019.3.9/certifi")
+        self._install("https://files.pythonhosted.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz",
+                      "chardet-3.0.4/chardet")
+        self._install("https://files.pythonhosted.org/packages/fc/bb/a5768c230f9ddb03acc9ef3f0d4a3cf93462473795d18e9535498c8f929d/chardet-3.0.4.tar.gz",
+                      "chardet-3.0.4/chardet")
+        self._install("https://files.pythonhosted.org/packages/ad/13/eb56951b6f7950cadb579ca166e448ba77f9d24efc03edd7e55fa57d04b7/idna-2.8.tar.gz",
+                      "idna-2.8/idna")
+        self._install("https://files.pythonhosted.org/packages/b1/53/37d82ab391393565f2f831b8eedbffd57db5a718216f82f1a8b4d381a1c1/urllib3-1.24.1.tar.gz",
+                      "urllib3-1.24.1/src/urllib3")
+        self._install("https://files.pythonhosted.org/packages/52/2c/514e4ac25da2b08ca5a464c50463682126385c4272c18193876e91f4bc38/requests-2.21.0.tar.gz",
+                      "requests-2.21.0/requests")
 
     def _install_pylint(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()

@@ -909,6 +909,9 @@ END
         self.assertEqual(self.scm.head_svn_revision(), self.scm.native_revision('.'))
         self.assertEqual(self.scm.native_revision('.'), '5')
 
+    def test_native_branch(self):
+        self.assertEqual(self.scm.native_branch('.'), 'trunk')
+
     def test_propset_propget(self):
         filepath = os.path.join(self.svn_checkout_path, "test_file")
         expected_mime_type = "x-application/foo-bar"
@@ -1111,6 +1114,10 @@ class GitTest(SCMTest):
         scm = self.tracking_scm
         command = ['git', '-C', scm.checkout_root, 'rev-parse', 'HEAD']
         self.assertEqual(scm.native_revision(scm.checkout_root), run_command(command).strip())
+
+    def test_native_branch(self):
+        scm = self.tracking_scm
+        self.assertEqual('master', scm.native_branch(scm.checkout_root))
 
     def test_rename_files(self):
         scm = self.tracking_scm
@@ -1626,6 +1633,9 @@ class GitSVNTest(SCMTest):
     def test_native_revision(self):
         command = ['git', '-C', self.git_checkout_path, 'rev-parse', 'HEAD']
         self.assertEqual(self.scm.native_revision(self.git_checkout_path), run_command(command).strip())
+
+    def test_native_branch(self):
+        self.assertEqual('trunk', self.scm.native_branch(self.git_checkout_path))
 
     def test_to_object_name(self):
         relpath = 'test_file_commit1'

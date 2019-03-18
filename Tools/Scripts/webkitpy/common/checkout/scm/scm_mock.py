@@ -87,6 +87,9 @@ class MockSCM(object):
     def native_revision(self, path):
         return self.svn_revision(path)
 
+    def native_branch(self, path):
+        return 'trunk'
+
     def timestamp_of_revision(self, path, revision):
         return '2013-02-01 08:48:05 +0000'
 
