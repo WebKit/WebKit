@@ -33,7 +33,7 @@ OBJC_CLASS UIColor;
 
 namespace WebCore {
 
-Color colorFromUIColor(UIColor *);
+WEBCORE_EXPORT Color colorFromUIColor(UIColor *);
 
 } // namespace WebCore
 

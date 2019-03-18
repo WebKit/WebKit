@@ -36,17 +36,22 @@
 
 #if USE(APPKIT)
 #import <WebCore/ColorMac.h>
+#else
+#import <WebCore/ColorIOS.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIColor.h>
 #import <UIKit/UIFont.h>
 #import <UIKit/UIFontDescriptor.h>
 #endif
 
 #if USE(APPKIT)
+using PlatformColor = NSColor;
 using PlatformFont = NSFont;
 using PlatformFontDescriptor = NSFontDescriptor;
 #else
+using PlatformColor = UIColor;
 using PlatformFont = UIFont;
 using PlatformFontDescriptor = UIFontDescriptor;
 #endif
@@ -58,9 +63,7 @@ using namespace WebCore;
 
 enum class NSType {
     Array,
-#if USE(APPKIT)
     Color,
-#endif
     Data,
     Date,
     Dictionary,
@@ -81,10 +84,8 @@ static NSType typeFromObject(id object)
     // Specific classes handled.
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-#if USE(APPKIT)
-    if ([object isKindOfClass:[NSColor class]])
+    if ([object isKindOfClass:[PlatformColor class]])
         return NSType::Color;
-#endif
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
     if ([object isKindOfClass:[NSDate class]])
@@ -170,7 +171,7 @@ static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArray<Cla
     return { array };
 }
 
-#pragma mark - NSColor
+#pragma mark - NSColor / UIColor
 
 #if USE(APPKIT)
 static inline void encodeColorInternal(Encoder& encoder, NSColor *color)
@@ -184,6 +185,19 @@ static inline Optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
     if (!decoder.decode(color))
         return WTF::nullopt;
     return { nsColor(color) };
+}
+#else
+static inline void encodeColorInternal(Encoder& encoder, UIColor *color)
+{
+    encoder << colorFromUIColor(color);
+}
+
+static inline Optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
+{
+    Color color;
+    if (!decoder.decode(color))
+        return WTF::nullopt;
+    return { adoptNS([[UIColor alloc] initWithCGColor:cachedCGColor(color)]) };
 }
 #endif
 
@@ -384,11 +398,9 @@ void encodeObject(Encoder& encoder, id object)
     case NSType::Array:
         encodeArrayInternal(encoder, static_cast<NSArray *>(object));
         return;
-#if USE(APPKIT)
     case NSType::Color:
-        encodeColorInternal(encoder, static_cast<NSColor *>(object));
+        encodeColorInternal(encoder, static_cast<PlatformColor *>(object));
         return;
-#endif
     case NSType::Dictionary:
         encodeDictionaryInternal(encoder, static_cast<NSDictionary *>(object));
         return;
@@ -435,10 +447,8 @@ Optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedCl
     switch (type) {
     case NSType::Array:
         return decodeArrayInternal(decoder, allowedClasses);
-#if USE(APPKIT)
     case NSType::Color:
         return decodeColorInternal(decoder);
-#endif
     case NSType::Dictionary:
         return decodeDictionaryInternal(decoder, allowedClasses);
     case NSType::Font:
@@ -470,9 +480,7 @@ template<> struct EnumTraits<IPC::NSType> {
     using values = EnumValues<
         IPC::NSType,
         IPC::NSType::Array,
-#if USE(APPKIT)
         IPC::NSType::Color,
-#endif
         IPC::NSType::Data,
         IPC::NSType::Date,
         IPC::NSType::Dictionary,

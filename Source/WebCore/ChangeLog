@@ -1,3 +1,13 @@
+2019-03-18  Timothy Hatcher  <timothy@apple.com>
+
+        WKWebView.GetContentsShouldReturnAttributedString is crashing on iOS Simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=195916
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj: Make ColorIOS.h a private header.
+        * platform/ios/ColorIOS.h: Export colorFromUIColor.
+
 2019-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Define the type of SVGPropertyOwnerRegistry for all SVG elements

@@ -57,14 +57,6 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
 
     __block bool finished = false;
 
-#if USE(APPKIT)
-    using PlatformFont = NSFont;
-    using PlatformColor = NSColor;
-#else
-    using PlatformFont = UIFont;
-    using PlatformColor = UIColor;
-#endif
-
     [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *documentAttributes, NSError *error) {
         EXPECT_NOT_NULL(attributedString);
         EXPECT_NOT_NULL(documentAttributes);
@@ -76,17 +68,29 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
 
             if (!i) {
                 EXPECT_WK_STREQ(@"Hello ", substring.string);
-                EXPECT_WK_STREQ(@"Times-Roman", dynamic_objc_cast<PlatformFont>(attributes[NSFontAttributeName]).fontName);
+#if USE(APPKIT)
+                EXPECT_WK_STREQ(@"Times-Roman", dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]).fontName);
+#else
+                EXPECT_WK_STREQ(@"TimesNewRomanPSMT", dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]).fontName);
+#endif
             } else if (i == 1) {
                 EXPECT_WK_STREQ(@"World!", substring.string);
-                EXPECT_WK_STREQ(@"Times-Bold", dynamic_objc_cast<PlatformFont>(attributes[NSFontAttributeName]).fontName);
+#if USE(APPKIT)
+                EXPECT_WK_STREQ(@"Times-Bold", dynamic_objc_cast<NSFont>(attributes[NSFontAttributeName]).fontName);
+#else
+                EXPECT_WK_STREQ(@"TimesNewRomanPS-BoldMT", dynamic_objc_cast<UIFont>(attributes[NSFontAttributeName]).fontName);
+#endif
             } else
                 ASSERT_NOT_REACHED();
 
             ++i;
         }];
 
-        EXPECT_WK_STREQ(@"sRGB IEC61966-2.1 colorspace 1 0 0 1", dynamic_objc_cast<PlatformColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+#if USE(APPKIT)
+        EXPECT_WK_STREQ(@"sRGB IEC61966-2.1 colorspace 1 0 0 1", dynamic_objc_cast<NSColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+#else
+        EXPECT_WK_STREQ(@"kCGColorSpaceModelRGB 1 0 0 1 ", dynamic_objc_cast<UIColor>(documentAttributes[NSBackgroundColorDocumentAttribute]).description);
+#endif
 
         finished = true;
     }];

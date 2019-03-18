@@ -1,5 +1,23 @@
 2019-03-18  Timothy Hatcher  <timothy@apple.com>
 
+        WKWebView.GetContentsShouldReturnAttributedString is crashing on iOS Simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=195916
+
+        Reviewed by Tim Horton.
+
+        Add direct support for UIColor so it does not try to use the NSSecureCoding path.
+        This avoids needs to list the classes when decoding the attributes NSDictionary
+        and matches the macOS NSColor encoder/decoder.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::typeFromObject):
+        (IPC::encodeColorInternal):
+        (IPC::decodeColorInternal):
+        (IPC::encodeObject):
+        (IPC::decodeObject):
+
+2019-03-18  Timothy Hatcher  <timothy@apple.com>
+
         Add new NSAttributedString API for converting HTML.
         https://bugs.webkit.org/show_bug.cgi?id=195636
         rdar://problem/45055697
