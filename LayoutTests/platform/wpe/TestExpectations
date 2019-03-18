@@ -46,7 +46,6 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # The webrtc implementation is not fully completed yet
-webkit.org/b/187064 webrtc/simulcast-h264.html
 webkit.org/b/191009 webrtc/video-mute-vp8.html [ Failure ]
 webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
 webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
@@ -85,7 +84,6 @@ webkit.org/b/186933 webrtc/getUserMedia-webaudio-autoplay.html
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure Crash ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-dtmf.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass Failure Crash ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
@@ -96,12 +94,10 @@ webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Pass Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Pass Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Pass Failure ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Pass Crash Failure ]
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout Failure ]
 webkit.org/b/79203 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
-webkit.org/b/79203 http/tests/media/media-stream/getusermedia-with-canvas.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
 webkit.org/b/79203 imported/w3c/web-platform-tests/mediacapture-streams/MediaStreamTrack-end-manual.https.html [ Failure ]
@@ -679,8 +675,6 @@ webkit.org/b/188056 workers/wasm-hashset-many.html [ Timeout Pass ]
 
 webkit.org/b/179898 svg/animations/svglengthlist-animation-3.html [ Pass Failure ]
 
-webkit.org/b/181533 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]
-
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/182240 svg/animations/svgenum-animation-7.html [ Pass Crash ]
@@ -688,9 +682,6 @@ webkit.org/b/182240 svg/animations/svgenum-animation-7.html [ Pass Crash ]
 webkit.org/b/119253 fast/workers/dedicated-worker-lifecycle.html [ Timeout Pass ]
 
 Bug(WPE) js/dom/create-lots-of-workers.html [ Pass Timeout ]
-
-webkit.org/b/171599 animations/trigger-container-scroll-empty.html [ Pass Failure ]
-webkit.org/b/171599 legacy-animation-engine/animations/trigger-container-scroll-empty.html [ Pass Failure ]
 
 webkit.org/b/187323 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
 
@@ -996,8 +987,6 @@ webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html 
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/abort/serviceworker-intercepted.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-origin-service-worker.https.html [ Failure ]
 
-webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count.html [ Failure ]
-
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
 webkit.org/b/169572 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location_hash.html [ Pass Failure ]
@@ -1043,7 +1032,6 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-method-denied.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight-sync-not-supported.htm [ Failure ]
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
-webkit.org/b/171031 imported/w3c/web-platform-tests/xhr/getallresponseheaders-cl.htm [ Failure ]
 
 webkit.org/b/179663 imported/w3c/web-platform-tests/xhr/headers-normalize-response.htm [ Failure ]
 webkit.org/b/175586 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
@@ -1115,7 +1103,6 @@ webkit.org/b/173419 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-di
 webkit.org/b/173419 fast/events/before-input-prevent-paste.html [ Failure ]
 webkit.org/b/173419 fast/events/click-focus-control.html [ Failure ]
 webkit.org/b/173419 fast/events/click-range-slider.html [ Failure ]
-webkit.org/b/173419 fast/events/constructors/media-stream-event-constructor.html [ Failure ]
 webkit.org/b/173419 fast/events/constructors/overconstrained-error-event-constructor.html [ Failure ]
 webkit.org/b/173419 fast/events/content-changed-during-drop.html [ Failure ]
 webkit.org/b/173419 fast/events/context-activated-by-key-event.html [ Failure ]
@@ -1283,7 +1270,6 @@ webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 
 webkit.org/b/178577 http/tests/dom/document-attributes-null-handling.html [ Failure ]
 webkit.org/b/178578 http/tests/images/hidpi-srcset-copy.html [ Failure ]
-webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
 
 webkit.org/b/175422 http/tests/blink/sendbeacon/beacon-same-origin.html [ Failure ]
 
@@ -1600,7 +1586,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/i18n/css3-text-line-break-baspglwj-007.html [ Timeout Pass ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-first-001.xht [ Timeout ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-last-001.xht [ Timeout ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-punctuation-end-001.html [ Pass Timeout ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctuation/hanging-scrollable-001.html [ Timeout Pass ]
 
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]

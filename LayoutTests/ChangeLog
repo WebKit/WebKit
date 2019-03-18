@@ -1,3 +1,10 @@
+2019-03-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed, fix test expectation linter warnings
+        https://bugs.webkit.org/show_bug.cgi?id=195881
+
+        * platform/wpe/TestExpectations:
+
 2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Fix webanimations test
