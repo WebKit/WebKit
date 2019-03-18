@@ -285,7 +285,7 @@ class Driver {
         await this.fetchResources();
         this.prepareToRun();
         if (isInBrowser && window.location.search == '?report=true') {
-            setTimeout(() => this.start(), 2000);
+            setTimeout(() => this.start(), 4000);
         }
     }
 

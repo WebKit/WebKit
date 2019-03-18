@@ -1,3 +1,12 @@
+2019-03-18  Saam Barati  <sbarati@apple.com>
+
+        Add a plan file for JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=190734
+
+        Reviewed by Mark Lam.
+
+        * Scripts/webkitpy/benchmark_runner/data/plans/jetstream2.plan: Added.
+
 2019-03-18  Chris Dumez  <cdumez@apple.com>
 
         Delay WebProcess launch until a load is triggered in a Web view

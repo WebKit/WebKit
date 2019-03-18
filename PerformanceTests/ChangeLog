@@ -1,3 +1,16 @@
+2019-03-18  Saam Barati  <sbarati@apple.com>
+
+        Add a plan file for JetStream 2
+        https://bugs.webkit.org/show_bug.cgi?id=190734
+
+        Reviewed by Mark Lam.
+
+        Make the delay when starting via run-benchmark longer to allow
+        the page's animation to finish.
+
+        * JetStream2/JetStreamDriver.js:
+        (Driver.prototype.async.initialize):
+
 2019-03-15  Jon Davis  <jond@apple.com>
 
         Fixed a bug preventing the overall sore to be displayed on JetStream2
