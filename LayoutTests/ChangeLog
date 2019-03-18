@@ -1,5 +1,18 @@
 2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK][WPE] Fix webanimations test
+        https://bugs.webkit.org/show_bug.cgi?id=189344
+
+        Reviewed by Philippe Normand.
+
+        GLib-based ports will have issues with recognizing the mimetype of
+        zero-byte files.
+        * platform/gtk/TestExpectations: Test below should pass now.
+        * webanimations/css-animation-effect-target-change-and-animation-removal-crash-expected.html:
+        Make it a 1-byte empty file.
+
+2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK][GStreamer] Mark flaky crashing test
 
         * platform/gtk/TestExpectations:

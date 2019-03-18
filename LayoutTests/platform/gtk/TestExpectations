@@ -3571,8 +3571,6 @@ webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure 
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 
-webkit.org/b/189344 webanimations/css-animation-effect-target-change-and-animation-removal-crash.html [ ImageOnlyFailure ]
-
 webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Timeout ]
 
 webkit.org/b/189567 webrtc/video-addLegacyTransceiver.html [ Failure ]
