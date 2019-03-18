@@ -1,3 +1,16 @@
+2019-03-18  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        [WPE][GTK] Fix a build warning because of missing to handle an enum value
+        https://bugs.webkit.org/show_bug.cgi?id=195876
+
+        Reviewed by Žan Doberšek.
+
+        When building WPE or GTK port, there is a build warning. The switch-case needs to
+        handle *Positioned* enum value as well in order to avoid the build warning.
+
+        * page/scrolling/nicosia/ScrollingTreeNicosia.cpp:
+        (WebCore::ScrollingTreeNicosia::createScrollingTreeNode): Add case ScrollingNodeType::Positioned.
+
 2019-03-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         REGRESSION: !vm.isInitializingObject() void* JSC::tryAllocateCellHelper<JSC::Structure> JSC::Structure::create
