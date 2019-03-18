@@ -1,3 +1,9 @@
+2019-03-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Add a secondary e-mail address for Fujii Hironori to make tools happier.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-03-18  Alex Christensen  <achristensen@webkit.org>
 
         Implement DownloadMonitor to prevent long-running slow downloads from background apps
