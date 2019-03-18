@@ -61,7 +61,7 @@ public:
 
 private:
     Optional<UniqueRef<Expression>> m_value;
-    FunctionDefinition* m_function;
+    FunctionDefinition* m_function { nullptr };
 };
 
 } // namespace AST

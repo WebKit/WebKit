@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-void synthesizeEnumerationFunctions(Program&);
+bool synthesizeEnumerationFunctions(Program&);
 
 }
 

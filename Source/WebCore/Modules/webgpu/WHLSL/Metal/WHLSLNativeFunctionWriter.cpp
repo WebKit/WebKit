@@ -28,7 +28,11 @@
 
 #if ENABLE(WEBGPU)
 
+#include "NotImplemented.h"
 #include "WHLSLAddressSpace.h"
+#include "WHLSLArrayType.h"
+#include "WHLSLInferTypes.h"
+#include "WHLSLIntrinsics.h"
 #include "WHLSLNamedType.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -43,15 +47,6 @@ namespace WebCore {
 namespace WHLSL {
 
 namespace Metal {
-
-static String getNativeName(AST::UnnamedType& unnamedType, TypeNamer& typeNamer)
-{
-    ASSERT(is<AST::NamedType>(unnamedType.unifyNode()));
-    auto& namedType = downcast<AST::NamedType>(unnamedType.unifyNode());
-    ASSERT(is<AST::NativeTypeDeclaration>(namedType));
-    auto& nativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(namedType);
-    return typeNamer.mangledNameForType(nativeTypeDeclaration);
-}
 
 static String mapFunctionName(String& functionName)
 {
@@ -101,22 +96,70 @@ static String atomicName(String input)
         return "fetch_xor"_str;
 }
 
-String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, TypeNamer& typeNamer)
+String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclaration, String& outputFunctionName, Intrinsics& intrinsics, TypeNamer& typeNamer)
 {
     StringBuilder stringBuilder;
     if (nativeFunctionDeclaration.isCast()) {
-        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto metalParameterName = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        if (metalParameterName != "atomic_int"_str && metalParameterName != "atomic_uint"_str) {
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, "x) {\n"));
-            stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        if (!nativeFunctionDeclaration.parameters().size()) {
+            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, "() {\n"));
+            stringBuilder.append(makeString("    ", metalReturnName, " x;\n"));
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Zero-fill
+            stringBuilder.append("    return x;\n");
             stringBuilder.append("}\n");
             return stringBuilder.toString();
         }
 
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, "x) {\n"));
-        stringBuilder.append("    return atomic_load_explicit(&x, memory_order_relaxed);\n");
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto& parameterType = nativeFunctionDeclaration.parameters()[0].type()->unifyNode();
+        if (is<AST::NamedType>(parameterType)) {
+            auto& parameterNamedType = downcast<AST::NamedType>(parameterType);
+            if (is<AST::NativeTypeDeclaration>(parameterNamedType)) {
+                auto& parameterNativeTypeDeclaration = downcast<AST::NativeTypeDeclaration>(parameterNamedType);
+                if (parameterNativeTypeDeclaration.isAtomic()) {
+                    stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+                    stringBuilder.append("    return atomic_load_explicit(&x, memory_order_relaxed);\n");
+                    stringBuilder.append("}\n");
+                    return stringBuilder.toString();
+                }
+            }
+        }
+
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+        stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
+    }
+
+    if (nativeFunctionDeclaration.name() == "operator.value") {
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
+        stringBuilder.append(makeString("    return static_cast<", metalReturnName, ">(x);\n"));
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
+    }
+
+    if (nativeFunctionDeclaration.name() == "operator.length") {
+        ASSERT_UNUSED(intrinsics, matches(nativeFunctionDeclaration.type(), intrinsics.uintType()));
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto& parameterType = nativeFunctionDeclaration.parameters()[0].type()->unifyNode();
+        ASSERT(is<AST::UnnamedType>(parameterType));
+        auto& unnamedParameterType = downcast<AST::UnnamedType>(parameterType);
+        if (is<AST::ArrayType>(unnamedParameterType)) {
+            auto& arrayParameterType = downcast<AST::ArrayType>(unnamedParameterType);
+            stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, " v) {\n"));
+            stringBuilder.append(makeString("    return ", arrayParameterType.numElements(), "u;\n"));
+            stringBuilder.append("}\n");
+            return stringBuilder.toString();
+        }
+
+        ASSERT(is<AST::ArrayReferenceType>(unnamedParameterType));
+        stringBuilder.append(makeString("uint ", outputFunctionName, '(', metalParameterName, " v) {\n"));
+        stringBuilder.append(makeString("    return v.length;\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
@@ -124,12 +167,12 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
     if (nativeFunctionDeclaration.name().startsWith("operator."_str)) {
         if (nativeFunctionDeclaration.name().endsWith("=")) {
             ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-            auto metalParameter1Name = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-            auto metalParameter2Name = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-            auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
+            auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+            auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+            auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
             auto fieldName = nativeFunctionDeclaration.name().substring("operator."_str.length());
             fieldName = fieldName.substring(0, fieldName.length() - 1);
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, "v, ", metalParameter2Name, " n) {\n"));
+            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
             stringBuilder.append(makeString("    v.", fieldName, " = n;\n"));
             stringBuilder.append(makeString("    return v;\n"));
             stringBuilder.append("}\n");
@@ -137,33 +180,56 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         }
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto metalParameterName = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, "v) {\n"));
-        stringBuilder.append(makeString("    return v.", nativeFunctionDeclaration.name().substring("operator."_str.length()), ";\n"));
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        auto fieldName = nativeFunctionDeclaration.name().substring("operator."_str.length());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"));
+        stringBuilder.append(makeString("    return v.", fieldName, ";\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
+    }
 
+    if (nativeFunctionDeclaration.name().startsWith("operator&."_str)) {
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        auto fieldName = nativeFunctionDeclaration.name().substring("operator&."_str.length());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " v) {\n"));
+        stringBuilder.append(makeString("    return &(v->", fieldName, ");\n"));
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "operator[]") {
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-        auto metalParameter1Name = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalParameter2Name = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, "m, ", metalParameter2Name, " i) {\n"));
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i) {\n"));
         stringBuilder.append(makeString("    return m[i];\n"));
+        stringBuilder.append("}\n");
+        return stringBuilder.toString();
+    }
+
+    if (nativeFunctionDeclaration.name() == "operator&[]") {
+        ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        auto fieldName = nativeFunctionDeclaration.name().substring("operator&[]."_str.length());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " v, ", metalParameter2Name, " n) {\n"));
+        stringBuilder.append(makeString("    return &(v.pointer[n]);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "operator[]=") {
         ASSERT(nativeFunctionDeclaration.parameters().size() == 3);
-        auto metalParameter1Name = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalParameter2Name = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-        auto metalParameter3Name = getNativeName(*nativeFunctionDeclaration.parameters()[2].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, "m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+        auto metalParameter3Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " m, ", metalParameter2Name, " i, ", metalParameter3Name, " v) {\n"));
         stringBuilder.append(makeString("    m[i] = v;\n"));
         stringBuilder.append(makeString("    return m;\n"));
         stringBuilder.append("}\n");
@@ -173,9 +239,9 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
     if (nativeFunctionDeclaration.isOperator()) {
         if (nativeFunctionDeclaration.parameters().size() == 1) {
             auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());
-            auto metalParameterName = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-            auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, "x) {\n"));
+            auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+            auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+            stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
             stringBuilder.append(makeString("    return ", operatorName, "x;\n"));
             stringBuilder.append("}\n");
             return stringBuilder.toString();
@@ -183,10 +249,10 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
 
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
         auto operatorName = nativeFunctionDeclaration.name().substring("operator"_str.length());
-        auto metalParameter1Name = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalParameter2Name = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, "x, ", metalParameter2Name, " y) {\n"));
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
         stringBuilder.append(makeString("    return x ", operatorName, " y;\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
@@ -217,9 +283,9 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         || nativeFunctionDeclaration.name() == "asuint"
         || nativeFunctionDeclaration.name() == "asfloat") {
         ASSERT(nativeFunctionDeclaration.parameters().size() == 1);
-        auto metalParameterName = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, "x) {\n"));
+        auto metalParameterName = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameterName, " x) {\n"));
         stringBuilder.append(makeString("    return ", mapFunctionName(nativeFunctionDeclaration.name()), "(x);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
@@ -227,18 +293,18 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
 
     if (nativeFunctionDeclaration.name() == "pow" || nativeFunctionDeclaration.name() == "atan2") {
         ASSERT(nativeFunctionDeclaration.parameters().size() == 2);
-        auto metalParameter1Name = getNativeName(*nativeFunctionDeclaration.parameters()[0].type(), typeNamer);
-        auto metalParameter2Name = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-        auto metalReturnName = getNativeName(nativeFunctionDeclaration.type(), typeNamer);
-        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, "x, ", metalParameter2Name, " y) {\n"));
+        auto metalParameter1Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[0].type());
+        auto metalParameter2Name = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+        auto metalReturnName = typeNamer.mangledNameForType(nativeFunctionDeclaration.type());
+        stringBuilder.append(makeString(metalReturnName, ' ', outputFunctionName, '(', metalParameter1Name, " x, ", metalParameter2Name, " y) {\n"));
         stringBuilder.append(makeString("    return ", nativeFunctionDeclaration.name(), "(x, y);\n"));
         stringBuilder.append("}\n");
         return stringBuilder.toString();
     }
 
     if (nativeFunctionDeclaration.name() == "f16tof32" || nativeFunctionDeclaration.name() == "f32tof16") {
-        // FIXME: Implement this
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "AllMemoryBarrierWithGroupSync") {
@@ -273,13 +339,13 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
             ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0].type()));
             auto& firstArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0].type());
             auto firstArgumentAddressSpace = firstArgumentPointer.addressSpace();
-            auto firstArgumentPointee = getNativeName(firstArgumentPointer.elementType(), typeNamer);
-            auto secondArgument = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
-            auto thirdArgument = getNativeName(*nativeFunctionDeclaration.parameters()[2].type(), typeNamer);
+            auto firstArgumentPointee = typeNamer.mangledNameForType(firstArgumentPointer.elementType());
+            auto secondArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
+            auto thirdArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[2].type());
             ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3].type()));
             auto& fourthArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[3].type());
             auto fourthArgumentAddressSpace = fourthArgumentPointer.addressSpace();
-            auto fourthArgumentPointee = getNativeName(fourthArgumentPointer.elementType(), typeNamer);
+            auto fourthArgumentPointee = typeNamer.mangledNameForType(fourthArgumentPointer.elementType());
             stringBuilder.append(makeString("void ", outputFunctionName, '(', convertAddressSpace(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " compare, ", thirdArgument, " desired, ", convertAddressSpace(fourthArgumentAddressSpace), ' ', fourthArgumentPointee, "* out) {\n"));
             stringBuilder.append("    atomic_compare_exchange_weak_explicit(object, &compare, desired, memory_order_relaxed);\n");
             stringBuilder.append("    *out = compare;\n");
@@ -291,12 +357,12 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
         ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0].type()));
         auto& firstArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[0].type());
         auto firstArgumentAddressSpace = firstArgumentPointer.addressSpace();
-        auto firstArgumentPointee = getNativeName(firstArgumentPointer.elementType(), typeNamer);
-        auto secondArgument = getNativeName(*nativeFunctionDeclaration.parameters()[1].type(), typeNamer);
+        auto firstArgumentPointee = typeNamer.mangledNameForType(firstArgumentPointer.elementType());
+        auto secondArgument = typeNamer.mangledNameForType(*nativeFunctionDeclaration.parameters()[1].type());
         ASSERT(is<AST::PointerType>(*nativeFunctionDeclaration.parameters()[2].type()));
         auto& thirdArgumentPointer = downcast<AST::PointerType>(*nativeFunctionDeclaration.parameters()[2].type());
         auto thirdArgumentAddressSpace = thirdArgumentPointer.addressSpace();
-        auto thirdArgumentPointee = getNativeName(thirdArgumentPointer.elementType(), typeNamer);
+        auto thirdArgumentPointee = typeNamer.mangledNameForType(thirdArgumentPointer.elementType());
         auto name = atomicName(nativeFunctionDeclaration.name().substring("Interlocked"_str.length()));
         stringBuilder.append(makeString("void ", outputFunctionName, '(', convertAddressSpace(firstArgumentAddressSpace), ' ', firstArgumentPointee, "* object, ", secondArgument, " operand, ", convertAddressSpace(thirdArgumentAddressSpace), ' ', thirdArgumentPointee, "* out) {\n"));
         stringBuilder.append(makeString("    *out = atomic_fetch_", name, "_explicit(object, operand, memory_order_relaxed);\n"));
@@ -305,83 +371,83 @@ String writeNativeFunction(AST::NativeFunctionDeclaration& nativeFunctionDeclara
     }
 
     if (nativeFunctionDeclaration.name() == "Sample") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "Load") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GetDimensions") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "SampleBias") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "SampleGrad") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "SampleLevel") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "Gather") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherRed") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "SampleCmp") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "SampleCmpLevelZero") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "Store") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherAlpha") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherBlue") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherCmp") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherCmpRed") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     if (nativeFunctionDeclaration.name() == "GatherGreen") {
-        // FIXME: Implement this.
-        CRASH();
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195813 Implement this
+        notImplemented();
     }
 
     // FIXME: Add all the functions that the compiler generated.

@@ -130,7 +130,11 @@ private:
         return result;
     }
 
-    Unexpected<Error> fail(const String& message);
+    enum class TryToPeek {
+        Yes,
+        No
+    };
+    Unexpected<Error> fail(const String& message, TryToPeek = TryToPeek::Yes);
     Expected<Lexer::Token, Error> peek();
     Optional<Lexer::Token> tryType(Lexer::Token::Type);
     Optional<Lexer::Token> tryTypes(Vector<Lexer::Token::Type>);

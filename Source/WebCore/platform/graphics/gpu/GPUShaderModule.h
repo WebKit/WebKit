@@ -46,12 +46,15 @@ class GPUShaderModule : public RefCounted<GPUShaderModule> {
 public:
     static RefPtr<GPUShaderModule> create(const GPUDevice&, GPUShaderModuleDescriptor&&);
 
-    PlatformShaderModule* platformShaderModule() const { return m_platformShaderModule.get(); }
+    PlatformShaderModule* platformShaderModule() const { return m_whlslSource.isNull() ? m_platformShaderModule.get() : nullptr; }
+    const String& whlslSource() const { return m_whlslSource; }
 
 private:
     GPUShaderModule(PlatformShaderModuleSmartPtr&&);
+    GPUShaderModule(String&& whlslSource);
 
     PlatformShaderModuleSmartPtr m_platformShaderModule;
+    String m_whlslSource;
 };
 
 } // namespace WebCore

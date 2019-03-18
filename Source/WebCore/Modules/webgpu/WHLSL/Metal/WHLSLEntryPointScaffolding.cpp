@@ -98,19 +98,17 @@ EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDe
     , m_layout(layout)
     , m_generateNextVariableName(generateNextVariableName)
 {
-    unsigned argumentBufferIndex = 0;
     m_namedBindGroups.reserveInitialCapacity(m_layout.size());
     for (size_t i = 0; i < m_layout.size(); ++i) {
         NamedBindGroup namedBindGroup;
         namedBindGroup.structName = m_typeNamer.generateNextTypeName();
         namedBindGroup.variableName = m_generateNextVariableName();
-        namedBindGroup.argumentBufferIndex = argumentBufferIndex++;
+        namedBindGroup.argumentBufferIndex = m_layout[i].name; // convertLayout() in GPURenderPipelineMetal.mm makes sure these don't collide.
         namedBindGroup.namedBindings.reserveInitialCapacity(m_layout[i].bindings.size());
-        unsigned index = 0;
         for (size_t j = 0; j < m_layout[i].bindings.size(); ++j) {
             NamedBinding namedBinding;
             namedBinding.elementName = m_typeNamer.generateNextStructureElementName();
-            namedBinding.index = index++;
+            namedBinding.index = m_layout[i].bindings[j].name; // GPUBindGroupLayout::tryCreate() makes sure these don't collide.
             namedBindGroup.namedBindings.uncheckedAppend(WTFMove(namedBinding));
         }
         m_namedBindGroups.uncheckedAppend(WTFMove(namedBindGroup));
@@ -130,21 +128,6 @@ EntryPointScaffolding::EntryPointScaffolding(AST::FunctionDefinition& functionDe
         m_parameterVariables.uncheckedAppend(m_generateNextVariableName());
 }
 
-MappedBindGroups EntryPointScaffolding::mappedBindGroups() const
-{
-    MappedBindGroups result;
-    result.reserveInitialCapacity(m_layout.size());
-    for (auto& namedBindGroup : m_namedBindGroups) {
-        MappedBindGroup mappedBindGroup;
-        mappedBindGroup.argumentBufferIndex = namedBindGroup.argumentBufferIndex;
-        mappedBindGroup.bindingIndices.reserveInitialCapacity(namedBindGroup.namedBindings.size());
-        for (auto& namedBinding : namedBindGroup.namedBindings)
-            mappedBindGroup.bindingIndices.uncheckedAppend(namedBinding.index);
-        result.uncheckedAppend(WTFMove(mappedBindGroup));
-    }
-    return result;
-}
-
 String EntryPointScaffolding::resourceHelperTypes()
 {
     StringBuilder stringBuilder;
@@ -159,7 +142,7 @@ String EntryPointScaffolding::resourceHelperTypes()
             auto index = m_namedBindGroups[i].namedBindings[j].index;
             stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[id(", index, ")]];\n"));
         }
-        stringBuilder.append("}\n\n");
+        stringBuilder.append("};\n\n");
     }
     return stringBuilder.toString();
 }
@@ -174,7 +157,7 @@ Optional<String> EntryPointScaffolding::resourceSignature()
         if (i)
             stringBuilder.append(", ");
         auto& namedBindGroup = m_namedBindGroups[i];
-        stringBuilder.append(makeString(namedBindGroup.structName, "& ", namedBindGroup.variableName, " [[buffer(", namedBindGroup.argumentBufferIndex, ")]]"));
+        stringBuilder.append(makeString("device ", namedBindGroup.structName, "& ", namedBindGroup.variableName, " [[buffer(", namedBindGroup.argumentBufferIndex, ")]]"));
     }
     return stringBuilder.toString();
 }
@@ -320,10 +303,10 @@ String VertexEntryPointScaffolding::helperTypes()
     for (auto& namedStageIn : m_namedStageIns) {
         auto mangledTypeName = m_typeNamer.mangledNameForType(*m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].unnamedType);
         auto elementName = namedStageIn.elementName;
-        auto attributeIndex = namedStageIn.elementName;
+        auto attributeIndex = namedStageIn.attributeIndex;
         stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[attribute(", attributeIndex, ")]];\n"));
     }
-    stringBuilder.append("}\n\n");
+    stringBuilder.append("};\n\n");
 
     stringBuilder.append(makeString("struct ", m_returnStructName, " {\n"));
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
@@ -333,7 +316,7 @@ String VertexEntryPointScaffolding::helperTypes()
         auto attribute = attributeForSemantic(*outputItem.semantic);
         stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, ' ', attribute, ";\n"));
     }
-    stringBuilder.append("}\n\n");
+    stringBuilder.append("};\n\n");
 
     stringBuilder.append(resourceHelperTypes());
 
@@ -363,7 +346,7 @@ String VertexEntryPointScaffolding::unpack()
     for (auto& namedStageIn : m_namedStageIns) {
         auto& path = m_entryPointItems.inputs[namedStageIn.indexInEntryPointItems].path;
         auto& elementName = namedStageIn.elementName;
-        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInStructName, '.', elementName, ";\n"));
+        stringBuilder.append(makeString(mangledInputPath(path), " = ", m_stageInParameterName, '.', elementName, ";\n"));
     }
 
     return stringBuilder.toString();
@@ -372,7 +355,12 @@ String VertexEntryPointScaffolding::unpack()
 String VertexEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName));
+    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName, ";\n"));
+    if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
+        auto& elementName = m_namedOutputs[0].elementName;
+        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n"));
+        return stringBuilder.toString();
+    }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& path = m_entryPointItems.outputs[i].path;
@@ -418,7 +406,7 @@ String FragmentEntryPointScaffolding::helperTypes()
         auto attributeIndex = namedStageIn.elementName;
         stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, " [[user(", attributeIndex, ")]];\n"));
     }
-    stringBuilder.append("}\n\n");
+    stringBuilder.append("};\n\n");
 
     stringBuilder.append(makeString("struct ", m_returnStructName, " {\n"));
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
@@ -428,7 +416,7 @@ String FragmentEntryPointScaffolding::helperTypes()
         auto attribute = attributeForSemantic(*outputItem.semantic);
         stringBuilder.append(makeString("    ", mangledTypeName, ' ', elementName, ' ', attribute, ";\n"));
     }
-    stringBuilder.append("}\n\n");
+    stringBuilder.append("};\n\n");
 
     stringBuilder.append(resourceHelperTypes());
 
@@ -467,7 +455,12 @@ String FragmentEntryPointScaffolding::unpack()
 String FragmentEntryPointScaffolding::pack(const String& inputVariableName, const String& outputVariableName)
 {
     StringBuilder stringBuilder;
-    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName));
+    stringBuilder.append(makeString(m_returnStructName, ' ', outputVariableName, ";\n"));
+    if (m_entryPointItems.outputs.size() == 1 && !m_entryPointItems.outputs[0].path.size()) {
+        auto& elementName = m_namedOutputs[0].elementName;
+        stringBuilder.append(makeString(outputVariableName, '.', elementName, " = ", inputVariableName, ";\n"));
+        return stringBuilder.toString();
+    }
     for (size_t i = 0; i < m_entryPointItems.outputs.size(); ++i) {
         auto& elementName = m_namedOutputs[i].elementName;
         auto& path = m_entryPointItems.outputs[i].path;

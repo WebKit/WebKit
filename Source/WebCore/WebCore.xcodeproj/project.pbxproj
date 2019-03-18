@@ -6455,6 +6455,7 @@
 		1C33277121CF0BE1000DC9F2 /* WHLSLNamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLNamedType.h; sourceTree = "<group>"; };
 		1C33277221CF0D2E000DC9F2 /* WHLSLUnnamedType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLUnnamedType.h; sourceTree = "<group>"; };
 		1C3969CF1B74211E002BCFA7 /* FontCacheCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontCacheCoreText.cpp; sourceTree = "<group>"; };
+		1C59B0182238687900853805 /* WHLSLScopedSetAdder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLScopedSetAdder.h; sourceTree = "<group>"; };
 		1C66260E1C6E7CA600AB527C /* FontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFace.cpp; sourceTree = "<group>"; };
 		1C66260F1C6E7CA600AB527C /* FontFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFace.h; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
@@ -13494,7 +13495,6 @@
 		C24A57B321FB8DDA004C6DD1 /* WHLSLSemanticMatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLSemanticMatcher.h; sourceTree = "<group>"; };
 		C24A57BA21FEAFEA004C6DD1 /* WHLSLPrepare.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WHLSLPrepare.cpp; sourceTree = "<group>"; };
 		C24A57BB21FEAFEA004C6DD1 /* WHLSLPrepare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLPrepare.h; sourceTree = "<group>"; };
-		C24A57BE21FEC65C004C6DD1 /* WHLSLMappedBindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WHLSLMappedBindings.h; sourceTree = "<group>"; };
 		C26017A11C72DC9900F74A16 /* CSSFontFaceSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceSet.cpp; sourceTree = "<group>"; };
 		C26017A21C72DC9900F74A16 /* CSSFontFaceSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSet.h; sourceTree = "<group>"; };
 		C280833C1C6DB194001451B6 /* FontFace.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FontFace.idl; sourceTree = "<group>"; };
@@ -17321,7 +17321,6 @@
 				1CECB3BB21F511AA00F44542 /* WHLSLEntryPointScaffolding.h */,
 				1CECB3AF21F2B98400F44542 /* WHLSLFunctionWriter.cpp */,
 				1CECB3B221F2B98600F44542 /* WHLSLFunctionWriter.h */,
-				C24A57BE21FEC65C004C6DD1 /* WHLSLMappedBindings.h */,
 				1CECB3B521F50AC700F44542 /* WHLSLMetalCodeGenerator.cpp */,
 				1CECB3B621F50AC700F44542 /* WHLSLMetalCodeGenerator.h */,
 				1CECB3B821F50D1000F44542 /* WHLSLNativeFunctionWriter.cpp */,
@@ -25818,6 +25817,7 @@
 				C234A99921E90F29003C984D /* WHLSLResolveOverloadImpl.cpp */,
 				C234A99721E90F28003C984D /* WHLSLResolveOverloadImpl.h */,
 				C234A99D21E910BD003C984D /* WHLSLResolvingType.h */,
+				1C59B0182238687900853805 /* WHLSLScopedSetAdder.h */,
 				C24A57B221FB8DDA004C6DD1 /* WHLSLSemanticMatcher.cpp */,
 				C24A57B321FB8DDA004C6DD1 /* WHLSLSemanticMatcher.h */,
 				C21BF74521CD969800227979 /* WHLSLStandardLibrary.txt */,

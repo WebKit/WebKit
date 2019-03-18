@@ -96,7 +96,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
             return "float";
         })();
         ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
-        auto& constantExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[0]);
+        auto& constantExpression = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
         auto& integerLiteral = constantExpression.integerLiteral();
         auto suffix = ([&]() -> String {
             switch (integerLiteral.value()) {
@@ -127,7 +127,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
             return "float";
         })();
         ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]));
-        auto& constantExpression1 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[0]);
+        auto& constantExpression1 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[1]);
         auto& integerLiteral1 = constantExpression1.integerLiteral();
         auto middle = ([&]() -> String {
             switch (integerLiteral1.value()) {
@@ -141,7 +141,7 @@ String writeNativeType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
             }
         })();
         ASSERT(WTF::holds_alternative<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]));
-        auto& constantExpression2 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[0]);
+        auto& constantExpression2 = WTF::get<AST::ConstantExpression>(nativeTypeDeclaration.typeArguments()[2]);
         auto& integerLiteral2 = constantExpression2.integerLiteral();
         auto suffix = ([&]() -> String {
             switch (integerLiteral2.value()) {

@@ -562,7 +562,7 @@ void Visitor::visit(AST::CallExpression& callExpression)
     for (auto& argument : callExpression.arguments())
         checkErrorAndVisit(argument);
     if (callExpression.castReturnType())
-        checkErrorAndVisit(callExpression.castReturnType()->get());
+        checkErrorAndVisit(*callExpression.castReturnType());
 }
 
 void Visitor::visit(AST::CommaExpression& commaExpression)

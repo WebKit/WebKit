@@ -85,6 +85,8 @@ private:
     void visit(AST::NativeTypeDeclaration&) override;
     void visit(AST::StructureDefinition&) override;
     void visit(AST::TypeDefinition&) override;
+    void visit(AST::Expression&) override;
+    void visit(AST::CallExpression&) override;
 
     String generateNextEnumerationMemberName()
     {
@@ -93,6 +95,7 @@ private:
 
     void emitNamedTypeDefinition(AST::NamedType&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
     void emitUnnamedTypeDefinition(BaseTypeNameNode&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
+    void emitAllUnnamedTypeDefinitions(Vector<UniqueRef<BaseTypeNameNode>>&, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder&);
     String metalTypeDeclarations();
     String metalTypeDefinitions();
 

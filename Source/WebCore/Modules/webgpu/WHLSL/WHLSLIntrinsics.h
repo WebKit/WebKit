@@ -58,16 +58,112 @@ public:
         return *m_boolType;
     }
 
-    AST::NativeTypeDeclaration& intType() const
+    AST::NativeTypeDeclaration& ucharType() const
     {
-        ASSERT(m_intType);
-        return *m_intType;
+        ASSERT(m_ucharType);
+        return *m_ucharType;
+    }
+
+    AST::NativeTypeDeclaration& ushortType() const
+    {
+        ASSERT(m_ushortType);
+        return *m_ushortType;
     }
 
     AST::NativeTypeDeclaration& uintType() const
     {
         ASSERT(m_uintType);
         return *m_uintType;
+    }
+
+    AST::NativeTypeDeclaration& charType() const
+    {
+        ASSERT(m_charType);
+        return *m_charType;
+    }
+
+    AST::NativeTypeDeclaration& shortType() const
+    {
+        ASSERT(m_shortType);
+        return *m_shortType;
+    }
+
+    AST::NativeTypeDeclaration& intType() const
+    {
+        ASSERT(m_intType);
+        return *m_intType;
+    }
+
+    AST::NativeTypeDeclaration& uchar2Type() const
+    {
+        ASSERT(m_vectorUchar[0]);
+        return *m_vectorUchar[0];
+    }
+
+    AST::NativeTypeDeclaration& uchar4Type() const
+    {
+        ASSERT(m_vectorUchar[2]);
+        return *m_vectorUchar[2];
+    }
+
+    AST::NativeTypeDeclaration& ushort2Type() const
+    {
+        ASSERT(m_vectorUshort[0]);
+        return *m_vectorUshort[0];
+    }
+
+    AST::NativeTypeDeclaration& ushort4Type() const
+    {
+        ASSERT(m_vectorUshort[2]);
+        return *m_vectorUshort[2];
+    }
+
+    AST::NativeTypeDeclaration& uint2Type() const
+    {
+        ASSERT(m_vectorUint[0]);
+        return *m_vectorUint[0];
+    }
+
+    AST::NativeTypeDeclaration& uint4Type() const
+    {
+        ASSERT(m_vectorUint[2]);
+        return *m_vectorUint[2];
+    }
+
+    AST::NativeTypeDeclaration& char2Type() const
+    {
+        ASSERT(m_vectorChar[0]);
+        return *m_vectorChar[0];
+    }
+
+    AST::NativeTypeDeclaration& char4Type() const
+    {
+        ASSERT(m_vectorChar[2]);
+        return *m_vectorChar[2];
+    }
+
+    AST::NativeTypeDeclaration& short2Type() const
+    {
+        ASSERT(m_vectorShort[0]);
+        return *m_vectorShort[0];
+    }
+
+    AST::NativeTypeDeclaration& short4Type() const
+    {
+        ASSERT(m_vectorShort[2]);
+        return *m_vectorShort[2];
+    }
+
+    AST::NativeTypeDeclaration& int2Type() const
+    {
+        ASSERT(m_vectorInt[0]);
+        return *m_vectorInt[0];
+    }
+
+    AST::NativeTypeDeclaration& int4Type() const
+    {
+        ASSERT(m_vectorInt[2]);
+        return *m_vectorInt[2];
     }
 
     AST::NativeTypeDeclaration& samplerType() const

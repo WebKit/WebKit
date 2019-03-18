@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
 #include "WHLSLPipelineDescriptor.h"
 #include <wtf/text/WTFString.h>
 
@@ -38,14 +37,14 @@ namespace WHLSL {
 // FIXME: Generate descriptive error messages and return them here.
 struct RenderPrepareResult {
     String metalSource;
-    Metal::MappedBindGroups vertexMappedBindGroups;
-    Metal::MappedBindGroups fragmentMappedBindGroups;
+    String mangledVertexEntryPointName;
+    String mangledFragmentEntryPointName;
 };
 Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescriptor&);
 
 struct ComputePrepareResult {
     String metalSource;
-    Metal::MappedBindGroups mappedBindGroups;
+    String mangledEntryPointName;
 };
 Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescriptor&);
 

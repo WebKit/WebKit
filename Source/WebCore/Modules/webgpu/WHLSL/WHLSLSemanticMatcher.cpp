@@ -189,16 +189,78 @@ static bool isAcceptableFormat(TextureFormat textureFormat, AST::UnnamedType& un
 {
     if (isColor) {
         switch (textureFormat) {
-        case TextureFormat::R8G8B8A8Unorm:
-        case TextureFormat::R8G8B8A8Uint:
-        case TextureFormat::B8G8R8A8Unorm:
+        case TextureFormat::R8Unorm:
+        case TextureFormat::R8UnormSrgb:
+        case TextureFormat::R8Snorm:
+        case TextureFormat::R16Unorm:
+        case TextureFormat::R16Snorm:
+        case TextureFormat::R16Float:
+        case TextureFormat::R32Float:
+            return matches(unnamedType, intrinsics.floatType());
+        case TextureFormat::RG8Unorm:
+        case TextureFormat::RG8UnormSrgb:
+        case TextureFormat::RG8Snorm:
+        case TextureFormat::RG16Unorm:
+        case TextureFormat::RG16Snorm:
+        case TextureFormat::RG16Float:
+        case TextureFormat::RG32Float:
+            return matches(unnamedType, intrinsics.float2Type());
+        case TextureFormat::B5G6R5Unorm:
+        case TextureFormat::RG11B10Float:
+            return matches(unnamedType, intrinsics.float3Type());
+        case TextureFormat::RGBA8Unorm:
+        case TextureFormat::RGBA8UnormSrgb:
+        case TextureFormat::BGRA8Unorm:
+        case TextureFormat::BGRA8UnormSrgb:
+        case TextureFormat::RGBA8Snorm:
+        case TextureFormat::RGB10A2Unorm:
+        case TextureFormat::RGBA16Unorm:
+        case TextureFormat::RGBA16Snorm:
+        case TextureFormat::RGBA16Float:
+        case TextureFormat::RGBA32Float:
             return matches(unnamedType, intrinsics.float4Type());
+        case TextureFormat::R8Uint:
+            return matches(unnamedType, intrinsics.ucharType());
+        case TextureFormat::R8Sint:
+            return matches(unnamedType, intrinsics.charType());
+        case TextureFormat::R16Uint:
+            return matches(unnamedType, intrinsics.ushortType());
+        case TextureFormat::R16Sint:
+            return matches(unnamedType, intrinsics.shortType());
+        case TextureFormat::R32Uint:
+            return matches(unnamedType, intrinsics.uintType());
+        case TextureFormat::R32Sint:
+            return matches(unnamedType, intrinsics.intType());
+        case TextureFormat::RG8Uint:
+            return matches(unnamedType, intrinsics.uchar2Type());
+        case TextureFormat::RG8Sint:
+            return matches(unnamedType, intrinsics.char2Type());
+        case TextureFormat::RG16Uint:
+            return matches(unnamedType, intrinsics.ushort2Type());
+        case TextureFormat::RG16Sint:
+            return matches(unnamedType, intrinsics.short2Type());
+        case TextureFormat::RG32Uint:
+            return matches(unnamedType, intrinsics.uint2Type());
+        case TextureFormat::RG32Sint:
+            return matches(unnamedType, intrinsics.int2Type());
+        case TextureFormat::RGBA8Uint:
+            return matches(unnamedType, intrinsics.uchar4Type());
+        case TextureFormat::RGBA8Sint:
+            return matches(unnamedType, intrinsics.char4Type());
+        case TextureFormat::RGBA16Uint:
+            return matches(unnamedType, intrinsics.ushort4Type());
+        case TextureFormat::RGBA16Sint:
+            return matches(unnamedType, intrinsics.short4Type());
+        case TextureFormat::RGBA32Uint:
+            return matches(unnamedType, intrinsics.uint4Type());
+        case TextureFormat::RGBA32Sint:
+            return matches(unnamedType, intrinsics.int4Type());
         default:
-            ASSERT(textureFormat == TextureFormat::D32FloatS8Uint);
+            ASSERT_NOT_REACHED();
             return false;
         }
     }
-    return textureFormat == TextureFormat::D32FloatS8Uint && matches(unnamedType, intrinsics.floatType());
+    return false;
 }
 
 static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Vector<EntryPointItem>& fragmentOutputs, Vector<AttachmentDescriptor>& attachmentDescriptors, Intrinsics& intrinsics)

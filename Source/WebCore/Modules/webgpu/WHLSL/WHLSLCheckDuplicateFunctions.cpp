@@ -59,7 +59,7 @@ bool checkDuplicateFunctions(const Program& program)
         return false;
     });
     for (size_t i = 0; i < functions.size(); ++i) {
-        for (size_t j = i + 1; j < functions.size(); ++i) {
+        for (size_t j = i + 1; j < functions.size(); ++j) {
             if (functions[i].get().name() != functions[j].get().name())
                 break;
             if (is<AST::NativeFunctionDeclaration>(functions[i].get()) && is<AST::NativeFunctionDeclaration>(functions[j].get()))

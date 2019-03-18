@@ -110,6 +110,8 @@ bool NameContext::add(AST::NativeTypeDeclaration& nativeTypeDeclaration)
 
 bool NameContext::add(AST::VariableDeclaration& variableDeclaration)
 {
+    if (variableDeclaration.name().isNull())
+        return true;
     if (exists(variableDeclaration.name()))
         return false;
     auto result = m_variables.add(String(variableDeclaration.name()), &variableDeclaration);

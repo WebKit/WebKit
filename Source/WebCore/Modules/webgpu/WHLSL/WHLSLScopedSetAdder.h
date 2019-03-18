@@ -27,25 +27,39 @@
 
 #if ENABLE(WEBGPU)
 
-#include <wtf/Vector.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
 namespace WHLSL {
 
-namespace Metal {
+template<typename T> class ScopedSetAdder {
+public:
+    ScopedSetAdder(HashSet<T>& set, T&& item)
+        : m_set(set)
+        , m_item(WTFMove(item))
+    {
+        m_isNewEntry = static_cast<bool>(m_set.add(m_item));
+    }
 
-struct MappedBindGroup {
-    unsigned argumentBufferIndex;
-    Vector<unsigned> bindingIndices;
+    ~ScopedSetAdder()
+    {
+        if (!m_isNewEntry)
+            return;
+        auto success = m_set.remove(m_item);
+        ASSERT_UNUSED(success, success);
+    }
+
+    bool isNewEntry() const { return m_isNewEntry; }
+
+private:
+    HashSet<T>& m_set;
+    T m_item;
+    bool m_isNewEntry;
 };
 
-using MappedBindGroups = Vector<MappedBindGroup>; // Parallel to the input resource Layout.
+}
 
-} // namespace Metal
-
-} // namespace WHLSL
-
-} // namespace WebCore
+}
 
 #endif

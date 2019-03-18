@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
 #include "WHLSLSemanticMatcher.h"
 
 namespace WebCore {
@@ -42,14 +41,14 @@ class TypeNamer;
 
 struct RenderMetalFunctions {
     String metalSource;
-    MappedBindGroups vertexMappedBindGroups;
-    MappedBindGroups fragmentMappedBindGroups;
+    String mangledVertexEntryPointName;
+    String mangledFragmentEntryPointName;
 };
 RenderMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedRenderSemantics&&, Layout&);
 
 struct ComputeMetalFunctions {
     String metalSource;
-    MappedBindGroups mappedBindGroups;
+    String mangledEntryPointName;
 };
 ComputeMetalFunctions metalFunctions(Program&, TypeNamer&, MatchedComputeSemantics&&, Layout&);
 

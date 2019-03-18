@@ -1,3 +1,202 @@
+2019-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up the compiler to our WebGPU implementation
+        https://bugs.webkit.org/show_bug.cgi?id=195509
+
+        Reviewed by Dean Jackson.
+
+        This represents a collection of changes necessary to compile and run the first WHLSL program in WebKit.
+
+        Because WHLSL isn't fully implemented yet, this patch doesn't remove the existing method for supplying
+        Metal shaders to WebGPU. Instead, it adds a new boolean to WebGPUShaderModuleDescriptor, "isWHLSL" which
+        causes us to run the WHLSL compiler.
+
+        More details below.
+
+        Test: webgpu/whlsl.html
+
+        * Modules/webgpu/WHLSL/AST/WHLSLCallExpression.h: Use raw pointer instead of Optional<std::reference_wrapper>.
+        (WebCore::WHLSL::AST::CallExpression::setCastData):
+        (WebCore::WHLSL::AST::CallExpression::isCast):
+        (WebCore::WHLSL::AST::CallExpression::castReturnType):
+        * Modules/webgpu/WHLSL/AST/WHLSLNativeTypeDeclaration.h:
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::isAtomic const):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::setIsAtomic):
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::name const): Deleted. The parent class already has a name string.
+        (WebCore::WHLSL::AST::NativeTypeDeclaration::name): Deleted.
+        * Modules/webgpu/WHLSL/AST/WHLSLReturn.h:
+        * Modules/webgpu/WHLSL/AST/WHLSLTypeReference.h:
+        (WebCore::WHLSL::AST::TypeReference::cloneTypeReference const): When cloning a type reference, make sure to
+        clone the pointer to its resolved type, too.
+        * Modules/webgpu/WHLSL/AST/WHLSLVariableReference.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.cpp: Incorporate resolution from
+        https://github.com/gpuweb/gpuweb/pull/188.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::EntryPointScaffolding):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceHelperTypes):
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::resourceSignature):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::unpack):
+        (WebCore::WHLSL::Metal::VertexEntryPointScaffolding::pack): Support semantics being placed directly on the
+        entry point, instead of being placed on a structure member.
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::helperTypes):
+        (WebCore::WHLSL::Metal::FragmentEntryPointScaffolding::pack): Ditto.
+        (WebCore::WHLSL::Metal::EntryPointScaffolding::mappedBindGroups const): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLEntryPointScaffolding.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.cpp:
+        (WebCore::WHLSL::Metal::FunctionDefinitionWriter::visit):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::createEntryPointScaffolding):
+        (WebCore::WHLSL::Metal::metalFunctions):
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::takeVertexMappedBindGroups): Deleted. After
+        https://github.com/gpuweb/gpuweb/pull/188, we don't need the mappings.
+        (WebCore::WHLSL::Metal::RenderFunctionDefinitionWriter::takeFragmentMappedBindGroups): Deleted. Ditto.
+        (WebCore::WHLSL::Metal::ComputeFunctionDefinitionWriter::takeMappedBindGroups): Deleted. Ditto.
+        * Modules/webgpu/WHLSL/Metal/WHLSLFunctionWriter.h: Ditto.
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.cpp: Ditto.
+        (WebCore::WHLSL::Metal::generateMetalCodeShared):
+        (WebCore::WHLSL::Metal::generateMetalCode):
+        * Modules/webgpu/WHLSL/Metal/WHLSLMetalCodeGenerator.h: Ditto.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.cpp: Support compiler-generated functions. Change
+        CRASH() to notImplemented().
+        (WebCore::WHLSL::Metal::writeNativeFunction):
+        (WebCore::WHLSL::Metal::getNativeName): Deleted.
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeFunctionWriter.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLNativeTypeWriter.cpp:
+        (WebCore::WHLSL::Metal::writeNativeType): 
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.cpp: The dependency graph needs to track all unnamed types. Also,
+        we need to track types that are the results of expressions (not just types literally spelled out in the
+        program). Enumerations need to be emitted after their base types are emitted.
+        (WebCore::WHLSL::Metal::TypeNamer::visit):
+        (WebCore::WHLSL::Metal::MetalTypeDeclarationWriter::MetalTypeDeclarationWriter):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDeclarations):
+        (WebCore::WHLSL::Metal::TypeNamer::emitUnnamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitNamedTypeDefinition):
+        (WebCore::WHLSL::Metal::TypeNamer::emitAllUnnamedTypeDefinitions):
+        (WebCore::WHLSL::Metal::TypeNamer::metalTypeDefinitions):
+        * Modules/webgpu/WHLSL/Metal/WHLSLTypeNamer.h:
+        * Modules/webgpu/WHLSL/WHLSLCheckDuplicateFunctions.cpp:
+        (WebCore::WHLSL::checkDuplicateFunctions):
+        * Modules/webgpu/WHLSL/WHLSLChecker.cpp: Wrap ResolvingType in a class to make sure it plays nicely with
+        HashMap. Also, use raw pointers instead of Optional<std::reference_wrapper>s.
+        (WebCore::WHLSL::resolveWithReferenceComparator):
+        (WebCore::WHLSL::resolveByInstantiation):
+        (WebCore::WHLSL::checkOperatorOverload):
+        (WebCore::WHLSL::Checker::assignTypes):
+        (WebCore::WHLSL::Checker::checkShaderType):
+        (WebCore::WHLSL::Checker::visit):
+        (WebCore::WHLSL::matchAndCommit):
+        (WebCore::WHLSL::Checker::recurseAndGetInfo):
+        (WebCore::WHLSL::Checker::assignType):
+        (WebCore::WHLSL::Checker::forwardType):
+        (WebCore::WHLSL::getUnnamedType):
+        (WebCore::WHLSL::Checker::finishVisitingPropertyAccess):
+        (WebCore::WHLSL::Checker::isBoolType):
+        * Modules/webgpu/WHLSL/WHLSLGatherEntryPointItems.cpp:
+        (WebCore::WHLSL::Gatherer::visit):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.cpp:
+        (WebCore::WHLSL::inferTypesForCall):
+        * Modules/webgpu/WHLSL/WHLSLInferTypes.h:
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.cpp:
+        (WebCore::WHLSL::Intrinsics::addPrimitive):
+        (WebCore::WHLSL::Intrinsics::addFullTexture):
+        * Modules/webgpu/WHLSL/WHLSLIntrinsics.h:
+        (WebCore::WHLSL::Intrinsics::ucharType const):
+        (WebCore::WHLSL::Intrinsics::ushortType const):
+        (WebCore::WHLSL::Intrinsics::charType const):
+        (WebCore::WHLSL::Intrinsics::shortType const):
+        (WebCore::WHLSL::Intrinsics::intType const):
+        (WebCore::WHLSL::Intrinsics::uchar2Type const):
+        (WebCore::WHLSL::Intrinsics::uchar4Type const):
+        (WebCore::WHLSL::Intrinsics::ushort2Type const):
+        (WebCore::WHLSL::Intrinsics::ushort4Type const):
+        (WebCore::WHLSL::Intrinsics::uint2Type const):
+        (WebCore::WHLSL::Intrinsics::uint4Type const):
+        (WebCore::WHLSL::Intrinsics::char2Type const):
+        (WebCore::WHLSL::Intrinsics::char4Type const):
+        (WebCore::WHLSL::Intrinsics::short2Type const):
+        (WebCore::WHLSL::Intrinsics::short4Type const):
+        (WebCore::WHLSL::Intrinsics::int2Type const):
+        (WebCore::WHLSL::Intrinsics::int4Type const):
+        * Modules/webgpu/WHLSL/WHLSLLexer.cpp:
+        (WebCore::WHLSL::Lexer::recognizeKeyword):
+        * Modules/webgpu/WHLSL/WHLSLNameContext.cpp:
+        (WebCore::WHLSL::NameContext::add):
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.cpp:
+        (WebCore::WHLSL::NameResolver::visit): Don't visit recursive types.
+        Also, make sure we preserve the CurrentFunction in our recursive scopes.
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h:
+        * Modules/webgpu/WHLSL/WHLSLParser.cpp:
+        (WebCore::WHLSL::Parser::fail):
+        (WebCore::WHLSL::Parser::peek):
+        (WebCore::WHLSL::Parser::parseType):
+        (WebCore::WHLSL::Parser::parseBuiltInSemantic):
+        * Modules/webgpu/WHLSL/WHLSLParser.h:
+        * Modules/webgpu/WHLSL/WHLSLPipelineDescriptor.h:
+        * Modules/webgpu/WHLSL/WHLSLPrepare.cpp:
+        (WebCore::WHLSL::prepareShared):
+        (WebCore::WHLSL::prepare):
+        * Modules/webgpu/WHLSL/WHLSLPrepare.h:
+        * Modules/webgpu/WHLSL/WHLSLRecursiveTypeChecker.cpp: Move big inline functions out-of-line.
+        (WebCore::WHLSL::RecursiveTypeChecker::visit):
+        (WebCore::WHLSL::checkRecursiveTypes):
+        (): Deleted.
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.cpp:
+        (WebCore::WHLSL::conversionCost):
+        (WebCore::WHLSL::resolveFunctionOverloadImpl):
+        * Modules/webgpu/WHLSL/WHLSLResolveOverloadImpl.h:
+        * Modules/webgpu/WHLSL/WHLSLResolvingType.h:
+        (WebCore::WHLSL::ResolvingType::ResolvingType):
+        (WebCore::WHLSL::ResolvingType::operator=):
+        (WebCore::WHLSL::ResolvingType::getUnnamedType):
+        (WebCore::WHLSL::ResolvingType::visit):
+        * Modules/webgpu/WHLSL/WHLSLScopedSetAdder.h: Renamed from Source/WebCore/Modules/webgpu/WHLSL/Metal/WHLSLMappedBindings.h.
+        (WebCore::WHLSL::ScopedSetAdder::ScopedSetAdder):
+        (WebCore::WHLSL::ScopedSetAdder::~ScopedSetAdder):
+        (WebCore::WHLSL::ScopedSetAdder::isNewEntry const):
+        * Modules/webgpu/WHLSL/WHLSLSemanticMatcher.cpp:
+        (WebCore::WHLSL::isAcceptableFormat):
+        * Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt: Turns out a bunch of texture types don't exist in MSL.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.cpp:
+        (WebCore::WHLSL::synthesizeArrayOperatorLength):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeArrayOperatorLength.h:
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Adding to the program can fail.
+        (WebCore::WHLSL::synthesizeConstructors): Some constructors shouldn't be generated for "void" and for atomic types.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.h: Adding to the program can fail.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.cpp: Ditto.
+        (WebCore::WHLSL::synthesizeEnumerationFunctions):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeEnumerationFunctions.h: Ditto.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.cpp: Ditto.
+        (WebCore::WHLSL::synthesizeStructureAccessors):
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeStructureAccessors.h: Ditto.
+        * Modules/webgpu/WHLSL/WHLSLVisitor.cpp:
+        (WebCore::WHLSL::Visitor::visit):
+        * Modules/webgpu/WebGPUDevice.cpp: Add flag that triggers the WHLSL compiler.
+        (WebCore::WebGPUDevice::createShaderModule const):
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.h: Ditto.
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl: Ditto.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/GPUPipelineLayout.h:
+        (WebCore::GPUPipelineLayout::bindGroupLayouts const):
+        * platform/graphics/gpu/GPUShaderModule.h: Add a string that represents the WHLSL shader source. The compiler currently
+        needs the rest of the pipeline state descriptor, so we defer compilation until create*Pipeline().
+        (WebCore::GPUShaderModule::platformShaderModule const):
+        (WebCore::GPUShaderModule::whlslSource const):
+        * platform/graphics/gpu/GPUShaderModuleDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Convert GPU types into WHLSL types, and invoke the compiler.
+        (WebCore::convertVertexFormat):
+        (WebCore::convertShaderStageFlags):
+        (WebCore::convertBindingType):
+        (WebCore::convertTextureFormat):
+        (WebCore::convertLayout):
+        (WebCore::convertRenderPipelineDescriptor):
+        (WebCore::trySetMetalFunctionsForPipelineDescriptor):
+        (WebCore::trySetWHLSLFunctionsForPipelineDescriptor):
+        (WebCore::trySetFunctionsForPipelineDescriptor):
+        (WebCore::tryCreateMtlRenderPipelineState):
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::create):
+        (WebCore::GPUShaderModule::GPUShaderModule):
+
 2019-03-18  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUAdapter.createDevice -> GPUAdapter.requestDevice

@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-void synthesizeArrayOperatorLength(Program&);
+bool synthesizeArrayOperatorLength(Program&);
 
 }
 

@@ -38,6 +38,8 @@ class GPUPipelineLayout : public RefCounted<GPUPipelineLayout> {
 public:
     static Ref<GPUPipelineLayout> create(GPUPipelineLayoutDescriptor&&);
 
+    const Vector<RefPtr<const GPUBindGroupLayout>>& bindGroupLayouts() const { return m_bindGroupLayouts; }
+
 private:
     explicit GPUPipelineLayout(GPUPipelineLayoutDescriptor&&);
 

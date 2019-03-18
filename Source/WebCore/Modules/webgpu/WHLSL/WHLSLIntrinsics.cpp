@@ -266,11 +266,13 @@ bool Intrinsics::addPrimitive(AST::NativeTypeDeclaration& nativeTypeDeclaration)
             return true;
         });
         m_floatType = &nativeTypeDeclaration;
-    } else if (nativeTypeDeclaration.name() == "atomic_int")
+    } else if (nativeTypeDeclaration.name() == "atomic_int") {
+        nativeTypeDeclaration.setIsAtomic();
         m_atomicIntType = &nativeTypeDeclaration;
-    else if (nativeTypeDeclaration.name() == "atomic_uint")
+    } else if (nativeTypeDeclaration.name() == "atomic_uint") {
+        nativeTypeDeclaration.setIsAtomic();
         m_atomicUintType = &nativeTypeDeclaration;
-    else if (nativeTypeDeclaration.name() == "sampler")
+    } else if (nativeTypeDeclaration.name() == "sampler")
         m_samplerType = &nativeTypeDeclaration;
     else
         ASSERT_NOT_REACHED();
@@ -357,7 +359,7 @@ bool Intrinsics::addFullTexture(AST::NativeTypeDeclaration& nativeTypeDeclaratio
     unsigned vectorLength;
     for (unsigned i = 0; i < WTF_ARRAY_LENGTH(m_textureInnerTypeNames); ++i) {
         if (innerType.name().startsWith(m_textureInnerTypeNames[i])) {
-            textureTypeIndex = i;
+            innerTypeIndex = i;
             if (innerType.name() == m_textureInnerTypeNames[i])
                 vectorLength = 1;
             else {

@@ -129,10 +129,12 @@ auto Parser::parse(Program& program, StringView stringView, Mode mode) -> Option
     return WTF::nullopt;
 }
 
-auto Parser::fail(const String& message) -> Unexpected<Error>
+auto Parser::fail(const String& message, TryToPeek tryToPeek) -> Unexpected<Error>
 {
-    if (auto nextToken = peek())
-        return Unexpected<Error>(Error(m_lexer.errorString(*nextToken, message)));
+    if (tryToPeek == TryToPeek::Yes) {
+        if (auto nextToken = peek())
+            return Unexpected<Error>(Error(m_lexer.errorString(*nextToken, message)));
+    }
     return Unexpected<Error>(Error(makeString("Cannot lex: ", message)));
 }
 
@@ -142,7 +144,7 @@ auto Parser::peek() -> Expected<Lexer::Token, Error>
         m_lexer.unconsumeToken(Lexer::Token(*token));
         return *token;
     }
-    return fail("Cannot consume token"_str);
+    return fail("Cannot consume token"_str, TryToPeek::No);
 }
 
 Optional<Lexer::Token> Parser::tryType(Lexer::Token::Type type)
@@ -582,13 +584,15 @@ auto Parser::parseNonAddressSpaceType() -> Expected<UniqueRef<AST::UnnamedType>,
 
 auto Parser::parseType() -> Expected<UniqueRef<AST::UnnamedType>, Error>
 {
-    auto type = backtrackingScope<Expected<UniqueRef<AST::UnnamedType>, Error>>([&]() {
-        return parseAddressSpaceType();
-    });
-    if (type)
-        return type;
+    {
+        auto type = backtrackingScope<Expected<UniqueRef<AST::UnnamedType>, Error>>([&]() {
+            return parseAddressSpaceType();
+        });
+        if (type)
+            return type;
+    }
 
-    type = backtrackingScope<Expected<UniqueRef<AST::UnnamedType>, Error>>([&]() {
+    auto type = backtrackingScope<Expected<UniqueRef<AST::UnnamedType>, Error>>([&]() {
         return parseNonAddressSpaceType();
     });
     if (type)
@@ -653,7 +657,7 @@ auto Parser::parseBuiltInSemantic() -> Expected<AST::BuiltInSemantic, Error>
     case Lexer::Token::Type::SVInnerCoverage:
         return AST::BuiltInSemantic(WTFMove(*origin), AST::BuiltInSemantic::Variable::SVInnerCoverage);
     case Lexer::Token::Type::SVTarget: {
-        auto target = consumeNonNegativeIntegralLiteral();
+        auto target = consumeNonNegativeIntegralLiteral(); // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195807 Make this work with strings like "SV_Target0".
         if (!target)
             return Unexpected<Error>(target.error());
         return AST::BuiltInSemantic(WTFMove(*origin), AST::BuiltInSemantic::Variable::SVTarget, *target);

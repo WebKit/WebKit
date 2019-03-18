@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-void synthesizeStructureAccessors(Program&);
+bool synthesizeStructureAccessors(Program&);
 
 }
 

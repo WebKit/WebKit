@@ -1,3 +1,13 @@
+2019-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WHLSL] Hook up the compiler to our WebGPU implementation
+        https://bugs.webkit.org/show_bug.cgi?id=195509
+
+        Reviewed by Dean Jackson.
+
+        * webgpu/whlsl-expected.html: Added.
+        * webgpu/whlsl.html: Added.
+
 2019-03-18  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUAdapter.createDevice -> GPUAdapter.requestDevice

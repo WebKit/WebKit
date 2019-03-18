@@ -41,17 +41,17 @@ static unsigned conversionCost(AST::FunctionDeclaration& candidate, const Vector
 {
     unsigned conversionCost = 0;
     for (size_t i = 0; i < candidate.parameters().size(); ++i) {
-        conversionCost += WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>&) -> unsigned {
+        conversionCost += argumentTypes[i].get().visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>&) -> unsigned {
             return 0;
-        }, [&](Ref<ResolvableTypeReference>& resolvableTypeReference) -> unsigned {
+        }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> unsigned {
             return resolvableTypeReference->resolvableType().conversionCost(*candidate.parameters()[i].type());
-        }), argumentTypes[i].get());
+        }));
     }
     // The return type can never be a literal type, so its conversion cost is always 0.
     return conversionCost;
 }
 
-AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, Optional<std::reference_wrapper<AST::NamedType>>& castReturnType)
+AST::FunctionDeclaration* resolveFunctionOverloadImpl(Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1>& possibleFunctions, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, AST::NamedType* castReturnType)
 {
     Vector<std::reference_wrapper<AST::FunctionDeclaration>, 1> candidates;
     for (auto& possibleFunction : possibleFunctions) {

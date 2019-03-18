@@ -325,7 +325,7 @@ auto Lexer::recognizeKeyword(unsigned end) -> Optional<Token::Type>
         return Token::Type::SVSampleIndex;
     if (substring == "SV_InnerCoverage")
         return Token::Type::SVInnerCoverage;
-    if (substring == "SV_Target")
+    if (substring == "SV_Target") // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195807 Make this work with strings like "SV_Target0".
         return Token::Type::SVTarget;
     if (substring == "SV_Depth")
         return Token::Type::SVDepth;

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "NotImplemented.h"
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
 #include "WHLSLAssignmentExpression.h"
@@ -50,7 +51,6 @@
 #include "WHLSLLogicalNotExpression.h"
 #include "WHLSLMakeArrayReferenceExpression.h"
 #include "WHLSLMakePointerExpression.h"
-#include "WHLSLMappedBindings.h"
 #include "WHLSLNativeFunctionDeclaration.h"
 #include "WHLSLNativeFunctionWriter.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -193,7 +193,7 @@ void FunctionDefinitionWriter::visit(AST::NativeFunctionDeclaration& nativeFunct
 {
     auto iterator = m_functionMapping.find(&nativeFunctionDeclaration);
     ASSERT(iterator != m_functionMapping.end());
-    m_stringBuilder.append(writeNativeFunction(nativeFunctionDeclaration, iterator->value, m_typeNamer));
+    m_stringBuilder.append(writeNativeFunction(nativeFunctionDeclaration, iterator->value, m_intrinsics, m_typeNamer));
 }
 
 void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition)
@@ -207,7 +207,7 @@ void FunctionDefinitionWriter::visit(AST::FunctionDefinition& functionDefinition
         m_entryPointScaffolding = WTFMove(entryPointScaffolding);
         m_stringBuilder.append(m_entryPointScaffolding->helperTypes());
         m_stringBuilder.append('\n');
-        m_stringBuilder.append(makeString(m_entryPointScaffolding->signature(iterator->value), " {"));
+        m_stringBuilder.append(makeString(m_entryPointScaffolding->signature(iterator->value), " {\n"));
         m_stringBuilder.append(m_entryPointScaffolding->unpack());
         for (size_t i = 0; i < functionDefinition.parameters().size(); ++i) {
             auto addResult = m_variableMapping.add(&functionDefinition.parameters()[i], m_entryPointScaffolding->parameterVariables()[i]);
@@ -261,8 +261,8 @@ void FunctionDefinitionWriter::visit(AST::Break&)
 
 void FunctionDefinitionWriter::visit(AST::Continue&)
 {
-    // FIXME: Figure out which loop we're in, and run the increment code
-    CRASH();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195808 Figure out which loop we're in, and run the increment code
+    notImplemented();
 }
 
 void FunctionDefinitionWriter::visit(AST::DoWhileLoop& doWhileLoop)
@@ -350,14 +350,14 @@ void FunctionDefinitionWriter::visit(AST::SwitchCase& switchCase)
     else
         m_stringBuilder.append("default:\n");
     checkErrorAndVisit(switchCase.block());
-    // FIXME: Figure out whether we need to break or fallthrough.
-    CRASH();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195812 Figure out whether we need to break or fallthrough.
+    notImplemented();
 }
 
 void FunctionDefinitionWriter::visit(AST::Trap&)
 {
-    // FIXME: Implement this
-    CRASH();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195811 Implement this
+    notImplemented();
 }
 
 void FunctionDefinitionWriter::visit(AST::VariableDeclarationsStatement& variableDeclarationsStatement)
@@ -447,35 +447,41 @@ void FunctionDefinitionWriter::visit(AST::Expression& expression)
 void FunctionDefinitionWriter::visit(AST::DotExpression&)
 {
     // This should be lowered already.
-    ASSERT_NOT_REACHED();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
+    notImplemented();
+    m_stack.append("dummy");
 }
 
 void FunctionDefinitionWriter::visit(AST::IndexExpression&)
 {
     // This should be lowered already.
-    ASSERT_NOT_REACHED();
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
+    notImplemented();
+    m_stack.append("dummy");
 }
 
 void FunctionDefinitionWriter::visit(AST::PropertyAccessExpression&)
 {
-    ASSERT_NOT_REACHED();
+    // This should be lowered already.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Replace this with ASSERT_NOT_REACHED().
+    notImplemented();
+    m_stack.append("dummy");
 }
 
 void FunctionDefinitionWriter::visit(AST::VariableDeclaration& variableDeclaration)
 {
     ASSERT(variableDeclaration.type());
-    if (variableDeclaration.initializer())
-        checkErrorAndVisit(*variableDeclaration.initializer());
-    else {
-        // FIXME: Zero-fill the variable.
-        CRASH();
-    }
-    // FIXME: Implement qualifiers.
     auto variableName = generateNextVariableName();
     auto addResult = m_variableMapping.add(&variableDeclaration, variableName);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", m_stack.takeLast(), ";\n"));
-    m_stack.append(variableName);
+    // FIXME: Implement qualifiers.
+    if (variableDeclaration.initializer()) {
+        checkErrorAndVisit(*variableDeclaration.initializer());
+        m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, " = ", m_stack.takeLast(), ";\n"));
+    } else {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195771 Zero-fill the variable.
+        m_stringBuilder.append(makeString(m_typeNamer.mangledNameForType(*variableDeclaration.type()), ' ', variableName, ";\n"));
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpression)
@@ -485,6 +491,7 @@ void FunctionDefinitionWriter::visit(AST::AssignmentExpression& assignmentExpres
     checkErrorAndVisit(assignmentExpression.right());
     auto rightName = m_stack.takeLast();
     m_stringBuilder.append(makeString(leftName, " = ", rightName, ";\n"));
+    m_stack.append(leftName);
 }
 
 void FunctionDefinitionWriter::visit(AST::CallExpression& callExpression)
@@ -650,24 +657,10 @@ public:
     {
     }
 
-    MappedBindGroups&& takeVertexMappedBindGroups()
-    {
-        ASSERT(m_vertexMappedBindGroups);
-        return WTFMove(*m_vertexMappedBindGroups);
-    }
-
-    MappedBindGroups&& takeFragmentMappedBindGroups()
-    {
-        ASSERT(m_fragmentMappedBindGroups);
-        return WTFMove(*m_fragmentMappedBindGroups);
-    }
-
 private:
     std::unique_ptr<EntryPointScaffolding> createEntryPointScaffolding(AST::FunctionDefinition&) override;
 
     MatchedRenderSemantics m_matchedSemantics;
-    Optional<MappedBindGroups> m_vertexMappedBindGroups;
-    Optional<MappedBindGroups> m_fragmentMappedBindGroups;
 };
 
 std::unique_ptr<EntryPointScaffolding> RenderFunctionDefinitionWriter::createEntryPointScaffolding(AST::FunctionDefinition& functionDefinition)
@@ -675,18 +668,10 @@ std::unique_ptr<EntryPointScaffolding> RenderFunctionDefinitionWriter::createEnt
     auto generateNextVariableName = [this]() -> String {
         return this->generateNextVariableName();
     };
-    if (&functionDefinition == m_matchedSemantics.vertexShader) {
-        auto result = std::make_unique<VertexEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.vertexShaderEntryPointItems, m_matchedSemantics.vertexShaderResourceMap, m_layout, WTFMove(generateNextVariableName), m_matchedSemantics.matchedVertexAttributes);
-        ASSERT(!m_vertexMappedBindGroups);
-        m_vertexMappedBindGroups = result->mappedBindGroups();
-        return result;
-    }
-    if (&functionDefinition == m_matchedSemantics.fragmentShader) {
-        auto result = std::make_unique<FragmentEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.fragmentShaderEntryPointItems, m_matchedSemantics.fragmentShaderResourceMap, m_layout, WTFMove(generateNextVariableName), m_matchedSemantics.matchedColorAttachments);
-        ASSERT(!m_fragmentMappedBindGroups);
-        m_fragmentMappedBindGroups = result->mappedBindGroups();
-        return result;
-    }
+    if (&functionDefinition == m_matchedSemantics.vertexShader)
+        return std::make_unique<VertexEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.vertexShaderEntryPointItems, m_matchedSemantics.vertexShaderResourceMap, m_layout, WTFMove(generateNextVariableName), m_matchedSemantics.matchedVertexAttributes);
+    if (&functionDefinition == m_matchedSemantics.fragmentShader)
+        return std::make_unique<FragmentEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.fragmentShaderEntryPointItems, m_matchedSemantics.fragmentShaderResourceMap, m_layout, WTFMove(generateNextVariableName), m_matchedSemantics.matchedColorAttachments);
     return nullptr;
 }
 
@@ -698,17 +683,10 @@ public:
     {
     }
 
-    MappedBindGroups&& takeMappedBindGroups()
-    {
-        ASSERT(m_mappedBindGroups);
-        return WTFMove(*m_mappedBindGroups);
-    }
-
 private:
     std::unique_ptr<EntryPointScaffolding> createEntryPointScaffolding(AST::FunctionDefinition&) override;
 
     MatchedComputeSemantics m_matchedSemantics;
-    Optional<MappedBindGroups> m_mappedBindGroups;
 };
 
 std::unique_ptr<EntryPointScaffolding> ComputeFunctionDefinitionWriter::createEntryPointScaffolding(AST::FunctionDefinition& functionDefinition)
@@ -716,12 +694,8 @@ std::unique_ptr<EntryPointScaffolding> ComputeFunctionDefinitionWriter::createEn
     auto generateNextVariableName = [this]() -> String {
         return this->generateNextVariableName();
     };
-    if (&functionDefinition == m_matchedSemantics.shader) {
-        auto result = std::make_unique<ComputeEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.entryPointItems, m_matchedSemantics.resourceMap, m_layout, WTFMove(generateNextVariableName));
-        ASSERT(!m_mappedBindGroups);
-        m_mappedBindGroups = result->mappedBindGroups();
-        return result;
-    }
+    if (&functionDefinition == m_matchedSemantics.shader)
+        return std::make_unique<ComputeEntryPointScaffolding>(functionDefinition, m_intrinsics, m_typeNamer, m_matchedSemantics.entryPointItems, m_matchedSemantics.resourceMap, m_layout, WTFMove(generateNextVariableName));
     return nullptr;
 }
 
@@ -766,6 +740,9 @@ RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Matc
     StringBuilder stringBuilder;
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
+    auto* vertexShaderEntryPoint = matchedSemantics.vertexShader;
+    auto* fragmentShaderEntryPoint = matchedSemantics.fragmentShader;
+
     RenderFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
         functionDefinitionWriter.visit(nativeFunctionDeclaration);
@@ -775,8 +752,8 @@ RenderMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Matc
 
     RenderMetalFunctions result;
     result.metalSource = stringBuilder.toString();
-    result.vertexMappedBindGroups = functionDefinitionWriter.takeVertexMappedBindGroups();
-    result.fragmentMappedBindGroups = functionDefinitionWriter.takeFragmentMappedBindGroups();
+    result.mangledVertexEntryPointName = sharedMetalFunctions.functionMapping.get(vertexShaderEntryPoint);
+    result.mangledFragmentEntryPointName = sharedMetalFunctions.functionMapping.get(fragmentShaderEntryPoint);
     return result;
 }
 
@@ -787,6 +764,8 @@ ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Mat
     StringBuilder stringBuilder;
     stringBuilder.append(sharedMetalFunctions.metalFunctions);
 
+    auto* entryPoint = matchedSemantics.shader;
+
     ComputeFunctionDefinitionWriter functionDefinitionWriter(program.intrinsics(), typeNamer, sharedMetalFunctions.functionMapping, WTFMove(matchedSemantics), layout);
     for (auto& nativeFunctionDeclaration : program.nativeFunctionDeclarations())
         functionDefinitionWriter.visit(nativeFunctionDeclaration);
@@ -796,7 +775,7 @@ ComputeMetalFunctions metalFunctions(Program& program, TypeNamer& typeNamer, Mat
 
     ComputeMetalFunctions result;
     result.metalSource = stringBuilder.toString();
-    result.mappedBindGroups = functionDefinitionWriter.takeMappedBindGroups();
+    result.mangledEntryPointName = sharedMetalFunctions.functionMapping.get(entryPoint);
     return result;
 }
 

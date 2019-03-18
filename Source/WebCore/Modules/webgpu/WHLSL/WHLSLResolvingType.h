@@ -27,9 +27,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include <memory>
-#include <wtf/Ref.h>
+#include "WHLSLUnnamedType.h"
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 
@@ -40,10 +40,18 @@ namespace WHLSL {
 namespace AST {
 
 class ResolvableType;
-class UnnamedType;
 
 }
 
+// There are cases where the type of one AST node should match the type of another AST node.
+// One example of this is the comma expression - the type of the comma expression should match the type of its last item.
+// If this type happens to be a resolvable type, it will get resolved later. When that happens,
+// both of the AST nodes have to be resolved to the result type. This class represents a
+// reference counted wrapper around a resolvable type so both entries in the type map can point
+// to the same resolvable type, so resolving it once resolves both the entries in the map.
+// This class could probably be represented as
+// "class ResolvableTypeReference : public std::reference_wrapper<AST::ResolvableType>, public RefCounted<ResolvableTypeReference {}"
+// but I didn't want to be too clever.
 class ResolvableTypeReference : public RefCounted<ResolvableTypeReference> {
 public:
     ResolvableTypeReference(AST::ResolvableType& resolvableType)
@@ -53,6 +61,8 @@ public:
 
     ResolvableTypeReference(const ResolvableTypeReference&) = delete;
     ResolvableTypeReference(ResolvableTypeReference&&) = delete;
+    ResolvableTypeReference& operator=(const ResolvableTypeReference&) = delete;
+    ResolvableTypeReference& operator=(ResolvableTypeReference&&) = delete;
 
     AST::ResolvableType& resolvableType() { return *m_resolvableType; }
 
@@ -60,7 +70,52 @@ private:
     AST::ResolvableType* m_resolvableType;
 };
 
-using ResolvingType = Variant<UniqueRef<AST::UnnamedType>, Ref<ResolvableTypeReference>>;
+// This is a thin wrapper around a Variant.
+// It exists so we can make sure that the default constructor does the right thing.
+class ResolvingType {
+public:
+    ResolvingType()
+        : m_inner(RefPtr<ResolvableTypeReference>())
+    {
+    }
+
+    ResolvingType(UniqueRef<AST::UnnamedType>&& v)
+        : m_inner(WTFMove(v))
+    {
+    }
+
+    ResolvingType(RefPtr<ResolvableTypeReference>&& v)
+        : m_inner(WTFMove(v))
+    {
+    }
+
+    ResolvingType(const ResolvingType&) = delete;
+    ResolvingType(ResolvingType&& other)
+        : m_inner(WTFMove(other.m_inner))
+    {
+    }
+
+    ResolvingType& operator=(const ResolvingType&) = delete;
+    ResolvingType& operator=(ResolvingType&& other)
+    {
+        m_inner = WTFMove(other.m_inner);
+        return *this;
+    }
+
+    AST::UnnamedType& getUnnamedType()
+    {
+        ASSERT(WTF::holds_alternative<UniqueRef<AST::UnnamedType>>(m_inner));
+        return WTF::get<UniqueRef<AST::UnnamedType>>(m_inner);
+    }
+
+    template <typename Visitor> auto visit(const Visitor& visitor) -> decltype(WTF::visit(visitor, std::declval<Variant<UniqueRef<AST::UnnamedType>, RefPtr<ResolvableTypeReference>>&>()))
+    {
+        return WTF::visit(visitor, m_inner);
+    }
+
+private:
+    Variant<UniqueRef<AST::UnnamedType>, RefPtr<ResolvableTypeReference>> m_inner;
+};
 
 }
 

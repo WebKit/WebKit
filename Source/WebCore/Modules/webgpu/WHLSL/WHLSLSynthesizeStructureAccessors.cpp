@@ -39,7 +39,7 @@ namespace WebCore {
 
 namespace WHLSL {
 
-void synthesizeStructureAccessors(Program& program)
+bool synthesizeStructureAccessors(Program& program)
 {
     bool isOperator = true;
     for (auto& structureDefinition : program.structureDefinitions()) {
@@ -50,7 +50,8 @@ void synthesizeStructureAccessors(Program& program)
                 AST::VariableDeclarations parameters;
                 parameters.append(WTFMove(variableDeclaration));
                 AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, structureElement.type().clone(), makeString("operator.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator));
-                program.append(WTFMove(nativeFunctionDeclaration));
+                if (!program.append(WTFMove(nativeFunctionDeclaration)))
+                    return false;
             }
 
             {
@@ -61,7 +62,8 @@ void synthesizeStructureAccessors(Program& program)
                 parameters.append(WTFMove(variableDeclaration1));
                 parameters.append(WTFMove(variableDeclaration2));
                 AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(structureElement.origin()), structureDefinition), makeString("operator.", structureElement.name(), '='), WTFMove(parameters), WTF::nullopt, isOperator));
-                program.append(WTFMove(nativeFunctionDeclaration));
+                if (!program.append(WTFMove(nativeFunctionDeclaration)))
+                    return false;
             }
 
             // The ander: operator&.field
@@ -74,12 +76,14 @@ void synthesizeStructureAccessors(Program& program)
                 AST::NativeFunctionDeclaration nativeFunctionDeclaration(AST::FunctionDeclaration(Lexer::Token(structureElement.origin()), AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), makeString("operator&.", structureElement.name()), WTFMove(parameters), WTF::nullopt, isOperator));
                 return nativeFunctionDeclaration;
             };
-            program.append(createAnder(AST::AddressSpace::Constant));
-            program.append(createAnder(AST::AddressSpace::Device));
-            program.append(createAnder(AST::AddressSpace::Threadgroup));
-            program.append(createAnder(AST::AddressSpace::Thread));
+            if (!program.append(createAnder(AST::AddressSpace::Constant))
+                || !program.append(createAnder(AST::AddressSpace::Device))
+                || !program.append(createAnder(AST::AddressSpace::Threadgroup))
+                || !program.append(createAnder(AST::AddressSpace::Thread)))
+                return false;
         }
     }
+    return true;
 }
 
 } // namespace WHLSL

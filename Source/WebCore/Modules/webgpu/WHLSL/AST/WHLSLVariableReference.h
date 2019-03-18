@@ -76,7 +76,7 @@ private:
     }
 
     String m_name;
-    VariableDeclaration* m_variable;
+    VariableDeclaration* m_variable { nullptr };
 };
 
 } // namespace AST

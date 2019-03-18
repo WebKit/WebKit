@@ -33,7 +33,7 @@ namespace WHLSL {
 
 class Program;
 
-void synthesizeConstructors(Program&);
+bool synthesizeConstructors(Program&);
 
 }
 

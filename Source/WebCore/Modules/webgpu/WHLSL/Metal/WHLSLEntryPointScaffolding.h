@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
 #include "WHLSLPipelineDescriptor.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -59,7 +58,6 @@ public:
     virtual String unpack() = 0;
     virtual String pack(const String& existingVariableName, const String& variableName) = 0;
 
-    MappedBindGroups mappedBindGroups() const;
     Vector<String>& parameterVariables() { return m_parameterVariables; }
 
 protected:

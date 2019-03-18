@@ -83,7 +83,10 @@ public:
 
     UniqueRef<TypeReference> cloneTypeReference() const
     {
-        return makeUniqueRef<TypeReference>(Lexer::Token(origin()), String(m_name), AST::clone(m_typeArguments));
+        auto result = makeUniqueRef<TypeReference>(Lexer::Token(origin()), String(m_name), AST::clone(m_typeArguments));
+        if (m_resolvedType)
+            result->setResolvedType(*m_resolvedType);
+        return result;
     }
 
     UniqueRef<UnnamedType> clone() const override

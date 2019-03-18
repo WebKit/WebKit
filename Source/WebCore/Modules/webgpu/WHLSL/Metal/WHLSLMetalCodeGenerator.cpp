@@ -48,7 +48,7 @@ static String generateMetalCodeShared(String&& metalTypes, String&& metalFunctio
     stringBuilder.append("#include <metal_compute>\n");
     stringBuilder.append("#include <metal_texture>\n");
     stringBuilder.append("\n");
-    stringBuilder.append("using namespace metal;\n"); // FIXME: Probably should qualify all calls to built-in functions, instead of using this line.
+    stringBuilder.append("using namespace metal;\n");
     stringBuilder.append("\n");
 
     stringBuilder.append(WTFMove(metalTypes));
@@ -62,7 +62,7 @@ RenderMetalCode generateMetalCode(Program& program, MatchedRenderSemantics&& mat
     auto metalTypes = typeNamer.metalTypes();
     auto metalFunctions = Metal::metalFunctions(program, typeNamer, WTFMove(matchedSemantics), layout);
     auto metalCode = generateMetalCodeShared(WTFMove(metalTypes), WTFMove(metalFunctions.metalSource));
-    return { WTFMove(metalCode), WTFMove(metalFunctions.vertexMappedBindGroups), WTFMove(metalFunctions.fragmentMappedBindGroups) };
+    return { WTFMove(metalCode), WTFMove(metalFunctions.mangledVertexEntryPointName), WTFMove(metalFunctions.mangledFragmentEntryPointName) };
 }
 
 ComputeMetalCode generateMetalCode(Program& program, MatchedComputeSemantics&& matchedSemantics, Layout& layout)
@@ -71,7 +71,7 @@ ComputeMetalCode generateMetalCode(Program& program, MatchedComputeSemantics&& m
     auto metalTypes = typeNamer.metalTypes();
     auto metalFunctions = Metal::metalFunctions(program, typeNamer, WTFMove(matchedSemantics), layout);
     auto metalCode = generateMetalCodeShared(WTFMove(metalTypes), WTFMove(metalFunctions.metalSource));
-    return { WTFMove(metalCode), WTFMove(metalFunctions.mappedBindGroups) };
+    return { WTFMove(metalCode), WTFMove(metalFunctions.mangledEntryPointName) };
 }
 
 }

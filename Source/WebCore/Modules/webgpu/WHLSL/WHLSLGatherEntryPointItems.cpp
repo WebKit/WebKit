@@ -116,6 +116,7 @@ public:
         auto depth = m_typeReferences.size();
         checkErrorAndVisit(*typeReference.resolvedType());
         ASSERT_UNUSED(depth, m_typeReferences.size() == depth);
+        m_typeReferences.removeLast();
     }
 
     void visit(AST::PointerType& pointerType)

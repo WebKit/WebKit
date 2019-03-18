@@ -66,18 +66,23 @@ static Optional<Program> prepareShared(String& whlslSource)
         return WTF::nullopt;
     if (!checkRecursiveTypes(program))
         return WTF::nullopt;
-    synthesizeStructureAccessors(program);
-    synthesizeEnumerationFunctions(program);
-    synthesizeArrayOperatorLength(program);
-    synthesizeConstructors(program);
-    resolveNamesInFunctions(program, nameResolver);
+    if (!synthesizeStructureAccessors(program))
+        return WTF::nullopt;
+    if (!synthesizeEnumerationFunctions(program))
+        return WTF::nullopt;
+    if (!synthesizeArrayOperatorLength(program))
+        return WTF::nullopt;
+    if (!synthesizeConstructors(program))
+        return WTF::nullopt;
+    if (!resolveNamesInFunctions(program, nameResolver))
+        return WTF::nullopt;
     if (!checkDuplicateFunctions(program))
         return WTF::nullopt;
 
     if (!check(program))
         return WTF::nullopt;
     checkLiteralTypes(program);
-    // resolveProperties(program);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195788 Resolve properties here
     findHighZombies(program);
     if (!checkStatementBehavior(program))
         return WTF::nullopt;
@@ -101,8 +106,8 @@ Optional<RenderPrepareResult> prepare(String& whlslSource, RenderPipelineDescrip
 
     RenderPrepareResult result;
     result.metalSource = WTFMove(generatedCode.metalSource);
-    result.vertexMappedBindGroups = WTFMove(generatedCode.vertexMappedBindGroups);
-    result.fragmentMappedBindGroups = WTFMove(generatedCode.fragmentMappedBindGroups);
+    result.mangledVertexEntryPointName = WTFMove(generatedCode.mangledVertexEntryPointName);
+    result.mangledFragmentEntryPointName = WTFMove(generatedCode.mangledFragmentEntryPointName);
     return result;
 }
 
@@ -119,7 +124,7 @@ Optional<ComputePrepareResult> prepare(String& whlslSource, ComputePipelineDescr
 
     ComputePrepareResult result;
     result.metalSource = WTFMove(generatedCode.metalSource);
-    result.mappedBindGroups = WTFMove(generatedCode.bindGroups);
+    result.mangledEntryPointName = WTFMove(generatedCode.mangledEntryPointName);
     return result;
 }
 

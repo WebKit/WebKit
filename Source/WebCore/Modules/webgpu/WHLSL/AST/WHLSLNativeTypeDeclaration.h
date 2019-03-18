@@ -54,13 +54,12 @@ public:
 
     bool isNativeTypeDeclaration() const override { return true; }
 
-    const String& name() const { return m_name; }
-    String& name() { return m_name; }
     TypeArguments& typeArguments() { return m_typeArguments; }
 
     bool isInt() const { return m_isInt; }
     bool isNumber() const { return m_isNumber; }
     bool isFloating() const { return m_isFloating; }
+    bool isAtomic() const { return m_isAtomic; }
     bool isVector() const { return m_isVector; }
     bool isMatrix() const { return m_isMatrix; }
     bool isTexture() const { return m_isTexture; }
@@ -76,6 +75,7 @@ public:
     void setIsInt() { m_isInt = true; }
     void setIsNumber() { m_isNumber = true; }
     void setIsFloating() { m_isFloating = true; }
+    void setIsAtomic() { m_isAtomic = true; }
     void setIsVector() { m_isVector = true; }
     void setIsMatrix() { m_isMatrix = true; }
     void setIsTexture() { m_isTexture = true; }
@@ -89,7 +89,6 @@ public:
     void setIterateAllValues(std::function<void(const std::function<bool(int64_t)>&)>&& iterateAllValues) { m_iterateAllValues = WTFMove(iterateAllValues); }
 
 private:
-    String m_name;
     TypeArguments m_typeArguments;
     std::function<bool(int)> m_canRepresentInteger;
     std::function<bool(unsigned)> m_canRepresentUnsignedInteger;
@@ -101,6 +100,7 @@ private:
     bool m_isInt { false };
     bool m_isNumber { false };
     bool m_isFloating { false };
+    bool m_isAtomic { false };
     bool m_isVector { false };
     bool m_isMatrix { false };
     bool m_isTexture { false };

@@ -51,37 +51,37 @@ public:
     void visit(AST::PointerType& pointerType) override
     {
         m_unnamedTypes.append(pointerType);
-        checkErrorAndVisit(pointerType);
+        Visitor::visit(pointerType);
     }
 
     void visit(AST::ArrayReferenceType& arrayReferenceType) override
     {
         m_unnamedTypes.append(arrayReferenceType);
-        checkErrorAndVisit(arrayReferenceType);
+        Visitor::visit(arrayReferenceType);
     }
 
     void visit(AST::ArrayType& arrayType) override
     {
         m_unnamedTypes.append(arrayType);
-        checkErrorAndVisit(arrayType);
+        Visitor::visit(arrayType);
     }
 
     void visit(AST::EnumerationDefinition& enumerationDefinition) override
     {
         m_namedTypes.append(enumerationDefinition);
-        checkErrorAndVisit(enumerationDefinition);
+        Visitor::visit(enumerationDefinition);
     }
 
     void visit(AST::StructureDefinition& structureDefinition) override
     {
         m_namedTypes.append(structureDefinition);
-        checkErrorAndVisit(structureDefinition);
+        Visitor::visit(structureDefinition);
     }
 
     void visit(AST::NativeTypeDeclaration& nativeTypeDeclaration) override
     {
         m_namedTypes.append(nativeTypeDeclaration);
-        checkErrorAndVisit(nativeTypeDeclaration);
+        Visitor::visit(nativeTypeDeclaration);
     }
 
     Vector<std::reference_wrapper<AST::UnnamedType>>&& takeUnnamedTypes()
@@ -99,16 +99,16 @@ private:
     Vector<std::reference_wrapper<AST::NamedType>> m_namedTypes;
 };
 
-void synthesizeConstructors(Program& program)
+bool synthesizeConstructors(Program& program)
 {
     FindAllTypes findAllTypes;
     findAllTypes.checkErrorAndVisit(program);
-    auto m_unnamedTypes = findAllTypes.takeUnnamedTypes();
-    auto m_namedTypes = findAllTypes.takeNamedTypes();
+    auto unnamedTypes = findAllTypes.takeUnnamedTypes();
+    auto namedTypes = findAllTypes.takeNamedTypes();
 
     bool isOperator = true;
 
-    for (auto& unnamedType : m_unnamedTypes) {
+    for (auto& unnamedType : unnamedTypes) {
         AST::VariableDeclaration variableDeclaration(Lexer::Token(unnamedType.get().origin()), AST::Qualifiers(), { unnamedType.get().clone() }, String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
@@ -116,10 +116,16 @@ void synthesizeConstructors(Program& program)
         program.append(WTFMove(copyConstructor));
 
         AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(unnamedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, unnamedType.get().clone(), "operator cast"_str, AST::VariableDeclarations(), WTF::nullopt, isOperator));
-        program.append(WTFMove(defaultConstructor));
+        if (!program.append(WTFMove(defaultConstructor)))
+            return false;
     }
 
-    for (auto& namedType : m_namedTypes) {
+    for (auto& namedType : namedTypes) {
+        if (matches(namedType, program.intrinsics().voidType()))
+            continue;
+        if (is<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)) && downcast<AST::NativeTypeDeclaration>(static_cast<AST::NamedType&>(namedType)).isAtomic())
+            continue;
+
         AST::VariableDeclaration variableDeclaration(Lexer::Token(namedType.get().origin()), AST::Qualifiers(), { AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()) }, String(), WTF::nullopt, WTF::nullopt);
         AST::VariableDeclarations parameters;
         parameters.append(WTFMove(variableDeclaration));
@@ -127,8 +133,10 @@ void synthesizeConstructors(Program& program)
         program.append(WTFMove(copyConstructor));
 
         AST::NativeFunctionDeclaration defaultConstructor(AST::FunctionDeclaration(Lexer::Token(namedType.get().origin()), AST::AttributeBlock(), WTF::nullopt, AST::TypeReference::wrap(Lexer::Token(namedType.get().origin()), namedType.get()), "operator cast"_str, AST::VariableDeclarations(), WTF::nullopt, isOperator));
-        program.append(WTFMove(defaultConstructor));
+        if (!program.append(WTFMove(defaultConstructor)))
+            return false;
     }
+    return true;
 }
 
 } // namespace WHLSL

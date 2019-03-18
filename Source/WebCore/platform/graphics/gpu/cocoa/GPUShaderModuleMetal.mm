@@ -43,6 +43,9 @@ RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShad
         LOG(WebGPU, "GPUShaderModule::create(): Invalid GPUDevice!");
         return nullptr;
     }
+    
+    if (descriptor.isWHLSL)
+        return adoptRef(new GPUShaderModule(String(descriptor.code)));
 
     PlatformShaderModuleSmartPtr module;
 
@@ -60,6 +63,11 @@ RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShad
 
 GPUShaderModule::GPUShaderModule(PlatformShaderModuleSmartPtr&& module)
     : m_platformShaderModule(WTFMove(module))
+{
+}
+
+GPUShaderModule::GPUShaderModule(String&& whlslSource)
+    : m_whlslSource(WTFMove(whlslSource))
 {
 }
 

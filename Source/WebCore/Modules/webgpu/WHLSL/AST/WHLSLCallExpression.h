@@ -62,11 +62,11 @@ public:
 
     void setCastData(NamedType& namedType)
     {
-        m_castReturnType = { namedType };
+        m_castReturnType = &namedType;
     }
 
-    bool isCast() { return static_cast<bool>(m_castReturnType); }
-    Optional<std::reference_wrapper<NamedType>>& castReturnType() { return m_castReturnType; }
+    bool isCast() { return m_castReturnType; }
+    NamedType* castReturnType() { return m_castReturnType; }
     bool hasOverloads() const { return static_cast<bool>(m_overloads); }
     Optional<Vector<std::reference_wrapper<FunctionDeclaration>, 1>>& overloads() { return m_overloads; }
     void setOverloads(const Vector<std::reference_wrapper<FunctionDeclaration>, 1>& overloads)
@@ -88,7 +88,7 @@ private:
     Vector<UniqueRef<Expression>> m_arguments;
     Optional<Vector<std::reference_wrapper<FunctionDeclaration>, 1>> m_overloads;
     FunctionDeclaration* m_function { nullptr };
-    Optional<std::reference_wrapper<NamedType>> m_castReturnType { WTF::nullopt };
+    NamedType* m_castReturnType { nullptr };
 };
 
 } // namespace AST

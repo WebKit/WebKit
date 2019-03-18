@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLMappedBindings.h"
 #include "WHLSLPipelineDescriptor.h"
 #include "WHLSLSemanticMatcher.h"
 #include <wtf/Variant.h>
@@ -43,15 +42,15 @@ namespace Metal {
 
 struct RenderMetalCode {
     String metalSource;
-    MappedBindGroups vertexMappedBindGroups;
-    MappedBindGroups fragmentMappedBindGroups;
+    String mangledVertexEntryPointName;
+    String mangledFragmentEntryPointName;
 };
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.
 RenderMetalCode generateMetalCode(Program&, MatchedRenderSemantics&& matchedSemantics, Layout&);
 
 struct ComputeMetalCode {
     String metalSource;
-    MappedBindGroups bindGroups;
+    String mangledEntryPointName;
 };
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.
 ComputeMetalCode generateMetalCode(Program&, MatchedComputeSemantics&& matchedSemantics, Layout&);

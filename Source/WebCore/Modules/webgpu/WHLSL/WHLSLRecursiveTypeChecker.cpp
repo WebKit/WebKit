@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "WHLSLScopedSetAdder.h"
 #include "WHLSLStructureDefinition.h"
 #include "WHLSLTypeDefinition.h"
 #include "WHLSLTypeReference.h"
@@ -42,63 +43,61 @@ class RecursiveTypeChecker : public Visitor {
 public:
     ~RecursiveTypeChecker() = default;
 
-    void visit(AST::TypeDefinition& typeDefinition) override
-    {
-        auto addResult = m_types.add(&typeDefinition);
-        if (!addResult.isNewEntry) {
-            setError();
-            return;
-        }
-
-        Visitor::visit(typeDefinition);
-
-        auto success = m_types.remove(&typeDefinition);
-        ASSERT_UNUSED(success, success);
-    }
-
-    void visit(AST::StructureDefinition& structureDefinition) override
-    {
-        auto addResult = m_types.add(&structureDefinition);
-        if (!addResult.isNewEntry) {
-            setError();
-            return;
-        }
-
-        Visitor::visit(structureDefinition);
-
-        auto success = m_types.remove(&structureDefinition);
-        ASSERT_UNUSED(success, success);
-    }
-
-    void visit(AST::TypeReference& typeReference) override
-    {
-        auto addResult = m_types.add(&typeReference);
-        if (!addResult.isNewEntry) {
-            setError();
-            return;
-        }
-
-        for (auto& typeArgument : typeReference.typeArguments())
-            checkErrorAndVisit(typeArgument);
-        checkErrorAndVisit(*typeReference.resolvedType());
-
-        auto success = m_types.remove(&typeReference);
-        ASSERT_UNUSED(success, success);
-    }
-
-    void visit(AST::ReferenceType&) override
-    {
-    }
+    void visit(AST::TypeDefinition&) override;
+    void visit(AST::StructureDefinition&) override;
+    void visit(AST::TypeReference&) override;
+    void visit(AST::ReferenceType&) override;
 
 private:
+    using Adder = ScopedSetAdder<AST::Type*>;
     HashSet<AST::Type*> m_types;
 };
+
+void RecursiveTypeChecker::visit(AST::TypeDefinition& typeDefinition)
+{
+    Adder adder(m_types, &typeDefinition);
+    if (!adder.isNewEntry()) {
+        setError();
+        return;
+    }
+
+    Visitor::visit(typeDefinition);
+}
+
+void RecursiveTypeChecker::visit(AST::StructureDefinition& structureDefinition)
+{
+    Adder adder(m_types, &structureDefinition);
+    if (!adder.isNewEntry()) {
+        setError();
+        return;
+    }
+
+    Visitor::visit(structureDefinition);
+}
+
+void RecursiveTypeChecker::visit(AST::TypeReference& typeReference)
+{
+    Adder adder(m_types, &typeReference);
+    if (!adder.isNewEntry()) {
+        setError();
+        return;
+    }
+
+    for (auto& typeArgument : typeReference.typeArguments())
+        checkErrorAndVisit(typeArgument);
+    if (typeReference.resolvedType())
+        checkErrorAndVisit(*typeReference.resolvedType());
+}
+
+void RecursiveTypeChecker::visit(AST::ReferenceType&)
+{
+}
 
 bool checkRecursiveTypes(Program& program)
 {
     RecursiveTypeChecker recursiveTypeChecker;
     recursiveTypeChecker.checkErrorAndVisit(program);
-    return recursiveTypeChecker.error();
+    return !recursiveTypeChecker.error();
 }
 
 } // namespace WHLSL

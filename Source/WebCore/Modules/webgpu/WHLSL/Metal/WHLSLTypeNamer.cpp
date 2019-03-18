@@ -31,6 +31,7 @@
 #include "WHLSLAddressSpace.h"
 #include "WHLSLArrayReferenceType.h"
 #include "WHLSLArrayType.h"
+#include "WHLSLCallExpression.h"
 #include "WHLSLEnumerationDefinition.h"
 #include "WHLSLEnumerationMember.h"
 #include "WHLSLNativeTypeDeclaration.h"
@@ -174,27 +175,6 @@ TypeNamer::TypeNamer(Program& program)
 
 TypeNamer::~TypeNamer() = default;
 
-void TypeNamer::visit(AST::UnnamedType& unnamedType)
-{
-    insert(unnamedType, m_trie);
-}
-
-void TypeNamer::visit(AST::EnumerationDefinition& enumerationDefinition)
-{
-    auto addResult = m_namedTypeMapping.add(&enumerationDefinition, generateNextTypeName());
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    for (auto& enumerationMember : enumerationDefinition.enumerationMembers()) {
-        auto addResult = m_enumerationMemberMapping.add(&static_cast<AST::EnumerationMember&>(enumerationMember), generateNextEnumerationMemberName());
-        ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    }
-    Visitor::visit(enumerationDefinition);
-}
-
-void TypeNamer::visit(AST::NativeTypeDeclaration&)
-{
-    // Native type declarations already have names, and are already declared in Metal.
-}
-
 static Vector<UniqueRef<BaseTypeNameNode>>::iterator findInVector(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTypeNameNode>>& types)
 {
     return std::find_if(types.begin(), types.end(), [&](BaseTypeNameNode& baseTypeNameNode) -> bool {
@@ -230,6 +210,39 @@ static BaseTypeNameNode& find(AST::UnnamedType& unnamedType, Vector<UniqueRef<Ba
     return *iterator;
 }
 
+void TypeNamer::visit(AST::UnnamedType& unnamedType)
+{
+    insert(unnamedType, m_trie);
+}
+
+void TypeNamer::visit(AST::EnumerationDefinition& enumerationDefinition)
+{
+    {
+        auto addResult = m_namedTypeMapping.add(&enumerationDefinition, generateNextTypeName());
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+
+    for (auto& enumerationMember : enumerationDefinition.enumerationMembers()) {
+        auto addResult = m_enumerationMemberMapping.add(&static_cast<AST::EnumerationMember&>(enumerationMember), generateNextEnumerationMemberName());
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+
+    Visitor::visit(enumerationDefinition);
+
+    {
+        Vector<std::reference_wrapper<BaseTypeNameNode>> neighbors = { find(enumerationDefinition.type(), m_trie) };
+        auto addResult = m_dependencyGraph.add(&enumerationDefinition, WTFMove(neighbors));
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
+}
+
+void TypeNamer::visit(AST::NativeTypeDeclaration& nativeTypeDeclaration)
+{
+    // Native type declarations already have names, and are already declared in Metal.
+    auto addResult = m_dependencyGraph.add(&nativeTypeDeclaration, Vector<std::reference_wrapper<BaseTypeNameNode>>());
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
 void TypeNamer::visit(AST::StructureDefinition& structureDefinition)
 {
     {
@@ -261,6 +274,19 @@ void TypeNamer::visit(AST::TypeDefinition& typeDefinition)
         auto addResult = m_dependencyGraph.add(&typeDefinition, WTFMove(neighbors));
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
+}
+
+void TypeNamer::visit(AST::Expression& expression)
+{
+    ASSERT(expression.resolvedType());
+    insert(*expression.resolvedType(), m_trie);
+    Visitor::visit(expression);
+}
+
+void TypeNamer::visit(AST::CallExpression& callExpression)
+{
+    for (auto& argument : callExpression.arguments())
+        checkErrorAndVisit(argument);
 }
 
 String TypeNamer::mangledNameForType(AST::NativeTypeDeclaration& nativeTypeDeclaration)
@@ -328,34 +354,20 @@ size_t TypeNamer::insert(AST::UnnamedType& unnamedType, Vector<UniqueRef<BaseTyp
 
 class MetalTypeDeclarationWriter : public Visitor {
 public:
-    MetalTypeDeclarationWriter(std::function<String(AST::NamedType&)>&& mangledNameForNamedType, std::function<String(AST::UnnamedType&)>&& mangledNameForUnnamedType, std::function<String(AST::EnumerationMember&)>&& mangledNameForEnumerationMember)
+    MetalTypeDeclarationWriter(std::function<String(AST::NamedType&)>&& mangledNameForNamedType)
         : m_mangledNameForNamedType(WTFMove(mangledNameForNamedType))
-        , m_mangledNameForUnnamedType(WTFMove(mangledNameForUnnamedType))
-        , m_mangledNameForEnumerationMember(WTFMove(mangledNameForEnumerationMember))
     {
     }
 
     String toString() { return m_stringBuilder.toString(); }
 
 private:
-    void visit(AST::EnumerationDefinition& enumerationDefinition)
-    {
-        auto& baseType = enumerationDefinition.type().unifyNode();
-        ASSERT(is<AST::NamedType>(baseType));
-        m_stringBuilder.append(makeString("enum class ", m_mangledNameForNamedType(enumerationDefinition), " : ", m_mangledNameForNamedType(downcast<AST::NamedType>(baseType)), " {\n"));
-        for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
-            m_stringBuilder.append(makeString("    ", m_mangledNameForEnumerationMember(enumerationMember), ",\n"));
-        m_stringBuilder.append("};\n");
-    }
-
     void visit(AST::StructureDefinition& structureDefinition)
     {
         m_stringBuilder.append(makeString("struct ", m_mangledNameForNamedType(structureDefinition), ";\n"));
     }
 
     std::function<String(AST::NamedType&)> m_mangledNameForNamedType;
-    std::function<String(AST::UnnamedType&)> m_mangledNameForUnnamedType;
-    std::function<String(AST::EnumerationMember&)>&& m_mangledNameForEnumerationMember;
     StringBuilder m_stringBuilder;
 };
 
@@ -363,10 +375,6 @@ String TypeNamer::metalTypeDeclarations()
 {
     MetalTypeDeclarationWriter metalTypeDeclarationWriter([&](AST::NamedType& namedType) -> String {
         return mangledNameForType(namedType);
-    }, [&](AST::UnnamedType& unnamedType) -> String {
-        return mangledNameForType(unnamedType);
-    }, [&](AST::EnumerationMember& enumerationMember) -> String {
-        return mangledNameForEnumerationMember(enumerationMember);
     });
     metalTypeDeclarationWriter.Visitor::visit(m_program);
     return metalTypeDeclarationWriter.toString();
@@ -406,7 +414,7 @@ void TypeNamer::emitUnnamedTypeDefinition(BaseTypeNameNode& baseTypeNameNode, Ha
         ASSERT(baseTypeNameNode.parent());
         stringBuilder.append(makeString("struct ", arrayReferenceType.mangledName(), "{ \n"));
         stringBuilder.append(makeString("    ", toString(arrayReferenceType.addressSpace()), " ", arrayReferenceType.parent()->mangledName(), "* pointer;\n"));
-        stringBuilder.append("    unsigned length;\n");
+        stringBuilder.append("    uint length;\n");
         stringBuilder.append("};\n");
     } else {
         ASSERT(is<ArrayTypeNameNode>(baseTypeNameNode));
@@ -426,7 +434,13 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
     for (auto& baseTypeNameNode : iterator->value)
         emitUnnamedTypeDefinition(baseTypeNameNode, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
     if (is<AST::EnumerationDefinition>(namedType)) {
-        // We already emitted this in the type declaration section. There's nothing to do.
+        auto& enumerationDefinition = downcast<AST::EnumerationDefinition>(namedType);
+        auto& baseType = enumerationDefinition.type().unifyNode();
+        ASSERT(is<AST::NamedType>(baseType));
+        stringBuilder.append(makeString("enum class ", mangledNameForType(enumerationDefinition), " : ", mangledNameForType(downcast<AST::NamedType>(baseType)), " {\n"));
+        for (auto& enumerationMember : enumerationDefinition.enumerationMembers())
+            stringBuilder.append(makeString("    ", mangledNameForEnumerationMember(enumerationMember), ",\n"));
+        stringBuilder.append("};\n");
     } else if (is<AST::NativeTypeDeclaration>(namedType)) {
         // Native types already have definitions. There's nothing to do.
     } else if (is<AST::StructureDefinition>(namedType)) {
@@ -443,6 +457,14 @@ void TypeNamer::emitNamedTypeDefinition(AST::NamedType& namedType, HashSet<AST::
     emittedNamedTypes.add(&namedType);
 }
 
+void TypeNamer::emitAllUnnamedTypeDefinitions(Vector<UniqueRef<BaseTypeNameNode>>& nodes, HashSet<AST::NamedType*>& emittedNamedTypes, HashSet<BaseTypeNameNode*>& emittedUnnamedTypes, StringBuilder& stringBuilder)
+{
+    for (auto& node : nodes) {
+        emitUnnamedTypeDefinition(node, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+        emitAllUnnamedTypeDefinitions(node->children(), emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+    }
+}
+
 String TypeNamer::metalTypeDefinitions()
 {
     HashSet<AST::NamedType*> emittedNamedTypes;
@@ -450,8 +472,7 @@ String TypeNamer::metalTypeDefinitions()
     StringBuilder stringBuilder;
     for (auto& keyValuePair : m_dependencyGraph)
         emitNamedTypeDefinition(*keyValuePair.key, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
-    for (auto& baseTypeNameNode : m_trie)
-        emitUnnamedTypeDefinition(baseTypeNameNode, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
+    emitAllUnnamedTypeDefinitions(m_trie, emittedNamedTypes, emittedUnnamedTypes, stringBuilder);
     return stringBuilder.toString();
 }
 

@@ -221,20 +221,20 @@ bool inferTypesForTypeArguments(AST::NamedType& possibleType, AST::TypeArguments
     return true;
 }
 
-bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, Optional<std::reference_wrapper<AST::NamedType>>& castReturnType)
+bool inferTypesForCall(AST::FunctionDeclaration& possibleFunction, Vector<std::reference_wrapper<ResolvingType>>& argumentTypes, const AST::NamedType* castReturnType)
 {
     if (possibleFunction.parameters().size() != argumentTypes.size())
         return false;
     for (size_t i = 0; i < possibleFunction.parameters().size(); ++i) {
-        auto success = WTF::visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
+        auto success = argumentTypes[i].get().visit(WTF::makeVisitor([&](UniqueRef<AST::UnnamedType>& unnamedType) -> bool {
             return matches(*possibleFunction.parameters()[i].type(), unnamedType);
-        }, [&](Ref<ResolvableTypeReference>& resolvableTypeReference) -> bool {
-            return resolvableTypeReference->resolvableType().canResolve(*possibleFunction.parameters()[i].type());
-        }), argumentTypes[i].get());
+        }, [&](RefPtr<ResolvableTypeReference>& resolvableTypeReference) -> bool {
+            return resolvableTypeReference->resolvableType().canResolve(possibleFunction.parameters()[i].type()->unifyNode());
+        }));
         if (!success)
             return false;
     }
-    if (castReturnType && !matches(castReturnType->get(), possibleFunction.type()))
+    if (castReturnType && !matches(possibleFunction.type(), *castReturnType))
         return false;
     return true;
 }
