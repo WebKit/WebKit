@@ -73,9 +73,9 @@ void WebConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Insp
             case WTFLogLevelAlways:
             case WTFLogLevelError:
             case WTFLogLevelWarning:
+            case WTFLogLevelInfo:
                 level = Inspector::Protocol::Console::ChannelLevel::Basic;
                 break;
-            case WTFLogLevelInfo:
             case WTFLogLevelDebug:
                 level = Inspector::Protocol::Console::ChannelLevel::Verbose;
                 break;

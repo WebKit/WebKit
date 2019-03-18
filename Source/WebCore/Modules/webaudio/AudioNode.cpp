@@ -163,14 +163,14 @@ void AudioNode::lazyInitialize()
 void AudioNode::addInput(std::unique_ptr<AudioNodeInput> input)
 {
     ASSERT(isMainThread());
-    DEBUG_LOG(LOGIDENTIFIER, input->node()->nodeType());
+    INFO_LOG(LOGIDENTIFIER, input->node()->nodeType());
     m_inputs.append(WTFMove(input));
 }
 
 void AudioNode::addOutput(std::unique_ptr<AudioNodeOutput> output)
 {
     ASSERT(isMainThread());
-    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
     m_outputs.append(WTFMove(output));
 }
 
@@ -221,7 +221,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
 
     ASSERT(isMainThread());
 
-    DEBUG_LOG(LOGIDENTIFIER, param.name(), ", output = ", outputIndex);
+    INFO_LOG(LOGIDENTIFIER, param.name(), ", output = ", outputIndex);
 
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError };
@@ -245,7 +245,7 @@ ExceptionOr<void> AudioNode::disconnect(unsigned outputIndex)
         return Exception { IndexSizeError };
 
     auto* output = this->output(outputIndex);
-    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
 
     output->disconnectAll();
 

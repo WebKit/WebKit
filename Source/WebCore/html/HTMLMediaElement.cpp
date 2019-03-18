@@ -1159,7 +1159,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
             break;
     }
 
-    DEBUG_LOG(LOGIDENTIFIER, "[", mimeType, "] -> ", canPlay);
+    INFO_LOG(LOGIDENTIFIER, mimeType, ": ", canPlay);
 
     return canPlay;
 }
@@ -3078,7 +3078,7 @@ void HTMLMediaElement::seekTask()
     if (willLog(WTFLogLevelDebug)) {
         MediaTime mediaTime = m_player->mediaTimeForTimeValue(time);
         if (time != mediaTime)
-            DEBUG_LOG(LOGIDENTIFIER, time, " media timeline equivalent is ", mediaTime);
+            INFO_LOG(LOGIDENTIFIER, time, " media timeline equivalent is ", mediaTime);
     }
 
     time = m_player->mediaTimeForTimeValue(time);
@@ -5914,7 +5914,7 @@ void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarg
 
 void HTMLMediaElement::dispatchEvent(Event& event)
 {
-    DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
+    DEBUG_LOG(LOGIDENTIFIER, event.type());
 
     HTMLElement::dispatchEvent(event);
 }
@@ -7270,7 +7270,7 @@ DOMWrapperWorld& HTMLMediaElement::ensureIsolatedWorld()
 
 bool HTMLMediaElement::ensureMediaControlsInjectedScript()
 {
-    DEBUG_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER);
 
     Page* page = document().page();
     if (!page)
@@ -7344,7 +7344,7 @@ void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JS
 
 void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    DEBUG_LOG(LOGIDENTIFIER);
+    INFO_LOG(LOGIDENTIFIER);
 
     if (!ensureMediaControlsInjectedScript())
         return;
@@ -7422,10 +7422,10 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 void HTMLMediaElement::setMediaControlsDependOnPageScaleFactor(bool dependsOnPageScale)
 {
-    DEBUG_LOG(LOGIDENTIFIER, "MediaElement::setMediaControlsDependPageScaleFactor", dependsOnPageScale);
+    INFO_LOG(LOGIDENTIFIER, dependsOnPageScale);
 
     if (document().settings().mediaControlsScaleWithPageZoom()) {
-        DEBUG_LOG(LOGIDENTIFIER, "MediaElement::setMediaControlsDependPageScaleFactor", "forced to false by Settings value");
+        INFO_LOG(LOGIDENTIFIER, "forced to false by Settings value");
         m_mediaControlsDependOnPageScaleFactor = false;
         return;
     }

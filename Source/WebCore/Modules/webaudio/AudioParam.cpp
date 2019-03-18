@@ -194,7 +194,7 @@ void AudioParam::connect(AudioNodeOutput* output)
     if (!m_outputs.add(output).isNewEntry)
         return;
 
-    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
 
     output->addParam(this);
     changedOutputs();
@@ -208,7 +208,7 @@ void AudioParam::disconnect(AudioNodeOutput* output)
     if (!output)
         return;
 
-    DEBUG_LOG(LOGIDENTIFIER, output->node()->nodeType());
+    INFO_LOG(LOGIDENTIFIER, output->node()->nodeType());
 
     if (m_outputs.remove(output)) {
         changedOutputs();

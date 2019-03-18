@@ -580,7 +580,7 @@ void RTCPeerConnection::fireEvent(Event& event)
 
 void RTCPeerConnection::dispatchEvent(Event& event)
 {
-    DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
+    INFO_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
     EventTarget::dispatchEvent(event);
 }
 

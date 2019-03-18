@@ -98,7 +98,7 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader& loader)
 
     for (auto& newCue : newCues) {
         newCue->setTrack(this);
-        DEBUG_LOG(LOGIDENTIFIER, *toVTTCue(newCue.get()));
+        INFO_LOG(LOGIDENTIFIER, *toVTTCue(newCue.get()));
         m_cues->add(newCue.releaseNonNull());
     }
 

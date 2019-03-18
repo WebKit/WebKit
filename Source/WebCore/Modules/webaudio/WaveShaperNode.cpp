@@ -71,7 +71,7 @@ static inline WaveShaperProcessor::OverSampleType processorType(WaveShaperNode::
 void WaveShaperNode::setOversample(OverSampleType type)
 {
     ASSERT(isMainThread());
-    DEBUG_LOG(LOGIDENTIFIER, type);
+    INFO_LOG(LOGIDENTIFIER, type);
 
     // Synchronize with any graph changes or changes to channel configuration.
     AudioContext::AutoLocker contextLocker(context());

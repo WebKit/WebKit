@@ -72,11 +72,11 @@ void InbandWebVTTTextTrack::newCuesParsed()
     for (auto& cueData : cues) {
         auto vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
         if (hasCue(vttCue.ptr(), TextTrackCue::IgnoreDuration)) {
-            DEBUG_LOG(LOGIDENTIFIER, "ignoring already added cue: ", vttCue.get());
+            INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", vttCue.get());
             return;
         }
 
-        DEBUG_LOG(LOGIDENTIFIER, vttCue.get());
+        INFO_LOG(LOGIDENTIFIER, vttCue.get());
 
         addCue(WTFMove(vttCue));
     }

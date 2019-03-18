@@ -337,7 +337,7 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
     if (!m_cues)
         return Exception { InvalidStateError };
 
-    DEBUG_LOG(LOGIDENTIFIER, cue);
+    INFO_LOG(LOGIDENTIFIER, cue);
 
     // 2. Remove cue from the method's TextTrack object's text track's text track list of cues.
     m_cues->remove(cue);

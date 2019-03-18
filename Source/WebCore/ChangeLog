@@ -1,3 +1,55 @@
+2019-03-18  Eric Carlson  <eric.carlson@apple.com>
+
+        Change some logging levels
+        https://bugs.webkit.org/show_bug.cgi?id=195861
+        <rdar://problem/48961669>
+
+        Reviewed by Jer Noble.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::dispatchEvent):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::addInput):
+        (WebCore::AudioNode::addOutput):
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::disconnect):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::connect):
+        (WebCore::AudioParam::disconnect):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::setOversample):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType const):
+        (WebCore::HTMLMediaElement::seekTask):
+        (WebCore::HTMLMediaElement::dispatchEvent):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::setMediaControlsDependOnPageScaleFactor):
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue):
+        (WebCore::InbandGenericTextTrack::removeGenericCue):
+        (WebCore::InbandGenericTextTrack::newCuesParsed):
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::removeCue):
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::getLoggingChannels):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings):
+        (WebCore::InbandTextTrackPrivateAVF::removeCompletedCues):
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless const):
+
 2019-03-15  Antoine Quint  <graouts@apple.com>
 
         Make mouse event simulation a quirk
