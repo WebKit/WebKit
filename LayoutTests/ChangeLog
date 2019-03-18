@@ -1,3 +1,13 @@
+2019-03-18  Daniel Bates  <dabates@apple.com>
+
+        Fix bad substitution made in r241282
+
+        Revert substitution of "computeSubsets(modifierKeys)" back to "modiferKeySubsetsToTest" so
+        that the test only checks key commands with Command and Option modifiers as opposed to all
+        modifiers. That will make what the test actually tests match the checked-in expected resutls.
+
+        * fast/events/ios/key-events-meta-alt-combinations.html:
+
 2019-03-18  Truitt Savell  <tsavell@apple.com>
 
         REGRESSION: (r243032) inspector/model/remote-object.html is failing.

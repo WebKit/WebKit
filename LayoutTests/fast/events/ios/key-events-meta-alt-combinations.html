@@ -7,7 +7,7 @@
 <script>
 const modiferKeySubsetsToTest = computeSubsets(["metaKey", "altKey"]);
 for (const k of keysExcludingDeadAndSkippedKeys) {
-    for (const modifiers of computeSubsets(modifierKeys))
+    for (const modifiers of modiferKeySubsetsToTest)
         tests.push(new KeyCommand(k, modifiers));
 }
 </script>
