@@ -954,7 +954,6 @@ http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
 
 http/tests/ssl/iframe-upgrade.https.html [ Skip ]
 http/tests/ssl/mixedContent/insecure-websocket.html [ Failure ]
-webkit.org/b/195741 http/tests/ssl/ping-with-unsafe-redirect.html [ Skip ]
 http/tests/ssl/upgrade-origin-usage.html [ Failure ]
 
 http/tests/ssl/media-stream [ Skip ]

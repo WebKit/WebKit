@@ -1,3 +1,12 @@
+2019-03-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK1] Null dereference in WebFrameNetworkingContext::storageSession
+        https://bugs.webkit.org/show_bug.cgi?id=195741
+
+        Reviewed by Ross Kirsling.
+
+        * platform/wincairo/TestExpectations: Unskipped http/tests/ssl/ping-with-unsafe-redirect.html.
+
 2019-03-16  Jer Noble  <jer.noble@apple.com>
 
         Add a new MediaCapabilitiesExtensionsEnabled setting
