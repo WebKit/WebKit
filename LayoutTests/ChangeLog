@@ -1,3 +1,13 @@
+2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Update test expectation
+
+        Unreviewed gardening.
+
+        Since iframe.referrerPolicy was implemented the WPE expectation
+        for the test below has been out of date.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt: Update.
+
 2019-03-18  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix test expectation linter warnings
