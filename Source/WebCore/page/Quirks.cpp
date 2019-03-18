@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -192,6 +192,16 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     }
 #endif
 
+    return false;
+}
+
+bool Quirks::shouldDispatchSimulateMouseEvents() const
+{
+    return false;
+}
+
+bool Quirks::shouldMousemoveEventHandlingPreventDefault() const
+{
     return false;
 }
 
