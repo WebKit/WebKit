@@ -1,5 +1,20 @@
 2019-03-18  Daniel Bates  <dabates@apple.com>
 
+        [iOS] No DOM keypress event emitted for cursor key commands when non-editable element is focused
+        https://bugs.webkit.org/show_bug.cgi?id=195626
+        <rdar://problem/48810626>
+
+        Reviewed by Wenson Hsieh.
+
+        Add some tests. These tests depend on UIKit work.
+
+        * fast/events/ios/key-events-control-expected.txt: Added.
+        * fast/events/ios/key-events-control.html: Copied from LayoutTests/fast/events/ios/key-events-meta-alt-combinations.html.
+        * fast/events/ios/key-events-meta-expected.txt: Added.
+        * fast/events/ios/key-events-meta.html: Copied from LayoutTests/fast/events/ios/key-events-meta-alt-combinations.html.
+
+2019-03-18  Daniel Bates  <dabates@apple.com>
+
         Fix bad substitution made in r241282
 
         Revert substitution of "computeSubsets(modifierKeys)" back to "modiferKeySubsetsToTest" so

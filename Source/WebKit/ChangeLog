@@ -1,3 +1,24 @@
+2019-03-18  Daniel Bates  <dabates@apple.com>
+
+        [iOS] No DOM keypress event emitted for cursor key commands when non-editable element is focused
+        https://bugs.webkit.org/show_bug.cgi?id=195626
+        <rdar://problem/48810626>
+
+        Reviewed by Wenson Hsieh.
+
+        Following the UIKit fix <rdar://problem/47333786> WebKit will be asked whether it can perform some
+        more actions, including cursor movements and more editing actions. All such actions are only applicable
+        to editable elements. By responding NO to UIKit for such actions when we are not in an editable element
+        we avoid the need to do such bookkeeping ourselves as UIKit will forward our response back to us
+        on return from -handleKeyTextCommandForCurrentEvent, called from -[WKContentView _interpretKeyEvent].
+        WebKit is then in a position to try to handle the event or in the case of all standard text editing
+        key commands at the time of writing (e.g. Control + a) tell WebCore that it did not handle the event
+        so that WebCore can continue the DOM key event dispatch algorithm. For standard text editing key
+        commands, such as Control + a, we will emit a DOM keypress event for the 'a'.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformAction:withSender:]):
+
 2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE] Bump public API to wpe-1.0
