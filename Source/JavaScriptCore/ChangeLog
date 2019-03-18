@@ -1,3 +1,38 @@
+2019-03-18  Robin Morisset  <rmorisset@apple.com>
+
+        Remove the inline capacity of Operands
+        https://bugs.webkit.org/show_bug.cgi?id=195898
+
+        Reviewed by Yusuke Suzuki.
+
+        Operands currently has a vector with an inline capacity of 24.
+        I tested on JetStream2, and only 4776 functions out of 12035 (that reach the DFG tier) have 24 or fewer elements in it.
+        This is a major problem, because we have 5 Operands in every DFG::BasicBlock, resulting in 2688 bytes of inline capacity per basic block.
+        Still on JetStream 2, functions have an average of 18 BB, but those functions whose operands overflow have an average of 27 BB (so we are wasting 72kB on average when compiling them), and the largest function has 1241 BB (!), for a total of 3.3MB being wasted while it is compiled.
+        
+        So I removed the inline capacity of the vector in Operands, and here are the results:
+        Baseline Jetstream2:
+        159.741
+        159.746
+        159.989
+        Baseline RAMification on grouped and jit tests: (end/peak/score)
+        89.288/89.763/89.526
+        90.166/90.761/90.418
+        89.560/90.014/89.787
+        After optimization Jetstream2:
+        159.342
+        161.812
+        162.037
+        After optimization RAMification:
+        89.147/89.644/89.395
+        89.102.89.585/89.343
+        88.953/89.536/89.2444
+        
+        So it looks like a roughly 1% improvement on RAMification (at least the tests where the JIT is enabled), and more surprisingly also a 1% progression on Jetstream2 (although I have more doubts about this one considering the variability in my numbers).
+        I hope to land this, and get more accurate results from the bots.
+
+        * bytecode/Operands.h:
+
 2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add --destroy-vm shell option and dumpHeapStatisticsAtVMDestruction option
