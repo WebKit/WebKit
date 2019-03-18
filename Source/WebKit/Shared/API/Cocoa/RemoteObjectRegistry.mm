@@ -49,6 +49,7 @@ RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObject
     : m_remoteObjectRegistry(remoteObjectRegistry)
     , m_messageSender(page)
     , m_takeBackgroundActivityToken([&page] { return page.process().throttler().backgroundActivityToken(); })
+    , m_launchInitialProcessIfNecessary([&page] { page.launchInitialProcessIfNecessary(); })
 {
 }
 
@@ -59,6 +60,10 @@ RemoteObjectRegistry::~RemoteObjectRegistry()
 
 void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)
 {
+    // For backward-compatibility, support invoking injected bundle methods before having done any load in the WebView.
+    if (m_launchInitialProcessIfNecessary)
+        m_launchInitialProcessIfNecessary();
+
     if (auto* replyInfo = invocation.replyInfo()) {
         ASSERT(!m_pendingReplies.contains(replyInfo->replyID));
         m_pendingReplies.add(replyInfo->replyID, m_takeBackgroundActivityToken());

@@ -60,7 +60,7 @@ void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -78,7 +78,7 @@ void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::viewLayoutSizeDidChange()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     // We only want one UpdateGeometry message in flight at once, so if we've already sent one but
@@ -140,7 +140,7 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return MachSendRight();
 
     RetainPtr<CAContext> rootLayerContext = [m_webPageProxy.acceleratedCompositingRootLayer() context];
@@ -168,7 +168,7 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     });
     RefPtr<WebPageProxy> retainedPage = &m_webPageProxy;
     [CATransaction addCommitHandler:[callbackID, retainedPage] {
-        if (!retainedPage->isValid())
+        if (!retainedPage->hasRunningProcess())
             return;
         if (Connection* connection = retainedPage->process().connection())
             connection->uninstallIncomingSyncMessageCallback(callbackID);
@@ -197,7 +197,7 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
 
 void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callback)
 {
-    if (!m_webPageProxy.isValid()) {
+    if (!m_webPageProxy.hasRunningProcess()) {
         callback(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }

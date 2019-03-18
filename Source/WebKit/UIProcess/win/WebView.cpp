@@ -737,7 +737,7 @@ void WebView::close()
 
 HCURSOR WebView::cursorToShow() const
 {
-    if (!m_page->isValid())
+    if (!m_page->hasRunningProcess())
         return 0;
 
     // We only show the override cursor if the default (arrow) cursor is showing.

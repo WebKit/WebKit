@@ -48,19 +48,19 @@ InspectorTargetProxy::InspectorTargetProxy(WebPageProxy& page, const String& tar
 
 void InspectorTargetProxy::connect(Inspector::FrontendChannel& channel)
 {
-    if (m_page.isValid())
+    if (m_page.hasRunningProcess())
         m_page.process().send(Messages::WebPage::ConnectInspector(identifier(), channel.connectionType()), m_page.pageID());
 }
 
 void InspectorTargetProxy::disconnect(Inspector::FrontendChannel&)
 {
-    if (m_page.isValid())
+    if (m_page.hasRunningProcess())
         m_page.process().send(Messages::WebPage::DisconnectInspector(identifier()), m_page.pageID());
 }
 
 void InspectorTargetProxy::sendMessageToTargetBackend(const String& message)
 {
-    if (m_page.isValid())
+    if (m_page.hasRunningProcess())
         m_page.process().send(Messages::WebPage::SendMessageToTargetBackend(identifier(), message), m_page.pageID());
 }
 

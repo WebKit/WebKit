@@ -83,7 +83,8 @@ ViewGestureController::ViewGestureController(WebPageProxy& webPageProxy)
     , m_swipeProgressTracker(webPageProxy, *this)
 #endif
 {
-    connectToProcess();
+    if (webPageProxy.hasRunningProcess())
+        connectToProcess();
 
     viewGestureControllersForAllPages().add(webPageProxy.pageID(), this);
 }

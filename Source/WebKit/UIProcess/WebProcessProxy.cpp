@@ -122,10 +122,11 @@ static WebProcessProxy::WebPageProxyMap& globalPageMap()
     return pageMap;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsPrewarmed isPrewarmed)
+Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore& websiteDataStore, IsPrewarmed isPrewarmed, ShouldLaunchProcess shouldLaunchProcess)
 {
     auto proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed));
-    proxy->connect();
+    if (shouldLaunchProcess == ShouldLaunchProcess::Yes)
+        proxy->connect();
     return proxy;
 }
 
@@ -359,7 +360,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     ASSERT(!m_pageMap.contains(webPage.pageID()));
     ASSERT(!globalPageMap().contains(webPage.pageID()));
     ASSERT(!m_isInProcessCache);
-    ASSERT(m_websiteDataStore.ptr() == &webPage.websiteDataStore());
+    ASSERT(m_websiteDataStore.ptr() == &webPage.websiteDataStore() || processPool().dummyProcessProxy() == this);
 
     if (beginsUsingDataStore == BeginsUsingDataStore::Yes)
         m_processPool->pageBeginUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
@@ -847,6 +848,12 @@ bool WebProcessProxy::canBeAddedToWebProcessCache() const
 
 void WebProcessProxy::maybeShutDown(AllowProcessCaching allowProcessCaching)
 {
+    if (processPool().dummyProcessProxy() == this && m_pageMap.isEmpty()) {
+        ASSERT(state() == State::Terminated);
+        m_processPool->disconnectProcess(this);
+        return;
+    }
+
     if (state() == State::Terminated || !canTerminateAuxiliaryProcess())
         return;
 

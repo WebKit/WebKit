@@ -1071,7 +1071,8 @@ public:
 
     WebPageGroup& pageGroup() { return m_pageGroup; }
 
-    bool isValid() const;
+    bool hasRunningProcess() const;
+    void launchInitialProcessIfNecessary();
 
 #if ENABLE(DRAG_SUPPORT)
     WebCore::DragOperation currentDragOperation() const { return m_currentDragOperation; }
@@ -1674,7 +1675,7 @@ private:
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
     void setCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents) { m_canShortCircuitHorizontalWheelEvents = canShortCircuitHorizontalWheelEvents; }
 
-    void reattachToWebProcess(const WebCore::RegistrableDomain&);
+    void launchProcess(const WebCore::RegistrableDomain&);
     void swapToWebProcess(Ref<WebProcessProxy>&&, std::unique_ptr<DrawingAreaProxy>&&, RefPtr<WebFrameProxy>&& mainFrame);
     void didFailToSuspendAfterProcessSwap();
     void didSuspendAfterProcessSwap();
@@ -1682,8 +1683,8 @@ private:
     enum class IsProcessSwap { No, Yes };
     void finishAttachingToWebProcess(IsProcessSwap);
 
-    RefPtr<API::Navigation> reattachToWebProcessForReload();
-    RefPtr<API::Navigation> reattachToWebProcessWithItem(WebBackForwardListItem&);
+    RefPtr<API::Navigation> launchProcessForReload();
+    RefPtr<API::Navigation> launchProcessWithItem(WebBackForwardListItem&);
 
     void requestNotificationPermission(uint64_t notificationID, const String& originString);
     void showNotification(const String& title, const String& body, const String& iconURL, const String& tag, const String& lang, WebCore::NotificationDirection, const String& originString, uint64_t notificationID);
@@ -2009,6 +2010,8 @@ private:
     void setNeedsFontAttributes(bool);
     void updateFontAttributesAfterEditorStateChange();
 
+    void didAttachToRunningProcess();
+
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL);
 #endif
@@ -2214,7 +2217,7 @@ private:
     bool m_paginationLineGridEnabled { false };
         
     // If the process backing the web page is alive and kicking.
-    bool m_isValid { true };
+    bool m_hasRunningProcess { false };
 
     // Whether WebPageProxy::close() has been called on this page.
     bool m_isClosed { false };

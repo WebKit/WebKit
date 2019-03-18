@@ -54,7 +54,7 @@ Ref<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy:
 
 void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
 {
-    if (!m_page.isValid())
+    if (!m_page.hasRunningProcess())
         return;
 
     auto it = m_pendingRequests.find(geolocationID);

@@ -303,7 +303,7 @@ void DrawingAreaProxyCoordinatedGraphics::sendUpdateBackingStoreState(RespondImm
 {
     ASSERT(m_currentBackingStoreStateID < m_nextBackingStoreStateID);
 
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     if (m_isWaitingForDidUpdateBackingStoreState)
@@ -334,7 +334,7 @@ void DrawingAreaProxyCoordinatedGraphics::waitForAndDispatchDidUpdateBackingStor
 {
     ASSERT(m_isWaitingForDidUpdateBackingStoreState);
 
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
     if (process().state() == WebProcessProxy::State::Launching)
         return;
@@ -465,7 +465,7 @@ void DrawingAreaProxyCoordinatedGraphics::DrawingMonitor::didDraw()
 
 void DrawingAreaProxyCoordinatedGraphics::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!m_webPageProxy.isValid()) {
+    if (!m_webPageProxy.hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }

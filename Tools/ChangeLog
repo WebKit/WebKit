@@ -1,3 +1,27 @@
+2019-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Delay WebProcess launch until a load is triggered in a Web view
+        https://bugs.webkit.org/show_bug.cgi?id=195758
+        <rdar://problem/48126013>
+
+        Reviewed by Geoff Garen.
+
+        Add API test coverage. Also update some existing API tests to not expect
+        constructing a WKWebView to launch both a WebProcess and a NetworkProcess.
+
+        * TestWebKitAPI/Tests/WebKit/NetworkProcessCrashWithPendingConnection.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/GetBackingScaleFactor.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (testDidResignInputElementStrongPasswordAppearanceAfterEvaluatingJavaScript):
+
 2019-03-18  Xan Lopez  <xan@igalia.com>
 
         [CMake] Prevent potential warning when determining $architecture

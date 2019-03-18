@@ -399,7 +399,7 @@ void WebInspectorProxy::platformAttach()
 
 void WebInspectorProxy::platformDetach()
 {
-    if (!inspectedPage()->isValid())
+    if (!inspectedPage()->hasRunningProcess())
         return;
 
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;

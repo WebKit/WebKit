@@ -87,7 +87,7 @@ bool DrawingAreaProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, Option
 #if PLATFORM(MAC)
 void DrawingAreaProxy::setViewExposedRect(Optional<WebCore::FloatRect> viewExposedRect)
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     m_viewExposedRect = viewExposedRect;
@@ -98,7 +98,7 @@ void DrawingAreaProxy::setViewExposedRect(Optional<WebCore::FloatRect> viewExpos
 
 void DrawingAreaProxy::viewExposedRectChangedTimerFired()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     if (m_viewExposedRect == m_lastSentViewExposedRect)

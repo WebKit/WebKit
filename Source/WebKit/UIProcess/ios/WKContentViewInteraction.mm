@@ -671,6 +671,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
 - (void)setupInteraction
 {
+    // If the page is not valid yet then delay interaction setup until the process is launched/relaunched.
+    if (!_page->hasRunningProcess())
+        return;
+
     if (_hasSetUpInteractions)
         return;
 
@@ -1217,7 +1221,7 @@ inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecogni
 
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
-    if (!_page->isValid())
+    if (!_page->hasRunningProcess())
         return;
 
     const _UIWebTouchEvent* lastTouchEvent = gestureRecognizer.lastTouchEvent;
@@ -6793,7 +6797,7 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 
 - (void)_hoverGestureRecognizerChanged:(UIGestureRecognizer *)gestureRecognizer
 {
-    if (!_page->isValid())
+    if (!_page->hasRunningProcess())
         return;
 
     // Make a timestamp that matches UITouch and UIEvent.

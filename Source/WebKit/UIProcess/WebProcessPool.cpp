@@ -63,6 +63,7 @@
 #include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebGeolocationManagerProxy.h"
+#include "WebInspectorUtilities.h"
 #include "WebKit2Initialize.h"
 #include "WebMemorySampler.h"
 #include "WebNotificationManagerProxy.h"
@@ -738,9 +739,10 @@ void WebProcessPool::windowServerConnectionStateChanged()
 void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     if (privateBrowsingEnabled) {
-        sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()));
+        ensureNetworkProcess().send(Messages::NetworkProcess::AddWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters()), 0);
     } else {
-        networkProcess()->removeSession(PAL::SessionID::legacyPrivateSessionID());
+        if (auto* networkProcess = this->networkProcess())
+            networkProcess->removeSession(PAL::SessionID::legacyPrivateSessionID());
     }
 }
 
@@ -898,7 +900,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     }
 
     parameters.cacheModel = cacheModel();
-    parameters.languages = userPreferredLanguages();
+    parameters.languages = configuration().overrideLanguages().isEmpty() ? userPreferredLanguages() : configuration().overrideLanguages();
 
     parameters.urlSchemesRegisteredAsEmptyDocument = copyToVector(m_schemesToRegisterAsEmptyDocument);
     parameters.urlSchemesRegisteredAsSecure = copyToVector(m_schemesToRegisterAsSecure);
@@ -1104,6 +1106,9 @@ void WebProcessPool::disconnectProcess(WebProcessProxy* process)
         m_prewarmedProcess = nullptr;
     }
 
+    if (m_dummyProcessProxy == process)
+        m_dummyProcessProxy = nullptr;
+
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     RefPtr<WebProcessProxy> protect(process);
@@ -1210,8 +1215,17 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
-    } else {
+    } else if (WebKit::isInspectorProcessPool(*this)) {
+        // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
+    } else {
+        // In the common case, we delay process launch until something is actually loaded in the page.
+        if (!m_dummyProcessProxy) {
+            auto dummyProcessProxy = WebProcessProxy::create(*this, WebsiteDataStore::createNonPersistent().get(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
+            m_dummyProcessProxy = dummyProcessProxy.ptr();
+            m_processes.append(WTFMove(dummyProcessProxy));
+        }
+        process = m_dummyProcessProxy;
     }
     ASSERT(process);
 
@@ -1278,13 +1292,15 @@ void WebProcessPool::pageBeginUsingWebsiteDataStore(uint64_t pageID, WebsiteData
     auto sessionID = dataStore.sessionID();
     if (sessionID.isEphemeral()) {
         ASSERT(dataStore.parameters().networkSessionParameters.sessionID == sessionID);
-        if (m_networkProcess)
+        if (m_networkProcess) {
             m_networkProcess->addSession(makeRef(dataStore));
-        dataStore.clearPendingCookies();
+            dataStore.clearPendingCookies();
+        }
     } else if (sessionID != PAL::SessionID::defaultSessionID()) {
-        if (m_networkProcess)
+        if (m_networkProcess) {
             m_networkProcess->addSession(makeRef(dataStore));
-        dataStore.clearPendingCookies();
+            dataStore.clearPendingCookies();
+        }
     }
 }
 

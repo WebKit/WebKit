@@ -481,6 +481,11 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #endif
 
     m_page = std::make_unique<Page>(WTFMove(pageConfiguration));
+
+    // Set the sessionID *before* updating the preferences as the privateBrowsingEnabled preferences may need to override it.
+    if (parameters.sessionID.isValid())
+        setSessionID(parameters.sessionID);
+
     updatePreferences(parameters.store);
 
     m_drawingArea = DrawingArea::create(*this, parameters);
@@ -539,6 +544,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
     setUseDarkAppearance(parameters.useDarkAppearance);
 
+    if (parameters.isEditable)
+        setEditable(true);
+
 #if PLATFORM(MAC)
     setUseSystemAppearance(parameters.useSystemAppearance);
 #endif
@@ -566,9 +574,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     
     if (!parameters.itemStates.isEmpty())
         restoreSessionInternal(parameters.itemStates, WasRestoredByAPIRequest::No, WebBackForwardListProxy::OverwriteExistingItem::Yes);
-
-    if (parameters.sessionID.isValid())
-        setSessionID(parameters.sessionID);
 
     m_drawingArea->setPaintingEnabled(true);
     

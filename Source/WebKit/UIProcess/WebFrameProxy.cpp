@@ -99,7 +99,7 @@ void WebFrameProxy::stopLoading() const
     if (!m_page)
         return;
 
-    if (!m_page->isValid())
+    if (!m_page->hasRunningProcess())
         return;
 
     m_page->process().send(Messages::WebPage::StopLoadingFrame(m_frameID), m_page->pageID());

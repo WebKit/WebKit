@@ -164,6 +164,10 @@ public:
 
     const Vector<RefPtr<WebProcessProxy>>& processes() const { return m_processes; }
 
+    // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
+    // null checks in WebPageProxy.
+    WebProcessProxy* dummyProcessProxy() const { return m_dummyProcessProxy; }
+
     // WebProcess or NetworkProcess as approporiate for current process model. The connection must be non-null.
     IPC::Connection* networkingProcessConnection();
 
@@ -586,6 +590,7 @@ private:
 
     Vector<RefPtr<WebProcessProxy>> m_processes;
     WebProcessProxy* m_prewarmedProcess { nullptr };
+    WebProcessProxy* m_dummyProcessProxy { nullptr }; // A lightweight WebProcessProxy without backing process.
 
     WebProcessProxy* m_processWithPageCache { nullptr };
 #if ENABLE(SERVICE_WORKER)

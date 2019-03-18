@@ -39,7 +39,6 @@ static bool loadedOrCrashed = false;
 static bool loaded = false;
 static bool webProcessCrashed = false;
 static bool networkProcessCrashed = false;
-static pid_t pid;
 static WKWebView* testView;
 
 @interface MonitorWebContentCrashNavigationDelegate : NSObject <WKNavigationDelegate>
@@ -138,8 +137,6 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
     WKContextClientV0 client;
     memset(&client, 0, sizeof(client));
     client.networkProcessDidCrash = [](WKContextRef context, const void* clientInfo) {
-        pid = [testView _webProcessIdentifier];
-        EXPECT_GT(pid, 0); // The WebProcess is already launched when the network process crashes.
         networkProcessCrashed = true;
     };
     WKContextSetClient(static_cast<WKContextRef>(processPool.get()), &client.base);
@@ -161,7 +158,6 @@ TEST(WebKit, NetworkProcessRelaunchOnLaunchFailure)
     EXPECT_TRUE(networkProcessCrashed);
     EXPECT_FALSE(webProcessCrashed);
     EXPECT_GT([webView _webProcessIdentifier], 0);
-    EXPECT_EQ(pid, [webView _webProcessIdentifier]);
     EXPECT_GT([processPool.get() _networkProcessIdentifier], 0);
 }
 

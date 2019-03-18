@@ -52,7 +52,7 @@ WebBackForwardList::~WebBackForwardList()
     LOG(BackForward, "(Back/Forward) Destroying WebBackForwardList %p", this);
 
     // A WebBackForwardList should never be destroyed unless it's associated page has been closed or is invalid.
-    ASSERT((!m_page && !m_currentIndex) || !m_page->isValid());
+    ASSERT((!m_page && !m_currentIndex) || !m_page->hasRunningProcess());
 }
 
 WebBackForwardListItem* WebBackForwardList::itemForID(const BackForwardItemIdentifier& identifier)

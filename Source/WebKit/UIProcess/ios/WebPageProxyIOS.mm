@@ -205,7 +205,7 @@ void WebPageProxy::focusedElementInformationCallback(const FocusedElementInforma
 
 void WebPageProxy::requestFocusedElementInformation(Function<void(const FocusedElementInformation&, CallbackBase::Error)>&& callback)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callback({ }, CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
@@ -216,13 +216,14 @@ void WebPageProxy::requestFocusedElementInformation(Function<void(const FocusedE
 
 void WebPageProxy::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visibleContentRectUpdate)
 {
-    if (!isValid())
-        return;
-
     if (visibleContentRectUpdate == m_lastVisibleContentRectUpdate)
         return;
 
     m_lastVisibleContentRectUpdate = visibleContentRectUpdate;
+
+    if (!hasRunningProcess())
+        return;
+
     m_process->send(Messages::ViewUpdateDispatcher::VisibleContentRectUpdate(m_pageID, visibleContentRectUpdate), 0);
 }
 
@@ -233,7 +234,7 @@ void WebPageProxy::resendLastVisibleContentRects()
 
 void WebPageProxy::updateStringForFind(const String& string)
 {
-    if (!isValid())
+    if (!hasRunningProcess())
         return;
 
     WebKit::updateStringForFind(string);
@@ -309,7 +310,7 @@ void WebPageProxy::scrollingNodeScrollDidEndScroll()
 
 void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const WebCore::FloatSize& maximumUnobscuredSize, const FloatRect& targetExposedContentRect, const FloatRect& targetUnobscuredRect, const FloatRect& targetUnobscuredRectInScrollViewCoordinates, const WebCore::FloatBoxExtent& unobscuredSafeAreaInsets, double targetScale, int32_t deviceOrientation, DynamicViewportSizeUpdateID dynamicViewportSizeUpdateID)
 {
-    if (!isValid())
+    if (!hasRunningProcess())
         return;
 
     hideValidationMessage();
@@ -325,7 +326,7 @@ void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSi
     m_viewportConfigurationViewLayoutSize = size;
     m_viewportConfigurationLayoutSizeScaleFactor = scaleFactor;
 
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), m_pageID);
 }
 
@@ -335,7 +336,7 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
         return;
     m_forceAlwaysUserScalable = userScalable;
 
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_pageID);
 }
 
@@ -343,7 +344,7 @@ void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)
 {
     m_maximumUnobscuredSize = size;
 
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetMaximumUnobscuredSize(size), m_pageID);
 }
 
@@ -351,14 +352,14 @@ void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
 {
     if (deviceOrientation != m_deviceOrientation) {
         m_deviceOrientation = deviceOrientation;
-        if (isValid())
+        if (hasRunningProcess())
             m_process->send(Messages::WebPage::SetDeviceOrientation(deviceOrientation), m_pageID);
     }
 }
 
 void WebPageProxy::setOverrideViewportArguments(const Optional<ViewportArguments>& viewportArguments)
 {
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetOverrideViewportArguments(viewportArguments), m_pageID);
 }
 
@@ -415,7 +416,7 @@ void WebPageProxy::layerTreeCommitComplete()
 
 void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::TextGranularity granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithFocusedElement, WTF::Function<void(const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(WebCore::IntPoint(), 0, 0, 0, CallbackBase::Error::Unknown);
         return;
     }
@@ -426,7 +427,7 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
 
 void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uint32_t touches, bool baseIsStart, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(WebCore::IntPoint(), 0, 0, CallbackBase::Error::Unknown);
         return;
     }
@@ -447,7 +448,7 @@ void WebPageProxy::replaceSelectedText(const String& oldText, const String& newT
 
 void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection, WTF::Function<void (const Vector<WebCore::FloatRect>&, const String&, double, uint64_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(Vector<WebCore::FloatRect>(), String(), 0, 0, CallbackBase::Error::Unknown);
         return;
     }
@@ -458,7 +459,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
 
 void WebPageProxy::applyAutocorrection(const String& correction, const String& originalText, WTF::Function<void (const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(String(), CallbackBase::Error::Unknown);
         return;
     }
@@ -476,7 +477,7 @@ bool WebPageProxy::applyAutocorrection(const String& correction, const String& o
 
 void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -487,7 +488,7 @@ void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint poin
 
 void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint point, WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, bool isInteractingWithFocusedElement, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -498,7 +499,7 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
 
 void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity granularity, WebCore::SelectionDirection direction, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -509,7 +510,7 @@ void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity
     
 void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -520,7 +521,7 @@ void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isI
 
 void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection direction, WTF::Function<void (uint64_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(0, CallbackBase::Error::Unknown);
         return;
     }
@@ -531,7 +532,7 @@ void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection directi
 
 void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(0, CallbackBase::Error::Unknown);
         return;
     }
@@ -543,7 +544,7 @@ void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point,
 
 void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, WTF::Function<void(uint64_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(0, CallbackBase::Error::Unknown);
         return;
     }
@@ -555,7 +556,7 @@ void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntP
 
 void WebPageProxy::requestDictationContext(WTF::Function<void (const String&, const String&, const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
         return;
     }
@@ -576,7 +577,7 @@ void WebPageProxy::handleAutocorrectionContext(const WebAutocorrectionContext& c
 
 void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const String&, const String&, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(String(), String(), String(), CallbackBase::Error::Unknown);
         return;
     }
@@ -597,7 +598,7 @@ void WebPageProxy::handleStylusSingleTapAtPoint(const WebCore::IntPoint& point, 
 
 void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WTF::Function<void (const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(WebCore::IntPoint(), 0, 0, 0, CallbackBase::Error::Unknown);
         return;
     }
@@ -694,7 +695,7 @@ void WebPageProxy::selectWordBackward()
 
 void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(Vector<WebCore::SelectionRect>(), CallbackBase::Error::Unknown);
         return;
     }
@@ -705,7 +706,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
 
 void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(Vector<WebCore::SelectionRect>(), CallbackBase::Error::Unknown);
         return;
     }
@@ -731,7 +732,7 @@ void WebPageProxy::cancelAutoscroll()
 
 void WebPageProxy::moveSelectionByOffset(int32_t offset, WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -774,7 +775,7 @@ void WebPageProxy::makeFirstResponder()
 
 void WebPageProxy::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
 {
-    if (!isValid())
+    if (!hasRunningProcess())
         return;
     
     process().send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
@@ -966,7 +967,7 @@ void WebPageProxy::disableInspectorNodeSearch()
 
 void WebPageProxy::focusNextFocusedElement(bool isForward, WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::Unknown);
         return;
     }
@@ -1049,7 +1050,7 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(uint64_t r
 
 uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, DrawToPDFCallback::CallbackFunction&& callback)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callback(IPC::DataReference(), CallbackBase::Error::OwnerWasInvalidated);
         return 0;
     }
@@ -1126,7 +1127,7 @@ void WebPageProxy::hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
 
 void WebPageProxy::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&& callback)
 {
-    if (!isValid()) {
+    if (!hasRunningProcess()) {
         callback({ });
         return;
     }
@@ -1148,13 +1149,13 @@ void WebPageProxy::didHandleAdditionalDragItemsRequest(bool added)
 
 void WebPageProxy::requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition)
 {
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::RequestDragStart(clientPosition, globalPosition), m_pageID);
 }
 
 void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
 {
-    if (isValid())
+    if (hasRunningProcess())
         m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition), m_pageID);
 }
 

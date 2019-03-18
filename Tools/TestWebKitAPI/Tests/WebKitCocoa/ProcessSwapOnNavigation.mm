@@ -3272,6 +3272,75 @@ TEST(ProcessSwap, UseWebProcessCacheAfterTermination)
     EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
 }
 
+TEST(ProcessSwap, UseWebProcessCacheForLoadInNewView)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+
+    int webkitPID = 0;
+
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+
+        // Process launch should be delayed until a load actually happens.
+        EXPECT_EQ(0, [webView _webProcessIdentifier]);
+        TestWebKitAPI::Util::sleep(0.1);
+        EXPECT_EQ(0, [webView _webProcessIdentifier]);
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]];
+        [webView loadRequest:request];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        webkitPID = [webView _webProcessIdentifier];
+        EXPECT_NE(0, webkitPID);
+    }
+
+    while ([processPool _processCacheSize] != 1)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main2.html"]];
+        [webView loadRequest:request];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+        EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+    }
+
+    while ([processPool _processCacheSize] != 1)
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_EQ(1U, [processPool _webProcessCountIgnoringPrewarmed]);
+
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+        [webView loadRequest:request];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        EXPECT_NE(webkitPID, [webView _webProcessIdentifier]);
+    }
+
+    EXPECT_EQ(2U, [processPool _webProcessCountIgnoringPrewarmed]);
+}
+
 #endif // PLATFORM(MAC)
 
 TEST(ProcessSwap, NumberOfPrewarmedProcesses)

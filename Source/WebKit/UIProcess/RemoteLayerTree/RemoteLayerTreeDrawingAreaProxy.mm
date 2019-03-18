@@ -150,7 +150,7 @@ WKOneShotDisplayLinkHandler *RemoteLayerTreeDrawingAreaProxy::displayLinkHandler
 
 void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     if (m_isWaitingForDidUpdateGeometry)
@@ -416,7 +416,7 @@ void RemoteLayerTreeDrawingAreaProxy::initializeDebugIndicator()
 
 void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
 {
-    if (!m_webPageProxy.isValid())
+    if (!m_webPageProxy.hasRunningProcess())
         return;
 
     if (m_didUpdateMessageState != NeedsDidUpdate) {
@@ -468,7 +468,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
 {
-    if (!m_webPageProxy.isValid()) {
+    if (!m_webPageProxy.hasRunningProcess()) {
         callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }

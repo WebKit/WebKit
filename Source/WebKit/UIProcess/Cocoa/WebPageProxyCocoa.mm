@@ -199,7 +199,7 @@ void WebPageProxy::platformCloneAttachment(Ref<API::Attachment>&& fromAttachment
     
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
 {
-    if (!isValid())
+    if (!hasRunningProcess())
         return;
     
     process().send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID);
@@ -207,7 +207,7 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
 
 void WebPageProxy::performDictionaryLookupOfCurrentSelection()
 {
-    if (!isValid())
+    if (!hasRunningProcess())
         return;
     
     process().send(Messages::WebPage::PerformDictionaryLookupOfCurrentSelection(), m_pageID);

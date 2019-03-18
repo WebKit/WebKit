@@ -65,10 +65,11 @@ TEST(WKProcessPool, InitialWarmedProcessUsed)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(1U, [pool _webPageContentProcessCount]);
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
     [webView _test_waitForDidFinishNavigation];
 
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
@@ -101,6 +102,8 @@ TEST(WKProcessPool, AutomaticProcessWarming)
     EXPECT_EQ(2U, [pool _webPageContentProcessCount]);
 
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:loadableURL]]];
+
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(2U, [pool _webPageContentProcessCount]);
 }

@@ -391,7 +391,7 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
 
 - (BOOL)_isValid
 {
-    return _page && _page->isValid();
+    return _page && _page->hasRunningProcess();
 }
 
 #if PLATFORM(IOS_FAMILY)

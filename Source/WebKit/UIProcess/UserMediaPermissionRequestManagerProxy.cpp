@@ -102,11 +102,11 @@ void UserMediaPermissionRequestManagerProxy::stopCapture()
 void UserMediaPermissionRequestManagerProxy::captureDevicesChanged()
 {
 #if ENABLE(MEDIA_STREAM)
-    if (!m_page.isValid() || !m_page.mainFrame())
+    if (!m_page.hasRunningProcess() || !m_page.mainFrame())
         return;
 
     auto handler = [this](Optional<bool> originHasPersistentAccess) mutable {
-        if (!originHasPersistentAccess || !m_page.isValid())
+        if (!originHasPersistentAccess || !m_page.hasRunningProcess())
             return;
 
         if (m_grantedRequests.isEmpty() && !*originHasPersistentAccess)
@@ -152,7 +152,7 @@ static uint64_t toWebCore(UserMediaPermissionRequestProxy::UserMediaAccessDenial
 
 void UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied(uint64_t userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason)
 {
-    if (!m_page.isValid())
+    if (!m_page.hasRunningProcess())
         return;
 
     auto request = m_pendingUserMediaRequests.take(userMediaID);
@@ -167,7 +167,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied(uint64_t u
 
 void UserMediaPermissionRequestManagerProxy::denyRequest(uint64_t userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason reason, const String& invalidConstraint)
 {
-    ASSERT(m_page.isValid());
+    ASSERT(m_page.hasRunningProcess());
 
 #if ENABLE(MEDIA_STREAM)
     m_page.process().send(Messages::WebPage::UserMediaAccessWasDenied(userMediaID, toWebCore(reason), invalidConstraint), m_page.pageID());
@@ -181,7 +181,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasGranted(uint64_t 
 {
     ASSERT(audioDevice || videoDevice);
 
-    if (!m_page.isValid())
+    if (!m_page.hasRunningProcess())
         return;
 
 #if ENABLE(MEDIA_STREAM)
@@ -328,7 +328,7 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         return;
     }
 
-    if (!m_page.isValid())
+    if (!m_page.hasRunningProcess())
         return;
 
     auto request = m_pendingUserMediaRequests.add(userMediaID, UserMediaPermissionRequestProxy::create(*this, userMediaID, m_page.mainFrame()->frameID(), frameID, WTFMove(userMediaDocumentOrigin), WTFMove(topLevelDocumentOrigin), { }, { }, WTFMove(userRequest))).iterator->value.copyRef();
@@ -363,7 +363,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest(R
             if (!request->isPending())
                 return;
 
-            if (!m_page.isValid())
+            if (!m_page.hasRunningProcess())
                 return;
 
             processUserMediaPermissionInvalidRequest(request.get(), invalidConstraint);
@@ -373,7 +373,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest(R
             if (!request->isPending())
                 return;
 
-            if (!m_page.isValid() || !m_page.mainFrame())
+            if (!m_page.hasRunningProcess() || !m_page.mainFrame())
                 return;
 
             processUserMediaPermissionValidRequest(WTFMove(request), WTFMove(audioDevices), WTFMove(videoDevices), WTFMove(deviceIdentifierHashSalt));
@@ -552,7 +552,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
         if (!originHasPersistentAccess)
             return;
 
-        if (!m_page.isValid())
+        if (!m_page.hasRunningProcess())
             return;
 
         auto requestID = generateRequestID();
@@ -564,7 +564,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(uint6
             if (!weakThis || !m_pendingDeviceRequests.remove(requestID))
                 return;
 
-            if (!m_page.isValid())
+            if (!m_page.hasRunningProcess())
                 return;
 
             syncWithWebCorePrefs();
@@ -596,7 +596,7 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 
 void UserMediaPermissionRequestManagerProxy::captureStateChanged(MediaProducer::MediaStateFlags oldState, MediaProducer::MediaStateFlags newState)
 {
-    if (!m_page.isValid())
+    if (!m_page.hasRunningProcess())
         return;
 
 #if ENABLE(MEDIA_STREAM)

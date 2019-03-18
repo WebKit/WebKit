@@ -522,6 +522,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->webProcessCache().capacity();
 }
 
+- (NSUInteger)_processCacheSize
+{
+    return _processPool->webProcessCache().size();
+}
+
 - (size_t)_serviceWorkerProcessCount
 {
 #if ENABLE(SERVICE_WORKER)

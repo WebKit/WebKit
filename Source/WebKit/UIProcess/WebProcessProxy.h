@@ -104,7 +104,9 @@ public:
         Yes
     };
 
-    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, IsPrewarmed);
+    enum class ShouldLaunchProcess : bool { No, Yes };
+
+    static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore&, IsPrewarmed, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
     ~WebProcessProxy();
 
     WebConnection* webConnection() const { return m_webConnection.get(); }

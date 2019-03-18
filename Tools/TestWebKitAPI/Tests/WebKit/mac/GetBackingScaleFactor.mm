@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "SyntheticBackingScaleFactorWindow.h"
 #import "Test.h"
+#import <WebKit/WKBrowsingContextController.h>
 #import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -68,6 +69,7 @@ TEST(WebKit, GetBackingScaleFactor)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("GetBackingScaleFactorTest"));
     setInjectedBundleClient(context.get());
     RetainPtr<WKView> view = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:0]);
+    [[view browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
     RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
     [window1.get() setBackingScaleFactor:1];

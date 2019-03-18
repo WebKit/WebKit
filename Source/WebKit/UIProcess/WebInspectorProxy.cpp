@@ -60,12 +60,14 @@ const unsigned WebInspectorProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* inspectedPage)
-    : m_inspectedPage(inspectedPage)
 #if PLATFORM(MAC)
-    , m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorProxy::closeFrontendAfterInactivityTimerFired)
+    : m_closeFrontendAfterInactivityTimer(RunLoop::main(), this, &WebInspectorProxy::closeFrontendAfterInactivityTimerFired)
 #endif
 {
-    m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
+    if (inspectedPage && inspectedPage->hasRunningProcess()) {
+        m_inspectedPage = inspectedPage;
+        m_inspectedPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
+    }
 }
 
 WebInspectorProxy::~WebInspectorProxy()
