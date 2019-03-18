@@ -109,6 +109,9 @@
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
 
+/* WKErrorAttributedStringContentFailedToLoad description */
+"Attributed string content failed to load" = "Attributed string content failed to load";
+
 /* Menu item label for automatic track selection behavior */
 "Auto (Recommended)" = "Auto (Recommended)";
 
@@ -801,6 +804,9 @@
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";
+
+/* WKErrorAttributedStringContentLoadTimedOut description */
+"Timed out while loading attributed string content" = "Timed out while loading attributed string content";
 
 /* prompt string in authentication panel */
 "To view this page, you must log in to area “%@” on %@." = "To view this page, you must log in to area “%@” on %@.";

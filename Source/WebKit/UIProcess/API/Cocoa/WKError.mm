@@ -67,12 +67,22 @@ NSString *localizedDescriptionForErrorCode(WKErrorCode errorCode)
 
     case WKErrorContentRuleListStoreRemoveFailed:
         return WEB_UI_STRING("Removing a WKContentRuleList failed", "WKErrorContentRuleListStoreRemoveFailed description");
+
+    case WKErrorAttributedStringContentFailedToLoad:
+        return WEB_UI_STRING("Attributed string content failed to load", "WKErrorAttributedStringContentFailedToLoad description");
+
+    case WKErrorAttributedStringContentLoadTimedOut:
+        return WEB_UI_STRING("Timed out while loading attributed string content", "WKErrorAttributedStringContentLoadTimedOut description");
     }
 }
 
-RetainPtr<NSError> createNSError(WKErrorCode errorCode)
+RetainPtr<NSError> createNSError(WKErrorCode errorCode, NSError* underlyingError)
 {
-    auto userInfo = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:localizedDescriptionForErrorCode(errorCode), NSLocalizedDescriptionKey, nil]);
+    NSDictionary *userInfo = nil;
+    if (underlyingError)
+        userInfo = @{ NSLocalizedDescriptionKey: localizedDescriptionForErrorCode(errorCode), NSUnderlyingErrorKey: underlyingError };
+    else
+        userInfo = @{ NSLocalizedDescriptionKey: localizedDescriptionForErrorCode(errorCode) };
 
-    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo.get()]);
+    return adoptNS([[NSError alloc] initWithDomain:WKErrorDomain code:errorCode userInfo:userInfo]);
 }

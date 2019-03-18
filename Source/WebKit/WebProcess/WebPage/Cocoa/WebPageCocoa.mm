@@ -208,6 +208,10 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
     Frame& frame = m_page->mainFrame();
 
     RefPtr<Range> range = TextIterator::rangeFromLocationAndLength(frame.document()->documentElement(), 0, INT_MAX);
+    if (!range) {
+        completionHandler({ });
+        return;
+    }
 
     NSDictionary* documentAttributes = nil;
 

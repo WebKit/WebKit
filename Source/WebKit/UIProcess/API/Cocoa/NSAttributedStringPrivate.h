@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKErrorPrivate.h"
+#import <WebKit/NSAttributedString.h>
 
-#import <wtf/RetainPtr.h>
-#import "GenericCallback.h"
+@class WKNavigation;
+@class WKWebView;
 
-RetainPtr<NSError> createNSError(WKErrorCode, NSError* underlyingError = nil);
-NSString *localizedDescriptionForErrorCode(WKErrorCode);
+NS_ASSUME_NONNULL_BEGIN
+
+/*!
+ @discussion Private extension of @link //apple_ref/occ/NSAttributedString NSAttributedString @/link to
+ translate HTML content into attributed strings using WebKit.
+ */
+@interface NSAttributedString (WKPrivate)
+
+/*!
+ @abstract Converts the contents loaded by a content loader block into an attributed string.
+ @param options Document attributes for interpreting the document contents.
+ NSTextSizeMultiplierDocumentOption, and NSTimeoutDocumentOption are supported option keys.
+ @param contentLoader A block to invoke when content needs to be loaded in the supplied
+ @link WKWebView @/link. A @link WKNavigation @/link for the main frame must be returned.
+ @param completionHandler A block to invoke when the translation completes or fails.
+ @discussion The completionHandler is passed the attributed string result along with any
+ document-level attributes, or an error.
+ */
++ (void)_loadFromHTMLWithOptions:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options contentLoader:(WKNavigation *(^)(WKWebView *))loadWebContent completionHandler:(NSAttributedStringCompletionHandler)completionHandler;
+
+@end
+
+NS_ASSUME_NONNULL_END

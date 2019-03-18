@@ -1193,4 +1193,11 @@ UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
 extern NSString *const UIBacklightLevelChangedNotification;
 
+extern NSString * const NSTextEncodingNameDocumentOption;
+extern NSString * const NSBaseURLDocumentOption;
+extern NSString * const NSTimeoutDocumentOption;
+extern NSString * const NSWebPreferencesDocumentOption;
+extern NSString * const NSWebResourceLoadDelegateDocumentOption;
+extern NSString * const NSTextSizeMultiplierDocumentOption;
+
 WTF_EXTERN_C_END

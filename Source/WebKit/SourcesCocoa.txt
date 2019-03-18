@@ -272,6 +272,7 @@ UIProcess/API/Cocoa/APIHTTPCookieStoreCocoa.mm
 UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
 UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm
 UIProcess/API/Cocoa/LegacyBundleForClass.mm
+UIProcess/API/Cocoa/NSAttributedString.mm
 UIProcess/API/Cocoa/WKBackForwardList.mm
 UIProcess/API/Cocoa/WKBackForwardListItem.mm
 UIProcess/API/Cocoa/WKBrowsingContextController.mm

@@ -1,3 +1,13 @@
+2019-03-18  Timothy Hatcher  <timothy@apple.com>
+
+        Add new NSAttributedString API for converting HTML.
+        https://bugs.webkit.org/show_bug.cgi?id=195636
+        rdar://problem/45055697
+
+        Reviewed by Tim Horton.
+
+        * en.lproj/Localizable.strings: Updated.
+
 2019-03-18  Zalan Bujtas  <zalan@apple.com>
 
         Call transition and animation callbacks on non-composited renderers too.

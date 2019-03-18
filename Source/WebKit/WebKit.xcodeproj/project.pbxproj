@@ -385,6 +385,8 @@
 		1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C0A19551C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp */; };
 		1C0A19581C90068F00FE0EBB /* WebAutomationSessionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A19561C90068F00FE0EBB /* WebAutomationSessionMessages.h */; };
 		1C0A195C1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0A195B1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h */; };
+		1C20936022318CB000026A39 /* NSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C20935E22318CB000026A39 /* NSAttributedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C891D6619B124FF00BA79DD /* WebInspectorUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C891D6319B124FF00BA79DD /* WebInspectorUI.h */; };
 		1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E281E1275D15400BC7BD0 /* WebInspector.h */; };
 		1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */; };
@@ -2396,6 +2398,9 @@
 		1C0A19591C9006EA00FE0EBB /* WebAutomationSession.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebAutomationSession.messages.in; sourceTree = "<group>"; };
 		1C0A195A1C91669500FE0EBB /* WebAutomationSessionProxy.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = WebAutomationSessionProxy.js; sourceTree = "<group>"; };
 		1C0A195B1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutomationSessionProxyScriptSource.h; path = DerivedSources/WebKit2/WebAutomationSessionProxyScriptSource.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C20935E22318CB000026A39 /* NSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSAttributedString.h; sourceTree = "<group>"; };
+		1C20935F22318CB000026A39 /* NSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NSAttributedString.mm; sourceTree = "<group>"; };
+		1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringPrivate.h; sourceTree = "<group>"; };
 		1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorProxy.messages.in; sourceTree = "<group>"; };
 		1C891D6219B124FF00BA79DD /* WebInspectorUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUI.cpp; sourceTree = "<group>"; };
 		1C891D6319B124FF00BA79DD /* WebInspectorUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUI.h; sourceTree = "<group>"; };
@@ -6141,6 +6146,9 @@
 				FED3C1DA1B447AE800E0EB7F /* APISerializedScriptValueCocoa.mm */,
 				1A3635AB1A3145E500ED6197 /* APIWebsiteDataStoreCocoa.mm */,
 				1AFDE64319510B5500C48FFA /* LegacyBundleForClass.mm */,
+				1C20935E22318CB000026A39 /* NSAttributedString.h */,
+				1C20935F22318CB000026A39 /* NSAttributedString.mm */,
+				1C2184012233872800BAC700 /* NSAttributedStringPrivate.h */,
 				37C4C08B1814AC5C003688B9 /* WKBackForwardList.h */,
 				37C4C08A1814AC5C003688B9 /* WKBackForwardList.mm */,
 				37C4C08E1814AF3A003688B9 /* WKBackForwardListInternal.h */,
@@ -9293,6 +9301,8 @@
 				1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */,
 				1A2162B111F38971008AD0F5 /* NPRuntimeUtilities.h in Headers */,
 				1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */,
+				1C20936022318CB000026A39 /* NSAttributedString.h in Headers */,
+				1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */,
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				37B47E2D1D64DB76005F4EFF /* objcSPI.h in Headers */,
