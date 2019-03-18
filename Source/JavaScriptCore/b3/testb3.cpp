@@ -3777,6 +3777,7 @@ void testShlImms(int64_t a, int64_t b)
             root->appendNew<Const64Value>(proc, Origin(), a),
             root->appendNew<Const32Value>(proc, Origin(), b)));
 
+    b = b & 0x3f; // to avoid undefined behaviour below
     CHECK(compileAndRun<int64_t>(proc) == (a << b));
 }
 
@@ -3791,7 +3792,26 @@ void testShlArgImm(int64_t a, int64_t b)
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0),
             root->appendNew<Const32Value>(proc, Origin(), b)));
 
+    b = b & 0x3f; // to avoid undefined behaviour below
     CHECK(compileAndRun<int64_t>(proc, a) == (a << b));
+}
+
+void testShlSShrArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* constB = root->appendNew<Const32Value>(proc, Origin(), b);
+    Value* innerShift = root->appendNew<Value>(proc, SShr, Origin(), argA, constB);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            innerShift,
+            constB));
+
+    b = b & 0x3f; // to avoid undefined behaviour below
+    CHECK(compileAndRun<int64_t>(proc, a) == ((a >> b) << b));
 }
 
 void testShlArg32(int32_t a)
@@ -3837,6 +3857,7 @@ void testShlImms32(int32_t a, int32_t b)
             root->appendNew<Const32Value>(proc, Origin(), a),
             root->appendNew<Const32Value>(proc, Origin(), b)));
 
+    b = b & 0x1f; // to avoid undefined behaviour below
     CHECK(compileAndRun<int32_t>(proc) == (a << b));
 }
 
@@ -3853,7 +3874,28 @@ void testShlArgImm32(int32_t a, int32_t b)
                 root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0)),
             root->appendNew<Const32Value>(proc, Origin(), b)));
 
+    b = b & 0x1f; // to avoid undefined behaviour below
     CHECK(compileAndRun<int32_t>(proc, a) == (a << b));
+}
+
+void testShlZShrArgImm32(int32_t a, int32_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<Value>(
+        proc, Trunc, Origin(),
+        root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    Value* constB = root->appendNew<Const32Value>(proc, Origin(), b);
+    Value* innerShift = root->appendNew<Value>(proc, ZShr, Origin(), argA, constB);
+    root->appendNewControlValue(
+        proc, Return, Origin(),
+        root->appendNew<Value>(
+            proc, Shl, Origin(),
+            innerShift,
+            constB));
+
+    b = b & 0x1f; // to avoid undefined behaviour below
+    CHECK(compileAndRun<int32_t>(proc, a) == static_cast<int32_t>((static_cast<uint32_t>(a) >> b) << b));
 }
 
 void testSShrArgs(int64_t a, int64_t b)
@@ -17309,6 +17351,13 @@ void run(const char* filter)
     RUN(testShlArgImm(0xffffffffffffffff, 0));
     RUN(testShlArgImm(0xffffffffffffffff, 1));
     RUN(testShlArgImm(0xffffffffffffffff, 63));
+    RUN(testShlSShrArgImm(1, 0));
+    RUN(testShlSShrArgImm(1, 1));
+    RUN(testShlSShrArgImm(1, 62));
+    RUN(testShlSShrArgImm(1, 65));
+    RUN(testShlSShrArgImm(0xffffffffffffffff, 0));
+    RUN(testShlSShrArgImm(0xffffffffffffffff, 1));
+    RUN(testShlSShrArgImm(0xffffffffffffffff, 63));
     RUN(testShlArg32(2));
     RUN(testShlArgs32(1, 0));
     RUN(testShlArgs32(1, 1));
@@ -17327,9 +17376,17 @@ void run(const char* filter)
     RUN(testShlArgImm32(1, 0));
     RUN(testShlArgImm32(1, 1));
     RUN(testShlArgImm32(1, 62));
+    RUN(testShlArgImm32(1, 33));
     RUN(testShlArgImm32(0xffffffff, 0));
     RUN(testShlArgImm32(0xffffffff, 1));
     RUN(testShlArgImm32(0xffffffff, 63));
+    RUN(testShlZShrArgImm32(1, 0));
+    RUN(testShlZShrArgImm32(1, 1));
+    RUN(testShlZShrArgImm32(1, 62));
+    RUN(testShlZShrArgImm32(1, 33));
+    RUN(testShlZShrArgImm32(0xffffffff, 0));
+    RUN(testShlZShrArgImm32(0xffffffff, 1));
+    RUN(testShlZShrArgImm32(0xffffffff, 63));
 
     RUN(testSShrArgs(1, 0));
     RUN(testSShrArgs(1, 1));

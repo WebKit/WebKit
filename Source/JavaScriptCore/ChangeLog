@@ -1,3 +1,26 @@
+2019-03-18  Robin Morisset  <rmorisset@apple.com>
+
+        B3 should reduce Shl(<S|Z>Shr(@x, @const), @const) to BitAnd(@x, -(1<<@const))
+        https://bugs.webkit.org/show_bug.cgi?id=152164
+
+        Reviewed by Filip Pizlo.
+
+        Turn this: Shl(<S|Z>Shr(@x, @const), @const)
+        Into this: BitAnd(@x, -(1<<@const))
+
+        I added two tests: one for ZShr/32 bits, and one for SShr/64 bits, I think it is enough coverage (no reason for any interaction between the signedness of the shift and the bitwidth).
+        I also modified a few adjacent tests to remove undefined behaviours.
+
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testShlImms):
+        (JSC::B3::testShlArgImm):
+        (JSC::B3::testShlSShrArgImm):
+        (JSC::B3::testShlImms32):
+        (JSC::B3::testShlArgImm32):
+        (JSC::B3::testShlZShrArgImm32):
+        (JSC::B3::run):
+
 2019-03-17  Robin Morisset  <rmorisset@apple.com>
 
         ParserError can be shrunk by 8 bytes

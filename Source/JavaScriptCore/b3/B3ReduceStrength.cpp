@@ -1200,6 +1200,19 @@ private:
                 break;
             }
 
+            // Turn this: Shl(<S|Z>Shr(@x, @const), @const)
+            // Into this: BitAnd(@x, -(1<<@const))
+            if ((m_value->child(0)->opcode() == SShr || m_value->child(0)->opcode() == ZShr)
+                && m_value->child(0)->child(1)->hasInt()
+                && m_value->child(1)->hasInt()
+                && m_value->child(0)->child(1)->asInt() == m_value->child(1)->asInt()) {
+                int shiftAmount = m_value->child(1)->asInt() & (m_value->type() == Int32 ? 31 : 63);
+                Value* newConst = m_proc.addIntConstant(m_value, - static_cast<int64_t>(1ull << shiftAmount));
+                m_insertionSet.insertValue(m_index, newConst);
+                replaceWithNew<Value>(BitAnd, m_value->origin(), m_value->child(0)->child(0), newConst);
+                break;
+            }
+
             handleShiftAmount();
             break;
 
