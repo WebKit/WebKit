@@ -60,7 +60,6 @@ enum ContentChangeType {
 class BorderEdge;
 class ImageBuffer;
 class InlineFlowBox;
-class KeyframeList;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 
@@ -222,17 +221,6 @@ public:
     void getGeometryForBackgroundImage(const RenderLayerModelObject* paintContainer, const LayoutPoint& paintOffset, FloatRect& destRect, FloatSize& phase, FloatSize& tileSize) const;
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
-
-    bool startTransition(double, CSSPropertyID, const RenderStyle* fromStyle, const RenderStyle* toStyle);
-    void transitionPaused(double timeOffset, CSSPropertyID);
-    void transitionFinished(CSSPropertyID);
-
-    bool startAnimation(double timeOffset, const Animation*, const KeyframeList& keyframes);
-    void animationPaused(double timeOffset, const String& name);
-    void animationSeeked(double timeOffset, const String& name);
-    void animationFinished(const String& name);
-
-    void suspendAnimations(MonotonicTime = MonotonicTime());
 
     RenderBoxModelObject* continuation() const;
     WEBCORE_EXPORT RenderInline* inlineContinuation() const;

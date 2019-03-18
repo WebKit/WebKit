@@ -69,12 +69,12 @@ RenderElement* AnimationBase::renderer() const
     return m_element ? m_element->renderer() : nullptr;
 }
 
-RenderBoxModelObject* AnimationBase::compositedRenderer() const
+RenderLayerModelObject* AnimationBase::compositedRenderer() const
 {
     auto* renderer = this->renderer();
     if (!renderer || !renderer->isComposited())
         return nullptr;
-    return downcast<RenderBoxModelObject>(renderer);
+    return downcast<RenderLayerModelObject>(renderer);
 }
 
 void AnimationBase::clear()

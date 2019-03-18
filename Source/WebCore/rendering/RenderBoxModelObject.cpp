@@ -161,62 +161,6 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
     return view().compositor().hasAcceleratedCompositing();
 }
 
-bool RenderBoxModelObject::startTransition(double timeOffset, CSSPropertyID propertyId, const RenderStyle* fromStyle, const RenderStyle* toStyle)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    return layer()->backing()->startTransition(timeOffset, propertyId, fromStyle, toStyle);
-}
-
-void RenderBoxModelObject::transitionPaused(double timeOffset, CSSPropertyID propertyId)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->transitionPaused(timeOffset, propertyId);
-}
-
-void RenderBoxModelObject::transitionFinished(CSSPropertyID propertyId)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->transitionFinished(propertyId);
-}
-
-bool RenderBoxModelObject::startAnimation(double timeOffset, const Animation* animation, const KeyframeList& keyframes)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    return layer()->backing()->startAnimation(timeOffset, animation, keyframes);
-}
-
-void RenderBoxModelObject::animationPaused(double timeOffset, const String& name)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->animationPaused(timeOffset, name);
-}
-
-void RenderBoxModelObject::animationSeeked(double timeOffset, const String& name)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->animationSeeked(timeOffset, name);
-}
-
-void RenderBoxModelObject::animationFinished(const String& name)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->animationFinished(name);
-}
-
-void RenderBoxModelObject::suspendAnimations(MonotonicTime time)
-{
-    ASSERT(hasLayer());
-    ASSERT(isComposited());
-    layer()->backing()->suspendAnimations(time);
-}
-
 RenderBoxModelObject::RenderBoxModelObject(Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
     : RenderLayerModelObject(element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
 {
