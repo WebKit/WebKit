@@ -453,7 +453,6 @@ public:
     WindRule shapeLayerWindRule() const;
     virtual void setShapeLayerWindRule(WindRule);
 
-    // Non-null if the event sensitive region of the layer differs from the layer bounds.
     const Region& eventRegion() const { return m_eventRegion; }
     virtual void setEventRegion(Region&&);
 

@@ -764,6 +764,8 @@ bool RenderLayerBacking::updateConfiguration()
     if (!m_owningLayer.isRenderViewLayer()) {
         bool didUpdateContentsRect = false;
         updateDirectlyCompositedBoxDecorations(contentsInfo, didUpdateContentsRect);
+
+        updateEventRegion();
     } else
         updateRootLayerConfiguration();
     
@@ -1428,6 +1430,22 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
     if (m_backgroundLayer)
         m_backgroundLayer->setDrawsContent(m_backgroundLayerPaintsFixedRootBackground ? hasPaintedContent : contentsInfo.paintsBoxDecorations());
+}
+
+void RenderLayerBacking::updateEventRegion()
+{
+    GraphicsContext nullContext(nullptr);
+    RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
+
+    Region eventRegion;
+    paintingInfo.eventRegion = &eventRegion;
+
+    auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
+    m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);
+
+    eventRegion.translate(roundedIntSize(contentOffsetInCompositingLayer()));
+
+    m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
 }
 
 // Return true if the layer changed.
@@ -2585,18 +2603,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, paintDirtyRect, paintBehavior, -m_subpixelOffsetFromRenderer);
 
-#if PLATFORM(IOS_FAMILY)
-    Region eventRegion;
-    paintingInfo.eventRegion = &eventRegion;
-#endif
-
     m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags);
-
-#if PLATFORM(IOS_FAMILY)
-    paintingInfo.eventRegion = nullptr;
-    eventRegion.translate(roundedIntSize(contentOffsetInCompositingLayer()));
-    m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
-#endif
 
     if (m_owningLayer.containsDirtyOverlayScrollbars())
         m_owningLayer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);

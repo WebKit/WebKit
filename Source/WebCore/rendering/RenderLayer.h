@@ -641,8 +641,9 @@ public:
         PaintLayerPaintingRootBackgroundOnly            = 1 << 11,
         PaintLayerPaintingSkipRootBackground            = 1 << 12,
         PaintLayerPaintingChildClippingMaskPhase        = 1 << 13,
+        PaintLayerCollectingEventRegion                 = 1 << 14,
     };
-    static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerPaintingCompositingBackgroundPhase,  PaintLayerPaintingCompositingForegroundPhase }; }
+    static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerPaintingCompositingBackgroundPhase, PaintLayerPaintingCompositingForegroundPhase }; }
 
     enum class SecurityOriginPaintPolicy { AnyOrigin, AccessibleOriginOnly };
 
@@ -984,6 +985,7 @@ private:
     void paintMaskForFragments(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject* paintingRootForRenderer);
     void paintChildClippingMaskForFragments(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintBehavior>, RenderObject* paintingRootForRenderer);
     void paintTransformedLayerIntoFragments(GraphicsContext&, const LayerPaintingInfo&, OptionSet<PaintLayerFlag>);
+    void collectEventRegionForFragments(const LayerFragments&, GraphicsContext&, const LayerPaintingInfo&);
 
     RenderLayer* transparentPaintingAncestor();
     void beginTransparencyLayers(GraphicsContext&, const LayerPaintingInfo&, const LayoutRect& dirtyRect);
