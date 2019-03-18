@@ -1,3 +1,28 @@
+2019-03-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/48839387
+
+    2019-03-18  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration (branch patch)
+            https://bugs.webkit.org/show_bug.cgi?id=195711
+            <rdar://problem/48839387>
+            <rdar://problem/48832278>
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site.html: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html: Added.
+            * http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html:
+
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r242749. rdar://problem/48839358

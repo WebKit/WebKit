@@ -1290,8 +1290,6 @@ void ResourceLoadStatisticsMemoryStore::didCreateNetworkProcess()
     ASSERT(!RunLoop::isMain());
 
     updateCookieBlocking([]() { });
-    updateCacheMaxAgeCap();
-    updateClientSideCookiesAgeCap();
 }
 
 } // namespace WebKit

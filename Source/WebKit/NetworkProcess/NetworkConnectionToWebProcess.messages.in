@@ -57,7 +57,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     EnsureLegacyPrivateBrowsingSession()
 
     RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
-    RemoveStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID);
+    ClearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, uint64_t pageID);
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     RemoveOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);

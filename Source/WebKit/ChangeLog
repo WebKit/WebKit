@@ -1,3 +1,98 @@
+2019-03-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/48839387
+
+    2019-03-18  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration (branch patch)
+            https://bugs.webkit.org/show_bug.cgi?id=195711
+            <rdar://problem/48839387>
+            <rdar://problem/48832278>
+
+            Reviewed by Brent Fulgham.
+
+            This patch does three things:
+
+            1) Applies the changes in https://trac.webkit.org/changeset/242288 to
+            a branch. The only meaningful difference is the use of String instead
+            of WebCore::RegistrableDomain. Tracked by <rdar://problem/48839387>.
+
+            2) Set the lifetime cap for client-side cookies in the call to
+            NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(). This
+            change makes sure that if ITP is enabled, the cap will be applied.
+            Previously, the cap was set when WebProcessPool::ensureNetworkProcess()
+            called WebsiteDataStore::didCreateNetworkProcess() which might fail if
+            the website data store's m_resourceLoadStatistics object is not created
+            yet. Tracked by <rdar://problem/48832278>.
+
+            3) Makes sure WebProcessPool::ensureNetworkProcess() calls
+            WebsiteDataStore::didCreateNetworkProcess() also if there was an
+            existing website data store object supplied (the withWebsiteDataStore
+            parameter). Tracked by <rdar://problem/48832278>.
+
+            * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+            (WebKit::NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics):
+            (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage): Deleted.
+            * NetworkProcess/NetworkConnectionToWebProcess.h:
+            * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::committedCrossSiteLoadWithLinkDecoration):
+            (WebKit::NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+            (WKWebsiteDataStoreStatisticsResetToConsistentState):
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/ResourceLoadStatisticsMemoryStore.cpp:
+            (WebKit::ResourceLoadStatisticsMemoryStore::didCreateNetworkProcess):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::isNonUniqueNavigationWithLinkDecoration):
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            * UIProcess/WebProcessPool.cpp:
+            (WebKit::WebProcessPool::ensureNetworkProcess):
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::close):
+
+2019-03-06  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r242554. rdar://problem/48647490
+
+    REGRESSION (r238490): YouTube.com: Returning PiP to Safari after sleeping device loses page
+    https://bugs.webkit.org/show_bug.cgi?id=195364
+    <rdar://problem/48538837>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Make sure we unset the LayerTreeFreezeReason::ProcessSuspended layer tree freeze reason
+    when WebPage::applicationWillEnterForeground() is called. This restores pre-r238490
+    behavior and addresses the issue with PiP on youtube.com.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::applicationWillEnterForeground):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242554 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-06  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION (r238490): YouTube.com: Returning PiP to Safari after sleeping device loses page
+            https://bugs.webkit.org/show_bug.cgi?id=195364
+            <rdar://problem/48538837>
+
+            Reviewed by Geoffrey Garen.
+
+            Make sure we unset the LayerTreeFreezeReason::ProcessSuspended layer tree freeze reason
+            when WebPage::applicationWillEnterForeground() is called. This restores pre-r238490
+            behavior and addresses the issue with PiP on youtube.com.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::applicationWillEnterForeground):
+
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
         Apply patch. rdar://problem/48839383

@@ -567,11 +567,11 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID s
 #endif
 }
 
-void NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID)
+void NetworkConnectionToWebProcess::clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID sessionID, uint64_t pageID)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
-        storageSession->removeStorageAccessForAllFramesOnPage(pageID);
+        storageSession->clearPageSpecificDataForResourceLoadStatistics(pageID);
 #else
     UNUSED_PARAM(sessionID);
     UNUSED_PARAM(pageID);

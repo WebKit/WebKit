@@ -596,6 +596,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 
     if (m_websiteDataStore)
         m_websiteDataStore->websiteDataStore().didCreateNetworkProcess();
+    else if (withWebsiteDataStore)
+        withWebsiteDataStore->didCreateNetworkProcess();
 
     return *m_networkProcess;
 }

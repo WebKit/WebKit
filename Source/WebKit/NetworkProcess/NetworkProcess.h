@@ -162,6 +162,8 @@ public:
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
     void setCacheMaxAgeCapForPrevalentResources(PAL::SessionID, Seconds, uint64_t contextId);
     void resetCacheMaxAgeCapForPrevalentResources(PAL::SessionID, uint64_t contextId);
+    void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const String& fromRegistrableDomain, const String& toRegistrableDomain, uint64_t pageID);
+    void resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID, CompletionHandler<void()>&&);
 #endif
 
     using CacheStorageParametersCallback = CompletionHandler<void(const String&, uint64_t quota)>;

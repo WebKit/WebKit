@@ -531,6 +531,16 @@ void NetworkProcessProxy::didResetCacheMaxAgeCapForPrevalentResources(uint64_t c
     auto completionHandler = m_updateRuntimeSettingsCallbackMap.take(contextId);
     completionHandler();
 }
+
+void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::ResetCrossSiteLoadsWithLinkDecorationForTesting(sessionID), WTFMove(completionHandler));
+}
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()

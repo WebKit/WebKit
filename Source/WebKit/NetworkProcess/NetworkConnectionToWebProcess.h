@@ -191,7 +191,7 @@ private:
     CacheStorageEngineConnection& cacheStorageConnection();
 
     void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, uint64_t pageID);
-    void removeStorageAccessForAllFramesOnPage(PAL::SessionID, uint64_t pageID);
+    void clearPageSpecificDataForResourceLoadStatistics(PAL::SessionID, uint64_t pageID);
 
     void addOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(const String& sourceOrigin, const String& destinationProtocol, const String& destinationHost, bool allowDestinationSubdomains);

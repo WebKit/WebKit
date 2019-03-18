@@ -158,11 +158,13 @@ public:
     WEBCORE_EXPORT Vector<String> getAllStorageAccessEntries() const;
     WEBCORE_EXPORT void grantStorageAccess(const String& resourceDomain, const String& firstPartyDomain, Optional<uint64_t> frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
-    WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
+    WEBCORE_EXPORT void clearPageSpecificDataForResourceLoadStatistics(uint64_t pageID);
     WEBCORE_EXPORT void removeAllStorageAccess();
     WEBCORE_EXPORT void setCacheMaxAgeCapForPrevalentResources(Seconds);
     WEBCORE_EXPORT void resetCacheMaxAgeCapForPrevalentResources();
     WEBCORE_EXPORT Optional<Seconds> maxAgeCacheCap(const ResourceRequest&);
+    WEBCORE_EXPORT void committedCrossSiteLoadWithLinkDecoration(const String& fromRegistrableDomain, const String& toRegistrableDomain, uint64_t pageID);
+    WEBCORE_EXPORT void resetCrossSiteLoadsWithLinkDecorationForTesting();
 #endif
 
 private:
@@ -191,11 +193,15 @@ private:
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
+    Optional<Seconds> clientSideCookieCap(const URL&, Optional<uint64_t> pageID) const;
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
     HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
     HashMap<uint64_t, HashMap<String, String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_pagesGrantedStorageAccess;
     Optional<Seconds> m_cacheMaxAgeCapForPrevalentResources { };
     Optional<Seconds> m_ageCapForClientSideCookies { };
+    Optional<Seconds> m_ageCapForClientSideCookiesShort { };
+    HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_navigatedToWithLinkDecorationByPrevalentResource;
+    bool m_navigationWithLinkDecorationTestMode = false;
 #endif
 
 #if PLATFORM(COCOA)

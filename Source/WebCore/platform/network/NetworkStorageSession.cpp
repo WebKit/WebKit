@@ -137,12 +137,19 @@ Optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& r
 void NetworkStorageSession::setAgeCapForClientSideCookies(Optional<Seconds> seconds)
 {
     m_ageCapForClientSideCookies = seconds;
+    m_ageCapForClientSideCookiesShort = seconds ? Seconds { seconds->seconds() / 7. } : seconds;
 }
 
 void NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(const Vector<String>& domains)
 {
     m_topPrivatelyControlledDomainsToBlock.clear();
     m_topPrivatelyControlledDomainsToBlock.add(domains.begin(), domains.end());
+
+    static NeverDestroyed<Seconds> oneWeekInSeconds = 24_h * 7;
+    if (!m_ageCapForClientSideCookies)
+        setAgeCapForClientSideCookies({ oneWeekInSeconds });
+    if (!m_cacheMaxAgeCapForPrevalentResources)
+        setCacheMaxAgeCapForPrevalentResources(oneWeekInSeconds);
 }
 
 void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains)
@@ -227,10 +234,12 @@ void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64
     iteration->value.remove(frameID);
 }
 
-void NetworkStorageSession::removeStorageAccessForAllFramesOnPage(uint64_t pageID)
+void NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics(uint64_t pageID)
 {
     m_pagesGrantedStorageAccess.remove(pageID);
     m_framesGrantedStorageAccess.remove(pageID);
+    if (!m_navigationWithLinkDecorationTestMode)
+        m_navigatedToWithLinkDecorationByPrevalentResource.remove(pageID);
 }
 
 void NetworkStorageSession::removeAllStorageAccess()
@@ -247,6 +256,38 @@ void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds secon
 void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
     m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
+}
+
+void NetworkStorageSession::committedCrossSiteLoadWithLinkDecoration(const String& fromRegistrableDomain, const String& toRegistrableDomain, uint64_t pageID)
+{
+    if (shouldBlockThirdPartyCookies(fromRegistrableDomain))
+        m_navigatedToWithLinkDecorationByPrevalentResource.add(pageID, toRegistrableDomain);
+}
+
+void NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting()
+{
+    m_navigatedToWithLinkDecorationByPrevalentResource.clear();
+    m_navigationWithLinkDecorationTestMode = true;
+}
+
+Optional<Seconds> NetworkStorageSession::clientSideCookieCap(const URL& url, Optional<uint64_t> pageID) const
+{
+    if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
+        return m_ageCapForClientSideCookies;
+
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
+    if (domainIterator == m_navigatedToWithLinkDecorationByPrevalentResource.end())
+        return m_ageCapForClientSideCookies;
+
+    auto domain = url.host().toString();
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    domain = topPrivatelyControlledDomain(domain);
+#endif
+
+    if (domainIterator->value == domain)
+        return m_ageCapForClientSideCookiesShort;
+
+    return m_ageCapForClientSideCookies;
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

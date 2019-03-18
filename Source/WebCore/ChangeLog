@@ -1,3 +1,54 @@
+2019-03-18  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Apply patch. rdar://problem/48839387
+
+    2019-03-18  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Further restrict client-side cookie persistence after cross-site navigations with link decoration (branch patch)
+            https://bugs.webkit.org/show_bug.cgi?id=195711
+            <rdar://problem/48839387>
+            <rdar://problem/48832278>
+
+            Reviewed by Brent Fulgham.
+
+            Tests: http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-decoration-same-site.html
+                   http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html
+                   http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html
+                   http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html
+                   http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html
+
+            This patch does three things:
+
+            1) Applies the changes in https://trac.webkit.org/changeset/242288 to
+            a branch. The only meaningful difference is the use of String instead
+            of WebCore::RegistrableDomain. Tracked by <rdar://problem/48839387>.
+
+            2) Set the lifetime cap for client-side cookies in the call to
+            NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor(). This
+            change makes sure that if ITP is enabled, the cap will be applied.
+            Previously, the cap was set when WebProcessPool::ensureNetworkProcess()
+            called WebsiteDataStore::didCreateNetworkProcess() which might fail if
+            the website data store's m_resourceLoadStatistics object is not created
+            yet. Tracked by <rdar://problem/48832278>.
+
+            3) Makes sure WebProcessPool::ensureNetworkProcess() calls
+            WebsiteDataStore::didCreateNetworkProcess() also if there was an
+            existing website data store object supplied (the withWebsiteDataStore
+            parameter). Tracked by <rdar://problem/48832278>.
+
+            * platform/network/NetworkStorageSession.cpp:
+            (WebCore::NetworkStorageSession::setAgeCapForClientSideCookies):
+            (WebCore::NetworkStorageSession::setPrevalentDomainsToBlockCookiesFor):
+            (WebCore::NetworkStorageSession::clearPageSpecificDataForResourceLoadStatistics):
+            (WebCore::NetworkStorageSession::committedCrossSiteLoadWithLinkDecoration):
+            (WebCore::NetworkStorageSession::resetCrossSiteLoadsWithLinkDecorationForTesting):
+            (WebCore::NetworkStorageSession::clientSideCookieCap const):
+            (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage): Deleted.
+            * platform/network/NetworkStorageSession.h:
+            * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+            (WebCore::filterCookies):
+            (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+
 2019-03-13  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r242749. rdar://problem/48839358
