@@ -1,3 +1,11 @@
+2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][GStreamer] Mark flaky crashing test
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations: Mark
+        imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html
+
 2019-03-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK1] Null dereference in WebFrameNetworkingContext::storageSession
