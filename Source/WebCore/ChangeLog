@@ -1,3 +1,16 @@
+2019-03-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r243037.
+
+        Broke the Windows build
+
+        Reverted changeset:
+
+        "Reduce the size of Node::deref by eliminating an explicit
+        parentNode check"
+        https://bugs.webkit.org/show_bug.cgi?id=195776
+        https://trac.webkit.org/changeset/243037
+
 2019-03-18  Eric Carlson  <eric.carlson@apple.com>
 
         Change some logging levels

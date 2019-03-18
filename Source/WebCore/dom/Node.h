@@ -500,7 +500,7 @@ public:
     void ref();
     void deref();
     bool hasOneRef() const;
-    unsigned refCount() const;
+    int refCount() const;
 
 #ifndef NDEBUG
     bool m_deletionHasBegun { false };
@@ -618,9 +618,6 @@ protected:
     };
     Node(Document&, ConstructionType);
 
-    static constexpr uint32_t s_refCountIncrement = 2;
-    static constexpr uint32_t s_refCountMask = ~0x1;
-
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
     bool hasRareData() const { return getFlag(HasRareDataFlag); }
@@ -667,7 +664,7 @@ private:
     static void moveTreeToNewScope(Node&, TreeScope& oldScope, TreeScope& newScope);
     void moveNodeToNewDocument(Document& oldDocument, Document& newDocument);
 
-    uint32_t m_refCountAndParentBit { s_refCountIncrement };
+    int m_refCount;
     mutable uint32_t m_nodeFlags;
 
     ContainerNode* m_parentNode { nullptr };
@@ -698,37 +695,34 @@ ALWAYS_INLINE void Node::ref()
     ASSERT(!m_deletionHasBegun);
     ASSERT(!m_inRemovedLastRefFunction);
     ASSERT(!m_adoptionIsRequired);
-    m_refCountAndParentBit += s_refCountIncrement;
+    ++m_refCount;
 }
 
 ALWAYS_INLINE void Node::deref()
 {
     ASSERT(isMainThread());
-    ASSERT(refCount());
+    ASSERT(m_refCount >= 0);
     ASSERT(!m_deletionHasBegun);
     ASSERT(!m_inRemovedLastRefFunction);
     ASSERT(!m_adoptionIsRequired);
-    auto tempRefCount = m_refCountAndParentBit - s_refCountIncrement;
-    if (!tempRefCount) {
+    if (--m_refCount <= 0 && !parentNode()) {
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = true;
 #endif
         removedLastRef();
-        return;
     }
-    m_refCountAndParentBit = tempRefCount;
 }
 
 ALWAYS_INLINE bool Node::hasOneRef() const
 {
     ASSERT(!m_deletionHasBegun);
     ASSERT(!m_inRemovedLastRefFunction);
-    return refCount() == 1;
+    return m_refCount == 1;
 }
 
-ALWAYS_INLINE unsigned Node::refCount() const
+ALWAYS_INLINE int Node::refCount() const
 {
-    return m_refCountAndParentBit / s_refCountIncrement;
+    return m_refCount;
 }
 
 // Used in Node::addSubresourceAttributeURLs() and in addSubresourceStyleURLs()
@@ -742,8 +736,6 @@ inline void Node::setParentNode(ContainerNode* parent)
 {
     ASSERT(isMainThread());
     m_parentNode = parent;
-    auto refCountWithoutParentBit = m_refCountAndParentBit & s_refCountMask;
-    m_refCountAndParentBit = refCountWithoutParentBit | !!parent;
 }
 
 inline ContainerNode* Node::parentNode() const
