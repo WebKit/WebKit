@@ -1,5 +1,16 @@
 2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
 
+        [GTK][WPE] Cryptic error from Tools/gtkdoc/generate-gtkdoc
+        https://bugs.webkit.org/show_bug.cgi?id=195883
+
+        Reviewed by Carlos Garcia Campos.
+
+        * gtkdoc/gtkdoc.py:
+        (GTKDoc._run_command): When commands fail to run, include the full command line for
+        the program invocation and the output it has generated on the standard error stream.
+
+2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
+
         [WPE] Bump dependencies to wpe-1.0 and wpebackend-fdo-1.0
         https://bugs.webkit.org/show_bug.cgi?id=195786
 
