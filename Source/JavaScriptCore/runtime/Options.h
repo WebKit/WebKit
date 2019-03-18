@@ -394,7 +394,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, gcMaxHeapSize, 0, Normal, nullptr) \
     v(unsigned, forceRAMSize, 0, Normal, nullptr) \
     v(bool, recordGCPauseTimes, false, Normal, nullptr) \
-    v(bool, logHeapStatisticsAtExit, false, Normal, nullptr) \
+    v(bool, dumpHeapStatisticsAtVMDestruction, false, Normal, nullptr) \
     v(bool, forceCodeBlockToJettisonDueToOldAge, false, Normal, "If true, this means that anytime we can jettison a CodeBlock due to old age, we do.") \
     v(bool, useEagerCodeBlockJettisonTiming, false, Normal, "If true, the time slices for jettisoning a CodeBlock due to old age are shrunk significantly.") \
     \

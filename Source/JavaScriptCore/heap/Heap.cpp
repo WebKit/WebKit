@@ -344,6 +344,30 @@ bool Heap::isPagedOut(MonotonicTime deadline)
     return m_objectSpace.isPagedOut(deadline);
 }
 
+void Heap::dumpHeapStatisticsAtVMDestruction()
+{
+    unsigned counter = 0;
+    m_objectSpace.forEachBlock([&] (MarkedBlock::Handle* block) {
+        unsigned live = 0;
+        block->forEachCell([&] (HeapCell* cell, HeapCell::Kind) {
+            if (cell->isLive())
+                live++;
+            return IterationStatus::Continue;
+        });
+        dataLogLn("[", counter++, "] ", block->cellSize(), ", ", live, " / ", block->cellsPerBlock(), " ", static_cast<double>(live) / block->cellsPerBlock() * 100, "% ", block->attributes(), " ", block->subspace()->name());
+        block->forEachCell([&] (HeapCell* heapCell, HeapCell::Kind kind) {
+            if (heapCell->isLive() && kind == HeapCell::Kind::JSCell) {
+                auto* cell = static_cast<JSCell*>(heapCell);
+                if (cell->isObject())
+                    dataLogLn("    ", JSValue((JSObject*)cell));
+                else
+                    dataLogLn("    ", *cell);
+            }
+            return IterationStatus::Continue;
+        });
+    });
+}
+
 // The VM is being destroyed and the collector will never run again.
 // Run all pending finalizers now because we won't get another chance.
 void Heap::lastChanceToFinalize()
@@ -423,6 +447,9 @@ void Heap::lastChanceToFinalize()
     
     if (Options::logGC())
         dataLog("5 ");
+
+    if (UNLIKELY(Options::dumpHeapStatisticsAtVMDestruction()))
+        dumpHeapStatisticsAtVMDestruction();
     
     m_arrayBuffers.lastChanceToFinalize();
     m_objectSpace.stopAllocatingForGood();

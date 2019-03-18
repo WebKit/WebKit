@@ -1,5 +1,34 @@
 2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add --destroy-vm shell option and dumpHeapStatisticsAtVMDestruction option
+        https://bugs.webkit.org/show_bug.cgi?id=195897
+
+        Reviewed by Keith Miller.
+
+        It is useful if we have an option logging the status of all the existing MarkedBlocks and their objects at VM destruction.
+        I used this feature to find wasting memory, and successfully removed many wasted MarkedBlocks and JS cells like r243081.
+        This patch adds,
+
+        1. --destroy-vm option to JSC shell to destroy main thread JSC::VM
+        2. dumpHeapStatisticsAtVMDestruction to dump MarkedBlocks at VM destruction
+
+        While the current option name is "dumpHeapStatisticsAtVMDestruction", we just dump the status of MarkedBlocks and cells. But eventually,
+        we would like to collect heap statistics and dump them to investigate Heap status more.
+
+        This patch also removes logHeapStatisticsAtExit option since it is no longer used in JSC.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::dumpHeapStatisticsAtVMDestruction):
+        (JSC::Heap::lastChanceToFinalize):
+        * heap/Heap.h:
+        * jsc.cpp:
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (runJSC):
+        * runtime/Options.h:
+
+2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] jsSubstring should resolve rope before calling JSRopeString::create
         https://bugs.webkit.org/show_bug.cgi?id=195840
 

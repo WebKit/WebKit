@@ -573,6 +573,8 @@ private:
 
     void setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>>);
 
+    void dumpHeapStatisticsAtVMDestruction();
+
     static bool useGenerationalGC();
     static bool shouldSweepSynchronously();
     

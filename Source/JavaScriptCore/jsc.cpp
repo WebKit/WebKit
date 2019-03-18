@@ -413,15 +413,16 @@ public:
         parseArguments(argc, argv);
     }
 
+    Vector<Script> m_scripts;
+    Vector<String> m_arguments;
+    String m_profilerOutput;
+    String m_uncaughtExceptionName;
     bool m_interactive { false };
     bool m_dump { false };
     bool m_module { false };
     bool m_exitCode { false };
-    Vector<Script> m_scripts;
-    Vector<String> m_arguments;
+    bool m_destroyVM { false };
     bool m_profile { false };
-    String m_profilerOutput;
-    String m_uncaughtExceptionName;
     bool m_treatWatchdogExceptionAsSuccess { false };
     bool m_alwaysDumpUncaughtException { false };
     bool m_dumpMemoryFootprint { false };
@@ -2692,6 +2693,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
     fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
     fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
+    fprintf(stderr, "  --destroy-vm               Destroy VM before exiting\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
     fprintf(stderr, "\n");
@@ -2798,6 +2800,10 @@ void CommandLine::parseArguments(int argc, char** argv)
             JSC::Options::useSamplingProfiler() = true;
             JSC::Options::collectSamplingProfilerDataForJSCShell() = true;
             m_dumpSamplingProfilerData = true;
+            continue;
+        }
+        if (!strcmp(arg, "--destroy-vm")) {
+            m_destroyVM = true;
             continue;
         }
 
@@ -2973,7 +2979,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
 
     vm.codeCache()->write(vm);
 
-    if (isWorker) {
+    if (options.m_destroyVM || isWorker) {
         JSLockHolder locker(vm);
         // This is needed because we don't want the worker's main
         // thread to die before its compilation threads finish.
