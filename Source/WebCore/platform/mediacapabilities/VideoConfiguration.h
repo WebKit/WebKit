@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,6 +36,7 @@ struct VideoConfiguration {
     uint32_t height;
     uint64_t bitrate;
     double framerate;
+    Optional<bool> alphaChannel;
 };
 
 }

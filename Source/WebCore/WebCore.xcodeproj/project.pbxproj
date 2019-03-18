@@ -13778,7 +13778,7 @@
 		CDA595912146DEC300A84185 /* HEVCUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilities.h; sourceTree = "<group>"; };
 		CDA595922146DEC300A84185 /* HEVCUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HEVCUtilities.cpp; sourceTree = "<group>"; };
 		CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HEVCUtilitiesCocoa.h; sourceTree = "<group>"; };
-		CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HEVCUtilitiesCocoa.cpp; sourceTree = "<group>"; };
+		CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HEVCUtilitiesCocoa.mm; sourceTree = "<group>"; };
 		CDA79821170A22DC00D45C55 /* AudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSession.h; sourceTree = "<group>"; };
 		CDA79823170A258300D45C55 /* AudioSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSession.cpp; sourceTree = "<group>"; };
 		CDA79825170A279000D45C55 /* AudioSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioSessionIOS.mm; sourceTree = "<group>"; };
@@ -25039,8 +25039,8 @@
 				B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */,
 				49FFBF1C11C8550E006A7118 /* GraphicsContext3DCocoa.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextCocoa.mm */,
-				CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.cpp */,
 				CDA595962146DF7800A84185 /* HEVCUtilitiesCocoa.h */,
+				CDA595972146DF7800A84185 /* HEVCUtilitiesCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
@@ -30863,6 +30863,8 @@
 				49E911C70EF86D47009D0CAF /* MatrixTransformOperation.h in Headers */,
 				5CBC8DAD1AAA302200E1C803 /* MediaAccessibilitySoftLink.h in Headers */,
 				931BCC611124DFCB00BE70DD /* MediaCanStartListener.h in Headers */,
+				CDCC9BCF22387E9A00FFB51C /* MediaCapabilitiesDecodingInfo.h in Headers */,
+				CDCC9BD122387EAA00FFB51C /* MediaCapabilitiesEncodingInfo.h in Headers */,
 				078E093A17D16E1C00420AA1 /* MediaConstraints.h in Headers */,
 				417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */,
 				DEBCCDD416646EAF00A452E1 /* MediaControlElementTypes.h in Headers */,
@@ -32166,7 +32168,6 @@
 				C65046A9167BFB5500CC2A4D /* TemplateContentDocumentFragment.h in Headers */,
 				26E944DD1AC4B4EA007B85B5 /* Term.h in Headers */,
 				6550B6A6099DF0270090D781 /* Text.h in Headers */,
-				CDCC9BD122387EAA00FFB51C /* MediaCapabilitiesEncodingInfo.h in Headers */,
 				93309E17099E64920056E581 /* TextAffinity.h in Headers */,
 				CE7B2DB51586ABAD0098B3FA /* TextAlternativeWithRange.h in Headers */,
 				0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */,
@@ -32260,7 +32261,6 @@
 				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				FB484F4D171F821E00040755 /* TransformFunctions.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
-				CDCC9BCF22387E9A00FFB51C /* MediaCapabilitiesDecodingInfo.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,
 				5DB1BC6A10715A6400EFAA49 /* TransformSource.h in Headers */,
 				4945BFD413CF809000CC3B38 /* TransformState.h in Headers */,

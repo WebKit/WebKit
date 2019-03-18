@@ -27,6 +27,7 @@
 #include "MediaCapabilities.h"
 
 #include "ContentType.h"
+#include "Document.h"
 #include "JSMediaCapabilitiesDecodingInfo.h"
 #include "JSMediaCapabilitiesEncodingInfo.h"
 #include "MediaCapabilitiesDecodingInfo.h"
@@ -34,6 +35,7 @@
 #include "MediaDecodingConfiguration.h"
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactory.h"
+#include "Settings.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -159,7 +161,7 @@ static bool isValidMediaConfiguration(const MediaConfiguration& configuration)
     return true;
 }
 
-void MediaCapabilities::decodingInfo(MediaDecodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
+void MediaCapabilities::decodingInfo(Document& document, MediaDecodingConfiguration&& configuration, Ref<DeferredPromise>&& promise)
 {
     // 2.4 Media Capabilities Interface
     // https://wicg.github.io/media-capabilities/#media-capabilities-interface
@@ -171,6 +173,9 @@ void MediaCapabilities::decodingInfo(MediaDecodingConfiguration&& configuration,
         promise->reject(TypeError);
         return;
     }
+
+    if (!document.settings().mediaCapabilitiesExtensionsEnabled() && configuration.video)
+        configuration.video.value().alphaChannel.reset();
 
     // 4. Let p be a new promise.
     // 5. In parallel, run the create a MediaCapabilitiesInfo algorithm with configuration and resolve p with its result.

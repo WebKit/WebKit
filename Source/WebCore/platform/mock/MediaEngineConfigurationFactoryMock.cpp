@@ -47,6 +47,12 @@ static bool canDecodeMedia(const MediaDecodingConfiguration& configuration)
     if (videoConfig && videoConfig->width > 1280 && videoConfig->height > 720)
         return false;
 
+    // Only the "mock-with-alpha" codec supports alphaChannel
+    if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
+        if (ContentType(videoConfig->contentType).codecsParameter() != "mock-with-alpha")
+            return false;
+    }
+
     // Audio decoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;
     if (audioConfig)
@@ -91,6 +97,12 @@ static bool canEncodeMedia(const MediaEncodingConfiguration& configuration)
     auto videoConfig = configuration.video;
     if (videoConfig && videoConfig->width > 1280 && videoConfig->height > 720)
         return false;
+
+    // Only the "mock-with-alpha" codec supports alphaChannel
+    if (videoConfig && videoConfig->alphaChannel && videoConfig->alphaChannel.value()) {
+        if (ContentType(videoConfig->contentType).codecsParameter() != "mock-with-alpha")
+            return false;
+    }
 
     // Audio encoding support limited to audio/mp4.
     auto audioConfig = configuration.audio;

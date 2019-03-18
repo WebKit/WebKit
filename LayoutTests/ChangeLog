@@ -1,3 +1,13 @@
+2019-03-18  Jer Noble  <jer.noble@apple.com>
+
+        Add experimental "alphaChannel" property to VideoConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=195853
+
+        Reviewed by Eric Carlson.
+
+        * media/mediacapabilities/mock-decodingInfo-alphaChannel-expected.txt: Added.
+        * media/mediacapabilities/mock-decodingInfo-alphaChannel.html: Added.
+
 2019-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up the compiler to our WebGPU implementation

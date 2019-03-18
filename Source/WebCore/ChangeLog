@@ -1,3 +1,34 @@
+2019-03-18  Jer Noble  <jer.noble@apple.com>
+
+        Add experimental "alphaChannel" property to VideoConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=195853
+
+        Reviewed by Eric Carlson.
+
+        Test: media/mediacapabilities/mock-decodingInfo-alphaChannel.html
+
+        Add a new, experimental addition to Media Capabilities to allow pages to query for
+        alpha channel support.
+
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::MediaCapabilities::decodingInfo):
+        * Modules/mediacapabilities/MediaCapabilities.h:
+        * Modules/mediacapabilities/MediaCapabilities.idl:
+        * Modules/mediacapabilities/VideoConfiguration.idl:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.h:
+        * platform/graphics/cocoa/HEVCUtilitiesCocoa.mm: Renamed from Source/WebCore/platform/graphics/cocoa/HEVCUtilitiesCocoa.cpp.
+        (WebCore::validateHEVCParameters):
+        * platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp:
+        (WebCore::createMediaPlayerDecodingConfigurationCocoa):
+        * platform/mediacapabilities/VideoConfiguration.h:
+        * platform/mock/MediaEngineConfigurationFactoryMock.cpp:
+        (WebCore::canDecodeMedia):
+        (WebCore::canEncodeMedia):
+
 2019-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unused webkitEditableContentChanged event

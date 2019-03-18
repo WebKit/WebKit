@@ -28,15 +28,34 @@
 
 #if PLATFORM(COCOA)
 
+#include "FourCC.h"
 #include "HEVCUtilities.h"
 #include "MediaCapabilitiesInfo.h"
 
 #include "VideoToolboxSoftLink.h"
 
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVVideoCodecTypeHEVCWithAlpha, NSString *)
+
 namespace WebCore {
 
-bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo& info)
+bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo& info, bool hasAlphaChannel)
 {
+    CMVideoCodecType codec = kCMVideoCodecType_HEVC;
+    if (hasAlphaChannel) {
+        if (!AVFoundationLibrary() || !canLoadAVVideoCodecTypeHEVCWithAlpha())
+            return false;
+
+        auto codecCode = FourCC::fromString(getAVVideoCodecTypeHEVCWithAlpha());
+        if (!codecCode)
+            return false;
+
+        codec = codecCode.value().value;
+    }
+    OSStatus status = VTSelectAndCreateVideoDecoderInstance(codec, kCFAllocatorDefault, nullptr, nullptr);
+    if (status != noErr)
+        return false;
+
     if (!canLoad_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary()
         || !canLoad_VideoToolbox_kVTHEVCDecoderCapability_SupportedProfiles()
         || !canLoad_VideoToolbox_kVTHEVCDecoderCapability_PerProfileSupport()

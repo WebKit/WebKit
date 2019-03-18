@@ -30,6 +30,7 @@
 #include <VideoToolbox/VideoToolbox.h>
 #include <wtf/SoftLinking.h>
 
+typedef struct OpaqueVTVideoDecoder VTVideoDecoderRef;
 typedef struct OpaqueVTImageRotationSession* VTImageRotationSessionRef;
 typedef struct OpaqueVTPixelBufferConformer* VTPixelBufferConformerRef;
 typedef struct OpaqueVTPixelTransferSession* VTPixelTransferSessionRef;
@@ -64,6 +65,8 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTCopyHEVCDecoderC
 #define VTCopyHEVCDecoderCapabilitiesDictionary softLink_VideoToolbox_VTCopyHEVCDecoderCapabilitiesDictionary
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, VideoToolbox, VTGetHEVCCapabilitesForFormatDescription, OSStatus, (CMVideoFormatDescriptionRef formatDescription, CFDictionaryRef decoderCapabilitiesDict, Boolean* isDecodable, Boolean* mayBePlayable), (formatDescription, decoderCapabilitiesDict, isDecodable, mayBePlayable))
 #define VTGetHEVCCapabilitesForFormatDescription softLink_VideoToolbox_VTGetHEVCCapabilitesForFormatDescription
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, VideoToolbox, VTSelectAndCreateVideoDecoderInstance, OSStatus, (CMVideoCodecType codecType, CFAllocatorRef allocator, CFDictionaryRef videoDecoderSpecification, VTVideoDecoderRef *decoderInstanceOut), (codecType, allocator, videoDecoderSpecification, decoderInstanceOut))
+#define VTSelectAndCreateVideoDecoderInstance softLink_VideoToolbox_VTSelectAndCreateVideoDecoderInstance
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder, CFStringRef)
 #define kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder get_VideoToolbox_kVTVideoDecoderSpecification_EnableHardwareAcceleratedVideoDecoder()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, VideoToolbox, kVTDecompressionPropertyKey_PixelBufferPool, CFStringRef)

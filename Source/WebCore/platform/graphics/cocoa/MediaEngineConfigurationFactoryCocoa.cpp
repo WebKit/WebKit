@@ -76,15 +76,24 @@ void createMediaPlayerDecodingConfigurationCocoa(MediaDecodingConfiguration&& co
             return;
         }
 
+        bool alphaChannel = videoConfiguration.alphaChannel && videoConfiguration.alphaChannel.value();
+
         if (videoCodecType == kCMVideoCodecType_HEVC) {
             auto parameters = parseHEVCCodecParameters(codec);
-            if (!parameters || !validateHEVCParameters(parameters.value(), info)) {
+            if (!parameters || !validateHEVCParameters(parameters.value(), info, alphaChannel)) {
                 callback({{ }, WTFMove(configuration)});
                 return;
             }
-        } else if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported()) {
-            info.powerEfficient = VTIsHardwareDecodeSupported(videoCodecType);
-            info.smooth = true;
+        } else {
+            if (alphaChannel) {
+                callback({{ }, WTFMove(configuration)});
+                return;
+            }
+
+            if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported()) {
+                info.powerEfficient = VTIsHardwareDecodeSupported(videoCodecType);
+                info.smooth = true;
+            }
         }
     }
 

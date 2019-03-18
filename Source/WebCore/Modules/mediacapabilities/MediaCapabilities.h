@@ -31,12 +31,13 @@
 
 namespace WebCore {
 
+class Document;
 struct MediaDecodingConfiguration;
 struct MediaEncodingConfiguration;
 
 class MediaCapabilities : public RefCounted<MediaCapabilities> {
 public:
-    void decodingInfo(MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
+    void decodingInfo(Document&, MediaDecodingConfiguration&&, Ref<DeferredPromise>&&);
     void encodingInfo(MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
 
 private:

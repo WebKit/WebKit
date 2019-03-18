@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct MediaCapabilitiesInfo;
 
-extern bool validateHEVCParameters(HEVCParameterSet&, MediaCapabilitiesInfo&);
+extern bool validateHEVCParameters(HEVCParameterSet&, MediaCapabilitiesInfo&, bool hasAlphaChannel);
 
 }
 
