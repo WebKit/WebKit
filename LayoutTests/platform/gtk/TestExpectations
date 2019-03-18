@@ -228,7 +228,6 @@ webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 # See also bug #175578
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Crash Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
@@ -1341,8 +1340,6 @@ webkit.org/b/195260 mathml/presentation/tokenElements-dynamic.html [ Crash Pass 
 
 webkit.org/b/195271 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-1.html [ Failure Pass ]
 
-webkit.org/b/195877 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2162,6 +2159,9 @@ webkit.org/b/193518 imported/w3c/web-platform-tests/fetch/range/general.window.h
 webkit.org/b/194386 media/video-background-playback.html [ Crash Pass ]
 
 webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Timeout ]
+
+webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Crash Failure ]
+webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

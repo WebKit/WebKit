@@ -1,3 +1,13 @@
+2019-03-18  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][GStreamer] Mark flaky crashing test
+
+        * platform/gtk/TestExpectations:
+
+        Unreviewed gardening.
+        * platform/gtk/TestExpectations: Mark
+        imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html
+
 2019-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Rewrite HTTP source element using pushsrc base class
