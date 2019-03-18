@@ -1,3 +1,12 @@
+2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Bump dependencies to wpe-1.0 and wpebackend-fdo-1.0
+        https://bugs.webkit.org/show_bug.cgi?id=195786
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/FindWPE.cmake: Check for the wpe-1.0 pkg-config package.
+
 2019-03-11  Xan Lopez  <xan@igalia.com>
 
         [CMake] Build 32bit binaries on Linux/64bit when the --32-bit is passed to build-jsc

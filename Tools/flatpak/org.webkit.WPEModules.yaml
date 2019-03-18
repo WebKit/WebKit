@@ -2,11 +2,11 @@
   buildsystem: cmake-ninja
   sources:
     - type: archive
-      url: https://wpewebkit.org/releases/libwpe-1.1.0.tar.xz
-      sha256: 72e34ad754be11abd1a438cfe195d8d644c52105ab2b1c3b39dec6228bc776ce
+      url: https://wpewebkit.org/releases/libwpe-1.1.90.tar.xz
+      sha256: d21dcf83f7e7405e8296c1732d240637d2facdb40e1c9879a1c0f9f222517592
 - name: wpebackend-fdo
   buildsystem: cmake-ninja
   sources:
-    - type: git
-      url: https://github.com/Igalia/wpebackend-fdo.git
-      commit: fa227dac7c6a133d62b35d7a6af0332582b64d4d
+    - type: archive
+      url: https://wpewebkit.org/releases/wpebackend-fdo-1.1.91.tar.xz
+      sha256: d20e5688e3e6d9fdf1c3ee083ea14720bf59354aa17f275a003b030e8131315d

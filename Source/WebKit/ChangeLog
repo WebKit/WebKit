@@ -1,3 +1,13 @@
+2019-03-18  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE] Bump dependencies to wpe-1.0 and wpebackend-fdo-1.0
+        https://bugs.webkit.org/show_bug.cgi?id=195786
+
+        Reviewed by Philippe Normand.
+
+        * wpe/wpe-web-extension.pc.in: Change dependency to wpe-1.0
+        * wpe/wpe-webkit.pc.in: Ditto.
+
 2019-03-17  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [iOS] Block the accessibility server when accessibility is not enabled.

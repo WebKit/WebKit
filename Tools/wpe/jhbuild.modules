@@ -193,8 +193,8 @@
   </autotools>
 
   <cmake id="libwpe">
-      <branch repo="wpewebkit" module="libwpe-1.1.0.tar.xz" version="1.1.0"
-              hash="sha256:72e34ad754be11abd1a438cfe195d8d644c52105ab2b1c3b39dec6228bc776ce"/>
+      <branch repo="wpewebkit" module="libwpe-1.1.90.tar.xz" version="1.1.90"
+              hash="sha256:d21dcf83f7e7405e8296c1732d240637d2facdb40e1c9879a1c0f9f222517592"/>
   </cmake>
 
   <cmake id="wpebackend-fdo">
@@ -202,8 +202,8 @@
       <dep package="libwpe"/>
       <dep package="glib"/>
     </dependencies>
-    <branch repo="github.com" module="Igalia/wpebackend-fdo.git" checkoutdir="wpebackend-fdo"
-            tag="fa227dac7c6a133d62b35d7a6af0332582b64d4d"/>
+    <branch repo="wpewebkit" module="wpebackend-fdo-1.1.91.tar.xz" version="1.1.91"
+            hash="sha256:d20e5688e3e6d9fdf1c3ee083ea14720bf59354aa17f275a003b030e8131315d"/>
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
