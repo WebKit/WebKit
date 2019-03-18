@@ -302,7 +302,6 @@ namespace WebCore {
     macro(webkitAnimationIteration) \
     macro(webkitAnimationStart) \
     macro(webkitBeforeTextInserted) \
-    macro(webkitEditableContentChanged) \
     macro(webkitTransitionEnd) \
     macro(webkitbeginfullscreen) \
     macro(webkitcurrentplaybacktargetiswirelesschanged) \

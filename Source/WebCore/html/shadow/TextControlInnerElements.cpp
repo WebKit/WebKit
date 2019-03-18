@@ -148,15 +148,14 @@ void TextControlInnerTextElement::defaultEventHandler(Event& event)
     // FIXME: In the future, we should add a way to have default event listeners.
     // Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     // Or possibly we could just use a normal event listener.
-    if (event.isBeforeTextInsertedEvent() || event.type() == eventNames().webkitEditableContentChangedEvent) {
-        RefPtr<Element> shadowAncestor = shadowHost();
+    if (event.isBeforeTextInsertedEvent()) {
         // A TextControlInnerTextElement can have no host if its been detached,
         // but kept alive by an EditCommand. In this case, an undo/redo can
         // cause events to be sent to the TextControlInnerTextElement. To
         // prevent an infinite loop, we must check for this case before sending
         // the event up the chain.
-        if (shadowAncestor)
-            shadowAncestor->defaultEventHandler(event);
+        if (auto host = makeRefPtr(shadowHost()))
+            host->defaultEventHandler(event);
     }
     if (!event.defaultHandled())
         HTMLDivElement::defaultEventHandler(event);

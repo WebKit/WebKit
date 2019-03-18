@@ -1,3 +1,19 @@
+2019-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove unused webkitEditableContentChanged event
+        https://bugs.webkit.org/show_bug.cgi?id=195909
+
+        Reviewed by Wenson Hsieh.
+
+        Removed webkitEditableContentChanged event which is no longer used after r206944.
+
+        Note that only WebKit's C++ code can fire events in TextControlInnerElements
+        since the element is an implementation detail of input and textarea elements.
+
+        * dom/EventNames.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+
 2019-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WHLSL] Hook up the compiler to our WebGPU implementation
