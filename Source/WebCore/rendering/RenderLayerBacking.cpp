@@ -1434,6 +1434,7 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
 void RenderLayerBacking::updateEventRegion()
 {
+#if PLATFORM(COCOA)
     GraphicsContext nullContext(nullptr);
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
 
@@ -1446,6 +1447,7 @@ void RenderLayerBacking::updateEventRegion()
     eventRegion.translate(roundedIntSize(contentOffsetInCompositingLayer()));
 
     m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
+#endif
 }
 
 // Return true if the layer changed.
