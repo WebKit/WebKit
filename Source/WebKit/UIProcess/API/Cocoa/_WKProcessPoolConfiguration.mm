@@ -324,6 +324,16 @@
     _processPoolConfiguration->setJITEnabled(enabled);
 }
 
+- (NSUInteger)downloadMonitorSpeedMultiplierForTesting
+{
+    return _processPoolConfiguration->downloadMonitorSpeedMultiplier();
+}
+
+- (void)setDownloadMonitorSpeedMultiplierForTesting:(NSUInteger)multiplier
+{
+    _processPoolConfiguration->setDownloadMonitorSpeedMultiplier(multiplier);
+}
+
 - (void)setSuppressesConnectionTerminationOnSystemChange:(BOOL)suppressesConnectionTerminationOnSystemChange
 {
     _processPoolConfiguration->setSuppressesConnectionTerminationOnSystemChange(suppressesConnectionTerminationOnSystemChange);

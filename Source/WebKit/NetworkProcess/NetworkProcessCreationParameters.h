@@ -112,6 +112,7 @@ struct NetworkProcessCreationParameters {
     bool shouldDisableServiceWorkerProcessTerminationDelay { false };
 #endif
     bool shouldEnableITPDatabase { false };
+    uint32_t downloadMonitorSpeedMultiplier { 1 };
 };
 
 } // namespace WebKit

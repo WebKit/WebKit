@@ -23,63 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DownloadMap.h"
+#pragma once
 
-#if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
-
-#include "Download.h"
+#include <WebCore/Timer.h>
+#include <wtf/Deque.h>
 
 namespace WebKit {
 
+class Download;
 
-Download* DownloadMap::get(DownloadID downloadID) const
-{
-    return m_downloads.get(downloadID);
-}
-
-bool DownloadMap::isEmpty() const
-{
-    return m_downloads.isEmpty();
-}
-
-uint64_t DownloadMap::size() const
-{
-    return m_downloads.size();
-}
-
-bool DownloadMap::contains(DownloadID downloadID) const
-{
-    return m_downloads.contains(downloadID);
-}
-
-DownloadMap::DownloadMapType::AddResult DownloadMap::add(DownloadID downloadID, std::unique_ptr<Download>&& download)
-{
-    auto result = m_downloads.add(downloadID, WTFMove(download));
-    if (m_downloads.size() == 1) {
-        ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
-    }
-
-    return result;
-}
-
-bool DownloadMap::remove(DownloadID downloadID)
-{
-    auto result = m_downloads.remove(downloadID);
-    if (m_downloads.isEmpty()) {
-        ASSERT(m_downloadAssertion);
-        m_downloadAssertion = nullptr;
-    }
+class DownloadMonitor {
+    WTF_MAKE_NONCOPYABLE(DownloadMonitor); WTF_MAKE_FAST_ALLOCATED;
+public:
+    DownloadMonitor(Download&);
     
-    return result;
-}
+    void applicationDidEnterBackground();
+    void applicationWillEnterForeground();
+    void downloadReceivedBytes(uint64_t);
+    void timerFired();
 
-auto DownloadMap::values() -> DownloadMapType::ValuesIteratorRange
-{
-    return m_downloads.values();
-}
+private:
+    Download& m_download;
+
+    double measuredThroughputRate() const;
+    uint32_t speedMultiplier() const;
+    
+    struct Timestamp {
+        MonotonicTime time;
+        uint64_t bytesReceived;
+    };
+    static constexpr size_t timestampCapacity = 10;
+    Deque<Timestamp, timestampCapacity> m_timestamps;
+    WebCore::Timer m_timer { *this, &DownloadMonitor::timerFired };
+    size_t m_interval { 0 };
+};
 
 } // namespace WebKit
-
-#endif // ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)

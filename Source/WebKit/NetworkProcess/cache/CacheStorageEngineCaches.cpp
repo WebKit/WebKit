@@ -51,7 +51,7 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
-Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, StorageQuotaManager& quotaManager)
+Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, WebCore::StorageQuotaManager& quotaManager)
     : m_engine(&engine)
     , m_origin(WTFMove(origin))
     , m_rootPath(WTFMove(rootPath))
@@ -500,10 +500,10 @@ void Caches::requestSpace(uint64_t spaceRequired, WebCore::DOMCacheEngine::Compl
 
     m_quotaManager->requestSpace(spaceRequired, [callback = WTFMove(callback)](auto decision) {
         switch (decision) {
-        case StorageQuotaManager::Decision::Deny:
+        case WebCore::StorageQuotaManager::Decision::Deny:
             callback(Error::QuotaExceeded);
             return;
-        case StorageQuotaManager::Decision::Grant:
+        case WebCore::StorageQuotaManager::Decision::Grant:
             callback({ });
         };
     });

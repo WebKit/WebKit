@@ -1102,7 +1102,7 @@ public:
 
     WebPageCreationParameters creationParameters(WebProcessProxy&, DrawingAreaProxy&);
 
-    void handleDownloadRequest(DownloadProxy*);
+    void handleDownloadRequest(DownloadProxy&);
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);

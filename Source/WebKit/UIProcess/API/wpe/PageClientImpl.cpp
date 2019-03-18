@@ -124,10 +124,9 @@ void PageClientImpl::didCommitLoadForMainFrame(const String&, bool)
 {
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+void PageClientImpl::handleDownloadRequest(DownloadProxy& download)
 {
-    ASSERT(download);
-    m_view.handleDownloadRequest(*download);
+    m_view.handleDownloadRequest(download);
 }
 
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)

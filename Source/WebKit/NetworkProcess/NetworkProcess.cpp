@@ -361,6 +361,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     for (auto& scheme : parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
+    
+    m_downloadMonitorSpeedMultiplier = parameters.downloadMonitorSpeedMultiplier;
 
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
@@ -1953,6 +1955,16 @@ void NetworkProcess::cancelPrepareToSuspend()
     platformProcessDidResume();
     for (auto& connection : m_webProcessConnections)
         connection->endSuspension();
+}
+
+void NetworkProcess::applicationDidEnterBackground()
+{
+    m_downloadManager.applicationDidEnterBackground();
+}
+
+void NetworkProcess::applicationWillEnterForeground()
+{
+    m_downloadManager.applicationWillEnterForeground();
 }
 
 void NetworkProcess::processDidResume()

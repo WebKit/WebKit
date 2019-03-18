@@ -1,3 +1,111 @@
+2019-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Implement DownloadMonitor to prevent long-running slow downloads from background apps
+        https://bugs.webkit.org/show_bug.cgi?id=195785
+
+        Reviewed by Geoffrey Garen.
+
+        This is similar to what was updated in <rdar://problem/42677685> but for WebKit Downloads.
+        To test it I implemented a throttled TCP server, SPI to speed up DownloadMonitor's timer,
+        and SPI to synthesize the application going into the background and foreground, which
+        NSNotificationCenter does on iOS.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        (WebKit::Download::didCancel):
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::applicationEnteredBackground):
+        (WebKit::Download::applicationEnteredForeground):
+        (WebKit::Download::manager const):
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadFinished):
+        (WebKit::DownloadManager::applicationDidEnterBackground):
+        (WebKit::DownloadManager::applicationWillEnterForeground):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        * NetworkProcess/Downloads/DownloadMap.cpp:
+        (WebKit::DownloadMap::values):
+        * NetworkProcess/Downloads/DownloadMap.h:
+        * NetworkProcess/Downloads/DownloadMonitor.cpp: Added.
+        (WebKit::operator _kbps):
+        (WebKit::timeUntilNextInterval):
+        (WebKit::DownloadMonitor::DownloadMonitor):
+        (WebKit::DownloadMonitor::measuredThroughputRate const):
+        (WebKit::DownloadMonitor::downloadReceivedBytes):
+        (WebKit::DownloadMonitor::applicationEnteredForeground):
+        (WebKit::DownloadMonitor::applicationEnteredBackground):
+        (WebKit::DownloadMonitor::speedMultiplier const):
+        (WebKit::DownloadMonitor::timerFired):
+        * NetworkProcess/Downloads/DownloadMonitor.h: Added.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::applicationDidEnterBackground):
+        (WebKit::NetworkProcess::applicationWillEnterForeground):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextDownloadURLRequest):
+        (WKContextResumeDownload):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _synthesizeAppIsBackground:]):
+        (-[WKProcessPool _downloadURLRequest:originatingWebView:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration downloadMonitorSpeedMultiplier]):
+        (-[_WKProcessPoolConfiguration setDownloadMonitorSpeedMultiplier:]):
+        * UIProcess/Cocoa/DownloadProxyMapCocoa.mm: Added.
+        (WebKit::DownloadProxyMap::platformCreate):
+        (WebKit::DownloadProxyMap::platformDestroy):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didFinish):
+        (WebKit::DownloadProxy::didFail):
+        (WebKit::DownloadProxy::didCancel):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::DownloadProxyMap):
+        (WebKit::DownloadProxyMap::~DownloadProxyMap):
+        (WebKit::DownloadProxyMap::platformCreate):
+        (WebKit::DownloadProxyMap::platformDestroy):
+        (WebKit::DownloadProxyMap::applicationDidEnterBackground):
+        (WebKit::DownloadProxyMap::applicationWillEnterForeground):
+        (WebKit::DownloadProxyMap::createDownloadProxy):
+        (WebKit::DownloadProxyMap::downloadFinished):
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::synthesizeAppIsBackground):
+        (WebKit::NetworkProcessProxy::createDownloadProxy):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::handleDownloadRequest):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        (WebKit::WebProcessPool::resumeDownload):
+        (WebKit::WebProcessPool::createDownloadProxy):
+        (WebKit::WebProcessPool::synthesizeAppIsBackground):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Native selection views sometimes appear in hidden editable areas after losing focus

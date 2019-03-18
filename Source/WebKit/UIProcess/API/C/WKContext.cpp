@@ -275,12 +275,12 @@ void WKContextSetConnectionClient(WKContextRef contextRef, const WKContextConnec
 
 WKDownloadRef WKContextDownloadURLRequest(WKContextRef contextRef, WKURLRequestRef requestRef)
 {
-    return WebKit::toAPI(WebKit::toImpl(contextRef)->download(0, WebKit::toImpl(requestRef)->resourceRequest()));
+    return WebKit::toAPI(&WebKit::toImpl(contextRef)->download(0, WebKit::toImpl(requestRef)->resourceRequest()));
 }
 
 WKDownloadRef WKContextResumeDownload(WKContextRef contextRef, WKDataRef resumeData, WKStringRef path)
 {
-    return WebKit::toAPI(WebKit::toImpl(contextRef)->resumeDownload(nullptr, WebKit::toImpl(resumeData), WebKit::toWTFString(path)));
+    return WebKit::toAPI(&WebKit::toImpl(contextRef)->resumeDownload(nullptr, WebKit::toImpl(resumeData), WebKit::toWTFString(path)));
 }
 
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)

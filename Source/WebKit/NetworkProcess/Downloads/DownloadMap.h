@@ -49,6 +49,8 @@ public:
     DownloadMapType::AddResult add(DownloadID, std::unique_ptr<Download>&&);
     bool remove(DownloadID);
 
+    DownloadMapType::ValuesIteratorRange values();
+
 private:
     DownloadMapType m_downloads;
     std::unique_ptr<ProcessAssertion> m_downloadAssertion;

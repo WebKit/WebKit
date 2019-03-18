@@ -23,63 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DownloadMap.h"
+#pragma once
 
-#if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
+#include <thread>
+#include <wtf/Function.h>
 
-#include "Download.h"
+namespace TestWebKitAPI {
 
-namespace WebKit {
-
-
-Download* DownloadMap::get(DownloadID downloadID) const
-{
-    return m_downloads.get(downloadID);
-}
-
-bool DownloadMap::isEmpty() const
-{
-    return m_downloads.isEmpty();
-}
-
-uint64_t DownloadMap::size() const
-{
-    return m_downloads.size();
-}
-
-bool DownloadMap::contains(DownloadID downloadID) const
-{
-    return m_downloads.contains(downloadID);
-}
-
-DownloadMap::DownloadMapType::AddResult DownloadMap::add(DownloadID downloadID, std::unique_ptr<Download>&& download)
-{
-    auto result = m_downloads.add(downloadID, WTFMove(download));
-    if (m_downloads.size() == 1) {
-        ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
-    }
-
-    return result;
-}
-
-bool DownloadMap::remove(DownloadID downloadID)
-{
-    auto result = m_downloads.remove(downloadID);
-    if (m_downloads.isEmpty()) {
-        ASSERT(m_downloadAssertion);
-        m_downloadAssertion = nullptr;
-    }
+class TCPServer {
+public:
+    using Socket = int;
+    static constexpr Socket InvalidSocket = -1;
+    using Port = uint16_t;
+    static constexpr Port InvalidPort = 0;
     
-    return result;
-}
+    TCPServer(Function<void(Socket)>&&);
+    ~TCPServer();
+    
+    Port port() const { return m_port; }
+    
+private:
+    void socketBindListen();
+    void waitForAndReplyToRequests();
 
-auto DownloadMap::values() -> DownloadMapType::ValuesIteratorRange
-{
-    return m_downloads.values();
-}
+    Port m_port { InvalidPort };
+    Socket m_listeningSocket { InvalidSocket };
+    Socket m_connectionSocket { InvalidSocket };
+    std::thread m_thread;
+    Function<void(Socket)> m_socketHandler;
+};
 
-} // namespace WebKit
-
-#endif // ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
+} // namespace TestWebKitAPI

@@ -2835,13 +2835,13 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     DownloadID downloadID = { };
     if (action == PolicyAction::Download) {
         // Create a download proxy.
-        auto* download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
+        auto& download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
         if (navigation) {
-            download->setWasUserInitiated(navigation->wasUserInitiated());
-            download->setRedirectChain(navigation->takeRedirectChain());
+            download.setWasUserInitiated(navigation->wasUserInitiated());
+            download.setRedirectChain(navigation->takeRedirectChain());
         }
 
-        downloadID = download->downloadID();
+        downloadID = download.downloadID();
         handleDownloadRequest(download);
         m_decidePolicyForResponseRequest = { };
     }
@@ -5452,7 +5452,7 @@ void WebPageProxy::setMayStartMediaWhenInWindow(bool mayStartMedia)
     process().send(Messages::WebPage::SetMayStartMediaWhenInWindow(mayStartMedia), m_pageID);
 }
 
-void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
+void WebPageProxy::handleDownloadRequest(DownloadProxy& download)
 {
     pageClient().handleDownloadRequest(download);
 }

@@ -1,3 +1,28 @@
+2019-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Implement DownloadMonitor to prevent long-running slow downloads from background apps
+        https://bugs.webkit.org/show_bug.cgi?id=195785
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TCPServer.cpp: Added.
+        (TestWebKitAPI::TCPServer::TCPServer):
+        (TestWebKitAPI::TCPServer::~TCPServer):
+        (TestWebKitAPI::TCPServer::socketBindListen):
+        (TestWebKitAPI::TCPServer::waitForAndReplyToRequests):
+        * TestWebKitAPI/TCPServer.h: Added.
+        (TestWebKitAPI::TCPServer::port const):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[DownloadMonitorTestDelegate _downloadDidStart:]):
+        (-[DownloadMonitorTestDelegate _downloadDidCancel:]):
+        (-[DownloadMonitorTestDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[DownloadMonitorTestDelegate _download:didReceiveData:]):
+        (TestWebKitAPI::respondSlowly):
+        (TestWebKitAPI::webViewWithDownloadMonitorSpeedMultiplier):
+        (TestWebKitAPI::downloadAtRate):
+        (TestWebKitAPI::TEST):
+
 2019-03-18  Saam Barati  <sbarati@apple.com>
 
         Add a plan file for JetStream 2

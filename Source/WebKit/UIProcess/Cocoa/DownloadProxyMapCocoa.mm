@@ -23,63 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DownloadMap.h"
+#import "config.h"
+#import "DownloadProxyMap.h"
 
-#if ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
-
-#include "Download.h"
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#endif
 
 namespace WebKit {
 
-
-Download* DownloadMap::get(DownloadID downloadID) const
+void DownloadProxyMap::platformCreate()
 {
-    return m_downloads.get(downloadID);
+#if PLATFORM(IOS_FAMILY)
+    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
+        if (!weakThis)
+            return;
+        weakThis->applicationDidEnterBackground();
+    }).get()];
+    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = makeWeakPtr(*this)](NSNotification *) {
+        if (!weakThis)
+            return;
+        weakThis->applicationWillEnterForeground();
+    }).get()];
+#endif
 }
 
-bool DownloadMap::isEmpty() const
+void DownloadProxyMap::platformDestroy()
 {
-    return m_downloads.isEmpty();
-}
-
-uint64_t DownloadMap::size() const
-{
-    return m_downloads.size();
-}
-
-bool DownloadMap::contains(DownloadID downloadID) const
-{
-    return m_downloads.contains(downloadID);
-}
-
-DownloadMap::DownloadMapType::AddResult DownloadMap::add(DownloadID downloadID, std::unique_ptr<Download>&& download)
-{
-    auto result = m_downloads.add(downloadID, WTFMove(download));
-    if (m_downloads.size() == 1) {
-        ASSERT(!m_downloadAssertion);
-        m_downloadAssertion = std::make_unique<ProcessAssertion>(getpid(), "WebKit downloads"_s, AssertionState::UnboundedNetworking);
-    }
-
-    return result;
-}
-
-bool DownloadMap::remove(DownloadID downloadID)
-{
-    auto result = m_downloads.remove(downloadID);
-    if (m_downloads.isEmpty()) {
-        ASSERT(m_downloadAssertion);
-        m_downloadAssertion = nullptr;
-    }
-    
-    return result;
-}
-
-auto DownloadMap::values() -> DownloadMapType::ValuesIteratorRange
-{
-    return m_downloads.values();
+#if PLATFORM(IOS_FAMILY)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
+#endif
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(TAKE_UNBOUNDED_NETWORKING_ASSERTION)
