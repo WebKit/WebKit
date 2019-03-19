@@ -36,6 +36,8 @@ function willEvaluateScriptTest() {
 function test() {
     ProtocolTest.debug();
 
+    InspectorProtocol.sendCommand("Page.enable");
+
     let suite = ProtocolTest.createAsyncSuite("Timeline.LineColumn");
 
     function replacer(key, value) {

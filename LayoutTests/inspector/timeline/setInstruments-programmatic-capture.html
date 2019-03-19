@@ -16,6 +16,8 @@ function test()
     let heapExpected = false;
     let programmaticCaptureStopped = null;
 
+    InspectorProtocol.sendCommand("Heap.enable");
+
     InspectorProtocol.eventHandler["Timeline.programmaticCaptureStarted"] = () => {
         ProtocolTest.pass("Timeline.programmaticCaptureStarted");
     };
