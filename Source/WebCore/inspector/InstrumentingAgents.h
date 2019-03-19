@@ -39,6 +39,7 @@
 namespace Inspector {
 class InspectorAgent;
 class InspectorDebuggerAgent;
+class InspectorScriptProfilerAgent;
 }
 
 namespace WebCore {
@@ -102,6 +103,9 @@ public:
     PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
     void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
 
+    Inspector::InspectorScriptProfilerAgent* inspectorScriptProfilerAgent() const { return m_inspectorScriptProfilerAgent; }
+    void setInspectorScriptProfilerAgent(Inspector::InspectorScriptProfilerAgent* agent) { m_inspectorScriptProfilerAgent = agent; }
+
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
 
@@ -157,6 +161,7 @@ private:
     InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
     InspectorNetworkAgent* m_inspectorNetworkAgent { nullptr };
     PageRuntimeAgent* m_pageRuntimeAgent { nullptr };
+    Inspector::InspectorScriptProfilerAgent* m_inspectorScriptProfilerAgent { nullptr };
     InspectorTimelineAgent* m_inspectorTimelineAgent { nullptr };
     InspectorTimelineAgent* m_persistentInspectorTimelineAgent { nullptr };
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent { nullptr };

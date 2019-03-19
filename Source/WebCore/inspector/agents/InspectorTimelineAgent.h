@@ -40,17 +40,11 @@
 #include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 
-namespace Inspector {
-class InspectorHeapAgent;
-class InspectorScriptProfilerAgent;
-}
-
 namespace WebCore {
 
 class Event;
 class FloatQuad;
 class Frame;
-class InspectorPageAgent;
 class RenderObject;
 class RunLoopObserver;
 
@@ -94,7 +88,7 @@ class InspectorTimelineAgent final
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorTimelineAgent(WebAgentContext&, Inspector::InspectorScriptProfilerAgent*, Inspector::InspectorHeapAgent*, InspectorPageAgent*);
+    InspectorTimelineAgent(WebAgentContext&);
     virtual ~InspectorTimelineAgent();
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) final;
@@ -212,9 +206,6 @@ private:
 
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
-    Inspector::InspectorScriptProfilerAgent* m_scriptProfilerAgent;
-    Inspector::InspectorHeapAgent* m_heapAgent;
-    InspectorPageAgent* m_pageAgent;
 
     Vector<TimelineRecordEntry> m_recordStack;
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;

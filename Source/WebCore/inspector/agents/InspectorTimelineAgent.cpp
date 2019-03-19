@@ -41,6 +41,7 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSDOMWindow.h"
+#include "PageHeapAgent.h"
 #include "PageScriptDebugServer.h"
 #include "RenderView.h"
 #include "ScriptState.h"
@@ -48,7 +49,6 @@
 #include "WebConsoleAgent.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
-#include <JavaScriptCore/InspectorHeapAgent.h>
 #include <JavaScriptCore/InspectorScriptProfilerAgent.h>
 #include <JavaScriptCore/ScriptBreakpoint.h>
 #include <wtf/Stopwatch.h>
@@ -83,13 +83,10 @@ static CFRunLoopRef currentRunLoop()
 }
 #endif
 
-InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context, InspectorScriptProfilerAgent* scriptProfileAgent, InspectorHeapAgent* heapAgent, InspectorPageAgent* pageAgent)
+InspectorTimelineAgent::InspectorTimelineAgent(WebAgentContext& context)
     : InspectorAgentBase("Timeline"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::TimelineFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::TimelineBackendDispatcher::create(context.backendDispatcher, this))
-    , m_scriptProfilerAgent(scriptProfileAgent)
-    , m_heapAgent(heapAgent)
-    , m_pageAgent(pageAgent)
 {
 }
 
@@ -532,25 +529,25 @@ void InspectorTimelineAgent::toggleInstruments(InstrumentState state)
 
 void InspectorTimelineAgent::toggleScriptProfilerInstrument(InstrumentState state)
 {
-    if (m_scriptProfilerAgent) {
+    if (auto* scriptProfilerAgent = m_instrumentingAgents.inspectorScriptProfilerAgent()) {
         ErrorString unused;
         if (state == InstrumentState::Start) {
             const bool includeSamples = true;
-            m_scriptProfilerAgent->startTracking(unused, &includeSamples);
+            scriptProfilerAgent->startTracking(unused, &includeSamples);
         } else
-            m_scriptProfilerAgent->stopTracking(unused);
+            scriptProfilerAgent->stopTracking(unused);
     }
 }
 
 void InspectorTimelineAgent::toggleHeapInstrument(InstrumentState state)
 {
-    if (m_heapAgent) {
+    if (auto* heapAgent = m_instrumentingAgents.pageHeapAgent()) {
         ErrorString unused;
         if (state == InstrumentState::Start) {
             if (m_autoCapturePhase == AutoCapturePhase::None || m_autoCapturePhase == AutoCapturePhase::FirstNavigation)
-                m_heapAgent->startTracking(unused);
+                heapAgent->startTracking(unused);
         } else
-            m_heapAgent->stopTracking(unused);
+            heapAgent->stopTracking(unused);
     }
 }
 
@@ -712,12 +709,14 @@ void InspectorTimelineAgent::addRecordToTimeline(RefPtr<JSON::Object>&& record, 
 
 void InspectorTimelineAgent::setFrameIdentifier(JSON::Object* record, Frame* frame)
 {
-    if (!frame || !m_pageAgent)
+    if (!frame)
         return;
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    record->setString("frameId", frameId);
+
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent)
+        return;
+
+    record->setString("frameId"_s, pageAgent->frameId(frame));
 }
 
 void InspectorTimelineAgent::didCompleteRecordEntry(const TimelineRecordEntry& entry)

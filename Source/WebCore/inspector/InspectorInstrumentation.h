@@ -1408,11 +1408,13 @@ inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, Ref<Inspect
 
 inline void InspectorInstrumentation::startProfiling(Page& page, JSC::ExecState* exec, const String &title)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     startProfilingImpl(instrumentingAgentsForPage(page), exec, title);
 }
 
 inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::ExecState* exec, const String &title)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     stopProfilingImpl(instrumentingAgentsForPage(page), exec, title);
 }
 
@@ -1425,12 +1427,14 @@ inline void InspectorInstrumentation::consoleStartRecordingCanvas(CanvasRenderin
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didRequestAnimationFrameImpl(*instrumentingAgents, callbackId, document);
 }
 
 inline void InspectorInstrumentation::didCancelAnimationFrame(Document& document, int callbackId)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
         didCancelAnimationFrameImpl(*instrumentingAgents, callbackId, document);
 }
