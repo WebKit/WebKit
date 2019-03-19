@@ -40,6 +40,9 @@ class WebPageProxy;
 @interface WKCompositingView : UIView
 @end
 
+@interface WKTiledBackingView : WKCompositingView
+@end
+
 @interface WKTransformView : WKCompositingView
 @end
 

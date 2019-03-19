@@ -352,7 +352,6 @@ private:
     bool paintsContent(RenderLayer::PaintedContentRequest&) const;
 
     void updateDrawsContent(PaintedContentsInfo&);
-    void updateEventRegion();
 
     // Returns true if this compositing layer has no visible content.
     bool isSimpleContainerCompositingLayer(PaintedContentsInfo&) const;

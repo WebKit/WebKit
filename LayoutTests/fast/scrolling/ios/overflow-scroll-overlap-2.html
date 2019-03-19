@@ -33,14 +33,6 @@ body {
     height: 100px;
     background: red;
 }
-.overlapping-empty {
-    position:absolute;
-    left: 25px;
-    top: 25px;
-    width: 100px;
-    height: 100px;
-    background: blue;
-}
 .clip {
     position:absolute;
     width: 100px;
@@ -57,7 +49,85 @@ body {
 }
 </style>
 <script src="../../../resources/basic-gestures.js"></script>
-<script src="../resources/overflow-scroll-overlap.js"></script>
+<script type="text/javascript">
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    internals.settings.setAsyncFrameScrollingEnabled(true);
+    internals.settings.setAsyncOverflowScrollingEnabled(true);
+}
+
+function sleep(delay)
+{
+    return new Promise((resolve) => { setTimeout(resolve, delay); });
+}
+
+async function runTest() {
+    for (const scrollable of document.querySelectorAll('.overflowscroll')) {
+        scrollable.addEventListener('scroll', function(e) {
+            logScroll(e.target);
+        });
+    }
+
+    {
+        let i = 0;
+        for (const scrollcontent of document.querySelectorAll('.scrollcontent'))
+            scrollcontent.innerText = "Scrollable " + ++i;
+    }
+    {
+        let i = 0;
+        for (const overlapping of document.querySelectorAll('.overlapping'))
+            overlapping.insertBefore(document.createTextNode("Overlapping " + ++i), overlapping.firstChild);
+    }
+
+
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    for (const testcase of document.querySelectorAll('.case'))
+        testcase.style.display = 'none';
+
+    {
+        let i = 0;
+        for (const testcase of document.querySelectorAll('.case')) {
+            ++i;
+            testcase.style.display = 'inline-block';
+            
+            const target = testcase.querySelector('.target');
+            const rect = target.getBoundingClientRect();
+            const centerX = (rect.left + rect.right) / 2;
+            const centerY = (rect.top + rect.bottom) / 2;
+            await touchAndDragFromPointToPoint(centerX, centerY, centerX, centerY - 30);
+            await liftUpAtPoint(centerX, centerY - 30);
+            await sleep(500);
+
+            testcase.style.display = 'none';
+            outputCase(i);
+        }
+   }
+
+    for (const testcase of document.querySelectorAll('.case'))
+        testcase.style.display = 'none';
+
+    testRunner.notifyDone();
+}
+
+const scrolledElements = new Set();
+
+function logScroll(element) {
+    if (scrolledElements.has(element))
+        return;
+    scrolledElements.add(element);
+}
+
+function outputCase(i) {
+    log.innerText += "case " + i + ": ";
+    for (const scrolled of scrolledElements)
+        log.innerText += scrolled.getElementsByClassName("scrollcontent")[0].innerText + " ";
+    log.innerText += "\n";
+    scrolledElements.clear();
+}
+</script>
 </head>
 <body onload="runTest()">
 <p>
@@ -67,15 +137,8 @@ Test that scrollable areas with non-trivial overlap are correctly targeted.
     <div class="overflowscroll target">
         <div class="scrollcontent"></div>
     </div>
-    <div class="overlapping" style="visibility:hidden">
-    </div>
-</div>
-
-<div class="case">
-    <div class="overflowscroll target">
-        <div class="scrollcontent"></div>
-    </div>
-    <div class="overlapping-empty" style="background-color:transparent">
+    <div class="overlapping" style="left: 80px">
+        <div class="overlapping" style="left: -40px; top: -30px"></div>
     </div>
 </div>
 
@@ -92,6 +155,24 @@ Test that scrollable areas with non-trivial overlap are correctly targeted.
         <div class="scrollcontent"></div>
     </div>
     <div class="overlapping" style="pointer-events:none">
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px">
+    Text text text text text text text text text text text text text text text text text text text text text text
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; padding-left:40px">
+    Text text text text text text text text text text text text text text text text text text text text text text
     </div>
 </div>
 

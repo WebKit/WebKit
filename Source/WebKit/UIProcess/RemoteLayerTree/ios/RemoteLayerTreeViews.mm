@@ -49,6 +49,8 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
         auto handlesEvent = [&] {
             if (![view pointInside:subviewPoint withEvent:event])
                 return false;
+            if ([view isKindOfClass:[WKTiledBackingView class]])
+                return true;
             if (![view isKindOfClass:[WKCompositingView class]])
                 return true;
             auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
@@ -111,6 +113,9 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
     return WebKit::RemoteLayerTreeNode::appendLayerDescription(super.description, self.layer);
 }
 
+@end
+
+@implementation WKTiledBackingView
 @end
 
 @implementation WKTransformView
