@@ -1,3 +1,40 @@
+2019-03-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Smart Insert for paragraphs.
+        https://bugs.webkit.org/show_bug.cgi?id=194880
+
+        Reviewed by Ryosuke Niwa.
+
+        Add additional newlines to maintain spacing around paragraphs.
+
+        Tests: editing/pasteboard/smart-paste-paragraph-001.html
+               editing/pasteboard/smart-paste-paragraph-002.html
+               editing/pasteboard/smart-paste-paragraph-003.html
+               editing/pasteboard/smart-paste-paragraph-004.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::editingBehavior const):
+        * dom/Document.h:
+
+        Expose editing behaviour through document so that is can be access from the selection commands
+        and allow the editing behaviour to be used.
+
+        * editing/CompositeEditCommand.h:
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldSmartInsertDeleteParagraphs const):
+
+        Only have editing insert paragraphs on iOS and in editing elements that support multiple lines.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartParagraphReplace const):
+        (WebCore::ReplaceSelectionCommand::addNewLinesForSmartReplace):
+        * editing/ReplaceSelectionCommand.h:
+
+        Add addititional newlines when pasting full paragraphs to maintian two newlines between paragraphs
+        if that is what the original document had. If there are not multiple lines between paragraphs, do not
+        add additional new lines.
+
 2019-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reduce the size of Node::deref by eliminating an explicit parentNode check

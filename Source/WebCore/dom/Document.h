@@ -116,6 +116,7 @@ class DocumentParser;
 class DocumentSharedObjectPool;
 class DocumentTimeline;
 class DocumentType;
+class EditingBehavior;
 class ExtensionStyleSheets;
 class FloatQuad;
 class FloatRect;
@@ -562,6 +563,7 @@ public:
     WEBCORE_EXPORT Page* page() const; // Can be null.
     const Settings& settings() const { return m_settings.get(); }
     Settings& mutableSettings() { return m_settings.get(); }
+    EditingBehavior editingBehavior() const;
 
     const Quirks& quirks() const { return m_quirks; }
 

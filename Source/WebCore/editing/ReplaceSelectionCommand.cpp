@@ -777,6 +777,11 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     fragment.removeNodePreservingChildren(*wrappingStyleSpan);
     return true;
 }
+    
+static bool isBlankLine(VisiblePosition& position)
+{
+    return isStartOfLine(position) && startOfLine(position.next()) != startOfLine(position);
+}
 
 // At copy time, WebKit wraps copied content in a span that contains the source document's 
 // default styles.  If the copied Range inherits any other styles from its ancestors, we put 
@@ -924,6 +929,18 @@ bool ReplaceSelectionCommand::willApplyCommand()
     m_documentFragmentHTMLMarkup = serializeFragment(*m_documentFragment, SerializedNodes::SubtreeIncludingNode);
     return CompositeEditCommand::willApplyCommand();
 }
+    
+static bool hasBlankLineBetweenParagraphs(Position& position)
+{
+    bool reachedBoundaryStart = false;
+    bool reachedBoundaryEnd = false;
+    VisiblePosition visiblePosition(position);
+    VisiblePosition previousPosition = visiblePosition.previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
+    VisiblePosition nextPosition = visiblePosition.next(CannotCrossEditingBoundary, &reachedBoundaryStart);
+    bool hasLineBeforePosition = isEndOfLine(previousPosition);
+    
+    return !reachedBoundaryStart && !reachedBoundaryEnd && isBlankLine(visiblePosition) && hasLineBeforePosition && isStartOfLine(nextPosition);
+}
 
 void ReplaceSelectionCommand::doApply()
 {
@@ -1069,6 +1086,8 @@ void ReplaceSelectionCommand::doApply()
     // Paste into run of tabs splits the tab span.
     insertionPos = positionOutsideTabSpan(insertionPos);
 
+    bool hasBlankLinesBetweenParagraphs = hasBlankLineBetweenParagraphs(insertionPos);
+    
     bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
 
     // We're finished if there is nothing to add.
@@ -1120,8 +1139,9 @@ void ReplaceSelectionCommand::doApply()
         fragment.removeNode(*refNode);
 
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
-    if ((isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
-        && blockStart && blockStart->renderer()->isListItem())
+    bool isInsertingIntoList = (isListHTMLElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListHTMLElement(refNode->firstChild())))
+    && blockStart && blockStart->renderer()->isListItem();
+    if (isInsertingIntoList)
         refNode = insertAsListItems(downcast<HTMLElement>(*refNode), blockStart, insertionPos, insertedNodes);
     else {
         insertNodeAt(*refNode, insertionPos);
@@ -1270,6 +1290,9 @@ void ReplaceSelectionCommand::doApply()
     if (shouldPerformSmartReplace())
         addSpacesForSmartReplace();
 
+    if (!isInsertingIntoList && hasBlankLinesBetweenParagraphs && shouldPerformSmartParagraphReplace())
+        addNewLinesForSmartReplace();
+
     // If we are dealing with a fragment created from plain text
     // no style matching is necessary.
     if (plainTextFragment)
@@ -1325,10 +1348,61 @@ bool ReplaceSelectionCommand::shouldPerformSmartReplace() const
 
     return true;
 }
+    
+bool ReplaceSelectionCommand::shouldPerformSmartParagraphReplace() const
+{
+    if (!m_smartReplace)
+        return false;
+
+    if (!document().editingBehavior().shouldSmartInsertDeleteParagraphs())
+        return false;
+
+    return true;
+}
 
 static bool isCharacterSmartReplaceExemptConsideringNonBreakingSpace(UChar32 character, bool previousCharacter)
 {
     return isCharacterSmartReplaceExempt(character == noBreakSpace ? ' ' : character, previousCharacter);
+}
+
+void ReplaceSelectionCommand::addNewLinesForSmartReplace()
+{
+    VisiblePosition startOfInsertedContent = positionAtStartOfInsertedContent();
+    VisiblePosition endOfInsertedContent = positionAtEndOfInsertedContent();
+
+    bool isPastedContentEntireParagraphs = isStartOfParagraph(startOfInsertedContent) && isEndOfParagraph(endOfInsertedContent);
+
+    // If we aren't pasting a paragraph, no need to attempt to insert newlines.
+    if (!isPastedContentEntireParagraphs)
+        return;
+
+    bool reachedBoundaryStart = false;
+    bool reachedBoundaryEnd = false;
+    VisiblePosition positionBeforeStart = startOfInsertedContent.previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
+    VisiblePosition positionAfterEnd = endOfInsertedContent.next(CannotCrossEditingBoundary, &reachedBoundaryEnd);
+
+    if (!reachedBoundaryStart && !reachedBoundaryEnd) {
+        if (!isBlankLine(positionBeforeStart) && !isBlankLine(startOfInsertedContent) && isEndOfLine(positionBeforeStart) && !isEndOfEditableOrNonEditableContent(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(endOfInsertedContent)) {
+            setEndingSelection(startOfInsertedContent);
+            insertParagraphSeparator();
+            auto newStart = endingSelection().visibleStart().previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
+            if (!reachedBoundaryStart)
+                m_startOfInsertedContent = newStart.deepEquivalent();
+        }
+    }
+
+    reachedBoundaryStart = false;
+    reachedBoundaryEnd = false;
+    positionAfterEnd = endOfInsertedContent.next(CannotCrossEditingBoundary, &reachedBoundaryEnd);
+    positionBeforeStart = startOfInsertedContent.previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
+
+    if (!reachedBoundaryEnd && !reachedBoundaryStart) {
+        if (!isBlankLine(positionAfterEnd) && !isBlankLine(endOfInsertedContent) && isStartOfLine(positionAfterEnd) && !isEndOfLine(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(positionAfterEnd)) {
+            setEndingSelection(endOfInsertedContent);
+            insertParagraphSeparator();
+            m_endOfInsertedContent = endingSelection().start();
+        }
+    }
 }
 
 void ReplaceSelectionCommand::addSpacesForSmartReplace()

@@ -1,3 +1,28 @@
+2019-03-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Smart Insert for paragraphs.
+        https://bugs.webkit.org/show_bug.cgi?id=194880
+
+        Reviewed by Ryosuke Niwa.
+
+        List tests are covered by paste-list-00*.
+        Table tests are covered by paste-table-00* and paste-into-table-*.
+
+        * editing/pasteboard/smart-paste-paragraph-001-expected.txt: Added.
+        * editing/pasteboard/smart-paste-paragraph-001.html: Added.
+        * editing/pasteboard/smart-paste-paragraph-002-expected.txt: Added.
+        * editing/pasteboard/smart-paste-paragraph-002.html: Added.
+        * editing/pasteboard/smart-paste-paragraph-003-expected.txt: Added.
+        * editing/pasteboard/smart-paste-paragraph-003.html: Added.
+        * editing/pasteboard/smart-paste-paragraph-004-expected.txt: Added.
+        * editing/pasteboard/smart-paste-paragraph-004.html: Added.
+        * platform/ios-wk2/editing/pasteboard/paste-text-016-expected.txt:
+        This needed to be rebaselined to match the new behaviour.
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-001-expected.txt: Added.
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-002-expected.txt: Added.
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-003-expected.txt: Added.
+        * platform/ios/editing/pasteboard/smart-paste-paragraph-004-expected.txt: Added.
+
 2019-03-18  Jer Noble  <jer.noble@apple.com>
 
         Add experimental "alphaChannel" property to VideoConfiguration

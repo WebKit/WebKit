@@ -7430,6 +7430,11 @@ Ref<FontFaceSet> Document::fonts()
     updateStyleIfNeeded();
     return fontSelector().fontFaceSet();
 }
+    
+EditingBehavior Document::editingBehavior() const
+{
+    return EditingBehavior { settings().editingBehaviorType() };
+}
 
 float Document::deviceScaleFactor() const
 {

@@ -108,7 +108,9 @@ private:
     VisiblePosition positionAtEndOfInsertedContent() const;
 
     bool shouldPerformSmartReplace() const;
+    bool shouldPerformSmartParagraphReplace() const;
     void addSpacesForSmartReplace();
+    void addNewLinesForSmartReplace();
     void completeHTMLReplacement(const Position& lastPositionToSelect);
     void mergeTextNodesAroundPosition(Position&, Position& positionOnlyToBeUpdated);
 

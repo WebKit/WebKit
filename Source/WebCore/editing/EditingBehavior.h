@@ -98,6 +98,9 @@ public:
     
     // On iOS, when smart delete is on, it is always on, and should do not additional checks (i.e. WordGranularity).
     bool shouldAlwaysSmartDelete() const { return m_type == EditingIOSBehavior; }
+    
+    // On iOS, we should turn on smart insert and delete and newlines around paragraphs to match UIKit behaviour.
+    bool shouldSmartInsertDeleteParagraphs() const { return m_type == EditingIOSBehavior; }
 
 private:
     EditingBehaviorType m_type;

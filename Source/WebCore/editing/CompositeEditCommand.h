@@ -152,6 +152,7 @@ protected:
     void insertNodeAt(Ref<Node>&&, const Position&);
     void insertNodeAtTabSpanPosition(Ref<Node>&&, const Position&);
     void insertNodeBefore(Ref<Node>&&, Node& refChild, ShouldAssumeContentIsAlwaysEditable = DoNotAssumeContentIsAlwaysEditable);
+    void insertParagraphSeparatorAtPosition(const Position&, bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertParagraphSeparator(bool useDefaultParagraphElement = false, bool pasteBlockqutoeIntoUnquotedArea = false);
     void insertLineBreak();
     void insertTextIntoNode(Text&, unsigned offset, const String& text);
