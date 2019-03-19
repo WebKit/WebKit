@@ -177,11 +177,18 @@ static inline String quotaErrorMessageName(const char* taskName)
 
 void UniqueIDBDatabase::requestSpace(uint64_t taskSize, const char* taskName, CompletionHandler<void(Optional<IDBError>&&)>&& callback)
 {
-    m_server->requestSpace(m_identifier.origin(), taskSize, [weakThis = makeWeakPtr(this), taskName, callback = WTFMove(callback)](auto decision) mutable {
+    m_server->requestSpace(m_identifier.origin(), taskSize, [weakThis = makeWeakPtr(this), this, taskName, callback = WTFMove(callback)](auto decision) mutable {
         if (!weakThis) {
             callback(IDBError { UnknownError });
             return;
         }
+
+        if (m_owningPointerForClose) {
+            // We are closing the database, there is no point in trying to modify the database at that point.
+            callback(IDBError { UnknownError });
+            return;
+        }
+
         switch (decision) {
         case StorageQuotaManager::Decision::Deny:
             callback(IDBError { QuotaExceededError, quotaErrorMessageName(taskName) });

@@ -1,3 +1,18 @@
+2019-03-19  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION: Layout Test http/tests/security/cross-origin-indexeddb.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=195779
+
+        Reviewed by Chris Dumez.
+
+        When requesting space, we might delay execution of the task.
+        In such a case, a task to close the database might be done before the task continues.
+        Check that the database is not closing to continue the task.
+        This should ensure that the cross thread queue is not already killed.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::requestSpace):
+
 2019-03-19  Zalan Bujtas  <zalan@apple.com>
 
         RenderElement::startAnimation should take const Animation&
