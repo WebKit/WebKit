@@ -1,3 +1,13 @@
+2019-03-19  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r239904): Update dark mode defines in a few places that got missed.
+        https://bugs.webkit.org/show_bug.cgi?id=195958
+
+        Reviewed by Megan Gardner.
+
+        * inspector/css/shadow-scoped-style-expected.txt: Rebaseline.
+        * platform/mac/printing/width-overflow-expected.txt: Rebaseline.
+
 2019-03-19  Joanmarie Diggs  <jdiggs@igalia.com>
 
         REGRESSION(r241586:r241590): [GTK] Accessibility tests in need of rebase

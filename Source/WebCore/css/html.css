@@ -25,7 +25,7 @@
 
 html {
     display: block;
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
 #endif
 }
@@ -387,7 +387,7 @@ input[type="range"],
 input,
 input:matches([type="password"], [type="search"]) {
     -webkit-appearance: textfield;
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
     background-color: -apple-system-control-background;
 #else
@@ -407,7 +407,7 @@ input:matches([type="password"], [type="search"]) {
     cursor: auto;
 }
 
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
 @media (prefers-dark-interface) {
     input,
     input:matches([type="password"], [type="search"]) {
@@ -665,7 +665,7 @@ keygen::-webkit-keygen-select {
 textarea {
     -webkit-appearance: textarea;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
     background-color: -apple-system-control-background;
 #else
@@ -952,7 +952,7 @@ select {
 #else
     -webkit-appearance: menulist;
     border: 1px solid;
-#if defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC
+#if defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT
     color: text;
     background-color: -apple-system-control-background;
 #else

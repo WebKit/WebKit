@@ -1,3 +1,15 @@
+2019-03-19  Timothy Hatcher  <timothy@apple.com>
+
+        REGRESSION (r239904): Update dark mode defines in a few places that got missed.
+        https://bugs.webkit.org/show_bug.cgi?id=195958
+
+        Reviewed by Megan Gardner.
+
+        * DerivedSources.make: Support HAVE_OS_DARK_MODE_SUPPORT in html.css.
+        * css/html.css: Update dark mode defines.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateBackgroundRecursively): Ditto.
+
 2019-03-19  Chris Dumez  <cdumez@apple.com>
 
         media/track/track-in-band-style.html is flaky
