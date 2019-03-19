@@ -140,7 +140,7 @@ body[dir=rtl] .details-section > .header::before {
 
 .details-section > .header .go-to-arrow {
     width: 10px;
-    height: 12px;
+    height: 15px;
     -webkit-margin-start: 3px;
 }
 

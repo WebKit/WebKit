@@ -25,13 +25,18 @@
 
 WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElement
 {
-    constructor(resource, representedObject)
+    constructor(resource, representedObject, {allowDirectoryAsName, hideOrigin} = {})
     {
         console.assert(resource instanceof WI.Resource);
 
         const title = null;
         const subtitle = null;
         super(resource, ["resource", WI.ResourceTreeElement.ResourceIconStyleClassName, WI.Resource.classNameForResource(resource)], title, subtitle, representedObject || resource);
+
+        if (allowDirectoryAsName)
+            this._allowDirectoryAsName = allowDirectoryAsName;
+        if (hideOrigin)
+            this._hideOrigin = hideOrigin;
 
         this._updateResource(resource);
     }
@@ -135,7 +140,9 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
 
     get mainTitleText()
     {
-        return WI.displayNameForURL(this._resource.url, this._resource.urlComponents);
+        return WI.displayNameForURL(this._resource.url, this._resource.urlComponents, {
+            allowDirectoryAsName: this._allowDirectoryAsName,
+        });
     }
 
     _updateTitles()
@@ -158,9 +165,11 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         var oldMainTitle = this.mainTitle;
         this.mainTitle = this.mainTitleText;
 
-        // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
-        var subtitle = parentResourceHost !== urlComponents.host || frame && frame.isMainFrame() && isMainResource ? WI.displayNameForHost(urlComponents.host) : null;
-        this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+        if (!this._hideOrigin) {
+            // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
+            var subtitle = parentResourceHost !== urlComponents.host || frame && frame.isMainFrame() && isMainResource ? WI.displayNameForHost(urlComponents.host) : null;
+            this.subtitle = this.mainTitle !== subtitle ? subtitle : null;
+        }
 
         if (oldMainTitle !== this.mainTitle)
             this.callFirstAncestorFunction("descendantResourceTreeElementMainTitleDidChange", [this, oldMainTitle]);

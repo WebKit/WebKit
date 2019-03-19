@@ -191,6 +191,43 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         this._tooltipHandledSeparately = !!x;
     }
 
+    createFoldersAsNeededForSubpath(subpath)
+    {
+        if (!subpath)
+            return this;
+
+        let components = subpath.split("/");
+        if (components.length === 1)
+            return this;
+
+        if (!this._subpathFolderTreeElementMap)
+            this._subpathFolderTreeElementMap = new Map;
+
+        let currentPath = "";
+        let currentFolderTreeElement = this;
+
+        for (let component of components) {
+            if (currentPath)
+                currentPath += "/";
+            currentPath += component;
+
+            let cachedFolder = this._subpathFolderTreeElementMap.get(currentPath);
+            if (cachedFolder) {
+                currentFolderTreeElement = cachedFolder;
+                continue;
+            }
+
+            let newFolder = new WI.FolderTreeElement(component);
+            this._subpathFolderTreeElementMap.set(currentPath, newFolder);
+
+            let index = insertionIndexForObjectInListSortedByFunction(newFolder, currentFolderTreeElement.children, WI.ResourceTreeElement.compareFolderAndResourceTreeElements);
+            currentFolderTreeElement.insertChild(newFolder, index);
+            currentFolderTreeElement = newFolder;
+        }
+
+        return currentFolderTreeElement;
+    }
+
     // Overrides from TreeElement (Private)
 
     isEventWithinDisclosureTriangle(event)

@@ -130,43 +130,6 @@ WI.SourceCodeTreeElement = class SourceCodeTreeElement extends WI.FolderizedTree
 
     // Protected
 
-    createFoldersAsNeededForSubpath(subpath)
-    {
-        if (!subpath)
-            return this;
-
-        var components = subpath.split("/");
-        if (components.length === 1)
-            return this;
-
-        if (!this._subpathFolderTreeElementMap)
-            this._subpathFolderTreeElementMap = {};
-
-        var currentPath = "";
-        var currentFolderTreeElement = this;
-
-        for (var i = 0; i < components.length - 1; ++i) {
-            var componentName = components[i];
-            currentPath += (i ? "/" : "") + componentName;
-
-            var cachedFolder = this._subpathFolderTreeElementMap[currentPath];
-            if (cachedFolder) {
-                currentFolderTreeElement = cachedFolder;
-                continue;
-            }
-
-            var newFolder = new WI.FolderTreeElement(componentName);
-            newFolder.__path = currentPath;
-            this._subpathFolderTreeElementMap[currentPath] = newFolder;
-
-            var index = insertionIndexForObjectInListSortedByFunction(newFolder, currentFolderTreeElement.children, WI.ResourceTreeElement.compareFolderAndResourceTreeElements);
-            currentFolderTreeElement.insertChild(newFolder, index);
-            currentFolderTreeElement = newFolder;
-        }
-
-        return currentFolderTreeElement;
-    }
-
     descendantResourceTreeElementTypeDidChange(childTreeElement, oldType)
     {
         // Called by descendant SourceMapResourceTreeElements.

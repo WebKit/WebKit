@@ -122,11 +122,7 @@ InspectorFrontendAPI = {
 
     contextMenuItemSelected: function(id)
     {
-        try {
-            WI.ContextMenu.contextMenuItemSelected(id);
-        } catch (e) {
-            console.error("Uncaught exception in inspector page under contextMenuItemSelected", e);
-        }
+        WI.ContextMenu.contextMenuItemSelected(id);
     },
 
     contextMenuCleared: function()

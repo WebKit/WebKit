@@ -214,7 +214,7 @@ function parseQueryString(queryString, arrayResult)
     return parameters;
 }
 
-WI.displayNameForURL = function(url, urlComponents)
+WI.displayNameForURL = function(url, urlComponents, options = {})
 {
     if (url.startsWith("data:"))
         return WI.truncateURL(url);
@@ -228,6 +228,9 @@ WI.displayNameForURL = function(url, urlComponents)
     } catch {
         displayName = urlComponents.lastPathComponent;
     }
+
+    if (options.allowDirectoryAsName && (!displayName || urlComponents.path.endsWith(displayName + "/")))
+        displayName = "/";
 
     return displayName || WI.displayNameForHost(urlComponents.host) || url;
 };

@@ -24,6 +24,8 @@
  */
 
 .sidebar > .panel.navigation.sources > .content {
+    display: flex;
+    flex-direction: column;
     top: var(--navigation-bar-height);
 }
 
@@ -73,6 +75,7 @@
 }
 
 .sidebar > .panel.navigation.sources > .content > .details-section.paused-reason.collapsed > .header > .options,
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints.collapsed > .header > .options,
 .sidebar > .panel.navigation.sources > .content > .details-section > .content,
 .sidebar > .panel.navigation.sources > .content > .details-section > .content > .group {
     display: block;
@@ -82,19 +85,24 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.scripts:not(.collapsed) {
-    border-bottom: none;
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint {
+    width: 15px;
 }
 
 .sidebar > .panel.navigation.sources > .content > .navigation-bar {
     margin-bottom: 1px;
 }
 
-.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread {
+.sidebar > .panel.navigation.sources > .content > .resources {
+    position: relative;
+    height: 100%;
+}
+
+.sidebar > .panel.navigation.sources > .content .tree-outline.single-thread {
     -webkit-margin-start: -10px;
 }
 
-.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread > .item.thread {
+.sidebar > .panel.navigation.sources > .content .tree-outline.single-thread > .item.thread {
     display: none;
 }
 

@@ -88,10 +88,10 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._typeFilterScopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._typeFilterScopeBarSelectionChanged, this);
 
         if (WI.MediaInstrument.supported()) {
-            this._groupByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-by-node", WI.UIString("Group Media Requests"), WI.settings.groupByDOMNode.value);
-            this._groupByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupByDOMNodeCheckedDidChange, this);
+            this._groupMediaRequestsByDOMNodeNavigationItem = new WI.CheckboxNavigationItem("group-media-requests", WI.UIString("Group Media Requests"), WI.settings.groupMediaRequestsByDOMNode.value);
+            this._groupMediaRequestsByDOMNodeNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleGroupMediaRequestsByDOMNodeCheckedDidChange, this);
         } else
-            WI.settings.groupByDOMNode.value = false;
+            WI.settings.groupMediaRequestsByDOMNode.value = false;
 
         this._urlFilterSearchText = null;
         this._urlFilterSearchRegex = null;
@@ -246,7 +246,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
     {
         let navigationItems = [this._urlFilterNavigationItem, this._typeFilterScopeBar];
         if (WI.MediaInstrument.supported())
-            navigationItems.push(this._groupByDOMNodeNavigationItem);
+            navigationItems.push(this._groupMediaRequestsByDOMNodeNavigationItem);
         return navigationItems;
     }
 
@@ -643,7 +643,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         cell.classList.add(WI.ResourceTreeElement.ResourceIconStyleClassName);
 
-        if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
+        if (WI.settings.groupMediaRequestsByDOMNode.value && resource.initiatorNode) {
             let nodeEntry = this._domNodeEntries.get(resource.initiatorNode);
             if (nodeEntry.initiatedResourceEntries.length > 1 || nodeEntry.domNode.domEvents.length)
                 cell.classList.add("child");
@@ -1063,7 +1063,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // This will ensure that all resource entries for a given `initiatorNode` will appear right
         // next to each other, as they will all effectively be sorted by the first resource.
         let substitute = (entry, other) => {
-            if (WI.settings.groupByDOMNode.value && entry.resource.initiatorNode) {
+            if (WI.settings.groupMediaRequestsByDOMNode.value && entry.resource.initiatorNode) {
                 let nodeEntry = this._domNodeEntries.get(entry.resource.initiatorNode);
                 if (!nodeEntry.initiatedResourceEntries.includes(other))
                     return nodeEntry.initiatedResourceEntries[0];
@@ -1710,7 +1710,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         this._tryLinkResourceToDOMNode(resourceEntry);
 
-        if (WI.settings.groupByDOMNode.value && resource.initiatorNode) {
+        if (WI.settings.groupMediaRequestsByDOMNode.value && resource.initiatorNode) {
             if (!this._entriesSortComparator)
                 this._generateSortComparator();
         } else if (this._isDefaultSort() || !this._entriesSortComparator) {
@@ -1726,7 +1726,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         insertObjectIntoSortedArray(resourceEntry, collection.entries, this._entriesSortComparator);
 
         if (this._passFilter(resourceEntry)) {
-            if (WI.settings.groupByDOMNode.value)
+            if (WI.settings.groupMediaRequestsByDOMNode.value)
                 this._updateFilteredEntries();
             else
                 insertObjectIntoSortedArray(resourceEntry, collection.filteredEntries, this._entriesSortComparator);
@@ -1897,7 +1897,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         else
             collection.filteredEntries = collection.entries.slice();
 
-        if (WI.settings.groupByDOMNode.value) {
+        if (WI.settings.groupMediaRequestsByDOMNode.value) {
             for (let nodeEntry of this._domNodeEntries.values()) {
                 if (nodeEntry.initiatedResourceEntries.length < 2 && !nodeEntry.domNode.domEvents.length)
                     continue;
@@ -2003,11 +2003,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._reloadTable();
     }
 
-    _handleGroupByDOMNodeCheckedDidChange(event)
+    _handleGroupMediaRequestsByDOMNodeCheckedDidChange(event)
     {
-        WI.settings.groupByDOMNode.value = this._groupByDOMNodeNavigationItem.checked;
+        WI.settings.groupMediaRequestsByDOMNode.value = this._groupMediaRequestsByDOMNodeNavigationItem.checked;
 
-        if (!WI.settings.groupByDOMNode.value) {
+        if (!WI.settings.groupMediaRequestsByDOMNode.value) {
             this._table.element.classList.remove("grouped");
 
             if (this._selectedObject && this._selectedObject instanceof WI.DOMNode) {

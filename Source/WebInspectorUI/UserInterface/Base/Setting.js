@@ -134,7 +134,7 @@ WI.settings = {
     emulateInUserGesture: new WI.Setting("emulate-in-user-gesture", false),
     enableControlFlowProfiler: new WI.Setting("enable-control-flow-profiler", false),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", false),
-    groupByDOMNode: new WI.Setting("group-by-dom-node", false),
+    groupMediaRequestsByDOMNode: new WI.Setting("group-media-requests-by-dom-node", WI.Setting.migrateValue("group-by-dom-node") || false),
     indentUnit: new WI.Setting("indent-unit", 4),
     indentWithTabs: new WI.Setting("indent-with-tabs", false),
     resourceCachingDisabled: new WI.Setting("disable-resource-caching", false),

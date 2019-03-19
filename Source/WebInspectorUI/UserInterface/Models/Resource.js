@@ -1181,6 +1181,12 @@ WI.Resource.NetworkPriority = {
     High: Symbol("high"),
 };
 
+WI.Resource.GroupingMode = {
+    Path: "group-resource-by-path",
+    Type: "group-resource-by-type",
+};
+WI.settings.resourceGroupingMode = new WI.Setting("resource-grouping-mode", WI.Resource.GroupingMode.Type);
+
 // This MIME Type map is private, use WI.Resource.typeFromMIMEType().
 WI.Resource._mimeTypeMap = {
     "text/html": WI.Resource.Type.Document,
