@@ -270,6 +270,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
                 cueData.setForegroundColor(color);
+                continue;
             }
             
             if (CFStringCompare(key, kCMTextMarkupAttribute_BackgroundColorARGB, 0) == kCFCompareEqualTo) {
@@ -281,6 +282,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
                 cueData.setBackgroundColor(color);
+                continue;
             }
 
             if (CFStringCompare(key, kCMTextMarkupAttribute_CharacterBackgroundColorARGB, 0) == kCFCompareEqualTo) {
@@ -292,6 +294,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 if (!makeRGBA32FromARGBCFArray(arrayValue, color))
                     continue;
                 cueData.setHighlightColor(color);
+                continue;
             }
         }
 

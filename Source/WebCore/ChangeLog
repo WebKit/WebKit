@@ -1,3 +1,16 @@
+2019-03-19  Chris Dumez  <cdumez@apple.com>
+
+        media/track/track-in-band-style.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=195922
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes):
+        Small optimization: some of the if checks were missing their "continue;"
+        statement. This would cause us to keep checking following keys even though
+        we already got a match.
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Build cleanly with GCC 9
