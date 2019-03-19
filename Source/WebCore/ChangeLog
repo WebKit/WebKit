@@ -1,3 +1,21 @@
+2019-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrolling state nodes should hold references to GraphicsLayers
+        https://bugs.webkit.org/show_bug.cgi?id=195844
+        <rdar://problem/48949634>
+
+        Reviewed by Tim Horton.
+
+        GraphicsLayers are refcounted, and the scrolling tree keeps GraphicsLayer pointers,
+        so for safely the scrolling tree should store RefPtr<GraphicsLayer> instead.
+
+        I removed the union (since it would be weird with a RefPtr and raw pointer). This code
+        should probably use WTF::Variant<> in future.
+
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::LayerRepresentation):
+        (WebCore::LayerRepresentation::operator GraphicsLayer* const):
+
 2019-03-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243092 and r243096.

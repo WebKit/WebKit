@@ -58,11 +58,7 @@ public:
         PlatformLayerIDRepresentation
     };
 
-    LayerRepresentation()
-        : m_graphicsLayer(nullptr)
-        , m_layerID(0)
-        , m_representation(EmptyRepresentation)
-    { }
+    LayerRepresentation() = default;
 
     LayerRepresentation(GraphicsLayer* graphicsLayer)
         : m_graphicsLayer(graphicsLayer)
@@ -72,15 +68,13 @@ public:
 
     LayerRepresentation(PlatformLayer* platformLayer)
         : m_typelessPlatformLayer(makePlatformLayerTypeless(platformLayer))
-        , m_layerID(0)
         , m_representation(PlatformLayerRepresentation)
     {
         retainPlatformLayer(m_typelessPlatformLayer);
     }
 
     LayerRepresentation(GraphicsLayer::PlatformLayerID layerID)
-        : m_graphicsLayer(nullptr)
-        , m_layerID(layerID)
+        : m_layerID(layerID)
         , m_representation(PlatformLayerIDRepresentation)
     {
     }
@@ -103,7 +97,7 @@ public:
     operator GraphicsLayer*() const
     {
         ASSERT(m_representation == GraphicsLayerRepresentation);
-        return m_graphicsLayer;
+        return m_graphicsLayer.get();
     }
 
     operator PlatformLayer*() const
@@ -179,13 +173,10 @@ private:
     WEBCORE_EXPORT static PlatformLayer* makePlatformLayerTyped(void* typelessPlatformLayer);
     WEBCORE_EXPORT static void* makePlatformLayerTypeless(PlatformLayer*);
 
-    union {
-        GraphicsLayer* m_graphicsLayer;
-        void* m_typelessPlatformLayer;
-    };
-
-    GraphicsLayer::PlatformLayerID m_layerID;
-    Type m_representation;
+    RefPtr<GraphicsLayer> m_graphicsLayer;
+    void* m_typelessPlatformLayer { nullptr };
+    GraphicsLayer::PlatformLayerID m_layerID { 0 };
+    Type m_representation { EmptyRepresentation };
 };
 
 class ScrollingStateNode : public RefCounted<ScrollingStateNode> {
