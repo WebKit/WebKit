@@ -1,3 +1,25 @@
+2019-03-19  Conrad Shultz  <conrad_shultz@apple.com>
+
+        REGRESSION (r242369): Only use picker-supported UTIs when creating image picker
+        https://bugs.webkit.org/show_bug.cgi?id=195955
+
+        Reviewed by Chris Dumez and Wenson Hsieh.
+
+        r242369 started passing UTIs to -[UIImagePickerController setMediaTypes:] that correspond to types accepted by the
+        file input element. However, UIImagePickerController expects a specific subset of UTIs. In the worst case, if no
+        expected types are passed, this can cause a crash.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (UTIsForMIMETypes):
+        Return a set rather than an array.
+        (-[WKFileUploadPanel _mediaTypesForPickerSourceType:]):
+        Rather than hardcode specific UTIs, ask UIImagePickerController for its available types. If an accepted type
+        is in the list of available types, use it. Otherwise, if an accepted type conforms to an available type,
+        use the available type. This is an O(n^2) process, but there typically are only a handful of types, so
+        this seems acceptable.
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Convert the set from UTIsForMIMETypes() to an array.
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Build cleanly with GCC 9

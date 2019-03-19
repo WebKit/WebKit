@@ -314,7 +314,7 @@ static inline UIImage *cameraIcon()
 
 #pragma mark - Media Types
 
-static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
+static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
 {
     NSMutableSet *mediaTypes = [NSMutableSet set];
     for (NSString *mimeType in mimeTypes) {
@@ -322,17 +322,32 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         if (!uti.isEmpty())
             [mediaTypes addObject:(__bridge NSString *)uti];
     }
-    return mediaTypes.allObjects;
+    return mediaTypes;
 }
 
-- (NSArray *)_mediaTypesForPickerSourceType:(UIImagePickerControllerSourceType)sourceType
+- (NSArray<NSString *> *)_mediaTypesForPickerSourceType:(UIImagePickerControllerSourceType)sourceType
 {
-    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get());
-    if (mediaTypes.count)
+    NSArray<NSString *> *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:sourceType];
+    NSSet<NSString *> *acceptedMediaTypes = UTIsForMIMETypes(_mimeTypes.get());
+    if (acceptedMediaTypes.count) {
+        NSMutableArray<NSString *> *mediaTypes = [NSMutableArray array];
+        for (NSString *availableMediaType in availableMediaTypes) {
+            if ([acceptedMediaTypes containsObject:availableMediaType])
+                [mediaTypes addObject:availableMediaType];
+            else {
+                for (NSString *acceptedMediaType in acceptedMediaTypes) {
+                    if (UTTypeConformsTo((__bridge CFStringRef)acceptedMediaType, (__bridge CFStringRef)availableMediaType)) {
+                        [mediaTypes addObject:availableMediaType];
+                        break;
+                    }
+                }
+            }
+        }
         return mediaTypes;
+    }
 
     // Fallback to every supported media type if there is no filter.
-    return [UIImagePickerController availableMediaTypesForSourceType:sourceType];
+    return availableMediaTypes;
 }
 
 #pragma mark - Source selection menu
@@ -356,7 +371,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)_showDocumentPickerMenu
 {
-    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get());
+    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
 
     BOOL containsImageMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeImage);
     BOOL containsVideoMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeMovie);
