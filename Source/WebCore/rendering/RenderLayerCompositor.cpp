@@ -552,6 +552,9 @@ void RenderLayerCompositor::didChangePlatformLayerForLayer(RenderLayer& layer, c
 
     if (auto nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
         scrollingCoordinator->setNodeLayers(nodeID, { backing->graphicsLayer() });
+
+    if (auto nodeID = backing->scrollingNodeIDForRole(ScrollCoordinationRole::Positioning))
+        scrollingCoordinator->setNodeLayers(nodeID, { backing->graphicsLayer() });
 }
 
 void RenderLayerCompositor::didPaintBacking(RenderLayerBacking*)
@@ -3958,6 +3961,9 @@ void RenderLayerCompositor::detachScrollCoordinatedLayer(RenderLayer& layer, Opt
 
     if (roles.contains(ScrollCoordinationRole::ViewportConstrained))
         detachScrollCoordinatedLayerWithRole(layer, *scrollingCoordinator, ScrollCoordinationRole::ViewportConstrained);
+
+    if (roles.contains(ScrollCoordinationRole::Positioning))
+        detachScrollCoordinatedLayerWithRole(layer, *scrollingCoordinator, ScrollCoordinationRole::Positioning);
 
     backing->detachFromScrollingCoordinator(roles);
 }

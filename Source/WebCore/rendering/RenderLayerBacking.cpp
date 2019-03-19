@@ -3135,6 +3135,8 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
         ts << " scrolling node " << nodeID;
     if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::FrameHosting))
         ts << " frame hosting node " << nodeID;
+    if (auto nodeID = backing.scrollingNodeIDForRole(ScrollCoordinationRole::Positioning))
+        ts << " positioning node " << nodeID;
     return ts;
 }
 

@@ -6744,6 +6744,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
         auto scrollingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Scrolling);
         auto frameHostingNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::FrameHosting);
         auto viewportConstrainedNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::ViewportConstrained);
+        auto positionedNodeID = backing.scrollingNodeIDForRole(WebCore::ScrollCoordinationRole::Positioning);
 
         if (scrollingNodeID || frameHostingNodeID || viewportConstrainedNodeID) {
             stream << " {";
@@ -6764,6 +6765,12 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
                 if (!first)
                     stream << ", ";
                 stream << "vc " << viewportConstrainedNodeID;
+            }
+
+            if (positionedNodeID) {
+                if (!first)
+                    stream << ", ";
+                stream << "pos " << positionedNodeID;
             }
 
             stream << "}";

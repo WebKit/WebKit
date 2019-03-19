@@ -1,3 +1,25 @@
+2019-03-19  Simon Fraser  <simon.fraser@apple.com>
+
+        [Async overflow] Handle positioned nodes in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=195946
+
+        Reviewed by Zalan Bujtas.
+
+        When I added support for positioned nodes in the scrolling tree I missed handling
+        the ScrollCoordinationRole::Positioning in a few places.
+
+        I wasn't able to come up with a test for this; when a positioned node toggles between
+        tiled and non-tiled, hitting the code in didChangePlatformLayerForLayer(), we already
+        update the node with the new layer.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive): Logging.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::operator<<): Logging.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::didChangePlatformLayerForLayer): Update the node's layer.
+        (WebCore::RenderLayerCompositor::detachScrollCoordinatedLayer): Handle detaching of this node type.
+
 2019-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes
