@@ -25,22 +25,39 @@
 
 #pragma once
 
-#include "SVGAnimatedAngle.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedPointList.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedPrimitiveProperty.h"
-#include "SVGAnimatedRect.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedTransformList.h"
-
 namespace WebCore {
 
-using SVGAnimatedBoolean = SVGAnimatedPrimitiveProperty<bool>;
-using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
+template<typename ValueType>
+class SVGAnimationDiscreteFunction : public SVGAnimationFunction {
+public:
+    SVGAnimationDiscreteFunction(AnimationMode animationMode, CalcMode, bool, bool)
+        : SVGAnimationFunction(animationMode)
+    {
+    }
+
+    bool isDiscrete() const override { return true; }
+
+    void setToAtEndOfDurationValue(const String&) override
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    void setFromAndByValues(SVGElement*, const String&, const String&) override
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    void progress(SVGElement*, float percentage, unsigned, ValueType& animated)
+    {
+        if ((m_animationMode == AnimationMode::FromTo && percentage > 0.5) || m_animationMode == AnimationMode::To || percentage == 1)
+            animated = m_to;
+        else
+            animated = m_from;
+    }
+
+protected:
+    ValueType m_from;
+    ValueType m_to;
+};
 
 }

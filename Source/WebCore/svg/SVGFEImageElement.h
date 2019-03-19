@@ -23,7 +23,6 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFEImage.h"

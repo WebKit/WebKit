@@ -46,6 +46,7 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
         PropertyRegistry::registerProperty<SVGNames::orderAttr, &SVGFEConvolveMatrixElement::m_orderX, &SVGFEConvolveMatrixElement::m_orderY>();
         PropertyRegistry::registerProperty<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
         PropertyRegistry::registerProperty<SVGNames::targetYAttr, &SVGFEConvolveMatrixElement::m_targetY>();
+        PropertyRegistry::registerProperty<SVGNames::preserveAlphaAttr, &SVGFEConvolveMatrixElement::m_preserveAlpha>();
     });
 }
 
@@ -79,7 +80,6 @@ void SVGFEConvolveMatrixElement::registerAttributes()
     registry.registerAttribute<SVGNames::kernelUnitLengthAttr,
         &SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier, &SVGFEConvolveMatrixElement::m_kernelUnitLengthX,
         &SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier, &SVGFEConvolveMatrixElement::m_kernelUnitLengthY>();
-    registry.registerAttribute<SVGNames::preserveAlphaAttr, &SVGFEConvolveMatrixElement::m_preserveAlpha>();
 }
 
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -152,9 +152,9 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
 
     if (name == SVGNames::preserveAlphaAttr) {
         if (value == "true")
-            m_preserveAlpha.setValue(true);
+            m_preserveAlpha->setBaseValInternal(true);
         else if (value == "false")
-            m_preserveAlpha.setValue(false);
+            m_preserveAlpha->setBaseValInternal(false);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + value  + "\". Filtered element will not be displayed.");
         return;

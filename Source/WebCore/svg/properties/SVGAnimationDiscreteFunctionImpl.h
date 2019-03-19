@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,21 @@
 
 #pragma once
 
-#include "SVGAnimatedAngle.h"
-#include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumber.h"
-#include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedPointList.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedPrimitiveProperty.h"
-#include "SVGAnimatedRect.h"
-#include "SVGAnimatedString.h"
-#include "SVGAnimatedTransformList.h"
+#include "SVGAnimationDiscreteFunction.h"
+#include "SVGPropertyTraits.h"
 
 namespace WebCore {
 
-using SVGAnimatedBoolean = SVGAnimatedPrimitiveProperty<bool>;
-using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
+class SVGAnimationBooleanFunction : public SVGAnimationDiscreteFunction<bool> {
+public:
+    using Base = SVGAnimationDiscreteFunction<bool>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPropertyTraits<bool>::fromString(from);
+        m_to = SVGPropertyTraits<bool>::fromString(to);
+    }
+};
 
 }

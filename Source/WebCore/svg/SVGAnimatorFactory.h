@@ -20,7 +20,6 @@
 #pragma once
 
 #include "SVGAnimatedAngle.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedColor.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
@@ -50,7 +49,7 @@ public:
         case AnimatedAngle:
             return std::make_unique<SVGAnimatedAngleAnimator>(animationElement, contextElement);
         case AnimatedBoolean:
-            return std::make_unique<SVGAnimatedBooleanAnimator>(animationElement, contextElement);
+            return nullptr;
         case AnimatedColor:
             return std::make_unique<SVGAnimatedColorAnimator>(*animationElement, *contextElement);
         case AnimatedEnumeration:

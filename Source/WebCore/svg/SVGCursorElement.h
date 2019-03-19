@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGElement.h"

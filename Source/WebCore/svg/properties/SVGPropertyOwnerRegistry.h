@@ -42,6 +42,12 @@ public:
     {
     }
 
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedBoolean> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedBooleanAccessor<OwnerType>::template singleton<property>());
+    }
+
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property>
     static void registerProperty()
     {

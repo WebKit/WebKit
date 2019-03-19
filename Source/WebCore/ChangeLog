@@ -1,3 +1,71 @@
+2019-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG property tear off objects for SVGAnimatedBoolean
+        https://bugs.webkit.org/show_bug.cgi?id=195862
+
+        Reviewed by Simon Fraser.
+
+        -- SVGAnimatedBoolean will be defined as SVGAnimatedPrimitiveProperty<bool>.
+        -- SVGAnimatedBooleanAccessor is added to access a member of this type.
+        -- A function registerProperty() is added to SVGPropertyOwnerRegistry
+           to register this type.
+        -- SVGAnimatedBooleanAnimator is added to animate a member of this type.
+        -- SVGAnimationBooleanFunction is added to handle the progress of this
+           new type over a period of time.
+
+        SVGAnimationDiscreteFunction is the base class of SVGAnimationBooleanFunction.
+        It will be the base class of all the discrete animation function types:
+        string, bool, enum and PreserveAspectRatio types.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimationElement.h:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGCursorElement.h:
+        * svg/SVGDefsElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::SVGExternalResourcesRequired):
+        (WebCore::SVGExternalResourcesRequired::parseAttribute):
+        (WebCore::SVGExternalResourcesRequired::registerAttributes): Deleted.
+        * svg/SVGExternalResourcesRequired.h:
+        (WebCore::SVGExternalResourcesRequired::externalResourcesRequired const):
+        (WebCore::SVGExternalResourcesRequired::externalResourcesRequiredAnimated):
+        (WebCore::SVGExternalResourcesRequired::setExternalResourcesRequired): Deleted.
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.h:
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGSwitchElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextContentElement.h:
+        * svg/SVGUseElement.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimationDiscreteFunction.h: Added.
+        (WebCore::SVGAnimationDiscreteFunction::SVGAnimationDiscreteFunction):
+        (WebCore::SVGAnimationDiscreteFunction::progress):
+        * svg/properties/SVGAnimationDiscreteFunctionImpl.h: Added.
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
 2019-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Crash when reloading test with async overflow scrolling

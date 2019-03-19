@@ -22,7 +22,6 @@
 #pragma once
 
 #include "Gradient.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"

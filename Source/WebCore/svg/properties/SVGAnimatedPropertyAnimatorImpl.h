@@ -28,6 +28,7 @@
 #include "SVGAnimatedPropertyAnimator.h"
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAnimationAdditiveValueFunctionImpl.h"
+#include "SVGAnimationDiscreteFunctionImpl.h"
 
 namespace WebCore {
 
@@ -35,6 +36,24 @@ class SVGAnimatedIntegerPairAnimator;
 
 template<typename AnimatedPropertyAnimator1, typename AnimatedPropertyAnimator2>
 class SVGAnimatedPropertyPairAnimator;
+
+class SVGAnimatedBooleanAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedBoolean, SVGAnimationBooleanFunction>  {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedBoolean, SVGAnimationBooleanFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedBoolean>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::unique_ptr<SVGAnimatedBooleanAnimator>(new SVGAnimatedBooleanAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        bool& animated = m_animated->animVal();
+        m_function.progress(targetElement, percentage, repeatCount, animated);
+    }
+};
 
 class SVGAnimatedIntegerAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedInteger, SVGAnimationIntegerFunction> {
     friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator>;

@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGSMILElement.h"
 #include "SVGTests.h"

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
@@ -67,12 +66,6 @@ public:
     }
 
     // Animatable attributes
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedBooleanAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedBooleanAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, typename EnumType, SVGAnimatedEnumerationAttribute<EnumType> OwnerType::*attribute>
     void registerAttribute()
     {

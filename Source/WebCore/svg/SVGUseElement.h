@@ -23,7 +23,6 @@
 
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocumentClient.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"

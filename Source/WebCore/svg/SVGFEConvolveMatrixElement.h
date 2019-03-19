@@ -78,7 +78,7 @@ public:
     EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
     float kernelUnitLengthX() const { return m_kernelUnitLengthX.currentValue(attributeOwnerProxy()); }
     float kernelUnitLengthY() const { return m_kernelUnitLengthY.currentValue(attributeOwnerProxy()); }
-    bool preserveAlpha() const { return m_preserveAlpha.currentValue(attributeOwnerProxy()); }
+    bool preserveAlpha() const { return m_preserveAlpha->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
     SVGAnimatedInteger& orderXAnimated() { return m_orderX; }
@@ -91,7 +91,7 @@ public:
     RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedNumber> kernelUnitLengthXAnimated() { return m_kernelUnitLengthX.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedNumber> kernelUnitLengthYAnimated() { return m_kernelUnitLengthY.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedBoolean> preserveAlphaAnimated() { return m_preserveAlpha.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedBoolean& preserveAlphaAnimated() { return m_preserveAlpha; }
 
 private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
@@ -99,7 +99,8 @@ private:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
     static void registerAttributes();
-    
+    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
+
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -108,7 +109,6 @@ private:
         return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
     }
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
@@ -131,7 +131,7 @@ private:
     SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_DUPLICATE };
     SVGAnimatedNumberAttribute m_kernelUnitLengthX;
     SVGAnimatedNumberAttribute m_kernelUnitLengthY;
-    SVGAnimatedBooleanAttribute m_preserveAlpha;
+    Ref<SVGAnimatedBoolean> m_preserveAlpha { SVGAnimatedBoolean::create(this) };
 };
 
 } // namespace WebCore

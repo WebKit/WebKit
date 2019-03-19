@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FloatPoint.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedRect.h"

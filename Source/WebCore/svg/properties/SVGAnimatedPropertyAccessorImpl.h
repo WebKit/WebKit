@@ -33,6 +33,28 @@
 namespace WebCore {
 
 template<typename OwnerType>
+class SVGAnimatedBooleanAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedBoolean> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedBoolean>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedBoolean> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedBooleanAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedBooleanAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedBooleanAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType>
 class SVGAnimatedIntegerAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedInteger>;
 

@@ -50,10 +50,8 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGExternalResourcesRequired>;
 
-    auto externalResourcesRequiredAnimated() { return m_externalResourcesRequired.animatedProperty(attributeOwnerProxy()); }
-
-    bool externalResourcesRequired() const { return m_externalResourcesRequired.value(); }
-    void setExternalResourcesRequired(bool externalResourcesRequired) { m_externalResourcesRequired.setValue(externalResourcesRequired); }
+    bool externalResourcesRequired() const { return m_externalResourcesRequired->currentValue(); }
+    SVGAnimatedBoolean& externalResourcesRequiredAnimated() { return m_externalResourcesRequired; }
 
 protected:
     SVGExternalResourcesRequired(SVGElement* contextElement);
@@ -73,11 +71,10 @@ protected:
     bool haveLoadedRequiredResources() const;
 
 private:
-    static void registerAttributes();
     AttributeOwnerProxy attributeOwnerProxy() { return { *this, m_contextElement }; }
     
     SVGElement& m_contextElement;
-    SVGAnimatedBooleanAttribute m_externalResourcesRequired;
+    Ref<SVGAnimatedBoolean> m_externalResourcesRequired;
 };
 
 } // namespace WebCore

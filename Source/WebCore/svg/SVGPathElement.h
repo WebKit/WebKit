@@ -22,7 +22,6 @@
 #pragma once
 
 #include "Path.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedPath.h"
 #include "SVGExternalResourcesRequired.h"

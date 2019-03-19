@@ -29,22 +29,18 @@ namespace WebCore {
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired(SVGElement* contextElement)
     : m_contextElement(*contextElement)
+    , m_externalResourcesRequired(SVGAnimatedBoolean::create(contextElement))
 {
-    registerAttributes();
-}
-
-void SVGExternalResourcesRequired::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::externalResourcesRequiredAttr, &SVGEllipseElement::m_externalResourcesRequired>();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::externalResourcesRequiredAttr, &SVGExternalResourcesRequired::m_externalResourcesRequired>();
+    });
 }
 
 void SVGExternalResourcesRequired::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::externalResourcesRequiredAttr)
-        setExternalResourcesRequired(value == "true");
+        m_externalResourcesRequired->setBaseValInternal(value == "true");
 }
 
 void SVGExternalResourcesRequired::svgAttributeChanged(const QualifiedName& attrName)

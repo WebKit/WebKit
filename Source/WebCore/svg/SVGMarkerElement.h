@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGAnimatedAngle.h"
-#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
