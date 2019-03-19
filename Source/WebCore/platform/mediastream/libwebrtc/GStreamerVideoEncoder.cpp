@@ -43,7 +43,7 @@ static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE ("src",
 
 typedef void (*SetBitrateFunc) (GObject * encoder, const gchar * propname,
     gint bitrate);
-typedef void (*SetupEncoder) (GObject * encoder);
+typedef void (*SetupFunc) (GstWebrtcVideoEncoder * self);
 typedef struct
 {
   gboolean avalaible;
@@ -52,7 +52,7 @@ typedef struct
   const gchar *parser_name;
   GstCaps *encoded_format;
   SetBitrateFunc setBitrate;
-  SetupEncoder setupEncoder;
+  SetupFunc setupEncoder;
   const gchar *bitrate_propname;
   const gchar *keyframe_interval_propname;
 } EncoderDefinition;
@@ -168,11 +168,11 @@ gst_webrtc_video_encoder_set_format (GstWebrtcVideoEncoder * self,
       GstPad *tmppad;
       priv->encoderId = (EncoderId) i;
       priv->encoder = gst_element_factory_make (encoders[i].name, NULL);
-      encoders[priv->encoderId].setupEncoder (G_OBJECT (priv->encoder));
 
       if (encoders[i].parser_name)
         priv->parser = gst_element_factory_make (encoders[i].parser_name, NULL);
 
+      encoders[priv->encoderId].setupEncoder (self);
       if (encoders[i].encoded_format) {
         priv->capsfilter = gst_element_factory_make ("capsfilter", NULL);
         g_object_set (priv->capsfilter, "caps", encoders[i].encoded_format,
@@ -245,7 +245,7 @@ gst_webrtc_video_encoder_set_property (GObject * object,
 static void
 register_known_encoder (EncoderId encId, const gchar * name,
     const gchar * parser_name, const gchar * caps, const gchar * encoded_format,
-    SetupEncoder setupEncoder, const gchar * bitrate_propname,
+    SetupFunc setupEncoder, const gchar * bitrate_propname,
     SetBitrateFunc setBitrate, const gchar * keyframe_interval_propname)
 {
   GstPluginFeature *feature =
@@ -273,20 +273,25 @@ register_known_encoder (EncoderId encId, const gchar * name,
 }
 
 static void
-setup_x264enc (GObject * encoder)
+setup_x264enc (GstWebrtcVideoEncoder * self)
 {
-  gst_util_set_object_arg (encoder, "tune", "zerolatency");
+  gst_util_set_object_arg (G_OBJECT (PRIV (self)->encoder), "tune",
+      "zerolatency");
+  g_object_set (PRIV (self)->parser, "config-interval", 1, NULL);
 }
 
 static void
-setup_openh264enc (GObject *)
+setup_openh264enc (GstWebrtcVideoEncoder * self)
 {
+  g_object_set (PRIV (self)->parser, "config-interval", 1, NULL);
 }
 
 static void
-setup_omxh264enc (GObject * encoder)
+setup_omxh264enc (GstWebrtcVideoEncoder * self)
 {
-  gst_util_set_object_arg (encoder, "control-rate", "constant");
+  gst_util_set_object_arg (G_OBJECT (PRIV (self)->encoder), "control-rate",
+      "variable");
+  g_object_set (PRIV (self)->parser, "config-interval", 1, NULL);
 }
 
 

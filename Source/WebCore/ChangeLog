@@ -1,3 +1,19 @@
+2019-03-19  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC] Create sps/pps for all frames to please libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=195677
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        (gst_webrtc_video_encoder_set_format):
+        (register_known_encoder):
+        (setup_x264enc):
+        (setup_openh264enc):
+        (setup_omxh264enc):
+        (set_bitrate_bit_per_sec):
+        (gst_webrtc_video_encoder_class_init):
+
 2019-03-19  Timothy Hatcher  <timothy@apple.com>
 
         REGRESSION (r239904): Update dark mode defines in a few places that got missed.
