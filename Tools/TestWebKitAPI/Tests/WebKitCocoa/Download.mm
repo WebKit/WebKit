@@ -885,7 +885,7 @@ TEST(_WKDownload, DownloadMonitorCancel)
     downloadAtRate(1.5, 120); // Should cancel in ~2.5 seconds
 }
 
-TEST(_WKDownload, DownloadMonitorSurvive)
+TEST(_WKDownload, DISABLED_DownloadMonitorSurvive)
 {
     __block BOOL timeoutReached = NO;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{

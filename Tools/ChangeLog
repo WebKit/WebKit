@@ -1,3 +1,12 @@
+2019-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Disable flaky test added in r2431100
+        https://webkit.org/b/195785
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (TestWebKitAPI::TEST):
+        Apparently bots don't hit 150kb/s as reliably as I do locally.  Can't say I'm too surprised.
+
 2019-03-18  Timothy Hatcher  <timothy@apple.com>
 
         WKWebView.GetContentsShouldReturnAttributedString is crashing on iOS Simulator.
