@@ -1,3 +1,37 @@
+2019-03-18  Darin Adler  <darin@apple.com>
+
+        Cut down on use of StringBuffer, possibly leading toward removing it entirely
+        https://bugs.webkit.org/show_bug.cgi?id=195870
+
+        Reviewed by Daniel Bates.
+
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle): Fixed all the problems mentioned in "FIXME".
+        Made this a single function rather than a function template. Switch to
+        StringBuilder instead of StringBuffer. Return the original string if the
+        canonicalize operation doesn't change anything.
+        (WebCore::Document::updateTitle): Updated for the change above.
+
+        * platform/Length.cpp:
+        (WebCore::newCoordsArray): Use createUninitialized instead of StringBuffer.
+        Also got rid of unneeded use of upconvertedCharacters on a temporary string
+        that we explicitly created with 16-bit characters. The performance of this
+        function could be considerably simplified by not copying the original string
+        at all, but didn't do that at this time.
+
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::decode): Use createUninitialized instead of
+        StringBuffer. Also renamed numChars to numCodeUnits to both switch to complete
+        words and to be slightly more accurate.
+
+        * rendering/RenderText.cpp:
+        (WebCore::convertNoBreakSpace): Added.
+        (WebCore::capitalize): Use Vector instead of StringBuffer. Simplify code by
+        using convertNoBreakSpace function. Removed code that was using StringImpl
+        directly for a tiny speed boost; if we want to optimize the performance of
+        this function we would need to do more than that. Return the original string
+        if it happens to already be capitalized.
+
 2019-03-18  Timothy Hatcher  <timothy@apple.com>
 
         WKWebView.GetContentsShouldReturnAttributedString is crashing on iOS Simulator.

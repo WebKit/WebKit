@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008, 2009, 2011, 2012 Google Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -1503,44 +1503,32 @@ Element* Document::scrollingElement()
     return body();
 }
 
-template<typename CharacterType> static inline String canonicalizedTitle(Document& document, const String& title)
+static String canonicalizedTitle(Document& document, const String& title)
 {
-    // FIXME: Compiling a separate copy of this for LChar and UChar is likely unnecessary.
-    // FIXME: Missing an optimized case for when title is fine as-is. This unnecessarily allocates
-    // and keeps around a new copy, and it's even the less optimal type of StringImpl with a separate buffer.
-    // Could probably just use StringBuilder instead.
+    // Collapse runs of HTML spaces into single space characters.
+    // Strip leading and trailing spaces.
+    // Replace backslashes with currency symbols.
 
-    auto* characters = title.characters<CharacterType>();
-    unsigned length = title.length();
-
-    StringBuffer<CharacterType> buffer { length };
-    unsigned bufferLength = 0;
+    StringBuilder builder;
 
     auto* decoder = document.decoder();
     auto backslashAsCurrencySymbol = decoder ? decoder->encoding().backslashAsCurrencySymbol() : '\\';
 
-    // Collapse runs of HTML spaces into single space characters.
-    // Strip leading and trailing spaces.
-    // Replace backslashes with currency symbols.
     bool previousCharacterWasHTMLSpace = false;
-    for (unsigned i = 0; i < length; ++i) {
-        auto character = characters[i];
+    for (auto character : StringView { title }.codeUnits()) {
         if (isHTMLSpace(character))
             previousCharacterWasHTMLSpace = true;
         else {
             if (character == '\\')
                 character = backslashAsCurrencySymbol;
-            if (previousCharacterWasHTMLSpace && bufferLength)
-                buffer[bufferLength++] = ' ';
-            buffer[bufferLength++] = character;
+            if (previousCharacterWasHTMLSpace && !builder.isEmpty())
+                builder.append(' ');
+            builder.append(character);
             previousCharacterWasHTMLSpace = false;
         }
     }
-    if (!bufferLength)
-        return { };
 
-    buffer.shrink(bufferLength);
-    return String::adopt(WTFMove(buffer));
+    return builder == title ? title : builder.toString();
 }
 
 void Document::updateTitle(const StringWithDirection& title)
@@ -1549,14 +1537,9 @@ void Document::updateTitle(const StringWithDirection& title)
         return;
 
     m_rawTitle = title;
-    m_title = title;
 
-    if (!m_title.string.isEmpty()) {
-        if (m_title.string.is8Bit())
-            m_title.string = canonicalizedTitle<LChar>(*this, m_title.string);
-        else
-            m_title.string = canonicalizedTitle<UChar>(*this, m_title.string);
-    }
+    m_title.string = canonicalizedTitle(*this, title.string);
+    m_title.direction = title.direction;
 
     if (auto* loader = this->loader())
         loader->setTitle(m_title);

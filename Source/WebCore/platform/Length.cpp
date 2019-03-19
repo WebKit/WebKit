@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -31,10 +31,8 @@
 #include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
-
 
 namespace WebCore {
 
@@ -91,7 +89,8 @@ static unsigned countCharacter(StringImpl& string, UChar character)
 UniqueArray<Length> newCoordsArray(const String& string, int& len)
 {
     unsigned length = string.length();
-    StringBuffer<UChar> spacified(length);
+    UChar* spacified;
+    auto str = StringImpl::createUninitialized(length, spacified);
     for (unsigned i = 0; i < length; i++) {
         UChar cc = string[i];
         if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
@@ -99,23 +98,21 @@ UniqueArray<Length> newCoordsArray(const String& string, int& len)
         else
             spacified[i] = cc;
     }
-    RefPtr<StringImpl> str = StringImpl::adopt(WTFMove(spacified));
 
     str = str->simplifyWhiteSpace();
 
-    len = countCharacter(*str, ' ') + 1;
+    len = countCharacter(str, ' ') + 1;
     auto r = makeUniqueArray<Length>(len);
 
     int i = 0;
     unsigned pos = 0;
     size_t pos2;
 
-    auto upconvertedCharacters = StringView(str.get()).upconvertedCharacters();
     while ((pos2 = str->find(' ', pos)) != notFound) {
-        r[i++] = parseLength(upconvertedCharacters + pos, pos2 - pos);
+        r[i++] = parseLength(str->characters16() + pos, pos2 - pos);
         pos = pos2+1;
     }
-    r[i] = parseLength(upconvertedCharacters + pos, str->length() - pos);
+    r[i] = parseLength(str->characters16() + pos, str->length() - pos);
 
     ASSERT(i == len - 1);
 

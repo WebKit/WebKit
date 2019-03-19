@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #include "TextCodecUTF16.h"
 
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -71,10 +70,11 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
 
     const unsigned char* p = reinterpret_cast<const unsigned char*>(bytes);
     size_t numBytes = length + m_haveBufferedByte;
-    size_t numChars = numBytes / 2;
+    size_t numCodeUnits = numBytes / 2;
+    RELEASE_ASSERT(numCodeUnits <= std::numeric_limits<unsigned>::max());
 
-    StringBuffer<UChar> buffer(numChars);
-    UChar* q = buffer.characters();
+    UChar* q;
+    auto result = String::createUninitialized(numCodeUnits, q);
 
     if (m_haveBufferedByte) {
         UChar c;
@@ -85,17 +85,17 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
         *q++ = c;
         m_haveBufferedByte = false;
         p += 1;
-        numChars -= 1;
+        numCodeUnits -= 1;
     }
 
     if (m_littleEndian) {
-        for (size_t i = 0; i < numChars; ++i) {
+        for (size_t i = 0; i < numCodeUnits; ++i) {
             UChar c = p[0] | (p[1] << 8);
             p += 2;
             *q++ = c;
         }
     } else {
-        for (size_t i = 0; i < numChars; ++i) {
+        for (size_t i = 0; i < numCodeUnits; ++i) {
             UChar c = (p[0] << 8) | p[1];
             p += 2;
             *q++ = c;
@@ -108,9 +108,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool, bool, bool
         m_bufferedByte = p[0];
     }
 
-    buffer.shrink(q - buffer.characters());
-
-    return String::adopt(WTFMove(buffer));
+    return result;
 }
 
 Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling)

@@ -1,3 +1,15 @@
+2019-03-18  Darin Adler  <darin@apple.com>
+
+        Cut down on use of StringBuffer, possibly leading toward removing it entirely
+        https://bugs.webkit.org/show_bug.cgi?id=195870
+
+        Reviewed by Daniel Bates.
+
+        * wtf/URL.cpp: Remove a now-inaccurate comment mentioning StringBuffer.
+
+        * wtf/text/StringView.cpp:
+        (WTF::convertASCIICase): Use createUninitialized instead of StringBuffer.
+
 2019-03-18  Xan Lopez  <xan@igalia.com>
 
         [WTF] Remove redundant std::move in StringConcatenate

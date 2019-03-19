@@ -34,7 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
@@ -220,11 +219,11 @@ String convertASCIICase(const CharacterType* input, unsigned length)
     if (!input)
         return { };
 
-    StringBuffer<CharacterType> buffer(length);
-    CharacterType* characters = buffer.characters();
+    CharacterType* characters;
+    auto result = String::createUninitialized(length, characters);
     for (unsigned i = 0; i < length; ++i)
         characters[i] = type == ASCIICase::Lower ? toASCIILower(input[i]) : toASCIIUpper(input[i]);
-    return String::adopt(WTFMove(buffer));
+    return result;
 }
 
 String StringView::convertToASCIILowercase() const

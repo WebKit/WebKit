@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2007, 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
@@ -51,7 +51,6 @@
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -141,30 +140,25 @@ static HashMap<const RenderText*, WeakPtr<RenderInline>>& inlineWrapperForDispla
     return map;
 }
 
+static inline UChar convertNoBreakSpace(UChar character)
+{
+    return character == noBreakSpace ? ' ' : character;
+}
+
 String capitalize(const String& string, UChar previousCharacter)
 {
-    // FIXME: Need to change this to use u_strToTitle instead of u_totitle and to consider locale.
-
-    if (string.isNull())
-        return string;
+    // FIXME: Change this to use u_strToTitle instead of u_totitle and to consider locale.
 
     unsigned length = string.length();
-    auto& stringImpl = *string.impl();
 
-    if (length >= std::numeric_limits<unsigned>::max())
-        CRASH();
+    // Prepend the previous character, and convert NO BREAK SPACE to SPACE so ICU will see a word separator.
+    Vector<UChar> wordBreakCharacters;
+    wordBreakCharacters.grow(length + 1);
+    wordBreakCharacters[0] = convertNoBreakSpace(previousCharacter);
+    for (unsigned i = 1; i < length + 1; i++)
+        wordBreakCharacters[i] = convertNoBreakSpace(string[i - 1]);
 
-    StringBuffer<UChar> stringWithPrevious(length + 1);
-    stringWithPrevious[0] = previousCharacter == noBreakSpace ? ' ' : previousCharacter;
-    for (unsigned i = 1; i < length + 1; i++) {
-        // Replace NO BREAK SPACE with a real space since ICU does not treat it as a word separator.
-        if (stringImpl[i - 1] == noBreakSpace)
-            stringWithPrevious[i] = ' ';
-        else
-            stringWithPrevious[i] = stringImpl[i - 1];
-    }
-
-    auto* boundary = wordBreakIterator(StringView(stringWithPrevious.characters(), length + 1));
+    auto* boundary = wordBreakIterator(StringView { wordBreakCharacters.data(), length + 1 });
     if (!boundary)
         return string;
 
@@ -175,12 +169,12 @@ String capitalize(const String& string, UChar previousCharacter)
     int32_t startOfWord = ubrk_first(boundary);
     for (endOfWord = ubrk_next(boundary); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(boundary)) {
         if (startOfWord) // Ignore first char of previous string
-            result.append(stringImpl[startOfWord - 1] == noBreakSpace ? noBreakSpace : u_totitle(stringWithPrevious[startOfWord]));
+            result.append(string[startOfWord - 1] == noBreakSpace ? noBreakSpace : u_totitle(wordBreakCharacters[startOfWord]));
         for (int i = startOfWord + 1; i < endOfWord; i++)
-            result.append(stringImpl[i - 1]);
+            result.append(string[i - 1]);
     }
 
-    return result.toString();
+    return result == string ? string : result.toString();
 }
 
 inline RenderText::RenderText(Node& node, const String& text)
