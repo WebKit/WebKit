@@ -2237,7 +2237,7 @@ sub generateBuildSystemFromCMakeProject
         push @args, "-DCMAKE_BUILD_TYPE=Debug";
     }
 
-    push @args, "-DENABLE_ADDRESS_SANITIZER=ON" if asanIsEnabled();
+    push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
 
     push @args, '-DCMAKE_TOOLCHAIN_FILE=Platform/PlayStation' if isPlayStation();
 
