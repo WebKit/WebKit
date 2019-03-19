@@ -756,10 +756,10 @@ class ExtractTestResults(master.MasterShellCommand):
 class PrintConfiguration(steps.ShellSequence):
     name = 'configuration'
     description = ['configuration']
-    descriptionDone = ['configuration']
     haltOnFailure = False
     flunkOnFailure = False
     warnOnFailure = False
+    logEnviron = False
     command_list = [['hostname'],
                     ['df', '-hl'],
                     ['date'],
@@ -769,6 +769,51 @@ class PrintConfiguration(steps.ShellSequence):
     def __init__(self, **kwargs):
         super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
         self.commands = []
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
         # FIXME: Check platform before running platform specific commands.
         for command in self.command_list:
-            self.commands.append(util.ShellArg(command=command, logfile=command[0]))
+            self.commands.append(util.ShellArg(command=command, logfile='stdio'))
+
+    def convert_build_to_os_name(self, build):
+        if not build:
+            return 'Unknown'
+
+        build_to_name_mapping = {
+            '10.14': 'Mojave',
+            '10.13': 'High Sierra',
+            '10.12': 'Sierra',
+            '10.11': 'El Capitan',
+            '10.10': 'Yosemite',
+            '10.9': 'Maverick',
+            '10.8': 'Mountain Lion',
+            '10.7': 'Lion',
+            '10.6': 'Snow Leopard',
+            '10.5': 'Leopard',
+        }
+
+        for key, value in build_to_name_mapping.iteritems():
+            if build.startswith(key):
+                return value
+        return 'Unknown'
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to print configuration'}
+        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        configuration = u''
+        match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
+        if match:
+            os_version = match.group(1).strip()
+            os_name = self.convert_build_to_os_name(os_version)
+            configuration = u'OS: {} ({})'.format(os_name, os_version)
+
+        sdk_re = 'MacOSX[\s\S]*?SDKVersion:[ \t]*(.+?)\n'
+        is_ios_builder = 'iOS' in self.getProperty('buildername', '')
+        if is_ios_builder:
+            sdk_re = 'iPhoneSimulator[\s\S]*?SDKVersion:[ \t]*(.+?)\n'
+        match = re.search(sdk_re, logText)
+        if match:
+            xcode_version = match.group(1).strip()
+            configuration += u', Xcode: {}'.format(xcode_version)
+        return {u'step': configuration}
