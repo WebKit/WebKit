@@ -346,7 +346,9 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy&, WebFramePr
     }
     
     if (!m_uiDelegate.m_delegateMethods.webViewRequestStorageAccessPanelForTopPrivatelyControlledDomainUnderFirstPartyTopPrivatelyControlledDomainCompletionHandler) {
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
         presentStorageAccessAlert(m_uiDelegate.m_webView, requestingDomain, currentDomain, WTFMove(completionHandler));
+#endif
         return;
     }
 

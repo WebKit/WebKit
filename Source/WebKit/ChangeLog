@@ -1,3 +1,10 @@
+2019-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r243173.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm):
+
 2019-03-19  Brent Fulgham  <bfulgham@apple.com>
 
         Add default prompt implementation for the Storage Access API
