@@ -45,7 +45,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << canHandleHTTPSServerTrustEvaluation;
     encoder << diskCacheDirectory;
     encoder << diskCacheDirectoryExtensionHandle;
-    encoder << shouldEnableNetworkCacheEfficacyLogging;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
@@ -113,8 +112,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     result.diskCacheDirectoryExtensionHandle = WTFMove(*diskCacheDirectoryExtensionHandle);
 
-    if (!decoder.decode(result.shouldEnableNetworkCacheEfficacyLogging))
-        return false;
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (!decoder.decode(result.shouldEnableNetworkCacheSpeculativeRevalidation))
         return false;

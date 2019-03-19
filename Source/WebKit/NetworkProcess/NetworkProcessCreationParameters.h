@@ -56,7 +56,6 @@ struct NetworkProcessCreationParameters {
 
     String diskCacheDirectory;
     SandboxExtension::Handle diskCacheDirectoryExtensionHandle;
-    bool shouldEnableNetworkCacheEfficacyLogging { false };
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
 #endif

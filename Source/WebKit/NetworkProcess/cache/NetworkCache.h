@@ -48,7 +48,6 @@ namespace NetworkCache {
 
 class Cache;
 class SpeculativeLoadManager;
-class Statistics;
 
 struct MappedBody {
 #if ENABLE(SHAREABLE_RESOURCE)
@@ -65,12 +64,10 @@ enum class RetrieveDecision {
     NoDueToStreamingMedia,
 };
 
-// FIXME: This enum is used in the Statistics code in a way that prevents removing or reordering anything.
 enum class StoreDecision {
     Yes,
     NoDueToProtocol,
     NoDueToHTTPMethod,
-    NoDueToAttachmentResponse, // Unused.
     NoDueToNoStoreResponse,
     NoDueToHTTPStatusCode,
     NoDueToNoStoreRequest,
@@ -92,12 +89,11 @@ using GlobalFrameID = std::pair<uint64_t /*webPageID*/, uint64_t /*webFrameID*/>
 class Cache : public RefCounted<Cache> {
 public:
     enum class Option {
-        EfficacyLogging = 1 << 0,
         // In testing mode we try to eliminate sources of randomness. Cache does not shrink and there are no read timeouts.
-        TestingMode = 1 << 1,
-        RegisterNotify = 1 << 2,
+        TestingMode = 1 << 0,
+        RegisterNotify = 1 << 1,
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
-        SpeculativeRevalidation = 1 << 3,
+        SpeculativeRevalidation = 1 << 2,
 #endif
     };
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<Option>);
@@ -169,7 +165,6 @@ private:
     std::unique_ptr<WebCore::LowPowerModeNotifier> m_lowPowerModeNotifier;
     std::unique_ptr<SpeculativeLoadManager> m_speculativeLoadManager;
 #endif
-    std::unique_ptr<Statistics> m_statistics;
 
     unsigned m_traverseCount { 0 };
 };

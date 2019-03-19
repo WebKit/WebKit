@@ -28,7 +28,6 @@
 
 #include "Logging.h"
 #include "NetworkCacheSpeculativeLoadManager.h"
-#include "NetworkCacheStatistics.h"
 #include "NetworkCacheStorage.h"
 #include "NetworkProcess.h"
 #include <WebCore/CacheValidation.h>
@@ -98,9 +97,6 @@ Cache::Cache(NetworkProcess& networkProcess, Ref<Storage>&& storage, OptionSet<O
             m_speculativeLoadManager = std::make_unique<SpeculativeLoadManager>(*this, m_storage.get());
     }
 #endif
-
-    if (options.contains(Option::EfficacyLogging))
-        m_statistics = Statistics::open(*this, m_storage->basePath());
 
     if (options.contains(Option::RegisterNotify)) {
 #if PLATFORM(COCOA)
@@ -279,9 +275,6 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
     LOG(NetworkCache, "(NetworkProcess) retrieving %s priority %d", request.url().string().ascii().data(), static_cast<int>(request.priority()));
 
-    if (m_statistics)
-        m_statistics->recordRetrievalRequest(frameID.first);
-
     Key storageKey = makeCacheKey(request);
     auto priority = static_cast<unsigned>(request.priority());
 
@@ -297,9 +290,6 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 
     auto retrieveDecision = makeRetrieveDecision(request);
     if (retrieveDecision != RetrieveDecision::Yes) {
-        if (m_statistics)
-            m_statistics->recordNotUsingCacheForRequest(frameID.first, storageKey, request, retrieveDecision);
-
         completeRetrieve(WTFMove(completionHandler), nullptr, info);
         return;
     }
@@ -317,14 +307,11 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, frameID, networkProcess = makeRef(networkProcess())](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = makeRef(networkProcess())](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
-
-            if (m_statistics)
-                m_statistics->recordRetrievalFailure(frameID.first, storageKey, request);
 
             completeRetrieve(WTFMove(completionHandler), nullptr, info);
             return false;
@@ -351,8 +338,6 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #endif
         completeRetrieve(WTFMove(completionHandler), WTFMove(entry), info);
 
-        if (m_statistics)
-            m_statistics->recordRetrievedCachedEntry(frameID.first, storageKey, request, useDecision);
         return useDecision != UseDecision::NoDueToDecodeFailure;
     });
 }
@@ -390,9 +375,6 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
             remove(key);
         }
 
-        if (m_statistics)
-            m_statistics->recordNotCachingResponse(key, storeDecision);
-
         return nullptr;
     }
 
@@ -422,10 +404,6 @@ std::unique_ptr<Entry> Cache::storeRedirect(const WebCore::ResourceRequest& requ
     StoreDecision storeDecision = makeStoreDecision(request, response, 0);
     if (storeDecision != StoreDecision::Yes) {
         LOG(NetworkCache, "(NetworkProcess) didn't store redirect, storeDecision=%d", static_cast<int>(storeDecision));
-        auto key = makeCacheKey(request);
-        if (m_statistics)
-            m_statistics->recordNotCachingResponse(key, storeDecision);
-
         return nullptr;
     }
 
@@ -458,9 +436,6 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
     auto updateRecord = updateEntry->encodeAsStorageRecord();
 
     m_storage->store(updateRecord, { });
-
-    if (m_statistics)
-        m_statistics->recordRevalidationSuccess(frameID.first, existingEntry.key(), originalRequest);
 
     return updateEntry;
 }
@@ -582,9 +557,6 @@ void Cache::deleteDumpFile()
 void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
-
-    if (m_statistics)
-        m_statistics->clear();
 
     String anyType;
     m_storage->clear(anyType, modifiedSince, WTFMove(completionHandler));

@@ -78,8 +78,6 @@ NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKe
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 #endif
 
-static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"WebKitNetworkCacheEfficacyLoggingEnabled";
-
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
@@ -105,8 +103,6 @@ static void registerUserDefaultsIfNeeded()
     
     [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
     [registrationDictionary setObject:@YES forKey:WebKitJSCFTLJITEnabledDefaultsKey];
-
-    [registrationDictionary setObject:@NO forKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:registrationDictionary];
 }
@@ -289,8 +285,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     }
 
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
-
-    parameters.shouldEnableNetworkCacheEfficacyLogging = [defaults boolForKey:WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey];
 
 #if PLATFORM(IOS_FAMILY)
     parameters.ctDataConnectionServiceType = m_configuration->ctDataConnectionServiceType();

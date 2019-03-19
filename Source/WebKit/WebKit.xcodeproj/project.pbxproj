@@ -1204,7 +1204,6 @@
 		832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */; };
 		832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 832ED18A1E2FE13B006BA64A /* PerActivityStateCPUUsageSampler.h */; };
 		834B250F1A831A8D00CFB150 /* NetworkCacheFileSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */; };
-		834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */; };
 		836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */; };
 		8372DB251A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB241A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8372DB291A67562800C697C5 /* WebPageDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8372DB271A67562800C697C5 /* WebPageDiagnosticLoggingClient.h */; };
@@ -3723,7 +3722,6 @@
 		83397C6622124BD100B62388 /* WebProcessCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessCache.cpp; sourceTree = "<group>"; };
 		83397C6722124BD100B62388 /* WebProcessCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessCache.h; sourceTree = "<group>"; };
 		834B250E1A831A8D00CFB150 /* NetworkCacheFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheFileSystem.h; sourceTree = "<group>"; };
-		834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheStatistics.h; sourceTree = "<group>"; };
 		8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSQLiteDatabaseTracker.cpp; sourceTree = "<group>"; };
 		8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSQLiteDatabaseTracker.h; sourceTree = "<group>"; };
 		8372DB241A674C8F00C697C5 /* WKPageDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageDiagnosticLoggingClient.h; sourceTree = "<group>"; };
@@ -3741,7 +3739,6 @@
 		839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGraphicsUsageSampler.h; sourceTree = "<group>"; };
 		83A0ED321F747CC6003299EB /* PreconnectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreconnectTask.h; sourceTree = "<group>"; };
 		83A0ED331F747CC7003299EB /* PreconnectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreconnectTask.cpp; sourceTree = "<group>"; };
-		83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStatistics.cpp; sourceTree = "<group>"; };
 		83D454D61BE9D3C4006C93BD /* NetworkLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkLoadClient.h; sourceTree = "<group>"; };
 		83EE57591DB7D60600C74C50 /* WebValidationMessageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebValidationMessageClient.cpp; sourceTree = "<group>"; };
 		83EE575A1DB7D60600C74C50 /* WebValidationMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebValidationMessageClient.h; sourceTree = "<group>"; };
@@ -8875,8 +8872,6 @@
 				831EEBBB1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h */,
 				832AE2511BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.cpp */,
 				832AE2501BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h */,
-				83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */,
-				834B25101A842C8700CFB150 /* NetworkCacheStatistics.h */,
 				E4436EC31A0CFDB200EAD204 /* NetworkCacheStorage.cpp */,
 				E4436EC21A0CFDB200EAD204 /* NetworkCacheStorage.h */,
 				8310428A1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.cpp */,
@@ -9257,7 +9252,6 @@
 				E4436ECE1A0D040B00EAD204 /* NetworkCacheKey.h in Headers */,
 				831EEBBD1BD85C4300BB64C3 /* NetworkCacheSpeculativeLoad.h in Headers */,
 				832AE2521BE2E8CD00FAAE10 /* NetworkCacheSpeculativeLoadManager.h in Headers */,
-				834B25121A842C8700CFB150 /* NetworkCacheStatistics.h in Headers */,
 				E4436ECF1A0D040B00EAD204 /* NetworkCacheStorage.h in Headers */,
 				8310428B1BD6B66F00A715E4 /* NetworkCacheSubresourcesEntry.h in Headers */,
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,

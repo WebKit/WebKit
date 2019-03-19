@@ -112,8 +112,6 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
     SoupNetworkSession::clearOldSoupCache(FileSystem::directoryName(m_diskCacheDirectory));
 
     OptionSet<NetworkCache::Cache::Option> cacheOptions { NetworkCache::Cache::Option::RegisterNotify };
-    if (parameters.shouldEnableNetworkCacheEfficacyLogging)
-        cacheOptions.add(NetworkCache::Cache::Option::EfficacyLogging);
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (parameters.shouldEnableNetworkCacheSpeculativeRevalidation)
         cacheOptions.add(NetworkCache::Cache::Option::SpeculativeRevalidation);

@@ -1,5 +1,43 @@
 2019-03-19  Chris Dumez  <cdumez@apple.com>
 
+        Drop NetworkCacheStatistics code
+        https://bugs.webkit.org/show_bug.cgi?id=195910
+
+        Reviewed by Antti Koivisto.
+
+        Drop NetworkCacheStatistics code. It was a temporary experiment and has not been used in a long time.
+
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::Cache):
+        (WebKit::NetworkCache::Cache::retrieve):
+        (WebKit::NetworkCache::Cache::store):
+        (WebKit::NetworkCache::Cache::storeRedirect):
+        (WebKit::NetworkCache::Cache::update):
+        (WebKit::NetworkCache::Cache::clear):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStatistics.cpp: Removed.
+        * NetworkProcess/cache/NetworkCacheStatistics.h: Removed.
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::traverseRecordsFiles):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * Sources.txt:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::registerUserDefaultsIfNeeded):
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/soup/WebProcessPoolSoup.cpp:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-03-19  Chris Dumez  <cdumez@apple.com>
+
         Spew: Unhandled web process message 'VisitedLinkTableController:VisitedLinkStateChanged'
         https://bugs.webkit.org/show_bug.cgi?id=194787
         <rdar://problem/48175520>
