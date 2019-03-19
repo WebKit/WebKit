@@ -720,12 +720,24 @@ void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) cons
     SVGElement* nonConstThis = const_cast<SVGElement*>(this);
     if (name == anyQName())
         synchronizeAllAnimatedSVGAttribute(nonConstThis);
-    else if (isAnimatedPropertyAttribute(name)) {
+    else {
         // If the value of the property has changed, serialize the new value to the attribute.
         if (auto value = propertyRegistry().synchronize(name))
             nonConstThis->setSynchronizedLazyAttribute(name, *value);
-    } else
-        nonConstThis->synchronizeAttribute(name);
+        else
+            nonConstThis->synchronizeAttribute(name);
+    }
+}
+    
+void SVGElement::commitPropertyChange(SVGProperty* property)
+{
+    // We want to dirty the top-level property when a descendant changes. For example
+    // a change in an SVGLength item in SVGLengthList should set the dirty flag on
+    // SVGLengthList and not the SVGLength.
+    property->setDirty();
+
+    invalidateSVGAttributes();
+    svgAttributeChanged(propertyRegistry().propertyAttributeName(*property));
 }
 
 void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)

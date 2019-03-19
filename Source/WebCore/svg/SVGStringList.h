@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,63 @@
 
 #pragma once
 
-#include "SVGAnimatedListPropertyTearOff.h"
-#include "SVGListPropertyTearOff.h"
-#include "SVGStringListValues.h"
+#include "SVGParserUtilities.h"
+#include "SVGPrimitiveList.h"
 
 namespace WebCore {
 
-class SVGStringList final : public SVGStaticListPropertyTearOff<SVGStringListValues> {
+class SVGStringList final : public SVGPrimitiveList<String> {
+    using Base = SVGPrimitiveList<String>;
+    using Base::Base;
+    using Base::m_items;
+
 public:
-    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGStringListValues>;
-    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
-
-    static Ref<SVGStringList> create(SVGElement& contextElement, SVGStringListValues& values)
+    static Ref<SVGStringList> create(SVGPropertyOwner* owner)
     {
-        return adoptRef(*new SVGStringList(&contextElement, values));
+        return adoptRef(*new SVGStringList(owner));
     }
 
-    static Ref<SVGStringList> create(AnimatedListPropertyTearOff&, SVGPropertyRole, SVGStringListValues& values, ListWrapperCache&)
+    void reset(const String& string)
     {
-        // FIXME: Find a way to remove this. It's only needed to keep Windows compiling.
-        ASSERT_NOT_REACHED();
-        return adoptRef(*new SVGStringList(nullptr, values));
+        parse(string, ' ');
+
+        // Add empty string, if list is empty.
+        if (m_items.isEmpty())
+            m_items.append(emptyString());
     }
 
-private:
-    SVGStringList(SVGElement* contextElement, SVGStringListValues& values)
-        : SVGStaticListPropertyTearOff<SVGStringListValues>(contextElement, values)
+    bool parse(const String& data, UChar delimiter)
     {
+        clearItems();
+
+        auto upconvertedCharacters = StringView(data).upconvertedCharacters();
+        const UChar* ptr = upconvertedCharacters;
+        const UChar* end = ptr + data.length();
+        while (ptr < end) {
+            const UChar* start = ptr;
+            while (ptr < end && *ptr != delimiter && !isSVGSpace(*ptr))
+                ptr++;
+            if (ptr == start)
+                break;
+            m_items.append(String(start, ptr - start));
+            skipOptionalSVGSpacesOrDelimiter(ptr, end, delimiter);
+        }
+
+        return ptr == end;
+    }
+
+    String valueAsString() const override
+    {
+        StringBuilder builder;
+
+        for (auto string : m_items) {
+            if (builder.length())
+                builder.append(' ');
+
+            builder.append(string);
+        }
+
+        return builder.toString();
     }
 };
 

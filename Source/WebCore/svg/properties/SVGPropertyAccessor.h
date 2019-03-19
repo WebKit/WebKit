@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,17 +20,30 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    NoInterfaceObject,
-    SuppressToJSObject,
-] interface SVGTests {
-    readonly attribute SVGStringList requiredFeatures;
-    readonly attribute SVGStringList requiredExtensions;
-    readonly attribute SVGStringList systemLanguage;
+#pragma once
 
-    // FIXME: Using "undefined" as default parameter value is wrong.
-    boolean hasExtension(optional DOMString extension = "undefined");
+#include "SVGPointerMemberAccessor.h"
+
+namespace WebCore {
+
+template<typename OwnerType, typename PropertyType>
+class SVGPropertyAccessor : public SVGPointerMemberAccessor<OwnerType, PropertyType> {
+    using Base = SVGPointerMemberAccessor<OwnerType, PropertyType>;
+
+public:
+    using Base::Base;
+
+protected:
+    using Base::property;
+    using Base::singleton;
+
+    bool matches(const OwnerType& owner, const SVGProperty& property) const override
+    {
+        return this->property(owner).ptr() == &property;
+    }
 };
+
+}

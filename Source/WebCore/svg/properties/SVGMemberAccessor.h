@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class SVGAnimatedProperty;
+class SVGProperty;
 
 template<typename OwnerType>
 class SVGMemberAccessor {
@@ -42,6 +43,7 @@ public:
     virtual bool isAnimatedProperty() const { return false; }
     virtual bool isAnimatedLength() const { return false; }
 
+    virtual bool matches(const OwnerType&, const SVGProperty&) const { return false; }
     virtual bool matches(const OwnerType&, const SVGAnimatedProperty&) const { return false; }
     virtual Optional<String> synchronize(const OwnerType&) const { return WTF::nullopt; }
 

@@ -27,6 +27,7 @@
 
 #include "SVGAnimatedPropertyAccessorImpl.h"
 #include "SVGAnimatedPropertyPairAccessorImpl.h"
+#include "SVGPropertyAccessorImpl.h"
 #include "SVGPropertyRegistry.h"
 #include <wtf/HashMap.h>
 
@@ -40,6 +41,12 @@ public:
     SVGPropertyOwnerRegistry(OwnerType& owner)
         : m_owner(owner)
     {
+    }
+
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGStringList> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGStringListAccessor<OwnerType>::template singleton<property>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedBoolean> OwnerType::*property>
@@ -75,6 +82,18 @@ public:
     static bool isKnownAttribute(const QualifiedName& attributeName)
     {
         return findAccessor(attributeName);
+    }
+
+    QualifiedName propertyAttributeName(const SVGProperty& property) const override
+    {
+        QualifiedName attributeName = nullQName();
+        enumerateRecursively([&](const auto& entry) -> bool {
+            if (!entry.value->matches(m_owner, property))
+                return true;
+            attributeName = entry.key;
+            return false;
+        });
+        return attributeName;
     }
 
     QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty& animatedProperty) const override

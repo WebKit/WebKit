@@ -26,6 +26,9 @@
 #pragma once
 
 namespace WebCore {
+    
+class SVGElement;
+class SVGProperty;
 
 class SVGPropertyOwner {
 public:
@@ -40,11 +43,11 @@ public:
         return owner()->attributeContextElement();
     }
     
-    virtual void commitPropertyChange()
+    virtual void commitPropertyChange(SVGProperty* property)
     {
         if (!owner())
             return;
-        owner()->commitPropertyChange();
+        owner()->commitPropertyChange(property);
     }
     
 protected:

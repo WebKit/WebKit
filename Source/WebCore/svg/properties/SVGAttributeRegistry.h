@@ -37,7 +37,6 @@
 #include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
 #include "SVGLegacyAnimatedProperty.h"
-#include "SVGStringListValues.h"
 #include "SVGZoomAndPanType.h"
 #include <wtf/HashMap.h>
 
@@ -50,13 +49,6 @@ public:
     {
         static NeverDestroyed<SVGAttributeRegistry<OwnerType, BaseTypes...>> map;
         return map;
-    }
-
-    // Non animatable attributes
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGStringListValuesAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGStringListValuesAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGZoomAndPanTypeAttribute OwnerType::*attribute>

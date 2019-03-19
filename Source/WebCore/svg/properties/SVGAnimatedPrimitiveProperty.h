@@ -49,7 +49,7 @@ public:
     ExceptionOr<void> setBaseVal(const PropertyType& baseVal)
     {
         m_baseVal = baseVal;
-        commitPropertyChange();
+        commitPropertyChange(nullptr);
         return { };
     }
 

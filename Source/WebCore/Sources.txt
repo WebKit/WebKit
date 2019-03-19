@@ -2384,7 +2384,6 @@ svg/SVGSVGElement.cpp
 svg/SVGScriptElement.cpp
 svg/SVGSetElement.cpp
 svg/SVGStopElement.cpp
-svg/SVGStringListValues.cpp
 svg/SVGStyleElement.cpp
 svg/SVGSwitchElement.cpp
 svg/SVGSymbolElement.cpp

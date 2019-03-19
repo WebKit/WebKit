@@ -1,3 +1,104 @@
+2019-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG property tear off objects for SVGStringList
+        https://bugs.webkit.org/show_bug.cgi?id=195863
+
+        Reviewed by Simon Fraser.
+
+        SVGStringList is not animated list. So we need to introduce two new classes:
+
+        -- SVGProperty: This will be the base of all the non-animated properties.
+           Like the SVGAnimatedProperty, SVGProperty will be registered with the
+           attribute name in SVGPropertyRegistery. It will also commit changes
+           to the reflecting attribute. And it will provide a synchronize string
+           for lazy attribute update.
+
+        -- SVGList: It will be the base of all the list properties. It can hold
+           primitive types or SVG types. In this patch primitive types will be 
+           supported only. To do that, a superclass called SVGPrimitiveList is
+           added. Its items are of primitive type such as String type.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::synchronizeAnimatedSVGAttribute const):
+        (WebCore::SVGElement::commitPropertyChange):
+        * svg/SVGElement.h:
+        * svg/SVGStringList.h:
+        * svg/SVGStringListValues.cpp: Removed.
+        * svg/SVGStringListValues.h: Removed.
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::SVGTests):
+        (WebCore::SVGTests::isKnownAttribute):
+        (WebCore::SVGTests::isValid const):
+        (WebCore::SVGTests::parseAttribute):
+        (WebCore::SVGTests::registerAttributes): Deleted.
+        (WebCore::SVGTests::requiredFeatures): Deleted.
+        (WebCore::SVGTests::requiredExtensions): Deleted.
+        (WebCore::SVGTests::systemLanguage): Deleted.
+        * svg/SVGTests.h:
+        (WebCore::SVGTests::requiredFeatures):
+        (WebCore::SVGTests::requiredExtensions):
+        (WebCore::SVGTests::systemLanguage):
+        (): Deleted.
+        * svg/SVGTests.idl:
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::SVGViewElement):
+        (WebCore::SVGViewElement::parseAttribute):
+        (WebCore::SVGViewElement::viewTarget): Deleted.
+        * svg/SVGViewElement.h:
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedPrimitiveProperty.h:
+        (WebCore::SVGAnimatedPrimitiveProperty::setBaseVal):
+        * svg/properties/SVGAnimatedProperty.cpp:
+        (WebCore::SVGAnimatedProperty::commitPropertyChange):
+        * svg/properties/SVGAnimatedProperty.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGList.h: Added.
+        (WebCore::SVGList::numberOfItems const):
+        (WebCore::SVGList::clear):
+        (WebCore::SVGList::getItem):
+        (WebCore::SVGList::initialize):
+        (WebCore::SVGList::insertItemBefore):
+        (WebCore::SVGList::replaceItem):
+        (WebCore::SVGList::removeItem):
+        (WebCore::SVGList::appendItem):
+        (WebCore::SVGList::items):
+        (WebCore::SVGList::items const):
+        (WebCore::SVGList::size const):
+        (WebCore::SVGList::isEmpty const):
+        (WebCore::SVGList::clearItems):
+        (WebCore::SVGList::canAlterList const):
+        (WebCore::SVGList::canGetItem):
+        (WebCore::SVGList::canReplaceItem):
+        (WebCore::SVGList::canRemoveItem):
+        (WebCore::SVGList::detachItems):
+        * svg/properties/SVGMemberAccessor.h:
+        (WebCore::SVGMemberAccessor::matches const):
+        * svg/properties/SVGPrimitiveList.h: Added.
+        * svg/properties/SVGProperty.h:
+        (WebCore::SVGProperty::isAttached const):
+        (WebCore::SVGProperty::attach):
+        (WebCore::SVGProperty::detach):
+        (WebCore::SVGProperty::contextElement const):
+        (WebCore::SVGProperty::commitChange):
+        (WebCore::SVGProperty::access const):
+        (WebCore::SVGProperty::isReadOnly const):
+        (WebCore::SVGProperty::isDirty const):
+        (WebCore::SVGProperty::setDirty):
+        (WebCore::SVGProperty::synchronize):
+        (WebCore::SVGProperty::valueAsString const):
+        (WebCore::SVGProperty::SVGProperty):
+        * svg/properties/SVGPropertyAccessor.h: Added.
+        * svg/properties/SVGPropertyAccessorImpl.h: Added.
+        * svg/properties/SVGPropertyOwner.h:
+        (WebCore::SVGPropertyOwner::commitPropertyChange):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+        * svg/properties/SVGPropertyRegistry.h:
+        * svg/properties/SVGStaticListPropertyTearOff.h: Removed.
+
 2019-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed followup to r243126.

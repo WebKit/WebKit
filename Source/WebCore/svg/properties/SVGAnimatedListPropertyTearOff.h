@@ -22,7 +22,6 @@
 
 #include "SVGLegacyAnimatedProperty.h"
 #include "SVGListPropertyTearOff.h"
-#include "SVGStaticListPropertyTearOff.h"
 
 namespace WebCore {
 

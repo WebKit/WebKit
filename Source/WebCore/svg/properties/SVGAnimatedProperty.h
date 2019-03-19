@@ -26,8 +26,13 @@
 #pragma once
 
 #include "SVGPropertyOwner.h"
+#include <wtf/Optional.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+    
+class SVGElement;
 
 class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty>, public SVGPropertyOwner {
 public:
@@ -62,7 +67,7 @@ protected:
     }
     
     SVGPropertyOwner* owner() const override;
-    void commitPropertyChange() override;
+    void commitPropertyChange(SVGProperty*) override;
     
     SVGElement* m_contextElement { nullptr };
     bool m_isAnimating { false };

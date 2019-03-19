@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,51 @@
 
 #pragma once
 
-#include "SVGAttributeAnimator.h"
+#include "SVGList.h"
 
 namespace WebCore {
 
-class SVGAnimatedProperty;
+template<typename PropertyType>
+class SVGPrimitiveList : public SVGList<PropertyType> {
+protected:
+    using Base = SVGList<PropertyType>;
+    using Base::Base;
+    using Base::size;
+    using Base::m_items;
 
-class SVGPropertyRegistry {
-public:
-    SVGPropertyRegistry() = default;
-    virtual ~SVGPropertyRegistry() = default;
+    PropertyType at(unsigned index) const override
+    {
+        ASSERT(index < size());
+        return m_items.at(index);
+    }
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty&) const = 0;
-    virtual Optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+    PropertyType insert(unsigned index, PropertyType&& newItem) override
+    {
+        ASSERT(index <= size());
+        m_items.insert(index, WTFMove(newItem));
+        return at(index);
+    }
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
-    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    PropertyType replace(unsigned index, PropertyType&& newItem) override
+    {
+        ASSERT(index < size());
+        m_items.at(index) = WTFMove(newItem);
+        return at(index);
+    }
+
+    PropertyType remove(unsigned index) override
+    {
+        ASSERT(index < size());
+        PropertyType item = at(index);
+        m_items.remove(index);
+        return WTFMove(item);
+    }
+
+    PropertyType append(PropertyType&& newItem) override
+    {
+        m_items.append(WTFMove(newItem));
+        return at(size() - 1);
+    }
 };
 
 }

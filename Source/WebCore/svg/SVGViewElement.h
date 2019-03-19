@@ -24,11 +24,10 @@
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
+#include "SVGStringList.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
-
-class SVGStringList;
 
 class SVGViewElement final : public SVGElement, public SVGExternalResourcesRequired, public SVGFitToViewBox, public SVGZoomAndPan {
     WTF_MAKE_ISO_ALLOCATED(SVGViewElement);
@@ -38,7 +37,7 @@ public:
     using SVGElement::ref;
     using SVGElement::deref;
 
-    Ref<SVGStringList> viewTarget();
+    Ref<SVGStringList> viewTarget() { return m_viewTarget.copyRef(); }
 
 private:
     SVGViewElement(const QualifiedName&, Document&);
@@ -56,7 +55,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGStringListValues m_viewTarget;
+    Ref<SVGStringList> m_viewTarget { SVGStringList::create(this) };
 };
 
 } // namespace WebCore

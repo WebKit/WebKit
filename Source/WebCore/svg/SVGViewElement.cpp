@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,9 +34,13 @@ inline SVGViewElement::SVGViewElement(const QualifiedName& tagName, Document& do
     : SVGElement(tagName, document)
     , SVGExternalResourcesRequired(this)
     , SVGFitToViewBox(this)
-    , m_viewTarget(SVGNames::viewTargetAttr)
 {
     ASSERT(hasTagName(SVGNames::viewTag));
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::viewTargetAttr, &SVGViewElement::m_viewTarget>();
+    });
 }
 
 Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Document& document)
@@ -44,15 +48,12 @@ Ref<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGViewElement(tagName, document));
 }
 
-Ref<SVGStringList> SVGViewElement::viewTarget()
-{
-    return SVGStringList::create(*this, m_viewTarget);
-}
-
 void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (name == SVGNames::viewTargetAttr)
-        m_viewTarget.reset(value);
+    if (name == SVGNames::viewTargetAttr) {
+        m_viewTarget->reset(value);
+        return;
+    }
 
     SVGElement::parseAttribute(name, value);
     SVGExternalResourcesRequired::parseAttribute(name, value);

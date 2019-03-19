@@ -21,8 +21,7 @@
 
 #pragma once
 
-#include "SVGAttribute.h"
-#include "SVGStringListValues.h"
+#include "SVGStringList.h"
 
 namespace WebCore {
 
@@ -59,21 +58,20 @@ public:
     WEBCORE_EXPORT static bool hasFeatureForLegacyBindings(const String& feature, const String& version);
 
     // These methods are called from DOM through the super classes.
-    Ref<SVGStringList> requiredFeatures();
-    Ref<SVGStringList> requiredExtensions();
-    Ref<SVGStringList> systemLanguage();
+    SVGStringList& requiredFeatures() { return m_requiredFeatures; }
+    SVGStringList& requiredExtensions() { return m_requiredExtensions; }
+    SVGStringList& systemLanguage() { return m_systemLanguage; }
 
 protected:
     SVGTests(SVGElement* contextElement);
 
 private:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTests>;
-    static void registerAttributes();
 
     SVGElement& m_contextElement;
-    SVGStringListValuesAttribute m_requiredFeatures { SVGNames::requiredFeaturesAttr };
-    SVGStringListValuesAttribute m_requiredExtensions { SVGNames::requiredExtensionsAttr };
-    SVGStringListValuesAttribute m_systemLanguage { SVGNames::systemLanguageAttr };
+    Ref<SVGStringList> m_requiredFeatures;
+    Ref<SVGStringList> m_requiredExtensions;
+    Ref<SVGStringList> m_systemLanguage;
 };
 
 } // namespace WebCore

@@ -35,7 +35,7 @@ SVGPropertyOwner* SVGAnimatedProperty::owner() const
     return m_contextElement;
 }
 
-void SVGAnimatedProperty::commitPropertyChange()
+void SVGAnimatedProperty::commitPropertyChange(SVGProperty*)
 {
     if (!m_contextElement)
         return;
