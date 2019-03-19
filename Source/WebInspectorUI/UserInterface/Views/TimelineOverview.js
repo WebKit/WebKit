@@ -788,7 +788,7 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
             if (firstRecord instanceof WI.CPUTimelineRecord) {
                 let selectionPadding = WI.CPUTimelineOverviewGraph.samplingRatePerSecond * 2.25;
-                this.selectionStartTime = startTime - selectionPadding;
+                this.selectionStartTime = startTime - selectionPadding - (WI.CPUTimelineOverviewGraph.samplingRatePerSecond / 2);
                 this.selectionDuration = endTime - startTime + (selectionPadding * 2);
             } else if (startTime < this.selectionStartTime || endTime > this.selectionStartTime + this.selectionDuration) {
                 let selectionPadding = this.secondsPerPixel * 10;

@@ -1,5 +1,59 @@
 2019-03-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: CPU Usage Timeline - the right edge of each column should align with a CPU measurement
+        https://bugs.webkit.org/show_bug.cgi?id=195789
+        <rdar://problem/48915271>
+
+        Reviewed by Joseph Pecoraro.
+
+        Right now, each column is rendered such that the middle of the column is aligned with the
+        time of the CPU measurement. This could potentially be misleading, as the width/position of
+        the bar implies that there was a period of time after the actual time of the CPU measurement
+        that should be "attributed" to that same CPU measurement.
+
+           1      2      3
+               _______
+               [  *  ]
+               [  *  ]_______
+               [  *  ][  *  ]
+        _______[  *  ][  *  ]
+        [  *  ][  *  ][  *  ]
+        [__*__][__*__][__*__]
+         A   B  C   D  E   F
+
+        In this example, one might "attribute" any work done at time B to record 1, when in reality,
+        it should be "attributed" to record 2, since the CPU measurement had already been taken by
+        the time B was captured, meaning that the work for B hadn't yet been done and could
+        therefore not have affected the CPU measurement for record 1.
+
+        We should be rendering the columns such that the CPU measurement aligns with the trailing
+        edge of the column, so that all of the work that could be "attributed" to a given CPU
+        measurement comes before it.
+
+          1      2      3
+            _______       ___
+            [    *]       [
+            [    *]_______[
+            [    *][    *][
+        ____[    *][    *][
+          *][    *][    *][
+        __*][____*][____*][__
+         A   B  C   D  E   F
+
+                NOTE: this "rendering" isn't exactly accurate, as the `*` should overlap the `]`.
+
+        Legend:
+         - `[     ]` represents a column for a CPU measurement
+         - `*` represents the time when the measurement actually takes place
+
+        * UserInterface/Views/CPUTimelineOverviewGraph.js:
+        (WI.CPUTimelineOverviewGraph.prototype.layout):
+        (WI.CPUTimelineOverviewGraph.prototype._handleChartClick):
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview.prototype._recordSelected):
+
+2019-03-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Provide $event in the console when paused on an event listener
         https://bugs.webkit.org/show_bug.cgi?id=188672
 

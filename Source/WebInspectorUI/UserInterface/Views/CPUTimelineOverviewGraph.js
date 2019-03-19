@@ -116,7 +116,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         }
 
         const includeRecordBeforeStart = true;
-        let visibleRecords = this._cpuTimeline.recordsInTimeRange(graphStartTime, visibleEndTime + (CPUTimelineOverviewGraph.samplingRatePerSecond / 2), includeRecordBeforeStart);
+        let visibleRecords = this._cpuTimeline.recordsInTimeRange(graphStartTime, visibleEndTime, includeRecordBeforeStart);
         if (!visibleRecords.length)
             return;
 
@@ -124,14 +124,13 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
             return yScale(record.usage);
         }
 
-        let intervalWidth = (CPUTimelineOverviewGraph.samplingRatePerSecond / secondsPerPixel);
+        let intervalWidth = CPUTimelineOverviewGraph.samplingRatePerSecond / secondsPerPixel;
         const minimumDisplayHeight = 4;
 
-        // Bars for each record.
         for (let record of visibleRecords) {
             let additionalClass = record === this.selectedRecord ? "selected" : undefined;
             let w = intervalWidth;
-            let x = xScale(record.startTime - (CPUTimelineOverviewGraph.samplingRatePerSecond / 2));            
+            let x = xScale(record.startTime - CPUTimelineOverviewGraph.samplingRatePerSecond);
             let h1 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage));
             let h2 = Math.max(minimumDisplayHeight, yScale(record.mainThreadUsage + record.workerThreadUsage));
             let h3 = Math.max(minimumDisplayHeight, yScale(record.usage));
@@ -200,7 +199,7 @@ WI.CPUTimelineOverviewGraph = class CPUTimelineOverviewGraph extends WI.Timeline
         let graphStartTime = this.startTime;
 
         let clickTime = graphStartTime + graphClickTime;
-        let record = this._cpuTimeline.closestRecordTo(clickTime);
+        let record = this._cpuTimeline.closestRecordTo(clickTime + (CPUTimelineOverviewGraph.samplingRatePerSecond / 2));
         if (!record)
             return;
 
