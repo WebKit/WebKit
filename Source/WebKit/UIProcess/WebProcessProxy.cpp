@@ -298,9 +298,9 @@ void WebProcessProxy::shutDown()
         frame->webProcessWillShutDown();
     m_frameMap.clear();
 
-    for (auto* visitedLinkStore : m_visitedLinkStores)
+    for (auto* visitedLinkStore : m_visitedLinkStoresWithUsers.keys())
         visitedLinkStore->removeProcess(*this);
-    m_visitedLinkStores.clear();
+    m_visitedLinkStoresWithUsers.clear();
 
     for (auto* webUserContentControllerProxy : m_webUserContentControllerProxies)
         webUserContentControllerProxy->removeProcess(*this);
@@ -392,27 +392,44 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     if (endsUsingDataStore == EndsUsingDataStore::Yes)
         m_processPool->pageEndUsingWebsiteDataStore(webPage.pageID(), webPage.websiteDataStore());
 
+    removeVisitedLinkStoreUser(webPage.visitedLinkStore(), webPage.pageID());
+
     updateBackgroundResponsivenessTimer();
 
     maybeShutDown();
 }
 
-void WebProcessProxy::addVisitedLinkStore(VisitedLinkStore& store)
+void WebProcessProxy::addVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, uint64_t pageID)
 {
-    m_visitedLinkStores.add(&store);
-    store.addProcess(*this);
+    auto users = m_visitedLinkStoresWithUsers.ensure(&visitedLinkStore, [] {
+        return HashSet<uint64_t> { };
+    }).iterator->value;
+
+    ASSERT(!users.contains(pageID));
+    users.add(pageID);
+
+    if (users.size() == 1 && state() == State::Running)
+        visitedLinkStore.addProcess(*this);
+}
+
+void WebProcessProxy::removeVisitedLinkStoreUser(VisitedLinkStore& visitedLinkStore, uint64_t pageID)
+{
+    auto it = m_visitedLinkStoresWithUsers.find(&visitedLinkStore);
+    if (it == m_visitedLinkStoresWithUsers.end())
+        return;
+
+    auto& users = it->value;
+    users.remove(pageID);
+    if (users.isEmpty()) {
+        m_visitedLinkStoresWithUsers.remove(it);
+        visitedLinkStore.removeProcess(*this);
+    }
 }
 
 void WebProcessProxy::addWebUserContentControllerProxy(WebUserContentControllerProxy& proxy, WebPageCreationParameters& parameters)
 {
     m_webUserContentControllerProxies.add(&proxy);
     proxy.addProcess(*this, parameters);
-}
-
-void WebProcessProxy::didDestroyVisitedLinkStore(VisitedLinkStore& store)
-{
-    ASSERT(m_visitedLinkStores.contains(&store));
-    m_visitedLinkStores.remove(&store);
 }
 
 void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy& proxy)
@@ -739,21 +756,13 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
         return;
     }
 
-    for (WebPageProxy* page : m_pageMap.values()) {
-        ASSERT(this == &page->process());
-        page->processDidFinishLaunching();
-    }
-
-    for (auto* provisionalPage : m_provisionalPages) {
-        ASSERT(this == &provisionalPage->process());
-        provisionalPage->processDidFinishLaunching();
-    }
-
-
     RELEASE_ASSERT(!m_webConnection);
     m_webConnection = WebConnectionToWebProcess::create(this);
 
     m_processPool->processDidFinishLaunching(this);
+
+    for (auto* visitedLinkStore : m_visitedLinkStoresWithUsers.keys())
+        visitedLinkStore->addProcess(*this);
 
 #if PLATFORM(IOS_FAMILY)
     if (connection()) {

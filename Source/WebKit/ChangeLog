@@ -1,3 +1,65 @@
+2019-03-19  Chris Dumez  <cdumez@apple.com>
+
+        Spew: Unhandled web process message 'VisitedLinkTableController:VisitedLinkStateChanged'
+        https://bugs.webkit.org/show_bug.cgi?id=194787
+        <rdar://problem/48175520>
+
+        Reviewed by Geoffrey Garen.
+
+        The unhandled 'VisitedLinkTableController:VisitedLinkStateChanged' message logging happens
+        when IPC is sent to a WebProcess which does not have a VisitedLinkTableController with the
+        given identifier. VisitedLinkTableController are kept alive by the WebPage in the WebProcess
+        side so this indicates that there is no WebPage using this VisitedLinkTableController anymore.
+
+        In the UIProcess side, our tracking of who is using which VisitedLinkStore was very poor.
+        WebPageProxy objects would ask their process to register itself with the page's visitedLinkStore
+        as soon as the WebPage object has been created on the WebProcess side. This part was fine.
+        However, unregistration from the visitedLinkStores would only happen when either the
+        visitedLinkStore would get destroyed or when the WebProcess would shutdown. This means that
+        WebProcess could stay registered with a visitedLinkStore even after the page that was using it
+        has been closed, which would lead to such logging.
+
+        To address the issue, the WebProcessProxy now keeps track for which pages are using which
+        visitedLinkStore. When a visitedLinkStore is used by a page for the first time, the
+        WebProcessProxy will register itself with the visitedLinkStore. Similarly, when the last page
+        using a given visitedLinkStore is closed, the process unregisters itself from the
+        visitedLinkStore, thus avoiding the bug.
+
+        I also simplified a lot the logic for having a page telling the WebProcessProxy it started
+        using a visitedLinkStore. Previously, it would have to wait until the process is done launching
+        before notifying the WebProcessProxy. Now, the WebPageProxy merely tells the WebProcessProxy
+        that it is starting to use a visitedLinkStore as soon as it sent the CreateWebPage IPC to the
+        WebProcess (no matter if the process is still launching or not). At this point, the
+        WebProcessProxy registers the page as a user of the visitedLinkStore and takes care of waiting
+        until it is done launching before registering itself with the visitedLinkStore.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::initializeWebPage):
+        (WebKit::ProvisionalPageProxy::processDidFinishLaunching): Deleted.
+        (WebKit::ProvisionalPageProxy::finishInitializingWebPageAfterProcessLaunch): Deleted.
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::~VisitedLinkStore):
+        (WebKit::VisitedLinkStore::addProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::finishAttachingToWebProcess):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::resetStateAfterProcessExited):
+        (WebKit::WebPageProxy::finishInitializingWebPageAfterProcessLaunch): Deleted.
+        (WebKit::WebPageProxy::processDidFinishLaunching): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::removeWebPage):
+        (WebKit::WebProcessProxy::addVisitedLinkStoreUser):
+        (WebKit::WebProcessProxy::removeVisitedLinkStoreUser):
+        (WebKit::WebProcessProxy::addWebUserContentControllerProxy):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::addVisitedLinkStore): Deleted.
+        (WebKit::WebProcessProxy::didDestroyVisitedLinkStore): Deleted.
+        * UIProcess/WebProcessProxy.h:
+
 2019-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes
