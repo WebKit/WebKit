@@ -1,3 +1,11 @@
+2019-03-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed follow-up to r243073, fixing WPE MiniBrowser launching.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName): Adjust the shared library name that's changed
+        with the API version bump in r243073.
+
 2019-03-18  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes
