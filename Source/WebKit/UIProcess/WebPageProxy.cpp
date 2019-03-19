@@ -5815,6 +5815,9 @@ NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
 
 void WebPageProxy::postMessageToInjectedBundle(const String& messageName, API::Object* messageBody)
 {
+    // For backward-compatibility, make sure we launch the initial process if the client asks to post a message to its injected bundle because doing a load.
+    launchInitialProcessIfNecessary();
+
     process().send(Messages::WebPage::PostInjectedBundleMessage(messageName, UserData(process().transformObjectsToHandles(messageBody).get())), m_pageID);
 }
 

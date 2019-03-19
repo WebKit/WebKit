@@ -1,5 +1,26 @@
 2019-03-19  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r243094): internal media test fairplay-hls-error.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=195954
+        <rdar://problem/49005981>
+
+        Reviewed by Geoffrey Garen.
+
+        TestController::resetStateToConsistentValues() tries to send a "reset" message to its
+        injected bundle. Part of the "reset" message sets the external hosts that we're allowed
+        to load. If there is no WebProcess yet when WKPagePostMessageToInjectedBundle() is called,
+        then this message does not get sent and the allowed hosts do not get set, causing this
+        test failure.
+
+        To address the issue, make sure we launch the initial process if necessary when
+        WebPageProxy::postMessageToInjectedBundle() is called, in order to maintain backward
+        compatibility.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+
+2019-03-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r243142.
 
         Caused assertion hits in WK2 Debug
