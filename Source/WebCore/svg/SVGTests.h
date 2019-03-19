@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "QualifiedName.h"
 #include "SVGStringList.h"
 
 namespace WebCore {

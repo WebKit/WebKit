@@ -1,5 +1,15 @@
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed GTK build fix
+        https://bugs.webkit.org/show_bug.cgi?id=195863
+        <rdar://problem/49006248>
+
+        Patch by Diego Pino.
+
+        * svg/SVGTests.h:
+
+2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, rolling out r243132.
 
         Broke GTK build
