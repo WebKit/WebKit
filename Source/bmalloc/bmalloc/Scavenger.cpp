@@ -356,7 +356,7 @@ void Scavenger::threadRunLoop()
         }
 
         if (verbose)
-            fprintf(stderr, "new wait time %lldms\n", m_waitTime.count());
+            fprintf(stderr, "new wait time %lldms\n", static_cast<long long int>(m_waitTime.count()));
     }
 }
 

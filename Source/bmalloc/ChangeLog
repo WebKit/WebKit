@@ -1,3 +1,12 @@
+2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wformat warning
+        https://bugs.webkit.org/show_bug.cgi?id=195895
+        <rdar://problem/48517629>
+
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::threadRunLoop):
+
 2019-03-18  Michael Saboff  <msaboff@apple.com>
 
         [BMalloc] Scavenger should react to recent memory activity
