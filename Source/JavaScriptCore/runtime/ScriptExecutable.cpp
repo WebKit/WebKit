@@ -385,9 +385,9 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
     return result;
 }
 
-static void setupLLInt(VM& vm, CodeBlock* codeBlock)
+static void setupLLInt(CodeBlock* codeBlock)
 {
-    LLInt::setEntrypoint(vm, codeBlock);
+    LLInt::setEntrypoint(codeBlock);
 }
 
 static void setupJIT(VM& vm, CodeBlock* codeBlock)
@@ -424,7 +424,7 @@ Exception* ScriptExecutable::prepareForExecutionImpl(
         codeBlock->validate();
     
     if (Options::useLLInt())
-        setupLLInt(vm, codeBlock);
+        setupLLInt(codeBlock);
     else
         setupJIT(vm, codeBlock);
     

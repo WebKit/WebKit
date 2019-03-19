@@ -38,7 +38,8 @@
 namespace JSC {
     class JSInterfaceJIT : public CCallHelpers, public GPRInfo, public FPRInfo {
     public:
-        JSInterfaceJIT(VM* vm, CodeBlock* codeBlock = 0)
+
+        JSInterfaceJIT(VM* vm = nullptr, CodeBlock* codeBlock = nullptr)
             : CCallHelpers(codeBlock)
             , m_vm(vm)
         {

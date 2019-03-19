@@ -1,3 +1,117 @@
+2019-03-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] LLIntEntryPoint creates same DirectJITCode for all functions
+        https://bugs.webkit.org/show_bug.cgi?id=194648
+
+        Reviewed by Keith Miller.
+
+        1. Making LLIntThunks singleton. 
+
+        Motivation: Former implementation has one LLIntThunk per type per VM.
+        However, the generated code for every kind of thunk is essentially the
+        same and we end up wasting memory (right now jitAllocationGranule = 32 bytes)
+        when we have 2 or more VM instantiated. Turn these thunks into
+        singleton will avoid such wasting.
+
+        Tradeoff: This change comes with a price, because we will keep thunks
+        allocated even when there is no VM instantiated. Considering WebCore use case,
+        the situation of having no VM instantiated is uncommon, since once a
+        VM is created through `commomVM()`, it will never be destroyed. Given
+        that, this change does not impact the overall memory comsumption of
+        WebCore/JSC. It also doesn't impact memory footprint, since thunks are
+        generated lazily (see results below).
+
+        Since we are keeping a static `MacroAssemblerCodeRef<JITThunkPtrTag>`,
+        we have the assurance that JITed code will never be deallocated,
+        given it is being pointed by `RefPtr<ExecutableMemoryHandle> m_executableMemory`.
+        To understand why we decided to make LLIntThunks singleton instead of
+        removing them, please see the comment on `llint/LLIntThunks.cpp`.
+
+        2. Making all LLIntEntrypoints singleton
+
+        Motivation: With singleton LLIntThunks, we also can have singleton
+        DirectJITCodes and NativeJITCodes for each LLIntEntrypoint type and
+        avoid multiple allocations of objects with the same content.
+
+        Tradeoff: As explained before, once we allocate an entrypoint, it
+        will be alive until the program exits. However, the gains we can
+        achieve in some use cases justifies such allocations.
+
+        As DirectJITCode and NativeJITCode are ThreadSafeRefCounted and we are using
+        `codeBlock->setJITCode(makeRef(*jitCode))`, their reference counter
+        will never be less than 1.
+
+        3. Memory usage analysis
+
+        This change reduces memory usage on stress/generate-multiple-llint-entrypoints.js
+        by 2% and is neutral on JetStream 2. Following results were generated
+        running each benchmark 6 times and using 95% Student's t distribution
+        confidence interval.
+
+        microbenchmarks/generate-multiple-llint-entrypoints.js (Changes uses less memory): 
+            Mean of memory peak on ToT: 122576896 bytes (confidence interval: 67747.2316)
+            Mean of memory peak on Changes: 119248213.33 bytes (confidence interval: 50251.2718)
+
+        JetStream2 (Neutral):
+            Mean of memory peak on ToT: 5442742272 bytes (confidence interval: 134381565.9117)
+            Mean of memory peak on Changes: 5384949760 bytes (confidence interval: 158413904.8352)
+
+        4. Performance Analysis
+
+        This change is performance neutral on JetStream 2 and Speedometer 2.
+        See results below.:
+
+        JetStream 2 (Neutral):
+            Mean of score on ToT: 139.58 (confidence interval: 2.44)
+            Mean of score on Changes: 141.46 (confidence interval: 4.24)
+
+        Speedometer run #1
+           ToT: 110 +- 2.9
+           Changes: 110 +- 1.8
+
+        Speedometer run #2
+           ToT: 110 +- 1.6
+           Changes: 108 +- 2.3
+
+        Speedometer run #3
+           ToT: 110 +- 3.0
+           Changes: 110 +- 1.4
+
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::JSInterfaceJIT):
+        * llint/LLIntEntrypoint.cpp:
+
+        Here we are changing the usage or DirectJITCode by NativeJITCode on cases
+        where there is no difference from address of calls with and without
+        ArithCheck.
+
+        (JSC::LLInt::setFunctionEntrypoint):
+        (JSC::LLInt::setEvalEntrypoint):
+        (JSC::LLInt::setProgramEntrypoint):
+        (JSC::LLInt::setModuleProgramEntrypoint):
+        (JSC::LLInt::setEntrypoint):
+        * llint/LLIntEntrypoint.h:
+        * llint/LLIntThunks.cpp:
+        (JSC::LLInt::generateThunkWithJumpTo):
+        (JSC::LLInt::functionForCallEntryThunk):
+        (JSC::LLInt::functionForConstructEntryThunk):
+        (JSC::LLInt::functionForCallArityCheckThunk):
+        (JSC::LLInt::functionForConstructArityCheckThunk):
+        (JSC::LLInt::evalEntryThunk):
+        (JSC::LLInt::programEntryThunk):
+        (JSC::LLInt::moduleProgramEntryThunk):
+        (JSC::LLInt::functionForCallEntryThunkGenerator): Deleted.
+        (JSC::LLInt::functionForConstructEntryThunkGenerator): Deleted.
+        (JSC::LLInt::functionForCallArityCheckThunkGenerator): Deleted.
+        (JSC::LLInt::functionForConstructArityCheckThunkGenerator): Deleted.
+        (JSC::LLInt::evalEntryThunkGenerator): Deleted.
+        (JSC::LLInt::programEntryThunkGenerator): Deleted.
+        (JSC::LLInt::moduleProgramEntryThunkGenerator): Deleted.
+        * llint/LLIntThunks.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::setupLLInt):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+
 2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add missing exception checks revealed by newly added exception checks, follow-up after r243081
