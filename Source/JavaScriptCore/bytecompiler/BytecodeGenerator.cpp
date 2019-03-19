@@ -422,9 +422,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
         // Generator and AsyncFunction never provides "arguments". "arguments" reference will be resolved in an upper generator function scope.
         needsArguments = false;
-
-        // Generator and AsyncFunction uses the var scope to save and resume its variables. So the lexical scope is always instantiated.
-        shouldCaptureSomeOfTheThings = true;
     }
 
     if (isGeneratorOrAsyncFunctionWrapperParseMode(parseMode) && needsArguments) {
@@ -490,7 +487,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (shouldCaptureSomeOfTheThings)
         m_lexicalEnvironmentRegister = addVar();
 
-    if (shouldCaptureSomeOfTheThings || vm.typeProfiler())
+    if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode) || shouldCaptureSomeOfTheThings || vm.typeProfiler())
         symbolTableConstantIndex = addConstantValue(functionSymbolTable)->index();
 
     // We can allocate the "var" environment if we don't have default parameter expressions. If we have
@@ -839,10 +836,17 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // Set up the lexical environment scope as the generator frame. We store the saved and resumed generator registers into this scope with the symbol keys.
     // Since they are symbol keyed, these variables cannot be reached from the usual code.
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode)) {
-        ASSERT(m_lexicalEnvironmentRegister);
         m_generatorFrameSymbolTable.set(*m_vm, functionSymbolTable);
         m_generatorFrameSymbolTableIndex = symbolTableConstantIndex;
-        move(generatorFrameRegister(), m_lexicalEnvironmentRegister);
+        if (m_lexicalEnvironmentRegister)
+            move(generatorFrameRegister(), m_lexicalEnvironmentRegister);
+        else {
+            // It would be possible that generator does not need to suspend and resume any registers.
+            // In this case, we would like to avoid creating a lexical environment as much as possible.
+            // op_create_generator_frame_environment is a marker, which is similar to op_yield.
+            // Generatorification inserts lexical environment creation if necessary. Otherwise, we convert it to op_mov frame, `undefined`.
+            OpCreateGeneratorFrameEnvironment::emit(this, generatorFrameRegister(), scopeRegister(), VirtualRegister { symbolTableConstantIndex }, addConstantValue(jsUndefined()));
+        }
         emitPutById(generatorRegister(), propertyNames().builtinNames().generatorFramePrivateName(), generatorFrameRegister());
     }
 

@@ -281,6 +281,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const I
         return CanCompile;
 
     case op_yield:
+    case op_create_generator_frame_environment:
     case llint_program_prologue:
     case llint_eval_prologue:
     case llint_module_program_prologue:

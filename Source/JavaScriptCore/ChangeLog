@@ -1,3 +1,46 @@
+2019-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Generator should not create JSLexicalEnvironment if it is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=195901
+
+        Reviewed by Saam Barati.
+
+        It is not rare that generators do not need to have any registers to be suspended and resumed.
+        Since currently we always emit op_create_lexical_environment for generator code, we sometimes
+        create empty JSLexicalEnvironment while it is not required. We can see that a lot of empty JSLexicalEnvironment
+        are allocated in RAMification's Basic test.
+
+        This patch removes this unnecessary allocation. We introduce op_create_generator_frame_environment, which is
+        a marker, similar to op_yield. And generatorification phase decides whether we should actually emit op_create_lexical_environment,
+        based on the result of the analysis in generatorification. This can remove unnecessary JSLexicalEnvironment allocations.
+
+        We run RAMification in 6 times, use average of them.
+        RAMification's Basic in JIT mode shows 1.4% improvement.
+        ToT
+            Current: 55076864.00, Peak: 55080960.00
+        Patched
+            Current: 54325930.67, Peak: 54329344.00
+
+        RAMification's Basic in non-JIT mode shows 5.0% improvement.
+        ToT
+            Current: 12485290.67, Peak: 12485290.67
+        Patched
+            Current: 11894101.33, Peak: 11894101.33
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::BytecodeGeneratorification):
+        (JSC::BytecodeGeneratorification::generatorFrameData const):
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/BytecodeList.rb:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * llint/LowLevelInterpreter.asm:
+
 2019-03-18  Robin Morisset  <rmorisset@apple.com>
 
         Remove the inline capacity of Operands

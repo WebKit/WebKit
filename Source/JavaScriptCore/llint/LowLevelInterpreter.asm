@@ -1800,6 +1800,11 @@ llintOp(op_yield, OpYield, macro (unused, unused, unused)
 end)
 
 
+llintOp(op_create_generator_frame_environment, OpYield, macro (unused, unused, unused)
+    notSupported()
+end)
+
+
 llintOp(op_debug, OpDebug, macro (unused, unused, dispatch)
     loadp CodeBlock[cfr], t0
     loadi CodeBlock::m_debuggerRequests[t0], t0

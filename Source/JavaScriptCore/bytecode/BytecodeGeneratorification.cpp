@@ -55,6 +55,14 @@ class BytecodeGeneratorification {
 public:
     typedef Vector<YieldData> Yields;
 
+    struct GeneratorFrameData {
+        InstructionStream::Offset m_point;
+        VirtualRegister m_dst;
+        VirtualRegister m_scope;
+        VirtualRegister m_symbolTable;
+        VirtualRegister m_initialValue;
+    };
+
     BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlock* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
         : m_bytecodeGenerator(bytecodeGenerator)
         , m_codeBlock(codeBlock)
@@ -80,6 +88,18 @@ public:
                     YieldData& data = m_yields[liveCalleeLocalsIndex];
                     data.point = instruction.offset();
                     data.argument = bytecode.m_argument;
+                    break;
+                }
+
+                case op_create_generator_frame_environment: {
+                    auto bytecode = instruction->as<OpCreateGeneratorFrameEnvironment>();
+                    GeneratorFrameData data;
+                    data.m_point = instruction.offset();
+                    data.m_dst = bytecode.m_dst;
+                    data.m_scope = bytecode.m_scope;
+                    data.m_symbolTable = bytecode.m_symbolTable;
+                    data.m_initialValue = bytecode.m_initialValue;
+                    m_generatorFrameData = WTFMove(data);
                     break;
                 }
 
@@ -113,6 +133,11 @@ public:
     InstructionStream::Ref enterPoint() const
     {
         return m_instructions.at(m_enterPoint);
+    }
+
+    Optional<GeneratorFrameData> generatorFrameData() const
+    {
+        return m_generatorFrameData;
     }
 
     const InstructionStream& instructions() const
@@ -150,6 +175,7 @@ private:
 
     BytecodeGenerator& m_bytecodeGenerator;
     InstructionStream::Offset m_enterPoint;
+    Optional<GeneratorFrameData> m_generatorFrameData;
     UnlinkedCodeBlock* m_codeBlock;
     InstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
@@ -205,7 +231,7 @@ void BytecodeGeneratorification::run()
         for (unsigned i = 0; i < m_yields.size(); ++i)
             jumpTable.add(i + 1, m_yields[i].point);
 
-        rewriter.insertFragmentBefore(nextToEnterPoint, [&](BytecodeRewriter::Fragment& fragment) {
+        rewriter.insertFragmentBefore(nextToEnterPoint, [&] (BytecodeRewriter::Fragment& fragment) {
             fragment.appendInstruction<OpSwitchImm>(switchTableIndex, BoundLabel(nextToEnterPoint.offset()), state);
         });
     }
@@ -215,7 +241,7 @@ void BytecodeGeneratorification::run()
 
         auto instruction = m_instructions.at(data.point);
         // Emit save sequence.
-        rewriter.insertFragmentBefore(instruction, [&](BytecodeRewriter::Fragment& fragment) {
+        rewriter.insertFragmentBefore(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
@@ -235,7 +261,7 @@ void BytecodeGeneratorification::run()
         });
 
         // Emit resume sequence.
-        rewriter.insertFragmentAfter(instruction, [&](BytecodeRewriter::Fragment& fragment) {
+        rewriter.insertFragmentAfter(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
             data.liveness.forEachSetBit([&](size_t index) {
                 VirtualRegister operand = virtualRegisterForLocal(index);
                 Storage storage = storageForGeneratorLocal(index);
@@ -252,6 +278,18 @@ void BytecodeGeneratorification::run()
         });
 
         // Clip the unnecessary bytecodes.
+        rewriter.removeBytecode(instruction);
+    }
+
+    if (m_generatorFrameData) {
+        auto instruction = m_instructions.at(m_generatorFrameData->m_point);
+        rewriter.insertFragmentAfter(instruction, [&] (BytecodeRewriter::Fragment& fragment) {
+            if (!m_generatorFrameSymbolTable->scopeSize()) {
+                // This will cause us to put jsUndefined() into the generator frame's scope value.
+                fragment.appendInstruction<OpMov>(m_generatorFrameData->m_dst, m_generatorFrameData->m_initialValue);
+            } else
+                fragment.appendInstruction<OpCreateLexicalEnvironment>(m_generatorFrameData->m_dst, m_generatorFrameData->m_scope, m_generatorFrameData->m_symbolTable, m_generatorFrameData->m_initialValue);
+        });
         rewriter.removeBytecode(instruction);
     }
 

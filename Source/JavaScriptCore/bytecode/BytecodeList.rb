@@ -929,6 +929,14 @@ op :create_lexical_environment,
         initialValue: VirtualRegister,
     }
 
+op :create_generator_frame_environment,
+    args: {
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        symbolTable: VirtualRegister,
+        initialValue: VirtualRegister,
+    }
+
 op :get_parent_scope,
     args: {
         dst: VirtualRegister,
