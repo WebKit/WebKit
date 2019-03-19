@@ -715,6 +715,8 @@ private:
     {
         VERBOSE_LOG("        appended ", node, " ", Graph::opName(node->op()), "\n");
 
+        m_hasAnyForceOSRExits |= (node->op() == ForceOSRExit);
+
         m_currentBlock->append(node);
         if (clobbersExitState(m_graph, node))
             m_exitOK = false;
@@ -1176,6 +1178,7 @@ private:
 
     const Instruction* m_currentInstruction;
     bool m_hasDebuggerEnabled;
+    bool m_hasAnyForceOSRExits { false };
 };
 
 BasicBlock* ByteCodeParser::allocateTargetableBlock(unsigned bytecodeIndex)
@@ -7284,6 +7287,142 @@ void ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    if (m_hasAnyForceOSRExits) {
+        BlockSet blocksToIgnore;
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            if (block->isOSRTarget && block->bytecodeBegin == m_graph.m_plan.osrEntryBytecodeIndex()) {
+                blocksToIgnore.add(block);
+                break;
+            }
+        }
+
+        {
+            bool isSafeToValidate = false;
+            auto postOrder = m_graph.blocksInPostOrder(isSafeToValidate); // This algorithm doesn't rely on the predecessors list, which is not yet built.
+            bool changed;
+            do {
+                changed = false;
+                for (BasicBlock* block : postOrder) {
+                    for (BasicBlock* successor : block->successors()) {
+                        if (blocksToIgnore.contains(successor)) {
+                            changed |= blocksToIgnore.add(block);
+                            break;
+                        }
+                    }
+                }
+            } while (changed);
+        }
+
+        InsertionSet insertionSet(m_graph);
+        Operands<VariableAccessData*> mapping(OperandsLike, m_graph.block(0)->variablesAtHead);
+
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            if (blocksToIgnore.contains(block))
+                continue;
+
+            mapping.fill(nullptr);
+            if (validationEnabled()) {
+                // Verify that it's correct to fill mapping with nullptr.
+                for (unsigned i = 0; i < block->variablesAtHead.size(); ++i) {
+                    Node* node = block->variablesAtHead.at(i);
+                    RELEASE_ASSERT(!node);
+                }
+            }
+
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                {
+                    Node* node = block->at(nodeIndex);
+
+                    if (node->hasVariableAccessData(m_graph))
+                        mapping.operand(node->local()) = node->variableAccessData();
+
+                    if (node->op() != ForceOSRExit)
+                        continue;
+                }
+
+                NodeOrigin origin = block->at(nodeIndex)->origin;
+                RELEASE_ASSERT(origin.exitOK);
+
+                ++nodeIndex;
+
+                {
+                    if (validationEnabled()) {
+                        // This verifies that we don't need to change any of the successors's predecessor
+                        // list after planting the Unreachable below. At this point in the bytecode
+                        // parser, we haven't linked up the predecessor lists yet.
+                        for (BasicBlock* successor : block->successors())
+                            RELEASE_ASSERT(successor->predecessors.isEmpty());
+                    }
+
+                    auto insertLivenessPreservingOp = [&] (InlineCallFrame* inlineCallFrame, NodeType op, VirtualRegister operand) {
+                        VariableAccessData* variable = mapping.operand(operand);
+                        if (!variable) {
+                            variable = newVariableAccessData(operand);
+                            mapping.operand(operand) = variable;
+                        }
+
+                        VirtualRegister argument = operand - (inlineCallFrame ? inlineCallFrame->stackOffset : 0);
+                        if (argument.isArgument() && !argument.isHeader()) {
+                            const Vector<ArgumentPosition*>& arguments = m_inlineCallFrameToArgumentPositions.get(inlineCallFrame);
+                            arguments[argument.toArgument()]->addVariable(variable);
+                        }
+                        insertionSet.insertNode(nodeIndex, SpecNone, op, origin, OpInfo(variable));
+                    };
+                    auto addFlushDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                        insertLivenessPreservingOp(inlineCallFrame, Flush, operand);
+                    };
+                    auto addPhantomLocalDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                        insertLivenessPreservingOp(inlineCallFrame, PhantomLocal, operand);
+                    };
+                    flushForTerminalImpl(origin.semantic, addFlushDirect, addPhantomLocalDirect);
+                }
+
+                while (true) {
+                    RELEASE_ASSERT(nodeIndex < block->size());
+
+                    Node* node = block->at(nodeIndex);
+
+                    node->origin = origin;
+                    m_graph.doToChildren(node, [&] (Edge edge) {
+                        // We only need to keep data flow edges to nodes defined prior to the ForceOSRExit. The reason
+                        // for this is we rely on backwards propagation being able to see the "full" bytecode. To model
+                        // this, we preserve uses of a node in a generic way so that backwards propagation can reason
+                        // about them. Therefore, we can't remove uses of a node which is defined before the ForceOSRExit
+                        // even when we're at a point in the program after the ForceOSRExit, because that would break backwards
+                        // propagation's analysis over the uses of a node. However, we don't need this same preservation for
+                        // nodes defined after ForceOSRExit, as we've already exitted before those defs.
+                        if (edge->hasResult())
+                            insertionSet.insertNode(nodeIndex, SpecNone, Phantom, origin, Edge(edge.node(), UntypedUse));
+                    });
+
+                    bool isTerminal = node->isTerminal();
+
+                    node->removeWithoutChecks();
+
+                    if (isTerminal) {
+                        insertionSet.insertNode(nodeIndex, SpecNone, Unreachable, origin);
+                        break;
+                    }
+
+                    ++nodeIndex;
+                }
+
+                insertionSet.execute(block);
+
+                auto nodeAndIndex = block->findTerminal();
+                RELEASE_ASSERT(nodeAndIndex.node->op() == Unreachable);
+                block->resize(nodeAndIndex.index + 1);
+                break;
+            }
+        }
+    } else if (validationEnabled()) {
+        // Ensure our bookkeeping for ForceOSRExit nodes is working.
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block)
+                RELEASE_ASSERT(node->op() != ForceOSRExit);
+        }
+    }
+    
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
 

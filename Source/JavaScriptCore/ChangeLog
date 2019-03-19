@@ -1,3 +1,29 @@
+2019-03-19  Saam barati  <sbarati@apple.com>
+
+        Prune code after ForceOSRExit
+        https://bugs.webkit.org/show_bug.cgi?id=195913
+
+        Reviewed by Keith Miller.
+
+        I removed our original implementation of this in r242989 because
+        it was not sound. It broke backwards propagation because it removed
+        uses of a node that backwards propagation relied on to be sound.
+        Essentially, backwards propagation relies on being able to see uses
+        that would exist in bytecode to be sound.
+        
+        The rollout in r242989 was a 1% Speedometer2 regression. This patch
+        rolls back in the optimization in a sound way.
+        
+        This patch augments the code we had prior to r242989 to be sound. In
+        addition to preserving liveness, we now also convert all uses after
+        the ForceOSRExit to be Phantom. This may pessimize the optimizations
+        we do in backwards propagation, but it will prevent that phase from
+        making unsound optimizations.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Build cleanly with GCC 9
