@@ -153,7 +153,7 @@ public:
     static bool isEventListenerDisabled(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static InspectorInstrumentationCookie willDispatchEvent(Document&, const Event&, bool hasEventListeners);
     static void didDispatchEvent(const InspectorInstrumentationCookie&);
-    static void willHandleEvent(ScriptExecutionContext&, const Event&, const RegisteredEventListener&);
+    static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEvent(ScriptExecutionContext&);
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
     static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
@@ -345,7 +345,7 @@ private:
     static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
-    static void willHandleEventImpl(InstrumentingAgents&, const Event&, const RegisteredEventListener&);
+    static void willHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&);
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
@@ -800,7 +800,7 @@ inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrument
         didDispatchEventImpl(cookie);
 }
 
-inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& context, const Event& event, const RegisteredEventListener& listener)
+inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))

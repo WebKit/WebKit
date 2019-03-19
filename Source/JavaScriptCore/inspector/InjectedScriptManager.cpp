@@ -122,6 +122,12 @@ void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
         injectedScript.releaseObjectGroup(objectGroup);
 }
 
+void InjectedScriptManager::clearEventValue()
+{
+    for (auto& injectedScript : m_idToInjectedScript.values())
+        injectedScript.clearEventValue();
+}
+
 void InjectedScriptManager::clearExceptionValue()
 {
     for (auto& injectedScript : m_idToInjectedScript.values())

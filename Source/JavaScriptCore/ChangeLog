@@ -1,5 +1,26 @@
 2019-03-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Provide $event in the console when paused on an event listener
+        https://bugs.webkit.org/show_bug.cgi?id=188672
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScript.cpp:
+        (Inspector::InjectedScript::setEventValue): Added.
+        (Inspector::InjectedScript::clearEventValue): Added.
+
+        * inspector/InjectedScriptManager.h:
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::clearEventValue): Added.
+
+        * inspector/InjectedScriptSource.js:
+        (WI.InjectedScript.prototype.setEventValue): Added.
+        (WI.InjectedScript.prototype.clearEventValue): Added.
+        (BasicCommandLineAPI):
+
+2019-03-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: ScriptProfiler: lazily create the agent
         https://bugs.webkit.org/show_bug.cgi?id=195591
         <rdar://problem/48791756>

@@ -47,6 +47,7 @@ function bind(func, thisObject, ...outerArgs)
 function CommandLineAPI(commandLineAPIImpl, callFrame)
 {
     this.$_ = injectedScript._lastResult;
+    this.$event = injectedScript._eventValue;
     this.$exception = injectedScript._exceptionValue;
 
     // $0

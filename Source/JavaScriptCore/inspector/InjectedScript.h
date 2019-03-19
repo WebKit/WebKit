@@ -80,6 +80,9 @@ public:
     RefPtr<Protocol::Runtime::RemoteObject> wrapTable(JSC::JSValue table, JSC::JSValue columns) const;
     RefPtr<Protocol::Runtime::ObjectPreview> previewValue(JSC::JSValue) const;
 
+    void setEventValue(JSC::JSValue);
+    void clearEventValue();
+
     void setExceptionValue(JSC::JSValue);
     void clearExceptionValue();
 

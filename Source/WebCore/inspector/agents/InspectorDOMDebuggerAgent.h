@@ -38,6 +38,10 @@
 #include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+class InjectedScriptManager;
+}
+
 namespace WebCore {
 
 class Element;
@@ -74,7 +78,8 @@ public:
     void willSendXMLHttpRequest(const String& url);
     void willFetch(const String& url);
     void frameDocumentUpdated(Frame&);
-    void willHandleEvent(const Event&, const RegisteredEventListener&);
+    void willHandleEvent(Event&, const RegisteredEventListener&);
+    void didHandleEvent();
     void willFireTimer(bool oneShot);
     void willFireAnimationFrame();
     void mainFrameDOMContentLoaded();
@@ -98,6 +103,7 @@ private:
     void discardBindings();
 
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
     InspectorDOMAgent* m_domAgent { nullptr };
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 

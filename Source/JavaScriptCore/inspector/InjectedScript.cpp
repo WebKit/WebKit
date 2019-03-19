@@ -347,6 +347,21 @@ RefPtr<Protocol::Runtime::ObjectPreview> InjectedScript::previewValue(JSC::JSVal
     return BindingTraits<Protocol::Runtime::ObjectPreview>::runtimeCast(resultObject);
 }
 
+void InjectedScript::setEventValue(JSC::JSValue value)
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "setEventValue"_s, inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(value);
+    makeCall(function);
+}
+
+void InjectedScript::clearEventValue()
+{
+    ASSERT(!hasNoValue());
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), "clearEventValue"_s, inspectorEnvironment()->functionCallHandler());
+    makeCall(function);
+}
+
 void InjectedScript::setExceptionValue(JSC::JSValue value)
 {
     ASSERT(!hasNoValue());

@@ -37,8 +37,11 @@
 #include "HTMLElement.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSEvent.h"
 #include "RegisteredEventListener.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/RegularExpression.h>
 #include <wtf/JSONValues.h>
@@ -65,6 +68,7 @@ using namespace Inspector;
 InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase("DOMDebugger"_s, context)
     , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(context.backendDispatcher, this))
+    , m_injectedScriptManager(context.injectedScriptManager)
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
 {
@@ -365,10 +369,19 @@ void InspectorDOMDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t ro
         updateSubtreeBreakpoints(child, newRootMask, set);
 }
 
-void InspectorDOMDebuggerAgent::willHandleEvent(const Event& event, const RegisteredEventListener& registeredEventListener)
+void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
 {
     if (!m_debuggerAgent->breakpointsActive())
         return;
+
+    auto state = event.target()->scriptExecutionContext()->execState();
+    auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
+    ASSERT(!injectedScript.hasNoValue());
+    {
+        JSC::JSLockHolder lock(state);
+
+        injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
+    }
 
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventBreakpoints.contains(std::make_pair(Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener, event.type()));
 
@@ -387,6 +400,11 @@ void InspectorDOMDebuggerAgent::willHandleEvent(const Event& event, const Regist
     }
 
     m_debuggerAgent->schedulePauseOnNextStatement(Inspector::DebuggerFrontendDispatcher::Reason::EventListener, WTFMove(eventData));
+}
+
+void InspectorDOMDebuggerAgent::didHandleEvent()
+{
+    m_injectedScriptManager.clearEventValue();
 }
 
 void InspectorDOMDebuggerAgent::willFireTimer(bool oneShot)
