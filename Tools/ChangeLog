@@ -1,3 +1,13 @@
+2019-03-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] Backported mssdemux protection data crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=195918
+
+        Reviewed by Philippe Normand.
+
+        * gstreamer/jhbuild.modules:
+        * gstreamer/patches/gst-plugins-bad-0005-mssdemux-fix-protection-data-double-free.patch: Added.
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r243132.

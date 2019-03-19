@@ -1,0 +1,27 @@
+From 7c136bbb5ee34dfc1a0b003f5db351f1986106a0 Mon Sep 17 00:00:00 2001
+From: Xabier Rodriguez Calvar <calvaris@igalia.com>
+Date: Mon, 18 Mar 2019 15:23:07 +0100
+Subject: [PATCH] mssdemux: fix protection data double free
+
+For not being duplicated here it was being freed when the manifest was
+being destroyed and a second time when the buffer was being destroyed.
+---
+ ext/smoothstreaming/gstmssdemux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ext/smoothstreaming/gstmssdemux.c b/ext/smoothstreaming/gstmssdemux.c
+index 85f0ec89a..bcea8ca07 100644
+--- a/ext/smoothstreaming/gstmssdemux.c
++++ b/ext/smoothstreaming/gstmssdemux.c
+@@ -489,7 +489,7 @@ gst_mss_demux_setup_streams (GstAdaptiveDemux * demux)
+ 
+     if (protected) {
+       GstBuffer *protection_buffer =
+-          gst_buffer_new_wrapped ((gpointer) protection_data,
++          gst_buffer_new_wrapped (g_strdup (protection_data),
+           strlen (protection_data));
+       GstEvent *event =
+           gst_event_new_protection (protection_system_id, protection_buffer,
+-- 
+2.20.1
+
