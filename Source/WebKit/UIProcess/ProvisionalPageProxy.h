@@ -79,6 +79,7 @@ public:
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, Optional<WebsitePoliciesData>&&);
     void cancel();
 
+    void processDidFinishLaunching();
     void processDidTerminate();
     void connectionWillOpen(IPC::Connection&);
 
@@ -114,6 +115,7 @@ private:
 #endif
 
     void initializeWebPage();
+    void finishInitializingWebPageAfterProcessLaunch();
 
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;

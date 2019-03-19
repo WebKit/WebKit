@@ -146,12 +146,9 @@ public:
 
     virtual bool isServiceWorkerProcess() const { return false; }
 
-    void didCreateWebPageInProcess(uint64_t pageID);
-
-    void addVisitedLinkStoreUser(VisitedLinkStore&, uint64_t pageID);
-    void removeVisitedLinkStoreUser(VisitedLinkStore&, uint64_t pageID);
-
+    void addVisitedLinkStore(VisitedLinkStore&);
     void addWebUserContentControllerProxy(WebUserContentControllerProxy&, WebPageCreationParameters&);
+    void didDestroyVisitedLinkStore(VisitedLinkStore&);
     void didDestroyWebUserContentControllerProxy(WebUserContentControllerProxy&);
 
     RefPtr<API::UserInitiatedAction> userInitiatedActivity(uint64_t);
@@ -431,7 +428,7 @@ private:
     HashSet<ProvisionalPageProxy*> m_provisionalPages;
     UserInitiatedActionMap m_userInitiatedActionMap;
 
-    HashMap<VisitedLinkStore*, HashSet<uint64_t/* pageID */>> m_visitedLinkStoresWithUsers;
+    HashSet<VisitedLinkStore*> m_visitedLinkStores;
     HashSet<WebUserContentControllerProxy*> m_webUserContentControllerProxies;
 
     int m_numberOfTimesSuddenTerminationWasDisabled;

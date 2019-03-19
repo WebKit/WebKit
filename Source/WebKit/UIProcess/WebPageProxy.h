@@ -1233,6 +1233,8 @@ public:
     void connectionWillOpen(IPC::Connection&);
     void webProcessWillShutDown();
 
+    void processDidFinishLaunching();
+
     void didSaveToPageCache();
         
     void setScrollPinningBehavior(WebCore::ScrollPinningBehavior);
@@ -1972,6 +1974,8 @@ private:
 
     void didResignInputElementStrongPasswordAppearance(const UserData&);
 
+    void finishInitializingWebPageAfterProcessLaunch();
+
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
     void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
 
@@ -2220,6 +2224,8 @@ private:
 
     // Whether it can run modal child web pages.
     bool m_canRunModal { false };
+
+    bool m_needsToFinishInitializingWebPageAfterProcessLaunch { false };
 
     bool m_isInPrintingMode { false };
     bool m_isPerformingDOMPrintOperation { false };
