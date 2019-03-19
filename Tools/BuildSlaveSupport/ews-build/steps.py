@@ -95,6 +95,12 @@ class CheckOutSource(git.Git):
                                                 progress=True,
                                                 **kwargs)
 
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to updated working directory'}
+        else:
+            return {u'step': u'Cleaned and updated working directory'}
+
 
 class CleanWorkingDirectory(shell.ShellCommand):
     name = 'clean-working-directory'

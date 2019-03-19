@@ -1,3 +1,13 @@
+2019-03-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Improve summary for CheckOutSource step
+        https://bugs.webkit.org/show_bug.cgi?id=195963
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CheckOutSource.getResultSummary):
+
 2019-03-19  Daniel Bates  <dabates@apple.com>
 
         [iOS] Focus not preserved when switching between tabs
