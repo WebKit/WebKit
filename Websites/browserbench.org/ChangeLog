@@ -1,3 +1,10 @@
+2019-03-18  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Rename JetStream directory to JetStream1.1
+
+        * JetStream: Removed.
+        * JetStream1.1: Copied from Websites/browserbench.org/JetStream.
+
 2019-01-09  Saam Barati  <sbarati@apple.com>
 
         Merge the latest version of JetStream2.0 to browserbench.org.
