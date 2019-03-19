@@ -88,17 +88,26 @@ class TestFreshnessPage extends PageWithHeading {
                 measurementSet.fetchBetween(startTime, this._measurementSetFetchTime).then(() => {
                     const currentTimeSeries = measurementSet.fetchedTimeSeries('current', false, false);
 
-                    let timeForLastDataPoint = startTime;
+                    let timeForLatestBuild = startTime;
                     let lastBuildLink = null;
                     let builder = null;
                     const lastPoint = currentTimeSeries.lastPoint();
                     if (lastPoint) {
-                        timeForLastDataPoint = lastPoint.build().buildTime();
-                        lastBuildLink = lastPoint.build().url();
-                        builder = lastPoint.build().builder();
+                        timeForLatestBuild = lastPoint.build().buildTime().getTime();
+                        const view = currentTimeSeries.viewBetweenPoints(currentTimeSeries.firstPoint(), lastPoint);
+                        for (const point of view) {
+                            const build = point.build();
+                            if (!build)
+                                continue;
+                            if (build.buildTime().getTime() >= timeForLatestBuild) {
+                                timeForLatestBuild = build.buildTime().getTime();
+                                lastBuildLink = build.url();
+                                builder = build.builder();
+                            }
+                        }
                     }
 
-                    lastDataPointByMetric.set(metric, {time: timeForLastDataPoint, hasCurrentDataPoint: !!currentTimeSeries.lastPoint(),
+                    lastDataPointByMetric.set(metric, {time: timeForLatestBuild, hasCurrentDataPoint: !!lastPoint,
                         lastBuildLink, builder});
                     this.enqueueToRender();
                 });
