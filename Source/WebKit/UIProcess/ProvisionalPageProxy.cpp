@@ -99,6 +99,7 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
 
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID());
     m_process->send(Messages::WebPage::Close(), m_page.pageID());
+    m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.pageID());
 
     RunLoop::main().dispatch([process = m_process.copyRef()] {
         process->maybeShutDown();
@@ -136,21 +137,6 @@ void ProvisionalPageProxy::cancel()
     didFailProvisionalLoadForFrame(m_mainFrame->frameID(), { }, m_navigationID, m_provisionalLoadURL, error, UserData { }); // Will delete |this|.
 }
 
-void ProvisionalPageProxy::processDidFinishLaunching()
-{
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "processDidFinishLaunching: pageID = %" PRIu64, m_page.pageID());
-    finishInitializingWebPageAfterProcessLaunch();
-}
-
-void ProvisionalPageProxy::finishInitializingWebPageAfterProcessLaunch()
-{
-    ASSERT(m_process->state() == WebProcessProxy::State::Running);
-
-    // FIXME: The WebPageProxy delays adding the visited link store until after the process has launched
-    // so the ProvisionalPageProxy does the same. However, do we really need to?
-    m_process->addVisitedLinkStore(m_page.visitedLinkStore());
-}
-
 void ProvisionalPageProxy::initializeWebPage()
 {
     m_drawingArea = m_page.pageClient().createDrawingAreaProxy(m_process);
@@ -158,9 +144,7 @@ void ProvisionalPageProxy::initializeWebPage()
     auto parameters = m_page.creationParameters(m_process, *m_drawingArea);
     parameters.isProcessSwap = true;
     m_process->send(Messages::WebProcess::CreateWebPage(m_page.pageID(), parameters), 0);
-
-    if (m_process->state() == WebProcessProxy::State::Running)
-        finishInitializingWebPageAfterProcessLaunch();
+    m_process->addVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.pageID());
 }
 
 void ProvisionalPageProxy::loadData(API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<WebsitePoliciesData>&& websitePolicies)

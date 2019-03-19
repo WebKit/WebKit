@@ -42,10 +42,7 @@ Ref<VisitedLinkStore> VisitedLinkStore::create()
 
 VisitedLinkStore::~VisitedLinkStore()
 {
-    for (WebProcessProxy* process : m_processes) {
-        process->removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), identifier());
-        process->didDestroyVisitedLinkStore(*this);
-    }
+    RELEASE_ASSERT(m_processes.isEmpty());
 }
 
 VisitedLinkStore::VisitedLinkStore()
@@ -56,6 +53,7 @@ VisitedLinkStore::VisitedLinkStore()
 void VisitedLinkStore::addProcess(WebProcessProxy& process)
 {
     ASSERT(process.state() == WebProcessProxy::State::Running);
+    ASSERT(!m_processes.contains(&process));
 
     if (!m_processes.add(&process).isNewEntry)
         return;

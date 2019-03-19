@@ -819,7 +819,6 @@ void WebPageProxy::finishAttachingToWebProcess(IsProcessSwap isProcessSwap)
         // when the process was provisional.
         if (isProcessSwap != IsProcessSwap::Yes)
             m_webProcessLifetimeTracker.webPageEnteringWebProcess(m_process);
-        processDidFinishLaunching();
     }
 
     updateActivityState();
@@ -958,19 +957,7 @@ void WebPageProxy::initializeWebPage()
 
     process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(m_process, *m_drawingArea)), 0);
 
-    m_needsToFinishInitializingWebPageAfterProcessLaunch = true;
-    finishInitializingWebPageAfterProcessLaunch();
-}
-
-void WebPageProxy::finishInitializingWebPageAfterProcessLaunch()
-{
-    if (!m_needsToFinishInitializingWebPageAfterProcessLaunch)
-        return;
-    if (m_process->state() != WebProcessProxy::State::Running)
-        return;
-
-    m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
-    m_process->addVisitedLinkStore(m_visitedLinkStore);
+    m_process->addVisitedLinkStoreUser(visitedLinkStore(), m_pageID);
 }
 
 void WebPageProxy::close()
@@ -5113,12 +5100,6 @@ void WebPageProxy::webProcessWillShutDown()
     m_webProcessLifetimeTracker.webPageLeavingWebProcess(m_process);
 }
 
-void WebPageProxy::processDidFinishLaunching()
-{
-    ASSERT(m_process->state() == WebProcessProxy::State::Running);
-    finishInitializingWebPageAfterProcessLaunch();
-}
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
@@ -6926,8 +6907,6 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_hasRunningProcess = false;
     m_isPageSuspended = false;
-
-    m_needsToFinishInitializingWebPageAfterProcessLaunch = false;
 
     m_editorState = EditorState();
     m_cachedFontAttributesAtSelectionStart.reset();
