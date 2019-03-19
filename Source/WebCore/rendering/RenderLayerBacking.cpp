@@ -250,6 +250,7 @@ RenderLayerBacking::~RenderLayerBacking()
     ASSERT(!m_viewportConstrainedNodeID);
     ASSERT(!m_scrollingNodeID);
     ASSERT(!m_frameHostingNodeID);
+    ASSERT(!m_positioningNodeID);
 
     destroyGraphicsLayers();
 }

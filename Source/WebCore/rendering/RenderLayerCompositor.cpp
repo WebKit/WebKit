@@ -3805,7 +3805,7 @@ void RenderLayerCompositor::removeFromScrollCoordinatedLayers(RenderLayer& layer
         m_legacyScrollingLayerCoordinator->removeLayer(layer);
 #endif
 
-    detachScrollCoordinatedLayer(layer, { ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained, ScrollCoordinationRole::FrameHosting });
+    detachScrollCoordinatedLayer(layer, { ScrollCoordinationRole::Scrolling, ScrollCoordinationRole::ViewportConstrained, ScrollCoordinationRole::FrameHosting, ScrollCoordinationRole::Positioning });
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer& layer) const

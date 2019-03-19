@@ -1,3 +1,23 @@
+2019-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash when reloading test with async overflow scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=195629
+        <rdar://problem/48814045>
+
+        Reviewed by Antoine Quint.
+
+        RenderLayerCompositor::removeFromScrollCoordinatedLayers needs to pass the Positioning
+        bit to make sure we remove RenderLayers added m_scrollingNodeToLayerMap for Positioning
+        scrolling nodes.
+
+        Fixes crashes seen in compositing/clipping/border-radius-async-overflow-non-stacking.html
+        and scrollingcoordinator/scrolling-tree/remove-coordinated-frame.html.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::removeFromScrollCoordinatedLayers):
+
 2019-03-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timeline: lazily create the agent
