@@ -3551,7 +3551,7 @@ NSArray* playerKVOProperties()
         }
 
 #if !RELEASE_LOG_DISABLED
-        if (player->logger().willLog(player->logChannel(), WTFLogLevelDebug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
+        if (player->logger().willLog(player->logChannel(), WTFLogLevel::Debug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
             auto identifier = Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", player->logIdentifier());
 
             if (shouldLogValue) {

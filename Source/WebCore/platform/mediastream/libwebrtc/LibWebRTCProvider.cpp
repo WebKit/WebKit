@@ -142,25 +142,25 @@ static rtc::LoggingSeverity computeLogLevel()
 {
 #if defined(NDEBUG)
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    if (LogWebRTC.state != WTFLogChannelOn)
+    if (LogWebRTC.state != WTFLogChannelState::On)
         return rtc::LS_ERROR;
 
     switch (LogWebRTC.level) {
-    case WTFLogLevelAlways:
-    case WTFLogLevelError:
+    case WTFLogLevel::Always:
+    case WTFLogLevel::Error:
         return rtc::LS_ERROR;
-    case WTFLogLevelWarning:
+    case WTFLogLevel::Warning:
         return rtc::LS_WARNING;
-    case WTFLogLevelInfo:
+    case WTFLogLevel::Info:
         return rtc::LS_INFO;
-    case WTFLogLevelDebug:
+    case WTFLogLevel::Debug:
         return rtc::LS_VERBOSE;
     }
 #else
     return rtc::LS_NONE;
 #endif
 #else
-    return (LogWebRTC.state != WTFLogChannelOn) ? rtc::LS_WARNING : rtc::LS_INFO;
+    return (LogWebRTC.state != WTFLogChannelState::On) ? rtc::LS_WARNING : rtc::LS_INFO;
 #endif
 }
 

@@ -1,3 +1,13 @@
+2019-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        Make WTFLogChannelState and WTFLogLevel enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2019-03-19  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] Backported mssdemux protection data crash fix

@@ -1,3 +1,15 @@
+2019-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        Make WTFLogChannelState and WTFLogLevel enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+
+        Reviewed by Eric Carlson.
+
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::logSpeculativeLoadingDiagnosticMessage):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::NetworkRTCProvider):
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r243132.

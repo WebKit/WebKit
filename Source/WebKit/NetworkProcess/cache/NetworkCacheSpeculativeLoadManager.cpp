@@ -67,7 +67,7 @@ static void printSpeculativeLoadingDiagnosticMessageCounts()
 static void logSpeculativeLoadingDiagnosticMessage(NetworkProcess& networkProcess, const GlobalFrameID& frameID, const String& message)
 {
 #if !LOG_DISABLED
-    if (WebKit2LogNetworkCacheSpeculativePreloading.state == WTFLogChannelOn)
+    if (WebKit2LogNetworkCacheSpeculativePreloading.state == WTFLogChannelState::On)
         allSpeculativeLoadingDiagnosticMessages().add(message);
 #endif
     networkProcess.logDiagnosticMessage(frameID.first, WebCore::DiagnosticLoggingKeys::networkCacheKey(), message, WebCore::ShouldSample::Yes);

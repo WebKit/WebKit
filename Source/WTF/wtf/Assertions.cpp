@@ -409,15 +409,15 @@ void WTFSetLogChannelLevel(WTFLogChannel* channel, WTFLogLevel level)
 
 bool WTFWillLogWithLevel(WTFLogChannel* channel, WTFLogLevel level)
 {
-    return channel->level >= level && channel->state != WTFLogChannelOff;
+    return channel->level >= level && channel->state != WTFLogChannelState::Off;
 }
 
 void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* format, ...)
 {
-    if (level != WTFLogLevelAlways && level > channel->level)
+    if (level != WTFLogLevel::Always && level > channel->level)
         return;
 
-    if (channel->level != WTFLogLevelAlways && channel->state == WTFLogChannelOff)
+    if (channel->level != WTFLogLevel::Always && channel->state == WTFLogChannelState::Off)
         return;
 
     va_list args;
@@ -432,15 +432,15 @@ void WTFLogWithLevel(WTFLogChannel* channel, WTFLogLevel level, const char* form
 
 static void WTFLogVaList(WTFLogChannel* channel, const char* format, va_list args)
 {
-    if (channel->state == WTFLogChannelOff)
+    if (channel->state == WTFLogChannelState::Off)
         return;
 
-    if (channel->state == WTFLogChannelOn) {
+    if (channel->state == WTFLogChannelState::On) {
         vprintf_stderr_with_trailing_newline(format, args);
         return;
     }
 
-    ASSERT(channel->state == WTFLogChannelOnWithAccumulation);
+    ASSERT(channel->state == WTFLogChannelState::OnWithAccumulation);
 
     ALLOW_NONLITERAL_FORMAT_BEGIN
     String loggingString = WTF::createWithFormatAndArguments(format, args);
@@ -466,7 +466,7 @@ void WTFLog(WTFLogChannel* channel, const char* format, ...)
 
 void WTFLogVerbose(const char* file, int line, const char* function, WTFLogChannel* channel, const char* format, ...)
 {
-    if (channel->state != WTFLogChannelOn)
+    if (channel->state != WTFLogChannelState::On)
         return;
 
     va_list args;
@@ -533,9 +533,9 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
         Vector<String> componentInfo = logLevelComponent.split('=');
         String component = componentInfo[0].stripWhiteSpace();
 
-        WTFLogChannelState logChannelState = WTFLogChannelOn;
+        WTFLogChannelState logChannelState = WTFLogChannelState::On;
         if (component.startsWith('-')) {
-            logChannelState = WTFLogChannelOff;
+            logChannelState = WTFLogChannelState::Off;
             component = component.substring(1);
         }
 
@@ -544,17 +544,17 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
             continue;
         }
 
-        WTFLogLevel logChannelLevel = WTFLogLevelError;
+        WTFLogLevel logChannelLevel = WTFLogLevel::Error;
         if (componentInfo.size() > 1) {
             String level = componentInfo[1].stripWhiteSpace();
             if (equalLettersIgnoringASCIICase(level, "error"))
-                logChannelLevel = WTFLogLevelError;
+                logChannelLevel = WTFLogLevel::Error;
             else if (equalLettersIgnoringASCIICase(level, "warning"))
-                logChannelLevel = WTFLogLevelWarning;
+                logChannelLevel = WTFLogLevel::Warning;
             else if (equalLettersIgnoringASCIICase(level, "info"))
-                logChannelLevel = WTFLogLevelInfo;
+                logChannelLevel = WTFLogLevel::Info;
             else if (equalLettersIgnoringASCIICase(level, "debug"))
-                logChannelLevel = WTFLogLevelDebug;
+                logChannelLevel = WTFLogLevel::Debug;
             else
                 WTFLogAlways("Unknown logging level: %s", level.utf8().data());
         }

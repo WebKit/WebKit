@@ -156,7 +156,7 @@ SoupNetworkSession::~SoupNetworkSession() = default;
 void SoupNetworkSession::setupLogger()
 {
 #if !LOG_DISABLED
-    if (LogNetwork.state != WTFLogChannelOn || soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_LOGGER))
+    if (LogNetwork.state != WTFLogChannelState::On || soup_session_get_feature(m_soupSession.get(), SOUP_TYPE_LOGGER))
         return;
 
     GRefPtr<SoupLogger> logger = adoptGRef(soup_logger_new(SOUP_LOGGER_LOG_BODY, -1));

@@ -1,3 +1,23 @@
+2019-03-19  Alex Christensen  <achristensen@webkit.org>
+
+        Make WTFLogChannelState and WTFLogLevel enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/Logger.h:
+        (WTF::Logger::logAlways const):
+        (WTF::Logger::error const):
+        (WTF::Logger::warning const):
+        (WTF::Logger::info const):
+        (WTF::Logger::debug const):
+        (WTF::Logger::willLog const):
+        (WTF::Logger::log):
+        * wtf/MemoryPressureHandler.cpp:
+        * wtf/RefCountedLeakCounter.cpp:
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r243132.
