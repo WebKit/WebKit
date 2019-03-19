@@ -1,3 +1,14 @@
+2019-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Add default prompt implementation for the Storage Access API
+        https://bugs.webkit.org/show_bug.cgi?id=195866
+        <rdar://problem/45150009>
+
+        Reviewed by Chris Dumez.
+
+        * en.lproj/Localizable.strings: Update with new strings used by the
+        Storage Access API dialog.
+
 2019-03-19  Thibault Saunier  <tsaunier@igalia.com>
 
         [GStreamer][WebRTC] Create sps/pps for all frames to please libwebrtc

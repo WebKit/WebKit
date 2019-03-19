@@ -1,3 +1,25 @@
+2019-03-19  Brent Fulgham  <bfulgham@apple.com>
+
+        Add default prompt implementation for the Storage Access API
+        https://bugs.webkit.org/show_bug.cgi?id=195866
+        <rdar://problem/45150009>
+
+        Reviewed by Chris Dumez.
+
+        This patch revises the UIDelegate implementation with a default permission dialog
+        for the Storage Access API. This allows us to use and test the API in MiniBrowser,
+        rather than requiring a full-fledged web browser to drive testing.
+ 
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::presentStorageAccessConfirmDialog): Added.
+        (WebKit::UIDelegate::UIClient::requestStorageAccessConfirm): Modify to call new default
+        implementation if the WKWebVIew client doesn't implement the necessary SPI.
+        * UIProcess/Cocoa/WKStorageAccessAlert.h: Added.
+        * UIProcess/Cocoa/WKStorageAccessAlert.mm: Added.
+        (WebKit::presentStorageAccessAlert):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-19  Conrad Shultz  <conrad_shultz@apple.com>
 
         REGRESSION (r242369): Only use picker-supported UTIs when creating image picker

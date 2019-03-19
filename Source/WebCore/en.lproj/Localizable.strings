@@ -103,6 +103,15 @@
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
 
+/* Allow Storage Access API */
+"Allow" = "Allow";
+
+/* Title for Allow button label in the Storage Access API request dialog */
+"Allow (cross-site cookie and website data access)" = "Allow";
+
+/* Storage Access API request validation (iOS phrasing) */
+"Allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Allow \"%@\" to use cookies and website data while browsing \"%@\"?";
+
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
 
@@ -246,6 +255,15 @@
 
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
+
+/* Storage Access API request validation (macOS phrasing) */
+"Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?";
+
+/* Storage Access API deny access */
+"Don't Allow" = "Don't Allow";
+
+/* Title for Don't Allow button label in the Storage Access API request dialog */
+"Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
 
 /* Title of the Done button for zoomed form controls. */
 "Done" = "Done";
@@ -801,6 +819,9 @@
 
 /* Unwanted software warning */
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
+
+/* Storage Access API tracking warning */
+"This will allow \"%@\" to track your activity." = "This will allow \"%@\" to track your activity.";
 
 /* Undo action name */
 "Tighten Kerning (Undo action name)" = "Tighten Kerning";
