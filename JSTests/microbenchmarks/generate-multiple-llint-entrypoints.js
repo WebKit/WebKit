@@ -3,7 +3,7 @@ function assert(a, e) {
         throw new Error("Expected: " + e + " but got: " + a);
 }
 
-let n = 40000;
+let n = 1000;
 let arr = Array(n);
 
 for(let i = 0; i < n; i++) {
