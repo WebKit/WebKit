@@ -1,3 +1,26 @@
+2019-03-19  Antti Koivisto  <antti@apple.com>
+
+        Layer with no backing store should still hit-test over a scroller
+        https://bugs.webkit.org/show_bug.cgi?id=195378
+        <rdar://problem/48652078>
+
+        Reviewed by Simon Fraser.
+
+        Reorganize the tests a bit and add some new ones.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-2-expected.txt:
+        * fast/scrolling/ios/overflow-scroll-overlap-2.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-3-expected.txt: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-3.html: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-4-expected.txt: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-4.html: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap.html:
+        * fast/scrolling/resources/overflow-scroll-overlap.js: Added.
+        (sleep):
+        (async.runTest):
+        (logScroll):
+        (outputCase):
+
 2019-03-18  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243092 and r243096.

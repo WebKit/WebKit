@@ -1243,7 +1243,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (paintPhase == PaintPhase::EventRegion) {
         // FIXME: Handle inlines, lineboxes, SVG too.
         // FIXME: Transforms?
-        if (style().pointerEvents() != PointerEvents::None)
+        if (visibleToHitTesting())
             paintInfo.eventRegion->unite(enclosingIntRect(LayoutRect(paintOffset, size())));
 
         // No need to check descendants if we don't have overflow.

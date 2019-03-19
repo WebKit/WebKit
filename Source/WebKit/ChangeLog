@@ -1,3 +1,19 @@
+2019-03-19  Antti Koivisto  <antti@apple.com>
+
+        Layer with no backing store should still hit-test over a scroller
+        https://bugs.webkit.org/show_bug.cgi?id=195378
+        <rdar://problem/48652078>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        (WebKit::RemoteLayerTreeHost::makeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::collectDescendantViewsAtPoint):
+
+        No need for special WKTiledBackingView, tiled views now have correct event regions.
+
 2019-03-18  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes

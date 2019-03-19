@@ -1,0 +1,5 @@
+Test that scrollable areas with text overlap are correctly targeted.
+
+case 1: Scrollable 1 
+case 2: Scrollable 2 
+

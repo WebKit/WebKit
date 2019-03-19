@@ -4243,16 +4243,17 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
     bool isPaintingCompositedForeground = paintFlags.contains(PaintLayerPaintingCompositingForegroundPhase);
     bool isPaintingCompositedBackground = paintFlags.contains(PaintLayerPaintingCompositingBackgroundPhase);
     bool isPaintingOverflowContents = paintFlags.contains(PaintLayerPaintingOverflowContents);
+    bool isCollectingEventRegion = paintFlags.contains(PaintLayerCollectingEventRegion);
     // Outline always needs to be painted even if we have no visible content. Also,
     // the outline is painted in the background phase during composited scrolling.
     // If it were painted in the foreground phase, it would move with the scrolled
     // content. When not composited scrolling, the outline is painted in the
     // foreground phase. Since scrolled contents are moved by repainting in this
     // case, the outline won't get 'dragged along'.
-    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars
+    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion
         && ((isPaintingScrollingContent && isPaintingCompositedBackground)
         || (!isPaintingScrollingContent && isPaintingCompositedForeground));
-    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
+    bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion;
 
     if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer().isRenderView() && !renderer().isDocumentElementRenderer())
         return;
@@ -4323,7 +4324,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             paintBehavior.add(PaintBehavior::ExcludeSelection);
 
         LayoutRect paintDirtyRect = localPaintingInfo.paintDirtyRect;
-        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
+        if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars || isCollectingEventRegion) {
             // Collect the fragments. This will compute the clip rectangles and paint offsets for each layer fragment, as well as whether or not the content of each
             // fragment should paint. If the parent's filter dictates full repaint to ensure proper filter effect,
             // use the overflow clip as dirty rect, instead of no clipping. It maintains proper clipping for overflow::scroll.
@@ -4356,6 +4357,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
                     localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
             }
         }
+
+        if (isCollectingEventRegion)
+            collectEventRegionForFragments(layerFragments, currentContext, localPaintingInfo);
 
         if (shouldPaintOutline)
             paintOutlineForFragments(layerFragments, currentContext, localPaintingInfo, paintBehavior, subtreePaintRootForRenderer);
@@ -4462,6 +4466,9 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
         return;
 
     if (!hasSelfPaintingLayerDescendant())
+        return;
+
+    if (paintFlags.contains(PaintLayerCollectingEventRegion) && renderBox() && !renderBox()->hasRenderOverflow())
         return;
 
 #if !ASSERT_DISABLED
@@ -4746,8 +4753,6 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         paintForegroundForFragmentsWithPhase(PaintPhase::Float, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
         paintForegroundForFragmentsWithPhase(PaintPhase::Foreground, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
         paintForegroundForFragmentsWithPhase(PaintPhase::ChildOutlines, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
-        if (localPaintingInfo.eventRegion)
-            paintForegroundForFragmentsWithPhase(PaintPhase::EventRegion, layerFragments, context, localPaintingInfo, localPaintBehavior, subtreePaintRootForRenderer);
     }
     
     if (shouldClip)
@@ -4769,8 +4774,6 @@ void RenderLayer::paintForegroundForFragmentsWithPhase(PaintPhase phase, const L
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), phase, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this, localPaintingInfo.requireSecurityOriginAccessForWidgets);
         if (phase == PaintPhase::Foreground)
             paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
-        if (phase == PaintPhase::EventRegion)
-            paintInfo.eventRegion = localPaintingInfo.eventRegion;
         renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset));
         
         if (shouldClip)
@@ -4840,6 +4843,17 @@ void RenderLayer::paintOverflowControlsForFragments(const LayerFragments& layerF
         paintOverflowControls(context, roundedIntPoint(toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset)),
             snappedIntRect(fragment.backgroundRect.rect()), true);
         restoreClip(context, localPaintingInfo, fragment.backgroundRect);
+    }
+}
+
+void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFragments, GraphicsContext& context, const LayerPaintingInfo& localPaintingInfo)
+{
+    ASSERT(localPaintingInfo.eventRegion);
+
+    for (const auto& fragment : layerFragments) {
+        PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, { });
+        paintInfo.eventRegion = localPaintingInfo.eventRegion;
+        renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset));
     }
 }
 
