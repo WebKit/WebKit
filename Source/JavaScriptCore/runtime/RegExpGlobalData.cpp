@@ -43,6 +43,7 @@ JSValue RegExpGlobalData::getBackref(ExecState* exec, JSGlobalObject* owner, uns
 
     if (i < array->length()) {
         JSValue result = JSValue(array).get(exec, i);
+        RETURN_IF_EXCEPTION(scope, { });
         ASSERT(result.isString() || result.isUndefined());
         if (!result.isUndefined())
             return result;
@@ -61,6 +62,7 @@ JSValue RegExpGlobalData::getLastParen(ExecState* exec, JSGlobalObject* owner)
     unsigned length = array->length();
     if (length > 1) {
         JSValue result = JSValue(array).get(exec, length - 1);
+        RETURN_IF_EXCEPTION(scope, { });
         ASSERT(result.isString() || result.isUndefined());
         if (!result.isUndefined())
             return result;

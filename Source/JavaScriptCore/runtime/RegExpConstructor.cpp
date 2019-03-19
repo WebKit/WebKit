@@ -150,9 +150,13 @@ EncodedJSValue regExpConstructorRightContext(ExecState* exec, EncodedJSValue thi
 bool setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (auto constructor = jsDynamicCast<RegExpConstructor*>(vm, JSValue::decode(thisValue))) {
+        auto* string = JSValue::decode(value).toString(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+        scope.release();
         JSGlobalObject* globalObject = constructor->globalObject(vm);
-        globalObject->regExpGlobalData().setInput(exec, globalObject, JSValue::decode(value).toString(exec));
+        globalObject->regExpGlobalData().setInput(exec, globalObject, string);
         return true;
     }
     return false;
@@ -161,9 +165,13 @@ bool setRegExpConstructorInput(ExecState* exec, EncodedJSValue thisValue, Encode
 bool setRegExpConstructorMultiline(ExecState* exec, EncodedJSValue thisValue, EncodedJSValue value)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     if (auto constructor = jsDynamicCast<RegExpConstructor*>(vm, JSValue::decode(thisValue))) {
+        bool multiline = JSValue::decode(value).toBoolean(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+        scope.release();
         JSGlobalObject* globalObject = constructor->globalObject(vm);
-        globalObject->regExpGlobalData().setMultiline(JSValue::decode(value).toBoolean(exec));
+        globalObject->regExpGlobalData().setMultiline(multiline);
         return true;
     }
     return false;
