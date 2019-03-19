@@ -1,5 +1,17 @@
 2019-03-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Unreviewed followup to r243126.
+
+        LayerRepresentation operator=() needs to copy m_graphicsLayer now that it doesn't
+        share a pointer with m_typelessPlatformLayer. Also make the LayerRepresentation construction
+        from a GraphiscLayer* explicit.
+
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::LayerRepresentation::operator=):
+        (WebCore::LayerRepresentation::toRepresentation const):
+
+2019-03-18  Simon Fraser  <simon.fraser@apple.com>
+
         Scrolling state nodes should hold references to GraphicsLayers
         https://bugs.webkit.org/show_bug.cgi?id=195844
         <rdar://problem/48949634>

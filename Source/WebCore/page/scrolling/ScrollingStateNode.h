@@ -119,6 +119,7 @@ public:
 
     LayerRepresentation& operator=(const LayerRepresentation& other)
     {
+        m_graphicsLayer = other.m_graphicsLayer;
         m_typelessPlatformLayer = other.m_typelessPlatformLayer;
         m_layerID = other.m_layerID;
         m_representation = other.m_representation;
@@ -155,7 +156,7 @@ public:
             return LayerRepresentation();
         case GraphicsLayerRepresentation:
             ASSERT(m_representation == GraphicsLayerRepresentation);
-            return *this;
+            return LayerRepresentation(m_graphicsLayer.get());
         case PlatformLayerRepresentation:
             return m_graphicsLayer ? m_graphicsLayer->platformLayer() : nullptr;
         case PlatformLayerIDRepresentation:
