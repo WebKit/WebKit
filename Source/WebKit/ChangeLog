@@ -1,3 +1,16 @@
+2019-03-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Remove overridden rules in sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=193840
+        <rdar://problem/47558526>
+
+        Reviewed by Brent Fulgham.
+
+        On iOS, there are some rules overridden in the same sandbox file. The overridden rules
+        should be removed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-03-19  Timothy Hatcher  <timothy@apple.com>
 
         Make WebKit/NSAttributedString.h a public header.

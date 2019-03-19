@@ -36,13 +36,6 @@
 ;;; remove unneeded sandbox extensions.
 ;;;
 
-;;; <rdar://problem/29959382> Allow UIKit apps access to com.apple.TextInput.preferences mach service
-(allow mach-lookup
-    (global-name "com.apple.TextInput.preferences"))
-
-(allow mach-lookup
-    (xpc-service-name "com.apple.siri.context.service"))
-
 (allow mach-lookup
     (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
     (global-name-regex #"^com\.apple\.uikit\.viewservice\..+"))
@@ -59,30 +52,11 @@
 
 (url-translation)
 
-;; For <rdar://problem/20812377> All applications need to be able to access the com.apple.UIKit.KeyboardManagement running in backboardd
-;; renamed in <rdar://problem/20909914> Rename com.apple.UIKit.KeyboardManagement
-(allow mach-lookup
-    (global-name "com.apple.UIKit.KeyboardManagement")
-    (global-name "com.apple.UIKit.KeyboardManagement.hosted"))
-
 ;; TextInput framework
 (allow mach-lookup
-    (global-name "com.apple.TextInput")
-    (global-name "com.apple.TextInput.emoji")
-    (global-name "com.apple.TextInput.image-cache-server")
-    (global-name "com.apple.TextInput.lexicon-server")
-    (global-name "com.apple.TextInput.rdt")
-    (global-name "com.apple.TextInput.shortcuts"))
+    (global-name "com.apple.TextInput"))
+
 (mobile-preferences-read "com.apple.da")
-
-;; Various Accessibility services.
-(allow mach-lookup
-    (xpc-service-name "com.apple.accessibility.AccessibilityUIServer")) ; Needed for Zoom focus updates
-
-;; ZoomTouch
-;; <rdar://problem/11823957>
-(allow mach-lookup
-    (global-name "com.apple.accessibility.AXBackBoardServer"))
 
 ;; Speak Selection & VoiceOver
 ;; <rdar://problem/12030530> AX: Sandbox violation with changing Language while VO is on
@@ -93,9 +67,7 @@
     "com.apple.voiceservices") ; Ditto
 
 (allow mach-lookup
-    (global-name "com.apple.audio.AudioComponentPrefs")
-    (global-name "com.apple.audio.AudioComponentRegistrar")
-    (global-name "com.apple.audio.AudioQueueServer"))
+    (global-name "com.apple.audio.AudioComponentRegistrar"))
 
 (allow mach-register
     (local-name "com.apple.iphone.axserver")) ; Needed for Application Accessibility
@@ -105,10 +77,6 @@
 (allow file-read*
     (home-subpath "/Library/VoiceServices/Assets")
     (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
-
-;; HearingAidSupport
-(allow mach-lookup
-    (xpc-service-name "com.apple.accessibility.heard"))
 
 ;; MediaAccessibility (captions)
 ;; <rdar://problem/12801477>
@@ -121,8 +89,7 @@
 ;; Network Extensions / VPN helper.
 (allow mach-lookup
     (global-name "com.apple.nehelper")
-    (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/48442387>
-    (global-name "com.apple.nesessionmanager"))
+    (global-name "com.apple.nesessionmanager.content-filter")) ;; <rdar://problem/48442387>
 
 ;; allow 3rd party applications to access nsurlstoraged's top level domain data cache
 (allow-well-known-system-group-container-literal-read
@@ -131,10 +98,6 @@
 ;; Access the keyboards
 (allow file-read*
     (home-subpath "/Library/Caches/com.apple.keyboards"))
-
-;; NSExtension helper for supplying information not provided by PlugInKit
-(allow mach-lookup
-    (xpc-service-name "com.apple.uifoundation-bundle-helper"))
 
 ;; <rdar://problem/19525887>
 (allow mach-lookup (xpc-service-name-regex #"\.apple-extension-service$"))
@@ -170,25 +133,13 @@
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
 (allow mach-lookup
-    (xpc-service-name "com.apple.lsdiconservice") ;; Remove this line after <rdar://problem/47151295> is fixed.
     (xpc-service-name "com.apple.iconservices")
     (global-name "com.apple.iconservices"))
 
 ;; Common mach services needed by UIKit.
 (allow mach-lookup
     (global-name "com.apple.CARenderServer")
-    (global-name "com.apple.KeyboardServices.TextReplacementService")
-    (global-name "com.apple.assertiond.applicationstateconnection")
-    (global-name "com.apple.assertiond.expiration")
-    (global-name "com.apple.assertiond.processinfoservice")
-    (global-name "com.apple.audio.SystemSoundServer-iOS")
-    (global-name "com.apple.backboard.TouchDeliveryPolicyServer")
-    (global-name "com.apple.backboard.animation-fence-arbiter")
-    (global-name "com.apple.backboard.display.services")
-    (global-name "com.apple.backboard.hid.focus")
-    (global-name "com.apple.backboard.hid.services")
     (global-name "com.apple.iohideventsystem")
-    (global-name "com.apple.frontboard.workspace")
     (global-name "com.apple.frontboard.systemappservices"))
 
 ;; <rdar://problem/47268166>
@@ -294,24 +245,8 @@
     (home-prefix "/Library/Preferences/com.apple.springboard.plist")
     (with no-log))
 
-;; <rdar://problem/34092690>
-(allow mach-lookup
-    (xpc-service-name "com.apple.avkit.SharedPreferences"))
-
 ;; <rdar://problem/34986314>
 (mobile-preferences-read "com.apple.indigo")
-
-;; <rdar://problem/35417382>, <rdar://problem/35518557>
-(allow mach-lookup
-    (global-name "com.apple.corespotlightservice"))
-
-;; <rdar://problem/35446577>
-(allow mach-lookup
-    (global-name "com.apple.coremedia.endpointplaybacksession.xpc"))
-
-;; <rdar://problem/35509194>
-(allow mach-lookup
-    (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc"))
 
 ;;;
 ;;; End UIKit-apps.sb content
@@ -398,9 +333,7 @@
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name "com.apple.PowerManagement.control")
-    (global-name "com.apple.accountsd.accountmanager")
-    (global-name "com.apple.analyticsd")
-    (global-name "com.apple.coremedia.audiodeviceclock"))
+    (global-name "com.apple.analyticsd"))
 
 (deny file-write-create (vnode-type SYMLINK))
 (deny file-read-xattr file-write-xattr (xattr-regex #"^com\.apple\.security\.private\."))
@@ -441,7 +374,6 @@
 
 ;; Support incoming video connections
 (allow mach-lookup
-    (global-name "com.apple.audio.audiohald")
     (global-name "com.apple.coremedia.compressionsession")
     (global-name "com.apple.coremedia.decompressionsession")
     (global-name "com.apple.coremedia.videoqueue"))
@@ -462,37 +394,12 @@
     (global-name "com.apple.FileCoordination")
     (global-name "com.apple.FileProvider")
     (global-name "com.apple.Honeybee.event-notify")
-    (global-name "com.apple.KeyboardServices.TextReplacementService")
     (global-name "com.apple.MediaPlayer.RemotePlayerService")
     (global-name "com.apple.ReportCrash.SimulateCrash")
-    (global-name "com.apple.TextInput.emoji")
-    (global-name "com.apple.TextInput.image-cache-server")
-    (global-name "com.apple.TextInput.lexicon-server")
-    (global-name "com.apple.TextInput.preferences")
-    (global-name "com.apple.TextInput.rdt")
-    (global-name "com.apple.TextInput.shortcuts")
-    (global-name "com.apple.UIKit.KeyboardManagement")
-    (global-name "com.apple.UIKit.KeyboardManagement.hosted")
-    (global-name "com.apple.accessibility.AXBackBoardServer")
-    (global-name "com.apple.accessibility.AccessibilityUIServer")
-    (global-name "com.apple.accessibility.heard")
     (global-name "com.apple.accountsd.accountmanager")
-    (global-name "com.apple.app-sandbox.mach")
     (global-name "com.apple.appsupport.cplogd")
-    (global-name "com.apple.assertiond.applicationstateconnection")
-    (global-name "com.apple.assertiond.expiration")
     (global-name "com.apple.assertiond.processassertionconnection")
-    (global-name "com.apple.assertiond.processinfoservice")
-    (global-name "com.apple.audio.AudioComponentPrefs")
-    (global-name "com.apple.audio.AudioQueueServer")
-    (global-name "com.apple.audio.SystemSoundServer-iOS")
-    (global-name "com.apple.audio.audiohald")
     (global-name "com.apple.audio.reporting.xpc")
-    (global-name "com.apple.avkit.SharedPreferences")
-    (global-name "com.apple.backboard.TouchDeliveryPolicyServer")
-    (global-name "com.apple.backboard.animation-fence-arbiter")
-    (global-name "com.apple.backboard.display.services")
-    (global-name "com.apple.backboard.hid.focus")
     (global-name "com.apple.bird")
     (global-name "com.apple.bird.token")
     (global-name "com.apple.cfprefsd.agent")
@@ -500,18 +407,15 @@
     (global-name "com.apple.coremedia.assetcacheinspector")
     (global-name "com.apple.coremedia.audiodeviceclock")
     (global-name "com.apple.coremedia.audioprocessingtap.xpc")
-    (global-name "com.apple.coremedia.endpointplaybacksession.xpc")
     (global-name "com.apple.coremedia.endpointremotecontrolsession.xpc")
     (global-name "com.apple.coremedia.sandboxserver")
     (global-name "com.apple.coremedia.videocompositor")
     (global-name "com.apple.coremedia.visualcontext.xpc")
     (global-name "com.apple.coreservices.lsuseractivitymanager.xpc")
-    (global-name "com.apple.corespotlightservice")
     (global-name "com.apple.ctkd.token-client")
     (global-name "com.apple.cvmsServ")
     (global-name "com.apple.duetknowledged.activity")
     (global-name "com.apple.dyld.closured")
-    (global-name "com.apple.frontboard.workspace")
     (global-name "com.apple.gpumemd.source")
     (global-name "com.apple.hangtracerd")
     (global-name "com.apple.itunescloudd.xpc")
@@ -534,10 +438,8 @@
     (global-name "com.apple.pluginkit.plugin-service")
     (global-name "com.apple.quicklook.ThumbnailsAgent")
     (global-name "com.apple.revisiond")
-    (global-name "com.apple.siri.context.service")
     (global-name "com.apple.springboard.backgroundappservices")
     (global-name "com.apple.system.libinfo.muser")
-    (global-name "com.apple.uifoundation-bundle-helper")
     (global-name "com.apple.webkit.camera")
 )
 
