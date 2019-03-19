@@ -127,10 +127,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(WTFMove(databaseAgentPtr));
 
-    auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(pageContext);
-    m_instrumentingAgents->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
-    m_agents.append(WTFMove(scriptProfilerAgentPtr));
-
     auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, m_domAgent);
     WebConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
@@ -192,6 +188,11 @@ void InspectorController::createLazyAgents()
 #if ENABLE(INDEXED_DATABASE)
     m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, m_pageAgent));
 #endif
+
+    auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(pageContext);
+    m_instrumentingAgents->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
+    m_agents.append(WTFMove(scriptProfilerAgentPtr));
+
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(std::make_unique<InspectorCPUProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));

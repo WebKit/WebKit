@@ -38,11 +38,13 @@ class InspectorScriptProfilerAgent;
 class JSGlobalObjectConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*, InspectorDebuggerAgent*, InspectorScriptProfilerAgent*);
+    explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*, InspectorDebuggerAgent*);
     virtual ~JSGlobalObjectConsoleClient() { }
 
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);
+
+    void setInspectorScriptProfilerAgent(InspectorScriptProfilerAgent* agent) { m_scriptProfilerAgent = agent; }
 
 protected:
     void messageWithTypeAndLevel(MessageType, MessageLevel, JSC::ExecState*, Ref<ScriptArguments>&&) override;
@@ -66,7 +68,7 @@ private:
 
     InspectorConsoleAgent* m_consoleAgent;
     InspectorDebuggerAgent* m_debuggerAgent;
-    InspectorScriptProfilerAgent* m_scriptProfilerAgent;
+    InspectorScriptProfilerAgent* m_scriptProfilerAgent { nullptr };
     Vector<String> m_profiles;
     bool m_profileRestoreBreakpointActiveValue { false };
 };

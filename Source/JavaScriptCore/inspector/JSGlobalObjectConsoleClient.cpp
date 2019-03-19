@@ -54,11 +54,10 @@ void JSGlobalObjectConsoleClient::setLogToSystemConsole(bool shouldLog)
     sLogToSystemConsole = shouldLog;
 }
 
-JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent, InspectorDebuggerAgent* debuggerAgent, InspectorScriptProfilerAgent* scriptProfilerAgent)
+JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent, InspectorDebuggerAgent* debuggerAgent)
     : ConsoleClient()
     , m_consoleAgent(consoleAgent)
     , m_debuggerAgent(debuggerAgent)
-    , m_scriptProfilerAgent(scriptProfilerAgent)
 {
 }
 
@@ -121,27 +120,33 @@ void JSGlobalObjectConsoleClient::profileEnd(JSC::ExecState*, const String& titl
 
 void JSGlobalObjectConsoleClient::startConsoleProfile()
 {
+    ErrorString unused;
+
     // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
-    m_scriptProfilerAgent->programmaticCaptureStarted();
+    if (m_scriptProfilerAgent)
+        m_scriptProfilerAgent->programmaticCaptureStarted();
 
     m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
-
-    ErrorString unused;
     m_debuggerAgent->setBreakpointsActive(unused, false);
 
-    const bool includeSamples = true;
-    m_scriptProfilerAgent->startTracking(unused, &includeSamples);
+    if (m_scriptProfilerAgent) {
+        const bool includeSamples = true;
+        m_scriptProfilerAgent->startTracking(unused, &includeSamples);
+    }
 }
 
 void JSGlobalObjectConsoleClient::stopConsoleProfile()
 {
     ErrorString unused;
-    m_scriptProfilerAgent->stopTracking(unused);
+
+    if (m_scriptProfilerAgent)
+        m_scriptProfilerAgent->stopTracking(unused);
 
     m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
 
     // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
-    m_scriptProfilerAgent->programmaticCaptureStopped();
+    if (m_scriptProfilerAgent)
+        m_scriptProfilerAgent->programmaticCaptureStopped();
 }
 
 void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)

@@ -75,18 +75,16 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
     auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context);
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, consoleAgent.get());
-    auto scriptProfilerAgent = std::make_unique<InspectorScriptProfilerAgent>(context);
 
     m_inspectorAgent = inspectorAgent.get();
     m_debuggerAgent = debuggerAgent.get();
     m_consoleAgent = consoleAgent.get();
-    m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent, m_debuggerAgent, scriptProfilerAgent.get());
+    m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent, m_debuggerAgent);
 
     m_agents.append(WTFMove(inspectorAgent));
     m_agents.append(WTFMove(runtimeAgent));
     m_agents.append(WTFMove(consoleAgent));
     m_agents.append(WTFMove(debuggerAgent));
-    m_agents.append(WTFMove(scriptProfilerAgent));
 
     m_executionStopwatch->start();
 }
@@ -311,6 +309,10 @@ void JSGlobalObjectInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     auto context = jsAgentContext();
+
+    auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(context);
+    m_consoleClient->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
+    m_agents.append(WTFMove(scriptProfilerAgentPtr));
 
     auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
     if (m_consoleAgent)
