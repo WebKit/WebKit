@@ -1,3 +1,19 @@
+2019-03-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM: "Capture Screenshot" should only be shown if the node is attached
+        https://bugs.webkit.org/show_bug.cgi?id=195793
+        <rdar://problem/48916594>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.get attached): Added.
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._populateTagContextMenu):
+
 2019-03-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: HAR Extension for `serverIPAddress` port number

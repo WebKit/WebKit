@@ -156,14 +156,16 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
     let copySubMenu = options.copySubMenu || contextMenu.appendSubMenuItem(WI.UIString("Copy"));
 
     let isElement = domNode.nodeType() === Node.ELEMENT_NODE;
-    if (domNode.ownerDocument && isElement) {
+    let attached = domNode.attached;
+
+    if (isElement && attached) {
         copySubMenu.appendItem(WI.UIString("Selector Path"), () => {
             let cssPath = WI.cssPath(domNode);
             InspectorFrontendHost.copyText(cssPath);
         });
     }
 
-    if (domNode.ownerDocument && !domNode.isPseudoElement()) {
+    if (!domNode.isPseudoElement() && attached) {
         copySubMenu.appendItem(WI.UIString("XPath"), () => {
             let xpath = WI.xpath(domNode);
             InspectorFrontendHost.copyText(xpath);
@@ -205,7 +207,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         contextMenu.appendSeparator();
     }
 
-    if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && domNode.ownerDocument) {
+    if (WI.domDebuggerManager.supported && isElement && !domNode.isPseudoElement() && attached) {
         contextMenu.appendSeparator();
 
         WI.appendContextMenuItemsForDOMNodeBreakpoints(contextMenu, domNode);
@@ -224,19 +226,19 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         });
     }
 
-    if (!options.excludeRevealElement && window.DOMAgent && domNode.ownerDocument) {
+    if (!options.excludeRevealElement && window.DOMAgent && attached) {
         contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
             WI.domManager.inspectElement(domNode.id);
         });
     }
 
-    if (!options.excludeRevealLayer && window.LayerTreeAgent && domNode.parentNode) {
+    if (!options.excludeRevealLayer && window.LayerTreeAgent && attached) {
         contextMenu.appendItem(WI.UIString("Reveal in Layers Tab"), () => {
             WI.showLayersTab({nodeToSelect: domNode});
         });
     }
 
-    if (window.PageAgent) {
+    if (window.PageAgent && attached) {
         contextMenu.appendItem(WI.UIString("Capture Screenshot"), () => {
             PageAgent.snapshotNode(domNode.id, (error, dataURL) => {
                 if (error) {
@@ -259,7 +261,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         });
     }
 
-    if (isElement) {
+    if (isElement && attached) {
         contextMenu.appendItem(WI.UIString("Scroll Into View"), () => {
             domNode.scrollIntoView();
         });

@@ -193,6 +193,15 @@ WI.DOMNode = class DOMNode extends WI.Object
         return this._frame;
     }
 
+    get attached()
+    {
+        for (let node = this; node; node = node.parentNode) {
+            if (node.ownerDocument === node)
+                return true;
+        }
+        return false;
+    }
+
     get children()
     {
         if (!this._children)

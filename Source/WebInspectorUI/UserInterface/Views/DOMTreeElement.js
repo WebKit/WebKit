@@ -727,6 +727,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
     {
         let node = this.representedObject;
         let isNonShadowEditable = !node.isInUserAgentShadowTree() && this.editable;
+        let attached = node.attached;
 
         if (event.target && event.target.tagName === "A") {
             let url = event.target.href;
@@ -760,7 +761,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 attributeName = attributeNameElement.textContent.trim();
         }
 
-        let attributeValue = this.representedObject.getAttribute(attributeName);
+        let attributeValue = node.getAttribute(attributeName);
         subMenus.copy.appendItem(WI.UIString("Attribute"), () => {
             let text = attributeName;
             if (attributeValue)
@@ -769,7 +770,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         }, !attribute || !isNonShadowEditable);
 
         subMenus.delete.appendItem(WI.UIString("Attribute"), () => {
-            this.representedObject.removeAttribute(attributeName);
+            node.removeAttribute(attributeName);
         }, !attribute || !isNonShadowEditable);
 
         subMenus.edit.appendItem(WI.UIString("Tag"), () => {
@@ -778,14 +779,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         contextMenu.appendSeparator();
 
-        if (WI.cssManager.canForcePseudoClasses()) {
+        if (WI.cssManager.canForcePseudoClasses() && attached) {
             let pseudoSubMenu = contextMenu.appendSubMenuItem(WI.UIString("Forced Pseudo-Classes"));
 
-            let enabledPseudoClasses = this.representedObject.enabledPseudoClasses;
+            let enabledPseudoClasses = node.enabledPseudoClasses;
             WI.CSSManager.ForceablePseudoClasses.forEach((pseudoClass) => {
                 let enabled = enabledPseudoClasses.includes(pseudoClass);
                 pseudoSubMenu.appendCheckboxItem(pseudoClass.capitalize(), () => {
-                    this.representedObject.setPseudoClassEnabled(pseudoClass, !enabled);
+                    node.setPseudoClassEnabled(pseudoClass, !enabled);
                 }, enabled);
             });
 
