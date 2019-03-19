@@ -1374,6 +1374,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                     setDownloadBuffering();
                 }
             }
+        } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
+            if (gst_structure_get_uint64(structure, "read-position", &m_networkReadPosition))
+                GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT, m_networkReadPosition);
         } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
             if (WEBKIT_IS_WEB_SRC(m_source.get()))
                 if (const char* uri = gst_structure_get_string(structure, "uri"))
@@ -1703,8 +1706,12 @@ bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
     if (m_errorOccured || m_loadingStalled)
         return false;
 
-    if (isLiveStream())
-        return true;
+    if (WEBKIT_IS_WEB_SRC(m_source.get())) {
+        GST_LOG_OBJECT(pipeline(), "Last network read position: %" G_GUINT64_FORMAT ", current: %" G_GUINT64_FORMAT, m_readPositionAtLastDidLoadingProgress, m_networkReadPosition);
+        bool didLoadingProgress = m_readPositionAtLastDidLoadingProgress != m_networkReadPosition;
+        m_readPositionAtLastDidLoadingProgress = m_networkReadPosition;
+        return didLoadingProgress;
+    }
 
     if (UNLIKELY(!m_pipeline || !durationMediaTime() || (!isMediaSource() && !totalBytes())))
         return false;
@@ -1712,7 +1719,7 @@ bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
     MediaTime currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
     m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    GST_LOG("didLoadingProgress: %s", toString(didLoadingProgress).utf8().data());
+    GST_LOG_OBJECT(pipeline(), "didLoadingProgress: %s", boolForPrinting(didLoadingProgress));
     return didLoadingProgress;
 }
 

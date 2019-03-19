@@ -1,3 +1,29 @@
+2019-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r243058): [GStreamer] 3 tests now timing out
+        https://bugs.webkit.org/show_bug.cgi?id=195888
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A breaking change was introduced in r243058. Now on-disk-buffering
+        is disabled when the reported Content-Length is 0 or not present
+        at all. This broke the progress event logic in didLoadProgress()
+        because leading to progress events not being fired as expected.
+
+        The proposed solution is to make webkitwebsrc notify the player
+        every time the network process receives data from the network. So
+        the player can now easily determine if the load progressed by
+        checking the reported statistics.
+
+        No new tests, existing media tests cover this change.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::dataReceived):
+
 2019-03-19  Alicia Boya García  <aboya@igalia.com>
 
         [MSE] Use tolerance in eraseBeginTime

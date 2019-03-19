@@ -288,6 +288,9 @@ private:
 #endif
     virtual bool isMediaSource() const { return false; }
 
+    uint64_t m_networkReadPosition { 0 };
+    mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
+
     Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
 };
 }

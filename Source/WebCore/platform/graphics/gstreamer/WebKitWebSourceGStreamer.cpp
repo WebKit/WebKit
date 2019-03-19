@@ -978,6 +978,8 @@ void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const c
     if (LIKELY (priv->requestedPosition == priv->readPosition))
         priv->requestedPosition = newPosition;
     priv->readPosition = newPosition;
+    gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src),
+        gst_structure_new("webkit-network-statistics", "read-position", G_TYPE_UINT64, priv->readPosition, nullptr)));
 
     uint64_t newSize = 0;
     if (priv->haveSize && (newPosition > priv->size)) {
