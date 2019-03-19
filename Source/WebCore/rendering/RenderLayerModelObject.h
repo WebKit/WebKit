@@ -73,7 +73,7 @@ public:
     void transitionPaused(double timeOffset, CSSPropertyID) override;
     void transitionFinished(CSSPropertyID) override;
 
-    bool startAnimation(double timeOffset, const Animation*, const KeyframeList& keyframes) override;
+    bool startAnimation(double timeOffset, const Animation&, const KeyframeList&) override;
     void animationPaused(double timeOffset, const String& name) override;
     void animationSeeked(double timeOffset, const String& name) override;
     void animationFinished(const String& name) override;

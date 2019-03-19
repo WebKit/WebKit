@@ -1319,7 +1319,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     for (const auto& action : pendingAcceleratedActions) {
         switch (action) {
         case AcceleratedAction::Play:
-            if (!compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer().ptr(), m_blendingKeyframes)) {
+            if (!compositedRenderer->startAnimation(timeOffset, backingAnimationForCompositedRenderer(), m_blendingKeyframes)) {
                 m_shouldRunAccelerated = false;
                 m_lastRecordedAcceleratedAction = AcceleratedAction::Stop;
                 animation()->acceleratedStateDidChange();

@@ -304,7 +304,7 @@ void RenderLayerModelObject::transitionFinished(CSSPropertyID propertyId)
     layer()->backing()->transitionFinished(propertyId);
 }
 
-bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation* animation, const KeyframeList& keyframes)
+bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
 {
     if (!layer() || !layer()->backing())
         return false;

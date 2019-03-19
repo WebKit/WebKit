@@ -292,7 +292,7 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
     if (auto* renderer = this->renderer())
-        return renderer->startAnimation(timeOffset, m_animation.ptr(), m_keyframes);
+        return renderer->startAnimation(timeOffset, m_animation, m_keyframes);
     return false;
 }
 

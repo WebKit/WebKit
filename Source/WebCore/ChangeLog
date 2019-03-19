@@ -1,3 +1,26 @@
+2019-03-19  Zalan Bujtas  <zalan@apple.com>
+
+        RenderElement::startAnimation should take const Animation&
+        https://bugs.webkit.org/show_bug.cgi?id=195929
+
+        Reviewed by Daniel Bates.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::applyPendingAcceleratedActions):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::startAnimation):
+        (WebCore::RenderElement::animationFinished):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::startAnimation):
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::startAnimation):
+        (WebCore::RenderLayerModelObject::animationFinished):
+        * rendering/RenderLayerModelObject.h:
+
 2019-03-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Heap: lazily create the agent

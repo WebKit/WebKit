@@ -226,7 +226,7 @@ public:
     virtual void transitionPaused(double /* timeOffset */, CSSPropertyID) { }
     virtual void transitionFinished(CSSPropertyID) { }
 
-    virtual bool startAnimation(double /* timeOffset */, const Animation*, const KeyframeList&) { return false; }
+    virtual bool startAnimation(double /* timeOffset */, const Animation&, const KeyframeList&) { return false; }
     virtual void animationPaused(double /* timeOffset */, const String& /* name */) { }
     virtual void animationSeeked(double /* timeOffset */, const String& /* name */) { }
     virtual void animationFinished(const String& /* name */) { }
