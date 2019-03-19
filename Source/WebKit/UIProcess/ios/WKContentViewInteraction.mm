@@ -1174,7 +1174,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     if (!_webView._retainingActiveFocusedState) {
         // We need to complete the editing operation before we blur the element.
         [self _endEditing];
-        _page->blurFocusedElement();
+        if (_dismissingAccessory || _keyboardDidRequestDismissal)
+            _page->blurFocusedElement();
     }
 
     [self _cancelInteraction];
@@ -3691,6 +3692,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 // UIWebFormAccessoryDelegate
 - (void)accessoryDone
 {
+    SetForScope<BOOL> dismissingAccessoryScope { _dismissingAccessory, YES };
     [self resignFirstResponder];
 }
 

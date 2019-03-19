@@ -1,3 +1,30 @@
+2019-03-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Focus not preserved when switching between tabs
+        https://bugs.webkit.org/show_bug.cgi?id=195820
+        <rdar://problem/43614450>
+
+        Reviewed by Brent Fulgham.
+
+        Fixes a usability annoyance when using a hardware keyboard; focus is not preserved when switching between tabs.
+        Do not unconditionally tell the WebProcess to blur the currently focused element when the content view (WKContentView)
+        resigns first responder. Instead only tell it to blur when the content view is resigning because either the
+        accessory view was dismissed (Done button was pressed) or the keyboard was dismissed (the hide keyboard button
+        was pressed).
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm: Add new ivar to track whether the content view is resigning
+        first responder status because the accessory view is being dismissed.
+        (-[WKContentView resignFirstResponderForWebView]): Only tell WebKit to blur the focused element if we are
+        resigning because the accessory view is being dismissed or the keyboard was hidden. We continue to do all
+        other steps when resigning, including hiding the keyboard. Note that by not telling WebKit to blur the
+        focused element we let it's focus controller manage the focused element with respect to the current
+        page activation state (i.e. whether the content view is first responder or not). When the content view
+        becomes the first responder then WebKit's focus controller will be told that the page has become activated
+        and will tell the UIProcess to focus the currently focused element, which will bring up the keyboard.
+        (-[WKContentView accessoryDone]): Update state so we know that a subsequent call to resign first responder
+        was due to the accessory view being dismissed.
+
 2019-03-19  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Remove overridden rules in sandbox

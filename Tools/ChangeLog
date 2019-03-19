@@ -1,3 +1,16 @@
+2019-03-19  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Focus not preserved when switching between tabs
+        https://bugs.webkit.org/show_bug.cgi?id=195820
+        <rdar://problem/43614450>
+
+        Reviewed by Brent Fulgham.
+
+        Add tests to ensure that we restore focus when resigning and becoming first responder.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2019-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes

@@ -274,7 +274,7 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
     EXPECT_WK_STREQ("a", [webView stringByEvaluatingJavaScript:@"document.querySelector('input').value"]);
 }
 
-TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
+TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
 {
     auto expectedCaretRect = CGRectMake(16, 13, 2, 15);
     auto webView = webViewWithAutofocusedInput();
@@ -284,6 +284,39 @@ TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
     dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
     [webView resignFirstResponder];
     restoreActiveFocusState();
+    [webView waitForCaretViewFrameToBecome:CGRectZero];
+
+    [webView becomeFirstResponder];
+    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+}
+
+TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponderWithRetainActiveFocusedState)
+{
+    NSArray *expectedSelectionRects = @[ [NSValue valueWithCGRect:CGRectMake(16, 13, 24, 15)] ];
+
+    auto webView = webViewWithAutofocusedInput();
+    [[webView textInputContentView] insertText:@"hello"];
+    [webView selectAll:nil];
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
+
+    dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
+    [webView resignFirstResponder];
+    restoreActiveFocusState();
+    [webView waitForSelectionViewRectsToBecome:@[ ]];
+
+    [webView becomeFirstResponder];
+    [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
+}
+
+TEST(KeyboardInputTests, CaretSelectionRectAfterRestoringFirstResponder)
+{
+    auto expectedCaretRect = CGRectMake(16, 13, 2, 15);
+    auto webView = webViewWithAutofocusedInput();
+    EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
+    [webView waitForCaretViewFrameToBecome:expectedCaretRect];
+
+    [webView resignFirstResponder];
     [webView waitForCaretViewFrameToBecome:CGRectZero];
 
     [webView becomeFirstResponder];
@@ -300,9 +333,7 @@ TEST(KeyboardInputTests, RangedSelectionRectAfterRestoringFirstResponder)
     EXPECT_WK_STREQ("INPUT", [webView stringByEvaluatingJavaScript:@"document.activeElement.tagName"]);
     [webView waitForSelectionViewRectsToBecome:expectedSelectionRects];
 
-    dispatch_block_t restoreActiveFocusState = [webView _retainActiveFocusedState];
     [webView resignFirstResponder];
-    restoreActiveFocusState();
     [webView waitForSelectionViewRectsToBecome:@[ ]];
 
     [webView becomeFirstResponder];
