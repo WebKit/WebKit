@@ -1,3 +1,26 @@
+2019-03-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Heap: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195590
+        <rdar://problem/48791750>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/InspectorHeapAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::~InspectorHeapAgent): Deleted.
+
+        * inspector/agents/InspectorConsoleAgent.h:
+        (Inspector::InspectorConsoleAgent::setInspectorHeapAgent): Added.
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::InspectorConsoleAgent):
+        (Inspector::InspectorConsoleAgent::takeHeapSnapshot):
+        (Inspector::InspectorConsoleAgent::~InspectorConsoleAgent): Deleted.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+        (Inspector::JSGlobalObjectInspectorController::createLazyAgents):
+
 2019-03-19  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] LLIntEntryPoint creates same DirectJITCode for all functions

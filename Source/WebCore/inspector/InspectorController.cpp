@@ -131,15 +131,11 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
     m_agents.append(WTFMove(domStorageAgentPtr));
 
-    auto heapAgentPtr = std::make_unique<PageHeapAgent>(pageContext);
-    InspectorHeapAgent* heapAgent = heapAgentPtr.get();
-    m_agents.append(WTFMove(heapAgentPtr));
-
     auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(pageContext);
     m_instrumentingAgents->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
     m_agents.append(WTFMove(scriptProfilerAgentPtr));
 
-    auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, heapAgent, m_domAgent);
+    auto consoleAgentPtr = std::make_unique<PageConsoleAgent>(pageContext, m_domAgent);
     WebConsoleAgent* consoleAgent = consoleAgentPtr.get();
     m_instrumentingAgents->setWebConsoleAgent(consoleAgentPtr.get());
     m_agents.append(WTFMove(consoleAgentPtr));
@@ -202,6 +198,7 @@ void InspectorController::createLazyAgents()
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(std::make_unique<InspectorCPUProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
+    m_agents.append(std::make_unique<PageHeapAgent>(pageContext));
 #endif
     m_agents.append(std::make_unique<PageAuditAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorCanvasAgent>(pageContext));

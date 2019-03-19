@@ -73,8 +73,7 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 
     auto inspectorAgent = std::make_unique<InspectorAgent>(context);
     auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
-    auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
-    auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context, heapAgent.get());
+    auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context);
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, consoleAgent.get());
     auto scriptProfilerAgent = std::make_unique<InspectorScriptProfilerAgent>(context);
 
@@ -87,7 +86,6 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     m_agents.append(WTFMove(runtimeAgent));
     m_agents.append(WTFMove(consoleAgent));
     m_agents.append(WTFMove(debuggerAgent));
-    m_agents.append(WTFMove(heapAgent));
     m_agents.append(WTFMove(scriptProfilerAgent));
 
     m_executionStopwatch->start();
@@ -313,6 +311,11 @@ void JSGlobalObjectInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     auto context = jsAgentContext();
+
+    auto heapAgent = std::make_unique<InspectorHeapAgent>(context);
+    if (m_consoleAgent)
+        m_consoleAgent->setInspectorHeapAgent(heapAgent.get());
+    m_agents.append(WTFMove(heapAgent));
 
     m_agents.append(std::make_unique<JSGlobalObjectAuditAgent>(context));
 }

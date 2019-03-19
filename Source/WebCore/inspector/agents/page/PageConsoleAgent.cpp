@@ -42,8 +42,8 @@ namespace WebCore {
 
 using namespace Inspector;
 
-PageConsoleAgent::PageConsoleAgent(WebAgentContext& context, InspectorHeapAgent* heapAgent, InspectorDOMAgent* domAgent)
-    : WebConsoleAgent(context, heapAgent)
+PageConsoleAgent::PageConsoleAgent(WebAgentContext& context, InspectorDOMAgent* domAgent)
+    : WebConsoleAgent(context)
     , m_inspectorDOMAgent(domAgent)
 {
 }

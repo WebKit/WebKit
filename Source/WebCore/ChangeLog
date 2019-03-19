@@ -1,3 +1,38 @@
+2019-03-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Heap: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195590
+        <rdar://problem/48791750>
+
+        Reviewed by Joseph Pecoraro.
+
+        No change in functionality.
+
+        * inspector/agents/page/PageHeapAgent.cpp:
+        (WebCore::PageHeapAgent::disable):
+        * inspector/agents/WebHeapAgent.h:
+        * inspector/agents/WebHeapAgent.cpp:
+        (WebCore::WebHeapAgent::WebHeapAgent):
+        (WebCore::WebHeapAgent::enable): Added.
+        (WebCore::WebHeapAgent::disable):
+
+        * inspector/agents/page/PageConsoleAgent.h:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        * inspector/agents/WebConsoleAgent.h:
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::WebConsoleAgent):
+        * inspector/agents/worker/WorkerConsoleAgent.h:
+        * inspector/agents/worker/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::WorkerConsoleAgent):
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::createLazyAgents):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+        (WebCore::WorkerInspectorController::createLazyAgents):
+
 2019-03-19  Simon Fraser  <simon.fraser@apple.com>
 
         Fix GraphicsLayer-related crashes after r243129

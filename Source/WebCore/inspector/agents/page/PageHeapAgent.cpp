@@ -45,8 +45,8 @@ void PageHeapAgent::enable(ErrorString& errorString)
 
 void PageHeapAgent::disable(ErrorString& errorString)
 {
-    WebHeapAgent::disable(errorString);
     m_instrumentingAgents.setPageHeapAgent(nullptr);
+    WebHeapAgent::disable(errorString);
 }
 
 void PageHeapAgent::mainFrameNavigated()

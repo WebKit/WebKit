@@ -38,7 +38,7 @@ class WebConsoleAgent : public Inspector::InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(WebConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebConsoleAgent(Inspector::AgentContext&, Inspector::InspectorHeapAgent*);
+    WebConsoleAgent(Inspector::AgentContext&);
     virtual ~WebConsoleAgent() = default;
 
     void frameWindowDiscarded(DOMWindow*);

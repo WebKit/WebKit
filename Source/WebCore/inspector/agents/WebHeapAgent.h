@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InspectorWebAgentBase.h"
 #include <JavaScriptCore/InspectorHeapAgent.h>
 #include <wtf/Forward.h>
 
@@ -39,15 +40,18 @@ class WebHeapAgent : public Inspector::InspectorHeapAgent {
     WTF_MAKE_FAST_ALLOCATED;
     friend class SendGarbageCollectionEventsTask;
 public:
-    WebHeapAgent(Inspector::AgentContext&);
+    WebHeapAgent(WebAgentContext&);
     virtual ~WebHeapAgent();
 
 protected:
+    void enable(ErrorString&) override;
     void disable(ErrorString&) override;
 
     void dispatchGarbageCollectedEvent(Inspector::Protocol::Heap::GarbageCollection::Type, Seconds startTime, Seconds endTime) override;
 
     void dispatchGarbageCollectionEventsAfterDelay(Vector<GarbageCollectionData>&& collections);
+
+    InstrumentingAgents& m_instrumentingAgents;
 
     std::unique_ptr<SendGarbageCollectionEventsTask> m_sendGarbageCollectionEventsTask;
 };

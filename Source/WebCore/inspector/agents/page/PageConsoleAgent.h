@@ -42,7 +42,7 @@ class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageConsoleAgent(WebAgentContext&, Inspector::InspectorHeapAgent*, InspectorDOMAgent*);
+    PageConsoleAgent(WebAgentContext&, InspectorDOMAgent*);
     virtual ~PageConsoleAgent() = default;
 
 private:

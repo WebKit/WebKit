@@ -48,10 +48,6 @@ InspectorHeapAgent::InspectorHeapAgent(AgentContext& context)
 {
 }
 
-InspectorHeapAgent::~InspectorHeapAgent()
-{
-}
-
 void InspectorHeapAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
 }

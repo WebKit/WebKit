@@ -32,8 +32,8 @@ namespace WebCore {
 
 using namespace Inspector;
 
-WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context, InspectorHeapAgent* heapAgent)
-    : WebConsoleAgent(context, heapAgent)
+WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context)
+    : WebConsoleAgent(context)
 {
     ASSERT(context.workerGlobalScope.isContextThread());
 }

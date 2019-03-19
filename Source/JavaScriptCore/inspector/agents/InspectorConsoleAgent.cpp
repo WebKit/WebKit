@@ -42,16 +42,11 @@ namespace Inspector {
 static const unsigned maximumConsoleMessages = 100;
 static const int expireConsoleMessagesStep = 10;
 
-InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context, InspectorHeapAgent* heapAgent)
+InspectorConsoleAgent::InspectorConsoleAgent(AgentContext& context)
     : InspectorAgentBase("Console"_s)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(std::make_unique<ConsoleFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(ConsoleBackendDispatcher::create(context.backendDispatcher, this))
-    , m_heapAgent(heapAgent)
-{
-}
-
-InspectorConsoleAgent::~InspectorConsoleAgent()
 {
 }
 
@@ -171,6 +166,9 @@ void InspectorConsoleAgent::stopTiming(const String& title, Ref<ScriptCallStack>
 void InspectorConsoleAgent::takeHeapSnapshot(const String& title)
 {
     if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
+    if (!m_heapAgent)
         return;
 
     ErrorString ignored;

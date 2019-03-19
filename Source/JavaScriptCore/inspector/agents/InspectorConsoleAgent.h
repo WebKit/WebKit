@@ -52,12 +52,14 @@ class JS_EXPORT_PRIVATE InspectorConsoleAgent : public InspectorAgentBase, publi
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorConsoleAgent(AgentContext&, InspectorHeapAgent*);
-    virtual ~InspectorConsoleAgent();
+    InspectorConsoleAgent(AgentContext&);
+    virtual ~InspectorConsoleAgent() = default;
 
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(DisconnectReason) override;
     void discardValues() override;
+
+    void setInspectorHeapAgent(InspectorHeapAgent* agent) { m_heapAgent = agent; }
 
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
@@ -82,7 +84,7 @@ protected:
     InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<ConsoleFrontendDispatcher> m_frontendDispatcher;
     RefPtr<ConsoleBackendDispatcher> m_backendDispatcher;
-    InspectorHeapAgent* m_heapAgent;
+    InspectorHeapAgent* m_heapAgent { nullptr };
 
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount { 0 };
