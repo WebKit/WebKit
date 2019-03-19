@@ -1,3 +1,39 @@
+2019-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Make WTFLogChannelState and WTFLogLevel enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+
+        Reviewed by Eric Carlson.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::removeSamplesFromTrackBuffer):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+        (WebCore::LibWebRTCMediaEndpoint::statsLogInterval const):
+        * dom/Document.cpp:
+        (WebCore::messageLevelFromWTFLogLevel):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::FTPDirectoryDocument):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::seekTask):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::sourceWasRemoved):
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::getLoggingChannels):
+        (WebCore::channelConfigurationForString):
+        * platform/Logging.cpp:
+        (WebCore::isLogChannelEnabled):
+        (WebCore::setLogChannelToAccumulate):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::initializePeerConnectionFactoryAndThreads):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::compositingLogEnabled):
+
 2019-03-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG property tear off objects for SVGStringList

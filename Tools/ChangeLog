@@ -1,5 +1,15 @@
 2019-03-18  Alex Christensen  <achristensen@webkit.org>
 
+        Make WTFLogChannelState and WTFLogLevel enum classes
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/Logging.cpp:
+        (TestWebKitAPI::TEST_F):
+
+2019-03-18  Alex Christensen  <achristensen@webkit.org>
+
         Disable flaky test added in r2431100
         https://webkit.org/b/195785
 

@@ -3075,7 +3075,7 @@ void HTMLMediaElement::seekTask()
     // time scale, we will ask the media engine to "seek" to the current movie time, which may be a noop and
     // not generate a timechanged callback. This means m_seeking will never be cleared and we will never
     // fire a 'seeked' event.
-    if (willLog(WTFLogLevelDebug)) {
+    if (willLog(WTFLogLevel::Debug)) {
         MediaTime mediaTime = m_player->mediaTimeForTimeValue(time);
         if (time != mediaTime)
             INFO_LOG(LOGIDENTIFIER, time, " media timeline equivalent is ", mediaTime);
@@ -4651,7 +4651,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
     UNUSED_PARAM(keySystem);
 
     // Don't log if this was just called to find out if there are any valid <source> elements.
-    bool shouldLog = willLog(WTFLogLevelDebug) && actionIfInvalid != DoNothing;
+    bool shouldLog = willLog(WTFLogLevel::Debug) && actionIfInvalid != DoNothing;
     if (shouldLog)
         INFO_LOG(LOGIDENTIFIER);
 
@@ -4750,7 +4750,7 @@ CheckAgain:
 
 void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
 {
-    if (willLog(WTFLogLevelInfo) && source.hasTagName(sourceTag)) {
+    if (willLog(WTFLogLevel::Info) && source.hasTagName(sourceTag)) {
         URL url = source.getNonEmptyURLAttribute(srcAttr);
         INFO_LOG(LOGIDENTIFIER, "'src' is ", url);
     }
@@ -4802,7 +4802,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
 
 void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement& source)
 {
-    if (willLog(WTFLogLevelInfo) && source.hasTagName(sourceTag)) {
+    if (willLog(WTFLogLevel::Info) && source.hasTagName(sourceTag)) {
         URL url = source.getNonEmptyURLAttribute(srcAttr);
         INFO_LOG(LOGIDENTIFIER, "'src' is ", url);
     }

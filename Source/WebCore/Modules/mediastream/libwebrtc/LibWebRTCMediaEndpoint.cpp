@@ -865,7 +865,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
         }
 
         for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
-            if (logger().willLog(logChannel(), WTFLogLevelDebug)) {
+            if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
                 // Stats are very verbose, let's only display them in inspector console in verbose mode.
                 logger().debug(LogWebRTC,
                     Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint", "OnStatsDelivered", logIdentifier()),
@@ -904,7 +904,7 @@ WTFLogChannel& LibWebRTCMediaEndpoint::logChannel() const
 
 Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
 {
-    if (logger().willLog(logChannel(), WTFLogLevelInfo))
+    if (logger().willLog(logChannel(), WTFLogLevel::Info))
         return 2_s;
 
     if (reportTimestamp - m_statsFirstDeliveredTimestamp > 15000000)
