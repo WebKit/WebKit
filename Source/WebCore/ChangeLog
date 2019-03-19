@@ -1,3 +1,53 @@
+2019-03-19  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use tolerance in eraseBeginTime
+        https://bugs.webkit.org/show_bug.cgi?id=195911
+
+        Reviewed by Jer Noble.
+
+        https://bugs.webkit.org/show_bug.cgi?id=190085 introduced tolerance
+        when erasing frames during the Coded Frame Processing algorithm in
+        such a way that, in files with less than perfect timestamps, a frame
+        existing before after the current append is not erased accidentally
+        due to small overlaps.
+
+        This patch takes care of the opposite problem: we don't want an old
+        frame being accidentally NOT erased by a new one with the same
+        timestamps just because these overlaps make
+        highestPresentationTimestamp very slightly higher than the frame PTS.
+
+        This bug in practice causes some frames of the old quality to not be
+        erased when the new quality is appended, resulting in some seemingly
+        still frames from a different quality appearing at some points during
+        WebM video in presence of quality changes.
+
+        This bug can be reduced to this minimal test case that illustrates the
+        timestamp imprecission of a typical WebM file:
+
+        function sampleRun(generation) {
+            return concatenateSamples([
+                makeASample(     0,      0, 166667, 1000000, 1, SAMPLE_FLAG.SYNC, generation),
+                makeASample(167000, 167000, 166667, 1000000, 1, SAMPLE_FLAG.NONE, generation),
+                makeASample(333000, 333000, 166667, 1000000, 1, SAMPLE_FLAG.SYNC, generation), // overlaps previous frame
+                makeASample(500000, 500000, 166667, 1000000, 1, SAMPLE_FLAG.NONE, generation),
+            ]);
+        }
+
+        After appending this twice it would be expected that the second
+        generation takes fully over the first, since the timestamps are
+        completely the same. Due to the bug, sync frames with an overlap, like
+        the third one in that list, actually persist from the first
+        generation, due to lack of tolerance when comparing the start of a new
+        frame with highestPresentationTimestamp.
+
+        This patch introduces the tolerance in that case too to fix this
+        problem.
+
+        Test: media/media-source/media-source-append-twice-overlapping-sync-frame.html
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK build fix

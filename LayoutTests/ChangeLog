@@ -1,3 +1,13 @@
+2019-03-19  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE] Use tolerance in eraseBeginTime
+        https://bugs.webkit.org/show_bug.cgi?id=195911
+
+        Reviewed by Jer Noble.
+
+        * media/media-source/media-source-append-twice-overlapping-sync-frame-expected.txt: Added.
+        * media/media-source/media-source-append-twice-overlapping-sync-frame.html: Added.
+
 2019-03-19  Antti Koivisto  <antti@apple.com>
 
         Layer with no backing store should still hit-test over a scroller
