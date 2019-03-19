@@ -47,7 +47,6 @@ namespace WebCore {
 
 class Database;
 class EventTarget;
-class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class JSDOMGlobalObject;
 class Storage;
@@ -61,13 +60,11 @@ public:
 
     void init(Inspector::InspectorAgent* inspectorAgent
         , Inspector::InspectorConsoleAgent* consoleAgent
-        , InspectorDOMStorageAgent* domStorageAgent
         , InspectorDatabaseAgent* databaseAgent
         )
     {
         m_inspectorAgent = inspectorAgent;
         m_consoleAgent = consoleAgent;
-        m_domStorageAgent = domStorageAgent;
         m_databaseAgent = databaseAgent;
     }
 
@@ -107,7 +104,6 @@ private:
 
     Inspector::InspectorAgent* m_inspectorAgent { nullptr };
     Inspector::InspectorConsoleAgent* m_consoleAgent { nullptr };
-    InspectorDOMStorageAgent* m_domStorageAgent { nullptr };
     InspectorDatabaseAgent* m_databaseAgent { nullptr };
 
     std::unique_ptr<InspectableObject> m_inspectedObject; // $0

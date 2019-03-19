@@ -41,7 +41,6 @@ class DOMStorageFrontendDispatcher;
 namespace WebCore {
 
 class Frame;
-class InspectorPageAgent;
 class Page;
 class SecurityOrigin;
 class Storage;
@@ -52,8 +51,8 @@ class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspect
     WTF_MAKE_NONCOPYABLE(InspectorDOMStorageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMStorageAgent(WebAgentContext&, InspectorPageAgent*);
-    virtual ~InspectorDOMStorageAgent();
+    InspectorDOMStorageAgent(WebAgentContext&);
+    virtual ~InspectorDOMStorageAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
@@ -66,8 +65,8 @@ public:
     void removeDOMStorageItem(ErrorString&, const JSON::Object& storageId, const String& key) override;
 
     // Called from the injected script.
-    String storageId(Storage&);
-    RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
+    static String storageId(Storage&);
+    static RefPtr<Inspector::Protocol::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
 
     // InspectorInstrumentation
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
@@ -77,9 +76,6 @@ private:
 
     std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
-    InspectorPageAgent* m_pageAgent { nullptr };
-
-    bool m_enabled { false };
 };
 
 } // namespace WebCore

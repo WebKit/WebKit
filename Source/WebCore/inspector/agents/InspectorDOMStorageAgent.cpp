@@ -54,18 +54,11 @@ namespace WebCore {
 
 using namespace Inspector;
 
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context, InspectorPageAgent* pageAgent)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(context.backendDispatcher, this))
-    , m_pageAgent(pageAgent)
 {
-    m_instrumentingAgents.setInspectorDOMStorageAgent(this);
-}
-
-InspectorDOMStorageAgent::~InspectorDOMStorageAgent()
-{
-    m_instrumentingAgents.setInspectorDOMStorageAgent(nullptr);
 }
 
 void InspectorDOMStorageAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -80,12 +73,12 @@ void InspectorDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::Disconne
 
 void InspectorDOMStorageAgent::enable(ErrorString&)
 {
-    m_enabled = true;
+    m_instrumentingAgents.setInspectorDOMStorageAgent(this);
 }
 
 void InspectorDOMStorageAgent::disable(ErrorString&)
 {
-    m_enabled = false;
+    m_instrumentingAgents.setInspectorDOMStorageAgent(nullptr);
 }
 
 void InspectorDOMStorageAgent::getDOMStorageItems(ErrorString& errorString, const JSON::Object& storageId, RefPtr<JSON::ArrayOf<JSON::ArrayOf<String>>>& items)
@@ -147,7 +140,7 @@ String InspectorDOMStorageAgent::storageId(Storage& storage)
     ASSERT(window);
     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
     bool isLocalStorage = window->optionalLocalStorage() == &storage;
-    return storageId(securityOrigin.ptr(), isLocalStorage)->toJSONString();
+    return InspectorDOMStorageAgent::storageId(securityOrigin.ptr(), isLocalStorage)->toJSONString();
 }
 
 RefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::storageId(SecurityOrigin* securityOrigin, bool isLocalStorage)
@@ -160,10 +153,7 @@ RefPtr<Inspector::Protocol::DOMStorage::StorageId> InspectorDOMStorageAgent::sto
 
 void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)
 {
-    if (!m_enabled)
-        return;
-
-    RefPtr<Inspector::Protocol::DOMStorage::StorageId> id = storageId(securityOrigin, storageType == StorageType::Local);
+    RefPtr<Inspector::Protocol::DOMStorage::StorageId> id = InspectorDOMStorageAgent::storageId(securityOrigin, storageType == StorageType::Local);
 
     if (key.isNull())
         m_frontendDispatcher->domStorageItemsCleared(id);
@@ -188,15 +178,22 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
         return nullptr;
     }
 
-    targetFrame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    ASSERT(pageAgent);
+    if (!pageAgent) {
+        errorString = "Missing Page agent"_s;
+        return nullptr;
+    }
+
+    targetFrame = pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     if (!targetFrame) {
         errorString = "Frame not found for the given security origin"_s;
         return nullptr;
     }
 
     if (!isLocalStorage)
-        return m_pageAgent->page().sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
-    return m_pageAgent->page().storageNamespaceProvider().localStorageArea(*targetFrame->document());
+        return pageAgent->page().sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
+    return pageAgent->page().storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 
 } // namespace WebCore

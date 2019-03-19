@@ -71,7 +71,6 @@ void CommandLineAPIHost::disconnect()
 {
     m_inspectorAgent = nullptr;
     m_consoleAgent = nullptr;
-    m_domStorageAgent = nullptr;
     m_databaseAgent = nullptr;
 }
 
@@ -167,9 +166,7 @@ String CommandLineAPIHost::databaseId(Database& database)
 
 String CommandLineAPIHost::storageId(Storage& storage)
 {
-    if (m_domStorageAgent)
-        return m_domStorageAgent->storageId(storage);
-    return { };
+    return InspectorDOMStorageAgent::storageId(storage);
 }
 
 JSValue CommandLineAPIHost::wrapper(ExecState* exec, JSDOMGlobalObject* globalObject)

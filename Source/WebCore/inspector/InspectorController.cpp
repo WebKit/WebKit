@@ -127,10 +127,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     InspectorDatabaseAgent* databaseAgent = databaseAgentPtr.get();
     m_agents.append(WTFMove(databaseAgentPtr));
 
-    auto domStorageAgentPtr = std::make_unique<InspectorDOMStorageAgent>(pageContext, m_pageAgent);
-    InspectorDOMStorageAgent* domStorageAgent = domStorageAgentPtr.get();
-    m_agents.append(WTFMove(domStorageAgentPtr));
-
     auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(pageContext);
     m_instrumentingAgents->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());
     m_agents.append(WTFMove(scriptProfilerAgentPtr));
@@ -142,7 +138,7 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(m_inspectorAgent, consoleAgent, domStorageAgent, databaseAgent);
+        commandLineAPIHost->init(m_inspectorAgent, consoleAgent, databaseAgent);
 }
 
 InspectorController::~InspectorController()
@@ -192,14 +188,15 @@ void InspectorController::createLazyAgents()
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, m_pageAgent));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
+    m_agents.append(std::make_unique<InspectorDOMStorageAgent>(pageContext));
 #if ENABLE(INDEXED_DATABASE)
     m_agents.append(std::make_unique<InspectorIndexedDBAgent>(pageContext, m_pageAgent));
 #endif
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(std::make_unique<InspectorCPUProfilerAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
-    m_agents.append(std::make_unique<PageHeapAgent>(pageContext));
 #endif
+    m_agents.append(std::make_unique<PageHeapAgent>(pageContext));
     m_agents.append(std::make_unique<PageAuditAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorCanvasAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorTimelineAgent>(pageContext));
