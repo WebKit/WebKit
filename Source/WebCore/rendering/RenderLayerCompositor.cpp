@@ -291,8 +291,27 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
 RenderLayerCompositor::~RenderLayerCompositor()
 {
     // Take care that the owned GraphicsLayers are deleted first as their destructors may call back here.
-    m_clipLayer = nullptr;
-    m_scrolledContentsLayer = nullptr;
+    GraphicsLayer::unparentAndClear(m_rootContentsLayer);
+    
+    GraphicsLayer::unparentAndClear(m_clipLayer);
+    GraphicsLayer::unparentAndClear(m_scrollContainerLayer);
+    GraphicsLayer::unparentAndClear(m_scrolledContentsLayer);
+
+    GraphicsLayer::unparentAndClear(m_overflowControlsHostLayer);
+
+    GraphicsLayer::unparentAndClear(m_layerForHorizontalScrollbar);
+    GraphicsLayer::unparentAndClear(m_layerForVerticalScrollbar);
+    GraphicsLayer::unparentAndClear(m_layerForScrollCorner);
+
+#if ENABLE(RUBBER_BANDING)
+    GraphicsLayer::unparentAndClear(m_layerForOverhangAreas);
+    GraphicsLayer::unparentAndClear(m_contentShadowLayer);
+    GraphicsLayer::unparentAndClear(m_layerForTopOverhangArea);
+    GraphicsLayer::unparentAndClear(m_layerForBottomOverhangArea);
+    GraphicsLayer::unparentAndClear(m_layerForHeader);
+    GraphicsLayer::unparentAndClear(m_layerForFooter);
+#endif
+
     ASSERT(m_rootLayerAttachment == RootLayerUnattached);
 }
 

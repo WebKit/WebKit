@@ -539,7 +539,6 @@ private:
     
 private:
     RenderView& m_renderView;
-    RefPtr<GraphicsLayer> m_rootContentsLayer;
     Timer m_updateCompositingLayersTimer;
 
     ChromeClient::CompositingTriggerFlags m_compositingTriggers { static_cast<ChromeClient::CompositingTriggerFlags>(ChromeClient::AllTriggers) };
@@ -566,6 +565,8 @@ private:
     unsigned m_compositingUpdateCount { 0 };
 
     RootLayerAttachment m_rootLayerAttachment { RootLayerUnattached };
+
+    RefPtr<GraphicsLayer> m_rootContentsLayer;
 
     // Enclosing clipping layer for iframe content
     RefPtr<GraphicsLayer> m_clipLayer;
