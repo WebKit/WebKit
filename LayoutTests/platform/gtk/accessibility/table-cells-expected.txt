@@ -13,8 +13,8 @@ South	3333	1111	2222
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 234.000000, 27.000000 }
-AXSize: { 144.000000, 66.000000 }
+AXPosition: { 234.000, 27.0000 }
+AXSize: { 144.000, 66.0000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -33,8 +33,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 446.000000, 57.000000 }
-AXSize: { 53.000000, 36.000000 }
+AXPosition: { 446.000, 57.0000 }
+AXSize: { 53.0000, 36.0000 }
 AXTitle: 
 AXDescription: 
 AXValue: Males
@@ -53,8 +53,8 @@ AXPlatformAttributes: computed-role:cell, tag:th, toolkit:WebKitGtk
 AXRole: AXColumnHeader
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 227.000000, 27.000000 }
-AXSize: { 143.000000, 66.000000 }
+AXPosition: { 227.000, 27.0000 }
+AXSize: { 143.000, 66.0000 }
 AXTitle: 
 AXDescription: 
 AXValue: Ruritanian<\n>Population <\n>Survey
@@ -73,8 +73,8 @@ AXPlatformAttributes: computed-role:columnheader, tag:th, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 370.000000, 93.000000 }
-AXSize: { 69.000000, 30.000000 }
+AXPosition: { 370.000, 93.0000 }
+AXSize: { 69.0000, 30.0000 }
 AXTitle: 
 AXDescription: 
 AXValue: 3333
@@ -93,8 +93,8 @@ AXPlatformAttributes: computed-role:cell, tag:td, toolkit:WebKitGtk
 AXRole: AXCell
 AXParent: AXRow
 AXChildren: 0
-AXPosition: { 439.000000, 183.000000 }
-AXSize: { 52.000000, 30.000000 }
+AXPosition: { 439.000, 183.000 }
+AXSize: { 52.0000, 30.0000 }
 AXTitle: 
 AXDescription: 
 AXValue: 1111

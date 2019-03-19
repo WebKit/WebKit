@@ -80,7 +80,7 @@ legend
       AXRole: AXLabel
       
 footer
-      AXRole: AXFooter
+      AXRole: AXLandmarkContentInfo
       
 form
       AXRole: AXForm
