@@ -110,7 +110,7 @@ public:
     {
 
         ASSERT(isWide());
-        return reinterpret_cast<const Impl<OpcodeSize::Wide>*>((uintptr_t)this + 1);
+        return reinterpret_cast<const Impl<OpcodeSize::Wide>*>(bitwise_cast<uintptr_t>(this) + 1);
     }
 };
 
