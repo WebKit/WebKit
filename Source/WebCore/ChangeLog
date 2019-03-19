@@ -1,3 +1,15 @@
+2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r243132.
+
+        Broke GTK build
+
+        Reverted changeset:
+
+        "Make WTFLogChannelState and WTFLogLevel enum classes"
+        https://bugs.webkit.org/show_bug.cgi?id=195904
+        https://trac.webkit.org/changeset/243132
+
 2019-03-19  Antti Koivisto  <antti@apple.com>
 
         Layer with no backing store should still hit-test over a scroller

@@ -273,7 +273,7 @@ struct RenderLayerCompositor::OverlapExtent {
 #if !LOG_DISABLED
 static inline bool compositingLogEnabled()
 {
-    return LogCompositing.state == WTFLogChannelState::On;
+    return LogCompositing.state == WTFLogChannelOn;
 }
 #endif
 

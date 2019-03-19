@@ -385,7 +385,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
     sample.offsetTimestampsBy(timelineOffset);
     DEBUG_LOG(LOGIDENTIFIER, "updated sample = ", sample);
 
-    if (WILL_LOG(WTFLogLevel::Debug)) {
+    if (WILL_LOG(WTFLogLevelDebug)) {
         MediaTime now = streamTime();
         double delta = (sample.presentationTime() - now).toDouble();
         if (delta < 0)

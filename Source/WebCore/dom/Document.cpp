@@ -8538,18 +8538,18 @@ static MessageSource messageSourceForWTFLogChannel(const WTFLogChannel& channel)
 static MessageLevel messageLevelFromWTFLogLevel(WTFLogLevel level)
 {
     switch (level) {
-    case WTFLogLevel::Always:
+    case WTFLogLevelAlways:
         return MessageLevel::Log;
-    case WTFLogLevel::Error:
+    case WTFLogLevelError:
         return MessageLevel::Error;
         break;
-    case WTFLogLevel::Warning:
+    case WTFLogLevelWarning:
         return MessageLevel::Warning;
         break;
-    case WTFLogLevel::Info:
+    case WTFLogLevelInfo:
         return MessageLevel::Info;
         break;
-    case WTFLogLevel::Debug:
+    case WTFLogLevelDebug:
         return MessageLevel::Debug;
         break;
     }

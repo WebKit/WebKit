@@ -57,32 +57,32 @@ public:
         //  on some systems, so don't allow it.
         UNUSED_PARAM(channel);
 #else
-        log(channel, WTFLogLevel::Always, arguments...);
+        log(channel, WTFLogLevelAlways, arguments...);
 #endif
     }
 
     template<typename... Arguments>
     inline void error(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        log(channel, WTFLogLevel::Error, arguments...);
+        log(channel, WTFLogLevelError, arguments...);
     }
 
     template<typename... Arguments>
     inline void warning(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        log(channel, WTFLogLevel::Warning, arguments...);
+        log(channel, WTFLogLevelWarning, arguments...);
     }
 
     template<typename... Arguments>
     inline void info(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        log(channel, WTFLogLevel::Info, arguments...);
+        log(channel, WTFLogLevelInfo, arguments...);
     }
 
     template<typename... Arguments>
     inline void debug(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        log(channel, WTFLogLevel::Debug, arguments...);
+        log(channel, WTFLogLevelDebug, arguments...);
     }
 
     inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level) const

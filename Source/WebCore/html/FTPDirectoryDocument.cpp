@@ -425,7 +425,7 @@ FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame, const URL& url)
     : HTMLDocument(frame, url)
 {
 #if !LOG_DISABLED
-    LogFTP.state = WTFLogChannelState::On;
+    LogFTP.state = WTFLogChannelOn;
 #endif
 }
 

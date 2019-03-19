@@ -126,47 +126,47 @@ public:
         //  on some systems, so don't allow it.
         UNUSED_PARAM(channel);
 #else
-        if (!willLog(channel, WTFLogLevel::Always))
+        if (!willLog(channel, WTFLogLevelAlways))
             return;
 
-        log(channel, WTFLogLevel::Always, arguments...);
+        log(channel, WTFLogLevelAlways, arguments...);
 #endif
     }
 
     template<typename... Arguments>
     inline void error(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        if (!willLog(channel, WTFLogLevel::Error))
+        if (!willLog(channel, WTFLogLevelError))
             return;
 
-        log(channel, WTFLogLevel::Error, arguments...);
+        log(channel, WTFLogLevelError, arguments...);
     }
 
     template<typename... Arguments>
     inline void warning(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        if (!willLog(channel, WTFLogLevel::Warning))
+        if (!willLog(channel, WTFLogLevelWarning))
             return;
 
-        log(channel, WTFLogLevel::Warning, arguments...);
+        log(channel, WTFLogLevelWarning, arguments...);
     }
 
     template<typename... Arguments>
     inline void info(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        if (!willLog(channel, WTFLogLevel::Info))
+        if (!willLog(channel, WTFLogLevelInfo))
             return;
 
-        log(channel, WTFLogLevel::Info, arguments...);
+        log(channel, WTFLogLevelInfo, arguments...);
     }
 
     template<typename... Arguments>
     inline void debug(WTFLogChannel& channel, const Arguments&... arguments) const
     {
-        if (!willLog(channel, WTFLogLevel::Debug))
+        if (!willLog(channel, WTFLogLevelDebug))
             return;
 
-        log(channel, WTFLogLevel::Debug, arguments...);
+        log(channel, WTFLogLevelDebug, arguments...);
     }
 
     inline bool willLog(const WTFLogChannel& channel, WTFLogLevel level) const
@@ -174,10 +174,10 @@ public:
         if (!m_enabled)
             return false;
 
-        if (level <= WTFLogLevel::Error)
+        if (level <= WTFLogLevelError)
             return true;
 
-        if (channel.state == WTFLogChannelState::Off || level > channel.level)
+        if (channel.state == WTFLogChannelOff || level > channel.level)
             return false;
 
         return m_enabled;
@@ -242,7 +242,7 @@ private:
         os_log(channel.osLogChannel, "%{public}s", logMessage.utf8().data());
 #endif
 
-        if (channel.state == WTFLogChannelState::Off || level > channel.level)
+        if (channel.state == WTFLogChannelOff || level > channel.level)
             return;
 
         for (Observer& observer : observers())

@@ -54,7 +54,7 @@ bool isLogChannelEnabled(const String& name)
     WTFLogChannel* channel = WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
     if (!channel)
         return false;
-    return channel->state != WTFLogChannelState::Off;
+    return channel->state != WTFLogChannelOff;
 }
 
 static bool logChannelsNeedInitialization = true;
@@ -65,7 +65,7 @@ void setLogChannelToAccumulate(const String& name)
     if (!channel)
         return;
 
-    channel->state = WTFLogChannelState::OnWithAccumulation;
+    channel->state = WTFLogChannelOnWithAccumulation;
     logChannelsNeedInitialization = true;
 }
 

@@ -148,13 +148,8 @@ extern "C" {
 #define NO_RETURN_DUE_TO_CRASH
 #endif
 
-#ifdef __cplusplus
-enum class WTFLogChannelState : uint8_t { Off, On, OnWithAccumulation };
-enum class WTFLogLevel : uint8_t { Always, Error, Warning, Info, Debug };
-#else
-typedef uint8_t WTFLogChannelState;
-typedef uint8_t WTFLogLevel;
-#endif
+typedef enum { WTFLogChannelOff, WTFLogChannelOn, WTFLogChannelOnWithAccumulation } WTFLogChannelState;
+typedef enum { WTFLogLevelAlways, WTFLogLevelError, WTFLogLevelWarning, WTFLogLevelInfo, WTFLogLevelDebug } WTFLogLevel;
 
 typedef struct {
     WTFLogChannelState state;
@@ -179,10 +174,10 @@ typedef struct {
 #if !defined(DEFINE_LOG_CHANNEL)
 #if RELEASE_LOG_DISABLED
 #define DEFINE_LOG_CHANNEL(name, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { (WTFLogChannelState)0, #name, (WTFLogLevel)1 };
+    WTFLogChannel LOG_CHANNEL(name) = { WTFLogChannelOff, #name, WTFLogLevelError };
 #else
 #define DEFINE_LOG_CHANNEL(name, subsystem) \
-    WTFLogChannel LOG_CHANNEL(name) = { (WTFLogChannelState)0, #name, (WTFLogLevel)1, subsystem, OS_LOG_DEFAULT };
+    WTFLogChannel LOG_CHANNEL(name) = { WTFLogChannelOff, #name, WTFLogLevelError, subsystem, OS_LOG_DEFAULT };
 #endif
 #endif
 

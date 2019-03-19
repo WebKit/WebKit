@@ -34,7 +34,7 @@ namespace WebCore {
 static inline bool compositingLogEnabled()
 {
 #if !LOG_DISABLED
-    return LogCompositing.state == WTFLogChannelState::On;
+    return LogCompositing.state == WTFLogChannelOn;
 #else
     return false;
 #endif

@@ -65,7 +65,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 #if defined(NDEBUG)
     rtc::LogMessage::LogToDebug(rtc::LS_NONE);
 #else
-    if (WebKit2LogWebRTC.state != WTFLogChannelState::On)
+    if (WebKit2LogWebRTC.state != WTFLogChannelOn)
         rtc::LogMessage::LogToDebug(rtc::LS_WARNING);
 #endif
 }

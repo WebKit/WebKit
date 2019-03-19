@@ -741,7 +741,7 @@ static PlatformTimeRanges removeSamplesFromTrackBuffer(const DecodeOrderSampleMa
     size_t bytesRemoved = 0;
     auto logIdentifier = WTF::Logger::LogSiteIdentifier(buffer->logClassName(), logPrefix, buffer->logIdentifier());
     auto& logger = buffer->logger();
-    auto willLog = logger.willLog(buffer->logChannel(), WTFLogLevel::Debug);
+    auto willLog = logger.willLog(buffer->logChannel(), WTFLogLevelDebug);
 #else
     UNUSED_PARAM(logPrefix);
     UNUSED_PARAM(buffer);

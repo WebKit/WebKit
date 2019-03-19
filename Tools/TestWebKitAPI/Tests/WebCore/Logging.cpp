@@ -72,10 +72,10 @@ public:
         m_stderr = fdopen(m_descriptors[0], "r");
 
         WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all");
-        WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
-        WTFSetLogChannelLevel(&TestChannel2, WTFLogLevel::Error);
-        WTFSetLogChannelLevel(&TestChannel3, WTFLogLevel::Error);
-        WTFSetLogChannelLevel(&TestChannel4, WTFLogLevel::Error);
+        WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
+        WTFSetLogChannelLevel(&TestChannel2, WTFLogLevelError);
+        WTFSetLogChannelLevel(&TestChannel3, WTFLogLevelError);
+        WTFSetLogChannelLevel(&TestChannel4, WTFLogLevelError);
     }
 
     void TearDown() override
@@ -110,86 +110,86 @@ private:
 
 TEST_F(LoggingTest, Initialization)
 {
-    EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel2.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel3.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel4.state, WTFLogChannelState::On);
+    EXPECT_EQ(TestChannel1.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel2.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel3.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel4.state, WTFLogChannelOn);
 
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel3.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel4.level, WTFLogLevel::Error);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel2.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel3.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel4.level, WTFLogLevelError);
 
-    TestChannel1.state = WTFLogChannelState::Off;
+    TestChannel1.state = WTFLogChannelOff;
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1");
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel1.state, WTFLogChannelOn);
 
-    TestChannel1.state = WTFLogChannelState::Off;
+    TestChannel1.state = WTFLogChannelOff;
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=foo");
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelError);
 #if TEST_OUTPUT
     EXPECT_TRUE(output().contains("Unknown logging level: foo", false));
 #endif
 
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel1=warning");
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Warning);
-    EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel3.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel4.level, WTFLogLevel::Error);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelWarning);
+    EXPECT_EQ(TestChannel2.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel3.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel4.level, WTFLogLevelError);
 
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "Channel4=   debug, Channel3 = info,Channel2=error");
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Warning);
-    EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel3.level, WTFLogLevel::Info);
-    EXPECT_EQ(TestChannel4.level, WTFLogLevel::Debug);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelWarning);
+    EXPECT_EQ(TestChannel2.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel3.level, WTFLogLevelInfo);
+    EXPECT_EQ(TestChannel4.level, WTFLogLevelDebug);
 
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "-all");
-    EXPECT_EQ(TestChannel1.state, WTFLogChannelState::Off);
-    EXPECT_EQ(TestChannel2.state, WTFLogChannelState::Off);
-    EXPECT_EQ(TestChannel3.state, WTFLogChannelState::Off);
-    EXPECT_EQ(TestChannel4.state, WTFLogChannelState::Off);
+    EXPECT_EQ(TestChannel1.state, WTFLogChannelOff);
+    EXPECT_EQ(TestChannel2.state, WTFLogChannelOff);
+    EXPECT_EQ(TestChannel3.state, WTFLogChannelOff);
+    EXPECT_EQ(TestChannel4.state, WTFLogChannelOff);
 
     WTFInitializeLogChannelStatesFromString(testLogChannels, logChannelCount, "all");
-    EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel2.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel3.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel4.state, WTFLogChannelState::On);
+    EXPECT_EQ(TestChannel1.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel2.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel3.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel4.state, WTFLogChannelOn);
 }
 
 TEST_F(LoggingTest, WTFWillLogWithLevel)
 {
-    EXPECT_EQ(TestChannel1.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel2.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel3.state, WTFLogChannelState::On);
-    EXPECT_EQ(TestChannel4.state, WTFLogChannelState::On);
+    EXPECT_EQ(TestChannel1.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel2.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel3.state, WTFLogChannelOn);
+    EXPECT_EQ(TestChannel4.state, WTFLogChannelOn);
 
-    EXPECT_EQ(TestChannel1.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel2.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel3.level, WTFLogLevel::Error);
-    EXPECT_EQ(TestChannel4.level, WTFLogLevel::Error);
+    EXPECT_EQ(TestChannel1.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel2.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel3.level, WTFLogLevelError);
+    EXPECT_EQ(TestChannel4.level, WTFLogLevelError);
 
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Error));
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel2, WTFLogLevel::Error));
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel3, WTFLogLevel::Error));
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel4, WTFLogLevel::Error));
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelError));
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel2, WTFLogLevelError));
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel3, WTFLogLevelError));
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel4, WTFLogLevelError));
 
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Info));
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel2, WTFLogLevel::Info));
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel3, WTFLogLevel::Info));
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel4, WTFLogLevel::Info));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelInfo));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel2, WTFLogLevelInfo));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel3, WTFLogLevelInfo));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel4, WTFLogLevelInfo));
 
-    TestChannel1.state = WTFLogChannelState::Off;
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Error));
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Info));
+    TestChannel1.state = WTFLogChannelOff;
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelError));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelInfo));
 
-    TestChannel1.state = WTFLogChannelState::On;
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Error));
-    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Info));
+    TestChannel1.state = WTFLogChannelOn;
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelError));
+    EXPECT_FALSE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelInfo));
 
-    TestChannel1.level = WTFLogLevel::Info;
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Error));
-    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevel::Info));
+    TestChannel1.level = WTFLogLevelInfo;
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelError));
+    EXPECT_TRUE(WTFWillLogWithLevel(&TestChannel1, WTFLogLevelInfo));
 }
 
 #if TEST_OUTPUT
@@ -201,21 +201,21 @@ TEST_F(LoggingTest, LOG)
 
 TEST_F(LoggingTest, LOG_WITH_LEVEL)
 {
-    LOG_WITH_LEVEL(Channel1, WTFLogLevel::Error, "Go and boil your bottoms, you sons of a silly person.");
+    LOG_WITH_LEVEL(Channel1, WTFLogLevelError, "Go and boil your bottoms, you sons of a silly person.");
     EXPECT_TRUE(output().contains("sons of a silly person.", false));
 
-    LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "You don't frighten us, English pig dogs.");
+    LOG_WITH_LEVEL(Channel1, WTFLogLevelWarning, "You don't frighten us, English pig dogs.");
     EXPECT_EQ(0u, output().length());
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Info);
-    LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelInfo);
+    LOG_WITH_LEVEL(Channel1, WTFLogLevelWarning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
     EXPECT_TRUE(output().contains("outrageous accent", false));
 
-    LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
+    LOG_WITH_LEVEL(Channel1, WTFLogLevelDebug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
     EXPECT_EQ(0u, output().length());
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Debug);
-    LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "Go and tell your master that we have been charged by God with a sacred quest.");
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelDebug);
+    LOG_WITH_LEVEL(Channel1, WTFLogLevelDebug, "Go and tell your master that we have been charged by God with a sacred quest.");
     EXPECT_TRUE(output().contains("sacred quest", false));
 }
 
@@ -238,35 +238,35 @@ TEST_F(LoggingTest, RELEASE_LOG_IF)
 
 TEST_F(LoggingTest, RELEASE_LOG_WITH_LEVEL)
 {
-    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Error, "You don't frighten us, English pig dogs.");
+    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevelError, "You don't frighten us, English pig dogs.");
     EXPECT_TRUE(output().contains("pig dogs.", false));
 
-    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "Go and boil your bottoms, you sons of a silly person.");
+    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevelWarning, "Go and boil your bottoms, you sons of a silly person.");
     EXPECT_EQ(0u, output().length());
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Info);
-    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Warning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelInfo);
+    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevelWarning, "I'm French. Why do you think I have this outrageous accent, you silly king?");
     EXPECT_TRUE(output().contains("outrageous accent", false));
 
-    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
+    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevelDebug, "You don't frighten us with your silly knees-bent running around advancing behavior!");
     EXPECT_EQ(0u, output().length());
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Debug);
-    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevel::Debug, "Go and tell your master that we have been charged by God with a sacred quest.");
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelDebug);
+    RELEASE_LOG_WITH_LEVEL(Channel1, WTFLogLevelDebug, "Go and tell your master that we have been charged by God with a sacred quest.");
     EXPECT_TRUE(output().contains("sacred quest", false));
 }
 
 TEST_F(LoggingTest, RELEASE_LOG_WITH_LEVEL_IF)
 {
     bool enabled = true;
-    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Error, "Is there someone else up there that we can talk to?");
+    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevelError, "Is there someone else up there that we can talk to?");
     EXPECT_TRUE(output().contains("someone else", false));
 
-    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Debug, "No, now go away");
+    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevelDebug, "No, now go away");
     EXPECT_EQ(0u, output().length());
 
     enabled = false;
-    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevel::Warning, "or I shall taunt you a second time! %i", 12);
+    RELEASE_LOG_WITH_LEVEL_IF(enabled, Channel1, WTFLogLevelWarning, "or I shall taunt you a second time! %i", 12);
     EXPECT_EQ(0u, output().length());
 }
 
@@ -275,8 +275,8 @@ TEST_F(LoggingTest, Logger)
     Ref<Logger> logger = Logger::create(this);
     EXPECT_TRUE(logger->enabled());
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
-    EXPECT_TRUE(logger->willLog(TestChannel1, WTFLogLevel::Error));
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
+    EXPECT_TRUE(logger->willLog(TestChannel1, WTFLogLevelError));
     logger->error(TestChannel1, "You're using coconuts!");
     EXPECT_TRUE(output().contains("You're using coconuts!", false));
     logger->warning(TestChannel1, "You're using coconuts!");
@@ -305,15 +305,15 @@ TEST_F(LoggingTest, Logger)
     logger->error(TestChannel1, "You've got ", 2, " empty halves of ", "coconuts!");
     EXPECT_TRUE(output().contains("You've got 2 empty halves of coconuts!", false));
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Error);
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelError);
     logger->logAlways(TestChannel1, "I shall taunt you a second time!");
     EXPECT_TRUE(output().contains("I shall taunt you a second time!", false));
 
     logger->setEnabled(this, false);
-    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevel::Error));
-    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevel::Warning));
-    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevel::Info));
-    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevel::Debug));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelError));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelWarning));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelInfo));
+    EXPECT_FALSE(logger->willLog(TestChannel1, WTFLogLevelDebug));
     EXPECT_FALSE(logger->enabled());
     logger->logAlways(TestChannel1, "You've got two empty halves of coconuts");
     EXPECT_EQ(0u, output().length());
@@ -348,7 +348,7 @@ TEST_F(LoggingTest, LoggerHelper)
     EXPECT_TRUE(result.contains(signature, false));
     EXPECT_TRUE(result.contains("to the show that never", false));
 
-    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevel::Warning);
+    WTFSetLogChannelLevel(&TestChannel1, WTFLogLevelWarning);
 
     ERROR_LOG(LOGIDENTIFIER, "We're so glad you could attend");
     EXPECT_TRUE(output().contains("We're so glad you could attend", false));
@@ -388,7 +388,7 @@ private:
 
     StringBuilder m_logBuffer;
     WTFLogChannel m_lastChannel;
-    WTFLogLevel m_lastLevel { WTFLogLevel::Error };
+    WTFLogLevel m_lastLevel { WTFLogLevelError };
 };
 
 #if !RELEASE_LOG_DISABLED
@@ -403,7 +403,7 @@ TEST_F(LoggingTest, LogObserver)
     EXPECT_TRUE(this->output().contains("testing 1, 2, 3", false));
     EXPECT_TRUE(observer.log().contains("testing 1, 2, 3", false));
     EXPECT_STREQ(observer.channel().name, logChannel().name);
-    EXPECT_EQ(static_cast<int>(WTFLogLevel::Always), static_cast<int>(observer.level()));
+    EXPECT_EQ(static_cast<int>(WTFLogLevelAlways), static_cast<int>(observer.level()));
 
     logger().removeObserver(observer);
     ALWAYS_LOG("testing ", 1, ", ", 2, ", 3");
