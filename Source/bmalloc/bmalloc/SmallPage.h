@@ -51,6 +51,10 @@ public:
     bool hasPhysicalPages() { return m_hasPhysicalPages; }
     void setHasPhysicalPages(bool hasPhysicalPages) { m_hasPhysicalPages = hasPhysicalPages; }
     
+    bool usedSinceLastScavenge() { return m_usedSinceLastScavenge; }
+    void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
+    void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
+
     SmallLine* begin();
 
     unsigned char slide() const { return m_slide; }
@@ -59,6 +63,7 @@ public:
 private:
     unsigned char m_hasFreeLines: 1;
     unsigned char m_hasPhysicalPages: 1;
+    unsigned char m_usedSinceLastScavenge: 1;
     unsigned char m_refCount: 7;
     unsigned char m_sizeClass;
     unsigned char m_slide;

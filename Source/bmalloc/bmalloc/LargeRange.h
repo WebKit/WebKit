@@ -37,6 +37,8 @@ public:
         : Range()
         , m_startPhysicalSize(0)
         , m_totalPhysicalSize(0)
+        , m_isEligible(true)
+        , m_usedSinceLastScavenge(false)
     {
     }
 
@@ -44,15 +46,19 @@ public:
         : Range(other)
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
+        , m_isEligible(true)
+        , m_usedSinceLastScavenge(false)
     {
         BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
     }
 
-    LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize)
+    LargeRange(void* begin, size_t size, size_t startPhysicalSize, size_t totalPhysicalSize, bool usedSinceLastScavenge = false)
         : Range(begin, size)
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
+        , m_isEligible(true)
+        , m_usedSinceLastScavenge(usedSinceLastScavenge)
     {
         BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
@@ -83,13 +89,18 @@ public:
     void setEligible(bool eligible) { m_isEligible = eligible; }
     bool isEligibile() const { return m_isEligible; }
 
+    bool usedSinceLastScavenge() const { return m_usedSinceLastScavenge; }
+    void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
+    void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
+
     bool operator<(const void* other) const { return begin() < other; }
     bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
 
 private:
     size_t m_startPhysicalSize;
     size_t m_totalPhysicalSize;
-    bool m_isEligible { true };
+    unsigned m_isEligible: 1;
+    unsigned m_usedSinceLastScavenge: 1;
 };
 
 inline bool canMerge(const LargeRange& a, const LargeRange& b)
@@ -112,19 +123,22 @@ inline bool canMerge(const LargeRange& a, const LargeRange& b)
 inline LargeRange merge(const LargeRange& a, const LargeRange& b)
 {
     const LargeRange& left = std::min(a, b);
+    bool mergedUsedSinceLastScavenge = a.usedSinceLastScavenge() || b.usedSinceLastScavenge();
     if (left.size() == left.startPhysicalSize()) {
         return LargeRange(
             left.begin(),
             a.size() + b.size(),
             a.startPhysicalSize() + b.startPhysicalSize(),
-            a.totalPhysicalSize() + b.totalPhysicalSize());
+            a.totalPhysicalSize() + b.totalPhysicalSize(),
+            mergedUsedSinceLastScavenge);
     }
 
     return LargeRange(
         left.begin(),
         a.size() + b.size(),
         left.startPhysicalSize(),
-        a.totalPhysicalSize() + b.totalPhysicalSize());
+        a.totalPhysicalSize() + b.totalPhysicalSize(),
+        mergedUsedSinceLastScavenge);
 }
 
 inline std::pair<LargeRange, LargeRange> LargeRange::split(size_t leftSize) const

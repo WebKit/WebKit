@@ -1,3 +1,58 @@
+2019-03-18  Michael Saboff  <msaboff@apple.com>
+
+        [BMalloc] Scavenger should react to recent memory activity
+        https://bugs.webkit.org/show_bug.cgi?id=195895
+
+        Reviewed by Geoffrey Garen.
+
+        This change adds a recently used bit to objects that are scavenged.  When an object is allocated, that bit is set.
+        When we scavenge, if the bit is set, we clear it.  If the bit was already clear, we decommit the object.  The timing
+        to scavenging has been changed as well.  We perform our first scavne almost immediately after bmalloc is initialized
+        (10ms later).  Subsequent scavenging is done as a multiple of the time it took to scavenge.  We bound this computed
+        time between a minimum and maximum.  Through empirical testing, the multiplier, minimum and maximum are
+        150x, 100ms and 10,000ms respectively.  For mini-mode, when the JIT is disabled, we use much more aggressive values of
+        50x, 25ms and 500ms.
+
+        Eliminated partial scavenging since this change allows for any scavenge to be partial or full based on recent use of
+        the objects on the various free lists.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::usedSinceLastScavenge):
+        (bmalloc::Chunk::clearUsedSinceLastScavenge):
+        (bmalloc::Chunk::setUsedSinceLastScavenge):
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::scavengeToHighWatermark): Deleted.
+        * bmalloc/Heap.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark): Deleted.
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark): Deleted.
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::usedSinceLastScavenge):
+        (bmalloc::LargeRange::clearUsedSinceLastScavenge):
+        (bmalloc::LargeRange::setUsedSinceLastScavenge):
+        (): Deleted.
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::threadRunLoop):
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge): Deleted.
+        (bmalloc::Scavenger::partialScavenge): Deleted.
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallPage.h:
+        (bmalloc::SmallPage::usedSinceLastScavenge):
+        (bmalloc::SmallPage::clearUsedSinceLastScavenge):
+        (bmalloc::SmallPage::setUsedSinceLastScavenge):
+
 2019-03-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] Add StaticPerProcess for known types to save pages

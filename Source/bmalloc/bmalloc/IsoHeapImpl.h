@@ -40,7 +40,6 @@ public:
     virtual ~IsoHeapImplBase();
     
     virtual void scavenge(Vector<DeferredDecommit>&) = 0;
-    virtual void scavengeToHighWatermark(Vector<DeferredDecommit>&) = 0;
     virtual size_t freeableMemory() = 0;
     virtual size_t footprint() = 0;
     
@@ -72,7 +71,6 @@ public:
     void didBecomeEligible(IsoDirectory<Config, IsoDirectoryPage<Config>::numPages>*);
     
     void scavenge(Vector<DeferredDecommit>&) override;
-    void scavengeToHighWatermark(Vector<DeferredDecommit>&) override;
 
     size_t freeableMemory() override;
 

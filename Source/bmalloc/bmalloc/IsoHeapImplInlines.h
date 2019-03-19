@@ -110,19 +110,6 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
 }
 
 template<typename Config>
-void IsoHeapImpl<Config>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
-{
-    std::lock_guard<Mutex> locker(this->lock);
-    if (!m_directoryHighWatermark)
-        m_inlineDirectory.scavengeToHighWatermark(decommits);
-    for (IsoDirectoryPage<Config>* page = m_headDirectory; page; page = page->next) {
-        if (page->index() >= m_directoryHighWatermark)
-            page->payload.scavengeToHighWatermark(decommits);
-    }
-    m_directoryHighWatermark = 0;
-}
-
-template<typename Config>
 size_t IsoHeapImpl<Config>::freeableMemory()
 {
     return m_freeableMemory;

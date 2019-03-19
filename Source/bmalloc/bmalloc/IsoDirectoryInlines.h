@@ -51,8 +51,6 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
     if (pageIndex >= numPages)
         return EligibilityKind::Full;
 
-    m_highWatermark = std::max(pageIndex, m_highWatermark);
-    
     Scavenger& scavenger = *Scavenger::get();
     scavenger.didStartGrowing();
     
@@ -143,18 +141,6 @@ void IsoDirectory<Config, passedNumPages>::scavenge(Vector<DeferredDecommit>& de
         [&] (size_t index) {
             scavengePage(index, decommits);
         });
-    m_highWatermark = 0;
-}
-
-template<typename Config, unsigned passedNumPages>
-void IsoDirectory<Config, passedNumPages>::scavengeToHighWatermark(Vector<DeferredDecommit>& decommits)
-{
-    (m_empty & m_committed).forEachSetBit(
-        [&] (size_t index) {
-            if (index > m_highWatermark)
-                scavengePage(index, decommits);
-        });
-    m_highWatermark = 0;
 }
 
 template<typename Config, unsigned passedNumPages>

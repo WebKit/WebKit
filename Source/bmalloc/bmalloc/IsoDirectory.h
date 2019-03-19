@@ -75,7 +75,6 @@ public:
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
     void scavenge(Vector<DeferredDecommit>&);
-    void scavengeToHighWatermark(Vector<DeferredDecommit>&);
 
     template<typename Func>
     void forEachCommittedPage(const Func&);
@@ -90,7 +89,6 @@ private:
     Bits<numPages> m_committed;
     std::array<IsoPage<Config>*, numPages> m_pages;
     unsigned m_firstEligible { 0 };
-    unsigned m_highWatermark { 0 };
 };
 
 } // namespace bmalloc

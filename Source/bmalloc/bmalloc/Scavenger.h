@@ -89,11 +89,10 @@ private:
     void setThreadName(const char*);
 
     std::chrono::milliseconds timeSinceLastFullScavenge();
-    std::chrono::milliseconds timeSinceLastPartialScavenge();
-    void partialScavenge();
 
     std::atomic<State> m_state { State::Sleep };
     size_t m_scavengerBytes { 0 };
+    std::chrono::milliseconds m_waitTime;
     bool m_isProbablyGrowing { false };
     bool m_isInMiniMode { false };
     
@@ -103,7 +102,6 @@ private:
 
     std::thread m_thread;
     std::chrono::steady_clock::time_point m_lastFullScavengeTime { std::chrono::steady_clock::now() };
-    std::chrono::steady_clock::time_point m_lastPartialScavengeTime { std::chrono::steady_clock::now() };
     
 #if BOS(DARWIN)
     dispatch_source_t m_pressureHandlerDispatchSource;
