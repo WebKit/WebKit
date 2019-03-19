@@ -58,14 +58,14 @@ std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create()
 
     auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::Yes));
     platformDisplay->initialize();
-    return WTFMove(platformDisplay);
+    return platformDisplay;
 }
 
 std::unique_ptr<PlatformDisplay> PlatformDisplayWayland::create(struct wl_display* display)
 {
     auto platformDisplay = std::unique_ptr<PlatformDisplayWayland>(new PlatformDisplayWayland(display, NativeDisplayOwned::No));
     platformDisplay->initialize();
-    return WTFMove(platformDisplay);
+    return platformDisplay;
 }
 
 PlatformDisplayWayland::PlatformDisplayWayland(struct wl_display* display, NativeDisplayOwned displayOwned)

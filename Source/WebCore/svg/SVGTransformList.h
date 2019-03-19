@@ -64,7 +64,7 @@ public:
         m_wrappers->append(makeWeakPtr(*wrapper));
 
         ASSERT(m_values->size() == m_wrappers->size());
-        return WTFMove(wrapper);
+        return wrapper;
     }
 
 private:

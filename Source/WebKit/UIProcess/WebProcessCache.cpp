@@ -145,7 +145,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->suspendedPageCount());
 
-    return WTFMove(process);
+    return process;
 }
 
 void WebProcessCache::updateCapacity(WebProcessPool& processPool)

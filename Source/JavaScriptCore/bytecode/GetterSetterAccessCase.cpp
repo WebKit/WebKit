@@ -66,7 +66,7 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
     result->m_customAccessor = customGetter ? FunctionPtr<OperationPtrTag>(customGetter) : nullptr;
-    return WTFMove(result);
+    return result;
 }
 
 std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, PropertyOffset offset,
@@ -76,7 +76,7 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, offset, structure, conditionSet, false, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_customAccessor = customSetter ? FunctionPtr<OperationPtrTag>(customSetter) : nullptr;
-    return WTFMove(result);
+    return result;
 }
 
 
@@ -97,7 +97,7 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::clone() const
 {
     std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(*this));
     result->resetState();
-    return WTFMove(result);
+    return result;
 }
 
 bool GetterSetterAccessCase::hasAlternateBase() const

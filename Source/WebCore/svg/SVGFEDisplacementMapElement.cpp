@@ -132,7 +132,7 @@ RefPtr<FilterEffect> SVGFEDisplacementMapElement::build(SVGFilterBuilder* filter
     inputEffects.reserveCapacity(2);
     inputEffects.append(input1);
     inputEffects.append(input2);    
-    return WTFMove(effect);
+    return effect;
 }
 
 }

@@ -231,7 +231,7 @@ private:
             COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::Object), cannot_cast);
 
             Ref<JSON::Object> result = m_result.releaseNonNull();
-            return WTFMove(*reinterpret_cast<Ref<${objectType}>*>(&result));
+            return reinterpret_cast<Ref<${objectType}>*>(&result)->copyRef();
         }
     };
 

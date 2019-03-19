@@ -511,7 +511,7 @@ Ref<StyleProperties> HTMLTableElement::createSharedCellStyle()
     if (m_padding)
         style->setProperty(CSSPropertyPadding, cssValuePool.createValue(m_padding, CSSPrimitiveValue::CSS_PX));
 
-    return WTFMove(style);
+    return style;
 }
 
 const StyleProperties* HTMLTableElement::additionalCellStyle()

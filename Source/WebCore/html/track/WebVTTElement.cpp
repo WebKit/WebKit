@@ -88,7 +88,7 @@ Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& t
 {
     Ref<WebVTTElement> clone = create(static_cast<WebVTTNodeType>(m_webVTTNodeType), targetDocument);
     clone->setLanguage(m_language);
-    return WTFMove(clone);
+    return clone;
 }
 
 Ref<HTMLElement> WebVTTElement::createEquivalentHTMLElement(Document& document)

@@ -145,7 +145,7 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuil
 
     auto effect = FEColorMatrix::create(filter, filterType, filterValues);
     effect->inputEffects().append(input1);
-    return WTFMove(effect);
+    return effect;
 }
 
 } // namespace WebCore

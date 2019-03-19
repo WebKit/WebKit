@@ -269,7 +269,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             vector.append(WTFMove(*element));
         }
         vector.shrinkToFit();
-        return WTFMove(vector);
+        return vector;
     }
 };
 
@@ -389,7 +389,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             }
         }
 
-        return WTFMove(hashMap);
+        return hashMap;
     }
 };
 
@@ -434,7 +434,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
             }
         }
 
-        return WTFMove(hashSet);
+        return hashSet;
     }
 };
 
@@ -505,7 +505,7 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
                 return WTF::nullopt;
             
             Expected<ValueType, ErrorType> expected(WTFMove(*value));
-            return WTFMove(expected);
+            return expected;
         }
         Optional<ErrorType> error;
         decoder >> error;

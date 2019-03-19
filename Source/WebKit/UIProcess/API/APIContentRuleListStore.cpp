@@ -198,7 +198,7 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
     });
     if (!success)
         return WTF::nullopt;
-    return WTFMove(metaData);
+    return metaData;
 }
 
 #if !PLATFORM(COCOA)

@@ -62,7 +62,7 @@ protected:
         ASSERT(index < size());
         PropertyType item = at(index);
         m_items.remove(index);
-        return WTFMove(item);
+        return item;
     }
 
     PropertyType append(PropertyType&& newItem) override

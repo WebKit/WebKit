@@ -1108,7 +1108,7 @@ RefPtr<Node> CompositeEditCommand::insertBlockPlaceholder(const Position& pos)
 
     auto placeholder = createBlockPlaceholderElement(document());
     insertNodeAt(placeholder.copyRef(), pos);
-    return WTFMove(placeholder);
+    return placeholder;
 }
 
 RefPtr<Node> CompositeEditCommand::addBlockPlaceholderIfNeeded(Element* container)
@@ -1215,7 +1215,7 @@ RefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(co
     if (newBlock->lastChild() && newBlock->lastChild()->hasTagName(brTag) && !endWasBr)
         removeNode(*newBlock->lastChild());
 
-    return WTFMove(newBlock);
+    return newBlock;
 }
 
 void CompositeEditCommand::pushAnchorElementDown(Element& anchorElement)

@@ -84,7 +84,7 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForJSConstructor(Do
         element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom());
     element->setSelected(selected);
 
-    return WTFMove(element);
+    return element;
 }
 
 bool HTMLOptionElement::isFocusable() const

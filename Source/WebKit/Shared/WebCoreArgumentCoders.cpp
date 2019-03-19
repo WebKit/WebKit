@@ -594,7 +594,7 @@ Optional<FloatPoint> ArgumentCoder<FloatPoint>::decode(Decoder& decoder)
     FloatPoint floatPoint;
     if (!SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint))
         return WTF::nullopt;
-    return WTFMove(floatPoint);
+    return floatPoint;
 }
 
 void ArgumentCoder<FloatPoint3D>::encode(Encoder& encoder, const FloatPoint3D& floatPoint)
@@ -623,7 +623,7 @@ Optional<FloatRect> ArgumentCoder<FloatRect>::decode(Decoder& decoder)
     FloatRect floatRect;
     if (!SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect))
         return WTF::nullopt;
-    return WTFMove(floatRect);
+    return floatRect;
 }
 
 
@@ -670,7 +670,7 @@ Optional<FloatQuad> ArgumentCoder<FloatQuad>::decode(Decoder& decoder)
     FloatQuad floatQuad;
     if (!SimpleArgumentCoder<FloatQuad>::decode(decoder, floatQuad))
         return WTF::nullopt;
-    return WTFMove(floatQuad);
+    return floatQuad;
 }
 
 void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
@@ -688,7 +688,7 @@ Optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& de
     ViewportArguments viewportArguments;
     if (!SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments))
         return WTF::nullopt;
-    return WTFMove(viewportArguments);
+    return viewportArguments;
 }
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -708,7 +708,7 @@ Optional<WebCore::IntPoint> ArgumentCoder<IntPoint>::decode(Decoder& decoder)
     IntPoint intPoint;
     if (!SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint))
         return WTF::nullopt;
-    return WTFMove(intPoint);
+    return intPoint;
 }
 
 void ArgumentCoder<IntRect>::encode(Encoder& encoder, const IntRect& intRect)
@@ -726,7 +726,7 @@ Optional<IntRect> ArgumentCoder<IntRect>::decode(Decoder& decoder)
     IntRect rect;
     if (!decode(decoder, rect))
         return WTF::nullopt;
-    return WTFMove(rect);
+    return rect;
 }
 
 void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
@@ -744,7 +744,7 @@ Optional<IntSize> ArgumentCoder<IntSize>::decode(Decoder& decoder)
     IntSize intSize;
     if (!SimpleArgumentCoder<IntSize>::decode(decoder, intSize))
         return WTF::nullopt;
-    return WTFMove(intSize);
+    return intSize;
 }
 
 void ArgumentCoder<LayoutSize>::encode(Encoder& encoder, const LayoutSize& layoutSize)
@@ -939,7 +939,7 @@ Optional<MimeClassInfo> ArgumentCoder<MimeClassInfo>::decode(Decoder& decoder)
     if (!decoder.decode(mimeClassInfo.extensions))
         return WTF::nullopt;
 
-    return WTFMove(mimeClassInfo);
+    return mimeClassInfo;
 }
 
 
@@ -979,7 +979,7 @@ Optional<WebCore::PluginInfo> ArgumentCoder<PluginInfo>::decode(Decoder& decoder
         return WTF::nullopt;
 #endif
 
-    return WTFMove(pluginInfo);
+    return pluginInfo;
 }
 
 void ArgumentCoder<AuthenticationChallenge>::encode(Encoder& encoder, const AuthenticationChallenge& challenge)
@@ -1377,7 +1377,7 @@ Optional<SelectionRect> ArgumentCoder<SelectionRect>::decode(Decoder& decoder)
         return WTF::nullopt;
     selectionRect.setIsHorizontal(boolValue);
 
-    return WTFMove(selectionRect);
+    return selectionRect;
 }
 
 #endif
@@ -1577,7 +1577,7 @@ Optional<CompositionUnderline> ArgumentCoder<CompositionUnderline>::decode(Decod
     if (!decoder.decode(underline.color))
         return WTF::nullopt;
 
-    return WTFMove(underline);
+    return underline;
 }
 
 void ArgumentCoder<DatabaseDetails>::encode(Encoder& encoder, const DatabaseDetails& details)
@@ -2454,7 +2454,7 @@ Optional<BlobPart> ArgumentCoder<BlobPart>::decode(Decoder& decoder)
         return WTF::nullopt;
     }
 
-    return WTFMove(blobPart);
+    return blobPart;
 }
 
 void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndicatorData& textIndicatorData)
@@ -2511,7 +2511,7 @@ Optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decoder& de
     if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithoutSelection))
         return WTF::nullopt;
 
-    return WTFMove(textIndicatorData);
+    return textIndicatorData;
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -2764,7 +2764,7 @@ Optional<ResourceLoadStatistics> ArgumentCoder<ResourceLoadStatistics>::decode(D
         return WTF::nullopt;
 #endif
 
-    return WTFMove(statistics);
+    return statistics;
 }
 
 #if ENABLE(MEDIA_STREAM)
@@ -2907,7 +2907,7 @@ auto ArgumentCoder<ScrollOffsetRange<float>>::decode(Decoder& decoder) -> Option
 
     range.start = start;
     range.end = end;
-    return WTFMove(range);
+    return range;
 }
 
 #endif

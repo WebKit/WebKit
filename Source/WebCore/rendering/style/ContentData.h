@@ -97,7 +97,7 @@ private:
     {
         auto image = std::make_unique<ImageContentData>(m_image.copyRef());
         image->setAltText(altText());
-        return WTFMove(image);
+        return image;
     }
 
     Ref<StyleImage> m_image;

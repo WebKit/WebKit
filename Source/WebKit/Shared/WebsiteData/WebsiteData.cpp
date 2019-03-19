@@ -55,7 +55,7 @@ auto WebsiteData::Entry::decode(IPC::Decoder& decoder) -> Optional<Entry>
     if (!decoder.decode(result.size))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 void WebsiteData::encode(IPC::Encoder& encoder) const

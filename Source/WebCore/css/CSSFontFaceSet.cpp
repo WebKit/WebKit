@@ -386,7 +386,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     result.reserveInitialCapacity(resultConstituents.size());
     for (auto* constituent : resultConstituents)
         result.uncheckedAppend(*constituent);
-    return WTFMove(result);
+    return result;
 }
 
 ExceptionOr<bool> CSSFontFaceSet::check(const String& font, const String& text)

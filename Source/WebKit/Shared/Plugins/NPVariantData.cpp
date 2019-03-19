@@ -168,31 +168,31 @@ Optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
     switch (result.m_type) {
     case NPVariantData::Void:
     case NPVariantData::Null:
-        return WTFMove(result);
+        return result;
     case NPVariantData::Bool:
         if (!decoder.decode(result.m_boolValue))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     case NPVariantData::Int32:
         if (!decoder.decode(result.m_int32Value))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     case NPVariantData::Double:
         if (!decoder.decode(result.m_doubleValue))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     case NPVariantData::String:
         if (!decoder.decode(result.m_stringValue))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     case NPVariantData::LocalNPObjectID:
         if (!decoder.decode(result.m_localNPObjectIDValue))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     case NPVariantData::RemoteNPObjectID:
         if (!decoder.decode(result.m_remoteNPObjectIDValue))
             return WTF::nullopt;
-        return WTFMove(result);
+        return result;
     }
 
     return WTF::nullopt;

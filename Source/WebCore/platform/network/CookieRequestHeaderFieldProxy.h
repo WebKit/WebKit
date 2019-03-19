@@ -75,7 +75,7 @@ Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(De
         return WTF::nullopt;
     if (!decoder.decode(result.includeSecureCookies))
         return WTF::nullopt;
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace WebCore

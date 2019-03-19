@@ -2337,7 +2337,7 @@ RetainPtr<CFDataRef> WebPage::pdfSnapshotAtSize(const IntRect& rect, const IntSi
     CGPDFContextClose(pdfContext.get());
 #endif
 
-    return WTFMove(data);
+    return data;
 }
 #endif
 
@@ -6074,7 +6074,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
         }
     }
 
-    return WTFMove(documentLoader);
+    return documentLoader;
 }
 
 void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Frame& frame)

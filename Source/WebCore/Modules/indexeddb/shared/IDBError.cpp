@@ -43,13 +43,6 @@ IDBError IDBError::isolatedCopy() const
     return IDBError { m_code, m_message.isolatedCopy() };
 }
 
-IDBError& IDBError::operator=(const IDBError& other)
-{
-    m_code = other.m_code;
-    m_message = other.m_message;
-    return *this;
-}
-
 String IDBError::name() const
 {
     if (!m_code)

@@ -368,7 +368,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     }
 
     result->identifier = *identifier;
-    return WTFMove(result);
+    return result;
 }
 
 static CryptoKeyUsageBitmap toCryptoKeyUsageBitmap(CryptoKeyUsage usage)

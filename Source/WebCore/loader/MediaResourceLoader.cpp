@@ -106,7 +106,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     Ref<MediaResource> mediaResource = MediaResource::create(*this, resource);
     m_resources.add(mediaResource.ptr());
 
-    return WTFMove(mediaResource);
+    return mediaResource;
 }
 
 void MediaResourceLoader::removeResource(MediaResource& mediaResource)

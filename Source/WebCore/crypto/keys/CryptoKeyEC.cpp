@@ -164,7 +164,7 @@ ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
     result.ext = extractable();
     if (!platformAddFieldElements(result))
         return Exception { OperationError };
-    return WTFMove(result);
+    return result;
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportSpki() const

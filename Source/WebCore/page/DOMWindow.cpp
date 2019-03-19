@@ -1485,7 +1485,7 @@ RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String
     if (ruleList->rules().isEmpty())
         return nullptr;
 
-    return WTFMove(ruleList);
+    return ruleList;
 }
 
 RefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const

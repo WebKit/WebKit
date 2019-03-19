@@ -1101,7 +1101,7 @@ ExceptionOr<String> Internals::elementRenderTreeAsText(Element& element)
     if (representation.isEmpty())
         return Exception { InvalidAccessError };
 
-    return WTFMove(representation);
+    return representation;
 }
 
 bool Internals::hasPausedImageAnimations(Element& element)
@@ -2336,7 +2336,7 @@ static ExceptionOr<FindOptions> parseFindOptions(const Vector<String>& optionLis
         if (!found)
             return Exception { SyntaxError };
     }
-    return WTFMove(result);
+    return result;
 }
 
 ExceptionOr<RefPtr<Range>> Internals::rangeOfString(const String& text, RefPtr<Range>&& referenceRange, const Vector<String>& findOptions)

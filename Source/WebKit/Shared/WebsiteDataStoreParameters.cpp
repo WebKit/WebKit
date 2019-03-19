@@ -118,7 +118,7 @@ Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Dec
     parameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
     
-    return WTFMove(parameters);
+    return parameters;
 }
 
 WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)

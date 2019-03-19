@@ -76,7 +76,7 @@ ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node* contextNode, unsig
             return convertToResult.releaseException();
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 }

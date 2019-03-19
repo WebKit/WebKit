@@ -288,7 +288,7 @@ Optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPersiste
 
     CaptureDevice device { iterator->value.persistentId, type, iterator->value.label };
     device.setEnabled(true);
-    return WTFMove(device);
+    return device;
 }
 
 Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::audioDevices()

@@ -351,7 +351,7 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
     if (!haveGlyphs)
         return nullptr;
 
-    return WTFMove(glyphPage);
+    return glyphPage;
 }
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const

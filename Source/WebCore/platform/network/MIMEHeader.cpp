@@ -117,7 +117,7 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
     if (mimeParametersIterator != keyValuePairs.end())
         mimeHeader->m_contentLocation = mimeParametersIterator->value;
 
-    return WTFMove(mimeHeader);
+    return mimeHeader;
 }
 
 MIMEHeader::Encoding MIMEHeader::parseContentTransferEncoding(const String& text)

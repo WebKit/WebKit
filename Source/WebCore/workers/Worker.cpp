@@ -110,7 +110,7 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
     fetchOptions.redirect = FetchOptions::Redirect::Follow;
     fetchOptions.destination = FetchOptions::Destination::Worker;
     worker->m_scriptLoader->loadAsynchronously(context, WTFMove(request), WTFMove(fetchOptions), contentSecurityPolicyEnforcement, ServiceWorkersMode::All, worker);
-    return WTFMove(worker);
+    return worker;
 }
 
 Worker::~Worker()

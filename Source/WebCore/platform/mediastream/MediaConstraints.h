@@ -720,7 +720,7 @@ public:
         if (!decoder.decode(map.m_groupId))
             return WTF::nullopt;
 
-        return WTFMove(map);
+        return map;
     }
 
 private:

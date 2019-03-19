@@ -611,6 +611,13 @@ public:
         this->overflowed();
     }
 
+    Checked(const Checked& value)
+    {
+        if (value.hasOverflowed())
+            this->overflowed();
+        m_value = static_cast<T>(value.m_value);
+    }
+
     template <typename U> Checked(U value)
     {
         if (!isInBounds<T>(value))

@@ -746,7 +746,7 @@ inline RefPtr<StyleReflection> StyleBuilderConverter::convertReflection(StyleRes
     styleResolver.styleMap()->mapNinePieceImage(CSSPropertyWebkitBoxReflect, reflectValue.mask(), mask);
     reflection->setMask(mask);
 
-    return WTFMove(reflection);
+    return reflection;
 }
 
 inline IntSize StyleBuilderConverter::convertInitialLetter(StyleResolver&, const CSSValue& value)

@@ -125,7 +125,7 @@ Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
         break;
     }
 
-    return WTFMove(jobData);
+    return jobData;
 }
 
 } // namespace WebCore

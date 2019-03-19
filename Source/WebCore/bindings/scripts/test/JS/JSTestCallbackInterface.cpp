@@ -361,7 +361,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(state, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return returnValue;
 }
 
 CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
@@ -392,7 +392,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(state, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return returnValue;
 }
 
 CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackThatSkipsInvokeCheck(typename IDLDictionary<TestCallbackInterface::Dictionary>::ParameterType dictionaryParam)
@@ -419,7 +419,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(state, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return returnValue;
 }
 
 CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterface::callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam)
@@ -449,7 +449,7 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackInterfac
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     auto returnValue = convert<IDLDOMString>(state, jsResult);
     RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return returnValue;
 }
 
 JSC::JSValue toJS(TestCallbackInterface& impl)

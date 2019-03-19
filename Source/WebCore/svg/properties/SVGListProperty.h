@@ -165,7 +165,7 @@ public:
         m_wrappers->append(makeWeakPtr(newItem.get()));
 
         commitChange();
-        return WTFMove(newItem);
+        return newItem;
     }
 
     // SVGList::getItem()
@@ -257,7 +257,7 @@ public:
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         if (!processIncomingListItemWrapper(newItem, &index))
-            return WTFMove(newItem);
+            return newItem;
 
         // Spec: Inserts a new item into the list at the specified position. The index of the item before which the new item is to be
         // inserted. The first item is number 0. If the index is equal to 0, then the new item is inserted at the front of the list.
@@ -267,7 +267,7 @@ public:
         m_wrappers->insert(index, makeWeakPtr(newItem.get()));
 
         commitChange();
-        return WTFMove(newItem);
+        return newItem;
     }
 
     // SVGList::replaceItem()
@@ -326,7 +326,7 @@ public:
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // Spec: If the item is already in this list, note that the index of the item to replace is before the removal of the item.
         if (!processIncomingListItemWrapper(newItem, &index))
-            return WTFMove(newItem);
+            return newItem;
 
         if (m_values->isEmpty()) {
             ASSERT(m_wrappers->isEmpty());
@@ -344,7 +344,7 @@ public:
         m_wrappers->at(index) = makeWeakPtr(newItem.get());
 
         commitChange();
-        return WTFMove(newItem);
+        return newItem;
     }
 
     // SVGList::removeItem()
@@ -372,7 +372,7 @@ public:
         m_values->remove(index);
 
         commitChange();
-        return WTFMove(oldItem);
+        return oldItem;
     }
 
     ExceptionOr<Ref<ListItemTearOff>> removeItemValuesAndWrappers(AnimatedListPropertyTearOff& animatedList, unsigned index)
@@ -438,7 +438,7 @@ public:
         m_wrappers->append(makeWeakPtr(newItem.get()));
 
         commitChange(ListModificationAppend);
-        return WTFMove(newItem);
+        return newItem;
     }
 
     PropertyType& values()

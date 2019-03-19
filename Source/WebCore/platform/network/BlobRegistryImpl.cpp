@@ -77,7 +77,7 @@ Ref<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest
 {
     auto handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
     handle->start();
-    return WTFMove(handle);
+    return handle;
 }
 
 void BlobRegistryImpl::appendStorageItems(BlobData* blobData, const BlobDataItemList& items, long long offset, long long length)

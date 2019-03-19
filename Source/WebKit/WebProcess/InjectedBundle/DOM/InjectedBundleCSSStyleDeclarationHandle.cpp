@@ -52,7 +52,7 @@ RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclaratio
 
     auto styleDeclarationHandle = adoptRef(*new InjectedBundleCSSStyleDeclarationHandle(*styleDeclaration));
     result.iterator->value = styleDeclarationHandle.ptr();
-    return WTFMove(styleDeclarationHandle);
+    return styleDeclarationHandle;
 }
 
 InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle(CSSStyleDeclaration& styleDeclaration)

@@ -143,7 +143,7 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
     identifier.m_databaseName = WTFMove(*databaseName); // FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
     identifier.m_sessionID = WTFMove(*sessionID);
     identifier.m_origin = WTFMove(*origin);
-    return WTFMove(identifier);
+    return identifier;
 }
 
 } // namespace WebCore

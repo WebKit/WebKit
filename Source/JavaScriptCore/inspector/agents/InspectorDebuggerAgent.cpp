@@ -416,7 +416,7 @@ static RefPtr<Protocol::Debugger::Location> buildDebuggerLocation(const JSC::Bre
         .release();
     location->setColumnNumber(breakpoint.column);
 
-    return WTFMove(location);
+    return location;
 }
 
 static bool parseLocation(ErrorString& errorString, const JSON::Object& location, JSC::SourceID& sourceID, unsigned& lineNumber, unsigned& columnNumber)

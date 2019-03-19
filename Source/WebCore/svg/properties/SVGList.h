@@ -71,7 +71,7 @@ public:
 
         auto item = append(WTFMove(newItem));
         commitChange();
-        return WTFMove(item);
+        return item;
     }
 
     ExceptionOr<ItemType> insertItemBefore(ItemType&& newItem, unsigned index)
@@ -88,7 +88,7 @@ public:
 
         auto item = insert(index, WTFMove(newItem));
         commitChange();
-        return WTFMove(item);
+        return item;
     }
 
     ExceptionOr<ItemType> replaceItem(ItemType&& newItem, unsigned index)
@@ -100,7 +100,7 @@ public:
 
         auto item = replace(index, WTFMove(newItem));
         commitChange();
-        return WTFMove(item);
+        return item;
     }
 
     ExceptionOr<ItemType> removeItem(unsigned index)
@@ -112,7 +112,7 @@ public:
 
         auto item = remove(index);
         commitChange();
-        return WTFMove(item);
+        return item;
     }
 
     ExceptionOr<ItemType> appendItem(ItemType&& newItem)
@@ -124,7 +124,7 @@ public:
 
         auto item = append(WTFMove(newItem));
         commitChange();
-        return WTFMove(item);
+        return item;
     }
 
     // Parsers and animators need to have a direct access to the items.

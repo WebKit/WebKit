@@ -1972,7 +1972,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
         result->entrypoint.calleeSaveRegisters = code.calleeSaveRegisterAtOffsetList();
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 template <typename IntType>

@@ -75,7 +75,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     // 4. Return session.
     auto session = MediaKeySession::create(context, makeWeakPtr(*this), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), instanceSession.releaseNonNull());
     m_sessions.append(session.copyRef());
-    return WTFMove(session);
+    return session;
 }
 
 void MediaKeys::setServerCertificate(const BufferSource& serverCertificate, Ref<DeferredPromise>&& promise)

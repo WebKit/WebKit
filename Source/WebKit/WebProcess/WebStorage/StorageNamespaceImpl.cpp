@@ -101,7 +101,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page* newPage)
     ASSERT(m_storageType == StorageType::EphemeralLocal);
     auto newNamespace = adoptRef(*new StorageNamespaceImpl(m_storageType, m_storageNamespaceID, m_topLevelOrigin.get(), m_quotaInBytes));
 
-    return WTFMove(newNamespace);
+    return newNamespace;
 }
 
 } // namespace WebKit

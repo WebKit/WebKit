@@ -1458,7 +1458,7 @@ RefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelection&
         }
     }
 
-    return WTFMove(style);
+    return style;
 }
 
 WritingDirection EditingStyle::textDirectionForSelection(const VisibleSelection& selection, EditingStyle* typingStyle, bool& hasNestedOrMultipleEmbeddings)

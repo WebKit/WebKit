@@ -542,7 +542,7 @@ RefPtr<DocumentFragment> VTTCue::getCueAsHTML()
 
     auto clonedFragment = DocumentFragment::create(ownerDocument());
     copyWebVTTNodeToDOMTree(m_webVTTNodeTree.get(), clonedFragment.ptr());
-    return WTFMove(clonedFragment);
+    return clonedFragment;
 }
 
 RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
@@ -557,7 +557,7 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     ScriptDisallowedScope::EventAllowedScope allowedScope(clonedFragment);
 
     m_webVTTNodeTree->cloneChildNodes(clonedFragment);
-    return WTFMove(clonedFragment);
+    return clonedFragment;
 }
 
 void VTTCue::setRegionId(const String& regionId)

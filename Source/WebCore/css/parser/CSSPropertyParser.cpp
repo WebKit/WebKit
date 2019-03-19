@@ -575,7 +575,7 @@ static RefPtr<CSSValue> consumeFontVariationSettings(CSSParserTokenRange& range)
     if (!settings->length())
         return nullptr;
 
-    return WTFMove(settings);
+    return settings;
 }
 #endif // ENABLE(VARIATION_FONTS)
 
@@ -2462,7 +2462,7 @@ static RefPtr<CSSBasicShapePath> consumeBasicShapePath(CSSParserTokenRange& args
     auto shape = CSSBasicShapePath::create(WTFMove(byteStream));
     shape->setWindRule(windRule);
     
-    return WTFMove(shape);
+    return shape;
 }
 
 static void complete4Sides(RefPtr<CSSPrimitiveValue> side[4])
@@ -5531,7 +5531,7 @@ static RefPtr<CSSValue> consumeImplicitGridAutoFlow(CSSParserTokenRange& range, 
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueDense));
     }
     
-    return WTFMove(list);
+    return list;
 }
 
 bool CSSPropertyParser::consumeGridShorthand(bool important)

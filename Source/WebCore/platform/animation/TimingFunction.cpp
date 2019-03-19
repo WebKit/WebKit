@@ -119,7 +119,7 @@ ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const Stri
 
     if (auto cssValue = styleProperties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
         if (auto timingFunction = createFromCSSValue(*cssValue.get()))
-            return WTFMove(timingFunction);
+            return timingFunction;
     }
     
     return Exception { TypeError };

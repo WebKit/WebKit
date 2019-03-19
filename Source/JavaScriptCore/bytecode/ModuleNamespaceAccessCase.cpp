@@ -58,7 +58,7 @@ std::unique_ptr<AccessCase> ModuleNamespaceAccessCase::clone() const
 {
     std::unique_ptr<ModuleNamespaceAccessCase> result(new ModuleNamespaceAccessCase(*this));
     result->resetState();
-    return WTFMove(result);
+    return result;
 }
 
 void ModuleNamespaceAccessCase::emit(AccessGenerationState& state, MacroAssembler::JumpList& fallThrough)

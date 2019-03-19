@@ -320,7 +320,7 @@ RefPtr<FormData> FormData::decode(Decoder& decoder)
     if (!decoder.decode(data->m_identifier))
         return nullptr;
 
-    return WTFMove(data);
+    return data;
 }
 
 } // namespace WebCore

@@ -904,7 +904,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt), m_pageID);
     m_process->responsivenessTimer().start();
 
-    return WTFMove(navigation);
+    return navigation;
 }
 
 RefPtr<API::Navigation> WebPageProxy::launchProcessWithItem(WebBackForwardListItem& item)
@@ -927,7 +927,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessWithItem(WebBackForwardListIt
     m_process->send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), item.itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt), m_pageID);
     m_process->responsivenessTimer().start();
 
-    return WTFMove(navigation);
+    return navigation;
 }
 
 void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingArea)
@@ -1084,7 +1084,7 @@ RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, Sho
 
     auto navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     loadRequestWithNavigationShared(m_process.copyRef(), navigation.get(), WTFMove(request), shouldOpenExternalURLsPolicy, userData, ShouldTreatAsContinuingLoad::No);
-    return WTFMove(navigation);
+    return navigation;
 }
 
 void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& process, API::Navigation& navigation, ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies)
@@ -1167,7 +1167,7 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
     m_process->send(Messages::WebPage::LoadRequest(loadParameters), m_pageID);
     m_process->responsivenessTimer().start();
 
-    return WTFMove(navigation);
+    return navigation;
 }
 
 RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData)
@@ -1184,7 +1184,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
 
     auto navigation = m_navigationState->createLoadDataNavigation(std::make_unique<API::SubstituteData>(data.vector(), MIMEType, encoding, baseURL, userData));
     loadDataWithNavigationShared(m_process.copyRef(), navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No);
-    return WTFMove(navigation);
+    return navigation;
 }
 
 void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, API::Navigation& navigation, const IPC::DataReference& data, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& websitePolicies)
@@ -1349,7 +1349,7 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
     m_process->send(Messages::WebPage::Reload(navigation->navigationID(), options.toRaw(), sandboxExtensionHandle), m_pageID);
     m_process->responsivenessTimer().start();
 
-    return WTFMove(navigation);
+    return navigation;
 }
 
 void WebPageProxy::recordAutomaticNavigationSnapshot()

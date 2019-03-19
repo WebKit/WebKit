@@ -146,7 +146,7 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
         auto& styleImage = downcast<ImageContentData>(*contentData).image();
         auto image = createRenderer<RenderImage>(element, WTFMove(style), const_cast<StyleImage*>(&styleImage));
         image->setIsGeneratedContent();
-        return WTFMove(image);
+        return image;
     }
 
     switch (style.display()) {

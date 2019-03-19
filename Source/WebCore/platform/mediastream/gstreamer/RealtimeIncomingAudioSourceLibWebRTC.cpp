@@ -40,7 +40,7 @@ Ref<RealtimeIncomingAudioSource> RealtimeIncomingAudioSource::create(rtc::scoped
 {
     auto source = RealtimeIncomingAudioSourceLibWebRTC::create(WTFMove(audioTrack), WTFMove(audioTrackId));
     source->start();
-    return WTFMove(source);
+    return source;
 }
 
 Ref<RealtimeIncomingAudioSourceLibWebRTC> RealtimeIncomingAudioSourceLibWebRTC::create(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)

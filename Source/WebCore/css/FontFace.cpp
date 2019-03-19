@@ -115,7 +115,7 @@ ExceptionOr<Ref<FontFace>> FontFace::create(Document& document, const String& fa
         ASSERT_UNUSED(status, status == CSSFontFace::Status::Success || status == CSSFontFace::Status::Failure);
     }
 
-    return WTFMove(result);
+    return result;
 }
 
 Ref<FontFace> FontFace::create(CSSFontFace& face)

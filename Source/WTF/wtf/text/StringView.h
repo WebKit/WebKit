@@ -752,7 +752,6 @@ public:
 
     bool operator==(const Iterator&) const;
     bool operator!=(const Iterator&) const;
-    Iterator& operator=(const Iterator&);
 
 private:
     std::reference_wrapper<const StringView> m_stringView;
@@ -829,14 +828,6 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
     else
         U16_NEXT(m_stringView.get().characters16(), m_nextCodePointOffset.value(), m_stringView.get().length(), m_codePoint);
     ASSERT(m_nextCodePointOffset.value() <= m_stringView.get().length());
-    return *this;
-}
-
-inline auto StringView::CodePoints::Iterator::operator=(const Iterator& other) -> Iterator&
-{
-    m_stringView = other.m_stringView;
-    m_nextCodePointOffset = other.m_nextCodePointOffset;
-    m_codePoint = other.m_codePoint;
     return *this;
 }
 

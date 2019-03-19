@@ -95,10 +95,10 @@ RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const 
     auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
-        return WTFMove(newHandle);
+        return newHandle;
 
     if (newHandle->start())
-        return WTFMove(newHandle);
+        return newHandle;
 
     return nullptr;
 }

@@ -917,7 +917,7 @@ static Ref<Element> createTabSpanElement(Document& document, Text& tabTextNode)
 
     spanElement->appendChild(tabTextNode);
 
-    return WTFMove(spanElement);
+    return spanElement;
 }
 
 Ref<Element> createTabSpanElement(Document& document, const String& tabText)

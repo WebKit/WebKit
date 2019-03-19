@@ -58,7 +58,7 @@ const GRefPtr<GstSample> GStreamerSampleFromLibWebRTCVideoFrame(const webrtc::Vi
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
     auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-    return WTFMove(sample);
+    return sample;
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> GStreamerVideoFrameLibWebRTC::create(GstSample * sample)

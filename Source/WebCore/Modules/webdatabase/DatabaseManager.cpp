@@ -183,7 +183,7 @@ ExceptionOr<Ref<Database>> DatabaseManager::tryToOpenDatabaseBackend(ScriptExecu
 
     // FIXME: What guarantees backendContext.securityOrigin() is non-null?
     DatabaseTracker::singleton().setDatabaseDetails(backendContext->securityOrigin(), name, displayName, estimatedSize);
-    return WTFMove(database);
+    return database;
 }
 
 void DatabaseManager::addProposedDatabase(ProposedDatabase& database)

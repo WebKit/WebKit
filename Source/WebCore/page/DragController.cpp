@@ -174,7 +174,7 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
                 anchor->appendChild(document.createTextNode(title));
                 auto fragment = document.createDocumentFragment();
                 fragment->appendChild(anchor);
-                return WTFMove(fragment);
+                return fragment;
             }
         }
     }

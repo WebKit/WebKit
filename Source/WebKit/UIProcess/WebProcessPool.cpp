@@ -2365,7 +2365,7 @@ RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const W
         m_suspendedPages.remove(it);
 
 
-    return WTFMove(process);
+    return process;
 }
 
 void WebProcessPool::addSuspendedPage(std::unique_ptr<SuspendedPageProxy>&& suspendedPage)

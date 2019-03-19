@@ -72,7 +72,7 @@ static inline Optional<FormControlState> deserializeFormControlState(const Vecto
     subvector.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
         subvector.uncheckedAppend(stateVector[index++]);
-    return WTFMove(subvector);
+    return subvector;
 }
 
 // ----------------------------------------------------------------------------

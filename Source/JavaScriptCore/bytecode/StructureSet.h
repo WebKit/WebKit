@@ -49,11 +49,6 @@ public:
     {
     }
     
-    ALWAYS_INLINE StructureSet(const StructureSet& other)
-        : TinyPtrSet(other)
-    {
-    }
-    
     Structure* onlyStructure() const
     {
         return onlyEntry();

@@ -112,7 +112,7 @@ ExceptionOr<RefPtr<Node>> NodeIterator::nextNode()
     }
 
     m_candidateNode.clear();
-    return WTFMove(result);
+    return result;
 }
 
 ExceptionOr<RefPtr<Node>> NodeIterator::previousNode()
@@ -141,7 +141,7 @@ ExceptionOr<RefPtr<Node>> NodeIterator::previousNode()
     }
 
     m_candidateNode.clear();
-    return WTFMove(result);
+    return result;
 }
 
 void NodeIterator::nodeWillBeRemoved(Node& removedNode)

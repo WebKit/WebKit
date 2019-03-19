@@ -1743,7 +1743,7 @@ RefPtr<WebGLBuffer> WebGLRenderingContextBase::createBuffer()
         return nullptr;
     auto buffer = WebGLBuffer::create(*this);
     addSharedObject(buffer.get());
-    return WTFMove(buffer);
+    return buffer;
 }
 
 RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
@@ -1752,7 +1752,7 @@ RefPtr<WebGLFramebuffer> WebGLRenderingContextBase::createFramebuffer()
         return nullptr;
     auto buffer = WebGLFramebuffer::create(*this);
     addContextObject(buffer.get());
-    return WTFMove(buffer);
+    return buffer;
 }
 
 RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
@@ -1761,7 +1761,7 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::createTexture()
         return nullptr;
     auto texture = WebGLTexture::create(*this);
     addSharedObject(texture.get());
-    return WTFMove(texture);
+    return texture;
 }
 
 RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
@@ -1773,7 +1773,7 @@ RefPtr<WebGLProgram> WebGLRenderingContextBase::createProgram()
 
     InspectorInstrumentation::didCreateProgram(*this, program.get());
 
-    return WTFMove(program);
+    return program;
 }
 
 RefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
@@ -1782,7 +1782,7 @@ RefPtr<WebGLRenderbuffer> WebGLRenderingContextBase::createRenderbuffer()
         return nullptr;
     auto buffer = WebGLRenderbuffer::create(*this);
     addSharedObject(buffer.get());
-    return WTFMove(buffer);
+    return buffer;
 }
 
 RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type)
@@ -1796,7 +1796,7 @@ RefPtr<WebGLShader> WebGLRenderingContextBase::createShader(GC3Denum type)
 
     auto shader = WebGLShader::create(*this, type);
     addSharedObject(shader.get());
-    return WTFMove(shader);
+    return shader;
 }
 
 void WebGLRenderingContextBase::cullFace(GC3Denum mode)
@@ -2642,7 +2642,7 @@ Optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes
         attributes.depth = false;
     if (!m_attributes.stencil)
         attributes.stencil = false;
-    return WTFMove(attributes);
+    return attributes;
 }
 
 GC3Denum WebGLRenderingContextBase::getError()
@@ -2958,7 +2958,7 @@ WebGLAny WebGLRenderingContextBase::getUniform(WebGLProgram* program, const WebG
             Vector<bool> vector(length);
             for (unsigned j = 0; j < length; j++)
                 vector[j] = value[j];
-            return WTFMove(vector);
+            return vector;
         }
         return static_cast<bool>(value[0]);
     }

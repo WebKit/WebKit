@@ -53,7 +53,7 @@ ExceptionOr<Vector<WTF::KeyValuePair<String, SQLValue>>> SQLResultSetRowList::it
     for (unsigned i = 0; i < numberOfColumns; i++)
         result.append({ m_columns[i], m_result[valuesIndex + i] });
 
-    return WTFMove(result);
+    return result;
 }
 
 }

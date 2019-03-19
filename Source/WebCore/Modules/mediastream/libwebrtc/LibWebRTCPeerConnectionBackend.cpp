@@ -413,7 +413,7 @@ ExceptionOr<Ref<RTCRtpSender>> LibWebRTCPeerConnectionBackend::addTrack(MediaStr
         auto receiver = createReceiverForSource(createEmptySource(track.kind(), createCanonicalUUIDString()), transceiverBackend->createReceiverBackend());
         auto transceiver = RTCRtpTransceiver::create(sender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));
         m_peerConnection.addInternalTransceiver(WTFMove(transceiver));
-        return WTFMove(sender);
+        return sender;
     }
 
     RTCRtpSender* sender = nullptr;
@@ -460,7 +460,7 @@ ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addUnifiedPl
     auto receiver = createReceiverForSource(createEmptySource(sender->trackKind(), createCanonicalUUIDString()), WTFMove(backends->receiverBackend));
     auto transceiver = RTCRtpTransceiver::create(WTFMove(sender), WTFMove(receiver), WTFMove(backends->transceiverBackend));
     m_peerConnection.addInternalTransceiver(transceiver.copyRef());
-    return WTFMove(transceiver);
+    return transceiver;
 }
 
 ExceptionOr<Ref<RTCRtpTransceiver>> LibWebRTCPeerConnectionBackend::addTransceiver(const String& trackKind, const RTCRtpTransceiverInit& init)

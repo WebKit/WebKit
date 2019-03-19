@@ -397,7 +397,7 @@ Optional<MediaKeySystemConfiguration> CDM::getSupportedConfiguration(const Media
     if ((accumulatedConfiguration.distinctiveIdentifier == MediaKeysRequirement::Required || accumulatedConfiguration.persistentState == MediaKeysRequirement::Required) && !origin.canAccessLocalStorage(&topOrigin))
         return WTF::nullopt;
 
-    return WTFMove(accumulatedConfiguration);
+    return accumulatedConfiguration;
     // NOTE: Continued in getConsentStatus().
 }
 

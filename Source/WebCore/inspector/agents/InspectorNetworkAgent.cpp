@@ -368,7 +368,7 @@ RefPtr<Inspector::Protocol::Network::Response> InspectorNetworkAgent::buildObjec
         responseObject->setSecurity(WTFMove(securityPayload));
     }
 
-    return WTFMove(responseObject);
+    return responseObject;
 }
 
 Ref<Inspector::Protocol::Network::CachedResource> InspectorNetworkAgent::buildObjectForCachedResource(CachedResource* cachedResource)

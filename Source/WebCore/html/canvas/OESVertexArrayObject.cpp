@@ -50,7 +50,7 @@ RefPtr<WebGLVertexArrayObjectOES> OESVertexArrayObject::createVertexArrayOES()
 
     auto object = WebGLVertexArrayObjectOES::create(m_context, WebGLVertexArrayObjectOES::Type::User);
     m_context.addContextObject(object.get());
-    return WTFMove(object);
+    return object;
 }
 
 void OESVertexArrayObject::deleteVertexArrayOES(WebGLVertexArrayObjectOES* arrayObject)

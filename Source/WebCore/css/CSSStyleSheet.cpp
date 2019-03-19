@@ -263,7 +263,7 @@ RefPtr<CSSRuleList> CSSStyleSheet::rules()
     unsigned ruleCount = length();
     for (unsigned i = 0; i < ruleCount; ++i)
         ruleList->rules().append(item(i));
-    return WTFMove(ruleList);
+    return ruleList;
 }
 
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)

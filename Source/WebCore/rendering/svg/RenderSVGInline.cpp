@@ -43,7 +43,7 @@ std::unique_ptr<InlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
     auto box = std::make_unique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return WTFMove(box);
+    return box;
 }
 
 FloatRect RenderSVGInline::objectBoundingBox() const

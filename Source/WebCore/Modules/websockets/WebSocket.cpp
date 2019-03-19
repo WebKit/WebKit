@@ -172,7 +172,7 @@ ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, c
     if (result.hasException())
         return result.releaseException();
 
-    return WTFMove(socket);
+    return socket;
 }
 
 ExceptionOr<Ref<WebSocket>> WebSocket::create(ScriptExecutionContext& context, const String& url, const String& protocol)

@@ -1783,7 +1783,7 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
         if (range->selectNodeContents(*node).hasException())
             return nullptr;
     }
-    return WTFMove(range);
+    return range;
 }
     
 RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRange, const String& matchText)
@@ -1904,7 +1904,7 @@ RefPtr<Range> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOf
         return nullptr;
     if (!setRangeStartOrEndWithCharacterOffset(result, endCharacterOffset, false))
         return nullptr;
-    return WTFMove(result);
+    return result;
 }
 
 void AXObjectCache::setTextMarkerDataWithCharacterOffset(TextMarkerData& textMarkerData, const CharacterOffset& characterOffset)

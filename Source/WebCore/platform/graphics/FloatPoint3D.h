@@ -50,13 +50,6 @@ public:
     {
     }
 
-    FloatPoint3D(const FloatPoint3D& p)
-        : m_x(p.x())
-        , m_y(p.y())
-        , m_z(p.z())
-    {
-    }
-
     float x() const { return m_x; }
     void setX(float x) { m_x = x; }
 

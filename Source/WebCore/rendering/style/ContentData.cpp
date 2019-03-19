@@ -49,14 +49,14 @@ RenderPtr<RenderObject> ImageContentData::createContentRenderer(Document& docume
     auto image = createRenderer<RenderImage>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), const_cast<StyleImage*>(m_image.ptr()));
     image->initializeStyle();
     image->setAltText(altText());
-    return WTFMove(image);
+    return image;
 }
 
 RenderPtr<RenderObject> TextContentData::createContentRenderer(Document& document, const RenderStyle&) const
 {
     auto fragment = createRenderer<RenderTextFragment>(document, m_text);
     fragment->setAltText(altText());
-    return WTFMove(fragment);
+    return fragment;
 }
 
 RenderPtr<RenderObject> CounterContentData::createContentRenderer(Document& document, const RenderStyle&) const
@@ -68,7 +68,7 @@ RenderPtr<RenderObject> QuoteContentData::createContentRenderer(Document& docume
 {
     auto quote = createRenderer<RenderQuote>(document, RenderStyle::createStyleInheritingFromPseudoStyle(pseudoStyle), m_quote);
     quote->initializeStyle();
-    return WTFMove(quote);
+    return quote;
 }
 
 } // namespace WebCore

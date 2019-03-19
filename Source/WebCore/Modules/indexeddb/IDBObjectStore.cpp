@@ -495,7 +495,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::createIndex(ExecState&, const String&
     Locker<Lock> locker(m_referencedIndexLock);
     m_referencedIndexes.set(name, WTFMove(index));
 
-    return WTFMove(referencedIndex);
+    return referencedIndex;
 }
 
 ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
@@ -527,7 +527,7 @@ ExceptionOr<Ref<IDBIndex>> IDBObjectStore::index(const String& indexName)
 
     m_referencedIndexes.set(indexName, WTFMove(index));
 
-    return WTFMove(referencedIndex);
+    return referencedIndex;
 }
 
 ExceptionOr<void> IDBObjectStore::deleteIndex(const String& name)

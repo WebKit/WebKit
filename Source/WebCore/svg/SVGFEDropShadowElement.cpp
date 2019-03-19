@@ -136,7 +136,7 @@ RefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuild
 
     auto effect = FEDropShadow::create(filter, stdDeviationX(), stdDeviationY(), dx(), dy(), color, opacity);
     effect->inputEffects().append(input1);
-    return WTFMove(effect);
+    return effect;
 }
 
 }

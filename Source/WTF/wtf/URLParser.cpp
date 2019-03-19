@@ -67,13 +67,6 @@ public:
             && m_end == other.m_end;
     }
     ALWAYS_INLINE bool operator!=(const CodePointIterator& other) const { return !(*this == other); }
-    
-    ALWAYS_INLINE CodePointIterator& operator=(const CodePointIterator& other)
-    {
-        m_begin = other.m_begin;
-        m_end = other.m_end;
-        return *this;
-    }
 
     ALWAYS_INLINE bool atEnd() const
     {

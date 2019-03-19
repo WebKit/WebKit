@@ -49,7 +49,7 @@ RefPtr<AudioBuffer> AudioBuffer::create(unsigned numberOfChannels, size_t number
     if (!buffer->m_length)
         return nullptr;
 
-    return WTFMove(buffer);
+    return buffer;
 }
 
 RefPtr<AudioBuffer> AudioBuffer::createFromAudioFileData(const void* data, size_t dataSize, bool mixToMono, float sampleRate)

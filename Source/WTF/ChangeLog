@@ -1,3 +1,42 @@
+2019-03-19  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Build cleanly with GCC 9
+        https://bugs.webkit.org/show_bug.cgi?id=195920
+
+        Reviewed by Chris Dumez.
+
+        WebKit triggers three new GCC 9 warnings:
+
+        """
+        -Wdeprecated-copy, implied by -Wextra, warns about the C++11 deprecation of implicitly
+        declared copy constructor and assignment operator if one of them is user-provided.
+        """
+
+        Solution is to either add a copy constructor or copy assignment operator, if required, or
+        else remove one if it is redundant.
+
+        """
+        -Wredundant-move, implied by -Wextra, warns about redundant calls to std::move.
+        -Wpessimizing-move, implied by -Wall, warns when a call to std::move prevents copy elision.
+        """
+
+        These account for most of this patch. Solution is to just remove the bad WTFMove().
+
+        Additionally, -Wclass-memaccess has been enhanced to catch a few cases that GCC 8 didn't.
+        These are solved by casting nontrivial types to void* before using memcpy. (Of course, it
+        would be safer to not use memcpy on nontrivial types, but that's too complex for this
+        patch. Searching for memcpy used with static_cast<void*> will reveal other cases to fix.)
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::Checked::Checked):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::allocate):
+        * wtf/URLParser.cpp:
+        (WTF::CodePointIterator::operator!= const):
+        (WTF::CodePointIterator::operator=): Deleted.
+        * wtf/text/StringView.h:
+        (WTF::StringView::CodePoints::Iterator::operator=): Deleted.
+
 2019-03-19  Alex Christensen  <achristensen@webkit.org>
 
         Make WTFLogChannelState and WTFLogLevel enum classes

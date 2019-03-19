@@ -78,7 +78,7 @@ ExceptionOr<Ref<Text>> Text::splitText(unsigned offset)
     if (renderer())
         renderer()->setTextWithOffset(data(), 0, oldData.length());
 
-    return WTFMove(newText);
+    return newText;
 }
 
 static const Text* earliestLogicallyAdjacentTextNode(const Text* text)

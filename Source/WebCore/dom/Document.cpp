@@ -3856,7 +3856,7 @@ Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
         cloneChildNodes(clone);
         break;
     }
-    return WTFMove(clone);
+    return clone;
 }
 
 Ref<Document> Document::cloneDocumentWithoutChildren() const

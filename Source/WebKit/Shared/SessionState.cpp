@@ -84,7 +84,7 @@ auto HTTPBody::Element::decode(IPC::Decoder& decoder) -> Optional<Element>
     if (!decoder.decode(result.blobURLString))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 void HTTPBody::encode(IPC::Encoder& encoder) const
@@ -184,7 +184,7 @@ Optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
     if (!decoder.decode(result.children))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 void PageState::encode(IPC::Encoder& encoder) const
@@ -243,7 +243,7 @@ Optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder
     if (!decoder.decode(result.pageState))
         return WTF::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 void BackForwardListState::encode(IPC::Encoder& encoder) const

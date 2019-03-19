@@ -134,7 +134,7 @@ RefPtr<ImageBitmap> OffscreenCanvas::transferToImageBitmap()
     gc3d->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT);
     gc3d->clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
 
-    return WTFMove(imageBitmap);
+    return imageBitmap;
 #else
     return nullptr;
 #endif

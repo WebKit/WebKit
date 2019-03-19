@@ -283,7 +283,7 @@ ExceptionOr<String> PropertySetCSSStyleDeclaration::removeProperty(const String&
 
     if (changed)
         mutationScope.enqueueMutationRecord();
-    return WTFMove(result);
+    return result;
 }
 
 RefPtr<CSSValue> PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal(CSSPropertyID propertyID)

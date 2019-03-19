@@ -51,7 +51,7 @@ std::unique_ptr<AccessCase> IntrinsicGetterAccessCase::clone() const
 {
     std::unique_ptr<IntrinsicGetterAccessCase> result(new IntrinsicGetterAccessCase(*this));
     result->resetState();
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace JSC

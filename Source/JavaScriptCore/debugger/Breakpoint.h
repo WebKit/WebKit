@@ -47,19 +47,6 @@ struct Breakpoint : public DoublyLinkedListNode<Breakpoint> {
     {
     }
 
-    Breakpoint(const Breakpoint& other)
-        : id(other.id)
-        , sourceID(other.sourceID)
-        , line(other.line)
-        , column(other.column)
-        , condition(other.condition)
-        , autoContinue(other.autoContinue)
-        , ignoreCount(other.ignoreCount)
-        , hitCount(other.hitCount)
-        , resolved(other.resolved)
-    {
-    }
-
     BreakpointID id { noBreakpointID };
     SourceID sourceID { noSourceID };
     unsigned line { 0 };

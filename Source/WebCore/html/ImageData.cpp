@@ -49,7 +49,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh)
     IntSize size(sw, sh);
     auto data = adoptRef(*new ImageData(size));
     data->data()->zeroFill();
-    return WTFMove(data);
+    return data;
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size)
