@@ -42,6 +42,7 @@ class DeprecatedCSSOMValue;
 class Document;
 class SVGDocumentExtensions;
 class SVGElementRareData;
+class SVGPropertyAnimatorFactory;
 class SVGSVGElement;
 class SVGUseElement;
 
@@ -161,7 +162,9 @@ public:
     void commitPropertyChange(SVGAnimatedProperty&);
 
     const SVGElement* attributeContextElement() const override { return this; }
+    SVGPropertyAnimatorFactory& propertyAnimatorFactory() { return *m_propertyAnimatorFactory; }
     std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive);
+    void animatorWillBeDeleted(const QualifiedName&);
 
     // These are needed for the RenderTree, animation and DOM.
     const auto& className() const { return m_className.currentValue(attributeOwnerProxy()); }
@@ -214,6 +217,8 @@ private:
     std::unique_ptr<SVGElementRareData> m_svgRareData;
 
     HashSet<SVGElement*> m_elementsWithRelativeLengths;
+
+    std::unique_ptr<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };

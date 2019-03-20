@@ -49,7 +49,7 @@ SVGAttributeAnimationControllerBase& SVGAnimateElementBase::attributeAnimationCo
     ASSERT(!hasInvalidCSSAttributeType());
 
     if (!m_attributeAnimationController) {
-        if (targetElement()->isAnimatedPropertyAttribute(attributeName()))
+        if (targetElement()->isAnimatedAttribute(attributeName()))
             m_attributeAnimationController = std::make_unique<SVGAttributeAnimationController>(*this, *targetElement());
         else
             m_attributeAnimationController = std::make_unique<SVGLegacyAttributeAnimationController>(*this, *targetElement());

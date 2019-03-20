@@ -37,6 +37,7 @@ class SVGSMILElement;
 class SVGAttributeAnimationController : public SVGAttributeAnimationControllerBase {
 public:
     SVGAttributeAnimationController(SVGAnimationElement&, SVGElement&);
+    ~SVGAttributeAnimationController();
     
 private:
     SVGAttributeAnimator* animator() const;

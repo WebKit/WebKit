@@ -1,3 +1,110 @@
+2019-03-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGColorAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=196025
+
+        Reviewed by Simon Fraser.
+
+        SVG attributes like "fill" and "stroke" do not have reflecting properties
+        in SVGElement but they are animatable by SMIL. Animating such attributes
+        is different from animating the SVG animated properties. These new classes
+        will be added to handle the first type of this kind of attribute: the Color:
+
+        -- SVGPropertyAnimatorCreator is added to SVGElement. It is responsible 
+           for creating SVGPropertyAnimators for the attribute which do not have
+           reflecting animated properties stored by SVGElement. It will maintain
+           a HashMap for the animated values for these attributes which is indexed
+           by the attribute name. The animated values has to be RefCounted because
+           the same attribute can be animated by multiple animators. So the values
+           of this HashMap will be of type Ref<SVGProperty>, e.g.
+            <circle cx="80" cy="120" r="35">
+                <animate attributeName="fill" values="#080" begin="2s" />
+                <animate attributeName="fill" values="#602;#004" begin="4s" dur="5s"/>
+            </circle>
+
+        -- SVGPropertyAnimator is the a new type which animates an attribute with
+           no reflecting animated property.
+
+        -- SVGPrimitivePropertyAnimator is a template class which is responsible
+           for animating attributes with primitive types, e.g. Color, string and 
+           float. It is derived form SVGPropertyAnimator and it is initialized 
+           with a Ref<SVGValueProperty<PropertyType>> which is created and maintained
+           by SVGPropertyAnimatorFactory.
+
+        -- SVGAnimationColorFunction is the animation function that animates the
+           attributes whose type are Color. Note the conversion form String to 
+           Color in this class has to handle the case when its value is "attributeName="
+           e.g. <animate attributeName="fill" from="attributeName="r"/>
+
+        -- SVGColorAnimator will be defined to be
+           SVGPrimitivePropertyAnimator<Color, SVGAnimationColorFunction>.
+
+        The life cycle of the RefCounted properties can be explained as follows:
+
+        -- SVGPropertyAnimatorFactory checks whether its HashMap has an entry
+           for the given attribute name. If it does not have, it will create a
+           new value through the value creation method for this attribute.
+
+        -- SVGPropertyAnimatorFactory passes the shared animated value to the
+           animator creation method. So multiple animators will be accessing the
+           same value through their RefCounted pointers.
+
+        -- When the animator is about to be deleted, it will notify the target
+           SVGElement which will notify its SVGPropertyAnimatorFactory.
+           SVGPropertyAnimatorFactory will check its HashMap and retrieves the
+           entry for the given attribute name. If the refCount is 2, it is going
+           to remove the entry form the HashMap.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimateColorElement.cpp:
+        (WebCore::attributeValueIsCurrentColor): Deleted.
+        (WebCore::SVGAnimateColorElement::determinePropertyValueTypes): Deleted.
+        * svg/SVGAnimateColorElement.h:
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::attributeAnimationController):
+        * svg/SVGAnimatedColor.cpp: Removed.
+        * svg/SVGAnimatedColor.h: Removed.
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGAttributeAnimationController.cpp:
+        (WebCore::SVGAttributeAnimationController::~SVGAttributeAnimationController):
+        * svg/SVGAttributeAnimationController.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::isAnimatedAttribute const):
+        (WebCore::SVGElement::createAnimator):
+        (WebCore::SVGElement::animatorWillBeDeleted):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::propertyAnimatorFactory):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGMPathElement.cpp:
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp: Added.
+        (WebCore::SVGAnimationColorFunction::colorFromString):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationColorFunction::progress):
+        * svg/properties/SVGAnimationFunction.h:
+        * svg/properties/SVGAttributeAnimator.cpp:
+        (WebCore::SVGAttributeAnimator::applyAnimatedStylePropertyChange):
+        (WebCore::SVGAttributeAnimator::removeAnimatedStyleProperty):
+        * svg/properties/SVGAttributeAnimator.h:
+        * svg/properties/SVGPrimitivePropertyAnimator.h: Added.
+        (WebCore::SVGPrimitivePropertyAnimator::create):
+        (WebCore::SVGPrimitivePropertyAnimator::SVGPrimitivePropertyAnimator):
+        * svg/properties/SVGPrimitivePropertyAnimatorImpl.h: Added.
+        * svg/properties/SVGPropertyAnimator.h: Added.
+        (WebCore::SVGPropertyAnimator::SVGPropertyAnimator):
+        (WebCore::SVGPropertyAnimator::adjustForInheritance const):
+        (WebCore::SVGPropertyAnimator::computeCSSPropertyValue const):
+        (WebCore::SVGPropertyAnimator::computeInheritedCSSPropertyValue const):
+        * svg/properties/SVGPropertyAnimatorFactory.h: Added.
+        (WebCore::SVGPropertyAnimatorFactory::isKnownAttribute):
+        (WebCore::SVGPropertyAnimatorFactory::createAnimator):
+        (WebCore::SVGPropertyAnimatorFactory::animatorWillBeDeleted):
+        (WebCore::SVGPropertyAnimatorFactory::createColorAnimator):
+        (WebCore::SVGPropertyAnimatorFactory::attributeAnimatorCreator):
+
 2019-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Use WeakPtr instead of storing raw pointers in WebSocket code

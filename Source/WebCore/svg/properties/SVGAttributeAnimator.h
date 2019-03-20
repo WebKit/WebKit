@@ -74,8 +74,12 @@ public:
     virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
 
 protected:
+    static void applyAnimatedStylePropertyChange(SVGElement*, CSSPropertyID, const String& value);
+    static void removeAnimatedStyleProperty(SVGElement*, CSSPropertyID);
     static void applyAnimatedPropertyChange(SVGElement*, const QualifiedName&);
 
+    void applyAnimatedStylePropertyChange(SVGElement*, const String& value);
+    void removeAnimatedStyleProperty(SVGElement*);
     void applyAnimatedPropertyChange(SVGElement*);
 
     const QualifiedName& m_attributeName;

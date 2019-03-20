@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,11 @@
 
 #pragma once
 
-#include "SVGAttributeAnimator.h"
+#include "SVGAnimationFunction.h"
+#include "SVGPrimitivePropertyAnimator.h"
 
 namespace WebCore {
 
-class SVGElement;
-
-class SVGAnimationFunction {
-public:
-    virtual ~SVGAnimationFunction() = default;
-
-    virtual bool isDiscrete() const { return false; }
-
-    virtual void setFromAndToValues(SVGElement* targetElement, const String&, const String&) = 0;
-    virtual void setFromAndByValues(SVGElement* targetElement, const String&, const String&) = 0;
-    virtual void setToAtEndOfDurationValue(const String&) = 0;
-
-    virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
-protected:
-    SVGAnimationFunction(AnimationMode animationMode)
-        : m_animationMode(animationMode)
-    {
-    }
-
-    virtual void addFromAndToValues(SVGElement*) { }
-
-    AnimationMode m_animationMode;
-};
+using SVGColorAnimator = SVGPrimitivePropertyAnimator<Color, SVGAnimationColorFunction>;
 
 }

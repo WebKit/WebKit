@@ -32,7 +32,6 @@ public:
 
 private:
     SVGAnimateColorElement(const QualifiedName&, Document&);
-    void determinePropertyValueTypes(const String& from, const String& to) override;
 };
 
 } // namespace WebCore

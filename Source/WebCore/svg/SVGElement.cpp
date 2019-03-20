@@ -44,6 +44,7 @@
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"
 #include "SVGNames.h"
+#include "SVGPropertyAnimatorFactory.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderSupport.h"
 #include "SVGSVGElement.h"
@@ -275,6 +276,7 @@ static inline const HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyT
 SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
     : StyledElement(tagName, document, CreateSVGElement)
     , SVGLangSpace(this)
+    , m_propertyAnimatorFactory(std::make_unique<SVGPropertyAnimatorFactory>())
 {
     registerAttributes();
 }
@@ -756,17 +758,27 @@ bool SVGElement::isAnimatedPropertyAttribute(const QualifiedName& attributeName)
 
 bool SVGElement::isAnimatedAttribute(const QualifiedName& attributeName) const
 {
-    return isAnimatedPropertyAttribute(attributeName);
+    return SVGPropertyAnimatorFactory::isKnownAttribute(attributeName) || isAnimatedPropertyAttribute(attributeName);
 }
 
 std::unique_ptr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
 {
+    // Property animator, e.g. "fill" or "fill-opacity".
+    if (auto animator = propertyAnimatorFactory().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive))
+        return animator;
+    
+    // Animated property animator.
     auto animator = propertyRegistry().createAnimator(attributeName, animationMode, calcMode, isAccumulated, isAdditive);
     if (!animator)
         return animator;
     for (auto* instance : instances())
         instance->propertyRegistry().appendAnimatedInstance(attributeName, *animator);
     return animator;
+}
+    
+void SVGElement::animatorWillBeDeleted(const QualifiedName& attributeName)
+{
+    propertyAnimatorFactory().animatorWillBeDeleted(attributeName);
 }
 
 Optional<ElementStyle> SVGElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle*)

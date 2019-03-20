@@ -40,19 +40,4 @@ Ref<SVGAnimateColorElement> SVGAnimateColorElement::create(const QualifiedName& 
     return adoptRef(*new SVGAnimateColorElement(tagName, document));
 }
 
-static bool attributeValueIsCurrentColor(const String& value)
-{
-    static NeverDestroyed<const AtomicString> currentColor("currentColor", AtomicString::ConstructFromLiteral);
-    return value == currentColor;
-}
-
-void SVGAnimateColorElement::determinePropertyValueTypes(const String& from, const String& to)
-{
-    SVGAnimateElementBase::determinePropertyValueTypes(from, to);
-    if (attributeValueIsCurrentColor(from))
-        m_fromPropertyValueType = CurrentColorValue;
-    if (attributeValueIsCurrentColor(to))
-        m_toPropertyValueType = CurrentColorValue;
-}
-
 }

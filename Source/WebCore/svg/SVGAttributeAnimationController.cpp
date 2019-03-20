@@ -37,6 +37,12 @@ SVGAttributeAnimationController::SVGAttributeAnimationController(SVGAnimationEle
     : SVGAttributeAnimationControllerBase(animationElement, targetElement)
 {
 }
+    
+SVGAttributeAnimationController::~SVGAttributeAnimationController()
+{
+    if (m_animator)
+        m_targetElement.animatorWillBeDeleted(m_animationElement.attributeName());
+}
 
 SVGAttributeAnimator* SVGAttributeAnimationController::animator() const
 {

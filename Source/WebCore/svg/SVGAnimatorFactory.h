@@ -20,7 +20,6 @@
 #pragma once
 
 #include "SVGAnimatedAngle.h"
-#include "SVGAnimatedColor.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
@@ -44,18 +43,18 @@ public:
         ASSERT(contextElement);
 
         switch (attributeType) {
+        case AnimatedBoolean:
+        case AnimatedColor:
+        case AnimatedInteger:
+        case AnimatedIntegerOptionalInteger:
+        case AnimatedPreserveAspectRatio:
+        case AnimatedRect:
+            return nullptr;
+
         case AnimatedAngle:
             return std::make_unique<SVGAnimatedAngleAnimator>(animationElement, contextElement);
-        case AnimatedBoolean:
-            return nullptr;
-        case AnimatedColor:
-            return std::make_unique<SVGAnimatedColorAnimator>(*animationElement, *contextElement);
         case AnimatedEnumeration:
             return std::make_unique<SVGAnimatedEnumerationAnimator>(animationElement, contextElement);
-        case AnimatedInteger:
-            return nullptr;
-        case AnimatedIntegerOptionalInteger:
-            return nullptr;
         case AnimatedLength:
             return std::make_unique<SVGAnimatedLengthAnimator>(animationElement, contextElement);
         case AnimatedLengthList:
@@ -70,10 +69,6 @@ public:
             return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
         case AnimatedPoints:
             return std::make_unique<SVGAnimatedPointListAnimator>(animationElement, contextElement);
-        case AnimatedPreserveAspectRatio:
-            return nullptr;
-        case AnimatedRect:
-            return nullptr;
         case AnimatedString:
             return std::make_unique<SVGAnimatedStringAnimator>(animationElement, contextElement);
         case AnimatedTransformList:

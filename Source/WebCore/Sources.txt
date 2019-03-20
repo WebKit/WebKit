@@ -2270,7 +2270,6 @@ svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
 svg/SVGAnimatedAngle.cpp
-svg/SVGAnimatedColor.cpp
 svg/SVGAnimatedEnumeration.cpp
 svg/SVGAnimatedLength.cpp
 svg/SVGAnimatedLengthList.cpp
@@ -2422,6 +2421,7 @@ svg/graphics/filters/SVGFilterBuilder.cpp
 
 svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
 svg/properties/SVGAnimatedProperty.cpp
+svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp
 svg/properties/SVGAttributeOwnerProxy.cpp
 svg/properties/SVGLegacyAnimatedProperty.cpp

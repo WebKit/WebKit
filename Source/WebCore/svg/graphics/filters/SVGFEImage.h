@@ -30,6 +30,7 @@ namespace WebCore {
 class Document;
 class Image;
 class RenderElement;
+class TreeScope;
 
 class FEImage final : public FilterEffect {
 public:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SVGAnimationAdditiveValueFunctionImpl.h"
 
-#include "SVGAttributeAnimator.h"
+#include "RenderElement.h"
+#include "SVGElement.h"
 
 namespace WebCore {
 
-class SVGElement;
+Color SVGAnimationColorFunction::colorFromString(SVGElement* targetElement, const String& string)
+{
+    static NeverDestroyed<const AtomicString> currentColor("currentColor", AtomicString::ConstructFromLiteral);
 
-class SVGAnimationFunction {
-public:
-    virtual ~SVGAnimationFunction() = default;
+    if (string != currentColor.get())
+        return SVGPropertyTraits<Color>::fromString(string);
 
-    virtual bool isDiscrete() const { return false; }
+    if (auto* renderer = targetElement->renderer())
+        return renderer->style().visitedDependentColor(CSSPropertyColor);
 
-    virtual void setFromAndToValues(SVGElement* targetElement, const String&, const String&) = 0;
-    virtual void setFromAndByValues(SVGElement* targetElement, const String&, const String&) = 0;
-    virtual void setToAtEndOfDurationValue(const String&) = 0;
-
-    virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
-protected:
-    SVGAnimationFunction(AnimationMode animationMode)
-        : m_animationMode(animationMode)
-    {
-    }
-
-    virtual void addFromAndToValues(SVGElement*) { }
-
-    AnimationMode m_animationMode;
-};
+    return { };
+}
 
 }

@@ -32,6 +32,63 @@
 
 namespace WebCore {
 
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* element, CSSPropertyID id, const String& value)
+{
+    ASSERT(element);
+    ASSERT(!element->m_deletionHasBegun);
+    
+    if (!element->ensureAnimatedSMILStyleProperties().setProperty(id, value, false))
+        return;
+    element->invalidateStyle();
+}
+
+void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement* targetElement, const String& value)
+{
+    ASSERT(targetElement);
+    ASSERT(m_attributeName != anyQName());
+    
+    // FIXME: Do we really need to check both isConnected and !parentNode?
+    if (!targetElement->isConnected() || !targetElement->parentNode())
+        return;
+    
+    CSSPropertyID id = cssPropertyID(m_attributeName.localName());
+    
+    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    applyAnimatedStylePropertyChange(targetElement, id, value);
+    
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    for (auto* instance : targetElement->instances())
+        applyAnimatedStylePropertyChange(instance, id, value);
+}
+    
+void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* element, CSSPropertyID id)
+{
+    ASSERT(element);
+    ASSERT(!element->m_deletionHasBegun);
+
+    element->ensureAnimatedSMILStyleProperties().removeProperty(id);
+    element->invalidateStyle();
+}
+
+void SVGAttributeAnimator::removeAnimatedStyleProperty(SVGElement* targetElement)
+{
+    ASSERT(targetElement);
+    ASSERT(m_attributeName != anyQName());
+
+    // FIXME: Do we really need to check both isConnected and !parentNode?
+    if (!targetElement->isConnected() || !targetElement->parentNode())
+        return;
+
+    CSSPropertyID id = cssPropertyID(m_attributeName.localName());
+
+    SVGElement::InstanceUpdateBlocker blocker(*targetElement);
+    removeAnimatedStyleProperty(targetElement, id);
+
+    // If the target element has instances, update them as well, w/o requiring the <use> tree to be rebuilt.
+    for (auto* instance : targetElement->instances())
+        removeAnimatedStyleProperty(instance, id);
+}
+    
 void SVGAttributeAnimator::applyAnimatedPropertyChange(SVGElement* element, const QualifiedName& attributeName)
 {
     ASSERT(!element->m_deletionHasBegun);
