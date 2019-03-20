@@ -52,32 +52,33 @@ static inline bool isClassicPhone()
     return isClassic() && [PAL::getUIApplicationClass() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
 }
 
-static inline NSString *osNameForUserAgent()
+static inline String osNameForUserAgent()
 {
     if (deviceHasIPadCapability() && !isClassicPhone())
-        return @"OS";
-    return @"iPhone OS";
+        return "OS";
+    return "iPhone OS";
 }
 
-static inline NSString *deviceNameForUserAgent()
+static inline String deviceNameForUserAgent()
 {
     if (isClassic()) {
         if (isClassicPad())
-            return @"iPad";
-        return @"iPhone";
+            return "iPad";
+        return "iPhone";
     }
 
-    NSString *name = deviceName();
+    String name = deviceName();
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
-    NSUInteger location = [name rangeOfString:@" Simulator" options:NSBackwardsSearch].location;
-    if (location != NSNotFound && location > 0)
-        return [name substringToIndex:location];
+    size_t location = name.find(" Simulator");
+    if (location != notFound) 
+        return name.substring(0, location);
 #endif
     return name;
 }
 
 String standardUserAgentWithApplicationName(const String& applicationName)
 {
+    // FIXME: Is this needed any more? Mac doesn't have this check,
     // Check to see if there is a user agent override for all WebKit clients.
     CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));
     if (override) {
@@ -86,12 +87,10 @@ String standardUserAgentWithApplicationName(const String& applicationName)
         CFRelease(override);
     }
 
-    // FIXME: We should implement this with String and/or StringBuilder instead.
-    NSString *webKitVersion = userAgentBundleVersion();
-    NSString *osMarketingVersionString = systemMarketingVersionForUserAgentString();
-    if (applicationName.isEmpty())
-        return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko)", deviceNameForUserAgent(), osNameForUserAgent(), osMarketingVersionString, webKitVersion];
-    return [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU %@ %@ like Mac OS X) AppleWebKit/%@ (KHTML, like Gecko) %@", deviceNameForUserAgent(), osNameForUserAgent(), osMarketingVersionString, webKitVersion, static_cast<NSString *>(applicationName)];
+    String osVersion = systemMarketingVersionForUserAgentString();
+    String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
+
+    return makeString("Mozilla/5.0 (", deviceNameForUserAgent(), "; CPU ", osNameForUserAgent(), " ", osVersion, " like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
 }
 
 } // namespace WebCore.

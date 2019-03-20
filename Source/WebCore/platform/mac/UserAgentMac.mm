@@ -32,22 +32,12 @@
 
 namespace WebCore {
 
-#if defined(__ppc__) || defined(__ppc64__)
-#define PROCESSOR "PPC"
-#elif defined(__i386__) || defined(__x86_64__)
-#define PROCESSOR "Intel"
-#else
-#error Unknown architecture
-#endif
-
 String standardUserAgentWithApplicationName(const String& applicationName)
 {
     String osVersion = systemMarketingVersionForUserAgentString();
-    String webKitVersionString = userAgentBundleVersion();
+    String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
 
-    if (applicationName.isEmpty())
-        return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersionString, " (KHTML, like Gecko)");
-    return makeString("Mozilla/5.0 (Macintosh; " PROCESSOR " Mac OS X ", osVersion, ") AppleWebKit/", webKitVersionString, " (KHTML, like Gecko) ", applicationName);
+    return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X ", osVersion, ") AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
 }
 
 } // namespace WebCore

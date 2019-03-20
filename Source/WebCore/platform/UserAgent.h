@@ -34,7 +34,6 @@ namespace WebCore {
 WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applicationName);
 
 String systemMarketingVersionForUserAgentString();
-String userAgentBundleVersion();
 #else
 
 WEBCORE_EXPORT String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());

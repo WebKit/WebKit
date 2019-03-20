@@ -38,9 +38,4 @@ String systemMarketingVersionForUserAgentString()
     return [systemMarketingVersion() stringByReplacingOccurrencesOfString:@"." withString:@"_"];
 }
 
-String userAgentBundleVersion()
-{
-    return "605.1.15"_s;
-}
-
 } // namespace WebCore

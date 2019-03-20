@@ -1,3 +1,28 @@
+2019-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Simplify Cocoa platform user agent logic by using string constants instead of function calls for the frozen parts
+        https://bugs.webkit.org/show_bug.cgi?id=195936
+
+        Reviewed by Dean Jackson.
+
+        No new tests because no behavior changes. Existing behavior is tested by fast/dom/navigator-userAgent-frozen.html
+
+        * platform/UserAgent.h: Remove prototype of removed function.
+        * platform/cocoa/UserAgentCocoa.mm:
+        (WebCore::userAgentBundleVersion): Deleted.
+        * platform/ios/UserAgentIOS.mm:
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::osNameForUserAgent): Use WTF String instead of NSString
+        (WebCore::deviceNameForUserAgent): dutto
+        (WebCore::standardUserAgentWithApplicationName): Simplify this
+        function to account for WebKit version now being frozen. Also
+        use String instead of NSString.
+        * platform/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName): Simplify this
+        function to account for CPU and WEbKit version now being
+        frozen. Also avoid two separate but very similar calls to
+        makeString().
+
 2019-03-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed adjustment to r242842 per Darin's request.
