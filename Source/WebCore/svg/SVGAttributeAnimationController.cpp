@@ -109,7 +109,7 @@ void SVGAttributeAnimationController::resetAnimatedType()
 void SVGAttributeAnimationController::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement*)
 {
     ASSERT(percentage >= 0 && percentage <= 1);
-    if (m_targetElement.hasTagName(SVGNames::setTag))
+    if (m_animationElement.hasTagName(SVGNames::setTag))
         percentage = 1;
 
     if (m_animationElement.calcMode() == CalcMode::Discrete)

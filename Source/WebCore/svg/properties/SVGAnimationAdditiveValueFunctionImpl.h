@@ -64,5 +64,40 @@ private:
         m_to += m_from;
     }
 };
+    
+class SVGAnimationRectFunction : public SVGAnimationAdditiveValueFunction<FloatRect> {
+public:
+    using Base = SVGAnimationAdditiveValueFunction<FloatRect>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPropertyTraits<FloatRect>::fromString(from);
+        m_to = SVGPropertyTraits<FloatRect>::fromString(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration = SVGPropertyTraits<FloatRect>::fromString(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, FloatRect& animated)
+    {
+        FloatRect from = m_animationMode == AnimationMode::To ? animated : m_from;
+        
+        float x = Base::progress(percentage, repeatCount, from.x(), m_to.x(), toAtEndOfDuration().x(), animated.x());
+        float y = Base::progress(percentage, repeatCount, from.y(), m_to.y(), toAtEndOfDuration().y(), animated.y());
+        float width = Base::progress(percentage, repeatCount, from.width(), m_to.width(), toAtEndOfDuration().width(), animated.width());
+        float height = Base::progress(percentage, repeatCount, from.height(), m_to.height(), toAtEndOfDuration().height(), animated.height());
+        
+        animated = { x, y, width, height };
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        m_to += m_from;
+    }
+};
 
 }

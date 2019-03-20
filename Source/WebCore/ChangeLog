@@ -1,3 +1,103 @@
+2019-03-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG property tear off objects of SVGAnimatedRect
+        https://bugs.webkit.org/show_bug.cgi?id=195949
+
+        Reviewed by Simon Fraser.
+
+        SVGRect is an SVG type, so we need to introduce two classes to represent
+        it and its animated property SVGAnimatedRect.
+
+        -- SVGValueProperty: It is derived from SVGProperty and it will be the 
+           base class of all the SVG type based properties. It is basically a
+           RefCounted object with m_value member. For SVGRect, m_value will be
+           of type FloatRect.
+
+        -- SVGAnimatedValueProperty: It is derived from SVGAnimatedProperty and
+           it will be the base class of all the animated SVG type based properties.
+           It is RefCounted object with two RefCounted members: baseVal and animVal.
+           These two members are of type SVGValueProperty. For SVGAnimatedRect,
+           baseVal and animVal will be of type SVGRect.
+
+        SVGAnimatedValueProperty will be responsible for:
+
+        1) Providing access to its baseVal and animVal. Note the same interface
+           is used internally and used by the DOM.
+
+        2) Managing the animation of the property by starting and stopping it.
+
+        3) Coordinating the changes in its baseVal and animVal with the owner
+           element.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimatedRect.cpp: Removed.
+        * svg/SVGAnimatedRect.h: Removed.
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGAttributeAnimationController.cpp:
+        (WebCore::SVGAttributeAnimationController::calculateAnimatedValue):
+        This is a bug from r243036. The <set> can be the tag of m_animationElement
+        not m_targetElement.
+        * svg/SVGAttributeAnimationController.h:
+        * svg/SVGAttributeAnimationControllerBase.h:
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::registerAttributes):
+        (WebCore::SVGFitToViewBox::setViewBox):
+        (WebCore::SVGFitToViewBox::resetViewBox):
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::viewBox const):
+        (WebCore::SVGFitToViewBox::viewBoxAnimated):
+        (WebCore::SVGFitToViewBox::viewBoxString const):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGRect.h:
+        (WebCore::SVGRect::create):
+        (WebCore::SVGRect::x):
+        (WebCore::SVGRect::setX):
+        (WebCore::SVGRect::y):
+        (WebCore::SVGRect::setY):
+        (WebCore::SVGRect::width):
+        (WebCore::SVGRect::setWidth):
+        (WebCore::SVGRect::height):
+        (WebCore::SVGRect::setHeight):
+        (WebCore::SVGRect::SVGRect): Deleted.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::checkIntersectionWithoutUpdatingLayout):
+        (WebCore::checkEnclosureWithoutUpdatingLayout):
+        * svg/SVGSVGElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        * svg/SVGViewSpec.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimatedValueProperty.h: Added.
+        (WebCore::SVGAnimatedValueProperty::create):
+        (WebCore::SVGAnimatedValueProperty::~SVGAnimatedValueProperty):
+        (WebCore::SVGAnimatedValueProperty::setBaseValInternal):
+        (WebCore::SVGAnimatedValueProperty::baseVal const):
+        (WebCore::SVGAnimatedValueProperty::baseVal):
+        (WebCore::SVGAnimatedValueProperty::setAnimVal):
+        (WebCore::SVGAnimatedValueProperty::animVal const):
+        (WebCore::SVGAnimatedValueProperty::animVal):
+        (WebCore::SVGAnimatedValueProperty::currentValue const):
+        (WebCore::SVGAnimatedValueProperty::SVGAnimatedValueProperty):
+        (WebCore::SVGAnimatedValueProperty::ensureAnimVal):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationRectFunction::progress):
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+        * svg/properties/SVGValueProperty.h: Added.
+        (WebCore::SVGValueProperty::create):
+        (WebCore::SVGValueProperty::value const):
+        (WebCore::SVGValueProperty::setValue):
+        (WebCore::SVGValueProperty::value):
+        (WebCore::SVGValueProperty::SVGValueProperty):
+
 2019-03-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource

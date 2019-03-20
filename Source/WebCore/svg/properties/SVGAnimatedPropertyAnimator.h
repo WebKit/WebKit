@@ -36,6 +36,14 @@ class SVGAnimatedPropertyAnimator : public SVGAttributeAnimator {
 public:
     using AnimatorAnimatedProperty = AnimatedProperty;
 
+    template<typename... Arguments>
+    SVGAnimatedPropertyAnimator(const QualifiedName& attributeName, Ref<AnimatedProperty>& animated, Arguments&&... arguments)
+        : SVGAttributeAnimator(attributeName)
+        , m_animated(animated.copyRef())
+        , m_function(std::forward<Arguments>(arguments)...)
+    {
+    }
+
     void appendAnimatedInstance(Ref<AnimatedProperty>& animated)
     {
         m_animatedInstances.append(animated.copyRef());
@@ -88,14 +96,6 @@ public:
     }
 
 protected:
-    template<typename... Arguments>
-    SVGAnimatedPropertyAnimator(const QualifiedName& attributeName, Ref<AnimatedProperty>& animated, Arguments&&... arguments)
-        : SVGAttributeAnimator(attributeName)
-        , m_animated(animated.copyRef())
-        , m_function(std::forward<Arguments>(arguments)...)
-    {
-    }
-
     Ref<AnimatedProperty> m_animated;
     Vector<Ref<AnimatedProperty>> m_animatedInstances;
     AnimationFunction m_function;

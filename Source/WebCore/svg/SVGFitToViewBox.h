@@ -42,10 +42,10 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFitToViewBox>;
 
-    const FloatRect& viewBox() const { return m_viewBox.currentValue(m_attributeOwnerProxy); }
+    const FloatRect& viewBox() const { return m_viewBox->currentValue(); }
     const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(m_attributeOwnerProxy); }
 
-    RefPtr<SVGAnimatedRect> viewBoxAnimated() { return m_viewBox.animatedProperty(m_attributeOwnerProxy); }
+    SVGAnimatedRect& viewBoxAnimated() { return m_viewBox; }
     RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated() { return m_preserveAspectRatio.animatedProperty(m_attributeOwnerProxy); }
 
     void setViewBox(const FloatRect&);
@@ -54,14 +54,14 @@ public:
     void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio.setValue(preserveAspectRatio); }
     void resetPreserveAspectRatio() { m_preserveAspectRatio.resetValue(); }
 
-    String viewBoxString() const { return m_viewBox.toString(); }
+    String viewBoxString() const { return SVGPropertyTraits<FloatRect>::toString(viewBox()); }
     String preserveAspectRatioString() const { return m_preserveAspectRatio.toString(); }
 
     bool hasValidViewBox() const { return m_isViewBoxValid; }
     bool hasEmptyViewBox() const { return m_isViewBoxValid && viewBox().isEmpty(); }
 
 protected:
-    SVGFitToViewBox(SVGElement* contextElement, AnimatedPropertyState = PropertyIsReadWrite);
+    SVGFitToViewBox(SVGElement* contextElement, SVGPropertyAccess = SVGPropertyAccess::ReadWrite);
 
     static bool isKnownAttribute(const QualifiedName& attributeName)
     {
@@ -77,7 +77,7 @@ private:
     static void registerAttributes();
 
     AttributeOwnerProxy m_attributeOwnerProxy;
-    SVGAnimatedRectAttribute m_viewBox;
+    Ref<SVGAnimatedRect> m_viewBox;
     SVGAnimatedPreserveAspectRatioAttribute m_preserveAspectRatio;
     bool m_isViewBoxValid { false };
 };

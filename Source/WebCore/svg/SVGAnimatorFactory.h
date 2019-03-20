@@ -30,7 +30,6 @@
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
 
@@ -75,7 +74,7 @@ public:
         case AnimatedPreserveAspectRatio:
             return std::make_unique<SVGAnimatedPreserveAspectRatioAnimator>(animationElement, contextElement);
         case AnimatedRect:
-            return std::make_unique<SVGAnimatedRectAnimator>(animationElement, contextElement);
+            return nullptr;
         case AnimatedString:
             return std::make_unique<SVGAnimatedStringAnimator>(animationElement, contextElement);
         case AnimatedTransformList:

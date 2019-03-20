@@ -76,4 +76,26 @@ private:
     }
 };
 
+template<typename OwnerType>
+class SVGAnimatedRectAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedRect> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedRect>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedRect> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedRectAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedRectAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedRectAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
 }

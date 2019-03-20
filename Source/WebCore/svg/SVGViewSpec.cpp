@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +33,7 @@
 namespace WebCore {
 
 SVGViewSpec::SVGViewSpec(SVGElement& contextElement)
-    : SVGFitToViewBox(&contextElement, PropertyIsReadOnly)
+    : SVGFitToViewBox(&contextElement, SVGPropertyAccess::ReadOnly)
     , m_contextElement(makeWeakPtr(contextElement))
     , m_attributeOwnerProxy(*this, contextElement)
 {

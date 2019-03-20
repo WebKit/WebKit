@@ -34,13 +34,16 @@
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedPrimitiveProperty.h"
-#include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
+#include "SVGAnimatedValueProperty.h"
+#include "SVGRect.h"
 
 namespace WebCore {
 
 using SVGAnimatedBoolean = SVGAnimatedPrimitiveProperty<bool>;
 using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
+
+using SVGAnimatedRect = SVGAnimatedValueProperty<SVGRect>;
 
 }

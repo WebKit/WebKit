@@ -32,7 +32,6 @@
 #include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedRect.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
@@ -106,12 +105,6 @@ public:
     void registerAttribute()
     {
         registerAttribute(SVGAnimatedPreserveAspectRatioAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedRectAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedRectAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedStringAttribute OwnerType::*attribute>

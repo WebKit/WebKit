@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "QualifiedName.h"
+#include "SVGAnimatedPropertyType.h"
+
 namespace WebCore {
 
 class SVGAnimationElement;

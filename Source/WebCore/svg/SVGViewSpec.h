@@ -21,7 +21,6 @@
 #pragma once
 
 #include "SVGAnimatedPreserveAspectRatio.h"
-#include "SVGAnimatedRect.h"
 #include "SVGFitToViewBox.h"
 #include "SVGTransformListValues.h"
 #include "SVGZoomAndPan.h"

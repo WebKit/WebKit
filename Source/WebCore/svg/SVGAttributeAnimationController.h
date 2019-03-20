@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class SVGAnimationElement;
+class SVGAttributeAnimator;
 class SVGElement;
 class SVGSMILElement;
 

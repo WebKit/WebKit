@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,105 +20,87 @@
 
 #pragma once
 
-#include "SVGPropertyTearOff.h"
 #include "SVGPropertyTraits.h"
+#include "SVGValueProperty.h"
 
 namespace WebCore {
 
-class SVGRect : public SVGPropertyTearOff<FloatRect> {
+class SVGRect : public SVGValueProperty<FloatRect> {
+    using Base = SVGValueProperty<FloatRect>;
+    using Base::Base;
+    using Base::m_value;
+
 public:
-    static Ref<SVGRect> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatRect& value)
+    static Ref<SVGRect> create(const FloatRect& value = { })
     {
-        return adoptRef(*new SVGRect(animatedProperty, role, value));
+        return adoptRef(*new SVGRect(value));
     }
 
-    static Ref<SVGRect> create(const FloatRect& initialValue = { })
+    static Ref<SVGRect> create(SVGPropertyOwner* owner, SVGPropertyAccess access, const FloatRect& value = { })
     {
-        return adoptRef(*new SVGRect(initialValue));
+        return adoptRef(*new SVGRect(owner, access, value));
     }
 
-    template<typename T> static ExceptionOr<Ref<SVGRect>> create(ExceptionOr<T>&& initialValue)
+    template<typename T>
+    static ExceptionOr<Ref<SVGRect>> create(ExceptionOr<T>&& value)
     {
-        if (initialValue.hasException())
-            return initialValue.releaseException();
-        return create(initialValue.releaseReturnValue());
+        if (value.hasException())
+            return value.releaseException();
+        return adoptRef(*new SVGRect(value.releaseReturnValue()));
     }
 
-    float x()
-    {
-        return propertyReference().x();
-    }
+    float x() { return m_value.x(); }
 
     ExceptionOr<void> setX(float xValue)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setX(xValue);
+        m_value.setX(xValue);
         commitChange();
-
         return { };
     }
 
-    float y()
-    {
-        return propertyReference().y();
-    }
+    float y() { return m_value.y(); }
 
     ExceptionOr<void> setY(float xValue)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setY(xValue);
+        m_value.setY(xValue);
         commitChange();
-
         return { };
     }
 
-    float width()
-    {
-        return propertyReference().width();
-    }
+    float width() { return m_value.width(); }
 
     ExceptionOr<void> setWidth(float widthValue)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setWidth(widthValue);
+        m_value.setWidth(widthValue);
         commitChange();
-
         return { };
     }
 
-    float height()
-    {
-        return propertyReference().height();
-    }
+    float height() { return m_value.height(); }
 
     ExceptionOr<void> setHeight(float heightValue)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setHeight(heightValue);
+        m_value.setHeight(heightValue);
         commitChange();
-
         return { };
     }
-
-private:
-    SVGRect(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatRect& value)
-        : SVGPropertyTearOff<FloatRect>(&animatedProperty, role, value)
+    
+    String valueAsString() const override
     {
-    }
-
-    explicit SVGRect(const FloatRect& initialValue)
-        : SVGPropertyTearOff<FloatRect>(initialValue)
-    {
+        return SVGPropertyTraits<FloatRect>::toString(m_value);
     }
 };
 
-
-} // namespace WebCore
+}
