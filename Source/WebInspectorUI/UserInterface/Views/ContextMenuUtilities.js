@@ -232,7 +232,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
         });
     }
 
-    if (!options.excludeRevealLayer && window.LayerTreeAgent && attached) {
+    if (WI.settings.experimentalEnableLayersTab.value && window.LayerTreeAgent && attached) {
         contextMenu.appendItem(WI.UIString("Reveal in Layers Tab"), () => {
             WI.showLayersTab({nodeToSelect: domNode});
         });
