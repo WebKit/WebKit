@@ -1,3 +1,28 @@
+2019-03-20  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Group UIWebFormAccessoryDelegate-related code and tighten it up a bit
+        https://bugs.webkit.org/show_bug.cgi?id=196018
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView accessoryClear]): Use uniform initializer syntax. Code could send the empty
+        string, but I resisted since null string, as we do now, likely encodes more compactly and we
+        avoid a per-process alloc.
+        (-[WKContentView accessoryTab:]): Fix style nit; missing space between capture list and arguments
+        in lambda. Also use lamdba capture initializer syntax and remove a local.
+        (-[WKContentView _updateAccessory]): Remove a FIXME as it can't be satified with the current
+        design without more bookkeeping. The design for showing and hiding an AutoFill button added in
+        r166933 requires knowing the title for the button when showing it via -setAccessoryViewCustomButtonTitle.
+        We could re-implement such that -setAccessoryViewCustomButtonTitle: stores the title and calls
+        -_updateAccessory, but that has the disadvantage of increasing the memory footprint of WKContentView
+        for the stored title and that seems worse than centralizing the logic in _updateAccessory. So,
+        let's not fix this FIXME. Now that we are removing the FIXME, change to use an early return style.
+        (-[WKContentView _hideKeyboard]): Micro optimization; only call _updateAccessory if we have
+        a form accessory view. This method is called everytime we load a page (more precisely when we
+        commit the load for a page) in addition to everytime we blur (defocus) an element. No need to
+        update an accessory if we don't have one.
+ 
 2019-03-20  Olivier Robin  <olivierrobin@chromium.org>
 
         Fix _getContentsAsAttributedStringWithCompletionHandler availability for iOS.

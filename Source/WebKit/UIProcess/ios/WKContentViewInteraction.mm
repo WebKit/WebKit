@@ -3693,13 +3693,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithContext:context]];
 }
 
-// UIWebFormAccessoryDelegate
-- (void)accessoryDone
-{
-    SetForScope<BOOL> dismissingAccessoryScope { _dismissingAccessory, YES };
-    [self resignFirstResponder];
-}
-
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
 - (NSArray *)keyCommands
 {
@@ -3722,21 +3715,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_previousAccessoryTabForWebView:(id)sender
 {
     [self accessoryTab:NO];
-}
-
-- (void)accessoryTab:(BOOL)isNext
-{
-    [self _endEditing];
-    _inputPeripheral = nil;
-
-    _isChangingFocusUsingAccessoryTab = YES;
-    [self beginSelectionChange];
-    RetainPtr<WKContentView> view = self;
-    _page->focusNextFocusedElement(isNext, [view](WebKit::CallbackBase::Error) {
-        [view endSelectionChange];
-        [view reloadInputViews];
-        view->_isChangingFocusUsingAccessoryTab = NO;
-    });
 }
 
 - (void)_becomeFirstResponderWithSelectionMovingForward:(BOOL)selectingForward completionHandler:(void (^)(BOOL didBecomeFirstResponder))completionHandler
@@ -3772,6 +3750,33 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self _resetIsDoubleTapPending];
 }
 
+// MARK: UIWebFormAccessoryDelegate protocol and accessory methods
+
+- (void)accessoryClear
+{
+    _page->setFocusedElementValue({ });
+}
+
+- (void)accessoryDone
+{
+    SetForScope<BOOL> dismissingAccessoryScope { _dismissingAccessory, YES };
+    [self resignFirstResponder];
+}
+
+- (void)accessoryTab:(BOOL)isNext
+{
+    [self _endEditing];
+    _inputPeripheral = nil;
+
+    _isChangingFocusUsingAccessoryTab = YES;
+    [self beginSelectionChange];
+    _page->focusNextFocusedElement(isNext, [protectedSelf = retainPtr(self)] (WebKit::CallbackBase::Error) {
+        [protectedSelf endSelectionChange];
+        [protectedSelf reloadInputViews];
+        protectedSelf->_isChangingFocusUsingAccessoryTab = NO;
+    });
+}
+
 - (void)accessoryAutoFill
 {
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
@@ -3779,36 +3784,30 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         [inputDelegate _webView:_webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
 }
 
-- (void)accessoryClear
-{
-    _page->setFocusedElementValue(String());
-}
-
 - (void)_updateAccessory
 {
     [_formAccessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [_formAccessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
-    if (currentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad()) {
         [_formAccessoryView setClearVisible:NO];
-    else {
-        switch (_focusedElementInformation.elementType) {
-        case WebKit::InputType::Date:
-        case WebKit::InputType::Month:
-        case WebKit::InputType::DateTimeLocal:
-        case WebKit::InputType::Time:
-            [_formAccessoryView setClearVisible:YES];
-            break;
-        default:
-            [_formAccessoryView setClearVisible:NO];
-            break;
-        }
+        return;
     }
 
-    // FIXME: hide or show the AutoFill button as needed.
+    switch (_focusedElementInformation.elementType) {
+    case WebKit::InputType::Date:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Time:
+        [_formAccessoryView setClearVisible:YES];
+        return;
+    default:
+        [_formAccessoryView setClearVisible:NO];
+        return;
+    }
 }
 
-// Keyboard interaction
+// MARK: Keyboard interaction
 // UITextInput protocol implementation
 
 - (BOOL)_allowAnimatedUpdateSelectionRectViews
@@ -4782,7 +4781,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     // FIXME: Does it make sense to call -reloadInputViews on watchOS?
     [self reloadInputViews];
-    [self _updateAccessory];
+    if (_formAccessoryView)
+        [self _updateAccessory];
 }
 
 - (const WebKit::FocusedElementInformation&)focusedElementInformation
