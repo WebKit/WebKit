@@ -49,11 +49,18 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
     {
         // FIXME: DOMNode
 
+        // Don't include the DOMEvent's originator.
+        let domEvent = this._domEvent;
+        if (domEvent && domEvent.originator) {
+            domEvent = Object.shallowCopy(domEvent);
+            domEvent.originator = undefined;
+        }
+
         return {
             type: this.type,
             eventType: this._eventType,
             timestamp: this.startTime,
-            domEvent: this._domEvent,
+            domEvent,
             isLowPower: this._isLowPower,
         };
     }

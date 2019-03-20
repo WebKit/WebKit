@@ -1,3 +1,15 @@
+2019-03-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timelines - Export fails for MediaTimelineRecords with originator DOM Node - Cannot serialize cyclic structure
+        https://bugs.webkit.org/show_bug.cgi?id=196027
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/MediaTimelineRecord.js:
+        (WI.MediaTimelineRecord.prototype.toJSON):
+        Remove the originator since that is a WI.DOMNode and cannot
+        be JSON serialized.
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: move breakpoint storage to use `WI.ObjectStore`
