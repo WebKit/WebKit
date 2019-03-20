@@ -1,3 +1,15 @@
+2019-03-20  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key
+        https://bugs.webkit.org/show_bug.cgi?id=195683
+
+        Reviewed by Alex Christensen.
+
+        Adding the test that was supposed to have landed along with r242893.
+
+        * pointerevents/pointer-id-crash-expected.txt: Added.
+        * pointerevents/pointer-id-crash.html: Added.
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failures after r243161.
