@@ -289,19 +289,7 @@ unsigned long long DatabaseTracker::maximumSize(Database& database)
 
 void DatabaseTracker::closeAllDatabases(CurrentQueryBehavior currentQueryBehavior)
 {
-    Vector<Ref<Database>> openDatabases;
-    {
-        LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
-        if (!m_openDatabaseMap)
-            return;
-        for (auto& nameMap : m_openDatabaseMap->values()) {
-            for (auto& set : nameMap->values()) {
-                for (auto& database : *set)
-                    openDatabases.append(*database);
-            }
-        }
-    }
-    for (auto& database : openDatabases) {
+    for (auto& database : openDatabases()) {
         if (currentQueryBehavior == CurrentQueryBehavior::Interrupt)
             database->interrupt();
         database->close();
@@ -531,6 +519,24 @@ void DatabaseTracker::doneCreatingDatabase(Database& database)
 {
     LockHolder lockDatabase(m_databaseGuard);
     doneCreatingDatabase(database.securityOrigin(), database.stringIdentifier());
+}
+
+Vector<Ref<Database>> DatabaseTracker::openDatabases()
+{
+    Vector<Ref<Database>> openDatabases;
+    {
+        LockHolder openDatabaseMapLock(m_openDatabaseMapGuard);
+
+        if (m_openDatabaseMap) {
+            for (auto& nameMap : m_openDatabaseMap->values()) {
+                for (auto& set : nameMap->values()) {
+                    for (auto& database : *set)
+                        openDatabases.append(*database);
+                }
+            }
+        }
+    }
+    return openDatabases;
 }
 
 void DatabaseTracker::addOpenDatabase(Database& database)

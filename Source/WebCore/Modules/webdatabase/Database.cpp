@@ -618,6 +618,12 @@ String Database::displayName() const
     return m_displayName.isolatedCopy();
 }
 
+String Database::expectedVersion() const
+{
+    // Return a deep copy for ref counting thread safety
+    return m_expectedVersion.isolatedCopy();
+}
+
 unsigned long long Database::estimatedSize() const
 {
     return m_estimatedSize;

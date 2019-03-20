@@ -1,3 +1,72 @@
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Database: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195587
+        <rdar://problem/48791735>
+
+        Reviewed by Timothy Hatcher.
+
+        No change in functionality.
+
+        * inspector/agents/InspectorDatabaseAgent.h:
+        * inspector/agents/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::didCommitLoad): Added.
+        (WebCore::InspectorDatabaseAgent::didOpenDatabase):
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::enable):
+        (WebCore::InspectorDatabaseAgent::disable):
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        (WebCore::InspectorDatabaseAgent::databaseId):
+        (WebCore::InspectorDatabaseAgent::findByFileName):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        (WebCore::InspectorDatabaseAgent::clearResources): Deleted.
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent): Deleted.
+        * inspector/InspectorDatabaseResource.h:
+        (WebCore::InspectorDatabaseResource::database const):
+        (WebCore::InspectorDatabaseResource::setDatabase):
+        (WebCore::InspectorDatabaseResource::database): Deleted.
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::create):
+        (WebCore::InspectorDatabaseResource::InspectorDatabaseResource):
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        Pass the `Database` as a reference instead of a pointer. Retrieve any information directly
+        from the `Database`, rather than using the arguments that were used to create it.
+
+        * Modules/webdatabase/Database.h:
+        (WebCore::Database::expectedVersion const): Deleted.
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::expectedVersion const): Added.
+        * Modules/webdatabase/DatabaseManager.cpp:
+        (WebCore::DatabaseManager::openDatabase):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::closeAllDatabases):
+        (WebCore::DatabaseTracker::openDatabases): Added.
+        Expose various values used by `InspectorDatabaseAgent` and `InspectorDatabaseResource`.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::createLazyAgents):
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+
+        * inspector/CommandLineAPIHost.h:
+        (WebCore::CommandLineAPIHost::init):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::disconnect):
+        (WebCore::CommandLineAPIHost::inspect):
+        (WebCore::CommandLineAPIHost::clearConsoleMessages):
+        (WebCore::CommandLineAPIHost::databaseId):
+        (WebCore::CommandLineAPIHost::storageId):
+        Rather than pass each agent individually, pass the entire `InstrumentingAgents` so that the
+        current agent can be used instead of whatever was initially created.
+
 2019-03-20  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Always consider baseline shim for the minimum contribution

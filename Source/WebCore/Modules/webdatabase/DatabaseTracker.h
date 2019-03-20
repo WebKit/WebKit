@@ -72,6 +72,7 @@ public:
     void setDatabaseDetails(const SecurityOriginData&, const String& name, const String& displayName, unsigned long long estimatedSize);
     WEBCORE_EXPORT String fullPathForDatabase(const SecurityOriginData&, const String& name, bool createIfDoesNotExist);
 
+    Vector<Ref<Database>> openDatabases();
     void addOpenDatabase(Database&);
     void removeOpenDatabase(Database&);
 

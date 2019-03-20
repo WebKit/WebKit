@@ -41,8 +41,8 @@
 #include "JSEventListener.h"
 #include "Pasteboard.h"
 #include "Storage.h"
+#include "WebConsoleAgent.h"
 #include <JavaScriptCore/InspectorAgent.h>
-#include <JavaScriptCore/InspectorConsoleAgent.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptValue.h>
@@ -69,14 +69,17 @@ CommandLineAPIHost::~CommandLineAPIHost() = default;
 
 void CommandLineAPIHost::disconnect()
 {
-    m_inspectorAgent = nullptr;
-    m_consoleAgent = nullptr;
-    m_databaseAgent = nullptr;
+
+    m_instrumentingAgents = nullptr;
 }
 
 void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInspect, JSC::JSValue hintsValue)
 {
-    if (!m_inspectorAgent)
+    if (!m_instrumentingAgents)
+        return;
+
+    auto* inspectorAgent = m_instrumentingAgents->inspectorAgent();
+    if (!inspectorAgent)
         return;
 
     RefPtr<JSON::Object> hintsObject;
@@ -84,7 +87,7 @@ void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInsp
         return;
 
     auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(Inspector::toInspectorValue(state, valueToInspect));
-    m_inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
+    inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
 }
 
 CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(ExecState& state, EventTarget& target)
@@ -126,10 +129,15 @@ CommandLineAPIHost::EventListenersRecord CommandLineAPIHost::getEventListeners(E
 
 void CommandLineAPIHost::clearConsoleMessages()
 {
-    if (m_consoleAgent) {
-        ErrorString unused;
-        m_consoleAgent->clearMessages(unused);
-    }
+    if (!m_instrumentingAgents)
+        return;
+
+    auto* consoleAgent = m_instrumentingAgents->webConsoleAgent();
+    if (!consoleAgent)
+        return;
+
+    ErrorString unused;
+    consoleAgent->clearMessages(unused);
 }
 
 void CommandLineAPIHost::copyText(const String& text)
@@ -159,8 +167,10 @@ JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::ExecState& state)
 
 String CommandLineAPIHost::databaseId(Database& database)
 {
-    if (m_databaseAgent)
-        return m_databaseAgent->databaseId(database);
+    if (m_instrumentingAgents) {
+        if (auto* databaseAgent = m_instrumentingAgents->inspectorDatabaseAgent())
+            return databaseAgent->databaseId(database);
+    }
     return { };
 }
 

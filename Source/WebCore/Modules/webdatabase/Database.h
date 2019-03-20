@@ -88,6 +88,7 @@ public:
     // Internal engine support
     String stringIdentifier() const;
     String displayName() const;
+    String expectedVersion() const;
     unsigned long long estimatedSize() const;
     String fileName() const;
     DatabaseDetails details() const;
@@ -133,7 +134,6 @@ private:
     bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
     bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
     void setExpectedVersion(const String&);
-    const String& expectedVersion() const { return m_expectedVersion; }
     String getCachedVersion() const;
     void setCachedVersion(const String&);
     bool getActualVersionForTransaction(String& version);

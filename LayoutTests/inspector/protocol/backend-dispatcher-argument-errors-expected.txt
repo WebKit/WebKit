@@ -35,26 +35,18 @@ Actual error message: Some arguments of method 'Runtime.evaluate' can't be proce
 Actual error data: [{"code":-32602,"message":"Parameter 'includeCommandLineAPI' has wrong type. It must be 'Boolean'."},{"code":-32602,"message":"Some arguments of method 'Runtime.evaluate' can't be processed"}]
 
 -- Running test case: TestErrorCodeForSyncServerError
-Sending message: {"id":123,"method":"Database.getDatabaseTableNames","params":{"databaseId":"thisisNotADatabase"}}
-PASS: the backend should send a protocol error when receiving an invalid message.
-PASS: the reported error should be "ServerError" (-32000)
-Actual error code: -32000
-Actual error message: Database agent is not enabled
-Actual error data: [{"code":-32000,"message":"Database agent is not enabled"}]
-
--- Running test case: TestErrorCodeForAsyncServerError
-Sending message: {"id":123,"method":"Database.executeSQL","params":{"databaseId":"thisisNotADatabase","query":"asdf"}}
-PASS: the backend should send a protocol error when receiving an invalid message.
-PASS: the reported error should be "ServerError" (-32000)
-Actual error code: -32000
-Actual error message: Database agent is not enabled
-Actual error data: [{"code":-32000,"message":"Database agent is not enabled"}]
-
--- Running test case: CommandWithBadArgumentValue
 Sending message: {"id":123,"method":"Runtime.getProperties","params":{"objectId":"thisisNotAnId"}}
 PASS: the backend should send a protocol error when receiving an invalid message.
 PASS: the reported error should be "ServerError" (-32000)
 Actual error code: -32000
 Actual error message: Could not find InjectedScript for objectId
 Actual error data: [{"code":-32000,"message":"Could not find InjectedScript for objectId"}]
+
+-- Running test case: TestErrorCodeForAsyncServerError
+Sending message: {"id":123,"method":"Runtime.awaitPromise","params":{"promiseObjectId":"thisisNotAnId"}}
+PASS: the backend should send a protocol error when receiving an invalid message.
+PASS: the reported error should be "ServerError" (-32000)
+Actual error code: -32000
+Actual error message: Could not find InjectedScript for promiseObjectId
+Actual error data: [{"code":-32000,"message":"Could not find InjectedScript for promiseObjectId"}]
 

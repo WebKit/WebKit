@@ -25,6 +25,7 @@ function test()
     let suite = ProtocolTest.createAsyncSuite("CommandLineAPI.prototype.inspect");
 
     InspectorProtocol.awaitCommand({method: "Inspector.enable", params: {}})
+    InspectorProtocol.awaitCommand({method: "Database.enable", params: {}})
 
     function addTestCase({name, description, expression}) {
         suite.addTestCase({

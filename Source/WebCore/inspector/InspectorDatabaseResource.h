@@ -41,17 +41,19 @@ class Database;
 
 class InspectorDatabaseResource : public RefCounted<InspectorDatabaseResource> {
 public:
-    static Ref<InspectorDatabaseResource> create(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
+    static Ref<InspectorDatabaseResource> create(Database&, const String& domain, const String& name, const String& version);
 
-    void bind(Inspector::DatabaseFrontendDispatcher*);
-    Database* database() { return m_database.get(); }
-    void setDatabase(RefPtr<Database>&& database) { m_database = WTFMove(database); }
+    void bind(Inspector::DatabaseFrontendDispatcher&);
+
+    Database& database() const { return m_database.get(); }
+    void setDatabase(Database& database) { m_database = database; }
+
     String id() const { return m_id; }
 
 private:
-    InspectorDatabaseResource(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
+    InspectorDatabaseResource(Database&, const String& domain, const String& name, const String& version);
 
-    RefPtr<Database> m_database;
+    Ref<Database> m_database;
     String m_id;
     String m_domain;
     String m_name;

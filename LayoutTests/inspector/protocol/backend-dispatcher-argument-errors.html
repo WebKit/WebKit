@@ -76,21 +76,14 @@ function test()
     addErrorResponseTestCase({
         name: "TestErrorCodeForSyncServerError",
         description: "The backend should return a server error with the correct error code.",
-        message: {id: 123, method: "Database.getDatabaseTableNames", params: {databaseId: "thisisNotADatabase"}},
+        message: {id: 123, method: "Runtime.getProperties", params: {objectId: "thisisNotAnId"}},
         expectedError: "ServerError"
     });
 
     addErrorResponseTestCase({
         name: "TestErrorCodeForAsyncServerError",
         description: "The backend should return a server error with the correct error code.",
-        message: {id: 123, method: "Database.executeSQL", params: {databaseId: "thisisNotADatabase", query: "asdf"}},
-        expectedError: "ServerError"
-    });
-
-    addErrorResponseTestCase({
-        name: "CommandWithBadArgumentValue",
-        description: "The backend should return an error if something went wrong when invoking the agent's method.",
-        message: {id: 123, method: "Runtime.getProperties", params: {objectId: "thisisNotAnId"}},
+        message: {id: 123, method: "Runtime.awaitPromise", params: {promiseObjectId: "thisisNotAnId"}},
         expectedError: "ServerError"
     });
 

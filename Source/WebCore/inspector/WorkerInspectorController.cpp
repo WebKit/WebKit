@@ -75,8 +75,8 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
     m_agents.append(std::make_unique<WorkerRuntimeAgent>(workerContext));
     m_agents.append(WTFMove(consoleAgent));
 
-    if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
-        commandLineAPIHost->init(nullptr, m_instrumentingAgents->webConsoleAgent(), nullptr);
+    if (auto* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
+        commandLineAPIHost->init(m_instrumentingAgents.copyRef());
 }
 
 WorkerInspectorController::~WorkerInspectorController()

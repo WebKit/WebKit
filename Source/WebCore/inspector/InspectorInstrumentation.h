@@ -35,6 +35,7 @@
 #include "CallTracerTypes.h"
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
+#include "Database.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "EventTarget.h"
@@ -68,7 +69,6 @@ class CachedResource;
 class CharacterData;
 class DOMWindow;
 class DOMWrapperWorld;
-class Database;
 class Document;
 class DocumentLoader;
 class EventListener;
@@ -240,7 +240,7 @@ public:
     static InspectorInstrumentationCookie willFireObserverCallback(ScriptExecutionContext&, const String& callbackType);
     static void didFireObserverCallback(const InspectorInstrumentationCookie&);
 
-    static void didOpenDatabase(ScriptExecutionContext*, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
+    static void didOpenDatabase(Database&);
 
     static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
@@ -417,7 +417,7 @@ private:
     static InspectorInstrumentationCookie willFireObserverCallbackImpl(InstrumentingAgents&, const String&, ScriptExecutionContext&);
     static void didFireObserverCallbackImpl(const InspectorInstrumentationCookie&);
 
-    static void didOpenDatabaseImpl(InstrumentingAgents&, RefPtr<Database>&&, const String& domain, const String& name, const String& version);
+    static void didOpenDatabaseImpl(InstrumentingAgents&, Database&);
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*);
 
@@ -1172,10 +1172,11 @@ inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource& 
     willDestroyCachedResourceImpl(cachedResource);
 }
 
-inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, RefPtr<Database>&& database, const String& domain, const String& name, const String& version)
+inline void InspectorInstrumentation::didOpenDatabase(Database& database)
 {
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didOpenDatabaseImpl(*instrumentingAgents, WTFMove(database), domain, name, version);
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(database.scriptExecutionContext()))
+        didOpenDatabaseImpl(*instrumentingAgents, database);
 }
 
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin)

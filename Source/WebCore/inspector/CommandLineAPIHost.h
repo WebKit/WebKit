@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "InstrumentingAgents.h"
 #include <JavaScriptCore/PerGlobalObjectWrapperWorld.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -38,16 +39,10 @@ namespace JSC {
 class JSValue;
 }
 
-namespace Inspector {
-class InspectorAgent;
-class InspectorConsoleAgent;
-}
-
 namespace WebCore {
 
 class Database;
 class EventTarget;
-class InspectorDatabaseAgent;
 class JSDOMGlobalObject;
 class Storage;
 
@@ -58,14 +53,9 @@ public:
     static Ref<CommandLineAPIHost> create();
     ~CommandLineAPIHost();
 
-    void init(Inspector::InspectorAgent* inspectorAgent
-        , Inspector::InspectorConsoleAgent* consoleAgent
-        , InspectorDatabaseAgent* databaseAgent
-        )
+    void init(RefPtr<InstrumentingAgents> instrumentingAgents)
     {
-        m_inspectorAgent = inspectorAgent;
-        m_consoleAgent = consoleAgent;
-        m_databaseAgent = databaseAgent;
+        m_instrumentingAgents = instrumentingAgents;
     }
 
     void disconnect();
@@ -102,10 +92,7 @@ public:
 private:
     CommandLineAPIHost();
 
-    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
-    Inspector::InspectorConsoleAgent* m_consoleAgent { nullptr };
-    InspectorDatabaseAgent* m_databaseAgent { nullptr };
-
+    RefPtr<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<InspectableObject> m_inspectedObject; // $0
     Inspector::PerGlobalObjectWrapperWorld m_wrappers;
 };
