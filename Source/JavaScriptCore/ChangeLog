@@ -1,3 +1,109 @@
+2019-03-20  Mark Lam  <mark.lam@apple.com>
+
+        Open source arm64e code.
+        https://bugs.webkit.org/show_bug.cgi?id=196012
+        <rdar://problem/49066237>
+
+        Reviewed by Keith Miller.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/ARM64EAssembler.h: Added.
+        (JSC::ARM64EAssembler::encodeGroup1):
+        (JSC::ARM64EAssembler::encodeGroup2):
+        (JSC::ARM64EAssembler::encodeGroup4):
+        (JSC::ARM64EAssembler::pacia1716):
+        (JSC::ARM64EAssembler::pacib1716):
+        (JSC::ARM64EAssembler::autia1716):
+        (JSC::ARM64EAssembler::autib1716):
+        (JSC::ARM64EAssembler::paciaz):
+        (JSC::ARM64EAssembler::paciasp):
+        (JSC::ARM64EAssembler::pacibz):
+        (JSC::ARM64EAssembler::pacibsp):
+        (JSC::ARM64EAssembler::autiaz):
+        (JSC::ARM64EAssembler::autiasp):
+        (JSC::ARM64EAssembler::autibz):
+        (JSC::ARM64EAssembler::autibsp):
+        (JSC::ARM64EAssembler::xpaclri):
+        (JSC::ARM64EAssembler::pacia):
+        (JSC::ARM64EAssembler::pacib):
+        (JSC::ARM64EAssembler::pacda):
+        (JSC::ARM64EAssembler::pacdb):
+        (JSC::ARM64EAssembler::autia):
+        (JSC::ARM64EAssembler::autib):
+        (JSC::ARM64EAssembler::autda):
+        (JSC::ARM64EAssembler::autdb):
+        (JSC::ARM64EAssembler::paciza):
+        (JSC::ARM64EAssembler::pacizb):
+        (JSC::ARM64EAssembler::pacdza):
+        (JSC::ARM64EAssembler::pacdzb):
+        (JSC::ARM64EAssembler::autiza):
+        (JSC::ARM64EAssembler::autizb):
+        (JSC::ARM64EAssembler::autdza):
+        (JSC::ARM64EAssembler::autdzb):
+        (JSC::ARM64EAssembler::xpaci):
+        (JSC::ARM64EAssembler::xpacd):
+        (JSC::ARM64EAssembler::pacga):
+        (JSC::ARM64EAssembler::braa):
+        (JSC::ARM64EAssembler::brab):
+        (JSC::ARM64EAssembler::blraa):
+        (JSC::ARM64EAssembler::blrab):
+        (JSC::ARM64EAssembler::braaz):
+        (JSC::ARM64EAssembler::brabz):
+        (JSC::ARM64EAssembler::blraaz):
+        (JSC::ARM64EAssembler::blrabz):
+        (JSC::ARM64EAssembler::retaa):
+        (JSC::ARM64EAssembler::retab):
+        (JSC::ARM64EAssembler::eretaa):
+        (JSC::ARM64EAssembler::eretab):
+        (JSC::ARM64EAssembler::linkPointer):
+        (JSC::ARM64EAssembler::repatchPointer):
+        (JSC::ARM64EAssembler::setPointer):
+        (JSC::ARM64EAssembler::readPointer):
+        (JSC::ARM64EAssembler::readCallTarget):
+        (JSC::ARM64EAssembler::ret):
+        * assembler/MacroAssembler.cpp:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerARM64.cpp:
+        * assembler/MacroAssemblerARM64E.h: Added.
+        (JSC::MacroAssemblerARM64E::tagReturnAddress):
+        (JSC::MacroAssemblerARM64E::untagReturnAddress):
+        (JSC::MacroAssemblerARM64E::tagPtr):
+        (JSC::MacroAssemblerARM64E::untagPtr):
+        (JSC::MacroAssemblerARM64E::removePtrTag):
+        (JSC::MacroAssemblerARM64E::callTrustedPtr):
+        (JSC::MacroAssemblerARM64E::call):
+        (JSC::MacroAssemblerARM64E::callRegister):
+        (JSC::MacroAssemblerARM64E::jump):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareForTailCall):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * jit/ThunkGenerators.cpp:
+        (JSC::arityFixupGenerator):
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ClassInfo.h:
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSCPtrTag.cpp: Added.
+        (JSC::tagForPtr):
+        (JSC::ptrTagName):
+        (JSC::initializePtrTagLookup):
+        * runtime/JSCPtrTag.h:
+        (JSC::initializePtrTagLookup):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
 2019-03-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSC::createError needs to check for OOM in errorDescriptionForValue

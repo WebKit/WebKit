@@ -802,6 +802,7 @@ runtime/JSAsyncGeneratorFunction.cpp
 runtime/JSBigInt.cpp
 runtime/JSBoundFunction.cpp
 runtime/JSCJSValue.cpp
+runtime/JSCPtrTag.cpp
 runtime/JSCallee.cpp
 runtime/JSCell.cpp
 runtime/JSCustomGetterSetterFunction.cpp

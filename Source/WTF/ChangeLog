@@ -1,3 +1,52 @@
+2019-03-20  Mark Lam  <mark.lam@apple.com>
+
+        Open source arm64e code.
+        https://bugs.webkit.org/show_bug.cgi?id=196012
+        <rdar://problem/49066237>
+
+        Reviewed by Keith Miller.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/BlockPtr.h:
+        * wtf/Platform.h:
+        * wtf/PlatformRegisters.cpp: Added.
+        (WTF::threadStateLRInternal):
+        (WTF::threadStatePCInternal):
+        * wtf/PlatformRegisters.h:
+        * wtf/PointerPreparations.h:
+        * wtf/PtrTag.cpp: Added.
+        (WTF::tagForPtr):
+        (WTF::ptrTagName):
+        (WTF::registerPtrTagLookup):
+        (WTF::reportBadTag):
+        * wtf/PtrTag.h:
+        (WTF::removeCodePtrTag):
+        (WTF::tagCodePtrImpl):
+        (WTF::tagCodePtr):
+        (WTF::untagCodePtrImplHelper):
+        (WTF::untagCodePtrImpl):
+        (WTF::untagCodePtr):
+        (WTF::retagCodePtrImplHelper):
+        (WTF::retagCodePtrImpl):
+        (WTF::retagCodePtr):
+        (WTF::tagCFunctionPtrImpl):
+        (WTF::tagCFunctionPtr):
+        (WTF::untagCFunctionPtrImpl):
+        (WTF::untagCFunctionPtr):
+        (WTF::tagInt):
+        (WTF::assertIsCFunctionPtr):
+        (WTF::assertIsNullOrCFunctionPtr):
+        (WTF::assertIsNotTagged):
+        (WTF::assertIsTagged):
+        (WTF::assertIsNullOrTagged):
+        (WTF::isTaggedWith):
+        (WTF::assertIsTaggedWith):
+        (WTF::assertIsNullOrTaggedWith):
+        (WTF::usesPointerTagging):
+        (WTF::registerPtrTagLookup):
+        (WTF::reportBadTag):
+        (WTF::tagForPtr): Deleted.
+
 2019-03-20  Keith Rollin  <krollin@apple.com>
 
         Update checks that determine if WebKit is system WebKit

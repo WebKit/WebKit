@@ -1808,6 +1808,8 @@
 		FE1BD0211E72027900134BC9 /* CellProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0201E72027000134BC9 /* CellProfile.h */; };
 		FE1BD0251E72053800134BC9 /* HeapVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1BD0231E72052F00134BC9 /* HeapVerifier.h */; };
 		FE1C0FFD1B193E9800B53FCA /* Exception.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1C0FFC1B193E9800B53FCA /* Exception.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE20CE9E15F04A9500DF3430 /* LLIntCLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */; };
 		FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4816,6 +4818,9 @@
 		FE1BD0231E72052F00134BC9 /* HeapVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapVerifier.h; sourceTree = "<group>"; };
 		FE1C0FFC1B193E9800B53FCA /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		FE1C0FFE1B194FD100B53FCA /* Exception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Exception.cpp; sourceTree = "<group>"; };
+		FE1E2C3C2240C1EF00F6B729 /* JSCPtrTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCPtrTag.cpp; sourceTree = "<group>"; };
+		FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARM64EAssembler.h; sourceTree = "<group>"; };
+		FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARM64E.h; sourceTree = "<group>"; };
 		FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntCLoop.cpp; path = llint/LLIntCLoop.cpp; sourceTree = "<group>"; };
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MinimumReservedZoneSize.h; sourceTree = "<group>"; };
@@ -6867,6 +6872,7 @@
 				F692A8870255597D01FF60F7 /* JSCJSValue.cpp */,
 				14ABB36E099C076400E2A24F /* JSCJSValue.h */,
 				865A30F0135007E100CDB49E /* JSCJSValueInlines.h */,
+				FE1E2C3C2240C1EF00F6B729 /* JSCPtrTag.cpp */,
 				FE7497E5209001B00003565B /* JSCPtrTag.h */,
 				72AAF7CB1D0D318B005E60BE /* JSCustomGetterSetterFunction.cpp */,
 				72AAF7CC1D0D318B005E60BE /* JSCustomGetterSetterFunction.h */,
@@ -7703,6 +7709,7 @@
 				0F3730901C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h */,
 				AD412B351E7B57C0008AF157 /* AllowMacroScratchRegisterUsageIf.h */,
 				8640923B156EED3B00566CB2 /* ARM64Assembler.h */,
+				FE1E2C3D2240D2F600F6B729 /* ARM64EAssembler.h */,
 				86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */,
 				9688CB130ED12B4E001D649F /* AssemblerBuffer.h */,
 				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
@@ -7716,6 +7723,7 @@
 				86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */,
 				FEB137561BB11EEE00CD5100 /* MacroAssemblerARM64.cpp */,
 				8640923C156EED3B00566CB2 /* MacroAssemblerARM64.h */,
+				FE1E2C3E2240D30B00F6B729 /* MacroAssemblerARM64E.h */,
 				A729009B17976C6000317298 /* MacroAssemblerARMv7.cpp */,
 				86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */,
 				0F6DB7EB1D617D0F00CDBF8E /* MacroAssemblerCodeRef.cpp */,
@@ -8514,6 +8522,7 @@
 				0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */,
 				0FEC85011BDACDAC0080FF74 /* B3BasicBlock.h in Headers */,
 				0FEC85021BDACDAC0080FF74 /* B3BasicBlockInlines.h in Headers */,
+				FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */,
 				0FEC85031BDACDAC0080FF74 /* B3BasicBlockUtils.h in Headers */,
 				0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */,
 				0FEC85041BDACDAC0080FF74 /* B3BlockWorklist.h in Headers */,
@@ -8593,6 +8602,7 @@
 				0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */,
 				0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */,
 				0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */,
+				FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */,
 				DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */,
 				0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */,
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,

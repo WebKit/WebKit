@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,10 +35,10 @@
 #include "MacroAssemblerARMv7.h"
 namespace JSC { typedef MacroAssemblerARMv7 MacroAssemblerBase; };
 
-#elif CPU(ARM64E) && __has_include(<WebKitAdditions/MacroAssemblerARM64E.h>)
+#elif CPU(ARM64E)
 #define TARGET_ASSEMBLER ARM64EAssembler
 #define TARGET_MACROASSEMBLER MacroAssemblerARM64E
-#include <WebKitAdditions/MacroAssemblerARM64E.h>
+#include "MacroAssemblerARM64E.h"
 
 #elif CPU(ARM64)
 #define TARGET_ASSEMBLER ARM64Assembler

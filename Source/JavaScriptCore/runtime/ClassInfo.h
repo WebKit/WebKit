@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,6 +26,10 @@
 #include "ConstructData.h"
 #include "JSCast.h"
 
+#if CPU(ARM64E)
+#include <ptrauth.h>
+#endif
+
 namespace WTF {
 class PrintStream;
 };
@@ -36,6 +40,13 @@ class HeapSnapshotBuilder;
 class JSArrayBufferView;
 class Snippet;
 struct HashTable;
+
+#if CPU(ARM64E)
+#define WTF_METHOD_TABLE_ENTRY(method) \
+    __ptrauth(ptrauth_key_process_independent_code, true, ptrauth_string_discriminator("MethodTable." #method)) method
+#else
+#define WTF_METHOD_TABLE_ENTRY(method) method
+#endif
 
 struct MethodTable {
     using DestroyFunctionPtr = void (*)(JSCell*);

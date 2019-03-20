@@ -33,6 +33,7 @@
 #include "ExecutableAllocator.h"
 #include "Heap.h"
 #include "Identifier.h"
+#include "JSCPtrTag.h"
 #include "JSDateMath.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
@@ -60,6 +61,8 @@ void initializeThreading()
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::initializeThreading();
         Options::initialize();
+
+        initializePtrTagLookup();
 
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();

@@ -23,54 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <wtf/PtrTag.h>
+#include "config.h"
+#include "JSCPtrTag.h"
 
 namespace JSC {
 
-using PtrTag = WTF::PtrTag;
+#if CPU(ARM64E)
 
-#define FOR_EACH_JSC_PTRTAG(v) \
-    v(B3CCallPtrTag) \
-    v(B3CompilationPtrTag) \
-    v(BytecodePtrTag) \
-    v(DisassemblyPtrTag) \
-    v(ExceptionHandlerPtrTag) \
-    v(ExecutableMemoryPtrTag) \
-    v(JITThunkPtrTag) \
-    v(JITStubRoutinePtrTag) \
-    v(JSEntryPtrTag) \
-    v(JSInternalPtrTag) \
-    v(JSSwitchPtrTag) \
-    v(LinkBufferPtrTag) \
-    v(OperationPtrTag) \
-    v(OSREntryPtrTag) \
-    v(OSRExitPtrTag) \
-    v(SlowPathPtrTag) \
-    v(WasmEntryPtrTag) \
-    v(Yarr8BitPtrTag) \
-    v(Yarr16BitPtrTag) \
-    v(YarrMatchOnly8BitPtrTag) \
-    v(YarrMatchOnly16BitPtrTag) \
-    v(YarrBacktrackPtrTag) \
+static const char* tagForPtr(const void* ptr)
+{
+#define RETURN_NAME_IF_TAG_MATCHES(tag) \
+    if (WTF::untagCodePtrImpl<WTF::PtrTagAction::NoAssert>(ptr, JSC::tag) == removeCodePtrTag(ptr)) \
+        return #tag;
+    FOR_EACH_JSC_PTRTAG(RETURN_NAME_IF_TAG_MATCHES)
+#undef RETURN_NAME_IF_TAG_MATCHES
+    return nullptr; // Matching tag not found.
+}
 
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable:4307)
-#endif
+static const char* ptrTagName(PtrTag tag)
+{
+#define RETURN_PTRTAG_NAME(_tagName) case _tagName: return #_tagName;
+    switch (static_cast<unsigned>(tag)) {
+        FOR_EACH_JSC_PTRTAG(RETURN_PTRTAG_NAME)
+    }
+#undef RETURN_PTRTAG_NAME
+    return nullptr; // Matching tag not found.
+}
 
-FOR_EACH_JSC_PTRTAG(WTF_DECLARE_PTRTAG)
+void initializePtrTagLookup()
+{
+    static WTF::PtrTagLookup lookup = { tagForPtr, ptrTagName };
+    WTF::registerPtrTagLookup(&lookup);
+}
 
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-
-void initializePtrTagLookup();
-
-#if !CPU(ARM64E)
-inline void initializePtrTagLookup() { }
-#endif
+#endif // CPU(ARM64E)
 
 } // namespace JSC
-

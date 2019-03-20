@@ -758,7 +758,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
         if (!trueCaller) {
             ASSERT(inlineCallFrame->isTail());
             void* returnPC = frame.get<void*>(CallFrame::returnPCOffset());
-#if USE(POINTER_PROFILING)
+#if CPU(ARM64E)
             void* oldEntrySP = cpu.fp<uint8_t*>() + sizeof(CallerFrameAndPC);
             void* newEntrySP = cpu.fp<uint8_t*>() + inlineCallFrame->returnPCOffset() + sizeof(void*);
             returnPC = retagCodePtr(returnPC, bitwise_cast<PtrTag>(oldEntrySP), bitwise_cast<PtrTag>(newEntrySP));
@@ -803,7 +803,7 @@ static void reifyInlinedCallFrames(Context& context, CodeBlock* outermostBaselin
                 callerFrame = cpu.fp<uint8_t*>() + trueCaller->inlineCallFrame()->stackOffset * sizeof(EncodedJSValue);
 
             void* targetAddress = jumpTarget.executableAddress();
-#if USE(POINTER_PROFILING)
+#if CPU(ARM64E)
             void* newEntrySP = cpu.fp<uint8_t*>() + inlineCallFrame->returnPCOffset() + sizeof(void*);
             targetAddress = retagCodePtr(targetAddress, JSInternalPtrTag, bitwise_cast<PtrTag>(newEntrySP));
 #endif

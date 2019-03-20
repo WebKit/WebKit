@@ -167,6 +167,8 @@
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */; };
+		FE1E2C3B2240C06600F6B729 /* PtrTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C392240C05400F6B729 /* PtrTag.cpp */; };
+		FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 /* End PBXBuildFile section */
@@ -676,6 +678,8 @@
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE05FAE61FDB214300093230 /* DumbPtrTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbPtrTraits.h; sourceTree = "<group>"; };
 		FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFAssertions.cpp; sourceTree = "<group>"; };
+		FE1E2C392240C05400F6B729 /* PtrTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtrTag.cpp; sourceTree = "<group>"; };
+		FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformRegisters.cpp; sourceTree = "<group>"; };
 		FE7497E4208FFCAA0003565B /* PtrTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtrTag.h; sourceTree = "<group>"; };
 		FE7497ED209163060003565B /* MetaAllocatorPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaAllocatorPtr.h; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
@@ -1063,6 +1067,7 @@
 				0F824A641B7443A0002E345D /* ParkingLot.cpp */,
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
+				FE1E2C41224187C600F6B729 /* PlatformRegisters.cpp */,
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,
 				0FF860941BCCBD740045127F /* PointerComparison.h */,
 				FEB6B035201BE0B600B958C1 /* PointerPreparations.h */,
@@ -1072,6 +1077,7 @@
 				0FC4488216FE9FE100844BE9 /* ProcessID.h */,
 				7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */,
 				7AF023B32061E16C00A8EFD6 /* ProcessPrivilege.h */,
+				FE1E2C392240C05400F6B729 /* PtrTag.cpp */,
 				FE7497E4208FFCAA0003565B /* PtrTag.h */,
 				143F611D1565F0F900DB514A /* RAMSize.cpp */,
 				143F611E1565F0F900DB514A /* RAMSize.h */,
@@ -1527,6 +1533,7 @@
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
 				0F9D3360165DBA73005AD387 /* FilePrintStream.cpp in Sources */,
 				A331D95B21F24992009F02AA /* FileSystem.cpp in Sources */,
+				FE1E2C42224187C600F6B729 /* PlatformRegisters.cpp in Sources */,
 				A331D95D21F249E4009F02AA /* FileSystemCF.cpp in Sources */,
 				A331D95F21F249F6009F02AA /* FileSystemCocoa.mm in Sources */,
 				A331D96121F24A0A009F02AA /* FileSystemMac.mm in Sources */,
@@ -1620,6 +1627,7 @@
 				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,
 				1C181C931D307AB800F5FA16 /* UTextProviderUTF16.cpp in Sources */,
+				FE1E2C3B2240C06600F6B729 /* PtrTag.cpp in Sources */,
 				A8A47469151A825B004123FF /* UTF8Conversion.cpp in Sources */,
 				7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */,
 				0F66B2921DC97BAB004A1D3F /* WallTime.cpp in Sources */,

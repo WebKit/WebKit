@@ -585,11 +585,8 @@ macro functionArityCheck(doneLabel, slowPath)
     btiz t1, .continue
 
 .noExtraSlot:
-    if POINTER_PROFILING
-        if ARM64 or ARM64E
-            loadp 8[cfr], lr
-        end
-
+    if ARM64E
+        loadp 8[cfr], lr
         addp 16, cfr, t3
         untagReturnAddress t3
     end
@@ -618,13 +615,10 @@ macro functionArityCheck(doneLabel, slowPath)
     addp 8, t3
     baddinz 1, t2, .fillLoop
 
-    if POINTER_PROFILING
+    if ARM64E
         addp 16, cfr, t1
         tagReturnAddress t1
-
-        if ARM64 or ARM64E
-            storep lr, 8[cfr]
-        end
+        storep lr, 8[cfr]
     end
 
 .continue:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -381,7 +381,11 @@ asm (
     // Note: we haven't changed the value of fp. Hence, it is still pointing to the frame of
     // the caller of the probe (which is what we want in order to play nice with debuggers e.g. lldb).
     "mov       x0, sp" "\n" // Set the Probe::State* arg.
-    CALL_WITH_PTRTAG("blr", "x28", CFunctionPtrTag) // Call the probe handler.
+#if CPU(ARM64E)
+    "blraaz    x28" "\n" // Call the probe handler.
+#else
+    "blr       x28" "\n" // Call the probe handler.
+#endif
 
     // Make sure the Probe::State is entirely below the result stack pointer so
     // that register values are still preserved when we call the initializeStack
@@ -417,7 +421,11 @@ asm (
     "cbz       x2, " LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) "\n"
 
     "mov       x0, x27" "\n" // Set the Probe::State* arg.
-    CALL_WITH_PTRTAG("blr", "x2", CFunctionPtrTag) // Call the initializeStackFunction (loaded into x2 above).
+#if CPU(ARM64E)
+    "blraaz    x2" "\n" // Call the initializeStackFunction (loaded into x2 above).
+#else
+    "blr       x2" "\n" // Call the initializeStackFunction (loaded into x2 above).
+#endif
 
     LOCAL_LABEL_STRING(ctiMasmProbeTrampolineRestoreRegisters) ":" "\n"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -155,7 +155,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
         if (!trueCaller) {
             ASSERT(inlineCallFrame->isTail());
             jit.loadPtr(AssemblyHelpers::Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()), GPRInfo::regT3);
-#if USE(POINTER_PROFILING)
+#if CPU(ARM64E)
             jit.addPtr(AssemblyHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::callFrameRegister, GPRInfo::regT2);
             jit.untagPtr(GPRInfo::regT3, GPRInfo::regT2);
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
@@ -206,7 +206,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
                 callerFrameGPR = GPRInfo::regT3;
             }
 
-#if USE(POINTER_PROFILING)
+#if CPU(ARM64E)
             jit.addPtr(AssemblyHelpers::TrustedImm32(inlineCallFrame->returnPCOffset() + sizeof(void*)), GPRInfo::callFrameRegister, GPRInfo::regT2);
             jit.move(AssemblyHelpers::TrustedImmPtr(jumpTarget), GPRInfo::nonArgGPR0);
             jit.tagPtr(GPRInfo::nonArgGPR0, GPRInfo::regT2);

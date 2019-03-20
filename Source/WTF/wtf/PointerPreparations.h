@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,18 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/PointerPreparations.h>)
-#include <WebKitAdditions/PointerPreparations.h>
-#endif
+namespace WTF {
 
-#ifndef WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION
+#if CPU(ARM64E)
+#include <ptrauth.h>
+
+#define WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(vtblPtr) \
+    (reinterpret_cast<void*>(ptrauth_sign_unauthenticated(vtblPtr, ptrauth_key_cxx_vtable_pointer, 0)))
+
+#else // not CPU(ARM64E)
+
 #define WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(vtblPtr) (reinterpret_cast<void*>(vtblPtr))
-#endif
 
-#ifndef WTF_SET_POINTER_PREPARATION_OPTIONS
-#define WTF_SET_POINTER_PREPARATION_OPTIONS() do { } while (false)
-#endif
+#endif // not CPU(ARM64E)
 
-#ifndef WTF_METHOD_TABLE_ENTRY
-#define WTF_METHOD_TABLE_ENTRY(method) method
-#endif
+} // namespace WTF

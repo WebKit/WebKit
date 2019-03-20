@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -805,7 +805,7 @@ public:
 #if CPU(ARM_THUMB2) || CPU(ARM64)
         loadPtr(Address(framePointerRegister, CallFrame::returnPCOffset()), linkRegister);
         subPtr(TrustedImm32(2 * sizeof(void*)), newFrameSizeGPR);
-#if USE(POINTER_PROFILING)
+#if CPU(ARM64E)
         addPtr(TrustedImm32(sizeof(CallerFrameAndPC)), MacroAssembler::framePointerRegister, tempGPR);
         untagPtr(linkRegister, tempGPR);
 #endif
