@@ -248,20 +248,17 @@ static bool shouldLaunchProcess(const PluginProcessAttributes& pluginProcessAttr
     return false;
 }
 
-void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<String>& arguments, bool& result)
+void PluginProcessProxy::launchProcess(const String& launchPath, const Vector<String>& arguments, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!shouldLaunchProcess(m_pluginProcessAttributes, launchPath, arguments)) {
-        result = false;
-        return;
-    }
-
-    result = true;
+    if (!shouldLaunchProcess(m_pluginProcessAttributes, launchPath, arguments))
+        return completionHandler(false);
 
     RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
     for (size_t i = 0; i < arguments.size(); ++i)
         [argumentsArray addObject:(NSString *)arguments[i]];
 
     [NSTask launchedTaskWithLaunchPath:launchPath arguments:argumentsArray.get()];
+    completionHandler(true);
 }
 
 static bool isJavaUpdaterURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
@@ -289,14 +286,10 @@ static bool shouldLaunchApplicationAtURL(const PluginProcessAttributes& pluginPr
     return false;
 }
 
-void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const Vector<String>& arguments, bool& result)
+void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const Vector<String>& arguments, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!shouldLaunchApplicationAtURL(m_pluginProcessAttributes, urlString)) {
-        result = false;
-        return;
-    }
-
-    result = true;
+    if (!shouldLaunchApplicationAtURL(m_pluginProcessAttributes, urlString))
+        return completionHandler(false);
 
     RetainPtr<NSMutableArray> argumentsArray = adoptNS([[NSMutableArray alloc] initWithCapacity:arguments.size()]);
     for (size_t i = 0; i < arguments.size(); ++i)
@@ -304,6 +297,7 @@ void PluginProcessProxy::launchApplicationAtURL(const String& urlString, const V
 
     NSDictionary *configuration = [NSDictionary dictionaryWithObject:argumentsArray.get() forKey:NSWorkspaceLaunchConfigurationArguments];
     [[NSWorkspace sharedWorkspace] launchApplicationAtURL:[NSURL URLWithString:urlString] options:NSWorkspaceLaunchAsync configuration:configuration error:nullptr];
+    completionHandler(true);
 }
 
 static bool isSilverlightPreferencesURL(const PluginProcessAttributes& pluginProcessAttributes, const String& urlString)
@@ -321,21 +315,20 @@ static bool shouldOpenURL(const PluginProcessAttributes& pluginProcessAttributes
     return false;
 }
 
-void PluginProcessProxy::openURL(const String& urlString, bool& result, int32_t& status, String& launchedURLString)
+void PluginProcessProxy::openURL(const String& urlString, CompletionHandler<void(bool result, int32_t status, String launchedURLString)>&& completionHandler)
 {
-    if (!shouldOpenURL(m_pluginProcessAttributes, urlString)) {
-        result = false;
-        return;
-    }
+    if (!shouldOpenURL(m_pluginProcessAttributes, urlString))
+        return completionHandler(false, 0, { });
 
-    result = true;
     CFURLRef launchedURL;
-    status = LSOpenCFURLRef(URL({ }, urlString).createCFURL().get(), &launchedURL);
+    uint32_t status = LSOpenCFURLRef(URL({ }, urlString).createCFURL().get(), &launchedURL);
 
+    String launchedURLString;
     if (launchedURL) {
         launchedURLString = URL(launchedURL).string();
         CFRelease(launchedURL);
     }
+    completionHandler(true, status, launchedURLString);
 }
 
 static bool shouldOpenFile(const PluginProcessAttributes& pluginProcessAttributes, const String& fullPath)
@@ -348,15 +341,13 @@ static bool shouldOpenFile(const PluginProcessAttributes& pluginProcessAttribute
     return false;
 }
 
-void PluginProcessProxy::openFile(const String& fullPath, bool& result)
+void PluginProcessProxy::openFile(const String& fullPath, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!shouldOpenFile(m_pluginProcessAttributes, fullPath)) {
-        result = false;
-        return;
-    }
+    if (!shouldOpenFile(m_pluginProcessAttributes, fullPath))
+        return completionHandler(false);
 
-    result = true;
     [[NSWorkspace sharedWorkspace] openFile:fullPath];
+    completionHandler(true);
 }
 
 int pluginProcessLatencyQOS()

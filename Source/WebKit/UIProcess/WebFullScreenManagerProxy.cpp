@@ -97,12 +97,12 @@ void WebFullScreenManagerProxy::requestExitFullScreen()
     m_page.process().send(Messages::WebFullScreenManager::RequestExitFullScreen(), m_page.pageID());
 }
 
-void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
+void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if PLATFORM(IOS_FAMILY)
-    supports = !withKeyboard;
+    completionHandler(!withKeyboard);
 #else
-    supports = true;
+    completionHandler(true);
 #endif
 }
 

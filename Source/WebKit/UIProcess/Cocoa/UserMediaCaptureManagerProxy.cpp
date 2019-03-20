@@ -139,7 +139,7 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_process.removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, bool& succeeded, String& invalidConstraints, WebCore::RealtimeMediaSourceSettings& settings)
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(uint64_t id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& constraints, CompletionHandler<void(bool succeeded, String invalidConstraints, WebCore::RealtimeMediaSourceSettings&&)>&& completionHandler)
 {
     MESSAGE_CHECK_CONTEXTID(id);
 
@@ -160,7 +160,9 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         break;
     }
 
-    succeeded = !!sourceOrError;
+    bool succeeded = !!sourceOrError;
+    String invalidConstraints;
+    WebCore::RealtimeMediaSourceSettings settings;
     if (sourceOrError) {
         auto source = sourceOrError.source();
         source->setIsRemote(true);
@@ -169,6 +171,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
         m_proxies.add(id, std::make_unique<SourceProxy>(id, *this, WTFMove(source)));
     } else
         invalidConstraints = WTFMove(sourceOrError.errorMessage);
+    completionHandler(succeeded, invalidConstraints, WTFMove(settings));
 }
 
 void UserMediaCaptureManagerProxy::startProducingData(uint64_t id)
@@ -193,12 +196,14 @@ void UserMediaCaptureManagerProxy::end(uint64_t id)
     m_proxies.remove(id);
 }
 
-void UserMediaCaptureManagerProxy::capabilities(uint64_t id, WebCore::RealtimeMediaSourceCapabilities& capabilities)
+void UserMediaCaptureManagerProxy::capabilities(uint64_t id, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&& completionHandler)
 {
     MESSAGE_CHECK_CONTEXTID(id);
+    WebCore::RealtimeMediaSourceCapabilities capabilities;
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         capabilities = iter->value->source().capabilities();
+    completionHandler(WTFMove(capabilities));
 }
 
 void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)

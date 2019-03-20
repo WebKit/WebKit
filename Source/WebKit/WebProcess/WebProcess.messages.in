@@ -77,9 +77,9 @@ messages -> WebProcess LegacyReceiver {
 
     ReleasePageCache()
 
-    FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) LegacySync
-    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () LegacySync
-    DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () LegacySync
+    FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Delayed
+    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Delayed
+    DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Delayed
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 #if PLATFORM(COCOA)
@@ -95,7 +95,7 @@ messages -> WebProcess LegacyReceiver {
     EnsureAutomationSessionProxy(String sessionIdentifier)
     DestroyAutomationSessionProxy()
 
-    ProcessWillSuspendImminently() -> (bool handled) LegacySync
+    ProcessWillSuspendImminently() -> (bool handled) Delayed
     PrepareToSuspend()
     CancelPrepareToSuspend()
     ProcessDidResume()

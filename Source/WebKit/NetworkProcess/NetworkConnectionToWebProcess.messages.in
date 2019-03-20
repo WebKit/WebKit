@@ -33,11 +33,11 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     StartDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
     ConvertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)
 
-    CookiesForDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) LegacySync
+    CookiesForDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Delayed
     SetCookiesFromDOM(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, String cookieString)
-    CookiesEnabled(PAL::SessionID sessionID) -> (bool enabled) LegacySync
-    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) LegacySync
-    GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID) -> (Vector<WebCore::Cookie> cookies) LegacySync
+    CookiesEnabled(PAL::SessionID sessionID) -> (bool enabled) Delayed
+    CookieRequestHeaderFieldValue(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies) -> (String cookieString, bool didAccessSecureCookies) Delayed
+    GetRawCookies(PAL::SessionID sessionID, URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, Optional<uint64_t> frameID, Optional<uint64_t> pageID) -> (Vector<WebCore::Cookie> cookies) Delayed
     DeleteCookie(PAL::SessionID sessionID, URL url, String cookieName)
 
     RegisterFileBlobURL(URL url, String path, WebKit::SandboxExtension::Handle extensionHandle, String contentType)
@@ -46,7 +46,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterBlobURLOptionallyFileBacked(URL url, URL srcURL, String fileBackedPath, String contentType)
     RegisterBlobURLForSlice(URL url, URL srcURL, int64_t start, int64_t end)
     UnregisterBlobURL(URL url)
-    BlobSize(URL url) -> (uint64_t resultSize) LegacySync
+    BlobSize(URL url) -> (uint64_t resultSize) Delayed
     WriteBlobsToTemporaryFiles(Vector<String> blobURLs) -> (Vector<String> fileNames) Async
 
     SetCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
@@ -71,17 +71,17 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     ResetOriginAccessWhitelists();
 
-    GetNetworkLoadInformationRequest(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceRequest request) LegacySync
-    GetNetworkLoadInformationResponse(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceResponse response) LegacySync
-    GetNetworkLoadIntermediateInformation(uint64_t resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) LegacySync
-    TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) LegacySync
+    GetNetworkLoadInformationRequest(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceRequest request) Delayed
+    GetNetworkLoadInformationResponse(uint64_t resourceLoadIdentifier) -> (WebCore::ResourceResponse response) Delayed
+    GetNetworkLoadIntermediateInformation(uint64_t resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Delayed
+    TakeNetworkLoadInformationMetrics(uint64_t resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Delayed
 
 #if ENABLE(INDEXED_DATABASE)
-    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier) LegacySync
+    EstablishIDBConnectionToServer(PAL::SessionID sessionID) -> (uint64_t serverConnectionIdentifier) Delayed
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) LegacySync
+    EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier) Delayed
 #endif
 
     SetWebProcessIdentifier(WebCore::ProcessIdentifier processIdentifier)

@@ -22,7 +22,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 messages -> WebFullScreenManagerProxy {
-    SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) LegacySync
+    SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Delayed
     EnterFullScreen()
     ExitFullScreen()
     BeganEnterFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect)

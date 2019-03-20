@@ -24,11 +24,11 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManagerProxy {
-CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings) LegacySync
+    CreateMediaSourceForCaptureDeviceWithConstraints(uint64_t id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings) Delayed
     StartProducingData(uint64_t id)
     StopProducingData(uint64_t id)
     End(uint64_t id)
-    Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities) LegacySync
+    Capabilities(uint64_t id) -> (WebCore::RealtimeMediaSourceCapabilities capabilities) Delayed
     SetMuted(uint64_t id, bool muted)
     ApplyConstraints(uint64_t id, struct WebCore::MediaConstraints constraints)
 }

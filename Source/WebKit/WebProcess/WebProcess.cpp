@@ -1348,15 +1348,17 @@ void WebProcess::releasePageCache()
     PageCache::singleton().pruneToSizeNow(0, PruningReason::MemoryPressure);
 }
 
-void WebProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WebsiteData& websiteData)
+void WebProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, CompletionHandler<void(WebsiteData&&)>&& completionHandler)
 {
+    WebsiteData websiteData;
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         for (auto& origin : MemoryCache::singleton().originsWithCache(sessionID))
             websiteData.entries.append(WebsiteData::Entry { origin->data(), WebsiteDataType::MemoryCache, 0 });
     }
+    completionHandler(WTFMove(websiteData));
 }
 
-void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince)
+void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     UNUSED_PARAM(modifiedSince);
 
@@ -1366,9 +1368,10 @@ void WebProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDa
 
         CrossOriginPreflightResultCache::singleton().clear();
     }
+    completionHandler();
 }
 
-void WebProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas)
+void WebProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& completionHandler)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
         HashSet<RefPtr<SecurityOrigin>> origins;
@@ -1377,6 +1380,7 @@ void WebProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet
 
         MemoryCache::singleton().removeResourcesWithOrigins(sessionID, origins);
     }
+    completionHandler();
 }
 
 void WebProcess::setHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
@@ -1467,20 +1471,20 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
     });
 }
 
-void WebProcess::processWillSuspendImminently(bool& handled)
+void WebProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
 {
     if (parentProcessConnection()->inSendSync()) {
         // Avoid reentrency bugs such as rdar://problem/21605505 by just bailing
         // if we get an incoming ProcessWillSuspendImminently message when waiting for a
         // reply to a sync message.
         // FIXME: ProcessWillSuspendImminently should not be a sync message.
-        return;
+        return completionHandler(false);
     }
 
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently()", this);
     DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
-    handled = true;
+    completionHandler(true);
 }
 
 void WebProcess::prepareToSuspend()
