@@ -721,7 +721,7 @@ bool AuxiliaryProcess::isSystemWebKit()
     static bool isSystemWebKit = [] {
 #if HAVE(ALTERNATE_SYSTEM_LAYOUT)
         if ([[webKit2Bundle() bundlePath] hasPrefix:@"/Library/Apple/System/"])
-            return true;
+            return YES;
 #endif
         return [[webKit2Bundle() bundlePath] hasPrefix:@"/System/"];
     }();
