@@ -1796,3 +1796,6 @@ webkit.org/b/193399 media/media-fullscreen-return-to-inline.html [ Pass Timeout 
 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]
 
 webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html [ Pass Failure ]
+
+# <rdar://problem/45595702>
+webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Skip ]
