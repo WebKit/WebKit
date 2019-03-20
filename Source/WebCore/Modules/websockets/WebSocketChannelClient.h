@@ -31,10 +31,11 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class WebSocketChannelClient {
+class WebSocketChannelClient : public CanMakeWeakPtr<WebSocketChannelClient> {
 public:
     virtual ~WebSocketChannelClient() = default;
     virtual void didConnect() = 0;

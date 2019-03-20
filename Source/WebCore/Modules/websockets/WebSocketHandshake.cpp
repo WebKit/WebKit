@@ -123,7 +123,7 @@ WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, D
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"))
-    , m_document(document)
+    , m_document(makeWeakPtr(document))
     , m_mode(Incomplete)
     , m_allowCookies(allowCookies)
 {

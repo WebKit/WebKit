@@ -193,8 +193,8 @@ private:
         BlobLoaderFailed
     };
 
-    Document* m_document;
-    WebSocketChannelClient* m_client;
+    WeakPtr<Document> m_document;
+    WeakPtr<WebSocketChannelClient> m_client;
     std::unique_ptr<WebSocketHandshake> m_handshake;
     RefPtr<SocketStreamHandle> m_handle;
     Vector<char> m_buffer;

@@ -35,6 +35,7 @@
 #include "ResourceResponse.h"
 #include "WebSocketExtensionDispatcher.h"
 #include "WebSocketExtensionProcessor.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -100,7 +101,7 @@ private:
     URL m_url;
     String m_clientProtocol;
     bool m_secure;
-    Document* m_document;
+    WeakPtr<Document> m_document;
 
     Mode m_mode;
     bool m_allowCookies;
