@@ -27,12 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.ConsoleCommandView = class ConsoleCommandView extends WI.Object
+WI.ConsoleCommandView = class ConsoleCommandView
 {
     constructor(commandText, className)
     {
-        super();
-
         this._commandText = commandText;
         this._className = className || "";
     }

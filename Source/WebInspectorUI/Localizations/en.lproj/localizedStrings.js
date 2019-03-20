@@ -432,6 +432,7 @@ localizedStrings["Errors:"] = "Errors:";
 localizedStrings["Estimated energy impact."] = "Estimated energy impact.";
 localizedStrings["Eval Code"] = "Eval Code";
 localizedStrings["Evaluate JavaScript"] = "Evaluate JavaScript";
+localizedStrings["Evaluations"] = "Evaluations";
 localizedStrings["Event"] = "Event";
 localizedStrings["Event Breakpoint\u2026"] = "Event Breakpoint\u2026";
 localizedStrings["Event Dispatched"] = "Event Dispatched";

@@ -42,6 +42,10 @@
     visibility: hidden;
 }
 
+.log-scope-bar > li.unread.evaluations > .indicator {
+    background-color: darkgrey;
+}
+
 .log-scope-bar > li.unread.errors > .indicator {
     background-color: hsl(0, 95%, 72%);
 }

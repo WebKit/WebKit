@@ -84,6 +84,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         let scopeBarItems = [
             new WI.ScopeBarItem(WI.LogContentView.Scopes.All, WI.UIString("All"), {exclusive: true}),
+            new WI.ScopeBarItem(WI.LogContentView.Scopes.Evaluations, WI.UIString("Evaluations"), {className: "evaluations"}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Errors, WI.UIString("Errors"), {className: "errors"}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Warnings, WI.UIString("Warnings"), {className: "warnings"}),
             new WI.ScopeBarItem(WI.LogContentView.Scopes.Logs, WI.UIString("Logs"), {className: "logs"}),
@@ -225,14 +226,13 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         let target = messageView.message ? messageView.message.target : WI.runtimeManager.activeExecutionContext.target;
         target.connection.runAfterPendingDispatches(this._clearFocusableChildren.bind(this));
 
-        if (type && type !== WI.ConsoleMessage.MessageType.EndGroup) {
-            console.assert(messageView.message instanceof WI.ConsoleMessage);
-            if (!(messageView.message instanceof WI.ConsoleCommandResultMessage))
-                this._markScopeBarItemUnread(messageView.message.level);
+        if (messageView instanceof WI.ConsoleCommandView || messageView.message instanceof WI.ConsoleCommandResultMessage)
+            this._markScopeBarItemUnread(WI.LogContentView.Scopes.Evaluations);
+        else
+            this._markScopeBarItemForMessageLevelUnread(messageView.message.level);
 
-            console.assert(messageView.element instanceof Element);
-            this._filterMessageElements([messageView.element]);
-        }
+        console.assert(messageView.element instanceof Element);
+        this._filterMessageElements([messageView.element]);
     }
 
     get supportsSearch() { return true; }
@@ -422,15 +422,20 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         return undefined;
     }
 
-    _markScopeBarItemUnread(level)
+    _markScopeBarItemUnread(scope)
     {
-        let messageLevel = this._scopeFromMessageLevel(level);
-        if (!messageLevel)
-            return;
-
-        let item = this._scopeBar.item(messageLevel);
+        let item = this._scopeBar.item(scope);
         if (item && !item.selected && !this._scopeBar.item(WI.LogContentView.Scopes.All).selected)
             item.element.classList.add("unread");
+    }
+
+    _markScopeBarItemForMessageLevelUnread(level)
+    {
+        let scope = this._scopeFromMessageLevel(level);
+        if (!scope)
+            return;
+
+        this._markScopeBarItemUnread(scope);
     }
 
     _messageAdded(event)
@@ -452,7 +457,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     _previousMessageRepeatCountUpdated(event)
     {
         if (this._logViewController.updatePreviousMessageRepeatCount(event.data.count) && this._lastMessageView)
-            this._markScopeBarItemUnread(this._lastMessageView.message.level);
+            this._markScopeBarItemForMessageLevelUnread(this._lastMessageView.message.level);
     }
 
     _handleContextMenuEvent(event)
@@ -823,25 +828,24 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
     _messageSourceBarSelectionDidChange(event)
     {
-        let selectedItem = this._messageSourceBar.selectedItems[0];
-        if (selectedItem.id === WI.LogContentView.Scopes.AllChannels) {
-            for (let item of this._messageSourceBar.items)
-                item.element.classList.remove("unread");
-        } else
-            selectedItem.element.classList.remove("unread");
+        let items = this._messageSourceBar.selectedItems;
+        if (items.some((item) => item.id === WI.LogContentView.Scopes.AllChannels))
+            items = this._messageSourceBar.items;
+
+        for (let item of items)
+            item.element.classList.remove("unread");
 
         this._filterMessageElements(this._allMessageElements());
     }
 
     _scopeBarSelectionDidChange(event)
     {
-        let selectedItem = this._scopeBar.selectedItems[0];
+        let items = this._scopeBar.selectedItems;
+        if (items.some((item) => item.id === WI.LogContentView.Scopes.All))
+            items = this._scopeBar.items;
 
-        if (selectedItem.id === WI.LogContentView.Scopes.All) {
-            for (let item of this._scopeBar.items)
-                item.element.classList.remove("unread");
-        } else
-            selectedItem.element.classList.remove("unread");
+        for (let item of items)
+            item.element.classList.remove("unread");
 
         this._filterMessageElements(this._allMessageElements());
     }
@@ -849,8 +853,10 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     _filterMessageElements(messageElements)
     {
         messageElements.forEach(function(messageElement) {
-            let visible = messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage;
-            if (!visible)
+            let visible = false;
+            if (messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage)
+                visible = this._scopeBar.selectedItems.some((item) => item.id === WI.LogContentView.Scopes.Evaluations || item.id === WI.LogContentView.Scopes.All);
+            else
                 visible = this._messageShouldBeVisible(messageElement.__message);
 
             let classList = messageElement.classList;
@@ -1087,7 +1093,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
                 this._highlightRanges(message, matchRanges);
 
             let classList = message.classList;
-            if (!isEmptyObject(matchRanges) || message.__commandView instanceof WI.ConsoleCommandView || message.__message instanceof WI.ConsoleCommandResultMessage)
+            if (!isEmptyObject(matchRanges))
                 classList.remove(WI.LogContentView.FilteredOutBySearchStyleClassName);
             else
                 classList.add(WI.LogContentView.FilteredOutBySearchStyleClassName);
@@ -1180,15 +1186,17 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
 WI.LogContentView.Scopes = {
     All: "log-all",
-    Errors: "log-errors",
-    Warnings: "log-warnings",
-    Logs: "log-logs",
-    Infos: "log-infos",
     Debugs: "log-debugs",
+    Errors: "log-errors",
+    Evaluations: "log-evaluations",
+    Infos: "log-infos",
+    Logs: "log-logs",
+    Warnings: "log-warnings",
+
     AllChannels: "log-all-channels",
     Media: "log-media",
-    WebRTC: "log-webrtc",
     MediaSource: "log-mediasource",
+    WebRTC: "log-webrtc",
 };
 
 WI.LogContentView.ItemWrapperStyleClassName = "console-item";
