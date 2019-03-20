@@ -1005,10 +1005,10 @@ void InspectorDOMAgent::getAccessibilityPropertiesForNode(ErrorString& errorStri
     axProperties = buildObjectForAccessibilityProperties(node);
 }
 
-void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& whitespaceTrimmedQuery, const JSON::Array* nodeIds, String* searchId, int* resultCount)
+void InspectorDOMAgent::performSearch(ErrorString& errorString, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount)
 {
     // FIXME: Search works with node granularity - number of matches within node is not calculated.
-    InspectorNodeFinder finder(whitespaceTrimmedQuery);
+    InspectorNodeFinder finder(query, caseSensitive && *caseSensitive);
 
     if (nodeIds) {
         for (auto& nodeValue : *nodeIds) {

@@ -302,7 +302,15 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         function contextNodesReady(nodeIds)
         {
-            DOMAgent.performSearch(query, nodeIds, searchResultsReady.bind(this));
+            if (this._searchQuery !== query)
+                return;
+
+            let commandArguments = {
+                query: this._searchQuery,
+                nodeIds,
+                caseSensitive: WI.SearchUtilities.defaultSettings.caseSensitive.value,
+            };
+            DOMAgent.performSearch.invoke(commandArguments, searchResultsReady.bind(this));
         }
 
         this.getSearchContextNodes(contextNodesReady.bind(this));

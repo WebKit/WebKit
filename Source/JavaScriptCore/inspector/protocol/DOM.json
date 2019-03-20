@@ -359,7 +359,8 @@
             "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session.",
             "parameters": [
                 { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
-                { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Ids of nodes to use as starting points for the search." }
+                { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Ids of nodes to use as starting points for the search." },
+                { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, search is case sensitive." }
             ],
             "returns": [
                 { "name": "searchId", "type": "string", "description": "Unique search session identifier." },

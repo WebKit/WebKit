@@ -304,7 +304,11 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
                 this._domSearchIdentifier = undefined;
             }
 
-            countPromise(DOMAgent.performSearch(searchQuery), domCallback);
+            let commandArguments = {
+                query: searchQuery,
+                caseSensitive: isCaseSensitive,
+            };
+            countPromise(DOMAgent.performSearch.invoke(commandArguments), domCallback);
         }
 
         // FIXME: Resource search should work in JSContext inspection.

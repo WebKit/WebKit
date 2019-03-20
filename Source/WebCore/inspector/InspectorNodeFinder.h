@@ -41,11 +41,16 @@ class Node;
 
 class InspectorNodeFinder {
 public:
-    InspectorNodeFinder(const String& whitespaceTrimmedQuery);
+    InspectorNodeFinder(const String& query, bool caseSensitive);
     void performSearch(Node*);
     const ListHashSet<Node*>& results() const { return m_results; }
 
 private:
+    bool checkEquals(const String&, const String&);
+    bool checkContains(const String&, const String&);
+    bool checkStartsWith(const String&, const String&);
+    bool checkEndsWith(const String&, const String&);
+
     bool matchesAttribute(const Attribute&);
     bool matchesElement(const Element&);
 
@@ -53,15 +58,15 @@ private:
     void searchUsingXPath(Node&);
     void searchUsingCSSSelectors(Node&);
 
+    String m_query;
+    String m_tagNameQuery;
+    String m_attributeQuery;
+    bool m_caseSensitive;
+
+    ListHashSet<Node*> m_results;
     bool m_startTagFound;
     bool m_endTagFound;
     bool m_exactAttributeMatch;
-
-    String m_whitespaceTrimmedQuery;
-    String m_tagNameQuery;
-    String m_attributeQuery;
-
-    ListHashSet<Node*> m_results;
 };
 
 } // namespace WebCore

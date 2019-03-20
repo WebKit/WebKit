@@ -53,13 +53,14 @@ static String stripCharacters(const String& string, const char startCharacter, c
     return string.substring(start, end - start);
 }
 
-InspectorNodeFinder::InspectorNodeFinder(const String& whitespaceTrimmedQuery)
-    : m_whitespaceTrimmedQuery(whitespaceTrimmedQuery)
+InspectorNodeFinder::InspectorNodeFinder(const String& query, bool caseSensitive)
+    : m_query(query)
+    , m_caseSensitive(caseSensitive)
 {
-    m_tagNameQuery = stripCharacters(whitespaceTrimmedQuery, '<', '>', m_startTagFound, m_endTagFound);
+    m_tagNameQuery = stripCharacters(query, '<', '>', m_startTagFound, m_endTagFound);
 
     bool startQuoteFound, endQuoteFound;
-    m_attributeQuery = stripCharacters(whitespaceTrimmedQuery, '"', '"', startQuoteFound, endQuoteFound);
+    m_attributeQuery = stripCharacters(query, '"', '"', startQuoteFound, endQuoteFound);
     m_exactAttributeMatch = startQuoteFound && endQuoteFound;
 }
 
@@ -83,7 +84,7 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
         case Node::TEXT_NODE:
         case Node::COMMENT_NODE:
         case Node::CDATA_SECTION_NODE:
-            if (node->nodeValue().containsIgnoringASCIICase(m_whitespaceTrimmedQuery))
+            if (checkContains(node->nodeValue(), m_query))
                 m_results.add(node);
             break;
         case Node::ELEMENT_NODE:
@@ -98,20 +99,50 @@ void InspectorNodeFinder::searchUsingDOMTreeTraversal(Node& parentNode)
     }
 }
 
+bool InspectorNodeFinder::checkEquals(const String& a, const String& b)
+{
+    if (m_caseSensitive)
+        return a == b;
+    return equalIgnoringASCIICase(a, b);
+}
+
+bool InspectorNodeFinder::checkContains(const String& a, const String& b)
+{
+    if (m_caseSensitive)
+        return a.contains(b);
+    return a.containsIgnoringASCIICase(b);
+}
+
+bool InspectorNodeFinder::checkStartsWith(const String& a, const String& b)
+{
+    if (m_caseSensitive)
+        return a.startsWith(b);
+    return a.startsWithIgnoringASCIICase(b);
+}
+
+bool InspectorNodeFinder::checkEndsWith(const String& a, const String& b)
+{
+    if (m_caseSensitive)
+        return a.endsWith(b);
+    return a.endsWithIgnoringASCIICase(b);
+}
+
 bool InspectorNodeFinder::matchesAttribute(const Attribute& attribute)
 {
-    if (attribute.localName().string().containsIgnoringASCIICase(m_whitespaceTrimmedQuery))
+    if (checkContains(attribute.localName().string(), m_query))
         return true;
-    return m_exactAttributeMatch ? attribute.value() == m_attributeQuery : attribute.value().string().containsIgnoringASCIICase(m_attributeQuery);
+
+    auto value = attribute.value().string();
+    return m_exactAttributeMatch ? checkEquals(value, m_attributeQuery) : checkContains(value, m_attributeQuery);
 }
 
 bool InspectorNodeFinder::matchesElement(const Element& element)
 {
     String nodeName = element.nodeName();
-    if ((!m_startTagFound && !m_endTagFound && nodeName.containsIgnoringASCIICase(m_tagNameQuery))
-        || (m_startTagFound && m_endTagFound && equalIgnoringASCIICase(nodeName, m_tagNameQuery))
-        || (m_startTagFound && !m_endTagFound && nodeName.startsWithIgnoringASCIICase(m_tagNameQuery))
-        || (!m_startTagFound && m_endTagFound && nodeName.endsWithIgnoringASCIICase(m_tagNameQuery)))
+    if ((!m_startTagFound && !m_endTagFound && checkContains(nodeName, m_tagNameQuery))
+        || (m_startTagFound && m_endTagFound && checkEquals(nodeName, m_tagNameQuery))
+        || (m_startTagFound && !m_endTagFound && checkStartsWith(nodeName, m_tagNameQuery))
+        || (!m_startTagFound && m_endTagFound && checkEndsWith(nodeName, m_tagNameQuery)))
         return true;
 
     if (!element.hasAttributes())
@@ -127,7 +158,7 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
 
 void InspectorNodeFinder::searchUsingXPath(Node& parentNode)
 {
-    auto evaluateResult = parentNode.document().evaluate(m_whitespaceTrimmedQuery, &parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
+    auto evaluateResult = parentNode.document().evaluate(m_query, &parentNode, nullptr, XPathResult::ORDERED_NODE_SNAPSHOT_TYPE, nullptr);
     if (evaluateResult.hasException())
         return;
     auto result = evaluateResult.releaseReturnValue();
@@ -157,7 +188,7 @@ void InspectorNodeFinder::searchUsingCSSSelectors(Node& parentNode)
     if (!is<ContainerNode>(parentNode))
         return;
 
-    auto queryResult = downcast<ContainerNode>(parentNode).querySelectorAll(m_whitespaceTrimmedQuery);
+    auto queryResult = downcast<ContainerNode>(parentNode).querySelectorAll(m_query);
     if (queryResult.hasException())
         return;
 

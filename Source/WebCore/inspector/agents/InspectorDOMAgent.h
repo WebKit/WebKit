@@ -134,7 +134,7 @@ public:
     void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;
     void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
     void getAccessibilityPropertiesForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::DOM::AccessibilityProperties>& axProperties) override;
-    void performSearch(ErrorString&, const String& whitespaceTrimmedQuery, const JSON::Array* nodeIds, String* searchId, int* resultCount) override;
+    void performSearch(ErrorString&, const String& query, const JSON::Array* nodeIds, const bool* caseSensitive, String* searchId, int* resultCount) override;
     void getSearchResults(ErrorString&, const String& searchId, int fromIndex, int toIndex, RefPtr<JSON::ArrayOf<int>>&) override;
     void discardSearchResults(ErrorString&, const String& searchId) override;
     void resolveNode(ErrorString&, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result) override;
