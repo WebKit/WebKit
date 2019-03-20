@@ -1,3 +1,15 @@
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [CSS OM] StyledElementInlineStylePropertyMap creates a Ref cycle with its owner element
+        https://bugs.webkit.org/show_bug.cgi?id=195987
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test.
+
+        * css-typedom/attribute-style-map-should-not-leak-every-element-expected.txt: Added.
+        * css-typedom/attribute-style-map-should-not-leak-every-element.html: Added.
+
 2019-03-20  Antoine Quint  <graouts@apple.com>
 
         REGRESSION(r240634): Element::hasPointerCapture() passes a JS-controlled value directly into a HashMap as a key

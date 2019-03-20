@@ -88,13 +88,18 @@ public:
 private:
     RefPtr<TypedOMCSSStyleValue> get(const String& property) const final
     {
-        return extractInlineProperty(property, m_element.get());
+        ASSERT(m_element); // Hitting this assertion would imply a GC bug. Element is collected while this property map is alive.
+        if (!m_element)
+            return nullptr;
+        return extractInlineProperty(property, *m_element);
     }
 
     explicit StyledElementInlineStylePropertyMap(StyledElement& element)
-        : m_element(makeRef(element))
+        : m_element(&element)
     {
     }
+
+    void clearElement() override { m_element = nullptr; }
 
     static RefPtr<TypedOMCSSStyleValue> extractInlineProperty(const String& name, StyledElement& element)
     {
@@ -114,7 +119,7 @@ private:
         return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
     }
 
-    Ref<StyledElement> m_element;
+    StyledElement* m_element { nullptr };
 };
 
 StylePropertyMap& StyledElement::ensureAttributeStyleMap()

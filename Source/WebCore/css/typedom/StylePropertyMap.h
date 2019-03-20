@@ -35,6 +35,8 @@
 namespace WebCore {
 
 class StylePropertyMap : public StylePropertyMapReadOnly {
+public:
+    virtual void clearElement() = 0;
 };
 
 } // namespace WebCore

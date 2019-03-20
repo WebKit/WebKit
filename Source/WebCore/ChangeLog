@@ -1,5 +1,34 @@
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        [CSS OM] StyledElementInlineStylePropertyMap creates a Ref cycle with its owner element
+        https://bugs.webkit.org/show_bug.cgi?id=195987
+
+        Reviewed by Simon Fraser.
+
+        StyledElementInlineStylePropertyMap was leaking every element for which it was created because due to
+        a reference cycle. The StyledElementInlineStylePropertyMap holds onto its element using Ref and
+        the element also stores StyledElementInlineStylePropertyMap in ElementRareData using RefPtr.
+
+        Fixed the cycle by making the reference from StyledElementInlineStylePropertyMap weak. For now we use
+        a raw pointer because we can't create a WeakPtr of an element yet.
+
+        Test: css-typedom/attribute-style-map-should-not-leak-every-element.html
+
+        * css/typedom/StylePropertyMap.h:
+        (WebCore::StylePropertyMap): Added clearElement as a virtual function.
+        * dom/Element.cpp:
+        (WebCore::Element::~Element): Clear the element pointer in StyledElementInlineStylePropertyMap.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElementInlineStylePropertyMap::get): Added a null check for m_element.
+        (WebCore::StyledElementInlineStylePropertyMap::StyledElementInlineStylePropertyMap):
+        (WebCore::StyledElementInlineStylePropertyMap::clearElement): Added.
+        (WebCore::StyledElementInlineStylePropertyMap): Use a raw pointer instead of Ref to StyledElement
+        to avoid the leak.
+        * platform/graphics/CustomPaintImage.cpp:
+        (WebCore::HashMapStylePropertyMap::clearElement): Added.
+
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         appendChild should throw when inserting an ancestor of a template into its content adopted to another document
         https://bugs.webkit.org/show_bug.cgi?id=195984
 

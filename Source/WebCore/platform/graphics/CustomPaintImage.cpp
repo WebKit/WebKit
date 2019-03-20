@@ -105,6 +105,8 @@ private:
     {
     }
 
+    void clearElement() override { }
+
     RefPtr<TypedOMCSSStyleValue> get(const String& property) const final { return makeRefPtr(m_map.get(property)); }
 
     HashMap<String, RefPtr<TypedOMCSSStyleValue>> m_map;
