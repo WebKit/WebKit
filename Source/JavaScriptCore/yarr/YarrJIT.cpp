@@ -3386,6 +3386,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         YarrOpCode alternativeNextOpCode = OpSimpleNestedAlternativeNext;
         YarrOpCode alternativeEndOpCode = OpSimpleNestedAlternativeEnd;
 
+        if (UNLIKELY(!m_vm->isSafeToRecurse())) {
+            m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
+            return;
+        }
+
         // We can currently only compile quantity 1 subpatterns that are
         // not copies. We generate a copy in the case of a range quantifier,
         // e.g. /(?:x){3,9}/, or /(?:x)+/ (These are effectively expanded to
@@ -3492,6 +3497,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     // once, and will never backtrack back into the assertion.
     void opCompileParentheticalAssertion(PatternTerm* term)
     {
+        if (UNLIKELY(!m_vm->isSafeToRecurse())) {
+            m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
+            return;
+        }
+
         size_t parenBegin = m_ops.size();
         m_ops.append(OpParentheticalAssertionBegin);
 
@@ -3572,6 +3582,11 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     // to return the failing result.
     void opCompileBody(PatternDisjunction* disjunction)
     {
+        if (UNLIKELY(!m_vm->isSafeToRecurse())) {
+            m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
+            return;
+        }
+        
         Vector<std::unique_ptr<PatternAlternative>>& alternatives = disjunction->m_alternatives;
         size_t currentAlternativeIndex = 0;
 
@@ -4199,6 +4214,9 @@ static void dumpCompileFailure(JITFailureReason failure)
         break;
     case JITFailureReason::FixedCountParenthesizedSubpattern:
         dataLog("Can't JIT a pattern containing fixed count parenthesized subpatterns\n");
+        break;
+    case JITFailureReason::ParenthesisNestedTooDeep:
+        dataLog("Can't JIT pattern due to parentheses nested too deeply\n");
         break;
     case JITFailureReason::ExecutableMemoryAllocationFailure:
         dataLog("Can't JIT because of failure of allocation of executable memory\n");

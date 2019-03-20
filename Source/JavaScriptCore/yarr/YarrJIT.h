@@ -56,6 +56,7 @@ enum class JITFailureReason : uint8_t {
     VariableCountedParenthesisWithNonZeroMinimum,
     ParenthesizedSubpattern,
     FixedCountParenthesizedSubpattern,
+    ParenthesisNestedTooDeep,
     ExecutableMemoryAllocationFailure,
 };
 
