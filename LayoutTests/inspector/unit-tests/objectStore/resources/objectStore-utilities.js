@@ -25,22 +25,22 @@ TestPage.registerInitializer(() => {
         return WI.ObjectStore.__testObjectStore;
     };
 
-    InspectorTest.ObjectStore.add = async function(value, expected) {
-        let result = await WI.ObjectStore.__testObjectStore.add(value);
+    InspectorTest.ObjectStore.put = async function(value, expected) {
+        let result = await WI.ObjectStore.__testObjectStore.put(value);
         InspectorTest.assert(result === expected, `the key of the added item should be ${expected}, but is actually ${result}`);
 
-        await InspectorTest.ObjectStore.logValues("add: ");
+        await InspectorTest.ObjectStore.logValues("put: ");
         return result;
     };
 
-    InspectorTest.ObjectStore.addObject = async function(object, expected) {
-        let result = await WI.ObjectStore.__testObjectStore.addObject(object);
+    InspectorTest.ObjectStore.putObject = async function(object, expected) {
+        let result = await WI.ObjectStore.__testObjectStore.putObject(object);
         InspectorTest.assert(result === expected, `the key of the added item should be ${expected}, but is actually ${result}`);
 
         let resolved = WI.ObjectStore.__testObjectStore._resolveKeyPath(object);
         InspectorTest.assert(resolved.value === expected, `the resolved keyPath on the object should equal ${expected}, but is actually ${resolved.value}`);
 
-        await InspectorTest.ObjectStore.logValues("addObject: ");
+        await InspectorTest.ObjectStore.logValues("putObject: ");
         return result;
     };
 

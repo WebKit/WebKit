@@ -66,12 +66,15 @@ WI.BreakpointAction = class BreakpointAction
         this._breakpoint.breakpointActionDidChange(this);
     }
 
-    get info()
+    toJSON()
     {
-        var obj = {type: this._type, id: this._id};
+        let json = {
+            type: this._type,
+            id: this._id,
+        };
         if (this._data)
-            obj.data = this._data;
-        return obj;
+            json.data = this._data;
+        return json;
     }
 };
 

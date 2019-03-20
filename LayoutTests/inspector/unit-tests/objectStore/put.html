@@ -6,27 +6,27 @@
 <script>
 function test()
 {
-    let suite = InspectorTest.ObjectStore.createSuite("WI.ObjectStore.prototype.add");
+    let suite = InspectorTest.ObjectStore.createSuite("WI.ObjectStore.prototype.put");
 
-    function testAdd(name, {options, tests}) {
+    function testPut(name, {options, tests}) {
         InspectorTest.ObjectStore.wrapTest(name, async function() {
             InspectorTest.ObjectStore.createObjectStore(options);
 
             for (let {value, expected} of tests)
-                await InspectorTest.ObjectStore.add(value, expected);
+                await InspectorTest.ObjectStore.put(value, expected);
         });
     }
 
-    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.add.NoParameters", async function() {
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.put.NoParameters", async function() {
         let objectStore = InspectorTest.ObjectStore.createObjectStore();
 
         await InspectorTest.expectException(async function() {
-            await objectStore.add();
-            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+            await objectStore.put();
+            await objectStore.put(InspectorTest.ObjectStore.basicObject2);
         });
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Boolean", {
+    testPut("WI.ObjectStore.prototype.put.Boolean", {
         options: {autoIncrement: true},
         tests: [
             {value: false, expected: 1},
@@ -34,7 +34,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Number", {
+    testPut("WI.ObjectStore.prototype.put.Number", {
         options: {autoIncrement: true},
         tests: [
             {value: 11, expected: 1},
@@ -42,7 +42,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.String", {
+    testPut("WI.ObjectStore.prototype.put.String", {
         options: {autoIncrement: true},
         tests: [
             {value: "foo", expected: 1},
@@ -50,7 +50,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Array", {
+    testPut("WI.ObjectStore.prototype.put.Array", {
         options: {autoIncrement: true},
         tests: [
             {value: [11], expected: 1},
@@ -58,35 +58,35 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Null", {
+    testPut("WI.ObjectStore.prototype.put.Null", {
         options: {autoIncrement: true},
         tests: [
             {value: null, expected: 1},
         ],
     });
 
-    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.add.Object.WithoutKeyPathOrAutoIncrement", async function() {
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.put.Object.WithoutKeyPathOrAutoIncrement", async function() {
         let objectStore = InspectorTest.ObjectStore.createObjectStore();
 
         await InspectorTest.expectException(async function() {
-            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
-            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject2);
         });
     });
 
-    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.add.Object.KeyPathMissingOnObjectWithoutAutoIncrement", async function() {
+    InspectorTest.ObjectStore.wrapTest("WI.ObjectStore.prototype.put.Object.KeyPathMissingOnObjectWithoutAutoIncrement", async function() {
         const options = {
             keyPath: "KeyPathMissingOnObjectWithoutAutoIncrement",
         };
         let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
 
         await InspectorTest.expectException(async function() {
-            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
-            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject2);
         });
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathSetOnObjectWithoutAutoIncrement", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathSetOnObjectWithoutAutoIncrement", {
         options: {keyPath: "KeyPathSetOnObjectWithoutAutoIncrement"},
         tests: [
             {value: {KeyPathSetOnObjectWithoutAutoIncrement: 42, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
@@ -94,7 +94,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathMissingOnObjectWithAutoIncrement", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathMissingOnObjectWithAutoIncrement", {
         options: {keyPath: "KeyPathMissingOnObjectWithAutoIncrement", autoIncrement: true},
         tests: [
             {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
@@ -102,7 +102,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathSetOnObjectWithAutoIncrement", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathSetOnObjectWithAutoIncrement", {
         options: {keyPath: "KeyPathSetOnObjectWithAutoIncrement", autoIncrement: true},
         tests: [
             {value: {KeyPathSetOnObjectWithAutoIncrement: 42, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
@@ -110,7 +110,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.AutoIncrementWithoutKeyPath", {
+    testPut("WI.ObjectStore.prototype.put.Object.AutoIncrementWithoutKeyPath", {
         options: {autoIncrement: true},
         tests: [
             {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
@@ -118,7 +118,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathSetOnObjectWithoutAutoIncrement.Sub", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathSetOnObjectWithoutAutoIncrement.Sub", {
         options: {keyPath: "KeyPathSetOnObjectWithoutAutoIncrement.Sub"},
         tests: [
             {value: {KeyPathSetOnObjectWithoutAutoIncrement: {Sub: 42}, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
@@ -126,7 +126,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathMissingOnObjectWithAutoIncrement.Sub", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathMissingOnObjectWithAutoIncrement.Sub", {
         options: {keyPath: "KeyPathMissingOnObjectWithAutoIncrement.Sub", autoIncrement: true},
         tests: [
             {value: InspectorTest.ObjectStore.basicObject1, expected: 1},
@@ -134,7 +134,7 @@ function test()
         ],
     });
 
-    testAdd("WI.ObjectStore.prototype.add.Object.KeyPathSetOnObjectWithAutoIncrement.Sub", {
+    testPut("WI.ObjectStore.prototype.put.Object.KeyPathSetOnObjectWithAutoIncrement.Sub", {
         options: {keyPath: "KeyPathSetOnObjectWithAutoIncrement.Sub", autoIncrement: true},
         tests: [
             {value: {KeyPathSetOnObjectWithAutoIncrement: {Sub: 42}, ...InspectorTest.ObjectStore.basicObject1}, expected: 42},
@@ -147,6 +147,6 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-    <p>Tests WI.ObjectStore.prototype.add.</p>
+    <p>Tests WI.ObjectStore.prototype.put.</p>
 </body>
 </html>

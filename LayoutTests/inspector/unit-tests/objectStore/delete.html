@@ -14,7 +14,7 @@ function test()
 
             let keys = [];
             for (let {value, expected} of tests)
-                keys.push(await InspectorTest.ObjectStore.add(value, expected));
+                keys.push(await InspectorTest.ObjectStore.put(value, expected));
 
             for (let key of keys)
                 await InspectorTest.ObjectStore.delete(key);
@@ -29,7 +29,7 @@ function test()
 
         try {
             // This call may fail on WK1
-            await InspectorTest.ObjectStore.add(InspectorTest.ObjectStore.basicObject2, 1);
+            await InspectorTest.ObjectStore.put(InspectorTest.ObjectStore.basicObject2, 1);
         } catch { }
 
         await InspectorTest.expectException(async () => {
@@ -44,7 +44,7 @@ function test()
         };
         let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
 
-        await InspectorTest.ObjectStore.add(InspectorTest.ObjectStore.basicObject2, 1);
+        await InspectorTest.ObjectStore.put(InspectorTest.ObjectStore.basicObject2, 1);
 
         await InspectorTest.expectException(async () => {
             await objectStore.delete(InspectorTest.ObjectStore.basicObject1);
@@ -95,8 +95,8 @@ function test()
         let objectStore = InspectorTest.ObjectStore.createObjectStore();
 
         await InspectorTest.expectException(async function() {
-            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
-            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject2);
         });
     });
 
@@ -107,8 +107,8 @@ function test()
         let objectStore = InspectorTest.ObjectStore.createObjectStore(options);
 
         await InspectorTest.expectException(async function() {
-            await objectStore.add(InspectorTest.ObjectStore.basicObject1);
-            await objectStore.add(InspectorTest.ObjectStore.basicObject2);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject1);
+            await objectStore.put(InspectorTest.ObjectStore.basicObject2);
         });
     });
 

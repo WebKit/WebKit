@@ -116,7 +116,7 @@ WI.AuditManager = class AuditManager extends WI.Object
                 if (test.__default)
                     saveDisabledDefaultTest(test);
                 else
-                    WI.objectStores.audits.addObject(test);
+                    WI.objectStores.audits.putObject(test);
             }
 
             this._disabledDefaultTestsSetting.value = disabledDefaultTests;
@@ -217,7 +217,7 @@ WI.AuditManager = class AuditManager extends WI.Object
 
         if (object instanceof WI.AuditTestBase) {
             this._addTest(object);
-            WI.objectStores.audits.addObject(object);
+            WI.objectStores.audits.putObject(object);
         } else if (object instanceof WI.AuditTestResultBase)
             this._addResult(object);
 

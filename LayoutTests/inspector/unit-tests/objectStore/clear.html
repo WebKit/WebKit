@@ -13,7 +13,7 @@ function test()
             let objectStore = InspectorTest.ObjectStore.createObjectStore({autoIncrement: true});
 
             for (let object of objects)
-                await objectStore.add(object);
+                await objectStore.put(object);
 
             await InspectorTest.ObjectStore.logValues();
 

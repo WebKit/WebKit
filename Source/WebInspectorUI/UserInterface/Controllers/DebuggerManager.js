@@ -50,7 +50,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        this._breakpointsSetting = new WI.Setting("breakpoints", []);
         this._breakpointsEnabledSetting = new WI.Setting("breakpoints-enabled", true);
         this._allExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-all-exceptions", false);
         this._uncaughtExceptionsBreakpointEnabledSetting = new WI.Setting("break-on-uncaught-exceptions", false);
@@ -100,14 +99,26 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._ignoreBreakpointDisplayLocationDidChangeEvent = false;
 
-        // Ensure that all managers learn about restored breakpoints,
-        // regardless of their initialization order.
-        setTimeout(() => {
+        (async () => {
+            let existingSerializedBreakpoints = WI.Setting.migrateValue("breakpoints");
+            if (existingSerializedBreakpoints) {
+                for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
+                    await WI.objectStores.breakpoints.putObject(new WI.Breakpoint(existingSerializedBreakpoint));
+            }
+
+            let serializedBreakpoints = await WI.objectStores.breakpoints.getAll();
+
             this._restoringBreakpoints = true;
-            for (let cookie of this._breakpointsSetting.value)
-                this.addBreakpoint(new WI.Breakpoint(cookie));
+            for (let serializedBreakpoint of serializedBreakpoints) {
+                let breakpoint = new WI.Breakpoint(serializedBreakpoint);
+
+                const key = null;
+                WI.objectStores.breakpoints.associateObject(breakpoint, key, serializedBreakpoint);
+
+                this.addBreakpoint(breakpoint);
+            }
             this._restoringBreakpoints = false;
-        });
+        })();
     }
 
     // Target
@@ -497,7 +508,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             });
         }
 
-        this._saveBreakpoints();
+        if (!this._restoringBreakpoints)
+            WI.objectStores.breakpoints.putObject(breakpoint);
 
         this._addProbesForBreakpoint(breakpoint);
 
@@ -547,7 +559,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         breakpoint.disabled = true;
         breakpoint.clearActions();
 
-        this._saveBreakpoints();
+        if (!this._restoringBreakpoints)
+            WI.objectStores.breakpoints.deleteObject(breakpoint);
 
         this._removeProbesForBreakpoint(breakpoint);
 
@@ -892,22 +905,18 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         const templatePlaceholderRegex = /\$\{.*?\}/;
 
-        let options = breakpoint.options;
-        let invalidActions = [];
-
-        for (let action of options.actions) {
+        let options = breakpoint.serializeOptions();
+        options.actions = options.actions.filter((action) => {
             if (action.type !== WI.BreakpointAction.Type.Log)
-                continue;
+                return true;
 
             if (!templatePlaceholderRegex.test(action.data))
-                continue;
+                return true;
 
             let lexer = new WI.BreakpointLogMessageLexer;
             let tokens = lexer.tokenize(action.data);
-            if (!tokens) {
-                invalidActions.push(action);
-                continue;
-            }
+            if (!tokens)
+                return false;
 
             let templateLiteral = tokens.reduce((text, token) => {
                 if (token.type === WI.BreakpointLogMessageLexer.TokenType.PlainText)
@@ -919,11 +928,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
             action.data = "console.log(`" + templateLiteral + "`)";
             action.type = WI.BreakpointAction.Type.Evaluate;
-        }
-
-        for (let invalidAction of invalidActions)
-            options.actions.remove(invalidAction);
-
+            return true;
+        });
         return options;
     }
 
@@ -969,10 +975,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         // Convert BreakpointAction types to DebuggerAgent protocol types.
         // NOTE: Breakpoint.options returns new objects each time, so it is safe to modify.
         let options = this._debuggerBreakpointOptions(breakpoint);
-        if (options.actions.length) {
-            for (let action of options.actions)
-                action.type = this._debuggerBreakpointActionType(action.type);
-        }
+        for (let action of options.actions)
+            action.type = this._debuggerBreakpointActionType(action.type);
 
         if (breakpoint.contentIdentifier) {
             let targets = specificTarget ? [specificTarget] : WI.targets;
@@ -1046,9 +1050,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _breakpointDisabledStateDidChange(event)
     {
-        this._saveBreakpoints();
-
         let breakpoint = event.target;
+
         if (breakpoint === this._allExceptionsBreakpoint) {
             if (!breakpoint.disabled && !this.breakpointsDisabledTemporarily)
                 this.breakpointsEnabled = true;
@@ -1078,6 +1081,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
         }
 
+        if (!this._restoringBreakpoints)
+            WI.objectStores.breakpoints.putObject(breakpoint);
+
         if (breakpoint.disabled)
             this._removeBreakpoint(breakpoint);
         else
@@ -1086,9 +1092,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _breakpointEditablePropertyDidChange(event)
     {
-        this._saveBreakpoints();
-
         let breakpoint = event.target;
+
+        if (!this._restoringBreakpoints)
+            WI.objectStores.breakpoints.putObject(breakpoint);
+
         if (breakpoint.disabled)
             return;
 
@@ -1247,16 +1255,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this._uncaughtExceptionsBreakpoint.resolved = true;
             break;
         }
-    }
-
-    _saveBreakpoints()
-    {
-        if (this._restoringBreakpoints)
-            return;
-
-        let breakpointsToSave = this._breakpoints.filter((breakpoint) => !!breakpoint.contentIdentifier);
-        let serializedBreakpoints = breakpointsToSave.map((breakpoint) => breakpoint.info);
-        this._breakpointsSetting.value = serializedBreakpoints;
     }
 
     _associateBreakpointsWithSourceCode(breakpoints, sourceCode)

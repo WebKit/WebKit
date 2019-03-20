@@ -190,31 +190,6 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         return this._actions;
     }
 
-    get options()
-    {
-        return {
-            condition: this._condition,
-            ignoreCount: this._ignoreCount,
-            actions: this._serializableActions(),
-            autoContinue: this._autoContinue
-        };
-    }
-
-    get info()
-    {
-        // The id, scriptIdentifier, target, and resolved state are tied to the current session, so don't include them for serialization.
-        return {
-            contentIdentifier: this._contentIdentifier,
-            lineNumber: this._sourceCodeLocation.lineNumber,
-            columnNumber: this._sourceCodeLocation.columnNumber,
-            disabled: this._disabled,
-            condition: this._condition,
-            ignoreCount: this._ignoreCount,
-            actions: this._serializableActions(),
-            autoContinue: this._autoContinue
-        };
-    }
-
     get probeActions()
     {
         return this._actions.filter(function(action) {
@@ -307,9 +282,34 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     saveIdentityToCookie(cookie)
     {
-        cookie[WI.Breakpoint.ContentIdentifierCookieKey] = this.contentIdentifier;
-        cookie[WI.Breakpoint.LineNumberCookieKey] = this.sourceCodeLocation.lineNumber;
-        cookie[WI.Breakpoint.ColumnNumberCookieKey] = this.sourceCodeLocation.columnNumber;
+        cookie["breakpoint-content-identifier"] = this.contentIdentifier;
+        cookie["breakpoint-line-number"] = this.sourceCodeLocation.lineNumber;
+        cookie["breakpoint-column-number"] = this.sourceCodeLocation.columnNumber;
+    }
+
+    serializeOptions()
+    {
+        return {
+            condition: this._condition,
+            ignoreCount: this._ignoreCount,
+            actions: this._actions.map((action) => action.toJSON()),
+            autoContinue: this._autoContinue,
+        };
+    }
+
+    toJSON(key)
+    {
+        // The id, scriptIdentifier, target, and resolved state are tied to the current session, so don't include them for serialization.
+        let json = {
+            contentIdentifier: this._contentIdentifier,
+            lineNumber: this._sourceCodeLocation.lineNumber,
+            columnNumber: this._sourceCodeLocation.columnNumber,
+            disabled: this._disabled,
+            ...this.serializeOptions(),
+        };
+        if (key === WI.ObjectStore.toJSONSymbol)
+            json[WI.objectStores.breakpoints.keyPath] = this._contentIdentifier + ":" + this._sourceCodeLocation.lineNumber + ":" + this._sourceCodeLocation.columnNumber;
+        return json;
     }
 
     // Protected (Called by BreakpointAction)
@@ -326,14 +326,6 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     // Private
 
-    _serializableActions()
-    {
-        var actions = [];
-        for (var i = 0; i < this._actions.length; ++i)
-            actions.push(this._actions[i].info);
-        return actions;
-    }
-
     _sourceCodeLocationLocationChanged(event)
     {
         this.dispatchEventToListeners(WI.Breakpoint.Event.LocationDidChange, event.data);
@@ -345,12 +337,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
     }
 };
 
-WI.Breakpoint.DefaultBreakpointActionType = WI.BreakpointAction.Type.Log;
-
 WI.Breakpoint.TypeIdentifier = "breakpoint";
-WI.Breakpoint.ContentIdentifierCookieKey = "breakpoint-content-identifier";
-WI.Breakpoint.LineNumberCookieKey = "breakpoint-line-number";
-WI.Breakpoint.ColumnNumberCookieKey = "breakpoint-column-number";
 
 WI.Breakpoint.Event = {
     DisabledStateDidChange: "breakpoint-disabled-state-did-change",
