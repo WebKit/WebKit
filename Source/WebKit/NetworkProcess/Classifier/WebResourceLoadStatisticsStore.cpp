@@ -580,7 +580,7 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const RegistrableDomai
 void WebResourceLoadStatisticsStore::hasHadUserInteraction(const RegistrableDomain& domain, CompletionHandler<void(bool)>&& completionHandler)
 {
     postTask([this, domain, completionHandler = WTFMove(completionHandler)]() mutable {
-        bool hadUserInteraction = m_statisticsStore ? m_statisticsStore->hasHadUserInteraction(domain) : false;
+        bool hadUserInteraction = m_statisticsStore ? m_statisticsStore->hasHadUserInteraction(domain, OperatingDatesWindow::Long) : false;
         postTaskReply([hadUserInteraction, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(hadUserInteraction);
         });
@@ -1012,12 +1012,12 @@ void WebResourceLoadStatisticsStore::notifyResourceLoadStatisticsProcessed()
         m_networkSession->notifyResourceLoadStatisticsProcessed();
 }
 
-void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domainsToRemoveWebsiteDataFor, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     
     if (m_networkSession) {
-        m_networkSession->deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(dataTypes, WTFMove(domains), shouldNotifyPage, includeHttpOnlyCookies, WTFMove(completionHandler));
+        m_networkSession->deleteWebsiteDataForRegistrableDomains(dataTypes, WTFMove(domainsToRemoveWebsiteDataFor), shouldNotifyPage, WTFMove(completionHandler));
         return;
     }
 

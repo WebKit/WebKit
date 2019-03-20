@@ -962,6 +962,16 @@ void NetworkProcessProxy::committedCrossSiteLoadWithLinkDecoration(PAL::SessionI
     sendWithAsyncReply(Messages::NetworkProcess::CommittedCrossSiteLoadWithLinkDecoration(sessionID, fromDomain, toDomain, pageID), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::setCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, const RegistrableDomain& fromDomain, const RegistrableDomain& toDomain, CompletionHandler<void()>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler();
+        return;
+    }
+    
+    sendWithAsyncReply(Messages::NetworkProcess::SetCrossSiteLoadWithLinkDecorationForTesting(sessionID, fromDomain, toDomain), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     if (!canSendMessage()) {

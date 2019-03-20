@@ -303,6 +303,7 @@ interface TestRunner {
     void setStatisticsSubresourceUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTopFrameUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTopFrameUniqueRedirectFrom(DOMString hostName, DOMString hostNameRedirectedTo);
+    void setStatisticsCrossSiteLoadWithLinkDecoration(DOMString fromHost, DOMString toHost);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();

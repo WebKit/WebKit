@@ -1764,6 +1764,18 @@ void WebsiteDataStore::setGrandfathered(const URL& url, bool isGrandfathered, Co
     }
 }
 
+void WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    
+    for (auto& processPool : processPools()) {
+        if (auto* process = processPool->networkProcess())
+            process->setCrossSiteLoadWithLinkDecorationForTesting(m_sessionID, RegistrableDomain { fromURL }, RegistrableDomain { toURL }, [processPool, callbackAggregator = callbackAggregator.copyRef()] { });
+    }
+}
+
 void WebsiteDataStore::resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));

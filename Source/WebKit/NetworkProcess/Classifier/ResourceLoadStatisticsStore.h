@@ -71,6 +71,8 @@ private:
     int m_monthDay { 0 }; // [1, 31].
 };
 
+enum class OperatingDatesWindow : bool { Long, Short };
+
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsStore : public CanMakeWeakPtr<ResourceLoadStatisticsStore> {
 public:
@@ -168,7 +170,7 @@ public:
     virtual void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) = 0;
 
     virtual void clearUserInteraction(const RegistrableDomain&) = 0;
-    virtual bool hasHadUserInteraction(const RegistrableDomain&) = 0;
+    virtual bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) = 0;
 
     virtual void setLastSeen(const RegistrableDomain& primaryDomain, Seconds) = 0;
 
@@ -188,12 +190,12 @@ protected:
 
     ResourceLoadStatisticsStore(WebResourceLoadStatisticsStore&, WorkQueue&, ShouldIncludeLocalhost);
 
-    bool hasStatisticsExpired(const ResourceLoadStatistics&) const;
-    bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime) const;
+    bool hasStatisticsExpired(const ResourceLoadStatistics&, OperatingDatesWindow) const;
+    bool hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow) const;
     void scheduleStatisticsProcessingRequestIfNecessary();
     void mergeOperatingDates(Vector<OperatingDate>&&);
     virtual Vector<RegistrableDomain> ensurePrevalentResourcesForDebugMode() = 0;
-    virtual Vector<RegistrableDomain> registrableDomainsToRemoveWebsiteDataFor() = 0;
+    virtual HashMap<RegistrableDomain, WebsiteDataToRemove> registrableDomainsToRemoveWebsiteDataFor() = 0;
     virtual void pruneStatisticsIfNeeded() = 0;
 
     WebResourceLoadStatisticsStore& store() { return m_store; }

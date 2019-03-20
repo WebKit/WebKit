@@ -50,7 +50,8 @@ namespace WebKit {
 using namespace WebCore;
 
 constexpr Seconds minimumStatisticsProcessingInterval { 5_s };
-constexpr unsigned operatingDatesWindow { 30 };
+constexpr unsigned operatingDatesWindowLong { 30 };
+constexpr unsigned operatingDatesWindowShort { 7 };
 
 #if !RELEASE_LOG_DISABLED
 static String domainsToString(const Vector<RegistrableDomain>& domains)
@@ -60,6 +61,28 @@ static String domainsToString(const Vector<RegistrableDomain>& domains)
         if (!builder.isEmpty())
             builder.appendLiteral(", ");
         builder.append(domain.string());
+    }
+    return builder.toString();
+}
+
+static String domainsToString(const HashMap<RegistrableDomain, WebsiteDataToRemove>& domainsToRemoveWebsiteDataFor)
+{
+    StringBuilder builder;
+    for (auto& domain : domainsToRemoveWebsiteDataFor.keys()) {
+        if (!builder.isEmpty())
+            builder.appendLiteral(", ");
+        builder.append(domain.string());
+        switch (domainsToRemoveWebsiteDataFor.get(domain)) {
+        case WebsiteDataToRemove::All:
+            builder.appendLiteral("(all data)");
+            break;
+        case WebsiteDataToRemove::AllButHttpOnlyCookies:
+            builder.appendLiteral("(all but HttpOnly cookies)");
+            break;
+        case WebsiteDataToRemove::AllButCookies:
+            builder.appendLiteral("(all but cookies)");
+            break;
+        }
     }
     return builder.toString();
 }
@@ -157,12 +180,12 @@ void ResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
     m_parameters.shouldSubmitTelemetry = value;
 }
 
-void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& callback)
+void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     if (!shouldRemoveDataRecords()) {
-        callback();
+        completionHandler();
         return;
     }
 
@@ -172,33 +195,33 @@ void ResourceLoadStatisticsStore::removeDataRecords(CompletionHandler<void()>&& 
         m_activePluginTokens.add(plugin->pluginProcessToken());
 #endif
 
-    auto prevalentResourceDomains = registrableDomainsToRemoveWebsiteDataFor();
-    if (prevalentResourceDomains.isEmpty()) {
-        callback();
+    auto domainsToRemoveWebsiteDataFor = registrableDomainsToRemoveWebsiteDataFor();
+    if (domainsToRemoveWebsiteDataFor.isEmpty()) {
+        completionHandler();
         return;
     }
 
 #if !RELEASE_LOG_DISABLED
-    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "About to remove data records for %{public}s.", domainsToString(prevalentResourceDomains).utf8().data());
+    RELEASE_LOG_INFO_IF(m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "About to remove data records for %{public}s.", domainsToString(domainsToRemoveWebsiteDataFor).utf8().data());
 #endif
 
     setDataRecordsBeingRemoved(true);
 
-    RunLoop::main().dispatch([prevalentResourceDomains = crossThreadCopy(prevalentResourceDomains), callback = WTFMove(callback), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
+    RunLoop::main().dispatch([domainsToRemoveWebsiteDataFor = crossThreadCopy(domainsToRemoveWebsiteDataFor), completionHandler = WTFMove(completionHandler), weakThis = makeWeakPtr(*this), shouldNotifyPagesWhenDataRecordsWereScanned = m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, workQueue = m_workQueue.copyRef()] () mutable {
         if (!weakThis) {
-            callback();
+            completionHandler();
             return;
         }
 
-        weakThis->m_store.deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(prevalentResourceDomains), shouldNotifyPagesWhenDataRecordsWereScanned, IncludeHttpOnlyCookies::Yes, [callback = WTFMove(callback), weakThis = WTFMove(weakThis), workQueue = workQueue.copyRef()](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
-            workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(domainsWithDeletedWebsiteData), callback = WTFMove(callback), weakThis = WTFMove(weakThis)] () mutable {
+        weakThis->m_store.deleteWebsiteDataForRegistrableDomains(WebResourceLoadStatisticsStore::monitoredDataTypes(), WTFMove(domainsToRemoveWebsiteDataFor), shouldNotifyPagesWhenDataRecordsWereScanned, [completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis), workQueue = workQueue.copyRef()](const HashSet<RegistrableDomain>& domainsWithDeletedWebsiteData) mutable {
+            workQueue->dispatch([domainsWithDeletedWebsiteData = crossThreadCopy(domainsWithDeletedWebsiteData), completionHandler = WTFMove(completionHandler), weakThis = WTFMove(weakThis)] () mutable {
                 if (!weakThis) {
-                    callback();
+                    completionHandler();
                     return;
                 }
                 weakThis->incrementRecordsDeletedCountForDomains(WTFMove(domainsWithDeletedWebsiteData));
                 weakThis->setDataRecordsBeingRemoved(false);
-                callback();
+                completionHandler();
 #if !RELEASE_LOG_DISABLED
                 RELEASE_LOG_INFO_IF(weakThis->m_debugLoggingEnabled, ResourceLoadStatisticsDebug, "Done removing data records.");
 #endif
@@ -430,7 +453,7 @@ Optional<Seconds> ResourceLoadStatisticsStore::statisticsEpirationTime() const
     if (m_parameters.timeToLiveUserInteraction)
         return WallTime::now().secondsSinceEpoch() - m_parameters.timeToLiveUserInteraction.value();
     
-    if (m_operatingDates.size() >= operatingDatesWindow)
+    if (m_operatingDates.size() >= operatingDatesWindowLong)
         return m_operatingDates.first().secondsSinceEpoch();
     
     return WTF::nullopt;
@@ -448,8 +471,8 @@ Vector<OperatingDate> ResourceLoadStatisticsStore::mergeOperatingDates(const Vec
     // Remove duplicate dates.
     removeRepeatedElements(mergedDates);
     
-    // Drop old dates until the Vector size reaches operatingDatesWindow.
-    while (mergedDates.size() > operatingDatesWindow)
+    // Drop old dates until the Vector size reaches operatingDatesWindowLong.
+    while (mergedDates.size() > operatingDatesWindowLong)
         mergedDates.remove(0);
     
     return mergedDates;
@@ -468,17 +491,18 @@ void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
     if (!m_operatingDates.isEmpty() && today <= m_operatingDates.last())
         return;
 
-    while (m_operatingDates.size() >= operatingDatesWindow)
+    while (m_operatingDates.size() >= operatingDatesWindowLong)
         m_operatingDates.remove(0);
 
     m_operatingDates.append(today);
 }
 
-bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime) const
+bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserInteractionTime, OperatingDatesWindow operatingDatesWindow) const
 {
     ASSERT(!RunLoop::isMain());
-    
-    if (m_operatingDates.size() >= operatingDatesWindow) {
+
+    unsigned operatingDatesWindowInDays = (operatingDatesWindow == OperatingDatesWindow::Long ? operatingDatesWindowLong : operatingDatesWindowShort);
+    if (m_operatingDates.size() >= operatingDatesWindowInDays) {
         if (OperatingDate::fromWallTime(mostRecentUserInteractionTime) < m_operatingDates.first())
             return true;
     }
@@ -492,9 +516,9 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(WallTime mostRecentUserIn
     return false;
 }
 
-bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic) const
+bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
 {
-    return hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime);
+    return hasStatisticsExpired(resourceStatistic.mostRecentUserInteractionTime, operatingDatesWindow);
 }
 
 void ResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount)

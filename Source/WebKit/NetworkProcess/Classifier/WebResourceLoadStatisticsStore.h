@@ -60,6 +60,11 @@ class WebProcessProxy;
 enum class ShouldGrandfatherStatistics : bool;
 enum class ShouldIncludeLocalhost : bool { No, Yes };
 enum class EnableResourceLoadStatisticsDebugMode : bool { No, Yes };
+enum class WebsiteDataToRemove : uint8_t {
+    All,
+    AllButHttpOnlyCookies,
+    AllButCookies
+};
 
 class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
 public:
@@ -107,7 +112,7 @@ public:
     void logSubresourceRedirect(const RedirectedFromDomain&, const RedirectedToDomain&, CompletionHandler<void()>&&);
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&, CompletionHandler<void()>&&);
     void clearUserInteraction(const TopFrameDomain&, CompletionHandler<void()>&&);
-    void deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<RegistrableDomain>&&, bool shouldNotifyPage, WebCore::IncludeHttpOnlyCookies, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
+    void deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType>, HashMap<RegistrableDomain, WebsiteDataToRemove>&&, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&&);
     void registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType>, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
     bool grantStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID);
     void hasHadUserInteraction(const RegistrableDomain&, CompletionHandler<void(bool)>&&);

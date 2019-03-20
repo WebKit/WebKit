@@ -40,6 +40,7 @@
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
@@ -444,12 +445,12 @@ void ResourceLoadStatisticsMemoryStore::clearUserInteraction(const RegistrableDo
     statistics.mostRecentUserInteractionTime = { };
 }
 
-bool ResourceLoadStatisticsMemoryStore::hasHadUserInteraction(const RegistrableDomain& domain)
+bool ResourceLoadStatisticsMemoryStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
 {
     ASSERT(!RunLoop::isMain());
 
     auto mapEntry = m_resourceStatisticsMap.find(domain);
-    return mapEntry == m_resourceStatisticsMap.end() ? false: hasHadUnexpiredRecentUserInteraction(mapEntry->value);
+    return mapEntry == m_resourceStatisticsMap.end() ? false: hasHadUnexpiredRecentUserInteraction(mapEntry->value, operatingDatesWindow);
 }
 
 void ResourceLoadStatisticsMemoryStore::setPrevalentResource(ResourceLoadStatistics& resourceStatistic, ResourceLoadPrevalence newPrevalence)
@@ -785,11 +786,11 @@ void ResourceLoadStatisticsMemoryStore::processStatistics(const Function<void(co
         processFunction(resourceStatistic);
 }
 
-bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics& resourceStatistic) const
+bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics& resourceStatistic, OperatingDatesWindow operatingDatesWindow) const
 {
     ASSERT(!RunLoop::isMain());
 
-    if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic)) {
+    if (resourceStatistic.hadUserInteraction && hasStatisticsExpired(resourceStatistic, operatingDatesWindow)) {
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
@@ -801,7 +802,17 @@ bool ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction(Res
     return resourceStatistic.hadUserInteraction;
 }
 
-Vector<RegistrableDomain> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()
+bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllWebsiteDataFor(ResourceLoadStatistics& resourceStatistic, bool shouldCheckForGrandfathering) const
+{
+    return resourceStatistic.isPrevalentResource && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Long) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+}
+
+bool ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor(ResourceLoadStatistics& resourceStatistic, bool shouldCheckForGrandfathering) const
+{
+    return RuntimeEnabledFeatures::sharedFeatures().isITPFirstPartyWebsiteDataRemovalEnabled() && resourceStatistic.gotLinkDecorationFromPrevalentResource && !hasHadUnexpiredRecentUserInteraction(resourceStatistic, OperatingDatesWindow::Short) && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+}
+
+HashMap<RegistrableDomain, WebsiteDataToRemove> ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -811,16 +822,20 @@ Vector<RegistrableDomain> ResourceLoadStatisticsMemoryStore::registrableDomainsT
     if (shouldClearGrandfathering)
         clearEndOfGrandfatheringTimeStamp();
 
-    Vector<RegistrableDomain> prevalentResources;
+    HashMap<RegistrableDomain, WebsiteDataToRemove> domainsToRemoveWebsiteDataFor;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (statistic.isPrevalentResource && !hasHadUnexpiredRecentUserInteraction(statistic) && (!shouldCheckForGrandfathering || !statistic.grandfathered))
-            prevalentResources.append(statistic.registrableDomain);
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
+            domainsToRemoveWebsiteDataFor.add(statistic.registrableDomain, WebsiteDataToRemove::All);
+        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering)) {
+            domainsToRemoveWebsiteDataFor.add(statistic.registrableDomain, WebsiteDataToRemove::AllButCookies);
+            statistic.gotLinkDecorationFromPrevalentResource = false;
+        }
 
         if (shouldClearGrandfathering && statistic.grandfathered)
             statistic.grandfathered = false;
     }
 
-    return prevalentResources;
+    return domainsToRemoveWebsiteDataFor;
 }
 
 void ResourceLoadStatisticsMemoryStore::pruneStatisticsIfNeeded()

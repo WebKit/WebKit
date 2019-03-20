@@ -297,17 +297,36 @@ void WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom(WKWebsiteDataStor
 #endif
 }
 
-void WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(WKWebsiteDataStoreRef dataStoreRef, double seconds)
+void WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(WKWebsiteDataStoreRef dataStoreRef, WKStringRef fromHost, WKStringRef toHost, void* context, WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecorationFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().setTimeToLiveUserInteraction(Seconds { seconds }, [] { });
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setCrossSiteLoadWithLinkDecorationForTesting(URL(URL(), WebKit::toImpl(fromHost)->string()), URL(URL(), WebKit::toImpl(toHost)->string()), [context, callback] {
+        callback(context);
+    });
+#else
+    callback(context);
 #endif
 }
 
-void WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(WKWebsiteDataStoreRef dataStoreRef)
+void WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteractionFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleStatisticsAndDataRecordsProcessing([] { });
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().setTimeToLiveUserInteraction(Seconds { seconds }, [context, callback] {
+        callback(context);
+    });
+#else
+    callback(context);
+#endif
+}
+
+void WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecordsFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().scheduleStatisticsAndDataRecordsProcessing([context, callback] {
+        callback(context);
+    });
+#else
+    callback(context);
 #endif
 }
 

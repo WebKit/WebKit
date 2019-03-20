@@ -106,7 +106,7 @@ public:
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
     void clearUserInteraction(const RegistrableDomain&) override;
-    bool hasHadUserInteraction(const RegistrableDomain&) override;
+    bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
 
@@ -114,7 +114,9 @@ private:
     static bool shouldBlockAndKeepCookies(const ResourceLoadStatistics&);
     static bool shouldBlockAndPurgeCookies(const ResourceLoadStatistics&);
     static bool hasUserGrantedStorageAccessThroughPrompt(const ResourceLoadStatistics&, const RegistrableDomain&);
-    bool hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics&) const;
+    bool hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics&, OperatingDatesWindow) const;
+    bool shouldRemoveAllWebsiteDataFor(ResourceLoadStatistics&, bool shouldCheckForGrandfathering) const;
+    bool shouldRemoveAllButCookiesFor(ResourceLoadStatistics&, bool shouldCheckForGrandfathering) const;
     bool wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated) const;
     void incrementRecordsDeletedCountForDomains(HashSet<RegistrableDomain>&&) override;
     void setPrevalentResource(ResourceLoadStatistics&, ResourceLoadPrevalence);
@@ -126,9 +128,8 @@ private:
     void removeDataRecords(CompletionHandler<void()>&&);
     void pruneStatisticsIfNeeded() override;
     ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
-    Vector<RegistrableDomain> registrableDomainsToRemoveWebsiteDataFor() override;
+    HashMap<RegistrableDomain, WebsiteDataToRemove> registrableDomainsToRemoveWebsiteDataFor() override;
     bool isMemoryStore() const final { return true; }
-
 
     WeakPtr<ResourceLoadStatisticsPersistentStorage> m_persistentStorage;
     HashMap<RegistrableDomain, ResourceLoadStatistics> m_resourceStatisticsMap;

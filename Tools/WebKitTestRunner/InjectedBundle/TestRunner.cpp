@@ -1851,6 +1851,29 @@ void TestRunner::setStatisticsTopFrameUniqueRedirectFrom(JSStringRef hostName, J
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration(JSStringRef fromHost, JSStringRef toHost)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("FromHost") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(fromHost) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("ToHost") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(toHost) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsCrossSiteLoadWithLinkDecoration"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
 
 void TestRunner::setStatisticsTimeToLiveUserInteraction(double seconds)
 {

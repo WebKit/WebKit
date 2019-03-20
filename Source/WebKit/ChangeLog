@@ -1,3 +1,97 @@
+2019-03-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
+        https://bugs.webkit.org/show_bug.cgi?id=195923
+        <rdar://problem/49001272>
+
+        Reviewed by Alex Christensen.
+
+        Cross-site trackers abuse link query parameters to transport user identifiers and then store
+        them in first-party storage space. To address this, we've done three things:
+        - r236448 capped all persistent client-side cookies to seven days of storage.
+        - r242288 further capped persistent client-side cookies for navigations with link decoration from prevalent resources.
+        - r242603 added logging of navigations with link decoration from prevalent resources.
+
+        This patch introduces an experimental feature that removes non-cookie website data for sites
+        that have been navigated to, with link decoration, by a prevalent resource.
+
+        To achieve this, resource domains to remove website data for are now marked with an enum called
+        WebsiteDataToRemove with values All, AllButHttpOnlyCookies, AllButCookies. As resources are
+        iterated, they are marked for either of these values and the new function
+        ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor() leads to the marking with
+        WebsiteDataToRemove::AllButCookies.
+
+        Then NetworkProcess::deleteWebsiteDataForRegistrableDomains() looks at this setting and removes
+        website data accordingly.
+
+        The thinking behind this is that the lifetime cap applied in r236448 and r242288 take care of
+        script writable cookies, and this patch takes care of all other script writable storage.
+
+        The infrastructure to handle user interaction expiration is now parameterized so that multiple
+        expiries can be applied. In this particular case, seven days of browser use.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsMemoryStore::hasHadUnexpiredRecentUserInteraction const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveAllWebsiteDataFor const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::shouldRemoveAllButCookiesFor const):
+        (WebKit::ResourceLoadStatisticsMemoryStore::registrableDomainsToRemoveWebsiteDataFor):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::domainsToString):
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::statisticsEpirationTime const):
+        (WebKit::ResourceLoadStatisticsStore::mergeOperatingDates):
+        (WebKit::ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired const):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::WebResourceLoadStatisticsStore::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores): Deleted.
+           Renamed to reflect that it actually takes a parameter for which types of data to remove.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::setCrossSiteLoadWithLinkDecorationForTesting):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::deleteCookiesForTesting):
+        (WebKit::NetworkProcess::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores): Deleted.
+           Renamed to reflect that it actually takes a parameter for which types of data to remove.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::deleteWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkSession::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores): Deleted.
+           Renamed to reflect that it actually takes a parameter for which types of data to remove.
+        * NetworkProcess/NetworkSession.h:
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration):
+        (WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction):
+        (WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::setCrossSiteLoadWithLinkDecorationForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setCrossSiteLoadWithLinkDecorationForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2019-03-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r243173.

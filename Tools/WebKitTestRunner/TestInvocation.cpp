@@ -1304,6 +1304,20 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
+    if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsCrossSiteLoadWithLinkDecoration")) {
+        ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
+        
+        WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        auto fromHostKey = adoptWK(WKStringCreateWithUTF8CString("FromHost"));
+        auto toHostKey = adoptWK(WKStringCreateWithUTF8CString("ToHost"));
+
+        WKStringRef fromHost = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, fromHostKey.get()));
+        WKStringRef toHost = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, toHostKey.get()));
+        
+        TestController::singleton().setStatisticsCrossSiteLoadWithLinkDecoration(fromHost, toHost);
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsTimeToLiveUserInteraction")) {
         ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
         WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);

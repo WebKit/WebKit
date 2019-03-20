@@ -125,9 +125,9 @@ void NetworkSession::notifyPageStatisticsTelemetryFinished(unsigned totalPrevale
     m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::NotifyResourceLoadStatisticsTelemetryFinished(totalPrevalentResources, totalPrevalentResourcesWithUserInteraction, top3SubframeUnderTopFrameOrigins), 0);
 }
 
-void NetworkSession::deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<RegistrableDomain>&& domains, bool shouldNotifyPage, IncludeHttpOnlyCookies includeHttpOnlyCookies, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
+void NetworkSession::deleteWebsiteDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, HashMap<RegistrableDomain, WebsiteDataToRemove>&& domains, bool shouldNotifyPage, CompletionHandler<void(const HashSet<RegistrableDomain>&)>&& completionHandler)
 {
-    m_networkProcess->deleteWebsiteDataForRegistrableDomainsInAllPersistentDataStores(m_sessionID, dataTypes, WTFMove(domains), shouldNotifyPage, includeHttpOnlyCookies, WTFMove(completionHandler));
+    m_networkProcess->deleteWebsiteDataForRegistrableDomains(m_sessionID, dataTypes, WTFMove(domains), shouldNotifyPage, WTFMove(completionHandler));
 }
 
 void NetworkSession::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)

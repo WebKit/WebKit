@@ -225,6 +225,7 @@ public:
     void setStatisticsSubresourceUniqueRedirectFrom(WKStringRef host, WKStringRef hostRedirectedFrom);
     void setStatisticsTopFrameUniqueRedirectTo(WKStringRef host, WKStringRef hostRedirectedTo);
     void setStatisticsTopFrameUniqueRedirectFrom(WKStringRef host, WKStringRef hostRedirectedFrom);
+    void setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void statisticsProcessStatisticsAndDataRecords();
     void statisticsUpdateCookieBlocking();

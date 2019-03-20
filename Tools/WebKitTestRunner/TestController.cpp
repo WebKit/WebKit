@@ -3255,16 +3255,28 @@ void TestController::setStatisticsTopFrameUniqueRedirectFrom(WKStringRef host, W
     WKWebsiteDataStoreSetStatisticsTopFrameUniqueRedirectFrom(dataStore, host, hostRedirectedFrom);
 }
 
+void TestController::setStatisticsCrossSiteLoadWithLinkDecoration(WKStringRef fromHost, WKStringRef toHost)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetStatisticsCrossSiteLoadWithLinkDecoration(dataStore, fromHost, toHost, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
+}
+
 void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(dataStore, seconds);
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreSetStatisticsTimeToLiveUserInteraction(dataStore, seconds, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
 }
 
 void TestController::statisticsProcessStatisticsAndDataRecords()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(dataStore);
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreStatisticsProcessStatisticsAndDataRecords(dataStore, &context, resourceStatisticsVoidResultCallback);
+    runUntil(context.done, noTimeout);
 }
 
 void TestController::statisticsUpdateCookieBlocking()

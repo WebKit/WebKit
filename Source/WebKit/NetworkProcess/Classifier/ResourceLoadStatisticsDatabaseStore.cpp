@@ -819,7 +819,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccess(SubFrameDomain&& su
     if (userWasPromptedNow) {
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);
-        ASSERT(hasHadUserInteraction(subFrameDomain));
+        ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
         insertDomainRelationship(m_storageAccessUnderTopFrameDomainsStatement, subFrameStatus.second, topFrameDomain);
     }
 
@@ -839,7 +839,7 @@ void ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal(SubFrameDom
 #ifndef NDEBUG
         auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
         ASSERT(subFrameStatus.first == AddedRecord::No);
-        ASSERT(hasHadUserInteraction(subFrameDomain));
+        ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
         ASSERT(hasUserGrantedStorageAccessThroughPrompt(subFrameStatus.second, topFrameDomain));
 #endif
         setUserInteraction(subFrameDomain, true, WallTime::now());
@@ -1033,7 +1033,7 @@ void ResourceLoadStatisticsDatabaseStore::clearUserInteraction(const Registrable
     }
 }
 
-bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const RegistrableDomain& domain)
+bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const RegistrableDomain& domain, OperatingDatesWindow operatingDatesWindow)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1050,7 +1050,7 @@ bool ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction(const Registrabl
     
     WallTime mostRecentUserInteractionTime = WallTime::fromRawSeconds(m_hadUserInteractionStatement.getColumnDouble(1));
 
-    if (hasStatisticsExpired(mostRecentUserInteractionTime)) {
+    if (hasStatisticsExpired(mostRecentUserInteractionTime, operatingDatesWindow)) {
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
@@ -1492,7 +1492,19 @@ void ResourceLoadStatisticsDatabaseStore::clearGrandfathering(Vector<unsigned>&&
     }
 }
 
-Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
+bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllWebsiteDataFor(const PrevalentDomainData& resourceStatistic, bool shouldCheckForGrandfathering) const
+{
+    return !resourceStatistic.hadUserInteraction && (!shouldCheckForGrandfathering || !resourceStatistic.grandfathered);
+}
+
+bool ResourceLoadStatisticsDatabaseStore::shouldRemoveAllButCookiesFor(const PrevalentDomainData& resourceStatistic, bool shouldCheckForGrandfathering) const
+{
+    UNUSED_PARAM(resourceStatistic);
+    UNUSED_PARAM(shouldCheckForGrandfathering);
+    return false;
+}
+
+HashMap<RegistrableDomain, WebsiteDataToRemove> ResourceLoadStatisticsDatabaseStore::registrableDomainsToRemoveWebsiteDataFor()
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1504,13 +1516,15 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::registrableDomain
 
     clearExpiredUserInteractions();
     
-    Vector<RegistrableDomain> prevalentResources;
+    HashMap<RegistrableDomain, WebsiteDataToRemove> domainsToRemoveWebsiteDataFor;
 
     Vector<PrevalentDomainData> prevalentDomains = this->prevalentDomains();
     Vector<unsigned> domainIDsToClearGrandfathering;
     for (auto& statistic : prevalentDomains) {
-        if (!statistic.hadUserInteraction && (!shouldCheckForGrandfathering || !statistic.grandfathered))
-            prevalentResources.append(statistic.registerableDomain);
+        if (shouldRemoveAllWebsiteDataFor(statistic, shouldCheckForGrandfathering))
+            domainsToRemoveWebsiteDataFor.add(statistic.registerableDomain, WebsiteDataToRemove::All);
+        else if (shouldRemoveAllButCookiesFor(statistic, shouldCheckForGrandfathering))
+            domainsToRemoveWebsiteDataFor.add(statistic.registerableDomain, WebsiteDataToRemove::AllButCookies);
 
         if (shouldClearGrandfathering && statistic.grandfathered)
             domainIDsToClearGrandfathering.append(statistic.domainID);
@@ -1518,7 +1532,7 @@ Vector<RegistrableDomain> ResourceLoadStatisticsDatabaseStore::registrableDomain
 
     clearGrandfathering(WTFMove(domainIDsToClearGrandfathering));
     
-    return prevalentResources;
+    return domainsToRemoveWebsiteDataFor;
 }
 
 void ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded()

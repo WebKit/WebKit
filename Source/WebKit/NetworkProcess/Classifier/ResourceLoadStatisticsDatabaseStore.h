@@ -101,7 +101,7 @@ public:
     void logCrossSiteLoadWithLinkDecoration(const NavigatedFromDomain&, const NavigatedToDomain&) override;
 
     void clearUserInteraction(const RegistrableDomain&) override;
-    bool hasHadUserInteraction(const RegistrableDomain&) override;
+    bool hasHadUserInteraction(const RegistrableDomain&, OperatingDatesWindow) override;
 
     void setLastSeen(const RegistrableDomain&, Seconds) override;
 
@@ -158,7 +158,9 @@ private:
     void pruneStatisticsIfNeeded() override;
     enum class AddedRecord { No, Yes };
     std::pair<AddedRecord, unsigned> ensureResourceStatisticsForRegistrableDomain(const RegistrableDomain&);
-    Vector<RegistrableDomain> registrableDomainsToRemoveWebsiteDataFor() override;
+    bool shouldRemoveAllWebsiteDataFor(const PrevalentDomainData&, bool shouldCheckForGrandfathering) const;
+    bool shouldRemoveAllButCookiesFor(const PrevalentDomainData&, bool shouldCheckForGrandfathering) const;
+    HashMap<RegistrableDomain, WebsiteDataToRemove> registrableDomainsToRemoveWebsiteDataFor() override;
     bool isDatabaseStore() const final { return true; }
 
     bool createSchema();

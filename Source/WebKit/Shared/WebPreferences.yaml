@@ -1381,6 +1381,14 @@ MediaCapabilitiesExtensionsEnabled:
   humanReadableDescription: "Media Capabilities Extensions"
   category: experimental
 
+IsITPFirstPartyWebsiteDataRemovalEnabled:
+    type: bool
+    defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+    humanReadableName: "ITP First Party Website Data Removal"
+    humanReadableDescription: "Enable Intelligent Tracking Prevention First Party Website Data Removal"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

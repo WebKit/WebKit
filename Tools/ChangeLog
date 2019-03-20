@@ -1,3 +1,28 @@
+2019-03-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
+        https://bugs.webkit.org/show_bug.cgi?id=195923
+        <rdar://problem/49001272>
+
+        Reviewed by Alex Christensen.
+
+        This patch does the following to the TestRunner:
+        - Adds setStatisticsCrossSiteLoadWithLinkDecoration().
+        - Makes setStatisticsTimeToLiveUserInteraction() wait for completion.
+        - Makes statisticsProcessStatisticsAndDataRecords() wait for completion.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsCrossSiteLoadWithLinkDecoration):
+        (WTR::TestController::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-03-19  Christopher Reid  <chris.reid@sony.com>
 
         [CMake] Support more clang and gcc sanitizers

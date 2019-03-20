@@ -94,6 +94,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << shouldEnableITPDatabase;
     encoder << downloadMonitorSpeedMultiplier;
+    encoder << isITPFirstPartyWebsiteDataRemovalEnabled;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -224,7 +225,10 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!downloadMonitorSpeedMultiplier)
         return false;
     result.downloadMonitorSpeedMultiplier = *downloadMonitorSpeedMultiplier;
-    
+
+    if (!decoder.decode(result.isITPFirstPartyWebsiteDataRemovalEnabled))
+        return false;
+
     return true;
 }
 

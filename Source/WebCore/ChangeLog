@@ -1,3 +1,19 @@
+2019-03-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
+        https://bugs.webkit.org/show_bug.cgi?id=195923
+        <rdar://problem/49001272>
+
+        Reviewed by Alex Christensen.
+
+        Adds a new experimental feature.
+
+        Test: http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html
+
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setIsITPFirstPartyWebsiteDataRemovalEnabled):
+        (WebCore::RuntimeEnabledFeatures::isITPFirstPartyWebsiteDataRemovalEnabled const):
+
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reparenting during a mutation event inside appendChild could result in a circular DOM tree

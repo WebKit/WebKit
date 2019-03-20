@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/cookies/resources/cookie-utilities.js"></script>
+    <script src="resources/util.js"></script>
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<div id="description">Check that non-cookie website data gets removed after a navigation with link decoration from a prevalent resource.</div>
+<br>
+<div id="output"></div>
+<br>
+<script>
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+
+    const httpOnlyCookieName = "http-only-cookie";
+    const serverSideCookieName = "server-side-cookie";
+    const clientSideCookieName = "client-side-cookie";
+
+    function sortStringArray(a, b) {
+        a = a.toLowerCase();
+        b = b.toLowerCase();
+
+        return a > b ? 1 : b > a ? -1 : 0;
+    }
+
+    function addLinebreakToOutput() {
+        let element = document.createElement("br");
+        output.appendChild(element);
+    }
+
+    function addOutput(message) {
+        let element = document.createElement("div");
+        element.innerText = message;
+        output.appendChild(element);
+    }
+
+    function checkCookies(isAfterDeletion) {
+        let unsortedTestPassedMessages = [];
+        let cookies = internals.getCookies();
+        if (!cookies.length)
+            testFailed((isAfterDeletion ? "After" : "Before") + " script-accessible deletion: No cookies found.");
+        for (let cookie of cookies) {
+            switch (cookie.name) {
+                case httpOnlyCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: " + (isAfterDeletion ? " " : "") + "HttpOnly cookie exists.");
+                    break;
+                case serverSideCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Regular server-side cookie exists.");
+                    break;
+                case clientSideCookieName:
+                    unsortedTestPassedMessages.push((isAfterDeletion ? "After" : "Before") + " deletion: Client-side cookie exists.");
+                    break;
+            }
+        }
+        let sortedTestPassedMessages = unsortedTestPassedMessages.sort(sortStringArray);
+        for (let testPassedMessage of sortedTestPassedMessages) {
+            addOutput(testPassedMessage);
+        }
+    }
+
+    const dbName = "TestDatabase";
+
+    function createIDBDataStore(callback) {
+        let request = indexedDB.open(dbName);
+        request.onerror = function() {
+            addOutput("Couldn't create indexedDB.");
+            finishTest();
+        };
+        request.onupgradeneeded = function(event) {
+            let db = event.target.result;
+            let objStore = db.createObjectStore("test", {autoIncrement: true});
+            objStore.add("value");
+            callback();
+        }
+    }
+
+    function checkIDBDataStoreExists(isAfterDeletion, callback) {
+        let request = indexedDB.open(dbName);
+        request.onerror = function() {
+            addOutput("Couldn't open indexedDB.");
+            finishTest();
+        };
+        request.onupgradeneeded = function () {
+            addOutput((isAfterDeletion ? "After" : "Before") + " deletion: IDB entry does not exist.");
+            callback();
+        };
+        request.onsuccess = function() {
+            addOutput((isAfterDeletion ? "After" : "Before") + " deletion: IDB entry does exist.");
+            callback();
+        };
+    }
+
+    async function writeWebsiteDataAndContinue() {
+        // Write cookies.
+        await fetch("/cookies/resources/set-http-only-cookie.php?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
+        await fetch("/cookies/resources/setCookies.cgi", { headers: { "Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
+        document.cookie = clientSideCookieName + "=1";
+
+        checkCookies(false);
+        addLinebreakToOutput();
+
+        // Write IndexedDB.
+        createIDBDataStore(function () {
+            checkIDBDataStoreExists(false, processWebsiteDataAndContinue);
+        });
+    }
+
+    function processWebsiteDataAndContinue() {
+        testRunner.statisticsProcessStatisticsAndDataRecords();
+
+        addLinebreakToOutput();
+        checkCookies(true);
+        addLinebreakToOutput();
+        checkIDBDataStoreExists(true, finishTest);
+    }
+
+    function finishTest() {
+        resetCookies();
+        testRunner.dumpResourceLoadStatistics();
+        setEnableFeature(false, function() {
+            testRunner.notifyDone();
+        });
+    }
+
+    const prevalentResourceOrigin = "http://localhost:8000";
+    const destinationOrigin  = "http://127.0.0.1:8000";
+    function runTest() {
+        setEnableFeature(true, function () {
+            testRunner.setStatisticsPrevalentResource(prevalentResourceOrigin, true, function() {
+                testRunner.setStatisticsCrossSiteLoadWithLinkDecoration(prevalentResourceOrigin, destinationOrigin);
+                writeWebsiteDataAndContinue();
+            });
+        });
+    }
+</script>
+</body>
+</html>
