@@ -290,6 +290,7 @@
     (iokit-property "product-id")
     (iokit-property "software-behavior")
     (iokit-property "vendor-id")
+    (iokit-property "ui-pip") ;; <rdar://problem/48867037>
 )
 
 ;; Read-only preferences and data

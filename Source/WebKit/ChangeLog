@@ -1,3 +1,15 @@
+2019-03-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Unable to PiP web videos in Safari due to sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=196015
+        <rdar://problem/48867037>
+
+        Reviewed by Brent Fulgham.
+
+        The sandbox should allow getting the iokit property 'ui-pip'.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-03-20  John Wilander  <wilander@apple.com>
 
         (Test fix) Override minimumTimeBetweenDataRecordsRemoval in ResourceLoadStatisticsStore::shouldRemoveDataRecord() during layout tests
