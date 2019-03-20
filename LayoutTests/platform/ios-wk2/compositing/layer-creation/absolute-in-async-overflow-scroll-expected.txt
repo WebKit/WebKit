@@ -16,12 +16,12 @@ This layer should be composited.
             (GraphicsLayer
               (offsetFromRenderer width=1 height=1)
               (position 1.00 1.00)
-              (bounds 185.00 185.00)
+              (bounds 200.00 200.00)
               (children 1
                 (GraphicsLayer
                   (offsetFromRenderer width=1 height=1)
                   (anchor 0.00 0.00)
-                  (bounds 185.00 841.00)
+                  (bounds 200.00 840.00)
                   (drawsContent 1)
                   (children 1
                     (GraphicsLayer

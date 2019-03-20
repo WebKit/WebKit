@@ -1,3 +1,10 @@
+2019-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening. Fix the results for absolute-in-async-overflow-scroll.html.
+
+        * compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt:
+        * platform/ios-wk2/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt: Copied from LayoutTests/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt.
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: move breakpoint storage to use `WI.ObjectStore`
