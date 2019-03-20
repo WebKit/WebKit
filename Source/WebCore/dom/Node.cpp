@@ -42,6 +42,7 @@
 #include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "FrameView.h"
+#include "HTMLAreaElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLCollection.h"
 #include "HTMLElement.h"
@@ -795,7 +796,11 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
 LayoutRect Node::renderRect(bool* isReplaced)
 {    
     RenderObject* hitRenderer = this->renderer();
-    ASSERT(hitRenderer);
+    if (!hitRenderer && is<HTMLAreaElement>(*this)) {
+        auto& area = downcast<HTMLAreaElement>(*this);
+        if (auto* imageElement = area.imageElement())
+            hitRenderer = imageElement->renderer();
+    }
     RenderObject* renderer = hitRenderer;
     while (renderer && !renderer->isBody() && !renderer->isDocumentElementRenderer()) {
         if (renderer->isRenderBlock() || renderer->isInlineBlockOrInlineTable() || renderer->isReplaced()) {
