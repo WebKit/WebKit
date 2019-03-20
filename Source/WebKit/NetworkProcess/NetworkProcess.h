@@ -534,6 +534,7 @@ private:
 
     struct StorageQuotaManagers {
         uint64_t defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
+        uint64_t defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
         HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> managersPerOrigin;
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;

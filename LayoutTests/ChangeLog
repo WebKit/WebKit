@@ -1,3 +1,14 @@
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
+        Have smaller default quotas for third party frames
+        https://bugs.webkit.org/show_bug.cgi?id=195841
+
+        Reviewed by Geoffrey Garen.
+
+        * http/wpt/cache-storage/quota-third-party.https-expected.txt: Added.
+        * http/wpt/cache-storage/quota-third-party.https.html: Added.
+        * http/wpt/cache-storage/resources/quota-third-party-iframe.html: Added.
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: include window as part of any event listener chain

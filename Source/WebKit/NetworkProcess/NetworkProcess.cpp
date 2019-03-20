@@ -2029,9 +2029,12 @@ void NetworkProcess::cacheStorageRootPath(PAL::SessionID sessionID, CacheStorage
 
 void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&& handle)
 {
-    m_storageQuotaManagers.ensure(sessionID, [] {
+    auto& managers =  m_storageQuotaManagers.ensure(sessionID, [] {
         return StorageQuotaManagers { };
-    }).iterator->value.defaultQuota = quota;
+    }).iterator->value;
+    managers.defaultQuota = quota;
+    // FIXME: Pass default third party quota as a parameter.
+    managers.defaultThirdPartyQuota = quota / 10;
 
     auto iterator = m_cacheStorageParametersCallbacks.find(sessionID);
     if (iterator == m_cacheStorageParametersCallbacks.end())
@@ -2390,7 +2393,8 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
         return StorageQuotaManagers { };
     }).iterator->value;
     return *storageQuotaManagers.managersPerOrigin.ensure(origin, [this, &storageQuotaManagers, sessionID, &origin] {
-        return std::make_unique<StorageQuotaManager>(storageQuotaManagers.defaultQuota, [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+        auto quota = origin.topOrigin == origin.clientOrigin ? storageQuotaManagers.defaultQuota : storageQuotaManagers.defaultThirdPartyQuota;
+        return std::make_unique<StorageQuotaManager>(quota, [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             this->requestStorageSpace(sessionID, origin, quota, currentSpace, spaceIncrease, WTFMove(callback));
         });
     }).iterator->value;

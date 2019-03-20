@@ -1,3 +1,14 @@
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
+        Have smaller default quotas for third party frames
+        https://bugs.webkit.org/show_bug.cgi?id=195841
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::storageQuotaManager):
+        For third party iframes, use the default quota divided by 10.
+
 2019-03-20  Dean Jackson  <dino@apple.com>
 
         [iOS] Enable fast clicking everywhere
