@@ -1,3 +1,16 @@
+2019-03-20  Saam Barati  <sbarati@apple.com>
+
+        AI rule for ValueBitNot/ValueBitXor/ValueBitAnd/ValueBitOr is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=195980
+
+        Reviewed by Yusuke Suzuki.
+
+        They were all saying they could be type: (SpecBoolInt32, SpecBigInt)
+        However, they should have been type: (SpecInt32Only, SpecBigInt)
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-03-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove copyRef() calls added in r243163

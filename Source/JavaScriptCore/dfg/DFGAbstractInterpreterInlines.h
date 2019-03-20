@@ -389,7 +389,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBoolInt32 | SpecBigInt);
+            setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
 
         break;
@@ -414,7 +414,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setTypeForNode(node, SpecBigInt);
         else {
             clobberWorld();
-            setTypeForNode(node, SpecBoolInt32 | SpecBigInt);
+            setTypeForNode(node, SpecInt32Only | SpecBigInt);
         }
         break;
             
