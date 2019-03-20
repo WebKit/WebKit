@@ -7,7 +7,7 @@ function foo(a) {
 }
 noInline(foo);
 
-for (let i = 0; i < 3e7; i++) {
+for (let i = 0; i < 1e7; i++) {
     let a = {};
     foo(a);
 }

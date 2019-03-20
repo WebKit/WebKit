@@ -1,3 +1,12 @@
+2019-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, reduce # of iterations to avoid timing out after r242991
+        https://bugs.webkit.org/show_bug.cgi?id=195791
+
+        To avoid timing out, this patch reduces it from 3e7 to 1e7. 1e7 iteration counts still reproduce the issue at 60%.
+
+        * stress/symbol-is-destructed-before-refing-underlying-symbol-impl.js:
+
 2019-03-19  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] microbenchmarks/generate-multiple-llint-entrypoints.js is running out of executable memory on ARMv7
