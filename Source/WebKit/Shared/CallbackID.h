@@ -49,10 +49,7 @@ public:
 
     ALWAYS_INLINE CallbackID& operator=(const CallbackID& otherID)
     {
-        if (this == &otherID)
-            return *this;
         m_id = otherID.m_id;
-        ASSERT(HashTraits<uint64_t>::emptyValue() != m_id && !HashTraits<uint64_t>::isDeletedValue(m_id));
         return *this;
     }
 

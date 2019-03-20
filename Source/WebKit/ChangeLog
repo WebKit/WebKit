@@ -1,5 +1,17 @@
 2019-03-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, drop invalid assertions landed in r243163.
+
+        Those assertions were causing some API tests to crash.
+        Also include some post-review suggestions from Darin.
+
+        * Shared/CallbackID.h:
+        (WebKit::CallbackID::operator=):
+        * Shared/OptionalCallbackID.h:
+        (WebKit::OptionalCallbackID::operator=):
+
+2019-03-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix assertion failures in API tests after r243159.
 
         * UIProcess/VisitedLinkStore.cpp:
