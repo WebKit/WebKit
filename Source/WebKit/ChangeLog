@@ -1,5 +1,12 @@
 2019-03-20  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix typo in comment added in r243156.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::postMessageToInjectedBundle):
+
+2019-03-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop invalid assertions landed in r243163.
 
         Those assertions were causing some API tests to crash.
