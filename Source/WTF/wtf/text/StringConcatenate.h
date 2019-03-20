@@ -278,7 +278,7 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
 
         makeStringAccumulator(buffer, adapter, adapters...);
 
-        return resultImpl;
+        return String { WTFMove(resultImpl) };
     }
 
     UChar* buffer;
@@ -288,7 +288,7 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
 
     makeStringAccumulator(buffer, adapter, adapters...);
 
-    return resultImpl;
+    return String { WTFMove(resultImpl) };
 }
 
 template<typename... StringTypes>

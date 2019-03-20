@@ -1,3 +1,13 @@
+2019-03-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r243115) breaks build for clang 3.8
+        https://bugs.webkit.org/show_bug.cgi?id=195947
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeStringFromAdapters):
+
 2019-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add an platform-driven spell-checking mechanism
