@@ -1,5 +1,22 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: include window as part of any event listener chain
+        https://bugs.webkit.org/show_bug.cgi?id=195730
+        <rdar://problem/48916872>
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/dom/getEventListenersForNode.html
+
+        * inspector/agents/InspectorDOMAgent.h:
+        (WebCore::EventListenerInfo::EventListenerInfo): Deleted.
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        (WebCore::InspectorDOMAgent::getEventListeners): Deleted.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Runtime: lazily create the agent
         https://bugs.webkit.org/show_bug.cgi?id=195972
         <rdar://problem/49039655>

@@ -494,8 +494,23 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         } else if (breakpoint instanceof WI.EventBreakpoint) {
             constructor = WI.EventBreakpointTreeElement;
 
-            if (breakpoint.eventListener)
-                parentTreeElement = getDOMNodeTreeElement(breakpoint.eventListener.node);
+            if (breakpoint.eventListener) {
+                let eventTargetTreeElement = null;
+                if (breakpoint.eventListener.onWindow) {
+                    if (!DebuggerSidebarPanel.__windowEventTargetRepresentedObject)
+                        DebuggerSidebarPanel.__windowEventTargetRepresentedObject = {__window: true};
+
+                    eventTargetTreeElement = this._breakpointsContentTreeOutline.findTreeElement(DebuggerSidebarPanel.__windowEventTargetRepresentedObject);
+                    if (!eventTargetTreeElement) {
+                        const subtitle = null;
+                        eventTargetTreeElement = new WI.GeneralTreeElement(["event-target-window"], WI.unlocalizedString("window"), subtitle, DebuggerSidebarPanel.__windowEventTargetRepresentedObject);
+                        this._addTreeElement(eventTargetTreeElement, parentTreeElement);
+                    }
+                } else if (breakpoint.eventListener.node)
+                    eventTargetTreeElement = getDOMNodeTreeElement(breakpoint.eventListener.node);
+                if (eventTargetTreeElement)
+                    parentTreeElement = eventTargetTreeElement;
+            }
         } else if (breakpoint instanceof WI.URLBreakpoint) {
             constructor = WI.URLBreakpointTreeElement;
 
@@ -899,6 +914,14 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
     _breakpointTreeOutlineDeleteTreeElement(treeElement)
     {
         console.assert(treeElement.selected);
+
+        if (treeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject) {
+            let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
+            for (let eventBreakpoint of eventBreakpointsOnWindow)
+                WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
+            return true;
+        }
+
         console.assert(treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement);
         if (!(treeElement instanceof WI.ResourceTreeElement) && !(treeElement instanceof WI.ScriptTreeElement))
             return false;
@@ -953,6 +976,9 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             || treeElement instanceof WI.DOMBreakpointTreeElement
             || treeElement instanceof WI.EventBreakpointTreeElement
             || treeElement instanceof WI.URLBreakpointTreeElement)
+            return;
+
+        if (treeElement.representedObject === DebuggerSidebarPanel.__windowEventTargetRepresentedObject)
             return;
 
         const options = {
@@ -1231,8 +1257,13 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             if (eventListener) {
                 console.assert(eventListener.eventListenerId === pauseData.eventListenerId);
 
-                let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(eventListener.node));
-                rows.push(ownerElementRow);
+                let value = null;
+                if (eventListener.onWindow)
+                    value = WI.unlocalizedString("window");
+                else if (eventListener.node)
+                    value = WI.linkifyNodeReference(eventListener.node);
+                if (value)
+                    rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Target"), value));
             }
 
             this._pauseReasonGroup.rows = rows;

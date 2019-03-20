@@ -19,11 +19,13 @@ function test() {
                 }
 
                 for (let eventListener of eventListeners) {
-                    let node = WI.domManager.nodeForId(eventListener.nodeId);
-
-
                     InspectorTest.log(`Event: ${eventListener.type}`);
-                    InspectorTest.log(`Node: ${node.displayName}`);
+                    if (eventListener.nodeId) {
+                        let node = WI.domManager.nodeForId(eventListener.nodeId);
+                        InspectorTest.log(`Target: ${node.displayName}`);
+                    }
+                    if (eventListener.onWindow)
+                        InspectorTest.log("Target: window");
                     InspectorTest.log(`Capture: ${eventListener.useCapture}`);
                     InspectorTest.log(`Attribute: ${eventListener.isAttribute}`);
 
@@ -33,8 +35,8 @@ function test() {
                         InspectorTest.log(`Passive: ${eventListener.passive}`);
                     if (eventListener.once)
                         InspectorTest.log(`Once: ${eventListener.once}`);
-
-                    InspectorTest.expectThat(eventListener.location, "The Event Listener has a source location.");
+                    if (eventListener.location)
+                        InspectorTest.log("The Event Listener has a source location.");
 
                     InspectorTest.log("");
                 }

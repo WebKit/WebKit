@@ -16,6 +16,7 @@ function test() {
 
     function logListener() {
         return DOMAgent.getEventListenersForNode(clickEventListener.nodeId).then(({listeners}) => {
+            listeners = listeners.filter((listener) => listener.nodeId === clickEventListener.nodeId);
             InspectorTest.assert(listeners.length === 1, "There should only be one event listener.");
             InspectorTest.assert(listeners[0].type === "click", `There event listener should be for "click".`);
             InspectorTest.log("Click event listener is " + (listeners[0].disabled ? "disabled" : "enabled") + ".");

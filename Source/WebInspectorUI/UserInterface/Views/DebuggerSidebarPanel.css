@@ -103,6 +103,10 @@
     border-bottom: none;
 }
 
+.sidebar > .panel.navigation.debugger > .content > .breakpoints .tree-outline .item.event-target-window .icon {
+    content: url(../Images/TypeObject.svg);
+}
+
 @media (prefers-color-scheme: dark) {
     .sidebar > .panel.navigation.debugger .warning-banner {
         background-color: var(--yellow-highlight-background-color);

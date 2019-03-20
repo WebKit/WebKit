@@ -142,6 +142,14 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._breakpointsTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._breakpointsTreeOutline.ondelete = (treeElement) => {
             console.assert(treeElement.selected);
+
+            if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject) {
+                let eventBreakpointsOnWindow = WI.domManager.eventListenerBreakpoints.filter((eventBreakpoint) => eventBreakpoint.eventListener.onWindow);
+                for (let eventBreakpoint of eventBreakpointsOnWindow)
+                    WI.domManager.removeBreakpointForEventListener(eventBreakpoint.eventListener);
+                return true;
+            }
+
             console.assert(treeElement instanceof WI.ResourceTreeElement || treeElement instanceof WI.ScriptTreeElement);
             if (!(treeElement instanceof WI.ResourceTreeElement) && !(treeElement instanceof WI.ScriptTreeElement))
                 return false;
@@ -901,8 +909,23 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else if (breakpoint instanceof WI.EventBreakpoint) {
             constructor = WI.EventBreakpointTreeElement;
 
-            if (breakpoint.eventListener)
-                parentTreeElement = getDOMNodeTreeElement(breakpoint.eventListener.node);
+            if (breakpoint.eventListener) {
+                let eventTargetTreeElement = null;
+                if (breakpoint.eventListener.onWindow) {
+                    if (!SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
+                        SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject = {__window: true};
+
+                    eventTargetTreeElement = this._breakpointsTreeOutline.findTreeElement(SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject);
+                    if (!eventTargetTreeElement) {
+                        const subtitle = null;
+                        eventTargetTreeElement = new WI.GeneralTreeElement(["event-target-window"], WI.unlocalizedString("window"), subtitle, SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject);
+                        this._insertDebuggerTreeElement(eventTargetTreeElement, parentTreeElement);
+                    }
+                } else if (breakpoint.eventListener.node)
+                    eventTargetTreeElement = getDOMNodeTreeElement(breakpoint.eventListener.node);
+                if (eventTargetTreeElement)
+                    parentTreeElement = eventTargetTreeElement;
+            }
         } else if (breakpoint instanceof WI.URLBreakpoint) {
             constructor = WI.URLBreakpointTreeElement;
 
@@ -1255,8 +1278,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (eventListener) {
                 console.assert(eventListener.eventListenerId === pauseData.eventListenerId);
 
-                let ownerElementRow = new WI.DetailsSectionSimpleRow(WI.UIString("Element"), WI.linkifyNodeReference(eventListener.node));
-                rows.push(ownerElementRow);
+                let value = null;
+                if (eventListener.onWindow)
+                    value = WI.unlocalizedString("window");
+                else if (eventListener.node)
+                    value = WI.linkifyNodeReference(eventListener.node);
+                if (value)
+                    rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Target"), value));
             }
 
             this._pauseReasonGroup.rows = rows;
@@ -1386,6 +1414,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             || treeElement instanceof WI.DOMBreakpointTreeElement
             || treeElement instanceof WI.EventBreakpointTreeElement
             || treeElement instanceof WI.URLBreakpointTreeElement)
+            return;
+
+        if (treeElement.representedObject === SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject)
             return;
 
         if (treeElement instanceof WI.FolderTreeElement

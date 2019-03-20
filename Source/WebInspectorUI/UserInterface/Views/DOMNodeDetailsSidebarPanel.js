@@ -90,7 +90,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         }
 
         createOption(WI.UIString("Group by Event"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
-        createOption(WI.UIString("Group by Node"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Node);
+        createOption(WI.UIString("Group by Target"), WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target);
 
         eventListenersGroupMethodSelectElement.value = this._eventListenerGroupingMethodSetting.value;
 
@@ -341,6 +341,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         if (!domNode)
             return;
 
+        const windowTargetIdentifier = Symbol("window");
+
         function createEventListenerSection(title, eventListeners, options = {}) {
             let groups = eventListeners.map((eventListener) => new WI.EventListenerSectionGroup(eventListener, options));
 
@@ -354,12 +356,13 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         function generateGroupsByEvent(eventListeners) {
             let eventListenerTypes = new Map;
             for (let eventListener of eventListeners) {
-                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
+                console.assert(eventListener.nodeId || eventListener.onWindow);
+                if (eventListener.nodeId)
+                    eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
                 let eventListenersForType = eventListenerTypes.get(eventListener.type);
                 if (!eventListenersForType)
                     eventListenerTypes.set(eventListener.type, eventListenersForType = []);
-
                 eventListenersForType.push(eventListener);
             }
 
@@ -373,32 +376,43 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
             return rows;
         }
 
-        function generateGroupsByNode(eventListeners) {
-            let eventListenerNodes = new Map;
+        function generateGroupsByTarget(eventListeners) {
+            let eventListenerTargets = new Map;
             for (let eventListener of eventListeners) {
-                eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
+                console.assert(eventListener.nodeId || eventListener.onWindow);
+                if (eventListener.nodeId)
+                    eventListener.node = WI.domManager.nodeForId(eventListener.nodeId);
 
-                let eventListenersForNode = eventListenerNodes.get(eventListener.node);
-                if (!eventListenersForNode)
-                    eventListenerNodes.set(eventListener.node, eventListenersForNode = []);
-
-                eventListenersForNode.push(eventListener);
+                let target = eventListener.onWindow ? windowTargetIdentifier : eventListener.node;
+                let eventListenersForTarget = eventListenerTargets.get(target);
+                if (!eventListenersForTarget)
+                    eventListenerTargets.set(target, eventListenersForTarget = []);
+                eventListenersForTarget.push(eventListener);
             }
 
             let rows = [];
 
+            function generateSectionForTarget(target) {
+                let eventListenersForTarget = eventListenerTargets.get(target);
+                if (!eventListenersForTarget)
+                    return;
+
+                eventListenersForTarget.sort((a, b) => a.type.toLowerCase().extendedLocaleCompare(b.type.toLowerCase()));
+
+                let title = target === windowTargetIdentifier ? WI.unlocalizedString("window") : target.displayName;
+
+                let section = createEventListenerSection(title, eventListenersForTarget, {hideTarget: true});
+                if (target instanceof WI.DOMNode)
+                    WI.bindInteractionsForNodeToElement(target, section.titleElement, {ignoreClick: true});
+                rows.push(section);
+            }
+
             let currentNode = domNode;
             do {
-                let eventListenersForNode = eventListenerNodes.get(currentNode);
-                if (!eventListenersForNode)
-                    continue;
-
-                eventListenersForNode.sort((a, b) => a.type.toLowerCase().extendedLocaleCompare(b.type.toLowerCase()));
-
-                let section = createEventListenerSection(currentNode.displayName, eventListenersForNode, {hideNode: true});
-                WI.bindInteractionsForNodeToElement(currentNode, section.titleElement, {ignoreClick: true});
-                rows.push(section);
+                generateSectionForTarget(currentNode);
             } while (currentNode = currentNode.parentNode);
+
+            generateSectionForTarget(windowTargetIdentifier);
 
             return rows;
         }
@@ -424,8 +438,8 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                 this._eventListenersSectionGroup.rows = generateGroupsByEvent.call(this, eventListeners);
                 break;
 
-            case WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Node:
-                this._eventListenersSectionGroup.rows = generateGroupsByNode.call(this, eventListeners);
+            case WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Target:
+                this._eventListenersSectionGroup.rows = generateGroupsByTarget.call(this, eventListeners);
                 break;
             }
         }
@@ -950,5 +964,5 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
 WI.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod = {
     Event: "event",
-    Node: "node",
+    Target: "target",
 };

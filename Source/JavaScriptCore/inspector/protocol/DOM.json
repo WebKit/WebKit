@@ -87,10 +87,10 @@
                 { "name": "type", "type": "string", "description": "<code>EventListener</code>'s type." },
                 { "name": "useCapture", "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
                 { "name": "isAttribute", "type": "boolean", "description": "<code>EventListener</code>'s isAttribute." },
-                { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
+                { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "The target <code>DOMNode</code> id if the event listener is for a node." },
+                { "name": "onWindow", "type": "boolean", "optional": true, "description": "True if the event listener was added to the window." },
                 { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." },
                 { "name": "handlerName", "type": "string", "optional": true, "description": "Event handler function name." },
-                { "name": "handlerObject", "$ref": "Runtime.RemoteObject", "optional": true, "description": "Event handler function value." },
                 { "name": "passive", "type": "boolean", "optional": true, "description": "<code>EventListener</code>'s passive." },
                 { "name": "once", "type": "boolean", "optional": true, "description": "<code>EventListener</code>'s once." },
                 { "name": "disabled", "type": "boolean", "optional": true },
@@ -289,8 +289,7 @@
             "name": "getEventListenersForNode",
             "description": "Returns event listeners relevant to the node.",
             "parameters": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." },
-                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name for handler value. Handler value is not returned without this parameter specified." }
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." }
             ],
             "returns": [
                 { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }

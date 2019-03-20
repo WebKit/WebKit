@@ -141,6 +141,10 @@
     }
 }
 
+.sidebar > .panel.navigation.sources > .content > .breakpoints .tree-outline .item.event-target-window .icon {
+    content: url(../Images/TypeObject.svg);
+}
+
 @media (prefers-dark-interface) {
     .sidebar > .panel.navigation.sources > .content > .warning-banner {
         color: var(--yellow-highlight-text-color);

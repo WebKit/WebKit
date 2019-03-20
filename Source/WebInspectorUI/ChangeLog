@@ -1,5 +1,47 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: include window as part of any event listener chain
+        https://bugs.webkit.org/show_bug.cgi?id=195730
+        <rdar://problem/48916872>
+
+        Reviewed by Timothy Hatcher.
+
+        Allow non-nodes (e.g. `window`) to be listed as the target of an event listener.
+        Add support for the same concept when showing breakpoint details after pausing on a specific
+        event listener in the Debugger/Sources navigation sidebar.
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype.initialLayout):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByEvent):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByTarget): Added.
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.eventListenersCallback):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners):
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshEventListeners.generateGroupsByNode): Deleted.
+
+        * UserInterface/Views/EventListenerSectionGroup.js:
+        (WI.EventListenerSectionGroup.prototype._targetTextOrLink): Added.
+        (WI.EventListenerSectionGroup.prototype._nodeTextOrLink): Deleted.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addBreakpoint):
+        (WI.DebuggerSidebarPanel.prototype._breakpointTreeOutlineDeleteTreeElement):
+        (WI.DebuggerSidebarPanel.prototype._treeSelectionDidChange):
+        (WI.DebuggerSidebarPanel.prototype._updatePauseReasonSection):
+        * UserInterface/Views/DebuggerSidebarPanel.css:
+        (.sidebar > .panel.navigation.debugger > .content > .breakpoints .tree-outline .item.event-target-window .icon): Added.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._updatePauseReasonSection):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTreeSelectionDidChange):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints .tree-outline .item.event-target-window .icon): Added.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: virtualize the list of variables in the Scope sidebar
         https://bugs.webkit.org/show_bug.cgi?id=192648
         <rdar://problem/46800949>

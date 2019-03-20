@@ -4,73 +4,85 @@ Testing DOMAgent.getEventListenersForNode.
 == Running test suite: DOM.getEventListenersForNode
 -- Running test case: DOM.getEventListenersForNode.Basic
 Event: A
-Node: body
+Target: body
 Capture: true
 Attribute: false
 Handler Name: bodyA
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: B
-Node: body
+Target: body
 Capture: true
 Attribute: false
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: E
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: false
 Handler Name: ObjectEventHandler
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: D
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: false
 Handler Name: handleEvent
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: C
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: false
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: B
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: false
 Handler Name: xB
 Once: true
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: A
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: false
 Handler Name: xA
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: click
-Node: div#x
+Target: div#x
 Capture: false
 Attribute: true
 Handler Name: onclick
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: B
-Node: #document
+Target: #document
 Capture: false
 Attribute: false
 Passive: true
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
 
 Event: A
-Node: #document
+Target: #document
 Capture: false
 Attribute: false
 Handler Name: documentA
 Passive: true
-PASS: The Event Listener has a source location.
+The Event Listener has a source location.
+
+Event: load
+Target: window
+Capture: false
+Attribute: true
+Handler Name: onload
+The Event Listener has a source location.
+
+Event: error
+Target: window
+Capture: false
+Attribute: true
 
 

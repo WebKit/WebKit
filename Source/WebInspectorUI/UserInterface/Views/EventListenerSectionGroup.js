@@ -34,8 +34,8 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         var rows = [];
         if (!options.hideType)
             rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Event"), this._eventListener.type));
-        if (!options.hideNode)
-            rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Node"), this._nodeTextOrLink()));
+        if (!options.hideTarget)
+            rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Target"), this._targetTextOrLink()));
         rows.push(new WI.DetailsSectionSimpleRow(WI.UIString("Function"), this._functionTextOrLink()));
 
         if (this._eventListener.useCapture)
@@ -65,17 +65,17 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
 
     // Private
 
-    _nodeTextOrLink()
+    _targetTextOrLink()
     {
-        var node = this._eventListener.node;
-        console.assert(node);
-        if (!node)
-            return "";
+        if (this._eventListener.onWindow)
+            return WI.unlocalizedString("window");
 
-        if (node.nodeType() === Node.DOCUMENT_NODE)
-            return "document";
+        let node = this._eventListener.node;
+        if (node)
+            return WI.linkifyNodeReference(node);
 
-        return WI.linkifyNodeReference(node);
+        console.assert();
+        return "";
     }
 
     _functionTextOrLink()

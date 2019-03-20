@@ -53,10 +53,12 @@ function test() {
     }
 
     function logListeners(expectedCount) {
-        return DOMAgent.getEventListenersForNode(node.id).then((payload) => {
-            InspectorTest.expectEqual(payload.listeners.length, expectedCount, `There should be ${expectedCount} event listeners.`);
+        return DOMAgent.getEventListenersForNode(node.id).then(({listeners}) => {
+            listeners = listeners.filter((listener) => listener.nodeId === node.id);
 
-            for (let eventListener of payload.listeners)
+            InspectorTest.expectEqual(listeners.length, expectedCount, `There should be ${expectedCount} event listeners.`);
+
+            for (let eventListener of listeners)
                 InspectorTest.log(`  - "${eventListener.type}"`);
         });
     }
@@ -67,10 +69,12 @@ function test() {
         name: "DOM.eventListeners.Initial",
         description: "Test that the document has no event listeners.",
         test(resolve, reject) {
-            DOMAgent.getEventListenersForNode(node.id).then((payload) => {
-                InspectorTest.expectEqual(payload.listeners.length, 0, "There should be no event listeners.");
+            DOMAgent.getEventListenersForNode(node.id).then(({listeners}) => {
+                listeners = listeners.filter((listener) => listener.nodeId === node.id);
 
-                for (let eventListener of payload.listeners)
+                InspectorTest.expectEqual(listeners.length, 0, "There should be no event listeners.");
+
+                for (let eventListener of listeners)
                     InspectorTest.log(eventListener.type);
             }).then(resolve, reject);
         }

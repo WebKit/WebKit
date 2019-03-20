@@ -77,19 +77,6 @@ struct HighlightConfig;
 
 typedef String ErrorString;
 
-struct EventListenerInfo {
-    EventListenerInfo(Node* node, const AtomicString& eventType, EventListenerVector&& eventListenerVector)
-        : node(node)
-        , eventType(eventType)
-        , eventListenerVector(WTFMove(eventListenerVector))
-    {
-    }
-
-    Node* node;
-    const AtomicString eventType;
-    const EventListenerVector eventListenerVector;
-};
-
 class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
@@ -129,7 +116,7 @@ public:
     void getSupportedEventNames(ErrorString&, RefPtr<JSON::ArrayOf<String>>& eventNames) override;
     void getDataBindingsForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::DataBinding>>& dataArray) override;
     void getAssociatedDataForNode(ErrorString&, int nodeId, Optional<String>& associatedData) override;
-    void getEventListenersForNode(ErrorString&, int nodeId, const WTF::String* objectGroup, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
+    void getEventListenersForNode(ErrorString&, int nodeId, RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::EventListener>>& listenersArray) override;
     void setEventListenerDisabled(ErrorString&, int eventListenerId, bool disabled) override;
     void setBreakpointForEventListener(ErrorString&, int eventListenerId) override;
     void removeBreakpointForEventListener(ErrorString&, int eventListenerId) override;
@@ -155,9 +142,6 @@ public:
     void markUndoableState(ErrorString&) override;
     void focus(ErrorString&, int nodeId) override;
     void setInspectedNode(ErrorString&, int nodeId) override;
-
-    void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
-
 
     // InspectorInstrumentation
     int identifierForNode(Node&);
@@ -248,7 +232,7 @@ private:
     Ref<JSON::ArrayOf<String>> buildArrayForElementAttributes(Element*);
     Ref<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::DOM::Node>> buildArrayForPseudoElements(const Element&, NodeToIdMap* nodesMap);
-    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, const AtomicString& eventType, Node*, const String* objectGroupId, bool disabled, bool hasBreakpoint);
+    Ref<Inspector::Protocol::DOM::EventListener> buildObjectForEventListener(const RegisteredEventListener&, int identifier, EventTarget&, const AtomicString& eventType, bool disabled, bool hasBreakpoint);
     RefPtr<Inspector::Protocol::DOM::AccessibilityProperties> buildObjectForAccessibilityProperties(Node*);
     void processAccessibilityChildren(AccessibilityObject&, JSON::ArrayOf<int>&);
     
