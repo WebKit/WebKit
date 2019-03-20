@@ -31,9 +31,9 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SecurityOrigin.h"
 #include <cstdint>
 #include <wtf/Condition.h>
+#include <wtf/Scope.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -43,8 +43,6 @@ class CachedResourceStreamingClient final : public PlatformMediaResourceClient {
 public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);
     virtual ~CachedResourceStreamingClient();
-
-    const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
 
 private:
     void checkUpdateBlocksize(uint64_t bytesRead);
@@ -67,7 +65,6 @@ private:
 
     GRefPtr<GstElement> m_src;
     ResourceRequest m_request;
-    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
 
 enum MainThreadSourceNotification {
@@ -110,6 +107,7 @@ struct _WebKitWebSrcPrivate {
     uint64_t queueSize { 0 };
     GRefPtr<GstAdapter> adapter;
     GRefPtr<GstEvent> httpHeadersEvent;
+    GUniquePtr<GstStructure> httpHeaders;
 };
 
 enum {
@@ -143,6 +141,7 @@ static gboolean webKitWebSrcDoSeek(GstBaseSrc*, GstSegment*);
 static gboolean webKitWebSrcQuery(GstBaseSrc*, GstQuery*);
 static gboolean webKitWebSrcUnLock(GstBaseSrc*);
 static gboolean webKitWebSrcUnLockStop(GstBaseSrc*);
+static void webKitWebSrcSetContext(GstElement*, GstContext*);
 
 #define webkit_web_src_parent_class parent_class
 // We split this out into another macro to avoid a check-webkit-style error.
@@ -193,6 +192,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
             nullptr, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     eklass->change_state = GST_DEBUG_FUNCPTR(webKitWebSrcChangeState);
+    eklass->set_context = GST_DEBUG_FUNCPTR(webKitWebSrcSetContext);
 
     GstBaseSrcClass* baseSrcClass = GST_BASE_SRC_CLASS(klass);
     baseSrcClass->start = GST_DEBUG_FUNCPTR(webKitWebSrcStart);
@@ -315,6 +315,19 @@ static void webKitWebSrcGetProperty(GObject* object, guint propID, GValue* value
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);
         break;
     }
+}
+
+static void webKitWebSrcSetContext(GstElement* element, GstContext* context)
+{
+    WebKitWebSrc* src = WEBKIT_WEB_SRC(element);
+    WebKitWebSrcPrivate* priv = src->priv;
+
+    GST_DEBUG_OBJECT(src, "context type: %s", gst_context_get_context_type(context));
+    if (gst_context_has_context_type(context, WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME)) {
+        const GValue* value = gst_structure_get_value(gst_context_get_structure(context), "player");
+        priv->player = reinterpret_cast<MediaPlayer*>(g_value_get_pointer(value));
+    }
+    GST_ELEMENT_CLASS(parent_class)->set_context(element, context);
 }
 
 static GstFlowReturn webKitWebSrcCreate(GstPushSrc* pushSrc, GstBuffer** buffer)
@@ -472,7 +485,19 @@ static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
 {
     WebKitWebSrc* src = WEBKIT_WEB_SRC(baseSrc);
     WebKitWebSrcPrivate* priv = src->priv;
-    ASSERT(priv->player);
+
+    if (!priv->player) {
+        GRefPtr<GstQuery> query = adoptGRef(gst_query_new_context(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
+        if (gst_pad_peer_query(GST_BASE_SRC_PAD(baseSrc), query.get())) {
+            GstContext* context;
+
+            gst_query_parse_context(query.get(), &context);
+            gst_element_set_context(GST_ELEMENT_CAST(src), context);
+        } else
+            gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_need_context(GST_OBJECT_CAST(src), WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
+    }
+
+    RELEASE_ASSERT(priv->player);
 
     priv->wereHeadersReceived = false;
     priv->wasResponseReceived = false;
@@ -740,16 +765,8 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"webkit+http", "webkit+https", "webkit+blob", nullptr };
+    static const char* protocols[] = {"http", "https", "blob", nullptr };
     return protocols;
-}
-
-static URL convertPlaybinURI(const char* uriString)
-{
-    URL url(URL(), uriString);
-    ASSERT(url.protocol().substring(0, 7) == "webkit+");
-    url.setProtocol(url.protocol().substring(7).toString());
-    return url;
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
@@ -774,7 +791,12 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
     if (!uri)
         return TRUE;
 
-    URL url = convertPlaybinURI(uri);
+    if (priv->originalURI.length()) {
+        GST_ERROR_OBJECT(src, "URI can only be set in states < PAUSED");
+        return FALSE;
+    }
+
+    URL url(URL(), uri);
     if (!urlHasSupportedProtocol(url)) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;
@@ -857,12 +879,45 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
 
-    auto origin = SecurityOrigin::create(response.url());
-    m_origins.add(WTFMove(origin));
-
     auto responseURI = response.url().string().utf8();
     if (priv->originalURI != responseURI)
         priv->redirectedURI = WTFMove(responseURI);
+
+    uint64_t length = response.expectedContentLength();
+    if (length > 0 && priv->requestedPosition && response.httpStatusCode() == 206)
+        length += priv->requestedPosition;
+
+    priv->httpHeaders.reset(gst_structure_new_empty("http-headers"));
+    gst_structure_set(priv->httpHeaders.get(), "uri", G_TYPE_STRING, priv->originalURI.data(),
+        "http-status-code", G_TYPE_UINT, response.httpStatusCode(), nullptr);
+    if (!priv->redirectedURI.isNull())
+        gst_structure_set(priv->httpHeaders.get(), "redirection-uri", G_TYPE_STRING, priv->redirectedURI.data(), nullptr);
+    GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
+    for (const auto& header : m_request.httpHeaderFields())
+        gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
+    GST_DEBUG_OBJECT(src, "Request headers going downstream: %" GST_PTR_FORMAT, headers.get());
+    gst_structure_set(priv->httpHeaders.get(), "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
+    headers.reset(gst_structure_new_empty("response-headers"));
+    for (const auto& header : response.httpHeaderFields()) {
+        bool ok = false;
+        uint64_t convertedValue = header.value.toUInt64(&ok);
+        if (ok)
+            gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_UINT64, convertedValue, nullptr);
+        else
+            gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
+    }
+    auto contentLengthFieldName(httpHeaderNameString(HTTPHeaderName::ContentLength).toString());
+    if (!gst_structure_has_field(headers.get(), contentLengthFieldName.utf8().data()))
+        gst_structure_set(headers.get(), contentLengthFieldName.utf8().data(), G_TYPE_UINT64, static_cast<uint64_t>(length), nullptr);
+    gst_structure_set(priv->httpHeaders.get(), "response-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
+    GST_DEBUG_OBJECT(src, "Response headers going downstream: %" GST_PTR_FORMAT, headers.get());
+
+    priv->httpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, gst_structure_copy(priv->httpHeaders.get())));
+
+    auto scopeExit = makeScopeExit([&] {
+        GstStructure* structure = gst_structure_copy(src->priv->httpHeaders.get());
+        gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src), structure));
+    });
 
     if (response.httpStatusCode() >= 400) {
         GST_ELEMENT_ERROR(src, RESOURCE, READ, ("Received %d HTTP error code", response.httpStatusCode()), (nullptr));
@@ -891,15 +946,11 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
         }
     }
 
-    long long length = response.expectedContentLength();
-    if (length > 0 && priv->requestedPosition && response.httpStatusCode() == 206)
-        length += priv->requestedPosition;
-
     priv->isSeekable = length > 0 && g_ascii_strcasecmp("none", response.httpHeaderField(HTTPHeaderName::AcceptRanges).utf8().data());
 
-    GST_DEBUG_OBJECT(src, "Size: %lld, isSeekable: %s", length, boolForPrinting(priv->isSeekable));
+    GST_DEBUG_OBJECT(src, "Size: %" G_GUINT64_FORMAT ", isSeekable: %s", length, boolForPrinting(priv->isSeekable));
     if (length > 0) {
-        if (!priv->haveSize || (static_cast<long long>(priv->size) != length)) {
+        if (!priv->haveSize || priv->size != length) {
             priv->haveSize = true;
             priv->size = length;
             priv->isDurationSet = false;
@@ -928,37 +979,6 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
 
     {
         LockHolder locker(priv->responseLock);
-
-        // Emit a GST_EVENT_CUSTOM_DOWNSTREAM_STICKY event and message to let
-        // GStreamer know about the HTTP headers sent and received.
-        GstStructure* httpHeaders = gst_structure_new_empty("http-headers");
-        gst_structure_set(httpHeaders, "uri", G_TYPE_STRING, priv->originalURI.data(),
-            "http-status-code", G_TYPE_UINT, response.httpStatusCode(), nullptr);
-        if (!priv->redirectedURI.isNull())
-            gst_structure_set(httpHeaders, "redirection-uri", G_TYPE_STRING, priv->redirectedURI.data(), nullptr);
-        GUniquePtr<GstStructure> headers(gst_structure_new_empty("request-headers"));
-        for (const auto& header : m_request.httpHeaderFields())
-            gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
-        GST_DEBUG_OBJECT(src, "Request headers going downstream: %" GST_PTR_FORMAT, headers.get());
-        gst_structure_set(httpHeaders, "request-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
-        headers.reset(gst_structure_new_empty("response-headers"));
-        for (const auto& header : response.httpHeaderFields()) {
-            bool ok = false;
-            uint64_t convertedValue = header.value.toUInt64(&ok);
-            if (ok)
-                gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_UINT64, convertedValue, nullptr);
-            else
-                gst_structure_set(headers.get(), header.key.utf8().data(), G_TYPE_STRING, header.value.utf8().data(), nullptr);
-        }
-        auto contentLengthFieldName(httpHeaderNameString(HTTPHeaderName::ContentLength).toString());
-        if (!gst_structure_has_field(headers.get(), contentLengthFieldName.utf8().data()))
-            gst_structure_set(headers.get(), contentLengthFieldName.utf8().data(), G_TYPE_UINT64, static_cast<uint64_t>(length), nullptr);
-        gst_structure_set(httpHeaders, "response-headers", GST_TYPE_STRUCTURE, headers.get(), nullptr);
-        GST_DEBUG_OBJECT(src, "Response headers going downstream: %" GST_PTR_FORMAT, headers.get());
-
-        gst_element_post_message(GST_ELEMENT_CAST(src), gst_message_new_element(GST_OBJECT_CAST(src), gst_structure_copy(httpHeaders)));
-
-        priv->httpHeadersEvent = adoptGRef(gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_STICKY, httpHeaders));
         priv->wereHeadersReceived = true;
         priv->headersCondition.notifyOne();
     }
@@ -1039,18 +1059,6 @@ void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&)
 
     if (priv->isSeeking && !priv->isFlushing)
         priv->isSeeking = false;
-}
-
-bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
-{
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(priv->resource->client());
-    for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
-        if (!origin.canAccess(*responseOrigin))
-            return true;
-    }
-    return false;
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

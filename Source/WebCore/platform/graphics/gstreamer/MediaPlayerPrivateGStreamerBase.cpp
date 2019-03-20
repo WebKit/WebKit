@@ -37,6 +37,7 @@
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "VideoSinkGStreamer.h"
+#include "WebKitWebSourceGStreamer.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
@@ -333,6 +334,16 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
     const gchar* contextType;
     gst_message_parse_context_type(message, &contextType);
     GST_DEBUG_OBJECT(pipeline(), "Handling %s need-context message for %s", contextType, GST_MESSAGE_SRC_NAME(message));
+
+    if (!g_strcmp0(contextType, WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME)) {
+        GRefPtr<GstContext> context = adoptGRef(gst_context_new(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME, FALSE));
+        GstStructure* contextStructure = gst_context_writable_structure(context.get());
+
+        ASSERT(m_player);
+        gst_structure_set(contextStructure, "player", G_TYPE_POINTER, m_player, nullptr);
+        gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
+        return true;
+    }
 
 #if USE(GSTREAMER_GL)
     GRefPtr<GstContext> elementContext = adoptGRef(requestGLContext(contextType));

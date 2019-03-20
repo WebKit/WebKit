@@ -225,12 +225,6 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     }
 }
 
-static void convertToInternalProtocol(URL& url)
-{
-    if (url.protocolIsInHTTPFamily() || url.protocolIsBlob())
-        url.setProtocol("webkit+" + url.protocol());
-}
-
 void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 {
     // Clean out everything after file:// url path.
@@ -239,8 +233,6 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
         cleanURLString = cleanURLString.substring(0, url.pathEnd());
 
     m_url = URL(URL(), cleanURLString);
-    convertToInternalProtocol(m_url);
-
     GST_INFO_OBJECT(pipeline(), "Load %s", m_url.string().utf8().data());
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
 }
@@ -311,7 +303,6 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
     m_player->readyStateChanged();
     m_volumeAndMuteInitialized = false;
     m_durationAtEOS = MediaTime::invalidTime();
-    m_hasTaintedOrigin = WTF::nullopt;
 
     if (!m_delayingLoad)
         commitLoad();
@@ -1346,9 +1337,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         }
 #endif
         else if (gst_structure_has_name(structure, "http-headers")) {
-            if (const char* uri = gst_structure_get_string(structure, "uri")) {
+            const char* redirectionUri = gst_structure_get_string(structure, "redirection-uri");
+            const char* uri = redirectionUri ? redirectionUri : gst_structure_get_string(structure, "uri");
+            if (uri) {
                 URL url(URL(), uri);
-                convertToInternalProtocol(url);
+
+                m_origins.add(SecurityOrigin::create(url));
+
                 if (url != m_url) {
                     GST_DEBUG_OBJECT(pipeline(), "Ignoring HTTP response headers for non-main URI.");
                     break;
@@ -1358,16 +1353,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 const char* contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data();
                 uint64_t contentLength = 0;
-                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName, &contentLength)) {
-                    // souphttpsrc sets a string for Content-Length, so
-                    // handle it here, until we remove the webkit+ protocol
-                    // prefix from webkitwebsrc.
-                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName)) {
-                        contentLength = g_ascii_strtoull(contentLengthAsString, nullptr, 10);
-                        if (contentLength == G_MAXUINT64)
-                            contentLength = 0;
-                    }
-                }
+                gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName, &contentLength);
                 GST_INFO_OBJECT(pipeline(), "%s stream detected", !contentLength ? "Live" : "Non-live");
                 if (!contentLength) {
                     m_isStreaming = true;
@@ -1377,10 +1363,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
             if (gst_structure_get_uint64(structure, "read-position", &m_networkReadPosition))
                 GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT, m_networkReadPosition);
-        } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
-            if (WEBKIT_IS_WEB_SRC(m_source.get()))
-                if (const char* uri = gst_structure_get_string(structure, "uri"))
-                    m_hasTaintedOrigin = webKitSrcWouldTaintOrigin(WEBKIT_WEB_SRC(m_source.get()), SecurityOrigin::create(URL(URL(), uri)));
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
@@ -2168,7 +2150,6 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // append the value of new-location to it.
         URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
         URL newUrl = URL(baseUrl, newLocation);
-        convertToInternalProtocol(newUrl);
 
         auto securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
@@ -2530,16 +2511,18 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
     return false;
 }
 
-Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin&) const
+Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
-    // Ideally the given origin should always be verified with
-    // webKitSrcWouldTaintOrigin() instead of only checking it for
-    // adaptive-streaming-statistics. We can't do this yet because HLS fragments
-    // are currently downloaded independently from WebKit.
-    // See also https://bugs.webkit.org/show_bug.cgi?id=189967.
-    return m_hasTaintedOrigin;
+    GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
+    for (auto& responseOrigin : m_origins) {
+        if (!origin.canAccess(*responseOrigin)) {
+            GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
+            return true;
+        }
+    }
+    GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
+    return false;
 }
-
 
 }
 

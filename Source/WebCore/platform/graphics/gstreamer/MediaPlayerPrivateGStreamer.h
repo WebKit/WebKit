@@ -291,8 +291,9 @@ private:
     uint64_t m_networkReadPosition { 0 };
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
-    Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
+    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
+
 }
 
 #endif // USE(GSTREAMER)

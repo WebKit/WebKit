@@ -25,7 +25,6 @@
 
 namespace WebCore {
 class MediaPlayer;
-class SecurityOrigin;
 }
 
 G_BEGIN_DECLS
@@ -35,6 +34,8 @@ G_BEGIN_DECLS
 #define WEBKIT_WEB_SRC_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), WEBKIT_TYPE_WEB_SRC, WebKitWebSrcClass))
 #define WEBKIT_IS_WEB_SRC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_WEB_SRC))
 #define WEBKIT_IS_WEB_SRC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_WEB_SRC))
+
+#define WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME  "webkit.media-player"
 
 typedef struct _WebKitWebSrc        WebKitWebSrc;
 typedef struct _WebKitWebSrcClass   WebKitWebSrcClass;
@@ -53,7 +54,6 @@ struct _WebKitWebSrcClass {
 GType webkit_web_src_get_type(void);
 void webKitWebSrcSetMediaPlayer(WebKitWebSrc*, WebCore::MediaPlayer*);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
-bool webKitSrcWouldTaintOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
 
 G_END_DECLS
 
