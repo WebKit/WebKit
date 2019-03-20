@@ -1,3 +1,10 @@
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test failures after r243161.
+
+        * inspector/timeline/line-column-expected.txt:
+        Update expected line number for code movement inside Web Inspector's injected script.
+
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         appendChild should throw when inserting an ancestor of a template into its content adopted to another document
