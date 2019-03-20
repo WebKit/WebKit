@@ -233,6 +233,9 @@ WI.NavigationBar = class NavigationBar extends WI.View
             item.updateLayout(true);
         }
 
+        if (this.sizesToFit)
+            return;
+
         let visibleNavigationItems = this._visibleNavigationItems;
 
         function calculateVisibleItemWidth() {

@@ -1,5 +1,56 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOM: selecting a node in a different frame should automatically switch the console prompt's execution context
+        https://bugs.webkit.org/show_bug.cgi?id=195805
+        <rdar://problem/48930866>
+
+        Reviewed by Timothy Hatcher.
+
+        Add an "Auto" execution context item that is selected by default and will update the
+        selected execution context whenever the inspected node changes. It will also display the
+        preferred name for whatever execution context is currently active.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole):
+        (WI.QuickConsole.prototype.initializeMainExecutionContextPathComponent):
+        (WI.QuickConsole.prototype._preferredNameForFrame): Added.
+        (WI.QuickConsole.prototype._selectExecutionContext): Added.
+        (WI.QuickConsole.prototype._executionContextPathComponentsToDisplay):
+        (WI.QuickConsole.prototype._rebuildExecutionContextPathComponents):
+        (WI.QuickConsole.prototype._framePageExecutionContextsChanged):
+        (WI.QuickConsole.prototype._frameExecutionContextsCleared):
+        (WI.QuickConsole.prototype._activeExecutionContextChanged):
+        (WI.QuickConsole.prototype._createExecutionContextPathComponent):
+        (WI.QuickConsole.prototype._insertOtherExecutionContextPathComponent):
+        (WI.QuickConsole.prototype._removeOtherExecutionContextPathComponent):
+        (WI.QuickConsole.prototype._insertExecutionContextPathComponentForFrame):
+        (WI.QuickConsole.prototype._removeExecutionContextPathComponentForFrame):
+        (WI.QuickConsole.prototype._targetRemoved):
+        (WI.QuickConsole.prototype._pathComponentSelected):
+        (WI.QuickConsole.prototype._handleInspectedNodeChanged): Added.
+        (WI.QuickConsole.prototype.get selectedExecutionContext): Deleted.
+        (WI.QuickConsole.prototype.set selectedExecutionContext): Deleted.
+        (WI.QuickConsole.prototype._createExecutionContextPathComponentFromFrame): Deleted.
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context)): Added.
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context): Added.
+        (.quick-console > .navigation-bar > .hierarchical-path:not(.automatic-execution-context) .execution-context .selector-arrows): Added.
+        (.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context): Deleted.
+        (.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context .selector-arrows): Deleted.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.get inspectedNode): Added.
+        (WI.DOMManager.prototype.setInspectedNode):
+        Broadcast when the inspected node changes.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.layout):
+        When `sizesToFit` is enabled, don't force any items to be hidden.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: refactor WI.TimelineDataGridNode and its subclasses to unify the API surface
         https://bugs.webkit.org/show_bug.cgi?id=195959
         <rdar://problem/49028896>

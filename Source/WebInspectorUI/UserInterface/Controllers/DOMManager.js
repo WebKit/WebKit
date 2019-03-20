@@ -75,6 +75,8 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     // Public
 
+    get inspectedNode() { return this._inspectedNode; }
+
     get eventListenerBreakpoints()
     {
         return Array.from(this._breakpointsForEventListeners.values());
@@ -554,6 +556,8 @@ WI.DOMManager = class DOMManager extends WI.Object
                 return;
 
             this._inspectedNode = node;
+
+            this.dispatchEventToListeners(WI.DOMManager.Event.InspectedNodeChanged);
         };
 
         // COMPATIBILITY (iOS 11): DOM.setInspectedNode did not exist.
@@ -666,4 +670,5 @@ WI.DOMManager.Event = {
     ChildNodeCountUpdated: "dom-manager-child-node-count-updated",
     DOMNodeWasInspected: "dom-manager-dom-node-was-inspected",
     InspectModeStateChanged: "dom-manager-inspect-mode-state-changed",
+    InspectedNodeChanged: "dom-manager-inspected-node-changed",
 };
