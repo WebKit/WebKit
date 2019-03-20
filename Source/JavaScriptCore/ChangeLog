@@ -1,3 +1,16 @@
+2019-03-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove copyRef() calls added in r243163
+        https://bugs.webkit.org/show_bug.cgi?id=195962
+
+        Reviewed by Chris Dumez.
+
+        As best I can tell, may be a GCC 9 bug. It shouldn't warn about this case because the return
+        value is noncopyable and the WTFMove() is absolutely required. We can avoid the warning
+        without refcount churn by introducing an intermediate variable.
+
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+
 2019-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Optimize jsc_value_object_define_property_data|accessor

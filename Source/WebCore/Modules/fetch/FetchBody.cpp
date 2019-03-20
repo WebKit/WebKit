@@ -243,7 +243,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
-        return body.copyRef();
+        return body;
     }
     if (isArrayBuffer())
         return FormData::create(arrayBufferBody().data(), arrayBufferBody().byteLength());
@@ -253,7 +253,7 @@ RefPtr<FormData> FetchBody::bodyAsFormData(ScriptExecutionContext& context) cons
         ASSERT(!context.isWorkerGlobalScope());
         auto body = makeRef(const_cast<FormData&>(formDataBody()));
         body->generateFiles(&downcast<Document>(context));
-        return body.copyRef();
+        return body;
     }
     if (auto* data = m_consumer.data())
         return FormData::create(data->data(), data->size());
@@ -274,7 +274,7 @@ FetchBody::TakenData FetchBody::take()
     if (isBlob()) {
         auto body = FormData::create();
         body->appendBlob(blobBody().url());
-        return body.copyRef();
+        return TakenData { WTFMove(body) };
     }
 
     if (isFormData())

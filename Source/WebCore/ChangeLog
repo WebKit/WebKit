@@ -1,3 +1,19 @@
+2019-03-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove copyRef() calls added in r243163
+        https://bugs.webkit.org/show_bug.cgi?id=195962
+
+        Reviewed by Chris Dumez.
+
+        The first two cases here can just directly return the RefPtr.
+
+        In the third case, we have to work around a GCC 6 bug because GCC 6 is unable to pick the
+        right constructor to use, unlike modern compilers.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::bodyAsFormData const):
+        (WebCore::FetchBody::take):
+
 2019-03-20  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Fix handling of resolution changes in AppendPipeline

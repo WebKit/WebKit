@@ -230,8 +230,9 @@ private:
             COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
             COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::Object), cannot_cast);
 
-            Ref<JSON::Object> result = m_result.releaseNonNull();
-            return reinterpret_cast<Ref<${objectType}>*>(&result)->copyRef();
+            Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
+            auto result = WTFMove(*reinterpret_cast<Ref<${objectType}>*>(&jsonResult));
+            return result;
         }
     };
 
