@@ -1,3 +1,18 @@
+2019-03-19  Gyuyoung Kim  <gyuyoung.kim@lge.com>
+
+        [WPE] Fix build warnings because of missing an argument when initializing wpe_input_axis_event
+        https://bugs.webkit.org/show_bug.cgi?id=195931
+
+        Reviewed by Michael Catanzaro.
+
+        There are still build warnings when building wpe port. It looks like
+        these build warnings have been caused by missing to set an argument
+        for the modifier parameter of wpe_input_axis_event. This patch sets 0
+        for the modifier argument to avoid the build warnings.
+
+        * UIProcess/API/wpe/ScrollGestureController.cpp:
+        (WebKit::ScrollGestureController::handleEvent):
+
 2019-03-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
