@@ -1,3 +1,14 @@
+2019-03-20  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed test gardening after r243229.
+
+        * inspector/css/shadow-scoped-style-expected.txt: Rebaseline.
+        * platform/mac-highsierra/inspector/css/shadow-scoped-style-expected.txt: Added.
+        * platform/mac-highsierra/printing/width-overflow-expected.txt: Added.
+        * platform/mac-sierra/inspector/css/shadow-scoped-style-expected.txt: Added.
+        * platform/mac-sierra/printing/width-overflow-expected.txt: Added.
+        * platform/mac/printing/width-overflow-expected.txt: Rebaseline.
+
 2019-03-20  Chris Dumez  <cdumez@apple.com>
 
         [ Mac WK2 ] REGRESSION (r239333) Flaky ASSERTION FAILED: m_uncommittedState.state == State::Committed on http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html
