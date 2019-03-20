@@ -213,15 +213,18 @@ function test()
         name: "Array.prototype.remove",
         test() {
             let arr1 = [1, 2, 3, 1];
-            arr1.remove(1);
+            InspectorTest.expectThat(arr1.remove(1), "remove should return true when removing a value that exists.");
             InspectorTest.expectShallowEqual(arr1, [2, 3, 1], "remove should only remove the first matching value.");
 
             let arr2 = ["1", "2", 3, 1];
-            arr2.remove("1");
-            arr2.remove(2);
+            InspectorTest.expectThat(arr2.remove("1"), "remove should return true when removing a value that exists.");
+            InspectorTest.expectFalse(arr2.remove(2), "remove should return false when removing a value that does not exist.");
             InspectorTest.expectShallowEqual(arr2, ["2", 3, 1], "remove should only remove values that strictly match.");
 
-            return true;
+            let arr3 = [1, 2, 3];
+            InspectorTest.expectFalse(arr3.remove("1"), "remove should return false when removing a value that does not exist.");
+            InspectorTest.expectFalse(arr3.remove(4), "remove should return false when removing a value that does not exist.");
+            InspectorTest.expectShallowEqual(arr3, [1, 2, 3], "remove should not affect the array if the value does not exist.");
         }
     });
 

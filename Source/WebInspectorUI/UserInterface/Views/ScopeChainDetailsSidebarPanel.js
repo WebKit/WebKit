@@ -261,6 +261,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
                 }
 
                 let treeOutline = objectTree.treeOutline;
+                treeOutline.registerScrollVirtualizer(this.contentView.element, 16);
                 treeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._treeElementAdded.bind(this, detailsSectionIdentifier), this);
                 treeOutline.addEventListener(WI.TreeOutline.Event.ElementDisclosureDidChanged, this._treeElementDisclosureDidChange.bind(this, detailsSectionIdentifier), this);
 

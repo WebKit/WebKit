@@ -96,8 +96,14 @@ PASS: lastValue of an empty array should be undefined.
 [1,2,3,4] => [[1,2],[2,3],[3,4]]
 
 -- Running test case: Array.prototype.remove
+PASS: remove should return true when removing a value that exists.
 PASS: remove should only remove the first matching value.
+PASS: remove should return true when removing a value that exists.
+PASS: remove should return false when removing a value that does not exist.
 PASS: remove should only remove values that strictly match.
+PASS: remove should return false when removing a value that does not exist.
+PASS: remove should return false when removing a value that does not exist.
+PASS: remove should not affect the array if the value does not exist.
 
 -- Running test case: Array.prototype.removeAll
 PASS: removeAll should remove all matching values.

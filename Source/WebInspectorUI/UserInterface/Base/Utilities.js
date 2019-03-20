@@ -585,9 +585,10 @@ Object.defineProperty(Array.prototype, "remove",
         for (let i = 0; i < this.length; ++i) {
             if (this[i] === value) {
                 this.splice(i, 1);
-                return;
+                return true;
             }
         }
+        return false;
     }
 });
 

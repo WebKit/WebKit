@@ -165,12 +165,8 @@ WI.TreeElement = class TreeElement extends WI.Object
             this._childrenListNode.hidden = this._hidden;
 
         if (this.treeOutline) {
-            if (this.treeOutline.virtualized) {
-                let focusedTreeElement = null;
-                if (!this._hidden && this.selected)
-                    focusedTreeElement = this;
-                this.treeOutline.updateVirtualizedElementsDebouncer.delayForTime(0, focusedTreeElement);
-            }
+            if (this.treeOutline.virtualized)
+                this.treeOutline.updateVirtualizedElementsDebouncer.delayForFrame();
 
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementVisibilityDidChange, {element: this});
         }
@@ -269,9 +265,6 @@ WI.TreeElement = class TreeElement extends WI.Object
                 this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
         }
 
-        if (this.treeOutline && this.treeOutline.virtualized)
-            this.treeOutline.updateVirtualizedElementsDebouncer.delayForTime(0);
-
         if (this.selected)
             this.select();
         if (this.expanded)
@@ -286,9 +279,6 @@ WI.TreeElement = class TreeElement extends WI.Object
             this._listItemNode.parentNode.removeChild(this._listItemNode);
         if (this._childrenListNode && this._childrenListNode.parentNode)
             this._childrenListNode.parentNode.removeChild(this._childrenListNode);
-
-        if (this.treeOutline && this.treeOutline.virtualized)
-            this.treeOutline.updateVirtualizedElementsDebouncer.delayForTime(0);
     }
 
     static treeElementToggled(event)
@@ -354,8 +344,9 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (this.oncollapse)
             this.oncollapse(this);
 
-        if (this.treeOutline && this.treeOutline.virtualized) {
-            this.treeOutline.updateVirtualizedElementsDebouncer.delayForTime(0, this);
+        if (this.treeOutline) {
+            if (this.treeOutline.virtualized)
+                this.treeOutline.updateVirtualizedElementsDebouncer.delayForFrame();
 
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
         }
@@ -421,8 +412,9 @@ WI.TreeElement = class TreeElement extends WI.Object
         if (this.onexpand)
             this.onexpand(this);
 
-        if (this.treeOutline && this.treeOutline.virtualized) {
-            this.treeOutline.updateVirtualizedElementsDebouncer.delayForTime(0, this);
+        if (this.treeOutline) {
+            if (this.treeOutline.virtualized)
+                this.treeOutline.updateVirtualizedElementsDebouncer.delayForFrame();
 
             this.treeOutline.dispatchEventToListeners(WI.TreeOutline.Event.ElementDisclosureDidChanged, {element: this});
         }

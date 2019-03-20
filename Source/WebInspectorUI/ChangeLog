@@ -1,3 +1,37 @@
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: virtualize the list of variables in the Scope sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=192648
+        <rdar://problem/46800949>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ScopeChainDetailsSidebarPanel.js:
+        (WI.ScopeChainDetailsSidebarPanel.prototype._generateCallFramesSection):
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.set hidden):
+        (WI.TreeElement.prototype._attach):
+        (WI.TreeElement.prototype._detach):
+        (WI.TreeElement.prototype.collapse):
+        (WI.TreeElement.prototype.expand):
+        Move `updateVirtualizedElements` calls to the owner `WI.TreeOutline` to ensure that they get
+        called. Make the remaining calls use rAF debouncing to better coalesce updates.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype._rememberTreeElement):
+        (WI.TreeOutline.prototype._forgetTreeElement):
+        (WI.TreeOutline.prototype.registerScrollVirtualizer):
+        (WI.TreeOutline.prototype._updateVirtualizedElements.calculateOffsetFromContainer): Added.
+        (WI.TreeOutline.prototype._updateVirtualizedElements):
+        (WI.TreeOutline.prototype._calculateVirtualizedValues): Deleted.
+        Calculate the `WI.TreeOutline`'s top offset within the scroll container so that it will only
+        update when it's within the visual area.
+
+        * UserInterface/Views/Utilities.js:
+        (Array.prototype.remove):
+        Return whether the item was actually removed from the array.
+
 2019-03-20  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timelines - Export fails for MediaTimelineRecords with originator DOM Node - Cannot serialize cyclic structure
