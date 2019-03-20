@@ -135,6 +135,11 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         d.addCallback(lambda _: self.downloadFileContentToWorker('.buildbot-patched', 'patched\n'))
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Patch does not apply'}
+        return super(ApplyPatch, self).getResultSummary()
+
 
 class CheckPatchRelevance(buildstep.BuildStep):
     name = 'check-patch-relevance'

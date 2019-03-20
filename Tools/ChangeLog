@@ -1,3 +1,13 @@
+2019-03-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Improve failure summary string for ApplyPatch step
+        https://bugs.webkit.org/show_bug.cgi?id=195995
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ApplyPatch.getResultSummary): Override getResultSummary.
+
 2019-03-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for new meter ARIA role
