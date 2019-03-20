@@ -1,5 +1,37 @@
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Some elements lag behind async overflow scrolling on palace-games.com
+        https://bugs.webkit.org/show_bug.cgi?id=195934
+
+        Reviewed by Zalan Bujtas.
+
+        The logic added in r242997 was wrong for an absolutely-positioned layer whose containig block was
+        inside an overflow:scroll, but whose compositing ancestor was outside. This is a case where
+        we need to make a Positioning node for the absolute layer, because it needs to move along
+        with the scrolled content.
+        
+        There are six permutations of overflow, containing block and compositing ancestor that we care about.
+        Showing renderer (aka DOM) order, they are (where <- indicates child <- parent):
+        
+        layer <- cb <- ca <- os -- no positioned node required
+        layer <- cb <- os <- ca -- compositing parent skips overflow, need a "Moved" Positioned node.
+        layer <- ov <- cb <- ca -- no positioned node required
+        layer <- ov <- ca <- cb -- no positioned node required
+        layer <- ca <- cb <- ov -- no positioned node required
+        layer <- ca <- ov <- cb -- containing block skips overflow, need a "Stationary" Positioned node.
+        
+        [cb = containing block, ca = compositing ancestor, ov = overflow scroll]
+
+        Test: scrollingcoordinator/scrolling-tree/positioned-nodes-complex.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::layerParentedAcrossCoordinatedScrollingBoundary):
+        (WebCore::RenderLayerCompositor::computeCoordinatedPositioningForLayer const):
+
+2019-03-20  Simon Fraser  <simon.fraser@apple.com>
+
         Explicitly trigger compositing for layers that need to be moved by ScrollingTreePositionedNodes
         https://bugs.webkit.org/show_bug.cgi?id=195710
         <rdar://problem/48867502>

@@ -2922,12 +2922,15 @@ bool RenderLayerCompositor::layerContainingBlockCrossesCoordinatedScrollingBound
     return false;
 }
 
-// Is there scrollable overflow between this layer and its composited ancestor?
-static bool layerParentedAcrossCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
+// Is there scrollable overflow between this layer and its composited ancestor, and the containing block is the scroller or inside the scroller.
+static bool layerParentedAcrossCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor, bool checkContainingBlock, bool& containingBlockIsInsideOverflow)
 {
     ASSERT(layer.isComposited());
 
     for (const auto* currLayer = layer.parent(); currLayer != &compositedAncestor; currLayer = currLayer->parent()) {
+        if (checkContainingBlock && currLayer->renderer().canContainAbsolutelyPositionedObjects())
+            containingBlockIsInsideOverflow = true;
+
         if (currLayer->hasCompositedScrollableOverflow())
             return true;
     }
@@ -2951,17 +2954,17 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
     auto* compositedAncestor = layer.ancestorCompositingLayer();
 
     auto& renderer = layer.renderer();
-    if (renderer.isOutOfFlowPositioned() && renderer.style().position() == PositionType::Absolute) {
+    bool containingBlockCanSkipOverflow = renderer.isOutOfFlowPositioned() && renderer.style().position() == PositionType::Absolute;
+    if (containingBlockCanSkipOverflow) {
         if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositedAncestor))
             return ScrollPositioningBehavior::Stationary;
-
-        return ScrollPositioningBehavior::None;
     }
 
     // 2. The layer's containing block is the overflow or inside the overflow:scroll, but its z-order ancestor is
     //    outside the overflow:scroll. In that case, we have to move the layer via the scrolling tree to make
     //    it move along with the overflow scrolling.
-    if (layerParentedAcrossCoordinatedScrollingBoundary(layer, *compositedAncestor))
+    bool containingBlockIsInsideOverflow = !containingBlockCanSkipOverflow;
+    if (layerParentedAcrossCoordinatedScrollingBoundary(layer, *compositedAncestor, containingBlockCanSkipOverflow, containingBlockIsInsideOverflow) && containingBlockIsInsideOverflow)
         return ScrollPositioningBehavior::Moves;
 
     return ScrollPositioningBehavior::None;
