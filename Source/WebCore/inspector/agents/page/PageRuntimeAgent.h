@@ -41,7 +41,6 @@ class ExecState;
 
 namespace WebCore {
 
-class InspectorPageAgent;
 class Frame;
 class Page;
 class SecurityOrigin;
@@ -51,11 +50,10 @@ class PageRuntimeAgent final : public Inspector::InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(PageRuntimeAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageRuntimeAgent(PageAgentContext&, InspectorPageAgent*);
+    PageRuntimeAgent(PageAgentContext&);
     virtual ~PageRuntimeAgent() = default;
 
-    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
-    void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
+    // RuntimeBackendDispatcherHandler
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
     void evaluate(ErrorString&, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, const bool* emulateUserGesture, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Optional<bool>& wasThrown, Optional<int>& savedResultIndex) final;
@@ -72,11 +70,10 @@ private:
 
     std::unique_ptr<Inspector::RuntimeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
-    InspectorPageAgent* m_pageAgent;
+
+    InstrumentingAgents& m_instrumentingAgents;
 
     Page& m_inspectedPage;
-
-    bool m_mainWorldContextCreated { false };
 };
 
 } // namespace WebCore

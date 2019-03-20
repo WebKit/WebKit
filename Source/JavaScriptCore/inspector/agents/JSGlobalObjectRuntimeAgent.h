@@ -40,8 +40,6 @@ class JSGlobalObjectRuntimeAgent final : public InspectorRuntimeAgent {
 public:
     JSGlobalObjectRuntimeAgent(JSAgentContext&);
 
-    void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
-
     InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
     // NOTE: JavaScript inspector does not yet need to mute a console because no messages

@@ -53,58 +53,42 @@ namespace WebCore {
 
 using namespace Inspector;
 
-PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context, InspectorPageAgent* pageAgent)
+PageRuntimeAgent::PageRuntimeAgent(PageAgentContext& context)
     : InspectorRuntimeAgent(context)
     , m_frontendDispatcher(std::make_unique<Inspector::RuntimeFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::RuntimeBackendDispatcher::create(context.backendDispatcher, this))
-    , m_pageAgent(pageAgent)
+    , m_instrumentingAgents(context.instrumentingAgents)
     , m_inspectedPage(context.inspectedPage)
 {
 }
 
-void PageRuntimeAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
-{
-}
-
-void PageRuntimeAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason reason)
-{
-    String unused;
-    disable(unused);
-
-    InspectorRuntimeAgent::willDestroyFrontendAndBackend(reason);
-}
-
 void PageRuntimeAgent::enable(ErrorString& errorString)
 {
-    if (enabled())
-        return;
+    bool enabled = m_instrumentingAgents.pageRuntimeAgent() == this;
 
     InspectorRuntimeAgent::enable(errorString);
 
-    // Only report existing contexts if the page did commit load, otherwise we may
-    // unintentionally initialize contexts in the frames which may trigger some listeners
-    // that are expected to be triggered only after the load is committed, see http://crbug.com/131623
-    if (m_mainWorldContextCreated)
+    m_instrumentingAgents.setPageRuntimeAgent(this);
+
+    if (!enabled)
         reportExecutionContextCreation();
 }
 
 void PageRuntimeAgent::disable(ErrorString& errorString)
 {
-    if (!enabled())
-        return;
+    m_instrumentingAgents.setPageRuntimeAgent(nullptr);
 
     InspectorRuntimeAgent::disable(errorString);
 }
 
 void PageRuntimeAgent::didCreateMainWorldContext(Frame& frame)
 {
-    m_mainWorldContextCreated = true;
-
-    if (!enabled())
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent)
         return;
 
-    String frameId = m_pageAgent->frameId(&frame);
-    JSC::ExecState* scriptState = mainWorldExecState(&frame);
+    auto frameId = pageAgent->frameId(&frame);
+    auto* scriptState = mainWorldExecState(&frame);
     notifyContextCreated(frameId, scriptState, nullptr, true);
 }
 
@@ -136,11 +120,15 @@ void PageRuntimeAgent::unmuteConsole()
 
 void PageRuntimeAgent::reportExecutionContextCreation()
 {
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent)
+        return;
+
     Vector<std::pair<JSC::ExecState*, SecurityOrigin*>> isolatedContexts;
     for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->script().canExecuteScripts(NotAboutToExecuteScript))
             continue;
-        String frameId = m_pageAgent->frameId(frame);
+        String frameId = pageAgent->frameId(frame);
 
         JSC::ExecState* scriptState = mainWorldExecState(frame);
         notifyContextCreated(frameId, scriptState, nullptr, true);

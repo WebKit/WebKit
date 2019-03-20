@@ -72,7 +72,6 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     auto context = jsAgentContext();
 
     auto inspectorAgent = std::make_unique<InspectorAgent>(context);
-    auto runtimeAgent = std::make_unique<JSGlobalObjectRuntimeAgent>(context);
     auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context);
 
     m_inspectorAgent = inspectorAgent.get();
@@ -80,7 +79,6 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
     m_agents.append(WTFMove(inspectorAgent));
-    m_agents.append(WTFMove(runtimeAgent));
     m_agents.append(WTFMove(consoleAgent));
 
     m_executionStopwatch->start();
@@ -308,6 +306,8 @@ void JSGlobalObjectInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     auto context = jsAgentContext();
+
+    m_agents.append(std::make_unique<JSGlobalObjectRuntimeAgent>(context));
 
     auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, m_consoleAgent);
     m_debuggerAgent = debuggerAgent.get();

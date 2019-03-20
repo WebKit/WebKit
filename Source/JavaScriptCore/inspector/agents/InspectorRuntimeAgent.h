@@ -53,6 +53,7 @@ class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, publi
 public:
     virtual ~InspectorRuntimeAgent();
 
+    void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(DisconnectReason) override;
 
     void enable(ErrorString&) override { m_enabled = true; }
@@ -74,8 +75,6 @@ public:
     void enableControlFlowProfiler(ErrorString&) override;
     void disableControlFlowProfiler(ErrorString&) override;
     void getBasicBlocks(ErrorString&, const String& in_sourceID, RefPtr<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>& out_basicBlocks) override;
-
-    bool enabled() const { return m_enabled; }
 
 protected:
     InspectorRuntimeAgent(AgentContext&);

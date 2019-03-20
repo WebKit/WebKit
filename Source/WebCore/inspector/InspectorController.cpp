@@ -115,10 +115,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_pageAgent = pageAgentPtr.get();
     m_agents.append(WTFMove(pageAgentPtr));
 
-    auto runtimeAgent = std::make_unique<PageRuntimeAgent>(pageContext, pageAgent);
-    m_instrumentingAgents->setPageRuntimeAgent(runtimeAgent.get());
-    m_agents.append(WTFMove(runtimeAgent));
-
     auto domAgentPtr = std::make_unique<InspectorDOMAgent>(pageContext, pageAgent, m_overlay.get());
     m_domAgent = domAgentPtr.get();
     m_agents.append(WTFMove(domAgentPtr));
@@ -169,10 +165,12 @@ void InspectorController::createLazyAgents()
 
     auto pageContext = pageAgentContext();
 
+    m_agents.append(std::make_unique<PageRuntimeAgent>(pageContext));
+
     auto debuggerAgent = std::make_unique<PageDebuggerAgent>(pageContext, m_pageAgent);
     auto debuggerAgentPtr = debuggerAgent.get();
-
     m_agents.append(WTFMove(debuggerAgent));
+
     m_agents.append(std::make_unique<PageNetworkAgent>(pageContext, m_pageAgent));
     m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext, m_domAgent));
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, m_domAgent, debuggerAgentPtr));

@@ -42,10 +42,6 @@ JSGlobalObjectRuntimeAgent::JSGlobalObjectRuntimeAgent(JSAgentContext& context)
 {
 }
 
-void JSGlobalObjectRuntimeAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
-{
-}
-
 InjectedScript JSGlobalObjectRuntimeAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     ASSERT_UNUSED(executionContextId, !executionContextId);

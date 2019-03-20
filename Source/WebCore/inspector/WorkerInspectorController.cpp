@@ -71,8 +71,6 @@ WorkerInspectorController::WorkerInspectorController(WorkerGlobalScope& workerGl
 
     auto consoleAgent = std::make_unique<WorkerConsoleAgent>(workerContext);
     m_instrumentingAgents->setWebConsoleAgent(consoleAgent.get());
-
-    m_agents.append(std::make_unique<WorkerRuntimeAgent>(workerContext));
     m_agents.append(WTFMove(consoleAgent));
 
     if (auto* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost())
@@ -166,6 +164,8 @@ void WorkerInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     auto workerContext = workerAgentContext();
+
+    m_agents.append(std::make_unique<WorkerRuntimeAgent>(workerContext));
 
 #if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerGlobalScope>(m_workerGlobalScope)) {
