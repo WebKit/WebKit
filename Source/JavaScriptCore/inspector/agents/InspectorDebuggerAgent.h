@@ -37,6 +37,7 @@
 #include "ScriptDebugListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -113,7 +114,8 @@ public:
         virtual void debuggerWasEnabled() = 0;
         virtual void debuggerWasDisabled() = 0;
     };
-    void setListener(Listener* listener) { m_listener = listener; }
+    void addListener(Listener& listener) { m_listeners.add(&listener); }
+    void removeListener(Listener& listener) { m_listeners.remove(&listener); }
 
 protected:
     InspectorDebuggerAgent(AgentContext&);
@@ -169,37 +171,38 @@ private:
     typedef std::pair<unsigned, int> AsyncCallIdentifier;
     static AsyncCallIdentifier asyncCallIdentifier(AsyncCallType, int callbackId);
 
-    typedef HashMap<JSC::SourceID, Script> ScriptsMap;
-    typedef HashMap<String, Vector<JSC::BreakpointID>> BreakpointIdentifierToDebugServerBreakpointIDsMap;
-    typedef HashMap<String, RefPtr<JSON::Object>> BreakpointIdentifierToBreakpointMap;
-    typedef HashMap<JSC::BreakpointID, String> DebugServerBreakpointIDToBreakpointIdentifier;
-
-    InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<DebuggerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<DebuggerBackendDispatcher> m_backendDispatcher;
+
     ScriptDebugServer& m_scriptDebugServer;
-    Listener* m_listener { nullptr };
+    InjectedScriptManager& m_injectedScriptManager;
+    HashMap<JSC::SourceID, Script> m_scripts;
+
+    HashSet<Listener*> m_listeners;
+
     JSC::ExecState* m_pausedScriptState { nullptr };
     JSC::Strong<JSC::Unknown> m_currentCallStack;
-    ScriptsMap m_scripts;
-    BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
-    BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;
-    DebugServerBreakpointIDToBreakpointIdentifier m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier;
-    JSC::BreakpointID m_continueToLocationBreakpointID;
+
+    HashMap<String, Vector<JSC::BreakpointID>> m_breakpointIdentifierToDebugServerBreakpointIDs;
+    HashMap<String, RefPtr<JSON::Object>> m_javaScriptBreakpoints;
+    HashMap<JSC::BreakpointID, String> m_debuggerBreakpointIdentifierToInspectorBreakpointIdentifier;
+    JSC::BreakpointID m_continueToLocationBreakpointID { JSC::noBreakpointID };
     DebuggerFrontendDispatcher::Reason m_breakReason;
-    RefPtr<JSON::Object> m_breakAuxData;
+    RefPtr<JSON::Object> m_breakData;
     ShouldDispatchResumed m_conditionToDispatchResumed { ShouldDispatchResumed::No };
-    bool m_enablePauseWhenIdle { false };
+
     HashMap<AsyncCallIdentifier, RefPtr<AsyncStackTrace>> m_pendingAsyncCalls;
-    Optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier { WTF::nullopt };
+    Optional<AsyncCallIdentifier> m_currentAsyncCallIdentifier;
+    int m_asyncStackTraceDepth { 0 };
+
     bool m_enabled { false };
-    bool m_javaScriptPauseScheduled { false };
-    bool m_hasExceptionValue { false };
-    bool m_didPauseStopwatch { false };
+    bool m_enablePauseWhenIdle { false };
     bool m_pauseOnAssertionFailures { false };
     bool m_pauseForInternalScripts { false };
+    bool m_javaScriptPauseScheduled { false };
+    bool m_didPauseStopwatch { false };
+    bool m_hasExceptionValue { false };
     bool m_registeredIdleCallback { false };
-    int m_asyncStackTraceDepth { 0 };
 };
 
 } // namespace Inspector

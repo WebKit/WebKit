@@ -72,7 +72,7 @@ InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, I
     , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
 {
-    m_debuggerAgent->setListener(this);
+    m_debuggerAgent->addListener(*this);
 }
 
 InspectorDOMDebuggerAgent::~InspectorDOMDebuggerAgent()
@@ -112,7 +112,7 @@ void InspectorDOMDebuggerAgent::willDestroyFrontendAndBackend(Inspector::Disconn
 
 void InspectorDOMDebuggerAgent::discardAgent()
 {
-    m_debuggerAgent->setListener(nullptr);
+    m_debuggerAgent->removeListener(*this);
     m_debuggerAgent = nullptr;
 }
 

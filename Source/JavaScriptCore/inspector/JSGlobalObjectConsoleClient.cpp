@@ -54,10 +54,9 @@ void JSGlobalObjectConsoleClient::setLogToSystemConsole(bool shouldLog)
     sLogToSystemConsole = shouldLog;
 }
 
-JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent, InspectorDebuggerAgent* debuggerAgent)
+JSGlobalObjectConsoleClient::JSGlobalObjectConsoleClient(InspectorConsoleAgent* consoleAgent)
     : ConsoleClient()
     , m_consoleAgent(consoleAgent)
-    , m_debuggerAgent(debuggerAgent)
 {
 }
 
@@ -126,8 +125,10 @@ void JSGlobalObjectConsoleClient::startConsoleProfile()
     if (m_scriptProfilerAgent)
         m_scriptProfilerAgent->programmaticCaptureStarted();
 
-    m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
-    m_debuggerAgent->setBreakpointsActive(unused, false);
+    if (m_debuggerAgent) {
+        m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
+        m_debuggerAgent->setBreakpointsActive(unused, false);
+    }
 
     if (m_scriptProfilerAgent) {
         const bool includeSamples = true;
@@ -142,7 +143,8 @@ void JSGlobalObjectConsoleClient::stopConsoleProfile()
     if (m_scriptProfilerAgent)
         m_scriptProfilerAgent->stopTracking(unused);
 
-    m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
+    if (m_debuggerAgent)
+        m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
 
     // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
     if (m_scriptProfilerAgent)
