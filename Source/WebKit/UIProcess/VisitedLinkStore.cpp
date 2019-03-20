@@ -68,9 +68,9 @@ void VisitedLinkStore::addProcess(WebProcessProxy& process)
 
 void VisitedLinkStore::removeProcess(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(&process));
+    if (!m_processes.remove(&process))
+        return;
 
-    m_processes.remove(&process);
     process.removeMessageReceiver(Messages::VisitedLinkStore::messageReceiverName(), identifier());
 }
 

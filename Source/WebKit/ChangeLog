@@ -1,3 +1,10 @@
+2019-03-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix assertion failures in API tests after r243159.
+
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::removeProcess):
+
 2019-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add an platform-driven spell-checking mechanism
