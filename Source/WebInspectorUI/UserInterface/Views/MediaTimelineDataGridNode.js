@@ -25,19 +25,14 @@
 
 WI.MediaTimelineDataGridNode = class MediaTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(record, graphDataSource)
+    constructor(record, options = {})
     {
         console.assert(record instanceof WI.MediaTimelineRecord);
 
-        const includesGraph = false;
-        super(includesGraph, graphDataSource);
-
-        this._records = [record];
+        super([record], options);
     }
 
     // Public
-
-    get records() { return this._records; }
 
     get data()
     {

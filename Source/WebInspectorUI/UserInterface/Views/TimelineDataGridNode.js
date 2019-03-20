@@ -25,16 +25,18 @@
 
 WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
 {
-    constructor(includesGraph, graphDataSource, hasChildren)
+    constructor(records, options = {})
     {
-        super({}, hasChildren);
+        super({}, options.hasChildren);
 
         this.copyable = false;
 
-        this._includesGraph = includesGraph || false;
-        this._graphDataSource = graphDataSource || null;
+        this._records = records;
+        this._includesGraph = options.includesGraph || false;
+        this._graphDataSource = options.graphDataSource || null;
+        this._cachedData = null;
 
-        if (graphDataSource) {
+        if (this._graphDataSource) {
             this._graphContainerElement = document.createElement("div");
             this._timelineRecordBars = [];
         }
@@ -42,15 +44,11 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
 
     // Public
 
+    get records() { return this._records; }
+
     get record()
     {
         return this.records && this.records.length ? this.records[0] : null;
-    }
-
-    get records()
-    {
-        // Implemented by subclasses.
-        return [];
     }
 
     get graphDataSource()
@@ -63,8 +61,9 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
         if (!this._graphDataSource)
             return {};
 
-        var records = this.records || [];
-        return {graph: records.length ? records[0].startTime : 0};
+        return {
+            graph: this.record ? this.record.startTime : 0,
+        };
     }
 
     collapse()
@@ -207,6 +206,8 @@ WI.TimelineDataGridNode = class TimelineDataGridNode extends WI.DataGridNode
 
     refresh()
     {
+        this._cachedData = null;
+
         if (this._graphDataSource && this._includesGraph)
             this.needsGraphRefresh();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,45 +25,35 @@
 
 WI.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(renderingFrameTimelineRecord, baseStartTime)
+    constructor(record, options = {})
     {
-        super(false, null);
+        console.assert(record instanceof WI.RenderingFrameTimelineRecord);
 
-        this._record = renderingFrameTimelineRecord;
-        this._baseStartTime = baseStartTime || 0;
+        super([record], options);
     }
 
     // Public
 
-    get records()
-    {
-        return [this._record];
-    }
-
     get data()
     {
-        if (!this._cachedData) {
-            let name = WI.TimelineTabContentView.displayNameForRecord(this._record);
-            let scriptTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Script);
-            let layoutTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Layout);
-            let paintTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Paint);
-            let otherTime = this._record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Other);
-            this._cachedData = {
-                name,
-                startTime: this._record.startTime,
-                totalTime: this._record.duration,
-                scriptTime,
-                layoutTime,
-                paintTime,
-                otherTime,
-            };
-        }
+        if (this._cachedData)
+            return this._cachedData;
 
+        this._cachedData = super.data;
+        this._cachedData.name = WI.TimelineTabContentView.displayNameForRecord(this.record);
+        this._cachedData.startTime = this.record.startTime - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
+        this._cachedData.totalTime = this.record.duration;
+        this._cachedData.scriptTime = this.record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Script);
+        this._cachedData.layoutTime = this.record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Layout);
+        this._cachedData.paintTime = this.record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Paint);
+        this._cachedData.otherTime = this.record.durationForTask(WI.RenderingFrameTimelineRecord.TaskType.Other);
         return this._cachedData;
     }
 
     createCellContent(columnIdentifier, cell)
     {
+        const higherResolution = true;
+
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
@@ -72,14 +62,14 @@ WI.RenderingFrameTimelineDataGridNode = class RenderingFrameTimelineDataGridNode
             return value;
 
         case "startTime":
-            return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
 
         case "scriptTime":
         case "layoutTime":
         case "paintTime":
         case "otherTime":
         case "totalTime":
-            return (isNaN(value) || value === 0) ? emDash : Number.secondsToString(value, true);
+            return (isNaN(value) || value === 0) ? emDash : Number.secondsToString(value, higherResolution);
         }
 
         return super.createCellContent(columnIdentifier, cell);

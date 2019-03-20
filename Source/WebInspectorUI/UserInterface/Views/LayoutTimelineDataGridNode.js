@@ -25,42 +25,36 @@
 
 WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(layoutTimelineRecord, baseStartTime)
+    constructor(record, options = {})
     {
-        super(false, null);
+        console.assert(record instanceof WI.LayoutTimelineRecord);
 
-        this._record = layoutTimelineRecord;
-        this._baseStartTime = baseStartTime || 0;
+        super([record], options);
     }
 
     // Public
 
-    get records()
-    {
-        return [this._record];
-    }
-
     get data()
     {
-        if (!this._cachedData) {
-            this._cachedData = {
-                type: this._record.eventType,
-                name: this.displayName(),
-                width: this._record.width,
-                height: this._record.height,
-                area: this._record.width * this._record.height,
-                startTime: this._record.startTime,
-                totalTime: this._record.duration,
-                location: this._record.initiatorCallFrame,
-            };
-        }
+        if (this._cachedData)
+            return this._cachedData;
 
+        this._cachedData = super.data;
+        this._cachedData.type = this.record.eventType;
+        this._cachedData.name = this.displayName();
+        this._cachedData.width = this.record.width;
+        this._cachedData.height = this.record.height;
+        this._cachedData.area = this.record.width * this.record.height;
+        this._cachedData.startTime = this.record.startTime - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
+        this._cachedData.totalTime = this.record.duration;
+        this._cachedData.location = this.record.initiatorCallFrame;
         return this._cachedData;
     }
 
     createCellContent(columnIdentifier, cell)
     {
         var value = this.data[columnIdentifier];
+        const higherResolution = true;
 
         switch (columnIdentifier) {
         case "name":
@@ -75,10 +69,10 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
             return isNaN(value) ? emDash : WI.UIString("%dpx\u00B2").format(value);
 
         case "startTime":
-            return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
 
         case "totalTime":
-            return isNaN(value) ? emDash : Number.secondsToString(value, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
         }
 
         return super.createCellContent(columnIdentifier, cell);

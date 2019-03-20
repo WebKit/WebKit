@@ -186,7 +186,9 @@ WI.MediaTimelineView = class MediaTimelineView extends WI.TimelineView
             if (timelineRecord.domEvent && timelineRecord.domEvent.originator)
                 this._dataGrid.setColumnVisible("originator", true);
 
-            this._dataGrid.addRowInSortOrder(new WI.MediaTimelineDataGridNode(timelineRecord, this));
+            this._dataGrid.addRowInSortOrder(new WI.MediaTimelineDataGridNode(timelineRecord, {
+                graphDataSource: this,
+            }));
         }
 
         this._pendingRecords = [];

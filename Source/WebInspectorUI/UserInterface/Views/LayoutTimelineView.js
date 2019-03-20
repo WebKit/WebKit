@@ -204,7 +204,9 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
             return;
 
         for (var layoutTimelineRecord of this._pendingRecords) {
-            let dataGridNode = new WI.LayoutTimelineDataGridNode(layoutTimelineRecord, this.zeroTime);
+            let dataGridNode = new WI.LayoutTimelineDataGridNode(layoutTimelineRecord, {
+                graphDataSource: this,
+            });
 
             this._dataGrid.addRowInSortOrder(dataGridNode);
 
@@ -217,14 +219,24 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
                 }
 
                 let childRecord = entry.children[entry.index];
-                console.assert(childRecord.type === WI.TimelineRecord.Type.Layout, childRecord);
 
-                let childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
+                const options = {
+                    graphDataSource: this,
+                };
+                let childDataGridNode = null;
+                if (childRecord.type === WI.TimelineRecord.Type.Script)
+                    childDataGridNode = new WI.ScriptTimelineDataGridNode(childRecord, options);
+                else {
+                    console.assert(childRecord.type === WI.TimelineRecord.Type.Layout, childRecord);
+                    childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, options);
+                }
+
                 console.assert(entry.parentDataGridNode, "Missing parent node for entry.", entry);
                 this._dataGrid.addRowInSortOrder(childDataGridNode, entry.parentDataGridNode);
 
                 if (childDataGridNode && childRecord.children.length)
                     stack.push({children: childRecord.children, parentDataGridNode: childDataGridNode, index: 0});
+
                 ++entry.index;
             }
         }

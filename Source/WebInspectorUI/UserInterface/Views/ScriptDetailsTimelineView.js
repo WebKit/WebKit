@@ -179,9 +179,11 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         if (this.startTime !== this._oldStartTime || this.endTime !== this._oldEndTime) {
             let dataGridNode = this._dataGrid.children[0];
             while (dataGridNode) {
-                dataGridNode.updateRangeTimes(this.startTime, this.endTime);
                 if (dataGridNode.revealed)
-                    dataGridNode.refreshIfNeeded();
+                    dataGridNode.refresh();
+                else
+                    dataGridNode.needsRefresh();
+
                 dataGridNode = dataGridNode.traverseNextNode(false, null, true);
             }
 
@@ -202,10 +204,6 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         if (!this._pendingRecords.length)
             return;
 
-        let zeroTime = this.zeroTime;
-        let startTime = this.startTime;
-        let endTime = this.endTime;
-
         for (let scriptTimelineRecord of this._pendingRecords) {
             let rootNodes = [];
             if (scriptTimelineRecord.profile) {
@@ -213,11 +211,15 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
                 rootNodes = scriptTimelineRecord.profile.topDownRootNodes;
             }
 
-            let dataGridNode = new WI.ScriptTimelineDataGridNode(scriptTimelineRecord, zeroTime);
+            let dataGridNode = new WI.ScriptTimelineDataGridNode(scriptTimelineRecord, {
+                graphDataSource: this,
+            });
             this._dataGrid.addRowInSortOrder(dataGridNode);
 
             for (let profileNode of rootNodes) {
-                let profileNodeDataGridNode = new WI.ProfileNodeDataGridNode(profileNode, zeroTime, startTime, endTime);
+                let profileNodeDataGridNode = new WI.ProfileNodeDataGridNode(profileNode, {
+                    graphDataSource: this,
+                });
                 this._dataGrid.addRowInSortOrder(profileNodeDataGridNode, dataGridNode);
             }
         }

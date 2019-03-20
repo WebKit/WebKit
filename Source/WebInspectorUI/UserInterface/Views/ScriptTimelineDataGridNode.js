@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,64 +25,50 @@
 
 WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(scriptTimelineRecord, baseStartTime, rangeStartTime, rangeEndTime)
+    constructor(record, options = {})
     {
-        super(false, null);
+        console.assert(record instanceof WI.ScriptTimelineRecord);
 
-        this._record = scriptTimelineRecord;
-        this._baseStartTime = baseStartTime || 0;
-        this._rangeStartTime = rangeStartTime || 0;
-        this._rangeEndTime = typeof rangeEndTime === "number" ? rangeEndTime : Infinity;
+        super([record], options);
     }
 
     // Public
 
-    get records()
-    {
-        return [this._record];
-    }
-
-    get baseStartTime()
-    {
-        return this._baseStartTime;
-    }
-
-    get rangeStartTime()
-    {
-        return this._rangeStartTime;
-    }
-
-    get rangeEndTime()
-    {
-        return this._rangeEndTime;
-    }
-
     get data()
     {
-        if (!this._cachedData) {
-            var startTime = this._record.startTime;
-            var duration = this._record.startTime + this._record.duration - startTime;
-            var callFrameOrSourceCodeLocation = this._record.initiatorCallFrame || this._record.sourceCodeLocation;
+        if (this._cachedData)
+            return this._cachedData;
 
-            // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
-            if (this._record.profile) {
-                var oneRootNode = this._record.profile.topDownRootNodes[0];
-                if (oneRootNode && oneRootNode.calls) {
-                    startTime = Math.max(this._rangeStartTime, this._record.startTime);
-                    duration = Math.min(this._record.startTime + this._record.duration, this._rangeEndTime) - startTime;
-                }
-            }
-
-            this._cachedData = {
-                eventType: this._record.eventType,
-                startTime,
-                selfTime: duration,
-                totalTime: duration,
-                averageTime: duration,
-                callCount: this._record.callCountOrSamples,
-                location: callFrameOrSourceCodeLocation,
-            };
+        let baseStartTime = 0;
+        let rangeStartTime = 0;
+        let rangeEndTime = Infinity;
+        if (this.graphDataSource) {
+            baseStartTime = this.graphDataSource.zeroTime;
+            rangeStartTime = this.graphDataSource.startTime;
+            rangeEndTime = this.graphDataSource.endTime;
         }
+
+        let startTime = this.record.startTime;
+        let duration = this.record.startTime + this.record.duration - startTime;
+
+        // COMPATIBILITY (iOS 8): Profiles included per-call information and can be finely partitioned.
+        if (this.record.profile) {
+            let oneRootNode = this.record.profile.topDownRootNodes[0];
+            if (oneRootNode && oneRootNode.calls) {
+                startTime = Math.max(rangeStartTime, this.record.startTime);
+                duration = Math.min(this.record.startTime + this.record.duration, rangeEndTime) - startTime;
+            }
+        }
+
+        this._cachedData = super.data;
+        this._cachedData.type = this.record.eventType;
+        this._cachedData.name = this.displayName();
+        this._cachedData.startTime = startTime - baseStartTime;
+        this._cachedData.selfTime = duration;
+        this._cachedData.totalTime = duration;
+        this._cachedData.averageTime = duration;
+        this._cachedData.callCount = this.record.callCountOrSamples;
+        this._cachedData.location = this.record.initiatorCallFrame || this.record.sourceCodeLocation;
 
         return this._cachedData;
     }
@@ -94,9 +80,9 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
 
         this._subtitle = "";
 
-        if (this._record.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled) {
-            let timeoutString = Number.secondsToString(this._record.details.timeout / 1000);
-            if (this._record.details.repeating)
+        if (this.record.eventType === WI.ScriptTimelineRecord.EventType.TimerInstalled) {
+            let timeoutString = Number.secondsToString(this.record.details.timeout / 1000);
+            if (this.record.details.repeating)
                 this._subtitle = WI.UIString("%s interval").format(timeoutString);
             else
                 this._subtitle = WI.UIString("%s delay").format(timeoutString);
@@ -105,35 +91,10 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
         return this._subtitle;
     }
 
-    updateRangeTimes(startTime, endTime)
-    {
-        var oldRangeStartTime = this._rangeStartTime;
-        var oldRangeEndTime = this._rangeEndTime;
-
-        if (oldRangeStartTime === startTime && oldRangeEndTime === endTime)
-            return;
-
-        this._rangeStartTime = startTime;
-        this._rangeEndTime = endTime;
-
-        // If we have no duration the range does not matter.
-        if (!this._record.duration)
-            return;
-
-        // We only need a refresh if the new range time changes the visible portion of this record.
-        var recordStart = this._record.startTime;
-        var recordEnd = this._record.startTime + this._record.duration;
-        var oldStartBoundary = Number.constrain(oldRangeStartTime, recordStart, recordEnd);
-        var oldEndBoundary = Number.constrain(oldRangeEndTime, recordStart, recordEnd);
-        var newStartBoundary = Number.constrain(startTime, recordStart, recordEnd);
-        var newEndBoundary = Number.constrain(endTime, recordStart, recordEnd);
-
-        if (oldStartBoundary !== newStartBoundary || oldEndBoundary !== newEndBoundary)
-            this.needsRefresh();
-    }
-
     createCellContent(columnIdentifier, cell)
     {
+        const higherResolution = true;
+
         var value = this.data[columnIdentifier];
 
         switch (columnIdentifier) {
@@ -142,15 +103,19 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
             return this._createNameCellDocumentFragment();
 
         case "startTime":
-            return isNaN(value) ? emDash : Number.secondsToString(value - this._baseStartTime, true);
-
         case "selfTime":
         case "totalTime":
         case "averageTime":
-            return isNaN(value) ? emDash : Number.secondsToString(value, true);
+            return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
 
         case "callCount":
             return isNaN(value) ? emDash : value.toLocaleString();
+
+        // Necessary to be displayed in WI.LayoutTimelineView.
+        case "width":
+        case "height":
+        case "area":
+            return zeroWidthSpace;
         }
 
         return super.createCellContent(columnIdentifier, cell);

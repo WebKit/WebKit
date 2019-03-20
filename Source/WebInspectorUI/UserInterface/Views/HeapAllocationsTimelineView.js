@@ -101,7 +101,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         WI.ContentView.addEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
 
         this._pendingRecords = [];
-        this._pendingZeroTimeDataGridNodes = [];
 
         timeline.addEventListener(WI.Timeline.Event.RecordAdded, this._heapAllocationsTimelineRecordAdded, this);
 
@@ -263,19 +262,12 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
     layout()
     {
-        if (this._pendingZeroTimeDataGridNodes.length && this.zeroTime) {
-            for (let dataGridNode of this._pendingZeroTimeDataGridNodes)
-                dataGridNode.updateTimestamp(this.zeroTime);
-            this._pendingZeroTimeDataGridNodes = [];
-            this._dataGrid._sort();
-        }
-
-        if (this._pendingRecords.length) {
+        if (this._pendingRecords.length && this.zeroTime) {
             for (let heapAllocationsTimelineRecord of this._pendingRecords) {
-                let dataGridNode = new WI.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, this.zeroTime, this);
-                this._dataGrid.addRowInSortOrder(dataGridNode);
-                if (!this.zeroTime)
-                    this._pendingZeroTimeDataGridNodes.push(dataGridNode);
+                this._dataGrid.addRowInSortOrder(new WI.HeapAllocationsTimelineDataGridNode(heapAllocationsTimelineRecord, {
+                    graphDataSource: this,
+                    heapAllocationsView: this,
+                }));
             }
 
             this._pendingRecords = [];
@@ -291,7 +283,6 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
         this.showHeapSnapshotList();
         this._pendingRecords = [];
-        this._pendingZeroTimeDataGridNodes = [];
         this._updateCompareHeapSnapshotButton();
     }
 

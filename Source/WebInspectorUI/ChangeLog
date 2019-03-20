@@ -1,5 +1,120 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: refactor WI.TimelineDataGridNode and its subclasses to unify the API surface
+        https://bugs.webkit.org/show_bug.cgi?id=195959
+        <rdar://problem/49028896>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TimelineDataGridNode.js:
+        (WI.TimelineDataGridNode.prototype.get records):
+        (WI.TimelineDataGridNode.prototype.get data):
+        (WI.TimelineDataGridNode.prototype.refresh):
+
+        * UserInterface/Views/HeapAllocationsTimelineDataGridNode.js:
+        (WI.HeapAllocationsTimelineDataGridNode):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.get heapSnapshot): Added.
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.get data):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.createCellContent):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.createCells):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype._handleHeapSnapshotCollectedNodes):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype._handleHeapSnapshotInvalidated):
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.get record): Deleted.
+        (WI.HeapAllocationsTimelineDataGridNode.prototype.updateTimestamp): Deleted.
+        (WI.HeapAllocationsTimelineDataGridNode.prototype._heapSnapshotCollectedNodes): Deleted.
+        (WI.HeapAllocationsTimelineDataGridNode.prototype._heapSnapshotInvalidated): Deleted.
+
+        * UserInterface/Views/LayoutTimelineDataGridNode.js:
+        (WI.LayoutTimelineDataGridNode):
+        (WI.LayoutTimelineDataGridNode.prototype.get data):
+        (WI.LayoutTimelineDataGridNode.prototype.createCellContent):
+        (WI.LayoutTimelineDataGridNode.prototype.get records): Deleted.
+
+        * UserInterface/Views/MediaTimelineDataGridNode.js:
+        (WI.MediaTimelineDataGridNode):
+        (WI.MediaTimelineDataGridNode.prototype.get records): Deleted.
+
+        * UserInterface/Views/ProfileNodeDataGridNode.js:
+        (WI.ProfileNodeDataGridNode):
+        (WI.ProfileNodeDataGridNode.prototype.get profileNode):
+        (WI.ProfileNodeDataGridNode.prototype.get data):
+        (WI.ProfileNodeDataGridNode.prototype.createCellContent):
+        (WI.ProfileNodeDataGridNode.prototype._populate):
+        (WI.ProfileNodeDataGridNode.prototype.get records): Deleted.
+        (WI.ProfileNodeDataGridNode.prototype.get baseStartTime): Deleted.
+        (WI.ProfileNodeDataGridNode.prototype.get rangeStartTime): Deleted.
+        (WI.ProfileNodeDataGridNode.prototype.get rangeEndTime): Deleted.
+        (WI.ProfileNodeDataGridNode.prototype.updateRangeTimes): Deleted.
+        (WI.ProfileNodeDataGridNode.prototype.refresh): Deleted.
+
+        * UserInterface/Views/RenderingFrameTimelineDataGridNode.js:
+        (WI.RenderingFrameTimelineDataGridNode):
+        (WI.RenderingFrameTimelineDataGridNode.prototype.get data):
+        (WI.RenderingFrameTimelineDataGridNode.prototype.createCellContent):
+        (WI.RenderingFrameTimelineDataGridNode.prototype.get records): Deleted.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode):
+        (WI.ResourceTimelineDataGridNode.prototype.get resource):
+        (WI.ResourceTimelineDataGridNode.prototype.get data):
+        (WI.ResourceTimelineDataGridNode.prototype.createCellContent):
+        (WI.ResourceTimelineDataGridNode.prototype.appendContextMenuItems):
+        (WI.ResourceTimelineDataGridNode.prototype.filterableDataForColumn):
+        (WI.ResourceTimelineDataGridNode.prototype._createNameCellDocumentFragment):
+        (WI.ResourceTimelineDataGridNode.prototype._cachedCellContent):
+        (WI.ResourceTimelineDataGridNode.prototype._timelineRecordUpdated):
+        (WI.ResourceTimelineDataGridNode.prototype._dataGridNodeGoToArrowClicked):
+        (WI.ResourceTimelineDataGridNode.prototype._updateStatus):
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar.else.let.graphDataSource.get startTime):
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar.else.let.graphDataSource.get currentTime):
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar.else.let.graphDataSource.get endTime):
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar.else.let.graphDataSource.get _extraTimePadding):
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar):
+        (WI.ResourceTimelineDataGridNode.prototype.get records): Deleted.
+
+        * UserInterface/Views/ResourceTimingPopoverDataGridNode.js:
+        (WI.ResourceTimingPopoverDataGridNode):
+        (WI.ResourceTimingPopoverDataGridNode.prototype.get records): Deleted.
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WI.ScriptTimelineDataGridNode.prototype.get data):
+        (WI.ScriptTimelineDataGridNode.prototype.get subtitle):
+        (WI.ScriptTimelineDataGridNode.prototype.createCellContent):
+        (WI.ScriptTimelineDataGridNode.prototype.get records): Deleted.
+        (WI.ScriptTimelineDataGridNode.prototype.get baseStartTime): Deleted.
+        (WI.ScriptTimelineDataGridNode.prototype.get rangeStartTime): Deleted.
+        (WI.ScriptTimelineDataGridNode.prototype.get rangeEndTime): Deleted.
+        (WI.ScriptTimelineDataGridNode.prototype.updateRangeTimes): Deleted.
+
+        * UserInterface/Views/SourceCodeTimelineTimelineDataGridNode.js:
+        (WI.SourceCodeTimelineTimelineDataGridNode.prototype.get data):
+
+        * UserInterface/Views/HeapAllocationsTimelineView.js:
+        (WI.HeapAllocationsTimelineView):
+        (WI.HeapAllocationsTimelineView.prototype.layout):
+        (WI.HeapAllocationsTimelineView.prototype.reset):
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/MediaTimelineView.js:
+        (WI.MediaTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/NetworkTimelineView.js:
+        (WI.NetworkTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WI.OverviewTimelineView.prototype._addResourceToDataGridIfNeeded):
+        (WI.OverviewTimelineView.prototype._addSourceCodeTimeline):
+        * UserInterface/Views/RenderingFrameTimelineView.js:
+        (WI.RenderingFrameTimelineView.prototype._processPendingRecords):
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView.prototype.layout):
+        (WI.ScriptDetailsTimelineView.prototype._processPendingRecords):
+        Update Timeline `WI.DataGrid` views to use the new constructor format.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.css:
+        (.resource-timing-popover-content .data-grid td.graph-column):
+        Drive-by: add extra padding before/after resource timing bars shown when hovering.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: changes to CSS resources only take affect once editing stops
         https://bugs.webkit.org/show_bug.cgi?id=195774
         <rdar://problem/48905413>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,20 +27,26 @@ WI.ResourceTimingPopoverDataGridNode = class ResourceTimingPopoverDataGridNode e
 {
     constructor(description, startTime, endTime, graphDataSource)
     {
-        super(true, graphDataSource);
+        let record = new WI.TimelineRecord(WI.TimelineRecord.Type.Network, startTime, endTime);
+        super([record], {
+            includesGraph: true,
+            graphDataSource,
+        });
 
         const higherResolution = true;
         let duration = Number.secondsToMillisecondsString(endTime - startTime, higherResolution);
 
         this._data = {description, duration};
-        this._record = new WI.TimelineRecord(WI.TimelineRecord.Type.Network, startTime, endTime);
     }
 
     // Public
 
-    get records() { return [this._record]; }
     get data() { return this._data; }
-    get selectable() { return false; }
+
+    get selectable()
+    {
+        return false;
+    }
 
     // Protected
 

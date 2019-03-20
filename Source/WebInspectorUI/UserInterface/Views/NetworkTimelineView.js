@@ -257,9 +257,11 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
             if (dataGridNode)
                 continue;
 
-            const includesGraph = false;
-            const shouldShowPopover = true;
-            dataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
+            dataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, {
+                graphDataSource: this,
+                shouldShowPopover: true,
+            });
+
             this._resourceDataGridNodeMap.set(resourceTimelineRecord.resource, dataGridNode);
 
             this._dataGrid.addRowInSortOrder(dataGridNode);

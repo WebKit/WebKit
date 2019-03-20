@@ -25,37 +25,32 @@
 
 WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(resourceTimelineRecord, includesGraph, graphDataSource, shouldShowPopover)
+    constructor(record, options = {})
     {
-        super(includesGraph, graphDataSource);
+        console.assert(record instanceof WI.ResourceTimelineRecord);
 
-        this._resource = resourceTimelineRecord.resource;
-        this._record = resourceTimelineRecord;
-        this._shouldShowPopover = shouldShowPopover;
+        super([record], options);
 
-        this._resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._needsRefresh, this);
-        this._resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._needsRefresh, this);
-        this._resource.addEventListener(WI.Resource.Event.URLDidChange, this._needsRefresh, this);
+        this._shouldShowPopover = options.shouldShowPopover;
 
-        if (includesGraph)
-            this._record.addEventListener(WI.TimelineRecord.Event.Updated, this._timelineRecordUpdated, this);
+        this.resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._needsRefresh, this);
+        this.resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._needsRefresh, this);
+        this.resource.addEventListener(WI.Resource.Event.URLDidChange, this._needsRefresh, this);
+
+        if (options.includesGraph)
+            this.record.addEventListener(WI.TimelineRecord.Event.Updated, this._timelineRecordUpdated, this);
         else {
-            this._resource.addEventListener(WI.Resource.Event.TypeDidChange, this._needsRefresh, this);
-            this._resource.addEventListener(WI.Resource.Event.SizeDidChange, this._needsRefresh, this);
-            this._resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._needsRefresh, this);
+            this.resource.addEventListener(WI.Resource.Event.TypeDidChange, this._needsRefresh, this);
+            this.resource.addEventListener(WI.Resource.Event.SizeDidChange, this._needsRefresh, this);
+            this.resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._needsRefresh, this);
         }
     }
 
     // Public
 
-    get records()
-    {
-        return [this._record];
-    }
-
     get resource()
     {
-        return this._resource;
+        return this.record.resource;
     }
 
     get data()
@@ -63,40 +58,28 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         if (this._cachedData)
             return this._cachedData;
 
-        var resource = this._resource;
-        var data = {};
-
-        if (!this._includesGraph) {
-            var zeroTime = this.graphDataSource ? this.graphDataSource.zeroTime : 0;
-
-            data.domain = WI.displayNameForHost(resource.urlComponents.host);
-            data.scheme = resource.urlComponents.scheme ? resource.urlComponents.scheme.toUpperCase() : "";
-            data.method = resource.requestMethod;
-            data.type = resource.type;
-            data.statusCode = resource.statusCode;
-            data.cached = resource.cached;
-            data.size = resource.size;
-            data.transferSize = !isNaN(resource.networkTotalTransferSize) ? resource.networkTotalTransferSize : resource.estimatedTotalTransferSize;
-            data.requestSent = resource.requestSentTimestamp - zeroTime;
-            data.duration = resource.receiveDuration;
-            data.latency = resource.latency;
-            data.protocol = resource.protocol;
-            data.priority = resource.priority;
-            data.remoteAddress = resource.remoteAddress;
-            data.connectionIdentifier = resource.connectionIdentifier;
-        }
-
-        data.graph = this._record.startTime;
-
-        this._cachedData = data;
-        return data;
+        this._cachedData = super.data;
+        this._cachedData.domain = WI.displayNameForHost(this.resource.urlComponents.host);
+        this._cachedData.scheme = this.resource.urlComponents.scheme ? this.resource.urlComponents.scheme.toUpperCase() : "";
+        this._cachedData.method = this.resource.requestMethod;
+        this._cachedData.type = this.resource.type;
+        this._cachedData.statusCode = this.resource.statusCode;
+        this._cachedData.cached = this.resource.cached;
+        this._cachedData.size = this.resource.size;
+        this._cachedData.transferSize = !isNaN(this.resource.networkTotalTransferSize) ? this.resource.networkTotalTransferSize : this.resource.estimatedTotalTransferSize;
+        this._cachedData.requestSent = this.resource.requestSentTimestamp - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
+        this._cachedData.duration = this.resource.receiveDuration;
+        this._cachedData.latency = this.resource.latency;
+        this._cachedData.protocol = this.resource.protocol;
+        this._cachedData.priority = this.resource.priority;
+        this._cachedData.remoteAddress = this.resource.remoteAddress;
+        this._cachedData.connectionIdentifier = this.resource.connectionIdentifier;
+        return this._cachedData;
     }
 
     createCellContent(columnIdentifier, cell)
     {
-        let resource = this._resource;
-
-        if (resource.hadLoadingError())
+        if (this.resource.hadLoadingError())
             cell.classList.add("error");
 
         let value = this.data[columnIdentifier];
@@ -104,7 +87,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         switch (columnIdentifier) {
         case "name":
             cell.classList.add(...this.iconClassNames());
-            cell.title = resource.displayURL;
+            cell.title = this.resource.displayURL;
             this._updateStatus(cell);
             return this._createNameCellDocumentFragment();
 
@@ -114,7 +97,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             return text;
 
         case "statusCode":
-            cell.title = resource.statusText || "";
+            cell.title = this.resource.statusText || "";
             return value || emDash;
 
         case "cached":
@@ -180,7 +163,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
 
     appendContextMenuItems(contextMenu)
     {
-        WI.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
+        WI.appendContextMenuItemsForSourceCode(contextMenu, this.resource);
     }
 
     // Protected
@@ -213,7 +196,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
     filterableDataForColumn(columnIdentifier)
     {
         if (columnIdentifier === "name")
-            return this._resource.url;
+            return this.resource.url;
         return super.filterableDataForColumn(columnIdentifier);
     }
 
@@ -226,8 +209,8 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         fragment.append(mainTitle);
 
         // Show the host as the subtitle if it is different from the main resource or if this is the main frame's main resource.
-        let frame = this._resource.parentFrame;
-        let isMainResource = this._resource.isMainResource();
+        let frame = this.resource.parentFrame;
+        let isMainResource = this.resource.isMainResource();
         let parentResourceHost;
         if (frame && isMainResource) {
             // When the resource is a main resource, get the host from the current frame's parent frame instead of the current frame.
@@ -237,8 +220,8 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             parentResourceHost = frame.mainResource.urlComponents.host;
         }
 
-        if (parentResourceHost !== this._resource.urlComponents.host || frame.isMainFrame() && isMainResource) {
-            let subtitle = WI.displayNameForHost(this._resource.urlComponents.host);
+        if (parentResourceHost !== this.resource.urlComponents.host || frame.isMainFrame() && isMainResource) {
+            let subtitle = WI.displayNameForHost(this.resource.urlComponents.host);
             if (mainTitle !== subtitle) {
                 let subtitleElement = document.createElement("span");
                 subtitleElement.classList.add("subtitle");
@@ -252,12 +235,12 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
 
     _cachedCellContent()
     {
-        if (!this._resource.hasResponse())
+        if (!this.resource.hasResponse())
             return emDash;
 
-        let responseSource = this._resource.responseSource;
+        let responseSource = this.resource.responseSource;
         if (responseSource === WI.Resource.ResponseSource.MemoryCache || responseSource === WI.Resource.ResponseSource.DiskCache) {
-            console.assert(this._resource.cached, "This resource has a cache responseSource it should also be marked as cached", this._resource);
+            console.assert(this.resource.cached, "This resource has a cache responseSource it should also be marked as cached", this.resource);
             let span = document.createElement("span");
             let cacheType = document.createElement("span");
             cacheType.classList = "cache-type";
@@ -267,7 +250,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         }
 
         let fragment = document.createDocumentFragment();
-        fragment.append(this._resource.cached ? WI.UIString("Yes") : WI.UIString("No"));
+        fragment.append(this.resource.cached ? WI.UIString("Yes") : WI.UIString("No"));
         return fragment;
     }
 
@@ -286,7 +269,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
 
     _timelineRecordUpdated(event)
     {
-        if (this.isRecordVisible(this._record))
+        if (this.isRecordVisible(this.record))
             this.needsGraphRefresh();
     }
 
@@ -296,21 +279,21 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             ignoreNetworkTab: true,
             ignoreSearchTab: true,
         };
-        WI.showSourceCode(this._resource, options);
+        WI.showSourceCode(this.resource, options);
     }
 
     _updateStatus(cell)
     {
-        if (this._resource.failed)
+        if (this.resource.failed)
             cell.classList.add("error");
         else {
             cell.classList.remove("error");
 
-            if (this._resource.finished)
+            if (this.resource.finished)
                 this.createGoToArrowButton(cell, this._dataGridNodeGoToArrowClicked.bind(this));
         }
 
-        if (this._resource.isLoading()) {
+        if (this.resource.isLoading()) {
             if (!this._spinner)
                 this._spinner = new WI.IndeterminateProgressSpinner;
             let contentElement = cell.firstChild;
@@ -386,14 +369,10 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             let graphDataSource = {
                 get secondsPerPixel() { return resource.totalDuration / WI.ResourceTimelineDataGridNode.PopoverGraphColumnWidthPixels; },
                 get zeroTime() { return resource.firstTimestamp; },
-                get startTime() { return resource.firstTimestamp; },
-                get currentTime() { return this.endTime; },
-
-                get endTime()
-                {
-                    let endTimePadding = this.secondsPerPixel * WI.TimelineRecordBar.MinimumWidthPixels;
-                    return resource.lastTimestamp + endTimePadding;
-                }
+                get startTime() { return this.zeroTime; },
+                get currentTime() { return resource.lastTimestamp + this._extraTimePadding; },
+                get endTime() { return this.currentTime; },
+                get _extraTimePadding() { return this.secondsPerPixel * WI.TimelineRecordBar.MinimumWidthPixels; },
             };
 
             if (resource.timingData.redirectEnd - resource.timingData.redirectStart) {

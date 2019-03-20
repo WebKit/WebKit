@@ -25,54 +25,68 @@
 
 WI.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimelineDataGridNode extends WI.TimelineDataGridNode
 {
-    constructor(heapAllocationsTimelineRecord, zeroTime, heapAllocationsView)
+    constructor(record, options = {})
     {
-        super(false, null);
+        console.assert(record instanceof WI.HeapAllocationsTimelineRecord);
 
-        this._record = heapAllocationsTimelineRecord;
-        this._heapAllocationsView = heapAllocationsView;
+        super([record], options);
 
-        this._data = {
-            name: this.displayName(),
-            timestamp: zeroTime ? this._record.timestamp - zeroTime : NaN,
-            size: this._record.heapSnapshot.totalSize,
-            liveSize: this._record.heapSnapshot.liveSize,
-        };
+        this._heapAllocationsView = options.heapAllocationsView;
 
-        this._record.heapSnapshot.addEventListener(WI.HeapSnapshotProxy.Event.CollectedNodes, this._heapSnapshotCollectedNodes, this);
-        this._record.heapSnapshot.addEventListener(WI.HeapSnapshotProxy.Event.Invalidated, this._heapSnapshotInvalidated, this);
+        this.heapSnapshot.addEventListener(WI.HeapSnapshotProxy.Event.CollectedNodes, this._handleHeapSnapshotCollectedNodes, this);
+        this.heapSnapshot.addEventListener(WI.HeapSnapshotProxy.Event.Invalidated, this._handleHeapSnapshotInvalidated, this);
     }
 
     // Public
 
-    get record() { return this._record; }
-    get data() { return this._data; }
+    get heapSnapshot()
+    {
+        return this.record.heapSnapshot;
+    }
+
+    get data()
+    {
+        if (this._cachedData)
+            return this._cachedData;
+
+        this._cachedData = super.data;
+        this._cachedData.name = this.displayName();
+        this._cachedData.timestamp = this.record.timestamp - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
+        this._cachedData.size = this.heapSnapshot.totalSize;
+        this._cachedData.liveSize = this.heapSnapshot.liveSize;
+        return this._cachedData;
+    }
 
     createCellContent(columnIdentifier, cell)
     {
+        const higherResolution = true;
+
+        let value = this.data[columnIdentifier];
+
         switch (columnIdentifier) {
         case "name":
             cell.classList.add(...this.iconClassNames());
 
             var fragment = document.createDocumentFragment();
             var titleElement = fragment.appendChild(document.createElement("span"));
-            titleElement.textContent = this._data.name;
-            if (!this._record.heapSnapshot.invalid) {
+            titleElement.textContent = value;
+
+            if (this._heapAllocationsView && !this.heapSnapshot.invalid) {
                 var goToButton = fragment.appendChild(WI.createGoToArrowButton());
                 goToButton.addEventListener("click", (event) => {
-                    this._heapAllocationsView.showHeapSnapshotTimelineRecord(this._record);
+                    this._heapAllocationsView.showHeapSnapshotTimelineRecord(this.record);
                 });
             }
+
             return fragment;
 
-        case "timestamp":
-            return isNaN(this._data.timestamp) ? emDash : Number.secondsToString(this._data.timestamp, true);
+        case "timestamp": {
+            return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
+        }
 
         case "size":
-            return Number.bytesToString(this._data.size);
-
         case "liveSize":
-            return Number.bytesToString(this._data.liveSize);
+            return Number.bytesToString(value, higherResolution);
         }
 
         return super.createCellContent(columnIdentifier, cell);
@@ -88,42 +102,25 @@ WI.HeapAllocationsTimelineDataGridNode = class HeapAllocationsTimelineDataGridNo
         this.element.classList.remove("baseline");
     }
 
-    updateTimestamp(zeroTime)
-    {
-        console.assert(isNaN(this._data.timestamp));
-        this._data.timestamp = this._record.timestamp - zeroTime;
-        this.needsRefresh();
-    }
-
     // Protected
 
     createCells()
     {
         super.createCells();
 
-        if (this._record.heapSnapshot.invalid)
+        if (this.heapSnapshot.invalid)
             this.element.classList.add("invalid");
     }
 
     // Private
 
-    _heapSnapshotCollectedNodes()
+    _handleHeapSnapshotCollectedNodes()
     {
-        let oldSize = this._data.liveSize;
-        let newSize = this._record.heapSnapshot.liveSize;
-
-        console.assert(newSize <= oldSize);
-        if (oldSize === newSize)
-            return;
-
-        this._data.liveSize = newSize;
         this.needsRefresh();
     }
 
-    _heapSnapshotInvalidated()
+    _handleHeapSnapshotInvalidated()
     {
-        this._data.liveSize = 0;
-
         this.needsRefresh();
     }
 };

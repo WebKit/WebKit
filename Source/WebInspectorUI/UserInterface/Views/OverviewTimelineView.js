@@ -220,9 +220,10 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         if (!resourceTimelineRecord)
             resourceTimelineRecord = new WI.ResourceTimelineRecord(resource);
 
-        const includesGraph = true;
-        const shouldShowPopover = false;
-        let resourceDataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, includesGraph, this, shouldShowPopover);
+        let resourceDataGridNode = new WI.ResourceTimelineDataGridNode(resourceTimelineRecord, {
+            graphDataSource: this,
+            includesGraph: true,
+        });
         this._resourceDataGridNodeMap.set(resource, resourceDataGridNode);
 
         let expandedByDefault = false;
@@ -253,7 +254,9 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
     _addSourceCodeTimeline(sourceCodeTimeline)
     {
         let parentDataGridNode = sourceCodeTimeline.sourceCodeLocation ? this._addResourceToDataGridIfNeeded(sourceCodeTimeline.sourceCode) : null;
-        let sourceCodeTimelineDataGridNode = new WI.SourceCodeTimelineTimelineDataGridNode(sourceCodeTimeline, this);
+        let sourceCodeTimelineDataGridNode = new WI.SourceCodeTimelineTimelineDataGridNode(sourceCodeTimeline, {
+            graphDataSource: this,
+        });
         this._resourceDataGridNodeMap.set(sourceCodeTimeline, sourceCodeTimelineDataGridNode);
 
         this._insertDataGridNode(sourceCodeTimelineDataGridNode, parentDataGridNode);
