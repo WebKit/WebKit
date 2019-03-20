@@ -732,6 +732,10 @@
 
 /* FIXME: move out all ENABLE() defines from here to FeatureDefines.h */
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalPlatform.h>)
+#include <WebKitAdditions/AdditionalPlatform.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/AdditionalFeatureDefines.h>)
 #include <WebKitAdditions/AdditionalFeatureDefines.h>
 #endif

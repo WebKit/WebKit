@@ -1,3 +1,15 @@
+2019-03-20  Keith Rollin  <krollin@apple.com>
+
+        Update checks that determine if WebKit is system WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=195756
+
+        Reviewed by Alexey Proskuryakov.
+
+        The system WebKit can be installed in additional locations, so check
+        for and allow those, too.
+
+        * wtf/Platform.h:
+
 2019-03-20  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, further attempt to fix clang 3.8 build

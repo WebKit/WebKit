@@ -719,6 +719,10 @@ void AuxiliaryProcess::setQOS(int latencyQOS, int throughputQOS)
 bool AuxiliaryProcess::isSystemWebKit()
 {
     static bool isSystemWebKit = [] {
+#if HAVE(ALTERNATE_SYSTEM_LAYOUT)
+        if ([[webKit2Bundle() bundlePath] hasPrefix:@"/Library/Apple/System/"])
+            return true;
+#endif
         return [[webKit2Bundle() bundlePath] hasPrefix:@"/System/"];
     }();
     return isSystemWebKit;
