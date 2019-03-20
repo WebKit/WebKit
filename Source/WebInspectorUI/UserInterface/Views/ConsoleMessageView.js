@@ -416,8 +416,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         this._makeExpandable();
 
-        // Auto-expand for console.trace.
-        if (this._message.type === WI.ConsoleMessage.MessageType.Trace)
+        if (this._message.type === WI.ConsoleMessage.MessageType.Trace && WI.settings.consoleAutoExpandTrace.value)
             this.expand();
 
         this._stackTraceElement = this._element.appendChild(document.createElement("div"));

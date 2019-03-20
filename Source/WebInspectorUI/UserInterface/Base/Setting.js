@@ -127,6 +127,7 @@ WI.Setting.Event = {
 WI.settings = {
     canvasRecordingAutoCaptureEnabled: new WI.Setting("canvas-recording-auto-capture-enabled", false),
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
+    consoleAutoExpandTrace: new WI.Setting("console-auto-expand-trace", true),
     cssChangesPerNode: new WI.Setting("css-changes-per-node", false),
     clearLogOnNavigate: new WI.Setting("clear-log-on-navigate", true),
     clearNetworkOnNavigate: new WI.Setting("clear-network-on-navigate", true),
