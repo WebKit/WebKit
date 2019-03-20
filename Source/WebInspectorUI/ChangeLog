@@ -1,3 +1,13 @@
+2019-03-20  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: enabledProperties don't get invalidated after removing property
+        https://bugs.webkit.org/show_bug.cgi?id=196038
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.shiftPropertiesAfter):
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: include window as part of any event listener chain

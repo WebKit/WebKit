@@ -413,6 +413,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             this._properties.splice(realIndex, 1);
 
         // Invalidate cached properties.
+        this._enabledProperties = null;
         this._visibleProperties = null;
     }
 
