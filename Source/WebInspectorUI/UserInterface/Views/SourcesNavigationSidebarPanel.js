@@ -111,16 +111,26 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._pauseReasonLinkContainerElement = document.createElement("span");
         this._pauseReasonTextRow = new WI.DetailsSectionTextRow;
         this._pauseReasonGroup = new WI.DetailsSectionGroup([this._pauseReasonTextRow]);
-        this._pauseReasonSection = new WI.DetailsSection("paused-reason", WI.UIString("Pause Reason"), [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
+        let pauseReasonSection = new WI.DetailsSection("paused-reason", WI.UIString("Pause Reason"), [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
+
+        this._pauseReasonContainer = document.createElement("div");
+        this._pauseReasonContainer.className = "pause-reason-container";
+        this._pauseReasonContainer.appendChild(pauseReasonSection.element);
 
         this._callStackTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleCallStackElementAddedOrRemoved, this);
+        this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.ElementRemoved, this._handleCallStackElementAddedOrRemoved, this);
         this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
 
         let callStackRow = new WI.DetailsSectionRow;
         callStackRow.element.appendChild(this._callStackTreeOutline.element);
 
         let callStackGroup = new WI.DetailsSectionGroup([callStackRow]);
-        this._callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [callStackGroup]);
+        let callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [callStackGroup]);
+
+        this._callStackContainer = document.createElement("div");
+        this._callStackContainer.className = "call-stack-container";
+        this._callStackContainer.appendChild(callStackSection.element);
 
         this._mainTargetTreeElement = null;
         this._activeCallFrameTreeElement = null;
@@ -183,7 +193,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         let breakpointsGroup = new WI.DetailsSectionGroup([breakpointsRow]);
         let breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
-        this.contentView.element.insertBefore(breakpointsSection.element, this.contentView.element.firstChild);
+
+        let breakpointsContainer = this.contentView.element.insertBefore(document.createElement("div"), this.contentView.element.firstChild);
+        breakpointsContainer.classList.add("breakpoints-container");
+        breakpointsContainer.appendChild(breakpointsSection.element);
 
         this._resourcesNavigationBar = new WI.NavigationBar;
         this.contentView.addSubview(this._resourcesNavigationBar);
@@ -213,7 +226,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._resourcesNavigationBar.addNavigationItem(resourceGroupingModeNavigationItem);
 
         let resourcesContainer = this.contentView.element.insertBefore(document.createElement("div"), this._resourcesNavigationBar.element.nextSibling);
-        resourcesContainer.classList.add("resources");
+        resourcesContainer.classList.add("resources-container");
 
         this._resourcesTreeOutline = this.contentTreeOutline;
         this._resourcesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
@@ -1421,6 +1434,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         console.error("Unknown tree element", treeElement);
     }
 
+    _handleCallStackElementAddedOrRemoved(event)
+    {
+        let count = this._callStackTreeOutline.children.length;
+        for (let child of this._callStackTreeOutline.children)
+            count += child.children.length;
+
+        // Don't count the main thread element when it is hidden.
+        if (WI.targets.length === 1)
+            --count;
+
+        this.element.style.setProperty("--call-stack-count", count);
+    }
+
     _handleBreakpointElementAddedOrRemoved(event)
     {
         let treeElement = event.data.element;
@@ -1433,6 +1459,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (setting)
             setting.value = !!treeElement.parent;
+
+        let count = this._breakpointsTreeOutline.children.length;
+        for (let child of this._breakpointsTreeOutline.children)
+            count += child.children.length;
+        this.element.style.setProperty("--breakpoints-count", count);
     }
 
     _handleCreateBreakpointMouseDown(event)
@@ -1635,10 +1666,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerPaused(event)
     {
-        this.contentView.element.insertBefore(this._callStackSection.element, this.contentView.element.firstChild);
+        this.contentView.element.insertBefore(this._callStackContainer, this.contentView.element.firstChild);
 
         if (this._updatePauseReason())
-            this.contentView.element.insertBefore(this._pauseReasonSection.element, this.contentView.element.firstChild);
+            this.contentView.element.insertBefore(this._pauseReasonContainer, this.contentView.element.firstChild);
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
@@ -1651,9 +1682,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerResumed(event)
     {
-        this._callStackSection.element.remove();
+        this._callStackContainer.remove();
 
-        this._pauseReasonSection.element.remove();
+        this._pauseReasonContainer.remove();
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = false;

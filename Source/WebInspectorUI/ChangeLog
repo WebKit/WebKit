@@ -1,5 +1,47 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: disabled breakpoints banner should be sticky
+        https://bugs.webkit.org/show_bug.cgi?id=195104
+        <rdar://problem/48442259>
+
+        Reviewed by Timothy Hatcher.
+
+        Allow each of the individual sections to be scrolled separately from the entire sidebar.
+
+        Leverage CSS variables set via JavaScript to be able to calculate the maximum height of each
+        `WI.TreeOutline` section based on the number of items.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleCallStackElementAddedOrRemoved): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleBreakpointElementAddedOrRemoved):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content):
+        (.sidebar > .panel.navigation.sources > .content .details-section): Added.
+        (.sidebar > .panel.navigation.sources > .content .details-section.paused-reason.collapsed > .header > .options,): Added.
+        (.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .content): Added.
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container)): Added.
+        (.sidebar > .panel.navigation.sources > .content > .call-stack-container): Added.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container): Added.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint): Added.
+        (.sidebar > .panel.navigation.sources > .content > .resources-container): Added.
+        (.sidebar > .panel.navigation.sources > .content .tree-outline.single-thread): Added.
+        (.sidebar > .panel.navigation.sources > .content .tree-outline.single-thread > .item.thread): Added.
+        (@media (min-height: 600px) .sidebar > .panel.navigation.sources > .content): Added.
+        (@media (min-height: 600px) .sidebar > .panel.navigation.sources > .content > .pause-reason-container): Added.
+        (@media (min-height: 600px) .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container)): Added.
+        (.sidebar > .panel.navigation.sources > .content > .details-section): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.paused-reason.collapsed > .header > .options,): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .tree-outline.single-thread > .item.thread): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .resources): Deleted.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         "Reveal in Layers Tab" context menu option should not be available if the Layers Tab has not been enabled
         https://bugs.webkit.org/show_bug.cgi?id=196009
 

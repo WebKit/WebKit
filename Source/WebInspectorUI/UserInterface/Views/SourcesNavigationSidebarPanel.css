@@ -24,8 +24,6 @@
  */
 
 .sidebar > .panel.navigation.sources > .content {
-    display: flex;
-    flex-direction: column;
     top: var(--navigation-bar-height);
 }
 
@@ -68,24 +66,46 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section {
+.sidebar > .panel.navigation.sources > .content .details-section {
     padding-bottom: 1px;
     font-size: 11px;
-    border-width: 1px !important;
+    border-bottom: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.paused-reason.collapsed > .header > .options,
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints.collapsed > .header > .options,
-.sidebar > .panel.navigation.sources > .content > .details-section > .content,
-.sidebar > .panel.navigation.sources > .content > .details-section > .content > .group {
+.sidebar > .panel.navigation.sources > .content .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,
+.sidebar > .panel.navigation.sources > .content .details-section > .content,
+.sidebar > .panel.navigation.sources > .content .details-section > .content > .group {
     display: block;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content {
+.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .content {
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint {
+.sidebar > .panel.navigation.sources > .content .details-section.breakpoints > .header > .options .create-breakpoint {
+    width: 15px;
+}
+
+.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container) {
+    border-bottom: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.sidebar > .panel.navigation.sources > .content > .call-stack-container {
+    /* 24px from .details-section > .header (23px height and -1px top) */
+    /* 1px from .sidebar > .panel.navigation.sources > .content > .call-stack-container (border-bottom) */
+    /* 5.5 to ensure that half of the next item is shown when overflowing */
+    min-height: calc(25px + calc(min(var(--call-stack-count), 5.5) * 20px));
+}
+
+.sidebar > .panel.navigation.sources > .content > .breakpoints-container {
+    /* 24px from `.details-section > .header` (23px height and -1px top) */
+    /* 1px from .sidebar > .panel.navigation.sources > .content > .breakpoints-container (border-bottom) */
+    /* 5.5 to ensure that half of the next item is shown when overflowing */
+    min-height: calc(25px + calc(min(var(--breakpoints-count), 5.5) * 20px));
+}
+
+.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint {
     width: 15px;
 }
 
@@ -93,9 +113,8 @@
     margin-bottom: 1px;
 }
 
-.sidebar > .panel.navigation.sources > .content > .resources {
-    position: relative;
-    height: 100%;
+.sidebar > .panel.navigation.sources > .content > .resources-container {
+    overflow-y: auto;
 }
 
 .sidebar > .panel.navigation.sources > .content .tree-outline.single-thread {
@@ -104,6 +123,22 @@
 
 .sidebar > .panel.navigation.sources > .content .tree-outline.single-thread > .item.thread {
     display: none;
+}
+
+@media (min-height: 600px) {
+    .sidebar > .panel.navigation.sources > .content {
+        display: flex;
+        flex-direction: column;
+        overflow-y: hidden;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > .pause-reason-container {
+        flex-shrink: 0;
+    }
+
+    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container) {
+        height: 100%;
+    }
 }
 
 @media (prefers-dark-interface) {
