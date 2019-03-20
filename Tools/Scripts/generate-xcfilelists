@@ -631,11 +631,20 @@ function get_canonical_platform_name()
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphone" ]] && { echo "iphoneos"; return; }
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ipad" ]] && { echo "iphoneos"; return; }
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphoneos" ]] && { echo "iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphonesimulator" ]] && { echo "iphonesimulator"; return; }
 
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "mac" ]] && { echo "macosx"; return; }
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "osx" ]] && { echo "macosx"; return; }
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macos" ]] && { echo "macosx"; return; }
     [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macosx" ]] && { echo "macosx"; return; }
+
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvos" ]] && { echo "appletvos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvos" ]] && { echo "appletvos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvsimulator" ]] && { echo "appletvsimulator"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvsimulator" ]] && { echo "appletvsimulator"; return; }
+
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchos" ]] && { echo "watchos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchsimulator" ]] && { echo "watchsimulator"; return; }
 
     die "Unrecognized platform name: $1"
 }

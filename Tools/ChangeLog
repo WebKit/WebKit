@@ -1,3 +1,21 @@
+2019-03-19  Keith Rollin  <krollin@apple.com>
+
+        Add support for more platforms to generate-xcfilelists
+        https://bugs.webkit.org/show_bug.cgi?id=195977
+
+        Reviewed by Alexey Proskuryakov.
+
+        generate-xcfilelists incorrectly complains when involved with building
+        WebKit for iphonesimulator:
+
+            $ make debug SDKROOT=iphonesimulator.internal -C Internal/
+            …
+            ### (die get_canonical_platform_name main main) Unrecognized platform name: iphonesimulator
+
+        Address this by teaching generate-xcfilelists about more platforms.
+
+        * Scripts/generate-xcfilelists:
+
 2019-03-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
