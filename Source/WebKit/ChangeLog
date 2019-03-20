@@ -1,3 +1,24 @@
+2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement FIDO AppID extension
+        https://bugs.webkit.org/show_bug.cgi?id=143491
+        <rdar://problem/48298273>
+
+        Reviewed by Brent Fulgham.
+
+        In U2fHidAuthenticator::continueSignCommandAfterResponseReceived, it will retry the current command
+        with the AppID if it exists when SW_WRONG_DATA is received from devices. Noted, it will not set
+        the AuthenticationExtensionsClientOutputs::appid to false in any circumstances. In other words, the
+        field will be empty if AppID is supplied in AuthenticationExtensionsClientInputs and not used.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserConsented):
+        * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.cpp:
+        (WebKit::U2fHidAuthenticator::issueSignCommand):
+        (WebKit::U2fHidAuthenticator::continueSignCommandAfterResponseReceived):
+        * UIProcess/WebAuthentication/fido/U2fHidAuthenticator.h:
+
 2019-03-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed adjustment to r242842 per Darin's request.

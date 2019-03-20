@@ -1,3 +1,60 @@
+2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement FIDO AppID extension
+        https://bugs.webkit.org/show_bug.cgi?id=143491
+        <rdar://problem/48298273>
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds support for FIDO AppID extension: https://www.w3.org/TR/webauthn/#sctn-appid-extension.
+        To be noticed, this implementation follows what spec suggested in the 'Note' session and what Chrome/Firefox
+        do in practice to avoid some unnecessary steps of
+        https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-appid-and-facets-v2.0-id-20180227.html#determining-if-a-caller-s-facetid-is-authorized-for-an-appid.
+
+        In fido::convertToU2fSignCommand, the checkOnly flag is deleted as it is never used.
+
+        Covered by new tests in existing files.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/webauthn/AuthenticationExtensionsClientInputs.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        (WebCore::AuthenticationExtensionsClientInputs::encode const):
+        (WebCore::AuthenticationExtensionsClientInputs::decode):
+        * Modules/webauthn/AuthenticationExtensionsClientInputs.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialRequestOptions.idl.
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinatorInternal::processAppIdExtension):
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::tryCreate):
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        (WebCore::PublicKeyCredential::getClientExtensionResults const):
+        (WebCore::PublicKeyCredential::create): Deleted.
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.idl:
+        * Modules/webauthn/PublicKeyCredentialData.h:
+        (WebCore::PublicKeyCredentialData::encode const):
+        (WebCore::PublicKeyCredentialData::decode):
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        (WebCore::PublicKeyCredentialRequestOptions::encode const):
+        (WebCore::PublicKeyCredentialRequestOptions::decode):
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.idl:
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPMakeCredentialResponse):
+        (fido::readCTAPGetAssertionResponse):
+        * Modules/webauthn/fido/U2fCommandConstructor.cpp:
+        (fido::convertToU2fSignCommand):
+        * Modules/webauthn/fido/U2fCommandConstructor.h:
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fRegisterResponse):
+        (fido::readU2fSignResponse):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2019-03-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Debugger: lazily create the agent

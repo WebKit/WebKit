@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticationExtensionsClientInputs.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
@@ -83,6 +84,7 @@ struct PublicKeyCredentialCreationOptions {
     Optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
     Optional<AuthenticatorSelectionCriteria> authenticatorSelection;
+    Optional<AuthenticationExtensionsClientInputs> extensions; // A place holder, but never used.
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PublicKeyCredentialCreationOptions> decode(Decoder&);

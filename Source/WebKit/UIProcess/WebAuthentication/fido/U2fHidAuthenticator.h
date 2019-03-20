@@ -74,6 +74,7 @@ private:
     Vector<uint8_t> m_lastCommand;
     CommandType m_lastCommandType;
     size_t m_nextListIndex { 0 };
+    bool m_isAppId { false };
 };
 
 } // namespace WebKit

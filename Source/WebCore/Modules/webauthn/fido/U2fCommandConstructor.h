@@ -62,7 +62,7 @@ WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vecto
 WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::PublicKeyCredentialDescriptor&);
 
 // Extracts APDU encoded U2F sign command from PublicKeyCredentialRequestOptions.
-WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const WebCore::PublicKeyCredentialRequestOptions&, const Vector<uint8_t>& keyHandle, bool checkOnly = false);
+WEBCORE_EXPORT Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const WebCore::PublicKeyCredentialRequestOptions&, const Vector<uint8_t>& keyHandle, bool isAppId = false);
 
 WEBCORE_EXPORT Vector<uint8_t> constructBogusU2fRegistrationCommand();
 

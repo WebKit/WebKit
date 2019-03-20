@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,20 +25,6 @@
 
 [
     Conditional=WEB_AUTHN,
-    EnabledAtRuntime=WebAuthentication,
-    Exposed=Window,
-    SecureContext,
-] interface PublicKeyCredential : BasicCredential {
-    [SameObject] readonly attribute ArrayBuffer rawId;
-    [SameObject] readonly attribute AuthenticatorResponse response;
-    AuthenticationExtensionsClientOutputs getClientExtensionResults();
-
-    [CallWith=Document] static Promise<boolean> isUserVerifyingPlatformAuthenticatorAvailable();
-};
-
-[
-    Conditional=WEB_AUTHN,
-    JSGenerateToJSObject,
-] dictionary AuthenticationExtensionsClientOutputs {
-    boolean appid;
+] dictionary AuthenticationExtensionsClientInputs {
+    USVString appid;
 };

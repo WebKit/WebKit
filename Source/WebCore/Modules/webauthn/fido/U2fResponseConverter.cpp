@@ -170,7 +170,7 @@ Optional<PublicKeyCredentialData> readU2fRegisterResponse(const String& rpId, co
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement));
 
-    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr };
+    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.data(), attestationObject.size()), nullptr, nullptr, nullptr, WTF::nullopt };
 }
 
 Optional<PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
@@ -186,7 +186,7 @@ Optional<PublicKeyCredentialData> readU2fSignResponse(const String& rpId, const 
     counter += u2fData[counterIndex + 3];
     auto authData = buildAuthData(rpId, flags, counter, { });
 
-    return PublicKeyCredentialData { ArrayBuffer::create(keyHandle.data(), keyHandle.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(u2fData.data() + signatureIndex, u2fData.size() - signatureIndex), nullptr };
+    return PublicKeyCredentialData { ArrayBuffer::create(keyHandle.data(), keyHandle.size()), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(u2fData.data() + signatureIndex, u2fData.size() - signatureIndex), nullptr, WTF::nullopt };
 }
 
 } // namespace fido

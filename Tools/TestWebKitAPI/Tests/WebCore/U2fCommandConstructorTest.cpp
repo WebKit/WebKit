@@ -176,6 +176,27 @@ TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionToU2fSignRequest)
     EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fSignCommandApdu, sizeof(TestData::kU2fSignCommandApdu)));
 }
 
+TEST(U2fCommandConstructorTest, TestConvertCtapGetAssertionWithAppIDToU2fSignRequest)
+{
+    auto getAssertionReq = constructGetAssertionRequest();
+    PublicKeyCredentialDescriptor credentialDescriptor;
+    credentialDescriptor.type = PublicKeyCredentialType::PublicKey;
+    credentialDescriptor.idVector = convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle));
+    Vector<PublicKeyCredentialDescriptor> allowedList;
+    allowedList.append(WTFMove(credentialDescriptor));
+    getAssertionReq.allowCredentials = WTFMove(allowedList);
+    EXPECT_TRUE(isConvertibleToU2fSignCommand(getAssertionReq));
+
+    // AppID
+    WebCore::AuthenticationExtensionsClientInputs extensions;
+    extensions.appid = "https://www.example.com/appid";
+    getAssertionReq.extensions = WTFMove(extensions);
+
+    const auto u2fSignCommand = convertToU2fSignCommand(convertBytesToVector(TestData::kClientDataHash, sizeof(TestData::kClientDataHash)), getAssertionReq, convertBytesToVector(TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), true);
+    ASSERT_TRUE(u2fSignCommand);
+    EXPECT_EQ(*u2fSignCommand, convertBytesToVector(TestData::kU2fAppIDSignCommandApdu, sizeof(TestData::kU2fAppIDSignCommandApdu)));
+}
+
 TEST(U2fCommandConstructorTest, TestU2fSignAllowListRequirement)
 {
     auto getAssertionReq = constructGetAssertionRequest();

@@ -114,12 +114,15 @@ Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>
     return constructU2fSignCommand(produceRpIdHash(request.rp.id), clientDataHash, keyHandle.idVector, true /* checkOnly */);
 }
 
-Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const Vector<uint8_t>& keyHandle, bool checkOnly)
+Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const Vector<uint8_t>& keyHandle, bool isAppId)
 {
     if (!isConvertibleToU2fSignCommand(request))
         return WTF::nullopt;
 
-    return constructU2fSignCommand(produceRpIdHash(request.rpId), clientDataHash, keyHandle, checkOnly);
+    if (!isAppId)
+        return constructU2fSignCommand(produceRpIdHash(request.rpId), clientDataHash, keyHandle, false);
+    ASSERT(request.extensions && !request.extensions->appid.isNull());
+    return constructU2fSignCommand(produceRpIdHash(request.extensions->appid), clientDataHash, keyHandle, false);
 }
 
 Vector<uint8_t> constructBogusU2fRegistrationCommand()

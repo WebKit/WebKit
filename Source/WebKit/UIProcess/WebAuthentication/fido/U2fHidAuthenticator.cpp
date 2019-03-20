@@ -101,7 +101,7 @@ void U2fHidAuthenticator::issueSignCommand(size_t index)
         receiveRespond(ExceptionData { NotAllowedError, "No credentials from the allowCredentials list is found in the authenticator."_s });
         return;
     }
-    auto u2fCmd = convertToU2fSignCommand(requestData().hash, requestData().requestOptions, requestData().requestOptions.allowCredentials[index].idVector);
+    auto u2fCmd = convertToU2fSignCommand(requestData().hash, requestData().requestOptions, requestData().requestOptions.allowCredentials[index].idVector, m_isAppId);
     ASSERT(u2fCmd);
     issueNewCommand(WTFMove(*u2fCmd), CommandType::SignCommand);
 }
@@ -200,17 +200,36 @@ void U2fHidAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&
 {
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
-        auto response = readU2fSignResponse(requestData().requestOptions.rpId, requestData().requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
+        Optional<PublicKeyCredentialData> response;
+        if (m_isAppId) {
+            ASSERT(requestData().requestOptions.extensions && !requestData().requestOptions.extensions->appid.isNull());
+            response = readU2fSignResponse(requestData().requestOptions.extensions->appid, requestData().requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
+        } else
+            response = readU2fSignResponse(requestData().requestOptions.rpId, requestData().requestOptions.allowCredentials[m_nextListIndex - 1].idVector, apduResponse.data());
         if (!response) {
             receiveRespond(ExceptionData { UnknownError, "Couldn't parse the U2F sign response."_s });
             return;
         }
+        if (m_isAppId)
+            response->appid = m_isAppId;
+
         receiveRespond(WTFMove(*response));
         return;
     }
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
         // Polling is required during test of user presence.
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
+        return;
+    case ApduResponse::Status::SW_WRONG_DATA:
+        if (requestData().requestOptions.extensions && !requestData().requestOptions.extensions->appid.isNull()) {
+            if (!m_isAppId) {
+                m_isAppId = true;
+                issueSignCommand(m_nextListIndex - 1);
+                return;
+            }
+            m_isAppId = false;
+        }
+        issueSignCommand(m_nextListIndex++);
         return;
     default:
         issueSignCommand(m_nextListIndex++);

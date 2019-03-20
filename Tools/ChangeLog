@@ -1,3 +1,19 @@
+2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement FIDO AppID extension
+        https://bugs.webkit.org/show_bug.cgi?id=143491
+        <rdar://problem/48298273>
+
+        Reviewed by Brent Fulgham.
+
+        Add a test that covers the new flag of convertToU2fSignCommand.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/FidoTestData.h:
+        * TestWebKitAPI/Tests/WebCore/U2fCommandConstructorTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-03-19  Keith Rollin  <krollin@apple.com>
 
         Add support for more platforms to generate-xcfilelists

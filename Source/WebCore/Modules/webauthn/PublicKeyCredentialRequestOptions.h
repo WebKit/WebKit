@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticationExtensionsClientInputs.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "UserVerificationRequirement.h"
@@ -40,6 +41,7 @@ struct PublicKeyCredentialRequestOptions {
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
+    mutable Optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
@@ -49,7 +51,7 @@ struct PublicKeyCredentialRequestOptions {
 template<class Encoder>
 void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 {
-    encoder << timeout << rpId << allowCredentials << userVerification;
+    encoder << timeout << rpId << allowCredentials << userVerification << extensions;
 }
 
 template<class Decoder>
@@ -73,6 +75,12 @@ Optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::d
     if (!userVerification)
         return WTF::nullopt;
     result.userVerification = WTFMove(*userVerification);
+
+    Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
+    decoder >> extensions;
+    if (!extensions)
+        return WTF::nullopt;
+    result.extensions = WTFMove(*extensions);
 
     return result;
 }

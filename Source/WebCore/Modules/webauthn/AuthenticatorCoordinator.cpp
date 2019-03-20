@@ -37,6 +37,8 @@
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialData.h"
 #include "PublicKeyCredentialRequestOptions.h"
+#include "RegistrableDomain.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
@@ -78,6 +80,27 @@ static Vector<uint8_t> produceClientDataJsonHash(const ArrayBuffer& clientDataJs
     return crypto->computeHash();
 }
 
+// The following roughly implements Step 1-3 of the spec to avoid the complexity of making unnecessary network requests:
+// https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-appid-and-facets-v2.0-id-20180227.html#determining-if-a-caller-s-facetid-is-authorized-for-an-appid
+// It follows what Chrome and Firefox do, see:
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1244959#c8
+// https://bugs.chromium.org/p/chromium/issues/detail?id=818303
+static String processAppIdExtension(const SecurityOrigin& facetId, const String& appId)
+{
+    // Step 1. Skipped since facetId should always be secure origins.
+    ASSERT(SchemeRegistry::shouldTreatURLSchemeAsSecure(facetId.protocol()));
+
+    // Step 2. Follow Chrome and Firefox to use the origin directly without adding a trailing slash.
+    if (appId.isEmpty())
+        return facetId.toString();
+
+    // Step 3. Relax the comparison to same site.
+    URL appIdURL(URL(), appId);
+    if (!appIdURL.isValid() || facetId.protocol() != appIdURL.protocol() || RegistrableDomain(appIdURL) != RegistrableDomain::uncheckedCreateFromHost(facetId.host()))
+        return String();
+    return appId;
+}
+
 } // namespace AuthenticatorCoordinatorInternal
 
 AuthenticatorCoordinator::AuthenticatorCoordinator(std::unique_ptr<AuthenticatorCoordinatorClient>&& client)
@@ -95,7 +118,7 @@ void AuthenticatorCoordinator::create(const SecurityOrigin& callerOrigin, const 
     using namespace AuthenticatorCoordinatorInternal;
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
-    // FIXME: Extensions are not supported yet. Skip Step 11-12.
+    // Extensions are not supported. Skip Step 11-12.
     // Step 1, 3, 16 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
@@ -158,7 +181,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
     using namespace AuthenticatorCoordinatorInternal;
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
-    // FIXME: Extensions are not supported yet. Skip Step 8-9.
     // Step 1, 3, 13 are handled by the caller.
     // Step 2.
     if (!sameOriginWithAncestors) {
@@ -176,6 +198,18 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const SecurityOrigin& 
     }
     if (options.rpId.isEmpty())
         options.rpId = callerOrigin.host();
+
+    // Step 8-9.
+    // Only FIDO AppID Extension is supported.
+    if (options.extensions && !options.extensions->appid.isNull()) {
+        // The following implements https://www.w3.org/TR/webauthn/#sctn-appid-extension as of 4 March 2019.
+        auto appid = processAppIdExtension(callerOrigin, options.extensions->appid);
+        if (!appid) {
+            promise.reject(Exception { SecurityError, "The origin of the document is not authorized for the provided App ID."_s });
+            return;
+        }
+        options.extensions->appid = appid;
+    }
 
     // Step 10-12.
     auto clientDataJson = produceClientDataJson(ClientDataType::Get, options.challenge, callerOrigin);

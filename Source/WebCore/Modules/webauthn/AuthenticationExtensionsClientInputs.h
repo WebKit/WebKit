@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,45 +27,37 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "BasicCredential.h"
-#include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
-#include <JavaScriptCore/ArrayBuffer.h>
-#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class AuthenticatorResponse;
-class Document;
+struct AuthenticationExtensionsClientInputs {
+    String appid;
 
-struct PublicKeyCredentialData;
-
-class PublicKeyCredential final : public BasicCredential {
-public:
-    struct AuthenticationExtensionsClientOutputs {
-        Optional<bool> appid;
-    };
-
-    static RefPtr<PublicKeyCredential> tryCreate(const PublicKeyCredentialData&);
-
-    ArrayBuffer* rawId() const { return m_rawId.ptr(); }
-    AuthenticatorResponse* response() const { return m_response.ptr(); }
-    AuthenticationExtensionsClientOutputs getClientExtensionResults() const;
-
-    static void isUserVerifyingPlatformAuthenticatorAvailable(Document&, DOMPromiseDeferred<IDLBoolean>&&);
-
-private:
-    PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&&, AuthenticationExtensionsClientOutputs&&);
-
-    Type credentialType() const final { return Type::PublicKey; }
-
-    Ref<ArrayBuffer> m_rawId;
-    Ref<AuthenticatorResponse> m_response;
-    AuthenticationExtensionsClientOutputs m_extensions;
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<AuthenticationExtensionsClientInputs> decode(Decoder&);
 };
 
-} // namespace WebCore
+template<class Encoder>
+void AuthenticationExtensionsClientInputs::encode(Encoder& encoder) const
+{
+    encoder << appid;
+}
 
-SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PublicKeyCredential, BasicCredential::Type::PublicKey)
+template<class Decoder>
+Optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInputs::decode(Decoder& decoder)
+{
+    AuthenticationExtensionsClientInputs result;
+
+    Optional<String> appid;
+    decoder >> appid;
+    if (!appid)
+        return WTF::nullopt;
+    result.appid = WTFMove(*appid);
+
+    return result;
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_AUTHN)

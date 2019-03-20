@@ -121,7 +121,7 @@ Optional<PublicKeyCredentialData> readCTAPMakeCredentialResponse(const Vector<ui
     attestationObjectMap[CBOR("attStmt")] = WTFMove(attStmt);
     auto attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
 
-    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr };
+    return PublicKeyCredentialData { ArrayBuffer::create(credentialId.data(), credentialId.size()), true, nullptr, ArrayBuffer::create(attestationObject.value().data(), attestationObject.value().size()), nullptr, nullptr, nullptr, WTF::nullopt };
 }
 
 Optional<PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer)
@@ -170,7 +170,7 @@ Optional<PublicKeyCredentialData> readCTAPGetAssertionResponse(const Vector<uint
         userHandle = ArrayBuffer::create(id.data(), id.size());
     }
 
-    return PublicKeyCredentialData { WTFMove(credentialId), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), WTFMove(userHandle) };
+    return PublicKeyCredentialData { WTFMove(credentialId), false, nullptr, nullptr, ArrayBuffer::create(authData.data(), authData.size()), ArrayBuffer::create(signature.data(), signature.size()), WTFMove(userHandle), WTF::nullopt };
 }
 
 Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>& inBuffer)

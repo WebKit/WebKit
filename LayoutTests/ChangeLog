@@ -1,3 +1,23 @@
+2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement FIDO AppID extension
+        https://bugs.webkit.org/show_bug.cgi?id=143491
+        <rdar://problem/48298273>
+
+        Reviewed by Brent Fulgham.
+
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-u2f.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure-u2f.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-u2f.https.html:
+
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline the test after r243175. It got somehow landed with failing expectations.

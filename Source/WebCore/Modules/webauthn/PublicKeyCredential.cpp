@@ -40,11 +40,6 @@
 
 namespace WebCore {
 
-Ref<PublicKeyCredential> PublicKeyCredential::create(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&& response)
-{
-    return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
-}
-
 RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(const PublicKeyCredentialData& data)
 {
     if (!data.rawId || !data.clientDataJSON)
@@ -54,25 +49,26 @@ RefPtr<PublicKeyCredential> PublicKeyCredential::tryCreate(const PublicKeyCreden
         if (!data.attestationObject)
             return nullptr;
 
-        return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAttestationResponse::create(data.clientDataJSON.releaseNonNull(), data.attestationObject.releaseNonNull())));
+        return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAttestationResponse::create(data.clientDataJSON.releaseNonNull(), data.attestationObject.releaseNonNull()), { data.appid }));
     }
 
     if (!data.authenticatorData || !data.signature)
         return nullptr;
 
-    return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAssertionResponse::create(data.clientDataJSON.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle))));
+    return adoptRef(*new PublicKeyCredential(data.rawId.releaseNonNull(), AuthenticatorAssertionResponse::create(data.clientDataJSON.releaseNonNull(), data.authenticatorData.releaseNonNull(), data.signature.releaseNonNull(), WTFMove(data.userHandle)), { data.appid }));
 }
 
-PublicKeyCredential::PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&& response)
+PublicKeyCredential::PublicKeyCredential(Ref<ArrayBuffer>&& id, Ref<AuthenticatorResponse>&& response, AuthenticationExtensionsClientOutputs&& extensions)
     : BasicCredential(WTF::base64URLEncode(id->data(), id->byteLength()), Type::PublicKey, Discovery::Remote)
     , m_rawId(WTFMove(id))
     , m_response(WTFMove(response))
+    , m_extensions(WTFMove(extensions))
 {
 }
 
-ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults() const
+PublicKeyCredential::AuthenticationExtensionsClientOutputs PublicKeyCredential::getClientExtensionResults() const
 {
-    return Exception { NotSupportedError };
+    return m_extensions;
 }
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)

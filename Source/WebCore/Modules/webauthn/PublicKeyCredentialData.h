@@ -49,6 +49,9 @@ struct PublicKeyCredentialData {
     mutable RefPtr<ArrayBuffer> signature;
     mutable RefPtr<ArrayBuffer> userHandle;
 
+    // Extensions
+    Optional<bool> appid;
+
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<PublicKeyCredentialData> decode(Decoder&);
 };
@@ -80,6 +83,9 @@ void PublicKeyCredentialData::encode(Encoder& encoder) const
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(authenticatorData->data()), authenticatorData->byteLength(), 1);
     encoder << static_cast<uint64_t>(signature->byteLength());
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(signature->data()), signature->byteLength(), 1);
+
+    // Encode AppID before user handle to avoid the userHandle flag.
+    encoder << appid;
 
     if (!userHandle) {
         encoder << false;
@@ -147,6 +153,12 @@ Optional<PublicKeyCredentialData> PublicKeyCredentialData::decode(Decoder& decod
     result.signature = ArrayBuffer::create(signatureLength.value(), sizeof(uint8_t));
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(result.signature->data()), signatureLength.value(), 1))
         return WTF::nullopt;
+
+    Optional<Optional<bool>> appid;
+    decoder >> appid;
+    if (!appid)
+        return WTF::nullopt;
+    result.appid = WTFMove(*appid);
 
     Optional<bool> hasUserHandle;
     decoder >> hasUserHandle;
