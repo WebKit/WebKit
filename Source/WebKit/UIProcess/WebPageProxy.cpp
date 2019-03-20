@@ -5528,7 +5528,7 @@ void WebPageProxy::didSelectOption(const String& selectedOption)
 
 WebInspectorProxy* WebPageProxy::inspector() const
 {
-    if (isClosed() || !hasRunningProcess())
+    if (isClosed())
         return nullptr;
     return m_inspector.get();
 }

@@ -1,3 +1,17 @@
+2019-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] REGRESSION(r243094): crash when launching minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=195951
+
+        Reviewed by Joseph Pecoraro.
+
+        Always return the inspector from WebPageProxy::inspector() when the page hasn't been closed. The inspector is
+        created in WebPageProxy constructor and it's safe to use even before a process has been launched, because
+        m_inspectedPage is null-checked everywhere.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::inspector const):
+
 2019-03-20  Keith Rollin  <krollin@apple.com>
 
         Update checks that determine if WebKit is system WebKit
