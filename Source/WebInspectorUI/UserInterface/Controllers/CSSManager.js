@@ -641,7 +641,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         {
             function styleSheetFound(styleSheet)
             {
-                resource.__pendingChangeTimeout = undefined;
+                resource.__pendingChangeTimeout.cancel();
 
                 console.assert(styleSheet);
                 if (!styleSheet)
@@ -657,9 +657,9 @@ WI.CSSManager = class CSSManager extends WI.Object
             this._lookupStyleSheetForResource(resource, styleSheetFound.bind(this));
         }
 
-        if (resource.__pendingChangeTimeout)
-            clearTimeout(resource.__pendingChangeTimeout);
-        resource.__pendingChangeTimeout = setTimeout(applyStyleSheetChanges.bind(this), 500);
+        if (!resource.__pendingChangeTimeout)
+            resource.__pendingChangeTimeout = new Throttler(applyStyleSheetChanges.bind(this), 100);
+        resource.__pendingChangeTimeout.fire();
     }
 
     _updateResourceContent(styleSheet)
@@ -668,8 +668,9 @@ WI.CSSManager = class CSSManager extends WI.Object
 
         function fetchedStyleSheetContent(parameters)
         {
+            styleSheet.__pendingChangeTimeout.cancel();
+
             let representedObject = parameters.sourceCode;
-            representedObject.__pendingChangeTimeout = undefined;
 
             console.assert(representedObject.url);
             if (!representedObject.url)
@@ -716,9 +717,9 @@ WI.CSSManager = class CSSManager extends WI.Object
                 this._fetchInfoForAllStyleSheets(styleSheetReady.bind(this));
         }
 
-        if (styleSheet.__pendingChangeTimeout)
-            clearTimeout(styleSheet.__pendingChangeTimeout);
-        styleSheet.__pendingChangeTimeout = setTimeout(applyStyleSheetChanges.bind(this), 500);
+        if (!styleSheet.__pendingChangeTimeout)
+            styleSheet.__pendingChangeTimeout = new Throttler(applyStyleSheetChanges.bind(this), 100);
+        styleSheet.__pendingChangeTimeout.fire();
     }
 };
 
