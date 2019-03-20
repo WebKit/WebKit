@@ -1,3 +1,32 @@
+2019-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Turn on async overflow scrolling by default
+        https://bugs.webkit.org/show_bug.cgi?id=196011
+        rdar://problem/48453859
+
+        Reviewed by Antti Koivisto.
+
+        New baselines, and skip some RTL tests that need a bit of work (webkit.org/b/196013).
+
+        * compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Copied from LayoutTests/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt.
+        * platform/ios-wk2/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt: Copied from LayoutTests/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt.
+        * platform/ios-wk2/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/scroll-partial-update-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layer-positions-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/remove-overflow-crash2-expected.txt:
+        * platform/ios-wk2/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * platform/ios/compositing/layers-inside-overflow-scroll-expected.txt:
+        * platform/ios/compositing/overflow/scroll-ancestor-update-expected.txt:
+        * platform/ios/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/ios/compositing/self-painting-layers-expected.txt:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-complex-expected.txt:
+
 2019-03-20  Youenn Fablet  <youenn@apple.com>
 
         Have smaller default quotas for third party frames

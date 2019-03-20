@@ -1437,7 +1437,7 @@ AsyncFrameScrollingEnabled:
 
 AsyncOverflowScrollingEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_ASYNC_OVERFLOW_SCROLLING_ENABLED
   humanReadableName: "Async Overflow Scrolling"
   humanReadableDescription: "Perform overflow scrolling off the main thread"
   category: internal
