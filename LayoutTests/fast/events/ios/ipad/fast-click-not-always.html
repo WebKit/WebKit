@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true internal:FastClicksEverywhere=false ] -->
 
 <html>
 <meta name="viewport" content="width=800">
@@ -25,12 +25,15 @@
 
             if (!window.testRunner)
                 return;
-            await UIHelper.humanSpeedDoubleTapAt(30, 30);
+
+            await UIHelper.humanSpeedZoomByDoubleTappingAt(30, 30);
+            document.getElementById("target").textContent = "PASS: Double tap caused zoom.";
+            testRunner.notifyDone();
         }
 
         function handleClick(event)
         {
-            document.getElementById("target").textContent = "PASS: Click fired on element with handler.";
+            document.getElementById("target").textContent = "FAIL: Click fired on element with handler.";
             testRunner.notifyDone();
         }
     </script>
@@ -49,7 +52,7 @@
 <div id="target"></div>
 <div id="description">This document doesn't have fast clicks because
     it sets a viewport width. It has a significant zoom since the viewport
-    width is significantly bigger than the body width. However, since fast click everywhere
-    is set to true, double tapping on the rectangle above should send a click event.</div>
+    width is significantly bigger than the body width. However, it sets fast click everywhere to
+    false, so double tapping on the rectangle above should zoom.</div>
 </body>
 </html>

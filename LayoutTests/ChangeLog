@@ -1,3 +1,23 @@
+2019-03-20  Dean Jackson  <dino@apple.com>
+
+        [iOS] Enable fast clicking everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=196023
+        <rdar://problem/49073589>
+
+        Reviewed by Wenson Hsieh.
+
+        Add a new test for the case where "Fast Clicks Everywhere" is explicitly
+        set to false. This required implementing a humanSpeedZoomByDoubleTappingAt
+        variation.
+
+        * fast/events/ios/ipad/fast-click-always-expected.txt:
+        * fast/events/ios/ipad/fast-click-always.html:
+        * fast/events/ios/ipad/fast-click-not-always-expected.txt: Added.
+        * fast/events/ios/ipad/fast-click-not-always.html:
+        * resources/ui-helper.js:
+        (window.UIHelper.humanSpeedZoomByDoubleTappingAt): New helper function that pauses between
+        double taps, and resolves when the zoom finishes.
+
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         [CSS OM] StyledElementInlineStylePropertyMap creates a Ref cycle with its owner element

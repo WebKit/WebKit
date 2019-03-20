@@ -99,6 +99,38 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static humanSpeedZoomByDoubleTappingAt(x, y)
+    {
+        console.assert(this.isIOS());
+
+        if (!this.isWebKit2()) {
+            // FIXME: Add a sleep in here.
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            eventSender.addTouchPoint(x, y);
+            eventSender.touchStart();
+            eventSender.releaseTouchPoint(0);
+            eventSender.touchEnd();
+            return Promise.resolve();
+        }
+
+        return new Promise(async (resolve) => {
+            await UIHelper.tapAt(x, y);
+            await new Promise(resolveAfterDelay => setTimeout(resolveAfterDelay, 120));
+            await new Promise((resolveAfterZoom) => {
+                testRunner.runUIScript(`
+                    uiController.didEndZoomingCallback = () => {
+                        uiController.didEndZoomingCallback = null;
+                        uiController.uiScriptComplete(uiController.zoomScale);
+                    };
+                    uiController.singleTapAtPoint(${x}, ${y}, () => {});`, resolveAfterZoom);
+            });
+            resolve();
+        });
+    }
+
     static zoomByDoubleTappingAt(x, y)
     {
         console.assert(this.isIOS());

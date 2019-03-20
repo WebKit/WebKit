@@ -251,3 +251,11 @@ bool defaultCustomPasteboardDataEnabled();
 #else
 #define DEFAULT_DOM_PASTE_ACCESS_REQUESTS_ENABLED false
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(WATCHOS)
+#define DEFAULT_FAST_CLICKS_EVERYWHERE false
+#else
+#define DEFAULT_FAST_CLICKS_EVERYWHERE true
+#endif
+#endif

@@ -1503,7 +1503,7 @@ FasterClicksEnabled:
 
 FastClicksEverywhere:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_FAST_CLICKS_EVERYWHERE
   condition: PLATFORM(IOS_FAMILY)
   humanReadableName: "Fast clicks everywhere"
   humanReadableDescription: "Force fast clicks on all pages"
