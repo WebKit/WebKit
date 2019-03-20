@@ -43,7 +43,11 @@ const time_t blacklistCheckTimeInterval = 60 * 10;
 // The time when we last re-parsed the blacklist file.
 static time_t blacklistUpdateTime;
 
+#if HAVE(ALTERNATE_SYSTEM_LAYOUT)
+NSString * const blacklistPath = @"/Library/Apple/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
+#else
 NSString * const blacklistPath = @"/System/Library/CoreServices/XProtect.bundle/Contents/Resources/XProtect.meta.plist";
+#endif
 
 namespace WebCore {
 
