@@ -48,8 +48,8 @@ public:
     ~DocumentMarkerController();
 
     void detach();
-    void addMarker(Range&, DocumentMarker::MarkerType);
-    void addMarker(Range&, DocumentMarker::MarkerType, const String& description);
+    WEBCORE_EXPORT void addMarker(Range&, DocumentMarker::MarkerType);
+    WEBCORE_EXPORT void addMarker(Range&, DocumentMarker::MarkerType, const String& description);
     void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType);
     void addMarkerToNode(Node&, unsigned startOffset, unsigned length, DocumentMarker::MarkerType, DocumentMarker::Data&&);
     WEBCORE_EXPORT void addTextMatchMarker(const Range&, bool activeMatch);
@@ -59,6 +59,10 @@ public:
     void addDictationResultMarker(Range&, const RetainPtr<id>& metadata);
 #endif
     void addDraggedContentMarker(Range&);
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    WEBCORE_EXPORT void addPlatformTextCheckingMarker(Range&, const String& key, const String& value);
+#endif
 
     void copyMarkers(Node& srcNode, unsigned startOffset, int length, Node& dstNode, int delta);
     bool hasMarkers() const
@@ -72,8 +76,11 @@ public:
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
-    void removeMarkers(Range&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
-    void removeMarkers(Node&, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    WEBCORE_EXPORT void removeMarkers(Range&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Node&, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), std::function<bool(DocumentMarker*)> filterFunction = nullptr, RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+
+    // Return false from filterFunction to remove the marker.
+    WEBCORE_EXPORT void filterMarkers(Range&, std::function<bool(DocumentMarker*)> filterFunction, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
 
     WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void removeMarkers(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());

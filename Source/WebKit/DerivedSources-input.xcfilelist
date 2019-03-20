@@ -112,6 +112,7 @@ $(PROJECT_DIR)/WebProcess/Storage/WebSWClientConnection.messages.in
 $(PROJECT_DIR)/WebProcess/Storage/WebSWContextManagerConnection.messages.in
 $(PROJECT_DIR)/WebProcess/UserContent/WebUserContentController.messages.in
 $(PROJECT_DIR)/WebProcess/WebAuthentication/WebAuthenticatorCoordinator.messages.in
+$(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/EventDispatcher.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in

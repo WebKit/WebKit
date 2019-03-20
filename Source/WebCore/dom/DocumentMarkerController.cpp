@@ -142,6 +142,17 @@ void DocumentMarkerController::addDraggedContentMarker(Range& range)
     }
 }
 
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+void DocumentMarkerController::addPlatformTextCheckingMarker(Range& range, const String& key, const String& value)
+{
+    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
+        auto textPiece = markedText.range();
+        DocumentMarker::PlatformTextCheckingData textCheckingData { key, value };
+        addMarker(textPiece->startContainer(), { DocumentMarker::PlatformTextChecking, textPiece->startOffset(), textPiece->endOffset(), WTFMove(textCheckingData) });
+    }
+}
+#endif
+
 void DocumentMarkerController::removeMarkers(Range& range, OptionSet<DocumentMarker::MarkerType> markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
     for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
@@ -152,7 +163,21 @@ void DocumentMarkerController::removeMarkers(Range& range, OptionSet<DocumentMar
         auto textPiece = markedText.range();
         unsigned startOffset = textPiece->startOffset();
         unsigned endOffset = textPiece->endOffset();
-        removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, shouldRemovePartiallyOverlappingMarker);
+        removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, nullptr, shouldRemovePartiallyOverlappingMarker);
+    }
+}
+
+void DocumentMarkerController::filterMarkers(Range& range, std::function<bool(DocumentMarker*)> filterFunction, OptionSet<DocumentMarker::MarkerType> markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
+{
+    for (TextIterator markedText(&range); !markedText.atEnd(); markedText.advance()) {
+        if (!possiblyHasMarkers(markerTypes))
+            return;
+        ASSERT(!m_markers.isEmpty());
+
+        auto textPiece = markedText.range();
+        unsigned startOffset = textPiece->startOffset();
+        unsigned endOffset = textPiece->endOffset();
+        removeMarkers(textPiece->startContainer(), startOffset, endOffset - startOffset, markerTypes, filterFunction, shouldRemovePartiallyOverlappingMarker);
     }
 }
 
@@ -300,6 +325,11 @@ Vector<FloatRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMark
 
 static bool shouldInsertAsSeparateMarker(const DocumentMarker& newMarker)
 {
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    if (newMarker.type() == DocumentMarker::PlatformTextChecking)
+        return true;
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (newMarker.type() == DocumentMarker::DictationPhraseWithAlternatives || newMarker.type() == DocumentMarker::DictationResult)
         return true;
@@ -433,7 +463,7 @@ void DocumentMarkerController::copyMarkers(Node& srcNode, unsigned startOffset, 
         dstNode.renderer()->repaint();
 }
 
-void DocumentMarkerController::removeMarkers(Node& node, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> markerTypes, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
+void DocumentMarkerController::removeMarkers(Node& node, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> markerTypes, std::function<bool(DocumentMarker*)> filterFunction, RemovePartiallyOverlappingMarkerOrNot shouldRemovePartiallyOverlappingMarker)
 {
     if (length <= 0)
         return;
@@ -457,6 +487,11 @@ void DocumentMarkerController::removeMarkers(Node& node, unsigned startOffset, i
 
         // skip marker that is wrong type or before target
         if (marker.endOffset() <= startOffset || !markerTypes.contains(marker.type())) {
+            i++;
+            continue;
+        }
+
+        if (filterFunction && !filterFunction(&marker)) {
             i++;
             continue;
         }

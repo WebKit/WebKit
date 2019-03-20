@@ -4533,6 +4533,11 @@ void Document::textInserted(Node& text, unsigned offset, unsigned length)
 
     // Update the markers for spelling and grammar checking.
     m_markers->shiftMarkers(text, offset, length);
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    // Freshly inserted text is expected to not inherit PlatformTextChecking markers.
+    m_markers->removeMarkers(text, offset, length, DocumentMarker::PlatformTextChecking);
+#endif
 }
 
 void Document::textRemoved(Node& text, unsigned offset, unsigned length)

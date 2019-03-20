@@ -59,6 +59,7 @@ VPATH = \
     $(WebKit2)/WebProcess/WebAuthentication \
     $(WebKit2)/WebProcess/WebCoreSupport \
     $(WebKit2)/WebProcess/WebPage \
+    $(WebKit2)/WebProcess/WebPage/Cocoa \
     $(WebKit2)/WebProcess/WebPage/RemoteLayerTree \
     $(WebKit2)/WebProcess/WebStorage \
     $(WebKit2)/WebProcess/cocoa \
@@ -135,6 +136,7 @@ MESSAGE_RECEIVERS = \
     SmartMagnificationController \
     StorageAreaMap \
     StorageManager \
+    TextCheckingControllerProxy \
     UserMediaCaptureManager \
     UserMediaCaptureManagerProxy \
     VideoFullscreenManager \

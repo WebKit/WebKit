@@ -1,3 +1,62 @@
+2019-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add an platform-driven spell-checking mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=195795
+
+        Reviewed by Ryosuke Niwa.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/TextCheckingController.h: Added.
+        * UIProcess/Cocoa/TextCheckingController.mm: Added.
+        (WebKit::TextCheckingController::TextCheckingController):
+        (WebKit::TextCheckingController::replaceRelativeToSelection):
+        (WebKit::TextCheckingController::removeAnnotationRelativeToSelection):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView replaceSelectionOffset:length:withAnnotatedString:relativeReplacementRange:]):
+        (-[WKContentView removeAnnotation:forSelectionOffset:length:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::textCheckingController):
+        Plumb two UITextInput methods through to the Web Content process.
+        I added a new object instead of just sticking things on WebPage
+        because there are quite a few more related ones coming down the pipeline,
+        and will also end up being messages going in the opposite direction.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h: Added.
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in: Added.
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm: Added.
+        (WebKit::TextCheckingControllerProxy::TextCheckingControllerProxy):
+        (WebKit::TextCheckingControllerProxy::~TextCheckingControllerProxy):
+        (WebKit::relevantMarkerTypes):
+        (WebKit::TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::replaceRelativeToSelection):
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        Make it possible for the platform to maintain arbitrary key-value pairs
+        attached to document ranges, as a way for it to keep track of various
+        text checking context (e.g. if something has been checked, replaced,
+        what language it might be, ...).
+
+        Allow it to replace the text of a range and the annotations in that range,
+        or remove annotations in a range. Ranges are specified relative to
+        the selection.
+
+        One large missing piece is giving the platform the ability to retrieve
+        annotations in a range; that is coming in a future patch.
+
+        We translate certain annotations into traditional WebCore spelling
+        and grammar document markers, for normal display-time treatment.
+
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm:
+        (-[WKAccessibilityWebPageObject convertScreenPointToRootView:]):
+        (-[WKAccessibilityWebPageObject accessibilityHitTest:]):
+        Unified sources fixes.
+
 2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement FIDO AppID extension

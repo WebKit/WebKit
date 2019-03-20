@@ -2408,6 +2408,9 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 {
     Ref<Frame> protection(m_frame);
 
+    if (platformDrivenTextCheckerEnabled())
+        return;
+
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(selectionAfterTyping);
     UNUSED_PARAM(doReplacement);
@@ -2630,6 +2633,9 @@ void Editor::markBadGrammar(const VisibleSelection& selection)
 
 void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType> textCheckingOptions, RefPtr<Range>&& spellingRange, RefPtr<Range>&& automaticReplacementRange, RefPtr<Range>&& grammarRange)
 {
+    if (platformDrivenTextCheckerEnabled())
+        return;
+
     ASSERT(unifiedTextCheckerEnabled());
 
     // There shouldn't be pending autocorrection at this moment.
@@ -2691,6 +2697,11 @@ static bool isAutomaticTextReplacementType(TextCheckingType type)
     }
     ASSERT_NOT_REACHED();
     return false;
+}
+
+void Editor::replaceRangeForSpellChecking(Range& rangeToReplace, const String& replacement)
+{
+    SpellingCorrectionCommand::create(rangeToReplace, replacement)->apply();
 }
 
 static void correctSpellcheckingPreservingTextCheckingParagraph(TextCheckingParagraph& paragraph, Range& rangeToReplace, const String& replacement, int resultLocation, int resultLength)
@@ -2905,6 +2916,9 @@ void Editor::changeBackToReplacedString(const String& replacedString)
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection)
 {
+    if (platformDrivenTextCheckerEnabled())
+        return;
+
     if (unifiedTextCheckerEnabled()) {
         if (!isContinuousSpellCheckingEnabled())
             return;

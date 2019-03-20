@@ -36,6 +36,7 @@
 #import "FocusedElementInformation.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
+#import "TextCheckingController.h"
 #import "UIKitSPI.h"
 #import "WKActionSheetAssistant.h"
 #import "WKAirPlayRoutePicker.h"
@@ -339,6 +340,10 @@ struct WKAutoCorrectionData {
 
     BOOL _shouldRestoreFirstResponderStatusAfterLosingFocus;
     BlockPtr<void()> _activeFocusedStateRetainBlock;
+#endif
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    std::unique_ptr<WebKit::TextCheckingController> _textCheckingController;
 #endif
 }
 

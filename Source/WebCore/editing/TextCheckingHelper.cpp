@@ -303,6 +303,9 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     if (!unifiedTextCheckerEnabled())
         return emptyString();
 
+    if (platformDrivenTextCheckerEnabled())
+        return emptyString();
+
     String firstFoundItem;
     String misspelledWord;
     String badGrammarPhrase;
@@ -572,6 +575,9 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
     if (!unifiedTextCheckerEnabled())
         return Vector<String>();
 
+    if (platformDrivenTextCheckerEnabled())
+        return Vector<String>();
+
     Vector<String> guesses;
     misspelled = false;
     ungrammatical = false;
@@ -687,6 +693,15 @@ bool unifiedTextCheckerEnabled(const Frame* frame)
     if (!frame)
         return false;
     return frame->settings().unifiedTextCheckerEnabled();
+}
+
+bool platformDrivenTextCheckerEnabled()
+{
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    return true;
+#else
+    return false;
+#endif
 }
 
 }

@@ -79,7 +79,11 @@ public:
         // This marker indicates that the user has selected a text candidate.
         AcceptedCandidate = 1 << 13,
         // This marker indicates that the user has initiated a drag with this content.
-        DraggedContent = 1 << 14
+        DraggedContent = 1 << 14,
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+        // This marker maintains state for the platform text checker.
+        PlatformTextChecking = 1 << 15,
+#endif
     };
 
     static constexpr OptionSet<MarkerType> allMarkers();
@@ -99,7 +103,17 @@ public:
     struct DraggedContentData {
         RefPtr<Node> targetNode;
     };
-    using Data = Variant<IsActiveMatchData, DescriptionData, DictationData, DictationAlternativesData, DraggedContentData>;
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    struct PlatformTextCheckingData {
+        String key;
+        String value;
+    };
+#endif
+    using Data = Variant<IsActiveMatchData, DescriptionData, DictationData, DictationAlternativesData, DraggedContentData
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    , PlatformTextCheckingData
+#endif
+    >;
 
     DocumentMarker(unsigned startOffset, unsigned endOffset, bool isActiveMatch);
     DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description = String());
@@ -162,6 +176,9 @@ constexpr auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
 #if PLATFORM(IOS_FAMILY)
         DictationPhraseWithAlternatives,
         DictationResult,
+#endif
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+        PlatformTextChecking
 #endif
     };
 }

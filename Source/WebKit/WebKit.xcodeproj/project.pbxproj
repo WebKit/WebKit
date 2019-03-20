@@ -2476,6 +2476,8 @@
 		29D04E2821F7C73D0076741D /* AccessibilityPrivSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityPrivSPI.h; sourceTree = "<group>"; };
 		2D0035221BC7414800DA8716 /* PDFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPlugin.h; path = PDF/PDFPlugin.h; sourceTree = "<group>"; };
 		2D0035231BC7414800DA8716 /* PDFPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPlugin.mm; path = PDF/PDFPlugin.mm; sourceTree = "<group>"; };
+		2D0CF64B21F2A80300787566 /* TextCheckingController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckingController.mm; sourceTree = "<group>"; };
+		2D0CF64C21F2A80300787566 /* TextCheckingController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextCheckingController.h; sourceTree = "<group>"; };
 		2D10875E1D2C573E00B85F82 /* LoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadParameters.cpp; sourceTree = "<group>"; };
 		2D10875F1D2C573E00B85F82 /* LoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadParameters.h; sourceTree = "<group>"; };
 		2D1087621D2C641B00B85F82 /* LoadParametersCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadParametersCocoa.mm; sourceTree = "<group>"; };
@@ -2739,6 +2741,9 @@
 		2D8786221BDB58FF00D02ABB /* APIUserStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserStyleSheet.h; sourceTree = "<group>"; };
 		2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformCALayerRemoteTiledBacking.cpp; sourceTree = "<group>"; };
 		2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteTiledBacking.h; sourceTree = "<group>"; };
+		2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextCheckingControllerProxy.messages.in; sourceTree = "<group>"; };
+		2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckingControllerProxy.mm; sourceTree = "<group>"; };
+		2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextCheckingControllerProxy.h; sourceTree = "<group>"; };
 		2D9CD5EE21FA75EE0029ACFA /* EditingRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingRange.cpp; sourceTree = "<group>"; };
 		2D9EA30C1A96CB59002D2807 /* WKPageInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageInjectedBundleClient.h; sourceTree = "<group>"; };
 		2D9EA30E1A96CBFF002D2807 /* WebPageInjectedBundleClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageInjectedBundleClient.h; sourceTree = "<group>"; };
@@ -5375,6 +5380,8 @@
 				1A002D47196B345D00B9AD44 /* SessionStateCoding.h */,
 				1A002D46196B345D00B9AD44 /* SessionStateCoding.mm */,
 				3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */,
+				2D0CF64C21F2A80300787566 /* TextCheckingController.h */,
+				2D0CF64B21F2A80300787566 /* TextCheckingController.mm */,
 				1AFE436418B6C081009C7A48 /* UIDelegate.h */,
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
 				E4E8648E1B1673FB00C82F40 /* VersionChecks.h */,
@@ -5613,6 +5620,9 @@
 		2D29ECCD192F2C2E00984B78 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */,
+				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
+				2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */,
 				2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */,
 			);
 			path = Cocoa;

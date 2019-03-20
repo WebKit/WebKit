@@ -782,6 +782,10 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _dataListTextSuggestions = nil;
 #endif
 
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    _textCheckingController = std::make_unique<WebKit::TextCheckingController>(*_page);
+#endif
+
     _hasSetUpInteractions = YES;
 }
 
@@ -5510,6 +5514,18 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 {
     _page->extendSelection(WebCore::WordGranularity);
 }
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+- (void)replaceSelectionOffset:(NSInteger)selectionOffset length:(NSUInteger)length withAnnotatedString:(NSAttributedString *)annotatedString relativeReplacementRange:(NSRange)relativeReplacementRange
+{
+    _textCheckingController->replaceRelativeToSelection(annotatedString, selectionOffset, length, relativeReplacementRange.location != NSNotFound);
+}
+
+- (void)removeAnnotation:(NSAttributedStringKey)annotationName forSelectionOffset:(NSInteger)selectionOffset length:(NSUInteger)length
+{
+    _textCheckingController->removeAnnotationRelativeToSelection(annotationName, selectionOffset, length);
+}
+#endif
 
 - (void)_updateChangedSelection
 {

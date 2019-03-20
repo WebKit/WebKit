@@ -252,6 +252,7 @@
 #include "PDFPlugin.h"
 #include "PlaybackSessionManager.h"
 #include "RemoteLayerTreeTransaction.h"
+#include "TextCheckingControllerProxy.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
 #include "VideoFullscreenManager.h"
@@ -370,6 +371,9 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_determinePrimarySnapshottedPlugInTimer(RunLoop::main(), this, &WebPage::determinePrimarySnapshottedPlugInTimerFired)
 #endif
     , m_layerHostingMode(parameters.layerHostingMode)
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    , m_textCheckingControllerProxy(makeUniqueRef<TextCheckingControllerProxy>(*this))
+#endif
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     , m_viewGestureGeometryCollector(std::make_unique<ViewGestureGeometryCollector>(*this))
 #elif HAVE(ACCESSIBILITY) && PLATFORM(GTK)

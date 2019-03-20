@@ -781,6 +781,18 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
             continue;
         }
 #endif
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+        if (marker.type() == DocumentMarker::PlatformTextChecking) {
+            if (!WTF::holds_alternative<DocumentMarker::PlatformTextCheckingData>(marker.data())) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            auto& textCheckingData = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker.data());
+            markerController.addPlatformTextCheckingMarker(newRange, textCheckingData.key, textCheckingData.value);
+            continue;
+        }
+#endif
         markerController.addMarker(newRange, marker.type(), marker.description());
     }
 }

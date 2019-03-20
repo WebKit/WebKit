@@ -1,3 +1,51 @@
+2019-03-20  Tim Horton  <timothy_horton@apple.com>
+
+        Add an platform-driven spell-checking mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=195795
+
+        Reviewed by Ryosuke Niwa.
+
+        * dom/Document.cpp:
+        (WebCore::Document::textInserted):
+        PlatformTextChecking markers are not expected
+        to propagate to newly inserted text, so remove them.
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::allMarkers):
+        Add a new type of DocumentMarker, PlatformTextChecking,
+        and a new data variant that stores a key value pair of strings.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addPlatformTextCheckingMarker):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::filterMarkers):
+        (WebCore::shouldInsertAsSeparateMarker):
+        * dom/DocumentMarkerController.h:
+        Export some things.
+        Add addPlatformTextCheckingMarker, like the others.
+        Make it possible to filter out markers of a particular type
+        in a range with a predicate function.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        Propagate PlatformTextChecking data.
+        A future change should probably make it possible for
+        any DocumentMarker to copy its data here, instead of
+        special-casing each type that is important.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange const):
+        (WebCore::platformDrivenTextCheckerEnabled):
+        * editing/TextCheckingHelper.h:
+        Bail from traditional spell checking if this mechanism is
+        enabled. (I wrote it this way to make it runtime switchable
+        in the near future, and to be similar to unifiedTextCheckerEnabled).
+
 2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement FIDO AppID extension

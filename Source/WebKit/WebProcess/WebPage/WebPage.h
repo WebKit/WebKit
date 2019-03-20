@@ -207,6 +207,7 @@ class PDFPlugin;
 class PageBanner;
 class PluginView;
 class RemoteWebInspectorUI;
+class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
 class ViewGestureGeometryCollector;
 class VisibleContentRectUpdateInfo;
@@ -1167,6 +1168,10 @@ public:
     WebPaymentCoordinator* paymentCoordinator();
 #endif
 
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    TextCheckingControllerProxy& textCheckingController() { return m_textCheckingControllerProxy.get(); }
+#endif
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1449,8 +1454,6 @@ private:
 
     static PluginView* focusedPluginViewForFrame(WebCore::Frame&);
 
-    static RefPtr<WebCore::Range> rangeFromEditingRange(WebCore::Frame&, const EditingRange&, EditingRangeIsRelativeTo = EditingRangeIsRelativeTo::EditableRoot);
-
     void reportUsedFeatures();
 
     void updateWebsitePolicies(WebsitePoliciesData&&);
@@ -1610,6 +1613,10 @@ private:
     WebCore::FloatPoint m_accessibilityPosition;
     
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
+#endif
+
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    UniqueRef<TextCheckingControllerProxy> m_textCheckingControllerProxy;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

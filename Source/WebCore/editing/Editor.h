@@ -301,6 +301,7 @@ public:
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(const SpellCheckRequest&, const Vector<TextCheckingResult>&);
+    WEBCORE_EXPORT void replaceRangeForSpellChecking(Range&, const String&);
 
     bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
     WEBCORE_EXPORT void toggleOverwriteModeEnabled();

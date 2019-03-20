@@ -339,6 +339,7 @@ UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
+UIProcess/Cocoa/TextCheckingController.mm
 UIProcess/Cocoa/UIDelegate.mm
 UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/VersionChecks.mm
@@ -558,6 +559,7 @@ WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 WebProcess/WebPage/ViewUpdateDispatcher.cpp
 WebProcess/WebPage/WKAccessibilityWebPageObjectIOS.mm
 
+WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 
 WebProcess/WebPage/ios/FindControllerIOS.mm
@@ -584,3 +586,4 @@ WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 // Derived Sources
 EditableImageControllerMessageReceiver.cpp
 ServiceWorkerFetchTaskMessageReceiver.cpp
+TextCheckingControllerProxyMessageReceiver.cpp

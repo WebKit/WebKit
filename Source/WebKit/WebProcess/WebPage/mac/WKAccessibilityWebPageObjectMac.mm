@@ -119,7 +119,7 @@ IGNORE_WARNINGS_END
 - (NSPoint)convertScreenPointToRootView:(NSPoint)point
 {
     return retrieveAccessibilityValueFromMainThread<NSPoint>([&self, &point] () -> NSPoint {
-        return m_page->screenToRootView(IntPoint(point.x, point.y));
+        return m_page->screenToRootView(WebCore::IntPoint(point.x, point.y));
     });
 }
 
@@ -238,11 +238,11 @@ IGNORE_WARNINGS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    auto convertedPoint = retrieveAccessibilityValueFromMainThread<IntPoint>([&self, &point] () -> IntPoint {
+    auto convertedPoint = retrieveAccessibilityValueFromMainThread<WebCore::IntPoint>([&self, &point] () -> WebCore::IntPoint {
         if (!m_page)
-            return IntPoint(point);
+            return WebCore::IntPoint(point);
         
-        auto convertedPoint = m_page->screenToRootView(IntPoint(point));
+        auto convertedPoint = m_page->screenToRootView(WebCore::IntPoint(point));
         
         // Some plugins may be able to figure out the scroll position and inset on their own.
         bool applyContentOffset = true;
