@@ -1,3 +1,34 @@
+2019-03-20  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Fix handling of resolution changes in AppendPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=195855
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        MediaSample instances produced by the AppendPipeline were not
+        accounting for resolution changes. The causes of this are twofold:
+
+        1) m_presentationSize is set by connectDemuxerSrcPadToAppsink() (by
+        calling parseDemuxerSrcPadCaps()), but not by appsinkCapsChanged().
+
+        2) appsinkCapsChanged() was being called in the main thread as an
+        asynchronous task. In consequence, even if m_presentationSize is set
+        there, many samples with the new resolution would still be wrapped in
+        a MediaSampleGStreamer using the old resolution by the main thread
+        running consumeAppsinkAvailableSamples() before appsinkCapsChanged()
+        is dispatched.
+
+        This patch fixes these problems by updating m_presentationSize in
+        appsinkCapsChanged() and making the streaming thread block until the
+        main thread has dispatched appsinkCapsChanged(). This way the handling
+        of caps changes is serialized with the handling of frames.
+
+        Test: media/media-source/media-source-samples-resolution-change.html
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+
 2019-03-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for new meter ARIA role

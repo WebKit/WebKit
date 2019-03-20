@@ -1,3 +1,15 @@
+2019-03-20  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Fix handling of resolution changes in AppendPipeline
+        https://bugs.webkit.org/show_bug.cgi?id=195855
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/media-source/content/test-green-6s-320x240.mp4: Added.
+        * media/media-source/content/test-red-3s-480x360.mp4: Added.
+        * media/media-source/media-source-samples-resolution-change-expected.txt: Added.
+        * media/media-source/media-source-samples-resolution-change.html: Added.
+
 2019-03-20  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for new meter ARIA role
