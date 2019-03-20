@@ -1,3 +1,31 @@
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        appendChild should throw when inserting an ancestor of a template into its content adopted to another document
+        https://bugs.webkit.org/show_bug.cgi?id=195984
+
+        Reviewed by Darin Adler.
+
+        The WPT test caught a bug that appendChild and other DOM insertion functions were incorrectly assuming that
+        any node that's in a HTML template element has the current document's template document as its owner.
+        The assumption is wrong when the template element's content DocumentFragment is adopted to another document.
+
+        Fixed the bug by always checking the ancestor host elements in checkAcceptChild. Also
+
+        Test: fast/dom/insert-template-parent-into-adopted-content.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::isInTemplateContent): Deleted. This code is simply wrong.
+        (WebCore::containsConsideringHostElements): Deleted. Call sites are updated to use containsIncludingHostElements.
+        (WebCore::containsIncludingHostElements): Moved from Node.cpp and optimized this code a bit. It's more efficient
+        to get the parent node and check for ShadowRoot and DocumentFragment only when the parent is null than to check
+        for those two node types before getting the parent node.
+        (WebCore::checkAcceptChild): Merged two code paths to call containsIncludingHostElements. The early return for
+        a pseudo element is there only to prevent tree corruption in release build even in the presence of a major bug
+        so it shouldn't be an spec compliance issue.
+        * dom/Node.cpp:
+        (WebCore::Node::containsIncludingHostElements const): Deleted.
+        * dom/Node.h:
+
 2019-03-20  Timothy Hatcher  <timothy@apple.com>
 
         Unreviewed followup to r243169 to fix test failures.

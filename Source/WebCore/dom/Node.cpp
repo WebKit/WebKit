@@ -1029,19 +1029,6 @@ bool Node::containsIncludingShadowDOM(const Node* node) const
     return false;
 }
 
-bool Node::containsIncludingHostElements(const Node* node) const
-{
-    while (node) {
-        if (node == this)
-            return true;
-        if (is<DocumentFragment>(*node) && downcast<DocumentFragment>(*node).isTemplateContent())
-            node = static_cast<const TemplateContentDocumentFragment*>(node)->host();
-        else
-            node = node->parentOrShadowHostNode();
-    }
-    return false;
-}
-
 Node* Node::pseudoAwarePreviousSibling() const
 {
     Element* parentOrHost = is<PseudoElement>(*this) ? downcast<PseudoElement>(*this).hostElement() : parentElement();

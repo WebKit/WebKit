@@ -1,3 +1,15 @@
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        appendChild should throw when inserting an ancestor of a template into its content adopted to another document
+        https://bugs.webkit.org/show_bug.cgi?id=195984
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/dom/insert-template-parent-into-adopted-content-expected.txt: Added.
+        * fast/dom/insert-template-parent-into-adopted-content.html: Added.
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test gardening. Fix the results for absolute-in-async-overflow-scroll.html.

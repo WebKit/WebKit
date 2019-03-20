@@ -1,3 +1,14 @@
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        appendChild should throw when inserting an ancestor of a template into its content adopted to another document
+        https://bugs.webkit.org/show_bug.cgi?id=195984
+
+        Reviewed by Darin Adler.
+
+        Rebaselined the test that is not fully passing.
+
+        * web-platform-tests/html/semantics/scripting-1/the-template-element/template-element/template-content-hierarcy-expected.txt:
+
 2019-03-20  Oriol Brufau  <obrufau@igalia.com>
 
         [css-grid] Always consider baseline shim for the minimum contribution
