@@ -456,7 +456,7 @@ const gchar* roleToString(AtkObject* object)
     case ATK_ROLE_LABEL:
         return "AXLabel";
     case ATK_ROLE_LEVEL_BAR:
-        return "AXProgressIndicator";
+        return "AXLevelIndicator";
     case ATK_ROLE_LINK:
         return "AXLink";
     case ATK_ROLE_LIST:

@@ -1,3 +1,15 @@
+2019-03-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for new meter ARIA role
+        https://bugs.webkit.org/show_bug.cgi?id=195966
+
+        Reviewed by Chris Fleizach.
+
+        Update Core role for ATK_ROLE_LEVEL_BAR from AXProgressIndicator
+        to AXLevelIndicator.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2019-03-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement FIDO AppID extension

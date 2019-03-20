@@ -1,3 +1,22 @@
+2019-03-20  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for new meter ARIA role
+        https://bugs.webkit.org/show_bug.cgi?id=195966
+
+        Reviewed by Chris Fleizach.
+
+        Add the new ARIA role to the internal rolemap so that it is treated
+        in the same fashion as its HTML element counterpart.
+
+        No new tests. Instead add the role to the existing role-exposure tests.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isMeter const):
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::computedRoleString const):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+
 2019-03-20  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Switch back to webkitwebsrc for adaptive streaming fragments downloading

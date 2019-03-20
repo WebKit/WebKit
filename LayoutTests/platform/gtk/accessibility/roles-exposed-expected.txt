@@ -745,6 +745,9 @@ div[role=menuitemcheckbox]
 div[role=menuitemradio]
       AXRole: AXRadioMenuItem
       
+div[role=meter]
+      AXRole: AXLevelIndicator
+      
 div[role=navigation]
       AXRole: AXLandmarkNavigation
       

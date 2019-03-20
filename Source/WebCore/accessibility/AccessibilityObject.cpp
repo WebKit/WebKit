@@ -969,6 +969,9 @@ bool AccessibilityObject::isRangeControl() const
 
 bool AccessibilityObject::isMeter() const
 {
+    if (ariaRoleAttribute() == AccessibilityRole::Meter)
+        return true;
+
 #if ENABLE(METER_ELEMENT)
     RenderObject* renderer = this->renderer();
     return renderer && renderer->isMeter();
@@ -2423,6 +2426,7 @@ static void initializeRoleMap()
         { "menuitem", AccessibilityRole::MenuItem },
         { "menuitemcheckbox", AccessibilityRole::MenuItemCheckbox },
         { "menuitemradio", AccessibilityRole::MenuItemRadio },
+        { "meter", AccessibilityRole::Meter },
         { "none", AccessibilityRole::Presentational },
         { "note", AccessibilityRole::DocumentNote },
         { "navigation", AccessibilityRole::LandmarkNavigation },
@@ -2512,9 +2516,6 @@ String AccessibilityObject::computedRoleString() const
 
     if (role == AccessibilityRole::HorizontalRule)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Splitter));
-
-    if (role == AccessibilityRole::Meter)
-        return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::ProgressIndicator));
 
     if (role == AccessibilityRole::PopUpButton || role == AccessibilityRole::ToggleButton)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Button));

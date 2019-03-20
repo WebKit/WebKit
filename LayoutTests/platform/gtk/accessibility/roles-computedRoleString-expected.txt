@@ -142,6 +142,7 @@ PASS: div[role="menubar"] -> menubar.
 PASS: div[role="menuitem"] -> menuitem. 
 PASS: div[role="menuitemcheckbox"] -> menuitemcheckbox. 
 PASS: div[role="menuitemradio"] -> menuitemradio. 
+PASS: div[role="meter"] -> meter. 
 PASS: div[role="navigation"] -> navigation. 
 PASS: div[role="note"] -> note. 
 PASS: div[role="paragraph"] -> paragraph. 

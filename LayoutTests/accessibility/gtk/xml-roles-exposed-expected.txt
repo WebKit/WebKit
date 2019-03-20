@@ -517,6 +517,25 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:math, xml-roles:math, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXLevelIndicator
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition:  { 0.00000, 0.00000 }
+AXSize: { 0.00000, 0.00000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:meter, xml-roles:meter, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXLandmarkNavigation
 AXParent: AXWebArea
 AXChildren: 0

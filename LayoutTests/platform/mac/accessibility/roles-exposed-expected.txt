@@ -1244,6 +1244,11 @@ div[role=menuitemradio]
       AXSubrole: 
       AXRoleDescription: menu item
       
+div[role=meter]
+      AXRole: AXLevelIndicator
+      AXSubrole: AXMeter
+      AXRoleDescription: level indicator
+      
 div[role=navigation]
       AXRole: AXGroup
       AXSubrole: AXLandmarkNavigation
