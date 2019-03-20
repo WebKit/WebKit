@@ -1,3 +1,9 @@
+2019-03-20  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed followup to r243169 to fix test failures.
+
+        * DerivedSources.make: Add HAVE_OS_DARK_MODE_SUPPORT to FEATURE_AND_PLATFORM_DEFINES.
+
 2019-03-20  Keith Rollin  <krollin@apple.com>
 
         Update the location for XProtect.meta.plist file
