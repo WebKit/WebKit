@@ -1,3 +1,22 @@
+2019-03-20  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GStreamer][WebRTC]: Refactor to make the encoding happen synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=195674
+
+        This simplifies the code and make sure that everything is called from the right
+        thread. It also makes it so we follow the same way of doing things as other libwebrtc
+        encoders.
+
+        Also "s/codecSpecifiInfos/codecSpecificInfos/"
+
+        Reviewed by Philippe Normand.
+
+        No new test as this is just a refactoring
+
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::InitEncode):
+        (WebCore::GStreamerVideoEncoder::returnFromFlowReturn):
+
 2019-03-20  Tim Horton  <timothy_horton@apple.com>
 
         Add an platform-driven spell-checking mechanism
