@@ -35,9 +35,13 @@ namespace WTF {
 class String;
 }
 
+namespace WebCore {
+class RegistrableDomain;
+}
+
 namespace WebKit {
 
-void presentStorageAccessAlert(WKWebView *, const WTF::String& requestingDomain, const WTF::String& currentDomain, CompletionHandler<void(bool)>&&);
+void presentStorageAccessAlert(WKWebView *, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&&);
 
 }
 
