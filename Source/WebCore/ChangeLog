@@ -1,3 +1,27 @@
+2019-03-20  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-grid] Always consider baseline shim for the minimum contribution
+        https://bugs.webkit.org/show_bug.cgi?id=195964
+
+        Reviewed by Javier Fernandez.
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-minimum-contribution-baseline-shim-vertical-lr.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-minimum-contribution-baseline-shim-vertical-rl.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-minimum-contribution-baseline-shim.html
+
+        Before this patch, the shim used for baseline alignment is not taken
+        into consideration when calculating the minimum contribution of a grid
+        item if its preferred size is auto, its minimum size is auto, and the
+        max track sizing function is a fixed small value. In this case, the
+        auto minimum size can produce a smaller track than if it was 0.
+
+        The specification needs to clarify how baseline shims interact with
+        minimum contributions (https://github.com/w3c/csswg-drafts/issues/3660),
+        but the above doesn't make sense.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::minSizeForChild const):
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Some elements lag behind async overflow scrolling on palace-games.com

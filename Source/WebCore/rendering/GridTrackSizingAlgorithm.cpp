@@ -799,10 +799,14 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
 {
     GridTrackSizingDirection childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), child, ForColumns);
     bool isRowAxis = direction() == childInlineDirection;
-    const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
     const Length& childSize = isRowAxis ? child.style().logicalWidth() : child.style().logicalHeight();
+    if (!childSize.isAuto())
+        return minContentForChild(child);
 
+    const Length& childMinSize = isRowAxis ? child.style().logicalMinWidth() : child.style().logicalMinHeight();
     bool overflowIsVisible = isRowAxis ? child.style().overflowInlineDirection() == Overflow::Visible : child.style().overflowBlockDirection() == Overflow::Visible;
+    LayoutUnit baselineShim = m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
+
     if (childSize.isAuto() && childMinSize.isAuto() && overflowIsVisible) {
         auto minSize = minContentForChild(child);
         LayoutUnit maxBreadth;
@@ -815,15 +819,11 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForChild(RenderBox& child) c
         if (minSize > maxBreadth) {
             auto marginAndBorderAndPadding = GridLayoutFunctions::marginLogicalSizeForChild(*renderGrid(), direction(), child);
             marginAndBorderAndPadding += isRowAxis ? child.borderAndPaddingLogicalWidth() : child.borderAndPaddingLogicalHeight();
-            minSize = std::max(maxBreadth, marginAndBorderAndPadding);
+            minSize = std::max(maxBreadth, marginAndBorderAndPadding + baselineShim);
         }
         return minSize;
     }
 
-    if (!childSize.isAuto())
-        return minContentForChild(child);
-
-    LayoutUnit baselineShim = m_algorithm.baselineOffsetForChild(child, gridAxisForDirection(direction()));
     LayoutUnit gridAreaSize = m_algorithm.gridAreaBreadthForChild(child, childInlineDirection);
     if (isRowAxis)
         return minLogicalWidthForChild(child, childMinSize, gridAreaSize) + baselineShim;
