@@ -2887,8 +2887,6 @@ public:
             return;
         out.printf(", @%u", child3()->index());
     }
-    
-    // NB. This class must have a trivial destructor.
 
     NodeOrigin origin;
 

@@ -1,5 +1,19 @@
 2019-03-20  Robin Morisset  <rmorisset@apple.com>
 
+        DFGNodeAllocator.h is dead code
+        https://bugs.webkit.org/show_bug.cgi?id=196019
+
+        Reviewed by Yusuke Suzuki.
+
+        As explained by Yusuke on IRC, the comment on DFG::Node saying that it cannot have a destructor is obsolete since https://trac.webkit.org/changeset/216815/webkit.
+        This patch removes both the comment and DFGNodeAllocator.h that that patch forgot to remove.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::dumpChildren):
+        * dfg/DFGNodeAllocator.h: Removed.
+
+2019-03-20  Robin Morisset  <rmorisset@apple.com>
+
         Compress CodeOrigin into a single word in the common case
         https://bugs.webkit.org/show_bug.cgi?id=195928
 
