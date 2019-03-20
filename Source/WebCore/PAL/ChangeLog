@@ -1,3 +1,10 @@
+2019-03-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed adjustment to r242842 per Darin's request.
+
+        * pal/win/LoggingWin.cpp:
+        (PAL::logLevelString):
+
 2019-03-14  Brent Fulgham  <bfulgham@apple.com>
 
         Move CoreCrypto SPI declarations to an appropriate PAL/spi header

@@ -1,3 +1,10 @@
+2019-03-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed adjustment to r242842 per Darin's request.
+
+        * Platform/win/LoggingWin.cpp:
+        (WebKit::logLevelString):
+
 2019-03-19  Gyuyoung Kim  <gyuyoung.kim@lge.com>
 
         [WPE] Fix build warnings because of missing an argument when initializing wpe_input_axis_event

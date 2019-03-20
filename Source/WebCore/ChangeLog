@@ -1,3 +1,10 @@
+2019-03-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed adjustment to r242842 per Darin's request.
+
+        * platform/win/LoggingWin.cpp:
+        (WebCore::logLevelString):
+
 2019-03-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG property tear off objects of SVGAnimatedPreserveAspectRatio
