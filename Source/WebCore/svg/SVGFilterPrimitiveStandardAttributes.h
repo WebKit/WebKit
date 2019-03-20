@@ -40,7 +40,7 @@ class SVGFilterPrimitiveStandardAttributes : public SVGElement {
 public:
     void setStandardAttributes(FilterEffect*) const;
 
-    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) = 0;
+    virtual RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const = 0;
     // Returns true, if the new value is different from the old one.
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 

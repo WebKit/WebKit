@@ -44,7 +44,7 @@ Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGFEMergeElement(tagName, document));
 }
 
-RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
+RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
 {
     auto effect = FEMerge::create(filter);
     FilterEffectVector& mergeInputs = effect->inputEffects();

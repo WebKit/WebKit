@@ -170,7 +170,7 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
     primitiveAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
+RefPtr<FilterEffect> SVGFEDiffuseLightingElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
 {
     auto input1 = filterBuilder->getEffectById(in1());
 

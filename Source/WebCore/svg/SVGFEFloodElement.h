@@ -33,7 +33,7 @@ private:
     SVGFEFloodElement(const QualifiedName&, Document&);
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 };
 
 } // namespace WebCore

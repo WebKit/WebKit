@@ -73,7 +73,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };

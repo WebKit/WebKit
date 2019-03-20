@@ -43,19 +43,19 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFitToViewBox>;
 
     const FloatRect& viewBox() const { return m_viewBox->currentValue(); }
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(m_attributeOwnerProxy); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio->currentValue(); }
 
     SVGAnimatedRect& viewBoxAnimated() { return m_viewBox; }
-    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated() { return m_preserveAspectRatio.animatedProperty(m_attributeOwnerProxy); }
+    SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
 
     void setViewBox(const FloatRect&);
     void resetViewBox();
 
-    void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio.setValue(preserveAspectRatio); }
-    void resetPreserveAspectRatio() { m_preserveAspectRatio.resetValue(); }
+    void setPreserveAspectRatio(const SVGPreserveAspectRatioValue& preserveAspectRatio) { m_preserveAspectRatio->setBaseValInternal(preserveAspectRatio); }
+    void resetPreserveAspectRatio() { m_preserveAspectRatio->setBaseValInternal({ }); }
 
     String viewBoxString() const { return SVGPropertyTraits<FloatRect>::toString(viewBox()); }
-    String preserveAspectRatioString() const { return m_preserveAspectRatio.toString(); }
+    String preserveAspectRatioString() const { return preserveAspectRatio().valueAsString(); }
 
     bool hasValidViewBox() const { return m_isViewBoxValid; }
     bool hasEmptyViewBox() const { return m_isViewBoxValid && viewBox().isEmpty(); }
@@ -74,11 +74,8 @@ protected:
     bool parseViewBox(const UChar*& start, const UChar* end, FloatRect& viewBox, bool validate = true);
 
 private:
-    static void registerAttributes();
-
-    AttributeOwnerProxy m_attributeOwnerProxy;
     Ref<SVGAnimatedRect> m_viewBox;
-    SVGAnimatedPreserveAspectRatioAttribute m_preserveAspectRatio;
+    Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio;
     bool m_isViewBoxValid { false };
 };
 

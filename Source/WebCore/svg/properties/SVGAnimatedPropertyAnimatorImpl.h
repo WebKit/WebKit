@@ -75,7 +75,25 @@ private:
         m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
     }
 };
-    
+
+class SVGAnimatedPreserveAspectRatioAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPreserveAspectRatio, SVGAnimationPreserveAspectRatioFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPreserveAspectRatio, SVGAnimationPreserveAspectRatioFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedPreserveAspectRatio>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedPreserveAspectRatioAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        SVGPreserveAspectRatioValue& animated = m_animated->animVal()->value();
+        m_function.progress(targetElement, percentage, repeatCount, animated);
+    }
+};
+
 class SVGAnimatedRectAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedRect, SVGAnimationRectFunction> {
     using Base = SVGAnimatedPropertyAnimator<SVGAnimatedRect, SVGAnimationRectFunction>;
 

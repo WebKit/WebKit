@@ -23,7 +23,6 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFEImage.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -40,15 +39,13 @@ public:
 
     bool hasSingleSecurityOrigin() const;
 
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated() { return m_preserveAspectRatio.animatedProperty(attributeOwnerProxy()); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio->currentValue(); }
+    SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
 
 private:
     SVGFEImageElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEImageElement, SVGFilterPrimitiveStandardAttributes, SVGExternalResourcesRequired, SVGURIReference>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEImageElement, SVGFilterPrimitiveStandardAttributes, SVGExternalResourcesRequired, SVGURIReference>;
@@ -67,7 +64,7 @@ private:
 
     void didFinishInsertingNode() override;
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
     void clearResourceReferences();
     void requestImageResource();
@@ -78,7 +75,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedPreserveAspectRatioAttribute m_preserveAspectRatio;
+    Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio { SVGAnimatedPreserveAspectRatio::create(this) };
     CachedResourceHandle<CachedImage> m_cachedImage;
 };
 

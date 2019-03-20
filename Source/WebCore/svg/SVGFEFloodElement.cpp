@@ -58,7 +58,7 @@ bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
     return false;
 }
 
-RefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter& filter)
+RefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter& filter) const
 {
     RenderObject* renderer = this->renderer();
     if (!renderer)

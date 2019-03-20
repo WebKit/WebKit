@@ -85,8 +85,8 @@ class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes 
 public:
     static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 
-    String in1() { return m_in1.currentValue(attributeOwnerProxy()); }
-    String in2() { return m_in2.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in2() const { return m_in2.currentValue(attributeOwnerProxy()); }
     CompositeOperationType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
     float k1() const { return m_k1.currentValue(attributeOwnerProxy()); }
     float k2() const { return m_k2.currentValue(attributeOwnerProxy()); }
@@ -121,7 +121,7 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };

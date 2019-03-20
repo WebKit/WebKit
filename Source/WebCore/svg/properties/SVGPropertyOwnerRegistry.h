@@ -55,16 +55,22 @@ public:
         registerProperty(attributeName, SVGAnimatedBooleanAccessor<OwnerType>::template singleton<property>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedRect> OwnerType::*property>
-    static void registerProperty()
-    {
-        registerProperty(attributeName, SVGAnimatedRectAccessor<OwnerType>::template singleton<property>());
-    }
-
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property>
     static void registerProperty()
     {
         registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>());
+    }
+    
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedPreserveAspectRatio> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedPreserveAspectRatioAccessor<OwnerType>::template singleton<property>());
+    }
+
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedRect> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedRectAccessor<OwnerType>::template singleton<property>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property1, Ref<SVGAnimatedInteger> OwnerType::*property2>

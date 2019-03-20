@@ -114,7 +114,7 @@ void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
+RefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
 {
     auto input1 = filterBuilder->getEffectById(in1());
 

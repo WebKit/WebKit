@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"

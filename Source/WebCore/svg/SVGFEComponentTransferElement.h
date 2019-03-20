@@ -48,7 +48,7 @@ private:
     // FIXME: svgAttributeChanged missing.
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };

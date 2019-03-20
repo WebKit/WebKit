@@ -42,4 +42,28 @@ public:
     }
 };
 
+class SVGAnimationPreserveAspectRatioFunction : public SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue> {
+public:
+    using Base = SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue>;
+    using Base::Base;
+    
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPreserveAspectRatioValue(from);
+        m_to = SVGPreserveAspectRatioValue(to);
+    }
+};
+
+class SVGAnimationStringFunction : public SVGAnimationDiscreteFunction<String> {
+public:
+    using Base = SVGAnimationDiscreteFunction<String>;
+    using Base::Base;
+    
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = from;
+        m_to = to;
+    }
+};
+
 }

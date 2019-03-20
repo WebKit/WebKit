@@ -77,6 +77,28 @@ private:
 };
 
 template<typename OwnerType>
+class SVGAnimatedPreserveAspectRatioAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPreserveAspectRatio> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPreserveAspectRatio>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedPreserveAspectRatio> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedPreserveAspectRatioAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedPreserveAspectRatioAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedPreserveAspectRatioAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType>
 class SVGAnimatedRectAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedRect> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedRect>;
     using Base::property;

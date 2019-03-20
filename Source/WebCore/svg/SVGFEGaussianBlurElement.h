@@ -65,7 +65,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
     static const AtomicString& stdDeviationXIdentifier();
     static const AtomicString& stdDeviationYIdentifier();

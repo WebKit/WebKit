@@ -139,7 +139,7 @@ void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter& filter)
+RefPtr<FilterEffect> SVGFETurbulenceElement::build(SVGFilterBuilder*, Filter& filter) const
 {
     if (baseFrequencyX() < 0 || baseFrequencyY() < 0)
         return nullptr;

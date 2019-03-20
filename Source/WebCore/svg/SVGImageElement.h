@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageLoader.h"
@@ -42,13 +41,13 @@ public:
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio.currentValue(attributeOwnerProxy()); }
+    const SVGPreserveAspectRatioValue& preserveAspectRatio() const { return m_preserveAspectRatio->currentValue(); }
 
     RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedPreserveAspectRatio> preserveAspectRatioAnimated() { return m_preserveAspectRatio.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedPreserveAspectRatio& preserveAspectRatioAnimated() { return m_preserveAspectRatio; }
 
 private:
     SVGImageElement(const QualifiedName&, Document&);
@@ -86,7 +85,7 @@ private:
     SVGAnimatedLengthAttribute m_y { LengthModeHeight };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth };
     SVGAnimatedLengthAttribute m_height { LengthModeHeight };
-    SVGAnimatedPreserveAspectRatioAttribute m_preserveAspectRatio;
+    Ref<SVGAnimatedPreserveAspectRatio> m_preserveAspectRatio { SVGAnimatedPreserveAspectRatio::create(this) };
     SVGImageLoader m_imageLoader;
 };
 

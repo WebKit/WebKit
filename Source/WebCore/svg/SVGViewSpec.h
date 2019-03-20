@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGFitToViewBox.h"
 #include "SVGTransformListValues.h"
 #include "SVGZoomAndPan.h"

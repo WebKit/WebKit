@@ -1,5 +1,147 @@
 2019-03-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Remove the SVG property tear off objects of SVGAnimatedPreserveAspectRatio
+        https://bugs.webkit.org/show_bug.cgi?id=195960
+
+        Reviewed by Simon Fraser.
+
+        -- Define SVGAnimatedPreserveAspectRatio to be SVGAnimatedValueProperty<
+           SVGPreserveAspectRatio>.
+
+        -- Make SVGPreserveAspectRatio be derived form SVGValueProperty<
+           SVGPreserveAspectRatioValue>.
+
+        -- Add SVGAnimatedPreserveAspectRatioAccessor to access the animated 
+           property.
+
+        -- Add SVGAnimatedPreserveAspectRatioAnimator to animate the animated
+           property of the target element and all its instances.
+
+        -- Add SVGAnimationPreserveAspectRatioFunction to progress animVal of
+           animated property in a period of time.
+
+        SVGFilterPrimitiveStandardAttributes::build() should be const function.
+        This is required for this patch because SVGFEImageElement::build() calls
+        SVGFEImageElement::preserveAspectRatio() which is const.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimatedPreserveAspectRatio.cpp: Removed.
+        * svg/SVGAnimatedPreserveAspectRatio.h: Removed.
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::build const):
+        (WebCore::SVGFEBlendElement::build): Deleted.
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build const):
+        (WebCore::SVGFEColorMatrixElement::build): Deleted.
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build const):
+        (WebCore::SVGFEComponentTransferElement::build): Deleted.
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::build const):
+        (WebCore::SVGFECompositeElement::build): Deleted.
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::build const):
+        (WebCore::SVGFEConvolveMatrixElement::build): Deleted.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build const):
+        (WebCore::SVGFEDiffuseLightingElement::build): Deleted.
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::build const):
+        (WebCore::SVGFEDisplacementMapElement::build): Deleted.
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::build const):
+        (WebCore::SVGFEDropShadowElement::build): Deleted.
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build const):
+        (WebCore::SVGFEFloodElement::build): Deleted.
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::build const):
+        (WebCore::SVGFEGaussianBlurElement::build): Deleted.
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::SVGFEImageElement):
+        (WebCore::SVGFEImageElement::parseAttribute):
+        (WebCore::SVGFEImageElement::build const):
+        (WebCore::SVGFEImageElement::registerAttributes): Deleted.
+        (WebCore::SVGFEImageElement::build): Deleted.
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build const):
+        (WebCore::SVGFEMergeElement::build): Deleted.
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::build const):
+        (WebCore::SVGFEMorphologyElement::build): Deleted.
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::build const):
+        (WebCore::SVGFEOffsetElement::build): Deleted.
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build const):
+        (WebCore::SVGFESpecularLightingElement::build): Deleted.
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::build const):
+        (WebCore::SVGFETileElement::build): Deleted.
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::build const):
+        (WebCore::SVGFETurbulenceElement::build): Deleted.
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::SVGFitToViewBox):
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::registerAttributes): Deleted.
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::preserveAspectRatio const):
+        (WebCore::SVGFitToViewBox::preserveAspectRatioAnimated):
+        (WebCore::SVGFitToViewBox::setPreserveAspectRatio):
+        (WebCore::SVGFitToViewBox::resetPreserveAspectRatio):
+        (WebCore::SVGFitToViewBox::preserveAspectRatioString const):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::registerAttributes):
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGImageElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGPatternElement.h:
+        * svg/SVGPreserveAspectRatio.h:
+        (WebCore::SVGPreserveAspectRatio::create):
+        (WebCore::SVGPreserveAspectRatio::align const):
+        (WebCore::SVGPreserveAspectRatio::setAlign):
+        (WebCore::SVGPreserveAspectRatio::meetOrSlice const):
+        (WebCore::SVGPreserveAspectRatio::setMeetOrSlice):
+        (WebCore::SVGPreserveAspectRatio::align): Deleted.
+        (WebCore::SVGPreserveAspectRatio::meetOrSlice): Deleted.
+        (WebCore::SVGPreserveAspectRatio::SVGPreserveAspectRatio): Deleted.
+        * svg/SVGSVGElement.h:
+        * svg/SVGStringList.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGViewSpec.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimationDiscreteFunctionImpl.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
+2019-03-19  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Remove the SVG property tear off objects of SVGAnimatedRect
         https://bugs.webkit.org/show_bug.cgi?id=195949
 

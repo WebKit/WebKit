@@ -44,6 +44,11 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
     , m_imageLoader(*this)
 {
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGImageElement::m_preserveAspectRatio>();
+    });
 }
 
 Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Document& document)
@@ -69,7 +74,6 @@ void SVGImageElement::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGImageElement::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGImageElement::m_width>();
     registry.registerAttribute<SVGNames::heightAttr, &SVGImageElement::m_height>();
-    registry.registerAttribute<SVGNames::preserveAspectRatioAttr, &SVGImageElement::m_preserveAspectRatio>();
 }
 
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -77,7 +81,7 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicStri
     if (name == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatioValue preserveAspectRatio;
         preserveAspectRatio.parse(value);
-        m_preserveAspectRatio.setValue(preserveAspectRatio);
+        m_preserveAspectRatio->setBaseValInternal(preserveAspectRatio);
         return;
     }
 

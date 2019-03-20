@@ -29,7 +29,6 @@
 #include "SVGAnimatedNumberOptionalNumber.h"
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedPointList.h"
-#include "SVGAnimatedPreserveAspectRatio.h"
 #include "SVGAnimatedString.h"
 #include "SVGAnimatedTransformList.h"
 
@@ -72,7 +71,7 @@ public:
         case AnimatedPoints:
             return std::make_unique<SVGAnimatedPointListAnimator>(animationElement, contextElement);
         case AnimatedPreserveAspectRatio:
-            return std::make_unique<SVGAnimatedPreserveAspectRatioAnimator>(animationElement, contextElement);
+            return nullptr;
         case AnimatedRect:
             return nullptr;
         case AnimatedString:

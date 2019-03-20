@@ -179,7 +179,7 @@ void SVGFESpecularLightingElement::lightElementAttributeChanged(const SVGFELight
     primitiveAttributeChanged(attrName);
 }
 
-RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filterBuilder, Filter& filter)
+RefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
 {
     auto input1 = filterBuilder->getEffectById(in1());
 

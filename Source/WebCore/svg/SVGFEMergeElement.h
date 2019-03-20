@@ -32,7 +32,7 @@ public:
 private:
     SVGFEMergeElement(const QualifiedName&, Document&);
 
-    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) override;
+    RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 };
 
 } // namespace WebCore
