@@ -54,7 +54,7 @@ JSObject* createInvalidInstanceofParameterErrorHasInstanceValueNotFunction(ExecS
 JSObject* createNotAConstructorError(ExecState*, JSValue);
 JSObject* createNotAFunctionError(ExecState*, JSValue);
 JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const String&);
-JSString* errorDescriptionForValue(ExecState*, JSValue);
+String errorDescriptionForValue(ExecState*, JSValue);
 
 JS_EXPORT_PRIVATE Exception* throwOutOfMemoryError(ExecState*, ThrowScope&);
 JS_EXPORT_PRIVATE Exception* throwStackOverflowError(ExecState*, ThrowScope&);

@@ -1,3 +1,13 @@
+2019-03-20  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JSC::createError needs to check for OOM in errorDescriptionForValue
+        https://bugs.webkit.org/show_bug.cgi?id=196032
+        <rdar://problem/46842740>
+
+        Reviewed by Mark Lam.
+
+        * stress/create-error-out-of-memory-rope-string.js: Added.
+
 2019-03-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, reduce # of iterations to avoid timing out after r242991

@@ -89,21 +89,26 @@ JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
     return createReferenceError(exec, message);
 }
     
-JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
+String errorDescriptionForValue(ExecState* exec, JSValue v)
 {
-    if (v.isString())
-        return jsNontrivialString(exec, makeString('"', asString(v)->value(exec), '"'));
+    if (v.isString()) {
+        String string = asString(v)->value(exec);
+        if (!string)
+            return string;
+        return tryMakeString('"', string, '"');
+    }
+
     if (v.isSymbol())
-        return jsNontrivialString(exec, asSymbol(v)->descriptiveString());
+        return asSymbol(v)->descriptiveString();
     if (v.isObject()) {
         VM& vm = exec->vm();
         CallData callData;
         JSObject* object = asObject(v);
         if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
-            return vm.smallStrings.functionString();
-        return jsString(exec, JSObject::calculatedClassName(object));
+            return vm.smallStrings.functionString()->value(exec);
+        return JSObject::calculatedClassName(object);
     }
-    return v.toString(exec);
+    return v.toString(exec)->value(exec);
 }
     
 static String defaultApproximateSourceError(const String& originalMessage, const String& sourceText)
@@ -269,8 +274,11 @@ JSObject* createError(ExecState* exec, JSValue value, const String& message, Err
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    String errorMessage = tryMakeString(errorDescriptionForValue(exec, value)->value(exec), ' ', message);
-    if (errorMessage.isNull())
+    String valueDescription = errorDescriptionForValue(exec, value);
+    if (!valueDescription)
+        return createOutOfMemoryError(exec);
+    String errorMessage = tryMakeString(valueDescription, ' ', message);
+    if (!errorMessage)
         return createOutOfMemoryError(exec);
     scope.assertNoException();
     JSObject* exception = createTypeError(exec, errorMessage, appender, runtimeTypeForValue(vm, value));
