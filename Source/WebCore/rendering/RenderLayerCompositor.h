@@ -65,22 +65,23 @@ enum class CompositingReason {
     Filters                                = 1 << 8,
     PositionFixed                          = 1 << 9,
     PositionSticky                         = 1 << 10,
-    OverflowScrollingTouch                 = 1 << 11,
+    OverflowScrolling                      = 1 << 11,
     Stacking                               = 1 << 12,
     Overlap                                = 1 << 13,
-    NegativeZIndexChildren                 = 1 << 14,
-    TransformWithCompositedDescendants     = 1 << 15,
-    OpacityWithCompositedDescendants       = 1 << 16,
-    MaskWithCompositedDescendants          = 1 << 17,
-    ReflectionWithCompositedDescendants    = 1 << 18,
-    FilterWithCompositedDescendants        = 1 << 19,
-    BlendingWithCompositedDescendants      = 1 << 20,
-    Perspective                            = 1 << 21,
-    Preserve3D                             = 1 << 22,
-    WillChange                             = 1 << 23,
-    Root                                   = 1 << 24,
-    IsolatesCompositedBlendingDescendants  = 1 << 25,
-    EmbeddedView                           = 1 << 26,
+    OverflowScrollPositioning              = 1 << 14,
+    NegativeZIndexChildren                 = 1 << 15,
+    TransformWithCompositedDescendants     = 1 << 16,
+    OpacityWithCompositedDescendants       = 1 << 17,
+    MaskWithCompositedDescendants          = 1 << 18,
+    ReflectionWithCompositedDescendants    = 1 << 19,
+    FilterWithCompositedDescendants        = 1 << 20,
+    BlendingWithCompositedDescendants      = 1 << 21,
+    Perspective                            = 1 << 22,
+    Preserve3D                             = 1 << 23,
+    WillChange                             = 1 << 24,
+    Root                                   = 1 << 25,
+    IsolatesCompositedBlendingDescendants  = 1 << 26,
+    EmbeddedView                           = 1 << 27,
 };
 
 enum class ScrollCoordinationRole {
@@ -475,7 +476,9 @@ private:
     bool requiresCompositingForPosition(RenderLayerModelObject&, const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForOverflowScrolling(const RenderLayer&, RequiresCompositingData&) const;
     bool requiresCompositingForEditableImage(RenderLayerModelObject&) const;
-    bool requiresCompositingForIndirectReason(RenderLayerModelObject&, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
+    bool requiresCompositingForIndirectReason(RenderLayerModelObject&, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
+
+    static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer&, const RenderLayer& compositedAncestor);
 
     static bool styleChangeMayAffectIndirectCompositingReasons(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 

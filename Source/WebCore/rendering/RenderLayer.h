@@ -1123,6 +1123,7 @@ private:
     enum class IndirectCompositingReason {
         None,
         Stacking,
+        OverflowScrollPositioning,
         Overlap,
         BackgroundLayer,
         GraphicalEffect, // opacity, mask, filter, transform etc.

@@ -276,8 +276,10 @@ void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString& errorStrin
     if (reasons.contains(CompositingReason::PositionSticky))
         compositingReasons->setPositionSticky(true);
 
-    if (reasons.contains(CompositingReason::OverflowScrollingTouch))
+    if (reasons.contains(CompositingReason::OverflowScrolling))
         compositingReasons->setOverflowScrollingTouch(true);
+
+    // FIXME: handle OverflowScrollPositioning (webkit.org/b/195985).
 
     if (reasons.contains(CompositingReason::Stacking))
         compositingReasons->setStacking(true);

@@ -955,7 +955,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Now check for reasons to become composited that depend on the state of descendant layers.
     RenderLayer::IndirectCompositingReason indirectCompositingReason;
     if (!willBeComposited && canBeComposited(layer)
-        && requiresCompositingForIndirectReason(layer.renderer(), childState.subtreeIsCompositing, anyDescendantHas3DTransform, indirectCompositingReason)) {
+        && requiresCompositingForIndirectReason(layer.renderer(), compositingState.compositingAncestor, childState.subtreeIsCompositing, anyDescendantHas3DTransform, indirectCompositingReason)) {
         layer.setIndirectCompositingReason(indirectCompositingReason);
         childState.compositingAncestor = &layer;
         overlapMap.pushCompositingContainer();
@@ -2228,6 +2228,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
     if (layer.mustCompositeForIndirectReasons()) {
         RenderLayer::IndirectCompositingReason reason = layer.indirectCompositingReason();
         return reason == RenderLayer::IndirectCompositingReason::Overlap
+            || reason == RenderLayer::IndirectCompositingReason::OverflowScrollPositioning
             || reason == RenderLayer::IndirectCompositingReason::Stacking
             || reason == RenderLayer::IndirectCompositingReason::BackgroundLayer
             || reason == RenderLayer::IndirectCompositingReason::GraphicalEffect
@@ -2284,13 +2285,16 @@ OptionSet<CompositingReason> RenderLayerCompositor::reasonsForCompositing(const 
         reasons.add(renderer.isFixedPositioned() ? CompositingReason::PositionFixed : CompositingReason::PositionSticky);
 
     if (requiresCompositingForOverflowScrolling(*renderer.layer(), queryData))
-        reasons.add(CompositingReason::OverflowScrollingTouch);
+        reasons.add(CompositingReason::OverflowScrolling);
 
     switch (renderer.layer()->indirectCompositingReason()) {
     case RenderLayer::IndirectCompositingReason::None:
         break;
     case RenderLayer::IndirectCompositingReason::Stacking:
         reasons.add(CompositingReason::Stacking);
+        break;
+    case RenderLayer::IndirectCompositingReason::OverflowScrollPositioning:
+        reasons.add(CompositingReason::OverflowScrollPositioning);
         break;
     case RenderLayer::IndirectCompositingReason::Overlap:
         reasons.add(CompositingReason::Overlap);
@@ -2374,8 +2378,8 @@ const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer& l
     if (reasons & CompositingReason::PositionSticky)
         return "position: sticky";
 
-    if (reasons & CompositingReason::OverflowScrollingTouch)
-        return "-webkit-overflow-scrolling: touch";
+    if (reasons & CompositingReason::OverflowScrolling)
+        return "async overflow scrolling";
 
     if (reasons & CompositingReason::Stacking)
         return "stacking";
@@ -2766,9 +2770,9 @@ bool RenderLayerCompositor::requiresCompositingForOverflowScrolling(const Render
 }
 
 // FIXME: why doesn't this handle the clipping cases?
-bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
+bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerModelObject& renderer, const RenderLayer* compositingAncestor, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason& reason) const
 {
-    auto& layer = *downcast<RenderBoxModelObject>(renderer).layer();
+    auto& layer = *renderer.layer();
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
@@ -2787,6 +2791,13 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
     
         if (renderer.style().hasPerspective()) {
             reason = RenderLayer::IndirectCompositingReason::Perspective;
+            return true;
+        }
+    }
+
+    if (renderer.isAbsolutelyPositioned() && compositingAncestor) {
+        if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositingAncestor)) {
+            reason = RenderLayer::IndirectCompositingReason::OverflowScrollPositioning;
             return true;
         }
     }
@@ -2892,10 +2903,9 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
 }
 
 // Is this layer's containingBlock an ancestor of scrollable overflow, and is the layer's compositing ancestor inside that overflow?
-static bool layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
+bool RenderLayerCompositor::layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
 {
-    ASSERT(layer.isComposited());
-    ASSERT(layer.renderer().style().position() == PositionType::Absolute);
+    ASSERT(layer.renderer().isAbsolutelyPositioned());
 
     bool sawCompositingAncestor = false;
     for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
