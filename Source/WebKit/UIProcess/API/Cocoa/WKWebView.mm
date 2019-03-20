@@ -1840,6 +1840,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 {
     RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _processWillSwap]", self);
     [self _processWillSwapOrDidExit];
+    if (_gestureController)
+        _gestureController->disconnectFromProcess();
 }
 
 - (void)_processDidExit
@@ -1852,7 +1854,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     [_scrollView setBackgroundColor:[UIColor whiteColor]];
     [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
     [_scrollView setZoomScale:1];
-    
+    _gestureController = nullptr;
 }
 
 - (void)_didRelaunchProcess
@@ -1860,6 +1862,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     RELEASE_LOG_IF_ALLOWED("%p -[WKWebView _didRelaunchProcess]", self);
     _hasScheduledVisibleRectUpdate = NO;
     _visibleContentRectUpdateScheduledFromScrollViewInStableState = YES;
+    if (_gestureController)
+        _gestureController->connectToProcess();
 }
 
 - (void)_didCommitLoadForMainFrame

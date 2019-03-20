@@ -1,3 +1,20 @@
+2019-03-20  Chris Dumez  <cdumez@apple.com>
+
+        Regression(PSON): ViewGestureController is not properly notified of process swaps on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=196029
+        <rdar://problem/48954651>
+
+        Reviewed by Tim Horton.
+
+        If there is a ViewGestureController when process swapping, make sure we disconnect it
+        from the old process and reconnect it to the new one. This matches what is done in
+        WebViewImpl for macOS (see r238356).
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processWillSwap]):
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didRelaunchProcess]):
+
 2019-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r243094): crash when launching minibrowser

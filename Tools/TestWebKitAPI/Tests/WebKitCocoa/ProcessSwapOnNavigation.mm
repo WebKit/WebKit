@@ -4957,8 +4957,6 @@ TEST(ProcessSwap, ProcessSwapInRelatedView)
     EXPECT_NE(applePID, webkitPID);
 }
 
-#if PLATFORM(MAC)
-
 TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
@@ -4983,7 +4981,9 @@ TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
     }];
 
     // Make sure there is a gesture controller.
+#if PLATFORM(MAC)
     [webView _setCustomSwipeViewsTopContentInset:2.];
+#endif
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
     [webView loadRequest:request];
@@ -5011,6 +5011,92 @@ TEST(ProcessSwap, TerminateProcessAfterProcessSwap)
     TestWebKitAPI::Util::run(&done);
     done = false;
 }
+
+TEST(ProcessSwap, SwapWithGestureController)
+{
+    @autoreleasepool {
+        auto processPoolConfiguration = psonProcessPoolConfiguration();
+        auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+        auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [webViewConfiguration setProcessPool:processPool.get()];
+        auto handler = adoptNS([[PSONScheme alloc] init]);
+        [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+        auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+        [webView setNavigationDelegate:delegate.get()];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+        [webView loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        // Ensure a ViewGestureController is created.
+        [webView setAllowsBackForwardNavigationGestures:YES];
+#if PLATFORM(MAC)
+        [webView _setCustomSwipeViewsTopContentInset:2.];
+#endif
+
+        request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
+        [webView loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    }
+}
+
+TEST(ProcessSwap, CrashWithGestureController)
+{
+    @autoreleasepool {
+        auto processPoolConfiguration = psonProcessPoolConfiguration();
+        auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+        auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [webViewConfiguration setProcessPool:processPool.get()];
+        auto handler = adoptNS([[PSONScheme alloc] init]);
+        [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+        auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        __block bool webProcessTerminated = false;
+        [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *) {
+            webProcessTerminated = true;
+        }];
+        [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+            done = true;
+        }];
+
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main.html"]];
+        [webView loadRequest:request];
+
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+
+        // Ensure a ViewGestureController is created.
+        [webView setAllowsBackForwardNavigationGestures:YES];
+#if PLATFORM(MAC)
+        [webView _setCustomSwipeViewsTopContentInset:2.];
+#endif
+
+        webProcessTerminated = false;
+        kill([webView _webProcessIdentifier], 9);
+
+        TestWebKitAPI::Util::run(&webProcessTerminated);
+
+        TestWebKitAPI::Util::spinRunLoop(1);
+
+        [webView reload];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+    }
+}
+
+#if PLATFORM(MAC)
 
 TEST(ProcessSwap, NavigateCrossOriginWithOpenee)
 {
