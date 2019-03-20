@@ -258,7 +258,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
     case PhantomCreateRest:
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
-        InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+        InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame();
         if (!inlineCallFrame) {
             // We don't need to record anything about how the arguments are to be recovered. It's just a
             // given that we can read them from the stack.

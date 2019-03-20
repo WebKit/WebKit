@@ -122,7 +122,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker
 {
     return computeForStubInfo(
         locker, baselineBlock, stubInfo, uid,
-        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex));
+        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex()));
 }
 
 PutByIdStatus PutByIdStatus::computeForStubInfo(
@@ -237,9 +237,9 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
 
 PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    CallLinkStatus::ExitSiteData callExitSiteData =
-        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex);
-    ExitFlag didExit = hasBadCacheExitSite(baselineBlock, codeOrigin.bytecodeIndex);
+    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(baselineBlock, bytecodeIndex);
+    ExitFlag didExit = hasBadCacheExitSite(baselineBlock, bytecodeIndex);
 
     for (ICStatusContext* context : contextStack) {
         ICStatus status = context->get(codeOrigin);
@@ -247,7 +247,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& b
         auto bless = [&] (const PutByIdStatus& result) -> PutByIdStatus {
             if (!context->isInlined(codeOrigin)) {
                 PutByIdStatus baselineResult = computeFor(
-                    baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit,
+                    baselineBlock, baselineMap, bytecodeIndex, uid, didExit,
                     callExitSiteData);
                 baselineResult.merge(result);
                 return baselineResult;
@@ -272,7 +272,7 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, ICStatusMap& b
             return bless(*status.putStatus);
     }
     
-    return computeFor(baselineBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit, callExitSiteData);
+    return computeFor(baselineBlock, baselineMap, bytecodeIndex, uid, didExit, callExitSiteData);
 }
 
 PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const StructureSet& set, UniquedStringImpl* uid, bool isDirect)

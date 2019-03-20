@@ -1268,10 +1268,10 @@ private:
 
             forEachEscapee([&] (HashMap<Node*, Allocation>& escapees, Node* where) {
                 for (Node* allocation : escapees.keys()) {
-                    InlineCallFrame* inlineCallFrame = allocation->origin.semantic.inlineCallFrame;
+                    InlineCallFrame* inlineCallFrame = allocation->origin.semantic.inlineCallFrame();
                     if (!inlineCallFrame)
                         continue;
-                    if ((inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs()) && inlineCallFrame != where->origin.semantic.inlineCallFrame)
+                    if ((inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs()) && inlineCallFrame != where->origin.semantic.inlineCallFrame())
                         m_sinkCandidates.remove(allocation);
                 }
             });

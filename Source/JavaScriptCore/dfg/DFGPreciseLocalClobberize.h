@@ -130,7 +130,7 @@ private:
                 // This reads from a constant buffer.
                 return;
             }
-            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = spread->child1()->origin.semantic.inlineCallFrame();
             unsigned numberOfArgumentsToSkip = spread->child1()->numberOfArgumentsToSkip();
             readFrame(inlineCallFrame, numberOfArgumentsToSkip);
         };
@@ -192,9 +192,9 @@ private:
             } else {
                 InlineCallFrame* inlineCallFrame;
                 if (m_node->hasArgumentsChild() && m_node->argumentsChild())
-                    inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame;
+                    inlineCallFrame = m_node->argumentsChild()->origin.semantic.inlineCallFrame();
                 else
-                    inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
+                    inlineCallFrame = m_node->origin.semantic.inlineCallFrame();
 
                 unsigned numberOfArgumentsToSkip = 0;
                 if (m_node->op() == GetMyArgumentByVal || m_node->op() == GetMyArgumentByValOutOfBounds) {
@@ -220,7 +220,7 @@ private:
         }
 
         case GetArgument: {
-            InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame();
             unsigned indexIncludingThis = m_node->argumentIndex();
             if (!inlineCallFrame) {
                 if (indexIncludingThis < static_cast<unsigned>(m_graph.m_codeBlock->numParameters()))
@@ -248,7 +248,7 @@ private:
                 m_read(VirtualRegister(i));
         
             // Read all of the inline arguments and call frame headers that we didn't already capture.
-            for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingTailCalls()) {
+            for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingTailCalls()) {
                 if (!inlineCallFrame->isStrictMode()) {
                     for (unsigned i = inlineCallFrame->argumentsWithFixup.size(); i--;)
                         m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));

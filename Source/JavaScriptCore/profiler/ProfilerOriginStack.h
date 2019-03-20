@@ -33,7 +33,7 @@
 namespace JSC {
 
 class CodeBlock;
-struct CodeOrigin;
+class CodeOrigin;
 
 namespace Profiler {
 

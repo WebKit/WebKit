@@ -187,19 +187,20 @@ void SpeculativeJIT::emitGetLength(InlineCallFrame* inlineCallFrame, GPRReg leng
 
 void SpeculativeJIT::emitGetLength(CodeOrigin origin, GPRReg lengthGPR, bool includeThis)
 {
-    emitGetLength(origin.inlineCallFrame, lengthGPR, includeThis);
+    emitGetLength(origin.inlineCallFrame(), lengthGPR, includeThis);
 }
 
 void SpeculativeJIT::emitGetCallee(CodeOrigin origin, GPRReg calleeGPR)
 {
-    if (origin.inlineCallFrame) {
-        if (origin.inlineCallFrame->isClosureCall) {
+    auto* inlineCallFrame = origin.inlineCallFrame();
+    if (inlineCallFrame) {
+        if (inlineCallFrame->isClosureCall) {
             m_jit.loadPtr(
-                JITCompiler::addressFor(origin.inlineCallFrame->calleeRecovery.virtualRegister()),
+                JITCompiler::addressFor(inlineCallFrame->calleeRecovery.virtualRegister()),
                 calleeGPR);
         } else {
             m_jit.move(
-                TrustedImmPtr::weakPointer(m_jit.graph(), origin.inlineCallFrame->calleeRecovery.constant().asCell()),
+                TrustedImmPtr::weakPointer(m_jit.graph(), inlineCallFrame->calleeRecovery.constant().asCell()),
                 calleeGPR);
         }
     } else
@@ -1863,7 +1864,7 @@ void SpeculativeJIT::compileCurrentBlock()
             dataLogF(
                 "SpeculativeJIT generating Node @%d (bc#%u) at JIT offset 0x%x",
                 (int)m_currentNode->index(),
-                m_currentNode->origin.semantic.bytecodeIndex, m_jit.debugOffset());
+                m_currentNode->origin.semantic.bytecodeIndex(), m_jit.debugOffset());
             dataLog("\n");
         }
 
@@ -3937,8 +3938,9 @@ void SpeculativeJIT::compileValueAdd(Node* node)
 #endif
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
+    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
     JITAddIC* addIC = m_jit.codeBlock()->addJITAddIC(arithProfile, instruction);
     auto repatchingFunction = operationValueAddOptimize;
     auto nonRepatchingFunction = operationValueAdd;
@@ -3961,8 +3963,9 @@ void SpeculativeJIT::compileValueSub(Node* node)
 #endif
 
         CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-        const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
+        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
         JITSubIC* subIC = m_jit.codeBlock()->addJITSubIC(arithProfile, instruction);
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
@@ -4553,8 +4556,9 @@ void SpeculativeJIT::compileArithSub(Node* node)
 void SpeculativeJIT::compileValueNegate(Node* node)
 {
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
+    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
     JITNegIC* negIC = m_jit.codeBlock()->addJITNegIC(arithProfile, instruction);
     auto repatchingFunction = operationArithNegateOptimize;
     auto nonRepatchingFunction = operationArithNegate;
@@ -4776,8 +4780,9 @@ void SpeculativeJIT::compileValueMul(Node* node)
 #endif
 
     CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
-    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(node->origin.semantic.bytecodeIndex);
-    const Instruction* instruction = baselineCodeBlock->instructions().at(node->origin.semantic.bytecodeIndex).ptr();
+    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
+    ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+    const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
     JITMulIC* mulIC = m_jit.codeBlock()->addJITMulIC(arithProfile, instruction);
     auto repatchingFunction = operationValueMulOptimize;
     auto nonRepatchingFunction = operationValueMul;
@@ -7231,9 +7236,9 @@ void SpeculativeJIT::compileForwardVarargs(Node* node)
     LoadVarargsData* data = node->loadVarargsData();
     InlineCallFrame* inlineCallFrame;
     if (node->child1())
-        inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
+        inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame();
     else
-        inlineCallFrame = node->origin.semantic.inlineCallFrame;
+        inlineCallFrame = node->origin.semantic.inlineCallFrame();
 
     GPRTemporary length(this);
     JSValueRegsTemporary temp(this);
@@ -7396,9 +7401,10 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
         
     unsigned knownLength;
     bool lengthIsKnown; // if false, lengthGPR will have the length.
-    if (node->origin.semantic.inlineCallFrame
-        && !node->origin.semantic.inlineCallFrame->isVarargs()) {
-        knownLength = node->origin.semantic.inlineCallFrame->argumentCountIncludingThis - 1;
+    auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
+    if (inlineCallFrame
+        && !inlineCallFrame->isVarargs()) {
+        knownLength = inlineCallFrame->argumentCountIncludingThis - 1;
         lengthIsKnown = true;
     } else {
         knownLength = UINT_MAX;
@@ -7471,17 +7477,17 @@ void SpeculativeJIT::compileCreateDirectArguments(Node* node)
             slowPath, this, resultGPR, structure, lengthGPR, minCapacity);
         addSlowPathGenerator(WTFMove(generator));
     }
-        
-    if (node->origin.semantic.inlineCallFrame) {
-        if (node->origin.semantic.inlineCallFrame->isClosureCall) {
+
+    if (inlineCallFrame) {
+        if (inlineCallFrame->isClosureCall) {
             m_jit.loadPtr(
                 JITCompiler::addressFor(
-                    node->origin.semantic.inlineCallFrame->calleeRecovery.virtualRegister()),
+                    inlineCallFrame->calleeRecovery.virtualRegister()),
                 scratch1GPR);
         } else {
             m_jit.move(
                 TrustedImmPtr::weakPointer(
-                    m_jit.graph(), node->origin.semantic.inlineCallFrame->calleeRecovery.constant().asCell()),
+                    m_jit.graph(), inlineCallFrame->calleeRecovery.constant().asCell()),
                 scratch1GPR);
         }
     } else

@@ -27,7 +27,6 @@
 
 #include "ClassInfo.h"
 #include "CodeLocation.h"
-#include "CodeOrigin.h"
 #include "IndexingType.h"
 #include "JITStubRoutine.h"
 #include "Structure.h"

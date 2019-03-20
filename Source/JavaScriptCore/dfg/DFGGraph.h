@@ -424,7 +424,7 @@ public:
     
     ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)
     {
-        return executableFor(codeOrigin.inlineCallFrame);
+        return executableFor(codeOrigin.inlineCallFrame());
     }
     
     CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
@@ -441,9 +441,9 @@ public:
     
     bool isStrictModeFor(CodeOrigin codeOrigin)
     {
-        if (!codeOrigin.inlineCallFrame)
+        if (!codeOrigin.inlineCallFrame())
             return m_codeBlock->isStrictMode();
-        return codeOrigin.inlineCallFrame->isStrictMode();
+        return codeOrigin.inlineCallFrame()->isStrictMode();
     }
     
     ECMAMode ecmaModeFor(CodeOrigin codeOrigin)
@@ -463,7 +463,7 @@ public:
     
     bool hasExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
     {
-        return baselineCodeBlockFor(codeOrigin)->unlinkedCodeBlock()->hasExitSite(FrequentExitSite(codeOrigin.bytecodeIndex, exitKind));
+        return baselineCodeBlockFor(codeOrigin)->unlinkedCodeBlock()->hasExitSite(FrequentExitSite(codeOrigin.bytecodeIndex(), exitKind));
     }
     
     bool hasExitSite(Node* node, ExitKind exitKind)
@@ -827,7 +827,7 @@ public:
         CodeOrigin* codeOriginPtr = &codeOrigin;
         
         for (;;) {
-            InlineCallFrame* inlineCallFrame = codeOriginPtr->inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = codeOriginPtr->inlineCallFrame();
             VirtualRegister stackOffset(inlineCallFrame ? inlineCallFrame->stackOffset : 0);
             
             if (inlineCallFrame) {
@@ -839,7 +839,7 @@ public:
             
             CodeBlock* codeBlock = baselineCodeBlockFor(inlineCallFrame);
             FullBytecodeLiveness& fullLiveness = livenessFor(codeBlock);
-            const FastBitVector& liveness = fullLiveness.getLiveness(codeOriginPtr->bytecodeIndex);
+            const FastBitVector& liveness = fullLiveness.getLiveness(codeOriginPtr->bytecodeIndex());
             for (unsigned relativeLocal = codeBlock->numCalleeLocals(); relativeLocal--;) {
                 VirtualRegister reg = stackOffset + virtualRegisterForLocal(relativeLocal);
                 

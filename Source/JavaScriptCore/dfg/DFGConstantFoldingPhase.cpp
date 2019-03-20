@@ -363,7 +363,7 @@ private:
                 
                 unsigned index = checkedIndex.unsafeGet();
                 Node* arguments = node->child1().node();
-                InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
+                InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame();
                 
                 // Don't try to do anything if the index is known to be outside our static bounds. Note
                 // that our static bounds are usually strictly larger than the dynamic bounds. The

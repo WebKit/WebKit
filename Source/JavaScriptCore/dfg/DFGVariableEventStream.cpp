@@ -147,8 +147,9 @@ unsigned VariableEventStream::reconstruct(
         }
     };
 
-    if (codeOrigin.inlineCallFrame)
-        numVariables = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame)->numCalleeLocals() + VirtualRegister(codeOrigin.inlineCallFrame->stackOffset).toLocal() + 1;
+    auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+    if (inlineCallFrame)
+        numVariables = baselineCodeBlockForInlineCallFrame(inlineCallFrame)->numCalleeLocals() + VirtualRegister(inlineCallFrame->stackOffset).toLocal() + 1;
     else
         numVariables = baselineCodeBlock->numCalleeLocals();
     

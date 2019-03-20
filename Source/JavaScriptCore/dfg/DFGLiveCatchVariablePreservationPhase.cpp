@@ -125,12 +125,12 @@ public:
             if (origin == cachedCodeOrigin)
                 return cachedHandlerResult;
 
-            unsigned bytecodeIndexToCheck = origin.bytecodeIndex;
+            unsigned bytecodeIndexToCheck = origin.bytecodeIndex();
 
             cachedCodeOrigin = origin;
 
             while (1) {
-                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
+                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame();
                 CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
                 if (HandlerInfo* handler = codeBlock->handlerForBytecodeOffset(bytecodeIndexToCheck)) {
                     liveAtCatchHead.clearAll();
@@ -149,7 +149,7 @@ public:
                     break;
                 }
 
-                bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex;
+                bytecodeIndexToCheck = inlineCallFrame->directCaller.bytecodeIndex();
                 origin = inlineCallFrame->directCaller;
             }
 
@@ -199,7 +199,7 @@ public:
             }
 
             if (currentExceptionHandler && (node->op() == SetLocal || node->op() == SetArgument)) {
-                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame();
                 if (inlineCallFrame)
                     seenInlineCallFrames.add(inlineCallFrame);
                 VirtualRegister operand = node->local();

@@ -302,7 +302,7 @@ CallLinkStatus CallLinkStatus::computeFor(
 {
     if (CallLinkStatusInternal::verbose)
         dataLog("Figuring out call profiling for ", codeOrigin, "\n");
-    ExitSiteData exitSiteData = computeExitSiteData(profiledBlock, codeOrigin.bytecodeIndex);
+    ExitSiteData exitSiteData = computeExitSiteData(profiledBlock, codeOrigin.bytecodeIndex());
     if (CallLinkStatusInternal::verbose) {
         dataLog("takesSlowPath = ", exitSiteData.takesSlowPath, "\n");
         dataLog("badFunction = ", exitSiteData.badFunction, "\n");
@@ -346,7 +346,7 @@ CallLinkStatus CallLinkStatus::computeFor(
         
         auto bless = [&] (CallLinkStatus& result) {
             if (!context->isInlined(codeOrigin))
-                result.merge(computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap, exitSiteData));
+                result.merge(computeFor(profiledBlock, codeOrigin.bytecodeIndex(), baselineMap, exitSiteData));
         };
         
         auto checkInfo = [&] () -> CallLinkStatus {
@@ -393,7 +393,7 @@ CallLinkStatus CallLinkStatus::computeFor(
             return result;
     }
     
-    return computeFor(profiledBlock, codeOrigin.bytecodeIndex, baselineMap, exitSiteData);
+    return computeFor(profiledBlock, codeOrigin.bytecodeIndex(), baselineMap, exitSiteData);
 }
 #endif
 

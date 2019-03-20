@@ -39,7 +39,8 @@ ICStatus ICStatusContext::get(CodeOrigin codeOrigin) const
 
 bool ICStatusContext::isInlined(CodeOrigin codeOrigin) const
 {
-    return codeOrigin.inlineCallFrame && codeOrigin.inlineCallFrame != inlineCallFrame;
+    auto* originInlineCallFrame = codeOrigin.inlineCallFrame();
+    return originInlineCallFrame && originInlineCallFrame != inlineCallFrame;
 }
 
 ExitingInlineKind ICStatusContext::inlineKind(CodeOrigin codeOrigin) const

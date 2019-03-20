@@ -3430,7 +3430,7 @@ private:
             return false;
         CodeBlock* profiledBlock = m_graph.baselineCodeBlockFor(node->origin.semantic);
         ArrayProfile* arrayProfile = 
-            profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex);
+            profiledBlock->getArrayProfile(node->origin.semantic.bytecodeIndex());
         ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions, Array::Read);
         if (arrayProfile) {
             ConcurrentJSLocker locker(profiledBlock->m_lock);

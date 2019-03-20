@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "CodeBlockHash.h"
-#include "ExitingInlineKind.h"
 #include <limits.h>
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
@@ -39,42 +37,105 @@ class CodeBlock;
 struct DumpContext;
 struct InlineCallFrame;
 
-struct CodeOrigin {
-    static const unsigned invalidBytecodeIndex = UINT_MAX;
-    
-    // Bytecode offset that you'd use to re-execute this instruction, and the
-    // bytecode index of the bytecode instruction that produces some result that
-    // you're interested in (used for mapping Nodes whose values you're using
-    // to bytecode instructions that have the appropriate value profile).
-    unsigned bytecodeIndex;
-    
-    InlineCallFrame* inlineCallFrame;
-    
+class CodeOrigin {
+public:
     CodeOrigin()
-        : bytecodeIndex(invalidBytecodeIndex)
-        , inlineCallFrame(0)
+#if CPU(ADDRESS64)
+        : m_compositeValue(buildCompositeValue(nullptr, s_invalidBytecodeIndex))
+#else
+        : m_bytecodeIndex(s_invalidBytecodeIndex)
+        , m_inlineCallFrame(nullptr)
+#endif
     {
     }
     
     CodeOrigin(WTF::HashTableDeletedValueType)
-        : bytecodeIndex(invalidBytecodeIndex)
-        , inlineCallFrame(deletedMarker())
+#if CPU(ADDRESS64)
+        : m_compositeValue(buildCompositeValue(deletedMarker(), s_invalidBytecodeIndex))
+#else
+        : m_bytecodeIndex(s_invalidBytecodeIndex)
+        , m_inlineCallFrame(deletedMarker())
+#endif
     {
     }
     
-    explicit CodeOrigin(unsigned bytecodeIndex, InlineCallFrame* inlineCallFrame = 0)
-        : bytecodeIndex(bytecodeIndex)
-        , inlineCallFrame(inlineCallFrame)
+    explicit CodeOrigin(unsigned bytecodeIndex, InlineCallFrame* inlineCallFrame = nullptr)
+#if CPU(ADDRESS64)
+        : m_compositeValue(buildCompositeValue(inlineCallFrame, bytecodeIndex))
+#else
+        : m_bytecodeIndex(bytecodeIndex)
+        , m_inlineCallFrame(inlineCallFrame)
+#endif
     {
-        ASSERT(bytecodeIndex < invalidBytecodeIndex);
+        ASSERT(bytecodeIndex < s_invalidBytecodeIndex);
+#if CPU(ADDRESS64)
+        ASSERT(!(bitwise_cast<uintptr_t>(inlineCallFrame) & ~s_maskCompositeValueForPointer));
+#endif
     }
     
-    bool isSet() const { return bytecodeIndex != invalidBytecodeIndex; }
+#if CPU(ADDRESS64)
+    CodeOrigin& operator=(const CodeOrigin& other)
+    {
+        if (this != &other) {
+            if (UNLIKELY(isOutOfLine()))
+                delete outOfLineCodeOrigin();
+            
+            if (UNLIKELY(other.isOutOfLine()))
+                m_compositeValue = buildCompositeValue(other.inlineCallFrame(), other.bytecodeIndex());
+            else
+                m_compositeValue = other.m_compositeValue;
+        }
+        return *this;
+    }
+    CodeOrigin& operator=(CodeOrigin&& other)
+    {
+        if (this != &other) {
+            if (UNLIKELY(isOutOfLine()))
+                delete outOfLineCodeOrigin();
+
+            m_compositeValue = std::exchange(other.m_compositeValue, 0);
+        }
+        return *this;
+    }
+
+    CodeOrigin(const CodeOrigin& other)
+    {
+        // We don't use the member initializer list because it would not let us optimize the common case where there is no out-of-line storage
+        // (in which case we don't have to extract the components of the composite value just to reassemble it).
+        if (UNLIKELY(other.isOutOfLine()))
+            m_compositeValue = buildCompositeValue(other.inlineCallFrame(), other.bytecodeIndex());
+        else
+            m_compositeValue = other.m_compositeValue;
+    }
+    CodeOrigin(CodeOrigin&& other)
+        : m_compositeValue(std::exchange(other.m_compositeValue, 0))
+    {
+    }
+
+    ~CodeOrigin()
+    {
+        if (UNLIKELY(isOutOfLine()))
+            delete outOfLineCodeOrigin();
+    }
+#endif
+    
+    bool isSet() const
+    {
+#if CPU(ADDRESS64)
+        return !(m_compositeValue & s_maskIsBytecodeIndexInvalid);
+#else
+        return m_bytecodeIndex != s_invalidBytecodeIndex;
+#endif
+    }
     explicit operator bool() const { return isSet(); }
     
     bool isHashTableDeletedValue() const
     {
-        return bytecodeIndex == invalidBytecodeIndex && !!inlineCallFrame;
+#if CPU(ADDRESS64)
+        return !isSet() && (m_compositeValue & s_maskCompositeValueForPointer);
+#else
+        return m_bytecodeIndex == s_invalidBytecodeIndex && !!m_inlineCallFrame;
+#endif
     }
     
     // The inline depth is the depth of the inline stack, so 1 = not inlined,
@@ -86,13 +147,6 @@ struct CodeOrigin {
     CodeBlock* codeOriginOwner() const;
     
     int stackOffset() const;
-    
-    static unsigned inlineDepthForCallFrame(InlineCallFrame*);
-    
-    ExitingInlineKind exitingInlineKind() const
-    {
-        return inlineCallFrame ? ExitFromInlined : ExitFromNotInlined;
-    }
     
     unsigned hash() const;
     bool operator==(const CodeOrigin& other) const;
@@ -112,24 +166,122 @@ struct CodeOrigin {
     
     JS_EXPORT_PRIVATE void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
-    
+
+    unsigned bytecodeIndex() const
+    {
+#if CPU(ADDRESS64)
+        if (!isSet())
+            return s_invalidBytecodeIndex;
+        if (UNLIKELY(isOutOfLine()))
+            return outOfLineCodeOrigin()->bytecodeIndex;
+        return m_compositeValue >> (64 - s_freeBitsAtTop);
+#else
+        return m_bytecodeIndex;
+#endif
+    }
+
+    InlineCallFrame* inlineCallFrame() const
+    {
+#if CPU(ADDRESS64)
+        if (UNLIKELY(isOutOfLine()))
+            return outOfLineCodeOrigin()->inlineCallFrame;
+        return bitwise_cast<InlineCallFrame*>(m_compositeValue & s_maskCompositeValueForPointer);
+#else
+        return m_inlineCallFrame;
+#endif
+    }
+
 private:
+    static constexpr unsigned s_invalidBytecodeIndex = UINT_MAX;
+
+#if CPU(ADDRESS64)
+    static constexpr uintptr_t s_maskIsOutOfLine = 1;
+    static constexpr uintptr_t s_maskIsBytecodeIndexInvalid = 2;
+
+    struct OutOfLineCodeOrigin {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        InlineCallFrame* inlineCallFrame;
+        unsigned bytecodeIndex;
+        
+        OutOfLineCodeOrigin(InlineCallFrame* inlineCallFrame, unsigned bytecodeIndex)
+            : inlineCallFrame(inlineCallFrame)
+            , bytecodeIndex(bytecodeIndex)
+        {
+        }
+    };
+    
+    bool isOutOfLine() const
+    {
+        return m_compositeValue & s_maskIsOutOfLine;
+    }
+    OutOfLineCodeOrigin* outOfLineCodeOrigin() const
+    {
+        ASSERT(isOutOfLine());
+        return bitwise_cast<OutOfLineCodeOrigin*>(m_compositeValue & s_maskCompositeValueForPointer);
+    }
+#endif
+
     static InlineCallFrame* deletedMarker()
     {
-        return bitwise_cast<InlineCallFrame*>(static_cast<uintptr_t>(1));
+        auto value = static_cast<uintptr_t>(1 << 3);
+#if CPU(ADDRESS64)
+        ASSERT(value & s_maskCompositeValueForPointer);
+        ASSERT(!(value & ~s_maskCompositeValueForPointer));
+#endif
+        return bitwise_cast<InlineCallFrame*>(value);
     }
+
+#if CPU(X86_64) && CPU(ADDRESS64)
+    static constexpr unsigned s_freeBitsAtTop = 16;
+    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000fffffffffff8;
+#elif CPU(ARM64) && CPU(ADDRESS64)
+    static constexpr unsigned s_freeBitsAtTop = 28;
+    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000000ffffffff8;
+#endif
+#if CPU(ADDRESS64)
+    static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, unsigned bytecodeIndex)
+    {
+        if (bytecodeIndex == s_invalidBytecodeIndex)
+            return bitwise_cast<uintptr_t>(inlineCallFrame) | s_maskIsBytecodeIndexInvalid;
+
+        if (UNLIKELY(bytecodeIndex >= 1 << s_freeBitsAtTop)) {
+            auto* outOfLine = new OutOfLineCodeOrigin(inlineCallFrame, bytecodeIndex);
+            return bitwise_cast<uintptr_t>(outOfLine) | s_maskIsOutOfLine;
+        }
+
+        uintptr_t encodedBytecodeIndex = static_cast<uintptr_t>(bytecodeIndex) << (64 - s_freeBitsAtTop);
+        ASSERT(!(encodedBytecodeIndex & bitwise_cast<uintptr_t>(inlineCallFrame)));
+        return encodedBytecodeIndex | bitwise_cast<uintptr_t>(inlineCallFrame);
+    }
+
+    // The bottom bit indicates whether to look at an out-of-line implementation (because of a bytecode index which is too big for us to store).
+    // The next bit indicates whether this is an invalid bytecode (which depending on the InlineCallFrame* can either indicate an unset CodeOrigin,
+    // or a deletion marker for a hash table).
+    // The next bit is free
+    // The next 64-s_freeBitsAtTop-3 are the InlineCallFrame* or the OutOfLineCodeOrigin*
+    // Finally the last s_freeBitsAtTop are the bytecodeIndex if it is inline
+    uintptr_t m_compositeValue;
+#else
+    unsigned m_bytecodeIndex;
+    InlineCallFrame* m_inlineCallFrame;
+#endif
 };
 
 inline unsigned CodeOrigin::hash() const
 {
-    return WTF::IntHash<unsigned>::hash(bytecodeIndex) +
-        WTF::PtrHash<InlineCallFrame*>::hash(inlineCallFrame);
+    return WTF::IntHash<unsigned>::hash(bytecodeIndex()) +
+        WTF::PtrHash<InlineCallFrame*>::hash(inlineCallFrame());
 }
 
 inline bool CodeOrigin::operator==(const CodeOrigin& other) const
 {
-    return bytecodeIndex == other.bytecodeIndex
-        && inlineCallFrame == other.inlineCallFrame;
+#if CPU(ADDRESS64)
+    if (m_compositeValue == other.m_compositeValue)
+        return true;
+#endif
+    return bytecodeIndex() == other.bytecodeIndex()
+        && inlineCallFrame() == other.inlineCallFrame();
 }
 
 struct CodeOriginHash {

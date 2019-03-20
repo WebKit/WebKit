@@ -69,7 +69,7 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
     out.print(briefFunctionInformation(), ":<", RawPointer(baselineCodeBlock.get()));
     if (isStrictMode())
         out.print(" (StrictMode)");
-    out.print(", bc#", directCaller.bytecodeIndex, ", ", static_cast<Kind>(kind));
+    out.print(", bc#", directCaller.bytecodeIndex(), ", ", static_cast<Kind>(kind));
     if (isClosureCall)
         out.print(", closure call");
     else

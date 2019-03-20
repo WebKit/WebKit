@@ -68,12 +68,13 @@ void forAllKilledOperands(Graph& graph, Node* nodeBefore, Node* nodeAfter, const
     
     // It's easier to do this if the inline call frames are the same. This is way faster than the
     // other loop, below.
-    if (before.inlineCallFrame == after.inlineCallFrame) {
-        int stackOffset = before.inlineCallFrame ? before.inlineCallFrame->stackOffset : 0;
-        CodeBlock* codeBlock = graph.baselineCodeBlockFor(before.inlineCallFrame);
+    auto* beforeInlineCallFrame = before.inlineCallFrame();
+    if (beforeInlineCallFrame == after.inlineCallFrame()) {
+        int stackOffset = beforeInlineCallFrame ? beforeInlineCallFrame->stackOffset : 0;
+        CodeBlock* codeBlock = graph.baselineCodeBlockFor(beforeInlineCallFrame);
         FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
-        const FastBitVector& liveBefore = fullLiveness.getLiveness(before.bytecodeIndex);
-        const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex);
+        const FastBitVector& liveBefore = fullLiveness.getLiveness(before.bytecodeIndex());
+        const FastBitVector& liveAfter = fullLiveness.getLiveness(after.bytecodeIndex());
         
         (liveBefore & ~liveAfter).forEachSetBit(
             [&] (size_t relativeLocal) {

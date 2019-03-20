@@ -2056,9 +2056,10 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
 JSGlobalObject* CodeBlock::globalObjectFor(CodeOrigin codeOrigin)
 {
-    if (!codeOrigin.inlineCallFrame)
+    auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+    if (!inlineCallFrame)
         return globalObject();
-    return codeOrigin.inlineCallFrame->baselineCodeBlock->globalObject();
+    return inlineCallFrame->baselineCodeBlock->globalObject();
 }
 
 class RecursionCheckFunctor {
@@ -2403,7 +2404,7 @@ auto CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState
     // Otherwise, we should use the normal reoptimization trigger.
 
     bool didTryToEnterInLoop = false;
-    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
+    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
         if (inlineCallFrame->baselineCodeBlock->ownerExecutable()->didTryToEnterInLoop()) {
             didTryToEnterInLoop = true;
             break;
@@ -3175,7 +3176,7 @@ Optional<unsigned> CodeBlock::bytecodeOffsetFromCallSiteIndex(CallSiteIndex call
 #if ENABLE(DFG_JIT)
         RELEASE_ASSERT(canGetCodeOrigin(callSiteIndex));
         CodeOrigin origin = codeOrigin(callSiteIndex);
-        bytecodeOffset = origin.bytecodeIndex;
+        bytecodeOffset = origin.bytecodeIndex();
 #else
         RELEASE_ASSERT_NOT_REACHED();
 #endif

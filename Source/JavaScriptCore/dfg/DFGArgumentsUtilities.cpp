@@ -54,7 +54,7 @@ bool argumentsInvolveStackSlot(InlineCallFrame* inlineCallFrame, VirtualRegister
 
 bool argumentsInvolveStackSlot(Node* candidate, VirtualRegister reg)
 {
-    return argumentsInvolveStackSlot(candidate->origin.semantic.inlineCallFrame, reg);
+    return argumentsInvolveStackSlot(candidate->origin.semantic.inlineCallFrame(), reg);
 }
 
 Node* emitCodeToGetArgumentsArrayLength(
@@ -106,7 +106,7 @@ Node* emitCodeToGetArgumentsArrayLength(
             nodeIndex, origin, jsNumber(arguments->castOperand<JSImmutableButterfly*>()->length()));
     }
     
-    InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
+    InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame();
 
     unsigned numberOfArgumentsToSkip = 0;
     if (arguments->op() == CreateRest || arguments->op() == PhantomCreateRest)

@@ -579,9 +579,9 @@ void SpeculativeJIT::emitCall(Node* node)
             JITCompiler::JumpList slowCase;
             InlineCallFrame* inlineCallFrame;
             if (node->child3())
-                inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame;
+                inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame();
             else
-                inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                inlineCallFrame = node->origin.semantic.inlineCallFrame();
             // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
             emitSetupVarargsFrameFastCase(*m_jit.vm(), m_jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
             JITCompiler::Jump done = m_jit.jump();
@@ -720,10 +720,11 @@ void SpeculativeJIT::emitCall(Node* node)
     }
 
     CodeOrigin staticOrigin = node->origin.semantic;
-    ASSERT(!isTail || !staticOrigin.inlineCallFrame || !staticOrigin.inlineCallFrame->getCallerSkippingTailCalls());
-    ASSERT(!isEmulatedTail || (staticOrigin.inlineCallFrame && staticOrigin.inlineCallFrame->getCallerSkippingTailCalls()));
+    InlineCallFrame* staticInlineCallFrame = staticOrigin.inlineCallFrame();
+    ASSERT(!isTail || !staticInlineCallFrame || !staticInlineCallFrame->getCallerSkippingTailCalls());
+    ASSERT(!isEmulatedTail || (staticInlineCallFrame && staticInlineCallFrame->getCallerSkippingTailCalls()));
     CodeOrigin dynamicOrigin =
-        isEmulatedTail ? *staticOrigin.inlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
+        isEmulatedTail ? *staticInlineCallFrame->getCallerSkippingTailCalls() : staticOrigin;
 
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(dynamicOrigin, m_stream->size());
     
@@ -5014,7 +5015,7 @@ void SpeculativeJIT::compile(Node* node)
 
         Vector<SilentRegisterSavePlan> savePlans;
         silentSpillAllRegistersImpl(false, savePlans, InvalidGPRReg);
-        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
+        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
 
         addSlowPathGeneratorLambda([=]() {
             callTierUp.link(&m_jit);
@@ -5043,12 +5044,12 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case CheckTierUpAndOSREnter: {
-        ASSERT(!node->origin.semantic.inlineCallFrame);
+        ASSERT(!node->origin.semantic.inlineCallFrame());
 
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
 
-        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
+        unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
         auto triggerIterator = m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex);
         DFG_ASSERT(m_jit.graph(), node, triggerIterator != m_jit.jitCode()->tierUpEntryTriggers.end());
         JITCode::TriggerReason* forceEntryTrigger = &(m_jit.jitCode()->tierUpEntryTriggers.find(bytecodeIndex)->value);

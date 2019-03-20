@@ -278,7 +278,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     case PhantomCreateRest:
     case PhantomDirectArguments:
     case PhantomClonedArguments: {
-        if (!materialization->origin().inlineCallFrame) {
+        if (!materialization->origin().inlineCallFrame()) {
             switch (materialization->type()) {
             case PhantomDirectArguments:
                 return DirectArguments::createByCopying(exec);
@@ -303,7 +303,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
 
         // First figure out the argument count. If there isn't one then we represent the machine frame.
         unsigned argumentCount = 0;
-        if (materialization->origin().inlineCallFrame->isVarargs()) {
+        if (materialization->origin().inlineCallFrame()->isVarargs()) {
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location() != PromotedLocationDescriptor(ArgumentCountPLoc))
@@ -312,11 +312,11 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 break;
             }
         } else
-            argumentCount = materialization->origin().inlineCallFrame->argumentCountIncludingThis;
+            argumentCount = materialization->origin().inlineCallFrame()->argumentCountIncludingThis;
         RELEASE_ASSERT(argumentCount);
         
         JSFunction* callee = nullptr;
-        if (materialization->origin().inlineCallFrame->isClosureCall) {
+        if (materialization->origin().inlineCallFrame()->isClosureCall) {
             for (unsigned i = materialization->properties().size(); i--;) {
                 const ExitPropertyValue& property = materialization->properties()[i];
                 if (property.location() != PromotedLocationDescriptor(ArgumentsCalleePLoc))
@@ -326,7 +326,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 break;
             }
         } else
-            callee = materialization->origin().inlineCallFrame->calleeConstant();
+            callee = materialization->origin().inlineCallFrame()->calleeConstant();
         RELEASE_ASSERT(callee);
         
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(
@@ -474,7 +474,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock()->baselineAlternative());
-        const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex).ptr();
+        const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex()).ptr();
         if (!currentInstruction->is<OpNewArrayBuffer>()) {
             // This case can happen if Object.keys, an OpCall is first converted into a NewArrayBuffer which is then converted into a PhantomNewArrayBuffer.
             // There is no need to update the array allocation profile in that case.

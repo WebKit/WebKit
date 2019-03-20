@@ -147,7 +147,7 @@ public:
                         auto checkOp = CheckStructure;
                         if (SpecCellCheck & SpecEmpty) {
                             VirtualRegister local = node->variableAccessData()->local();
-                            auto* inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                            auto* inlineCallFrame = node->origin.semantic.inlineCallFrame();
                             if ((local - (inlineCallFrame ? inlineCallFrame->stackOffset : 0)) == virtualRegisterForArgument(0)) {
                                 // |this| can be the TDZ value. The call entrypoint won't have |this| as TDZ,
                                 // but a catch or a loop OSR entry may have |this| be TDZ.

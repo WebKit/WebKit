@@ -1902,8 +1902,9 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-        const Instruction* instruction = baselineCodeBlock->instructions().at(m_node->origin.semantic.bytecodeIndex).ptr();
+        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
         auto repatchingFunction = operationValueAddOptimize;
         auto nonRepatchingFunction = operationValueAdd;
         compileBinaryMathIC<JITAddGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
@@ -1921,8 +1922,9 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-        const Instruction* instruction = baselineCodeBlock->instructions().at(m_node->origin.semantic.bytecodeIndex).ptr();
+        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
         auto repatchingFunction = operationValueSubOptimize;
         auto nonRepatchingFunction = operationValueSub;
         compileBinaryMathIC<JITSubGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
@@ -1940,8 +1942,9 @@ private:
         }
 
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-        const Instruction* instruction = baselineCodeBlock->instructions().at(m_node->origin.semantic.bytecodeIndex).ptr();
+        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
         auto repatchingFunction = operationValueMulOptimize;
         auto nonRepatchingFunction = operationValueMul;
         compileBinaryMathIC<JITMulGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
@@ -2201,8 +2204,9 @@ private:
             }
 
             CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-            const Instruction* instruction = baselineCodeBlock->instructions().at(m_node->origin.semantic.bytecodeIndex).ptr();
+            unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+            ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+            const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
             auto repatchingFunction = operationValueSubOptimize;
             auto nonRepatchingFunction = operationValueSub;
             compileBinaryMathIC<JITSubGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
@@ -2833,8 +2837,9 @@ private:
     {
         DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
         CodeBlock* baselineCodeBlock = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic);
-        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-        const Instruction* instruction = baselineCodeBlock->instructions().at(m_node->origin.semantic.bytecodeIndex).ptr();
+        unsigned bytecodeIndex = m_node->origin.semantic.bytecodeIndex();
+        ArithProfile* arithProfile = baselineCodeBlock->arithProfileForBytecodeOffset(bytecodeIndex);
+        const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex).ptr();
         auto repatchingFunction = operationArithNegateOptimize;
         auto nonRepatchingFunction = operationArithNegate;
         compileUnaryMathIC<JITNegGenerator>(arithProfile, instruction, repatchingFunction, nonRepatchingFunction);
@@ -4242,7 +4247,7 @@ private:
     
     void compileGetMyArgumentByVal()
     {
-        InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+        InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame();
         
         LValue originalIndex = lowInt32(m_node->child2());
         
@@ -5816,7 +5821,7 @@ private:
                     CheckValue* lengthCheck = nullptr;
                     if (use->op() == PhantomSpread) {
                         if (use->child1()->op() == PhantomCreateRest) {
-                            InlineCallFrame* inlineCallFrame = use->child1()->origin.semantic.inlineCallFrame;
+                            InlineCallFrame* inlineCallFrame = use->child1()->origin.semantic.inlineCallFrame();
                             unsigned numberOfArgumentsToSkip = use->child1()->numberOfArgumentsToSkip();
                             LValue spreadLength = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
                                 return getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
@@ -5857,7 +5862,7 @@ private:
                             index = m_out.add(index, m_out.constIntPtr(array->length()));
                         } else {
                             RELEASE_ASSERT(use->child1()->op() == PhantomCreateRest);
-                            InlineCallFrame* inlineCallFrame = use->child1()->origin.semantic.inlineCallFrame;
+                            InlineCallFrame* inlineCallFrame = use->child1()->origin.semantic.inlineCallFrame();
                             unsigned numberOfArgumentsToSkip = use->child1()->numberOfArgumentsToSkip();
 
                             LValue length = m_out.zeroExtPtr(cachedSpreadLengths.get(inlineCallFrame));
@@ -6049,7 +6054,7 @@ private:
             LBasicBlock continuation = m_out.newBlock();
             LBasicBlock lastNext = m_out.insertNewBlocksBefore(loopHeader);
 
-            InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame();
             unsigned numberOfArgumentsToSkip = m_node->child1()->numberOfArgumentsToSkip();
             LValue sourceStart = getArgumentsStart(inlineCallFrame, numberOfArgumentsToSkip);
             LValue length = getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
@@ -8045,7 +8050,7 @@ private:
             }
 
             RELEASE_ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
             unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
             LValue length = cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
                 return m_out.zeroExtPtr(this->getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip));
@@ -8208,7 +8213,7 @@ private:
                         }
 
                         RELEASE_ASSERT(target->op() == PhantomCreateRest);
-                        InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame;
+                        InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
 
                         unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
 
@@ -8488,9 +8493,9 @@ private:
                     CCallHelpers::JumpList slowCase;
                     InlineCallFrame* inlineCallFrame;
                     if (node->child3())
-                        inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame;
+                        inlineCallFrame = node->child3()->origin.semantic.inlineCallFrame();
                     else
-                        inlineCallFrame = node->origin.semantic.inlineCallFrame;
+                        inlineCallFrame = node->origin.semantic.inlineCallFrame();
 
                     // emitSetupVarargsFrameFastCase modifies the stack pointer if it succeeds.
                     emitSetupVarargsFrameFastCase(*vm, jit, scratchGPR2, scratchGPR1, scratchGPR2, scratchGPR3, inlineCallFrame, data->firstVarArgOffset, slowCase);
@@ -8734,9 +8739,9 @@ private:
         LoadVarargsData* data = m_node->loadVarargsData();
         InlineCallFrame* inlineCallFrame;
         if (m_node->child1())
-            inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
+            inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame();
         else
-            inlineCallFrame = m_node->origin.semantic.inlineCallFrame;
+            inlineCallFrame = m_node->origin.semantic.inlineCallFrame();
 
         LValue length = nullptr; 
         LValue lengthIncludingThis = nullptr;
@@ -8883,7 +8888,7 @@ private:
             }
 
             ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
             unsigned numberOfArgumentsToSkip = target->numberOfArgumentsToSkip();
             spreadLengths.append(cachedSpreadLengths.ensure(inlineCallFrame, [&] () {
                 return this->getSpreadLengthFromInlineCallFrame(inlineCallFrame, numberOfArgumentsToSkip);
@@ -8934,7 +8939,7 @@ private:
             }
 
             RELEASE_ASSERT(target->op() == PhantomCreateRest);
-            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame;
+            InlineCallFrame* inlineCallFrame = target->origin.semantic.inlineCallFrame();
 
             LValue sourceStart = this->getArgumentsStart(inlineCallFrame, target->numberOfArgumentsToSkip());
             LValue spreadLength = m_out.zeroExtPtr(cachedSpreadLengths.get(inlineCallFrame));
@@ -11467,12 +11472,12 @@ private:
     
     ArgumentsLength getArgumentsLength()
     {
-        return getArgumentsLength(m_node->origin.semantic.inlineCallFrame);
+        return getArgumentsLength(m_node->origin.semantic.inlineCallFrame());
     }
     
     LValue getCurrentCallee()
     {
-        if (InlineCallFrame* frame = m_node->origin.semantic.inlineCallFrame) {
+        if (InlineCallFrame* frame = m_node->origin.semantic.inlineCallFrame()) {
             if (frame->isClosureCall)
                 return m_out.loadPtr(addressFor(frame->calleeRecovery.virtualRegister()));
             return weakPointer(frame->calleeRecovery.constant().asCell());
@@ -11488,7 +11493,7 @@ private:
     
     LValue getArgumentsStart()
     {
-        return getArgumentsStart(m_node->origin.semantic.inlineCallFrame);
+        return getArgumentsStart(m_node->origin.semantic.inlineCallFrame());
     }
     
     template<typename Functor>
@@ -16537,7 +16542,7 @@ private:
             // to baz and baz is inlined in bar. And then baz makes a tail-call to jaz,
             // and jaz is inlined in baz. We want the callframe for jaz to appear to 
             // have caller be bar.
-            codeOrigin = *codeOrigin.inlineCallFrame->getCallerSkippingTailCalls();
+            codeOrigin = *codeOrigin.inlineCallFrame()->getCallerSkippingTailCalls();
         }
 
         return codeOrigin;

@@ -529,7 +529,7 @@ private:
                     bool isClobberedByBlock = false;
                     Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
                     
-                    if (InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame) {
+                    if (InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame()) {
                         if (inlineCallFrame->isVarargs()) {
                             isClobberedByBlock |= clobberedByThisBlock.operand(
                                 inlineCallFrame->stackOffset + CallFrameSlot::argumentCount);
@@ -759,7 +759,7 @@ private:
                     Node* result = nullptr;
                     if (m_graph.varArgChild(node, 1)->isInt32Constant()) {
                         unsigned index = m_graph.varArgChild(node, 1)->asUInt32();
-                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                         index += numberOfArgumentsToSkip;
                         
                         bool safeToGetStack;
@@ -861,7 +861,7 @@ private:
                                 return true;
 
                             ASSERT(candidate->op() == PhantomCreateRest);
-                            InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                            InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                             return inlineCallFrame && !inlineCallFrame->isVarargs();
                         });
 
@@ -887,7 +887,7 @@ private:
 
                                 ASSERT(candidate->op() == PhantomCreateRest);
                                 unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
-                                InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                                InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                                 unsigned frameArgumentCount = inlineCallFrame->argumentCountIncludingThis - 1;
                                 if (frameArgumentCount >= numberOfArgumentsToSkip)
                                     return frameArgumentCount - numberOfArgumentsToSkip;
@@ -935,7 +935,7 @@ private:
 
                                     ASSERT(candidate->op() == PhantomCreateRest);
                                     unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
-                                    InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                                    InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                                     unsigned frameArgumentCount = inlineCallFrame->argumentCountIncludingThis - 1;
                                     for (unsigned loadIndex = numberOfArgumentsToSkip; loadIndex < frameArgumentCount; ++loadIndex) {
                                         VirtualRegister reg = virtualRegisterForArgument(loadIndex + 1) + inlineCallFrame->stackOffset;
@@ -970,7 +970,7 @@ private:
                             numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
                         varargsData->offset += numberOfArgumentsToSkip;
 
-                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
 
                         if (inlineCallFrame
                             && !inlineCallFrame->isVarargs()) {
@@ -1111,7 +1111,7 @@ private:
                                 return true;
 
                             ASSERT(candidate->op() == PhantomCreateRest);
-                            InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                            InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                             return inlineCallFrame && !inlineCallFrame->isVarargs();
                         });
 
@@ -1150,7 +1150,7 @@ private:
                                 }
 
                                 ASSERT(candidate->op() == PhantomCreateRest);
-                                InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                                InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                                 unsigned numberOfArgumentsToSkip = candidate->numberOfArgumentsToSkip();
                                 for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->argumentCountIncludingThis; ++i) {
                                     StackAccessData* data = m_graph.m_stackAccessData.add(
@@ -1175,7 +1175,7 @@ private:
                         CallVarargsData* varargsData = node->callVarargsData();
                         varargsData->firstVarArgOffset += numberOfArgumentsToSkip;
 
-                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame;
+                        InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
                         if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
                             Vector<Node*> arguments;
                             for (unsigned i = 1 + varargsData->firstVarArgOffset; i < inlineCallFrame->argumentCountIncludingThis; ++i) {

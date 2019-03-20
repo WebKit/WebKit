@@ -130,11 +130,12 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& m
 #if ENABLE(DFG_JIT)
 GetByIdStatus GetByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
+    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
     GetByIdStatus result = GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         locker, profiledBlock, stubInfo, uid,
-        CallLinkStatus::computeExitSiteData(profiledBlock, codeOrigin.bytecodeIndex));
+        CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex));
 
-    if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex))
+    if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, bytecodeIndex))
         return result.slowVersion();
     return result;
 }
@@ -302,9 +303,9 @@ GetByIdStatus GetByIdStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
     ICStatusContextStack& icContextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
 {
-    CallLinkStatus::ExitSiteData callExitSiteData =
-        CallLinkStatus::computeExitSiteData(profiledBlock, codeOrigin.bytecodeIndex);
-    ExitFlag didExit = hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex);
+    unsigned bytecodeIndex = codeOrigin.bytecodeIndex();
+    CallLinkStatus::ExitSiteData callExitSiteData = CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex);
+    ExitFlag didExit = hasBadCacheExitSite(profiledBlock, bytecodeIndex);
     
     for (ICStatusContext* context : icContextStack) {
         ICStatus status = context->get(codeOrigin);
@@ -314,7 +315,7 @@ GetByIdStatus GetByIdStatus::computeFor(
                 // Merge with baseline result, which also happens to contain exit data for both
                 // inlined and not-inlined.
                 GetByIdStatus baselineResult = computeFor(
-                    profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit,
+                    profiledBlock, baselineMap, bytecodeIndex, uid, didExit,
                     callExitSiteData);
                 baselineResult.merge(result);
                 return baselineResult;
@@ -339,7 +340,7 @@ GetByIdStatus GetByIdStatus::computeFor(
             return bless(*status.getStatus);
     }
     
-    return computeFor(profiledBlock, baselineMap, codeOrigin.bytecodeIndex, uid, didExit, callExitSiteData);
+    return computeFor(profiledBlock, baselineMap, bytecodeIndex, uid, didExit, callExitSiteData);
 }
 
 GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringImpl* uid)

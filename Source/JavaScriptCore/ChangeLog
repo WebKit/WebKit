@@ -1,3 +1,200 @@
+2019-03-20  Robin Morisset  <rmorisset@apple.com>
+
+        Compress CodeOrigin into a single word in the common case
+        https://bugs.webkit.org/show_bug.cgi?id=195928
+
+        Reviewed by Saam Barati.
+
+        The trick is that pointers only take 48 bits on x86_64 in practice (and we can even use the bottom three bits of that thanks to alignment), and even less on ARM64.
+        So we can shove the bytecode index in the top bits almost all the time.
+        If the bytecodeIndex is too ginormous (1<<16 in practice on x86_64), we just set one bit at the bottom and store a pointer to some out-of-line storage instead.
+        Finally we represent an invalid bytecodeIndex (which used to be represented by UINT_MAX) by setting the second least signifcant bit.
+
+        The patch looks very long, but most of it is just replacing direct accesses to inlineCallFrame and bytecodeIndex by the relevant getters.
+
+        End result: CodeOrigin in the common case moves from 16 bytes (8 for InlineCallFrame*, 4 for unsigned bytecodeIndex, 4 of padding) to 8.
+        As a reference, during running JetStream2 we allocate more than 35M CodeOrigins. While they won't all be alive at the same time, it is still quite a lot of objects, so I am hoping for some small
+        improvement to RAMification from this work.
+
+        The one slightly tricky part is that we must implement copy and move assignment operators and constructors to make sure that any out-of-line storage belongs to a single CodeOrigin and is destroyed exactly once.
+
+        * bytecode/ByValInfo.h:
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFor):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::globalObjectFor):
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize):
+        (JSC::CodeBlock::bytecodeOffsetFromCallSiteIndex):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::inlineDepth const):
+        (JSC::CodeOrigin::isApproximatelyEqualTo const):
+        (JSC::CodeOrigin::approximateHash const):
+        (JSC::CodeOrigin::inlineStack const):
+        (JSC::CodeOrigin::codeOriginOwner const):
+        (JSC::CodeOrigin::stackOffset const):
+        (JSC::CodeOrigin::dump const):
+        (JSC::CodeOrigin::inlineDepthForCallFrame): Deleted.
+        * bytecode/CodeOrigin.h:
+        (JSC::OutOfLineCodeOrigin::OutOfLineCodeOrigin):
+        (JSC::CodeOrigin::CodeOrigin):
+        (JSC::CodeOrigin::~CodeOrigin):
+        (JSC::CodeOrigin::isSet const):
+        (JSC::CodeOrigin::isHashTableDeletedValue const):
+        (JSC::CodeOrigin::bytecodeIndex const):
+        (JSC::CodeOrigin::inlineCallFrame const):
+        (JSC::CodeOrigin::buildCompositeValue):
+        (JSC::CodeOrigin::hash const):
+        (JSC::CodeOrigin::operator== const):
+        (JSC::CodeOrigin::exitingInlineKind const): Deleted.
+        * bytecode/DeferredSourceDump.h:
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeForStubInfo):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/ICStatusMap.cpp:
+        (JSC::ICStatusContext::isInlined const):
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::computeFor):
+        (JSC::InByIdStatus::computeForStubInfo):
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::computeCallerSkippingTailCalls):
+        (JSC::InlineCallFrame::getCallerInlineFrameSkippingTailCalls):
+        (JSC::baselineCodeBlockForOriginAndBaselineCodeBlock):
+        (JSC::CodeOrigin::walkUpInlineStack):
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::argumentsInvolveStackSlot):
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGArrayMode.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::handlePutByVal):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::attemptToMakeGetArrayLength):
+        * dfg/DFGForAllKills.h:
+        (JSC::DFG::forAllKilledOperands):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::isLiveInBytecode):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        (JSC::DFG::Graph::willCatchExceptionInMachineFrame):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::executableFor):
+        (JSC::DFG::Graph::isStrictModeFor):
+        (JSC::DFG::Graph::hasExitSite):
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlockForTryCatch):
+        * dfg/DFGMinifiedNode.cpp:
+        (JSC::DFG::MinifiedNode::fromNode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::printOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::handleExitCounts):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        * dfg/DFGOSRExitPreparation.cpp:
+        (JSC::DFG::prepareCodeOriginForOSRExit):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitGetLength):
+        (JSC::DFG::SpeculativeJIT::emitGetCallee):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileValueSub):
+        (JSC::DFG::SpeculativeJIT::compileValueNegate):
+        (JSC::DFG::SpeculativeJIT::compileValueMul):
+        (JSC::DFG::SpeculativeJIT::compileForwardVarargs):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        (JSC::DFG::TierUpCheckInjectionPhase::canOSREnterAtLoopHint):
+        (JSC::DFG::TierUpCheckInjectionPhase::buildNaturalLoopToLoopHintMap):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct const):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueMul):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileValueNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsLength):
+        (JSC::FTL::DFG::LowerDFGToB3::getCurrentCallee):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsStart):
+        (JSC::FTL::DFG::LowerDFGToB3::codeOriginDescriptionOfCallSite const):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::bytecodeOffset):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::unwindToMachineCodeBlockFrame):
+        (JSC::StackVisitor::readFrame):
+        (JSC::StackVisitor::readNonInlinedFrame):
+        (JSC::inlinedFrameOffset):
+        (JSC::StackVisitor::readInlinedFrame):
+        * interpreter/StackVisitor.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::executableFor):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::isStrictModeFor):
+        (JSC::AssemblyHelpers::argumentsStart):
+        (JSC::AssemblyHelpers::argumentCount):
+        * jit/PCToCodeOriginMap.cpp:
+        (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+        (JSC::PCToCodeOriginMap::findPC const):
+        * profiler/ProfilerOriginStack.cpp:
+        (JSC::Profiler::OriginStack::OriginStack):
+        * profiler/ProfilerOriginStack.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::appendSourceToError):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Search: allow DOM searches to be case sensitive

@@ -2895,9 +2895,10 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
     }
 
     CodeOrigin origin = exec->codeOrigin();
+    auto* inlineCallFrame = origin.inlineCallFrame();
     bool strictMode;
-    if (origin.inlineCallFrame)
-        strictMode = origin.inlineCallFrame->baselineCodeBlock->isStrictMode();
+    if (inlineCallFrame)
+        strictMode = inlineCallFrame->baselineCodeBlock->isStrictMode();
     else
         strictMode = exec->codeBlock()->isStrictMode();
     PutPropertySlot slot(scope, strictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
@@ -3044,7 +3045,7 @@ extern "C" void JIT_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock, Cod
     ASSERT(JITCode::isOptimizingJIT(optimizedCodeBlock->jitType()));
     
     bool didTryToEnterIntoInlinedLoops = false;
-    for (InlineCallFrame* inlineCallFrame = exit->m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
+    for (InlineCallFrame* inlineCallFrame = exit->m_codeOrigin.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
         if (inlineCallFrame->baselineCodeBlock->ownerExecutable()->didTryToEnterInLoop()) {
             didTryToEnterIntoInlinedLoops = true;
             break;

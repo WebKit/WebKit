@@ -33,11 +33,11 @@
 
 namespace JSC {
 
-struct CodeOrigin;
 struct EntryFrame;
 struct InlineCallFrame;
 
 class CodeBlock;
+class CodeOrigin;
 class ExecState;
 class JSCell;
 class JSFunction;

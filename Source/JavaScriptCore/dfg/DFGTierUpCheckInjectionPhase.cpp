@@ -108,7 +108,7 @@ public:
                     tierUpType = CheckTierUpInLoop;
                 insertionSet.insertNode(nodeIndex + 1, SpecNone, tierUpType, origin);
 
-                unsigned bytecodeIndex = origin.semantic.bytecodeIndex;
+                unsigned bytecodeIndex = origin.semantic.bytecodeIndex();
                 if (canOSREnter)
                     m_graph.m_plan.tierUpAndOSREnterBytecodes().append(bytecodeIndex);
 
@@ -170,7 +170,7 @@ private:
         ASSERT(node->op() == LoopHint);
 
         NodeOrigin origin = node->origin;
-        if (level != FTL::CanCompileAndOSREnter || origin.semantic.inlineCallFrame)
+        if (level != FTL::CanCompileAndOSREnter || origin.semantic.inlineCallFrame())
             return false;
 
         // We only put OSR checks for the first LoopHint in the block. Note that
@@ -194,7 +194,7 @@ private:
                     continue;
 
                 if (const NaturalLoop* loop = naturalLoops.innerMostLoopOf(block)) {
-                    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex;
+                    unsigned bytecodeIndex = node->origin.semantic.bytecodeIndex();
                     naturalLoopsToLoopHint.add(loop, bytecodeIndex);
                 }
                 break;

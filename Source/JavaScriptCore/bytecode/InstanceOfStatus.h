@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
 #include "ICStatusMap.h"
 #include "InstanceOfVariant.h"

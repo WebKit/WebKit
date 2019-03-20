@@ -1432,9 +1432,10 @@ public:
     
     bool isStrictModeFor(CodeOrigin codeOrigin)
     {
-        if (!codeOrigin.inlineCallFrame)
+        auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+        if (!inlineCallFrame)
             return codeBlock()->isStrictMode();
-        return codeOrigin.inlineCallFrame->isStrictMode();
+        return inlineCallFrame->isStrictMode();
     }
     
     ECMAMode ecmaModeFor(CodeOrigin codeOrigin)
@@ -1474,7 +1475,7 @@ public:
     
     static VirtualRegister argumentsStart(const CodeOrigin& codeOrigin)
     {
-        return argumentsStart(codeOrigin.inlineCallFrame);
+        return argumentsStart(codeOrigin.inlineCallFrame());
     }
 
     static VirtualRegister argumentCount(InlineCallFrame* inlineCallFrame)
@@ -1487,7 +1488,7 @@ public:
 
     static VirtualRegister argumentCount(const CodeOrigin& codeOrigin)
     {
-        return argumentCount(codeOrigin.inlineCallFrame);
+        return argumentCount(codeOrigin.inlineCallFrame());
     }
     
     void emitLoadStructure(VM&, RegisterID source, RegisterID dest, RegisterID scratch);

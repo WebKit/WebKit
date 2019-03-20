@@ -385,7 +385,7 @@ private:
     Node* injectLazyOperandSpeculation(Node* node)
     {
         ASSERT(node->op() == GetLocal);
-        ASSERT(node->origin.semantic.bytecodeIndex == m_currentIndex);
+        ASSERT(node->origin.semantic.bytecodeIndex() == m_currentIndex);
         ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
         LazyOperandValueProfileKey key(m_currentIndex, node->local());
         SpeculatedType prediction = m_inlineStackTop->m_lazyOperands.prediction(locker, key);
@@ -442,9 +442,9 @@ private:
 
         VariableAccessData* variableAccessData = newVariableAccessData(operand);
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadCache));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex(), BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex(), BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(local) = node;
         return node;
@@ -498,9 +498,9 @@ private:
             variableAccessData->mergeShouldNeverUnbox(true);
         
         variableAccessData->mergeStructureCheckHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadCache));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex(), BadCache));
         variableAccessData->mergeCheckArrayHoistingFailed(
-            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
+            m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex(), BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = node;
         return node;
@@ -563,8 +563,8 @@ private:
     {
         origin.walkUpInlineStack(
             [&] (CodeOrigin origin) {
-                unsigned bytecodeIndex = origin.bytecodeIndex;
-                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
+                unsigned bytecodeIndex = origin.bytecodeIndex();
+                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame();
                 flushImpl(inlineCallFrame, addFlushDirect);
 
                 CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
@@ -868,10 +868,10 @@ private:
                 return SpecFullTop;
 
             InlineStackEntry* stack = m_inlineStackTop;
-            while (stack->m_inlineCallFrame != codeOrigin->inlineCallFrame)
+            while (stack->m_inlineCallFrame != codeOrigin->inlineCallFrame())
                 stack = stack->m_caller;
 
-            bytecodeIndex = codeOrigin->bytecodeIndex;
+            bytecodeIndex = codeOrigin->bytecodeIndex();
             CodeBlock* profiledBlock = stack->m_profiledBlock;
             ConcurrentJSLocker locker(profiledBlock->m_lock);
             return profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
@@ -5396,7 +5396,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             unsigned identifierNumber = 0;
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-                ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex)).byValInfo;
+                ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex())).byValInfo;
                 // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
                 // At that time, there is no information.
                 if (byValInfo
@@ -6026,7 +6026,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                         m_inlineStackTop->m_exitProfile.hasExitSite(exitBytecodeIndex, BadIndexingType));
 
                     Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
-                    setArgument->origin.forExit.bytecodeIndex = exitBytecodeIndex;
+                    setArgument->origin.forExit = CodeOrigin(exitBytecodeIndex, setArgument->origin.forExit.inlineCallFrame());
                     m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
                     entrypointArguments[argument] = setArgument;
                 }
@@ -7088,7 +7088,7 @@ void ByteCodeParser::parseCodeBlock()
     if (UNLIKELY(Options::dumpSourceAtDFGTime())) {
         Vector<DeferredSourceDump>& deferredSourceDump = m_graph.m_plan.callback()->ensureDeferredSourceDump();
         if (inlineCallFrame()) {
-            DeferredSourceDump dump(codeBlock->baselineVersion(), m_codeBlock, JITCode::DFGJIT, inlineCallFrame()->directCaller.bytecodeIndex);
+            DeferredSourceDump dump(codeBlock->baselineVersion(), m_codeBlock, JITCode::DFGJIT, inlineCallFrame()->directCaller.bytecodeIndex());
             deferredSourceDump.append(dump);
         } else
             deferredSourceDump.append(DeferredSourceDump(codeBlock->baselineVersion()));
@@ -7176,7 +7176,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, unsigned instructionSize)
         PutByIdStatus putByIdStatus;
         {
             ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-            ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex)).byValInfo;
+            ByValInfo* byValInfo = m_inlineStackTop->m_baselineMap.get(CodeOrigin(currentCodeOrigin().bytecodeIndex())).byValInfo;
             // FIXME: When the bytecode is not compiled in the baseline JIT, byValInfo becomes null.
             // At that time, there is no information.
             if (byValInfo 

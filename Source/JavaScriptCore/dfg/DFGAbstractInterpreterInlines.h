@@ -2213,7 +2213,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds: {
         JSValue index = forNode(node->child2()).m_value;
-        InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame;
+        InlineCallFrame* inlineCallFrame = node->child1()->origin.semantic.inlineCallFrame();
 
         if (index && index.isUInt32()) {
             // This pretends to return TOP for accesses that are actually proven out-of-bounds because

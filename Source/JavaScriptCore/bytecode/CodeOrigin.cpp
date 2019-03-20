@@ -33,17 +33,12 @@
 
 namespace JSC {
 
-unsigned CodeOrigin::inlineDepthForCallFrame(InlineCallFrame* inlineCallFrame)
-{
-    unsigned result = 1;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->directCaller.inlineCallFrame)
-        result++;
-    return result;
-}
-
 unsigned CodeOrigin::inlineDepth() const
 {
-    return inlineDepthForCallFrame(inlineCallFrame);
+    unsigned result = 1;
+    for (InlineCallFrame* current = inlineCallFrame(); current; current = current->directCaller.inlineCallFrame())
+        result++;
+    return result;
 }
 
 bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame* terminal) const
@@ -65,22 +60,24 @@ bool CodeOrigin::isApproximatelyEqualTo(const CodeOrigin& other, InlineCallFrame
         ASSERT(a.isSet());
         ASSERT(b.isSet());
         
-        if (a.bytecodeIndex != b.bytecodeIndex)
+        if (a.bytecodeIndex() != b.bytecodeIndex())
             return false;
-        
-        bool aHasInlineCallFrame = !!a.inlineCallFrame && a.inlineCallFrame != terminal;
-        bool bHasInlineCallFrame = !!b.inlineCallFrame;
+
+        auto* aInlineCallFrame = a.inlineCallFrame();
+        auto* bInlineCallFrame = b.inlineCallFrame();
+        bool aHasInlineCallFrame = !!aInlineCallFrame && aInlineCallFrame != terminal;
+        bool bHasInlineCallFrame = !!bInlineCallFrame;
         if (aHasInlineCallFrame != bHasInlineCallFrame)
             return false;
         
         if (!aHasInlineCallFrame)
             return true;
         
-        if (a.inlineCallFrame->baselineCodeBlock.get() != b.inlineCallFrame->baselineCodeBlock.get())
+        if (aInlineCallFrame->baselineCodeBlock.get() != bInlineCallFrame->baselineCodeBlock.get())
             return false;
         
-        a = a.inlineCallFrame->directCaller;
-        b = b.inlineCallFrame->directCaller;
+        a = aInlineCallFrame->directCaller;
+        b = bInlineCallFrame->directCaller;
     }
 }
 
@@ -94,17 +91,19 @@ unsigned CodeOrigin::approximateHash(InlineCallFrame* terminal) const
     unsigned result = 2;
     CodeOrigin codeOrigin = *this;
     for (;;) {
-        result += codeOrigin.bytecodeIndex;
-        
-        if (!codeOrigin.inlineCallFrame)
+        result += codeOrigin.bytecodeIndex();
+
+        auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+
+        if (!inlineCallFrame)
             return result;
         
-        if (codeOrigin.inlineCallFrame == terminal)
+        if (inlineCallFrame == terminal)
             return result;
         
-        result += WTF::PtrHash<JSCell*>::hash(codeOrigin.inlineCallFrame->baselineCodeBlock.get());
+        result += WTF::PtrHash<JSCell*>::hash(inlineCallFrame->baselineCodeBlock.get());
         
-        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+        codeOrigin = inlineCallFrame->directCaller;
     }
 }
 
@@ -113,24 +112,25 @@ Vector<CodeOrigin> CodeOrigin::inlineStack() const
     Vector<CodeOrigin> result(inlineDepth());
     result.last() = *this;
     unsigned index = result.size() - 2;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->directCaller.inlineCallFrame)
+    for (InlineCallFrame* current = inlineCallFrame(); current; current = current->directCaller.inlineCallFrame())
         result[index--] = current->directCaller;
-    RELEASE_ASSERT(!result[0].inlineCallFrame);
+    RELEASE_ASSERT(!result[0].inlineCallFrame());
     return result;
 }
 
 CodeBlock* CodeOrigin::codeOriginOwner() const
 {
+    auto* inlineCallFrame = this->inlineCallFrame();
     if (!inlineCallFrame)
-        return 0;
+        return nullptr;
     return inlineCallFrame->baselineCodeBlock.get();
 }
 
 int CodeOrigin::stackOffset() const
 {
+    auto* inlineCallFrame = this->inlineCallFrame();
     if (!inlineCallFrame)
         return 0;
-    
     return inlineCallFrame->stackOffset;
 }
 
@@ -146,13 +146,13 @@ void CodeOrigin::dump(PrintStream& out) const
         if (i)
             out.print(" --> ");
         
-        if (InlineCallFrame* frame = stack[i].inlineCallFrame) {
+        if (InlineCallFrame* frame = stack[i].inlineCallFrame()) {
             out.print(frame->briefFunctionInformation(), ":<", RawPointer(frame->baselineCodeBlock.get()), "> ");
             if (frame->isClosureCall)
                 out.print("(closure) ");
         }
         
-        out.print("bc#", stack[i].bytecodeIndex);
+        out.print("bc#", stack[i].bytecodeIndex());
     }
 }
 

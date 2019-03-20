@@ -556,12 +556,13 @@ void SamplingProfiler::processUnverifiedStackTraces()
             CodeOrigin machineOrigin;
             origin.walkUpInlineStack([&] (const CodeOrigin& codeOrigin) {
                 machineOrigin = codeOrigin;
-                appendCodeBlock(codeOrigin.inlineCallFrame ? codeOrigin.inlineCallFrame->baselineCodeBlock.get() : machineCodeBlock, codeOrigin.bytecodeIndex);
+                auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+                appendCodeBlock(inlineCallFrame ? inlineCallFrame->baselineCodeBlock.get() : machineCodeBlock, codeOrigin.bytecodeIndex());
             });
 
             if (Options::collectSamplingProfilerDataForJSCShell()) {
                 RELEASE_ASSERT(machineOrigin.isSet());
-                RELEASE_ASSERT(!machineOrigin.inlineCallFrame);
+                RELEASE_ASSERT(!machineOrigin.inlineCallFrame());
 
                 StackFrame::CodeLocation machineLocation = stackTrace.frames.last().semanticLocation;
 

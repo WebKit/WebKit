@@ -156,11 +156,11 @@ unsigned CallFrame::bytecodeOffset()
     if (callSiteBitsAreCodeOriginIndex()) {
         ASSERT(codeBlock());
         CodeOrigin codeOrigin = this->codeOrigin();
-        for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame; inlineCallFrame;) {
+        for (InlineCallFrame* inlineCallFrame = codeOrigin.inlineCallFrame(); inlineCallFrame;) {
             codeOrigin = inlineCallFrame->directCaller;
-            inlineCallFrame = codeOrigin.inlineCallFrame;
+            inlineCallFrame = codeOrigin.inlineCallFrame();
         }
-        return codeOrigin.bytecodeIndex;
+        return codeOrigin.bytecodeIndex();
     }
 #endif
     ASSERT(callSiteBitsAreBytecodeOffset());

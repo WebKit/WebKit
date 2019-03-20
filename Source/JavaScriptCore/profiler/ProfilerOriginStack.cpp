@@ -48,12 +48,12 @@ OriginStack::OriginStack(Database& database, CodeBlock* codeBlock, const CodeOri
 {
     Vector<CodeOrigin> stack = codeOrigin.inlineStack();
     
-    append(Origin(database, codeBlock, stack[0].bytecodeIndex));
+    append(Origin(database, codeBlock, stack[0].bytecodeIndex()));
     
     for (unsigned i = 1; i < stack.size(); ++i) {
         append(Origin(
-            database.ensureBytecodesFor(stack[i].inlineCallFrame->baselineCodeBlock.get()),
-            stack[i].bytecodeIndex));
+            database.ensureBytecodesFor(stack[i].inlineCallFrame()->baselineCodeBlock.get()),
+            stack[i].bytecodeIndex()));
     }
 }
 

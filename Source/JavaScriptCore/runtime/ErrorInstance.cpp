@@ -66,8 +66,8 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
 
     CodeBlock* codeBlock;
     CodeOrigin codeOrigin = callFrame->codeOrigin();
-    if (codeOrigin && codeOrigin.inlineCallFrame)
-        codeBlock = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame);
+    if (codeOrigin && codeOrigin.inlineCallFrame())
+        codeBlock = baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame());
     else
         codeBlock = callFrame->codeBlock();
 

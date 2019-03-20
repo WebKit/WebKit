@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-struct CodeOrigin;
+class CodeOrigin;
 
 namespace DFG {
 

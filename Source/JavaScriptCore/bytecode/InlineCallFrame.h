@@ -152,7 +152,7 @@ struct InlineCallFrame {
             tailCallee = inlineCallFrame->isTail();
             callKind = inlineCallFrame->kind;
             codeOrigin = &inlineCallFrame->directCaller;
-            inlineCallFrame = codeOrigin->inlineCallFrame;
+            inlineCallFrame = codeOrigin->inlineCallFrame();
         } while (inlineCallFrame && tailCallee);
 
         if (tailCallee)
@@ -172,7 +172,7 @@ struct InlineCallFrame {
     InlineCallFrame* getCallerInlineFrameSkippingTailCalls()
     {
         CodeOrigin* caller = getCallerSkippingTailCalls();
-        return caller ? caller->inlineCallFrame : nullptr;
+        return caller ? caller->inlineCallFrame() : nullptr;
     }
     
     Vector<ValueRecovery> argumentsWithFixup; // Includes 'this' and arity fixups.
@@ -241,20 +241,23 @@ inline CodeBlock* baselineCodeBlockForInlineCallFrame(InlineCallFrame* inlineCal
 inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigin& codeOrigin, CodeBlock* baselineCodeBlock)
 {
     ASSERT(baselineCodeBlock->jitType() == JITCode::BaselineJIT);
-    if (codeOrigin.inlineCallFrame)
-        return baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame);
+    auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+    if (inlineCallFrame)
+        return baselineCodeBlockForInlineCallFrame(inlineCallFrame);
     return baselineCodeBlock;
 }
 
+// This function is defined here and not in CodeOrigin because it needs access to the directCaller field in InlineCallFrame
 template <typename Function>
 inline void CodeOrigin::walkUpInlineStack(const Function& function)
 {
     CodeOrigin codeOrigin = *this;
     while (true) {
         function(codeOrigin);
-        if (!codeOrigin.inlineCallFrame)
+        auto* inlineCallFrame = codeOrigin.inlineCallFrame();
+        if (!inlineCallFrame)
             break;
-        codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+        codeOrigin = inlineCallFrame->directCaller;
     }
 }
 

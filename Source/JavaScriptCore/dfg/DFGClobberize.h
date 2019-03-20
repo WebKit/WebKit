@@ -110,7 +110,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     // by calls into the runtime. For debugging we might replace the implementation of any node with a call
     // to the runtime, and that call may walk stack. Therefore, each node must read() anything that a stack
     // scan would read. That's what this does.
-    for (InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
+    for (InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame(); inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame()) {
         if (inlineCallFrame->isClosureCall)
             read(AbstractHeap(Stack, inlineCallFrame->stackOffset + CallFrameSlot::callee));
         if (inlineCallFrame->isVarargs())
@@ -123,7 +123,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     // The debugger's machinery is free to take a stack trace and try to read from
     // a scope which is expected to be flushed to the stack.
     if (graph.hasDebuggerEnabled()) {
-        ASSERT(!node->origin.semantic.inlineCallFrame);
+        ASSERT(!node->origin.semantic.inlineCallFrame());
         read(AbstractHeap(Stack, graph.m_codeBlock->scopeRegister()));
     }
     
@@ -710,7 +710,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case CallEval:
-        ASSERT(!node->origin.semantic.inlineCallFrame);
+        ASSERT(!node->origin.semantic.inlineCallFrame());
         read(AbstractHeap(Stack, graph.m_codeBlock->scopeRegister()));
         read(AbstractHeap(Stack, virtualRegisterForArgument(0)));
         read(World);

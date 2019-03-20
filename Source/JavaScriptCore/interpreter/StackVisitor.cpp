@@ -96,8 +96,8 @@ void StackVisitor::unwindToMachineCodeBlockFrame()
 #if ENABLE(DFG_JIT)
     if (m_frame.isInlinedFrame()) {
         CodeOrigin codeOrigin = m_frame.inlineCallFrame()->directCaller;
-        while (codeOrigin.inlineCallFrame)
-            codeOrigin = codeOrigin.inlineCallFrame->directCaller;
+        while (codeOrigin.inlineCallFrame())
+            codeOrigin = codeOrigin.inlineCallFrame()->directCaller;
         readNonInlinedFrame(m_frame.callFrame(), &codeOrigin);
     }
 #endif
@@ -144,7 +144,7 @@ void StackVisitor::readFrame(CallFrame* callFrame)
     }
 
     CodeOrigin codeOrigin = codeBlock->codeOrigin(index);
-    if (!codeOrigin.inlineCallFrame) {
+    if (!codeOrigin.inlineCallFrame()) {
         readNonInlinedFrame(callFrame, &codeOrigin);
         return;
     }
@@ -177,7 +177,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
     } else {
         m_frame.m_codeBlock = callFrame->codeBlock();
         m_frame.m_bytecodeOffset = !m_frame.codeBlock() ? 0
-            : codeOrigin ? codeOrigin->bytecodeIndex
+            : codeOrigin ? codeOrigin->bytecodeIndex()
             : callFrame->bytecodeOffset();
 
     }
@@ -190,7 +190,7 @@ void StackVisitor::readNonInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOri
 #if ENABLE(DFG_JIT)
 static int inlinedFrameOffset(CodeOrigin* codeOrigin)
 {
-    InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
+    InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame();
     int frameOffset = inlineCallFrame ? inlineCallFrame->stackOffset : 0;
     return frameOffset;
 }
@@ -203,7 +203,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
     int frameOffset = inlinedFrameOffset(codeOrigin);
     bool isInlined = !!frameOffset;
     if (isInlined) {
-        InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame;
+        InlineCallFrame* inlineCallFrame = codeOrigin->inlineCallFrame();
 
         m_frame.m_callFrame = callFrame;
         m_frame.m_inlineCallFrame = inlineCallFrame;
@@ -212,7 +212,7 @@ void StackVisitor::readInlinedFrame(CallFrame* callFrame, CodeOrigin* codeOrigin
         else
             m_frame.m_argumentCountIncludingThis = inlineCallFrame->argumentCountIncludingThis;
         m_frame.m_codeBlock = inlineCallFrame->baselineCodeBlock.get();
-        m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex;
+        m_frame.m_bytecodeOffset = codeOrigin->bytecodeIndex();
 
         JSFunction* callee = inlineCallFrame->calleeForCallFrame(callFrame);
         m_frame.m_callee = callee;
