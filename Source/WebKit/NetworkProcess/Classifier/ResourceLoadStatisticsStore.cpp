@@ -406,7 +406,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
     }
 #endif
 
-    return !m_lastTimeDataRecordsWereRemoved || MonotonicTime::now() >= (m_lastTimeDataRecordsWereRemoved + m_parameters.minimumTimeBetweenDataRecordsRemoval);
+    return !m_lastTimeDataRecordsWereRemoved || MonotonicTime::now() >= (m_lastTimeDataRecordsWereRemoved + m_parameters.minimumTimeBetweenDataRecordsRemoval) || parameters().isRunningTest;
 }
 
 void ResourceLoadStatisticsStore::setDataRecordsBeingRemoved(bool value)

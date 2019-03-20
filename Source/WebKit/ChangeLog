@@ -1,3 +1,18 @@
+2019-03-20  John Wilander  <wilander@apple.com>
+
+        (Test fix) Override minimumTimeBetweenDataRecordsRemoval in ResourceLoadStatisticsStore::shouldRemoveDataRecord() during layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=196017
+
+        Unreviewed test fix.
+
+        This patch adds a check of parameters().isRunningTest to the return of
+        ResourceLoadStatisticsStore::shouldRemoveDataRecord() to allow successive
+        layout tests to remove website data, effectively overriding the
+        minimumTimeBetweenDataRecordsRemoval setting.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::shouldRemoveDataRecords const):
+
 2019-03-20  Daniel Bates  <dabates@apple.com>
 
         [iOS] Group UIWebFormAccessoryDelegate-related code and tighten it up a bit
