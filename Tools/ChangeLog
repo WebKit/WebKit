@@ -1,3 +1,18 @@
+2019-03-20  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r243153): [iOS] TestWebKitAPI.FocusPreservationTests.ChangingFocusedNodeResetsFocusPreservationState is failing
+        https://bugs.webkit.org/show_bug.cgi?id=196031
+        <rdar://problem/49078172>
+
+        Reviewed by Tim Horton.
+
+        The test incorrectly assumes that calling -[WKWebView resignFirstResponder] is identical to dismissing the
+        <select> picker. This is no longer the case following r243135. Instead use testing SPI that invokes that
+        same code path used when the Done button is pressed to dismiss the <select> picker.
+
+        * TestWebKitAPI/Tests/ios/FocusPreservationTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-03-20  Chris Dumez  <cdumez@apple.com>
 
         Regression(PSON): ViewGestureController is not properly notified of process swaps on iOS

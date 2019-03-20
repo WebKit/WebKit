@@ -96,7 +96,7 @@ TEST(FocusPreservationTests, ChangingFocusedNodeResetsFocusPreservationState)
 
     EXPECT_NOT_NULL(webView.textInputContentView.inputView);
     [webView selectFormAccessoryPickerRow:1];
-    EXPECT_TRUE([webView resignFirstResponder]);
+    [webView dismissFormAccessoryView];
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"document.activeElement == document.querySelector('select')"].boolValue);
     EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"document.querySelector('select').selectedIndex"].intValue);
 
