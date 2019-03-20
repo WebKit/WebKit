@@ -1,3 +1,9 @@
+2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline the test after r243175. It got somehow landed with failing expectations.
+
+        * fast/dom/replace-child-with-mutation-event-removal-and-circular-template-insertion-expected.txt:
+
 2019-03-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics (experimental): Clear non-cookie website data for sites that have been navigated to, with link decoration, by a prevalent resource
