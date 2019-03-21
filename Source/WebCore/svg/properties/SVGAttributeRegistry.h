@@ -28,7 +28,6 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedString.h"
@@ -74,24 +73,10 @@ public:
         registerAttribute(SVGAnimatedLengthListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
     }
 
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedNumberAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedNumberAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedNumberListAttribute OwnerType::*attribute>
     void registerAttribute()
     {
         registerAttribute(SVGAnimatedNumberListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName,
-        const AtomicString& (*identifier)(), SVGAnimatedNumberAttribute OwnerType::*attribute,
-        const AtomicString& (*optionalIdentifier)(), SVGAnimatedNumberAttribute OwnerType::*optionalAttribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedOptionalNumberAttributeAccessor<OwnerType>::template singleton<attributeName, identifier, attribute, optionalIdentifier, optionalAttribute>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedPointListAttribute OwnerType::*attribute>

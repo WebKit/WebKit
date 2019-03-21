@@ -76,4 +76,47 @@ private:
     }
 };
 
+class SVGAnimatedNumberPairAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator> {
+    using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated1, Ref<SVGAnimatedNumber>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::unique_ptr<SVGAnimatedNumberPairAnimator>(new SVGAnimatedNumberPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
+    }
+
+private:
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) final
+    {
+        auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(from);
+        auto pairTo = SVGPropertyTraits<std::pair<float, float>>::fromString(to);
+        
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairTo.first;
+        
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairTo.second;
+    }
+
+    void setFromAndByValues(SVGElement*, const String& from, const String& by) final
+    {
+        auto pairFrom = SVGPropertyTraits<std::pair<float, float>>::fromString(from);
+        auto pairBy = SVGPropertyTraits<std::pair<float, float>>::fromString(by);
+        
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairFrom.first + pairBy.first;
+        
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairFrom.second + pairBy.second;
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) final
+    {
+        auto pairToAtEndOfDuration = SVGPropertyTraits<std::pair<float, float>>::fromString(toAtEndOfDuration);
+        m_animatedPropertyAnimator1->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.first;
+        m_animatedPropertyAnimator2->m_function.m_toAtEndOfDuration = pairToAtEndOfDuration.second;
+    }
+};
+
 }

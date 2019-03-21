@@ -120,7 +120,47 @@ private:
         m_to += m_from;
     }
 };
-    
+
+class SVGAnimationNumberFunction : public SVGAnimationAdditiveValueFunction<float> {
+    friend class SVGAnimatedNumberPairAnimator;
+
+public:
+    using Base = SVGAnimationAdditiveValueFunction<float>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPropertyTraits<float>::fromString(from);
+        m_to = SVGPropertyTraits<float>::fromString(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration = SVGPropertyTraits<float>::fromString(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, float& animated)
+    {
+        float from = m_animationMode == AnimationMode::To ? animated : m_from;
+        animated = Base::progress(percentage, repeatCount, from, m_to, toAtEndOfDuration(), animated);
+    }
+
+    float calculateDistance(SVGElement*, const String& from, const String& to) const override
+    {
+        float fromNumber = 0;
+        float toNumber = 0;
+        parseNumberFromString(from, fromNumber);
+        parseNumberFromString(to, toNumber);
+        return fabsf(toNumber - fromNumber);
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        m_to += m_from;
+    }
+};
+
 class SVGAnimationRectFunction : public SVGAnimationAdditiveValueFunction<FloatRect> {
 public:
     using Base = SVGAnimationAdditiveValueFunction<FloatRect>;

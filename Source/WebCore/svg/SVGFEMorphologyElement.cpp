@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,11 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
 {
     ASSERT(hasTagName(SVGNames::feMorphologyTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::radiusAttr, &SVGFEMorphologyElement::m_radiusX, &SVGFEMorphologyElement::m_radiusY>();
+    });
 }
 
 Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document& document)
@@ -43,22 +48,10 @@ Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEMorphologyElement(tagName, document));
 }
 
-const AtomicString& SVGFEMorphologyElement::radiusXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGRadiusX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFEMorphologyElement::radiusYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGRadiusY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
 void SVGFEMorphologyElement::setRadius(float x, float y)
 {
-    m_radiusX.setValue(x);
-    m_radiusY.setValue(y);
+    m_radiusX->setBaseValInternal(x);
+    m_radiusY->setBaseValInternal(y);
     invalidate();
 }
 
@@ -69,9 +62,6 @@ void SVGFEMorphologyElement::registerAttributes()
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
     registry.registerAttribute<SVGNames::operatorAttr, MorphologyOperatorType, &SVGFEMorphologyElement::m_svgOperator>();
-    registry.registerAttribute<SVGNames::radiusAttr,
-        &SVGFEMorphologyElement::radiusXIdentifier, &SVGFEMorphologyElement::m_radiusX,
-        &SVGFEMorphologyElement::radiusYIdentifier, &SVGFEMorphologyElement::m_radiusY>();
 }
 
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -91,8 +81,8 @@ void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const Ato
     if (name == SVGNames::radiusAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            m_radiusX.setValue(x);
-            m_radiusY.setValue(y);
+            m_radiusX->setBaseValInternal(x);
+            m_radiusY->setBaseValInternal(y);
         }
         return;
     }

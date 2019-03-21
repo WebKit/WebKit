@@ -23,7 +23,6 @@
 
 #include "FEComponentTransfer.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGElement.h"
 
@@ -77,19 +76,19 @@ public:
 
     ComponentTransferType type() const { return m_type.currentValue(attributeOwnerProxy()); }
     const SVGNumberListValues& tableValues() const { return m_tableValues.currentValue(attributeOwnerProxy()); }
-    float slope() const { return m_slope.currentValue(attributeOwnerProxy()); }
-    float intercept() const { return m_intercept.currentValue(attributeOwnerProxy()); }
-    float amplitude() const { return m_amplitude.currentValue(attributeOwnerProxy()); }
-    float exponent() const { return m_exponent.currentValue(attributeOwnerProxy()); }
-    float offset() const { return m_offset.currentValue(attributeOwnerProxy()); }
+    float slope() const { return m_slope->currentValue(); }
+    float intercept() const { return m_intercept->currentValue(); }
+    float amplitude() const { return m_amplitude->currentValue(); }
+    float exponent() const { return m_exponent->currentValue(); }
+    float offset() const { return m_offset->currentValue(); }
 
     RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedNumberList> tableValuesAnimated() { return m_tableValues.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> slopeAnimated() { return m_slope.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> interceptAnimated() { return m_intercept.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> amplitudeAnimated() { return m_amplitude.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> exponentAnimated() { return m_exponent.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> offsetAnimated() { return m_offset.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& slopeAnimated() { return m_slope; }
+    SVGAnimatedNumber& interceptAnimated() { return m_intercept; }
+    SVGAnimatedNumber& amplitudeAnimated() { return m_amplitude; }
+    SVGAnimatedNumber& exponentAnimated() { return m_exponent; }
+    SVGAnimatedNumber& offsetAnimated() { return m_offset; }
 
 protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
@@ -117,11 +116,11 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedEnumerationAttribute<ComponentTransferType> m_type { FECOMPONENTTRANSFER_TYPE_IDENTITY };
     SVGAnimatedNumberListAttribute m_tableValues;
-    SVGAnimatedNumberAttribute m_slope { 1 };
-    SVGAnimatedNumberAttribute m_intercept;
-    SVGAnimatedNumberAttribute m_amplitude { 1 };
-    SVGAnimatedNumberAttribute m_exponent { 1 };
-    SVGAnimatedNumberAttribute m_offset;
+    Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_exponent { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

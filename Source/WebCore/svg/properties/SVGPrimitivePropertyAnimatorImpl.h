@@ -25,11 +25,12 @@
 
 #pragma once
 
-#include "SVGAnimationFunction.h"
+#include "SVGAnimationAdditiveValueFunctionImpl.h"
 #include "SVGPrimitivePropertyAnimator.h"
 
 namespace WebCore {
 
 using SVGColorAnimator = SVGPrimitivePropertyAnimator<Color, SVGAnimationColorFunction>;
+using SVGNumberAnimator = SVGPrimitivePropertyAnimator<float, SVGAnimationNumberFunction>;
 
 }

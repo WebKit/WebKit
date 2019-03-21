@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +37,11 @@ inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& t
 {
     ASSERT(hasTagName(SVGNames::feGaussianBlurTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEGaussianBlurElement::m_stdDeviationX, &SVGFEGaussianBlurElement::m_stdDeviationY>();
+    });
 }
 
 Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedName& tagName, Document& document)
@@ -44,22 +49,10 @@ Ref<SVGFEGaussianBlurElement> SVGFEGaussianBlurElement::create(const QualifiedNa
     return adoptRef(*new SVGFEGaussianBlurElement(tagName, document));
 }
 
-const AtomicString& SVGFEGaussianBlurElement::stdDeviationXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGStdDeviationX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFEGaussianBlurElement::stdDeviationYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGStdDeviationY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
 void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
 {
-    m_stdDeviationX.setValue(x);
-    m_stdDeviationY.setValue(y);
+    m_stdDeviationX->setBaseValInternal(x);
+    m_stdDeviationY->setBaseValInternal(y);
     invalidate();
 }
 
@@ -69,9 +62,6 @@ void SVGFEGaussianBlurElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEGaussianBlurElement::m_in1>();
-    registry.registerAttribute<SVGNames::stdDeviationAttr,
-        &SVGFEGaussianBlurElement::stdDeviationXIdentifier, &SVGFEGaussianBlurElement::m_stdDeviationX,
-        &SVGFEGaussianBlurElement::stdDeviationYIdentifier, &SVGFEGaussianBlurElement::m_stdDeviationY>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEGaussianBlurElement::m_edgeMode>();
 }
 
@@ -80,8 +70,8 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
     if (name == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            m_stdDeviationX.setValue(x);
-            m_stdDeviationY.setValue(y);
+            m_stdDeviationX->setBaseValInternal(x);
+            m_stdDeviationY->setBaseValInternal(y);
         }
         return;
     }

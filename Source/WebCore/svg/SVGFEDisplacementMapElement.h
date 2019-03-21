@@ -22,7 +22,6 @@
 
 #include "FEDisplacementMap.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -75,13 +74,13 @@ public:
     String in2() const { return m_in2.currentValue(attributeOwnerProxy()); }
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector.currentValue(attributeOwnerProxy()); }
     ChannelSelectorType yChannelSelector() const { return m_yChannelSelector.currentValue(attributeOwnerProxy()); }
-    float scale() const { return m_scale.currentValue(attributeOwnerProxy()); }
+    float scale() const { return m_scale->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedString> in2Animated() { return m_in2.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> xChannelSelectorAnimated() { return m_xChannelSelector.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> yChannelSelectorAnimated() { return m_yChannelSelector.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> scaleAnimated() { return m_scale.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& scaleAnimated() { return m_scale; }
 
 private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
@@ -111,7 +110,7 @@ private:
     SVGAnimatedStringAttribute m_in2;
     SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_xChannelSelector { CHANNEL_A };
     SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_yChannelSelector { CHANNEL_A };
-    SVGAnimatedNumberAttribute m_scale;
+    Ref<SVGAnimatedNumber> m_scale { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

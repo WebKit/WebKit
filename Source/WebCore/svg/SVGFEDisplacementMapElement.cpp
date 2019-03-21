@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <oliver@nerget.com>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,6 +35,11 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
 {
     ASSERT(hasTagName(SVGNames::feDisplacementMapTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::scaleAttr, &SVGFEDisplacementMapElement::m_scale>();
+    });
 }
 
 Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const QualifiedName& tagName, Document& document)
@@ -51,7 +56,6 @@ void SVGFEDisplacementMapElement::registerAttributes()
     registry.registerAttribute<SVGNames::in2Attr, &SVGFEDisplacementMapElement::m_in2>();
     registry.registerAttribute<SVGNames::xChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_xChannelSelector>();
     registry.registerAttribute<SVGNames::yChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_yChannelSelector>();
-    registry.registerAttribute<SVGNames::scaleAttr, &SVGFEDisplacementMapElement::m_scale>();
 }
 
 void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -81,7 +85,7 @@ void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, cons
     }
 
     if (name == SVGNames::scaleAttr) {
-        m_scale.setValue(value.toFloat());
+        m_scale->setBaseValInternal(value.toFloat());
         return;
     }
 

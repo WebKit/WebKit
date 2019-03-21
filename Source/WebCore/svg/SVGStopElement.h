@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedNumber.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -33,24 +32,17 @@ public:
 
     Color stopColorIncludingOpacity() const;
 
-    float offset() { return m_offset.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> offsetAnimated() { return m_offset.animatedProperty(attributeOwnerProxy()); }
+    float offset() const { return m_offset->currentValue(); }
+    SVGAnimatedNumber& offsetAnimated() { return m_offset; }
 
 private:
     SVGStopElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGStopElement, SVGElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGStopElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -62,7 +54,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedNumberAttribute m_offset { 0 };
+    Ref<SVGAnimatedNumber> m_offset { SVGAnimatedNumber::create(0) };
 };
 
 } // namespace WebCore

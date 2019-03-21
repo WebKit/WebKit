@@ -23,7 +23,6 @@
 #pragma once
 
 #include "Path.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
 
@@ -43,11 +42,10 @@ public:
     bool isPointInStroke(DOMPointInit&&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGeometryElement, SVGGraphicsElement>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGeometryElement, SVGGraphicsElement>;
 
-    auto pathLengthAnimated() { return m_pathLength.animatedProperty(attributeOwnerProxy()); }
+    float pathLength() const { return m_pathLength->currentValue(); }
+    SVGAnimatedNumber& pathLengthAnimated() { return m_pathLength; }
 
 protected:
     SVGGeometryElement(const QualifiedName&, Document&);
@@ -59,18 +57,11 @@ private:
     bool isSVGGeometryElement() const override { return true; }
 
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    static void registerAttributes();
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedNumberAttribute m_pathLength;
+    Ref<SVGAnimatedNumber> m_pathLength { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

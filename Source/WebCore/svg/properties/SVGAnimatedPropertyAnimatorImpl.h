@@ -76,6 +76,25 @@ private:
     }
 };
 
+class SVGAnimatedNumberAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedNumber, SVGAnimationNumberFunction> {
+    friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator>;
+    friend class SVGAnimatedNumberPairAnimator;
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedNumber, SVGAnimationNumberFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::unique_ptr<SVGAnimatedNumberAnimator>(new SVGAnimatedNumberAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
+    }
+};
+
 class SVGAnimatedPreserveAspectRatioAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPreserveAspectRatio, SVGAnimationPreserveAspectRatioFunction> {
     using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPreserveAspectRatio, SVGAnimationPreserveAspectRatioFunction>;
     using Base::Base;

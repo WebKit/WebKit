@@ -69,4 +69,39 @@ private:
     }
 };
 
+template<typename OwnerType>
+class SVGAnimatedNumberPairAccessor final : public SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedNumberAccessor<OwnerType>, SVGAnimatedNumberAccessor<OwnerType>> {
+    using Base = SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedNumberAccessor<OwnerType>, SVGAnimatedNumberAccessor<OwnerType>>;
+    using Base::property1;
+    using Base::property2;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedNumber> OwnerType::*property1, Ref<SVGAnimatedNumber> OwnerType::*property2 >
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberPairAccessor, property1, property2>(); }
+
+private:
+    Optional<String> synchronize(const OwnerType& owner) const final
+    {
+        bool dirty1 = property1(owner)->isDirty();
+        bool dirty2 = property2(owner)->isDirty();
+        if (!(dirty1 || dirty2))
+            return WTF::nullopt;
+
+        String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
+        String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
+        return string1 == string2 ? string1 : string1 + ", " + string2;
+    }
+
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedNumberPairAnimator::create(attributeName, property1(owner), property2(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedNumberPairAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+    }
+};
+
 }

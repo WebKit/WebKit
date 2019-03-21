@@ -23,7 +23,6 @@
 
 #include "FETurbulence.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -97,17 +96,17 @@ class SVGFETurbulenceElement final : public SVGFilterPrimitiveStandardAttributes
 public:
     static Ref<SVGFETurbulenceElement> create(const QualifiedName&, Document&);
 
-    float baseFrequencyX() const { return m_baseFrequencyX.currentValue(attributeOwnerProxy()); }
-    float baseFrequencyY() const { return m_baseFrequencyY.currentValue(attributeOwnerProxy()); }
+    float baseFrequencyX() const { return m_baseFrequencyX->currentValue(); }
+    float baseFrequencyY() const { return m_baseFrequencyY->currentValue(); }
     int numOctaves() const { return m_numOctaves->currentValue(); }
-    float seed() const { return m_seed.currentValue(attributeOwnerProxy()); }
+    float seed() const { return m_seed->currentValue(); }
     SVGStitchOptions stitchTiles() const { return m_stitchTiles.currentValue(attributeOwnerProxy()); }
     TurbulenceType type() const { return m_type.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedNumber> baseFrequencyXAnimated() { return m_baseFrequencyX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> baseFrequencyYAnimated() { return m_baseFrequencyY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& baseFrequencyXAnimated() { return m_baseFrequencyX; }
+    SVGAnimatedNumber& baseFrequencyYAnimated() { return m_baseFrequencyY; }
     SVGAnimatedInteger& numOctavesAnimated() { return m_numOctaves; }
-    RefPtr<SVGAnimatedNumber> seedAnimated() { return m_seed.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& seedAnimated() { return m_seed; }
     RefPtr<SVGAnimatedEnumeration> stitchTilesAnimated() { return m_stitchTiles.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
 
@@ -133,15 +132,12 @@ private:
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& baseFrequencyXIdentifier();
-    static const AtomicString& baseFrequencyYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedNumberAttribute m_baseFrequencyX;
-    SVGAnimatedNumberAttribute m_baseFrequencyY;
+    Ref<SVGAnimatedNumber> m_baseFrequencyX { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_baseFrequencyY { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_numOctaves { SVGAnimatedInteger::create(this, 1) };
-    SVGAnimatedNumberAttribute m_seed;
+    Ref<SVGAnimatedNumber> m_seed { SVGAnimatedNumber::create(this) };
     SVGAnimatedEnumerationAttribute<SVGStitchOptions> m_stitchTiles { SVG_STITCHTYPE_NOSTITCH };
     SVGAnimatedEnumerationAttribute<TurbulenceType> m_type { TurbulenceType::Turbulence };
 };

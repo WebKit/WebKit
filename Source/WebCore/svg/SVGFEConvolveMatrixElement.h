@@ -71,26 +71,26 @@ public:
     int orderX() const { return m_orderX->currentValue(); }
     int orderY() const { return m_orderY->currentValue(); }
     const SVGNumberListValues& kernelMatrix() const { return m_kernelMatrix.currentValue(attributeOwnerProxy()); }
-    float divisor() const { return m_divisor.currentValue(attributeOwnerProxy()); }
-    float bias() const { return m_bias.currentValue(attributeOwnerProxy()); }
+    float divisor() const { return m_divisor->currentValue(); }
+    float bias() const { return m_bias->currentValue(); }
     int targetX() const { return m_targetX->currentValue(); }
     int targetY() const { return m_targetY->currentValue(); }
     EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthX() const { return m_kernelUnitLengthX.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthY() const { return m_kernelUnitLengthY.currentValue(attributeOwnerProxy()); }
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX->currentValue(); }
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
     bool preserveAlpha() const { return m_preserveAlpha->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
     SVGAnimatedInteger& orderXAnimated() { return m_orderX; }
     SVGAnimatedInteger& orderYAnimated() { return m_orderY; }
     RefPtr<SVGAnimatedNumberList> kernelMatrixAnimated() { return m_kernelMatrix.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> divisorAnimated() { return m_divisor.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> biasAnimated() { return m_bias.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& divisorAnimated() { return m_divisor; }
+    SVGAnimatedNumber& biasAnimated() { return m_bias; }
     SVGAnimatedInteger& targetXAnimated() { return m_targetX; }
     SVGAnimatedInteger& targetYAnimated() { return m_targetY; }
     RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthXAnimated() { return m_kernelUnitLengthX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthYAnimated() { return m_kernelUnitLengthY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& kernelUnitLengthXAnimated() { return m_kernelUnitLengthX; }
+    SVGAnimatedNumber& kernelUnitLengthYAnimated() { return m_kernelUnitLengthY; }
     SVGAnimatedBoolean& preserveAlphaAnimated() { return m_preserveAlpha; }
 
 private:
@@ -115,22 +115,19 @@ private:
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& kernelUnitLengthXIdentifier();
-    static const AtomicString& kernelUnitLengthYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
     Ref<SVGAnimatedInteger> m_orderX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_orderY { SVGAnimatedInteger::create(this) };
     SVGAnimatedNumberListAttribute m_kernelMatrix;
-    SVGAnimatedNumberAttribute m_divisor;
-    SVGAnimatedNumberAttribute m_bias;
+    Ref<SVGAnimatedNumber> m_divisor { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_bias { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_targetX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_targetY { SVGAnimatedInteger::create(this) };
     SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_DUPLICATE };
-    SVGAnimatedNumberAttribute m_kernelUnitLengthX;
-    SVGAnimatedNumberAttribute m_kernelUnitLengthY;
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedBoolean> m_preserveAlpha { SVGAnimatedBoolean::create(this) };
 };
 

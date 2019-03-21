@@ -25,6 +25,7 @@
 #include "SVGPathSegListValues.h"
 
 #include "SVGPathElement.h"
+#include "SVGPathSegWithContext.h"
 #include "SVGPathUtilities.h"
 
 namespace WebCore {

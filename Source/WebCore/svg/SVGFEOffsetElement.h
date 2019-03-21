@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -32,12 +31,12 @@ public:
     static Ref<SVGFEOffsetElement> create(const QualifiedName&, Document&);
 
     String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    float dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
-    float dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
+    float dx() const { return m_dx->currentValue(); }
+    float dy() const { return m_dy->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& dxAnimated() { return m_dx; }
+    SVGAnimatedNumber& dyAnimated() { return m_dy; }
 
 private:
     SVGFEOffsetElement(const QualifiedName&, Document&);
@@ -63,8 +62,8 @@ private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedNumberAttribute m_dx;
-    SVGAnimatedNumberAttribute m_dy;
+    Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

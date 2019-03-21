@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,14 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
 {
     ASSERT(hasTagName(SVGNames::feCompositeTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::k1Attr, &SVGFECompositeElement::m_k1>();
+        PropertyRegistry::registerProperty<SVGNames::k2Attr, &SVGFECompositeElement::m_k2>();
+        PropertyRegistry::registerProperty<SVGNames::k3Attr, &SVGFECompositeElement::m_k3>();
+        PropertyRegistry::registerProperty<SVGNames::k4Attr, &SVGFECompositeElement::m_k4>();
+    });
 }
 
 Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& tagName, Document& document)
@@ -51,10 +59,6 @@ void SVGFECompositeElement::registerAttributes()
     registry.registerAttribute<SVGNames::inAttr, &SVGFECompositeElement::m_in1>();
     registry.registerAttribute<SVGNames::in2Attr, &SVGFECompositeElement::m_in2>();
     registry.registerAttribute<SVGNames::operatorAttr, CompositeOperationType, &SVGFECompositeElement::m_svgOperator>();
-    registry.registerAttribute<SVGNames::k1Attr, &SVGFECompositeElement::m_k1>();
-    registry.registerAttribute<SVGNames::k2Attr, &SVGFECompositeElement::m_k2>();
-    registry.registerAttribute<SVGNames::k3Attr, &SVGFECompositeElement::m_k3>();
-    registry.registerAttribute<SVGNames::k4Attr, &SVGFECompositeElement::m_k4>();
 }
 
 void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -77,22 +81,22 @@ void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const Atom
     }
 
     if (name == SVGNames::k1Attr) {
-        m_k1.setValue(value.toFloat());
+        m_k1->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::k2Attr) {
-        m_k2.setValue(value.toFloat());
+        m_k2->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::k3Attr) {
-        m_k3.setValue(value.toFloat());
+        m_k3->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::k4Attr) {
-        m_k4.setValue(value.toFloat());
+        m_k4->setBaseValInternal(value.toFloat());
         return;
     }
 

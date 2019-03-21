@@ -23,9 +23,7 @@
 #include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedNumberOptionalNumber.h"
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedPointList.h"
 #include "SVGAnimatedString.h"
@@ -47,6 +45,8 @@ public:
         case AnimatedColor:
         case AnimatedInteger:
         case AnimatedIntegerOptionalInteger:
+        case AnimatedNumber:
+        case AnimatedNumberOptionalNumber:
         case AnimatedPreserveAspectRatio:
         case AnimatedRect:
             return nullptr;
@@ -59,12 +59,8 @@ public:
             return std::make_unique<SVGAnimatedLengthAnimator>(animationElement, contextElement);
         case AnimatedLengthList:
             return std::make_unique<SVGAnimatedLengthListAnimator>(animationElement, contextElement);
-        case AnimatedNumber:
-            return std::make_unique<SVGAnimatedNumberAnimator>(animationElement, contextElement);
         case AnimatedNumberList:
             return std::make_unique<SVGAnimatedNumberListAnimator>(animationElement, contextElement);
-        case AnimatedNumberOptionalNumber:
-            return std::make_unique<SVGAnimatedNumberOptionalNumberAnimator>(animationElement, contextElement);
         case AnimatedPath:
             return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
         case AnimatedPoints:

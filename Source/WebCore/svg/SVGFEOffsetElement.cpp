@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +37,12 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
 {
     ASSERT(hasTagName(SVGNames::feOffsetTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEOffsetElement::m_dx>();
+        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEOffsetElement::m_dy>();
+    });
 }
 
 Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
@@ -50,19 +56,17 @@ void SVGFEOffsetElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEOffsetElement::m_in1>();
-    registry.registerAttribute<SVGNames::dxAttr, &SVGFEOffsetElement::m_dx>();
-    registry.registerAttribute<SVGNames::dyAttr, &SVGFEOffsetElement::m_dy>();
 }
 
 void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::dxAttr) {
-        m_dx.setValue(value.toFloat());
+        m_dx->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::dyAttr) {
-        m_dy.setValue(value.toFloat());
+        m_dy->setBaseValInternal(value.toFloat());
         return;
     }
 

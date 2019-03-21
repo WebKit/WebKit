@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,6 +37,13 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
 {
     ASSERT(hasTagName(SVGNames::feDropShadowTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx>();
+        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy>();
+        PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY>();
+    });
 }
 
 Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& tagName, Document& document)
@@ -44,22 +51,10 @@ Ref<SVGFEDropShadowElement> SVGFEDropShadowElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEDropShadowElement(tagName, document));
 }
 
-const AtomicString& SVGFEDropShadowElement::stdDeviationXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGStdDeviationX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFEDropShadowElement::stdDeviationYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGStdDeviationY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
 void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 {
-    m_stdDeviationX.setValue(x);
-    m_stdDeviationY.setValue(y);
+    m_stdDeviationX->setBaseValInternal(x);
+    m_stdDeviationY->setBaseValInternal(y);
     invalidate();
 }
 
@@ -69,11 +64,6 @@ void SVGFEDropShadowElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
-    registry.registerAttribute<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx>();
-    registry.registerAttribute<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy>();
-    registry.registerAttribute<SVGNames::stdDeviationAttr,
-        &SVGFEDropShadowElement::stdDeviationXIdentifier, &SVGFEDropShadowElement::m_stdDeviationX,
-        &SVGFEDropShadowElement::stdDeviationYIdentifier, &SVGFEDropShadowElement::m_stdDeviationY>();
 }
 
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -81,8 +71,8 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
     if (name == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            m_stdDeviationX.setValue(x);
-            m_stdDeviationY.setValue(y);
+            m_stdDeviationX->setBaseValInternal(x);
+            m_stdDeviationY->setBaseValInternal(y);
         }
         return;
     }
@@ -93,12 +83,12 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::dxAttr) {
-        m_dx.setValue(value.toFloat());
+        m_dx->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::dyAttr) {
-        m_dy.setValue(value.toFloat());
+        m_dy->setBaseValInternal(value.toFloat());
         return;
     }
 

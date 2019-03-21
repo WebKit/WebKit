@@ -21,7 +21,6 @@
 #pragma once
 
 #include "FEDropShadow.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -34,16 +33,16 @@ public:
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
     String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    float dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
-    float dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
-    float stdDeviationX() const { return m_stdDeviationX.currentValue(attributeOwnerProxy()); }
-    float stdDeviationY() const { return m_stdDeviationY.currentValue(attributeOwnerProxy()); }
+    float dx() const { return m_dx->currentValue(); }
+    float dy() const { return m_dy->currentValue(); }
+    float stdDeviationX() const { return m_stdDeviationX->currentValue(); }
+    float stdDeviationY() const { return m_stdDeviationY->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> stdDeviationXAnimated() { return m_stdDeviationX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> stdDeviationYAnimated() { return m_stdDeviationY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& dxAnimated() { return m_dx; }
+    SVGAnimatedNumber& dyAnimated() { return m_dy; }
+    SVGAnimatedNumber& stdDeviationXAnimated() { return m_stdDeviationX; }
+    SVGAnimatedNumber& stdDeviationYAnimated() { return m_stdDeviationY; }
 
 private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
@@ -66,16 +65,13 @@ private:
 
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& stdDeviationXIdentifier();
-    static const AtomicString& stdDeviationYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedNumberAttribute m_dx { 2 };
-    SVGAnimatedNumberAttribute m_dy { 2 };
-    SVGAnimatedNumberAttribute m_stdDeviationX { 2 };
-    SVGAnimatedNumberAttribute m_stdDeviationY { 2 };
+    Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, 2) };
+    Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, 2) };
+    Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };
+    Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this, 2) };
 };
     
 } // namespace WebCore

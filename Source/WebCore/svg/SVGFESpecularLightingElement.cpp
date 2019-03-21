@@ -40,23 +40,19 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
 {
     ASSERT(hasTagName(SVGNames::feSpecularLightingTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant>();
+        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent>();
+        PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale>();
+        PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFESpecularLightingElement::m_kernelUnitLengthX, &SVGFESpecularLightingElement::m_kernelUnitLengthY>();
+    });
 }
 
 Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
-}
-
-const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
 }
 
 void SVGFESpecularLightingElement::registerAttributes()
@@ -65,12 +61,6 @@ void SVGFESpecularLightingElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFESpecularLightingElement::m_in1>();
-    registry.registerAttribute<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant>();
-    registry.registerAttribute<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent>();
-    registry.registerAttribute<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale>();
-    registry.registerAttribute<SVGNames::kernelUnitLengthAttr,
-        &SVGFESpecularLightingElement::kernelUnitLengthXIdentifier, &SVGFESpecularLightingElement::m_kernelUnitLengthX,
-        &SVGFESpecularLightingElement::kernelUnitLengthYIdentifier, &SVGFESpecularLightingElement::m_kernelUnitLengthY>();
 }
 
 void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -81,25 +71,25 @@ void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, con
     }
 
     if (name == SVGNames::surfaceScaleAttr) {
-        m_surfaceScale.setValue(value.toFloat());
+        m_surfaceScale->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::specularConstantAttr) {
-        m_specularConstant.setValue(value.toFloat());
+        m_specularConstant->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::specularExponentAttr) {
-        m_specularExponent.setValue(value.toFloat());
+        m_specularExponent->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
-            m_kernelUnitLengthX.setValue(x);
-            m_kernelUnitLengthY.setValue(y);
+            m_kernelUnitLengthX->setBaseValInternal(x);
+            m_kernelUnitLengthY->setBaseValInternal(y);
         }
         return;
     }

@@ -23,7 +23,6 @@
 #pragma once
 
 #include "FESpecularLighting.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGFELightElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -36,18 +35,18 @@ public:
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
     String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    float specularConstant() const  { return m_specularConstant.currentValue(attributeOwnerProxy()); }
-    float specularExponent() const { return m_specularExponent.currentValue(attributeOwnerProxy()); }
-    float surfaceScale() const { return m_surfaceScale.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthX() const { return m_kernelUnitLengthX.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthY() const { return m_kernelUnitLengthY.currentValue(attributeOwnerProxy()); }
+    float specularConstant() const { return m_specularConstant->currentValue(); }
+    float specularExponent() const { return m_specularExponent->currentValue(); }
+    float surfaceScale() const { return m_surfaceScale->currentValue(); }
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX->currentValue(); }
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> specularConstantAnimated() { return m_specularConstant.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> specularExponentAnimated() { return m_specularExponent.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> surfaceScaleAnimated() { return m_surfaceScale.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthXAnimated() { return m_kernelUnitLengthX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthYAnimated() { return m_kernelUnitLengthY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& specularConstantAnimated() { return m_specularConstant; }
+    SVGAnimatedNumber& specularExponentAnimated() { return m_specularExponent; }
+    SVGAnimatedNumber& surfaceScaleAnimated() { return m_surfaceScale; }
+    SVGAnimatedNumber& kernelUnitLengthXAnimated() { return m_kernelUnitLengthX; }
+    SVGAnimatedNumber& kernelUnitLengthYAnimated() { return m_kernelUnitLengthY; }
 
 private:
     SVGFESpecularLightingElement(const QualifiedName&, Document&);
@@ -71,17 +70,14 @@ private:
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& kernelUnitLengthXIdentifier();
-    static const AtomicString& kernelUnitLengthYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedNumberAttribute m_specularConstant { 1 };
-    SVGAnimatedNumberAttribute m_specularExponent { 1 };
-    SVGAnimatedNumberAttribute m_surfaceScale { 1 };
-    SVGAnimatedNumberAttribute m_kernelUnitLengthX;
-    SVGAnimatedNumberAttribute m_kernelUnitLengthY;
+    Ref<SVGAnimatedNumber> m_specularConstant { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

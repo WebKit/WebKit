@@ -18,6 +18,189 @@
 
 2019-03-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
+        Remove the SVG property tear off objects for SVGAnimatedNumber
+        https://bugs.webkit.org/show_bug.cgi?id=196037
+
+        Reviewed by Simon Fraser.
+
+        -- Define SVGAnimatedNumber to be SVGAnimatedPrimitiveProperty<float>.
+
+        -- Add SVGAnimatedNumberAccessor to associate an attribute name with a 
+           pointer to an SVGAnimatedNumber. Given a pointer to an SVGElement,
+           this accessor will and create an animator for the animated property.
+
+        -- Add SVGAnimatedNumberPairAccessor to associate an attribute name
+           with a pair of pointers to SVGAnimatedNumbers. Given a pointer to an
+           SVGElement, this accessor will and create an animator for these
+           animated properties.
+
+        -- Add SVGAnimatedNumberAnimator to animated an SVGAnimatedNumber.
+
+        -- Add SVGAnimatedNumberPairAnimator to animated a pair of SVGAnimatedNumbers.
+
+        -- Add SVGAnimationNumberFunction which will be responsible for progressing
+           a float over a period of time.
+
+        -- Define SVGNumberAnimator to be SVGPrimitivePropertyAnimator<float,
+           SVGAnimationNumberFunction>. SVGNumberAnimator will be responsible 
+           for animating attributes with no reflecting animated properties, e.g.
+           "fill-opacity".
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimatedLength.cpp:
+        * svg/SVGAnimatedLengthList.cpp:
+        * svg/SVGAnimatedNumber.cpp: Removed.
+        * svg/SVGAnimatedNumber.h: Removed.
+        * svg/SVGAnimatedNumberList.cpp:
+        * svg/SVGAnimatedNumberOptionalNumber.cpp: Removed.
+        * svg/SVGAnimatedNumberOptionalNumber.h: Removed.
+        * svg/SVGAnimatedTransformList.cpp:
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::registerAttributes):
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGComponentTransferFunctionElement::slope const):
+        (WebCore::SVGComponentTransferFunctionElement::intercept const):
+        (WebCore::SVGComponentTransferFunctionElement::amplitude const):
+        (WebCore::SVGComponentTransferFunctionElement::exponent const):
+        (WebCore::SVGComponentTransferFunctionElement::offset const):
+        (WebCore::SVGComponentTransferFunctionElement::slopeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::interceptAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::amplitudeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::exponentAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::offsetAnimated):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::registerAttributes):
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::setKernelUnitLength):
+        (WebCore::SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier): Deleted.
+        (WebCore::SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier): Deleted.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::registerAttributes):
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::kernelUnitLengthXIdentifier): Deleted.
+        (WebCore::SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier): Deleted.
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::registerAttributes):
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        (WebCore::SVGFEDropShadowElement::setStdDeviation):
+        (WebCore::SVGFEDropShadowElement::registerAttributes):
+        (WebCore::SVGFEDropShadowElement::parseAttribute):
+        (WebCore::SVGFEDropShadowElement::stdDeviationXIdentifier): Deleted.
+        (WebCore::SVGFEDropShadowElement::stdDeviationYIdentifier): Deleted.
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::setStdDeviation):
+        (WebCore::SVGFEGaussianBlurElement::registerAttributes):
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        (WebCore::SVGFEGaussianBlurElement::stdDeviationXIdentifier): Deleted.
+        (WebCore::SVGFEGaussianBlurElement::stdDeviationYIdentifier): Deleted.
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::SVGFELightElement):
+        (WebCore::SVGFELightElement::parseAttribute):
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::registerAttributes): Deleted.
+        * svg/SVGFELightElement.h:
+        (WebCore::SVGFELightElement::azimuth const):
+        (WebCore::SVGFELightElement::elevation const):
+        (WebCore::SVGFELightElement::x const):
+        (WebCore::SVGFELightElement::y const):
+        (WebCore::SVGFELightElement::z const):
+        (WebCore::SVGFELightElement::pointsAtX const):
+        (WebCore::SVGFELightElement::pointsAtY const):
+        (WebCore::SVGFELightElement::pointsAtZ const):
+        (WebCore::SVGFELightElement::specularExponent const):
+        (WebCore::SVGFELightElement::limitingConeAngle const):
+        (WebCore::SVGFELightElement::azimuthAnimated):
+        (WebCore::SVGFELightElement::elevationAnimated):
+        (WebCore::SVGFELightElement::xAnimated):
+        (WebCore::SVGFELightElement::yAnimated):
+        (WebCore::SVGFELightElement::zAnimated):
+        (WebCore::SVGFELightElement::pointsAtXAnimated):
+        (WebCore::SVGFELightElement::pointsAtYAnimated):
+        (WebCore::SVGFELightElement::pointsAtZAnimated):
+        (WebCore::SVGFELightElement::specularExponentAnimated):
+        (WebCore::SVGFELightElement::limitingConeAngleAnimated):
+        (WebCore::SVGFELightElement::attributeRegistry): Deleted.
+        (WebCore::SVGFELightElement::isKnownAttribute): Deleted.
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::setRadius):
+        (WebCore::SVGFEMorphologyElement::registerAttributes):
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        (WebCore::SVGFEMorphologyElement::radiusXIdentifier): Deleted.
+        (WebCore::SVGFEMorphologyElement::radiusYIdentifier): Deleted.
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::registerAttributes):
+        (WebCore::SVGFEOffsetElement::parseAttribute):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::registerAttributes):
+        (WebCore::SVGFESpecularLightingElement::parseAttribute):
+        (WebCore::SVGFESpecularLightingElement::kernelUnitLengthXIdentifier): Deleted.
+        (WebCore::SVGFESpecularLightingElement::kernelUnitLengthYIdentifier): Deleted.
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::registerAttributes):
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        (WebCore::SVGFETurbulenceElement::baseFrequencyXIdentifier): Deleted.
+        (WebCore::SVGFETurbulenceElement::baseFrequencyYIdentifier): Deleted.
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::SVGGeometryElement):
+        (WebCore::SVGGeometryElement::parseAttribute):
+        (WebCore::SVGGeometryElement::registerAttributes): Deleted.
+        * svg/SVGGeometryElement.h:
+        (WebCore::SVGGeometryElement::pathLength const):
+        (WebCore::SVGGeometryElement::pathLengthAnimated):
+        (WebCore::SVGGeometryElement::attributeRegistry): Deleted.
+        (WebCore::SVGGeometryElement::isKnownAttribute): Deleted.
+        * svg/SVGPathElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::SVGStopElement):
+        (WebCore::SVGStopElement::parseAttribute):
+        (WebCore::SVGStopElement::registerAttributes): Deleted.
+        * svg/SVGStopElement.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimatedPropertyPairAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyPairAnimatorImpl.h:
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationNumberFunction::progress):
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPrimitivePropertyAnimatorImpl.h:
+        * svg/properties/SVGPropertyAnimatorCreator.h:
+        (WebCore::SVGPropertyAnimatorCreator::createNumberAnimator):
+        (WebCore::SVGPropertyAnimatorCreator::attributeAnimatorCreator):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
+2019-03-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
         Remove the SVG tear off objects for SVGColorAnimator
         https://bugs.webkit.org/show_bug.cgi?id=196025
 

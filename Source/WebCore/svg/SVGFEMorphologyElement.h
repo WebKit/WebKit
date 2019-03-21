@@ -22,7 +22,6 @@
 
 #include "FEMorphology.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -65,13 +64,13 @@ public:
 
     String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
     MorphologyOperatorType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
-    float radiusX() const { return m_radiusX.currentValue(attributeOwnerProxy()); }
-    float radiusY() const { return m_radiusY.currentValue(attributeOwnerProxy()); }
+    float radiusX() const { return m_radiusX->currentValue(); }
+    float radiusY() const { return m_radiusY->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> svgOperatorAnimated() { return m_svgOperator.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> radiusXAnimated() { return m_radiusX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> radiusYAnimated() { return m_radiusY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& radiusXAnimated() { return m_radiusX; }
+    SVGAnimatedNumber& radiusYAnimated() { return m_radiusY; }
 
 private:
     SVGFEMorphologyElement(const QualifiedName&, Document&);
@@ -95,15 +94,12 @@ private:
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& radiusXIdentifier();
-    static const AtomicString& radiusYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
     SVGAnimatedEnumerationAttribute<MorphologyOperatorType> m_svgOperator { FEMORPHOLOGY_OPERATOR_ERODE };
-    SVGAnimatedNumberAttribute m_radiusX;
-    SVGAnimatedNumberAttribute m_radiusY;
+    Ref<SVGAnimatedNumber> m_radiusX { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_radiusY { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

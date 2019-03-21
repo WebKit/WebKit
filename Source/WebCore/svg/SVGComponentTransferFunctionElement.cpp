@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,15 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     : SVGElement(tagName, document)
 {
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope>();
+        PropertyRegistry::registerProperty<SVGNames::interceptAttr, &SVGComponentTransferFunctionElement::m_intercept>();
+        PropertyRegistry::registerProperty<SVGNames::amplitudeAttr, &SVGComponentTransferFunctionElement::m_amplitude>();
+        PropertyRegistry::registerProperty<SVGNames::exponentAttr, &SVGComponentTransferFunctionElement::m_exponent>();
+        PropertyRegistry::registerProperty<SVGNames::offsetAttr, &SVGComponentTransferFunctionElement::m_offset>();
+    });
 }
 
 void SVGComponentTransferFunctionElement::registerAttributes()
@@ -45,11 +54,6 @@ void SVGComponentTransferFunctionElement::registerAttributes()
         return;
     registry.registerAttribute<SVGNames::typeAttr, ComponentTransferType, &SVGComponentTransferFunctionElement::m_type>();
     registry.registerAttribute<SVGNames::tableValuesAttr, &SVGComponentTransferFunctionElement::m_tableValues>();
-    registry.registerAttribute<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope>();
-    registry.registerAttribute<SVGNames::interceptAttr, &SVGComponentTransferFunctionElement::m_intercept>();
-    registry.registerAttribute<SVGNames::amplitudeAttr, &SVGComponentTransferFunctionElement::m_amplitude>();
-    registry.registerAttribute<SVGNames::exponentAttr, &SVGComponentTransferFunctionElement::m_exponent>();
-    registry.registerAttribute<SVGNames::offsetAttr, &SVGComponentTransferFunctionElement::m_offset>();
 }
 
 void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -70,27 +74,27 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
     }
 
     if (name == SVGNames::slopeAttr) {
-        m_slope.setValue(value.toFloat());
+        m_slope->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::interceptAttr) {
-        m_intercept.setValue(value.toFloat());
+        m_intercept->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::amplitudeAttr) {
-        m_amplitude.setValue(value.toFloat());
+        m_amplitude->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::exponentAttr) {
-        m_exponent.setValue(value.toFloat());
+        m_exponent->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::offsetAttr) {
-        m_offset.setValue(value.toFloat());
+        m_offset->setBaseValInternal(value.toFloat());
         return;
     }
 

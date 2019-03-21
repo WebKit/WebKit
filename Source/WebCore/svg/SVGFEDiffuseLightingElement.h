@@ -37,16 +37,16 @@ public:
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
     String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    float diffuseConstant() const { return m_diffuseConstant.currentValue(attributeOwnerProxy()); }
-    float surfaceScale() const { return m_surfaceScale.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthX() const { return m_kernelUnitLengthX.currentValue(attributeOwnerProxy()); }
-    float kernelUnitLengthY() const { return m_kernelUnitLengthY.currentValue(attributeOwnerProxy()); }
+    float diffuseConstant() const { return m_diffuseConstant->currentValue(); }
+    float surfaceScale() const { return m_surfaceScale->currentValue(); }
+    float kernelUnitLengthX() const { return m_kernelUnitLengthX->currentValue(); }
+    float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
 
     RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> diffuseConstantAnimated() { return m_diffuseConstant.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> surfaceScaleAnimated() { return m_surfaceScale.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthXAnimated() { return m_kernelUnitLengthX.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumber> kernelUnitLengthYAnimated() { return m_kernelUnitLengthY.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumber& diffuseConstantAnimated() { return m_diffuseConstant; }
+    SVGAnimatedNumber& surfaceScaleAnimated() { return m_surfaceScale; }
+    SVGAnimatedNumber& kernelUnitLengthXAnimated() { return m_kernelUnitLengthX; }
+    SVGAnimatedNumber& kernelUnitLengthYAnimated() { return m_kernelUnitLengthY; }
 
 private:
     SVGFEDiffuseLightingElement(const QualifiedName&, Document&);
@@ -70,16 +70,13 @@ private:
     bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&) override;
     RefPtr<FilterEffect> build(SVGFilterBuilder*, Filter&) const override;
 
-    static const AtomicString& kernelUnitLengthXIdentifier();
-    static const AtomicString& kernelUnitLengthYIdentifier();
-
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedNumberAttribute m_diffuseConstant { 1 };
-    SVGAnimatedNumberAttribute m_surfaceScale { 1 };
-    SVGAnimatedNumberAttribute m_kernelUnitLengthX;
-    SVGAnimatedNumberAttribute m_kernelUnitLengthY;
+    Ref<SVGAnimatedNumber> m_diffuseConstant { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
+    Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
 };
 
 } // namespace WebCore

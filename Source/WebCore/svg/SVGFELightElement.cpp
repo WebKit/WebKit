@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Oliver Hunt <oliver@nerget.com>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,7 +43,19 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGFELightElement);
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
-    registerAttributes();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::azimuthAttr, &SVGFELightElement::m_azimuth>();
+        PropertyRegistry::registerProperty<SVGNames::elevationAttr, &SVGFELightElement::m_elevation>();
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGFELightElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGFELightElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::zAttr, &SVGFELightElement::m_z>();
+        PropertyRegistry::registerProperty<SVGNames::pointsAtXAttr, &SVGFELightElement::m_pointsAtX>();
+        PropertyRegistry::registerProperty<SVGNames::pointsAtYAttr, &SVGFELightElement::m_pointsAtY>();
+        PropertyRegistry::registerProperty<SVGNames::pointsAtZAttr, &SVGFELightElement::m_pointsAtZ>();
+        PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent>();
+        PropertyRegistry::registerProperty<SVGNames::limitingConeAngleAttr, &SVGFELightElement::m_limitingConeAngle>();
+    });
 }
 
 SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElement)
@@ -55,72 +67,55 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
-void SVGFELightElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::azimuthAttr, &SVGFELightElement::m_azimuth>();
-    registry.registerAttribute<SVGNames::elevationAttr, &SVGFELightElement::m_elevation>();
-    registry.registerAttribute<SVGNames::xAttr, &SVGFELightElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGFELightElement::m_y>();
-    registry.registerAttribute<SVGNames::zAttr, &SVGFELightElement::m_z>();
-    registry.registerAttribute<SVGNames::pointsAtXAttr, &SVGFELightElement::m_pointsAtX>();
-    registry.registerAttribute<SVGNames::pointsAtYAttr, &SVGFELightElement::m_pointsAtY>();
-    registry.registerAttribute<SVGNames::pointsAtZAttr, &SVGFELightElement::m_pointsAtZ>();
-    registry.registerAttribute<SVGNames::specularExponentAttr, &SVGFELightElement::m_specularExponent>();
-    registry.registerAttribute<SVGNames::limitingConeAngleAttr, &SVGFELightElement::m_limitingConeAngle>();
-}
-
 void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::azimuthAttr) {
-        m_azimuth.setValue(value.toFloat());
+        m_azimuth->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::elevationAttr) {
-        m_elevation.setValue(value.toFloat());
+        m_elevation->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::xAttr) {
-        m_x.setValue(value.toFloat());
+        m_x->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::yAttr) {
-        m_y.setValue(value.toFloat());
+        m_y->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::zAttr) {
-        m_z.setValue(value.toFloat());
+        m_z->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtXAttr) {
-        m_pointsAtX.setValue(value.toFloat());
+        m_pointsAtX->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtYAttr) {
-        m_pointsAtY.setValue(value.toFloat());
+        m_pointsAtY->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::pointsAtZAttr) {
-        m_pointsAtZ.setValue(value.toFloat());
+        m_pointsAtZ->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::specularExponentAttr) {
-        m_specularExponent.setValue(value.toFloat());
+        m_specularExponent->setBaseValInternal(value.toFloat());
         return;
     }
 
     if (name == SVGNames::limitingConeAngleAttr) {
-        m_limitingConeAngle.setValue(value.toFloat());
+        m_limitingConeAngle->setBaseValInternal(value.toFloat());
         return;
     }
 
@@ -129,7 +124,7 @@ void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void SVGFELightElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         auto parent = makeRefPtr(parentElement());
         if (!parent)
             return;

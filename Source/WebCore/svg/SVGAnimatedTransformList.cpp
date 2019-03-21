@@ -25,7 +25,6 @@
 #include "SVGAnimatedTransformList.h"
 
 #include "SVGAnimateTransformElement.h"
-#include "SVGAnimatedNumber.h"
 #include "SVGNames.h"
 #include "SVGTransformDistance.h"
 

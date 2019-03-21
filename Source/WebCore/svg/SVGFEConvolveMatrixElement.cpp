@@ -44,8 +44,11 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::orderAttr, &SVGFEConvolveMatrixElement::m_orderX, &SVGFEConvolveMatrixElement::m_orderY>();
+        PropertyRegistry::registerProperty<SVGNames::divisorAttr, &SVGFEConvolveMatrixElement::m_divisor>();
+        PropertyRegistry::registerProperty<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
         PropertyRegistry::registerProperty<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
         PropertyRegistry::registerProperty<SVGNames::targetYAttr, &SVGFEConvolveMatrixElement::m_targetY>();
+        PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFEConvolveMatrixElement::m_kernelUnitLengthX, &SVGFEConvolveMatrixElement::m_kernelUnitLengthY>();
         PropertyRegistry::registerProperty<SVGNames::preserveAlphaAttr, &SVGFEConvolveMatrixElement::m_preserveAlpha>();
     });
 }
@@ -55,18 +58,6 @@ Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const Qualifi
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
 }
 
-const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthX", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGKernelUnitLengthY", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
 void SVGFEConvolveMatrixElement::registerAttributes()
 {
     auto& registry = attributeRegistry();
@@ -74,12 +65,7 @@ void SVGFEConvolveMatrixElement::registerAttributes()
         return;
     registry.registerAttribute<SVGNames::inAttr, &SVGFEConvolveMatrixElement::m_in1>();
     registry.registerAttribute<SVGNames::kernelMatrixAttr, &SVGFEConvolveMatrixElement::m_kernelMatrix>();
-    registry.registerAttribute<SVGNames::divisorAttr, &SVGFEConvolveMatrixElement::m_divisor>();
-    registry.registerAttribute<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
-    registry.registerAttribute<SVGNames::kernelUnitLengthAttr,
-        &SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier, &SVGFEConvolveMatrixElement::m_kernelUnitLengthX,
-        &SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier, &SVGFEConvolveMatrixElement::m_kernelUnitLengthY>();
 }
 
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -119,14 +105,14 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     if (name == SVGNames::divisorAttr) {
         float divisor = value.toFloat();
         if (divisor)
-            m_divisor.setValue(divisor);
+            m_divisor->setBaseValInternal(divisor);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing divisor=\"" + value + "\". Filtered element will not be displayed.");
         return;
     }
     
     if (name == SVGNames::biasAttr) {
-        m_bias.setValue(value.toFloat());
+        m_bias->setBaseValInternal(value.toFloat());
         return;
     }
 
@@ -143,8 +129,8 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     if (name == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y) && x > 0 && y > 0) {
-            m_kernelUnitLengthX.setValue(x);
-            m_kernelUnitLengthY.setValue(y);
+            m_kernelUnitLengthX->setBaseValInternal(x);
+            m_kernelUnitLengthY->setBaseValInternal(y);
         } else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing kernelUnitLength=\"" + value + "\". Filtered element will not be displayed.");
         return;
@@ -194,8 +180,8 @@ void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 
 void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 {
-    m_kernelUnitLengthX.setValue(x);
-    m_kernelUnitLengthY.setValue(y);
+    m_kernelUnitLengthX->setBaseValInternal(x);
+    m_kernelUnitLengthY->setBaseValInternal(y);
     invalidate();
 }
 

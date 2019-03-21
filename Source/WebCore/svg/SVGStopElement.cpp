@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,7 +37,11 @@ inline SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document& do
     : SVGElement(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::stopTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::offsetAttr, &SVGStopElement::m_offset>();
+    });
 }
 
 Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Document& document)
@@ -45,21 +49,13 @@ Ref<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGStopElement(tagName, document));
 }
 
-void SVGStopElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::offsetAttr, &SVGStopElement::m_offset>();
-}
-
 void SVGStopElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::offsetAttr) {
         if (value.endsWith('%'))
-            m_offset.setValue(value.string().left(value.length() - 1).toFloat() / 100.0f);
+            m_offset->setBaseValInternal(value.string().left(value.length() - 1).toFloat() / 100.0f);
         else
-            m_offset.setValue(value.toFloat());
+            m_offset->setBaseValInternal(value.toFloat());
         return;
     }
 

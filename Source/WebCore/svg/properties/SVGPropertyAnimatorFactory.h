@@ -80,6 +80,11 @@ private:
         return SVGColorAnimator::create(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
     }
 
+    static auto createNumberAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return SVGNumberAnimator::create(attributeName,  WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
     static const AttributeAnimatorCreator& attributeAnimatorCreator()
     {
         static NeverDestroyed<AttributeAnimatorCreator> map = AttributeAnimatorCreator({
@@ -89,6 +94,13 @@ private:
             { SVGNames::lighting_colorAttr->impl(), std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
             { SVGNames::stop_colorAttr->impl(),     std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
             { SVGNames::strokeAttr->impl(),         std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+
+            { SVGNames::fill_opacityAttr->impl(),       std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            { SVGNames::flood_opacityAttr->impl(),      std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            { SVGNames::opacityAttr->impl(),            std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            { SVGNames::stop_opacityAttr->impl(),       std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            { SVGNames::stroke_miterlimitAttr->impl(),  std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            { SVGNames::stroke_opacityAttr->impl(),     std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
         });
         return map;
     }
