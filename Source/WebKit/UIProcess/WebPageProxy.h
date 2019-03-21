@@ -95,6 +95,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/ProcessID.h>
@@ -1500,6 +1501,8 @@ public:
     void speechSynthesisResume(CompletionHandler<void()>&&);
 #endif
 
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
     void addObserver(WebViewDidMoveToWindowObserver&);
     void removeObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
@@ -1507,6 +1510,8 @@ public:
 #if HAVE(LOAD_OPTIMIZER)
 WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_1
 #endif
+
+    Logger& logger();
 
     // IPC::MessageReceiver
     // Implemented in generated WebPageProxyMessageReceiver.cpp
@@ -2458,7 +2463,9 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
 #endif
 
     HashMap<WebViewDidMoveToWindowObserver*, WeakPtr<WebViewDidMoveToWindowObserver>> m_webViewDidMoveToWindowObservers;
-    
+
+    mutable RefPtr<Logger> m_logger;
+
 #if ENABLE(SPEECH_SYNTHESIS)
     struct SpeechSynthesisData {
         std::unique_ptr<WebCore::PlatformSpeechSynthesizer> synthesizer;

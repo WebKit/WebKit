@@ -55,6 +55,11 @@ void initializeLogChannelsIfNecessary(Optional<String> logChannelString)
     WTFInitializeLogChannelStatesFromString(logChannels, logChannelCount, enabledChannelsString.utf8().data());
 }
 
+WTFLogChannel* getLogChannel(const String& name)
+{
+    return WTFLogChannelByName(logChannels, logChannelCount, name.utf8().data());
+}
+
 } // namespace WebKit
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

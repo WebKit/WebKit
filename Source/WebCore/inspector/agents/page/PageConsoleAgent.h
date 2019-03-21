@@ -40,13 +40,17 @@ class PageConsoleAgent final : public WebConsoleAgent {
     WTF_MAKE_NONCOPYABLE(PageConsoleAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageConsoleAgent(WebAgentContext&);
+    PageConsoleAgent(PageAgentContext&);
     virtual ~PageConsoleAgent() = default;
+
+    void getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>&) final;
+    void setLoggingChannelLevel(ErrorString&, const String& channel, const String& level) final;
 
 private:
     void clearMessages(ErrorString&) override;
 
     InstrumentingAgents& m_instrumentingAgents;
+    Page& m_inspectedPage;
 };
 
 } // namespace WebCore

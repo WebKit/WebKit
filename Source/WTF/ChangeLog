@@ -1,3 +1,14 @@
+2019-03-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add UI process WebRTC runtime logging.
+        https://bugs.webkit.org/show_bug.cgi?id=196020
+        <rdar://problem/49071443>
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/Logger.h:
+        (WTF::LogArgument::toString): Add long long and unsigned long long variants.
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH

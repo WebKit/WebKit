@@ -42,6 +42,7 @@
 #include "WheelEventTestTrigger.h"
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -703,6 +704,8 @@ public:
     WEBCORE_EXPORT void applicationDidBecomeActive();
 
     PerformanceLogging& performanceLogging() const { return *m_performanceLogging; }
+
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
 private:
     struct Navigation {

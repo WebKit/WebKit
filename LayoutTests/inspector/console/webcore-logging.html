@@ -69,22 +69,6 @@ function test()
     });
 
     suite.addTestCase({
-        name: "Console.Logging.InvalidChannel",
-        description: "setLoggingChannelLevel should reject invalid log channel name.",
-        test(resolve, reject) {
-            ConsoleAgent.setLoggingChannelLevel("DOES_NOT_EXIST", WI.LoggingChannel.Level.Off, (error) => {
-                if (!error) {
-                    InspectorTest.fail("Should have an error with invalid channel.");
-                    reject();
-                    return;
-                }
-                InspectorTest.pass(error);
-                resolve();
-            });
-        }
-    });
-
-    suite.addTestCase({
         name: "Console.Logging.InvalidLevel",
         description: "setLoggingChannelLevel should reject invalid log channel level.",
         test(resolve, reject) {

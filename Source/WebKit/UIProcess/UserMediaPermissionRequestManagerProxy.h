@@ -25,6 +25,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakPtr.h>
@@ -40,7 +41,12 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class UserMediaPermissionRequestManagerProxy : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy> {
+class UserMediaPermissionRequestManagerProxy
+    : public CanMakeWeakPtr<UserMediaPermissionRequestManagerProxy>
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     explicit UserMediaPermissionRequestManagerProxy(WebPageProxy&);
     ~UserMediaPermissionRequestManagerProxy();
@@ -72,7 +78,20 @@ public:
     void captureStateChanged(WebCore::MediaProducer::MediaStateFlags oldState, WebCore::MediaProducer::MediaStateFlags newState);
     void syncWithWebCorePrefs() const;
 
+    enum class RequestAction {
+        Deny,
+        Grant,
+        Prompt
+    };
+
 private:
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final;
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const override { return "UserMediaPermissionRequestManagerProxy"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
     Ref<UserMediaPermissionRequestProxy> createPermissionRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&);
     void denyRequest(uint64_t userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason, const String& invalidConstraint);
 #if ENABLE(MEDIA_STREAM)
@@ -83,11 +102,6 @@ private:
 
     void getUserMediaPermissionInfo(uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(Optional<bool>)>&&);
 
-    enum class RequestAction {
-        Deny,
-        Grant,
-        Prompt
-    };
     RequestAction getRequestAction(const UserMediaPermissionRequestProxy&);
 
     bool wasGrantedVideoOrAudioAccess(uint64_t, const WebCore::SecurityOrigin& userMediaDocumentOrigin, const WebCore::SecurityOrigin& topLevelDocumentOrigin);
@@ -125,8 +139,30 @@ private:
     WebCore::MediaProducer::MediaStateFlags m_captureState { WebCore::MediaProducer::IsNotPlaying };
     RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_watchdogTimer;
     Seconds m_currentWatchdogInterval;
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
     bool m_hasFilteredDeviceList { false };
 };
 
+String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);
+
 } // namespace WebKit
 
+#if ENABLE(MEDIA_STREAM)
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebKit::UserMediaPermissionRequestManagerProxy::RequestAction> {
+    static String toString(const WebKit::UserMediaPermissionRequestManagerProxy::RequestAction type)
+    {
+        return convertEnumerationToString(type);
+    }
+};
+
+}; // namespace WTF
+#endif

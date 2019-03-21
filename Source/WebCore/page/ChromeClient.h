@@ -45,6 +45,7 @@
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
@@ -497,6 +498,8 @@ public:
     virtual void associateEditableImageWithAttachment(GraphicsLayer::EmbeddedViewID, const String&) { }
     virtual void didCreateEditableImage(GraphicsLayer::EmbeddedViewID) { }
     virtual void didDestroyEditableImage(GraphicsLayer::EmbeddedViewID) { }
+
+    virtual void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) { }
 
 protected:
     virtual ~ChromeClient() = default;

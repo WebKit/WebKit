@@ -865,4 +865,25 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
 };
 #endif
 
+template<> struct EnumTraits<WTFLogChannelState> {
+    using values = EnumValues<
+    WTFLogChannelState,
+    WTFLogChannelState::Off,
+    WTFLogChannelState::On,
+    WTFLogChannelState::OnWithAccumulation
+    >;
+};
+
+#undef Always
+template<> struct EnumTraits<WTFLogLevel> {
+    using values = EnumValues<
+    WTFLogLevel,
+    WTFLogLevel::Always,
+    WTFLogLevel::Error,
+    WTFLogLevel::Warning,
+    WTFLogLevel::Info,
+    WTFLogLevel::Debug
+    >;
+};
+
 } // namespace WTF

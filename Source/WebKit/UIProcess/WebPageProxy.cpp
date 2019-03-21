@@ -798,6 +798,9 @@ void WebPageProxy::swapToWebProcess(Ref<WebProcessProxy>&& process, std::unique_
     m_process = WTFMove(process);
     m_websiteDataStore = m_process->websiteDataStore();
 
+    if (m_logger)
+        m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
+
     ASSERT(!m_drawingArea);
     setDrawingArea(WTFMove(drawingArea));
     ASSERT(!m_mainFrame);
@@ -8944,6 +8947,32 @@ void WebPageProxy::focusTextInputContext(const TextInputContext& context, Comple
     }
 
     m_process->connection()->sendWithAsyncReply(Messages::WebPage::FocusTextInputContext(context), WTFMove(completionHandler), m_pageID);
+}
+
+Logger& WebPageProxy::logger()
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
+    }
+
+    return *m_logger;
+}
+
+void WebPageProxy::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+#if !RELEASE_LOG_DISABLED
+    auto* channel = getLogChannel(channelName);
+    if  (!channel)
+        return;
+
+    channel->state = state;
+    channel->level = level;
+#else
+    UNUSED_PARAM(channelName);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(level);
+#endif
 }
 
 } // namespace WebKit

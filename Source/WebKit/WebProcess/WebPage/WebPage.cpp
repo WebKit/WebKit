@@ -6608,6 +6608,11 @@ void WebPage::focusTextInputContext(const TextInputContext& textInputContext, Co
     }());
 }
 
+void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+    send(Messages::WebPageProxy::ConfigureLoggingChannel(channelName, state, level));
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

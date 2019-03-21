@@ -2910,4 +2910,20 @@ void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCo
 }
 #endif
 
+void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+#if !RELEASE_LOG_DISABLED
+    if (auto* channel = getLogChannel(channelName)) {
+        channel->state = state;
+        channel->level = level;
+    }
+
+    chrome().client().configureLoggingChannel(channelName, state, level);
+#else
+    UNUSED_PARAM(channelName);
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(level);
+#endif
+}
+
 } // namespace WebCore

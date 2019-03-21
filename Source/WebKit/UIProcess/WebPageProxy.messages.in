@@ -558,4 +558,6 @@ messages -> WebPageProxy {
     SpeechSynthesisPause() -> () Async
     SpeechSynthesisResume() -> () Async
 #endif
+
+    ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
 }

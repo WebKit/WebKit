@@ -1,3 +1,14 @@
+2019-03-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Add UI process WebRTC runtime logging.
+        https://bugs.webkit.org/show_bug.cgi?id=196020
+        <rdar://problem/49071443>
+
+        Reviewed by Youenn Fablet.
+
+        * inspector/console/webcore-logging.html:
+        * inspector/console/webcore-logging-expected.txt:
+
 2019-03-21  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to inform applications of WKContentRuleList actions

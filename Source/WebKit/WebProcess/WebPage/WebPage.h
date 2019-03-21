@@ -1164,6 +1164,8 @@ public:
     void suspendAllMediaBuffering();
     void resumeAllMediaBuffering();
 
+    void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();
 #endif

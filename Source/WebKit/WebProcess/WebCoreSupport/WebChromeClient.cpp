@@ -1325,4 +1325,9 @@ void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, 
 }
 #endif
 
+void WebChromeClient::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)
+{
+    m_page.configureLoggingChannel(channelName, state, level);
+}
+
 } // namespace WebKit

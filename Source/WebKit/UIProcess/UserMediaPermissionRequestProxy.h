@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -100,4 +100,22 @@ private:
     String m_deviceIdentifierHashSalt;
 };
 
+String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason);
+
 } // namespace WebKit
+
+namespace WTF {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebKit::UserMediaPermissionRequestProxy::UserMediaAccessDenialReason> {
+    static String toString(const WebKit::UserMediaPermissionRequestProxy::UserMediaAccessDenialReason type)
+    {
+        return convertEnumerationToString(type);
+    }
+};
+
+}; // namespace WTF
+

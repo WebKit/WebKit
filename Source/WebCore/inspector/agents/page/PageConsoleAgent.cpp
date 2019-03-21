@@ -42,9 +42,10 @@ namespace WebCore {
 
 using namespace Inspector;
 
-PageConsoleAgent::PageConsoleAgent(WebAgentContext& context)
+PageConsoleAgent::PageConsoleAgent(PageAgentContext& context)
     : WebConsoleAgent(context)
     , m_instrumentingAgents(context.instrumentingAgents)
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
@@ -54,6 +55,73 @@ void PageConsoleAgent::clearMessages(ErrorString& errorString)
         domAgent->releaseDanglingNodes();
 
     WebConsoleAgent::clearMessages(errorString);
+}
+
+void PageConsoleAgent::getLoggingChannels(ErrorString&, RefPtr<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>& channels)
+{
+    static const struct ChannelTable {
+        NeverDestroyed<String> name;
+        Inspector::Protocol::Console::ChannelSource source;
+    } channelTable[] = {
+        { MAKE_STATIC_STRING_IMPL("WebRTC"), Inspector::Protocol::Console::ChannelSource::WebRTC },
+        { MAKE_STATIC_STRING_IMPL("Media"), Inspector::Protocol::Console::ChannelSource::Media },
+        { MAKE_STATIC_STRING_IMPL("MediaSource"), Inspector::Protocol::Console::ChannelSource::MediaSource },
+    };
+
+    channels = JSON::ArrayOf<Inspector::Protocol::Console::Channel>::create();
+
+    size_t length = WTF_ARRAY_LENGTH(channelTable);
+    for (size_t i = 0; i < length; ++i) {
+        auto* logChannel = getLogChannel(channelTable[i].name);
+        if (!logChannel)
+            return;
+
+        auto level = Inspector::Protocol::Console::ChannelLevel::Off;
+        if (logChannel->state != WTFLogChannelState::Off) {
+            switch (logChannel->level) {
+            case WTFLogLevel::Always:
+            case WTFLogLevel::Error:
+            case WTFLogLevel::Warning:
+            case WTFLogLevel::Info:
+                level = Inspector::Protocol::Console::ChannelLevel::Basic;
+                break;
+            case WTFLogLevel::Debug:
+                level = Inspector::Protocol::Console::ChannelLevel::Verbose;
+                break;
+            }
+        }
+
+        auto channel = Inspector::Protocol::Console::Channel::create()
+            .setSource(channelTable[i].source)
+            .setLevel(level)
+            .release();
+        channels->addItem(WTFMove(channel));
+    }
+}
+
+static Optional<std::pair<WTFLogChannelState, WTFLogLevel>> channelConfigurationForString(const String& levelString)
+{
+    if (equalIgnoringASCIICase(levelString, "off"))
+        return { { WTFLogChannelState::Off, WTFLogLevel::Error } };
+
+    if (equalIgnoringASCIICase(levelString, "basic"))
+        return { { WTFLogChannelState::On, WTFLogLevel::Info } };
+
+    if (equalIgnoringASCIICase(levelString, "verbose"))
+        return { { WTFLogChannelState::On, WTFLogLevel::Debug } };
+
+    return WTF::nullopt;
+}
+
+void PageConsoleAgent::setLoggingChannelLevel(ErrorString& errorString, const String& channelName, const String& channelLevel)
+{
+    auto configuration = channelConfigurationForString(channelLevel);
+    if (!configuration) {
+        errorString = "Invalid logging level"_s;
+        return;
+    }
+
+    m_inspectedPage.configureLoggingChannel(channelName, configuration.value().first, configuration.value().second);
 }
 
 } // namespace WebCore
