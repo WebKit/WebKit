@@ -384,16 +384,15 @@ void ContentChangeObserver::adjustObservedState(Event event)
         break;
     case Event::StartedMouseMovedEventDispatching:
         ASSERT(!m_document.hasPendingStyleRecalc());
-        if (!isBetweenTouchEndAndMouseMoved()) {
-            setHasNoChangeState();
-            clearObservedDOMTimers();
-            setShouldObserveDOMTimerScheduling(true);
-        } else
-            setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
+        if (!isBetweenTouchEndAndMouseMoved())
+            reset();
         setIsBetweenTouchEndAndMouseMoved(false);
+        setShouldObserveDOMTimerScheduling(!hasVisibleChangeState());
+        setShouldObserveTransitions(!hasVisibleChangeState());
         break;
     case Event::EndedMouseMovedEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
+        setShouldObserveTransitions(false);
         break;
     case Event::StartedStyleRecalc:
         setShouldObserveNextStyleRecalc(false);
@@ -408,7 +407,6 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setHasIndeterminateState();
         break;
     case Event::EndedDOMTimerExecution:
-    case Event::EndedTransition:
         setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
         FALLTHROUGH;
     case Event::EndedStyleRecalc:
@@ -416,6 +414,15 @@ void ContentChangeObserver::adjustObservedState(Event event)
     case Event::CanceledTransition:
         if (!isObservationTimeWindowActive())
             adjustStateAndNotifyContentChangeIfNeeded();
+        break;
+    case Event::EndedTransition:
+        // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
+        // asynchronously right before the style update is issued.
+        if (m_document.inStyleRecalc()) {
+            // We need to start observing this style change synchronously.
+            m_isInObservedStyleRecalc = true;
+        } else
+            setShouldObserveNextStyleRecalc(true);
         break;
     case Event::EndedFixedObservationTimeWindow:
         adjustStateAndNotifyContentChangeIfNeeded();

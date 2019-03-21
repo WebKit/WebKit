@@ -1,3 +1,20 @@
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Start tracking implicit transitions at mousemove
+        https://bugs.webkit.org/show_bug.cgi?id=196054
+        <rdar://problem/49093840>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/0ms-delay-0ms-transition-on-mousemove-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/0ms-delay-0ms-transition-on-mousemove.html: Added.
+        * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove.html: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-mousemove-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-mousemove.html: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-touch-start.html: Added.
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Absolute in stacking-context scroller jiggles when scrolled
