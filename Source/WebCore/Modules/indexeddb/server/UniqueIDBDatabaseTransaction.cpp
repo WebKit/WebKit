@@ -81,7 +81,7 @@ void UniqueIDBDatabaseTransaction::abort()
     auto database = m_databaseConnection->database();
     ASSERT(database);
 
-    database->abortTransaction(*this, [this, protectedThis](const IDBError& error) {
+    database->abortTransaction(*this, UniqueIDBDatabase::WaitForPendingTasks::Yes, [this, protectedThis](const IDBError& error) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::abort (callback)");
         m_databaseConnection->didAbortTransaction(*this, error);
     });

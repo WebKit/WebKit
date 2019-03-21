@@ -199,6 +199,11 @@ void UniqueIDBDatabase::requestSpace(uint64_t taskSize, const char* taskName, Co
     });
 }
 
+void UniqueIDBDatabase::waitForRequestSpaceCompletion(CompletionHandler<void(Optional<IDBError>&&)>&& callback)
+{
+    requestSpace(0, "", WTFMove(callback));
+}
+
 void UniqueIDBDatabase::performCurrentOpenOperation()
 {
     LOG(IndexedDB, "(main) UniqueIDBDatabase::performCurrentOpenOperation (%p)", this);
@@ -779,7 +784,7 @@ void UniqueIDBDatabase::createObjectStore(UniqueIDBDatabaseTransaction& transact
     auto taskSize = defaultWriteOperationCost + estimateSize(info);
     requestSpace(taskSize, "createObjectStore", [this, taskSize, transaction = makeRef(transaction), info, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
-            callback(WTFMove(error.value()));
+            callback(WTFMove(*error));
             return;
         }
         this->createObjectStoreAfterQuotaCheck(taskSize, transaction.get(), info, WTFMove(callback));
@@ -823,6 +828,17 @@ void UniqueIDBDatabase::deleteObjectStore(UniqueIDBDatabaseTransaction& transact
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteObjectStore");
 
+    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreName, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error));
+            return;
+        }
+        this->deleteObjectStoreAfterQuotaCheck(transaction, objectStoreName, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::deleteObjectStoreAfterQuotaCheck(UniqueIDBDatabaseTransaction& transaction, const String& objectStoreName, ErrorCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -867,7 +883,7 @@ void UniqueIDBDatabase::renameObjectStore(UniqueIDBDatabaseTransaction& transact
     auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
     requestSpace(taskSize, "renameObjectStore", [this, taskSize, transaction = makeRef(transaction), objectStoreIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
-            callback(WTFMove(error.value()));
+            callback(WTFMove(*error));
             return;
         }
         this->renameObjectStoreAfterQuotaCheck(taskSize, transaction.get(), objectStoreIdentifier, newName, WTFMove(callback));
@@ -917,6 +933,17 @@ void UniqueIDBDatabase::clearObjectStore(UniqueIDBDatabaseTransaction& transacti
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::clearObjectStore");
 
+    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreIdentifier, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error));
+            return;
+        }
+        this->clearObjectStoreAfetQuotaCheck(transaction, objectStoreIdentifier, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::clearObjectStoreAfetQuotaCheck(UniqueIDBDatabaseTransaction& transaction, uint64_t objectStoreIdentifier, ErrorCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -951,7 +978,7 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
     auto taskSize = defaultWriteOperationCost + estimateSize(info);
     requestSpace(taskSize, "createIndex", [this, taskSize, transaction = makeRef(transaction), info, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
-            callback(WTFMove(error.value()));
+            callback(WTFMove(*error));
             return;
         }
         this->createIndexAfterQuotaCheck(taskSize, transaction.get(), info, WTFMove(callback));
@@ -997,6 +1024,17 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, u
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteIndex");
 
+    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), objectStoreIdentifier, indexName, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error));
+            return;
+        }
+        this->deleteIndexAfterQuotaCheck(transaction, objectStoreIdentifier, indexName, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::deleteIndexAfterQuotaCheck(UniqueIDBDatabaseTransaction& transaction, uint64_t objectStoreIdentifier, const String& indexName, ErrorCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1050,7 +1088,7 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, u
     auto taskSize = defaultWriteOperationCost + newName.sizeInBytes();
     requestSpace(taskSize, "renameIndex", [this, taskSize, transaction = makeRef(transaction), objectStoreIdentifier, indexIdentifier, newName, callback = WTFMove(callback)](auto error) mutable {
         if (error) {
-            callback(WTFMove(error.value()));
+            callback(WTFMove(*error));
             return;
         }
         this->renameIndexAfterQuotaCheck(taskSize, transaction.get(), objectStoreIdentifier, indexIdentifier, newName, WTFMove(callback));
@@ -1116,7 +1154,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     auto taskSize = defaultWriteOperationCost + estimateSize(keyData) + estimateSize(value);
     requestSpace(taskSize, "putOrAdd", [this, taskSize, requestData, keyData, value, callback = WTFMove(callback), overwriteMode](auto error) mutable {
         if (error) {
-            callback(WTFMove(error.value()), { });
+            callback(WTFMove(*error), { });
             return;
         }
         this->putOrAddAfterQuotaCheck(taskSize, requestData, keyData, value, overwriteMode, WTFMove(callback));
@@ -1265,6 +1303,17 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getRecord");
 
+    waitForRequestSpaceCompletion([this, requestData, getRecordData, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error), { });
+            return;
+        }
+        this->getRecordAfterQuotaCheck(requestData, getRecordData, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::getRecordAfterQuotaCheck(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData, GetResultCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1280,6 +1329,17 @@ void UniqueIDBDatabase::getAllRecords(const IDBRequestData& requestData, const I
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getAllRecords");
 
+    waitForRequestSpaceCompletion([this, requestData, getAllRecordsData, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error), { });
+            return;
+        }
+        this->getAllRecordsAfterQuotaCheck(requestData, getAllRecordsData, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::getAllRecordsAfterQuotaCheck(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData, GetAllResultsCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1347,6 +1407,17 @@ void UniqueIDBDatabase::getCount(const IDBRequestData& requestData, const IDBKey
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::getCount");
 
+    waitForRequestSpaceCompletion([this, requestData, range, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error), { });
+            return;
+        }
+        this->getCountAfterQuotaCheck(requestData, range, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::getCountAfterQuotaCheck(const IDBRequestData& requestData, const IDBKeyRangeData& range, CountCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1380,6 +1451,17 @@ void UniqueIDBDatabase::deleteRecord(const IDBRequestData& requestData, const ID
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::deleteRecord");
 
+    waitForRequestSpaceCompletion([this, requestData, keyRangeData, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error));
+            return;
+        }
+        this->deleteRecordAfterQuotaCheck(requestData, keyRangeData, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::deleteRecordAfterQuotaCheck(const IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData, ErrorCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1409,6 +1491,17 @@ void UniqueIDBDatabase::openCursor(const IDBRequestData& requestData, const IDBC
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::openCursor");
 
+    waitForRequestSpaceCompletion([this, requestData, info, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error), { });
+            return;
+        }
+        this->openCursorAfterQuotaCheck(requestData, info, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::openCursorAfterQuotaCheck(const IDBRequestData& requestData, const IDBCursorInfo& info, GetResultCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1439,6 +1532,17 @@ void UniqueIDBDatabase::iterateCursor(const IDBRequestData& requestData, const I
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::iterateCursor");
 
+    waitForRequestSpaceCompletion([this, requestData, data, callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error), { });
+            return;
+        }
+        this->iterateCursorAfterQuotaCheck(requestData, data, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::iterateCursorAfterQuotaCheck(const IDBRequestData& requestData, const IDBIterateCursorData& data, GetResultCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1501,6 +1605,17 @@ void UniqueIDBDatabase::commitTransaction(UniqueIDBDatabaseTransaction& transact
 
     ASSERT(transaction.databaseConnection().database() == this);
 
+    waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), callback = WTFMove(callback)](auto error) mutable {
+        if (error) {
+            callback(WTFMove(*error));
+            return;
+        }
+        this->commitTransactionAfterQuotaCheck(transaction, WTFMove(callback));
+    });
+}
+
+void UniqueIDBDatabase::commitTransactionAfterQuotaCheck(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)
+{
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)
         return;
@@ -1538,12 +1653,23 @@ void UniqueIDBDatabase::didPerformCommitTransaction(uint64_t callbackIdentifier,
     transactionCompleted(m_finishingTransactions.take(transactionIdentifier));
 }
 
-void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transaction, ErrorCallback callback)
+void UniqueIDBDatabase::abortTransaction(UniqueIDBDatabaseTransaction& transaction, WaitForPendingTasks waitForPendingTasks, ErrorCallback callback)
 {
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::abortTransaction - %s", transaction.info().identifier().loggingString().utf8().data());
 
     ASSERT(transaction.databaseConnection().database() == this);
+
+    if (waitForPendingTasks == WaitForPendingTasks::Yes) {
+        waitForRequestSpaceCompletion([this, transaction = makeRef(transaction), callback = WTFMove(callback)](auto&& error) mutable {
+            if (error) {
+                callback(WTFMove(*error));
+                return;
+            }
+            this->abortTransaction(transaction, WaitForPendingTasks::No, WTFMove(callback));
+        });
+        return;
+    }
 
     uint64_t callbackID = storeCallbackOrFireError(WTFMove(callback));
     if (!callbackID)

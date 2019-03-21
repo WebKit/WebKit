@@ -64,7 +64,8 @@ public:
 
 private:
     uint64_t spaceUsage() const;
-    void askForMoreSpace(uint64_t spaceUsage, uint64_t spaceIncrease);
+    bool shouldAskForMoreSpace(uint64_t spaceIncrease) const;
+    void askForMoreSpace(uint64_t spaceIncrease);
     void processPendingRequests(Optional<uint64_t>);
 
     uint64_t m_quota { 0 };

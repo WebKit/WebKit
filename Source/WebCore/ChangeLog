@@ -1,3 +1,49 @@
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
+        Include WAL and SHM file size in IDB database size computation
+        https://bugs.webkit.org/show_bug.cgi?id=195688
+
+        Reviewed by Brady Eidson.
+
+        Count WAL and SHM files as part of IDB quota checks.
+        This makes some IDB tests go over the testing quota which then
+        triggers some IDB tasks to happen sooner than other write IDB tasks.
+        The IDB implementation requires these tasks to remain ordered.
+        In case a write task is pending quota check, queue all tasks,
+        write or read, to keep the order.
+
+        This patch specials case aborting a transaction.
+        In case it is called as part of clearing a database,
+        the task should not be queued and all pending tasks are errored.
+        When transaction is aborted by the web page, queue the task.
+
+        When we can make a decision to run tasks with size 0,
+        do not check quota. This ensures that read operations
+        succeed even if we are above quota.
+
+        Covered by existing tests.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::waitForRequestSpaceCompletion):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::usage):
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::getDatabaseFileSize):
+        * storage/StorageQuotaManager.h:
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::requestSpace):
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timeline should show when events preventDefault() was called on an event or not

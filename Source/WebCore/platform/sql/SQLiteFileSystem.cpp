@@ -100,8 +100,19 @@ bool SQLiteFileSystem::truncateDatabaseFile(sqlite3* database)
     
 long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
 {        
-    long long size;
-    return FileSystem::getFileSize(fileName, size) ? size : 0;
+    long long fileSize = 0;
+    long long totalSize = 0;
+
+    if (FileSystem::getFileSize(fileName, fileSize))
+        totalSize += fileSize;
+
+    if (FileSystem::getFileSize(makeString(fileName, "-wal"_s), fileSize))
+        totalSize += fileSize;
+
+    if (FileSystem::getFileSize(makeString(fileName, "-shm"_s), fileSize))
+        totalSize += fileSize;
+
+    return totalSize;
 }
 
 Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)

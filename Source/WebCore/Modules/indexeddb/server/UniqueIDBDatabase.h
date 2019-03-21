@@ -101,7 +101,10 @@ public:
     void openCursor(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback);
     void iterateCursor(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback);
     void commitTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
-    void abortTransaction(UniqueIDBDatabaseTransaction&, ErrorCallback);
+
+    enum class WaitForPendingTasks { No, Yes };
+    void abortTransaction(UniqueIDBDatabaseTransaction&, WaitForPendingTasks, ErrorCallback);
+
     void didFinishHandlingVersionChange(UniqueIDBDatabaseConnection&, const IDBResourceIdentifier& transactionIdentifier);
     void transactionDestroyed(UniqueIDBDatabaseTransaction&);
     void connectionClosedFromClient(UniqueIDBDatabaseConnection&);
@@ -152,6 +155,17 @@ private:
     void createIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, const IDBIndexInfo&, ErrorCallback);
     void renameIndexAfterQuotaCheck(uint64_t taskSize, UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback);
     void putOrAddAfterQuotaCheck(uint64_t taskSize, const IDBRequestData&, const IDBKeyData&, const IDBValue&, IndexedDB::ObjectStoreOverwriteMode, KeyDataCallback);
+    void deleteRecordAfterQuotaCheck(const IDBRequestData&, const IDBKeyRangeData&, ErrorCallback);
+
+    void deleteObjectStoreAfterQuotaCheck(UniqueIDBDatabaseTransaction&, const String& objectStoreName, ErrorCallback);
+    void clearObjectStoreAfetQuotaCheck(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, ErrorCallback);
+    void deleteIndexAfterQuotaCheck(UniqueIDBDatabaseTransaction&, uint64_t objectStoreIdentifier, const String&, ErrorCallback);
+    void getRecordAfterQuotaCheck(const IDBRequestData&, const IDBGetRecordData&, GetResultCallback);
+    void getAllRecordsAfterQuotaCheck(const IDBRequestData&, const IDBGetAllRecordsData&, GetAllResultsCallback);
+    void getCountAfterQuotaCheck(const IDBRequestData&, const IDBKeyRangeData&, CountCallback);
+    void openCursorAfterQuotaCheck(const IDBRequestData&, const IDBCursorInfo&, GetResultCallback);
+    void iterateCursorAfterQuotaCheck(const IDBRequestData&, const IDBIterateCursorData&, GetResultCallback);
+    void commitTransactionAfterQuotaCheck(UniqueIDBDatabaseTransaction&, ErrorCallback);
 
     // Database thread operations
     void deleteBackingStore(const IDBDatabaseIdentifier&);
@@ -240,6 +254,7 @@ private:
     void notifyServerAboutClose(CloseState);
 
     void requestSpace(uint64_t taskSize, const char* errorMessage, CompletionHandler<void(Optional<IDBError>&&)>&&);
+    void waitForRequestSpaceCompletion(CompletionHandler<void(Optional<IDBError>&&)>&&);
     void updateSpaceUsedIfNeeded(uint64_t callbackIdentifier);
 
     Ref<IDBServer> m_server;

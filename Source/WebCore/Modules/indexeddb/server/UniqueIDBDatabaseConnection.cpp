@@ -75,7 +75,7 @@ void UniqueIDBDatabaseConnection::abortTransactionWithoutCallback(UniqueIDBDatab
     if (!m_database)
         return;
     
-    m_database->abortTransaction(transaction, [this, protectedThis, transactionIdentifier](const IDBError&) {
+    m_database->abortTransaction(transaction, UniqueIDBDatabase::WaitForPendingTasks::No, [this, protectedThis, transactionIdentifier](const IDBError&) {
         ASSERT(m_transactionMap.contains(transactionIdentifier));
         m_transactionMap.remove(transactionIdentifier);
     });
