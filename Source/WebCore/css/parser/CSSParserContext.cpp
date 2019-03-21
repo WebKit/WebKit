@@ -58,6 +58,9 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(TEXT_AUTOSIZING)
     textAutosizingEnabled = document.settings().textAutosizingEnabled();
 #endif
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    legacyOverflowScrollingTouchEnabled = document.settings().legacyOverflowScrollingTouchEnabled();
+#endif
     springTimingFunctionEnabled = document.settings().springTimingFunctionEnabled();
     constantPropertiesEnabled = document.settings().constantPropertiesEnabled();
     colorFilterEnabled = document.settings().colorFilterEnabled();
@@ -76,6 +79,9 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isHTMLDocument == b.isHTMLDocument
 #if ENABLE(TEXT_AUTOSIZING)
         && a.textAutosizingEnabled == b.textAutosizingEnabled
+#endif
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+        && a.legacyOverflowScrollingTouchEnabled == b.legacyOverflowScrollingTouchEnabled
 #endif
         && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
         && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior

@@ -49,6 +49,9 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     bool textAutosizingEnabled { false };
 #endif
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    bool legacyOverflowScrollingTouchEnabled { false };
+#endif
     bool enforcesCSSMIMETypeInNoQuirksMode { true };
     bool useLegacyBackgroundSizeShorthandBehavior { false };
     bool springTimingFunctionEnabled { false };
@@ -93,18 +96,21 @@ struct CSSParserContextHash {
 #if ENABLE(TEXT_AUTOSIZING)
             & key.textAutosizingEnabled                     << 1
 #endif
-            & key.enforcesCSSMIMETypeInNoQuirksMode         << 2
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 3
-            & key.springTimingFunctionEnabled               << 4
-            & key.constantPropertiesEnabled                 << 5
-            & key.colorFilterEnabled                        << 6
-            & key.deferredCSSParserEnabled                  << 7
-            & key.hasDocumentSecurityOrigin                 << 8
-            & key.useSystemAppearance                       << 9
-#if ENABLE(ATTACHMENT_ELEMENT)
-            & key.attachmentEnabled                         << 10
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+            & key.legacyOverflowScrollingTouchEnabled       << 2
 #endif
-            & key.mode                                      << 11; // Keep this last.
+            & key.enforcesCSSMIMETypeInNoQuirksMode         << 3
+            & key.useLegacyBackgroundSizeShorthandBehavior  << 4
+            & key.springTimingFunctionEnabled               << 5
+            & key.constantPropertiesEnabled                 << 6
+            & key.colorFilterEnabled                        << 7
+            & key.deferredCSSParserEnabled                  << 8
+            & key.hasDocumentSecurityOrigin                 << 9
+            & key.useSystemAppearance                       << 10
+#if ENABLE(ATTACHMENT_ELEMENT)
+            & key.attachmentEnabled                         << 11
+#endif
+            & key.mode                                      << 12; // Keep this last.
         hash ^= WTF::intHash(bits);
         return hash;
     }

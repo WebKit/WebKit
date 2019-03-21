@@ -388,6 +388,11 @@ asyncOverflowScrollingEnabled:
   initial: false
   onChange: setNeedsRelayoutAllFrames
 
+legacyOverflowScrollingTouchEnabled:
+  initial: true
+  onChange: setNeedsRelayoutAllFrames
+  conditional: OVERFLOW_SCROLLING_TOUCH
+
 webSecurityEnabled:
   initial: true
   inspectorOverride: true

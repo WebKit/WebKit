@@ -811,7 +811,7 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString&, RefPtr<JSON::Arr
             auto values = JSON::ArrayOf<String>::create();
             for (int j = firstCSSValueKeyword; j <= lastCSSValueKeyword; ++j) {
                 CSSValueID valueID = convertToCSSValueID(j);
-                if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyID, valueID, HTMLStandardMode))
+                if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyID, valueID, strictCSSParserContext()))
                     values->addItem(getValueNameString(valueID));
             }
             if (values->length())

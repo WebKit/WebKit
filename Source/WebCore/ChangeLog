@@ -1,3 +1,31 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an internal feature flag to disable the -webkit-overflow-scrolling CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=196058
+        rdar://problem/49078202
+
+        Reviewed by Antti Koivisto.
+
+        Add an internal setting called "legacyOverflowScrollingTouchEnabled", initially
+        on by default.
+
+        When disabled, it makes the -webkit-overflow-scrolling property be unsupported.
+
+        Tests: fast/scrolling/ios/overflow-scrolling-touch-disabled-stacking.html
+               fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        (WebCore::operator==):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * css/parser/CSSParserFastPaths.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/Settings.yaml:
+
 2019-03-21  Antti Koivisto  <antti@apple.com>
 
         UI-process hit-testing needs to know about containing block relationships

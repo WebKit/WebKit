@@ -1,3 +1,19 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add an internal feature flag to disable the -webkit-overflow-scrolling CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=196058
+        rdar://problem/49078202
+
+        Reviewed by Antti Koivisto.
+        
+        Add tests testing that the stacking-context side-effects -webkit-overflow-scrolling:touch
+        go away when it's disabled.
+
+        * fast/scrolling/ios/overflow-scrolling-touch-disabled-stacking-expected.html: Added.
+        * fast/scrolling/ios/overflow-scrolling-touch-disabled-stacking.html: Added.
+        * fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking-expected.html: Added.
+        * fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html: Added.
+
 2019-03-21  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix test failures after r243269.

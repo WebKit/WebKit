@@ -31,6 +31,7 @@
 #include "CSSParserFastPaths.h"
 
 #include "CSSFunctionValue.h"
+#include "CSSParserContext.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
@@ -519,9 +520,13 @@ RefPtr<CSSValue> CSSParserFastPaths::parseColor(const String& string, CSSParserM
     return CSSValuePool::singleton().createColorValue(color);
 }
 
-bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, CSSParserMode parserMode)
+bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId, CSSValueID valueID, const CSSParserContext& context)
 {
-    if (valueID == CSSValueInvalid || !isValueAllowedInMode(valueID, parserMode))
+#if !ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    UNUSED_PARAM(context);
+#endif
+
+    if (valueID == CSSValueInvalid || !isValueAllowedInMode(valueID, context.mode))
         return false;
 
     switch (propertyId) {
@@ -802,6 +807,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueHistoricalForms;
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
+        if (!context.legacyOverflowScrollingTouchEnabled)
+            return nullptr;
         return valueID == CSSValueAuto || valueID == CSSValueTouch;
 #endif
 #if ENABLE(VARIATION_FONTS)
@@ -981,7 +988,7 @@ static bool isUniversalKeyword(const String& string)
     || equalLettersIgnoringASCIICase(string, "revert");
 }
 
-static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String& string, CSSParserMode parserMode)
+static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String& string, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
 
@@ -1013,7 +1020,7 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, const String
     if (valueID == CSSValueRevert)
         return CSSValuePool::singleton().createRevertValue();
     
-    if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, parserMode))
+    if (CSSParserFastPaths::isValidKeywordPropertyAndValue(propertyId, valueID, context))
         return CSSPrimitiveValue::createIdentifier(valueID);
     return nullptr;
 }
@@ -1292,15 +1299,15 @@ static RefPtr<CSSValue> parseCaretColor(const String& string, CSSParserMode pars
     return CSSParserFastPaths::parseColor(string, parserMode);
 }
 
-RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, CSSParserMode parserMode)
+RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)
 {
-    if (auto result = parseSimpleLengthValue(propertyID, string, parserMode))
+    if (auto result = parseSimpleLengthValue(propertyID, string, context.mode))
         return result;
     if (propertyID == CSSPropertyCaretColor)
-        return parseCaretColor(string, parserMode);
+        return parseCaretColor(string, context.mode);
     if (isColorPropertyID(propertyID))
-        return parseColor(string, parserMode);
-    if (auto result = parseKeywordValue(propertyID, string, parserMode))
+        return parseColor(string, context.mode);
+    if (auto result = parseKeywordValue(propertyID, string, context))
         return result;
     return parseSimpleTransform(propertyID, string);
 }

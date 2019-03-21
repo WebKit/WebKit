@@ -1442,6 +1442,14 @@ AsyncOverflowScrollingEnabled:
   humanReadableDescription: "Perform overflow scrolling off the main thread"
   category: internal
 
+LegacyOverflowScrollingTouchEnabled:
+  type: bool
+  defaultValue: true
+  humanReadableName: "Legacy -webkit-overflow-scrolling property"
+  humanReadableDescription: "Support the legacy -webkit-overflow-scrolling CSS property"
+  condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)
+  category: internal
+
 FetchAPIKeepAliveEnabled:
   type: bool
   defaultValue: false
