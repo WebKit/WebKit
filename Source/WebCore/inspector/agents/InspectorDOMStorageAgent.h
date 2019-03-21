@@ -51,7 +51,7 @@ class InspectorDOMStorageAgent final : public InspectorAgentBase, public Inspect
     WTF_MAKE_NONCOPYABLE(InspectorDOMStorageAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMStorageAgent(WebAgentContext&);
+    InspectorDOMStorageAgent(PageAgentContext&);
     virtual ~InspectorDOMStorageAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -76,6 +76,8 @@ private:
 
     std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
+
+    Page& m_inspectedPage;
 };
 
 } // namespace WebCore

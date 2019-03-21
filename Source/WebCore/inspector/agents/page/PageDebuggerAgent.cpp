@@ -56,10 +56,9 @@ namespace WebCore {
 
 using namespace Inspector;
 
-PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context, InspectorPageAgent* pageAgent)
+PageDebuggerAgent::PageDebuggerAgent(PageAgentContext& context)
     : WebDebuggerAgent(context)
-    , m_page(context.inspectedPage)
-    , m_pageAgent(pageAgent)
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
@@ -81,7 +80,7 @@ String PageDebuggerAgent::sourceMapURLForScript(const Script& script)
     static NeverDestroyed<String> sourceMapHTTPHeaderDeprecated(MAKE_STATIC_STRING_IMPL("X-SourceMap"));
 
     if (!script.url.isEmpty()) {
-        CachedResource* resource = m_pageAgent->cachedResource(&m_page.mainFrame(), URL({ }, script.url));
+        CachedResource* resource = InspectorPageAgent::cachedResource(&m_inspectedPage.mainFrame(), URL({ }, script.url));
         if (resource) {
             String sourceMapHeader = resource->response().httpHeaderField(sourceMapHTTPHeader);
             if (!sourceMapHeader.isEmpty())
@@ -116,13 +115,13 @@ void PageDebuggerAgent::unmuteConsole()
 
 void PageDebuggerAgent::breakpointActionLog(JSC::ExecState& state, const String& message)
 {
-    m_pageAgent->page().console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state));
+    m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(&state));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString& errorString, const int* executionContextId)
 {
     if (!executionContextId) {
-        JSC::ExecState* scriptState = mainWorldExecState(&m_pageAgent->mainFrame());
+        JSC::ExecState* scriptState = mainWorldExecState(&m_inspectedPage.mainFrame());
         return injectedScriptManager().injectedScriptFor(scriptState);
     }
 

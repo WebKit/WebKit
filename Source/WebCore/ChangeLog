@@ -1,3 +1,91 @@
+2019-03-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Page: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195592
+        <rdar://problem/48791916>
+
+        Reviewed by Timothy Hatcher.
+
+        No change in functionality.
+
+        Have more agents save the inspected `Page` so they don't need to access it via the
+        `InspectorPageAgent`. Make some of `InspectorPageAgent`'s functions `static` so other
+        agents can use them without needing to have access to an enabled `InspectorPageAgent`.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::createLazyAgents):
+
+        * inspector/agents/InspectorPageAgent.h:
+        (WebCore::InspectorPageAgent::page): Deleted.
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::enable):
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::navigate):
+        (WebCore::InspectorPageAgent::overrideSetting):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::InspectorPageAgent::getResourceTree):
+        (WebCore::InspectorPageAgent::searchInResources):
+        (WebCore::InspectorPageAgent::didPaint):
+        (WebCore::InspectorPageAgent::didLayout):
+        (WebCore::InspectorPageAgent::didScroll):
+        (WebCore::InspectorPageAgent::didRecalculateStyle):
+        (WebCore::InspectorPageAgent::setEmulatedMedia):
+        (WebCore::InspectorPageAgent::setForcedAppearance):
+        (WebCore::InspectorPageAgent::getCompositingBordersVisible):
+        (WebCore::InspectorPageAgent::setCompositingBordersVisible):
+        (WebCore::InspectorPageAgent::snapshotNode):
+        (WebCore::InspectorPageAgent::snapshotRect):
+        (WebCore::InspectorPageAgent::archive):
+        (WebCore::InspectorPageAgent::mainFrame): Deleted.
+        (WebCore::InspectorPageAgent::hasIdForFrame const): Deleted.
+
+        * inspector/agents/InspectorApplicationCacheAgent.h:
+        * inspector/agents/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::updateApplicationCacheStatus):
+        (WebCore::InspectorApplicationCacheAgent::getFramesWithManifests):
+        (WebCore::InspectorApplicationCacheAgent::assertFrameWithDocumentLoader):
+
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::enable):
+
+        * inspector/agents/InspectorDOMStorageAgent.h:
+        * inspector/agents/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::findStorageArea):
+
+        * inspector/agents/InspectorIndexedDBAgent.h:
+        * inspector/agents/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::InspectorIndexedDBAgent):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNames):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        (WebCore::InspectorIndexedDBAgent::clearObjectStore):
+
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::sourceMapURLForScript):
+        (WebCore::PageDebuggerAgent::breakpointActionLog):
+        (WebCore::PageDebuggerAgent::injectedScriptForEval):
+
+        * inspector/agents/page/PageNetworkAgent.h:
+        * inspector/agents/page/PageNetworkAgent.cpp:
+        (WebCore::PageNetworkAgent::PageNetworkAgent):
+        (WebCore::PageNetworkAgent::loaderIdentifier):
+        (WebCore::PageNetworkAgent::frameIdentifier):
+        (WebCore::PageNetworkAgent::setResourceCachingDisabled):
+        (WebCore::PageNetworkAgent::scriptExecutionContext):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+
 2019-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Hardening: Use WeakPtrs in VideoFullscreenInterface{Mac,AVKit}

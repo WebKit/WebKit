@@ -54,10 +54,11 @@ namespace WebCore {
 
 using namespace Inspector;
 
-InspectorDOMStorageAgent::InspectorDOMStorageAgent(WebAgentContext& context)
+InspectorDOMStorageAgent::InspectorDOMStorageAgent(PageAgentContext& context)
     : InspectorAgentBase("DOMStorage"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::DOMStorageFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMStorageBackendDispatcher::create(context.backendDispatcher, this))
+    , m_inspectedPage(context.inspectedPage)
 {
 }
 
@@ -178,22 +179,15 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(ErrorString& error
         return nullptr;
     }
 
-    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
-    ASSERT(pageAgent);
-    if (!pageAgent) {
-        errorString = "Missing Page agent"_s;
-        return nullptr;
-    }
-
-    targetFrame = pageAgent->findFrameWithSecurityOrigin(securityOrigin);
+    targetFrame = InspectorPageAgent::findFrameWithSecurityOrigin(m_inspectedPage, securityOrigin);
     if (!targetFrame) {
         errorString = "Frame not found for the given security origin"_s;
         return nullptr;
     }
 
     if (!isLocalStorage)
-        return pageAgent->page().sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
-    return pageAgent->page().storageNamespaceProvider().localStorageArea(*targetFrame->document());
+        return m_inspectedPage.sessionStorage()->storageArea(targetFrame->document()->securityOrigin().data());
+    return m_inspectedPage.storageNamespaceProvider().localStorageArea(*targetFrame->document());
 }
 
 } // namespace WebCore

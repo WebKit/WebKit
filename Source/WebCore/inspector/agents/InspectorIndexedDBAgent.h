@@ -43,7 +43,7 @@ class InjectedScriptManager;
 
 namespace WebCore {
 
-class InspectorPageAgent;
+class Page;
 
 typedef String ErrorString;
 
@@ -51,13 +51,13 @@ class InspectorIndexedDBAgent final : public InspectorAgentBase, public Inspecto
     WTF_MAKE_NONCOPYABLE(InspectorIndexedDBAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorIndexedDBAgent(WebAgentContext&, InspectorPageAgent*);
-    virtual ~InspectorIndexedDBAgent();
+    InspectorIndexedDBAgent(PageAgentContext&);
+    virtual ~InspectorIndexedDBAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) override;
 
-    // Called from the front-end.
+    // IndexedDBBackendDispatcherHandler
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
     void requestDatabaseNames(const String& securityOrigin, Ref<RequestDatabaseNamesCallback>&&) override;
@@ -68,7 +68,8 @@ public:
 private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
-    InspectorPageAgent* m_pageAgent { nullptr };
+
+    Page& m_inspectedPage;
 };
 
 } // namespace WebCore

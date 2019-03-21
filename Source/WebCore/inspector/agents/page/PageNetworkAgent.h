@@ -29,11 +29,13 @@
 
 namespace WebCore {
 
+class Page;
+
 class PageNetworkAgent final : public InspectorNetworkAgent {
     WTF_MAKE_NONCOPYABLE(PageNetworkAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageNetworkAgent(PageAgentContext&, InspectorPageAgent*);
+    PageNetworkAgent(PageAgentContext&);
     virtual ~PageNetworkAgent() = default;
 
 private:
@@ -44,7 +46,7 @@ private:
     ScriptExecutionContext* scriptExecutionContext(ErrorString&, const String& frameId) final;
     bool shouldForceBufferingNetworkResourceData() const final { return false; }
 
-    InspectorPageAgent* m_pageAgent { nullptr };
+    Page& m_inspectedPage;
 };
 
 } // namespace WebCore

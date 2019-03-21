@@ -71,11 +71,12 @@ namespace WebCore {
 
 using namespace Inspector;
 
-InspectorCanvasAgent::InspectorCanvasAgent(WebAgentContext& context)
+InspectorCanvasAgent::InspectorCanvasAgent(PageAgentContext& context)
     : InspectorAgentBase("Canvas"_s, context)
     , m_frontendDispatcher(std::make_unique<Inspector::CanvasFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::CanvasBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
+    , m_inspectedPage(context.inspectedPage)
     , m_canvasDestroyedTimer(*this, &InspectorCanvasAgent::canvasDestroyedTimerFired)
     , m_canvasRecordingTimer(*this, &InspectorCanvasAgent::canvasRecordingTimerFired)
 {
@@ -111,13 +112,9 @@ void InspectorCanvasAgent::enable(ErrorString&)
         if (!is<Document>(scriptExecutionContext))
             return false;
 
-        if (auto* inspectorPageAgent = m_instrumentingAgents.inspectorPageAgent()) {
-            // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
-            auto* document = downcast<Document>(scriptExecutionContext);
-            return document->page() == &inspectorPageAgent->page();
-        }
-
-        return false;
+        // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
+        auto* document = downcast<Document>(scriptExecutionContext);
+        return document->page() == &m_inspectedPage;
     };
 
     {

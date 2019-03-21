@@ -59,7 +59,7 @@ class InspectorCanvasAgent final : public InspectorAgentBase, public CanvasObser
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit InspectorCanvasAgent(WebAgentContext&);
+    explicit InspectorCanvasAgent(PageAgentContext&);
     virtual ~InspectorCanvasAgent() = default;
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -128,12 +128,15 @@ private:
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
+
     Inspector::InjectedScriptManager& m_injectedScriptManager;
+    Page& m_inspectedPage;
+
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
     Vector<String> m_removedCanvasIdentifiers;
+    Optional<size_t> m_recordingAutoCaptureFrameCount;
     Timer m_canvasDestroyedTimer;
     Timer m_canvasRecordingTimer;
-    Optional<size_t> m_recordingAutoCaptureFrameCount;
 };
 
 } // namespace WebCore

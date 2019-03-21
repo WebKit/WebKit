@@ -38,7 +38,6 @@ namespace WebCore {
 class Document;
 class EventListener;
 class EventTarget;
-class InspectorPageAgent;
 class Page;
 class RegisteredEventListener;
 class TimerBase;
@@ -47,7 +46,7 @@ class PageDebuggerAgent final : public WebDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(PageDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PageDebuggerAgent(PageAgentContext&, InspectorPageAgent*);
+    PageDebuggerAgent(PageAgentContext&);
     virtual ~PageDebuggerAgent() = default;
 
     void didClearMainFrameWindowObject();
@@ -85,9 +84,7 @@ private:
 
     Inspector::InjectedScript injectedScriptForEval(ErrorString&, const int* executionContextId) override;
 
-    Page& m_page;
-
-    InspectorPageAgent* m_pageAgent;
+    Page& m_inspectedPage;
 
     HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
     HashMap<const TimerBase*, int> m_postMessageTimers;

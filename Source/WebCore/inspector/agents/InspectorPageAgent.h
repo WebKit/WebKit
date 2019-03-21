@@ -79,12 +79,13 @@ public:
     static Vector<CachedResource*> cachedResourcesForFrame(Frame*);
     static void resourceContent(ErrorString&, Frame*, const URL&, String* result, bool* base64Encoded);
     static String sourceMapURLForResource(CachedResource*);
-
     static CachedResource* cachedResource(Frame*, const URL&);
     static Inspector::Protocol::Page::ResourceType resourceTypeJSON(ResourceType);
     static ResourceType inspectorResourceType(CachedResource::Type);
     static ResourceType inspectorResourceType(const CachedResource&);
     static Inspector::Protocol::Page::ResourceType cachedResourceTypeJSON(const CachedResource&);
+    static Frame* findFrameWithSecurityOrigin(Page&, const String& originRawString);
+    static DocumentLoader* assertDocumentLoader(ErrorString&, Frame*);
 
     // Page API for InspectorFrontend
     void enable(ErrorString&) final;
@@ -132,15 +133,10 @@ public:
     void willDestroyFrontendAndBackend(Inspector::DisconnectReason) final;
 
     // Cross-agents API
-    Page& page() { return m_page; }
-    Frame& mainFrame();
     Frame* frameForId(const String& frameId);
     WEBCORE_EXPORT String frameId(Frame*);
-    bool hasIdForFrame(Frame*) const;
     String loaderId(DocumentLoader*);
-    Frame* findFrameWithSecurityOrigin(const String& originRawString);
     Frame* assertFrame(ErrorString&, const String& frameId);
-    static DocumentLoader* assertDocumentLoader(ErrorString&, Frame*);
 
 private:
     double timestamp();
@@ -154,19 +150,18 @@ private:
     std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
 
-    Page& m_page;
+    Page& m_inspectedPage;
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
-    bool m_enabled { false };
-    bool m_isFirstLayoutAfterOnLoad { false };
-    bool m_showPaintRects { false };
     String m_userAgentOverride;
     String m_emulatedMedia;
     String m_forcedAppearance;
+    bool m_isFirstLayoutAfterOnLoad { false };
+    bool m_showPaintRects { false };
 };
 
 } // namespace WebCore
