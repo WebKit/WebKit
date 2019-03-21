@@ -1,3 +1,9 @@
+2019-03-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Update status inactive committers' status to 'contributor'.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2019-03-21  Xan Lopez  <xan@igalia.com>
 
         [JSC][x86] Drop support for x87 floating point
