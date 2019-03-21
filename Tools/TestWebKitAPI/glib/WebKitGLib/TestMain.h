@@ -78,6 +78,19 @@
         }                                                                \
     } while (0)
 
+#if !defined(g_assert_cmpfloat_with_epsilon)
+#define g_assert_cmpfloat_with_epsilon(n1,n2,epsilon)                   \
+    do {                                                                \
+        double __n1 = (n1);                                             \
+        double __n2 = (n2);                                             \
+        double __epsilon = (epsilon);                                   \
+        if ((((__n1) > (__n2) ? (__n1) - (__n2) : (__n2) - (__n1)) < (__epsilon))) ; \
+        else {                                                          \
+            g_assertion_message_cmpnum (G_LOG_DOMAIN, __FILE__, __LINE__, \
+                G_STRFUNC, #n1 " == " #n2 " (+/- " #epsilon ")", __n1, "==", __n2, 'f'); \
+        }                                                               \
+    } while(0)
+#endif
 
 class Test {
 public:
