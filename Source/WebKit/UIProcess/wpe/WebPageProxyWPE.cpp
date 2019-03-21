@@ -53,9 +53,10 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::Recen
     notImplemented();
 }
 
-void WebPageProxy::loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&)
+void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     notImplemented();
+    completionHandler({ });
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime)

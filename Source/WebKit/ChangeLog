@@ -1,5 +1,59 @@
 2019-03-21  Alex Christensen  <achristensen@webkit.org>
 
+        Stop using LegacySync messages in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=196056
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::backForwardGoToItem):
+        (WebKit::ProvisionalPageProxy::didReceiveSyncMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleSynchronousMessage):
+        (WebKit::WebPageProxy::hasInsecureContent):
+        (WebKit::WebPageProxy::accessibilityScreenToRootView):
+        (WebKit::WebPageProxy::rootViewToAccessibilityScreen):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::backForwardGoToItem):
+        (WebKit::WebPageProxy::backForwardGoToItemShared):
+        (WebKit::WebPageProxy::backForwardItemAtIndex):
+        (WebKit::WebPageProxy::backForwardBackListCount):
+        (WebKit::WebPageProxy::backForwardForwardListCount):
+        (WebKit::WebPageProxy::canUndoRedo):
+        (WebKit::WebPageProxy::executeUndoRedo):
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        (WebKit::WebPageProxy::checkSpellingOfString):
+        (WebKit::WebPageProxy::checkGrammarOfString):
+        (WebKit::WebPageProxy::spellingUIIsShowing):
+        (WebKit::WebPageProxy::getGuessesForWord):
+        (WebKit::WebPageProxy::substitutionsPanelIsShowing):
+        (WebKit::WebPageProxy::showCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanelSoon):
+        (WebKit::WebPageProxy::recordAutocorrectionResponse):
+        (WebKit::WebPageProxy::dictationAlternatives):
+        (WebKit::WebPageProxy::wrapCryptoKey):
+        (WebKit::WebPageProxy::unwrapCryptoKey):
+        (WebKit::WebPageProxy::signedPublicKeyAndChallengeString):
+        (WebKit::WebPageProxy::serializedAttachmentDataForIdentifiers):
+        (WebKit::WebPageProxy::speechSynthesisVoiceList):
+        (WebKit::WebPageProxy::printMainFrame): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::createPluginContainer):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::interpretKeyEvent):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getIsSpeaking):
+        (WebKit::WebPageProxy::executeSavedCommandBySelector):
+        (WebKit::WebPageProxy::showPDFContextMenu):
+
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
         Stop using LegacySync messages in WebPage
         https://bugs.webkit.org/show_bug.cgi?id=196057
 

@@ -131,10 +131,10 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     return standardUserAgentWithApplicationName(applicationNameForUserAgent);
 }
 
-void WebPageProxy::getIsSpeaking(bool& isSpeaking)
+void WebPageProxy::getIsSpeaking(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
-    isSpeaking = [NSApp isSpeaking];
+    completionHandler([NSApp isSpeaking]);
 }
 
 void WebPageProxy::speak(const String& string)
@@ -404,11 +404,11 @@ void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInpu
     pageClient().setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
 }
 
-void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)
+void WebPageProxy::executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&& completionHandler)
 {
     MESSAGE_CHECK(isValidKeypressCommandName(selector));
 
-    handled = pageClient().executeSavedCommandBySelector(selector);
+    completionHandler(pageClient().executeSavedCommandBySelector(selector));
 }
 
 bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
@@ -548,10 +548,10 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(const String&
 }
 
 #if ENABLE(PDFKIT_PLUGIN)
-void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, Optional<int32_t>& selectedIndex)
+void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, CompletionHandler<void(Optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.m_items.size())
-        return;
+        return completionHandler(WTF::nullopt);
     
     RetainPtr<WKPDFMenuTarget> menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
     RetainPtr<NSMenu> nsMenu = adoptNS([[NSMenu alloc] init]);
@@ -584,7 +584,8 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     [NSMenu popUpContextMenu:nsMenu.get() withEvent:event forView:view];
 
     if (auto selectedMenuItem = [menuTarget selectedMenuItem])
-        selectedIndex = [selectedMenuItem tag];
+        return completionHandler([selectedMenuItem tag]);
+    completionHandler(WTF::nullopt);
 }
 #endif
 

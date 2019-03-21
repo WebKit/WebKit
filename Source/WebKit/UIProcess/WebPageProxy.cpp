@@ -704,16 +704,16 @@ void WebPageProxy::handleMessage(IPC::Connection& connection, const String& mess
     m_injectedBundleClient->didReceiveMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.object()).get());
 }
 
-void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, UserData& returnUserData)
+void WebPageProxy::handleSynchronousMessage(IPC::Connection& connection, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&& completionHandler)
 {
     ASSERT(m_process->connection() == &connection);
 
     if (!m_injectedBundleClient)
-        return;
+        return completionHandler({ });
 
     RefPtr<API::Object> returnData;
     m_injectedBundleClient->didReceiveSynchronousMessageFromInjectedBundle(this, messageName, m_process->transformHandlesToObjects(messageBody.object()).get(), returnData);
-    returnUserData = UserData(m_process->transformObjectsToHandles(returnData.get()));
+    completionHandler(UserData(m_process->transformObjectsToHandles(returnData.get())));
 }
 
 void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
@@ -3861,9 +3861,9 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
 }
 
-void WebPageProxy::hasInsecureContent(HasInsecureContent& hasInsecureContent)
+void WebPageProxy::hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent)>&& completionHandler)
 {
-    hasInsecureContent = m_pageLoadState.committedHasInsecureContent() ? HasInsecureContent::Yes : HasInsecureContent::No;
+    completionHandler(m_pageLoadState.committedHasInsecureContent() ? HasInsecureContent::Yes : HasInsecureContent::No);
 }
 
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
@@ -5218,14 +5218,14 @@ IntRect WebPageProxy::syncRootViewToScreen(const IntRect& viewRect)
     return pageClient().rootViewToScreen(viewRect);
 }
 
-void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, IntPoint& windowPoint)
+void WebPageProxy::accessibilityScreenToRootView(const IntPoint& screenPoint, CompletionHandler<void(IntPoint)>&& completionHandler)
 {
-    windowPoint = pageClient().accessibilityScreenToRootView(screenPoint);
+    completionHandler(pageClient().accessibilityScreenToRootView(screenPoint));
 }
 
-void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, IntRect& result)
+void WebPageProxy::rootViewToAccessibilityScreen(const IntRect& viewRect, CompletionHandler<void(IntRect)>&& completionHandler)
 {
-    result = pageClient().rootViewToAccessibilityScreen(viewRect);
+    completionHandler(pageClient().rootViewToAccessibilityScreen(viewRect));
 }
 
 void WebPageProxy::runBeforeUnloadConfirmPanel(uint64_t frameID, const SecurityOriginData& securityOrigin, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&& reply)
@@ -5307,7 +5307,7 @@ void WebPageProxy::showShareSheet(const ShareDataWithParsedURL& shareData, Share
     pageClient().showShareSheet(shareData, WTFMove(completionHandler));
 }
     
-void WebPageProxy::printFrame(uint64_t frameID)
+void WebPageProxy::printFrame(uint64_t frameID, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_isPerformingDOMPrintOperation);
     m_isPerformingDOMPrintOperation = true;
@@ -5319,11 +5319,8 @@ void WebPageProxy::printFrame(uint64_t frameID)
 
     endPrinting(); // Send a message synchronously while m_isPerformingDOMPrintOperation is still true.
     m_isPerformingDOMPrintOperation = false;
-}
 
-void WebPageProxy::printMainFrame()
-{
-    printFrame(m_mainFrame->frameID());
+    completionHandler();
 }
 
 void WebPageProxy::setMediaVolume(float volume)
@@ -5606,46 +5603,48 @@ void WebPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
     m_backForwardList->addItem(WTFMove(item));
 }
 
-void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::backForwardGoToItem(const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
 {
     // On process swap, we tell the previous process to ignore the load, which causes it so restore its current back forward item to its previous
     // value. Since the load is really going on in a new provisional process, we want to ignore such requests from the committed process.
     // Any real new load in the committed process would have cleared m_provisionalPage.
     if (m_provisionalPage)
-        return;
+        return completionHandler({ });
 
-    backForwardGoToItemShared(m_process.copyRef(), itemID, sandboxExtensionHandle);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    backForwardGoToItemShared(m_process.copyRef(), itemID, WTFMove(completionHandler));
 }
 
-void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::backForwardGoToItemShared(Ref<WebProcessProxy>&& process, const BackForwardItemIdentifier& itemID, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
 {
-    WebBackForwardListItem* item = m_backForwardList->itemForID(itemID);
+    auto* item = m_backForwardList->itemForID(itemID);
     if (!item)
-        return;
+        return completionHandler({ });
 
+    SandboxExtension::Handle sandboxExtensionHandle;
     bool createdExtension = maybeInitializeSandboxExtensionHandle(process, URL(URL(), item->url()), sandboxExtensionHandle);
     if (createdExtension)
         willAcquireUniversalFileReadSandboxExtension(process);
     m_backForwardList->goToItem(*item);
+    completionHandler(WTFMove(sandboxExtensionHandle));
 }
 
-void WebPageProxy::backForwardItemAtIndex(int32_t index, Optional<BackForwardItemIdentifier>& itemID)
+void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(Optional<BackForwardItemIdentifier>&&)>&& completionHandler)
 {
-    WebBackForwardListItem* item = m_backForwardList->itemAtIndex(index);
-    if (item)
-        itemID = item->itemID();
+    if (auto* item = m_backForwardList->itemAtIndex(index))
+        completionHandler(item->itemID());
     else
-        itemID = WTF::nullopt;
+        completionHandler(WTF::nullopt);
 }
 
-void WebPageProxy::backForwardBackListCount(uint32_t& count)
+void WebPageProxy::backForwardBackListCount(CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    count = m_backForwardList->backListCount();
+    completionHandler(m_backForwardList->backListCount());
 }
 
-void WebPageProxy::backForwardForwardListCount(uint32_t& count)
+void WebPageProxy::backForwardForwardListCount(CompletionHandler<void(uint32_t)>&& completionHandler)
 {
-    count = m_backForwardList->forwardListCount();
+    completionHandler(m_backForwardList->forwardListCount());
 }
 
 void WebPageProxy::compositionWasCanceled()
@@ -5669,14 +5668,15 @@ void WebPageProxy::registerInsertionUndoGrouping()
 #endif
 }
 
-void WebPageProxy::canUndoRedo(UndoOrRedo action, bool& result)
+void WebPageProxy::canUndoRedo(UndoOrRedo action, CompletionHandler<void(bool)>&& completionHandler)
 {
-    result = pageClient().canUndoRedo(action);
+    completionHandler(pageClient().canUndoRedo(action));
 }
 
-void WebPageProxy::executeUndoRedo(UndoOrRedo action)
+void WebPageProxy::executeUndoRedo(UndoOrRedo action, CompletionHandler<void()>&& completionHandler)
 {
     pageClient().executeUndoRedo(action);
+    completionHandler();
 }
 
 void WebPageProxy::clearAllEditCommands()
@@ -6069,25 +6069,32 @@ SpellDocumentTag WebPageProxy::spellDocumentTag()
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-void WebPageProxy::checkTextOfParagraph(const String& text, OptionSet<TextCheckingType> checkingTypes, int32_t insertionPoint, Vector<TextCheckingResult>& results)
+void WebPageProxy::checkTextOfParagraph(const String& text, OptionSet<TextCheckingType> checkingTypes, int32_t insertionPoint, CompletionHandler<void(Vector<WebCore::TextCheckingResult>&&)>&& completionHandler)
 {
-    results = TextChecker::checkTextOfParagraph(spellDocumentTag(), text, insertionPoint, checkingTypes, m_initialCapitalizationEnabled);
+    completionHandler(TextChecker::checkTextOfParagraph(spellDocumentTag(), text, insertionPoint, checkingTypes, m_initialCapitalizationEnabled));
 }
 #endif
 
-void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
+void WebPageProxy::checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&& completionHandler)
 {
+    int32_t misspellingLocation = 0;
+    int32_t misspellingLength = 0;
     TextChecker::checkSpellingOfString(spellDocumentTag(), text, misspellingLocation, misspellingLength);
+    completionHandler(misspellingLocation, misspellingLength);
 }
 
-void WebPageProxy::checkGrammarOfString(const String& text, Vector<GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+void WebPageProxy::checkGrammarOfString(const String& text, CompletionHandler<void(Vector<WebCore::GrammarDetail>&&, int32_t badGrammarLocation, int32_t badGrammarLength)>&& completionHandler)
 {
+    Vector<GrammarDetail> grammarDetails;
+    int32_t badGrammarLocation = 0;
+    int32_t badGrammarLength = 0;
     TextChecker::checkGrammarOfString(spellDocumentTag(), text, grammarDetails, badGrammarLocation, badGrammarLength);
+    completionHandler(WTFMove(grammarDetails), badGrammarLocation, badGrammarLength);
 }
 
-void WebPageProxy::spellingUIIsShowing(bool& isShowing)
+void WebPageProxy::spellingUIIsShowing(CompletionHandler<void(bool)>&& completionHandler)
 {
-    isShowing = TextChecker::spellingUIIsShowing();
+    completionHandler(TextChecker::spellingUIIsShowing());
 }
 
 void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
@@ -6100,9 +6107,11 @@ void WebPageProxy::updateSpellingUIWithGrammarString(const String& badGrammarPhr
     TextChecker::updateSpellingUIWithGrammarString(spellDocumentTag(), badGrammarPhrase, grammarDetail);
 }
 
-void WebPageProxy::getGuessesForWord(const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses)
+void WebPageProxy::getGuessesForWord(const String& word, const String& context, int32_t insertionPoint, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    Vector<String> guesses;
     TextChecker::getGuessesForWord(spellDocumentTag(), word, context, insertionPoint, guesses, m_initialCapitalizationEnabled);
+    completionHandler(WTFMove(guesses));
 }
 
 void WebPageProxy::learnWord(const String& word)
@@ -7601,28 +7610,32 @@ void WebPageProxy::toggleAutomaticTextReplacement()
 
 #if PLATFORM(MAC)
 
-void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)
+void WebPageProxy::substitutionsPanelIsShowing(CompletionHandler<void(bool)>&& completionHandler)
 {
-    isShowing = TextChecker::substitutionsPanelIsShowing();
+    completionHandler(TextChecker::substitutionsPanelIsShowing());
 }
 
 void WebPageProxy::showCorrectionPanel(int32_t panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
+    // FIXME: Make AlternativeTextType an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
     pageClient().showCorrectionPanel((AlternativeTextType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
 void WebPageProxy::dismissCorrectionPanel(int32_t reason)
 {
+    // FIXME: Make ReasonForDismissingAlternativeText an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
     pageClient().dismissCorrectionPanel((ReasonForDismissingAlternativeText)reason);
 }
 
-void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, String& result)
+void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&& completionHandler)
 {
-    result = pageClient().dismissCorrectionPanelSoon((ReasonForDismissingAlternativeText)reason);
+    // FIXME: Make ReasonForDismissingAlternativeText an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
+    completionHandler(pageClient().dismissCorrectionPanelSoon((ReasonForDismissingAlternativeText)reason));
 }
 
 void WebPageProxy::recordAutocorrectionResponse(int32_t response, const String& replacedString, const String& replacementString)
 {
+    // FIXME: Make AutocorrectionResponse an enum class with EnumTraits and serialize it instead of casting to/from an int32_t.
     pageClient().recordAutocorrectionResponse(static_cast<AutocorrectionResponse>(response), replacedString, replacementString);
 }
 
@@ -7643,9 +7656,9 @@ void WebPageProxy::removeDictationAlternatives(uint64_t dictationContext)
     pageClient().removeDictationAlternatives(dictationContext);
 }
 
-void WebPageProxy::dictationAlternatives(uint64_t dictationContext, Vector<String>& result)
+void WebPageProxy::dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    result = pageClient().dictationAlternatives(dictationContext);
+    completionHandler(pageClient().dictationAlternatives(dictationContext));
 }
 #endif
 
@@ -7725,7 +7738,7 @@ void WebPageProxy::setOverlayScrollbarStyle(Optional<WebCore::ScrollbarOverlaySt
 }
 
 #if ENABLE(WEB_CRYPTO)
-void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Vector<uint8_t>& wrappedKey)
+void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
 {
     PageClientProtector protector(pageClient());
 
@@ -7734,10 +7747,12 @@ void WebPageProxy::wrapCryptoKey(const Vector<uint8_t>& key, bool& succeeded, Ve
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
         masterKey = keyData->dataReference().vector();
 
-    succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
+    Vector<uint8_t> wrappedKey;
+    bool succeeded = wrapSerializedCryptoKey(masterKey, key, wrappedKey);
+    completionHandler(succeeded, WTFMove(wrappedKey));
 }
 
-void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succeeded, Vector<uint8_t>& key)
+void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, CompletionHandler<void(bool, Vector<uint8_t>&&)>&& completionHandler)
 {
     PageClientProtector protector(pageClient());
 
@@ -7746,16 +7761,20 @@ void WebPageProxy::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, bool& succ
     if (auto keyData = m_navigationClient->webCryptoMasterKey(*this))
         masterKey = keyData->dataReference().vector();
 
-    succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
+    Vector<uint8_t> key;
+    bool succeeded = unwrapSerializedCryptoKey(masterKey, wrappedKey, key);
+    completionHandler(succeeded, WTFMove(key));
 }
 #endif
 
-void WebPageProxy::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url, String& result)
+void WebPageProxy::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url, CompletionHandler<void(String)>&& completionHandler)
 {
     PageClientProtector protector(pageClient());
 
     if (auto apiString = m_navigationClient->signedPublicKeyAndChallengeString(*this, keySizeIndex, API::String::create(challengeString), url))
-        result = apiString->string();
+        return completionHandler(apiString->string());
+    
+    completionHandler({ });
 }
 
 void WebPageProxy::addMIMETypeWithCustomContentProvider(const String& mimeType)
@@ -8596,8 +8615,9 @@ void WebPageProxy::invalidateAllAttachments()
     m_attachmentIdentifierToAttachmentMap.clear();
 }
 
-void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers, Vector<WebCore::SerializedAttachmentData>& serializedData)
+void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers, CompletionHandler<void(Vector<WebCore::SerializedAttachmentData>&&)>&& completionHandler)
 {
+    Vector<WebCore::SerializedAttachmentData> serializedData;
     for (const auto& identifier : identifiers) {
         auto attachment = attachmentForIdentifier(identifier);
         if (!attachment)
@@ -8609,6 +8629,7 @@ void WebPageProxy::serializedAttachmentDataForIdentifiers(const Vector<String>& 
 
         serializedData.append({ identifier, attachment->mimeType(), data.releaseNonNull() });
     }
+    completionHandler(WTFMove(serializedData));
 }
 
 void WebPageProxy::didInvalidateDataForAttachment(API::Attachment& attachment)
@@ -8839,13 +8860,14 @@ WebPageProxy::SpeechSynthesisData& WebPageProxy::speechSynthesisData()
     return *m_speechSynthesisData;
 }
 
-void WebPageProxy::speechSynthesisVoiceList(Vector<WebSpeechSynthesisVoice>& result)
+void WebPageProxy::speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&& completionHandler)
 {
     auto& voiceList = speechSynthesisData().synthesizer->voiceList();
-    for (auto& voice : voiceList) {
-        WebSpeechSynthesisVoice v { voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault() };
-        result.append(WTFMove(v));
-    }
+    Vector<WebSpeechSynthesisVoice> result;
+    result.reserveInitialCapacity(voiceList.size());
+    for (auto& voice : voiceList)
+        result.uncheckedAppend(WebSpeechSynthesisVoice { voice->voiceURI(), voice->name(), voice->lang(), voice->localService(), voice->isDefault() });
+    completionHandler(WTFMove(result));
 }
 
 void WebPageProxy::speechSynthesisSpeak(const String& text, const String& lang, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&& completionHandler)

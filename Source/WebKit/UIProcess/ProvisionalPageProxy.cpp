@@ -303,9 +303,9 @@ void ProvisionalPageProxy::startURLSchemeTask(URLSchemeTaskParameters&& paramete
     m_page.startURLSchemeTaskShared(m_process.copyRef(), WTFMove(parameters));
 }
 
-void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, SandboxExtension::Handle& handle)
+void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(SandboxExtension::Handle&&)>&& completionHandler)
 {
-    m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, handle);
+    m_page.backForwardGoToItemShared(m_process.copyRef(), identifier, WTFMove(completionHandler));
 }
 
 void ProvisionalPageProxy::decidePolicyForNavigationActionSync(uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&& frameSecurityOrigin, WebCore::PolicyCheckIdentifier identifier,
@@ -445,7 +445,7 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 void ProvisionalPageProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPageProxy::BackForwardGoToItem::name()) {
-        IPC::handleMessageLegacySync<Messages::WebPageProxy::BackForwardGoToItem>(decoder, *replyEncoder, this, &ProvisionalPageProxy::backForwardGoToItem);
+        IPC::handleMessageDelayed<Messages::WebPageProxy::BackForwardGoToItem>(connection, decoder, replyEncoder, this, &ProvisionalPageProxy::backForwardGoToItem);
         return;
     }
 

@@ -1154,14 +1154,12 @@ public:
 #endif
 
 #if ENABLE(PDFKIT_PLUGIN)
-    void showPDFContextMenu(const WebKit::PDFContextMenu&, Optional<int32_t>& selectedIndex);
+    void showPDFContextMenu(const WebKit::PDFContextMenu&, CompletionHandler<void(Optional<int32_t>&&)>&&);
 #endif
     WebCore::IntRect visibleScrollerThumbRect() const { return m_visibleScrollerThumbRect; }
 
     uint64_t renderTreeSize() const { return m_renderTreeSize; }
 
-    void printMainFrame();
-    
     void setMediaVolume(float);
     void setMuted(WebCore::MediaProducer::MutedStateFlags);
     void setMayStartMediaWhenInWindow(bool);
@@ -1259,11 +1257,11 @@ public:
 #endif
 
 #if ENABLE(WEB_CRYPTO)
-    void wrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
-    void unwrapCryptoKey(const Vector<uint8_t>&, bool& succeeded, Vector<uint8_t>&);
+    void wrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
+    void unwrapCryptoKey(const Vector<uint8_t>&, CompletionHandler<void(bool, Vector<uint8_t>&&)>&&);
 #endif
 
-    void signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&, String& result);
+    void signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&, CompletionHandler<void(String)>&&);
 
     void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, WTF::Function<void (const ShareableBitmap::Handle&, CallbackBase::Error)>&&);
 
@@ -1323,9 +1321,9 @@ public:
     void installActivityStateChangeCompletionHandler(Function<void()>&&);
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    void checkTextOfParagraph(const String& text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint, Vector<WebCore::TextCheckingResult>& results);
+    void checkTextOfParagraph(const String& text, OptionSet<WebCore::TextCheckingType> checkingTypes, int32_t insertionPoint, CompletionHandler<void(Vector<WebCore::TextCheckingResult>&&)>&&);
 #endif
-    void getGuessesForWord(const String& word, const String& context, int32_t insertionPoint, Vector<String>& guesses);
+    void getGuessesForWord(const String& word, const String& context, int32_t insertionPoint, CompletionHandler<void(Vector<String>&&)>&&);
 
     void setShouldDispatchFakeMouseMoveEvents(bool);
 
@@ -1433,7 +1431,7 @@ public:
     RefPtr<API::Attachment> attachmentForIdentifier(const String& identifier) const;
     void insertAttachment(Ref<API::Attachment>&&, Function<void(CallbackBase::Error)>&&);
     void updateAttachmentAttributes(const API::Attachment&, Function<void(CallbackBase::Error)>&&);
-    void serializedAttachmentDataForIdentifiers(const Vector<String>&, Vector<WebCore::SerializedAttachmentData>&);
+    void serializedAttachmentDataForIdentifiers(const Vector<String>&, CompletionHandler<void(Vector<WebCore::SerializedAttachmentData>&&)>&&);
     void registerAttachmentIdentifier(const String&);
     void didInvalidateDataForAttachment(API::Attachment&);
 
@@ -1483,7 +1481,7 @@ public:
     void startURLSchemeTaskShared(Ref<WebProcessProxy>&&, URLSchemeTaskParameters&&);
     void loadDataWithNavigationShared(Ref<WebProcessProxy>&&, API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& = WTF::nullopt);
     void loadRequestWithNavigationShared(Ref<WebProcessProxy>&&, API::Navigation&, WebCore::ResourceRequest&&, WebCore::ShouldOpenExternalURLsPolicy, API::Object* userData, WebCore::ShouldTreatAsContinuingLoad, Optional<WebsitePoliciesData>&& = WTF::nullopt);
-    void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
+    void backForwardGoToItemShared(Ref<WebProcessProxy>&&, const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(SandboxExtension::Handle&&)>&&);
     void decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy>&&, uint64_t frameID, bool isMainFrame, WebCore::SecurityOriginData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, NavigationActionData&&,
         FrameInfoData&&, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody,
         WebCore::ResourceResponse&& redirectResponse, const UserData&, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&&);
@@ -1495,7 +1493,7 @@ public:
     void clearAdClickAttribution(CompletionHandler<void()>&&);
 
 #if ENABLE(SPEECH_SYNTHESIS)
-    void speechSynthesisVoiceList(Vector<WebSpeechSynthesisVoice>& result);
+    void speechSynthesisVoiceList(CompletionHandler<void(Vector<WebSpeechSynthesisVoice>&&)>&&);
     void speechSynthesisSpeak(const String&, const String&, float volume, float rate, float pitch, MonotonicTime startTime, const String& voiceURI, const String& voiceName, const String& voiceLang, bool localService, bool defaultVoice, CompletionHandler<void()>&&);
     void speechSynthesisCancel();
     void speechSynthesisPause(CompletionHandler<void()>&&);
@@ -1586,7 +1584,7 @@ private:
     void didFinishProgress();
     void setNetworkRequestsInProgress(bool);
 
-    void hasInsecureContent(WebCore::HasInsecureContent&);
+    void hasInsecureContent(CompletionHandler<void(WebCore::HasInsecureContent)>&&);
 
     void didDestroyNavigation(uint64_t navigationID);
 
@@ -1642,14 +1640,14 @@ private:
     void setIsResizable(bool isResizable);
     void screenToRootView(const WebCore::IntPoint& screenPoint, Messages::WebPageProxy::ScreenToRootView::DelayedReply&&);
     void rootViewToScreen(const WebCore::IntRect& viewRect, Messages::WebPageProxy::RootViewToScreen::DelayedReply&&);
-    void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, WebCore::IntPoint& windowPoint);
-    void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, WebCore::IntRect& result);
+    void accessibilityScreenToRootView(const WebCore::IntPoint& screenPoint, CompletionHandler<void(WebCore::IntPoint)>&&);
+    void rootViewToAccessibilityScreen(const WebCore::IntRect& viewRect, CompletionHandler<void(WebCore::IntRect)>&&);
     void runBeforeUnloadConfirmPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const String& message, Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::DelayedReply&&);
     void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll();
     void runOpenPanel(uint64_t frameID, const WebCore::SecurityOriginData&, const WebCore::FileChooserSettings&);
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, ShareSheetCallbackID);
-    void printFrame(uint64_t frameID);
+    void printFrame(uint64_t frameID, CompletionHandler<void()>&&);
     void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&&);
     void reachedApplicationCacheOriginQuota(const String& originIdentifier, uint64_t currentQuota, uint64_t totalBytesNeeded, Messages::WebPageProxy::ReachedApplicationCacheOriginQuota::DelayedReply&&);
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
@@ -1716,22 +1714,22 @@ private:
 
     // Back/Forward list management
     void backForwardAddItem(BackForwardListItemState&&);
-    void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, SandboxExtension::Handle&);
-    void backForwardItemAtIndex(int32_t index, Optional<WebCore::BackForwardItemIdentifier>&);
-    void backForwardBackListCount(uint32_t& count);
-    void backForwardForwardListCount(uint32_t& count);
+    void backForwardGoToItem(const WebCore::BackForwardItemIdentifier&, CompletionHandler<void(SandboxExtension::Handle&&)>&&);
+    void backForwardItemAtIndex(int32_t index, CompletionHandler<void(Optional<WebCore::BackForwardItemIdentifier>&&)>&&);
+    void backForwardBackListCount(CompletionHandler<void(uint32_t)>&&);
+    void backForwardForwardListCount(CompletionHandler<void(uint32_t)>&&);
     void backForwardClear();
 
     // Undo management
     void registerEditCommandForUndo(WebUndoStepID commandID, const String& label);
     void registerInsertionUndoGrouping();
     void clearAllEditCommands();
-    void canUndoRedo(UndoOrRedo, bool& result);
-    void executeUndoRedo(UndoOrRedo);
+    void canUndoRedo(UndoOrRedo, CompletionHandler<void(bool)>&&);
+    void executeUndoRedo(UndoOrRedo, CompletionHandler<void()>&&);
 
     // Keyboard handling
 #if PLATFORM(COCOA)
-    void executeSavedCommandBySelector(const String& selector, bool& handled);
+    void executeSavedCommandBySelector(const String& selector, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(GTK)
@@ -1755,11 +1753,11 @@ private:
 
     // Search popup results
     void saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&);
-    void loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&);
+    void loadRecentSearches(const String&, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&&);
 
 #if PLATFORM(COCOA)
     // Speech.
-    void getIsSpeaking(bool&);
+    void getIsSpeaking(CompletionHandler<void(bool)>&&);
     void speak(const String&);
     void stopSpeaking();
 
@@ -1782,9 +1780,9 @@ private:
 #endif
 
     // Spelling and grammar.
-    void checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    void checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
-    void spellingUIIsShowing(bool&);
+    void checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&&);
+    void checkGrammarOfString(const String& text, CompletionHandler<void(Vector<WebCore::GrammarDetail>&&, int32_t badGrammarLocation, int32_t badGrammarLength)>&&);
+    void spellingUIIsShowing(CompletionHandler<void(bool)>&&);
     void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
     void updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     void learnWord(const String& word);
@@ -1825,7 +1823,7 @@ private:
     void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID);
     void autocorrectionContextCallback(const WebAutocorrectionContext&, CallbackID);
     void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
-    void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
+    void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
     void selectionRectsCallback(const Vector<WebCore::SelectionRect>&, CallbackID);
 
@@ -1856,16 +1854,16 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    void substitutionsPanelIsShowing(bool&);
+    void substitutionsPanelIsShowing(CompletionHandler<void(bool)>&&);
     void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     void dismissCorrectionPanel(int32_t reason);
-    void dismissCorrectionPanelSoon(int32_t reason, String& result);
+    void dismissCorrectionPanelSoon(int32_t reason, CompletionHandler<void(String)>&&);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
 
 #if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);
     void removeDictationAlternatives(uint64_t dictationContext);
-    void dictationAlternatives(uint64_t dictationContext, Vector<String>& result);
+    void dictationAlternatives(uint64_t dictationContext, CompletionHandler<void(Vector<String>&&)>&&);
 #endif
 
     void setEditableElementIsFocused(bool);
@@ -1909,7 +1907,7 @@ private:
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
 #if PLATFORM(X11)
-    void createPluginContainer(uint64_t& windowID);
+    void createPluginContainer(CompletionHandler<void(uint64_t)>&&);
     void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
     void windowedPluginVisibilityDidChange(bool isVisible, uint64_t windowID);
 #endif
@@ -1974,7 +1972,7 @@ private:
     void didResignInputElementStrongPasswordAppearance(const UserData&);
 
     void handleMessage(IPC::Connection&, const String& messageName, const UserData& messageBody);
-    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, UserData& returnUserData);
+    void handleSynchronousMessage(IPC::Connection&, const String& messageName, const UserData& messageBody, CompletionHandler<void(UserData&&)>&&);
 
     void viewIsBecomingVisible();
 

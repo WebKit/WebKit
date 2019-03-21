@@ -63,14 +63,14 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::
     WebCore::saveRecentSearches(name, searchItems);
 }
 
-void WebPageProxy::loadRecentSearches(const String& name, Vector<WebCore::RecentSearch>& searchItems)
+void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     if (!name) {
         // FIXME: This should be a message check.
-        return;
+        return completionHandler({ });
     }
 
-    searchItems = WebCore::loadRecentSearches(name);
+    completionHandler(WebCore::loadRecentSearches(name));
 }
 
 void WebPageProxy::beginSafeBrowsingCheck(const URL& url, bool forMainFrameNavigation, WebFramePolicyListenerProxy& listener)

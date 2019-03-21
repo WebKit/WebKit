@@ -65,9 +65,10 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::Recen
     notImplemented();
 }
 
-void WebPageProxy::loadRecentSearches(const String&, Vector<WebCore::RecentSearch>&)
+void WebPageProxy::loadRecentSearches(const String&, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     notImplemented();
+    completionHandler({ });
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
@@ -102,15 +103,16 @@ static gboolean pluginContainerPlugRemoved(GtkSocket* socket)
     return FALSE;
 }
 
-void WebPageProxy::createPluginContainer(uint64_t& windowID)
+void WebPageProxy::createPluginContainer(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     RELEASE_ASSERT(WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11);
     GtkWidget* socket = gtk_socket_new();
     g_signal_connect(socket, "plug-removed", G_CALLBACK(pluginContainerPlugRemoved), 0);
     gtk_container_add(GTK_CONTAINER(viewWidget()), socket);
 
-    windowID = static_cast<uint64_t>(gtk_socket_get_id(GTK_SOCKET(socket)));
+    uint64_t windowID = static_cast<uint64_t>(gtk_socket_get_id(GTK_SOCKET(socket)));
     pluginWindowMap().set(windowID, socket);
+    completionHandler(windowID);
 }
 
 void WebPageProxy::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID)
