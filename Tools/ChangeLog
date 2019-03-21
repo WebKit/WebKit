@@ -1,5 +1,29 @@
 2019-03-21  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Retry API test in case of failures
+        https://bugs.webkit.org/show_bug.cgi?id=196004
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (UnApplyPatchIfRequired.doStepIf): Updated doStepIf to include patchFailedAPITests.
+        (CompileWebKitToT.doStepIf): Ditto.
+        (RunAPITests.evaluateCommand): Check if tests failed and retry them if required.
+        (ReRunAPITests): Re-run API tests.
+        (ReRunAPITests.evaluateCommand): Check if tests failed and retry on clean build if required.
+        (RunAPITestsWithoutPatch): Run API tests without patch.
+        (RunAPITestsWithoutPatch.doStepIf):
+        (RunAPITestsWithoutPatch.hideStepIf):
+        (RunAPITestsWithoutPatch.evaluateCommand):
+        (AnalyzeAPITestsResults): Analyze API test results from previous runs.
+        (AnalyzeAPITestsResults.start):
+        (AnalyzeAPITestsResults.analyzeResults): Analyze API test results.
+        (AnalyzeAPITestsResults.getBuildStepByName): Search for a build step by name.
+        (AnalyzeAPITestsResults.getTestsResults): Get the test results from previous API tesst steps.
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Monkey patched FakeBuild.
+
+2019-03-21  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Update queues configurations
         https://bugs.webkit.org/show_bug.cgi?id=196074
 

@@ -28,6 +28,7 @@ from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
 
+import json
 import re
 import requests
 
@@ -376,7 +377,7 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
     descriptionDone = ['Unapplied patch']
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedJSCTests')
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedJSCTests') or self.getProperty('patchFailedAPITests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -526,7 +527,7 @@ class CompileWebKitToT(CompileWebKit):
     haltOnFailure = True
 
     def doStepIf(self, step):
-        return self.getProperty('patchFailedToBuild')
+        return self.getProperty('patchFailedToBuild') or self.getProperty('patchFailedAPITests')
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -709,6 +710,139 @@ class RunAPITests(TestWithFailureCount):
         if not match:
             return 0
         return int(match.group('ran')) - int(match.group('passed'))
+
+    def evaluateCommand(self, cmd):
+        rc = super(RunAPITests, self).evaluateCommand(cmd)
+        if rc == SUCCESS:
+            message = 'Passed API tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.build.addStepsAfterCurrentStep([ReRunAPITests()])
+        return rc
+
+
+class ReRunAPITests(RunAPITests):
+    name = 're-run-api-tests'
+
+    def evaluateCommand(self, cmd):
+        rc = TestWithFailureCount.evaluateCommand(self, cmd)
+        if rc == SUCCESS:
+            message = 'Passed API tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
+        else:
+            self.setProperty('patchFailedAPITests', True)
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT(), RunAPITestsWithoutPatch(), AnalyzeAPITestsResults()])
+        return rc
+
+
+class RunAPITestsWithoutPatch(RunAPITests):
+    name = 'run-api-tests-without-patch'
+
+    def evaluateCommand(self, cmd):
+        return TestWithFailureCount.evaluateCommand(self, cmd)
+
+
+class AnalyzeAPITestsResults(buildstep.BuildStep):
+    name = 'analyze-api-tests-results'
+    description = ['analyze-api-test-results']
+    descriptionDone = ['analyze-api-tests-results']
+
+    def start(self):
+        self.results = {}
+        d = self.getTestsResults(RunAPITests.name)
+        d.addCallback(lambda res: self.getTestsResults(ReRunAPITests.name))
+        d.addCallback(lambda res: self.getTestsResults(RunAPITestsWithoutPatch.name))
+        d.addCallback(lambda res: self.analyzeResults())
+        return defer.succeed(None)
+
+    def analyzeResults(self):
+        if not self.results or len(self.results) == 0:
+            self._addToLog('stderr', 'Unable to parse API test results: {}'.format(self.results))
+            self.finished(RETRY)
+            self.build.buildFinished(['Unable to parse API test results'], RETRY)
+            return -1
+
+        first_run_results = self.results.get(RunAPITests.name)
+        second_run_results = self.results.get(ReRunAPITests.name)
+        clean_tree_results = self.results.get(RunAPITestsWithoutPatch.name)
+
+        if not (first_run_results and second_run_results and clean_tree_results):
+            self.finished(RETRY)
+            self.build.buildFinished(['Unable to parse API test results'], RETRY)
+            return -1
+
+        def getAPITestFailures(result):
+            # TODO: Analyze Time-out, Crash and Failure independently
+            return set([failure.get('name') for failure in result.get('Timedout', [])] +
+                [failure.get('name') for failure in result.get('Crashed', [])] +
+                [failure.get('name') for failure in result.get('Failed', [])])
+
+        first_run_failures = getAPITestFailures(first_run_results)
+        second_run_failures = getAPITestFailures(second_run_results)
+        clean_tree_failures = getAPITestFailures(clean_tree_results)
+
+        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
+        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(first_run_failures))
+        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures))
+        failures_with_patch = first_run_failures.intersection(second_run_failures)
+        new_failures = failures_with_patch - clean_tree_failures
+        new_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in new_failures])
+
+        if new_failures:
+            self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures))
+            self.finished(FAILURE)
+            self.build.results = FAILURE
+            message = 'Found {} new API Tests failures: {}'.format(len(new_failures), new_failures_string)
+            self.descriptionDone = message
+            self.build.buildFinished([message], FAILURE)
+        else:
+            self._addToLog('stderr', '\nNo new failures\n')
+            self.finished(SUCCESS)
+            self.build.results = SUCCESS
+            self.descriptionDone = 'Passed API tests'
+            message = 'Found {} pre-existing API tests failures'.format(len(clean_tree_failures))
+            self.build.buildFinished([message], SUCCESS)
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def getBuildStepByName(self, name):
+        for step in self.build.executedSteps:
+            if step.name == name:
+                return step
+        return None
+
+    @defer.inlineCallbacks
+    def getTestsResults(self, name):
+        step = self.getBuildStepByName(name)
+        if not step:
+            self._addToLog('stderr', 'ERROR: step not found: {}'.format(step))
+            defer.returnValue(None)
+
+        logs = yield self.master.db.logs.getLogs(step.stepid)
+        log = next((log for log in logs if log['name'] == u'json'), None)
+        if not log:
+            self._addToLog('stderr', 'ERROR: log for step not found: {}'.format(step))
+            defer.returnValue(None)
+
+        lastline = int(max(0, log['num_lines'] - 1))
+        logLines = yield self.master.db.logs.getLogLines(log['id'], 0, lastline)
+        if log['type'] == 's':
+            logLines = ''.join([line[1:] for line in logLines.splitlines()])
+
+        try:
+            self.results[name] = json.loads(logLines)
+        except Exception as ex:
+            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
 
 
 class ArchiveTestResults(shell.ShellCommand):

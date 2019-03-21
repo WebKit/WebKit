@@ -36,6 +36,10 @@ from twisted.trial import unittest
 
 from steps import *
 
+# Workaround for https://github.com/buildbot/buildbot/issues/4669
+from buildbot.test.fake.fakebuild import FakeBuild
+FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
+
 
 class ExpectMasterShellCommand(object):
     def __init__(self, command, workdir=None, env=None, usePTY=0):
