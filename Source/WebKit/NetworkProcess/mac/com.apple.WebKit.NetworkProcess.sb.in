@@ -142,7 +142,9 @@
 (allow ipc-posix-shm-read-data
     (ipc-posix-name "FNetwork.defaultStorageSession")
     (ipc-posix-name-regex #"\.PrivateBrowsing-")
-    (ipc-posix-name-regex #"^WebKit Test-"))
+    (ipc-posix-name-regex #"^WebKit Test-")
+    (ipc-posix-name "/com.apple.AppSSO.version")
+)
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
@@ -159,6 +161,7 @@
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
     (global-name "com.apple.nesessionmanager.content-filter") ;; <rdar://problem/47598758>
+    (global-name "com.apple.AppSSO.service-xpc")
 )
 
 ;; Security framework

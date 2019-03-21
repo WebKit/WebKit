@@ -1,3 +1,14 @@
+2019-03-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Extend Networking Process sandbox for some system frameworks
+        https://bugs.webkit.org/show_bug.cgi?id=196036
+        <rdar://problem/47594150>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
 2019-03-20  Alex Christensen  <achristensen@webkit.org>
 
         Reduce use of LegacySync IPC message type
