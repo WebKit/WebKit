@@ -52,7 +52,7 @@ std::unique_ptr<AccessCase> ProxyableAccessCase::clone() const
 {
     std::unique_ptr<ProxyableAccessCase> result(new ProxyableAccessCase(*this));
     result->resetState();
-    return result;
+    return std::unique_ptr<AccessCase> { WTFMove(result) };
 }
 
 void ProxyableAccessCase::dumpImpl(PrintStream& out, CommaPrinter& comma) const

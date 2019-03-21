@@ -1,3 +1,25 @@
+2019-03-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, more clang 3.8 build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=195947
+        <rdar://problem/49069219>
+
+        In the spirit of making our code worse to please old compilers....
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::clone const):
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::clone const):
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::clone const):
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::clone const):
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::clone const):
+
 2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not create JIT related data under non-JIT mode

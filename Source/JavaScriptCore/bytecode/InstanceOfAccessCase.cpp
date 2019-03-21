@@ -47,7 +47,7 @@ std::unique_ptr<AccessCase> InstanceOfAccessCase::clone() const
 {
     std::unique_ptr<InstanceOfAccessCase> result(new InstanceOfAccessCase(*this));
     result->resetState();
-    return result;
+    return std::unique_ptr<AccessCase> { WTFMove(result) };
 }
 
 InstanceOfAccessCase::~InstanceOfAccessCase()

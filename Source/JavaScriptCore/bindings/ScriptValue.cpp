@@ -74,7 +74,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
                     return nullptr;
                 inspectorArray->pushValue(WTFMove(elementValue));
             }
-            return inspectorArray;
+            return RefPtr<JSON::Value> { WTFMove(inspectorArray) };
         }
         VM& vm = scriptState.vm();
         auto inspectorObject = JSON::Object::create();
@@ -87,7 +87,7 @@ static RefPtr<JSON::Value> jsToInspectorValue(ExecState& scriptState, JSValue va
                 return nullptr;
             inspectorObject->setValue(name.string(), WTFMove(inspectorValue));
         }
-        return inspectorObject;
+        return RefPtr<JSON::Value> { WTFMove(inspectorObject) };
     }
 
     ASSERT_NOT_REACHED();
