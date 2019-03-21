@@ -141,7 +141,7 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
     LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
 
     m_elementsWithTransition.add(&element);
-    // FIXME: report state change.
+    adjustObservedState(Event::AddedTransition);
 }
 
 void ContentChangeObserver::didFinishTransition(const Element& element, CSSPropertyID propertyID)
@@ -151,7 +151,8 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
     if (!m_elementsWithTransition.take(&element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
-    // FIXME: report state change.
+
+    adjustObservedState(Event::EndedTransition);
 }
 
 void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
@@ -161,7 +162,8 @@ void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPrope
     if (!m_elementsWithTransition.take(&element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didRemoveTransition: transition got interrupted (" << &element << ").");
-    // FIXME: report state change.
+
+    adjustObservedState(Event::CanceledTransition);
 }
 
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
@@ -334,6 +336,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
     auto reset = [&] {
         setHasNoChangeState();
         clearObservedDOMTimers();
+        clearObservedTransitions();
         setIsBetweenTouchEndAndMouseMoved(false);
         ASSERT(!m_isObservingDOMTimerScheduling);
         ASSERT(!m_isWaitingForStyleRecalc);
@@ -351,6 +354,10 @@ void ContentChangeObserver::adjustObservedState(Event event)
             LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: in mouseMoved call. No need to notify the client.");
             return;
         }
+        if (isBetweenTouchEndAndMouseMoved()) {
+            LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: Not reached mouseMoved yet. No need to notify the client.");
+            return;
+        }
         if (!hasDeterminateState()) {
             LOG(ContentObservation, "adjustStateAndNotifyContentChangeIfNeeded: not in a determined state yet.");
             return;
@@ -365,9 +372,11 @@ void ContentChangeObserver::adjustObservedState(Event event)
     case Event::StartedTouchStartEventDispatching:
         reset();
         setShouldObserveDOMTimerScheduling(true);
+        setShouldObserveTransitions(true);
         break;
     case Event::EndedTouchStartEventDispatching:
         setShouldObserveDOMTimerScheduling(false);
+        setShouldObserveTransitions(false);
         setIsBetweenTouchEndAndMouseMoved(true);
         break;
     case Event::WillNotProceedWithClick:
@@ -394,14 +403,17 @@ void ContentChangeObserver::adjustObservedState(Event event)
         break;
     case Event::InstalledDOMTimer:
     case Event::StartedFixedObservationTimeWindow:
+    case Event::AddedTransition:
         ASSERT(!hasVisibleChangeState());
         setHasIndeterminateState();
         break;
     case Event::EndedDOMTimerExecution:
+    case Event::EndedTransition:
         setShouldObserveNextStyleRecalc(m_document.hasPendingStyleRecalc());
         FALLTHROUGH;
     case Event::EndedStyleRecalc:
     case Event::RemovedDOMTimer:
+    case Event::CanceledTransition:
         if (!isObservationTimeWindowActive())
             adjustStateAndNotifyContentChangeIfNeeded();
         break;
@@ -413,6 +425,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         // Remove pending activities. We don't need to observe them anymore.
         setShouldObserveNextStyleRecalc(false);
         clearObservedDOMTimers();
+        clearObservedTransitions();
         break;
     }
 }

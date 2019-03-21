@@ -1,3 +1,20 @@
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Start tracking implicit transitions at touchStart
+        https://bugs.webkit.org/show_bug.cgi?id=196051
+        <rdar://problem/49092952>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/0ms-transition-on-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/0ms-transition-on-touch-start.html: Added.
+        * fast/events/touch/ios/content-observation/100ms-transition-on-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/100ms-transition-on-touch-start.html: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start.html: Added.
+        * fast/events/touch/ios/content-observation/transition-on-touch-start-and-remove-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/transition-on-touch-start-and-remove.html: Added.
+
 2019-03-21  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r243250.

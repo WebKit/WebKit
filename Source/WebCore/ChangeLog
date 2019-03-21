@@ -1,5 +1,36 @@
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Start tracking implicit transitions at touchStart
+        https://bugs.webkit.org/show_bug.cgi?id=196051
+        <rdar://problem/49092952>
+
+        Reviewed by Simon Fraser.
+
+        This patch enables transition tracking on touchStart.
+
+        1. Start observing for new transitions at touchStart
+        2. Stop observing at touchEnd
+        3. Check the next style recalc when the transition is finished (at onAnimationEnd we don't yet have the final computed style).
+        4. Remove the tracked transition when it is canceled.
+
+        Tests: fast/events/touch/ios/content-observation/0ms-transition-on-touch-start.html
+               fast/events/touch/ios/content-observation/100ms-transition-on-touch-start.html
+               fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start.html
+               fast/events/touch/ios/content-observation/transition-on-touch-start-and-remove.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::didAddTransition):
+        (WebCore::ContentChangeObserver::didFinishTransition):
+        (WebCore::ContentChangeObserver::didRemoveTransition):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::setShouldObserveTransitions):
+        (WebCore::ContentChangeObserver::clearObservedTransitions):
+        (WebCore::ContentChangeObserver::hasObservedTransition const):
+        (WebCore::ContentChangeObserver::hasPendingActivity const):
+
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Track hidden elements only while transitioning.
         https://bugs.webkit.org/show_bug.cgi?id=196050
         <rdar://problem/49092037>
