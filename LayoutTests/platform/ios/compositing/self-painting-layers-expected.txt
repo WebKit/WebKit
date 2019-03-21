@@ -10,9 +10,9 @@ layer at (0,0) size 800x431
         RenderText {#text} at (0,0) size 0x0
 layer at (19,53) size 300x200
   RenderVideo {VIDEO} at (1,1) size 300x200
-layer at (18,269) size 302x152 clip at (19,270) size 285x150 scrollY 24 scrollHeight 500
+layer at (18,269) size 302x152 clip at (19,270) size 300x150 scrollY 24 scrollHeight 500
   RenderBlock {DIV} at (10,253) size 302x152 [border: (1px solid #000000)]
-    RenderBlock {DIV} at (1,1) size 285x500
+    RenderBlock {DIV} at (1,1) size 300x500
       RenderText {#text} at (0,6) size 107x36
         text run at (0,6) width 107: "Scrolled"
       RenderBR {BR} at (106,6) size 1x36

@@ -1,3 +1,138 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Turn on async overflow scrolling by default
+        https://bugs.webkit.org/show_bug.cgi?id=196011
+        rdar://problem/48453859
+
+        Reviewed by Antti Koivisto.
+        
+        Explicitly turn on async overflow scrolling in any test that:
+        1. Used -webkit-overflow-scrolling:touch
+        2. Called settings.setAsyncOverflowScrollingEnabled(true)
+
+        * accessibility/ios-simulator/scroll-in-overflow-div.html:
+        * compositing/clipping/border-radius-async-overflow-clipping-layer.html:
+        * compositing/clipping/border-radius-async-overflow-non-stacking.html:
+        * compositing/clipping/border-radius-async-overflow-stacking.html:
+        * compositing/geometry/fixed-inside-overflow-scroll.html:
+        * compositing/ios/overflow-scroll-touch-tiles.html:
+        * compositing/ios/overflow-scroll-update-overlap.html:
+        * compositing/layer-creation/absolute-in-async-overflow-scroll.html:
+        * compositing/overflow/absolute-in-overflow-expected.html:
+        * compositing/overflow/absolute-in-overflow.html:
+        * compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html:
+        * compositing/overflow/iframe-inside-overflow-clipping.html:
+        * compositing/overflow/nested-scrolling.html:
+        * compositing/overflow/overflow-auto-with-touch-expected.txt:
+        * compositing/overflow/overflow-auto-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-auto-with-touch-toggle.html:
+        * compositing/overflow/overflow-auto-with-touch.html:
+        * compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html:
+        * compositing/overflow/overflow-hidden-with-touch.html:
+        * compositing/overflow/overflow-overlay-with-touch-expected.txt:
+        * compositing/overflow/overflow-overlay-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-overlay-with-touch.html:
+        * compositing/overflow/overflow-scroll-with-touch-no-overflow.html:
+        * compositing/overflow/overflow-scroll.html:
+        * compositing/overflow/overflow-visible-with-touch.html:
+        * compositing/overflow/remove-overflow-crash.html:
+        * compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * compositing/overflow/scrolling-content-clip-to-viewport.html:
+        * compositing/overflow/scrolling-without-painting.html:
+        * compositing/overflow/should-not-override-z-index-for-element-with-non-auto-z-index-and-overflow-scroll-and-touch.html:
+        * compositing/overflow/subpixel-overflow.html:
+        * compositing/overflow/textarea-scroll-touch-expected.txt:
+        * compositing/overflow/textarea-scroll-touch.html:
+        * compositing/overflow/updating-scrolling-content.html:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants.html:
+        * compositing/scrolling/fixed-inside-scroll-expected.html:
+        * compositing/scrolling/fixed-inside-scroll.html:
+        * compositing/scrolling/overflow-scrolling-layers-are-self-painting.html:
+        * compositing/scrolling/touch-scroll-to-clip.html:
+        * compositing/scrolling/touch-scrolling-repaint-expected.html:
+        * compositing/scrolling/touch-scrolling-repaint-spans-expected.html:
+        * compositing/scrolling/touch-scrolling-repaint-spans.html:
+        * compositing/scrolling/touch-scrolling-repaint.html:
+        * css3/scroll-snap/nested-elements.html:
+        * css3/scroll-snap/scroll-snap-children-with-overflow.html:
+        * css3/scroll-snap/scroll-snap-offsets.html:
+        * css3/scroll-snap/scroll-snap-positions.html:
+        * css3/scroll-snap/scroll-snap-programmatic-overflow-scroll.html:
+        * css3/scroll-snap/scroll-snap-style-changed-align.html:
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow.html:
+        * fast/events/ios/touch-events-during-scroll-deceleration-in-overflow.html:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-block.html:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll-and-passive-observer-on-document.html:
+        * fast/events/touch/ios/drag-block-without-overflow-scroll.html:
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested.html:
+        * fast/scrolling/ios/change-scrollability-on-content-resize.html:
+        * fast/scrolling/ios/clipping-ancestor-with-accelerated-scrolling-ancestor.html:
+        * fast/scrolling/ios/fixed-inside-overflow-inside-iframe-expected.html:
+        * fast/scrolling/ios/fixed-inside-overflow-inside-iframe.html:
+        * fast/scrolling/ios/iframe-inside-overflow-clipping.html:
+        * fast/scrolling/ios/overflow-clip-with-accelerated-scrolling-ancestor.html:
+        * fast/scrolling/ios/overflow-scroll-inherited.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-2.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-3.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-4.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-5.html:
+        * fast/scrolling/ios/overflow-scroll-overlap.html:
+        * fast/scrolling/ios/overflow-scroll-touch.html:
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html:
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip.html:
+        * fast/scrolling/ios/overflow-scrolling-touch-disabled-stacking.html:
+        * fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking-expected.html:
+        * fast/scrolling/ios/overflow-scrolling-touch-enabled-stacking.html:
+        * fast/scrolling/ios/reconcile-layer-position-recursive.html:
+        * fast/scrolling/ios/remove-overflow-crash.html:
+        * fast/scrolling/ios/scroll-into-view-with-top-content-inset.html:
+        * fast/scrolling/ios/scrollbar-hiding.html:
+        * fast/scrolling/ios/scrolling-content-clip-to-viewport.html:
+        * fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor.html:
+        * fast/scrolling/ios/table-cell-touch-scrolling.html:
+        * fast/scrolling/ios/textarea-scroll-touch.html:
+        * fast/scrolling/ios/touch-scroll-back-forward.html:
+        * fast/scrolling/ios/touch-scroll-pointer-events-none.html:
+        * fast/scrolling/ios/touch-stacking.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/ios-wk2/compositing/layer-creation/scroll-partial-update-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layer-positions-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/ios-wk2/compositing/overflow/remove-overflow-crash2-expected.txt:
+        * platform/ios-wk2/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * platform/ios/compositing/layers-inside-overflow-scroll-expected.txt:
+        * platform/ios/compositing/overflow/scroll-ancestor-update-expected.txt:
+        * platform/ios/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/ios/compositing/self-painting-layers-expected.txt:
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position-limit.html:
+        * platform/ios/fast/scrolling/find-text-in-overflow-node-indicator-position.html:
+        * platform/ios/fast/scrolling/find-text-in-overflow-node.html:
+        * platform/ios/media/video-play-glyph-composited-outside-overflow-scrolling-touch-container.html:
+        * platform/mac/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt:
+        * pointerevents/ios/touch-action-none-in-overflow-scrolling-touch.html:
+        * scrollingcoordinator/ios/absolute-layer-should-not-move-with-scroll-expected.html:
+        * scrollingcoordinator/ios/absolute-layer-should-not-move-with-scroll.html:
+        * scrollingcoordinator/ios/relative-layer-should-move-with-scroll-expected.html:
+        * scrollingcoordinator/ios/relative-layer-should-move-with-scroll.html:
+        * scrollingcoordinator/ios/scroll-element-at-point.html:
+        * scrollingcoordinator/scrolling-tree/gain-scrolling-node-parent.html:
+        * scrollingcoordinator/scrolling-tree/lose-scrolling-node-parent.html:
+        * scrollingcoordinator/scrolling-tree/overflow-in-fixed.html:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes-complex.html:
+        * scrollingcoordinator/scrolling-tree/positioned-nodes.html:
+        * scrollingcoordinator/scrolling-tree/remove-scrolling-role.html:
+        * scrollingcoordinator/scrolling-tree/reparent-across-compositing-layers.html:
+        * scrollingcoordinator/scrolling-tree/reparent-with-layer-removal.html:
+        * scrollingcoordinator/scrolling-tree/resources/doc-with-sticky.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-2d-overflow.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-borders.html:
+
 2019-03-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] JS wrapper may be deleted while animation is yet to dispatch its finish event

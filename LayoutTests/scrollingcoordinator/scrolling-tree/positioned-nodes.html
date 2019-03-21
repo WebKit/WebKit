@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
     <title>Test scrolling tree stucture with various positioning and clipping configurations</title>
@@ -45,9 +45,6 @@
     <script>
         if (window.testRunner)
             testRunner.dumpAsText();
-
-        if (window.internals)
-            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
 
         function doTest() {
             if (window.internals)

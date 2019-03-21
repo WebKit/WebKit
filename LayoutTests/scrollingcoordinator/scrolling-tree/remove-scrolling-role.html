@@ -1,6 +1,5 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
 <html>
-
 <head>
     <style>
         body {
@@ -35,9 +34,6 @@
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
         }
-
-        if (window.internals)
-            window.internals.settings.setAsyncOverflowScrollingEnabled(true);
 
         function doTest()
         {

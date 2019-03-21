@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -35,10 +34,8 @@
         }
     </style>
     <script>
-        if (window.internals) {
-            internals.settings.setAsyncOverflowScrollingEnabled(true);
+        if (window.internals)
             internals.setUsesOverlayScrollbars(true);
-        }
     </script>
 </head>
 <body>

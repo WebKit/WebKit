@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
 <html>
 <head>
     <style>
@@ -13,10 +13,8 @@
         }
     </style>
     <script>
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.dumpAsText();
-            internals.settings.setAsyncOverflowScrollingEnabled(true);            
-        }
 
         window.addEventListener('load', () => {
             if (window.internals)
