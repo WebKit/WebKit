@@ -1,3 +1,16 @@
+2019-03-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS][macOS] Fix sandbox call violations
+        https://bugs.webkit.org/show_bug.cgi?id=195809
+        <rdar://problem/48829655>
+
+        Reviewed by Brent Fulgham.
+
+        An additional syscall needs to be added to the sandbox allow list.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add UI process WebRTC runtime logging.

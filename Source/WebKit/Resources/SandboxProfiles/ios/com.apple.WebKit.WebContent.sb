@@ -597,5 +597,6 @@
         (syscall-number SYS_open_dprotected_np)
         (syscall-number SYS_pread_nocancel)
         (syscall-number SYS___semwait_signal_nocancel)
+        (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
     )
 )
