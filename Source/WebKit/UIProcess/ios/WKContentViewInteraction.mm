@@ -1665,7 +1665,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         // For instance, one use case that currently relies on this detail is adjusting the zoom scale and viewport upon
         // rotation, when a select element is focused. See <https://webkit.org/b/192878> for more information.
         [self _zoomToRevealFocusedElement];
-        [self _ensureFormAccessoryView];
         [self _updateAccessory];
     }
 
@@ -2474,15 +2473,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (UITextInputAssistantItem *)inputAssistantItemForWebView
 {
     return [super inputAssistantItem];
-}
-
-- (void)_ensureFormAccessoryView
-{
-    if (_formAccessoryView)
-        return;
-
-    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:self.inputAssistantItem]);
-    [_formAccessoryView setDelegate:self];
 }
 
 - (UIView *)inputAccessoryView
@@ -3784,13 +3774,24 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         [inputDelegate _webView:_webView accessoryViewCustomButtonTappedInFormInputSession:_formInputSession.get()];
 }
 
+- (UIWebFormAccessory *)formAccessoryView
+{
+    if (_formAccessoryView)
+        return _formAccessoryView.get();
+    _formAccessoryView = adoptNS([[UIWebFormAccessory alloc] initWithInputAssistantItem:self.inputAssistantItem]);
+    [_formAccessoryView setDelegate:self];
+    return _formAccessoryView.get();
+}
+
 - (void)_updateAccessory
 {
-    [_formAccessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
-    [_formAccessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
+    auto* accessoryView = self.formAccessoryView; // Creates one, if needed.
+
+    [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
+    [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
     if (currentUserInterfaceIdiomIsPad()) {
-        [_formAccessoryView setClearVisible:NO];
+        [accessoryView setClearVisible:NO];
         return;
     }
 
@@ -3799,10 +3800,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     case WebKit::InputType::Month:
     case WebKit::InputType::DateTimeLocal:
     case WebKit::InputType::Time:
-        [_formAccessoryView setClearVisible:YES];
+        [accessoryView setClearVisible:YES];
         return;
     default:
-        [_formAccessoryView setClearVisible:NO];
+        [accessoryView setClearVisible:NO];
         return;
     }
 }
@@ -4795,12 +4796,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _focusedElementInformation.selectOptions;
 }
 
-- (UIWebFormAccessory *)formAccessoryView
-{
-    [self _ensureFormAccessoryView];
-    return _formAccessoryView.get();
-}
-
 static bool shouldDeferZoomingToSelectionWhenRevealingFocusedElement(WebKit::InputType type)
 {
     switch (type) {
@@ -4986,7 +4981,6 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     if (!shouldDeferZoomingToSelectionWhenRevealingFocusedElement(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 
-    [self _ensureFormAccessoryView];
     [self _updateAccessory];
 
 #if PLATFORM(WATCHOS)

@@ -1,3 +1,25 @@
+2019-03-21  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Inline -_ensureFormAccessoryView into -formAccessoryView and have -_updateAccessory ensure we have a form accessory
+        https://bugs.webkit.org/show_bug.cgi?id=196021
+
+        Reviewed by Wenson Hsieh.
+
+        Every caller of -_ensureFormAccessoryView, except -formAccessoryView, immediately follows the call
+        with a call to -_updateAccessory. Let's just have -_updateAccessory ensure we have a form accessory
+        view and inline the implementation of -_ensureFormAccessoryView into -formAccessoryView so we can
+        remove one method.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputView]): Remove call to -_ensureFormAccessoryView, -_updateAccessory will do
+        the equivalent work for us.
+        (-[WKContentView formAccessoryView]): Moved implementation of -_ensureFormAccessoryView into here.
+        (-[WKContentView _updateAccessory]): Call self.formAccessoryView to ensure we have a form accessory view.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Remove call to -_ensureFormAccessoryView, -_updateAccessory will do
+        the equivalent work for us.
+        (-[WKContentView _ensureFormAccessoryView]): Deleted.
+
 2019-03-21  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r243250.
