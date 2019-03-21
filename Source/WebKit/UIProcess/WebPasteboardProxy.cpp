@@ -63,14 +63,14 @@ void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
 
 #if !PLATFORM(COCOA)
 
-void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, const String&, Vector<String>& types)
+void WebPasteboardProxy::typesSafeForDOMToReadAndWrite(const String&, const String&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    types = { };
+    completionHandler({ });
 }
 
-void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData&, const String&, uint64_t& newChangeCount)
+void WebPasteboardProxy::writeCustomData(const WebCore::PasteboardCustomData&, const String&, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
-    newChangeCount = 0;
+    completionHandler(0);
 }
 
 #endif

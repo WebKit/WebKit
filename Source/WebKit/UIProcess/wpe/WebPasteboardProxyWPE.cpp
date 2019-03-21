@@ -32,14 +32,16 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebPasteboardProxy::getPasteboardTypes(Vector<String>& pasteboardTypes)
+void WebPasteboardProxy::getPasteboardTypes(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
+    Vector<String> pasteboardTypes;
     PlatformPasteboard().getTypes(pasteboardTypes);
+    completionHandler(WTFMove(pasteboardTypes));
 }
 
-void WebPasteboardProxy::readStringFromPasteboard(uint64_t index, const String& pasteboardType, WTF::String& value)
+void WebPasteboardProxy::readStringFromPasteboard(uint64_t index, const String& pasteboardType, CompletionHandler<void(String&&)>&& completionHandler)
 {
-    value = PlatformPasteboard().readString(index, pasteboardType);
+    completionHandler(PlatformPasteboard().readString(index, pasteboardType));
 }
 
 void WebPasteboardProxy::writeWebContentToPasteboard(const WebCore::PasteboardWebContent& content)

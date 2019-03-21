@@ -44,9 +44,9 @@ void WebPasteboardProxy::writeToClipboard(const String& pasteboardName, const We
     });
 }
 
-void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, WebSelectionData& selection)
+void WebPasteboardProxy::readFromClipboard(const String& pasteboardName, CompletionHandler<void(WebSelectionData&&)>&& completionHandler)
 {
-    selection = WebSelectionData(PlatformPasteboard(pasteboardName).readFromClipboard());
+    completionHandler(WebSelectionData(PlatformPasteboard(pasteboardName).readFromClipboard()));
 }
 
 void WebPasteboardProxy::setPrimarySelectionOwner(WebFrameProxy* frame)
