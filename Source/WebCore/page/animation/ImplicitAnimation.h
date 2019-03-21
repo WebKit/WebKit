@@ -79,6 +79,8 @@ public:
 
     const RenderStyle& unanimatedStyle() const override { return *m_fromStyle; }
 
+    void clear() override;
+
 protected:
     bool shouldSendEventForListener(Document::ListenerType) const;    
     bool sendTransitionEvent(const AtomicString&, double elapsedTime);

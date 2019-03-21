@@ -30,9 +30,11 @@
 #include "PlatformEvent.h"
 #include "Timer.h"
 #include "WKContentObservation.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
+class Animation;
 class DOMTimer;
 class Document;
 class Element;
@@ -46,6 +48,11 @@ public:
 
     void didInstallDOMTimer(const DOMTimer&, Seconds timeout, bool singleShot);
     void didRemoveDOMTimer(const DOMTimer&);
+
+    void didAddTransition(const Element&, const Animation&);
+    void didFinishTransition(const Element&, CSSPropertyID);
+    void didRemoveTransition(const Element&, CSSPropertyID);
+
     WEBCORE_EXPORT void willNotProceedWithClick();
     WEBCORE_EXPORT static void didRecognizeLongPress(Frame& mainFrame);
     WEBCORE_EXPORT static void didPreventDefaultForEvent(Frame& mainFrame);
@@ -114,6 +121,8 @@ private:
 
     void setShouldObserveDOMTimerScheduling(bool observe) { m_isObservingDOMTimerScheduling = observe; }
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
+    bool isObservingTransitions() const { return m_isObservingTransitions; }
+    bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
     void registerDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }
@@ -167,6 +176,8 @@ private:
     Document& m_document;
     Timer m_contentObservationTimer;
     HashSet<const DOMTimer*> m_DOMTimerList;
+    // FIXME: Move over to WeakHashSet when it starts supporting const.
+    HashSet<const Element*> m_elementsWithTransition;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
     bool m_isInObservedStyleRecalc { false };
@@ -174,6 +185,7 @@ private:
     bool m_observedDomTimerIsBeingExecuted { false };
     bool m_mouseMovedEventIsBeingDispatched { false };
     bool m_isBetweenTouchEndAndMouseMoved { false };
+    bool m_isObservingTransitions { false };
 };
 
 inline void ContentChangeObserver::setHasNoChangeState()

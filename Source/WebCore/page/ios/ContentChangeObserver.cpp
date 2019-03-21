@@ -39,6 +39,9 @@
 
 namespace WebCore {
 
+static const Seconds maximumDelayForTimers { 300_ms };
+static const Seconds maximumDelayForTransitions { 300_ms };
+
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
     , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
@@ -81,13 +84,54 @@ void ContentChangeObserver::completeDurationBasedContentObservation()
     adjustObservedState(Event::EndedFixedObservationTimeWindow);
 }
 
+void ContentChangeObserver::didAddTransition(const Element& element, const Animation& transition)
+{
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    if (hasVisibleChangeState())
+        return;
+    if (!isObservingTransitions())
+        return;
+    if (!transition.isDurationSet() || !transition.isPropertySet())
+        return;
+    if (!isObservedPropertyForTransition(transition.property()))
+        return;
+    auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
+    if (transitionEnd > maximumDelayForTransitions)
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
+
+    m_elementsWithTransition.add(&element);
+    // FIXME: report state change.
+}
+
+void ContentChangeObserver::didFinishTransition(const Element& element, CSSPropertyID propertyID)
+{
+    if (!isObservedPropertyForTransition(propertyID))
+        return;
+    if (!m_elementsWithTransition.take(&element))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
+    // FIXME: report state change.
+}
+
+void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
+{
+    if (!isObservedPropertyForTransition(propertyID))
+        return;
+    if (!m_elementsWithTransition.take(&element))
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "didRemoveTransition: transition got interrupted (" << &element << ").");
+    // FIXME: report state change.
+}
+
 void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds timeout, bool singleShot)
 {
     if (!m_document.settings().contentChangeObserverEnabled())
         return;
     if (m_document.activeDOMObjectsAreSuspended())
         return;
-    if (timeout > 300_ms || !singleShot)
+    if (timeout > maximumDelayForTimers || !singleShot)
         return;
     if (!isObservingDOMTimerScheduling())
         return;

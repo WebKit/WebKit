@@ -32,6 +32,9 @@
 #include "CSSAnimationControllerPrivate.h"
 #include "CSSPropertyAnimation.h"
 #include "CompositeAnimation.h"
+#if PLATFORM(IOS_FAMILY)
+#include "ContentChangeObserver.h"
+#endif
 #include "EventNames.h"
 #include "GeometryUtilities.h"
 #include "KeyframeAnimation.h"
@@ -46,11 +49,18 @@ ImplicitAnimation::ImplicitAnimation(const Animation& transition, CSSPropertyID 
     , m_transitionProperty(transition.property())
     , m_animatingProperty(animatingProperty)
 {
+#if PLATFORM(IOS_FAMILY)
+    element.document().contentChangeObserver().didAddTransition(element, transition);
+#endif
     ASSERT(animatingProperty != CSSPropertyInvalid);
 }
 
 ImplicitAnimation::~ImplicitAnimation()
 {
+#if PLATFORM(IOS_FAMILY)
+    if (auto* element = this->element())
+        element->document().contentChangeObserver().didRemoveTransition(*element, m_animatingProperty);
+#endif
     // // Make sure to tell the renderer that we are ending. This will make sure any accelerated animations are removed.
     if (!postActive())
         endAnimation();
@@ -158,6 +168,15 @@ void ImplicitAnimation::pauseAnimation(double timeOffset)
         setNeedsStyleRecalc(element());
 }
 
+void ImplicitAnimation::clear()
+{
+#if PLATFORM(IOS_FAMILY)
+    if (auto* element = this->element())
+        element->document().contentChangeObserver().didRemoveTransition(*element, m_animatingProperty);
+#endif
+    AnimationBase::clear();
+}
+
 void ImplicitAnimation::endAnimation(bool)
 {
     if (auto* renderer = this->renderer())
@@ -166,6 +185,10 @@ void ImplicitAnimation::endAnimation(bool)
 
 void ImplicitAnimation::onAnimationEnd(double elapsedTime)
 {
+#if PLATFORM(IOS_FAMILY)
+    if (auto* element = this->element())
+        element->document().contentChangeObserver().didFinishTransition(*element, m_animatingProperty);
+#endif
     // If we have a keyframe animation on this property, this transition is being overridden. The keyframe
     // animation keeps an unanimated style in case a transition starts while the keyframe animation is
     // running. But now that the transition has completed, we need to update this style with its new

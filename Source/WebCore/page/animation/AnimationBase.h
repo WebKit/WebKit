@@ -61,7 +61,7 @@ public:
     Element* element() const { return m_element.get(); }
     const RenderStyle& currentStyle() const override;
     RenderElement* renderer() const override;
-    void clear();
+    virtual void clear();
 
     double duration() const;
 
