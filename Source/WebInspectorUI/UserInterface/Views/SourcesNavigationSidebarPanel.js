@@ -682,15 +682,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 this._resourcesTreeOutline.insertChild(frameTreeElement, index);
             }
 
+            let resourceTreeElement = null;
+            if (resource instanceof WI.CSSStyleSheet)
+                resourceTreeElement = new WI.CSSStyleSheetTreeElement(resource);
+            else
+                resourceTreeElement = new WI.ResourceTreeElement(resource, resource, {allowDirectoryAsName: true, hideOrigin: true});
+
             let subpath = resource.urlComponents.path;
             if (subpath && subpath[0] === "/")
                 subpath = subpath.substring(1);
 
             let parent = frameTreeElement.createFoldersAsNeededForSubpath(subpath);
-            if (resource instanceof WI.CSSStyleSheet)
-                parent.appendChild(new WI.CSSStyleSheetTreeElement(resource));
-            else
-                parent.appendChild(new WI.ResourceTreeElement(resource, resource, {allowDirectoryAsName: true, hideOrigin: true}));
+            let index = insertionIndexForObjectInListSortedByFunction(resourceTreeElement, parent.children, this._boundCompareTreeElements);
+            parent.insertChild(resourceTreeElement, index);
         }
 
         if (resource.type === WI.Resource.Type.Document || resource.type === WI.Resource.Type.Script) {

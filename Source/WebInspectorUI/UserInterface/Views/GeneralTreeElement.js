@@ -207,6 +207,9 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         let currentFolderTreeElement = this;
 
         for (let component of components) {
+            if (component === components.lastValue)
+                break;
+
             if (currentPath)
                 currentPath += "/";
             currentPath += component;
