@@ -1,3 +1,13 @@
+2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check validation in operationArrayIndexOfString().
+        https://bugs.webkit.org/show_bug.cgi?id=196067
+        <rdar://problem/49056572>
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGOperations.cpp:
+
 2019-03-21  Xan Lopez  <xan@igalia.com>
 
         [JSC][x86] Drop support for x87 floating point

@@ -2538,8 +2538,10 @@ int32_t JIT_OPERATION operationArrayIndexOfString(ExecState* exec, Butterfly* bu
         auto* string = asString(value);
         if (string == searchElement)
             return index;
-        if (string->equal(exec, searchElement))
+        if (string->equal(exec, searchElement)) {
+            scope.assertNoException();
             return index;
+        }
         RETURN_IF_EXCEPTION(scope, { });
     }
     return -1;
