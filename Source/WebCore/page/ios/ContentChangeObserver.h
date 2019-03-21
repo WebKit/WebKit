@@ -139,7 +139,8 @@ private:
 
     bool isObservingContentChanges() const;
 
-    void cancelPendingActivities();
+    void stopObservingPendingActivities();
+    void reset();
 
     void setHasIndeterminateState();
     void setHasVisibleChangeState();

@@ -1,5 +1,25 @@
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Cleanup reset state.
+        https://bugs.webkit.org/show_bug.cgi?id=196076
+        <rdar://problem/49107931>
+
+        Reviewed by Simon Fraser.
+
+        stopObservingPendingActivities() is a subset of reset() and call it when we've observed a visible change.
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::willNotProceedWithClick):
+        (WebCore::ContentChangeObserver::stopObservingPendingActivities):
+        (WebCore::ContentChangeObserver::reset):
+        (WebCore::ContentChangeObserver::didSuspendActiveDOMObjects):
+        (WebCore::ContentChangeObserver::willDetachPage):
+        (WebCore::ContentChangeObserver::adjustObservedState):
+        (WebCore::ContentChangeObserver::cancelPendingActivities): Deleted.
+        * page/ios/ContentChangeObserver.h:
+
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
         Unreviewed build fix.
 
         * page/ios/ContentChangeObserver.h:
