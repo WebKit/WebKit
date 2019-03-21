@@ -58,6 +58,8 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
 
         this.element.addEventListener("dragover", this._handleDragOver.bind(this));
         this.element.addEventListener("drop", this._handleDrop.bind(this));
+
+        WI.canvasManager.enable();
     }
 
     static tabInfo()
@@ -120,6 +122,13 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._recordSingleFrameShortcut.disabled = true;
 
         super.hidden();
+    }
+
+    closed()
+    {
+        WI.canvasManager.disable();
+
+        super.closed();
     }
 
     restoreStateFromCookie(cookie)

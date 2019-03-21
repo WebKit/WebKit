@@ -1,5 +1,26 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: rework how Canvas.enable/Canvas.disable is used so that events are not sent when the Canvas tab isn't enabled
+        https://bugs.webkit.org/show_bug.cgi?id=195828
+        <rdar://problem/48941756>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.initializeTarget):
+        (WI.CanvasManager.prototype.enable): Added.
+        (WI.CanvasManager.prototype.disable): Added.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.closed): Added.
+
+        * UserInterface/Base/Test.js:
+        (WI.contentLoaded):
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: collapsing a section doesn't shrink the space used by that section
         https://bugs.webkit.org/show_bug.cgi?id=196045
 
