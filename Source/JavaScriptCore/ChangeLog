@@ -1,3 +1,16 @@
+2019-03-21  Robin Morisset  <rmorisset@apple.com>
+
+        B3::Opcode can fit in a single byte, shrinking B3Value by 8 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=196014
+
+        Reviewed by Keith Miller.
+
+        B3::Opcode has less than one hundred cases, so it can easily fit in one byte (from two currently)
+        This shrinks B3::Kind from 4 bytes to 2 (by removing the byte of padding at the end).
+        This in turns eliminate padding from B3::Value, shrinking it by 8 bytes (out of 80).
+
+        * b3/B3Opcode.h:
+
 2019-03-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, more clang 3.8 build fixes

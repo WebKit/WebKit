@@ -37,7 +37,7 @@ namespace JSC { namespace B3 {
 // Warning: In B3, an Opcode is just one part of a Kind. Kind is used the way that an opcode
 // would be used in simple IRs. See B3Kind.h.
 
-enum Opcode : int16_t {
+enum Opcode : uint8_t {
     // A no-op that returns Void, useful for when you want to remove a value.
     Nop,
     
