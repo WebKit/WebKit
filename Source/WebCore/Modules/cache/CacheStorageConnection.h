@@ -55,6 +55,7 @@ public:
     // Used only for testing purposes.
     virtual void clearMemoryRepresentation(const ClientOrigin&, DOMCacheEngine::CompletionCallback&& callback) { callback(DOMCacheEngine::Error::NotImplemented); }
     virtual void engineRepresentation(WTF::Function<void(const String&)>&& callback) { callback(String { }); }
+    virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 
 protected:
     CacheStorageConnection() =  default;

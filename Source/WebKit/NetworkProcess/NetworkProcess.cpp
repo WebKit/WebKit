@@ -2228,6 +2228,13 @@ void NetworkProcess::setIDBPerOriginQuota(uint64_t quota)
 }
 #endif // ENABLE(INDEXED_DATABASE)
 
+void NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID sessionID, const ClientOrigin& origin)
+{
+    auto& manager = storageQuotaManager(sessionID, origin);
+    manager.resetQuota(m_storageQuotaManagers.find(sessionID)->value.defaultQuota);
+    manager.updateQuotaBasedOnSpaceUsage();
+}
+
 #if ENABLE(SANDBOX_EXTENSIONS)
 void NetworkProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&& completionHandler)
 {

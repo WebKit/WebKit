@@ -30,6 +30,7 @@
 #include "CacheStorageEngineConnectionMessages.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkProcessMessages.h"
 #include "WebCacheStorageProvider.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -149,6 +150,11 @@ void WebCacheStorageConnection::engineRepresentationCompleted(uint64_t requestId
 {
     if (auto callback = m_engineRepresentationCallbacks.take(requestIdentifier))
         callback(result);
+}
+
+void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const ClientOrigin& origin)
+{
+    connection().send(Messages::NetworkProcess::UpdateQuotaBasedOnSpaceUsageForTesting(m_sessionID, origin), 0);
 }
 
 }

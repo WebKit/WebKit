@@ -1,5 +1,17 @@
 2019-03-20  Youenn Fablet  <youenn@apple.com>
 
+        Compute quota after network process restart based on default quota and space used
+        https://bugs.webkit.org/show_bug.cgi?id=195804
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/cache-storage/cache-quota-after-restart.any-expected.txt: Added.
+        * http/wpt/cache-storage/cache-quota-after-restart.any.html: Added.
+        * http/wpt/cache-storage/cache-quota-after-restart.any.js: Added.
+        (promise_test.async):
+
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
         Include WAL and SHM file size in IDB database size computation
         https://bugs.webkit.org/show_bug.cgi?id=195688
 

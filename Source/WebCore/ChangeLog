@@ -1,3 +1,32 @@
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
+        Compute quota after network process restart based on default quota and space used
+        https://bugs.webkit.org/show_bug.cgi?id=195804
+
+        Reviewed by Chris Dumez.
+
+        At creation of quota manager, a default quota will be assigned.
+        This value is the same for all origins.
+        Some origins may have been granted a bigger quota by the user.
+        In that case, the space used might be greater for these origins.
+        Update at initialization time the quota according the space used as follows:
+        - If space used is below default quota, stick with default quota.
+        - If space used is above, set quota to space used rounded by one tenth of the default quota.
+        The rounding ensures that quota requests will not happen too quickly after a page is loaded.
+
+        Test: http/wpt/cache-storage/cache-quota-after-restart.any.html
+
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::setQuotaBasedOnSpaceUsage):
+        * storage/StorageQuotaManager.cpp:
+        (WebCore::StorageQuotaManager::setQuotaBasedOnSpaceUsage):
+        (WebCore::StorageQuotaManager::addUser):
+        * storage/StorageQuotaManager.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::updateQuotaBasedOnSpaceUsage):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH

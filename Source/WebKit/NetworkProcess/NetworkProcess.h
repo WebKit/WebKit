@@ -281,6 +281,7 @@ public:
     void accessToTemporaryFileComplete(const String& path) final;
     void setIDBPerOriginQuota(uint64_t);
 #endif
+    void updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID, const WebCore::ClientOrigin&);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, CompletionHandler<void(SandboxExtension::HandleArray&&)>&&);

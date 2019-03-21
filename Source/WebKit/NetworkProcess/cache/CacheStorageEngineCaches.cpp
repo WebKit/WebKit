@@ -51,13 +51,19 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
 }
 
+Ref<Caches> Caches::create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, WebCore::StorageQuotaManager& quotaManager)
+{
+    auto caches = adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quotaManager });
+    quotaManager.addUser(caches.get());
+    return caches;
+}
+
 Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, WebCore::StorageQuotaManager& quotaManager)
     : m_engine(&engine)
     , m_origin(WTFMove(origin))
     , m_rootPath(WTFMove(rootPath))
     , m_quotaManager(makeWeakPtr(quotaManager))
 {
-    quotaManager.addUser(*this);
 }
 
 Caches::~Caches()
@@ -66,6 +72,15 @@ Caches::~Caches()
 
     if (m_quotaManager)
         m_quotaManager->removeUser(*this);
+}
+
+void Caches::whenInitialized(CompletionHandler<void()>&& callback)
+{
+    initialize([callback = WTFMove(callback)](auto&& error) mutable {
+        if (error)
+            RELEASE_LOG_ERROR(CacheStorage, "Caches::initialize failed, reported space used will be zero");
+        callback();
+    });
 }
 
 void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(Optional<WebCore::ClientOrigin>&&)>&& completionHandler)

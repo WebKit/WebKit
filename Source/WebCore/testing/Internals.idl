@@ -689,6 +689,8 @@ enum CompositingPolicy {
     void setResponseSizeWithPadding(FetchResponse response, unsigned long long size);
     unsigned long long responseSizeWithPadding(FetchResponse response);
 
+    void updateQuotaBasedOnSpaceUsage();
+
     void setConsoleMessageListener(StringCallback callback);
 
     DOMString audioSessionCategory();

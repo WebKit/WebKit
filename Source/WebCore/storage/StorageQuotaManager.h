@@ -62,6 +62,8 @@ public:
     WEBCORE_EXPORT void requestSpace(uint64_t, RequestCallback&&);
     void resetQuota(uint64_t newQuota) { m_quota = newQuota; }
 
+    WEBCORE_EXPORT void updateQuotaBasedOnSpaceUsage();
+
 private:
     uint64_t spaceUsage() const;
     bool shouldAskForMoreSpace(uint64_t spaceIncrease) const;

@@ -138,7 +138,6 @@ void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_
     }).iterator->value;
 
     auto referenceResult = references.find(cacheIdentifier);
-    ASSERT(referenceResult != references.end());
     if (referenceResult == references.end())
         return;
 

@@ -1,3 +1,30 @@
+2019-03-20  Youenn Fablet  <youenn@apple.com>
+
+        Compute quota after network process restart based on default quota and space used
+        https://bugs.webkit.org/show_bug.cgi?id=195804
+
+        Reviewed by Chris Dumez.
+
+        Make sure that Cache Storage quota user waits to declare as initialized to its manager
+        until all data is loaded so that it can report a valid space used from the start.
+
+        Add test API to reset the quota to its default value and compute it according current space use.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::create):
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::whenInitialized):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::dereference):
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::setQuotaBasedOnSpaceUsage):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH

@@ -65,6 +65,7 @@ private:
 
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&) final;
     void engineRepresentation(WTF::Function<void(const String&)>&&) final;
+    void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
 
     void openCompleted(uint64_t requestIdentifier, const WebCore::DOMCacheEngine::CacheIdentifierOrError&);
     void removeCompleted(uint64_t requestIdentifier, const WebCore::DOMCacheEngine::CacheIdentifierOrError&);

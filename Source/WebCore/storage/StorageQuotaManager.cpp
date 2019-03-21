@@ -44,6 +44,15 @@ uint64_t StorageQuotaManager::spaceUsage() const
     return usage;
 }
 
+void StorageQuotaManager::updateQuotaBasedOnSpaceUsage()
+{
+    if (!m_quota)
+        return;
+
+    auto defaultQuotaStep = m_quota / 10;
+    m_quota = std::max(m_quota, defaultQuotaStep * ((spaceUsage() / defaultQuotaStep) + 1));
+}
+
 void StorageQuotaManager::addUser(StorageQuotaUser& user)
 {
     ASSERT(!m_pendingInitializationUsers.contains(&user));
@@ -52,8 +61,14 @@ void StorageQuotaManager::addUser(StorageQuotaUser& user)
     user.whenInitialized([this, &user, weakThis = makeWeakPtr(this)]() {
         if (!weakThis)
             return;
-        m_pendingInitializationUsers.remove(&user);
-        m_users.add(&user);
+
+        if (m_pendingInitializationUsers.remove(&user))
+            m_users.add(&user);
+
+        if (!m_pendingInitializationUsers.isEmpty())
+            return;
+
+        updateQuotaBasedOnSpaceUsage();
         processPendingRequests({ });
     });
 }

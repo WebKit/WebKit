@@ -164,6 +164,7 @@ messages -> NetworkProcess LegacyReceiver {
 #if ENABLE(INDEXED_DATABASE)
     SetIDBPerOriginQuota(uint64_t quota)
 #endif
+    UpdateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID sessionID, struct WebCore::ClientOrigin origin)
 
     StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)
     DumpAdClickAttribution(PAL::SessionID sessionID) -> (String adClickAttributionState) Async

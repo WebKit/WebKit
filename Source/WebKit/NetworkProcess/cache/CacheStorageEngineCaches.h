@@ -44,7 +44,7 @@ class Engine;
 
 class Caches final : public RefCounted<Caches>, private WebCore::StorageQuotaUser {
 public:
-    static Ref<Caches> create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, WebCore::StorageQuotaManager& quotaManager) { return adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quotaManager }); }
+    static Ref<Caches> create(Engine&, WebCore::ClientOrigin&&, String&& rootPath, WebCore::StorageQuotaManager&);
     ~Caches();
 
     static void retrieveOriginFromDirectory(const String& folderPath, WorkQueue&, WTF::CompletionHandler<void(Optional<WebCore::ClientOrigin>&&)>&&);
@@ -90,6 +90,8 @@ private:
     void initializeSize();
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
+
+    void whenInitialized(CompletionHandler<void()>&&) final;
 
     void storeOrigin(WebCore::DOMCacheEngine::CompletionCallback&&);
     static Optional<WebCore::ClientOrigin> readOrigin(const NetworkCache::Data&);
