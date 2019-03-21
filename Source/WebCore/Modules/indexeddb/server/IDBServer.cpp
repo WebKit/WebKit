@@ -784,7 +784,7 @@ void IDBServer::QuotaUser::initializeSpaceUsed(uint64_t spaceUsed)
         callback();
 }
 
-IDBServer::QuotaUser& IDBServer::quotaUser(const ClientOrigin& origin)
+IDBServer::QuotaUser& IDBServer::ensureQuotaUser(const ClientOrigin& origin)
 {
     return *m_quotaUsers.ensure(origin, [this, &origin] {
         return std::make_unique<QuotaUser>(*this, m_quotaManagerGetter(m_sessionID, origin), ClientOrigin { origin });
@@ -810,12 +810,12 @@ void IDBServer::computeSpaceUsedForOrigin(const ClientOrigin& origin)
 
 void IDBServer::finishComputingSpaceUsedForOrigin(const ClientOrigin& origin, uint64_t spaceUsed)
 {
-    quotaUser(origin).initializeSpaceUsed(spaceUsed);
+    ensureQuotaUser(origin).initializeSpaceUsed(spaceUsed);
 }
 
 void IDBServer::requestSpace(const ClientOrigin& origin, uint64_t taskSize, CompletionHandler<void(StorageQuotaManager::Decision)>&& callback)
 {
-    auto* quotaManager = quotaUser(origin).manager();
+    auto* quotaManager = ensureQuotaUser(origin).manager();
     if (!quotaManager) {
         callback(StorageQuotaManager::Decision::Deny);
         return;
@@ -832,17 +832,17 @@ void IDBServer::resetSpaceUsed(const ClientOrigin& origin)
 
 void IDBServer::setSpaceUsed(const ClientOrigin& origin, uint64_t taskSize)
 {
-    quotaUser(origin).setSpaceUsed(taskSize);
+    ensureQuotaUser(origin).setSpaceUsed(taskSize);
 }
 
 void IDBServer::increasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t taskSize)
 {
-    quotaUser(origin).increasePotentialSpaceUsed(taskSize);
+    ensureQuotaUser(origin).increasePotentialSpaceUsed(taskSize);
 }
 
 void IDBServer::decreasePotentialSpaceUsed(const ClientOrigin& origin, uint64_t spaceUsed)
 {
-    quotaUser(origin).decreasePotentialSpaceUsed(spaceUsed);
+    ensureQuotaUser(origin).decreasePotentialSpaceUsed(spaceUsed);
 }
 
 void IDBServer::upgradeFilesIfNecessary()

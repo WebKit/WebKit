@@ -383,6 +383,7 @@ private:
     void clearCachedCredentials();
 
     void setCacheStorageParameters(PAL::SessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
+    void initializeQuotaUsers(WebCore::StorageQuotaManager&, PAL::SessionID, const WebCore::ClientOrigin&);
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
     void clearDiskCache(WallTime modifiedSince, CompletionHandler<void()>&&);

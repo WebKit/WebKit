@@ -260,11 +260,13 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
         m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
             ASSERT(RunLoop::isMain());
             protectedThis->clearMemoryRepresentation();
+            protectedThis->resetSpaceUsed();
             completionHandler();
         });
         return;
     }
     clearMemoryRepresentation();
+    resetSpaceUsed();
     clearPendingWritingCachesToDiskCallbacks();
     completionHandler();
 }
@@ -599,6 +601,15 @@ void Caches::removeCacheEntry(const NetworkCache::Key& key)
         return;
     }
     m_storage->remove(key);
+}
+
+void Caches::resetSpaceUsed()
+{
+    m_size = 0;
+    if (m_quotaManager) {
+        m_quotaManager->removeUser(*this);
+        m_quotaManager->addUser(*this);
+    }
 }
 
 void Caches::clearMemoryRepresentation()

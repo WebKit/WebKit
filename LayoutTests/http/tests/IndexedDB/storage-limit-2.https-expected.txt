@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: Cache API operation failed: Quota exceeded
+This test makes sure that storage of indexedDB and Cache API do not grow unboundedly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+db = event.target.result
+store = db.createObjectStore('store')
+db = event.target.result
+store = db.transaction('store', 'readwrite').objectStore('store')
+request = store.add(new Uint8Array(204800), 'key')
+finished idb processing
+Cache API store operation failed: QuotaExceededError: Quota exceeded
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

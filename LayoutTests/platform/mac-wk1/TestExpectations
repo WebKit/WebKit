@@ -164,6 +164,8 @@ imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 
 # Quota check missing in WK1
 http/tests/IndexedDB/storage-limit.https.html [ Skip ]
+http/tests/IndexedDB/storage-limit-1.https.html [ Skip ]
+http/tests/IndexedDB/storage-limit-2.https.html [ Skip ]
 storage/indexeddb/storage-limit.html [ Skip ]
 
 # Skip WebRTC for now in WK1

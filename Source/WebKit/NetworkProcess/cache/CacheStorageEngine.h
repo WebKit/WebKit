@@ -80,6 +80,8 @@ public:
     static void clearAllCaches(NetworkProcess&, PAL::SessionID, CompletionHandler<void()>&&);
     static void clearCachesForOrigin(NetworkProcess&, PAL::SessionID, WebCore::SecurityOriginData&&, CompletionHandler<void()>&&);
 
+    static void initializeQuotaUser(NetworkProcess&, PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void()>&&);
+
     bool shouldPersist() const { return !!m_ioQueue;}
 
     void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);

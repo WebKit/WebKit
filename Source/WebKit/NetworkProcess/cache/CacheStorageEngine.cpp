@@ -185,6 +185,15 @@ void Engine::clearCachesForOrigin(NetworkProcess& networkProcess, PAL::SessionID
     });
 }
 
+void Engine::initializeQuotaUser(NetworkProcess& networkProcess, PAL::SessionID sessionID, const WebCore::ClientOrigin& clientOrigin, CompletionHandler<void()>&& completionHandler)
+{
+    from(networkProcess, sessionID, [clientOrigin, completionHandler = WTFMove(completionHandler)](auto& engine) mutable {
+        engine.readCachesFromDisk(clientOrigin, [completionHandler = WTFMove(completionHandler)](auto&& cachesOrError) mutable {
+            completionHandler();
+        });
+    });
+}
+
 Engine::Engine(PAL::SessionID sessionID, NetworkProcess& process, String&& rootPath)
     : m_sessionID(sessionID)
     , m_networkProcess(makeWeakPtr(process))

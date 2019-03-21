@@ -2394,6 +2394,49 @@ void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientO
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestStorageSpace { sessionID, origin, quota, currentSize, spaceRequired }, WTFMove(callback), 0);
 }
 
+class QuotaUserInitializer final : public WebCore::StorageQuotaUser {
+public:
+    explicit QuotaUserInitializer(StorageQuotaManager& manager)
+        : m_manager(makeWeakPtr(manager))
+    {
+        manager.addUser(*this);
+    }
+
+    ~QuotaUserInitializer()
+    {
+        if (m_manager)
+            m_manager->removeUser(*this);
+        if (m_callback)
+            m_callback();
+    }
+
+private:
+    // StorageQuotaUser API.
+    uint64_t spaceUsed() const final
+    {
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+
+    void whenInitialized(CompletionHandler<void()>&& callback) final
+    {
+        m_callback = WTFMove(callback);
+    }
+
+    WeakPtr<StorageQuotaManager> m_manager;
+    CompletionHandler<void()> m_callback;
+};
+
+void NetworkProcess::initializeQuotaUsers(StorageQuotaManager& manager, PAL::SessionID sessionID, const ClientOrigin& origin)
+{
+    RunLoop::main().dispatch([this, weakThis = makeWeakPtr(this), sessionID, origin, user = std::make_unique<QuotaUserInitializer>(manager)]() mutable {
+        if (!weakThis)
+            return;
+        this->idbServer(sessionID).initializeQuotaUser(origin);
+        CacheStorage::Engine::initializeQuotaUser(*this, sessionID, origin, [user = WTFMove(user)] { });
+    });
+}
+
 StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionID, const ClientOrigin& origin)
 {
     auto& storageQuotaManagers = m_storageQuotaManagers.ensure(sessionID, [] {
@@ -2401,9 +2444,11 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
     }).iterator->value;
     return *storageQuotaManagers.managersPerOrigin.ensure(origin, [this, &storageQuotaManagers, sessionID, &origin] {
         auto quota = origin.topOrigin == origin.clientOrigin ? storageQuotaManagers.defaultQuota : storageQuotaManagers.defaultThirdPartyQuota;
-        return std::make_unique<StorageQuotaManager>(quota, [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+        auto manager = std::make_unique<StorageQuotaManager>(quota, [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             this->requestStorageSpace(sessionID, origin, quota, currentSpace, spaceIncrease, WTFMove(callback));
         });
+        initializeQuotaUsers(*manager, sessionID, origin);
+        return manager;
     }).iterator->value;
 }
 

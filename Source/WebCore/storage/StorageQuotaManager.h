@@ -50,12 +50,7 @@ public:
     static constexpr uint64_t defaultThirdPartyQuota() { return 100 * MB; }
 
     WEBCORE_EXPORT void addUser(StorageQuotaUser&);
-    void removeUser(StorageQuotaUser& user)
-    {
-        ASSERT(m_users.contains(&user) || m_pendingInitializationUsers.contains(&user));
-        m_pendingInitializationUsers.remove(&user);
-        m_users.remove(&user);
-    }
+    WEBCORE_EXPORT void removeUser(StorageQuotaUser&);
 
     enum class Decision { Deny, Grant };
     using RequestCallback = CompletionHandler<void(Decision)>;
@@ -68,9 +63,13 @@ private:
     uint64_t spaceUsage() const;
     bool shouldAskForMoreSpace(uint64_t spaceIncrease) const;
     void askForMoreSpace(uint64_t spaceIncrease);
-    void processPendingRequests(Optional<uint64_t>);
+
+    enum class ShouldDequeueFirstPendingRequest { No, Yes };
+    void processPendingRequests(Optional<uint64_t>, ShouldDequeueFirstPendingRequest);
 
     uint64_t m_quota { 0 };
+
+    bool m_isWaitingForSpaceIncreaseResponse { false };
     SpaceIncreaseRequester m_spaceIncreaseRequester;
     HashSet<const StorageQuotaUser*> m_pendingInitializationUsers;
     HashSet<const StorageQuotaUser*> m_users;

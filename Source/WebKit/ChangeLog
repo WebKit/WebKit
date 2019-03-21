@@ -1,3 +1,29 @@
+2019-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Cache API and IDB space usages should be initialized on first quota check
+        https://bugs.webkit.org/show_bug.cgi?id=195707
+
+        Reviewed by Chris Dumez.
+
+        When the quota manager is created, make sure it delays quota check decisions until IDB and Cache API quota users are initialized.
+        For IDB, the creation is synchronous but it may not be synchronous for Cache API.
+        For that purpose, add a temporary quota user that will stay uninitialized until these two quota users are added.
+        Once added, the temporary quota user is removed.
+        The addition of the real users is made asynchronously as this is triggered by the creation of one of the two quota users.
+
+        In the case of a Cache API caches being cleared, make sure to reset the size to zero and to redo the quota user initialization dance.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::QuotaUserInitializer::initialize):
+        (WebKit::QuotaUserInitializer::~QuotaUserInitializer):
+        (WebKit::QuotaUserInitializer::QuotaUserInitializer):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::initializeQuotaUser):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clear):
+
 2019-03-21  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][macOS] Fix sandbox call violations

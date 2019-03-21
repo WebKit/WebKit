@@ -1,3 +1,22 @@
+2019-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Cache API and IDB space usages should be initialized on first quota check
+        https://bugs.webkit.org/show_bug.cgi?id=195707
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+        Marking http/tests/cache-storage/cache-clearing-origin.https.html as
+        flaky on iOS as it is already marked flaky in MacOS.
+        * platform/mac-wk2/TestExpectations:
+        * http/tests/IndexedDB/storage-limit-1.https-expected.txt: Added.
+        * http/tests/IndexedDB/storage-limit-1.https.html: Added.
+        * http/tests/IndexedDB/storage-limit-2.https-expected.txt: Added.
+        * http/tests/IndexedDB/storage-limit-2.https.html: Added.
+        * http/tests/IndexedDB/storage-limit.https.html:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGPoint, SVGPointList and SVGAnimatedPointList

@@ -78,6 +78,7 @@ public:
 
     void clear(WTF::CompletionHandler<void()>&&);
     void clearMemoryRepresentation();
+    void resetSpaceUsed();
 
     uint64_t storageSize() const;
 

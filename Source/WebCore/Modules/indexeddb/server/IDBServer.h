@@ -125,6 +125,8 @@ public:
     void setSpaceUsed(const ClientOrigin&, uint64_t spaceUsed);
     void resetSpaceUsed(const ClientOrigin&);
 
+    void initializeQuotaUser(const ClientOrigin& origin) { ensureQuotaUser(origin); }
+
 private:
     IDBServer(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&&);
     IDBServer(PAL::SessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&&);
@@ -175,7 +177,7 @@ private:
         CompletionHandler<void()> m_initializationCallback;
     };
 
-    QuotaUser& quotaUser(const ClientOrigin&);
+    WEBCORE_EXPORT QuotaUser& ensureQuotaUser(const ClientOrigin&);
     void startComputingSpaceUsedForOrigin(const ClientOrigin&);
     void computeSpaceUsedForOrigin(const ClientOrigin&);
     void finishComputingSpaceUsedForOrigin(const ClientOrigin&, uint64_t spaceUsed);

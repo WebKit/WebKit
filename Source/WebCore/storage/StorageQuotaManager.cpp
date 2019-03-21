@@ -69,7 +69,7 @@ void StorageQuotaManager::addUser(StorageQuotaUser& user)
             return;
 
         updateQuotaBasedOnSpaceUsage();
-        processPendingRequests({ });
+        processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
     });
 }
 
@@ -79,6 +79,14 @@ bool StorageQuotaManager::shouldAskForMoreSpace(uint64_t spaceIncrease) const
         return false;
 
     return spaceUsage() + spaceIncrease > m_quota;
+}
+
+void StorageQuotaManager::removeUser(StorageQuotaUser& user)
+{
+    ASSERT(m_users.contains(&user) || m_pendingInitializationUsers.contains(&user));
+    m_users.remove(&user);
+    if (m_pendingInitializationUsers.remove(&user) && m_pendingInitializationUsers.isEmpty())
+        processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
 }
 
 void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&& callback)
@@ -99,14 +107,17 @@ void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&&
 void StorageQuotaManager::askForMoreSpace(uint64_t spaceIncrease)
 {
     ASSERT(shouldAskForMoreSpace(spaceIncrease));
+    ASSERT(!m_isWaitingForSpaceIncreaseResponse);
+    m_isWaitingForSpaceIncreaseResponse = true;
     m_spaceIncreaseRequester(m_quota, spaceUsage(), spaceIncrease, [this, weakThis = makeWeakPtr(*this)](Optional<uint64_t> newQuota) {
         if (!weakThis)
             return;
-        processPendingRequests(newQuota);
+        m_isWaitingForSpaceIncreaseResponse = false;
+        processPendingRequests(newQuota, ShouldDequeueFirstPendingRequest::Yes);
     });
 }
 
-void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota)
+void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota, ShouldDequeueFirstPendingRequest shouldDequeueFirstPendingRequest)
 {
     if (m_pendingRequests.isEmpty())
         return;
@@ -114,9 +125,17 @@ void StorageQuotaManager::processPendingRequests(Optional<uint64_t> newQuota)
     if (newQuota)
         m_quota = *newQuota;
 
-    auto request = m_pendingRequests.takeFirst();
-    auto decision = shouldAskForMoreSpace(request.spaceIncrease) ? Decision::Deny : Decision::Grant;
-    request.callback(decision);
+    if (m_isWaitingForSpaceIncreaseResponse)
+        return;
+
+    if (!m_pendingInitializationUsers.isEmpty())
+        return;
+
+    if (shouldDequeueFirstPendingRequest == ShouldDequeueFirstPendingRequest::Yes) {
+        auto request = m_pendingRequests.takeFirst();
+        auto decision = shouldAskForMoreSpace(request.spaceIncrease) ? Decision::Deny : Decision::Grant;
+        request.callback(decision);
+    }
 
     while (!m_pendingRequests.isEmpty()) {
         auto& request = m_pendingRequests.first();
