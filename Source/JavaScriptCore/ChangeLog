@@ -1,3 +1,15 @@
+2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
+
+        CachedUnlinkedSourceCodeShape::m_provider should be a CachedRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=196079
+
+        Reviewed by Saam Barati.
+
+        It was mistakenly cached as CachedPtr, which was leaking the decoded SourceProvider.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUnlinkedSourceCodeShape::encode):
+
 2019-03-21  Mark Lam  <mark.lam@apple.com>
 
         Placate exception check validation in operationArrayIndexOfString().

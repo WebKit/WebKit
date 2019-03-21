@@ -1475,7 +1475,7 @@ class CachedUnlinkedSourceCodeShape : public CachedObject<Source> {
 public:
     void encode(Encoder& encoder, const UnlinkedSourceCode& sourceCode)
     {
-        m_provider.encode(encoder, sourceCode.m_provider.get());
+        m_provider.encode(encoder, sourceCode.m_provider);
         m_startOffset = sourceCode.startOffset();
         m_endOffset = sourceCode.endOffset();
     }
@@ -1488,7 +1488,7 @@ public:
     }
 
 private:
-    CachedPtr<CachedSourceProvider> m_provider;
+    CachedRefPtr<CachedSourceProvider> m_provider;
     int m_startOffset;
     int m_endOffset;
 };
