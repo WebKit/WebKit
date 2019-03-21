@@ -65,11 +65,10 @@ namespace WebCore {
 
 using namespace Inspector;
 
-InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDOMAgent* domAgent, InspectorDebuggerAgent* debuggerAgent)
+InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent(WebAgentContext& context, InspectorDebuggerAgent* debuggerAgent)
     : InspectorAgentBase("DOMDebugger"_s, context)
     , m_backendDispatcher(Inspector::DOMDebuggerBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
-    , m_domAgent(domAgent)
     , m_debuggerAgent(debuggerAgent)
 {
     m_debuggerAgent->addListener(*this);
@@ -233,7 +232,13 @@ static String domTypeName(int type)
 
 void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
-    Node* node = m_domAgent->assertNode(errorString, nodeId);
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)
         return;
 
@@ -251,9 +256,16 @@ void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString& errorString, int n
 
 void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString& errorString, int nodeId, const String& typeString)
 {
-    Node* node = m_domAgent->assertNode(errorString, nodeId);
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    Node* node = domAgent->assertNode(errorString, nodeId);
     if (!node)
         return;
+
     int type = domTypeForName(errorString, typeString);
     if (type == -1)
         return;
@@ -316,12 +328,16 @@ void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpo
 {
     ASSERT(hasBreakpoint(&target, breakpointType));
 
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+
     Node* breakpointOwner = &target;
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
-        // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
-        // Target node may be unknown to frontend, so we need to push it first.
-        RefPtr<Inspector::Protocol::Runtime::RemoteObject> targetNodeObject = m_domAgent->resolveNode(&target, InspectorDebuggerAgent::backtraceObjectGroup);
-        description.setValue("targetNode", targetNodeObject);
+        if (domAgent) {
+            // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
+            // Target node may be unknown to frontend, so we need to push it first.
+            RefPtr<Inspector::Protocol::Runtime::RemoteObject> targetNodeObject = domAgent->resolveNode(&target, InspectorDebuggerAgent::backtraceObjectGroup);
+            description.setValue("targetNode", targetNodeObject);
+        }
 
         // Find breakpoint owner node.
         if (!insertion)
@@ -338,9 +354,12 @@ void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpo
             description.setBoolean("insertion", insertion);
     }
 
-    int breakpointOwnerNodeId = m_domAgent->boundNodeId(breakpointOwner);
-    ASSERT(breakpointOwnerNodeId);
-    description.setInteger("nodeId", breakpointOwnerNodeId);
+    if (domAgent) {
+        int breakpointOwnerNodeId = domAgent->boundNodeId(breakpointOwner);
+        ASSERT(breakpointOwnerNodeId);
+        description.setInteger("nodeId", breakpointOwnerNodeId);
+    }
+
     description.setString("type", domTypeName(breakpointType));
 }
 
@@ -383,18 +402,20 @@ void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEv
         injectedScript.setEventValue(toJS(state, deprecatedGlobalObjectForPrototype(state), event));
     }
 
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+
     bool shouldPause = m_debuggerAgent->pauseOnNextStatementEnabled() || m_eventBreakpoints.contains(std::make_pair(Inspector::Protocol::DOMDebugger::EventBreakpointType::Listener, event.type()));
 
-    if (!shouldPause && m_domAgent)
-        shouldPause = m_domAgent->hasBreakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    if (!shouldPause && domAgent)
+        shouldPause = domAgent->hasBreakpointForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
 
     if (!shouldPause)
         return;
 
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("eventName"_s, event.type());
-    if (m_domAgent) {
-        int eventListenerId = m_domAgent->idForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
+    if (domAgent) {
+        int eventListenerId = domAgent->idForEventListener(*event.currentTarget(), event.type(), registeredEventListener.callback(), registeredEventListener.useCapture());
         if (eventListenerId)
             eventData->setInteger("eventListenerId"_s, eventListenerId);
     }

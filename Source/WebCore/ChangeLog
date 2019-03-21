@@ -1,3 +1,71 @@
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOM: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195589
+        <rdar://problem/48791742>
+
+        Reviewed by Timothy Hatcher.
+
+        No change in functionality.
+
+        * inspector/agents/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::DOMListener): Deleted.
+        (WebCore::InspectorDOMAgent::pageAgent): Deleted.
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::highlightSelector):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::didRemoveDOMAttr):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMAgent::setDOMListener): Deleted.
+
+        * inspector/agents/InspectorCSSAgent.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorCSSAgent::reset):
+        (WebCore::InspectorCSSAgent::enable):
+        (WebCore::InspectorCSSAgent::disable):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore::InspectorCSSAgent::collectAllStyleSheets):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setStyleText):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::createStyleSheet):
+        (WebCore::InspectorCSSAgent::addRule):
+        (WebCore::InspectorCSSAgent::asInspectorStyleSheet):
+        (WebCore::InspectorCSSAgent::elementForId):
+        (WebCore::InspectorCSSAgent::bindStyleSheet):
+        (WebCore::InspectorCSSAgent::~InspectorCSSAgent): Deleted.
+        (WebCore::InspectorCSSAgent::discardAgent): Deleted.
+        (WebCore::InspectorCSSAgent::resetNonPersistentData): Deleted.
+        * inspector/InspectorStyleSheet.cpp:
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::InspectorDOMDebuggerAgent):
+        (WebCore::InspectorDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+
+        * inspector/agents/page/PageConsoleAgent.h:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        (WebCore::PageConsoleAgent::clearMessages):
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::createLazyAgents):
+        (WebCore::InspectorController::inspect):
+        (WebCore::InspectorController::hideHighlight):
+
 2019-03-20  Youenn Fablet  <youenn@apple.com>
 
         Include WAL and SHM file size in IDB database size computation

@@ -47,7 +47,6 @@ namespace WebCore {
 class Element;
 class Event;
 class Frame;
-class InspectorDOMAgent;
 class Node;
 class RegisteredEventListener;
 
@@ -57,7 +56,7 @@ class InspectorDOMDebuggerAgent final : public InspectorAgentBase, public Inspec
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorDOMDebuggerAgent(WebAgentContext&, InspectorDOMAgent*, Inspector::InspectorDebuggerAgent*);
+    InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
     virtual ~InspectorDOMDebuggerAgent();
 
     // DOMDebugger API
@@ -104,7 +103,7 @@ private:
 
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    InspectorDOMAgent* m_domAgent { nullptr };
+
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
     HashMap<Node*, uint32_t> m_domBreakpoints;

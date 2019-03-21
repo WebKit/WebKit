@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -294,19 +295,11 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule& rule)
     return downcast<CSSStyleRule>(&rule);
 }
 
-InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context, InspectorDOMAgent* domAgent)
+InspectorCSSAgent::InspectorCSSAgent(WebAgentContext& context)
     : InspectorAgentBase("CSS"_s, context)
     , m_frontendDispatcher(std::make_unique<CSSFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(CSSBackendDispatcher::create(context.backendDispatcher, this))
-    , m_domAgent(domAgent)
 {
-    m_domAgent->setDOMListener(this);
-}
-
-InspectorCSSAgent::~InspectorCSSAgent()
-{
-    ASSERT(!m_domAgent);
-    reset();
 }
 
 void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*)
@@ -315,16 +308,8 @@ void InspectorCSSAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
 
 void InspectorCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    resetNonPersistentData();
-
     String unused;
     disable(unused);
-}
-
-void InspectorCSSAgent::discardAgent()
-{
-    m_domAgent->setDOMListener(nullptr);
-    m_domAgent = nullptr;
 }
 
 void InspectorCSSAgent::reset()
@@ -335,25 +320,27 @@ void InspectorCSSAgent::reset()
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
     m_documentToKnownCSSStyleSheets.clear();
-    resetNonPersistentData();
-}
-
-void InspectorCSSAgent::resetNonPersistentData()
-{
     resetPseudoStates();
 }
 
 void InspectorCSSAgent::enable(ErrorString&)
 {
+    if (m_instrumentingAgents.inspectorCSSAgent() == this)
+        return;
+
     m_instrumentingAgents.setInspectorCSSAgent(this);
 
-    for (auto* document : m_domAgent->documents())
-        activeStyleSheetsUpdated(*document);
+    if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent()) {
+        for (auto* document : domAgent->documents())
+            activeStyleSheetsUpdated(*document);
+    }
 }
 
 void InspectorCSSAgent::disable(ErrorString&)
 {
     m_instrumentingAgents.setInspectorCSSAgent(nullptr);
+
+    reset();
 }
 
 void InspectorCSSAgent::documentDetached(Document& document)
@@ -415,7 +402,11 @@ bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::Ps
     if (m_nodeIdToForcedPseudoState.isEmpty())
         return false;
 
-    int nodeId = m_domAgent->boundNodeId(&element);
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent)
+        return false;
+
+    int nodeId = domAgent->boundNodeId(&element);
     if (!nodeId)
         return false;
 
@@ -574,8 +565,10 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString&, RefPtr<JSON::ArrayOf<Ins
 void InspectorCSSAgent::collectAllStyleSheets(Vector<InspectorStyleSheet*>& result)
 {
     Vector<CSSStyleSheet*> cssStyleSheets;
-    for (auto* document : m_domAgent->documents())
-        collectAllDocumentStyleSheets(*document, cssStyleSheets);
+    if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent()) {
+        for (auto* document : domAgent->documents())
+            collectAllDocumentStyleSheets(*document, cssStyleSheets);
+    }
 
     for (auto* cssStyleSheet : cssStyleSheets)
         result.append(bindStyleSheet(cssStyleSheet));
@@ -627,7 +620,13 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString& errorString, const String
     if (!inspectorStyleSheet)
         return;
 
-    auto result = m_domAgent->history()->perform(std::make_unique<SetStyleSheetTextAction>(inspectorStyleSheet, text));
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    auto result = domAgent->history()->perform(std::make_unique<SetStyleSheetTextAction>(inspectorStyleSheet, text));
     if (result.hasException())
         errorString = InspectorDOMAgent::toErrorString(result.releaseException());
 }
@@ -641,7 +640,13 @@ void InspectorCSSAgent::setStyleText(ErrorString& errorString, const JSON::Objec
     if (!inspectorStyleSheet)
         return;
 
-    auto performResult = m_domAgent->history()->perform(std::make_unique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text));
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    auto performResult = domAgent->history()->perform(std::make_unique<SetStyleTextAction>(inspectorStyleSheet, compoundId, text));
     if (performResult.hasException()) {
         errorString = InspectorDOMAgent::toErrorString(performResult.releaseException());
         return;
@@ -659,7 +664,13 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
     if (!inspectorStyleSheet)
         return;
 
-    auto performResult = m_domAgent->history()->perform(std::make_unique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector));
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    auto performResult = domAgent->history()->perform(std::make_unique<SetRuleSelectorAction>(inspectorStyleSheet, compoundId, selector));
     if (performResult.hasException()) {
         errorString = InspectorDOMAgent::toErrorString(performResult.releaseException());
         return;
@@ -670,7 +681,13 @@ void InspectorCSSAgent::setRuleSelector(ErrorString& errorString, const JSON::Ob
 
 void InspectorCSSAgent::createStyleSheet(ErrorString& errorString, const String& frameId, String* styleSheetId)
 {
-    Frame* frame = m_domAgent->pageAgent()->frameForId(frameId);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Missing Page agent"_s;
+        return;
+    }
+
+    Frame* frame = pageAgent->frameForId(frameId);
     if (!frame) {
         errorString = "No frame for given id found"_s;
         return;
@@ -740,9 +757,15 @@ void InspectorCSSAgent::addRule(ErrorString& errorString, const String& styleShe
         return;
     }
 
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
     auto action = std::make_unique<AddRuleAction>(inspectorStyleSheet, selector);
     auto& rawAction = *action;
-    auto performResult = m_domAgent->history()->perform(WTFMove(action));
+    auto performResult = domAgent->history()->perform(WTFMove(action));
     if (performResult.hasException()) {
         errorString = InspectorDOMAgent::toErrorString(performResult.releaseException());
         return;
@@ -816,7 +839,13 @@ void InspectorCSSAgent::getSupportedSystemFontFamilyNames(ErrorString&, RefPtr<J
 
 void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, const JSON::Array& forcedPseudoClasses)
 {
-    Element* element = m_domAgent->assertElement(errorString, nodeId);
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return;
+    }
+
+    Element* element = domAgent->assertElement(errorString, nodeId);
     if (!element)
         return;
 
@@ -842,7 +871,7 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 {
     return m_nodeToInspectorStyleSheet.ensure(&element, [this, &element] {
         String newStyleSheetId = String::number(m_lastStyleSheetId++);
-        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_domAgent->pageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Regular, this);
+        auto inspectorStyleSheet = InspectorStyleSheetForInlineStyle::create(m_instrumentingAgents.inspectorPageAgent(), newStyleSheetId, element, Inspector::Protocol::CSS::StyleSheetOrigin::Regular, this);
         m_idToInspectorStyleSheet.set(newStyleSheetId, inspectorStyleSheet.copyRef());
         return inspectorStyleSheet;
     }).iterator->value;
@@ -850,7 +879,13 @@ InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(Styl
 
 Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
 {
-    Node* node = m_domAgent->nodeForId(nodeId);
+    auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+    if (!domAgent) {
+        errorString = "Missing DOM agent"_s;
+        return nullptr;
+    }
+
+    Node* node = domAgent->nodeForId(nodeId);
     if (!node) {
         errorString = "No node with given id found"_s;
         return nullptr;
@@ -877,7 +912,7 @@ InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet
     if (!inspectorStyleSheet) {
         String id = String::number(m_lastStyleSheetId++);
         Document* document = styleSheet->ownerDocument();
-        inspectorStyleSheet = InspectorStyleSheet::create(m_domAgent->pageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
+        inspectorStyleSheet = InspectorStyleSheet::create(m_instrumentingAgents.inspectorPageAgent(), id, styleSheet, detectOrigin(styleSheet, document), InspectorDOMAgent::documentURLString(document), this);
         m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);
         m_cssStyleSheetToInspectorStyleSheet.set(styleSheet, inspectorStyleSheet);
         if (m_creatingViaInspectorStyleSheet) {

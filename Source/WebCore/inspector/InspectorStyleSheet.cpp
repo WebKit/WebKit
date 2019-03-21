@@ -46,6 +46,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLStyleElement.h"
 #include "InspectorCSSAgent.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
 #include "MediaList.h"
 #include "Node.h"

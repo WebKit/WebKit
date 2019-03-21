@@ -51,7 +51,7 @@ class JSValue;
 }
 
 namespace WebCore {
-    
+
 class AccessibilityObject;
 class CharacterData;
 class DOMEditor;
@@ -63,12 +63,12 @@ class FloatQuad;
 class Frame;
 class InspectorHistory;
 class InspectorOverlay;
-class InspectorPageAgent;
 #if ENABLE(VIDEO)
 class HTMLMediaElement;
 #endif
 class HitTestResult;
 class Node;
+class Page;
 class PseudoElement;
 class RevalidateStyleAttributeTask;
 class ShadowRoot;
@@ -81,13 +81,7 @@ class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOM
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    struct DOMListener {
-        virtual ~DOMListener() = default;
-        virtual void didRemoveDOMNode(Node&, int nodeId) = 0;
-        virtual void didModifyDOMAttr(Element&) = 0;
-    };
-
-    InspectorDOMAgent(WebAgentContext&, InspectorPageAgent*, InspectorOverlay*);
+    InspectorDOMAgent(PageAgentContext&, InspectorOverlay*);
     virtual ~InspectorDOMAgent();
 
     static String toErrorString(ExceptionCode);
@@ -175,7 +169,6 @@ public:
     int pushNodeToFrontend(ErrorString&, int documentNodeId, Node*);
     Node* nodeForId(int nodeId);
     int boundNodeId(const Node*);
-    void setDOMListener(DOMListener*);
 
     static String documentURLString(Document*);
 
@@ -201,9 +194,6 @@ public:
 
     static Node* scriptValueAsNode(JSC::JSValue);
     static JSC::JSValue nodeAsScriptValue(JSC::ExecState&, Node*);
-
-    // Methods called from other agents.
-    InspectorPageAgent* pageAgent() { return m_pageAgent; }
 
     bool hasBreakpointForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     int idForEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
@@ -246,10 +236,8 @@ private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
-    InspectorPageAgent* m_pageAgent { nullptr };
-
+    Page& m_inspectedPage;
     InspectorOverlay* m_overlay { nullptr };
-    DOMListener* m_domListener { nullptr };
     NodeToIdMap m_documentNodeToIdMap;
     // Owns node mappings for dangling nodes.
     Vector<std::unique_ptr<NodeToIdMap>> m_danglingNodeToIdMaps;

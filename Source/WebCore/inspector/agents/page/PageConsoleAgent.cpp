@@ -34,23 +34,24 @@
 
 #include "CommandLineAPIHost.h"
 #include "InspectorDOMAgent.h"
+#include "InstrumentingAgents.h"
 #include "Node.h"
 #include "WebInjectedScriptManager.h"
-
 
 namespace WebCore {
 
 using namespace Inspector;
 
-PageConsoleAgent::PageConsoleAgent(WebAgentContext& context, InspectorDOMAgent* domAgent)
+PageConsoleAgent::PageConsoleAgent(WebAgentContext& context)
     : WebConsoleAgent(context)
-    , m_inspectorDOMAgent(domAgent)
+    , m_instrumentingAgents(context.instrumentingAgents)
 {
 }
 
 void PageConsoleAgent::clearMessages(ErrorString& errorString)
 {
-    m_inspectorDOMAgent->releaseDanglingNodes();
+    if (auto* domAgent = m_instrumentingAgents.inspectorDOMAgent())
+        domAgent->releaseDanglingNodes();
 
     WebConsoleAgent::clearMessages(errorString);
 }

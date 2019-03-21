@@ -69,6 +69,7 @@
 #include "HTMLTemplateElement.h"
 #include "HTMLVideoElement.h"
 #include "HitTestResult.h"
+#include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorHistory.h"
@@ -277,12 +278,12 @@ String InspectorDOMAgent::toErrorString(Exception&& exception)
     return DOMException::name(exception.code());
 }
 
-InspectorDOMAgent::InspectorDOMAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
+InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay* overlay)
     : InspectorAgentBase("DOM"_s, context)
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_frontendDispatcher(std::make_unique<Inspector::DOMFrontendDispatcher>(context.frontendRouter))
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(context.backendDispatcher, this))
-    , m_pageAgent(pageAgent)
+    , m_inspectedPage(context.inspectedPage)
     , m_overlay(overlay)
 #if ENABLE(VIDEO)
     , m_mediaMetricsTimer(*this, &InspectorDOMAgent::mediaMetricsTimerFired)
@@ -302,7 +303,7 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     m_domEditor = std::make_unique<DOMEditor>(*m_history);
 
     m_instrumentingAgents.setInspectorDOMAgent(this);
-    m_document = m_pageAgent->mainFrame().document();
+    m_document = m_inspectedPage.mainFrame().document();
 
 #if ENABLE(VIDEO)
     if (m_document)
@@ -352,11 +353,6 @@ void InspectorDOMAgent::reset()
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
     m_document = nullptr;
-}
-
-void InspectorDOMAgent::setDOMListener(DOMListener* listener)
-{
-    m_domListener = listener;
 }
 
 void InspectorDOMAgent::setDocument(Document* document)
@@ -418,8 +414,9 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     }
 
     nodesMap->remove(node);
-    if (m_domListener)
-        m_domListener->didRemoveDOMNode(*node, id);
+
+    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+        cssAgent->didRemoveDOMNode(*node, id);
 
     if (m_childrenRequested.remove(id)) {
         // FIXME: Would be better to do this iteratively rather than recursively.
@@ -1160,7 +1157,7 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString& errorString, bool enabl
 
     m_overlay->didSetSearchingForNode(m_searchingForNode);
 
-    if (InspectorClient* client = m_pageAgent->page().inspectorController().inspectorClient())
+    if (InspectorClient* client = m_inspectedPage.inspectorController().inspectorClient())
         client->elementSelectionChanged(m_searchingForNode);
 }
 
@@ -1218,7 +1215,13 @@ void InspectorDOMAgent::highlightSelector(ErrorString& errorString, const JSON::
     RefPtr<Document> document;
 
     if (frameId) {
-        Frame* frame = m_pageAgent->frameForId(*frameId);
+        auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+        if (!pageAgent) {
+            errorString = "Missing Page agent"_s;
+            return;
+        }
+
+        Frame* frame = pageAgent->frameForId(*frameId);
         if (!frame) {
             errorString = "No frame for given id found"_s;
             return;
@@ -1305,7 +1308,13 @@ void InspectorDOMAgent::highlightNodeList(ErrorString& errorString, const JSON::
 
 void InspectorDOMAgent::highlightFrame(ErrorString& errorString, const String& frameId, const JSON::Object* color, const JSON::Object* outlineColor)
 {
-    Frame* frame = m_pageAgent->assertFrame(errorString, frameId);
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (!pageAgent) {
+        errorString = "Missing Page agent"_s;
+        return;
+    }
+
+    Frame* frame = pageAgent->assertFrame(errorString, frameId);
     if (!frame)
         return;
 
@@ -1541,14 +1550,18 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             value->setChildren(WTFMove(children));
     }
 
+    auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+
     if (is<Element>(*node)) {
         Element& element = downcast<Element>(*node);
         value->setAttributes(buildArrayForElementAttributes(&element));
         if (is<HTMLFrameOwnerElement>(element)) {
             HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
-            Frame* frame = frameOwner.contentFrame();
-            if (frame)
-                value->setFrameId(m_pageAgent->frameId(frame));
+            if (pageAgent) {
+                Frame* frame = frameOwner.contentFrame();
+                if (frame)
+                    value->setFrameId(pageAgent->frameId(frame));
+            }
             Document* document = frameOwner.contentDocument();
             if (document)
                 value->setContentDocument(buildObjectForNode(document, 0, nodesMap));
@@ -1578,10 +1591,10 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
             if (auto pseudoElements = buildArrayForPseudoElements(element, nodesMap))
                 value->setPseudoElements(WTFMove(pseudoElements));
         }
-
     } else if (is<Document>(*node)) {
         Document& document = downcast<Document>(*node);
-        value->setFrameId(m_pageAgent->frameId(document.frame()));
+        if (pageAgent)
+            value->setFrameId(pageAgent->frameId(document.frame()));
         value->setDocumentURL(documentURLString(&document));
         value->setBaseURL(documentBaseURLString(&document));
         value->setXmlVersion(document.xmlVersion());
@@ -2243,12 +2256,11 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomicString& n
         return;
 
     int id = boundNodeId(&element);
-    // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 
-    if (m_domListener)
-        m_domListener->didModifyDOMAttr(element);
+    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+        cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeModified(id, name, value);
 }
@@ -2256,12 +2268,11 @@ void InspectorDOMAgent::didModifyDOMAttr(Element& element, const AtomicString& n
 void InspectorDOMAgent::didRemoveDOMAttr(Element& element, const AtomicString& name)
 {
     int id = boundNodeId(&element);
-    // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 
-    if (m_domListener)
-        m_domListener->didModifyDOMAttr(element);
+    if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+        cssAgent->didModifyDOMAttr(element);
 
     m_frontendDispatcher->attributeRemoved(id, name);
 }
@@ -2271,12 +2282,12 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
     auto nodeIds = JSON::ArrayOf<int>::create();
     for (auto& element : elements) {
         int id = boundNodeId(element);
-        // If node is not mapped yet -> ignore the event.
         if (!id)
             continue;
 
-        if (m_domListener)
-            m_domListener->didModifyDOMAttr(*element);
+        if (auto* cssAgent = m_instrumentingAgents.inspectorCSSAgent())
+            cssAgent->didModifyDOMAttr(*element);
+
         nodeIds->addItem(id);
     }
     m_frontendDispatcher->inlineStyleInvalidated(WTFMove(nodeIds));
@@ -2296,7 +2307,6 @@ void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
 void InspectorDOMAgent::didInvalidateStyleAttr(Node& node)
 {
     int id = m_documentNodeToIdMap.get(&node);
-    // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
 

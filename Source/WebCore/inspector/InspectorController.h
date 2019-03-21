@@ -52,7 +52,6 @@ class DOMWrapperWorld;
 class Frame;
 class GraphicsContext;
 class InspectorClient;
-class InspectorDOMAgent;
 class InspectorFrontendClient;
 class InspectorInstrumentation;
 class InspectorPageAgent;
@@ -137,7 +136,6 @@ private:
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
 
     Inspector::InspectorAgent* m_inspectorAgent { nullptr };
-    InspectorDOMAgent* m_domAgent { nullptr };
     InspectorPageAgent* m_pageAgent { nullptr };
 
     bool m_isUnderTest { false };
