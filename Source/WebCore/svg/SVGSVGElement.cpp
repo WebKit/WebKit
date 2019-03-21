@@ -171,16 +171,11 @@ void SVGSVGElement::setCurrentScale(float scale)
         frame->setPageZoomFactor(scale);
 }
 
-Ref<SVGPoint> SVGSVGElement::currentTranslate()
-{
-    return SVGStaticPropertyTearOff<SVGSVGElement, SVGPoint>::create(*this, m_currentTranslate, &SVGSVGElement::updateCurrentTranslate);
-}
-
 void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
 {
-    if (m_currentTranslate == translation)
+    if (m_currentTranslate->value() == translation)
         return;
-    m_currentTranslate = translation;
+    m_currentTranslate->setValue(translation);
     updateCurrentTranslate();
 }
 

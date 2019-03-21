@@ -30,10 +30,11 @@
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedPointList.h"
 #include "SVGAnimatedPrimitiveProperty.h"
+#include "SVGAnimatedPropertyList.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAnimatedValueProperty.h"
+#include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRect.h"
 
@@ -46,5 +47,7 @@ using SVGAnimatedString = SVGAnimatedPrimitiveProperty<String>;
 
 using SVGAnimatedRect = SVGAnimatedValueProperty<SVGRect>;
 using SVGAnimatedPreserveAspectRatio = SVGAnimatedValueProperty<SVGPreserveAspectRatio>;
+
+using SVGAnimatedPointList = SVGAnimatedPropertyList<SVGPointList>;
 
 }

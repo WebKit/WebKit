@@ -27,6 +27,7 @@
 
 #include "SVGAnimatedPropertyAnimator.h"
 #include "SVGAnimatedPropertyImpl.h"
+#include "SVGAnimationAdditiveListFunctionImpl.h"
 #include "SVGAnimationAdditiveValueFunctionImpl.h"
 #include "SVGAnimationDiscreteFunctionImpl.h"
 
@@ -88,6 +89,23 @@ public:
         return std::unique_ptr<SVGAnimatedNumberAnimator>(new SVGAnimatedNumberAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
     }
 
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
+    }
+};
+
+class SVGAnimatedPointListAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPointList, SVGAnimationPointListFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPointList, SVGAnimationPointListFunction>;
+    using Base::Base;
+    
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedPointList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::unique_ptr<SVGAnimatedPointListAnimator>(new SVGAnimatedPointListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+    }
+    
 private:
     void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
     {

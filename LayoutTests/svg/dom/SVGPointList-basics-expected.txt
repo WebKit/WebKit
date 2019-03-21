@@ -45,6 +45,7 @@ PASS poly1.points.insertItemBefore('aString') threw exception TypeError: Not eno
 PASS poly1.points.insertItemBefore(poly1) threw exception TypeError: Not enough arguments.
 PASS poly1.points.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), 'aString')) is "x=100 y=0"
+PASS dumpPoint(poly1.points.removeItem(2, 'aString')) is "x=100 y=0"
 PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
 PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=0"
@@ -52,6 +53,7 @@ PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
 PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "100 0 0 0 100 100 0 100"
 PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), poly1)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.removeItem(2, 'aString')) is "x=0 y=0"
 PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
 PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
@@ -59,12 +61,14 @@ PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
 PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
 PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), null)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.removeItem(2, 'aString')) is "x=100 y=0"
 PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
 PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=0"
 PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "100 0 0 0 100 100 0 100"
 PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), 0)) is "x=0 y=0"
+PASS dumpPoint(poly1.points.removeItem(2, 'aString')) is "x=0 y=0"
 PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
 PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"

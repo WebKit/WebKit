@@ -32,7 +32,6 @@ namespace WebCore {
 
 class FloatPoint;
 class FloatRect;
-class SVGPointListValues;
 
 template <typename CharacterType>
 bool parseSVGNumber(CharacterType* ptr, size_t length, double& number);
@@ -82,7 +81,6 @@ inline bool skipOptionalSVGSpacesOrDelimiter(const CharacterType*& ptr, const Ch
     return ptr < end;
 }
 
-bool pointsListFromSVGData(SVGPointListValues&, const String& points);
 Vector<String> parseDelimitedString(const String& input, const char seperator);
 bool parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<String>& stringList);
 bool parseGlyphName(const String& input, HashSet<String>& values);

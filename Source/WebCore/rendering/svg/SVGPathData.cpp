@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static Path pathFromCircleElement(SVGElement& element)
+static Path pathFromCircleElement(const SVGElement& element)
 {
     ASSERT(is<SVGCircleElement>(element));
 
@@ -59,7 +59,7 @@ static Path pathFromCircleElement(SVGElement& element)
     return path;
 }
 
-static Path pathFromEllipseElement(SVGElement& element)
+static Path pathFromEllipseElement(const SVGElement& element)
 {
     RenderElement* renderer = element.renderer();
     if (!renderer)
@@ -82,7 +82,7 @@ static Path pathFromEllipseElement(SVGElement& element)
     return path;
 }
 
-static Path pathFromLineElement(SVGElement& element)
+static Path pathFromLineElement(const SVGElement& element)
 {
     Path path;
     const auto& line = downcast<SVGLineElement>(element);
@@ -93,44 +93,44 @@ static Path pathFromLineElement(SVGElement& element)
     return path;
 }
 
-static Path pathFromPathElement(SVGElement& element)
+static Path pathFromPathElement(const SVGElement& element)
 {
     return downcast<SVGPathElement>(element).pathForByteStream();
 }
 
-static Path pathFromPolygonElement(SVGElement& element)
+static Path pathFromPolygonElement(const SVGElement& element)
 {
-    auto& points = downcast<SVGPolygonElement>(element).animatedPoints()->values();
+    auto& points = downcast<SVGPolygonElement>(element).points().items();
     if (points.isEmpty())
         return { };
 
     Path path;
-    path.moveTo(points.first());
+    path.moveTo(points.first()->value());
 
     unsigned size = points.size();
     for (unsigned i = 1; i < size; ++i)
-        path.addLineTo(points.at(i));
+        path.addLineTo(points.at(i)->value());
 
     path.closeSubpath();
     return path;
 }
 
-static Path pathFromPolylineElement(SVGElement& element)
+static Path pathFromPolylineElement(const SVGElement& element)
 {
-    auto& points = downcast<SVGPolylineElement>(element).animatedPoints()->values();
+    auto& points = downcast<SVGPolylineElement>(element).points().items();
     if (points.isEmpty())
         return { };
 
     Path path;
-    path.moveTo(points.first());
+    path.moveTo(points.first()->value());
 
     unsigned size = points.size();
     for (unsigned i = 1; i < size; ++i)
-        path.addLineTo(points.at(i));
+        path.addLineTo(points.at(i)->value());
     return path;
 }
 
-static Path pathFromRectElement(SVGElement& element)
+static Path pathFromRectElement(const SVGElement& element)
 {
     RenderElement* renderer = element.renderer();
     if (!renderer)
@@ -169,11 +169,11 @@ static Path pathFromRectElement(SVGElement& element)
     return path;
 }
 
-Path pathFromGraphicsElement(SVGElement* element)
+Path pathFromGraphicsElement(const SVGElement* element)
 {
     ASSERT(element);
 
-    typedef Path (*PathFromFunction)(SVGElement&);
+    typedef Path (*PathFromFunction)(const SVGElement&);
     static HashMap<AtomicStringImpl*, PathFromFunction>* map = 0;
     if (!map) {
         map = new HashMap<AtomicStringImpl*, PathFromFunction>;

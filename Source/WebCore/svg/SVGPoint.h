@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,86 +28,69 @@
 
 #include "FloatPoint.h"
 #include "SVGMatrix.h"
-#include "SVGPropertyTearOff.h"
+#include "SVGValueProperty.h"
 
 namespace WebCore {
 
-class SVGPoint : public SVGPropertyTearOff<FloatPoint> {
+class SVGPoint : public SVGValueProperty<FloatPoint> {
+    using Base = SVGValueProperty<FloatPoint>;
+    using Base::Base;
+    using Base::m_value;
+
 public:
-    static Ref<SVGPoint> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatPoint& value)
+    static Ref<SVGPoint> create(const FloatPoint& value = { })
     {
-        return adoptRef(*new SVGPoint(animatedProperty, role, value));
+        return adoptRef(*new SVGPoint(value));
     }
 
-    static Ref<SVGPoint> create(const FloatPoint& initialValue = { })
+    template<typename T>
+    static ExceptionOr<Ref<SVGPoint>> create(ExceptionOr<T>&& value)
     {
-        return adoptRef(*new SVGPoint(initialValue));
+        if (value.hasException())
+            return value.releaseException();
+        return adoptRef(*new SVGPoint(value.releaseReturnValue()));
     }
 
-    template<typename T> static ExceptionOr<Ref<SVGPoint>> create(ExceptionOr<T>&& initialValue)
+    Ref<SVGPoint> clone() const
     {
-        if (initialValue.hasException())
-            return initialValue.releaseException();
-        return create(initialValue.releaseReturnValue());
+        return SVGPoint::create(m_value);
     }
+    
+    float x() { return m_value.x(); }
 
-    float x()
-    {
-        return propertyReference().x();
-    }
-
-    ExceptionOr<void> setX(float xValue)
+    ExceptionOr<void> setX(float x)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setX(xValue);
+        m_value.setX(x);
         commitChange();
 
         return { };
     }
 
-    float y()
-    {
-        return propertyReference().y();
-    }
+    float y() { return m_value.y(); }
 
-    ExceptionOr<void> setY(float xValue)
+    ExceptionOr<void> setY(float y)
     {
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setY(xValue);
+        m_value.setY(y);
         commitChange();
-
         return { };
     }
 
-    ExceptionOr<Ref<SVGPoint>> matrixTransform(SVGMatrix& matrix)
+    Ref<SVGPoint> matrixTransform(SVGMatrix& matrix) const
     {
-        if (isReadOnly())
-            return Exception { NoModificationAllowedError };
-
-        auto newPoint = propertyReference().matrixTransform(matrix.propertyReference());
-        commitChange();
-
-        return SVGPoint::create(newPoint);
+        auto newPoint = m_value.matrixTransform(matrix.propertyReference());
+        return adoptRef(*new SVGPoint(newPoint));
     }
 
-protected:
-    SVGPoint(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, FloatPoint& value)
-        : SVGPropertyTearOff<FloatPoint>(&animatedProperty, role, value)
+private:
+    String valueAsString() const override
     {
-    }
-
-    SVGPoint(SVGPropertyRole role, FloatPoint& value)
-        : SVGPropertyTearOff<FloatPoint>(nullptr, role, value)
-    {
-    }
-
-    explicit SVGPoint(const FloatPoint& initialValue)
-        : SVGPropertyTearOff<FloatPoint>(initialValue)
-    {
+        return SVGPropertyTraits<FloatPoint>::toString(m_value);
     }
 };
 

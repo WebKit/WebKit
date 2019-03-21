@@ -25,7 +25,6 @@
 
 #include "Document.h"
 #include "FloatRect.h"
-#include "SVGPointListValues.h"
 #include <limits>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringView.h>
@@ -258,40 +257,6 @@ bool parseRect(const String& string, FloatRect& rect)
     bool valid = parseNumber(ptr, end, x) && parseNumber(ptr, end, y) && parseNumber(ptr, end, width) && parseNumber(ptr, end, height, false);
     rect = FloatRect(x, y, width, height);
     return valid;
-}
-
-bool pointsListFromSVGData(SVGPointListValues& pointsList, const String& points)
-{
-    if (points.isEmpty())
-        return true;
-    auto upconvertedCharacters = StringView(points).upconvertedCharacters();
-    const UChar* cur = upconvertedCharacters;
-    const UChar* end = cur + points.length();
-
-    skipOptionalSVGSpaces(cur, end);
-
-    bool delimParsed = false;
-    while (cur < end) {
-        delimParsed = false;
-        float xPos = 0.0f;
-        if (!parseNumber(cur, end, xPos))
-           return false;
-
-        float yPos = 0.0f;
-        if (!parseNumber(cur, end, yPos, false))
-            return false;
-
-        skipOptionalSVGSpaces(cur, end);
-
-        if (cur < end && *cur == ',') {
-            delimParsed = true;
-            cur++;
-        }
-        skipOptionalSVGSpaces(cur, end);
-
-        pointsList.append(FloatPoint(xPos, yPos));
-    }
-    return cur == end && !delimParsed;
 }
 
 bool parseGlyphName(const String& input, HashSet<String>& values)

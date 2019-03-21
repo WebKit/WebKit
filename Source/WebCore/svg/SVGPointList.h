@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,81 @@
 
 #pragma once
 
-#include "SVGAnimatedListPropertyTearOff.h"
-#include "SVGListPropertyTearOff.h"
 #include "SVGPoint.h"
-#include "SVGPointListValues.h"
+#include "SVGValuePropertyList.h"
 
 namespace WebCore {
 
-class SVGPointList : public SVGListPropertyTearOff<SVGPointListValues> {
-public:
-    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGPointListValues>;
-    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
+class SVGPointList : public SVGValuePropertyList<SVGPoint> {
+    using Base = SVGValuePropertyList<SVGPoint>;
+    using Base::Base;
 
-    static Ref<SVGPointList> create(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGPointListValues& values, ListWrapperCache& wrappers)
+public:
+    static Ref<SVGPointList> create()
     {
-        return adoptRef(*new SVGPointList(animatedProperty, role, values, wrappers));
+        return adoptRef(*new SVGPointList());
     }
 
-private:
-    SVGPointList(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGPointListValues& values, ListWrapperCache& wrappers)
-        : SVGListPropertyTearOff<SVGPointListValues>(animatedProperty, role, values, wrappers)
+    static Ref<SVGPointList> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
     {
+        return adoptRef(*new SVGPointList(owner, access));
+    }
+
+    static Ref<SVGPointList> create(const SVGPointList& other, SVGPropertyAccess access)
+    {
+        return adoptRef(*new SVGPointList(other, access));
+    }
+
+    bool parse(const String& value)
+    {
+        clearItems();
+
+        auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+        const UChar* cur = upconvertedCharacters;
+        const UChar* end = cur + value.length();
+
+        skipOptionalSVGSpaces(cur, end);
+
+        bool delimParsed = false;
+        while (cur < end) {
+            delimParsed = false;
+            float xPos = 0.0f;
+            if (!parseNumber(cur, end, xPos))
+                return false;
+
+            float yPos = 0.0f;
+            if (!parseNumber(cur, end, yPos, false))
+                return false;
+
+            skipOptionalSVGSpaces(cur, end);
+
+            if (cur < end && *cur == ',') {
+                delimParsed = true;
+                cur++;
+            }
+            skipOptionalSVGSpaces(cur, end);
+
+            append(SVGPoint::create({ xPos, yPos }));
+        }
+
+        return !delimParsed;
+    }
+
+    String valueAsString() const override
+    {
+        StringBuilder builder;
+
+        for (const auto& point : m_items) {
+            if (builder.length())
+                builder.append(' ');
+
+            builder.appendNumber(point->x());
+            builder.append(' ');
+            builder.appendNumber(point->y());
+        }
+
+        return builder.toString();
     }
 };
 
-} // namespace WebCore
+}

@@ -33,7 +33,6 @@
 #include "SVGMarkerTypes.h"
 #include "SVGNumberListValues.h"
 #include "SVGPathByteStream.h"
-#include "SVGPointListValues.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGPropertyTraits.h"
 #include "SVGTransformListValues.h"
@@ -44,21 +43,11 @@ namespace WebCore {
 
 using SVGValueVariant = Variant<
     std::pair<SVGAngleValue, unsigned>*,
-    bool*,
-    Color*,
     unsigned*,
-    int*,
-    std::pair<int, int>*,
     SVGLengthValue*,
     SVGLengthListValues*,
-    float*,
     SVGNumberListValues*,
-    std::pair<float, float>*,
     SVGPathByteStream*,
-    SVGPointListValues*,
-    SVGPreserveAspectRatioValue*,
-    FloatRect*,
-    String*,
     SVGTransformListValues*
 >;
 

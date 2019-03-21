@@ -110,8 +110,18 @@ public:
 
     AnimatedPropertyType type() const
     {
-        ASSERT(m_value.index() >= AnimatedPropertyTypeMin && m_value.index() < AnimatedPropertyTypeMax);
-        return static_cast<AnimatedPropertyType>(m_value.index());
+        static AnimatedPropertyType animatedTypes[] = {
+            AnimatedAngle,
+            AnimatedEnumeration,
+            AnimatedLength,
+            AnimatedLengthList,
+            AnimatedNumberList,
+            AnimatedPath,
+            AnimatedTransformList
+        };
+
+        ASSERT(static_cast<size_t>(m_value.index()) < sizeof(animatedTypes) / sizeof(animatedTypes[0]));
+        return animatedTypes[m_value.index()];
     }
 
     String valueAsString() const

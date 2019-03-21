@@ -1,5 +1,161 @@
 2019-03-21  Said Abou-Hallawa  <said@apple.com>
 
+        Remove the SVG tear off objects for SVGPoint, SVGPointList and SVGAnimatedPointList
+        https://bugs.webkit.org/show_bug.cgi?id=195905
+
+        Reviewed by Simon Fraser.
+
+        To remove the SVG tear off objects for SVGPoint, SVGPointList and 
+        SVGAnimatedPointList, these changes are needed:
+
+        -- Define SVGPoint to be a superclass of SVGValueProperty<FloatPoint>.
+
+        -- Define SVGAnimatedPointList to be a superclass of SVGAnimatedPropertyList<SVGPointList>
+
+        -- Add SVGPropertyList which is a superclass of SVGList. Its items are
+           defined to RefCounted. It is the base class of SVGValuePropertyList
+           and it will be  the base class of SVGPathSegList in a later patch.
+
+        -- Add SVGValuePropertyList which is the base class of all the lists whose
+           items are backed by a value objects like SVGPoint. The difference between
+           SVGPropertyList and SVGValuePropertyList is the former class can store
+           a Ref pointer of the base class like SVGPathSeg while the later type
+           has to store the same type for all the items.
+
+        -- Add SVGAnimatedPropertyList which is the base class for all the animated
+           lists. Note that:
+           1) SVGElement owns SVGAnimatedPropertyList
+           2) SVGAnimatedPropertyList owns m_baseVal whose type is SVGList
+           3) m_baseVal owns the items whose type is a superclass of SVGProperty.
+           When changing an item, it calls its owner which is an SVGList.
+           SVGList calls its owner which is SVGAnimatedPropertyList.
+           SVGAnimatedPropertyList calls its owner which SVGElement to commit
+           the change. Later SVGAnimatedPropertyList::synchronize() is called 
+           which returns the property valueAsString() to update the reflecting
+           attribute.
+
+        -- New accessor, animator and animation function are added to access
+           and animate a member of type SVGAnimatedPropertyList.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::pathFromCircleElement):
+        (WebCore::pathFromEllipseElement):
+        (WebCore::pathFromLineElement):
+        (WebCore::pathFromPathElement):
+        (WebCore::pathFromPolygonElement):
+        (WebCore::pathFromPolylineElement):
+        (WebCore::pathFromRectElement):
+        (WebCore::pathFromGraphicsElement):
+        * rendering/svg/SVGPathData.h:
+        The IDL of SVGPolyElement interface requires the following attribute:
+            readonly attribute SVGPointList points;
+        For which we return:
+            SVGPointList& points() { return m_points->baseVal(); }
+        But for all the other properties we return the currentValue(). So to have
+        the two functions with the same name, the following function is added:
+            const SVGPointList& points() const { return m_points->currentValue(); }
+        This definition requires changing all callers to be const.
+
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * svg/SVGAnimatedPointList.cpp: Removed.
+        * svg/SVGAnimatedPointList.h: Removed.
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::type const):
+        This function had a bad design. It was designed to use the index of the
+        variant as the AnimatedPropertyType. But when some of the types are removed
+        from SVGValueVariant, this broke things. This fix is temporary till the 
+        class SVGValueVariant is removed.
+
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGExternalResourcesRequired.cpp:
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::pointsListFromSVGData): Deleted.
+        * svg/SVGParserUtilities.h:
+        * svg/SVGPoint.h:
+        (WebCore::SVGPoint::create):
+        (WebCore::SVGPoint::clone const):
+        (WebCore::SVGPoint::x):
+        (WebCore::SVGPoint::setX):
+        (WebCore::SVGPoint::y):
+        (WebCore::SVGPoint::setY):
+        (WebCore::SVGPoint::matrixTransform const):
+        (WebCore::SVGPoint::matrixTransform): Deleted.
+        (WebCore::SVGPoint::SVGPoint): Deleted.
+        * svg/SVGPoint.idl:
+        matrixTransform() should not throw an exception.
+
+        * svg/SVGPointList.h:
+        (WebCore::SVGPointList::create):
+        (WebCore::SVGPointList::parse):
+        (WebCore::SVGPointList::SVGPointList): Deleted.
+        Move the parse() and valueAsString() methods to SVGPointList. It is now
+        a superclass of SVGValuePropertyList. Its items are of type Ref<SVGPoint>.
+
+        * svg/SVGPointListValues.cpp: Removed.
+        * svg/SVGPointListValues.h: Removed.
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::parseAttribute):
+        (WebCore::SVGPolyElement::approximateMemoryCost const):
+        (WebCore::SVGPolyElement::registerAttributes): Deleted.
+        (WebCore::SVGPolyElement::points): Deleted.
+        (WebCore::SVGPolyElement::animatedPoints): Deleted.
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::points const):
+        (WebCore::SVGPolyElement::points):
+        (WebCore::SVGPolyElement::animatedPoints):
+        (WebCore::SVGPolyElement::pointList const): Deleted.
+        (WebCore::SVGPolyElement::attributeRegistry): Deleted.
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::setCurrentTranslate):
+        (WebCore::SVGSVGElement::currentTranslate): Deleted.
+        * svg/SVGSVGElement.h:
+        * svg/SVGSVGElement.idl:
+        Define currentTranslate property to be of type Ref<SVGPoint>. When requesting
+        it just return a reference to it.
+
+        * svg/SVGValue.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimatedPropertyList.h: Added.
+        Define the accessor, the animator and the animated type of SVGPointList.
+
+        (WebCore::SVGAnimatedPropertyList::create):
+        (WebCore::SVGAnimatedPropertyList::~SVGAnimatedPropertyList):
+        (WebCore::SVGAnimatedPropertyList::baseVal const):
+        (WebCore::SVGAnimatedPropertyList::baseVal):
+        (WebCore::SVGAnimatedPropertyList::animVal const):
+        (WebCore::SVGAnimatedPropertyList::animVal):
+        (WebCore::SVGAnimatedPropertyList::currentValue const):
+        (WebCore::SVGAnimatedPropertyList::SVGAnimatedPropertyList):
+        (WebCore::SVGAnimatedPropertyList::ensureAnimVal):
+        * svg/properties/SVGAnimationAdditiveListFunction.h: Added.
+        (WebCore::SVGAnimationAdditiveListFunction::SVGAnimationAdditiveListFunction):
+        (WebCore::SVGAnimationAdditiveListFunction::toAtEndOfDuration const):
+        (WebCore::SVGAnimationAdditiveListFunction::adjustAnimatedList):
+        * svg/properties/SVGAnimationAdditiveListFunctionImpl.h: Added.
+        (WebCore::SVGAnimationPointListFunction::progress):
+        Define the animation function for animating SVGPointList.
+
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPropertyList.h: Added.
+        (WebCore::SVGPropertyList::SVGPropertyList):
+        (WebCore::SVGPropertyList::~SVGPropertyList):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+        * svg/properties/SVGValuePropertyList.h: Added.
+        (WebCore::SVGValuePropertyList::operator=):
+        (WebCore::SVGValuePropertyList::operator Vector<typename PropertyType::ValueType> const):
+        (WebCore::SVGValuePropertyList::resize):
+        (WebCore::SVGValuePropertyList::SVGValuePropertyList):
+
+2019-03-21  Said Abou-Hallawa  <said@apple.com>
+
         Remove the SVG property tear off objects for SVGAnimatedString
         https://bugs.webkit.org/show_bug.cgi?id=196065
 

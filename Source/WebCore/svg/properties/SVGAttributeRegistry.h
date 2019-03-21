@@ -29,7 +29,6 @@
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumberList.h"
-#include "SVGAnimatedPointList.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
 #include "SVGLegacyAnimatedProperty.h"
@@ -76,12 +75,6 @@ public:
     void registerAttribute()
     {
         registerAttribute(SVGAnimatedNumberListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedPointListAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedPointListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
     }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedTransformListAttribute OwnerType::*attribute>

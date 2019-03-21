@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedPointList.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
@@ -31,10 +30,10 @@ namespace WebCore {
 class SVGPolyElement : public SVGGeometryElement, public SVGExternalResourcesRequired {
     WTF_MAKE_ISO_ALLOCATED(SVGPolyElement);
 public:
-    Ref<SVGPointList> points();
-    Ref<SVGPointList> animatedPoints();
+    const SVGPointList& points() const { return m_points->currentValue(); }
 
-    const SVGPointListValues& pointList() const { return m_points.value(); }
+    SVGPointList& points() { return m_points->baseVal(); }
+    SVGPointList& animatedPoints() { return *m_points->animVal(); }
 
     size_t approximateMemoryCost() const override;
 
@@ -43,8 +42,6 @@ protected:
 
 private:
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGPolyElement, SVGGeometryElement, SVGExternalResourcesRequired>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPolyElement, SVGGeometryElement, SVGExternalResourcesRequired>;
@@ -63,7 +60,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedPointListAttribute m_points;
+    Ref<SVGAnimatedPointList> m_points { SVGAnimatedPointList::create(this) };
 };
 
 } // namespace WebCore

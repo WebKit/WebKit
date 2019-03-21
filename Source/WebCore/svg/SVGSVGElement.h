@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2010 Rob Buis <buis@kde.org>
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,8 +61,8 @@ public: // DOM
     float currentScale() const;
     void setCurrentScale(float);
 
-    Ref<SVGPoint> currentTranslate();
-    FloatPoint currentTranslateValue() { return m_currentTranslate; }
+    SVGPoint& currentTranslate() { return m_currentTranslate; }
+    FloatPoint currentTranslateValue() const { return m_currentTranslate->value(); }
 
     unsigned suspendRedraw(unsigned maxWaitMilliseconds);
     void unsuspendRedraw(unsigned suspendHandleId);
@@ -106,7 +106,7 @@ public:
     SMILTimeContainer& timeContainer() { return m_timeContainer.get(); }
 
     void setCurrentTranslate(const FloatPoint&); // Used to pan.
-    void updateCurrentTranslate(); // Used from DOM bindings to create an SVGStaticPropertyTearOff for currentTranslate.
+    void updateCurrentTranslate();
 
     bool hasIntrinsicWidth() const;
     bool hasIntrinsicHeight() const;
@@ -169,9 +169,10 @@ private:
 
     bool m_useCurrentView { false };
     Ref<SMILTimeContainer> m_timeContainer;
-    FloatPoint m_currentTranslate;
     RefPtr<SVGViewSpec> m_viewSpec;
     String m_currentViewFragmentIdentifier;
+
+    Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };

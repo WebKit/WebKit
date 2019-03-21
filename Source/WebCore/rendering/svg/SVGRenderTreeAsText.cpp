@@ -271,7 +271,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
         writeNameValuePair(ts, "r", element.r().value(lengthContext));
     } else if (is<SVGPolyElement>(svgElement)) {
         const SVGPolyElement& element = downcast<SVGPolyElement>(svgElement);
-        writeNameAndQuotedValue(ts, "points", element.pointList().valueAsString());
+        writeNameAndQuotedValue(ts, "points", element.points().valueAsString());
     } else if (is<SVGPathElement>(svgElement)) {
         const SVGPathElement& element = downcast<SVGPathElement>(svgElement);
         String pathString;

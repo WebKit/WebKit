@@ -1,3 +1,17 @@
+2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGPoint, SVGPointList and SVGAnimatedPointList
+        https://bugs.webkit.org/show_bug.cgi?id=195905
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGPointList-basics.xhtml:
+        This change is required because SVGPointList will be following the SVG2
+        specs regarding adding new items to the list. 
+
+        See https://www.w3.org/TR/SVG/types.html#TermListInterface.
+
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.

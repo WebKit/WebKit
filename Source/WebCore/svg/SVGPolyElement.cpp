@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,28 +37,17 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document& document)
     : SVGGeometryElement(tagName, document)
     , SVGExternalResourcesRequired(this)
 {
-    registerAttributes();
-}
-
-void SVGPolyElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::pointsAttr, &SVGPolyElement::m_points>();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::pointsAttr, &SVGPolyElement::m_points>();
+    });
 }
 
 void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::pointsAttr) {
-        SVGPointListValues newList;
-        if (!pointsListFromSVGData(newList, value))
+        if (!m_points->baseVal()->parse(value))
             document().accessSVGExtensions().reportError("Problem parsing points=\"" + value + "\"");
-
-        if (auto wrapper = static_pointer_cast<SVGAnimatedPointList>(lookupAnimatedProperty(m_points)))
-            wrapper->detachListWrappers(newList.size());
-
-        m_points.setValue(WTFMove(newList));
         return;
     }
 
@@ -81,21 +70,9 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGExternalResourcesRequired::svgAttributeChanged(attrName);
 }
 
-Ref<SVGPointList> SVGPolyElement::points()
-{
-    m_points.setShouldSynchronize(true);
-    return static_pointer_cast<SVGAnimatedPointList>(lookupOrCreateAnimatedProperty(m_points))->baseVal();
-}
-
-Ref<SVGPointList> SVGPolyElement::animatedPoints()
-{
-    m_points.setShouldSynchronize(true);
-    return static_pointer_cast<SVGAnimatedPointList>(lookupOrCreateAnimatedProperty(m_points))->animVal();
-}
-
 size_t SVGPolyElement::approximateMemoryCost() const
 {
-    size_t pointsCost = pointList().size() * sizeof(FloatPoint);
+    size_t pointsCost = m_points->baseVal()->items().size() * sizeof(FloatPoint);
     // We need to account for the memory which is allocated by the RenderSVGPath::m_path.
     return sizeof(*this) + (renderer() ? pointsCost * 2 + sizeof(RenderSVGPath) : pointsCost);
 }

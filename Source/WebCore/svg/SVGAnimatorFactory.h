@@ -25,7 +25,6 @@
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGAnimatedPath.h"
-#include "SVGAnimatedPointList.h"
 #include "SVGAnimatedTransformList.h"
 
 namespace WebCore {
@@ -46,6 +45,7 @@ public:
         case AnimatedIntegerOptionalInteger:
         case AnimatedNumber:
         case AnimatedNumberOptionalNumber:
+        case AnimatedPoints:
         case AnimatedPreserveAspectRatio:
         case AnimatedRect:
         case AnimatedString:
@@ -63,8 +63,6 @@ public:
             return std::make_unique<SVGAnimatedNumberListAnimator>(animationElement, contextElement);
         case AnimatedPath:
             return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
-        case AnimatedPoints:
-            return std::make_unique<SVGAnimatedPointListAnimator>(animationElement, contextElement);
         case AnimatedTransformList:
             return std::make_unique<SVGAnimatedTransformListAnimator>(animationElement, contextElement);
         case AnimatedUnknown:

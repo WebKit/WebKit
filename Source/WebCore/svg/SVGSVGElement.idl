@@ -42,7 +42,7 @@
     readonly attribute boolean useCurrentView;
     readonly attribute SVGViewSpec currentView;
     attribute unrestricted float currentScale;
-    [NewObject] readonly attribute SVGPoint currentTranslate;
+    readonly attribute SVGPoint currentTranslate;
 
     unsigned long suspendRedraw(optional unsigned long maxWaitMilliseconds = 0);
     void unsuspendRedraw(optional unsigned long suspendHandleId = 0);
