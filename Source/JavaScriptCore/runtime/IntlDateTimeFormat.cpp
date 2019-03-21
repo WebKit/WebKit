@@ -977,9 +977,10 @@ ASCIILiteral IntlDateTimeFormat::partTypeString(UDateFormatField field)
 #if U_ICU_VERSION_MAJOR_NUM < 58 || !defined(U_HIDE_DEPRECATED_API)
     case UDAT_FIELD_COUNT:
 #endif
+    // Any newer additions to the UDateFormatField enum should just be considered an "unknown" part.
+    default:
         return "unknown"_s;
     }
-    // Any newer additions to the UDateFormatField enum should just be considered an "unknown" part.
     return "unknown"_s;
 }
 

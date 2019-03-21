@@ -1,3 +1,20 @@
+2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Fix JSC build with newer ICU
+        https://bugs.webkit.org/show_bug.cgi?id=196098
+
+        Reviewed by Keith Miller.
+
+        IntlDateTimeFormat and IntlNumberFormat have switch statement over ICU's enums. However it lacks "default" clause so that
+        the compile error occurs when a new enum value is added in ICU side. We should have "default" clause which just fallbacks
+        "unknown"_s case. The behavior is not changed since we already have `return "unknown"_s;` statement anyway after the
+        switch statement. This patch just suppresses a compile error.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::partTypeString):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::partTypeString):
+
 2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSObject::putDirectIndexSlowOrBeyondVectorLength should check if indexIsSufficientlyBeyondLengthForSparseMap
