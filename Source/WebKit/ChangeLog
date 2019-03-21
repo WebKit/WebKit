@@ -1,3 +1,30 @@
+2019-03-21  Brian Burg  <bburg@apple.com>
+
+        Web Automation: support uploading non-local file paths
+        https://bugs.webkit.org/show_bug.cgi?id=196081
+        <rdar://problem/45819897>
+
+        Reviewed by Devin Rousso and Joseph Pecoraro.
+
+        To support cases where supplied file paths do not exist on the session host, add support for
+        receiving file contents via Automation.setFilesToSelectForFileUpload.
+
+        * UIProcess/Automation/Automation.json: Add new parameter.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::setFilesToSelectForFileUpload):
+        Add support for receiving and saving file contents to a temporary directory. Rewrite the used paths so
+        that WebCore knows to look at the revised paths where the file contents have been saved.
+
+        (WebKit::WebAutomationSession::platformGenerateLocalFilePathForRemoteFile):
+        Since WebKit does not have usable FileSystem implementations for all ports, shell out the actual
+        saving of base64-encoded file data. Provide a Cocoa implementation, since that's what I can test.
+
+        * UIProcess/Automation/cocoa/WebAutomationSessionCocoa.mm:
+        (WebKit::WebAutomationSession::platformGenerateLocalFilePathForRemoteFile):
+        Use WTF::FileSystem to create a temporary directory, and use Cocoa methods to actually write the file.
+
 2019-03-21  Youenn Fablet  <youenn@apple.com>
 
         Cache API and IDB space usages should be initialized on first quota check

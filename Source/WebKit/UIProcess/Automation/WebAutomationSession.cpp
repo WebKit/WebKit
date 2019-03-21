@@ -1238,17 +1238,33 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(*this, *page, promptValue);
 }
 
-void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorString, const String& browsingContextHandle, const JSON::Array& filenames)
+void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorString, const String& browsingContextHandle, const JSON::Array& filenames, const JSON::Array* fileContents)
 {
     Vector<String> newFileList;
     newFileList.reserveInitialCapacity(filenames.length());
 
-    for (const auto& item : filenames) {
-        String filename;
-        if (!item->asString(filename))
-            SYNC_FAIL_WITH_PREDEFINED_ERROR(InternalError);
+    if (fileContents && fileContents->length() != filenames.length())
+        SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameters 'filenames' and 'fileContents' must have equal length.");
 
-        newFileList.append(filename);
+    for (size_t i = 0; i < filenames.length(); ++i) {
+        String filename;
+        if (!filenames.get(i)->asString(filename))
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'filenames' contains a non-string value.");
+
+        if (!fileContents) {
+            newFileList.append(filename);
+            continue;
+        }
+
+        String fileData;
+        if (!fileContents->get(i)->asString(fileData))
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The parameter 'fileContents' contains a non-string value.");
+
+        Optional<String> localFilePath = platformGenerateLocalFilePathForRemoteFile(filename, fileData);
+        if (!localFilePath)
+            SYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The remote file could not be saved to a local temporary directory.");
+
+        newFileList.append(localFilePath.value());
     }
 
     m_filesToSelectForFileUpload.swap(newFileList);
@@ -2047,5 +2063,12 @@ Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const Sha
     return WTF::nullopt;
 }
 #endif // !PLATFORM(COCOA) && !USE(CAIRO)
+
+#if !PLATFORM(COCOA)
+Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String&, const String&)
+{
+    return WTF::nullopt;
+}
+#endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

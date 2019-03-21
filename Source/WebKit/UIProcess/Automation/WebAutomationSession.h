@@ -186,7 +186,7 @@ public:
     void acceptCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle) override;
     void messageOfCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle, String* text) override;
     void setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString&, const String& browsingContextHandle, const String& text) override;
-    void setFilesToSelectForFileUpload(Inspector::ErrorString&, const String& browsingContextHandle, const JSON::Array& filenames) override;
+    void setFilesToSelectForFileUpload(Inspector::ErrorString&, const String& browsingContextHandle, const JSON::Array& filenames, const JSON::Array* optionalFileContents) override;
     void getAllCookies(const String& browsingContextHandle, Ref<GetAllCookiesCallback>&&) override;
     void deleteSingleCookie(const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
     void addSingleCookie(const String& browsingContextHandle, const JSON::Object& cookie, Ref<AddSingleCookieCallback>&&) override;
@@ -260,8 +260,12 @@ private:
     void platformSimulateKeySequence(WebPageProxy&, const String&);
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
-    // Get base64 encoded PNG data from a bitmap.
+    // Get base64-encoded PNG data from a bitmap.
     Optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
+
+    // Save base64-encoded file contents to a local file path and return the path.
+    // This reuses the basename of the remote file path so that the filename exposed to DOM API remains the same.
+    Optional<String> platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents);
 
 #if PLATFORM(COCOA)
     // The type parameter of the NSArray argument is platform-dependent.

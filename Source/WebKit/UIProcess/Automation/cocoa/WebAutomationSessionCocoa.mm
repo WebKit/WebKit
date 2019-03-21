@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #if PLATFORM(COCOA)
 
+#import <wtf/FileSystem.h>
+
 #if PLATFORM(IOS_FAMILY)
 #include <ImageIO/CGImageDestination.h>
 #include <MobileCoreServices/UTCoreTypes.h>
@@ -53,6 +55,28 @@ Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const Sha
     CGImageDestinationFinalize(destination.get());
 
     return String([imageData base64EncodedStringWithOptions:0]);
+}
+
+Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
+{
+    RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents options:0]);
+    if (!fileContents) {
+        LOG_ERROR("WebAutomationSession: unable to decode base64-encoded file contents.");
+        return WTF::nullopt;
+    }
+
+    NSString *temporaryDirectory = FileSystem::createTemporaryDirectory(@"WebDriver");
+    NSURL *remoteFile = [NSURL fileURLWithPath:remoteFilePath isDirectory:NO];
+    NSString *localFilePath = [temporaryDirectory stringByAppendingPathComponent:remoteFile.lastPathComponent];
+
+    NSError *fileWriteError;
+    [fileContents.get() writeToFile:localFilePath options:NSDataWritingAtomic error:&fileWriteError];
+    if (fileWriteError) {
+        LOG_ERROR("WebAutomationSession: Error writing image data to temporary file: %@", fileWriteError);
+        return WTF::nullopt;
+    }
+
+    return String(localFilePath);
 }
 
 Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const

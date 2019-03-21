@@ -619,7 +619,8 @@
             "description": "Sets the files to be selected when a file input type element becomes active in a browsing context.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
-                { "name": "filenames", "type": "array", "items": { "$ref": "string" }, "description": "Absolute paths to the files that should be selected." }
+                { "name": "filenames", "type": "array", "items": { "type": "string" }, "description": "Absolute paths to the files that should be selected." },
+                { "name": "fileContents", "type": "array", "items": { "type" : "string" }, "optional": true, "description": "An array of Base64-encoded binary data for each file to be selected. If this property is provided, it is assumed that 'filenames' are not real file paths on the session host's filesystem, and this binary data will be used instead." }
             ]
         },
         {
