@@ -81,6 +81,11 @@ public:
     bool scrollLimitReached(const PlatformWheelEvent&) const;
     ScrollingTreeScrollingNode* scrollingNodeForPoint(LayoutPoint) const override;
 
+#if PLATFORM(COCOA)
+    CALayer *scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
+    CALayer *scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
+#endif
+
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -119,11 +124,6 @@ protected:
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
 
     bool expectsWheelEventTestTrigger() const { return m_expectsWheelEventTestTrigger; }
-
-#if PLATFORM(COCOA)
-    CALayer *scrollContainerLayer() const { return m_scrollContainerLayer.get(); }
-    CALayer *scrolledContentsLayer() const { return m_scrolledContentsLayer.get(); }
-#endif
 
     LayoutPoint parentToLocalPoint(LayoutPoint) const override;
     LayoutPoint localToContentsPoint(LayoutPoint) const override;

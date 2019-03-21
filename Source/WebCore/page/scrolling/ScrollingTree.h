@@ -73,7 +73,7 @@ public:
 
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
     
-    ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
+    WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
     // Updates FrameView/RenderLayer scrolling state and GraphicsLayers.

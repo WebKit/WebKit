@@ -30,6 +30,7 @@
 #include "MessageReceiver.h"
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingTree.h"
+#include <WebCore/GraphicsLayer.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -108,6 +109,8 @@ public:
 
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);
+    void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&);
+
 #if ENABLE(CSS_SCROLL_SNAP)
     bool shouldSnapForMainFrameScrolling(WebCore::ScrollEventAxis) const;
     float closestSnapOffsetForMainFrameScrolling(WebCore::ScrollEventAxis, float scrollDestination, float velocity, unsigned& closestIndex) const;
@@ -124,6 +127,7 @@ private:
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     bool m_propagatesMainFrameScrolls;
+    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithNonAncestorScrollingRelations;
 };
 
 } // namespace WebKit

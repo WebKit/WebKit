@@ -41,6 +41,8 @@ public:
 
     virtual ~ScrollingTreePositionedNode();
 
+    CALayer *layer() const { return m_layer.get(); }
+
 private:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);
 

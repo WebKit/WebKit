@@ -65,6 +65,22 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
     };
 }
 
+static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
+{
+    auto scrollLayerID = RemoteLayerTreeNode::layerID(scrollView.layer);
+
+    for (UIView *view = hitView; view; view = [view superview]) {
+        if (view == scrollView)
+            return true;
+
+        auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
+        if (node && scrollLayerID && node->nonAncestorScrollContainerIDs().contains(scrollLayerID))
+            return true;
+    }
+
+    return false;
+}
+
 }
 
 @interface UIView (WKHitTesting)
@@ -89,8 +105,7 @@ static void collectDescendantViewsAtPoint(Vector<UIView *, 16>& viewsAtPoint, UI
         }
 
         if ([view isKindOfClass:[WKChildScrollView class]]) {
-            // See if the deepest view hit is actually a child of the scrollview.
-            if ([viewsAtPoint.last() isDescendantOfView:view])
+            if (WebKit::isScrolledBy((WKChildScrollView *)view, viewsAtPoint.last()))
                 return view;
         }
     }

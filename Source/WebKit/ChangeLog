@@ -1,3 +1,38 @@
+2019-03-21  Antti Koivisto  <antti@apple.com>
+
+        UI-process hit-testing needs to know about containing block relationships
+        https://bugs.webkit.org/show_bug.cgi?id=195845
+        <rdar://problem/48949633>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/ios/overflow-scroll-overlap-5.html
+
+        When an overflow scroller contains a positioned element the element may not be on a descendant layer of the scroller,
+        yet should move along with it. This needs to be taken into account in UI-side hit testing.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        (WebKit::RemoteLayerTreeNode::nonAncestorScrollContainerIDs const):
+        (WebKit::RemoteLayerTreeNode::addNonAncestorScrollContainerID):
+        (WebKit::RemoteLayerTreeNode::clearNonAncestorScrollContainerIDs):
+
+        Maintain non-ancestor scrolling relationships for layers.
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::commitScrollingTreeState):
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::isScrolledBy):
+
+        Helper to figure out who scrolls who.
+
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+
+        After commit, pull the non-ancestor scrolling relationships from the scrolling tree and update the layer tree.
+
 2019-03-21  Daniel Bates  <dabates@apple.com>
 
         [iOS] Inline -_ensureFormAccessoryView into -formAccessoryView and have -_updateAccessory ensure we have a form accessory

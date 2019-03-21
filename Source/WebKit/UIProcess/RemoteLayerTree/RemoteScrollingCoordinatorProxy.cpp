@@ -80,10 +80,9 @@ void RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrol
 {
     m_requestedScrollInfo = &requestedScrollInfo;
 
-    // FIXME: There must be a better idiom for this.
-    std::unique_ptr<ScrollingStateTree> stateTree(const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree().release());
+    auto stateTree = WTFMove(const_cast<RemoteScrollingCoordinatorTransaction&>(transaction).scrollingStateTree());
 
-    const RemoteLayerTreeHost* layerTreeHost = this->layerTreeHost();
+    auto* layerTreeHost = this->layerTreeHost();
     if (!layerTreeHost) {
         ASSERT_NOT_REACHED();
         return;
@@ -91,6 +90,8 @@ void RemoteScrollingCoordinatorProxy::commitScrollingTreeState(const RemoteScrol
 
     connectStateNodeLayers(*stateTree, *layerTreeHost);
     m_scrollingTree->commitTreeState(WTFMove(stateTree));
+
+    establishLayerTreeScrollingRelations(*layerTreeHost);
 
     m_requestedScrollInfo = nullptr;
 }
@@ -163,6 +164,11 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
         }
     }
 }
+
+void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&)
+{
+}
+
 #endif
 
 bool RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& event)

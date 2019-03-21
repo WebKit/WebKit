@@ -43,6 +43,8 @@
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingTreeFrameScrollingNode.h>
+#import <WebCore/ScrollingTreeOverflowScrollingNode.h>
+#import <WebCore/ScrollingTreePositionedNode.h>
 #endif
 
 namespace WebKit {
@@ -115,6 +117,32 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll()
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll()
 {
     m_webPageProxy.scrollingNodeScrollDidEndScroll();
+}
+
+void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost& remoteLayerTreeHost)
+{
+    for (auto layerID : m_layersWithNonAncestorScrollingRelations) {
+        if (auto* layerNode = remoteLayerTreeHost.nodeForID(layerID))
+            layerNode->clearNonAncestorScrollContainerIDs();
+    }
+    m_layersWithNonAncestorScrollingRelations.clear();
+
+    // Usually a scroll view scrolls its descendant layers. In some positioning cases it also controls non-descendants.
+    // To do overlap hit testing correctly we tell layers about such relations.
+
+    // FIXME: This doesn't contain ScrollPositioningBehavior::Stationary nodes. They will need to be handled too.
+    //        See https://bugs.webkit.org/show_bug.cgi?id=196100
+    for (auto& overflowAndPositionedNodeIDs : m_scrollingTree->overflowRelatedNodes()) {
+        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowAndPositionedNodeIDs.key));
+        for (auto positionedNodeID : overflowAndPositionedNodeIDs.value) {
+            auto* positionedNode = downcast<ScrollingTreePositionedNode>(m_scrollingTree->nodeForID(positionedNodeID));
+            auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
+
+            positionedLayerNode->addNonAncestorScrollContainerID(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
+
+            m_layersWithNonAncestorScrollingRelations.add(positionedLayerNode->layerID());
+        }
+    }
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)

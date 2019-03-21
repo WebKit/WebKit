@@ -27,6 +27,7 @@
 
 #include <WebCore/GraphicsLayer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 OBJC_CLASS CALayer;
 #if PLATFORM(IOS_FAMILY)
@@ -58,6 +59,11 @@ public:
     const WebCore::Region& eventRegion() const { return m_eventRegion; }
     void setEventRegion(const WebCore::Region&);
 
+    // If empty the layer is scrolled by an ancestor scroller.
+    const auto& nonAncestorScrollContainerIDs() const { return m_nonAncestorScrollLayerIDs; }
+    void addNonAncestorScrollContainerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_nonAncestorScrollLayerIDs.append(layerID); }
+    void clearNonAncestorScrollContainerIDs() { m_nonAncestorScrollLayerIDs.clear(); }
+
     void detachFromParent();
 
     static WebCore::GraphicsLayer::PlatformLayerID layerID(CALayer *);
@@ -76,6 +82,7 @@ private:
 #endif
 
     WebCore::Region m_eventRegion;
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_nonAncestorScrollLayerIDs;
 };
 
 }
