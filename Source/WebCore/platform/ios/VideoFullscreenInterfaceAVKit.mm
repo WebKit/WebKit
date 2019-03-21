@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -763,7 +763,7 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
 
-    m_videoFullscreenModel = model;
+    m_videoFullscreenModel = makeWeakPtr(model);
 
     if (m_videoFullscreenModel) {
         m_videoFullscreenModel->addClient(*this);
@@ -782,7 +782,7 @@ void VideoFullscreenInterfaceAVKit::setVideoFullscreenModel(VideoFullscreenModel
 
 void VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
 {
-    m_fullscreenChangeObserver = observer;
+    m_fullscreenChangeObserver = makeWeakPtr(observer);
 }
 
 void VideoFullscreenInterfaceAVKit::hasVideoChanged(bool hasVideo)
@@ -833,7 +833,7 @@ static UIViewController *fallbackViewController(UIView *view)
 
 UIViewController *VideoFullscreenInterfaceAVKit::presentingViewController()
 {
-    auto *controller = videoFullscreenModel()->presentingViewController();
+    auto *controller = videoFullscreenModel() ? videoFullscreenModel()->presentingViewController() : nil;
     if (!controller)
         controller = fallbackViewController(m_parentView.get());
 
@@ -927,8 +927,8 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
 
 void VideoFullscreenInterfaceAVKit::invalidate()
 {
-    m_videoFullscreenModel = nil;
-    m_fullscreenChangeObserver = nil;
+    m_videoFullscreenModel = nullptr;
+    m_fullscreenChangeObserver = nullptr;
     
     cleanupFullscreen();
 }
@@ -966,7 +966,9 @@ void VideoFullscreenInterfaceAVKit::preparedToExitFullscreen()
         return;
 
     m_waitingForPreparedToExit = false;
-    m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, true);
+    ASSERT(m_videoFullscreenModel);
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, true);
 #endif
 }
 
@@ -1135,7 +1137,9 @@ bool VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason(VideoFullscre
 #endif
     
     BOOL finished = reason == ExitFullScreenReason::DoneButtonTapped || reason == ExitFullScreenReason::PinchGestureHandled;
-    m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, finished);
+    ASSERT(m_videoFullscreenModel);
+    if (m_videoFullscreenModel)
+        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, finished);
 
     return false;
 }
@@ -1242,7 +1246,7 @@ void VideoFullscreenInterfaceAVKit::doSetup()
         [m_playerViewController setWebKitOverrideRouteSharingPolicy:(NSUInteger)m_routeSharingPolicy routingContextUID:m_routingContextUID];
 
 #if PLATFORM(WATCHOS)
-    m_viewController = videoFullscreenModel()->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController);
+    m_viewController = videoFullscreenModel() ? videoFullscreenModel()->createVideoFullscreenViewController(m_playerViewController.get().avPlayerViewController) : nil;
 #endif
 
     if (m_viewController) {
