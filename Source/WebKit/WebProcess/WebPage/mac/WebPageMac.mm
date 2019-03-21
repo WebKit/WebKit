@@ -504,8 +504,7 @@ void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, co
     for (auto& type : types)
         WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, data.vector());
 
-    bool result;
-    readSelectionFromPasteboard(replaceSelectionPasteboardName(), result);
+    readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
 
     for (auto& type : types)
         WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
@@ -529,50 +528,46 @@ void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& ele
     [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
 }
 
-void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
+void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.selection().isNone()) {
-        result = false;
-        return;
-    }
+    auto& frame = m_page->focusController().focusedOrMainFrame();
+    if (frame.selection().isNone())
+        return completionHandler(false);
     frame.editor().readSelectionFromPasteboard(pasteboardName);
-    result = true;
+    completionHandler(true);
 }
 
-void WebPage::getStringSelectionForPasteboard(String& stringValue)
+void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
-    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
+    if (auto* pluginView = focusedPluginViewForFrame(frame)) {
         String selection = pluginView->getSelectionString();
-        if (!selection.isNull()) {
-            stringValue = selection;
-            return;
-        }
+        if (!selection.isNull())
+            return completionHandler(WTFMove(selection));
     }
 
     if (frame.selection().isNone())
-        return;
+        return completionHandler({ });
 
-    stringValue = frame.editor().stringSelectionForPasteboard();
+    completionHandler(frame.editor().stringSelectionForPasteboard());
 }
 
-void WebPage::getDataSelectionForPasteboard(const String pasteboardType, SharedMemory::Handle& handle, uint64_t& size)
+void WebPage::getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    auto& frame = m_page->focusController().focusedOrMainFrame();
     if (frame.selection().isNone())
-        return;
+        return completionHandler({ }, 0);
 
     RefPtr<SharedBuffer> buffer = frame.editor().dataSelectionForPasteboard(pasteboardType);
-    if (!buffer) {
-        size = 0;
-        return;
-    }
-    size = buffer->size();
+    if (!buffer)
+        return completionHandler({ }, 0);
+    uint64_t size = buffer->size();
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     memcpy(sharedMemoryBuffer->data(), buffer->data(), size);
+    SharedMemory::Handle handle;
     sharedMemoryBuffer->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    completionHandler(WTFMove(handle), size);
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
@@ -589,39 +584,39 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest& request)
     return request.url().protocolIs("applewebdata");
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, bool& result)
+void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    auto& frame = m_page->focusController().focusedOrMainFrame();
 
+    bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
     if (hitResult.isSelected())
         result = frame.eventHandler().eventMayStartDrag(platform(event));
-    else
 #endif
-        result = false;
+    completionHandler(result);
 }
 
-void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, bool& result)
+void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, CompletionHandler<void(bool)>&& completionHandler)
 {
-    result = false;
-
     if (WebProcess::singleton().parentProcessConnection()->inSendSync()) {
         // In case we're already inside a sendSync message, it's possible that the page is in a
         // transitionary state, so any hit-testing could cause crashes  so we just return early in that case.
-        return;
+        return completionHandler(false);
     }
 
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
+    auto& frame = m_page->focusController().focusedOrMainFrame();
 
     HitTestResult hitResult = frame.eventHandler().hitTestResultAtPoint(frame.view()->windowToContents(event.position()), HitTestRequest::ReadOnly | HitTestRequest::Active);
     frame.eventHandler().setActivationEventNumber(eventNumber);
+    bool result = false;
 #if ENABLE(DRAG_SUPPORT)
     if (hitResult.isSelected())
         result = frame.eventHandler().eventMayStartDrag(platform(event));
     else
 #endif
         result = !!hitResult.scrollbar();
+    completionHandler(result);
 }
 
 void WebPage::setTopOverhangImage(WebImage* image)

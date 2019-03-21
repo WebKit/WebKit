@@ -176,11 +176,12 @@ String WebPage::platformUserAgent(const URL& url) const
 }
 
 #if HAVE(GTK_GESTURES)
-void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, IntPoint& result)
+void WebPage::getCenterForZoomGesture(const IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&& completionHandler)
 {
-    result = mainFrameView()->rootViewToContents(centerInViewCoordinates);
+    IntPoint result = mainFrameView()->rootViewToContents(centerInViewCoordinates);
     double scale = m_page->pageScaleFactor();
     result.scale(1 / scale, 1 / scale);
+    completionHandler(WTFMove(result));
 }
 #endif
 

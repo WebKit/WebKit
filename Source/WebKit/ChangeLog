@@ -1,5 +1,31 @@
 2019-03-21  Alex Christensen  <achristensen@webkit.org>
 
+        Stop using LegacySync messages in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=196057
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::markLayersVolatile):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::getCenterForZoomGesture):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::readSelectionFromPasteboard):
+        (WebKit::WebPage::getStringSelectionForPasteboard):
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::replaceSelectionWithPasteboardData):
+        (WebKit::WebPage::readSelectionFromPasteboard):
+        (WebKit::WebPage::getStringSelectionForPasteboard):
+        (WebKit::WebPage::getDataSelectionForPasteboard):
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
         Stop using LegacySync messages in WebPasteboardProxy
         https://bugs.webkit.org/show_bug.cgi?id=196060
 

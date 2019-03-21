@@ -705,7 +705,7 @@ public:
     void freezeLayerTree(LayerTreeFreezeReason);
     void unfreezeLayerTree(LayerTreeFreezeReason);
 
-    void markLayersVolatile(WTF::Function<void (bool)>&& completionHandler = { });
+    void markLayersVolatile(Function<void(bool)>&& completionHandler = { });
     void cancelMarkLayersVolatile();
 
     NotificationPermissionRequestManager* notificationPermissionRequestManager();
@@ -754,7 +754,7 @@ public:
 #endif
 
 #if PLATFORM (GTK) && HAVE(GTK_GESTURES)
-    void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, WebCore::IntPoint& result);
+    void getCenterForZoomGesture(const WebCore::IntPoint& centerInViewCoordinates, CompletionHandler<void(WebCore::IntPoint&&)>&&);
 #endif
 
     void didApplyStyle();
@@ -782,11 +782,11 @@ public:
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
-    void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
-    void getStringSelectionForPasteboard(WTF::String& stringValue);
-    void getDataSelectionForPasteboard(const WTF::String pasteboardType, SharedMemory::Handle& handle, uint64_t& size);
-    void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
-    void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
+    void readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&&);
+    void getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&&);
+    void getDataSelectionForPasteboard(const String pasteboardType, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&&);
+    void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&&);
+    void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&&);
     bool performNonEditingBehaviorForSelector(const String&, WebCore::KeyboardEvent*);
 #endif
 
@@ -1122,7 +1122,7 @@ public:
     void shouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&);
 #endif
 
-    void showShareSheet(WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback);
+    void showShareSheet(WebCore::ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback);
     void didCompleteShareSheet(bool wasCompleted, ShareSheetCallbackID contextId);
     
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -1813,7 +1813,7 @@ private:
 #endif
 
     WebCore::Timer m_layerVolatilityTimer;
-    Vector<WTF::Function<void (bool)>> m_markLayersAsVolatileCompletionHandlers;
+    Vector<Function<void(bool)>> m_markLayersAsVolatileCompletionHandlers;
     bool m_isSuspendedUnderLock { false };
 
     HashSet<String, ASCIICaseInsensitiveHash> m_mimeTypesWithCustomContentProviders;
@@ -1868,8 +1868,8 @@ private:
     HashMap<String, RefPtr<WebURLSchemeHandlerProxy>> m_schemeToURLSchemeHandlerProxyMap;
     HashMap<uint64_t, WebURLSchemeHandlerProxy*> m_identifierToURLSchemeHandlerProxyMap;
 
-    HashMap<uint64_t, WTF::Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
-    HashMap<ShareSheetCallbackID, WTF::Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
+    HashMap<uint64_t, Function<void(bool granted)>> m_storageAccessResponseCallbackMap;
+    HashMap<ShareSheetCallbackID, Function<void(bool completed)>> m_shareSheetResponseCallbackMap;
 
 #if ENABLE(APPLICATION_MANIFEST)
     HashMap<uint64_t, uint64_t> m_applicationManifestFetchCallbackMap;

@@ -407,7 +407,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM (GTK) && HAVE(GTK_GESTURES)
-    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) LegacySync
+    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Delayed
 #endif
 
 #if PLATFORM(COCOA)
@@ -417,16 +417,16 @@ messages -> WebPage LegacyReceiver {
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
-    GetStringSelectionForPasteboard() -> (String stringValue) LegacySync
-    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) LegacySync
-    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) LegacySync
+    GetStringSelectionForPasteboard() -> (String stringValue) Delayed
+    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Delayed
+    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Delayed
 
 #if ENABLE(SERVICE_CONTROLS)
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 #endif
 
-    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) LegacySync
-    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) LegacySync
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Delayed
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) Delayed
 
     SetTextAsync(String text)
     InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)

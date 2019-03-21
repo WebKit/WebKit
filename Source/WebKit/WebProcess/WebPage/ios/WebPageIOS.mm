@@ -479,19 +479,22 @@ void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& ele
     [m_mockAccessibilityElement setRemoteTokenData:elementTokenData];
 }
 
-void WebPage::readSelectionFromPasteboard(const String&, bool&)
+void WebPage::readSelectionFromPasteboard(const String&, CompletionHandler<void(bool&&)>&& completionHandler)
 {
     notImplemented();
+    completionHandler(false);
 }
 
-void WebPage::getStringSelectionForPasteboard(String&)
+void WebPage::getStringSelectionForPasteboard(CompletionHandler<void(String&&)>&& completionHandler)
 {
     notImplemented();
+    completionHandler({ });
 }
 
-void WebPage::getDataSelectionForPasteboard(const String, SharedMemory::Handle&, uint64_t&)
+void WebPage::getDataSelectionForPasteboard(const String, CompletionHandler<void(SharedMemory::Handle&&, uint64_t)>&& completionHandler)
 {
     notImplemented();
+    completionHandler({ }, 0);
 }
 
 WKAccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
@@ -506,14 +509,16 @@ bool WebPage::platformCanHandleRequest(const WebCore::ResourceRequest&)
     return false;
 }
 
-void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool&)
+void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
+    completionHandler(false);
 }
 
-void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, bool&)
+void WebPage::acceptsFirstMouse(int, const WebKit::WebMouseEvent&, CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
+    completionHandler(false);
 }
 
 void WebPage::computePagesForPrintingPDFDocument(uint64_t, const PrintInfo&, Vector<IntRect>&)
