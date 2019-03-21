@@ -5475,10 +5475,10 @@ void WebPageProxy::didChooseColor(const WebCore::Color& color)
 
 void WebPageProxy::didEndColorPicker()
 {
+    m_colorPicker = nullptr;
     if (!hasRunningProcess())
         return;
 
-    m_colorPicker = nullptr;
     m_process->send(Messages::WebPage::DidEndColorPicker(), m_pageID);
 }
 #endif

@@ -1,3 +1,20 @@
+2019-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Fix possible memory leak when dismissing a color picker
+        https://bugs.webkit.org/show_bug.cgi?id=196026
+        <rdar://problem/48778568>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix a problem with WebPageProxy::endColorPicker where an early return could leave a color picker
+        with a +1 reference count after dismissing it.
+
+        * UIProcess/WebColorPicker.cpp:
+        (WebKit::WebColorPicker::endPicker):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::endColorPicker):
+        (WebKit::WebPageProxy::didEndColorPicker):
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to provide geolocation information
