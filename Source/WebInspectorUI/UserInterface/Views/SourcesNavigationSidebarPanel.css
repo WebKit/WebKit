@@ -66,55 +66,56 @@
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content .details-section {
+.sidebar > .panel.navigation.sources > .content > .details-section {
     padding-bottom: 1px;
     font-size: 11px;
-    border-bottom: none;
+    border-bottom-width: 1px !important;
 }
 
-.sidebar > .panel.navigation.sources > .content .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,
-.sidebar > .panel.navigation.sources > .content .details-section > .content,
-.sidebar > .panel.navigation.sources > .content .details-section > .content > .group {
+.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,
+.sidebar > .panel.navigation.sources > .content > .details-section > .content,
+.sidebar > .panel.navigation.sources > .content > .details-section > .content > .group {
     display: block;
 }
 
-.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .content {
+.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content {
     display: none;
 }
 
-.sidebar > .panel.navigation.sources > .content .details-section.breakpoints > .header > .options .create-breakpoint {
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint {
     width: 15px;
 }
 
-.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container) {
-    border-bottom: 1px solid var(--border-color);
+.sidebar > .panel.navigation.sources > .content > .details-section:matches(.pause-reason, .call-stack, .breakpoints) > .content,
+.sidebar > .panel.navigation.sources > .content > .tree-outline.resources {
     overflow-y: auto;
 }
 
-.sidebar > .panel.navigation.sources > .content > .call-stack-container {
-    /* 24px from .details-section > .header (23px height and -1px top) */
-    /* 1px from .sidebar > .panel.navigation.sources > .content > .call-stack-container (border-bottom) */
-    /* 5.5 to ensure that half of the next item is shown when overflowing */
-    min-height: calc(25px + calc(min(var(--call-stack-count), 5.5) * 20px));
+.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints) > .content {
+    /* Same calculation as below, but without var(--item-count) */
+    max-height: 110px;
 }
 
-.sidebar > .panel.navigation.sources > .content > .breakpoints-container {
-    /* 24px from `.details-section > .header` (23px height and -1px top) */
-    /* 1px from .sidebar > .panel.navigation.sources > .content > .breakpoints-container (border-bottom) */
+.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content {
+    /* 1px from .sidebar > .panel.navigation.sources > .content > .details-section (border-bottom) */
     /* 5.5 to ensure that half of the next item is shown when overflowing */
-    min-height: calc(25px + calc(min(var(--breakpoints-count), 5.5) * 20px));
+    min-height: calc(min(var(--item-count), 5.5) * 20px);
 }
 
-.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint {
+.sidebar > .panel.navigation.sources > .content > .details-section.call-stack {
+    --item-count: var(--call-stack-count);
+}
+
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints {
+    --item-count: var(--breakpoints-count);
+}
+
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .create-breakpoint {
     width: 15px;
 }
 
 .sidebar > .panel.navigation.sources > .content > .navigation-bar {
     margin-bottom: 1px;
-}
-
-.sidebar > .panel.navigation.sources > .content > .resources-container {
-    overflow-y: auto;
 }
 
 .sidebar > .panel.navigation.sources > .content .tree-outline.single-thread {
@@ -132,16 +133,17 @@
         overflow-y: hidden;
     }
 
-    .sidebar > .panel.navigation.sources > .content > .pause-reason-container {
+    .sidebar > .panel.navigation.sources > .content > .pause-reason {
         flex-shrink: 0;
     }
 
-    .sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container) {
+    .sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content,
+    .sidebar > .panel.navigation.sources > .content > .tree-outline.resources {
         height: 100%;
     }
 }
 
-.sidebar > .panel.navigation.sources > .content > .breakpoints .tree-outline .item.event-target-window .icon {
+.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .tree-outline .item.event-target-window .icon {
     content: url(../Images/TypeObject.svg);
 }
 

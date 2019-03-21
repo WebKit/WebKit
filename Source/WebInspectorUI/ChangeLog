@@ -1,5 +1,52 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Sources: collapsing a section doesn't shrink the space used by that section
+        https://bugs.webkit.org/show_bug.cgi?id=196045
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerPaused):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerResumed):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .details-section):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.collapsed > .content):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints > .header > .options .create-breakpoint):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.pause-reason, .call-stack, .breakpoints) > .content,):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints) > .content):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.call-stack):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .create-breakpoint):
+        (.sidebar > .panel.navigation.sources > .content > .pause-reason):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.call-stack, .breakpoints):not(.collapsed) > .content,):
+        (.sidebar > .panel.navigation.sources > .content > .details-section.breakpoints .tree-outline .item.event-target-window .icon):
+        (.sidebar > .panel.navigation.sources > .content .details-section): Deleted.
+        (.sidebar > .panel.navigation.sources > .content .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,): Deleted.
+        (.sidebar > .panel.navigation.sources > .content .details-section.collapsed > .content): Deleted.
+        (.sidebar > .panel.navigation.sources > .content .details-section.breakpoints > .header > .options .create-breakpoint): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > :matches(.pause-reason-container, .call-stack-container, .breakpoints-container)): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .call-stack-container): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints-container .create-breakpoint): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .resources-container): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .pause-reason-container): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > :matches(.call-stack-container, .breakpoints-container, .resources-container)): Deleted.
+        (.sidebar > .panel.navigation.sources > .content > .breakpoints .tree-outline .item.event-target-window .icon): Deleted.
+         - Apply the overflow scrolling to the content element of each `WI.DetailsSection`.
+         - Ensure that there is a maximum height for each section.
+         - When `.collapsed`, don't try to grow/shrink the section based on its contents.
+
+        * UserInterface/Views/CallFrameTreeElement.css:
+        (.tree-outline .item.call-frame):
+        (.tree-outline .item.call-frame .status):
+        Make the container of the active call frame status indicator relatively positioned so that
+        the active call frame status indicator will follow the container when scrolling.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timeline should show when events preventDefault() was called on an event or not
         https://bugs.webkit.org/show_bug.cgi?id=176824
         <rdar://problem/34290931>

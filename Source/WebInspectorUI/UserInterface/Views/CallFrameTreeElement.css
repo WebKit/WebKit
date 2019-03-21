@@ -23,12 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.tree-outline .item.call-frame {
+    position: relative;
+}
+
 .tree-outline .item.call-frame .status {
     position: absolute;
     float: none;
     -webkit-margin-start: 1px;
 
-    --call-frame-status-start: 1px;
+    --call-frame-status-start: 11px;
 }
 
 body[dir=ltr] .tree-outline .item.call-frame .status {

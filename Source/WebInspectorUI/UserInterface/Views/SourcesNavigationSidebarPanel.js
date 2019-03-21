@@ -111,11 +111,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._pauseReasonLinkContainerElement = document.createElement("span");
         this._pauseReasonTextRow = new WI.DetailsSectionTextRow;
         this._pauseReasonGroup = new WI.DetailsSectionGroup([this._pauseReasonTextRow]);
-        let pauseReasonSection = new WI.DetailsSection("paused-reason", WI.UIString("Pause Reason"), [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
-
-        this._pauseReasonContainer = document.createElement("div");
-        this._pauseReasonContainer.className = "pause-reason-container";
-        this._pauseReasonContainer.appendChild(pauseReasonSection.element);
+        this._pauseReasonSection = new WI.DetailsSection("paused-reason", WI.UIString("Pause Reason"), [this._pauseReasonGroup], this._pauseReasonLinkContainerElement);
 
         this._callStackTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
         this._callStackTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._handleCallStackElementAddedOrRemoved, this);
@@ -126,11 +122,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         callStackRow.element.appendChild(this._callStackTreeOutline.element);
 
         let callStackGroup = new WI.DetailsSectionGroup([callStackRow]);
-        let callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [callStackGroup]);
-
-        this._callStackContainer = document.createElement("div");
-        this._callStackContainer.className = "call-stack-container";
-        this._callStackContainer.appendChild(callStackSection.element);
+        this._callStackSection = new WI.DetailsSection("call-stack", WI.UIString("Call Stack"), [callStackGroup]);
 
         this._mainTargetTreeElement = null;
         this._activeCallFrameTreeElement = null;
@@ -200,15 +192,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         breakpointNavigationBar.addNavigationItem(this._createBreakpointButton);
 
         let breakpointsGroup = new WI.DetailsSectionGroup([breakpointsRow]);
-        let breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
-
-        let breakpointsContainer = this.contentView.element.insertBefore(document.createElement("div"), this.contentView.element.firstChild);
-        breakpointsContainer.classList.add("breakpoints-container");
-        breakpointsContainer.appendChild(breakpointsSection.element);
+        this._breakpointsSection = new WI.DetailsSection("breakpoints", WI.UIString("Breakpoints"), [breakpointsGroup], breakpointNavigationBarWrapper);
+        this.contentView.element.insertBefore(this._breakpointsSection.element, this.contentView.element.firstChild);
 
         this._resourcesNavigationBar = new WI.NavigationBar;
         this.contentView.addSubview(this._resourcesNavigationBar);
-        this.contentView.element.insertBefore(this._resourcesNavigationBar.element, breakpointsSection.nextSibling);
+        this.contentView.element.insertBefore(this._resourcesNavigationBar.element, this._breakpointsSection.element.nextSibling);
 
         this._resourcesNavigationBar.addNavigationItem(new WI.FlexibleSpaceNavigationItem);
 
@@ -233,13 +222,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         resourceGroupingModeNavigationItem.element.addEventListener("mousedown", this._handleResourceGroupingModeMouseDown.bind(this));
         this._resourcesNavigationBar.addNavigationItem(resourceGroupingModeNavigationItem);
 
-        let resourcesContainer = this.contentView.element.insertBefore(document.createElement("div"), this._resourcesNavigationBar.element.nextSibling);
-        resourcesContainer.classList.add("resources-container");
-
         this._resourcesTreeOutline = this.contentTreeOutline;
+        this._resourcesTreeOutline.element.classList.add("resources");
         this._resourcesTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
         this._resourcesTreeOutline.includeSourceMapResourceChildren = true;
-        resourcesContainer.appendChild(this._resourcesTreeOutline.element);
+        this.contentView.element.insertBefore(this._resourcesTreeOutline.element, this._resourcesNavigationBar.element.nextSibling);
 
         let onlyShowResourcesWithIssuesFilterFunction = (treeElement) => {
             if (treeElement.treeOutline !== this._resourcesTreeOutline)
@@ -1697,10 +1684,10 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerPaused(event)
     {
-        this.contentView.element.insertBefore(this._callStackContainer, this.contentView.element.firstChild);
+        this.contentView.element.insertBefore(this._callStackSection.element, this.contentView.element.firstChild);
 
         if (this._updatePauseReason())
-            this.contentView.element.insertBefore(this._pauseReasonContainer, this.contentView.element.firstChild);
+            this.contentView.element.insertBefore(this._pauseReasonSection.element, this.contentView.element.firstChild);
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = true;
@@ -1713,9 +1700,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _handleDebuggerResumed(event)
     {
-        this._callStackContainer.remove();
+        this._callStackSection.element.remove();
 
-        this._pauseReasonContainer.remove();
+        this._pauseReasonSection.element.remove();
 
         this._debuggerPauseResumeButtonItem.enabled = true;
         this._debuggerPauseResumeButtonItem.toggled = false;
