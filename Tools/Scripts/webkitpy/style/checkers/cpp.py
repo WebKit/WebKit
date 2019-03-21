@@ -2862,15 +2862,32 @@ def check_min_versions_of_wk_api_available(clean_lines, line_number, error):
 
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
 
-    wk_api_available = search(r'WK_API_AVAILABLE\(macosx\(([^\)]+)\), ios\(([^\)]+)\)\)', line)
+    wk_api_available = search(r'WK_API_AVAILABLE\(macosx\(', line)
     if wk_api_available:
-        macosxMinVersion = wk_api_available.group(1)
-        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosxMinVersion):
-            error(line_number, 'build/wk_api_available', 5, '%s is neither a version number nor WK_MAC_TBA' % macosxMinVersion)
+        error(line_number, 'build/wk_api_available', 5, 'macosx() is deprecated; use macos() instead')
+
+    # FIXME: This should support any order.
+    wk_api_available = search(r'WK_API_AVAILABLE\(macos\(([^\)]+)\), ios\(([^\)]+)\)\)', line)
+    if wk_api_available:
+        macosMinVersion = wk_api_available.group(1)
+        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosMinVersion):
+            error(line_number, 'build/wk_api_available', 5, 'macos(%s) is invalid; expected WK_MAC_TBA or a number' % macosMinVersion)
 
         iosMinVersion = wk_api_available.group(2)
         if not match(r'^([\d\.]+|WK_IOS_TBA)$', iosMinVersion):
-            error(line_number, 'build/wk_api_available', 5, '%s is neither a version number nor WK_IOS_TBA' % iosMinVersion)
+            error(line_number, 'build/wk_api_available', 5, 'ios(%s) is invalid; expected WK_IOS_TBA or a number' % iosMinVersion)
+
+    wk_api_available = search(r'WK_API_AVAILABLE\(macos\(([^\)]+)\)\)', line)
+    if wk_api_available:
+        macosMinVersion = wk_api_available.group(1)
+        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosMinVersion):
+            error(line_number, 'build/wk_api_available', 5, 'macos(%s) is invalid; expected WK_MAC_TBA or a number' % macosMinVersion)
+
+    wk_api_available = search(r'WK_API_AVAILABLE\(ios\(([^\)]+)\)\)', line)
+    if wk_api_available:
+        iosMinVersion = wk_api_available.group(1)
+        if not match(r'^([\d\.]+|WK_IOS_TBA)$', iosMinVersion):
+            error(line_number, 'build/wk_api_available', 5, 'ios(%s) is invalid; expected WK_IOS_TBA or a number' % iosMinVersion)
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
