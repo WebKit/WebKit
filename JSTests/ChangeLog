@@ -1,3 +1,16 @@
+2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
+
+        JSObject::putDirectIndexSlowOrBeyondVectorLength should check if indexIsSufficientlyBeyondLengthForSparseMap
+        https://bugs.webkit.org/show_bug.cgi?id=196078
+        <rdar://problem/35925380>
+
+        Reviewed by Mark Lam.
+
+        Add a new benchmark that allocates several objects and invokes put_by_val_direct
+        with a large index. run-jsc-benchmarks says "definitely 1.6178x faster".
+
+        * microbenchmarks/put-by-val-direct-large-index.js: Added.
+
 2019-03-21  Mark Lam  <mark.lam@apple.com>
 
         Placate exception check validation in operationArrayIndexOfString().

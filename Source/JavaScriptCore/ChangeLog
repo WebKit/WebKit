@@ -1,5 +1,22 @@
 2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
 
+        JSObject::putDirectIndexSlowOrBeyondVectorLength should check if indexIsSufficientlyBeyondLengthForSparseMap
+        https://bugs.webkit.org/show_bug.cgi?id=196078
+        <rdar://problem/35925380>
+
+        Reviewed by Mark Lam.
+
+        Unlike the other variations of putByIndex, it only checked if the index
+        was larger than MIN_SPARSE_ARRAY_INDEX when the indexingType was
+        ALL_BLANK_INDEXING_TYPES. This resulted in a huge butterfly being
+        allocated for object literals (e.g. `{[9e4]: ...}`) and objects parsed
+        from JSON.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+
+2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
+
         CachedUnlinkedSourceCodeShape::m_provider should be a CachedRefPtr
         https://bugs.webkit.org/show_bug.cgi?id=196079
 

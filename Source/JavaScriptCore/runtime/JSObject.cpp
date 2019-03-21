@@ -3055,7 +3055,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
                 exec, i, value, attributes, mode,
                 ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm));
         }
-        if (i >= MIN_SPARSE_ARRAY_INDEX) {
+        if (indexIsSufficientlyBeyondLengthForSparseMap(i, 0) || i >= MIN_SPARSE_ARRAY_INDEX) {
             return putDirectIndexBeyondVectorLengthWithArrayStorage(
                 exec, i, value, attributes, mode, createArrayStorage(vm, 0, 0));
         }
