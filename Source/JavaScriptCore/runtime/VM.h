@@ -123,7 +123,6 @@ class JSDestructibleObjectHeapCellType;
 class JSGlobalObject;
 class JSObject;
 class JSRunLoopTimer;
-class JSSegmentedVariableObjectHeapCellType;
 class JSStringHeapCellType;
 class JSWebAssemblyCodeBlockHeapCellType;
 class JSWebAssemblyInstance;
@@ -329,7 +328,6 @@ public:
     std::unique_ptr<HeapCellType> destructibleCellHeapCellType;
     std::unique_ptr<JSStringHeapCellType> stringHeapCellType;
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
-    std::unique_ptr<JSSegmentedVariableObjectHeapCellType> segmentedVariableObjectHeapCellType;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<JSWebAssemblyCodeBlockHeapCellType> webAssemblyCodeBlockHeapCellType;
 #endif
@@ -365,7 +363,6 @@ public:
     CompleteSubspace stringSpace;
     CompleteSubspace destructibleObjectSpace;
     CompleteSubspace eagerlySweptDestructibleObjectSpace;
-    CompleteSubspace segmentedVariableObjectSpace;
     
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionSpace;

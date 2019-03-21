@@ -349,7 +349,6 @@
 		0F4F11E8209BCDAB00709654 /* CompilerTimingScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F11E6209BCDA100709654 /* CompilerTimingScope.h */; };
 		0F4F11EB209D426600709654 /* DFGAbstractValueClobberEpoch.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F11EA209D426300709654 /* DFGAbstractValueClobberEpoch.h */; };
 		0F4F29E018B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */; };
-		0F4F82881E2FFDE00075184C /* JSSegmentedVariableObjectHeapCellType.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F82861E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4F828C1E31B9760075184C /* StochasticSpaceTimeMutatorScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4F828A1E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.h */; };
 		0F50AF3C193E8B3900674EE8 /* DFGStructureClobberState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */; };
 		0F5513A61D5A682C00C32BD8 /* FreeList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F5513A51D5A682A00C32BD8 /* FreeList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2441,8 +2440,6 @@
 		0F4F11EA209D426300709654 /* DFGAbstractValueClobberEpoch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAbstractValueClobberEpoch.h; path = dfg/DFGAbstractValueClobberEpoch.h; sourceTree = "<group>"; };
 		0F4F29DD18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStaticExecutionCountEstimationPhase.cpp; path = dfg/DFGStaticExecutionCountEstimationPhase.cpp; sourceTree = "<group>"; };
 		0F4F29DE18B6AD1C0057BC15 /* DFGStaticExecutionCountEstimationPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStaticExecutionCountEstimationPhase.h; path = dfg/DFGStaticExecutionCountEstimationPhase.h; sourceTree = "<group>"; };
-		0F4F82851E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSegmentedVariableObjectHeapCellType.cpp; sourceTree = "<group>"; };
-		0F4F82861E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSegmentedVariableObjectHeapCellType.h; sourceTree = "<group>"; };
 		0F4F82891E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StochasticSpaceTimeMutatorScheduler.cpp; sourceTree = "<group>"; };
 		0F4F828A1E31B9710075184C /* StochasticSpaceTimeMutatorScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StochasticSpaceTimeMutatorScheduler.h; sourceTree = "<group>"; };
 		0F50AF3B193E8B3900674EE8 /* DFGStructureClobberState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureClobberState.h; path = dfg/DFGStructureClobberState.h; sourceTree = "<group>"; };
@@ -6996,8 +6993,6 @@
 				E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */,
 				0F919D0E157F3327004A4E7D /* JSSegmentedVariableObject.cpp */,
 				0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */,
-				0F4F82851E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.cpp */,
-				0F4F82861E2FFDDB0075184C /* JSSegmentedVariableObjectHeapCellType.h */,
 				A7299D9B17D12837005F5FF9 /* JSSet.cpp */,
 				A7299D9C17D12837005F5FF9 /* JSSet.h */,
 				A790DD69182F499700588807 /* JSSetIterator.cpp */,
@@ -8505,6 +8500,7 @@
 				79A228361D35D71F00D8E067 /* ArithProfile.h in Headers */,
 				0F6B1CB91861244C00845D97 /* ArityCheckMode.h in Headers */,
 				A1A009C11831A26E00CF8711 /* ARM64Assembler.h in Headers */,
+				FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */,
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
 				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
@@ -8546,7 +8542,6 @@
 				0F2C63B01E60AE4300C13839 /* B3Bank.h in Headers */,
 				0FEC85011BDACDAC0080FF74 /* B3BasicBlock.h in Headers */,
 				0FEC85021BDACDAC0080FF74 /* B3BasicBlockInlines.h in Headers */,
-				FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */,
 				0FEC85031BDACDAC0080FF74 /* B3BasicBlockUtils.h in Headers */,
 				0F338E1C1BF286EA0013C88F /* B3BlockInsertionSet.h in Headers */,
 				0FEC85041BDACDAC0080FF74 /* B3BlockWorklist.h in Headers */,
@@ -8626,7 +8621,6 @@
 				0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */,
 				0F4570411BE584CA0062A629 /* B3TimingScope.h in Headers */,
 				0FEC853C1BDACDAC0080FF74 /* B3Type.h in Headers */,
-				FE1E2C402240DD6200F6B729 /* ARM64EAssembler.h in Headers */,
 				DCFDFBDA1D1F5D9E00FE3D72 /* B3TypeMap.h in Headers */,
 				0FEC853E1BDACDAC0080FF74 /* B3UpsilonValue.h in Headers */,
 				0FEC85401BDACDAC0080FF74 /* B3UseCounts.h in Headers */,
@@ -9404,7 +9398,6 @@
 				A7C0C4AC168103020017011D /* JSScriptRefPrivate.h in Headers */,
 				14D01A7721FB351F00BC54E9 /* JSScriptSourceProvider.h in Headers */,
 				0F919D11157F332C004A4E7D /* JSSegmentedVariableObject.h in Headers */,
-				0F4F82881E2FFDE00075184C /* JSSegmentedVariableObjectHeapCellType.h in Headers */,
 				A7299D9E17D12837005F5FF9 /* JSSet.h in Headers */,
 				A790DD70182F499700588807 /* JSSetIterator.h in Headers */,
 				BDFCB2BBE90F41349E1B0BED /* JSSourceCode.h in Headers */,
@@ -9495,6 +9488,7 @@
 				14B723B812D7DA6F003BD5ED /* MachineStackMarker.h in Headers */,
 				86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */,
 				A1A009C01831A22D00CF8711 /* MacroAssemblerARM64.h in Headers */,
+				FE1E2C3F2240DD5800F6B729 /* MacroAssemblerARM64E.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
 				863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */,
 				E32AB2441DCD75F400D7533A /* MacroAssemblerHelpers.h in Headers */,

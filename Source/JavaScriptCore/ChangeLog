@@ -1,3 +1,39 @@
+2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use finalizer in JSGlobalLexicalEnvironment and JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=195992
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        JSGlobalLexicalEnvironment and JSGlobalObject have their own CompleteSubspace to call destructors while they are not inheriting JSDestructibleObject.
+        But it is too costly since (1) it requires CompleteSubspace in VM, (2) both objects allocate MarkedBlocks while # of them are really small.
+
+        Instead of using CompleteSubspace, we just set finalizers for them. Since these objects are rarely allocated, setting finalizers does not show
+        memory / performance problems (actually, previously we used finalizer for ArrayPrototype due to the same reason, and it does not show any problems).
+
+        And we also add following two changes to JSSegmentedVariableObject.
+
+        1. Remove one boolean used for debugging in Release build. It enlarges sizeof(JSSegmentedVariableObject) and allocates one more MarkedBlock.
+        2. Use cellLock() instead.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/JSSegmentedVariableObject.cpp:
+        (JSC::JSSegmentedVariableObject::findVariableIndex):
+        (JSC::JSSegmentedVariableObject::addVariables):
+        (JSC::JSSegmentedVariableObject::visitChildren):
+        (JSC::JSSegmentedVariableObject::~JSSegmentedVariableObject):
+        (JSC::JSSegmentedVariableObject::finishCreation):
+        * runtime/JSSegmentedVariableObject.h:
+        (JSC::JSSegmentedVariableObject::subspaceFor): Deleted.
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp: Removed.
+        * runtime/JSSegmentedVariableObjectHeapCellType.h: Removed.
+        * runtime/StringIteratorPrototype.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2019-03-20  Saam Barati  <sbarati@apple.com>
 
         DFG::AbstractValue::validateOSREntry is wrong when isHeapTop and the incoming value is Empty

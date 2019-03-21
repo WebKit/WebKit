@@ -871,7 +871,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSScriptFetchParameters.h
     runtime/JSScriptFetcher.h
     runtime/JSSegmentedVariableObject.h
-    runtime/JSSegmentedVariableObjectHeapCellType.h
     runtime/JSSet.h
     runtime/JSSetIterator.h
     runtime/JSSourceCode.h

@@ -31,7 +31,6 @@
 #include <JavaScriptCore/FastMallocAlignedMemoryAllocator.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
-#include <JavaScriptCore/JSSegmentedVariableObjectHeapCellType.h>
 #include <JavaScriptCore/MarkingConstraint.h>
 #include <JavaScriptCore/SubspaceInlines.h>
 #include <JavaScriptCore/VM.h>
@@ -46,7 +45,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , m_builtinNames(&vm)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(vm.heap, vm.destructibleObjectHeapCellType.get(), RuntimeMethod)
     , m_outputConstraintSpace("WebCore Wrapper w/ Output Constraint", vm.heap, vm.destructibleObjectHeapCellType.get(), vm.fastMallocAllocator.get())
-    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, vm.segmentedVariableObjectHeapCellType.get(), vm.fastMallocAllocator.get())
+    , m_globalObjectOutputConstraintSpace("WebCore Global Object w/ Output Constraint", vm.heap, vm.cellHeapCellType.get(), vm.fastMallocAllocator.get())
 {
 }
 

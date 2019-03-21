@@ -27,6 +27,7 @@
 #include "config.h"
 #include "StringIteratorPrototype.h"
 
+#include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "JSStringIterator.h"

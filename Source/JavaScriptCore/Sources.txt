@@ -846,7 +846,6 @@ runtime/JSScope.cpp
 runtime/JSScriptFetcher.cpp
 runtime/JSScriptFetchParameters.cpp
 runtime/JSSegmentedVariableObject.cpp
-runtime/JSSegmentedVariableObjectHeapCellType.cpp
 runtime/JSSet.cpp
 runtime/JSSetIterator.cpp
 runtime/JSSourceCode.cpp

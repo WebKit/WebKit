@@ -1,3 +1,15 @@
+2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use finalizer in JSGlobalLexicalEnvironment and JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=195992
+
+        Reviewed by Keith Miller and Mark Lam.
+
+        Use cellHeapCellType since JSSegmentedVariableObject already set finalizer.
+
+        * bindings/js/WebCoreJSClientData.cpp:
+        (WebCore::JSVMClientData::JSVMClientData):
+
 2019-03-20  Youenn Fablet  <youenn@apple.com>
 
         Compute quota after network process restart based on default quota and space used

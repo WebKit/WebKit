@@ -47,8 +47,6 @@ class LLIntOffsetsExtractor;
 // JSSegmentedVariableObject has its own GC tracing functionality, since it knows the
 // exact dimensions of the variables array at all times.
 
-// Except for JSGlobalObject, subclasses of this don't call the destructor and leak memory.
-
 class JSSegmentedVariableObject : public JSSymbolTableObject {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
@@ -57,6 +55,14 @@ public:
     using Base = JSSymbolTableObject;
 
     DECLARE_INFO;
+
+    static const bool needsDestruction = true;
+
+    template<typename CellType, SubspaceAccess>
+    static CompleteSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.cellSpace;
+    }
 
     bool isValidScopeOffset(ScopeOffset offset)
     {
@@ -90,12 +96,6 @@ public:
     
     static void destroy(JSCell*);
     
-    template<typename, SubspaceAccess>
-    static CompleteSubspace* subspaceFor(VM& vm)
-    {
-        return &vm.segmentedVariableObjectSpace;
-    }
-    
     const ClassInfo* classInfo() const { return m_classInfo; }
     
 protected:
@@ -108,8 +108,9 @@ protected:
 private:
     SegmentedVector<WriteBarrier<Unknown>, 16> m_variables;
     const ClassInfo* m_classInfo;
-    ConcurrentJSLock m_lock;
+#ifndef NDEBUG
     bool m_alreadyDestroyed { false }; // We use these assertions to check that we aren't doing ancient hacks that result in this being destroyed more than once.
+#endif
 };
 
 } // namespace JSC
