@@ -77,7 +77,7 @@ public:
 protected:
     explicit AnimationTimeline();
 
-    ListHashSet<WebAnimation*> m_allAnimations;
+    Vector<WeakPtr<WebAnimation>> m_allAnimations;
     ListHashSet<RefPtr<WebAnimation>> m_animations;
     HashMap<Element*, PropertyToTransitionMap> m_elementToCompletedCSSTransitionByCSSPropertyID;
 

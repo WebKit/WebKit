@@ -132,19 +132,19 @@ Vector<RefPtr<WebAnimation>> DocumentTimeline::getAnimations() const
 
     // First, let's get all qualifying animations in their right group.
     for (const auto& animation : m_allAnimations) {
-        if (!animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
+        if (!animation || !animation->isRelevant() || animation->timeline() != this || !is<KeyframeEffect>(animation->effect()))
             continue;
 
         auto* target = downcast<KeyframeEffect>(animation->effect())->target();
         if (!target || !target->isDescendantOf(*m_document))
             continue;
 
-        if (is<CSSTransition>(animation) && downcast<CSSTransition>(animation)->owningElement())
-            cssTransitions.append(animation);
-        else if (is<CSSAnimation>(animation) && downcast<CSSAnimation>(animation)->owningElement())
-            cssAnimations.append(animation);
+        if (is<CSSTransition>(animation.get()) && downcast<CSSTransition>(animation.get())->owningElement())
+            cssTransitions.append(animation.get());
+        else if (is<CSSAnimation>(animation.get()) && downcast<CSSAnimation>(animation.get())->owningElement())
+            cssAnimations.append(animation.get());
         else
-            webAnimations.append(animation);
+            webAnimations.append(animation.get());
     }
 
     // Now sort CSS Transitions by their composite order.

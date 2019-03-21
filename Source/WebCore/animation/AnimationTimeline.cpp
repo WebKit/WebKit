@@ -56,13 +56,13 @@ AnimationTimeline::~AnimationTimeline()
 
 void AnimationTimeline::forgetAnimation(WebAnimation* animation)
 {
-    m_allAnimations.remove(animation);
+    m_allAnimations.removeFirst(animation);
 }
 
 void AnimationTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     if (m_animations.add(&animation)) {
-        m_allAnimations.add(&animation);
+        m_allAnimations.append(makeWeakPtr(&animation));
         auto* timeline = animation.timeline();
         if (timeline && timeline != this)
             timeline->removeAnimation(animation);
@@ -492,7 +492,7 @@ void AnimationTimeline::cancelDeclarativeAnimation(DeclarativeAnimation& animati
 {
     animation.cancelFromStyle();
     removeAnimation(animation);
-    m_allAnimations.remove(&animation);
+    m_allAnimations.removeFirst(&animation);
 }
 
 } // namespace WebCore

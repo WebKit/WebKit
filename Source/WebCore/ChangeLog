@@ -1,3 +1,21 @@
+2019-03-20  Antoine Quint  <graouts@apple.com>
+
+        DumpRenderTree crashes under WebAnimation::isRelevant when running imported/mozilla/css-transitions/test_document-get-animations.html in GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=196028
+        <rdar://problem/46842707>
+
+        Reviewed by Dean Jackson.
+
+        Instead of keeping a ListHashSet of raw pointers, we are now using a Vector of WeakPtrs.
+
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::forgetAnimation):
+        (WebCore::AnimationTimeline::animationTimingDidChange):
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimation):
+        * animation/AnimationTimeline.h:
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::getAnimations const):
+
 2019-03-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGColorAnimator
