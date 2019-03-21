@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2006 Alexey Proskuryakov (ap@webkit.org)
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -1537,8 +1537,14 @@ public:
     void setPaintWorkletGlobalScopeForName(const String& name, Ref<PaintWorkletGlobalScope>&&);
 #endif
 
-    void setAsRunningUserScripts() { m_isRunningUserScripts = true; }
-    bool isRunningUserScripts() const { return m_isRunningUserScripts; }
+    WEBCORE_EXPORT bool hasEvaluatedUserAgentScripts() const;
+    WEBCORE_EXPORT bool isRunningUserScripts() const;
+    WEBCORE_EXPORT void setAsRunningUserScripts();
+    void setHasEvaluatedUserAgentScripts();
+#if ENABLE(APPLE_PAY)
+    WEBCORE_EXPORT bool hasStartedApplePaySession() const;
+    WEBCORE_EXPORT void setHasStartedApplePaySession();
+#endif
 
     void frameWasDisconnectedFromOwner();
 
@@ -2095,7 +2101,11 @@ private:
     HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 #endif
 
+    bool m_hasEvaluatedUserAgentScripts { false };
     bool m_isRunningUserScripts { false };
+#if ENABLE(APPLE_PAY)
+    bool m_hasStartedApplePaySession { false };
+#endif
 
     Ref<UndoManager> m_undoManager;
 #if PLATFORM(IOS_FAMILY)

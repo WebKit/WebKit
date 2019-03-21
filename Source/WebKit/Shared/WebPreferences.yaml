@@ -678,7 +678,7 @@ SelectionPaintingWithoutSelectionGapsEnabled:
 
 ApplePayEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_APPLE_PAY_ENABLED
   condition: ENABLE(APPLE_PAY)
 
 ApplePayCapabilityDisclosureAllowed:

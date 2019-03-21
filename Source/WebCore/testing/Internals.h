@@ -667,6 +667,9 @@ public:
     void setQuickLookPassword(const String&);
 
     void setAsRunningUserScripts(Document&);
+#if ENABLE(APPLE_PAY)
+    void setHasStartedApplePaySession(Document&);
+#endif
 
 #if ENABLE(WEBGL)
     void simulateWebGLContextChanged(WebGLRenderingContext&);

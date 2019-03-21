@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #if ENABLE(APPLE_PAY)
 
+#include "Document.h"
+#include "LinkIconCollector.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
@@ -46,34 +48,50 @@ PaymentCoordinator::~PaymentCoordinator()
     m_client.paymentCoordinatorDestroyed();
 }
 
-bool PaymentCoordinator::supportsVersion(unsigned version) const
+bool PaymentCoordinator::supportsVersion(Document& document, unsigned version) const
 {
+    if (!shouldAllowApplePay(document))
+        return false;
     return m_client.supportsVersion(version);
 }
 
-bool PaymentCoordinator::canMakePayments()
+bool PaymentCoordinator::canMakePayments(Document& document)
 {
+    if (!shouldAllowApplePay(document))
+        return false;
     return m_client.canMakePayments();
 }
 
-void PaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
+void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
-    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, domainName, WTFMove(completionHandler));
+    if (!shouldAllowApplePay(document))
+        return completionHandler(false);
+    m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
-void PaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
+void PaymentCoordinator::openPaymentSetup(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
-    m_client.openPaymentSetup(merchantIdentifier, domainName, WTFMove(completionHandler));
+    if (!shouldAllowApplePay(document))
+        return completionHandler(false);
+    m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
-bool PaymentCoordinator::beginPaymentSession(PaymentSession& paymentSession, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest& paymentRequest)
+bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession& paymentSession, const ApplePaySessionPaymentRequest& paymentRequest)
 {
     ASSERT(!m_activeSession);
 
-    if (!m_client.showPaymentUI(originatingURL, linkIconURLs, paymentRequest))
+    if (!shouldAllowApplePay(document))
+        return false;
+
+    Vector<URL> linkIconURLs;
+    for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
+        linkIconURLs.append(icon.url);
+
+    if (!m_client.showPaymentUI(document.url(), linkIconURLs, paymentRequest))
         return false;
 
     m_activeSession = &paymentSession;
+    document.setHasStartedApplePaySession();
     return true;
 }
 
@@ -195,8 +213,11 @@ void PaymentCoordinator::didCancelPaymentSession()
     m_activeSession = nullptr;
 }
 
-Optional<String> PaymentCoordinator::validatedPaymentNetwork(unsigned version, const String& paymentNetwork) const
+Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document& document, unsigned version, const String& paymentNetwork) const
 {
+    if (!shouldAllowApplePay(document))
+        return WTF::nullopt;
+
     if (version < 2 && equalIgnoringASCIICase(paymentNetwork, "jcb"))
         return WTF::nullopt;
 
@@ -204,6 +225,32 @@ Optional<String> PaymentCoordinator::validatedPaymentNetwork(unsigned version, c
         return WTF::nullopt;
 
     return m_client.validatedPaymentNetwork(paymentNetwork);
+}
+
+bool PaymentCoordinator::shouldAllowApplePay(Document& document) const
+{
+    if (m_client.supportsUnrestrictedApplePay())
+        return true;
+
+    if (document.hasEvaluatedUserAgentScripts() || document.isRunningUserScripts()) {
+        ASSERT(shouldAllowUserAgentScripts(document));
+        return false;
+    }
+
+    return true;
+}
+
+bool PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
+{
+    if (m_client.supportsUnrestrictedApplePay())
+        return true;
+
+    if (document.hasStartedApplePaySession()) {
+        ASSERT(shouldAllowApplePay(document));
+        return false;
+    }
+
+    return true;
 }
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,12 +71,12 @@ public:
     static const unsigned short STATUS_PIN_INCORRECT = 6;
     static const unsigned short STATUS_PIN_LOCKOUT = 7;
 
-    static ExceptionOr<bool> supportsVersion(ScriptExecutionContext&, unsigned version);
-    static ExceptionOr<bool> canMakePayments(ScriptExecutionContext&);
-    static ExceptionOr<void> canMakePaymentsWithActiveCard(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
-    static ExceptionOr<void> openPaymentSetup(ScriptExecutionContext&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
+    static ExceptionOr<bool> supportsVersion(Document&, unsigned version);
+    static ExceptionOr<bool> canMakePayments(Document&);
+    static ExceptionOr<void> canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
+    static ExceptionOr<void> openPaymentSetup(Document&, const String& merchantIdentifier, Ref<DeferredPromise>&&);
 
-    ExceptionOr<void> begin();
+    ExceptionOr<void> begin(Document&);
     ExceptionOr<void> abort();
     ExceptionOr<void> completeMerchantValidation(JSC::ExecState&, JSC::JSValue merchantSession);
     ExceptionOr<void> completeShippingMethodSelection(ApplePayShippingMethodUpdate&&);

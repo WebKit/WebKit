@@ -78,9 +78,11 @@ private:
 
     bool isWebPaymentCoordinator() const override { return true; }
 
+    bool supportsUnrestrictedApplePay() const override;
+
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    
+
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;

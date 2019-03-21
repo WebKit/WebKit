@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKWebProcessPlugIn.h>
 
-#if ENABLE(PAYMENT_REQUEST)
-
-#include "PaymentRequest.h"
-#include "PaymentSessionBase.h"
-#include <wtf/Function.h>
-
-namespace JSC {
-class JSValue;
-}
-
-namespace WebCore {
-
-class Document;
-struct AddressErrors;
-struct PayerErrorFields;
-struct PaymentValidationErrors;
-
-class PaymentHandler : public virtual PaymentSessionBase {
-public:
-    static RefPtr<PaymentHandler> create(Document&, PaymentRequest&, const PaymentRequest::MethodIdentifier&);
-    static ExceptionOr<void> canCreateSession(Document&);
-    static bool hasActiveSession(Document&);
-
-    virtual ExceptionOr<void> convertData(JSC::JSValue&&) = 0;
-    virtual ExceptionOr<void> show(Document&) = 0;
-    virtual void hide() = 0;
-    virtual void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) = 0;
-    virtual ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) = 0;
-    virtual ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) = 0;
-    virtual void complete(Optional<PaymentComplete>&&) = 0;
-    virtual ExceptionOr<void> retry(PaymentValidationErrors&&) = 0;
-};
-
-} // namespace WebCore
-
-#endif // ENABLE(PAYMENT_REQUEST)
+@interface WebProcessPlugInWithInternals : NSObject <WKWebProcessPlugIn>
+@end

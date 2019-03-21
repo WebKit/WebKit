@@ -7549,12 +7549,15 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     if (m_hasInjectedPlugInsScript)
         return;
 
+    auto& scriptController = frame()->script();
+
     // Use the JS file provided by the Chrome client, or fallback to the default one.
     String jsString = page()->chrome().client().plugInExtraScript();
-    if (!jsString)
+    if (!jsString || !scriptController.shouldAllowUserAgentScripts(*this))
         jsString = String(plugInsJavaScript, sizeof(plugInsJavaScript));
 
-    frame()->script().evaluateInWorld(ScriptSourceCode(jsString), world);
+    setHasEvaluatedUserAgentScripts();
+    scriptController.evaluateInWorld(ScriptSourceCode(jsString), world);
 
     m_hasInjectedPlugInsScript = true;
 }
@@ -8724,6 +8727,55 @@ ContentChangeObserver& Document::contentChangeObserver()
         m_contentChangeObserver = std::make_unique<ContentChangeObserver>(*this);
     return *m_contentChangeObserver; 
 }
+#endif
+
+bool Document::hasEvaluatedUserAgentScripts() const
+{
+    auto& top = topDocument();
+    return this == &top ? m_hasEvaluatedUserAgentScripts : top.hasEvaluatedUserAgentScripts();
+}
+
+bool Document::isRunningUserScripts() const
+{
+    auto& top = topDocument();
+    return this == &top ? m_isRunningUserScripts : top.isRunningUserScripts();
+}
+
+void Document::setAsRunningUserScripts()
+{
+    auto& top = topDocument();
+    if (this == &top)
+        m_isRunningUserScripts = true;
+    else
+        top.setAsRunningUserScripts();
+}
+
+void Document::setHasEvaluatedUserAgentScripts()
+{
+    auto& top = topDocument();
+    if (this == &top)
+        m_hasEvaluatedUserAgentScripts = true;
+    else
+        top.setHasEvaluatedUserAgentScripts();
+}
+
+#if ENABLE(APPLE_PAY)
+
+bool Document::hasStartedApplePaySession() const
+{
+    auto& top = topDocument();
+    return this == &top ? m_hasStartedApplePaySession : top.hasStartedApplePaySession();
+}
+
+void Document::setHasStartedApplePaySession()
+{
+    auto& top = topDocument();
+    if (this == &top)
+        m_hasStartedApplePaySession = true;
+    else
+        top.setHasStartedApplePaySession();
+}
+
 #endif
 
 } // namespace WebCore

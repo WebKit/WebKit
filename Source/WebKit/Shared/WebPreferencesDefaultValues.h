@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -258,4 +258,10 @@ bool defaultCustomPasteboardDataEnabled();
 #else
 #define DEFAULT_FAST_CLICKS_EVERYWHERE true
 #endif
+#endif
+
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+#define DEFAULT_APPLE_PAY_ENABLED true
+#else
+#define DEFAULT_APPLE_PAY_ENABLED false
 #endif

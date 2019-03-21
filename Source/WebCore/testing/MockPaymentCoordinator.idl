@@ -41,4 +41,6 @@
     readonly attribute sequence<ApplePayShippingMethod> shippingMethods;
     readonly attribute MockPaymentContactFields requiredBillingContactFields;
     readonly attribute MockPaymentContactFields requiredShippingContactFields;
+
+    attribute boolean supportsUnrestrictedApplePay;
 };

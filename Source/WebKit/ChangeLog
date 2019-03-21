@@ -1,3 +1,44 @@
+2019-03-21  Andy Estes  <aestes@apple.com>
+
+        [iOS] Apple Pay should be available in documents with no user agent scripts
+        https://bugs.webkit.org/show_bug.cgi?id=196061
+        <rdar://problem/48649391>
+
+        Reviewed by Brady Eidson.
+
+        * Shared/AuxiliaryProcess.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::parentProcessHasEntitlement):
+
+        Added a convenience function for checking parent process entitlements.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
+        Enabled Apple Pay by default on platforms that enable APPLE_PAY_REMOTE_UI.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::supportsUnrestrictedApplePay const):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+
+        Implemented supportsUnrestrictedApplePay by checking for the
+        com.apple.private.WebKit.UnrestrictedApplePay entitlement on platforms that enable
+        APPLE_PAY_REMOTE_UI.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (didClearWindowObjectForFrame):
+        (setUpPageLoaderClient):
+
+        Added injected bundle SPI that TestWebKitAPI uses to inject the WebCore Internals interface.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
+        Changed to call ScriptController::executeUserAgentScriptInWorld.
+
 2019-03-21  Chris Dumez  <cdumez@apple.com>
 
         WebKit should throw when trying to create a WKWebView with a related view that is using a different data store

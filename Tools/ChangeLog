@@ -1,3 +1,28 @@
+2019-03-21  Andy Estes  <aestes@apple.com>
+
+        [iOS] Apple Pay should be available in documents with no user agent scripts
+        https://bugs.webkit.org/show_bug.cgi?id=196061
+        <rdar://problem/48649391>
+
+        Reviewed by Brady Eidson.
+
+        Added API tests and related infrastructure.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplePay.mm: Added.
+        (-[TestApplePayScriptMessageHandler initWithExpectation:]):
+        (-[TestApplePayScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/apple-pay-active-session.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/apple-pay-availability-in-iframe.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/apple-pay-availability.html: Added.
+        * TestWebKitAPI/cocoa/TestProtocol.mm:
+        (-[TestProtocol startLoading]):
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.h: Added.
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm: Added.
+        (-[WebProcessPlugInWithInternals webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[WebProcessPlugInWithInternals webProcessPlugInBrowserContextController:didClearWindowObjectForFrame:inScriptWorld:]):
+
 2019-03-21  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSSION (r243297): webkitpy tests broken

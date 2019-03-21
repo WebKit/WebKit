@@ -3289,7 +3289,7 @@ void WebPage::runJavaScript(const String& script, bool forceUserGesture, Optiona
     ExceptionDetails details;
     auto* world = worldName ? InjectedBundleScriptWorld::find(worldName.value()) : &InjectedBundleScriptWorld::normalWorld();
     if (world) {
-        if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
+        if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeUserAgentScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
             hadException = false;
             serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContextForWorld(world),
                 toRef(m_mainFrame->coreFrame()->script().globalObject(world->coreWorld())->globalExec(), resultValue), nullptr);

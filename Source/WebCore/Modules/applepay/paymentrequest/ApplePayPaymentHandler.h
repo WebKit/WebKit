@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,9 +65,9 @@ private:
 
     // PaymentHandler
     ExceptionOr<void> convertData(JSC::JSValue&&) final;
-    ExceptionOr<void> show() final;
+    ExceptionOr<void> show(Document&) final;
     void hide() final;
-    void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
+    void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
     void complete(Optional<PaymentComplete>&&) final;

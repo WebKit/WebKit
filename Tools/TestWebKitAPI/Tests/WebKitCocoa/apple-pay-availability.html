@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<body>
+<script>
+    const applePayRequestBase = () => {
+        return {
+            merchantCapabilities: ['supports3DS'],
+            supportedNetworks: ['visa'],
+            countryCode: 'US',
+        };
+    };
+
+    const applePayPaymentRequest = () => {
+        const request = applePayRequestBase();
+        request.total = { label: 'total', amount: '0.00' };
+        request.currencyCode = 'USD';
+        return request;
+    };
+
+    const applePayMethod = () => {
+        const request = applePayRequestBase();
+        request.version = 1;
+        request.merchantIdentifier = '';
+        return {
+            supportedMethods: 'https://apple.com/apple-pay',
+            data: request,
+        };
+    };
+
+    window.addEventListener('load', async () => {
+        internals.mockPaymentCoordinator.supportsUnrestrictedApplePay = false;
+
+        const supportsVersion = ApplePaySession.supportsVersion(1);
+        const canMakePayments = ApplePaySession.canMakePayments();
+        const canMakePaymentsWithActiveCard = await ApplePaySession.canMakePaymentsWithActiveCard('');
+
+        const paymentRequest = new PaymentRequest([applePayMethod()], {
+            total: {
+                label: 'total',
+                amount: { currency: 'USD', value: '0.00' },
+            },
+        });
+
+        const canMakePayment = await paymentRequest.canMakePayment();
+
+        window.webkit.messageHandlers.testApplePay.postMessage({
+            supportsVersion,
+            canMakePayments,
+            canMakePaymentsWithActiveCard,
+            canMakePayment,
+        });
+    });
+</script>

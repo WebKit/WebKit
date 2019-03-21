@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class Document;
 class Payment;
 class PaymentCoordinatorClient;
 class PaymentContact;
@@ -52,14 +53,14 @@ public:
 
     PaymentCoordinatorClient& client() { return m_client; }
 
-    bool supportsVersion(unsigned version) const;
-    bool canMakePayments();
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
+    bool supportsVersion(Document&, unsigned version) const;
+    bool canMakePayments(Document&);
+    void canMakePaymentsWithActiveCard(Document&, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler);
+    void openPaymentSetup(Document&, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler);
 
     bool hasActiveSession() const { return m_activeSession; }
 
-    bool beginPaymentSession(PaymentSession&, const URL& originatingURL, const Vector<URL>& linkIconURLs, const ApplePaySessionPaymentRequest&);
+    bool beginPaymentSession(Document&, PaymentSession&, const ApplePaySessionPaymentRequest&);
     void completeMerchantValidation(const PaymentMerchantSession&);
     void completeShippingMethodSelection(Optional<ShippingMethodUpdate>&&);
     void completeShippingContactSelection(Optional<ShippingContactUpdate>&&);
@@ -75,7 +76,10 @@ public:
     WEBCORE_EXPORT void didSelectShippingContact(const PaymentContact&);
     WEBCORE_EXPORT void didCancelPaymentSession();
 
-    Optional<String> validatedPaymentNetwork(unsigned version, const String&) const;
+    Optional<String> validatedPaymentNetwork(Document&, unsigned version, const String&) const;
+
+    WEBCORE_EXPORT bool shouldAllowApplePay(Document&) const;
+    WEBCORE_EXPORT bool shouldAllowUserAgentScripts(Document&) const;
 
 private:
     PaymentCoordinatorClient& m_client;

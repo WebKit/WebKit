@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
+static ExceptionOr<Vector<String>> convertAndValidate(Document& document, unsigned version, const Vector<String>& supportedNetworks, const PaymentCoordinator& paymentCoordinator)
 {
     if (supportedNetworks.isEmpty())
         return Exception { TypeError, "At least one supported network must be provided." };
@@ -41,7 +41,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, const Ve
     Vector<String> result;
     result.reserveInitialCapacity(supportedNetworks.size());
     for (auto& supportedNetwork : supportedNetworks) {
-        auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(version, supportedNetwork);
+        auto validatedNetwork = paymentCoordinator.validatedPaymentNetwork(document, version, supportedNetwork);
         if (!validatedNetwork)
             return Exception { TypeError, makeString("\"", supportedNetwork, "\" is not a valid payment network.") };
         result.uncheckedAppend(*validatedNetwork);
@@ -50,9 +50,9 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, const Ve
     return WTFMove(result);
 }
 
-ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
+ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document, unsigned version, ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
-    if (!version || !paymentCoordinator.supportsVersion(version))
+    if (!version || !paymentCoordinator.supportsVersion(document, version))
         return Exception { InvalidAccessError, makeString('"', version, "\" is not a supported version.") };
 
     ApplePaySessionPaymentRequest result;
@@ -64,7 +64,7 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, 
         return merchantCapabilities.releaseException();
     result.setMerchantCapabilities(merchantCapabilities.releaseReturnValue());
 
-    auto supportedNetworks = convertAndValidate(version, request.supportedNetworks, paymentCoordinator);
+    auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
     if (supportedNetworks.hasException())
         return supportedNetworks.releaseException();
     result.setSupportedNetworks(supportedNetworks.releaseReturnValue());

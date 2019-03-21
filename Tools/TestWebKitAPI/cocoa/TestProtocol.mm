@@ -86,7 +86,12 @@ static NSURL *createRedirectURL(NSString *query)
         return;
     }
 
-    NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+    NSData *data;
+    if ([requestURL.host isEqualToString:@"bundle-html-file"])
+        data = [NSData dataWithContentsOfURL:[NSBundle.mainBundle URLForResource:requestURL.lastPathComponent.stringByDeletingPathExtension withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    else
+        data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+
     RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
 
     if ([requestURL.host isEqualToString:@"redirect"]) {

@@ -157,6 +157,16 @@ void WebPaymentCoordinator::paymentCoordinatorDestroyed()
     delete this;
 }
 
+bool WebPaymentCoordinator::supportsUnrestrictedApplePay() const
+{
+#if ENABLE(APPLE_PAY_REMOTE_UI)
+    static bool hasEntitlement = WebProcess::singleton().parentProcessHasEntitlement("com.apple.private.WebKit.UnrestrictedApplePay");
+    return hasEntitlement;
+#else
+    return true;
+#endif
+}
+
 IPC::Connection* WebPaymentCoordinator::messageSenderConnection() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)

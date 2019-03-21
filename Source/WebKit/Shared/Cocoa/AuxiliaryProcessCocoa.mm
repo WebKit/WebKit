@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "AuxiliaryProcess.h"
 
 #import "WKCrashReporter.h"
+#import <wtf/cocoa/Entitlements.h>
 
 namespace WebKit {
 
@@ -34,6 +35,11 @@ void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRef
 {
     setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data()]);
     CRASH();
+}
+
+bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
+{
+    return WTF::hasEntitlement(m_connection->xpcConnection(), entitlement);
 }
 
 }

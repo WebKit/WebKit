@@ -662,7 +662,7 @@ applePayCapabilityDisclosureAllowed:
   initial: true
 applePayEnabled:
   conditional: APPLE_PAY
-  initial: false
+  initial: defaultApplePayEnabled
 applePayRemoteUIEnabled:
   conditional: APPLE_PAY_REMOTE_UI
   initial: true

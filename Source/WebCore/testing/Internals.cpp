@@ -4541,8 +4541,15 @@ void Internals::setQuickLookPassword(const String& password)
 
 void Internals::setAsRunningUserScripts(Document& document)
 {
-    document.topDocument().setAsRunningUserScripts();
+    document.setAsRunningUserScripts();
 }
+
+#if ENABLE(APPLE_PAY)
+void Internals::setHasStartedApplePaySession(Document& document)
+{
+    document.setHasStartedApplePaySession();
+}
+#endif
 
 #if ENABLE(WEBGL)
 void Internals::simulateWebGLContextChanged(WebGLRenderingContext& context)

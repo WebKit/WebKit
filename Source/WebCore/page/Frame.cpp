@@ -5,7 +5,7 @@
  *                     2000 Simon Hausmann <hausmann@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  *                     2001 George Staikos <staikos@kde.org>
- * Copyright (C) 2004-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
@@ -769,8 +769,10 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
         return;
     if (!UserContentURLPattern::matchesPatterns(document->url(), script.whitelist(), script.blacklist()))
         return;
+    if (!m_script->shouldAllowUserAgentScripts(*document))
+        return;
 
-    document->topDocument().setAsRunningUserScripts();
+    document->setAsRunningUserScripts();
     loader().client().willInjectUserScript(world);
     m_script->evaluateInWorld(ScriptSourceCode(script.source(), URL(script.url())), world);
 }

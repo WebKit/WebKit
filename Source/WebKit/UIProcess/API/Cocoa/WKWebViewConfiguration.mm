@@ -249,6 +249,10 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     _editableImagesEnabled = NO;
     _undoManagerAPIEnabled = NO;
 
+#if ENABLE(APPLE_PAY)
+    _applePayEnabled = DEFAULT_APPLE_PAY_ENABLED;
+#endif
+
     return self;
 }
 
