@@ -1,5 +1,60 @@
 2019-03-21  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: flatten the overview to show all records, one per line
+        https://bugs.webkit.org/show_bug.cgi?id=191901
+        <rdar://problem/46423618>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/OverviewTimelineView.js:
+        (WI.OverviewTimelineView):
+        (WI.OverviewTimelineView.prototype.closed):
+        (WI.OverviewTimelineView.prototype.get navigationItems): Added.
+        (WI.OverviewTimelineView.prototype.reset):
+        (WI.OverviewTimelineView.prototype.layout):
+        (WI.OverviewTimelineView.prototype.get _relevantTimelines): Added.
+        (WI.OverviewTimelineView.prototype.get _shouldGroupBySourceCode): Added.
+        (WI.OverviewTimelineView.prototype._loadExistingRecords): Added.
+        (WI.OverviewTimelineView.prototype._insertDataGridNode):
+        (WI.OverviewTimelineView.prototype._addResourceToDataGridIfNeeded):
+        (WI.OverviewTimelineView.prototype._addSourceCodeTimeline):
+        (WI.OverviewTimelineView.prototype._processPendingRepresentedObjects):
+        (WI.OverviewTimelineView.prototype._handleGroupBySourceCodeSettingChanged): Added.
+        (WI.OverviewTimelineView.prototype._handleGroupBySourceCodeNavigationItemCheckedDidChange): Added.
+        (WI.OverviewTimelineView.prototype._handleTimelineRecordAdded): Added.
+        (WI.OverviewTimelineView.prototype._sourceCodeTimelineAdded):
+        (WI.OverviewTimelineView.prototype._networkTimelineRecordAdded): Deleted.
+        Listen for new records on all timelines. Add each record as a new line. Since each timeline
+        has different data to display, only show the "name" and "graph" for all records.
+
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._currentContentViewDidChange):
+        (WI.TimelineRecordingContentView.prototype._updateImportedView): Deleted.
+        When viewing the overview of an imported recording, show the non-grouped overview.
+
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.prototype.addRecord):
+        (WI.TimelineRecording.prototype._keyForRecord):
+        Drive-by: show Media timeline events under the owner frame's resource when grouped.
+
+        * UserInterface/Views/TimelineRecordBar.css:
+        (.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment, .timeline-record-bar.timeline-record-type-heap-allocations > .segment): Added.
+        (.timeline-record-bar.timeline-record-type-script.garbage-collected > .segment): Deleted.
+
+        * UserInterface/Base/Setting.js:
+        Add setting for controlling the Timeline overview grouping.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/SourceCodeTimelineTreeElement.js: Removed.
+        * UserInterface/Views/TimelineRecordingImportedView.js: Removed.
+        * UserInterface/Views/TimelineRecordingImportedView.css: Removed.
+        Remove unused files.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+2019-03-21  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: the name of the file should not be used as a folder
         https://bugs.webkit.org/show_bug.cgi?id=196064
         <rdar://problem/49097710>

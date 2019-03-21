@@ -87,9 +87,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._progressView = new WI.TimelineRecordingProgressView;
         this._timelineContentBrowser.addSubview(this._progressView);
 
-        this._importedView = new WI.TimelineRecordingImportedView;
-        this._timelineContentBrowser.addSubview(this._importedView);
-
         this._timelineViewMap = new Map;
         this._pathComponentMap = new Map;
 
@@ -316,7 +313,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._timelineOverview.viewMode = newViewMode;
         this._updateTimelineOverviewHeight();
         this._updateProgressView();
-        this._updateImportedView();
         this._updateFilterBar();
 
         if (timelineView) {
@@ -940,11 +936,6 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         let isCapturing = WI.timelineManager.isCapturing();
         this._progressView.visible = isCapturing && this.currentTimelineView && !this.currentTimelineView.showsLiveRecordingData;
-    }
-
-    _updateImportedView()
-    {
-        this._importedView.visible = this._recording.imported && this.currentTimelineView && this.currentTimelineView.showsImportedRecordingMessage;
     }
 
     _updateFilterBar()

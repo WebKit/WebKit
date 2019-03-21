@@ -31,7 +31,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         console.assert(timeline.type === WI.TimelineRecord.Type.Layout, timeline);
 
-        let columns = {type: {}, name: {}, location: {}, area: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
+        let columns = {type: {}, name: {}, initiator: {}, area: {}, width: {}, height: {}, startTime: {}, totalTime: {}};
 
         columns.name.title = WI.UIString("Type");
         columns.name.width = "15%";
@@ -52,8 +52,8 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
 
         this._scopeBar = columns.type.scopeBar;
 
-        columns.location.title = WI.UIString("Initiator");
-        columns.location.width = "25%";
+        columns.initiator.title = WI.UIString("Initiator");
+        columns.initiator.width = "25%";
 
         columns.area.title = WI.UIString("Area");
         columns.area.width = "8%";

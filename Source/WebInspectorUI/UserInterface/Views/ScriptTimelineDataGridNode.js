@@ -69,7 +69,6 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
         this._cachedData.averageTime = duration;
         this._cachedData.callCount = this.record.callCountOrSamples;
         this._cachedData.location = this.record.initiatorCallFrame || this.record.sourceCodeLocation;
-
         return this._cachedData;
     }
 
@@ -86,8 +85,8 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
                 this._subtitle = WI.UIString("%s interval").format(timeoutString);
             else
                 this._subtitle = WI.UIString("%s delay").format(timeoutString);
-        } else if (this._record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched) {
-            if (this._record.extraDetails && this._record.extraDetails.defaultPrevented)
+        } else if (this.record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched) {
+            if (this.record.extraDetails && this.record.extraDetails.defaultPrevented)
                 this._subtitle = WI.UIString("default prevented");
         }
 
@@ -119,6 +118,9 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
         case "height":
         case "area":
             return zeroWidthSpace;
+
+        case "source": // Timeline Overview
+            return super.createCellContent("location", cell);
         }
 
         return super.createCellContent(columnIdentifier, cell);

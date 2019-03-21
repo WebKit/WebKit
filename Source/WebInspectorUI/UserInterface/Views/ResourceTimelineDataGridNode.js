@@ -74,6 +74,7 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
         this._cachedData.priority = this.resource.priority;
         this._cachedData.remoteAddress = this.resource.remoteAddress;
         this._cachedData.connectionIdentifier = this.resource.connectionIdentifier;
+        this._cachedData.initiator = this.resource.initiatorSourceCodeLocation;
         return this._cachedData;
     }
 
@@ -139,6 +140,9 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
             if (title)
                 cell.title = title;
             return title || emDash;
+
+        case "source": // Timeline Overview
+            return super.createCellContent("initiator", cell);
         }
 
         return super.createCellContent(columnIdentifier, cell);

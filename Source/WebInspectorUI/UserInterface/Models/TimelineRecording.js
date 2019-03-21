@@ -238,12 +238,12 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         }
     }
 
-    sourceCodeTimelinesForSourceCode(sourceCode)
+    get sourceCodeTimelines()
     {
-        var timelines = this._sourceCodeTimelinesMap.get(sourceCode);
-        if (!timelines)
-            return [];
-        return [...timelines.values()];
+        let timelines = [];
+        for (let timelinesForSourceCode of this._sourceCodeTimelinesMap.values())
+            timelines = timelines.concat(Array.from(timelinesForSourceCode.values()));
+        return timelines;
     }
 
     timelineForInstrument(instrument)
@@ -308,16 +308,22 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             || record.type === WI.TimelineRecord.Type.RenderingFrame
             || record.type === WI.TimelineRecord.Type.CPU
             || record.type === WI.TimelineRecord.Type.Memory
-            || record.type === WI.TimelineRecord.Type.HeapAllocations
-            || record.type === WI.TimelineRecord.Type.Media)
+            || record.type === WI.TimelineRecord.Type.HeapAllocations)
             return;
 
         if (!WI.TimelineRecording.sourceCodeTimelinesSupported())
             return;
 
         // Add the record to the source code timelines.
-        var activeMainResource = WI.networkManager.mainFrame.provisionalMainResource || WI.networkManager.mainFrame.mainResource;
-        var sourceCode = record.sourceCodeLocation ? record.sourceCodeLocation.sourceCode : activeMainResource;
+        let sourceCode = null;
+        if (record.sourceCodeLocation)
+            sourceCode = record.sourceCodeLocation.sourceCode;
+        else if (record.type === WI.TimelineRecord.Type.Media) {
+            if (record.domNode && record.domNode.frame)
+                sourceCode = record.domNode.frame.mainResource;
+        }
+        if (!sourceCode)
+            sourceCode = WI.networkManager.mainFrame.provisionalMainResource || WI.networkManager.mainFrame.mainResource;
 
         var sourceCodeTimelines = this._sourceCodeTimelinesMap.get(sourceCode);
         if (!sourceCodeTimelines) {
@@ -452,10 +458,18 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     _keyForRecord(record)
     {
         var key = record.type;
-        if (record instanceof WI.ScriptTimelineRecord || record instanceof WI.LayoutTimelineRecord || record instanceof WI.MediaTimelineRecord)
+        if (record instanceof WI.ScriptTimelineRecord || record instanceof WI.LayoutTimelineRecord)
             key += ":" + record.eventType;
         if (record instanceof WI.ScriptTimelineRecord && record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched)
             key += ":" + record.details;
+        if (record instanceof WI.MediaTimelineRecord) {
+            key += ":" + record.eventType;
+            if (record.eventType === WI.MediaTimelineRecord.EventType.DOMEvent) {
+                if (record.domEvent && record.domEvent.eventName)
+                    key += ":" + record.domEvent.eventName;
+            } else if (record.eventType === WI.MediaTimelineRecord.EventType.LowPower)
+                key += ":" + (record.isLowPower ? "enabled" : "disabled");
+        }
         if (record.sourceCodeLocation)
             key += ":" + record.sourceCodeLocation.lineNumber + ":" + record.sourceCodeLocation.columnNumber;
         return key;

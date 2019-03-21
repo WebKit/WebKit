@@ -58,6 +58,7 @@ WI.MediaTimelineDataGridNode = class MediaTimelineDataGridNode extends WI.Timeli
             cell.classList.add(...this.iconClassNames());
             return value;
 
+        case "source": // Timeline Overview
         case "element":
             return value ? WI.linkifyNodeReference(value) : emDash;
 

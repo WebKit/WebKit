@@ -47,7 +47,7 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
         this._cachedData.area = this.record.width * this.record.height;
         this._cachedData.startTime = this.record.startTime - (this.graphDataSource ? this.graphDataSource.zeroTime : 0);
         this._cachedData.totalTime = this.record.duration;
-        this._cachedData.location = this.record.initiatorCallFrame;
+        this._cachedData.initiator = this.record.initiatorCallFrame;
         return this._cachedData;
     }
 
@@ -73,6 +73,9 @@ WI.LayoutTimelineDataGridNode = class LayoutTimelineDataGridNode extends WI.Time
 
         case "totalTime":
             return isNaN(value) ? emDash : Number.secondsToString(value, higherResolution);
+
+        case "source": // Timeline Overview
+            return super.createCellContent("initiator", cell);
         }
 
         return super.createCellContent(columnIdentifier, cell);
