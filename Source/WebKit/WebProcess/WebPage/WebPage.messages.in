@@ -78,10 +78,10 @@ messages -> WebPage LegacyReceiver {
     ReplaceSelectedText(String oldText, String newText)
     RequestAutocorrectionData(String textForAutocorrection, WebKit::CallbackID callbackID)
     ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
-    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Delayed
+    SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied) Synchronous
     RequestAutocorrectionContext()
     RequestEvasionRectsAboveSelection() -> (Vector<WebCore::FloatRect> rects) Async
-    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Delayed
+    GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information) Synchronous
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
@@ -123,7 +123,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) Delayed
+    TouchEventSync(WebKit::WebTouchEvent event) -> (bool handled) Synchronous
 #endif
 #if !ENABLE(IOS_TOUCH_EVENTS) && ENABLE(TOUCH_EVENTS)
     TouchEvent(WebKit::WebTouchEvent event)
@@ -377,7 +377,7 @@ messages -> WebPage LegacyReceiver {
     DrawRectToImage(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
     DrawPagesToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
 #if PLATFORM(IOS_FAMILY)
-    ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Delayed
+    ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Synchronous
 #endif
 #endif
 #if PLATFORM(GTK)
@@ -407,7 +407,7 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if PLATFORM (GTK) && HAVE(GTK_GESTURES)
-    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Delayed
+    GetCenterForZoomGesture(WebCore::IntPoint centerInViewCoordinates) -> (WebCore::IntPoint center) Synchronous
 #endif
 
 #if PLATFORM(COCOA)
@@ -417,16 +417,16 @@ messages -> WebPage LegacyReceiver {
     WindowAndViewFramesChanged(WebCore::FloatRect windowFrameInScreenCoordinates, WebCore::FloatRect windowFrameInUnflippedScreenCoordinates, WebCore::FloatRect viewFrameInWindowCoordinates, WebCore::FloatPoint accessibilityViewCoordinates)
     SetMainFrameIsScrollable(bool isScrollable)
     RegisterUIProcessAccessibilityTokens(IPC::DataReference elemenToken, IPC::DataReference windowToken)
-    GetStringSelectionForPasteboard() -> (String stringValue) Delayed
-    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Delayed
-    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Delayed
+    GetStringSelectionForPasteboard() -> (String stringValue) Synchronous
+    GetDataSelectionForPasteboard(String pasteboardType) -> (WebKit::SharedMemory::Handle handle, uint64_t size) Synchronous
+    ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
 
 #if ENABLE(SERVICE_CONTROLS)
     ReplaceSelectionWithPasteboardData(Vector<String> types, IPC::DataReference data)
 #endif
 
-    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Delayed
-    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) Delayed
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result) Synchronous
 
     SetTextAsync(String text)
     InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)

@@ -27,6 +27,6 @@ messages -> WebPage : WebPageBase {
     TestAsyncMessageWithNoArguments() -> () Async
     TestAsyncMessageWithMultipleArguments() -> (bool flag, uint64_t value) Async
 #endif
-    TestSyncMessage(uint32_t param) -> (uint8_t reply) Sync
-    TestDelayedMessage(bool value) -> (Optional<WebKit::TestClassName> optionalReply) Delayed
+    TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
+    TestSynchronousMessage(bool value) -> (Optional<WebKit::TestClassName> optionalReply) Synchronous
 }

@@ -154,6 +154,8 @@ public:
     static IPC::StringReference name() { return IPC::StringReference("TestSyncMessage"); }
     static const bool isSync = true;
 
+    using DelayedReply = CompletionHandler<void(uint8_t reply)>;
+    static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, uint8_t reply);
     typedef std::tuple<uint8_t&> Reply;
     explicit TestSyncMessage(uint32_t param)
         : m_arguments(param)
@@ -169,18 +171,18 @@ private:
     Arguments m_arguments;
 };
 
-class TestDelayedMessage {
+class TestSynchronousMessage {
 public:
     typedef std::tuple<bool> Arguments;
 
     static IPC::StringReference receiverName() { return messageReceiverName(); }
-    static IPC::StringReference name() { return IPC::StringReference("TestDelayedMessage"); }
+    static IPC::StringReference name() { return IPC::StringReference("TestSynchronousMessage"); }
     static const bool isSync = true;
 
     using DelayedReply = CompletionHandler<void(const Optional<WebKit::TestClassName>& optionalReply)>;
     static void send(std::unique_ptr<IPC::Encoder>&&, IPC::Connection&, const Optional<WebKit::TestClassName>& optionalReply);
     typedef std::tuple<Optional<WebKit::TestClassName>&> Reply;
-    explicit TestDelayedMessage(bool value)
+    explicit TestSynchronousMessage(bool value)
         : m_arguments(value)
     {
     }

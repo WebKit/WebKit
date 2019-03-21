@@ -47,21 +47,7 @@ void callMemberFunction(ArgsTuple&& args, C* object, MF function)
     callMemberFunctionImpl(object, function, std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
-// Dispatch functions with reply arguments.
-
-template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
-void callMemberFunctionImpl(C* object, MF function, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
-{
-    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., std::get<ReplyArgsIndex>(replyArgs)...);
-}
-
-template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
-void callMemberFunction(ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
-{
-    callMemberFunctionImpl(object, function, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
-}
-
-// Dispatch functions with delayed reply arguments.
+// Dispatch functions with synchronous reply arguments.
 
 template <typename C, typename MF, typename CH, typename ArgsTuple, size_t... ArgsIndex>
 void callMemberFunctionImpl(C* object, MF function, CompletionHandler<CH>&& completionHandler, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
@@ -75,7 +61,7 @@ void callMemberFunction(ArgsTuple&& args, CompletionHandler<CH>&& completionHand
     callMemberFunctionImpl(object, function, WTFMove(completionHandler), std::forward<ArgsTuple>(args), ArgsIndicies());
 }
 
-// Dispatch functions with connection parameter with delayed reply arguments.
+// Dispatch functions with connection parameter with synchronous reply arguments.
 
 template <typename C, typename MF, typename CH, typename ArgsTuple, size_t... ArgsIndex>
 void callMemberFunctionImpl(Connection& connection, C* object, MF function, CompletionHandler<CH>&& completionHandler, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
@@ -101,20 +87,6 @@ template<typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = st
 void callMemberFunction(Connection& connection, ArgsTuple&& args, C* object, MF function)
 {
     callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), ArgsIndicies());
-}
-
-// Dispatch functions with connection parameter with reply arguments.
-
-template <typename C, typename MF, typename ArgsTuple, size_t... ArgsIndex, typename ReplyArgsTuple, size_t... ReplyArgsIndex>
-void callMemberFunctionImpl(C* object, MF function, Connection& connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, std::index_sequence<ArgsIndex...>, std::index_sequence<ReplyArgsIndex...>)
-{
-    (object->*function)(connection, std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., std::get<ReplyArgsIndex>(replyArgs)...);
-}
-
-template <typename C, typename MF, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>, typename ReplyArgsTuple, typename ReplyArgsIndicies = std::make_index_sequence<std::tuple_size<ReplyArgsTuple>::value>>
-void callMemberFunction(Connection& connection, ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, MF function)
-{
-    callMemberFunctionImpl(object, function, connection, std::forward<ArgsTuple>(args), replyArgs, ArgsIndicies(), ReplyArgsIndicies());
 }
 
 // Main dispatch functions
@@ -148,34 +120,6 @@ void handleMessage(Decoder& decoder, C* object, MF function)
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageLegacySync(Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
-{
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
-        ASSERT(decoder.isInvalid());
-        return;
-    }
-
-    typename CodingType<typename T::Reply>::Type replyArguments;
-    callMemberFunction(WTFMove(arguments), replyArguments, object, function);
-    replyEncoder << replyArguments;
-}
-
-template<typename T, typename C, typename MF>
-void handleMessageLegacySync(Connection& connection, Decoder& decoder, Encoder& replyEncoder, C* object, MF function)
-{
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
-        ASSERT(decoder.isInvalid());
-        return;
-    }
-
-    typename CodingType<typename T::Reply>::Type replyArguments;
-    callMemberFunction(connection, WTFMove(arguments), replyArguments, object, function);
-    replyEncoder << replyArguments;
-}
-
-template<typename T, typename C, typename MF>
 void handleMessage(Connection& connection, Decoder& decoder, C* object, MF function)
 {
     typename CodingType<typename T::Arguments>::Type arguments;
@@ -187,7 +131,7 @@ void handleMessage(Connection& connection, Decoder& decoder, C* object, MF funct
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
+void handleMessageSynchronous(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
 {
     typename CodingType<typename T::Arguments>::Type arguments;
     if (!decoder.decode(arguments)) {
@@ -202,7 +146,7 @@ void handleMessageDelayed(Connection& connection, Decoder& decoder, std::unique_
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayedWantsConnection(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
+void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
 {
     typename CodingType<typename T::Arguments>::Type arguments;
     if (!decoder.decode(arguments)) {

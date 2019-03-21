@@ -176,11 +176,11 @@ void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& d
         return;
     }
     if (decoder.messageName() == Messages::WebPage::GetPluginProcessConnection::name()) {
-        IPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &WebPage::getPluginProcessConnection);
+        IPC::handleMessageSynchronous<Messages::WebPage::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &WebPage::getPluginProcessConnection);
         return;
     }
     if (decoder.messageName() == Messages::WebPage::TestMultipleAttributes::name()) {
-        IPC::handleMessageDelayedWantsConnection<Messages::WebPage::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &WebPage::testMultipleAttributes);
+        IPC::handleMessageSynchronousWantsConnection<Messages::WebPage::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &WebPage::testMultipleAttributes);
         return;
     }
 #if PLATFORM(MAC)

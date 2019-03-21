@@ -290,6 +290,12 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ServiceWorkerCli
     m_clientOrigins.remove(iterator);
 }
 
+void WebSWServerConnection::syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&& identifier, CompletionHandler<void()>&& completionHandler)
+{
+    syncTerminateWorker(WTFMove(identifier));
+    completionHandler();
+}
+    
 template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
 {
     static_cast<WebSWServerToContextConnection&>(connection).send(WTFMove(message));

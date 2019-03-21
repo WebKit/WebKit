@@ -34,16 +34,16 @@ messages -> PluginProcessProxy {
     SetFullscreenWindowIsShowing(bool fullscreenWindowIsShowing)
     
     # Returns true if the UI process launched the process.
-    LaunchProcess(String launchPath, Vector<String> arguments) -> (bool result) Delayed
+    LaunchProcess(String launchPath, Vector<String> arguments) -> (bool result) Synchronous
 
     # Returns true if the UI process launched the application.
-    LaunchApplicationAtURL(String url, Vector<String> arguments) -> (bool result) Delayed
+    LaunchApplicationAtURL(String url, Vector<String> arguments) -> (bool result) Synchronous
 
     # Returns true if the UI process did open the URL.
-    OpenURL(String urlString) -> (bool result, int32_t status, String launchedURLString) Delayed
+    OpenURL(String urlString) -> (bool result, int32_t status, String launchedURLString) Synchronous
     
     # Returns true if the UI process did open the file.
-    OpenFile(String fullPath) -> (bool result) Delayed
+    OpenFile(String fullPath) -> (bool result) Synchronous
 #endif
 }
 

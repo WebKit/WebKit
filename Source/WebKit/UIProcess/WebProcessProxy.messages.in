@@ -26,17 +26,17 @@ messages -> WebProcessProxy LegacyReceiver {
 
     DidDestroyUserGestureToken(uint64_t userGestureTokenID) 
 
-    ShouldTerminate() -> (bool shouldTerminate) Delayed
+    ShouldTerminate() -> (bool shouldTerminate) Synchronous
 
     EnableSuddenTermination()
     DisableSuddenTermination()
 
     # Plugin messages.
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins, struct Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers) Delayed
-    GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
+    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins, Vector<WebCore::PluginInfo> applicationPlugins, struct Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers) Synchronous
+    GetPluginProcessConnection(uint64_t pluginProcessToken) -> (IPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Synchronous
 #endif
-    GetNetworkProcessConnection() -> (IPC::Attachment connectionHandle) Delayed
+    GetNetworkProcessConnection() -> (IPC::Attachment connectionHandle) Synchronous
     ProcessReadyToSuspend()
     DidCancelProcessSuspension()
 

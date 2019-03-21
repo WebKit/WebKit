@@ -24,13 +24,13 @@
 
 messages -> WebProcessConnection LegacyReceiver {
     # Creates a plug-in instance using the given creation parameters.
-    CreatePlugin(struct WebKit::PluginCreationParameters pluginCreationParameters) -> (bool creationResult, bool wantsWheelEvents, uint32_t remoteLayerClientID) Delayed
+    CreatePlugin(struct WebKit::PluginCreationParameters pluginCreationParameters) -> (bool creationResult, bool wantsWheelEvents, uint32_t remoteLayerClientID) Synchronous
 
     # Creates a plug-in instance asynchronously using the given creation parameters.
     CreatePluginAsynchronously(struct WebKit::PluginCreationParameters pluginCreationParameters)
 
     # Destroys the plug-in instance with the given instance ID.
-    DestroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete) -> () Delayed
+    DestroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete) -> () Synchronous
 }
 
 #endif

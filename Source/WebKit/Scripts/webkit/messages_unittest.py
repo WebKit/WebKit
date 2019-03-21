@@ -280,7 +280,7 @@ _expected_superclass_results = {
             'conditions': (None),
         },
         {
-            'name': 'TestDelayedMessage',
+            'name': 'TestSynchronousMessage',
             'parameters': (
                 ('bool', 'value'),
             ),

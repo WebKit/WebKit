@@ -92,6 +92,7 @@ private:
 
     void registerServiceWorkerClient(WebCore::SecurityOriginData&& topOrigin, WebCore::ServiceWorkerClientData&&, const Optional<WebCore::ServiceWorkerRegistrationIdentifier>&, String&& userAgent);
     void unregisterServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier&);
+    void syncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier&&, CompletionHandler<void()>&&);
 
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return identifier().toUInt64(); }

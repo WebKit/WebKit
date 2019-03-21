@@ -43,7 +43,7 @@ messages -> WebSWServerConnection {
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, struct WebCore::ServiceWorkerClientData data, Optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier identifier)
 
-    SyncTerminateWorker(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () LegacySync
+    SyncTerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Synchronous
 }
 
 #endif // ENABLE(SERVICE_WORKER)

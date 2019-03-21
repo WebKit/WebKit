@@ -233,7 +233,7 @@ void WebSWClientConnection::connectionToServerLost()
 
 void WebSWClientConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier)
 {
-    sendSync(Messages::WebSWServerConnection::SyncTerminateWorker(identifier), Messages::WebSWServerConnection::SyncTerminateWorker::Reply());
+    sendSync(Messages::WebSWServerConnection::SyncTerminateWorkerFromClient(identifier), Messages::WebSWServerConnection::SyncTerminateWorkerFromClient::Reply());
 }
 
 } // namespace WebKit

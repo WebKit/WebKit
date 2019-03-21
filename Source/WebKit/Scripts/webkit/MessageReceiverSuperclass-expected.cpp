@@ -119,7 +119,13 @@ void TestAsyncMessageWithMultipleArguments::send(std::unique_ptr<IPC::Encoder>&&
 
 #endif
 
-void TestDelayedMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
+void TestSyncMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, uint8_t reply)
+{
+    *encoder << reply;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+void TestSynchronousMessage::send(std::unique_ptr<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
 {
     *encoder << optionalReply;
     connection.sendSyncReply(WTFMove(encoder));
@@ -161,11 +167,11 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
 void WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, std::unique_ptr<IPC::Encoder>& replyEncoder)
 {
     if (decoder.messageName() == Messages::WebPage::TestSyncMessage::name()) {
-        IPC::handleMessage<Messages::WebPage::TestSyncMessage>(decoder, *replyEncoder, this, &WebPage::testSyncMessage);
+        IPC::handleMessageSynchronous<Messages::WebPage::TestSyncMessage>(connection, decoder, replyEncoder, this, &WebPage::testSyncMessage);
         return;
     }
-    if (decoder.messageName() == Messages::WebPage::TestDelayedMessage::name()) {
-        IPC::handleMessageDelayed<Messages::WebPage::TestDelayedMessage>(connection, decoder, replyEncoder, this, &WebPage::testDelayedMessage);
+    if (decoder.messageName() == Messages::WebPage::TestSynchronousMessage::name()) {
+        IPC::handleMessageSynchronous<Messages::WebPage::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &WebPage::testSynchronousMessage);
         return;
     }
     UNUSED_PARAM(connection);
