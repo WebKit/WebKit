@@ -1,3 +1,15 @@
+2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Update the test to ensure OutOfMemoryError is thrown as intended
+        https://bugs.webkit.org/show_bug.cgi?id=196032
+        <rdar://problem/46842740>
+
+        Rubber stamped by Saam Barati.
+
+        * stress/create-error-out-of-memory-rope-string.js:
+        (assert):
+        (catch):
+
 2019-03-20  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSC::createError needs to check for OOM in errorDescriptionForValue
