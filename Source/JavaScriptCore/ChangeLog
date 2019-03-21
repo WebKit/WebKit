@@ -1,3 +1,21 @@
+2019-03-20  Saam Barati  <sbarati@apple.com>
+
+        GetCallee does not report the correct type in AI
+        https://bugs.webkit.org/show_bug.cgi?id=195981
+
+        Reviewed by Yusuke Suzuki.
+
+        I found this as part of my work in:
+        https://bugs.webkit.org/show_bug.cgi?id=195924
+        
+        I'm not sure how to write a test for it.
+        
+        GetCallee was always reporting that the result is SpecFunction. However,
+        for eval, it may result in just a JSCallee object, which is not a JSFunction.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-03-20  Mark Lam  <mark.lam@apple.com>
 
         Open source arm64e code.

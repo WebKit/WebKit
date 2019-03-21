@@ -2730,7 +2730,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        setTypeForNode(node, SpecFunction);
+        setTypeForNode(node, SpecFunction | SpecObjectOther);
         break;
         
     case GetArgumentCountIncludingThis:
