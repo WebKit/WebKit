@@ -1,3 +1,16 @@
+2019-03-21  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed, rolling out r243250.
+
+        Causing 109 Failures and 2 crashes on iOS Sim Debug
+        OpenSource/Internal queues
+
+        Reverted changeset:
+
+        "[iOS WK2] Turn on async overflow scrolling by default"
+        https://bugs.webkit.org/show_bug.cgi?id=196011
+        https://trac.webkit.org/changeset/243250
+
 2019-03-21  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ and WPE gardening after r243278.

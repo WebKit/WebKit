@@ -1310,9 +1310,5 @@ webkit.org/b/194826 [ Debug ] http/tests/resourceLoadStatistics/do-not-block-top
 webkit.org/b/194253 [ Debug ] scrollingcoordinator/scrolling-tree/fixed-inside-frame.html [ Pass Failure ]
 
 webkit.org/b/195341 fast/viewport/ios/device-width-viewport-after-changing-view-scale.html [ Pass Failure ]
-webkit.org/b/195341 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
 
-webkit.org/b/196013 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
-webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
-webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/196013 fast/scrolling/rubber-band-shows-background.html [ ImageOnlyFailure ]
+webkit.org/b/195341 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
