@@ -97,6 +97,9 @@ public:
     };
 
     const Vector<Key> keys() const;
+
+private:
+    mutable Lock m_keysMutex;
 };
 
 class CDMInstanceSessionClearKey final : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionClearKey> {

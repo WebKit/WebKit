@@ -1,3 +1,23 @@
+2019-03-21  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer][EME][Clearkey] Take a lock in keys() method
+        https://bugs.webkit.org/show_bug.cgi?id=195900
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This isn't ideal, since we're taking a lock for every frame to
+        decode. But there's no good way around it when keys can be
+        made unavailable at any time via an update() call, so we can't
+        cache key IDs in the decryptor.
+
+        Covered by test imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::keys const): This method is called
+        from GStreamer's decode() method, which runs off the main thread,
+        therefore we need to take a lock.
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add API to provide geolocation information
