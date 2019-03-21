@@ -1,3 +1,15 @@
+2019-03-21  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [JSC][32-bit] Build failure after r243232
+        https://bugs.webkit.org/show_bug.cgi?id=196068
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLib] Returning G_TYPE_OBJECT from a method does not work
