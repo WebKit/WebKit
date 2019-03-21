@@ -958,6 +958,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         && requiresCompositingForIndirectReason(layer.renderer(), compositingState.compositingAncestor, childState.subtreeIsCompositing, anyDescendantHas3DTransform, indirectCompositingReason)) {
         layer.setIndirectCompositingReason(indirectCompositingReason);
         childState.compositingAncestor = &layer;
+        childState.subtreeIsCompositing = true;
         overlapMap.pushCompositingContainer();
         addToOverlapMapRecursive(overlapMap, layer);
         willBeComposited = true;
@@ -967,10 +968,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // FIXME: Shouldn't we call computeCompositingRequirements to handle a reflection overlapping with another renderer?
         layer.reflectionLayer()->setIndirectCompositingReason(willBeComposited ? RenderLayer::IndirectCompositingReason::Stacking : RenderLayer::IndirectCompositingReason::None);
     }
-
-    // Subsequent layers in the parent stacking context also need to composite.
-    compositingState.subtreeIsCompositing |= childState.subtreeIsCompositing;
-    compositingState.fullPaintOrderTraversalRequired |= childState.fullPaintOrderTraversalRequired;
 
     // Set the flag to say that this layer has compositing children.
     layer.setHasCompositingDescendant(childState.subtreeIsCompositing);
@@ -987,6 +984,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     if (isCompositedClippingLayer) {
         if (!willBeComposited) {
             childState.compositingAncestor = &layer;
+            childState.subtreeIsCompositing = true;
             overlapMap.pushCompositingContainer();
             addToOverlapMapRecursive(overlapMap, layer);
             willBeComposited = true;
@@ -994,8 +992,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     }
 
 #if ENABLE(CSS_COMPOSITING)
-    if ((willBeComposited && layer.hasBlendMode())
-        || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
+    if ((willBeComposited && layer.hasBlendMode()) || (layer.hasNotIsolatedCompositedBlendingDescendants() && !layer.isolatesCompositedBlending()))
         compositingState.hasNotIsolatedCompositedBlendingDescendants = true;
 #endif
 
@@ -1013,7 +1010,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         willBeComposited = false;
 #endif
     }
-    
+
+    // Subsequent layers in the parent stacking context also need to composite.
+    compositingState.subtreeIsCompositing |= childState.subtreeIsCompositing;
+    compositingState.fullPaintOrderTraversalRequired |= childState.fullPaintOrderTraversalRequired;
+
     ASSERT(willBeComposited == needsToBeComposited(layer, queryData));
 
     // Create or destroy backing here. However, we can't update geometry because layers above us may become composited

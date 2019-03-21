@@ -1,3 +1,13 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Absolute in stacking-context scroller jiggles when scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=196010
+
+        Reviewed by Zalan Bujtas.
+
+        * compositing/overflow/absolute-in-overflow-expected.html: Added.
+        * compositing/overflow/absolute-in-overflow.html: Added.
+
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Start tracking implicit transitions at touchStart

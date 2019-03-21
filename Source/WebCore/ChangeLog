@@ -1,3 +1,29 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Absolute in stacking-context scroller jiggles when scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=196010
+
+        Reviewed by Zalan Bujtas.
+
+        Updating compositing layers after a scroll (in a compositing update on the main thread)
+        failed to traverse to an absolute layer inside a stacking-context overflow:scroll,
+        because the overflow's layer didn't have the "hasCompositingAncestor" bit set on it.
+
+        This happened because childState.subtreeIsCompositing wasn't being set when indirect
+        reasons trigger compositing. So clean up RenderLayerCompositor::computeCompositingRequirements()
+        to set childState.subtreeIsCompositing for "late" compositing decisions, and move the
+        "Subsequent layers in the parent stacking context also need to composite" chunk
+        down to after the last compositing decision has been made.
+
+        Test: compositing/overflow/absolute-in-overflow.html
+
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::scrollTo):
+        * page/scrolling/cocoa/ScrollingTreePositionedNode.mm:
+        (WebCore::ScrollingTreePositionedNode::applyLayerPositions):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Start tracking implicit transitions at touchStart

@@ -87,8 +87,6 @@ void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSiz
             }
         }
     }
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit);
-
     auto layerOffset = -scrollOffsetSinceLastCommit;
     if (m_constraints.scrollPositioningBehavior() == ScrollPositioningBehavior::Stationary) {
         // Stationary nodes move in the opposite direction.
@@ -96,6 +94,9 @@ void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSiz
     }
 
     FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() - layerOffset;
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << scrollOffsetSinceLastCommit << " moving layer to " << layerPosition);
+
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
 
     // FIXME: Should our scroller deltas propagate to descendants?

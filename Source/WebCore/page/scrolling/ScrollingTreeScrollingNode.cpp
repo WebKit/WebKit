@@ -161,6 +161,9 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollPosi
         return;
 
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);
+    
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")");
+
     updateViewportForCurrentScrollPosition();
     currentScrollPositionChanged();
 }
