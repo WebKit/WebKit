@@ -59,16 +59,19 @@ std::unique_ptr<GLContextEGL> GLContextEGL::createWPEContext(PlatformDisplay& pl
         return nullptr;
     }
 
-    EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
-    if (context == EGL_NO_CONTEXT) {
-        WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
-        return nullptr;
-    }
-
     auto* target = wpe_renderer_backend_egl_offscreen_target_create();
+    if (!target)
+        return nullptr;
+
     wpe_renderer_backend_egl_offscreen_target_initialize(target, downcast<PlatformDisplayLibWPE>(platformDisplay).backend());
     EGLNativeWindowType window = wpe_renderer_backend_egl_offscreen_target_get_native_window(target);
     if (!window) {
+        wpe_renderer_backend_egl_offscreen_target_destroy(target);
+        return nullptr;
+    }
+
+    EGLContext context = createContextForEGLVersion(platformDisplay, config, sharingContext);
+    if (context == EGL_NO_CONTEXT) {
         WTFLogAlways("Cannot create EGL WPE context: %s\n", lastErrorString());
         wpe_renderer_backend_egl_offscreen_target_destroy(target);
         return nullptr;

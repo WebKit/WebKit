@@ -1,3 +1,28 @@
+2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Confusing messages in stderr when surfaceless context is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=195742
+
+        Reviewed by Žan Doberšek.
+
+        The messages shown are:
+
+        Cannot create EGL surfaceless context: missing EGL_KHR_surfaceless_{context,opengl} extension.
+        Cannot create EGL WPE context: EGL_SUCCESS
+
+        It seems like there's anything wrong, while there isn't. It's also confusing an error message where the error is
+        EGL_SUCCESS. I think we should not show those messages at all, not suporting surfaceless contexts is not an
+        error and it's correctly handled. Failing to get a native window handle from render backend offscreen egl target
+        is not an error either, since most of the backends don't implement the interface (they actually have an empty
+        implementation).
+
+        * platform/graphics/egl/GLContextEGL.cpp:
+        (WebCore::GLContextEGL::createSurfacelessContext): Remove the message when extensions are not present
+        * platform/graphics/egl/GLContextEGLLibWPE.cpp:
+        (WebCore::GLContextEGL::createWPEContext): Handle the case of wpe_renderer_backend_egl_offscreen_target_create()
+        returning nullptr, which can happen if the backend doesn't implement the interface. Move the context creation
+        after the target initialization, to avoid leaking the context when the target doesn't have a native window.
+
 2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use finalizer in JSGlobalLexicalEnvironment and JSGlobalObject
