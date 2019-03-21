@@ -132,6 +132,14 @@ Stacking
         (layer-position-at-last-layout (10,28))
         (positioning-behavior moves))
       (related overflow nodes 1)
+      (children 1
+        (Positioned node
+          (layout constraints 
+            (layer-position-at-last-layout (79,18))
+            (positioning-behavior stationary))
+          (related overflow nodes 1)
+        )
+      )
     )
   )
 )
