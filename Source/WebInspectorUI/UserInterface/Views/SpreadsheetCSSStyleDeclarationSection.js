@@ -174,6 +174,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (!selectorText || selectorText === this._style.ownerRule.selectorText)
             this._discardSelectorChange();
         else {
+            this.dispatchEventToListeners(WI.SpreadsheetCSSStyleDeclarationSection.Event.SelectorWillChange);
             this._style.ownerRule.singleFireEventListener(WI.CSSRule.Event.SelectorChanged, this._renderSelector, this);
             this._style.ownerRule.selectorText = selectorText;
         }
@@ -302,18 +303,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
             var selectors = this._style.ownerRule.selectors;
             var matchedSelectorIndices = this._style.ownerRule.matchedSelectorIndices;
-            var alwaysMatch = !matchedSelectorIndices.length;
             if (selectors.length) {
-                let hasMatchingPseudoElementSelector = false;
                 for (let i = 0; i < selectors.length; ++i) {
-                    appendSelector(selectors[i], alwaysMatch || matchedSelectorIndices.includes(i));
+                    appendSelector(selectors[i], matchedSelectorIndices.includes(i));
                     if (i < selectors.length - 1)
                         this._selectorElement.append(", ");
-
-                    if (matchedSelectorIndices.includes(i) && selectors[i].isPseudoElementSelector())
-                        hasMatchingPseudoElementSelector = true;
                 }
-                this._element.classList.toggle("pseudo-element-selector", hasMatchingPseudoElementSelector);
             } else
                 appendSelectorTextKnownToMatch(this._style.ownerRule.selectorText);
 
@@ -544,6 +539,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
 WI.SpreadsheetCSSStyleDeclarationSection.Event = {
     FilterApplied: "spreadsheet-css-style-declaration-section-filter-applied",
+    SelectorWillChange: "spreadsheet-css-style-declaration-section-selector-will-change",
 };
 
 WI.SpreadsheetCSSStyleDeclarationSection.MatchedSelectorElementStyleClassName = "matched";

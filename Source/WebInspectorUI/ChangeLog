@@ -1,5 +1,61 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Styles Redesign: Editing selector should not hide the rule
+        https://bugs.webkit.org/show_bug.cgi?id=178489
+        <rdar://problem/35062434>
+
+        Reviewed by Timothy Hatcher.
+
+        Extracts the selector payload parsing logic inside `WI.DOMNodeStyles` into static functions
+        so that when the user changes the selector of a `WI.CSSRule`, it's able to process and
+        update itself with the new selector. This is mainly useful in the case where the `WI.CSSRule`
+        no longer applies to the selected node (meaning it won't be part of that node's
+        `WI.DOMNodeStyles`) in that it allows the `WI.SpreadsheetCSSStyleDeclarationSection` to
+        display the new selector text and the owner `WI.SpreadsheetRulesStyleDetailsPanel` to keep
+        that section visible even though it isn't applicable to the current node anymore.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles):
+        (WI.DOMNodeStyles.parseSelectorListPayload): Added.
+        (WI.DOMNodeStyles.createSourceCodeLocation): Added.
+        (WI.DOMNodeStyles.prototype.refresh):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedMatchedStyles):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedInlineStyles):
+        (WI.DOMNodeStyles.prototype.refresh.fetchedComputedStyle):
+        (WI.DOMNodeStyles.prototype._parseStyleDeclarationPayload):
+        (WI.DOMNodeStyles.prototype._parseRulePayload):
+        (WI.DOMNodeStyles.prototype._styleSheetContentDidChange):
+        (WI.DOMNodeStyles.prototype.refresh.parseRuleMatchArrayPayload): Deleted.
+        (WI.DOMNodeStyles.prototype._createSourceCodeLocation): Deleted.
+        (WI.DOMNodeStyles.prototype._parseSelectorListPayload): Deleted.
+        Keep track of all `WI.CSSRule` and `WI.CSSStyleDeclaration` that have ever been associated
+        with this object, so that if a rule's selector is changed to no longer match, and then is
+        changed back to match again, we are able to update that rule instead of creating a new one.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.layout):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionFilterApplied):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype._handleSectionSelectorWillChange): Added.
+        Attempt to preserve the position of any sections that are changed and no longer apply to the
+        current node.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.spreadsheetSelectorFieldDidChange):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._renderSelector):
+        Drive-by: remove unused CSS classes.
+
+        * UserInterface/Models/CSSRule.js:
+        (WI.CSSRule.prototype.update):
+        (WI.CSSRule.prototype._selectorResolved):
+        Drive-by: remove unused event.
+
+        * UserInterface/Base/Multimap.js:
+        (Multimap.prototype.has): Added.
+        (Multimap.prototype.sets): Added.
+        (Multimap.prototype.copy): Added.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: no way to filter out all console messages or all evaluations/results
         https://bugs.webkit.org/show_bug.cgi?id=167035
         <rdar://problem/30023523>

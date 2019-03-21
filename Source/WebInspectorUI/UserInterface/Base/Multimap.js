@@ -35,6 +35,14 @@ class Multimap
 
     // Public
 
+    has(key, value)
+    {
+        let valueSet = this._map.get(key);
+        if (!valueSet)
+            return false;
+        return value === undefined || valueSet.has(value);
+    }
+
     get(key)
     {
         return this._map.get(key);
@@ -88,12 +96,22 @@ class Multimap
         }
     }
 
+    sets()
+    {
+        return this._map.entries();
+    }
+
     *[Symbol.iterator]()
     {
         for (let [key, valueSet] of this._map) {
             for (let value of valueSet)
                 yield [key, value];
         }
+    }
+
+    copy()
+    {
+        return new Multimap(this.toJSON());
     }
 
     toJSON()

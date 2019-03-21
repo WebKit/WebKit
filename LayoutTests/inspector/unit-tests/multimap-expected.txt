@@ -1,0 +1,81 @@
+Testing all methods of Multimap.
+
+
+== Running test suite: Multimap
+-- Running test case: Multimap.prototype.constructor.Empty
+[]
+
+-- Running test case: Multimap.prototype.constructor.NonEmpty
+[["zero","one"],["zero","four"],["two","three"]]
+
+-- Running test case: Multimap.prototype.has
+PASS: has should return true if a key exists.
+PASS: has should return true if a value exists for an existing key.
+PASS: has should return false if a value doesn't exist for an existing key.
+PASS: has should return false if a key doesn't exist.
+PASS: has should return false if a key doesn't exist, even if the value exists for a different key.
+
+-- Running test case: Multimap.prototype.add.RepeatingKeysUniqueValues
+[["zero","one"],["zero","two"]]
+
+-- Running test case: Multimap.prototype.add.UniqueKeysRepeatingValues
+[["zero","one"],["two","one"],["three","one"]]
+
+-- Running test case: Multimap.prototype.add.RepeatingKeysRepeatingValues
+[["zero","one"],["zero","three"],["two","one"]]
+
+-- Running test case: Multimap.prototype.delete
+[[0,1],[2,3],[2,4]]
+PASS: The key 0 and the value 1 were successfully deleted.
+[[2,3],[2,4]]
+PASS: The key 2 and the value 3 were successfully deleted.
+[[2,4]]
+PASS: The key 2 and the value 4 were successfully deleted.
+[]
+
+-- Running test case: Multimap.prototype.delete.NonExistingValues
+[[0,1],[2,3],[4,4]]
+PASS: Nothing was removed for key 0 and value 3.
+PASS: Nothing was removed for key 0 and value 4.
+PASS: Nothing was removed for key 2 and value 1.
+PASS: Nothing was removed for key 2 and value 4.
+PASS: Nothing was removed for key 4 and value 1.
+PASS: Nothing was removed for key 4 and value 3.
+[[0,1],[2,3],[4,4]]
+
+-- Running test case: Multimap.prototype.delete.NonExistingKeys
+[[0,1],[2,3],[4,4]]
+PASS: Nothing was removed for key 1.
+PASS: Nothing was removed for key 3.
+PASS: Nothing was removed for key 5.
+[[0,1],[2,3],[4,4]]
+
+-- Running test case: Multimap.prototype.delete.AllValuesForKey
+[["opossum","badger"],["opossum","raccoon"],["raccoon","opossum"]]
+PASS: Nothing was removed for key "badger".
+[["opossum","badger"],["opossum","raccoon"],["raccoon","opossum"]]
+PASS: Values were removed for key "opossum".
+[["raccoon","opossum"]]
+
+-- Running test case: Multimap.prototype.clear
+[["one","two"],["one","five"],["three","four"],["three","six"]]
+[]
+
+-- Running test case: Multimap.prototype.keys
+[["one","two"],["one","five"],["three","four"],["three","six"]]
+["one","three"]
+
+-- Running test case: Multimap.prototype.values
+[["one","two"],["one","five"],["three","four"],["three","six"]]
+["two","five","four","six"]
+
+-- Running test case: Multimap.prototype.sets
+[["one","two"],["one","five"],["three","four"],["three","six"]]
+[["one",["two","five"]],["three",["four","six"]]]
+
+-- Running test case: Multimap.prototype.copy
+[["one","two"],["three","four"]]
+PASS: Copy should not return the same object.
+PASS: Copy should return a deep copy.
+PASS: Modifying the original should not modify the copy.
+

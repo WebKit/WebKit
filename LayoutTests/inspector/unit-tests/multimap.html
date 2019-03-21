@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("Multimap");
+
+    suite.addTestCase({
+        name: "Multimap.prototype.constructor.Empty",
+        test() {
+            let multimap = new Multimap;
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.constructor.NonEmpty",
+        test() {
+            let multimap = new Multimap([["zero", "one"], ["two", "three"], ["zero", "four"]]);
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.has",
+        test() {
+            let multimap = new Multimap([["zero", "one"], ["two", "three"], ["zero", "four"]]);
+
+            InspectorTest.expectThat(multimap.has("zero"), "has should return true if a key exists.");
+            InspectorTest.expectThat(multimap.has("zero", "one"), "has should return true if a value exists for an existing key.");
+            InspectorTest.expectFalse(multimap.has("zero", "three"), "has should return false if a value doesn't exist for an existing key.");
+            InspectorTest.expectFalse(multimap.has("one"), "has should return false if a key doesn't exist.");
+            InspectorTest.expectFalse(multimap.has("one", "three"), "has should return false if a key doesn't exist, even if the value exists for a different key.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.add.RepeatingKeysUniqueValues",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("zero", "one");
+            multimap.add("zero", "two");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.add.UniqueKeysRepeatingValues",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("zero", "one");
+            multimap.add("two", "one");
+            multimap.add("three", "one");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.add.RepeatingKeysRepeatingValues",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("zero", "one");
+            multimap.add("two", "one");
+            multimap.add("zero", "one");
+            multimap.add("zero", "three");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.delete",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(2, 4);
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.delete(0, 1), "The key 0 and the value 1 were successfully deleted.");
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.delete(2, 3), "The key 2 and the value 3 were successfully deleted.");
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.delete(2, 4), "The key 2 and the value 4 were successfully deleted.");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.delete.NonExistingValues",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(4, 4);
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectFalse(multimap.delete(0, 3), "Nothing was removed for key 0 and value 3.");
+            InspectorTest.expectFalse(multimap.delete(0, 4), "Nothing was removed for key 0 and value 4.");
+            InspectorTest.expectFalse(multimap.delete(2, 1), "Nothing was removed for key 2 and value 1.");
+            InspectorTest.expectFalse(multimap.delete(2, 4), "Nothing was removed for key 2 and value 4.");
+            InspectorTest.expectFalse(multimap.delete(4, 1), "Nothing was removed for key 4 and value 1.");
+            InspectorTest.expectFalse(multimap.delete(4, 3), "Nothing was removed for key 4 and value 3.");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.delete.NonExistingKeys",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add(0, 1);
+            multimap.add(2, 3);
+            multimap.add(4, 4);
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectFalse(multimap.delete(1), "Nothing was removed for key 1.");
+            InspectorTest.expectFalse(multimap.delete(3), "Nothing was removed for key 3.");
+            InspectorTest.expectFalse(multimap.delete(5), "Nothing was removed for key 5.");
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.delete.AllValuesForKey",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("opossum", "badger");
+            multimap.add("opossum", "raccoon");
+            multimap.add("raccoon", "opossum");
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectFalse(multimap.delete("badger"), `Nothing was removed for key "badger".`);
+
+            InspectorTest.log(multimap);
+
+            InspectorTest.expectThat(multimap.delete("opossum"), `Values were removed for key "opossum".`);
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.clear",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("one", "two");
+            multimap.add("three", "four");
+            multimap.add("one", "five");
+            multimap.add("three", "six");
+
+            InspectorTest.log(multimap);
+
+            multimap.clear();
+
+            InspectorTest.log(multimap);
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.keys",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("one", "two");
+            multimap.add("three", "four");
+            multimap.add("one", "five");
+            multimap.add("three", "six");
+
+            InspectorTest.log(multimap);
+            InspectorTest.log(Array.from(multimap.keys()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.values",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("one", "two");
+            multimap.add("three", "four");
+            multimap.add("one", "five");
+            multimap.add("three", "six");
+
+            InspectorTest.log(multimap);
+            InspectorTest.log(Array.from(multimap.values()));
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.sets",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("one", "two");
+            multimap.add("three", "four");
+            multimap.add("one", "five");
+            multimap.add("three", "six");
+
+            InspectorTest.log(multimap);
+            InspectorTest.log(Array.from(multimap.sets()).map(([key, value]) => [key, Array.from(value)]));
+        },
+    });
+
+    suite.addTestCase({
+        name: "Multimap.prototype.copy",
+        test() {
+            let multimap = new Multimap;
+
+            multimap.add("one", "two");
+            multimap.add("three", "four");
+
+            InspectorTest.log(multimap);
+
+            let copy = multimap.copy();
+
+            InspectorTest.expectNotEqual(multimap, copy, "Copy should not return the same object.")
+            InspectorTest.expectEqual(JSON.stringify(multimap), JSON.stringify(copy), "Copy should return a deep copy.");
+
+            multimap.add("five", "six");
+
+            InspectorTest.expectNotShallowEqual(multimap, copy, "Modifying the original should not modify the copy.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing all methods of Multimap.</p>
+</body>
+</html>
