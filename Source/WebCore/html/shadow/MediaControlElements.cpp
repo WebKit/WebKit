@@ -1171,6 +1171,20 @@ void MediaControlTextTrackContainerElement::updateDisplay()
     if (countChildNodes() < activeCues.size())
         removeChildren();
 
+    activeCues.removeAllMatching([] (CueInterval& cueInterval) {
+        if (!cueInterval.data() || !cueInterval.data()->isRenderable())
+            return true;
+
+        RefPtr<VTTCue> cue = toVTTCue(cueInterval.data());
+
+        return !cue->isRenderable()
+            || !cue->track()
+            || !cue->track()->isRendered()
+            || cue->track()->mode() == TextTrack::Mode::Disabled
+            || !cue->isActive()
+            || cue->text().isEmpty();
+    });
+
     // Sort the active cues for the appropriate display order. For example, for roll-up
     // or paint-on captions, we need to add the cues in reverse chronological order,
     // so that the newest captions appear at the bottom.
@@ -1183,22 +1197,13 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         if (!mediaController()->closedCaptionsVisible())
             continue;
 
-        RefPtr<TextTrackCue> textTrackCue = activeCues[i].data();
-        if (!textTrackCue->isRenderable())
-            continue;
-
-        RefPtr<VTTCue> cue = toVTTCue(textTrackCue.get());
-
-        ASSERT(cue->isActive());
-        if (!cue->track() || !cue->track()->isRendered() || !cue->isActive() || cue->text().isEmpty())
+        RefPtr<VTTCue> cue = toVTTCue(activeCues[i].data());
+        ASSERT(cue);
+        if (!cue)
             continue;
 
         LOG(Media, "MediaControlTextTrackContainerElement::updateDisplay(%p) - adding and positioning cue #%zu: \"%s\", start=%.2f, end=%.2f, line=%.2f", this, i, cue->text().utf8().data(), cue->startTime(), cue->endTime(), cue->line());
-
         Ref<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
-        if (cue->track()->mode() == TextTrack::Mode::Disabled)
-            continue;
-
         RefPtr<VTTRegion> region = cue->track()->regions()->getRegionById(cue->regionId());
         if (!region) {
             // If cue has an empty text track cue region identifier or there is no
