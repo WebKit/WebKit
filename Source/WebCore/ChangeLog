@@ -1,3 +1,39 @@
+2019-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Hardening: Use WeakPtrs in PlaybackSessionInterface{Mac,AVKit}
+        https://bugs.webkit.org/show_bug.cgi?id=195935
+        <rdar://problem/49007015>
+
+        Reviewed by Eric Carlson.
+
+        The PlaybackSessionInterface{Mac,AVKit} implementations store their playback session model
+        and playback controls manager members as bare pointers, something we've been working
+        to eliminate.
+        
+        This patch corrects this oversight.
+
+        No new tests since no changes in behavior.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.h:
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit):
+        (WebCore::playbackSessionModel const): Moved to implementation since WEBCORE_EXPORT is not
+        supposed to be used with inline methods.
+        * platform/mac/PlaybackSessionInterfaceMac.h:
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::PlaybackSessionInterfaceMac::PlaybackSessionInterfaceMac):
+        (WebCore::PlaybackSessionInterfaceMac::playbackSessionModel const):
+        (WebCore::PlaybackSessionInterfaceMac::beginScrubbing):
+        (WebCore::PlaybackSessionInterfaceMac::endScrubbing):
+        (WebCore::PlaybackSessionInterfaceMac::playBackControlsManager):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        (WebCore::VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac):
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (-[WebPlaybackControlsManager seekToTime:toleranceBefore:toleranceAfter:]):
+        (-[WebPlaybackControlsManager setCurrentAudioTouchBarMediaSelectionOption:]):
+        (-[WebPlaybackControlsManager setCurrentLegibleTouchBarMediaSelectionOption:]):
+
 2019-03-21  Said Abou-Hallawa  <said@apple.com>
 
         Remove the SVG tear off objects for SVGPoint, SVGPointList and SVGAnimatedPointList

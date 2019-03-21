@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ using namespace PAL;
 
 PlaybackSessionInterfaceAVKit::PlaybackSessionInterfaceAVKit(PlaybackSessionModel& model)
     : m_playerController(adoptNS([[WebAVPlayerController alloc] init]))
-    , m_playbackSessionModel(&model)
+    , m_playbackSessionModel(makeWeakPtr(model))
 {
     model.addClient(*this);
     [m_playerController setPlaybackSessionInterface:this];
@@ -75,6 +75,11 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
     [m_playerController setExternalPlaybackActive:false];
 
     invalidate();
+}
+
+PlaybackSessionModel* playbackSessionModel() const
+{
+    return m_playbackSessionModel.get();
 }
 
 void PlaybackSessionInterfaceAVKit::durationChanged(double duration)
