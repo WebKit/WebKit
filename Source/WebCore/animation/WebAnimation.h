@@ -117,6 +117,8 @@ public:
     bool isSuspended() const { return m_isSuspended; }
     virtual void remove();
 
+    bool hasPendingActivity() const final;
+
     using RefCounted::ref;
     using RefCounted::deref;
 

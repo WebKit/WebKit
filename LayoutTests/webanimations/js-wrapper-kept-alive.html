@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="target"></div>
+<script src="../resources/js-test-pre.js"></script>
+<script>
+description("This test checks that registering an event listener on an animation whose JS wrapper would otherwise be garbage-collected still fires registered event listeners.");
+
+if (window.internals)
+    jsTestIsAsync = true;
+
+// A longer animation that could not be garbage-collected under any circumstance allows us to finish the test
+// with a reasonable delay without hard-coding a timeout.
+const timeoutAnimation = document.getElementById("target").animate({ marginRight: ["0px", "100px"] }, 1000);
+timeoutAnimation.addEventListener("finish", finishJSTest);
+
+function runTest() {
+    const animation = document.getElementById("target").animate({ marginLeft: ["0px", "100px"] }, 100);
+    animation._isMyAnimation = true;
+    animation.addEventListener("finish", event => {
+        shouldBeTrue("event.target._isMyAnimation");
+        finishJSTest();
+    });
+}
+
+gc();
+runTest();
+gc();
+
+</script>
+<script src="../resources/js-test-post.js"></script>
+</body>
+</html>

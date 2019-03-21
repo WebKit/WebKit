@@ -1,3 +1,20 @@
+2019-03-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] JS wrapper may be deleted while animation is yet to dispatch its finish event
+        https://bugs.webkit.org/show_bug.cgi?id=196118
+        <rdar://problem/46614137>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test that starts a short animation, sets a custom property on it, registers a "finish" event listener on it and deletes
+        the sole reference to it in the JS world before triggering garbage collection. Prior to this fix, this test would time out
+        because the JS wrapper would be garbage-collected prior to the animation completing and thus the event listener would not
+        be called. To complete successfully, this test checks that it receives the event and its target is the same animation object
+        that was originally created by checking the custom property is still set.
+
+        * webanimations/js-wrapper-kept-alive-expected.txt: Added.
+        * webanimations/js-wrapper-kept-alive.html: Added.
+
 2019-03-21  Youenn Fablet  <youenn@apple.com>
 
         Cache API and IDB space usages should be initialized on first quota check
