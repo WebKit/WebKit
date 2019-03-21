@@ -75,7 +75,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
     rendering/RenderThemeGtk.cpp
 )
 
-if (ENABLE_GEOLOCATION)
+if (USE_GEOCLUE)
     list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )

@@ -131,8 +131,8 @@ UIProcess/API/glib/WebKitFileChooserRequest.cpp @no-unify
 UIProcess/API/glib/WebKitFindController.cpp @no-unify
 UIProcess/API/glib/WebKitFormClient.cpp @no-unify
 UIProcess/API/glib/WebKitFormSubmissionRequest.cpp @no-unify
+UIProcess/API/glib/WebKitGeolocationManager.cpp @no-unify
 UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp @no-unify
-UIProcess/API/glib/WebKitGeolocationProvider.cpp @no-unify
 UIProcess/API/glib/WebKitInjectedBundleClient.cpp @no-unify
 UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitJavascriptResult.cpp @no-unify

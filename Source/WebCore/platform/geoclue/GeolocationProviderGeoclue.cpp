@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GeolocationProviderGeoclue.h"
 
-#if ENABLE(GEOLOCATION)
+#if USE(GEOCLUE)
 
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -212,4 +212,4 @@ void GeolocationProviderGeoclue::updateClientRequirements()
 
 } // namespace WebCore
 
-#endif // ENABLE(GEOLOCATION)
+#endif // USE(GEOCLUE)

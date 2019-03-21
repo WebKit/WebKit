@@ -30,6 +30,7 @@
 #include <wpe/WebKitDefines.h>
 #include <wpe/WebKitDownload.h>
 #include <wpe/WebKitFaviconDatabase.h>
+#include <wpe/WebKitGeolocationManager.h>
 #include <wpe/WebKitNetworkProxySettings.h>
 #include <wpe/WebKitSecurityManager.h>
 #include <wpe/WebKitURISchemeRequest.h>
@@ -213,6 +214,9 @@ webkit_web_context_download_uri                     (WebKitWebContext           
 
 WEBKIT_API WebKitCookieManager *
 webkit_web_context_get_cookie_manager               (WebKitWebContext              *context);
+
+WEBKIT_API WebKitGeolocationManager *
+webkit_web_context_get_geolocation_manager          (WebKitWebContext              *context);
 
 WEBKIT_API WebKitFaviconDatabase *
 webkit_web_context_get_favicon_database             (WebKitWebContext              *context);

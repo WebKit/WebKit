@@ -16,6 +16,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp
+../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp
 ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp

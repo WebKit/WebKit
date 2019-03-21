@@ -31,13 +31,12 @@
 #include "TextCheckerState.h"
 #include "WebAutomationSession.h"
 #include "WebCertificateInfo.h"
-#include "WebGeolocationManagerProxy.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitCustomProtocolManagerClient.h"
 #include "WebKitDownloadClient.h"
 #include "WebKitDownloadPrivate.h"
 #include "WebKitFaviconDatabasePrivate.h"
-#include "WebKitGeolocationProvider.h"
+#include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInjectedBundleClient.h"
 #include "WebKitNetworkProxySettingsPrivate.h"
 #include "WebKitNotificationProvider.h"
@@ -170,9 +169,7 @@ struct _WebKitWebContextPrivate {
     GRefPtr<WebKitSecurityManager> securityManager;
     URISchemeHandlerMap uriSchemeHandlers;
     URISchemeRequestMap uriSchemeRequests;
-#if ENABLE(GEOLOCATION)
-    std::unique_ptr<WebKitGeolocationProvider> geolocationProvider;
-#endif
+    GRefPtr<WebKitGeolocationManager> geolocationManager;
     std::unique_ptr<WebKitNotificationProvider> notificationProvider;
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
@@ -367,9 +364,7 @@ static void webkitWebContextConstructed(GObject* object)
     attachDownloadClientToContext(webContext);
     attachCustomProtocolManagerClientToContext(webContext);
 
-#if ENABLE(GEOLOCATION)
-    priv->geolocationProvider = std::make_unique<WebKitGeolocationProvider>(priv->processPool->supplement<WebGeolocationManagerProxy>());
-#endif
+    priv->geolocationManager = adoptGRef(webkitGeolocationManagerCreate(priv->processPool->supplement<WebGeolocationManagerProxy>()));
     priv->notificationProvider = std::make_unique<WebKitNotificationProvider>(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
 #if PLATFORM(GTK) && ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
@@ -865,6 +860,23 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
 
     return webkit_website_data_manager_get_cookie_manager(context->priv->websiteDataManager.get());
+}
+
+/**
+ * webkit_web_context_get_geolocation_manager:
+ * @context: a #WebKitWebContext
+ *
+ * Get the #WebKitGeolocationManager of @context.
+ *
+ * Returns: (transfer none): the #WebKitGeolocationManager of @context.
+ *
+ * Since: 2.26
+ */
+WebKitGeolocationManager* webkit_web_context_get_geolocation_manager(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+
+    return context->priv->geolocationManager.get();
 }
 
 static void ensureFaviconDatabase(WebKitWebContext* context)

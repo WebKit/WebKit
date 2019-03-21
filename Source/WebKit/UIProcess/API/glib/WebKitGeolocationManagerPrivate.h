@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2019 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,16 +19,7 @@
 
 #pragma once
 
-#if USE(GEOCLUE)
+#include "WebGeolocationManagerProxy.h"
+#include "WebKitGeolocationManager.h"
 
-namespace WebCore {
-
-class GeolocationProviderGeoclueClient {
-public:
-    virtual void notifyPositionChanged(int timestamp, double latitude, double longitude, double altitude, double accuracy, double altitudeAccuracy) = 0;
-    virtual void notifyErrorOccurred(const char* message) = 0;
-};
-
-} // namespace WebCore
-
-#endif // USE(GEOCLUE)
+WebKitGeolocationManager* webkitGeolocationManagerCreate(WebKit::WebGeolocationManagerProxy*);

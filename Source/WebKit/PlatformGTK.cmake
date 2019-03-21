@@ -82,6 +82,7 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFindController.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitFormSubmissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitForwardDeclarations.h
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitGeolocationManager.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.h

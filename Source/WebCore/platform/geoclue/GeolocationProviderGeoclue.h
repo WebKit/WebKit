@@ -18,10 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef GeolocationProviderGeoclue_h
-#define GeolocationProviderGeoclue_h
+#pragma once
 
-#if ENABLE(GEOLOCATION)
+#if USE(GEOCLUE)
 
 #include "GeolocationProviderGeoclueClient.h"
 #include <wtf/glib/GRefPtr.h>
@@ -71,6 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(GEOLOCATION)
-
-#endif // GeolocationProviderGeoclue_h
+#endif // USE(GEOCLUE)

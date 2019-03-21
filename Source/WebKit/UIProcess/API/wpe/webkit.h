@@ -47,6 +47,7 @@
 #include <wpe/WebKitFaviconDatabase.h>
 #include <wpe/WebKitFindController.h>
 #include <wpe/WebKitFormSubmissionRequest.h>
+#include <wpe/WebKitGeolocationManager.h>
 #include <wpe/WebKitGeolocationPermissionRequest.h>
 #include <wpe/WebKitHitTestResult.h>
 #include <wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h>
