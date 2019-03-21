@@ -74,11 +74,11 @@
     },
     {
       "name": "ews108",
-      "platform": "ios-11"
+      "platform": "ios-12"
     },
     {
       "name": "ews109",
-      "platform": "ios-11"
+      "platform": "ios-12"
     },
     {
       "name": "ews112",
@@ -118,27 +118,27 @@
     },
     {
       "name": "ews121",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews122",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews123",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews124",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews125",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews126",
-      "platform": "ios-simulator-11"
+      "platform": "ios-simulator-12"
     },
     {
       "name": "ews127",
@@ -155,7 +155,7 @@
     {
       "name": "ews151",
       "platform": "*",
-      "max_builds": 3
+      "max_builds": 2
     },
     {
       "name": "ews152",
@@ -163,6 +163,74 @@
     },
     {
       "name": "ews153",
+      "platform": "*"
+    },
+    {
+      "name": "ews154",
+      "platform": "*"
+    },
+    {
+      "name": "ews155",
+      "platform": "*"
+    },
+    {
+      "name": "ews156",
+      "platform": "*"
+    },
+    {
+      "name": "ews157",
+      "platform": "*"
+    },
+    {
+      "name": "ews158",
+      "platform": "*"
+    },
+    {
+      "name": "ews159",
+      "platform": "*"
+    },
+    {
+      "name": "ews160",
+      "platform": "*"
+    },
+    {
+      "name": "ews161",
+      "platform": "*"
+    },
+    {
+      "name": "ews162",
+      "platform": "*"
+    },
+    {
+      "name": "ews163",
+      "platform": "*"
+    },
+    {
+      "name": "ews164",
+      "platform": "*"
+    },
+    {
+      "name": "ews165",
+      "platform": "*"
+    },
+    {
+      "name": "ews166",
+      "platform": "*"
+    },
+    {
+      "name": "ews167",
+      "platform": "*"
+    },
+    {
+      "name": "ews168",
+      "platform": "*"
+    },
+    {
+      "name": "ews169",
+      "platform": "*"
+    },
+    {
+      "name": "ews170",
       "platform": "*"
     },
     {
@@ -208,7 +276,7 @@
       "shortname": "style",
       "factory": "StyleFactory",
       "platform": "*",
-      "workernames": ["ews151", "webkit-misc"]
+      "workernames": ["webkit-misc"]
     },
     {
       "name": "GTK-Webkit2-EWS",
@@ -218,29 +286,29 @@
       "workernames": ["tanty-gtk-wk2-ews", "ltilve-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-11-Build-EWS",
+      "name": "iOS-12-Build-EWS",
       "shortname": "ios",
       "factory": "iOSBuildFactory",
-      "platform": "ios-11",
+      "platform": "ios-12",
       "configuration": "release",
       "architectures": ["arm64"],
       "workernames": ["ews108", "ews109"]
     },
     {
-      "name": "iOS-11-Simulator-Build-EWS",
+      "name": "iOS-12-Simulator-Build-EWS",
       "shortname": "ios-sim",
       "factory": "iOSBuildFactory",
-      "platform": "ios-simulator-11",
+      "platform": "ios-simulator-12",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-11-sim-wk2-tests-ews"],
-      "workernames": ["ews150", "ews152", "ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
+      "triggers": ["api-tests-ios-sim-ews", "ios-12-sim-wk2-tests-ews"],
+      "workernames": ["ews150", "ews154"]
     },
     {
-      "name": "iOS-11-Simulator-WK2-Tests-EWS",
+      "name": "iOS-12-Simulator-WK2-Tests-EWS",
       "shortname": "ios-wk2",
       "factory": "iOSTestsFactory",
-      "platform": "ios-simulator-11",
+      "platform": "ios-simulator-12",
       "configuration": "release",
       "architectures": ["x86_64"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126"]
@@ -253,7 +321,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
-      "workernames": ["ews150", "ews100", "ews101", "ews102", "ews103"]
+      "workernames": ["ews118", "ews119", "ews120"]
     },
     {
       "name": "macOS-High-Sierra-Release-WK1-Tests-EWS",
@@ -293,25 +361,6 @@
       "workernames": ["ews112", "ews113", "ews114", "ews115", "ews116"]
     },
     {
-      "name": "macOS-High-Sierra-Release-32bit-Build-EWS",
-      "shortname": "mac-32bit",
-      "factory": "macOSBuildFactory",
-      "platform": "mac-highsierra",
-      "configuration": "release",
-      "architectures": ["i386"],
-      "triggers": ["macos-high-sierra-release-32bit-wk2-tests-ews"],
-      "workernames": ["ews118", "ews119", "ews120"]
-    },
-    {
-      "name": "macOS-High-Sierra-Release-32bit-WK2-Tests-EWS",
-      "shortname": "mac-32bit-wk2",
-      "factory": "macOSWK2Factory",
-      "platform": "mac-highsierra",
-      "configuration": "release",
-      "architectures": ["i386"],
-      "workernames": ["ews118", "ews119", "ews120"]
-    },
-    {
       "name": "Windows-EWS",
       "shortname": "win",
       "factory": "WindowsFactory",
@@ -345,35 +394,35 @@
       "shortname": "bindings",
       "factory": "BindingsFactory",
       "platform": "*",
-      "workernames": ["ews151", "webkit-misc"]
+      "workernames": ["webkit-misc"]
     },
     {
       "name": "WebKitPy-Tests-EWS",
       "shortname": "webkitpy",
       "factory": "WebKitPyFactory",
       "platform": "*",
-      "workernames": ["ews151", "webkit-misc"]
+      "workernames": ["webkit-misc"]
     },
     {
       "name": "WebKitPerl-Tests-EWS",
       "shortname": "webkitperl",
       "factory": "WebKitPerlFactory",
       "platform": "*",
-      "workernames": ["ews151", "webkit-misc"]
+      "workernames": ["ews151"]
     },
     {
       "name": "API-Tests-iOS-Simulator-EWS",
       "shortname": "api-ios",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["ews152", "ews153", "webkit-misc"]
+      "workernames": ["ews156", "ews157", "ews158", "ews159"]
     },
     {
       "name": "API-Tests-macOS-EWS",
       "shortname": "api-mac",
       "factory": "APITestsFactory",
       "platform": "*",
-      "workernames": ["ews151", "ews152", "ews153", "webkit-misc"]
+      "workernames": ["ews120", "ews150", "ews151", "ews153", "ews155"]
     }
   ],
   "schedulers": [
@@ -381,15 +430,21 @@
       "type": "Try_Userpass",
       "name": "try",
       "port": 5555,
-      "builderNames": ["Style-EWS", "JSC-Tests-EWS", "macOS-High-Sierra-Release-Build-EWS", "GTK-Webkit2-EWS",
-                       "macOS-High-Sierra-Release-32bit-Build-EWS", "WPE-EWS", "Windows-EWS", "iOS-11-Build-EWS", "WinCairo-EWS", "iOS-11-Simulator-Build-EWS",
-                       "WebKitPy-Tests-EWS", "WebKitPerl-Tests-EWS", "macOS-High-Sierra-Debug-Build-EWS", "Bindings-Tests-EWS"]
+      "builderNames": ["macOS-High-Sierra-Release-Build-EWS",
+                       "iOS-12-Simulator-Build-EWS", "WebKitPerl-Tests-EWS"]
+    },
+    {
+      "type": "Try_Userpass",
+      "name": "disabled",
+      "port": 5556,
+      "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "JSC-Tests-EWS",
+                       "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WebKitPy-Tests-EWS", "WPE-EWS"]
     },
     {
       "type": "Triggerable",
-      "name": "ios-11-sim-wk2-tests-ews",
+      "name": "ios-12-sim-wk2-tests-ews",
       "builderNames": [
-        "iOS-11-Simulator-WK2-Tests-EWS"
+        "iOS-12-Simulator-WK2-Tests-EWS"
       ]
     },
     {
@@ -411,13 +466,6 @@
       "name": "macos-high-sierra-debug-wk1-tests-ews",
       "builderNames": [
         "macOS-High-Sierra-Debug-WK1-Tests-EWS"
-      ]
-    },
-    {
-      "type": "Triggerable",
-      "name": "macos-high-sierra-release-32bit-wk2-tests-ews",
-      "builderNames": [
-        "macOS-High-Sierra-Release-32bit-WK2-Tests-EWS"
       ]
     },
     {
