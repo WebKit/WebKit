@@ -1,3 +1,19 @@
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=195919
+        <rdar://problem/48573434>
+
+        Reviewed by Brent Fulgham.
+
+        When the container is injected too early, we might end up removing it as part of the collapsing logic
+        while the text renderer is being removed (replaced with the first letter + remaining text).
+
+        Test: fast/css/first-letter-and-float-crash.html
+
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+
 2019-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add UI process WebRTC runtime logging.

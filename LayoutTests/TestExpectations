@@ -3059,3 +3059,5 @@ imported/w3c/web-platform-tests/css/css-lists/counter-increment-inside-display-c
 imported/w3c/web-platform-tests/css/css-lists/counter-reset-inside-display-contents.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-marker-with-lineheight-and-overflow-hidden-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-001.html [ ImageOnlyFailure ]
+
+[ Debug ] fast/css/first-letter-and-float-crash.html [ Skip ]

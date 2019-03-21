@@ -1,3 +1,15 @@
+2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
+        Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.
+        https://bugs.webkit.org/show_bug.cgi?id=195919
+        <rdar://problem/48573434>
+
+        Reviewed by Brent Fulgham.
+
+        * fast/css/first-letter-and-float-crash-expected.txt: Added.
+        * fast/css/first-letter-and-float-crash.html: Added.
+        * platform/mac/TestExpectations:
+
 2019-03-21  Eric Carlson  <eric.carlson@apple.com>
 
         Add UI process WebRTC runtime logging.

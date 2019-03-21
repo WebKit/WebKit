@@ -217,9 +217,6 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
     newFirstLetter->initializeStyle();
     newFirstLetter->setIsFirstLetter();
 
-    auto& firstLetter = *newFirstLetter;
-    m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
-
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
     // no text-transform or a different text-transform applied to it.
@@ -253,6 +250,8 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
 
         auto* textNode = currentTextChild.textNode();
         auto* beforeChild = currentTextChild.nextSibling();
+        auto inlineWrapperForDisplayContents = makeWeakPtr(currentTextChild.inlineWrapperForDisplayContents());
+        auto hasInlineWrapperForDisplayContents = inlineWrapperForDisplayContents.get();
         m_builder.destroy(currentTextChild);
 
         // Construct a text fragment for the text after the first letter.
@@ -265,13 +264,18 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
             newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
         RenderTextFragment& remainingText = *newRemainingText;
+        ASSERT_UNUSED(hasInlineWrapperForDisplayContents, hasInlineWrapperForDisplayContents == inlineWrapperForDisplayContents.get());
+        remainingText.setInlineWrapperForDisplayContents(inlineWrapperForDisplayContents.get());
         m_builder.attach(*textContentParent, WTFMove(newRemainingText), beforeChild);
+
+        // FIXME: Make attach the final step so that we don't need to keep firstLetter around.
+        auto& firstLetter = *newFirstLetter;
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
+        m_builder.attach(*firstLetterContainer, WTFMove(newFirstLetter), &remainingText);
 
-        // construct text fragment for the first letter
+        // Construct text fragment for the first letter.
         auto letter = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, 0, length);
-
         m_builder.attach(firstLetter, WTFMove(letter));
     }
 }
