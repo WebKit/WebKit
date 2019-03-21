@@ -1,3 +1,19 @@
+2019-03-21  Chris Dumez  <cdumez@apple.com>
+
+        WebKit should throw when trying to create a WKWebView with a related view that is using a different data store
+        https://bugs.webkit.org/show_bug.cgi?id=196041
+        <rdar://problem/49083230>
+
+        Reviewed by Alex Christensen.
+
+        WebKit should throw when trying to create a WKWebView with a related view that is using a different data store.
+        We do not support having several WebsiteDataStores sharing the same WebProcess.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2019-03-21  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to inform applications of WKContentRuleList actions

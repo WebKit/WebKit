@@ -1215,6 +1215,9 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
         process = &pageConfiguration->relatedPage()->process();
+        // We do not support several WebsiteDataStores sharing a single process.
+        ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
+        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());
     } else if (WebKit::isInspectorProcessPool(*this)) {
         // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
