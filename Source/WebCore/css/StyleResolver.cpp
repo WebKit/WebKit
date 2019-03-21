@@ -745,7 +745,7 @@ static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element
         || style.isFloating() || style.hasOutOfFlowPosition();
 }
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
 static bool isScrollableOverflow(Overflow overflow)
 {
     return overflow == Overflow::Scroll || overflow == Overflow::Auto;
@@ -1037,7 +1037,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         style.setOverflowY(Overflow::Visible);
     }
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     // Touch overflow scrolling creates a stacking context.
     if (style.hasAutoZIndex() && style.useTouchOverflowScrolling() && (isScrollableOverflow(style.overflowX()) || isScrollableOverflow(style.overflowY())))
         style.setZIndex(0);

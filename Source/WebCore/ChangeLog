@@ -1,3 +1,38 @@
+2019-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH
+        https://bugs.webkit.org/show_bug.cgi?id=196049
+
+        Reviewed by Tim Horton.
+
+        This macro is about the -webkit-overflow-scrolling CSS property, not accelerated
+        overflow scrolling in general, so rename it.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::canUseCompositedScrolling const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareInheritedDataChangeRequiresLayout):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOM: lazily create the agent

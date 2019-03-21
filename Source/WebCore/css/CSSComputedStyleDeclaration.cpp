@@ -380,7 +380,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitMaskSourceType,
     CSSPropertyWebkitNbspMode,
     CSSPropertyOrder,
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     CSSPropertyWebkitOverflowScrolling,
 #endif
     CSSPropertyPerspective,
@@ -3731,7 +3731,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyWebkitMarginTopCollapse:
         case CSSPropertyWebkitMarginBeforeCollapse:
             return cssValuePool.createValue(style.marginBeforeCollapse());
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         case CSSPropertyWebkitOverflowScrolling:
             if (!style.useTouchOverflowScrolling())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);

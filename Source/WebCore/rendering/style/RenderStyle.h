@@ -736,7 +736,7 @@ public:
     bool touchCalloutEnabled() const { return m_rareInheritedData->touchCalloutEnabled; }
 #endif
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     bool useTouchOverflowScrolling() const { return m_rareInheritedData->useTouchOverflowScrolling; }
 #endif
 
@@ -1249,7 +1249,7 @@ public:
     void setTouchCalloutEnabled(bool v) { SET_VAR(m_rareInheritedData, touchCalloutEnabled, v); }
 #endif
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(m_rareInheritedData, useTouchOverflowScrolling, v); }
 #endif
 
@@ -1685,7 +1685,7 @@ public:
     static Color initialTapHighlightColor();
 #endif
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     static bool initialUseTouchOverflowScrolling() { return false; }
 #endif
 

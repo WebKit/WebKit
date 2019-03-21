@@ -113,7 +113,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
     , lineSnap(static_cast<unsigned>(RenderStyle::initialLineSnap()))
     , lineAlign(static_cast<unsigned>(RenderStyle::initialLineAlign()))
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , useTouchOverflowScrolling(RenderStyle::initialUseTouchOverflowScrolling())
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -211,7 +211,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , imageRendering(o.imageRendering)
     , lineSnap(o.lineSnap)
     , lineAlign(o.lineAlign)
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , useTouchOverflowScrolling(o.useTouchOverflowScrolling)
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)
@@ -302,7 +302,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && overflowWrap == o.overflowWrap
         && nbspMode == o.nbspMode
         && lineBreak == o.lineBreak
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         && useTouchOverflowScrolling == o.useTouchOverflowScrolling
 #endif
 #if ENABLE(TEXT_AUTOSIZING)

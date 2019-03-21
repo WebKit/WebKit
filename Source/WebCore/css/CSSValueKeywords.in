@@ -1044,7 +1044,7 @@ manual
 -webkit-letterpress
 #endif
 
-#if defined(ENABLE_ACCELERATED_OVERFLOW_SCROLLING) && ENABLE_ACCELERATED_OVERFLOW_SCROLLING
+#if defined(ENABLE_OVERFLOW_SCROLLING_TOUCH) && ENABLE_OVERFLOW_SCROLLING_TOUCH
 // -webkit-overflow-scrolling
 // auto
 touch

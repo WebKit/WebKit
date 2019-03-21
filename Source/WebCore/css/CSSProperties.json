@@ -6919,7 +6919,7 @@
             "codegen-properties": {
                 "name-for-methods": "UseTouchOverflowScrolling",
                 "converter": "OverflowScrolling",
-                "enable-if": "ENABLE_ACCELERATED_OVERFLOW_SCROLLING"
+                "enable-if": "ENABLE_OVERFLOW_SCROLLING_TOUCH"
             },
             "status": "non-standard"
         },

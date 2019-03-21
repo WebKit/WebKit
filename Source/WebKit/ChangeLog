@@ -1,3 +1,15 @@
+2019-03-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH
+        https://bugs.webkit.org/show_bug.cgi?id=196049
+
+        Reviewed by Tim Horton.
+
+        This macro is about the -webkit-overflow-scrolling CSS property, not accelerated
+        overflow scrolling in general, so rename it.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-03-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         Extend Networking Process sandbox for some system frameworks

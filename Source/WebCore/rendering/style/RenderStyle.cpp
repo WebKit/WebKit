@@ -688,7 +688,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.lineSnap != second.lineSnap
         || first.lineAlign != second.lineAlign
         || first.hangingPunctuation != second.hangingPunctuation
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
         || first.listStyleImage != second.listStyleImage) // FIXME: needs arePointingToEqualData()?

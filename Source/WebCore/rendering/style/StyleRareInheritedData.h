@@ -125,7 +125,7 @@ public:
     unsigned imageRendering : 3; // ImageRendering
     unsigned lineSnap : 2; // LineSnap
     unsigned lineAlign : 1; // LineAlign
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     unsigned useTouchOverflowScrolling: 1;
 #endif
 #if ENABLE(CSS_IMAGE_RESOLUTION)

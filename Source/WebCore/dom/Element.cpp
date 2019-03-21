@@ -4235,7 +4235,7 @@ OptionSet<TouchAction> Element::computedTouchActions() const
     return computedTouchActions;
 }
 
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
 ScrollingNodeID Element::nearestScrollingNodeIDUsingTouchOverflowScrolling() const
 {
     if (!renderer())

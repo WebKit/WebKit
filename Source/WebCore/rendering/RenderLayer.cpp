@@ -2177,7 +2177,7 @@ bool RenderLayer::canUseCompositedScrolling() const
     if (renderer().settings().asyncOverflowScrollingEnabled())
         return scrollsOverflow();
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if PLATFORM(IOS_FAMILY) && ENABLE(OVERFLOW_SCROLLING_TOUCH)
     return scrollsOverflow() && (renderer().style().useTouchOverflowScrolling() || renderer().settings().alwaysUseAcceleratedOverflowScroll());
 #else
     return false;

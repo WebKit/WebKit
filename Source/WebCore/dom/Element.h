@@ -596,7 +596,7 @@ public:
 
 #if ENABLE(POINTER_EVENTS)
     OptionSet<TouchAction> computedTouchActions() const;
-#if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     ScrollingNodeID nearestScrollingNodeIDUsingTouchOverflowScrolling() const;
 #endif
 #endif
