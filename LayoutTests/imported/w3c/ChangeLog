@@ -1,3 +1,13 @@
+2019-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Fix one of RTCRtpTransceiver-stop.html test title
+        https://bugs.webkit.org/show_bug.cgi?id=196090
+
+        Reviewed by Brent Fulgham.
+
+        * web-platform-tests/webrtc/RTCRtpTransceiver-stop-expected.txt:
+        * web-platform-tests/webrtc/RTCRtpTransceiver-stop.html:
+
 2019-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         appendChild should throw when inserting an ancestor of a template into its content adopted to another document
