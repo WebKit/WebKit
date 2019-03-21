@@ -589,6 +589,9 @@ static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const cha
  * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
  * jsc_context_set_value() to make the constructor available in the global object.
  *
+ * Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
+ * jsc_context_register_class() is responsible for disposing of it.
+ *
  * Returns: (transfer full): a #JSCValue representing the class constructor.
  */
 JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned paramCount, ...)
@@ -635,6 +638,9 @@ JSCValue* jsc_class_add_constructor(JSCClass* jscClass, const char* name, GCallb
  * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
  * jsc_context_set_value() to make the constructor available in the global object.
  *
+ * Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
+ * jsc_context_register_class() is responsible for disposing of it.
+ *
  * Returns: (transfer full): a #JSCValue representing the class constructor.
  */
 JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned parametersCount, GType* parameterTypes)
@@ -675,6 +681,9 @@ JSCValue* jsc_class_add_constructorv(JSCClass* jscClass, const char* name, GCall
  *
  * This function creates the constructor, which needs to be added to an object as a property to be able to use it. Use
  * jsc_context_set_value() to make the constructor available in the global object.
+ *
+ * Note that the value returned by @callback is adopted by @jsc_class, and the #GDestroyNotify passed to
+ * jsc_context_register_class() is responsible for disposing of it.
  *
  * Returns: (transfer full): a #JSCValue representing the class constructor.
  */
@@ -722,6 +731,11 @@ static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback ca
  * @callback is called receiving the class instance as first parameter, followed by the method parameters and then
  * @user_data as last parameter. When the method is cleared in the #JSCClass context, @destroy_notify is called with
  * @user_data as parameter.
+ *
+ * Note that the value returned by @callback must be transfer full. In case of non-refcounted boxed types, you should use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as the instance parameter.
  */
 void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned paramCount, ...)
 {
@@ -758,6 +772,11 @@ void jsc_class_add_method(JSCClass* jscClass, const char* name, GCallback callba
  * @callback is called receiving the class instance as first parameter, followed by the method parameters and then
  * @user_data as last parameter. When the method is cleared in the #JSCClass context, @destroy_notify is called with
  * @user_data as parameter.
+ *
+ * Note that the value returned by @callback must be transfer full. In case of non-refcounted boxed types, you should use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as the instance parameter.
  */
 void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned parametersCount, GType *parameterTypes)
 {
@@ -790,6 +809,11 @@ void jsc_class_add_methodv(JSCClass* jscClass, const char* name, GCallback callb
  * @callback is called receiving the class instance as first parameter, followed by a #GPtrArray of #JSCValue<!-- -->s
  * with the method arguments and then @user_data as last parameter. When the method is cleared in the #JSCClass context,
  * @destroy_notify is called with @user_data as parameter.
+ *
+ * Note that the value returned by @callback must be transfer full. In case of non-refcounted boxed types, you should use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as the instance parameter.
  */
 void jsc_class_add_method_variadic(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType)
 {
@@ -816,6 +840,11 @@ void jsc_class_add_method_variadic(JSCClass* jscClass, const char* name, GCallba
  * value needs to be set, @setter is called receiving the the class instance as first parameter, followed
  * by the value to be set and then @user_data as the last parameter. When the property is cleared in the
  * #JSCClass context, @destroy_notify is called with @user_data as parameter.
+ *
+ * Note that the value returned by @getter must be transfer full. In case of non-refcounted boxed types, you should use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as the instance parameter.
  */
 void jsc_class_add_property(JSCClass* jscClass, const char* name, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
 {

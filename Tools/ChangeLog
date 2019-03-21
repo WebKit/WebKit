@@ -1,3 +1,24 @@
+2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLib] Returning G_TYPE_OBJECT from a method does not work
+        https://bugs.webkit.org/show_bug.cgi?id=195574
+
+        Reviewed by Michael Catanzaro.
+
+        Add new test cases to check the behavior of constructors and functions returning GObject and boxed types.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (getGFile):
+        (getParent):
+        (createGString):
+        (getGString):
+        (getGStringCopyWillRaise):
+        (getGStringCopy):
+        (getGStringStr):
+        (getGStringLen):
+        (freeGString):
+        (testJSCClass):
+
 2019-03-20  Saam Barati  <sbarati@apple.com>
 
         DFG::AbstractValue::validateOSREntry is wrong when isHeapTop and the incoming value is Empty

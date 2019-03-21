@@ -588,11 +588,12 @@ gboolean jsc_value_is_array(JSCValue* value)
 /**
  * jsc_value_new_object:
  * @context: a #JSCContext
- * @instance: (nullable): an object instance or %NULL
+ * @instance: (nullable) (transfer full): an object instance or %NULL
  * @jsc_class: (nullable): the #JSCClass of @instance
  *
  * Create a new #JSCValue from @instance. If @instance is %NULL a new empty object is created.
- * When @instance is provided, @jsc_class must be provided too.
+ * When @instance is provided, @jsc_class must be provided too. @jsc_class takes ownership of
+ * @instance that will be freed by the #GDestroyNotify passed to jsc_context_register_class().
  *
  * Returns: (transfer full): a #JSCValue.
  */
@@ -1083,6 +1084,11 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
  * When the property is cleared in the #JSCClass context, @destroy_notify is called with
  * @user_data as parameter. This is equivalent to JavaScript <function>Object.defineProperty()</function>
  * when used with an accessor descriptor.
+ *
+ * Note that the value returned by @getter must be fully transferred. In case of boxed types, you could use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as instance parameter.
  */
 void jsc_value_object_define_property_accessor(JSCValue* value, const char* propertyName, JSCValuePropertyFlags flags, GType propertyType, GCallback getter, GCallback setter, gpointer userData, GDestroyNotify destroyNotify)
 {
@@ -1159,6 +1165,11 @@ static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char*
  * receiving the function parameters and then @user_data as last parameter. When the function is
  * cleared in @context, @destroy_notify is called with @user_data as parameter.
  *
+ * Note that the value returned by @callback must be fully transferred. In case of boxed types, you could use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as instance parameter.
+ *
  * Returns: (transfer full): a #JSCValue.
  */
 JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned paramCount, ...)
@@ -1195,6 +1206,11 @@ JSCValue* jsc_value_new_function(JSCContext* context, const char* name, GCallbac
  * receiving the function parameters and then @user_data as last parameter. When the function is
  * cleared in @context, @destroy_notify is called with @user_data as parameter.
  *
+ * Note that the value returned by @callback must be fully transferred. In case of boxed types, you could use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as instance parameter.
+ *
  * Returns: (transfer full): a #JSCValue.
  */
 JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, unsigned parametersCount, GType *parameterTypes)
@@ -1226,6 +1242,11 @@ JSCValue* jsc_value_new_functionv(JSCContext* context, const char* name, GCallba
  * When the function is called by JavaScript or jsc_value_function_call(), @callback is called
  * receiving an #GPtrArray of #JSCValue<!-- -->s with the arguments and then @user_data as last parameter.
  * When the function is cleared in @context, @destroy_notify is called with @user_data as parameter.
+ *
+ * Note that the value returned by @callback must be fully transferred. In case of boxed types, you could use
+ * %G_TYPE_POINTER instead of the actual boxed #GType to ensure that the instance owned by #JSCClass is used.
+ * If you really want to return a new copy of the boxed type, use #JSC_TYPE_VALUE and return a #JSCValue created
+ * with jsc_value_new_object() that receives the copy as instance parameter.
  *
  * Returns: (transfer full): a #JSCValue.
  */
