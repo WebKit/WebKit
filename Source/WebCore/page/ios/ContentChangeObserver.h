@@ -66,7 +66,6 @@ public:
         ~StyleChangeScope();
 
     private:
-        bool isConsideredHidden() const;
         bool isConsideredClickable() const;
 
         ContentChangeObserver& m_contentChangeObserver;

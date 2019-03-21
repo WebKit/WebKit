@@ -42,6 +42,43 @@ namespace WebCore {
 static const Seconds maximumDelayForTimers { 300_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
 
+static bool isConsideredHidden(const Element& element)
+{
+    if (!element.renderStyle())
+        return true;
+
+    auto& style = *element.renderStyle();
+    if (style.display() == DisplayType::None)
+        return true;
+
+    if (style.visibility() == Visibility::Hidden)
+        return true;
+
+    auto width = style.logicalWidth();
+    auto height = style.logicalHeight();
+    if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
+        return true;
+
+    auto top = style.logicalTop();
+    auto left = style.logicalLeft();
+    // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
+    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
+        return true;
+    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
+        return true;
+
+    // It's a common technique used to position content offscreen.
+    if (style.hasOutOfFlowPosition() && left.isFixed() && left.value() <= -999)
+        return true;
+
+    // FIXME: Check for other cases like zero height with overflow hidden.
+    auto maxHeight = style.maxHeight();
+    if (maxHeight.isFixed() && !maxHeight.value())
+        return true;
+
+    return false;
+}
+
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
     , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
@@ -98,6 +135,8 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
         return;
     auto transitionEnd = Seconds { transition.duration() + std::max<double>(0, transition.isDelaySet() ? transition.delay() : 0) };
     if (transitionEnd > maximumDelayForTransitions)
+        return;
+    if (!isConsideredHidden(element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
 
@@ -384,54 +423,17 @@ ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, co
     , m_hadRenderer(element.renderer())
 {
     if (m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState())
-        m_wasHidden = isConsideredHidden();
+        m_wasHidden = isConsideredHidden(m_element);
 }
 
 ContentChangeObserver::StyleChangeScope::~StyleChangeScope()
 {
     auto changedFromHiddenToVisible = [&] {
-        return m_wasHidden && !isConsideredHidden();
+        return m_wasHidden && !isConsideredHidden(m_element);
     };
 
     if (changedFromHiddenToVisible() && isConsideredClickable())
         m_contentChangeObserver.contentVisibilityDidChange();
-}
-
-bool ContentChangeObserver::StyleChangeScope::isConsideredHidden() const
-{
-    if (!m_element.renderStyle())
-        return true;
-
-    auto& style = *m_element.renderStyle();
-    if (style.display() == DisplayType::None)
-        return true;
-
-    if (style.visibility() == Visibility::Hidden)
-        return true;
-
-    auto width = style.logicalWidth();
-    auto height = style.logicalHeight();
-    if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
-        return true;
-
-    auto top = style.logicalTop();
-    auto left = style.logicalLeft();
-    // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
-    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
-        return true;
-    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
-        return true;
-
-    // It's a common technique used to position content offscreen.
-    if (style.hasOutOfFlowPosition() && left.isFixed() && left.value() <= -999)
-        return true;
-
-    // FIXME: Check for other cases like zero height with overflow hidden.
-    auto maxHeight = style.maxHeight();
-    if (maxHeight.isFixed() && !maxHeight.value())
-        return true;
-
-    return false;
 }
 
 bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
