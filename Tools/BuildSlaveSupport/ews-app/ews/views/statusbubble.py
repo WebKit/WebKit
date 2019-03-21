@@ -83,19 +83,19 @@ class StatusBubble(View):
 
         elif build.result == Buildbot.EXCEPTION:
             bubble['state'] = 'error'
-            bubble['details_message'] += ('An unexpected error occured. Recent messages:\n\n'
+            bubble['details_message'] = ('An unexpected error occured. Recent messages:\n\n'
                 + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
         elif build.result == Buildbot.RETRY:
             bubble['state'] = 'provisional-fail'
-            bubble['details_message'] += ('Build is being retried. Recent messages:\n\n'
+            bubble['details_message'] = ('Build is being retried. Recent messages:\n\n'
                 + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
         elif build.result == Buildbot.CANCELLED:
             bubble['state'] = 'provisional-fail'
-            bubble['details_message'] += ('Build was cancelled. Recent messages:\n\n'
+            bubble['details_message'] = ('Build was cancelled. Recent messages:\n\n'
                 + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
         else:
             bubble['state'] = 'error'
-            bubble['details_message'] += ('An unexpected error occured. Recent messages:\n\n'
+            bubble['details_message'] = ('An unexpected error occured. Recent messages:\n\n'
                 + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
 
         if 'details_message' in bubble:

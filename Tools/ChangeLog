@@ -1,3 +1,14 @@
+2019-03-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Generate status-bubble hover-over messages (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=195680
+        <rdar://problem/48903534>
+
+        Unreviewed infrastructure fix.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._build_bubble): Do not append to details_message in the cases in which it wasn't defined earlier.
+
 2019-03-21  Andy Estes  <aestes@apple.com>
 
         [iOS] Apple Pay should be available in documents with no user agent scripts
