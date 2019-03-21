@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include "CSSPropertyNames.h"
 #include "PlatformEvent.h"
 #include "Timer.h"
 #include "WKContentObservation.h"
