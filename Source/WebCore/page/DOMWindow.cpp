@@ -2109,7 +2109,7 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     // FIXME: We should use EventDispatcher everywhere.
     fireEventListeners(event, EventInvokePhase::Capturing);
     fireEventListeners(event, EventInvokePhase::Bubbling);
-    InspectorInstrumentation::didDispatchEventOnWindow(cookie);
+    InspectorInstrumentation::didDispatchEventOnWindow(cookie, event.defaultPrevented());
     event.resetAfterDispatch();
 }
 

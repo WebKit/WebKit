@@ -34,7 +34,7 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         let columns = {name: {}, location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
 
         columns.name.title = WI.UIString("Name");
-        columns.name.width = "10%";
+        columns.name.width = "30%";
         columns.name.icon = true;
         columns.name.disclosure = true;
         columns.name.locked = true;

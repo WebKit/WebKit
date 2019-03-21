@@ -1,5 +1,36 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timeline should show when events preventDefault() was called on an event or not
+        https://bugs.webkit.org/show_bug.cgi?id=176824
+        <rdar://problem/34290931>
+
+        Reviewed by Timothy Hatcher.
+
+        Original patch by Joseph Pecoraro <pecoraro@apple.com>.
+
+        * inspector/timeline/resources/timeline-event-utilities.js: Added.
+        (finishRecording):
+        (TestPage.registerInitializer.InspectorTest.TimelineEvent.captureTimelineWithScript):
+        (TestPage.registerInitializer):
+        Helper code for creating a recording from a function.
+
+        * inspector/timeline/timeline-event-CancelAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-CancelAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-EventDispatch.html: Added.
+        * inspector/timeline/timeline-event-EventDispatch-expected.txt: Added.
+        * inspector/timeline/timeline-event-FireAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-FireAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-RequestAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-RequestAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerFire.html: Added.
+        * inspector/timeline/timeline-event-TimerFire-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerInstall.html: Added.
+        * inspector/timeline/timeline-event-TimerInstall-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerRemove.html: Added.
+        * inspector/timeline/timeline-event-TimerRemove-expected.txt: Added.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Styles Redesign: Editing selector should not hide the rule
         https://bugs.webkit.org/show_bug.cgi?id=178489
         <rdar://problem/35062434>

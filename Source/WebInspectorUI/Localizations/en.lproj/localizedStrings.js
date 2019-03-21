@@ -1180,6 +1180,7 @@ localizedStrings["\u201C%s\u201D Event Fired"] = "\u201C%s\u201D Event Fired";
 localizedStrings["\u201C%s\u201D Profile Recorded"] = "\u201C%s\u201D Profile Recorded";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
+localizedStrings["default prevented"] = "default prevented";
 localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["invalid HAR"] = "invalid HAR";
 localizedStrings["invalid JSON"] = "invalid JSON";

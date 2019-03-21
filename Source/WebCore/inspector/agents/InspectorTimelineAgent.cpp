@@ -306,8 +306,12 @@ void InspectorTimelineAgent::willDispatchEvent(const Event& event, Frame* frame)
     pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event), TimelineRecordType::EventDispatch, false, frame);
 }
 
-void InspectorTimelineAgent::didDispatchEvent()
+void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 {
+    auto& entry = m_recordStack.last();
+    ASSERT(entry.type == TimelineRecordType::EventDispatch);
+    entry.data->setBoolean("defaultPrevented"_s, defaultPrevented);
+
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 

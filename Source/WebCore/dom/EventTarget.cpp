@@ -316,7 +316,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     }
 
     if (contextIsDocument)
-        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie);
+        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie, event.defaultPrevented());
 }
 
 Vector<AtomicString> EventTarget::eventTypes()

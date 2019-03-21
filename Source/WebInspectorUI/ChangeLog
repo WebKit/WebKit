@@ -1,5 +1,37 @@
 2019-03-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timeline should show when events preventDefault() was called on an event or not
+        https://bugs.webkit.org/show_bug.cgi?id=176824
+        <rdar://problem/34290931>
+
+        Reviewed by Timothy Hatcher.
+
+        Original patch by Joseph Pecoraro <pecoraro@apple.com>.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        New string.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype._processRecord):
+        Include the whole data object as extra details.
+
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord):
+        (WI.ScriptTimelineRecord.prototype.get eventType):
+        Wholesale copy of the extra data instead of just a single property.
+
+        * UserInterface/Views/ScriptDetailsTimelineView.js:
+        (WI.ScriptDetailsTimelineView):
+        Give the name column more initial space, there is still extra space
+        after this adjustment but name is comfortably larger (and the most
+        likely to be expanded).
+
+        * UserInterface/Views/ScriptTimelineDataGridNode.js:
+        (WI.ScriptTimelineDataGridNode.prototype.get subtitle):
+        Include "default prevented" as the event's subtitle if it was prevented.
+
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Styles Redesign: Editing selector should not hide the rule
         https://bugs.webkit.org/show_bug.cgi?id=178489
         <rdar://problem/35062434>

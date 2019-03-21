@@ -1,3 +1,40 @@
+2019-03-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timeline should show when events preventDefault() was called on an event or not
+        https://bugs.webkit.org/show_bug.cgi?id=176824
+        <rdar://problem/34290931>
+
+        Reviewed by Timothy Hatcher.
+
+        Original patch by Joseph Pecoraro <pecoraro@apple.com>.
+
+        Tests: inspector/timeline/timeline-event-CancelAnimationFrame.html
+               inspector/timeline/timeline-event-EventDispatch.html
+               inspector/timeline/timeline-event-FireAnimationFrame.html
+               inspector/timeline/timeline-event-RequestAnimationFrame.html
+               inspector/timeline/timeline-event-TimerFire.html
+               inspector/timeline/timeline-event-TimerInstall.html
+               inspector/timeline/timeline-event-TimerRemove.html
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::innerInvokeEventListeners):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+        Include `defaultPrevented` when notifying inspector.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didDispatchEvent):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindow):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindowImpl):
+        Pass `defaultPrevented` on to agent.
+
+        * inspector/agents/InspectorTimelineAgent.h:
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        Append a boolean `defaultPrevented` property on the `EventDispatch` timeline record's data.
+
 2019-03-20  Antoine Quint  <graouts@apple.com>
 
         DumpRenderTree crashes under WebAnimation::isRelevant when running imported/mozilla/css-transitions/test_document-get-animations.html in GuardMalloc
