@@ -1,3 +1,17 @@
+2019-03-20  Saam Barati  <sbarati@apple.com>
+
+        typeOfDoubleSum is wrong for when NaN can be produced
+        https://bugs.webkit.org/show_bug.cgi?id=196030
+
+        Reviewed by Filip Pizlo.
+
+        * stress/double-add-sub-mul-can-produce-nan.js: Added.
+        (assert):
+        (noInline.sub):
+        (noInline):
+        (assert.mul):
+        (assert.add):
+
 2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Update the test to ensure OutOfMemoryError is thrown as intended
