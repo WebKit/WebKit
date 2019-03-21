@@ -1,5 +1,20 @@
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] User data not correctly passed to callback of functions and constructors with no parameters
+        https://bugs.webkit.org/show_bug.cgi?id=196073
+
+        Reviewed by Michael Catanzaro.
+
+        Add test cases to check functions and constructors with no arguments but receiving user data.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (checkUserData):
+        (testJSCFunction):
+        (fooCreateWithUserData):
+        (testJSCClass):
+
+2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK build with GLib < 2.58 after r243285.
 
         Add g_assert_cmpfloat_with_epsilon macro if not defined.

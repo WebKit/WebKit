@@ -1,3 +1,21 @@
+2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] User data not correctly passed to callback of functions and constructors with no parameters
+        https://bugs.webkit.org/show_bug.cgi?id=196073
+
+        Reviewed by Michael Catanzaro.
+
+        This is because GClosure always expects a first parameter as instance. In case of functions or constructors with
+        no parameters we insert a fake instance which is just a null pointer that is ignored by the callback. But
+        if the function/constructor has user data the callback will expect one parameter for the user data. In that case
+        we can simply swap instance/user data so that the fake instance will be the second argument and user data the
+        first one.
+
+        * API/glib/JSCClass.cpp:
+        (jscClassCreateConstructor): Use g_cclosure_new_swap() if parameters is empty and user data was provided.
+        * API/glib/JSCValue.cpp:
+        (jscValueFunctionCreate): Ditto.
+
 2019-03-21  Pablo Saavedra  <psaavedra@igalia.com>
 
         [JSC][32-bit] Build failure after r243232
