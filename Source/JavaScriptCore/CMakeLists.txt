@@ -977,6 +977,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
+    wasm/WasmCapabilities.h
     wasm/WasmCodeBlock.h
     wasm/WasmContext.h
     wasm/WasmEmbedder.h

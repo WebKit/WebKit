@@ -420,8 +420,10 @@ static void recomputeDependentOptions()
         Options::useJIT() = false;
 #endif
 
-    if (!Options::useJIT())
+    if (!Options::useJIT()) {
+        Options::useSigillCrashAnalyzer() = false;
         Options::useWebAssembly() = false;
+    }
 
     if (!Options::useWebAssembly())
         Options::useFastTLSForWasmContext() = false;
@@ -509,9 +511,6 @@ static void recomputeDependentOptions()
         Options::sweepSynchronously() = true;
         Options::scribbleFreeCells() = true;
     }
-
-    if (Options::useSigillCrashAnalyzer())
-        enableSigillCrashAnalyzer();
 
     if (Options::reservedZoneSize() < minimumReservedZoneSize)
         Options::reservedZoneSize() = minimumReservedZoneSize;

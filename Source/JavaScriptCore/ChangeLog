@@ -1,5 +1,82 @@
 2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Do not create JIT related data under non-JIT mode
+        https://bugs.webkit.org/show_bug.cgi?id=195982
+
+        Reviewed by Mark Lam.
+
+        We avoid creations of JIT related data structures under non-JIT mode.
+        This patch removes the following allocations.
+
+        1. JITThunks
+        2. FTLThunks
+        3. FixedVMPoolExecutableAllocator
+        4. noJITValueProfileSingleton since it is no longer used
+        5. ARM disassembler should be initialized when it is used
+        6. Wasm related data structures are accidentally allocated if VM::canUseJIT() == false &&
+           Options::useWebAssembly() == true. Add Wasm::isSupported() function to check the both conditions.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator):
+        (JSC::ExecutableAllocator::initializeUnderlyingAllocator):
+        (JSC::ExecutableAllocator::isValid const):
+        (JSC::ExecutableAllocator::underMemoryPressure):
+        (JSC::ExecutableAllocator::memoryPressureMultiplier):
+        (JSC::ExecutableAllocator::allocate):
+        (JSC::ExecutableAllocator::isValidExecutableMemory):
+        (JSC::ExecutableAllocator::getLock const):
+        (JSC::ExecutableAllocator::committedByteCount):
+        (JSC::ExecutableAllocator::dumpProfile):
+        (JSC::startOfFixedExecutableMemoryPoolImpl):
+        (JSC::endOfFixedExecutableMemoryPoolImpl):
+        (JSC::ExecutableAllocator::initialize):
+        (JSC::ExecutableAllocator::initializeAllocator): Deleted.
+        (JSC::ExecutableAllocator::ExecutableAllocator): Deleted.
+        (JSC::ExecutableAllocator::~ExecutableAllocator): Deleted.
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocatorBase::isValid const):
+        (JSC::ExecutableAllocatorBase::underMemoryPressure):
+        (JSC::ExecutableAllocatorBase::memoryPressureMultiplier):
+        (JSC::ExecutableAllocatorBase::dumpProfile):
+        (JSC::ExecutableAllocatorBase::allocate):
+        (JSC::ExecutableAllocatorBase::setJITEnabled):
+        (JSC::ExecutableAllocatorBase::isValidExecutableMemory):
+        (JSC::ExecutableAllocatorBase::committedByteCount):
+        (JSC::ExecutableAllocatorBase::getLock const):
+        (JSC::ExecutableAllocator::isValid const): Deleted.
+        (JSC::ExecutableAllocator::underMemoryPressure): Deleted.
+        (JSC::ExecutableAllocator::memoryPressureMultiplier): Deleted.
+        (JSC::ExecutableAllocator::allocate): Deleted.
+        (JSC::ExecutableAllocator::setJITEnabled): Deleted.
+        (JSC::ExecutableAllocator::isValidExecutableMemory): Deleted.
+        (JSC::ExecutableAllocator::committedByteCount): Deleted.
+        (JSC::ExecutableAllocator::getLock const): Deleted.
+        * jsc.cpp:
+        (functionWebAssemblyMemoryMode):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/VM.cpp:
+        (JSC::enableAssembler):
+        (JSC::VM::canUseAssembler):
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmCapabilities.h: Added.
+        (JSC::Wasm::isSupported):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::enableFastMemory):
+
+2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Fix JSC build with newer ICU
         https://bugs.webkit.org/show_bug.cgi?id=196098
 

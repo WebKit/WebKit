@@ -59,6 +59,39 @@ static const unsigned jitAllocationGranule = 32;
 
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
 
+class ExecutableAllocatorBase {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ExecutableAllocatorBase);
+public:
+    bool isValid() const { return false; }
+
+    static bool underMemoryPressure() { return false; }
+
+    static double memoryPressureMultiplier(size_t) { return 1.0; }
+
+    static void dumpProfile() { }
+
+    RefPtr<ExecutableMemoryHandle> allocate(size_t, void*, JITCompilationEffort) { return nullptr; }
+
+    static void setJITEnabled(bool) { };
+    
+    bool isValidExecutableMemory(const AbstractLocker&, void*) { return false; }
+
+    static size_t committedByteCount() { return 0; }
+
+    Lock& getLock() const
+    {
+        return m_lock;
+    }
+
+protected:
+    ExecutableAllocatorBase() = default;
+    ~ExecutableAllocatorBase() = default;
+
+private:
+    mutable Lock m_lock;
+};
+
 #if ENABLE(JIT)
 
 JS_EXPORT_PRIVATE void* startOfFixedExecutableMemoryPoolImpl();
@@ -122,14 +155,13 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
     return memcpy(dst, src, n);
 }
 
-class ExecutableAllocator {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ExecutableAllocator);
-    enum ProtectionSetting { Writable, Executable };
-
+class ExecutableAllocator : private ExecutableAllocatorBase {
 public:
+    using Base = ExecutableAllocatorBase;
+
     static ExecutableAllocator& singleton();
-    static void initializeAllocator();
+    static void initialize();
+    static void initializeUnderlyingAllocator();
 
     bool isValid() const;
 
@@ -152,44 +184,22 @@ public:
     static size_t committedByteCount();
 
     Lock& getLock() const;
-private:
 
-    ExecutableAllocator();
-    ~ExecutableAllocator();
+private:
+    ExecutableAllocator() = default;
+    ~ExecutableAllocator() = default;
 };
 
 #else
 
-class ExecutableAllocator {
-    enum ProtectionSetting { Writable, Executable };
-
+class ExecutableAllocator : public ExecutableAllocatorBase {
 public:
     static ExecutableAllocator& singleton();
-    static void initializeAllocator();
-
-    bool isValid() const { return false; }
-
-    static bool underMemoryPressure() { return false; }
-
-    static double memoryPressureMultiplier(size_t) { return 1.0; }
-
-    static void dumpProfile() { }
-
-    RefPtr<ExecutableMemoryHandle> allocate(size_t, void*, JITCompilationEffort) { return nullptr; }
-
-    static void setJITEnabled(bool) { };
-    
-    bool isValidExecutableMemory(const AbstractLocker&, void*) { return false; }
-
-    static size_t committedByteCount() { return 0; }
-
-    Lock& getLock() const
-    {
-        return m_lock;
-    }
+    static void initialize();
 
 private:
-    mutable Lock m_lock;
+    ExecutableAllocator() = default;
+    ~ExecutableAllocator() = default;
 };
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)

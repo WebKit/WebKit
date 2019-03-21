@@ -115,7 +115,6 @@ static uintptr_t startOfFixedWritableMemoryPool;
 
 class FixedVMPoolExecutableAllocator;
 static FixedVMPoolExecutableAllocator* allocator = nullptr;
-static ExecutableAllocator* executableAllocator = nullptr;
 
 static bool s_isJITEnabled = true;
 static bool isJITEnabled()
@@ -404,49 +403,37 @@ private:
     MacroAssemblerCodePtr<ExecutableMemoryPtrTag> m_memoryEnd;
 };
 
-void ExecutableAllocator::initializeAllocator()
-{
-    ASSERT(!allocator);
-    allocator = new FixedVMPoolExecutableAllocator();
-    CodeProfiling::notifyAllocator(allocator);
-
-    executableAllocator = new ExecutableAllocator;
-}
-
-ExecutableAllocator& ExecutableAllocator::singleton()
-{
-    ASSERT(allocator);
-    ASSERT(executableAllocator);
-    return *executableAllocator;
-}
-
-ExecutableAllocator::ExecutableAllocator()
-{
-    ASSERT(allocator);
-}
-
-ExecutableAllocator::~ExecutableAllocator()
-{
-}
-
 FixedVMPoolExecutableAllocator::~FixedVMPoolExecutableAllocator()
 {
     m_reservation.deallocate();
 }
 
+void ExecutableAllocator::initializeUnderlyingAllocator()
+{
+    ASSERT(!allocator);
+    allocator = new FixedVMPoolExecutableAllocator();
+    CodeProfiling::notifyAllocator(allocator);
+}
+
 bool ExecutableAllocator::isValid() const
 {
+    if (!allocator)
+        return Base::isValid();
     return !!allocator->bytesReserved();
 }
 
 bool ExecutableAllocator::underMemoryPressure()
 {
+    if (!allocator)
+        return Base::underMemoryPressure();
     MetaAllocator::Statistics statistics = allocator->currentStatistics();
     return statistics.bytesAllocated > statistics.bytesReserved / 2;
 }
 
 double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 {
+    if (!allocator)
+        return Base::memoryPressureMultiplier(addedMemoryUsage);
     MetaAllocator::Statistics statistics = allocator->currentStatistics();
     ASSERT(statistics.bytesAllocated <= statistics.bytesReserved);
     size_t bytesAllocated = statistics.bytesAllocated + addedMemoryUsage;
@@ -465,6 +452,8 @@ double ExecutableAllocator::memoryPressureMultiplier(size_t addedMemoryUsage)
 
 RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes, void* ownerUID, JITCompilationEffort effort)
 {
+    if (!allocator)
+        return Base::allocate(sizeInBytes, ownerUID, effort);
     if (Options::logExecutableAllocation()) {
         MetaAllocator::Statistics stats = allocator->currentStatistics();
         dataLog("Allocating ", sizeInBytes, " bytes of executable memory with ", stats.bytesAllocated, " bytes allocated, ", stats.bytesReserved, " bytes reserved, and ", stats.bytesCommitted, " committed.\n");
@@ -514,33 +503,45 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
 
 bool ExecutableAllocator::isValidExecutableMemory(const AbstractLocker& locker, void* address)
 {
+    if (!allocator)
+        return Base::isValidExecutableMemory(locker, address);
     return allocator->isInAllocatedMemory(locker, address);
 }
 
 Lock& ExecutableAllocator::getLock() const
 {
+    if (!allocator)
+        return Base::getLock();
     return allocator->getLock();
 }
 
 size_t ExecutableAllocator::committedByteCount()
 {
+    if (!allocator)
+        return Base::committedByteCount();
     return allocator->bytesCommitted();
 }
 
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void ExecutableAllocator::dumpProfile()
 {
+    if (!allocator)
+        return;
     allocator->dumpProfile();
 }
 #endif
 
 void* startOfFixedExecutableMemoryPoolImpl()
 {
+    if (!allocator)
+        return nullptr;
     return allocator->memoryStart();
 }
 
 void* endOfFixedExecutableMemoryPoolImpl()
 {
+    if (!allocator)
+        return nullptr;
     return allocator->memoryEnd();
 }
 
@@ -551,13 +552,13 @@ bool isJITPC(void* pc)
 
 } // namespace JSC
 
-#else // !ENABLE(JIT)
+#endif // ENABLE(JIT)
 
 namespace JSC {
 
 static ExecutableAllocator* executableAllocator;
 
-void ExecutableAllocator::initializeAllocator()
+void ExecutableAllocator::initialize()
 {
     executableAllocator = new ExecutableAllocator;
 }
@@ -569,5 +570,3 @@ ExecutableAllocator& ExecutableAllocator::singleton()
 }
 
 } // namespace JSC
-
-#endif // ENABLE(JIT)

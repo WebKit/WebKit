@@ -804,8 +804,6 @@ public:
     RTTraceList* m_rtTraceList;
 #endif
 
-    std::unique_ptr<ValueProfile> noJITValueProfileSingleton;
-
     JS_EXPORT_PRIVATE void resetDateCache();
 
     RegExpCache* regExpCache() { return m_regExpCache; }

@@ -168,6 +168,7 @@
 #include "SymbolObject.h"
 #include "SymbolPrototype.h"
 #include "VariableWriteFireDetail.h"
+#include "WasmCapabilities.h"
 #include "WeakGCMapInlines.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"
@@ -1042,7 +1043,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         exposeDollarVM(vm);
 
 #if ENABLE(WEBASSEMBLY)
-    if (Options::useWebAssembly()) {
+    if (Wasm::isSupported()) {
         auto* webAssemblyPrototype = WebAssemblyPrototype::create(vm, this, WebAssemblyPrototype::createStructure(vm, this, m_objectPrototype.get()));
         m_webAssemblyModuleRecordStructure.initLater(
             [] (const Initializer<Structure>& init) {

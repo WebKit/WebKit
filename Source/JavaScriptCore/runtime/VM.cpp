@@ -185,19 +185,23 @@ Atomic<unsigned> VM::s_numberOfIDs;
 // just checks for ENABLE(JIT) or ENABLE(YARR_JIT) with this premise in mind.
 
 #if ENABLE(ASSEMBLER)
-static bool enableAssembler(ExecutableAllocator& executableAllocator)
+static bool enableAssembler()
 {
     if (!Options::useJIT() && !Options::useRegExpJIT())
         return false;
 
-    if (!executableAllocator.isValid()) {
+    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
+    if (canUseJITString && !atoi(canUseJITString))
+        return false;
+
+    ExecutableAllocator::initializeUnderlyingAllocator();
+    if (!ExecutableAllocator::singleton().isValid()) {
         if (Options::crashIfCantAllocateJITMemory())
             CRASH();
         return false;
     }
 
-    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
-    return !canUseJITString || atoi(canUseJITString);
+    return true;
 }
 #endif // ENABLE(!ASSEMBLER)
 
@@ -207,7 +211,7 @@ bool VM::canUseAssembler()
     static std::once_flag onceKey;
     static bool enabled = false;
     std::call_once(onceKey, [] {
-        enabled = enableAssembler(ExecutableAllocator::singleton());
+        enabled = enableAssembler();
     });
     return enabled;
 #else
@@ -407,14 +411,6 @@ VM::VM(VMType vmType, HeapType heapType)
     }
 
     Thread::current().setCurrentAtomicStringTable(existingEntryAtomicStringTable);
-
-#if ENABLE(JIT)
-    jitStubs = std::make_unique<JITThunks>();
-#endif
-
-#if ENABLE(FTL_JIT)
-    ftlThunks = std::make_unique<FTL::Thunks>();
-#endif // ENABLE(FTL_JIT)
     
 #if !ENABLE(C_LOOP)
     initializeHostCallReturnValue(); // This is needed to convince the linker not to drop host call return support.
@@ -472,13 +468,14 @@ VM::VM(VMType vmType, HeapType heapType)
 #if ENABLE(JIT)
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
     if (canUseJIT()) {
+        jitStubs = std::make_unique<JITThunks>();
+#if ENABLE(FTL_JIT)
+        ftlThunks = std::make_unique<FTL::Thunks>();
+#endif // ENABLE(FTL_JIT)
         getCTIInternalFunctionTrampolineFor(CodeForCall);
         getCTIInternalFunctionTrampolineFor(CodeForConstruct);
     }
 #endif
-
-    if (!canUseJIT())
-        noJITValueProfileSingleton = std::make_unique<ValueProfile>(0);
 
     if (Options::forceDebuggerBytecodeGeneration() || Options::alwaysUseShadowChicken())
         ensureShadowChicken();

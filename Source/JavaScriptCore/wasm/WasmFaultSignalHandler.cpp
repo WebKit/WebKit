@@ -30,6 +30,7 @@
 
 #include "ExecutableAllocator.h"
 #include "MachineContext.h"
+#include "WasmCapabilities.h"
 #include "WasmExceptionType.h"
 #include "WasmMemory.h"
 #include "WasmThunks.h"
@@ -126,6 +127,9 @@ void enableFastMemory()
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)
     static std::once_flag once;
     std::call_once(once, [] {
+        if (!Wasm::isSupported())
+            return;
+
         if (!Options::useWebAssemblyFastMemory())
             return;
 

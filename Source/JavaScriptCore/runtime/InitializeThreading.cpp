@@ -40,8 +40,10 @@
 #include "LLIntData.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Options.h"
+#include "SigillCrashAnalyzer.h"
 #include "StructureIDTable.h"
 #include "SuperSampler.h"
+#include "WasmCapabilities.h"
 #include "WasmThunks.h"
 #include "WriteBarrier.h"
 #include <mutex>
@@ -68,10 +70,11 @@ void initializeThreading()
         WriteBarrierCounters::initialize();
 #endif
 
-#if ENABLE(ASSEMBLER)
-        ExecutableAllocator::initializeAllocator();
-#endif
+        ExecutableAllocator::initialize();
         VM::computeCanUseJIT();
+
+        if (VM::canUseJIT() && Options::useSigillCrashAnalyzer())
+            enableSigillCrashAnalyzer();
 
         LLInt::initialize();
 #ifndef NDEBUG
@@ -83,7 +86,7 @@ void initializeThreading()
         thread.setSavedLastStackTop(thread.stack().origin());
 
 #if ENABLE(WEBASSEMBLY)
-        if (Options::useWebAssembly())
+        if (Wasm::isSupported())
             Wasm::Thunks::initialize();
 #endif
 

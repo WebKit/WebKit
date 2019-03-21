@@ -1496,9 +1496,6 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     if (vm()->typeProfiler())
         vm()->typeProfiler()->invalidateTypeSetCache();
 
-    if (ValueProfile* profile = vm()->noJITValueProfileSingleton.get())
-        *profile = ValueProfile(0);
-        
     reapWeakHandles();
     pruneStaleEntriesFromWeakGCMaps();
     sweepArrayBuffers();

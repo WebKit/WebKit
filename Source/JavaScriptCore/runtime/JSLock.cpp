@@ -28,6 +28,7 @@
 #include "JSCInlines.h"
 #include "MachineStackMarker.h"
 #include "SamplingProfiler.h"
+#include "WasmCapabilities.h"
 #include "WasmMachineThreads.h"
 #include <thread>
 #include <wtf/StackPointer.h>
@@ -149,7 +150,7 @@ void JSLock::didAcquireLock()
 
     m_vm->heap.machineThreads().addCurrentThread();
 #if ENABLE(WEBASSEMBLY)
-    if (Options::useWebAssembly())
+    if (Wasm::isSupported())
         Wasm::startTrackingCurrentThread();
 #endif
 
