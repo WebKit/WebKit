@@ -46,9 +46,12 @@ async function runTest() {
             const rect = target.getBoundingClientRect();
             const centerX = (rect.left + rect.right) / 2;
             const centerY = (rect.top + rect.bottom) / 2;
-            await touchAndDragFromPointToPoint(centerX, centerY, centerX, centerY - 30);
-            await liftUpAtPoint(centerX, centerY - 30);
-            await sleep(500);
+            await UIHelper.immediateScrollElementAtContentPointToOffset(centerX, centerY, 0, 30);
+            
+            // Restore the main scroll view to the original position in case it moved.
+            await UIHelper.immediateScrollElementAtContentPointToOffset(5, 5, 0, 0);
+
+            await UIHelper.ensurePresentationUpdate();
 
             testcase.style.display = 'none';
             outputCase(i);

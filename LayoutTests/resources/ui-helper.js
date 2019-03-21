@@ -286,6 +286,17 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static immediateScrollElementAtContentPointToOffset(x, y, scrollX, scrollY)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.immediateScrollElementAtContentPointToOffset(${x}, ${y}, ${scrollX}, ${scrollY});`, resolve);
+        });
+    }
+
     static ensureVisibleContentRectUpdate()
     {
         if (!this.isWebKit2())

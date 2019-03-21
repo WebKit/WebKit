@@ -1,3 +1,28 @@
+2019-03-21  Antti Koivisto  <antti@apple.com>
+
+        Use immediateScrollElementAtContentPointToOffset for scroll overlap tests
+        https://bugs.webkit.org/show_bug.cgi?id=195943
+
+        Reviewed by Simon Fraser.
+
+        This is much faster and simpler than simulated touch events.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-2.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-3.html:
+        * fast/scrolling/ios/overflow-scroll-overlap-4.html:
+        * fast/scrolling/ios/overflow-scroll-overlap.html:
+
+        This API doesn't respect touch-action property, so stop using it. Instead restore
+        the main scrollview to the initial position explicitly after scroll.
+
+        * fast/scrolling/resources/overflow-scroll-overlap.js:
+        (async.runTest):
+        * resources/ui-helper.js:
+        (return.new.Promise.):
+        (return.new.Promise):
+
+        Add a Promise returning helper.
+
 2019-03-20  Youenn Fablet  <youenn@apple.com>
 
         Compute quota after network process restart based on default quota and space used
