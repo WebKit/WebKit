@@ -77,7 +77,7 @@ PlaybackSessionInterfaceAVKit::~PlaybackSessionInterfaceAVKit()
     invalidate();
 }
 
-PlaybackSessionModel* playbackSessionModel() const
+PlaybackSessionModel* PlaybackSessionInterfaceAVKit::playbackSessionModel() const
 {
     return m_playbackSessionModel.get();
 }

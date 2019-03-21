@@ -1,3 +1,12 @@
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix iOS build after r243337
+        https://bugs.webkit.org/show_bug.cgi?id=195935
+
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+        (WebCore::playbackSessionModel const): Deleted.
+
 2019-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Hardening: Use WeakPtrs in PlaybackSessionInterface{Mac,AVKit}
