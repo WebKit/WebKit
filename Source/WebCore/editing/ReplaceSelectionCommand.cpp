@@ -777,11 +777,6 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     fragment.removeNodePreservingChildren(*wrappingStyleSpan);
     return true;
 }
-    
-static bool isBlankLine(VisiblePosition& position)
-{
-    return isStartOfLine(position) && startOfLine(position.next()) != startOfLine(position);
-}
 
 // At copy time, WebKit wraps copied content in a span that contains the source document's 
 // default styles.  If the copied Range inherits any other styles from its ancestors, we put 
@@ -939,7 +934,7 @@ static bool hasBlankLineBetweenParagraphs(Position& position)
     VisiblePosition nextPosition = visiblePosition.next(CannotCrossEditingBoundary, &reachedBoundaryStart);
     bool hasLineBeforePosition = isEndOfLine(previousPosition);
     
-    return !reachedBoundaryStart && !reachedBoundaryEnd && isBlankLine(visiblePosition) && hasLineBeforePosition && isStartOfLine(nextPosition);
+    return !reachedBoundaryStart && !reachedBoundaryEnd && isBlankParagraph(visiblePosition) && hasLineBeforePosition && isStartOfLine(nextPosition);
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -1382,7 +1377,7 @@ void ReplaceSelectionCommand::addNewLinesForSmartReplace()
     VisiblePosition positionAfterEnd = endOfInsertedContent.next(CannotCrossEditingBoundary, &reachedBoundaryEnd);
 
     if (!reachedBoundaryStart && !reachedBoundaryEnd) {
-        if (!isBlankLine(positionBeforeStart) && !isBlankLine(startOfInsertedContent) && isEndOfLine(positionBeforeStart) && !isEndOfEditableOrNonEditableContent(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(endOfInsertedContent)) {
+        if (!isBlankParagraph(positionBeforeStart) && !isBlankParagraph(startOfInsertedContent) && isEndOfLine(positionBeforeStart) && !isEndOfEditableOrNonEditableContent(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(endOfInsertedContent)) {
             setEndingSelection(startOfInsertedContent);
             insertParagraphSeparator();
             auto newStart = endingSelection().visibleStart().previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
@@ -1397,7 +1392,7 @@ void ReplaceSelectionCommand::addNewLinesForSmartReplace()
     positionBeforeStart = startOfInsertedContent.previous(CannotCrossEditingBoundary, &reachedBoundaryStart);
 
     if (!reachedBoundaryEnd && !reachedBoundaryStart) {
-        if (!isBlankLine(positionAfterEnd) && !isBlankLine(endOfInsertedContent) && isStartOfLine(positionAfterEnd) && !isEndOfLine(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(positionAfterEnd)) {
+        if (!isBlankParagraph(positionAfterEnd) && !isBlankParagraph(endOfInsertedContent) && isStartOfLine(positionAfterEnd) && !isEndOfLine(positionAfterEnd) && !isEndOfEditableOrNonEditableContent(positionAfterEnd)) {
             setEndingSelection(endOfInsertedContent);
             insertParagraphSeparator();
             m_endOfInsertedContent = endingSelection().start();

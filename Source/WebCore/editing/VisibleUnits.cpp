@@ -1377,6 +1377,11 @@ bool isEndOfParagraph(const VisiblePosition& pos, EditingBoundaryCrossingRule bo
 {
     return pos.isNotNull() && pos == endOfParagraph(pos, boundaryCrossingRule);
 }
+    
+bool isBlankParagraph(const VisiblePosition& position)
+{
+    return isStartOfParagraph(position) && startOfParagraph(position.next()) != startOfParagraph(position);
+}
 
 VisiblePosition previousParagraphPosition(const VisiblePosition& p, int x)
 {

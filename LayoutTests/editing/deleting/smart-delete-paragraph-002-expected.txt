@@ -1,0 +1,21 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of PRE > BODY > HTML > #document to 6 of PRE > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of PRE > BODY > HTML > #document to 2 of PRE > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > PRE > BODY > HTML > #document to 4 of #text > SPAN > PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > SPAN > PRE > BODY > HTML > #document to 21 of #text > PRE > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of PRE > BODY > HTML > #document to 2 of PRE > BODY > HTML > #document toDOMRange:range from 2 of PRE > BODY > HTML > #document to 2 of PRE > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Tests: 
+Smart deleting paragraph between two paragraphs in a pre element.
+Expected Results: 
+The extra line should be removed when the paragraph is removed. It should like this: 
+Test paragraph. 
+
+Last test paragraph.
+Test paragraph.
+
+Last test paragraph.
+execCutCommand: Test paragraph. <br>Last test paragraph.

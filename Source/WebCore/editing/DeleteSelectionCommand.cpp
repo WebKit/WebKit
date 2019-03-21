@@ -172,6 +172,46 @@ void DeleteSelectionCommand::setStartingSelectionOnSmartDelete(const Position& s
     setStartingSelection(VisibleSelection(newBase, newExtent, startingSelection().isDirectional())); 
 }
     
+bool DeleteSelectionCommand::shouldSmartDeleteParagraphSpacers()
+{
+    return document().editingBehavior().shouldSmartInsertDeleteParagraphs();
+}
+    
+void DeleteSelectionCommand::smartDeleteParagraphSpacers()
+{
+    VisiblePosition visibleStart { m_upstreamStart };
+    VisiblePosition visibleEnd { m_downstreamEnd };
+    bool selectionEndsInParagraphSeperator = isEndOfParagraph(visibleEnd);
+    bool selectionEndIsEndOfContent = endOfEditableContent(visibleEnd) == visibleEnd;
+    bool startAndEndInSameUnsplittableElement = unsplittableElementForPosition(visibleStart.deepEquivalent()) == unsplittableElementForPosition(visibleEnd.deepEquivalent());
+    visibleStart = visibleStart.previous(CannotCrossEditingBoundary);
+    visibleEnd = visibleEnd.next(CannotCrossEditingBoundary);
+    bool previousPositionIsBlankParagraph = isBlankParagraph(visibleStart);
+    bool endPositonIsBlankParagraph = isBlankParagraph(visibleEnd);
+    bool hasBlankParagraphAfterEndOrIsEndOfContent = !selectionEndIsEndOfContent && (endPositonIsBlankParagraph || selectionEndsInParagraphSeperator);
+    if (startAndEndInSameUnsplittableElement && previousPositionIsBlankParagraph && hasBlankParagraphAfterEndOrIsEndOfContent) {
+        m_needPlaceholder = false;
+        Position position;
+        if (endPositonIsBlankParagraph)
+            position = startOfNextParagraph(startOfNextParagraph(m_downstreamEnd)).deepEquivalent();
+        else
+            position = VisiblePosition(m_downstreamEnd).next().deepEquivalent();
+        m_upstreamEnd = position.upstream();
+        m_downstreamEnd = position.downstream();
+        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
+        setStartingSelectionOnSmartDelete(m_upstreamStart, m_downstreamEnd);
+    }
+    if (startAndEndInSameUnsplittableElement && selectionEndIsEndOfContent && previousPositionIsBlankParagraph && selectionEndsInParagraphSeperator) {
+        m_needPlaceholder = false;
+        VisiblePosition endOfParagraphBeforeStart = endOfParagraph(VisiblePosition { m_upstreamStart }.previous().previous());
+        Position position = endOfParagraphBeforeStart.deepEquivalent();
+        m_upstreamStart = position.upstream();
+        m_downstreamStart = position.downstream();
+        m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(DOWNSTREAM);
+        setStartingSelectionOnSmartDelete(m_upstreamStart, m_upstreamEnd);
+    }
+}
+    
 bool DeleteSelectionCommand::initializePositionData()
 {
     Position start, end;
@@ -265,6 +305,9 @@ bool DeleteSelectionCommand::initializePositionData()
 
             setStartingSelectionOnSmartDelete(m_downstreamStart, m_downstreamEnd);
         }
+    
+        if (shouldSmartDeleteParagraphSpacers())
+            smartDeleteParagraphSpacers();
     }
     
     // We must pass call parentAnchoredEquivalent on the positions since some editing positions

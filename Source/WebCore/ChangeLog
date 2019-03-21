@@ -1,3 +1,21 @@
+2019-03-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Smart delete for paragraphs.
+        https://bugs.webkit.org/show_bug.cgi?id=195837
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove additional newlines to maintain spacing around paragraphs.
+
+        Tests: editing/pasteboard/smart-delete-paragraph-001.html
+               editing/pasteboard/smart-delete-paragraph-002.html
+               editing/pasteboard/smart-delete-paragraph-003.html
+               editing/pasteboard/smart-delete-paragraph-004.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isBlankLine):
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+
 2019-03-21  Cathie Chen  <cathiechen@igalia.com>
 
         Fixed ContentChangeObserver build error.
