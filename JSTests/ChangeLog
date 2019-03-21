@@ -1,3 +1,13 @@
+2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Cap length of an array with spread to MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
+        https://bugs.webkit.org/show_bug.cgi?id=196055
+        <rdar://problem/49067448>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/new_array_with_spread-should-cap-array-size-to-MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.js: Added.
+
 2019-03-20  Saam Barati  <sbarati@apple.com>
 
         typeOfDoubleSum is wrong for when NaN can be produced

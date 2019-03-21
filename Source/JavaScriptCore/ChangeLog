@@ -1,3 +1,35 @@
+2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Cap length of an array with spread to MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
+        https://bugs.webkit.org/show_bug.cgi?id=196055
+        <rdar://problem/49067448>
+
+        Reviewed by Yusuke Suzuki.
+
+        We are doing this because:
+        1. We expect the array to be densely packed.
+        2. SpeculativeJIT::compileAllocateNewArrayWithSize() (and the FTL equivalent)
+           expects the array length to be less than MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH
+           if we don't want to use an ArrayStorage shape.
+        3. There's no reason why an array with spread needs to be that large anyway.
+           MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH is plenty.
+
+        In this patch, we also add a debug assert in compileAllocateNewArrayWithSize() and
+        emitAllocateButterfly() to check for overflows.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCreateRest):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+        (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+        (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        * runtime/ArrayConventions.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2019-03-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use finalizer in JSGlobalLexicalEnvironment and JSGlobalObject
