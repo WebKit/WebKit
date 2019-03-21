@@ -57,7 +57,8 @@ PASS: Capturing started.
       "startTime": "<filtered>",
       "frameId": "<filtered>",
       "data": {
-        "type": "click"
+        "type": "click",
+        "defaultPrevented": false
       },
       "children": [],
       "endTime": "<filtered>",
@@ -67,7 +68,8 @@ PASS: Capturing started.
       "startTime": "<filtered>",
       "frameId": "<filtered>",
       "data": {
-        "type": "click"
+        "type": "click",
+        "defaultPrevented": false
       },
       "children": [
         {
