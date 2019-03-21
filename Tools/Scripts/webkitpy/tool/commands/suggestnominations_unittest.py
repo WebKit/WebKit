@@ -95,7 +95,7 @@ git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-04
 """
 
     def test_basic(self):
-        expected_stdout = "REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
+        expected_stdout = "COMMITTER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
         options = self._make_options()
         suggest_nominations = SuggestNominations()
         suggest_nominations._init_options(options=options)
@@ -103,7 +103,7 @@ git-svn-id: http://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-04
         self.assert_execute_outputs(suggest_nominations, [], expected_stdout=expected_stdout, options=options)
 
     def test_with_verbose(self):
-        expected_stdout = "REVIEWER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\nCONTRIBUTOR: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
+        expected_stdout = "COMMITTER: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\nCONTRIBUTOR: Xianzhu Wang (wangxianzhu@chromium.org) has 88 reviewed patches\n"
         options = self._make_options(verbose=True)
         suggest_nominations = SuggestNominations()
         suggest_nominations._init_options(options=options)

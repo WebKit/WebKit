@@ -1,3 +1,16 @@
+2019-03-21  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSSION (r243297): webkitpy tests broken
+        https://bugs.webkit.org/show_bug.cgi?id=196108
+
+        Reviewed by Aakash Jain.
+
+        r243297 updated contributors.json, which broke a few unit tests.
+
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+        * Scripts/webkitpy/tool/commands/suggestnominations_unittest.py:
+
 2019-03-21  Chris Dumez  <cdumez@apple.com>
 
         WebKit should throw when trying to create a WKWebView with a related view that is using a different data store
