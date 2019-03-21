@@ -148,11 +148,11 @@ struct Action {
     {
         ASSERT(!hasStringArgument(type));
     }
+    Action(Action&&) = default;
 
     bool operator==(const Action& other) const
     {
         return m_type == other.m_type
-            && m_extensionIdentifier == other.m_extensionIdentifier
             && m_actionID == other.m_actionID
             && m_stringArgument == other.m_stringArgument;
     }
@@ -161,8 +161,6 @@ struct Action {
     static ActionType deserializeType(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
     static uint32_t serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location);
 
-    void setExtensionIdentifier(const String& extensionIdentifier) { m_extensionIdentifier = extensionIdentifier; }
-    const String& extensionIdentifier() const { return m_extensionIdentifier; }
     ActionType type() const { return m_type; }
     uint32_t actionID() const { return m_actionID; }
     const String& stringArgument() const { return m_stringArgument; }
@@ -170,14 +168,6 @@ struct Action {
     WEBCORE_EXPORT Action isolatedCopy() const;
     
 private:
-    Action(String&& extensionIdentifier, ActionType type, uint32_t actionID, String&& stringArgument)
-        : m_extensionIdentifier(WTFMove(extensionIdentifier))
-        , m_type(type)
-        , m_actionID(actionID)
-        , m_stringArgument(WTFMove(stringArgument))
-    { }
-
-    String m_extensionIdentifier;
     ActionType m_type;
     uint32_t m_actionID;
     String m_stringArgument;

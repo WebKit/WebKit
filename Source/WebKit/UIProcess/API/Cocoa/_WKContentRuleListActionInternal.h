@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebKitTestRunnerEvent.h"
+#import "_WKContentRuleListAction.h"
 
-#import "EventSenderProxy.h"
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import "WebKitTestRunnerWindow.h"
+#import "APIContentRuleListAction.h"
+#import "WKObject.h"
 
-@implementation WebKitTestRunnerEvent
+namespace WebKit {
 
-+ (NSPoint)mouseLocation
-{
-    return NSMakePoint(0, 0);
-    /*
-    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
-     */
+template<> struct WrapperTraits<API::ContentRuleListAction> {
+    using WrapperClass = _WKContentRuleListAction;
+};
+
 }
 
+@interface _WKContentRuleListAction () <WKObject> {
+@package
+    API::ObjectStorage<API::ContentRuleListAction> _action;
+}
 @end

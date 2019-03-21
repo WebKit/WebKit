@@ -41,6 +41,7 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+struct ContentRuleListResults;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
@@ -115,7 +116,7 @@ public:
         listener->use();
     }
     
-    virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, Vector<WTF::String>&&, Vector<WTF::String>&&) { };
+    virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, WebCore::ContentRuleListResults&&) { };
     
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual bool didFailToInitializePlugIn(WebKit::WebPageProxy&, API::Dictionary&) { return false; }

@@ -179,9 +179,22 @@ private:
     CompiledContentExtensionData m_data;
 };
 
+static std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<String>> allActionsForResourceLoad(const ContentExtensions::ContentExtensionsBackend& backend, const ResourceLoadInfo& info)
+{
+    Vector<ContentExtensions::Action> actions;
+    Vector<String> identifiersApplyingStylesheets;
+    for (auto&& actionsFromContentRuleList : backend.actionsForResourceLoad(info)) {
+        for (auto&& action : WTFMove(actionsFromContentRuleList.actions))
+            actions.append(WTFMove(action));
+        if (!actionsFromContentRuleList.sawIgnorePreviousRules)
+            identifiersApplyingStylesheets.append(actionsFromContentRuleList.contentRuleListIdentifier);
+    }
+    return { WTFMove(actions), WTFMove(identifiersApplyingStylesheets) };
+}
+
 void static testRequest(const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, size_t stylesheets = 1)
 {
-    auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
+    auto actions = allActionsForResourceLoad(contentExtensionsBackend, resourceLoadInfo);
     unsigned expectedSize = actions.first.size();
     EXPECT_EQ(expectedActions.size(), expectedSize);
     if (expectedActions.size() != expectedSize)
@@ -918,37 +931,38 @@ static const char* jsonWithStringsToCombine = "["
 
 TEST_F(ContentExtensionTest, StringParameters)
 {
+    using namespace ContentExtensions;
     auto backend1 = makeBackend("[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"matches\"}}]");
-    ASSERT_TRUE(actionsEqual(backend1.actionsForResourceLoad(mainDocumentRequest("test:///matches")), {{ ContentExtensions::ActionType::Notify, "testnotification" }}));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend1, mainDocumentRequest("test:///matches")), Vector<Action>::from(Action { ContentExtensions::ActionType::Notify, "testnotification" })));
 
     auto backend2 = makeBackend(jsonWithStringsToCombine);
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://A")), {{ ContentExtensions::ActionType::Notify, "AAA" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://B")), {{ ContentExtensions::ActionType::Notify, "BBB" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://C")), {{ ContentExtensions::ActionType::CSSDisplayNoneSelector, "CCC,selectorCombinedWithC" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://D")), {{ ContentExtensions::ActionType::CSSDisplayNoneSelector, "DDD" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://E")), { }, true));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://F")), { ContentExtensions::ActionType::BlockLoad }));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://G")), {{ ContentExtensions::ActionType::Notify, "GGG" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://GIK")), {{ ContentExtensions::ActionType::Notify, "GGG" }}));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://AJ")), {
-        { ContentExtensions::ActionType::Notify, "AAA" },
-        { ContentExtensions::ActionType::Notify, "AAA" } // ignore-previous-rules makes the AAA actions need to be unique.
-    }));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://A")), Vector<Action>::from(Action { ContentExtensions::ActionType::Notify, "AAA" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://B")), Vector<Action>::from(Action { ContentExtensions::ActionType::Notify, "BBB" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://C")), Vector<Action>::from(Action { ContentExtensions::ActionType::CSSDisplayNoneSelector, "CCC,selectorCombinedWithC" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://D")), Vector<Action>::from(Action { ContentExtensions::ActionType::CSSDisplayNoneSelector, "DDD" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://E")), { }, true));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://F")), Vector<Action>::from(Action { ContentExtensions::ActionType::BlockLoad })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://G")), Vector<Action>::from(Action { ContentExtensions::ActionType::Notify, "GGG" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://GIK")), Vector<Action>::from(Action { ContentExtensions::ActionType::Notify, "GGG" })));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://AJ")), Vector<Action>::from(
+        Action { ContentExtensions::ActionType::Notify, "AAA" },
+        Action { ContentExtensions::ActionType::Notify, "AAA" } // ignore-previous-rules makes the AAA actions need to be unique.
+    )));
     // FIXME: Add a test that matches actions with AAA with ignore-previous-rules between them and makes sure we only get one notification.
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://AE")), { }, true));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://ABCDE")), { }, true));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://ABCDEFG")), {
-        { ContentExtensions::ActionType::Notify, "GGG" },
-        { ContentExtensions::ActionType::BlockLoad }
-    }, true));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://FG")), {
-        { ContentExtensions::ActionType::Notify, "GGG" },
-        { ContentExtensions::ActionType::BlockLoad }
-    }));
-    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://EFG")), {
-        { ContentExtensions::ActionType::Notify, "GGG" },
-        { ContentExtensions::ActionType::BlockLoad }
-    }, true));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://AE")), { }, true));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://ABCDE")), { }, true));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://ABCDEFG")), Vector<Action>::from(
+        Action { ContentExtensions::ActionType::Notify, "GGG" },
+        Action { ContentExtensions::ActionType::BlockLoad }
+    ), true));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://FG")), Vector<Action>::from(
+        Action { ContentExtensions::ActionType::Notify, "GGG" },
+        Action { ContentExtensions::ActionType::BlockLoad }
+    )));
+    ASSERT_TRUE(actionsEqual(allActionsForResourceLoad(backend2, mainDocumentRequest("http://EFG")), Vector<Action>::from(
+        Action { ContentExtensions::ActionType::Notify, "GGG" },
+        Action { ContentExtensions::ActionType::BlockLoad }
+    ), true));
 }
 
 template<typename T, size_t cStringLength>

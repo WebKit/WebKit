@@ -29,6 +29,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKSameDocumentNavigationType.h>
 
+@class _WKContentRuleListAction;
 @class _WKWebsitePolicies;
 
 #if !TARGET_OS_IPHONE
@@ -93,6 +94,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error userInfo:(id <NSSecureCoding>)userInfo WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
 
 - (void)_webView:(WKWebView *)webView URL:(NSURL *)url contentRuleListIdentifiers:(NSArray<NSString *> *)identifiers notifications:(NSArray<NSString *> *)notifications WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason WK_API_AVAILABLE(macosx(10.14), ios(12.0));
 
 #if TARGET_OS_IPHONE

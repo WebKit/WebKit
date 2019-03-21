@@ -25,6 +25,7 @@
 #include "CSSParser.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
+#include "ContentRuleListResults.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -511,8 +512,8 @@ bool StyleSheetContents::subresourcesAllowReuse(CachePolicy cachePolicy, FrameLo
         auto* documentLoader = loader.documentLoader();
         if (page && documentLoader) {
             const auto& request = resource.resourceRequest();
-            auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), toResourceType(resource.type()), *documentLoader);
-            if (blockedStatus.blockedLoad || blockedStatus.madeHTTPS)
+            auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), toResourceType(resource.type()), *documentLoader);
+            if (results.summary.blockedLoad || results.summary.madeHTTPS)
                 return true;
         }
 #else

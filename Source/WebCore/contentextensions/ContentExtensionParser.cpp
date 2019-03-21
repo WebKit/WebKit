@@ -342,7 +342,7 @@ static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(
         if (!rule.has_value())
             return makeUnexpected(rule.error());
         if (rule.value())
-            ruleList.append(*rule.value());
+            ruleList.append(WTFMove(*rule.value()));
     }
 
     return ruleList;
@@ -374,7 +374,7 @@ Expected<Vector<ContentExtensionRule>, std::error_code> parseRuleList(const Stri
     dataLogF("Time spent loading extension %f\n", (loadExtensionEndTime - loadExtensionStartTime).seconds());
 #endif
 
-    return *ruleList;
+    return ruleList;
 }
 
 } // namespace ContentExtensions

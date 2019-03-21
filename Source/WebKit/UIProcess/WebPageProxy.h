@@ -197,6 +197,7 @@ enum class WritingDirection : uint8_t;
 
 struct ApplicationManifest;
 struct BackForwardItemIdentifier;
+struct ContentRuleListResults;
 struct DataListSuggestionInformation;
 struct DictionaryPopupInfo;
 struct ExceptionDetails;
@@ -1606,8 +1607,8 @@ private:
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
 
     void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
-        
-    void contentRuleListNotification(URL&&, Vector<String>&& identifiers, Vector<String>&& notifications);
+
+    void contentRuleListNotification(URL&&, WebCore::ContentRuleListResults&&);
 
     // History client
     void didNavigateWithNavigationData(const WebNavigationDataStore&, uint64_t frameID);

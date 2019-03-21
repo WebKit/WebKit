@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebKitTestRunnerEvent.h"
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
-#import "EventSenderProxy.h"
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import "WebKitTestRunnerWindow.h"
+WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKContentRuleListAction : NSObject
 
-@implementation WebKitTestRunnerEvent
-
-+ (NSPoint)mouseLocation
-{
-    return NSMakePoint(0, 0);
-    /*
-    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
-     */
-}
+@property (nonatomic, readonly) BOOL blockedLoad;
+@property (nonatomic, readonly) BOOL blockedCookies;
+@property (nonatomic, readonly) BOOL madeHTTPS;
+@property (nonatomic, readonly, copy) NSArray<NSString *> *notifications;
 
 @end

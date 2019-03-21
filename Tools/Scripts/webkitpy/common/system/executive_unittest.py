@@ -231,8 +231,9 @@ class ExecutiveTest(unittest.TestCase):
             return  # This function isn't implemented on Windows yet.
 
         executive = Executive()
-        pids = executive.running_pids()
+        pids, names = executive.running_pids()
         self.assertIn(os.getpid(), pids)
+        self.assertIn(os.path.basename(sys.executable), names)
 
     def serial_test_run_in_parallel(self):
         # We run this test serially to avoid overloading the machine and throwing off the timing.

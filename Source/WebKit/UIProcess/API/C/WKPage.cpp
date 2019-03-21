@@ -75,6 +75,7 @@
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
+#include <WebCore/ContentRuleListResults.h>
 #include <WebCore/Page.h>
 #include <WebCore/SSLKeyGenerator.h>
 #include <WebCore/SecurityOriginData.h>
@@ -2243,20 +2244,24 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didRemoveNavigationGestureSnapshot(toAPI(&page), m_client.base.clientInfo);
         }
         
-        void contentRuleListNotification(WebPageProxy& page, URL&& url, Vector<String>&& listIdentifiers, Vector<String>&& notifications) final
+        void contentRuleListNotification(WebPageProxy& page, URL&& url, ContentRuleListResults&& results) final
         {
             if (!m_client.contentRuleListNotification)
                 return;
 
             Vector<RefPtr<API::Object>> apiListIdentifiers;
-            for (const auto& identifier : listIdentifiers)
-                apiListIdentifiers.append(API::String::create(identifier));
-
             Vector<RefPtr<API::Object>> apiNotifications;
-            for (const auto& notification : notifications)
-                apiNotifications.append(API::String::create(notification));
+            for (const auto& pair : results.results) {
+                const String& listIdentifier = pair.first;
+                const auto& result = pair.second;
+                for (const String& notification : result.notifications) {
+                    apiListIdentifiers.append(API::String::create(listIdentifier));
+                    apiNotifications.append(API::String::create(notification));
+                }
+            }
 
-            m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTFMove(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTFMove(apiNotifications)).ptr()), m_client.base.clientInfo);
+            if (!apiNotifications.isEmpty())
+                m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTFMove(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTFMove(apiNotifications)).ptr()), m_client.base.clientInfo);
         }
 #if ENABLE(NETSCAPE_PLUGIN_API)
         void decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, CompletionHandler<void(PluginModuleLoadPolicy, const String&)>&& completionHandler) override

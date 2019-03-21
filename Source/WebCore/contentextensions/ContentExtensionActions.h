@@ -32,12 +32,14 @@
 
 namespace WebCore {
 
+struct ContentRuleListResults;
 class Page;
 class ResourceRequest;
 
 namespace ContentExtensions {
 
-typedef uint8_t SerializedActionByte;
+struct Action;
+using SerializedActionByte = uint8_t;
 
 enum class ActionType : uint8_t {
     BlockLoad,
@@ -64,14 +66,13 @@ static inline bool hasStringArgument(ActionType actionType)
     return false;
 }
 
-struct BlockedStatus {
-    bool blockedLoad { false };
-    bool blockedCookies { false };
-    bool madeHTTPS { false };
-    HashSet<std::pair<String, String>> notifications;
+struct ActionsFromContentRuleList {
+    String contentRuleListIdentifier;
+    bool sawIgnorePreviousRules { false };
+    Vector<Action> actions;
 };
 
-WEBCORE_EXPORT void applyBlockedStatusToRequest(const BlockedStatus&, Page*, ResourceRequest&);
+WEBCORE_EXPORT void applyResultsToRequest(ContentRuleListResults&&, Page*, ResourceRequest&);
 
 } // namespace ContentExtensions
 

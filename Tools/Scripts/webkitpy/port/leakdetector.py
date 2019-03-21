@@ -118,14 +118,19 @@ class LeakDetector(object):
 
     def check_for_leaks(self, process_name, process_pid):
         _log.debug("Checking for leaks in %s" % process_name)
+        pids = process_pid if isinstance(process_pid, list) else [process_pid]
+        names = process_name if isinstance(process_name, list) else [process_name]
         try:
-            leaks_filename = self.leaks_file_name(process_name, process_pid)
-            leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
-            # Oddly enough, run-leaks (or the underlying leaks tool) does not seem to always output utf-8,
-            # thus we pass decode_output=False.  Without this code we've seen errors like:
-            # "UnicodeDecodeError: 'utf8' codec can't decode byte 0x88 in position 779874: unexpected code byte"
-            self._port._run_script("run-leaks", self._leaks_args(process_name, process_pid), include_configuration_arguments=False, decode_output=False)
-            leaks_output = self._filesystem.read_binary_file(leaks_output_path)
+            for i in range(len(pids)):
+                pid = pids[i]
+                name = names[i]
+                leaks_filename = self.leaks_file_name(name, pid)
+                leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
+                # Oddly enough, run-leaks (or the underlying leaks tool) does not seem to always output utf-8,
+                # thus we pass decode_output=False.  Without this code we've seen errors like:
+                # "UnicodeDecodeError: 'utf8' codec can't decode byte 0x88 in position 779874: unexpected code byte"
+                self._port._run_script("run-leaks", self._leaks_args(name, pid), include_configuration_arguments=False, decode_output=False)
+                leaks_output = self._filesystem.read_binary_file(leaks_output_path)
         except ScriptError as e:
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
             return

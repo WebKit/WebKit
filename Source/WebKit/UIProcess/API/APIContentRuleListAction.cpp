@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebKitTestRunnerEvent.h"
+#include "config.h"
+#include "APIContentRuleListAction.h"
 
-#import "EventSenderProxy.h"
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import "WebKitTestRunnerWindow.h"
+namespace API {
 
-@implementation WebKitTestRunnerEvent
-
-+ (NSPoint)mouseLocation
+Ref<ContentRuleListAction> ContentRuleListAction::create(WebCore::ContentRuleListResults::Result&& result)
 {
-    return NSMakePoint(0, 0);
-    /*
-    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
-     */
+    return adoptRef(*new ContentRuleListAction(WTFMove(result)));
 }
 
-@end
+ContentRuleListAction::ContentRuleListAction(WebCore::ContentRuleListResults::Result&& result)
+    : m_result(WTFMove(result))
+{
+}
+
+ContentRuleListAction::~ContentRuleListAction() = default;
+
+bool ContentRuleListAction::blockedLoad() const
+{
+    return m_result.blockedLoad;
+}
+
+bool ContentRuleListAction::madeHTTPS() const
+{
+    return m_result.madeHTTPS;
+}
+
+bool ContentRuleListAction::blockedCookies() const
+{
+    return m_result.blockedCookies;
+}
+
+const Vector<WTF::String>& ContentRuleListAction::notifications() const
+{
+    return m_result.notifications;
+}
+
+} // namespace API

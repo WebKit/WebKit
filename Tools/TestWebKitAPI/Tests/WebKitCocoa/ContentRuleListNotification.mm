@@ -31,10 +31,45 @@
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKUserContentController.h>
 #import <WebKit/WKWebView.h>
+#import <WebKit/_WKContentRuleListAction.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/URL.h>
+#import <wtf/text/WTFString.h>
 
 static bool receivedNotification;
 static bool receivedAlert;
+
+struct Notification {
+    String identifier;
+    String url;
+    bool blockedLoad { false };
+    bool blockedCookies { false };
+    bool madeHTTPS { false };
+    Vector<String> notifications;
+    
+    bool operator==(const Notification& other) const
+    {
+        return identifier == other.identifier
+            && url == other.url
+            && blockedLoad == other.blockedLoad
+            && blockedCookies == other.blockedCookies
+            && madeHTTPS == other.madeHTTPS
+            && notifications == other.notifications;
+    }
+};
+
+static Vector<String> toVector(NSArray<NSString *> *array)
+{
+    Vector<String> vector;
+    vector.reserveInitialCapacity(array.count);
+    for (NSString *string in array)
+        vector.append(string);
+    return vector;
+}
+
+static Vector<Notification> notificationList;
+static RetainPtr<NSURL> notificationURL;
+static RetainPtr<NSString> notificationIdentifier;
 
 @interface ContentRuleListNotificationDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>
 @end
@@ -43,12 +78,17 @@ static bool receivedAlert;
 
 - (void)_webView:(WKWebView *)webView URL:(NSURL *)url contentRuleListIdentifiers:(NSArray<NSString *> *)identifiers notifications:(NSArray<NSString *> *)notifications
 {
-    EXPECT_STREQ(url.absoluteString.UTF8String, "apitest:///match");
+    notificationURL = url;
     EXPECT_EQ(identifiers.count, 1u);
-    EXPECT_STREQ([identifiers objectAtIndex:0].UTF8String, "testidentifier");
+    notificationIdentifier = [identifiers objectAtIndex:0];
     EXPECT_EQ(notifications.count, 1u);
     EXPECT_STREQ([notifications objectAtIndex:0].UTF8String, "testnotification");
     receivedNotification = true;
+}
+
+- (void)_webView:(WKWebView *)webView contentRuleListWithIdentifier:(NSString *)identifier performedAction:(_WKContentRuleListAction *)action forURL:(NSURL *)url
+{
+    notificationList.append({ identifier, url.absoluteString, !!action.blockedLoad, !!action.blockedCookies, !!action.madeHTTPS, toVector(action.notifications) });
 }
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
@@ -69,11 +109,13 @@ static bool receivedAlert;
 
 @end
 
-static RetainPtr<WKContentRuleList> makeWarnContentRuleList()
+static NSString *notificationSource = @"[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"match\"}}]";
+
+static RetainPtr<WKContentRuleList> makeContentRuleList(NSString *source, NSString *identifier = @"testidentifier")
 {
     __block bool doneCompiling = false;
     __block RetainPtr<WKContentRuleList> contentRuleList;
-    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:@"testidentifier" encodedContentRuleList:@"[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"match\"}}]" completionHandler:^(WKContentRuleList *list, NSError *error) {
+    [[WKContentRuleListStore defaultStore] compileContentRuleListForIdentifier:identifier encodedContentRuleList:source completionHandler:^(WKContentRuleList *list, NSError *error) {
         EXPECT_TRUE(list);
         contentRuleList = list;
         doneCompiling = true;
@@ -86,19 +128,21 @@ TEST(WebKit, ContentRuleListNotificationMainResource)
 {
     auto delegate = adoptNS([[ContentRuleListNotificationDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] addContentRuleList:makeWarnContentRuleList().get()];
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(notificationSource).get()];
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"apitest"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"apitest:///match"]]];
     TestWebKitAPI::Util::run(&receivedNotification);
+    EXPECT_STREQ([notificationURL absoluteString].UTF8String, "apitest:///match");
+    EXPECT_STREQ([notificationIdentifier UTF8String], "testidentifier");
 }
 
 TEST(WebKit, ContentRuleListNotificationSubresource)
 {
     auto delegate = adoptNS([[ContentRuleListNotificationDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration userContentController] addContentRuleList:makeWarnContentRuleList().get()];
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(notificationSource).get()];
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"apitest"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
@@ -106,4 +150,28 @@ TEST(WebKit, ContentRuleListNotificationSubresource)
     [webView loadHTMLString:@"<script>fetch('match').then(function(response){alert('fetch complete')})</script>" baseURL:[NSURL URLWithString:@"apitest:///"]];
     TestWebKitAPI::Util::run(&receivedAlert);
     EXPECT_TRUE(receivedNotification);
+    EXPECT_STREQ([notificationURL absoluteString].UTF8String, "apitest:///match");
+    EXPECT_STREQ([notificationIdentifier UTF8String], "testidentifier");
+}
+
+TEST(WebKit, PerformedActionForURL)
+{
+    NSString *firstList = @"[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"notify\"}}]";
+    NSString *secondList = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block\"}}]";
+    auto delegate = adoptNS([[ContentRuleListNotificationDelegate alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(firstList, @"firstList").get()];
+    [[configuration userContentController] addContentRuleList:makeContentRuleList(secondList, @"secondList").get()];
+    [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"apitest"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<script>fetch('notify').then(function(){fetch('block').then().catch(function(){alert('test complete')})})</script>" baseURL:[NSURL URLWithString:@"apitest:///"]];
+    TestWebKitAPI::Util::run(&receivedAlert);
+    
+    Vector<Notification> expectedNotifications {
+        { "firstList", "apitest:///notify", false, false, false, { "testnotification" } },
+        { "secondList", "apitest:///block", true, false, false, { } }
+    };
+    EXPECT_TRUE(expectedNotifications == notificationList);
 }

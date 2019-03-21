@@ -36,6 +36,7 @@
 #include "CSSValueKeywords.h"
 #include "ChromeClient.h"
 #include "CommonVM.h"
+#include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentType.h"
 #include "CookieJar.h"
@@ -1519,7 +1520,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto documentLoader = makeRefPtr(frame->loader().documentLoader())) {
-        if (page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Media, *documentLoader).blockedLoad) {
+        if (page->userContentProvider().processContentRuleListsForLoad(url, ResourceType::Media, *documentLoader).summary.blockedLoad) {
             mediaLoadingFailed(MediaPlayer::FormatError);
             return;
         }

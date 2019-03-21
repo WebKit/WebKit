@@ -4837,9 +4837,9 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
     });
 }
 
-void WebPageProxy::contentRuleListNotification(URL&& url, Vector<String>&& identifiers, Vector<String>&& notifications)
+void WebPageProxy::contentRuleListNotification(URL&& url, ContentRuleListResults&& results)
 {
-    m_navigationClient->contentRuleListNotification(*this, WTFMove(url), WTFMove(identifiers), WTFMove(notifications));
+    m_navigationClient->contentRuleListNotification(*this, WTFMove(url), WTFMove(results));
 }
     
 void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, uint64_t frameID) 

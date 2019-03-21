@@ -89,9 +89,9 @@ public:
 #if ENABLE(CONTENT_EXTENSIONS)
     // FIXME: These don't really belong here. They should probably bundled up in the ContentExtensionsBackend
     // which should always exist.
-    ContentExtensions::BlockedStatus processContentExtensionRulesForLoad(const URL&, ResourceType, DocumentLoader& initiatingDocumentLoader);
-    std::pair<Vector<ContentExtensions::Action>, Vector<String>> actionsForResourceLoad(const ResourceLoadInfo&, DocumentLoader& initiatingDocumentLoader);
-    WEBCORE_EXPORT void forEachContentExtension(const WTF::Function<void(const String&, ContentExtensions::ContentExtension&)>&, DocumentLoader& initiatingDocumentLoader);
+    ContentRuleListResults processContentRuleListsForLoad(const URL&, ResourceType, DocumentLoader& initiatingDocumentLoader);
+    Vector<ContentExtensions::ActionsFromContentRuleList> actionsForResourceLoad(const ResourceLoadInfo&, DocumentLoader& initiatingDocumentLoader);
+    WEBCORE_EXPORT void forEachContentExtension(const Function<void(const String&, ContentExtensions::ContentExtension&)>&, DocumentLoader& initiatingDocumentLoader);
 #endif
 
 protected:

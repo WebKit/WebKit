@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebKitTestRunnerEvent.h"
+#pragma once
 
-#import "EventSenderProxy.h"
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import "WebKitTestRunnerWindow.h"
+#include "APIObject.h"
 
-@implementation WebKitTestRunnerEvent
+#include <WebCore/ContentRuleListResults.h>
 
-+ (NSPoint)mouseLocation
-{
-    return NSMakePoint(0, 0);
-    /*
-    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
-     */
-}
+namespace API {
 
-@end
+class ContentRuleListAction final : public ObjectImpl<Object::Type::ContentRuleListAction> {
+public:
+    static Ref<ContentRuleListAction> create(WebCore::ContentRuleListResults::Result&&);
+    virtual ~ContentRuleListAction();
+
+    bool blockedLoad() const;
+    bool madeHTTPS() const;
+    bool blockedCookies() const;
+    const Vector<WTF::String>& notifications() const;
+
+private:
+    ContentRuleListAction(WebCore::ContentRuleListResults::Result&&);
+
+    WebCore::ContentRuleListResults::Result m_result;
+};
+    
+} // namespace API

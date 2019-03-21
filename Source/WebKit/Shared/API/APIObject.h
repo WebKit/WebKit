@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#pragma once
 
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -107,6 +106,7 @@ public:
         CacheManager,
         ColorPickerResultListener,
         ContentRuleList,
+        ContentRuleListAction,
         ContentRuleListStore,
         ContextMenuListener,
         CookieManager,
@@ -282,5 +282,3 @@ inline API::Object* Object::unwrap(void* object)
 } // namespace Object
 
 #undef DELEGATE_REF_COUNTING_TO_COCOA
-
-#endif // APIObject_h

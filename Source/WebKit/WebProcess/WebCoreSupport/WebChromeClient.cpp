@@ -58,6 +58,7 @@
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/ColorChooser.h>
+#include <WebCore/ContentRuleListResults.h>
 #include <WebCore/DataListSuggestionPicker.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/DocumentLoader.h>
@@ -909,18 +910,12 @@ void WebChromeClient::scheduleCompositingLayerFlush()
         m_page.drawingArea()->scheduleCompositingLayerFlush();
 }
 
-void WebChromeClient::contentRuleListNotification(const URL& url, const HashSet<std::pair<String, String>>& notificationPairs)
+void WebChromeClient::contentRuleListNotification(const URL& url, const ContentRuleListResults& results)
 {
-    Vector<String> identifiers;
-    Vector<String> notifications;
-    identifiers.reserveInitialCapacity(notificationPairs.size());
-    notifications.reserveInitialCapacity(notificationPairs.size());
-    for (auto& notification : notificationPairs) {
-        identifiers.uncheckedAppend(notification.first);
-        notifications.uncheckedAppend(notification.second);
-    }
-
-    m_page.send(Messages::WebPageProxy::ContentRuleListNotification(url, identifiers, notifications));
+#if ENABLE(CONTENT_EXTENSIONS)
+    ASSERT(results.shouldNotifyApplication());
+    m_page.send(Messages::WebPageProxy::ContentRuleListNotification(url, results));
+#endif
 }
 
 bool WebChromeClient::adjustLayerFlushThrottling(LayerFlushThrottleState::Flags flags)

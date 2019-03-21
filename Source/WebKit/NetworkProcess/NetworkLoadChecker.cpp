@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
 #include "NetworkProcess.h"
+#include <WebCore/ContentRuleListResults.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
@@ -240,13 +241,13 @@ void NetworkLoadChecker::checkRequest(ResourceRequest&& request, ContentSecurity
         }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-        this->processContentExtensionRulesForLoad(WTFMove(request), [this, weakThis = WTFMove(weakThis), handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
+        this->processContentRuleListsForLoad(WTFMove(request), [this, weakThis = WTFMove(weakThis), handler = WTFMove(handler), originalRequest = WTFMove(originalRequest)](auto result) mutable {
             if (!result.has_value()) {
                 ASSERT(result.error().isCancellation());
                 handler(WTFMove(result.error()));
                 return;
             }
-            if (result.value().status.blockedLoad) {
+            if (result.value().results.summary.blockedLoad) {
                 handler(this->accessControlErrorForValidationHandler("Blocked by content extension"_s));
                 return;
             }
@@ -452,12 +453,12 @@ ContentSecurityPolicy* NetworkLoadChecker::contentSecurityPolicy()
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& request, ContentExtensionCallback&& callback)
+void NetworkLoadChecker::processContentRuleListsForLoad(ResourceRequest&& request, ContentExtensionCallback&& callback)
 {
     // FIXME: Enable content blockers for navigation loads.
     if (!m_checkContentExtensions || !m_userContentControllerIdentifier || m_options.mode == FetchOptions::Mode::Navigate) {
-        ContentExtensions::BlockedStatus status;
-        callback(ContentExtensionResult { WTFMove(request), status });
+        ContentRuleListResults results;
+        callback(ContentExtensionResult { WTFMove(request), results });
         return;
     }
 
@@ -467,9 +468,9 @@ void NetworkLoadChecker::processContentExtensionRulesForLoad(ResourceRequest&& r
             return;
         }
 
-        auto status = backend.processContentExtensionRulesForPingLoad(request.url(), m_mainDocumentURL);
-        applyBlockedStatusToRequest(status, nullptr, request);
-        callback(ContentExtensionResult { WTFMove(request), status });
+        auto results = backend.processContentRuleListsForPingLoad(request.url(), m_mainDocumentURL);
+        WebCore::ContentExtensions::applyResultsToRequest(ContentRuleListResults { results }, nullptr, request);
+        callback(ContentExtensionResult { WTFMove(request), results });
     });
 }
 #endif // ENABLE(CONTENT_EXTENSIONS)

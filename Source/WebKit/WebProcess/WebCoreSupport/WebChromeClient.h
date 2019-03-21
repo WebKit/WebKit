@@ -214,7 +214,7 @@ private:
     void scheduleCompositingLayerFlush() final;
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) final;
 
-    void contentRuleListNotification(const URL&, const HashSet<std::pair<String, String>>&) final;
+    void contentRuleListNotification(const URL&, const WebCore::ContentRuleListResults&) final;
 
 #if PLATFORM(WIN)
     void setLastSetCursorToCurrentCursor() final { }

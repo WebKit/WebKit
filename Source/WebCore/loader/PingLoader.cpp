@@ -34,6 +34,7 @@
 #include "config.h"
 #include "PingLoader.h"
 
+#include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Frame.h"
@@ -59,7 +60,7 @@ namespace WebCore {
 #if !ENABLE(CONTENT_EXTENSIONS)
 
 // Returns true if we should block the load.
-static inline bool processContentExtensionRulesForLoad(const Frame&, ResourceRequest&, ResourceType)
+static inline bool processContentRuleListsForLoad(const Frame&, ResourceRequest&, ResourceType)
 {
     return false;
 }
@@ -67,7 +68,7 @@ static inline bool processContentExtensionRulesForLoad(const Frame&, ResourceReq
 #else
 
 // Returns true if we should block the load.
-static bool processContentExtensionRulesForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
+static bool processContentRuleListsForLoad(const Frame& frame, ResourceRequest& request, ResourceType resourceType)
 {
     auto* documentLoader = frame.loader().documentLoader();
     if (!documentLoader)
@@ -75,9 +76,10 @@ static bool processContentExtensionRulesForLoad(const Frame& frame, ResourceRequ
     auto* page = frame.page();
     if (!page)
         return false;
-    auto status = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), resourceType, *documentLoader);
-    applyBlockedStatusToRequest(status, page, request);
-    return status.blockedLoad;
+    auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), resourceType, *documentLoader);
+    bool result = results.summary.blockedLoad;
+    ContentExtensions::applyResultsToRequest(WTFMove(results), page, request);
+    return result;
 }
 
 #endif
@@ -93,7 +95,7 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
     }
 
     ResourceRequest request(url);
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Image))
+    if (processContentRuleListsForLoad(frame, request, ResourceType::Image))
         return;
 
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
@@ -119,7 +121,7 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
         return;
 
     ResourceRequest request(pingURL);
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw))
+    if (processContentRuleListsForLoad(frame, request, ResourceType::Raw))
         return;
 
     auto& document = *frame.document();
@@ -154,7 +156,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     ASSERT(frame.document());
 
     ResourceRequest request(reportURL);
-    if (processContentExtensionRulesForLoad(frame, request, ResourceType::Raw))
+    if (processContentRuleListsForLoad(frame, request, ResourceType::Raw))
         return;
 
     auto& document = *frame.document();

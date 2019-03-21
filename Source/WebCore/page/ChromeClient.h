@@ -101,6 +101,7 @@ class Widget;
 class MediaPlayerRequestInstallMissingPluginsCallback;
 #endif
 
+struct ContentRuleListResults;
 struct DateTimeChooserParameters;
 struct GraphicsDeviceAdapter;
 struct ShareDataWithParsedURL;
@@ -383,7 +384,7 @@ public:
     virtual void enableSuddenTermination() { }
     virtual void disableSuddenTermination() { }
 
-    virtual void contentRuleListNotification(const URL&, const HashSet<std::pair<String, String>>&) { };
+    virtual void contentRuleListNotification(const URL&, const ContentRuleListResults&) { };
 
 #if PLATFORM(WIN)
     virtual void setLastSetCursorToCurrentCursor() = 0;

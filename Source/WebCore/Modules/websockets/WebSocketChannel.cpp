@@ -33,6 +33,7 @@
 #include "WebSocketChannel.h"
 
 #include "Blob.h"
+#include "ContentRuleListResults.h"
 #include "CookieJar.h"
 #include "Document.h"
 #include "FileError.h"
@@ -89,8 +90,8 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto* page = m_document->page()) {
         if (auto* documentLoader = m_document->loader()) {
-            auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(url, ResourceType::Raw, *documentLoader);
-            if (blockedStatus.blockedLoad) {
+            auto results = page->userContentProvider().processContentRuleListsForLoad(url, ResourceType::Raw, *documentLoader);
+            if (results.summary.blockedLoad) {
                 Ref<WebSocketChannel> protectedThis(*this);
                 callOnMainThread([protectedThis = WTFMove(protectedThis)] {
                     if (protectedThis->m_client)
@@ -98,13 +99,13 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
                 });
                 return;
             }
-            if (blockedStatus.madeHTTPS) {
+            if (results.summary.madeHTTPS) {
                 ASSERT(url.protocolIs("ws"));
                 url.setProtocol("wss");
                 if (m_client)
                     m_client->didUpgradeURL();
             }
-            if (blockedStatus.blockedCookies)
+            if (results.summary.blockedCookies)
                 allowCookies = false;
         }
     }

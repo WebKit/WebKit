@@ -268,12 +268,13 @@ class Executive(AbstractExecutive):
     def running_pids(self, process_name_filter=None):
         if self._is_native_win:
             # FIXME: running_pids isn't implemented on native Windows yet...
-            return []
+            return [], []
 
         if not process_name_filter:
             process_name_filter = lambda process_name: True
 
         running_pids = []
+        running_names = []
         if self._is_cygwin:
             ps_process = self.run_command(['ps', '-e'], ignore_errors=True)
             for line in ps_process.splitlines():
@@ -282,6 +283,7 @@ class Executive(AbstractExecutive):
                     pid, ppid, pgid, winpid, tty, uid, stime, process_name = tokens
                     if process_name_filter(process_name):
                         running_pids.append(int(pid))
+                        running_names.append(os.path.basename(process_name))
                         self.pid_to_system_pid[int(pid)] = int(winpid)
                 except ValueError as e:
                     pass
@@ -295,10 +297,11 @@ class Executive(AbstractExecutive):
                     pid, process_name = line.strip().split(' ', 1)
                     if process_name_filter(process_name):
                         running_pids.append(int(pid))
+                        running_names.append(os.path.basename(process_name))
                 except ValueError as e:
                     pass
 
-        return sorted(running_pids)
+        return running_pids, running_names
 
     def _windows_image_name(self, process_name):
         name, extension = os.path.splitext(process_name)

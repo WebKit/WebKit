@@ -287,7 +287,7 @@ std::error_code compileRuleList(ContentExtensionCompilationClient& client, Strin
 {
 #if !ASSERT_DISABLED
     callOnMainThread([ruleJSON = ruleJSON.isolatedCopy(), parsedRuleList = parsedRuleList.isolatedCopy()] {
-        ASSERT(parseRuleList(ruleJSON) == parsedRuleList);
+        ASSERT(parseRuleList(ruleJSON).value() == parsedRuleList);
     });
 #endif
 

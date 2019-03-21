@@ -1,3 +1,25 @@
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform applications of WKContentRuleList actions
+        https://bugs.webkit.org/show_bug.cgi?id=195965
+        <rdar://problem/42664365>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (TestWebKitAPI::allActionsForResourceLoad):
+        (TestWebKitAPI::testRequest):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (Notification::description):
+        (Notification::operator== const):
+        (toVector):
+        (-[ContentRuleListNotificationDelegate _webView:URL:contentRuleListIdentifiers:notifications:]):
+        (-[ContentRuleListNotificationDelegate _webView:contentRuleListWithIdentifier:performedActionOnURL:blockedLoad:blockedCookies:madeHTTPS:notifications:]):
+        (makeContentRuleList):
+        (TEST):
+        (makeWarnContentRuleList): Deleted.
+
 2019-03-21  Timothy Hatcher  <timothy@apple.com>
 
         Style check error "WK_MAC_TBA is neither a version number nor WK_IOS_TBA" is confusing.

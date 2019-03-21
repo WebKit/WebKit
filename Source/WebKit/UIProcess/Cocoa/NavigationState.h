@@ -133,7 +133,7 @@ private:
         bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem*, const Vector<Ref<WebBackForwardListItem>>&) final;
 #endif
 
-        void contentRuleListNotification(WebPageProxy&, URL&&, Vector<String>&&, Vector<String>&&) final;
+        void contentRuleListNotification(WebPageProxy&, URL&&, WebCore::ContentRuleListResults&&) final;
         void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
         void decidePolicyForNavigationResponse(WebPageProxy&, Ref<API::NavigationResponse>&&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
 
@@ -219,6 +219,7 @@ private:
         bool webViewWillSnapshotBackForwardListItem : 1;
         bool webViewNavigationGestureSnapshotWasRemoved : 1;
         bool webViewURLContentRuleListIdentifiersNotifications : 1;
+        bool webViewContentRuleListWithIdentifierPerformedActionForURL : 1;
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;

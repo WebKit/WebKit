@@ -226,9 +226,9 @@ void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedStatus& blockedStatus, Page* page)
+void CachedResourceRequest::applyResults(ContentRuleListResults&& results, Page* page)
 {
-    ContentExtensions::applyBlockedStatusToRequest(blockedStatus, page, m_resourceRequest);
+    ContentExtensions::applyResultsToRequest(WTFMove(results), page, m_resourceRequest);
 }
 
 #endif

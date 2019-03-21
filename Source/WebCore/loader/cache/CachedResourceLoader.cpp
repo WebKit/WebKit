@@ -40,6 +40,7 @@
 #include "ChromeClient.h"
 #include "ContentExtensionError.h"
 #include "ContentExtensionRule.h"
+#include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMWindow.h"
@@ -808,9 +809,11 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     if (frame() && frame()->page() && m_documentLoader) {
         const auto& resourceRequest = request.resourceRequest();
         auto* page = frame()->page();
-        auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);
-        request.applyBlockedStatus(blockedStatus, page);
-        if (blockedStatus.blockedLoad) {
+        auto results = page->userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);
+        bool blockedLoad = results.summary.blockedLoad;
+        bool madeHTTPS = results.summary.madeHTTPS;
+        request.applyResults(WTFMove(results), page);
+        if (blockedLoad) {
             RELEASE_LOG_IF_ALLOWED("requestResource: Resource blocked by content blocker (frame = %p)", frame());
             if (type == CachedResource::Type::MainResource) {
                 CachedResourceHandle<CachedResource> resource = createResource(type, WTFMove(request), page->sessionID(), &page->cookieJar());
@@ -821,7 +824,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             }
             return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });
         }
-        if (blockedStatus.madeHTTPS
+        if (madeHTTPS
             && type == CachedResource::Type::MainResource
             && m_documentLoader->isLoadingMainResource()) {
             // This is to make sure the correct 'new' URL shows in the location bar.

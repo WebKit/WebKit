@@ -127,12 +127,18 @@ Trigger Trigger::isolatedCopy() const
 
 Action Action::isolatedCopy() const
 {
-    return {
-        m_extensionIdentifier.isolatedCopy(),
-        m_type,
-        m_actionID,
-        m_stringArgument.isolatedCopy()
-    };
+    if (hasStringArgument(m_type)) {
+        return {
+            m_type,
+            m_stringArgument.isolatedCopy(),
+            m_actionID
+        };
+    } else {
+        return {
+            m_type,
+            m_actionID
+        };
+    }
 }
 
 } // namespace ContentExtensions

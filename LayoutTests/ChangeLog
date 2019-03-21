@@ -1,3 +1,15 @@
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform applications of WKContentRuleList actions
+        https://bugs.webkit.org/show_bug.cgi?id=195965
+        <rdar://problem/42664365>
+
+        Reviewed by Geoff Garen.
+
+        * http/tests/contentextensions/popups-expected.txt:
+        Because popups now use UserContentProvider.processContentRuleListsForLoad like everything else,
+        it now prints messages to the debug console.  That is a desired improvement, so expectations are updated accordingly.
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add an internal feature flag to disable the -webkit-overflow-scrolling CSS property

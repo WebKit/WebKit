@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,22 +24,47 @@
  */
 
 #import "config.h"
-#import "WebKitTestRunnerEvent.h"
+#import "_WKContentRuleListActionInternal.h"
 
-#import "EventSenderProxy.h"
-#import "PlatformWebView.h"
-#import "TestController.h"
-#import "WebKitTestRunnerWindow.h"
+@implementation _WKContentRuleListAction
 
-@implementation WebKitTestRunnerEvent
-
-+ (NSPoint)mouseLocation
+- (void)dealloc
 {
-    return NSMakePoint(0, 0);
-    /*
-    WKPoint location = WTR::TestController::singleton().eventSenderProxy()->position();
-    return [WTR::TestController::singleton().mainWebView()->platformWindow() convertBaseToScreen:NSMakePoint(location.x, location.y)];
-     */
+    _action->~ContentRuleListAction();
+    
+    [super dealloc];
+}
+
+- (BOOL)blockedLoad
+{
+    return _action->blockedLoad();
+}
+
+- (BOOL)blockedCookies
+{
+    return _action->blockedCookies();
+}
+
+- (BOOL)madeHTTPS
+{
+    return _action->madeHTTPS();
+}
+
+- (NSArray<NSString *> *)notifications
+{
+    const auto& vector = _action->notifications();
+    if (vector.isEmpty())
+        return nil;
+
+    NSMutableArray<NSString *> *array = [[[NSMutableArray alloc] initWithCapacity:vector.size()] autorelease];
+    for (const auto& notification : vector)
+        [array addObject:notification];
+    return array;
+}
+
+- (API::Object&)_apiObject
+{
+    return *_action;
 }
 
 @end

@@ -33,6 +33,7 @@
 #include "CompiledContentExtension.h"
 #include "ContentExtension.h"
 #include "ContentExtensionsDebugging.h"
+#include "ContentRuleListResults.h"
 #include "DFABytecodeInterpreter.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -70,7 +71,7 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
-std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const
+auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const -> Vector<ActionsFromContentRuleList>
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeStart = MonotonicTime::now();
@@ -84,10 +85,13 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
     ASSERT_WITH_MESSAGE(urlString.isAllASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const auto urlCString = urlString.utf8();
 
-    Vector<Action> finalActions;
-    Vector<String> stylesheetIdentifiers;
-    ResourceFlags flags = resourceLoadInfo.getResourceFlags();
+    Vector<ActionsFromContentRuleList> actionsVector;
+    actionsVector.reserveInitialCapacity(m_contentExtensions.size());
+    const ResourceFlags flags = resourceLoadInfo.getResourceFlags();
     for (auto& contentExtension : m_contentExtensions.values()) {
+        ActionsFromContentRuleList actionsStruct;
+        actionsStruct.contentRuleListIdentifier = contentExtension->identifier();
+
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
         DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength());
@@ -100,7 +104,6 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
         const SerializedActionByte* actions = compiledExtension.actions();
         const unsigned actionsLength = compiledExtension.actionsLength();
         
-        bool sawIgnorePreviousRules = false;
         const Vector<uint32_t>& universalWithConditions = contentExtension->universalActionsWithConditions(topURL);
         const Vector<uint32_t>& universalWithoutConditions = contentExtension->universalActionsWithoutConditions();
         if (!withoutConditionsActions.isEmpty() || !withConditionsActions.isEmpty() || !universalWithConditions.isEmpty() || !universalWithoutConditions.isEmpty()) {
@@ -119,22 +122,20 @@ std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForRe
             // Add actions in reverse order to properly deal with IgnorePreviousRules.
             for (unsigned i = actionLocations.size(); i; i--) {
                 Action action = Action::deserialize(actions, actionsLength, actionLocations[i - 1]);
-                action.setExtensionIdentifier(contentExtension->identifier());
                 if (action.type() == ActionType::IgnorePreviousRules) {
-                    sawIgnorePreviousRules = true;
+                    actionsStruct.sawIgnorePreviousRules = true;
                     break;
                 }
-                finalActions.append(action);
+                actionsStruct.actions.append(WTFMove(action));
             }
         }
-        if (!sawIgnorePreviousRules)
-            stylesheetIdentifiers.append(contentExtension->identifier());
+        actionsVector.uncheckedAppend(WTFMove(actionsStruct));
     }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());
 #endif
-    return { WTFMove(finalActions), WTFMove(stylesheetIdentifiers) };
+    return actionsVector;
 }
 
 void ContentExtensionsBackend::forEach(const WTF::Function<void(const String&, ContentExtension&)>& apply)
@@ -149,7 +150,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(const URL& url, ResourceType resourceType, DocumentLoader& initiatingDocumentLoader)
 {
     if (m_contentExtensions.isEmpty())
         return { };
@@ -171,60 +172,70 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
     ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
-    bool willBlockLoad = false;
-    bool willBlockCookies = false;
-    bool willMakeHTTPS = false;
-    HashSet<std::pair<String, String>> notifications;
-    for (const auto& action : actions.first) {
-        switch (action.type()) {
-        case ContentExtensions::ActionType::BlockLoad:
-            willBlockLoad = true;
-            break;
-        case ContentExtensions::ActionType::BlockCookies:
-            willBlockCookies = true;
-            break;
-        case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-            if (resourceType == ResourceType::Document)
-                initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
-            else if (currentDocument)
-                currentDocument->extensionStyleSheets().addDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
-            break;
-        case ContentExtensions::ActionType::Notify:
-            notifications.add(std::make_pair(action.extensionIdentifier(), action.stringArgument()));
-            break;
-        case ContentExtensions::ActionType::MakeHTTPS: {
-            if ((url.protocolIs("http") || url.protocolIs("ws"))
-                && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
-                willMakeHTTPS = true;
-            break;
+    ContentRuleListResults results;
+    results.results.reserveInitialCapacity(actions.size());
+    for (const auto& actionsFromContentRuleList : actions) {
+        const String& contentRuleListIdentifier = actionsFromContentRuleList.contentRuleListIdentifier;
+        ContentRuleListResults::Result result;
+        for (const auto& action : actionsFromContentRuleList.actions) {
+            switch (action.type()) {
+            case ContentExtensions::ActionType::BlockLoad:
+                results.summary.blockedLoad = true;
+                result.blockedLoad = true;
+                break;
+            case ContentExtensions::ActionType::BlockCookies:
+                results.summary.blockedCookies = true;
+                result.blockedCookies = true;
+                break;
+            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+                if (resourceType == ResourceType::Document)
+                    initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
+                else if (currentDocument)
+                    currentDocument->extensionStyleSheets().addDisplayNoneSelector(contentRuleListIdentifier, action.stringArgument(), action.actionID());
+                break;
+            case ContentExtensions::ActionType::Notify:
+                results.summary.hasNotifications = true;
+                result.notifications.append(action.stringArgument());
+                break;
+            case ContentExtensions::ActionType::MakeHTTPS: {
+                if ((url.protocolIs("http") || url.protocolIs("ws"))
+                    && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol()))) {
+                    results.summary.madeHTTPS = true;
+                    result.madeHTTPS = true;
+                }
+                break;
+            }
+            case ContentExtensions::ActionType::IgnorePreviousRules:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         }
-        case ContentExtensions::ActionType::IgnorePreviousRules:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
 
-    for (const auto& identifier : actions.second) {
-        if (auto* styleSheetContents = globalDisplayNoneStyleSheet(identifier)) {
-            if (resourceType == ResourceType::Document)
-                initiatingDocumentLoader.addPendingContentExtensionSheet(identifier, *styleSheetContents);
-            else if (currentDocument)
-                currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(identifier, *styleSheetContents);
+        if (!actionsFromContentRuleList.sawIgnorePreviousRules) {
+            if (auto* styleSheetContents = globalDisplayNoneStyleSheet(contentRuleListIdentifier)) {
+                if (resourceType == ResourceType::Document)
+                    initiatingDocumentLoader.addPendingContentExtensionSheet(contentRuleListIdentifier, *styleSheetContents);
+                else if (currentDocument)
+                    currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(contentRuleListIdentifier, *styleSheetContents);
+            }
         }
+
+        results.results.uncheckedAppend({ contentRuleListIdentifier, WTFMove(result) });
     }
 
     if (currentDocument) {
-        if (willMakeHTTPS) {
+        if (results.summary.madeHTTPS) {
             ASSERT(url.protocolIs("http") || url.protocolIs("ws"));
             String newProtocol = url.protocolIs("http") ? "https"_s : "wss"_s;
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker promoted URL from ", url.string(), " to ", newProtocol));
         }
-        if (willBlockLoad)
+        if (results.summary.blockedLoad)
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));
     }
-    return { willBlockLoad, willBlockCookies, willMakeHTTPS, WTFMove(notifications) };
+
+    return results;
 }
 
-BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(const URL& url, const URL& mainDocumentURL)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL)
 {
     if (m_contentExtensions.isEmpty())
         return { };
@@ -232,30 +243,31 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
     ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Raw };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
-    bool willBlockLoad = false;
-    bool willBlockCookies = false;
-    bool willMakeHTTPS = false;
-    for (const auto& action : actions.first) {
-        switch (action.type()) {
-        case ContentExtensions::ActionType::BlockLoad:
-            willBlockLoad = true;
-            break;
-        case ContentExtensions::ActionType::BlockCookies:
-            willBlockCookies = true;
-            break;
-        case ContentExtensions::ActionType::MakeHTTPS:
-            if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
-                willMakeHTTPS = true;
-            break;
-        case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-        case ContentExtensions::ActionType::Notify:
-            break;
-        case ContentExtensions::ActionType::IgnorePreviousRules:
-            RELEASE_ASSERT_NOT_REACHED();
+    ContentRuleListResults results;
+    for (const auto& actionsFromContentRuleList : actions) {
+        for (const auto& action : actionsFromContentRuleList.actions) {
+            switch (action.type()) {
+            case ContentExtensions::ActionType::BlockLoad:
+                results.summary.blockedLoad = true;
+                break;
+            case ContentExtensions::ActionType::BlockCookies:
+                results.summary.blockedCookies = true;
+                break;
+            case ContentExtensions::ActionType::MakeHTTPS:
+                if ((url.protocolIs("http") || url.protocolIs("ws")) && (!url.port() || WTF::isDefaultPortForProtocol(url.port().value(), url.protocol())))
+                    results.summary.madeHTTPS = true;
+                break;
+            case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+            case ContentExtensions::ActionType::Notify:
+                // We currently have not implemented notifications from the NetworkProcess to the UIProcess.
+                break;
+            case ContentExtensions::ActionType::IgnorePreviousRules:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
         }
     }
 
-    return { willBlockLoad, willBlockCookies, willMakeHTTPS, { } };
+    return results;
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()
@@ -264,15 +276,12 @@ const String& ContentExtensionsBackend::displayNoneCSSRule()
     return rule;
 }
 
-void applyBlockedStatusToRequest(const BlockedStatus& status, Page* page, ResourceRequest& request)
+void applyResultsToRequest(ContentRuleListResults&& results, Page* page, ResourceRequest& request)
 {
-    if (page && !status.notifications.isEmpty())
-        page->chrome().client().contentRuleListNotification(request.url(), status.notifications);
-
-    if (status.blockedCookies)
+    if (results.summary.blockedCookies)
         request.setAllowCookies(false);
 
-    if (status.madeHTTPS) {
+    if (results.summary.madeHTTPS) {
         const URL& originalURL = request.url();
         ASSERT(originalURL.protocolIs("http"));
         ASSERT(!originalURL.port() || WTF::isDefaultPortForProtocol(originalURL.port().value(), originalURL.protocol()));
@@ -282,6 +291,13 @@ void applyBlockedStatusToRequest(const BlockedStatus& status, Page* page, Resour
         if (originalURL.port())
             newURL.setPort(WTF::defaultPortForProtocol("https").value());
         request.setURL(newURL);
+    }
+
+    if (page && results.shouldNotifyApplication()) {
+        results.results.removeAllMatching([](const auto& pair) {
+            return !pair.second.shouldNotifyApplication();
+        });
+        page->chrome().client().contentRuleListNotification(request.url(), results);
     }
 }
     

@@ -37,10 +37,7 @@
 
 namespace WebCore {
 
-namespace ContentExtensions {
-struct BlockedStatus;
-}
-
+struct ContentRuleListResults;
 class Document;
 class FrameLoader;
 struct ServiceWorkerRegistrationData;
@@ -91,7 +88,7 @@ public:
 
     void removeFragmentIdentifierIfNeeded();
 #if ENABLE(CONTENT_EXTENSIONS)
-    void applyBlockedStatus(const ContentExtensions::BlockedStatus&, Page*);
+    void applyResults(ContentRuleListResults&&, Page*);
 #endif
     void setDomainForCachePartition(Document&);
     void setDomainForCachePartition(const String&);

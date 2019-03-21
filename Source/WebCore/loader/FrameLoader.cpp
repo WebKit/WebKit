@@ -45,6 +45,7 @@
 #include "ChromeClient.h"
 #include "CommonVM.h"
 #include "ContentFilter.h"
+#include "ContentRuleListResults.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DatabaseManager.h"
@@ -3064,9 +3065,10 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
     if (error.isNull()) {
         if (auto* page = m_frame.page()) {
             if (m_documentLoader) {
-                auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(newRequest.url(), ResourceType::Raw, *m_documentLoader);
-                applyBlockedStatusToRequest(blockedStatus, page, newRequest);
-                if (blockedStatus.blockedLoad) {
+                auto results = page->userContentProvider().processContentRuleListsForLoad(newRequest.url(), ResourceType::Raw, *m_documentLoader);
+                bool blockedLoad = results.summary.blockedLoad;
+                ContentExtensions::applyResultsToRequest(WTFMove(results), page, newRequest);
+                if (blockedLoad) {
                     newRequest = { };
                     error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url(), emptyString());
                     response = { };

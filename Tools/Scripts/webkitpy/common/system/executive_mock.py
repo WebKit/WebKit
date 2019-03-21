@@ -82,12 +82,15 @@ class MockExecutive(object):
 
     def running_pids(self, process_name_filter):
         running_pids = []
+        running_names = []
         for process_name, process_pid in self._running_pids.iteritems():
             if process_name_filter(process_name):
                 running_pids.append(process_pid)
+                running_names.append(process_name)
 
         _log.info("MOCK running_pids: %s" % running_pids)
-        return running_pids
+        _log.info("MOCK running_names: %s" % running_names)
+        return running_pids, running_names
 
     def run_and_throw_if_fail(self, args, quiet=False, cwd=None, env=None):
         if self._should_log:

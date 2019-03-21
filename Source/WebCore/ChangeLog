@@ -1,3 +1,76 @@
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform applications of WKContentRuleList actions
+        https://bugs.webkit.org/show_bug.cgi?id=195965
+        <rdar://problem/42664365>
+
+        Reviewed by Geoff Garen.
+
+        We already had SPI to inform the application of notifications.
+        In order to inform it about other actions, I needed to put them in a different structure.
+        Basically, instead of a Vector<Action> I use a Vector<Vector<Action>> that contains the same actions.
+        That way we can give one callback per WKContentRuleList.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionActions.h:
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadEncodedRules):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::isolatedCopy const):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::operator== const):
+        (WebCore::ContentExtensions::Action::setExtensionIdentifier): Deleted.
+        (WebCore::ContentExtensions::Action::extensionIdentifier const): Deleted.
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad const):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentRuleListsForPingLoad):
+        (WebCore::ContentExtensions::applyResultsToRequest):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad): Deleted.
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForPingLoad): Deleted.
+        (WebCore::ContentExtensions::applyBlockedStatusToRequest): Deleted.
+        * contentextensions/ContentExtensionsBackend.h:
+        * contentextensions/ContentRuleListResults.h: Added.
+        (WebCore::ContentRuleListResults::Result::shouldNotifyApplication const):
+        (WebCore::ContentRuleListResults::shouldNotifyApplication const):
+        (WebCore::ContentRuleListResults::encode const):
+        (WebCore::ContentRuleListResults::decode):
+        (WebCore::ContentRuleListResults::Result::encode const):
+        (WebCore::ContentRuleListResults::Result::decode):
+        (WebCore::ContentRuleListResults::Summary::encode const):
+        (WebCore::ContentRuleListResults::Summary::decode):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::subresourcesAllowReuse const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/PingLoader.cpp:
+        (WebCore::processContentRuleListsForLoad):
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::sendViolationReport):
+        (WebCore::processContentExtensionRulesForLoad): Deleted.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::applyResults):
+        (WebCore::CachedResourceRequest::applyBlockedStatus): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::contentRuleListNotification):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+        * page/UserContentProvider.cpp:
+        (WebCore::UserContentProvider::processContentRuleListsForLoad):
+        (WebCore::UserContentProvider::actionsForResourceLoad):
+        (WebCore::UserContentProvider::processContentExtensionRulesForLoad): Deleted.
+        * page/UserContentProvider.h:
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add an internal feature flag to disable the -webkit-overflow-scrolling CSS property

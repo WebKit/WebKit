@@ -491,7 +491,7 @@ messages -> WebPageProxy {
 
     DidResignInputElementStrongPasswordAppearance(WebKit::UserData userData)
 
-    ContentRuleListNotification(URL url, Vector<String> identifiers, Vector<String> notifications)
+    ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     AddPlaybackTargetPickerClient(uint64_t contextId)

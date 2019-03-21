@@ -112,11 +112,11 @@ private:
 #if ENABLE(CONTENT_EXTENSIONS)
     struct ContentExtensionResult {
         WebCore::ResourceRequest request;
-        const WebCore::ContentExtensions::BlockedStatus& status;
+        const WebCore::ContentRuleListResults& results;
     };
     using ContentExtensionResultOrError = Expected<ContentExtensionResult, WebCore::ResourceError>;
     using ContentExtensionCallback = CompletionHandler<void(ContentExtensionResultOrError)>;
-    void processContentExtensionRulesForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
+    void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 
     void applyHTTPSUpgradeIfNeeded(WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) const;

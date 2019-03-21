@@ -37,6 +37,7 @@
 #include "ComposedTreeIterator.h"
 #include "ContentExtensionActions.h"
 #include "ContentExtensionRule.h"
+#include "ContentRuleListResults.h"
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
 #include "DOMApplicationCache.h"
@@ -2351,11 +2352,9 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
         && firstFrame->page()
         && firstFrame->mainFrame().document()
         && firstFrame->mainFrame().document()->loader()) {
-        ResourceLoadInfo resourceLoadInfo { firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup };
-        for (auto& action : firstFrame->page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader()).first) {
-            if (action.type() == ContentExtensions::ActionType::BlockLoad)
-                return RefPtr<WindowProxy> { nullptr };
-        }
+        auto results = firstFrame->page()->userContentProvider().processContentRuleListsForLoad(firstFrame->document()->completeURL(urlString), ResourceType::Popup, *firstFrame->mainFrame().document()->loader());
+        if (results.summary.blockedLoad)
+            return RefPtr<WindowProxy> { nullptr };
     }
 #endif
 

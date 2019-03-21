@@ -1,3 +1,33 @@
+2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to inform applications of WKContentRuleList actions
+        https://bugs.webkit.org/show_bug.cgi?id=195965
+        <rdar://problem/42664365>
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/NetworkLoadChecker.cpp:
+        (WebKit::NetworkLoadChecker::checkRequest):
+        (WebKit::NetworkLoadChecker::processContentRuleListsForLoad):
+        (WebKit::NetworkLoadChecker::processContentExtensionRulesForLoad): Deleted.
+        * NetworkProcess/NetworkLoadChecker.h:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::contentRuleListNotification):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::contentRuleListNotification):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contentRuleListNotification):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentRuleListNotification):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add an internal feature flag to disable the -webkit-overflow-scrolling CSS property

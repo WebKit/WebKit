@@ -26,6 +26,7 @@
 #import "config.h"
 #import "NavigationState.h"
 
+#import "APIContentRuleListAction.h"
 #import "APIFrameInfo.h"
 #import "APINavigationData.h"
 #import "APINavigationResponse.h"
@@ -59,11 +60,13 @@
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "WebProtectionSpace.h"
+#import "_WKContentRuleListActionInternal.h"
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
 #import "_WKSameDocumentNavigationTypeInternal.h"
 #import "_WKWebsitePoliciesInternal.h"
+#import <WebCore/ContentRuleListResults.h>
 #import <WebCore/Credential.h>
 #import <WebCore/SSLKeyGenerator.h>
 #import <WebCore/SecurityOriginData.h>
@@ -177,6 +180,8 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewWillSnapshotBackForwardListItem = [delegate respondsToSelector:@selector(_webView:willSnapshotBackForwardListItem:)];
     m_navigationDelegateMethods.webViewNavigationGestureSnapshotWasRemoved = [delegate respondsToSelector:@selector(_webViewDidRemoveNavigationGestureSnapshot:)];
     m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications = [delegate respondsToSelector:@selector(_webView:URL:contentRuleListIdentifiers:notifications:)];
+    m_navigationDelegateMethods.webViewContentRuleListWithIdentifierPerformedActionForURL = [delegate respondsToSelector:@selector(_webView:contentRuleListWithIdentifier:performedAction:forURL:)];
+
 #if USE(QUICK_LOOK)
     m_navigationDelegateMethods.webViewDidStartLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:)];
     m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
@@ -617,26 +622,39 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     }
 }
 
-void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, URL&& url, Vector<String>&& listIdentifiers, Vector<String>&& notifications)
+void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, URL&& url, ContentRuleListResults&& results)
 {
-    if (!m_navigationState.m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications)
+    if (!m_navigationState.m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications
+        && !m_navigationState.m_navigationDelegateMethods.webViewContentRuleListWithIdentifierPerformedActionForURL)
         return;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
         return;
 
-    ASSERT(listIdentifiers.size() == notifications.size());
+    RetainPtr<NSMutableArray<NSString *>> identifiers;
+    RetainPtr<NSMutableArray<NSString *>> notifications;
 
-    auto identifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:listIdentifiers.size()]);
-    for (auto& identifier : listIdentifiers)
-        [identifiers addObject:identifier];
+    for (const auto& pair : results.results) {
+        const String& listIdentifier = pair.first;
+        const auto& result = pair.second;
+        for (const String& notification : result.notifications) {
+            if (!identifiers)
+                identifiers = adoptNS([NSMutableArray new]);
+            if (!notifications)
+                notifications = adoptNS([NSMutableArray new]);
+            [identifiers addObject:listIdentifier];
+            [notifications addObject:notification];
+        }
+    }
 
-    auto nsNotifications = adoptNS([[NSMutableArray alloc] initWithCapacity:notifications.size()]);
-    for (auto& notification : notifications)
-        [nsNotifications addObject:notification];
-    
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView URL:url contentRuleListIdentifiers:identifiers.get() notifications:nsNotifications.get()];
+    if (notifications && m_navigationState.m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications)
+        [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView URL:url contentRuleListIdentifiers:identifiers.get() notifications:notifications.get()];
+
+    if (m_navigationState.m_navigationDelegateMethods.webViewContentRuleListWithIdentifierPerformedActionForURL) {
+        for (auto&& pair : WTFMove(results.results))
+            [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView contentRuleListWithIdentifier:pair.first performedAction:wrapper(API::ContentRuleListAction::create(WTFMove(pair.second)).get()) forURL:url];
+    }
 }
     
 void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy& page, Ref<API::NavigationResponse>&& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)

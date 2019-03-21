@@ -68,6 +68,7 @@
 #import "WKWindowFeaturesInternal.h"
 #import "_WKAttachmentInternal.h"
 #import "_WKAutomationSessionInternal.h"
+#import "_WKContentRuleListActionInternal.h"
 #import "_WKDownloadInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
@@ -302,6 +303,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::ContentRuleList:
         wrapper = [WKContentRuleList alloc];
+        break;
+
+    case Type::ContentRuleListAction:
+        wrapper = [_WKContentRuleListAction alloc];
         break;
 
     case Type::ContentRuleListStore:
