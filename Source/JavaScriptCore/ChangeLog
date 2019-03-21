@@ -1,3 +1,61 @@
+2019-03-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC][x86] Drop support for x87 floating point
+        https://bugs.webkit.org/show_bug.cgi?id=194853
+
+        Reviewed by Don Olmstead.
+
+        Require SSE2 throughout the codebase, and remove x87 support where
+        it was optionally available. SSE2 detection happens at compile
+        time through a static_assert.
+
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::storeDouble):
+        (JSC::MacroAssemblerX86::moveDoubleToInts):
+        (JSC::MacroAssemblerX86::supportsFloatingPoint):
+        (JSC::MacroAssemblerX86::supportsFloatingPointTruncate):
+        (JSC::MacroAssemblerX86::supportsFloatingPointSqrt):
+        (JSC::MacroAssemblerX86::supportsFloatingPointAbs):
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::moveDouble):
+        (JSC::MacroAssemblerX86Common::loadDouble):
+        (JSC::MacroAssemblerX86Common::loadFloat):
+        (JSC::MacroAssemblerX86Common::storeDouble):
+        (JSC::MacroAssemblerX86Common::storeFloat):
+        (JSC::MacroAssemblerX86Common::convertDoubleToFloat):
+        (JSC::MacroAssemblerX86Common::convertFloatToDouble):
+        (JSC::MacroAssemblerX86Common::addDouble):
+        (JSC::MacroAssemblerX86Common::addFloat):
+        (JSC::MacroAssemblerX86Common::divDouble):
+        (JSC::MacroAssemblerX86Common::divFloat):
+        (JSC::MacroAssemblerX86Common::subDouble):
+        (JSC::MacroAssemblerX86Common::subFloat):
+        (JSC::MacroAssemblerX86Common::mulDouble):
+        (JSC::MacroAssemblerX86Common::mulFloat):
+        (JSC::MacroAssemblerX86Common::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86Common::convertInt32ToFloat):
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        (JSC::MacroAssemblerX86Common::branchFloat):
+        (JSC::MacroAssemblerX86Common::compareDouble):
+        (JSC::MacroAssemblerX86Common::compareFloat):
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::truncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::truncateFloatToInt32):
+        (JSC::MacroAssemblerX86Common::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::branchDoubleNonZero):
+        (JSC::MacroAssemblerX86Common::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerX86Common::lshiftPacked):
+        (JSC::MacroAssemblerX86Common::rshiftPacked):
+        (JSC::MacroAssemblerX86Common::orPacked):
+        (JSC::MacroAssemblerX86Common::move32ToFloat):
+        (JSC::MacroAssemblerX86Common::moveFloatTo32):
+        (JSC::MacroAssemblerX86Common::moveConditionallyDouble):
+        (JSC::MacroAssemblerX86Common::moveConditionallyFloat):
+        * offlineasm/x86.rb:
+        * runtime/MathCommon.cpp:
+        (JSC::operationMathPow):
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] User data not correctly passed to callback of functions and constructors with no parameters

@@ -140,7 +140,6 @@ public:
 
     void storeDouble(FPRegisterID src, TrustedImmPtr address)
     {
-        ASSERT(isSSE2Present());
         ASSERT(address.m_value);
         m_assembler.movsd_rm(src, address.asPtr());
     }
@@ -173,7 +172,6 @@ public:
     
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
-        ASSERT(isSSE2Present());
         m_assembler.pextrw_irr(3, src, dest1);
         m_assembler.pextrw_irr(2, src, dest2);
         lshift32(TrustedImm32(16), dest1);
@@ -294,10 +292,10 @@ public:
         return DataLabelPtr(this);
     }
 
-    static bool supportsFloatingPoint() { return isSSE2Present(); }
-    static bool supportsFloatingPointTruncate() { return isSSE2Present(); }
-    static bool supportsFloatingPointSqrt() { return isSSE2Present(); }
-    static bool supportsFloatingPointAbs() { return isSSE2Present(); }
+    static bool supportsFloatingPoint() { return true; }
+    static bool supportsFloatingPointTruncate() { return true; }
+    static bool supportsFloatingPointSqrt() { return true; }
+    static bool supportsFloatingPointAbs() { return true; }
 
     template<PtrTag resultTag, PtrTag locationTag>
     static FunctionPtr<resultTag> readCallTarget(CodeLocationCall<locationTag> call)

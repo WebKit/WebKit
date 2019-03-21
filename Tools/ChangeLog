@@ -1,3 +1,15 @@
+2019-03-21  Xan Lopez  <xan@igalia.com>
+
+        [JSC][x86] Drop support for x87 floating point
+        https://bugs.webkit.org/show_bug.cgi?id=194853
+
+        Reviewed by Don Olmstead.
+
+        Force SSE2 on x86/32bit builds.
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2019-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] User data not correctly passed to callback of functions and constructors with no parameters

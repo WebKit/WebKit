@@ -437,20 +437,8 @@ double JIT_OPERATION operationMathPow(double x, double y)
     int32_t yAsInt = y;
     if (static_cast<double>(yAsInt) == y && yAsInt >= 0 && yAsInt <= maxExponentForIntegerMathPow) {
         // If the exponent is a small positive int32 integer, we do a fast exponentiation
-
-        // Do not use x87 values for accumulation. x87 values has 80bit precision.
-        // The result produced by x87's 80bit double precision differs from the one calculated with SSE2 in DFG.
-        // Using volatile double is workaround for this problem. By specifying volatile, we expect that `result` and `xd`
-        // are stored in the stack. And at that time, we expect that they are rounded by fst/fstp[1, 2].
-        // [1]: https://gcc.gnu.org/wiki/x87note
-        // [2]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=323
-#if !CPU(X86) || (defined(__SSE2_MATH__) && defined(__SSE2__))
-        typedef double DoubleValue;
-#else
-        typedef volatile double DoubleValue;
-#endif
-        DoubleValue result = 1;
-        DoubleValue xd = x;
+        double result = 1;
+        double xd = x;
         while (yAsInt) {
             if (yAsInt & 1)
                 result *= xd;

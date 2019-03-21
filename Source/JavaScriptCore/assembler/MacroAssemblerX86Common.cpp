@@ -168,6 +168,11 @@ static_assert(PROBE_OFFSETOF_REG(cpu.fprs, X86Registers::xmm15) == PROBE_CPU_XMM
 static_assert(sizeof(Probe::State) == PROBE_SIZE, "Probe::State::size's matches ctiMasmProbeTrampoline");
 static_assert((PROBE_EXECUTOR_OFFSET + PTR_SIZE) <= (PROBE_SIZE + OUT_SIZE), "Must have room after ProbeContext to stash the probe handler");
 
+#if CPU(X86)
+// SSE2 is a hard requirement on x86.
+static_assert(isSSE2Present(), "SSE2 support is required in JavaScriptCore");
+#endif
+
 #undef PROBE_OFFSETOF
 
 #if CPU(X86)
