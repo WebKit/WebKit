@@ -1,3 +1,24 @@
+2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove an invalid assertion in DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined().
+        https://bugs.webkit.org/show_bug.cgi?id=196116
+        <rdar://problem/48976951>
+
+        Reviewed by Filip Pizlo.
+
+        The DFG backend should not make assumptions about what optimizations the front end
+        will or will not do.  The assertion asserts that the operand cannot be known to be
+        a cell.  However, it is not guaranteed that the front end will fold away this case.
+        Also, the DFG backend is perfectly capable of generating code to handle the case
+        where the operand is a cell.
+
+        The attached test case demonstrates a case where the operand can be a known cell.
+        The test needs to be run with the concurrent JIT and GC, and is racy.  It used to
+        trip up this assertion about once every 10 runs or so.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+
 2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSC::createError should clear exception thrown by errorDescriptionForValue

@@ -1,3 +1,13 @@
+2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Remove an invalid assertion in DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined().
+        https://bugs.webkit.org/show_bug.cgi?id=196116
+        <rdar://problem/48976951>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/dfg-compare-eq-via-nonSpeculativeNonPeepholeCompareNullOrUndefined.js: Added.
+
 2019-03-21  Tadeu Zagallo  <tzagallo@apple.com>
 
         JSObject::putDirectIndexSlowOrBeyondVectorLength should check if indexIsSufficientlyBeyondLengthForSparseMap
