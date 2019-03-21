@@ -1309,8 +1309,6 @@ webkit.org/b/177816 webgl/1.0.2/conformance/ogles/GL/vec/vec_001_to_008.html [ C
 webkit.org/b/180097 media/video-concurrent-visible-playback.html [ Crash Pass ]
 webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 
-webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
-
 webkit.org/b/182106 media/video-multiple-concurrent-playback.html [ Crash Pass Timeout ]
 
 webkit.org/b/183180 imported/blink/fast/forms/time-multiple-fields/time-multiple-fields-crash-by-focus-on-unload.html [ Crash Pass ]
@@ -2122,6 +2120,8 @@ webkit.org/b/193315 editing/pasteboard/paste-line-endings-006.html [ Failure Pas
 webkit.org/b/193315 editing/pasteboard/paste-text-004.html [ Failure Pass ]
 webkit.org/b/193315 editing/pasteboard/paste-text-009.html [ Failure Pass ]
 webkit.org/b/193315 editing/pasteboard/paste-text-with-style-2.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-text-003.html [ Failure Pass ]
+webkit.org/b/193315 editing/pasteboard/paste-text-007.html [ Failure Pass ]
 
 webkit.org/b/193316 imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.html [ Failure Pass ]
 
@@ -2510,6 +2510,8 @@ webkit.org/b/194629 http/tests/websocket/connection-refusal-in-frame-resource-lo
 webkit.org/b/137311 media/video-fullscreeen-only-playback.html [ Timeout ]
 
 webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass ]
+
+webkit.org/b/196069 inspector/indexeddb/requestData.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3761,6 +3763,51 @@ webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative.html [ Failure ]
 
 webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
+
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/event-dispatch-active-flag.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-invalid.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exceptions.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-delete-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-index.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-key.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-primarykey.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbindex-query-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbindex-request-source.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-deleteIndex-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbtransaction_objectStoreNames.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key_valid.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-inject.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/list_ordering.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm [ Failure ]
+webkit.org/b/196069 storage/indexeddb/transaction-coordination-across-databases.html [ Failure ]
+
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-004.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
