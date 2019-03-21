@@ -1,3 +1,12 @@
+2019-03-20  Saam Barati  <sbarati@apple.com>
+
+        DFG::AbstractValue::validateOSREntry is wrong when isHeapTop and the incoming value is Empty
+        https://bugs.webkit.org/show_bug.cgi?id=195721
+
+        Reviewed by Filip Pizlo.
+
+        * Scripts/run-javascriptcore-tests:
+
 2019-03-20  Simon Fraser  <simon.fraser@apple.com>
 
         Rename ENABLE_ACCELERATED_OVERFLOW_SCROLLING macro to ENABLE_OVERFLOW_SCROLLING_TOUCH

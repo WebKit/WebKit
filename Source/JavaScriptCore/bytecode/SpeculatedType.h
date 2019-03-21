@@ -482,7 +482,7 @@ inline bool speculationChecked(SpeculatedType actual, SpeculatedType desired)
 SpeculatedType speculationFromClassInfo(const ClassInfo*);
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
-SpeculatedType speculationFromValue(JSValue);
+JS_EXPORT_PRIVATE SpeculatedType speculationFromValue(JSValue);
 SpeculatedType speculationFromJSType(JSType);
 
 SpeculatedType speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.

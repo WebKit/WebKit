@@ -58,7 +58,7 @@ const ArrayModes Uint32ArrayMode = 1 << 27;
 const ArrayModes Float32ArrayMode = 1 << 28;
 const ArrayModes Float64ArrayMode = 1 << 29;
 
-extern const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView];
+JS_EXPORT_PRIVATE extern const ArrayModes typedArrayModes[NumberOfTypedArrayTypesExcludingDataView];
 
 constexpr ArrayModes asArrayModesIgnoringTypedArrays(IndexingType indexingMode)
 {

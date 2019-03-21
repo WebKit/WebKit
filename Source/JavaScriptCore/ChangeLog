@@ -1,5 +1,42 @@
 2019-03-20  Saam Barati  <sbarati@apple.com>
 
+        DFG::AbstractValue::validateOSREntry is wrong when isHeapTop and the incoming value is Empty
+        https://bugs.webkit.org/show_bug.cgi?id=195721
+
+        Reviewed by Filip Pizlo.
+
+        There was a check in AbstractValue::validateOSREntry where it checked
+        if isHeapTop(), and if so, just returned true. However, this is wrong
+        if the value we're checking against is the empty value, since HeapTop
+        does not include the Empty value. Instead, this check should be
+        isBytecodeTop(), which does account for the empty value.
+        
+        This patch also does a couple of other things:
+        - For our OSR entry AbstractValues, we were using HeapTop to mark
+         a dead value. That is now changed to BytecodeTop. (The idea here
+         is just to have validateOSREntry return early.)
+        - It wasn't obvious to me how I could make this fail in JS code.
+         The symptom we'd end up seeing is something like a nullptr derefernece
+         from forgetting to do a TDZ check. Instead, I've added a unit test.
+         This unit test lives in a new test file: testdfg. testdfg is similar
+         to testb3/testair/testapi.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::isBytecodeTop const):
+        (JSC::DFG::AbstractValue::validateOSREntryValue const):
+        * dfg/testdfg.cpp: Added.
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (usage):
+        (JSC::DFG::testEmptyValueDoesNotValidateWithHeapTop):
+        (JSC::DFG::run):
+        (run):
+        (main):
+        * shell/CMakeLists.txt:
+
+2019-03-20  Saam Barati  <sbarati@apple.com>
+
         typeOfDoubleSum is wrong for when NaN can be produced
         https://bugs.webkit.org/show_bug.cgi?id=196030
 

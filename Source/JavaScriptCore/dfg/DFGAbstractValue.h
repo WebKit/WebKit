@@ -188,6 +188,14 @@ struct AbstractValue {
             && m_arrayModes == ALL_ARRAY_MODES
             && !m_value;
     }
+
+    bool isBytecodeTop() const
+    {
+        return (m_type | SpecBytecodeTop) == m_type
+            && m_structure.isTop()
+            && m_arrayModes == ALL_ARRAY_MODES
+            && !m_value;
+    }
     
     bool valueIsTop() const
     {
@@ -372,7 +380,7 @@ struct AbstractValue {
 
     bool validateOSREntryValue(JSValue value, FlushFormat format) const
     {
-        if (isHeapTop())
+        if (isBytecodeTop())
             return true;
         
         if (!!m_value && m_value != value)
@@ -411,7 +419,7 @@ struct AbstractValue {
     void checkConsistency() const { }
     void assertIsRegistered(Graph&) const { }
 #else
-    void checkConsistency() const;
+    JS_EXPORT_PRIVATE void checkConsistency() const;
     void assertIsRegistered(Graph&) const;
 #endif
 
@@ -536,7 +544,7 @@ private:
     void filterArrayModesByType();
 
 #if USE(JSVALUE64) && !defined(NDEBUG)
-    void ensureCanInitializeWithZeros();
+    JS_EXPORT_PRIVATE void ensureCanInitializeWithZeros();
 #endif
     
     bool shouldBeClear() const;

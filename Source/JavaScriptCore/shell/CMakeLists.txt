@@ -68,6 +68,10 @@ set(TESTAIR_SOURCES
     ../b3/air/testair.cpp
 )
 
+set(TESTDFG_SOURCES
+    ../dfg/testdfg.cpp
+)
+
 if (DEVELOPER_MODE AND NOT WIN32)
     add_executable(testmasm ${TESTMASM_SOURCES})
     target_link_libraries(testmasm ${JSC_LIBRARIES})
@@ -77,6 +81,9 @@ if (DEVELOPER_MODE AND NOT WIN32)
 
     add_executable(testair ${TESTAIR_SOURCES})
     target_link_libraries(testair ${JSC_LIBRARIES})
+
+    add_executable(testdfg ${TESTDFG_SOURCES})
+    target_link_libraries(testdfg ${JSC_LIBRARIES})
 
     add_executable(testapi ${TESTAPI_SOURCES})
     target_link_libraries(testapi ${JSC_LIBRARIES})

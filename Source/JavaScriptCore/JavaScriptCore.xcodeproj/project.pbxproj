@@ -59,6 +59,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				52CD0F662242F5A3004A18A5 /* PBXTargetDependency */,
 				7954BE0D20B63348009BC83A /* PBXTargetDependency */,
 				FE533CAF1F217EC60016A1FE /* PBXTargetDependency */,
 				0F6183471C45F67A0072450B /* PBXTargetDependency */,
@@ -884,6 +885,9 @@
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52CD0F5D2242F569004A18A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
+		52CD0F5E2242F569004A18A5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
+		52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52CD0F672242F71C004A18A5 /* testdfg.cpp */; };
 		52D13091221CE176009C836C /* foo.js in Copy Support Script */ = {isa = PBXBuildFile; fileRef = 52D1308F221CE03A009C836C /* foo.js */; };
 		52F6C35E1E71EB080081F4CC /* WebAssemblyWrapperFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */; };
 		530A66B91FA3E78B0026A545 /* UnifiedSource3-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 530A66B11FA3E77A0026A545 /* UnifiedSource3-mm.mm */; };
@@ -1924,6 +1928,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 65FB3F6609D11E9100F49DEB;
 			remoteInfo = "Derived Sources";
+		};
+		52CD0F652242F5A3004A18A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 52CD0F592242F569004A18A5;
+			remoteInfo = testdfg;
 		};
 		53B4BD131F68C2AA00D2BEA3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3381,6 +3392,8 @@
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
+		52CD0F642242F569004A18A5 /* testdfg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testdfg; sourceTree = BUILT_PRODUCTS_DIR; };
+		52CD0F672242F71C004A18A5 /* testdfg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = testdfg.cpp; path = dfg/testdfg.cpp; sourceTree = "<group>"; };
 		52D1308F221CE03A009C836C /* foo.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = foo.js; sourceTree = "<group>"; };
 		52F6C35B1E71EB080081F4CC /* WebAssemblyWrapperFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebAssemblyWrapperFunction.cpp; path = js/WebAssemblyWrapperFunction.cpp; sourceTree = "<group>"; };
 		52F6C35C1E71EB080081F4CC /* WebAssemblyWrapperFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAssemblyWrapperFunction.h; path = js/WebAssemblyWrapperFunction.h; sourceTree = "<group>"; };
@@ -5000,6 +5013,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		52CD0F5C2242F569004A18A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52CD0F5D2242F569004A18A5 /* Foundation.framework in Frameworks */,
+				52CD0F5E2242F569004A18A5 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		651122FC14046A4C002B101D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5068,6 +5090,7 @@
 				79281BDC20B62B3E002E2A60 /* testmem */,
 				6511230514046A4C002B101D /* testRegExp */,
 				932F5BD90822A1C700736975 /* JavaScriptCore.framework */,
+				52CD0F642242F569004A18A5 /* testdfg */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7646,6 +7669,7 @@
 				0FDB2CE5174830A2007B3C1B /* DFGWorklist.cpp */,
 				0FDB2CE6174830A2007B3C1B /* DFGWorklist.h */,
 				0F1FB3951E1AF7DF00A9BE50 /* DFGWorklistInlines.h */,
+				52CD0F672242F71C004A18A5 /* testdfg.cpp */,
 			);
 			name = dfg;
 			sourceTree = "<group>";
@@ -10038,6 +10062,22 @@
 			productReference = 14BD688E215191310050DAFF /* JSCLLIntSettingsExtractor */;
 			productType = "com.apple.product-type.tool";
 		};
+		52CD0F592242F569004A18A5 /* testdfg */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52CD0F5F2242F569004A18A5 /* Build configuration list for PBXNativeTarget "testdfg" */;
+			buildPhases = (
+				52CD0F5A2242F569004A18A5 /* Sources */,
+				52CD0F5C2242F569004A18A5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = testdfg;
+			productName = testapi;
+			productReference = 52CD0F642242F569004A18A5 /* testdfg */;
+			productType = "com.apple.product-type.tool";
+		};
 		651122F714046A4C002B101D /* testRegExp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6511230014046A4C002B101D /* Build configuration list for PBXNativeTarget "testRegExp" */;
@@ -10184,6 +10224,7 @@
 				FE533CA11F217DB30016A1FE /* testmasm */,
 				79281BBD20B62B3E002E2A60 /* testmem */,
 				5325BDBF21DFF2B100A0DEE1 /* Apply Configuration to XCFileLists */,
+				52CD0F592242F569004A18A5 /* testdfg */,
 			);
 		};
 /* End PBXProject section */
@@ -10552,6 +10593,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		52CD0F5A2242F569004A18A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52CD0F682242F71C004A18A5 /* testdfg.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		651122FA14046A4C002B101D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10801,6 +10850,11 @@
 			isa = PBXTargetDependency;
 			target = 65FB3F6609D11E9100F49DEB /* Derived Sources */;
 			targetProxy = 14D9D9D9218462B5009126C2 /* PBXContainerItemProxy */;
+		};
+		52CD0F662242F5A3004A18A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 52CD0F592242F569004A18A5 /* testdfg */;
+			targetProxy = 52CD0F652242F5A3004A18A5 /* PBXContainerItemProxy */;
 		};
 		53B4BD141F68C2AA00D2BEA3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11202,6 +11256,38 @@
 		};
 		14BD6897215191450050DAFF /* Production */ = {
 			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		52CD0F602242F569004A18A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		52CD0F612242F569004A18A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		52CD0F622242F569004A18A5 /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Profiling;
+		};
+		52CD0F632242F569004A18A5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -11644,6 +11730,17 @@
 				14BD6895215191450050DAFF /* Release */,
 				14BD6896215191450050DAFF /* Profiling */,
 				14BD6897215191450050DAFF /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		52CD0F5F2242F569004A18A5 /* Build configuration list for PBXNativeTarget "testdfg" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				52CD0F602242F569004A18A5 /* Debug */,
+				52CD0F612242F569004A18A5 /* Release */,
+				52CD0F622242F569004A18A5 /* Profiling */,
+				52CD0F632242F569004A18A5 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
