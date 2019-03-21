@@ -1,5 +1,12 @@
 2019-03-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rebaseline two tests after r243241.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/security/anchor-download-block-crossorigin-expected.txt:
+
+2019-03-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         [ iOS WK2 ] Layout Test imported/w3c/web-platform-tests/webrtc/simplecall.https.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=191707
 
