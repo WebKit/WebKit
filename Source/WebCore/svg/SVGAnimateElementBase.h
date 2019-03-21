@@ -39,6 +39,7 @@ public:
     SVGAttributeAnimationControllerBase* attributeAnimationControllerIfExists() const { return m_attributeAnimationController.get(); }
 
     AnimatedPropertyType determineAnimatedPropertyType(SVGElement&) const;
+    bool isDiscreteAnimator() const;
 
 protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);

@@ -66,12 +66,17 @@ bool SVGAnimateElementBase::hasValidAttributeType() const
     if (determineAnimatedPropertyType(*targetElement()) != AnimatedUnknown)
         return true;
 
-    return targetElement()->isAnimatedPropertyAttribute(attributeName());
+    return targetElement()->isAnimatedAttribute(attributeName());
 }
 
 AnimatedPropertyType SVGAnimateElementBase::determineAnimatedPropertyType(SVGElement& targetElement) const
 {
     return SVGAttributeAnimationControllerBase::determineAnimatedPropertyType(*this, targetElement, attributeName());
+}
+
+bool SVGAnimateElementBase::isDiscreteAnimator() const
+{
+    return hasValidAttributeType() && attributeAnimationControllerIfExists() && attributeAnimationControllerIfExists()->isDiscreteAnimator();
 }
 
 void SVGAnimateElementBase::calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement)

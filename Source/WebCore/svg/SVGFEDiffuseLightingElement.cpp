@@ -38,10 +38,10 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feDiffuseLightingTag));
-    registerAttributes();
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDiffuseLightingElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::diffuseConstantAttr, &SVGFEDiffuseLightingElement::m_diffuseConstant>();
         PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFEDiffuseLightingElement::m_surfaceScale>();
         PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFEDiffuseLightingElement::m_kernelUnitLengthX, &SVGFEDiffuseLightingElement::m_kernelUnitLengthY>();
@@ -53,18 +53,10 @@ Ref<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const Quali
     return adoptRef(*new SVGFEDiffuseLightingElement(tagName, document));
 }
 
-void SVGFEDiffuseLightingElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEDiffuseLightingElement::m_in1>();
-}
-
 void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

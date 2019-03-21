@@ -84,16 +84,16 @@ class SVGFECompositeElement final : public SVGFilterPrimitiveStandardAttributes 
 public:
     static Ref<SVGFECompositeElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    String in2() const { return m_in2.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
+    String in2() const { return m_in2->currentValue(); }
     CompositeOperationType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
     float k1() const { return m_k1->currentValue(); }
     float k2() const { return m_k2->currentValue(); }
     float k3() const { return m_k3->currentValue(); }
     float k4() const { return m_k4->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> in2Animated() { return m_in2.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
+    SVGAnimatedString& in2Animated() { return m_in2; }
     RefPtr<SVGAnimatedEnumeration> svgOperatorAnimated() { return m_svgOperator.animatedProperty(attributeOwnerProxy()); }
     SVGAnimatedNumber& k1Animated() { return m_k1; }
     SVGAnimatedNumber& k2Animated() { return m_k2; }
@@ -124,8 +124,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedStringAttribute m_in2;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<CompositeOperationType> m_svgOperator { FECOMPOSITE_OPERATOR_OVER };
     Ref<SVGAnimatedNumber> m_k1 { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_k2 { SVGAnimatedNumber::create(this) };

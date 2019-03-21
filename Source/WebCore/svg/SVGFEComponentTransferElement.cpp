@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,11 @@ inline SVGFEComponentTransferElement::SVGFEComponentTransferElement(const Qualif
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feComponentTransferTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEComponentTransferElement::m_in1>();
+    });
 }
 
 Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const QualifiedName& tagName, Document& document)
@@ -48,18 +52,10 @@ Ref<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(const Q
     return adoptRef(*new SVGFEComponentTransferElement(tagName, document));
 }
 
-void SVGFEComponentTransferElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEComponentTransferElement::m_in1>();
-}
-
 void SVGFEComponentTransferElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

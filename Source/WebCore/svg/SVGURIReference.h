@@ -23,7 +23,6 @@
 
 #include "Document.h"
 #include "QualifiedName.h"
-#include "SVGAnimatedString.h"
 #include "SVGPropertyOwnerRegistry.h"
 
 namespace WebCore {
@@ -69,8 +68,8 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
 
-    const String& href() const;
-    RefPtr<SVGAnimatedString> hrefAnimated();
+    String href() const { return m_href->currentValue(); }
+    SVGAnimatedString& hrefAnimated() { return m_href; }
 
 protected:
     SVGURIReference(SVGElement* contextElement);
@@ -78,10 +77,8 @@ protected:
     static bool isKnownAttribute(const QualifiedName& attributeName);
 
 private:
-    static void registerAttributes();
-
     std::unique_ptr<AttributeOwnerProxy> m_attributeOwnerProxy;
-    SVGAnimatedStringAttribute m_href;
+    Ref<SVGAnimatedString> m_href;
 };
 
 } // namespace WebCore

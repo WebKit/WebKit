@@ -38,6 +38,8 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDisplacementMapElement::m_in1>();
+        PropertyRegistry::registerProperty<SVGNames::in2Attr, &SVGFEDisplacementMapElement::m_in2>();
         PropertyRegistry::registerProperty<SVGNames::scaleAttr, &SVGFEDisplacementMapElement::m_scale>();
     });
 }
@@ -52,8 +54,6 @@ void SVGFEDisplacementMapElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEDisplacementMapElement::m_in1>();
-    registry.registerAttribute<SVGNames::in2Attr, &SVGFEDisplacementMapElement::m_in2>();
     registry.registerAttribute<SVGNames::xChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_xChannelSelector>();
     registry.registerAttribute<SVGNames::yChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_yChannelSelector>();
 }
@@ -75,12 +75,12 @@ void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, cons
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 
     if (name == SVGNames::in2Attr) {
-        m_in2.setValue(value);
+        m_in2->setBaseValInternal(value);
         return;
     }
 

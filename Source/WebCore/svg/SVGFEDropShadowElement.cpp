@@ -36,10 +36,10 @@ inline SVGFEDropShadowElement::SVGFEDropShadowElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feDropShadowTag));
-    registerAttributes();
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEDropShadowElement::m_dx>();
         PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEDropShadowElement::m_dy>();
         PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEDropShadowElement::m_stdDeviationX, &SVGFEDropShadowElement::m_stdDeviationY>();
@@ -58,14 +58,6 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
-void SVGFEDropShadowElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEDropShadowElement::m_in1>();
-}
-
 void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::stdDeviationAttr) {
@@ -78,7 +70,7 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 
@@ -97,7 +89,7 @@ void SVGFEDropShadowElement::parseAttribute(const QualifiedName& name, const Ato
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidate();
         return;

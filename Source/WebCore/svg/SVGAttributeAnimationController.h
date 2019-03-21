@@ -57,8 +57,7 @@ private:
     
     bool isAdditive() const override;
     bool hasValidAttributeType() const override;
-
-    bool isDiscreteAnimator() const;
+    bool isDiscreteAnimator() const override;
 
     mutable std::unique_ptr<SVGAttributeAnimator> m_animator;
 };

@@ -24,7 +24,6 @@
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include <wtf/RefPtr.h>
@@ -53,13 +52,13 @@ public:
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    const String& result() const { return m_result.currentValue(attributeOwnerProxy()); }
+    String result() const { return m_result->currentValue(); }
 
     RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> resultAnimated() { return m_result.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& resultAnimated() { return m_result; }
 
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
@@ -96,7 +95,7 @@ private:
     SVGAnimatedLengthAttribute m_y { LengthModeHeight, "0%" };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth, "100%" };
     SVGAnimatedLengthAttribute m_height { LengthModeHeight, "100%" };
-    SVGAnimatedStringAttribute m_result;
+    Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
 
 void invalidateFilterPrimitiveParent(SVGElement*);

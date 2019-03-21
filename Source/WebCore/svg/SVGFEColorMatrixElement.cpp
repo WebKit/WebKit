@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,6 +36,11 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
 {
     ASSERT(hasTagName(SVGNames::feColorMatrixTag));
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEColorMatrixElement::m_in1>();
+    });
 }
 
 Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName& tagName, Document& document)
@@ -48,7 +53,6 @@ void SVGFEColorMatrixElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEColorMatrixElement::m_in1>();
     registry.registerAttribute<SVGNames::typeAttr, ColorMatrixType, &SVGFEColorMatrixElement::m_type>();
     registry.registerAttribute<SVGNames::valuesAttr, &SVGFEColorMatrixElement::m_values>();
 }
@@ -63,7 +67,7 @@ void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const At
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

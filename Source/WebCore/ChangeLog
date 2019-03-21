@@ -1,3 +1,171 @@
+2019-03-21  Said Abou-Hallawa  <said@apple.com>
+
+        Remove the SVG property tear off objects for SVGAnimatedString
+        https://bugs.webkit.org/show_bug.cgi?id=196065
+
+        Reviewed by Simon Fraser.
+
+        -- Define SVGAnimatedString to be SVGAnimatedPrimitiveProperty<String>.
+
+        -- Add SVGAnimatedStringAccessor to associate an attribute name with a 
+           pointer to an SVGAnimatedString member of an SVGElement. Given a 
+           pointer to an SVGElement, this accessor will and create an animator
+           for the animated property.
+
+        -- Add SVGAnimatedStringAnimator to animated an SVGAnimatedString.
+
+        -- Add SVGAnimationStringFunction which is a discrete function and is 
+           responsible for progressing an animated String over a period of time.
+
+        -- Define SVGStringAnimator to be SVGPrimitivePropertyAnimator<String,
+           SVGAnimationStringFunction>. SVGStringAnimator is responsible for
+           animating attributes with no reflecting animated properties, e.g.
+           "font-family".
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::SVGAElement):
+        (WebCore::SVGAElement::parseAttribute):
+        (WebCore::SVGAElement::registerAttributes): Deleted.
+        * svg/SVGAElement.h:
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::hasValidAttributeType const):
+        (WebCore::SVGAnimateElementBase::isDiscreteAnimator const):
+        * svg/SVGAnimateElementBase.h:
+        * svg/SVGAnimatedString.cpp: Removed.
+        * svg/SVGAnimatedString.h: Removed.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+        The animation controller has to tell whether the animator is discrete or
+        not. The properties are now registered either in SVGAttributeRegistry which
+        relies on the tear off objects to know the AnimatedPropertyType of the
+        property. Or it is registered in SVGPropertyOwnerRegistry which creates
+        the animators through the accessors. Each animator knows whether it is
+        discrete or not.
+
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGAttributeAnimationController.cpp:
+        (WebCore::SVGAttributeAnimationController::isDiscreteAnimator const):
+        * svg/SVGAttributeAnimationController.h:
+        * svg/SVGAttributeAnimationControllerBase.h:
+        * svg/SVGCursorElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::SVGElement):
+        (WebCore::SVGElement::parseAttribute):
+        (WebCore::SVGElement::registerAttributes): Deleted.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::isKnownAttribute):
+        (WebCore::SVGElement::className const):
+        (WebCore::SVGElement::classNameAnimated):
+        (WebCore::SVGElement::attributeRegistry): Deleted.
+        * svg/SVGExternalResourcesRequired.cpp:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::registerAttributes):
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::registerAttributes):
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::parseAttribute):
+        (WebCore::SVGFEComponentTransferElement::registerAttributes): Deleted.
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::registerAttributes):
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::registerAttributes): Deleted.
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::registerAttributes):
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::SVGFEDropShadowElement):
+        (WebCore::SVGFEDropShadowElement::parseAttribute):
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged):
+        (WebCore::SVGFEDropShadowElement::registerAttributes): Deleted.
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::registerAttributes):
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::SVGFEMergeNodeElement):
+        (WebCore::SVGFEMergeNodeElement::parseAttribute):
+        (WebCore::SVGFEMergeNodeElement::registerAttributes): Deleted.
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::registerAttributes):
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::parseAttribute):
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        (WebCore::SVGFEOffsetElement::registerAttributes): Deleted.
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::parseAttribute):
+        (WebCore::SVGFESpecularLightingElement::registerAttributes): Deleted.
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::SVGFETileElement):
+        (WebCore::SVGFETileElement::parseAttribute):
+        (WebCore::SVGFETileElement::registerAttributes): Deleted.
+        * svg/SVGFETileElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::registerAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseAttribute):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::result const):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::resultAnimated):
+        * svg/SVGLegacyAttributeAnimationController.cpp:
+        (WebCore::SVGLegacyAttributeAnimationController::isDiscreteAnimator const):
+        * svg/SVGLegacyAttributeAnimationController.h:
+        * svg/SVGMPathElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::SVGURIReference):
+        (WebCore::SVGURIReference::isKnownAttribute):
+        (WebCore::SVGURIReference::parseAttribute):
+        (WebCore::SVGURIReference::registerAttributes): Deleted.
+        (WebCore::SVGURIReference::href const): Deleted.
+        (WebCore::SVGURIReference::hrefAnimated): Deleted.
+        * svg/SVGURIReference.h:
+        (WebCore::SVGURIReference::href const):
+        (WebCore::SVGURIReference::hrefAnimated):
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPrimitivePropertyAnimatorImpl.h:
+        * svg/properties/SVGPropertyAnimatorFactory.h:
+        (WebCore::SVGPropertyAnimatorFactory::createStringAnimator):
+        (WebCore::SVGPropertyAnimatorFactory::attributeAnimatorCreator):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
 2019-03-21  Zalan Bujtas  <zalan@apple.com>
 
         Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.

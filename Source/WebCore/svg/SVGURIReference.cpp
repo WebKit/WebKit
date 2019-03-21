@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,17 +33,13 @@ namespace WebCore {
 
 SVGURIReference::SVGURIReference(SVGElement* contextElement)
     : m_attributeOwnerProxy(std::make_unique<AttributeOwnerProxy>(*this, *contextElement))
+    , m_href(SVGAnimatedString::create(contextElement))
 {
-    registerAttributes();
-}
-
-void SVGURIReference::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::hrefAttr, &SVGURIReference::m_href>();
-    registry.registerAttribute<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::hrefAttr, &SVGURIReference::m_href>();
+        PropertyRegistry::registerProperty<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
+    });
 }
 
 SVGURIReference::AttributeRegistry& SVGURIReference::attributeRegistry()
@@ -53,23 +49,13 @@ SVGURIReference::AttributeRegistry& SVGURIReference::attributeRegistry()
 
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)
 {
-    return AttributeOwnerProxy::isKnownAttribute(attributeName);
+    return PropertyRegistry::isKnownAttribute(attributeName);
 }
 
 void SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (isKnownAttribute(name))
-        m_href.setValue(value);
-}
-
-const String& SVGURIReference::href() const
-{
-    return m_href.currentValue(*m_attributeOwnerProxy);
-}
-
-RefPtr<SVGAnimatedString> SVGURIReference::hrefAnimated()
-{
-    return m_href.animatedProperty(*m_attributeOwnerProxy);
+        m_href->setBaseValInternal(value);
 }
 
 String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, const Document& document)

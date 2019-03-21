@@ -40,6 +40,7 @@ inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& t
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEGaussianBlurElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEGaussianBlurElement::m_stdDeviationX, &SVGFEGaussianBlurElement::m_stdDeviationY>();
     });
 }
@@ -61,7 +62,6 @@ void SVGFEGaussianBlurElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEGaussianBlurElement::m_in1>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEGaussianBlurElement::m_edgeMode>();
 }
 
@@ -77,7 +77,7 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

@@ -35,12 +35,12 @@ public:
 
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     float stdDeviationX() const { return m_stdDeviationX->currentValue(); }
     float stdDeviationY() const { return m_stdDeviationY->currentValue(); }
     EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedNumber& stdDeviationXAnimated() { return m_stdDeviationX; }
     SVGAnimatedNumber& stdDeviationYAnimated() { return m_stdDeviationY; }
     RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
@@ -68,7 +68,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this) };
     SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_NONE };

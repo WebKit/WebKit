@@ -39,6 +39,7 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::radiusAttr, &SVGFEMorphologyElement::m_radiusX, &SVGFEMorphologyElement::m_radiusY>();
     });
 }
@@ -60,7 +61,6 @@ void SVGFEMorphologyElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
     registry.registerAttribute<SVGNames::operatorAttr, MorphologyOperatorType, &SVGFEMorphologyElement::m_svgOperator>();
 }
 
@@ -74,7 +74,7 @@ void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

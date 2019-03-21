@@ -54,7 +54,7 @@ SVGAttributeAnimator* SVGAttributeAnimationController::animator() const
 
 bool SVGAttributeAnimationController::isDiscreteAnimator() const
 {
-    return hasValidAttributeType() && m_animator && m_animator->isDiscrete();
+    return hasValidAttributeType() && animatorIfExists() && animatorIfExists()->isDiscrete();
 }
 
 bool SVGAttributeAnimationController::isAdditive() const

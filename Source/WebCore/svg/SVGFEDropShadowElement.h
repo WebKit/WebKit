@@ -32,13 +32,13 @@ public:
     
     void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     float dx() const { return m_dx->currentValue(); }
     float dy() const { return m_dy->currentValue(); }
     float stdDeviationX() const { return m_stdDeviationX->currentValue(); }
     float stdDeviationY() const { return m_stdDeviationY->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedNumber& dxAnimated() { return m_dx; }
     SVGAnimatedNumber& dyAnimated() { return m_dy; }
     SVGAnimatedNumber& stdDeviationXAnimated() { return m_stdDeviationX; }
@@ -48,17 +48,10 @@ private:
     SVGFEDropShadowElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-    
+
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDropShadowElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -67,7 +60,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedNumber> m_dx { SVGAnimatedNumber::create(this, 2) };
     Ref<SVGAnimatedNumber> m_dy { SVGAnimatedNumber::create(this, 2) };
     Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this, 2) };

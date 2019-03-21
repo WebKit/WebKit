@@ -70,11 +70,11 @@ class SVGFEColorMatrixElement final : public SVGFilterPrimitiveStandardAttribute
 public:
     static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     ColorMatrixType type() const { return m_type.currentValue(attributeOwnerProxy()); }
     const SVGNumberListValues& values() const { return m_values.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedNumberList> valuesAnimated() { return m_values.animatedProperty(attributeOwnerProxy()); }
 
@@ -102,7 +102,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<ColorMatrixType> m_type { FECOLORMATRIX_TYPE_MATRIX };
     SVGAnimatedNumberListAttribute m_values;
 };

@@ -62,12 +62,12 @@ public:
 
     void setRadius(float radiusX, float radiusY);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     MorphologyOperatorType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
     float radiusX() const { return m_radiusX->currentValue(); }
     float radiusY() const { return m_radiusY->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     RefPtr<SVGAnimatedEnumeration> svgOperatorAnimated() { return m_svgOperator.animatedProperty(attributeOwnerProxy()); }
     SVGAnimatedNumber& radiusXAnimated() { return m_radiusX; }
     SVGAnimatedNumber& radiusYAnimated() { return m_radiusY; }
@@ -96,7 +96,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<MorphologyOperatorType> m_svgOperator { FEMORPHOLOGY_OPERATOR_ERODE };
     Ref<SVGAnimatedNumber> m_radiusX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_radiusY { SVGAnimatedNumber::create(this) };

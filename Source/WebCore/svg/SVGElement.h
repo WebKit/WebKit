@@ -136,9 +136,6 @@ public:
 
     // The definition of the owner proxy has to match the class inheritance but we are interested in the SVG objects only.
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGElement, SVGLangSpace>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
-    static void registerAttributes();
 
     // A super class will override this function to return its owner proxy. The attributes of the super class will
     // be accessible through the registry of the owner proxy.
@@ -153,6 +150,8 @@ public:
     Vector<RefPtr<SVGLegacyAnimatedProperty>> lookupOrCreateAnimatedProperties(const QualifiedName& name) { return attributeOwnerProxy().lookupOrCreateAnimatedProperties(name); }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGElement>;
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
+
     virtual const SVGPropertyRegistry& propertyRegistry() const { return m_propertyRegistry; }
 
     bool isAnimatedPropertyAttribute(const QualifiedName&) const;
@@ -167,8 +166,8 @@ public:
     void animatorWillBeDeleted(const QualifiedName&);
 
     // These are needed for the RenderTree, animation and DOM.
-    const auto& className() const { return m_className.currentValue(attributeOwnerProxy()); }
-    auto classNameAnimated() { return m_className.animatedProperty(attributeOwnerProxy()); }
+    String className() const { return m_className->currentValue(); }
+    SVGAnimatedString& classNameAnimated() { return m_className; }
 
 protected:
     SVGElement(const QualifiedName&, Document&);
@@ -222,7 +221,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_className;
+    Ref<SVGAnimatedString> m_className { SVGAnimatedString::create(this) };
 };
 
 class SVGElement::InstanceInvalidationGuard {

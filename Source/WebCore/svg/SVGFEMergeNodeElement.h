@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -31,24 +30,17 @@ class SVGFEMergeNodeElement final : public SVGElement {
 public:
     static Ref<SVGFEMergeNodeElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
 
 private:
     SVGFEMergeNodeElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEMergeNodeElement, SVGElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEMergeNodeElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -57,7 +49,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

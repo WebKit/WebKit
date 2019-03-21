@@ -22,6 +22,8 @@
 #include "config.h"
 #include "SVGExternalResourcesRequired.h"
 
+#include "RenderSVGResource.h"
+#include "RenderSVGShape.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 

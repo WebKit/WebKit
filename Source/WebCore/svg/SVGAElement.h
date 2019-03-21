@@ -33,15 +33,13 @@ class SVGAElement final : public SVGGraphicsElement, public SVGExternalResources
 public:
     static Ref<SVGAElement> create(const QualifiedName&, Document&);
 
-    String target() const final { return m_target.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> targetAnimated() { return m_target.animatedProperty(attributeOwnerProxy()); }
+    String target() const final { return m_target->currentValue(); }
+    Ref<SVGAnimatedString>& targetAnimated() { return m_target; }
 
 private:
     SVGAElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGAElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
@@ -68,7 +66,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_target;
+    Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

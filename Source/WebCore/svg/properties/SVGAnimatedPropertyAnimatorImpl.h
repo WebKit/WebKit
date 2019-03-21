@@ -131,4 +131,22 @@ private:
     }
 };
 
+class SVGAnimatedStringAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedString, SVGAnimationStringFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedString, SVGAnimationStringFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedString>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedStringAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        String& animated = m_animated->animVal();
+        m_function.progress(targetElement, percentage, repeatCount, animated);
+    }
+};
+
 }

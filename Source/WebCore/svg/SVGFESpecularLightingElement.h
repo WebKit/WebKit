@@ -34,14 +34,14 @@ public:
     static Ref<SVGFESpecularLightingElement> create(const QualifiedName&, Document&);
     void lightElementAttributeChanged(const SVGFELightElement*, const QualifiedName&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     float specularConstant() const { return m_specularConstant->currentValue(); }
     float specularExponent() const { return m_specularExponent->currentValue(); }
     float surfaceScale() const { return m_surfaceScale->currentValue(); }
     float kernelUnitLengthX() const { return m_kernelUnitLengthX->currentValue(); }
     float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedNumber& specularConstantAnimated() { return m_specularConstant; }
     SVGAnimatedNumber& specularExponentAnimated() { return m_specularExponent; }
     SVGAnimatedNumber& surfaceScaleAnimated() { return m_surfaceScale; }
@@ -52,17 +52,10 @@ private:
     SVGFESpecularLightingElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFESpecularLightingElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFESpecularLightingElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -72,7 +65,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedNumber> m_specularConstant { SVGAnimatedNumber::create(this, 1) };
     Ref<SVGAnimatedNumber> m_specularExponent { SVGAnimatedNumber::create(this, 1) };
     Ref<SVGAnimatedNumber> m_surfaceScale { SVGAnimatedNumber::create(this, 1) };

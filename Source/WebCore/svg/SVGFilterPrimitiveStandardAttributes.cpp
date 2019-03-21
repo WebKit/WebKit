@@ -37,6 +37,11 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
     : SVGElement(tagName, document)
 {
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::resultAttr, &SVGFilterPrimitiveStandardAttributes::m_result>();
+    });
 }
 
 void SVGFilterPrimitiveStandardAttributes::registerAttributes()
@@ -48,7 +53,6 @@ void SVGFilterPrimitiveStandardAttributes::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGFilterPrimitiveStandardAttributes::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGFilterPrimitiveStandardAttributes::m_width>();
     registry.registerAttribute<SVGNames::heightAttr, &SVGFilterPrimitiveStandardAttributes::m_height>();
-    registry.registerAttribute<SVGNames::resultAttr, &SVGFilterPrimitiveStandardAttributes::m_result>();
 }
 
 void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -64,7 +68,7 @@ void SVGFilterPrimitiveStandardAttributes::parseAttribute(const QualifiedName& n
     else if (name == SVGNames::heightAttr)
         m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::resultAttr)
-        m_result.setValue(value);
+        m_result->setBaseValInternal(value);
 
     reportAttributeParsingError(parseError, name, value);
 

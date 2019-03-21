@@ -31,15 +31,13 @@ class SVGFEComponentTransferElement final : public SVGFilterPrimitiveStandardAtt
 public:
     static Ref<SVGFEComponentTransferElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
 
 private:
     SVGFEComponentTransferElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEComponentTransferElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEComponentTransferElement, SVGFilterPrimitiveStandardAttributes>;
@@ -52,7 +50,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
 };
 
 } // namespace WebCore

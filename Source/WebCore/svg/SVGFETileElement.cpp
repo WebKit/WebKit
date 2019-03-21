@@ -37,7 +37,11 @@ inline SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feTileTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFETileElement::m_in1>();
+    });
 }
 
 Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Document& document)
@@ -45,18 +49,10 @@ Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGFETileElement(tagName, document));
 }
 
-void SVGFETileElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFETileElement::m_in1>();
-}
-
 void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

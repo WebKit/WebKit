@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGAnimatedLength.h"
-#include "SVGAnimatedString.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGTests.h"

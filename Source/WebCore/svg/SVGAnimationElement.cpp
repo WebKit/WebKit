@@ -491,8 +491,7 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     CalcMode calcMode = this->calcMode();
     if (is<SVGAnimateElement>(*this) || is<SVGAnimateColorElement>(*this)) {
         ASSERT(targetElement());
-        AnimatedPropertyType type = downcast<SVGAnimateElementBase>(*this).determineAnimatedPropertyType(*targetElement());
-        if (type == AnimatedBoolean || type == AnimatedEnumeration || type == AnimatedPreserveAspectRatio || type == AnimatedString)
+        if (downcast<SVGAnimateElementBase>(*this).isDiscreteAnimator())
             calcMode = CalcMode::Discrete;
     }
     if (!m_keyPoints.isEmpty() && calcMode != CalcMode::Paced)

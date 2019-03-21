@@ -36,10 +36,10 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feOffsetTag));
-    registerAttributes();
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEOffsetElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGFEOffsetElement::m_dx>();
         PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGFEOffsetElement::m_dy>();
     });
@@ -48,14 +48,6 @@ inline SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Docu
 Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEOffsetElement(tagName, document));
-}
-
-void SVGFEOffsetElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEOffsetElement::m_in1>();
 }
 
 void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -71,7 +63,7 @@ void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicS
     }
 
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 
@@ -80,7 +72,7 @@ void SVGFEOffsetElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidate();
         return;

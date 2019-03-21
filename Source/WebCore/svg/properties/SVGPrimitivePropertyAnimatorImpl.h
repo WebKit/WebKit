@@ -32,5 +32,6 @@ namespace WebCore {
 
 using SVGColorAnimator = SVGPrimitivePropertyAnimator<Color, SVGAnimationColorFunction>;
 using SVGNumberAnimator = SVGPrimitivePropertyAnimator<float, SVGAnimationNumberFunction>;
+using SVGStringAnimator = SVGPrimitivePropertyAnimator<String, SVGAnimationStringFunction>;
 
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -278,7 +278,10 @@ SVGElement::SVGElement(const QualifiedName& tagName, Document& document)
     , SVGLangSpace(this)
     , m_propertyAnimatorFactory(std::make_unique<SVGPropertyAnimatorFactory>())
 {
-    registerAttributes();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<HTMLNames::classAttr, &SVGElement::m_className>();
+    });
 }
 
 SVGElement::~SVGElement()
@@ -453,18 +456,10 @@ void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
         correspondingElement->ensureSVGRareData().instances().add(this);
 }
 
-void SVGElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<HTMLNames::classAttr, &SVGElement::m_className>();
-}
-
 void SVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == HTMLNames::classAttr) {
-        m_className.setValue(value);
+        m_className->setBaseValInternal(value);
         return;
     }
 

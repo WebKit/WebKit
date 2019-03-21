@@ -43,6 +43,7 @@ public:
 
     virtual bool isAdditive() const = 0;
     virtual bool hasValidAttributeType() const = 0;
+    virtual bool isDiscreteAnimator() const = 0;
     
     virtual void resetAnimatedType() = 0;
     virtual void clearAnimatedType(SVGElement* targetElement) = 0;

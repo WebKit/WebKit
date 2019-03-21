@@ -67,7 +67,7 @@ public:
     void setOrder(float orderX, float orderY);
     void setKernelUnitLength(float kernelUnitLengthX, float kernelUnitLengthY);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
     int orderX() const { return m_orderX->currentValue(); }
     int orderY() const { return m_orderY->currentValue(); }
     const SVGNumberListValues& kernelMatrix() const { return m_kernelMatrix.currentValue(attributeOwnerProxy()); }
@@ -80,7 +80,7 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
     bool preserveAlpha() const { return m_preserveAlpha->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedInteger& orderXAnimated() { return m_orderX; }
     SVGAnimatedInteger& orderYAnimated() { return m_orderY; }
     RefPtr<SVGAnimatedNumberList> kernelMatrixAnimated() { return m_kernelMatrix.animatedProperty(attributeOwnerProxy()); }
@@ -117,7 +117,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedInteger> m_orderX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_orderY { SVGAnimatedInteger::create(this) };
     SVGAnimatedNumberListAttribute m_kernelMatrix;

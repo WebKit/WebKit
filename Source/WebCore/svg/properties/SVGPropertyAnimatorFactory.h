@@ -84,6 +84,11 @@ private:
     {
         return SVGNumberAnimator::create(attributeName,  WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
     }
+    
+    static auto createStringAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return SVGStringAnimator::create(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
+    }
 
     static const AttributeAnimatorCreator& attributeAnimatorCreator()
     {
@@ -101,6 +106,43 @@ private:
             { SVGNames::stop_opacityAttr->impl(),       std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
             { SVGNames::stroke_miterlimitAttr->impl(),  std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
             { SVGNames::stroke_opacityAttr->impl(),     std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
+            
+            { SVGNames::alignment_baselineAttr->impl(),             std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::baseline_shiftAttr->impl(),                 std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::buffered_renderingAttr->impl(),             std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::clip_pathAttr->impl(),                      std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::clip_ruleAttr->impl(),                      std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::color_interpolationAttr->impl(),            std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::color_interpolation_filtersAttr->impl(),    std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::color_profileAttr->impl(),                  std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::color_renderingAttr->impl(),                std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::cursorAttr->impl(),                         std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::displayAttr->impl(),                        std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::dominant_baselineAttr->impl(),              std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::fill_ruleAttr->impl(),                      std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::filterAttr->impl(),                         std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::font_familyAttr->impl(),                    std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::font_stretchAttr->impl(),                   std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::font_styleAttr->impl(),                     std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::font_variantAttr->impl(),                   std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::font_weightAttr->impl(),                    std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::image_renderingAttr->impl(),                std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::marker_endAttr->impl(),                     std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::marker_midAttr->impl(),                     std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::marker_startAttr->impl(),                   std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::maskAttr->impl(),                           std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::mask_typeAttr->impl(),                      std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::overflowAttr->impl(),                       std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::paint_orderAttr->impl(),                    std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::pointer_eventsAttr->impl(),                 std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::shape_renderingAttr->impl(),                std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::stroke_linecapAttr->impl(),                 std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::stroke_linejoinAttr->impl(),                std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::text_anchorAttr->impl(),                    std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::text_decorationAttr->impl(),                std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::text_renderingAttr->impl(),                 std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::vector_effectAttr->impl(),                  std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) },
+            { SVGNames::visibilityAttr->impl(),                     std::make_pair(SVGValueProperty<String>::create, SVGPropertyAnimatorFactory::createStringAnimator) }
         });
         return map;
     }

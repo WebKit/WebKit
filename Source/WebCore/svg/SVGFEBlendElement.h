@@ -46,12 +46,12 @@ class SVGFEBlendElement final : public SVGFilterPrimitiveStandardAttributes {
 public:
     static Ref<SVGFEBlendElement> create(const QualifiedName&, Document&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    String in2() const { return m_in2.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
+    String in2() const { return m_in2->currentValue(); }
     BlendMode mode() const { return m_mode.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> in2Animated() { return m_in2.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
+    SVGAnimatedString& in2Animated() { return m_in2; }
     RefPtr<SVGAnimatedEnumeration> modeAnimated() { return m_mode.animatedProperty(attributeOwnerProxy()); }
 
 private:
@@ -78,8 +78,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedStringAttribute m_in2;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<BlendMode> m_mode { BlendMode::Normal };
 };
 

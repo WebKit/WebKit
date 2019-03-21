@@ -39,10 +39,10 @@ inline SVGFESpecularLightingElement::SVGFESpecularLightingElement(const Qualifie
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feSpecularLightingTag));
-    registerAttributes();
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFESpecularLightingElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::specularConstantAttr, &SVGFESpecularLightingElement::m_specularConstant>();
         PropertyRegistry::registerProperty<SVGNames::specularExponentAttr, &SVGFESpecularLightingElement::m_specularExponent>();
         PropertyRegistry::registerProperty<SVGNames::surfaceScaleAttr, &SVGFESpecularLightingElement::m_surfaceScale>();
@@ -55,18 +55,10 @@ Ref<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(const Qua
     return adoptRef(*new SVGFESpecularLightingElement(tagName, document));
 }
 
-void SVGFESpecularLightingElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFESpecularLightingElement::m_in1>();
-}
-
 void SVGFESpecularLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,7 +52,11 @@ inline SVGAElement::SVGAElement(const QualifiedName& tagName, Document& document
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::aTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::targetAttr, &SVGAElement::m_target>();
+    });
 }
 
 Ref<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Document& document)
@@ -71,18 +75,10 @@ String SVGAElement::title() const
     return SVGElement::title();
 }
 
-void SVGAElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::targetAttr, &SVGAElement::m_target>();
-}
-
 void SVGAElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::targetAttr) {
-        m_target.setValue(value);
+        m_target->setBaseValInternal(value);
         return;
     }
 

@@ -56,6 +56,7 @@ private:
     
     bool isAdditive() const override;
     bool hasValidAttributeType() const override;
+    bool isDiscreteAnimator() const override;
 
     const AnimatedPropertyType m_animatedPropertyType;
 

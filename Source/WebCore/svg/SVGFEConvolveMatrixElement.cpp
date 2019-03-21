@@ -43,6 +43,7 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEConvolveMatrixElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::orderAttr, &SVGFEConvolveMatrixElement::m_orderX, &SVGFEConvolveMatrixElement::m_orderY>();
         PropertyRegistry::registerProperty<SVGNames::divisorAttr, &SVGFEConvolveMatrixElement::m_divisor>();
         PropertyRegistry::registerProperty<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
@@ -63,7 +64,6 @@ void SVGFEConvolveMatrixElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::inAttr, &SVGFEConvolveMatrixElement::m_in1>();
     registry.registerAttribute<SVGNames::kernelMatrixAttr, &SVGFEConvolveMatrixElement::m_kernelMatrix>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
 }
@@ -71,7 +71,7 @@ void SVGFEConvolveMatrixElement::registerAttributes()
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::inAttr) {
-        m_in1.setValue(value);
+        m_in1->setBaseValInternal(value);
         return;
     }
 

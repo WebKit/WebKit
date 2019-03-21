@@ -70,14 +70,14 @@ public:
 
     static ChannelSelectorType stringToChannel(const String&);
 
-    String in1() const { return m_in1.currentValue(attributeOwnerProxy()); }
-    String in2() const { return m_in2.currentValue(attributeOwnerProxy()); }
+    String in1() const { return m_in1->currentValue(); }
+    String in2() const { return m_in2->currentValue(); }
     ChannelSelectorType xChannelSelector() const { return m_xChannelSelector.currentValue(attributeOwnerProxy()); }
     ChannelSelectorType yChannelSelector() const { return m_yChannelSelector.currentValue(attributeOwnerProxy()); }
     float scale() const { return m_scale->currentValue(); }
 
-    RefPtr<SVGAnimatedString> in1Animated() { return m_in1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedString> in2Animated() { return m_in2.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedString& in1Animated() { return m_in1; }
+    SVGAnimatedString& in2Animated() { return m_in2; }
     RefPtr<SVGAnimatedEnumeration> xChannelSelectorAnimated() { return m_xChannelSelector.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedEnumeration> yChannelSelectorAnimated() { return m_yChannelSelector.animatedProperty(attributeOwnerProxy()); }
     SVGAnimatedNumber& scaleAnimated() { return m_scale; }
@@ -106,8 +106,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedStringAttribute m_in1;
-    SVGAnimatedStringAttribute m_in2;
+    Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
+    Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_xChannelSelector { CHANNEL_A };
     SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_yChannelSelector { CHANNEL_A };
     Ref<SVGAnimatedNumber> m_scale { SVGAnimatedNumber::create(this) };

@@ -88,6 +88,14 @@ bool SVGLegacyAttributeAnimationController::hasValidAttributeType() const
     return m_animatedPropertyType != AnimatedUnknown;
 }
 
+bool SVGLegacyAttributeAnimationController::isDiscreteAnimator() const
+{
+    return m_animatedPropertyType == AnimatedBoolean
+        || m_animatedPropertyType == AnimatedEnumeration
+        || m_animatedPropertyType == AnimatedPreserveAspectRatio
+        || m_animatedPropertyType == AnimatedString;
+}
+
 bool SVGLegacyAttributeAnimationController::calculateFromAndToValues(const String& fromString, const String& toString)
 {
     m_animationElement.determinePropertyValueTypes(fromString, toString);
