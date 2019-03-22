@@ -601,6 +601,7 @@
        (global-name "com.apple.logd")
        (global-name "com.apple.logd.events")
        (global-name "com.apple.lsd.mapdb")
+       (global-name "com.apple.lskdd") ;; <rdar://problem/49123855>
        (global-name "com.apple.mobileassetd")
        (global-name "com.apple.powerlog.plxpclogger.xpc")
        (global-name "com.apple.system.logger")
