@@ -340,12 +340,8 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(ExecState& state, JSValue 
         return Exception { ReadonlyError, "Failed to store record in an IDBObjectStore: The transaction is read-only."_s };
 
     auto serializedValue = SerializedScriptValue::create(state, value);
-    if (UNLIKELY(scope.exception())) {
-        // Clear the DOM exception from the serializer so we can give a more targeted exception.
-        scope.clearException();
-
+    if (UNLIKELY(scope.exception()))
         return Exception { DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
-    }
 
     bool privateBrowsingEnabled = false;
     if (is<Document>(*context)) {

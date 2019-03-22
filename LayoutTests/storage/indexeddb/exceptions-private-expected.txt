@@ -159,7 +159,7 @@ The data being stored could not be cloned by the internal structured cloning alg
 Expecting exception from store.add(self, 0)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
+Exception message: The object can not be cloned.
 
 IDBObjectStore.clear()
 This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".
@@ -272,7 +272,7 @@ The data being stored could not be cloned by the internal structured cloning alg
 Expecting exception from store.put(self, 0)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
+Exception message: The object can not be cloned.
 db.close()
 ro_transaction.oncomplete = transactionComplete
 rw_transaction.oncomplete = transactionComplete
@@ -504,7 +504,7 @@ If the structured clone algorithm throws an exception, that exception is rethrow
 Expecting exception from cursor.update(self)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
+Exception message: The object can not be cloned.
 The transaction this IDBCursor belongs to is not active.
 Expecting exception from cursorFromInactiveTransaction.update({})
 PASS Exception was thrown.

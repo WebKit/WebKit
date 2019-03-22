@@ -123,9 +123,11 @@ ExceptionOr<Ref<IDBOpenDBRequest>> IDBFactory::deleteDatabase(ScriptExecutionCon
 ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSValue secondValue)
 {
     auto first = scriptValueToIDBKey(execState, firstValue);
-    auto second = scriptValueToIDBKey(execState, secondValue);
+    if (!first->isValid())
+        return Exception { DataError, "Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key."_s };
 
-    if (!first->isValid() || !second->isValid())
+    auto second = scriptValueToIDBKey(execState, secondValue);
+    if (!second->isValid())
         return Exception { DataError, "Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key."_s };
 
     return first->compare(second.get());

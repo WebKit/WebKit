@@ -1,3 +1,30 @@
+2019-03-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix key path extraction code in IndexedDB to check own property
+        https://bugs.webkit.org/show_bug.cgi?id=196099
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated test expectations to PASS.
+
+        * web-platform-tests/IndexedDB/key-conversion-exceptions-expected.txt:
+        * web-platform-tests/IndexedDB/keygenerator-inject-expected.txt:
+        * web-platform-tests/IndexedDB/keypath-exceptions-expected.txt: Added.
+        * web-platform-tests/IndexedDB/wasm-module-value-expected.txt:
+
+2019-03-21  Sihui Liu  <sihui_liu@apple.com>
+
+        Fix three IDB WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=196099
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated test expectations to PASS.
+
+        * web-platform-tests/IndexedDB/key-conversion-exceptions-expected.txt:
+        * web-platform-tests/IndexedDB/keygenerator-inject-expected.txt:
+        * web-platform-tests/IndexedDB/keypath-exceptions-expected.txt: Added.
+
 2019-03-21  Youenn Fablet  <youenn@apple.com>
 
         Fix one of RTCRtpTransceiver-stop.html test title

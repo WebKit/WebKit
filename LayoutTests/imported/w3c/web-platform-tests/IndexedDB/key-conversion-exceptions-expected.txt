@@ -1,22 +1,14 @@
 
-FAIL IDBFactory cmp() static with throwing/invalid keys assert_throws: first key conversion with invalid key should throw DataError function "() => {
-            receiver[method](invalid_key, throwing_key('getter 2'));
-        }" threw object "getter 2: throwing from getter" that is not a DOMException DataError: property "code" is equal to undefined, expected 0
+PASS IDBFactory cmp() static with throwing/invalid keys 
 PASS IDBCursor continue() method with throwing/invalid keys 
 PASS IndexedDB: Exceptions thrown during key conversion 
 PASS IDBCursor update() method with throwing/invalid keys 
 PASS IDBKeyRange only() static with throwing/invalid keys 
 PASS IDBKeyRange lowerBound() static with throwing/invalid keys 
 PASS IDBKeyRange upperBound() static with throwing/invalid keys 
-FAIL IDBKeyRange bound() static with throwing/invalid keys assert_throws: first key conversion with invalid key should throw DataError function "() => {
-            receiver[method](invalid_key, throwing_key('getter 2'));
-        }" threw object "getter 2: throwing from getter" that is not a DOMException DataError: property "code" is equal to undefined, expected 0
-FAIL IDBObjectStore add() method with throwing/invalid keys assert_throws: key conversion with throwing getter should rethrow function "() => {
-            out_of_line[method]('value', throwing_key('getter'));
-        }" threw object "DataCloneError: Failed to store record in an IDBObjectStore: An object could not be cloned." ("DataCloneError") expected object "[object Object]" ("getter")
-FAIL IDBObjectStore put() method with throwing/invalid keys assert_throws: key conversion with throwing getter should rethrow function "() => {
-            out_of_line[method]('value', throwing_key('getter'));
-        }" threw object "DataCloneError: Failed to store record in an IDBObjectStore: An object could not be cloned." ("DataCloneError") expected object "[object Object]" ("getter")
+PASS IDBKeyRange bound() static with throwing/invalid keys 
+PASS IDBObjectStore add() method with throwing/invalid keys 
+PASS IDBObjectStore put() method with throwing/invalid keys 
 PASS IDBObjectStore delete() method with throwing/invalid keys 
 PASS IDBObjectStore get() method with throwing/invalid keys 
 PASS IDBObjectStore getKey() method with throwing/invalid keys 

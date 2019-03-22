@@ -11,7 +11,7 @@ store = db.createObjectStore('store')
 Expecting exception from store.add(module, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-Exception message: Failed to store record in an IDBObjectStore: An object could not be cloned.
+Exception message: The object can not be cloned.
 PASS successfullyParsed is true
 
 TEST COMPLETE
