@@ -1,3 +1,27 @@
+2019-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        Back out local changes to Alex's Subversion working directory
+
+        They were accidentally committed.
+
+        * Scripts/webkitpy/common/system/abstractexecutive.py:
+        (AbstractExecutive.wait_newest):
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.running_pids):
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.running_pids):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_running_pids):
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.check_for_leaks):
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector.check_for_leaks):
+        - This was the hack attached to Bug 193772.
+
+        * WebKitTestRunner/mac/WebKitTestRunnerEvent.mm:
+        (+[WebKitTestRunnerEvent mouseLocation]):
+        - This works around a crash on an internal build.
+
 2019-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r243354

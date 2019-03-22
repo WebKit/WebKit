@@ -22,7 +22,6 @@
 
 import logging
 import os
-import re
 import time
 
 from webkitpy.common.memoized import memoized
@@ -61,16 +60,7 @@ class DarwinPort(ApplePort):
         if not self.get_option('leaks'):
             return
         # We could use http://code.google.com/p/psutil/ to get the process_name from the pid.
-        if self.get_option('webkit_test_runner'):
-            # FIXME: This assumes no other processes spawning WebKit2 processes are running.
-            webkit_process_re = re.compile('.*/com\.apple\.WebKit\.\S+\.Development$')
-            process_name_filter = lambda process_name: re.match(webkit_process_re, process_name)
-            process_ids, process_names = self._executive.running_pids(process_name_filter) or []
-            process_ids.insert(0, process_pid)
-            process_names.insert(0, process_name)
-            self._leak_detector.check_for_leaks(process_names, process_ids)
-        else:
-            self._leak_detector.check_for_leaks(process_name, process_pid)
+        self._leak_detector.check_for_leaks(process_name, process_pid)
 
     def print_leaks_summary(self):
         if not self.get_option('leaks'):

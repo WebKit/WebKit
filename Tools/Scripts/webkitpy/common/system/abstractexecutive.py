@@ -74,7 +74,7 @@ class AbstractExecutive(object):
         if not process_name_filter:
             process_name_filter = lambda process_name: True
 
-        running_pids, undef = self.running_pids(process_name_filter)
+        running_pids = self.running_pids(process_name_filter)
         if not running_pids:
             return
         pid = running_pids[-1]
