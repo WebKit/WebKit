@@ -1,5 +1,23 @@
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
+        WebKit1 test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/compositing/clipping/border-radius-async-overflow-clipping-layer-expected.txt: Added.
+        * platform/mac-wk1/compositing/layer-creation/absolute-in-async-overflow-scroll-expected.txt: Added.
+        * platform/mac-wk1/compositing/overflow/overflow-auto-with-touch-expected.txt: Added.
+        * platform/mac-wk1/compositing/overflow/overflow-auto-with-touch-toggle-expected.txt: Added.
+        * platform/mac-wk1/compositing/overflow/overflow-overlay-with-touch-expected.txt: Added.
+        * platform/mac-wk1/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt: Added.
+        * platform/mac-wk1/compositing/overflow/textarea-scroll-touch-expected.txt: Added.
+        * platform/mac-wk1/compositing/plugins/composited-plugin-expected.txt: Added.
+        * platform/mac-wk1/compositing/plugins/no-backing-store-expected.txt: Added.
+        * platform/mac-wk1/compositing/plugins/small-to-large-composited-plugin-expected.txt: Added.
+        * platform/mac-wk1/compositing/rtl/rtl-scrolling-with-transformed-descendants-expected.txt: Added.
+        * platform/mac-wk1/compositing/scrolling/overflow-scrolling-layers-are-self-painting-expected.txt: Added.
+
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION: (r242132) tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html is a timeout
         https://bugs.webkit.org/show_bug.cgi?id=196115
 

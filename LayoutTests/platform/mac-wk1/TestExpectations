@@ -34,6 +34,81 @@ http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Pass ]
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
 
+#//////////////////////////////////////////////////////////////////////////////////////////
+# Features not supported in WebKit1
+#//////////////////////////////////////////////////////////////////////////////////////////
+
+fast/css-custom-paint [ Skip ]
+imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
+css-custom-properties-api [ Skip ]
+css-typedom [ Skip ]
+css-dark-mode [ Skip ]
+webgpu [ Skip ]
+
+# Media Stream API testing is not supported for WK1 yet.
+fast/mediastream
+imported/w3c/web-platform-tests/mediacapture-streams
+http/tests/media/media-stream
+http/tests/ssl/media-stream
+inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
+
+# Datalist is unsupported in WK1
+fast/forms/datalist [ WontFix ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
+
+# ShouldOpenExternalURLs not yet supported in WK1
+loader/navigation-policy [ Skip ]
+
+# <a download> is not supported in WK1 yet.
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
+webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-no-extension.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-redirect.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-load-after-download.html [ Skip ]
+webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
+webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
+webkit.org/b/156069 http/tests/download/anchor-download-no-value.html [ Skip ]
+webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
+webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
+
+# Not supported on WK1
+media/no-fullscreen-when-hidden.html [ Skip ]
+
+# Beacon is not supported on WK1.
+http/tests/blink/sendbeacon/ [ Skip ]
+http/tests/inspector/network/beacon-type.html [ Skip ]
+http/wpt/beacon/ [ Skip ]
+imported/blink/fast/beacon/ [ Skip ]
+imported/w3c/web-platform-tests/beacon/ [ Skip ]
+http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
+
+# Not supported on WK1
+http/tests/intersection-observer [ Skip ]
+imported/w3c/web-platform-tests/intersection-observer [ Skip ]
+intersection-observer [ Skip ]
+
+#//////////////////////////////////////////////////////////////////////////////////////////
+# End features not supported in WebKit1
+#//////////////////////////////////////////////////////////////////////////////////////////
+
 ###### This file has two sections. When adding new tests, make sure to
 ###### add to the right section:
 
@@ -139,13 +214,6 @@ fast/forms/file/open-file-panel.html [ Skip ]
 # WK1 and WK2 mousemove events are subtly different in ways that break this test on WK1.
 fast/events/ghostly-mousemoves-in-subframe.html [ Skip ]
 
-# Media Stream API testing is not supported for WK1 yet.
-fast/mediastream
-imported/w3c/web-platform-tests/mediacapture-streams
-http/tests/media/media-stream
-http/tests/ssl/media-stream
-inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
-
 # WK1 does not filter response headers.
 http/wpt/loading/redirect-headers.html [ Skip ]
 
@@ -176,10 +244,6 @@ http/wpt/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
 webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
-
-# Datalist is unsupported in WK1
-fast/forms/datalist [ WontFix ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK1 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
@@ -231,8 +295,8 @@ fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 fast/scrolling/scroll-container-horizontally.html [ Failure ]
 
 compositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure ]
-
 compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
+compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
 
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
@@ -245,9 +309,6 @@ fast/images/async-image-src-change.html
 http/tests/multipart/multipart-async-image.html
 
 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-
-# ShouldOpenExternalURLs not yet supported in WK1
-loader/navigation-policy [ Skip ]
 
 [ Sierra+ ] css3/masking/mask-repeat-space-padding.html [ ImageOnlyFailure ]
 
@@ -317,37 +378,6 @@ webkit.org/b/156084 accessibility/mac/video-tag-hit-test.html [ Skip ]
 
 # This newly imported test times out on WK1 but passes on WK2.
 webkit.org/b/172222 imported/w3c/web-platform-tests/notifications/event-onclose.html [ Skip ]
-
-# <a download> is not supported in WK1 yet.
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-synthetic-click.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download-user-triggered-synthetic-click.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-base-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-blank-target-popup-not-allowed.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-backslash.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-doublequote.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-slashes.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-includes-unicode.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-no-extension.html [ Skip ]
-webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-file-blob-download-then-revoke.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-attribute-content-disposition.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-no-extension.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-redirect.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-load-after-download.html [ Skip ]
-webkit.org/b/156069 http/tests/download/area-download.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-blob.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-data.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-allow-sameorigin.html [ Skip ]
-webkit.org/b/156069 http/tests/security/anchor-download-block-crossorigin.html [ Skip ]
-webkit.org/b/156069 http/tests/download/anchor-download-no-value.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click.html [ Skip ]
-webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-download-click.html [ Skip ]
-
-# Not supported on WK1
-media/no-fullscreen-when-hidden.html [ Skip ]
 
 webkit.org/b/169523 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Failure ]
 
@@ -458,16 +488,6 @@ webkit.org/b/180554 imported/w3c/web-platform-tests/xhr/event-upload-progress-cr
 
 webkit.org/b/187372 imported/w3c/web-platform-tests/IndexedDB/interfaces.any.worker.html [ Pass Timeout ]
 
-# Beacon is not supported on WK1.
-http/tests/blink/sendbeacon/ [ Skip ]
-http/tests/inspector/network/beacon-type.html [ Skip ]
-http/wpt/beacon/ [ Skip ]
-imported/blink/fast/beacon/ [ Skip ]
-imported/w3c/web-platform-tests/beacon/ [ Skip ]
-http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
-http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
-http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
-
 # This was a WK2-only fix.
 http/tests/css/filters-on-iframes.html [ Skip ]
 
@@ -540,11 +560,6 @@ webkit.org/b/172397 [ Debug ] legacy-animation-engine/animations/needs-layout.ht
 webkit.org/b/179775 imported/w3c/web-platform-tests/xhr/firing-events-http-no-content-length.html [ Pass Failure ]
 
 webkit.org/b/172044 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html [ Pass Timeout ]
-
-# Not supported on WK1
-http/tests/intersection-observer [ Skip ]
-imported/w3c/web-platform-tests/intersection-observer [ Skip ]
-intersection-observer [ Skip ]
 
 webkit.org/b/180898 accessibility/mac/AOM-events.html [ Skip ]
 webkit.org/b/183023 accessibility/mac/AOM-events-all.html [ Skip ]
@@ -648,19 +663,9 @@ webkit.org/b/189594 imported/w3c/web-platform-tests/css/css-animations/pending-s
 
 webkit.org/b/188070 imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.html [ Pass Failure ]
 
-# Not supported on WK1
-fast/css-custom-paint [ Skip ]
-imported/w3c/web-platform-tests/css/css-properties-values-api/ [ Skip ]
-css-custom-properties-api [ Skip ]
-css-typedom [ Skip ]
-css-dark-mode [ Skip ]
-
 webkit.org/b/189908 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
 webkit.org/b/189756 [ Mojave+ ] compositing/filters/opacity-change-on-filtered-paints-into-ancestor.html [ Pass ImageOnlyFailure ]
-
-# WebGPU is not supported on WK1.
-webgpu [ Skip ]
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
@@ -681,7 +686,7 @@ webkit.org/b/190383 fast/images/animated-image-different-dest-size.html [ Pass I
 
 webkit.org/b/191639 imported/blink/compositing/squashing/squashing-into-ancestor-painted-layer.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/190627  [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
+webkit.org/b/190627 [ Mojave+ ] compositing/masks/compositing-clip-path-change-no-repaint.html  [ Pass Failure ]
 
 webkit.org/b/172384 fast/hidpi/hidpi-long-page-with-inset-element.html [ Skip ]
 
