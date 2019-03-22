@@ -1,5 +1,19 @@
 2019-03-22  Youenn Fablet  <youenn@apple.com>
 
+        REGRESSION: Flaky ASSERTION FAILED: !m_killed seen with http/tests/security/cross-origin-worker-indexeddb.html
+        https://bugs.webkit.org/show_bug.cgi?id=196024
+        <rdar://problem/49117272>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do not proceed with opening the database if it is being closed.
+        Speculative fix, this should stop making test crashing on bots.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+
+2019-03-22  Youenn Fablet  <youenn@apple.com>
+
         storage/indexeddb/closed-cursor-private.html is crashing on debug
         https://bugs.webkit.org/show_bug.cgi?id=196101
 

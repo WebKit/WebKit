@@ -220,6 +220,9 @@ void UniqueIDBDatabase::performCurrentOpenOperation()
                 if (!weakThis)
                     return;
 
+                if (m_owningPointerForClose)
+                    return;
+
                 switch (decision) {
                 case StorageQuotaManager::Decision::Deny: {
                     auto result = IDBResultData::error(m_currentOpenDBRequest->requestData().requestIdentifier(), IDBError { QuotaExceededError, quotaErrorMessageName("openDatabase") });
