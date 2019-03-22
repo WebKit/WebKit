@@ -45,10 +45,6 @@ public:
     void deref() { BASSERT(m_refCount); --m_refCount; }
     unsigned refCount() { return m_refCount; }
 
-    bool usedSinceLastScavenge() { return m_usedSinceLastScavenge; }
-    void clearUsedSinceLastScavenge() { m_usedSinceLastScavenge = false; }
-    void setUsedSinceLastScavenge() { m_usedSinceLastScavenge = true; }
-
     size_t offset(void*);
 
     char* address(size_t offset);
@@ -63,7 +59,6 @@ public:
 
 private:
     size_t m_refCount { };
-    bool m_usedSinceLastScavenge: 1;
     List<SmallPage> m_freePages { };
 
     std::array<SmallLine, chunkSize / smallLineSize> m_lines { };

@@ -1,3 +1,22 @@
+2019-03-21  Michael Saboff  <msaboff@apple.com>
+
+        [BMalloc] No need to delay deallocating chunks based on recent use
+        https://bugs.webkit.org/show_bug.cgi?id=196121
+
+        Reviewed by Mark Lam.
+
+        The "used since last scavenge" logic is not needed for small chunks since their memory isn't decommitted directly.
+        We can deallocate small chunks immediately as that adds them to the LargeRange free list.  That free list employs the
+        "used since last scavenge" logic before the scavenger decommits the backing memory.
+
+        * bmalloc/Chunk.h:
+        (bmalloc::Chunk::usedSinceLastScavenge): Deleted.
+        (bmalloc::Chunk::clearUsedSinceLastScavenge): Deleted.
+        (bmalloc::Chunk::setUsedSinceLastScavenge): Deleted.
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::allocateSmallPage):
+
 2019-03-21  Brady Eidson  <beidson@apple.com>
 
         Certain WebProcesses should opt-out of the freezer.

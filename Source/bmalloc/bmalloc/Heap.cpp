@@ -202,18 +202,8 @@ void Heap::scavenge(std::lock_guard<Mutex>& lock, BulkDecommit& decommitter, siz
     }
 
     for (auto& list : m_chunkCache) {
-        for (auto iter = list.begin(); iter != list.end(); ) {
-            Chunk* chunk = *iter;
-            if (chunk->usedSinceLastScavenge()) {
-                chunk->clearUsedSinceLastScavenge();
-                deferredDecommits++;
-                ++iter;
-                continue;
-            }
-            ++iter;
-            list.remove(chunk);
-            deallocateSmallChunk(chunk, &list - &m_chunkCache[0]);
-        }
+        while (!list.isEmpty())
+            deallocateSmallChunk(list.pop(), &list - &m_chunkCache[0]);
     }
 
     for (LargeRange& range : m_largeFree) {
@@ -316,7 +306,6 @@ SmallPage* Heap::allocateSmallPage(std::unique_lock<Mutex>& lock, size_t sizeCla
         Chunk* chunk = m_freePages[pageClass].tail();
 
         chunk->ref();
-        chunk->setUsedSinceLastScavenge();
 
         SmallPage* page = chunk->freePages().pop();
         if (chunk->freePages().isEmpty())
