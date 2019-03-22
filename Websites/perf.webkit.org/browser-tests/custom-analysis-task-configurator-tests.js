@@ -231,4 +231,69 @@ describe('CustomAnalysisTaskConfigurator', () => {
         await waitForComponentsToRender(context);
         expect(customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').value).to.be('');
     });
+
+    it('Should dispatch "testConfigChange" action when selected platform changed', async () => {
+        const context = new BrowsingContext();
+        const customAnalysisTaskConfigurator = await createCustomAnalysisTaskConfiguratorWithContext(context);
+        let testConfigChangeActionCount = 0;
+        context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval = 1;
+
+        customAnalysisTaskConfigurator.listenToAction("testConfigChange", () => testConfigChangeActionCount += 1);
+
+        const test = new context.symbols.Test(1, {name: 'Speedometer'});
+        const mojave = new context.symbols.Platform(1, {
+            name: 'Mojave',
+            metrics: [
+                new context.symbols.Metric(1, {
+                    name: 'Allocation',
+                    aggregator: 'Arithmetic',
+                    test
+                })
+            ],
+            lastModifiedByMetric: Date.now(),
+        });
+        const highSierra = new context.symbols.Platform(2, {
+            name: 'High Sierra',
+            metrics: [
+                new context.symbols.Metric(1, {
+                    name: 'Allocation',
+                    aggregator: 'Arithmetic',
+                    test
+                })
+            ],
+            lastModifiedByMetric: Date.now(),
+        });
+        const repository = context.symbols.Repository.ensureSingleton(1, {name: 'WebKit'});
+        const triggerableRepositoryGroup = new context.symbols.TriggerableRepositoryGroup(1, {repositories: [{repository}]});
+        new context.symbols.Triggerable(1, {
+            name: 'test-triggerable',
+            isDisabled: false,
+            repositoryGroups: [triggerableRepositoryGroup],
+            configurations: [{test, platform: mojave}, {test, platform: highSierra}],
+        });
+        customAnalysisTaskConfigurator.selectTests([test]);
+        customAnalysisTaskConfigurator.selectPlatform(mojave);
+
+        await waitForComponentsToRender(context);
+        expect(testConfigChangeActionCount).to.be(2);
+
+        const requests = context.symbols.MockRemoteAPI.requests;
+        expect(requests.length).to.be(1);
+        expect(requests[0].url).to.be('/api/commits/1/latest?platform=1');
+        requests[0].reject();
+
+        customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').value = '123';
+        customAnalysisTaskConfigurator.content('baseline-revision-table').querySelector('input').dispatchEvent(new Event('input'));
+        await sleep(context.symbols.CustomAnalysisTaskConfigurator.commitFetchInterval);
+        expect(requests.length).to.be(2);
+        expect(requests[1].url).to.be('/api/commits/1/123');
+
+        customAnalysisTaskConfigurator._configureComparison();
+        await waitForComponentsToRender(context);
+        expect(testConfigChangeActionCount).to.be(3);
+
+        customAnalysisTaskConfigurator.selectPlatform(highSierra);
+        await waitForComponentsToRender(context);
+        expect(testConfigChangeActionCount).to.be(4);
+    });
 });

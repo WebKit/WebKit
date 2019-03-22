@@ -1,3 +1,23 @@
+2019-03-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        'custom-configuration-test-group-form' should update test name when selected test or platform changes.
+        https://bugs.webkit.org/show_bug.cgi?id=196114
+
+        Reviewed by Ryosuke Niwa.
+
+        r240104 fixes commit sets unnecessarily get updated even there is no change.
+        However, this made changing test or platform no longer triggers 'commitSetChange' action.
+        Test name should change not only when 'commitSet' gets change, but also platform or test changes.
+        Renaming the action name from 'commitSetChange' to a more accurate description 'testConfigChange'.
+        Dispatch 'testConfigChange' when platform or test changes.
+
+        * browser-tests/custom-analysis-task-configurator-tests.js: Changed action name to 'commitSetChange'.
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator.prototype._didUpdateSelectedPlatforms): Should dispatch 'commitSetChange' action.
+        (CustomAnalysisTaskConfigurator.prototype._updateCommitSetMap): Changed action name to 'commitSetChange'.
+        * public/v3/components/custom-configuration-test-group-form.js: Added a unit test for this change.
+        (CustomConfigurationTestGroupForm.prototype.didConstructShadowTree):
+
 2019-03-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Fix a bug from r226303 that latest build time is not correctly calculated.

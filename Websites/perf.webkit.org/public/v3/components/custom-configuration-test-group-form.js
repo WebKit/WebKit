@@ -49,7 +49,7 @@ class CustomConfigurationTestGroupForm extends TestGroupForm {
     {
         super.didConstructShadowTree();
 
-        this.part('configurator').listenToAction('commitSetChange', () => this.enqueueToRender());
+        this.part('configurator').listenToAction('testConfigChange', () => this.enqueueToRender());
 
         this.content('task-name').oninput = () => this.enqueueToRender();
         this.content('group-name').oninput = () => this.enqueueToRender();

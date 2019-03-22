@@ -60,6 +60,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
             this._updateMapFromSpecifiedRevisionsForConfiguration(this._invalidRevisionsByConfiguration, configuration);
         }
         this._updateCommitSetMap();
+        this.dispatchAction('testConfigChange');
         this.enqueueToRender();
     }
 
@@ -336,7 +337,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
 
         this._commitSetMap = {'Baseline': newBaseline, 'Comparison': newComparison};
 
-        this.dispatchAction('commitSetChange');
+        this.dispatchAction('testConfigChange');
         this.enqueueToRender();
     }
 
