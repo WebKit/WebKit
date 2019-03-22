@@ -1,5 +1,44 @@
 2019-03-22  Devin Rousso  <drousso@apple.com>
 
+        Unreviewed, fix test failures after r243269.
+
+        In debug builds, it's possible that the Web Inspector frontend is told to stop a timeline
+        recording before all of the recorded records have had a chance to be completed/processed.
+
+        As an example
+        ```
+            setTimeout(() => {
+                <stop recording>
+            });
+        ```
+        it may happen that the "stop recording" event will be dispatched before the timeout has
+        finished executing, meaning that the event that contains the recorded data for that timeout
+        will be ignored by the frontend.
+
+        Rework the tests so that they don't dispatch the "stop recording" event until the expected
+        record is received by the frontend, rather than having the test code itself say when to stop.
+
+        * inspector/timeline/resources/timeline-event-utilities.js:
+        (savePageData): Added.
+        (TestPage.registerInitializer.InspectorTest.TimelineEvent.captureTimelineWithScript):
+        (finishRecording): Deleted.
+        * inspector/timeline/timeline-event-CancelAnimationFrame.html:
+        * inspector/timeline/timeline-event-CancelAnimationFrame-expected.txt:
+        * inspector/timeline/timeline-event-EventDispatch.html:
+        * inspector/timeline/timeline-event-EventDispatch-expected.txt:
+        * inspector/timeline/timeline-event-FireAnimationFrame.html:
+        * inspector/timeline/timeline-event-FireAnimationFrame-expected.txt:
+        * inspector/timeline/timeline-event-RequestAnimationFrame.html:
+        * inspector/timeline/timeline-event-RequestAnimationFrame-expected.txt:
+        * inspector/timeline/timeline-event-TimerFire.html:
+        * inspector/timeline/timeline-event-TimerFire-expected.txt:
+        * inspector/timeline/timeline-event-TimerInstall.html:
+        * inspector/timeline/timeline-event-TimerInstall-expected.txt:
+        * inspector/timeline/timeline-event-TimerRemove.html:
+        * inspector/timeline/timeline-event-TimerRemove-expected.txt:
+
+2019-03-22  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Safari Canvas Inspector seems to show the canvas being rendered twice per frame.
         https://bugs.webkit.org/show_bug.cgi?id=196082
         <rdar://problem/49113496>

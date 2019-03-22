@@ -8,11 +8,9 @@
 function testRequestAnimationFrame() {
     let requestAnimationFrameIdentifier = requestAnimationFrame(() => {
         TestPage.addResult("PASS: requestAnimationFrame fired");
-
-        setTimeout(() => {
-            finishRecording({requestAnimationFrameIdentifier});
-        });
     });
+
+    savePageData({requestAnimationFrameIdentifier});
 }
 
 function test()
@@ -22,7 +20,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.FireAnimationFrame.requestAnimationFrame",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testRequestAnimationFrame()`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testRequestAnimationFrame()`,
+                eventType: WI.ScriptTimelineRecord.EventType.AnimationFrameFired,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.requestAnimationFrameIdentifier === "number");
 

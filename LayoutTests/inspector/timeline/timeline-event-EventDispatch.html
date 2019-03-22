@@ -6,27 +6,23 @@
 <script>
 
 function testClickEventHandler({preventDefault}) {
+    savePageData({preventDefault});
+
     let button = document.body.appendChild(document.createElement("button"));
     button.addEventListener("click", (event) => {
         TestPage.addResult("PASS: click handler fired" + (preventDefault ? ", will prevent default" : ""));
 
         if (preventDefault)
             event.preventDefault();
-
-        setTimeout(() => {
-            finishRecording({preventDefault});
-        });
-    });
+    }, {once: true});
     button.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true}));
 }
 
 function testClickEventAttributeHandler(id, {preventDefault}) {
+    savePageData({preventDefault});
+
     let button = document.getElementById(id);
     button.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true}));
-
-    setTimeout(() => {
-        finishRecording({preventDefault});
-    });
 }
 
 function test()
@@ -36,7 +32,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.EventDispatch.Handler.Regular",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testClickEventHandler({preventDefault: false})`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventHandler({preventDefault: false})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
 
@@ -54,7 +53,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.EventDispatch.Handler.DefaultPrevented",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testClickEventHandler({preventDefault: true})`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventHandler({preventDefault: true})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
 
@@ -72,7 +74,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.EventDispatch.AttributeHandler.Regular",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testClickEventAttributeHandler("b1", {preventDefault: false})`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventAttributeHandler("b1", {preventDefault: false})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
 
@@ -90,7 +95,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.EventDispatch.AttributeHandler.DefaultPrevented",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testClickEventAttributeHandler("b2", {preventDefault: true})`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testClickEventAttributeHandler("b2", {preventDefault: true})`,
+                eventType: WI.ScriptTimelineRecord.EventType.EventDispatched,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.preventDefault === "boolean");
 

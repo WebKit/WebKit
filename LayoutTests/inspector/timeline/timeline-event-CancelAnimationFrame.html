@@ -10,11 +10,9 @@ function testRequestAnimationFrame() {
         TestPage.addResult("FAIL: requestAnimationFrame fired");
     });
 
-    cancelAnimationFrame(requestAnimationFrameIdentifier);
+    savePageData({requestAnimationFrameIdentifier});
 
-    setTimeout(() => {
-        finishRecording({requestAnimationFrameIdentifier});
-    });
+    cancelAnimationFrame(requestAnimationFrameIdentifier);
 }
 
 function test()
@@ -24,7 +22,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.CancelAnimationFrame.requestAnimationFrame",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testRequestAnimationFrame()`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testRequestAnimationFrame()`,
+                eventType: WI.ScriptTimelineRecord.EventType.AnimationFrameCanceled,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.requestAnimationFrameIdentifier === "number");
 

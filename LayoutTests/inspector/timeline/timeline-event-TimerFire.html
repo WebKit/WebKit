@@ -8,11 +8,9 @@
 function testSetTimeout() {
     let setTimeoutIdentifier = setTimeout(() => {
         TestPage.addResult("PASS: setTimeout fired");
+    }, 10);
 
-        requestAnimationFrame(() => {
-            finishRecording({setTimeoutIdentifier});
-        });
-    });
+    savePageData({setTimeoutIdentifier});
 }
 
 function testSetInterval() {
@@ -23,14 +21,11 @@ function testSetInterval() {
 
         TestPage.addResult("PASS: setInterval fired: " + count);
 
-        if (count === 3) {
+        if (count === 3)
             clearInterval(setIntervalIdentifier);
+    }, 5);
 
-            requestAnimationFrame(() => {
-                finishRecording({setIntervalIdentifier});
-            });
-        }
-    });
+    savePageData({setIntervalIdentifier});
 }
 
 function test()
@@ -43,7 +38,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.TimerFire.setTimeout",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testSetTimeout()`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testSetTimeout()`,
+                eventType: WI.ScriptTimelineRecord.EventType.TimerFired,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.setTimeoutIdentifier === "number");
             timeoutIdentifier = pageRecordingData.setTimeoutIdentifier;
@@ -62,7 +60,10 @@ function test()
     suite.addTestCase({
         name: "TimelineEvent.TimerFire.setInterval",
         async test() {
-            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript(`testSetInterval()`);
+            let pageRecordingData = await InspectorTest.TimelineEvent.captureTimelineWithScript({
+                expression: `testSetInterval()`,
+                eventType: WI.ScriptTimelineRecord.EventType.TimerRemoved,
+            });
 
             InspectorTest.assert(typeof pageRecordingData.setIntervalIdentifier === "number");
             intervalIdentifier = pageRecordingData.setIntervalIdentifier;
