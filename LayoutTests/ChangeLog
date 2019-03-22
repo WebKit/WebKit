@@ -1,3 +1,24 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening.
+
+        Revert some iOS layout test results that were rebaselined with async scrolling enabled.
+
+        * platform/ios-wk2/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Removed.
+        * platform/ios-wk2/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Removed.
+        * platform/ios-wk2/compositing/layer-creation/scroll-partial-update-expected.txt: Removed.
+        * platform/ios-wk2/compositing/overflow/content-gains-scrollbars-expected.txt: Removed.
+        * platform/ios-wk2/compositing/overflow/overflow-scroll-expected.txt:
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layer-positions-expected.txt: Removed.
+        * platform/ios-wk2/compositing/overflow/overflow-scrollbar-layers-expected.txt: Removed.
+        * platform/ios-wk2/compositing/overflow/remove-overflow-crash2-expected.txt:
+        * platform/ios-wk2/compositing/overflow/scrollbar-painting-expected.txt:
+        * platform/ios/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * platform/ios/compositing/layers-inside-overflow-scroll-expected.txt:
+        * platform/ios/compositing/overflow/scroll-ancestor-update-expected.txt:
+        * platform/ios/compositing/reflections/nested-reflection-on-overflow-expected.txt:
+        * platform/ios/compositing/self-painting-layers-expected.txt:
+
 2019-03-21  Sihui Liu  <sihui_liu@apple.com>
 
         Fix key path extraction code in IndexedDB to check own property
