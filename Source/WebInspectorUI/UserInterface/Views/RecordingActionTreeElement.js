@@ -428,10 +428,22 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
         contextMenu.appendSeparator();
 
-        let callFrame = this.representedObject.trace[0];
-        if (callFrame) {
-            contextMenu.appendItem(WI.UIString("Reveal in Resources Tab"), () => {
-                WI.showSourceCodeLocation(callFrame.sourceCodeLocation, {
+        let sourceCodeLocation = null;
+        for (let callFrame of this.representedObject.trace) {
+            if (callFrame.sourceCodeLocation) {
+                sourceCodeLocation = callFrame.sourceCodeLocation;
+                break;
+            }
+        }
+
+        if (sourceCodeLocation) {
+            let label = null;
+            if (WI.settings.experimentalEnableSourcesTab.value)
+                label = WI.UIString("Reveal in Sources Tab");
+            else
+                label = WI.UIString("Reveal in Resources Tab");
+            contextMenu.appendItem(label, () => {
+                WI.showSourceCodeLocation(sourceCodeLocation, {
                     ignoreNetworkTab: true,
                     ignoreSearchTab: true,
                 });
