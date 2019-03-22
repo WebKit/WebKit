@@ -1,3 +1,9 @@
+2019-03-22  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
 2019-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build after r243354
