@@ -181,7 +181,7 @@ void UniqueIDBDatabaseConnection::didCommitTransaction(UniqueIDBDatabaseTransact
 
     auto transactionIdentifier = transaction.info().identifier();
 
-    ASSERT(m_transactionMap.contains(transactionIdentifier));
+    ASSERT(m_transactionMap.contains(transactionIdentifier) || !error.isNull());
     m_transactionMap.remove(transactionIdentifier);
 
     m_connectionToClient->didCommitTransaction(transactionIdentifier, error);
