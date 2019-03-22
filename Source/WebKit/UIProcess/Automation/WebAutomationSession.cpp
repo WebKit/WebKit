@@ -598,7 +598,7 @@ void WebAutomationSession::exitFullscreenWindowForPage(WebPageProxy& page, WTF::
 {
 #if ENABLE(FULLSCREEN_API)
     ASSERT(!m_windowStateTransitionCallback);
-    if (!page.fullScreenManager()->isFullScreen()) {
+    if (!page.fullScreenManager() || !page.fullScreenManager()->isFullScreen()) {
         completionHandler();
         return;
     }

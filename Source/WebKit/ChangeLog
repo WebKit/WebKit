@@ -1,3 +1,17 @@
+2019-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r243094): Automation: browser crash in WebAutomationSession::exitFullscreenWindowForPage()
+        https://bugs.webkit.org/show_bug.cgi?id=196140
+
+        Reviewed by Chris Dumez.
+
+        Since r243094, the WebPageProxy fullscreen manager is not created in the constructor, but once the page has a
+        process launched.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::exitFullscreenWindowForPage): Null check WebPageProxy::fullScreenManager() before
+        using it.
+
 2019-03-22  Timothy Hatcher  <timothy@apple.com>
 
         Change macosx() to macos() in WK_API... and JSC_API... macros.
