@@ -178,8 +178,7 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
         
     TestRunnerWKWebView *webView = mainWebView()->platformView();
 
-    if (test.options().shouldIgnoreMetaViewport)
-        webView.configuration.preferences._shouldIgnoreMetaViewport = YES;
+    webView.configuration.preferences._shouldIgnoreMetaViewport = test.options().shouldIgnoreMetaViewport;
 
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGSize oldSize = webView.bounds.size;

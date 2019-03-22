@@ -1,5 +1,19 @@
 2019-03-22  Chris Dumez  <cdumez@apple.com>
 
+        [ iOS Simulator] REGRESSION (r241821) Layout Test platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not-ignore-meta-viewport.html is a flaky failure on bots
+        https://bugs.webkit.org/show_bug.cgi?id=195348
+        <rdar://problem/48622090>
+
+        Reviewed by Alex Christensen.
+
+        Make sure webView.configuration.preferences._shouldIgnoreMetaViewport gets reset
+        to NO when test.options().shouldIgnoreMetaViewport is false.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
+2019-03-22  Chris Dumez  <cdumez@apple.com>
+
         Prewarmed processes should be usable with any website data store
         https://bugs.webkit.org/show_bug.cgi?id=196104
 
