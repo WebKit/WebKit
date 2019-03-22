@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyLinkError(ExecState* e
     JSValue message = exec->argument(0);
     auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm)->webAssemblyLinkErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSWebAssemblyLinkError::create(exec, vm, structure, message));
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSWebAssemblyLinkError::create(exec, vm, structure, message)));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyLinkError(ExecState* exec)
