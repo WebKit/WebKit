@@ -1,3 +1,16 @@
+2019-03-22  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Don't construct segments on PlaybackPipeline::flush
+        https://bugs.webkit.org/show_bug.cgi?id=195867
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Drawing an MSE video in a canvas seems to be failing in Mac. That
+        functionality is necessary for the tests introduced with this patch,
+        therefore they fail there. Marking them as Skip.
+
+        * platform/mac/TestExpectations:
+
 2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGNumber, SVGNumberList and SVGAnimatedNumberList

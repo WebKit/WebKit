@@ -1,3 +1,20 @@
+2019-03-22  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Don't construct segments on PlaybackPipeline::flush
+        https://bugs.webkit.org/show_bug.cgi?id=195867
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        These tests check that video and audio are roughly in sync with each
+        other and with the reported player position during MSE playback.
+
+        * web-platform-tests/media-source/mediasource-correct-frames-after-reappend-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html: Added.
+        * web-platform-tests/media-source/mediasource-correct-frames-expected.txt: Added.
+        * web-platform-tests/media-source/mediasource-correct-frames.html: Added.
+        * web-platform-tests/media-source/mp4/test-boxes-audio.mp4: Added.
+        * web-platform-tests/media-source/mp4/test-boxes-video.mp4: Added.
+
 2019-03-21  Sihui Liu  <sihui_liu@apple.com>
 
         Fix key path extraction code in IndexedDB to check own property

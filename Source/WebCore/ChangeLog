@@ -1,3 +1,30 @@
+2019-03-22  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] Don't construct segments on PlaybackPipeline::flush
+        https://bugs.webkit.org/show_bug.cgi?id=195867
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The previous approach did not really work for flushes on only one
+        branch, as setting reset-time in FLUSH_STOP affects the running time
+        of the entire pipeline, causing timing issues in the other branch.
+
+        Since it's preferable not to interfere with the other branch if
+        possible, setting reset-time to FALSE fixes that problem.
+
+        Also, it's not necessary to fabricate a segment. Since we are not
+        seeking, only the base needs to be adjusted, and gstbasesrc already
+        handles this correctly by default.
+
+        This fixes an audio/video synchronization bug in YT when some
+        automatic quality changes occur.
+
+        Tests: imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html
+               imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html
+
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::flush):
+
 2019-03-22  Frederic Wang  <fwang@igalia.com>
 
         Move implementation of mathsize to a single place

@@ -318,46 +318,16 @@ void PlaybackPipeline::flush(AtomicString trackId)
     GST_TRACE("Position: %" GST_TIME_FORMAT, GST_TIME_ARGS(position));
 
     if (static_cast<guint64>(position) == GST_CLOCK_TIME_NONE) {
-        GST_TRACE("Can't determine position, avoiding flush");
+        GST_DEBUG("Can't determine position, avoiding flush");
         return;
     }
-
-    double rate;
-    GstFormat format;
-    gint64 start = GST_CLOCK_TIME_NONE;
-    gint64 stop = GST_CLOCK_TIME_NONE;
-
-    query = adoptGRef(gst_query_new_segment(GST_FORMAT_TIME));
-    if (gst_element_query(pipeline(), query.get()))
-        gst_query_parse_segment(query.get(), &rate, &format, &start, &stop);
-
-    GST_TRACE("segment: [%" GST_TIME_FORMAT ", %" GST_TIME_FORMAT "], rate: %f",
-        GST_TIME_ARGS(start), GST_TIME_ARGS(stop), rate);
 
     if (!gst_element_send_event(GST_ELEMENT(appsrc), gst_event_new_flush_start())) {
         GST_WARNING("Failed to send flush-start event for trackId=%s", trackId.string().utf8().data());
-        return;
     }
 
-    if (!gst_element_send_event(GST_ELEMENT(appsrc), gst_event_new_flush_stop(true))) {
+    if (!gst_element_send_event(GST_ELEMENT(appsrc), gst_event_new_flush_stop(false))) {
         GST_WARNING("Failed to send flush-stop event for trackId=%s", trackId.string().utf8().data());
-        return;
-    }
-
-    if (static_cast<guint64>(position) == GST_CLOCK_TIME_NONE || static_cast<guint64>(start) == GST_CLOCK_TIME_NONE)
-        return;
-
-    GUniquePtr<GstSegment> segment(gst_segment_new());
-    gst_segment_init(segment.get(), GST_FORMAT_TIME);
-    gst_segment_do_seek(segment.get(), rate, GST_FORMAT_TIME, GST_SEEK_FLAG_NONE,
-        GST_SEEK_TYPE_SET, position, GST_SEEK_TYPE_SET, stop, nullptr);
-
-    GST_TRACE("Sending new seamless segment: [%" GST_TIME_FORMAT ", %" GST_TIME_FORMAT "], rate: %f",
-        GST_TIME_ARGS(segment->start), GST_TIME_ARGS(segment->stop), segment->rate);
-
-    if (!gst_base_src_new_seamless_segment(GST_BASE_SRC(appsrc), segment->start, segment->stop, segment->start)) {
-        GST_WARNING("Failed to send seamless segment event for trackId=%s", trackId.string().utf8().data());
-        return;
     }
 
     GST_DEBUG("trackId=%s flushed", trackId.string().utf8().data());
