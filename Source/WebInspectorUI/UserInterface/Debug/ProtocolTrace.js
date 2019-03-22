@@ -51,6 +51,9 @@ WI.ProtocolTrace = class ProtocolTrace
         // "Protocol Trace 2015-12-31 at 12.43.04.json".
         // When the Intl API is implemented, we can do a better job.
         let filename = WI.unlocalizedString(`Protocol Trace at ${YYYY}-${MM}-${DD} ${hh}.${mm}.${ss}.json`);
-        return {url: "web-inspector:///" + encodeURIComponent(filename), content: JSON.stringify(this._entries)};
+        return {
+            url: WI.FileUtilities.inspectorURLForFilename(filename),
+            content: JSON.stringify(this._entries),
+        };
     }
 };

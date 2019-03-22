@@ -2108,9 +2108,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.HARBuilder.buildArchive(resources).then((har) => {
             let mainFrame = WI.networkManager.mainFrame;
             let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
-            let url = "web-inspector:///" + encodeURI(archiveName) + ".har";
             WI.FileUtilities.save({
-                url,
+                url: WI.FileUtilities.inspectorURLForFilename(archiveName + ".har"),
                 content: JSON.stringify(har, null, 2),
                 forceSaveAs: true,
             });

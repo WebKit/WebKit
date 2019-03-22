@@ -121,7 +121,7 @@ WI.ShaderProgramContentView = class ShaderProgramContentView extends WI.ContentV
             filename = WI.UIString("Fragment");
 
         return {
-            url: `web-inspector:///${filename}.glsl`,
+            url: WI.FileUtilities.inspectorURLForFilename(filename + ".glsl"),
             content: this._lastActiveEditor.string,
             forceSaveAs: true,
         };

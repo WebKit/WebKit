@@ -604,9 +604,9 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             frameName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName;
 
         let filename = frameName ? `${frameName}-recording` : this._recording.displayName;
-        let url = "web-inspector:///" + encodeURI(filename) + ".json";
+
         WI.FileUtilities.save({
-            url,
+            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: JSON.stringify(json),
             forceSaveAs: true,
         });

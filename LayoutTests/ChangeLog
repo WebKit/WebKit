@@ -1,3 +1,17 @@
+2019-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timelines - Cannot export on about:blank - suggested filename containing a colon silently fails
+        https://bugs.webkit.org/show_bug.cgi?id=196109
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/unit-tests/file-utilities-expected.txt: Added.
+        * inspector/unit-tests/file-utilities.html: Added.
+        Tests for FileUtilities.js
+
+        * inspector/unit-tests/object-utilities.html:
+        * inspector/unit-tests/promise-utilities.html:
+
 2019-03-21  Chris Dumez  <cdumez@apple.com>
 
         [ Mac WK2 ] Layout Test http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html is a flaky failure

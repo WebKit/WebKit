@@ -143,8 +143,10 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
 
     get saveData()
     {
-        if (this.resource instanceof WI.CSSStyleSheet)
-            return {url: "web-inspector:///InspectorStyleSheet.css", content: this._textEditor.string, forceSaveAs: true};
+        if (this.resource instanceof WI.CSSStyleSheet) {
+            let url = WI.FileUtilities.inspectorURLForFilename("InspectorStyleSheet.css");
+            return {url, content: this._textEditor.string, forceSaveAs: true};
+        }
         return {url: this.resource.url, content: this._textEditor.string};
     }
 

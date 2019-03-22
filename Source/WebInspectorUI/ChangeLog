@@ -1,3 +1,50 @@
+2019-03-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timelines - Cannot export on about:blank - suggested filename containing a colon silently fails
+        https://bugs.webkit.org/show_bug.cgi?id=196109
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.FileUtilities.sanitizeFilename):
+        (WI.FileUtilities.inspectorURLForFilename):
+        New utility functions.
+
+        * UserInterface/Test.html:
+        Include FileUtilities.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.export):
+        * UserInterface/Debug/ProtocolTrace.js:
+        (WI.ProtocolTrace.prototype.get saveData):
+        (WI.ProtocolTrace):
+        * UserInterface/Views/ConsoleMessageView.js:
+        (WI.ConsoleMessageView.prototype._handleContextMenu):
+        (WI.ConsoleMessageView):
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/HeapSnapshotContentView.js:
+        (WI.HeapSnapshotContentView.prototype._exportSnapshot):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.get saveData):
+        (WI.LogContentView.prototype._handleContextMenuEvent):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._exportHAR):
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._exportRecording):
+        (WI.RecordingContentView.prototype._exportReduction):
+        * UserInterface/Views/ScriptContentView.js:
+        (WI.ScriptContentView.prototype.get saveData):
+        * UserInterface/Views/ShaderProgramContentView.js:
+        (WI.ShaderProgramContentView.prototype.get saveData):
+        * UserInterface/Views/TextContentView.js:
+        (WI.TextContentView.prototype.get saveData):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype.get saveData):
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView.prototype._exportTimelineRecording):
+        Update "web-inspector:///" URL building code to use the utility.
+
 2019-03-21  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Use CSS variables for text color in Computed panel

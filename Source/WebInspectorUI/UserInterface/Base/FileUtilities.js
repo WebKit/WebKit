@@ -38,6 +38,16 @@ WI.FileUtilities = class FileUtilities {
         return WI.UIString("Screen Shot %s-%s-%s at %s.%s.%s").format(...values);
     }
 
+    static sanitizeFilename(filename)
+    {
+        return filename.replace(/:+/g, "-");
+    }
+
+    static inspectorURLForFilename(filename)
+    {
+        return "web-inspector:///" + encodeURIComponent(FileUtilities.sanitizeFilename(filename));
+    }
+
     static save(saveData, forceSaveAs)
     {
         console.assert(saveData);

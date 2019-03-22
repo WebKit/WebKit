@@ -154,7 +154,7 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     get saveData()
     {
-        var url = this._script.url || "web-inspector:///" + encodeURI(this._script.displayName) + ".js";
+        let url = this._script.url || WI.FileUtilities.inspectorURLForFilename(this._script.displayName + ".js");
         return {url, content: this._textEditor.string};
     }
 

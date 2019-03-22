@@ -103,9 +103,8 @@ WI.HeapSnapshotContentView = class HeapSnapshotContentView extends WI.ContentVie
             Number.zeroPad(date.getSeconds(), 2),
         ];
         let filename = WI.UIString("Heap Snapshot %s-%s-%s at %s.%s.%s").format(...values);
-        let url = "web-inspector:///" + encodeURI(filename) + ".json";
         WI.FileUtilities.save({
-            url,
+            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: this.representedObject.snapshotStringData,
             forceSaveAs: true,
         });

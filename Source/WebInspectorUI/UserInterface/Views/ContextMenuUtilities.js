@@ -253,7 +253,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                 }
 
                 WI.FileUtilities.save({
-                    url: encodeURI(`web-inspector:///${WI.FileUtilities.screenshotString()}.png`),
+                    url: WI.FileUtilities.inspectorURLForFilename(WI.FileUtilities.screenshotString() + ".png"),
                     content: parseDataURL(dataURL).data,
                     base64Encoded: true,
                 });

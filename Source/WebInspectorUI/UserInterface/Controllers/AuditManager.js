@@ -232,10 +232,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         if (object instanceof WI.AuditTestResultBase)
             filename = WI.UIString("%s Result").format(filename);
 
-        let url = "web-inspector:///" + encodeURI(filename) + ".json";
-
         WI.FileUtilities.save({
-            url,
+            url: WI.FileUtilities.inspectorURLForFilename(filename + ".json"),
             content: JSON.stringify(object),
             forceSaveAs: true,
         });

@@ -951,7 +951,7 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
         contextMenu.appendItem(WI.UIString("Save Image"), () => {
             const forceSaveAs = true;
             WI.FileUtilities.save({
-                url: encodeURI("web-inspector:///" + image.getAttribute("filename")),
+                url: WI.FileUtilities.inspectorURLForFilename(image.getAttribute("filename")),
                 content: parseDataURL(this._message.messageText).data,
                 base64Encoded: true,
             }, forceSaveAs);

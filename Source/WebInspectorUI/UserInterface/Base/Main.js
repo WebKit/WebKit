@@ -3078,7 +3078,7 @@ WI.archiveMainFrame = function()
 
         let mainFrame = WI.networkManager.mainFrame;
         let archiveName = mainFrame.mainResource.urlComponents.host || mainFrame.mainResource.displayName || "Archive";
-        let url = "web-inspector:///" + encodeURI(archiveName) + ".webarchive";
+        let url = WI.FileUtilities.inspectorURLForFilename(archiveName + ".webarchive");
 
         InspectorFrontendHost.save(url, data, true, true);
     });
