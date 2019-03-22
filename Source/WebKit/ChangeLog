@@ -1,3 +1,17 @@
+2019-03-21  James Magahern  <jmagahern@apple.com>
+
+        Long press gesture recognizers in WKWebView are conflicting with internal scroll view long press gesture recognizers
+        https://bugs.webkit.org/show_bug.cgi?id=195726
+        rdar://problem/48582449
+
+        Reviewed by Megan Gardner.
+
+        We just need to add another clause to WKContentViewInteraction's
+        canPreventGestureRecognizer whitelist. 
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:canPreventGestureRecognizer:]):
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Turn on async overflow scrolling by default
