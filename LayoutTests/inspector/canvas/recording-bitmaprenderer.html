@@ -23,7 +23,7 @@ canvas.height = 2;
 function load() {
     ctx = canvas.getContext("bitmaprenderer");
 
-    document.body.appendChild(canvas);
+    cancelActions();
 
     runTest();
 }
@@ -34,11 +34,11 @@ function ignoreException(func){
     } catch (e) { }
 }
 
-let timeoutID = NaN;
+let requestAnimationFrameId = NaN;
 
 function cancelActions() {
-    clearTimeout(timeoutID);
-    timeoutID = NaN;
+    cancelAnimationFrame(requestAnimationFrameId);
+    requestAnimationFrameId = NaN;
 
     createImageBitmap(transparentImage).then((transparentBitmap) => {
         ctx.transferFromImageBitmap(transparentBitmap);
@@ -68,7 +68,7 @@ async function performActions() {
     function executeFrameFunction() {
         frames[index++]();
         if (index < frames.length)
-            timeoutID = setTimeout(executeFrameFunction, 0);
+            requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
     };
     executeFrameFunction();
 }

@@ -120,6 +120,15 @@ class GraphicsContext3DPrivate;
 
 class GraphicsContext3D : public RefCounted<GraphicsContext3D> {
 public:
+    class Client {
+    public:
+        virtual ~Client() { }
+        virtual void didComposite() = 0;
+        virtual void forceContextLost() = 0;
+        virtual void recycleContext() = 0;
+        virtual void dispatchContextChangedNotification() = 0;
+    };
+
     enum {
         // WebGL 1 constants
         DEPTH_BUFFER_BIT = 0x00000100,
@@ -764,7 +773,9 @@ public:
 #endif
 
     bool makeContextCurrent();
-    void setWebGLContext(WebGLRenderingContextBase* base) { m_webglContext = base; }
+
+    void addClient(Client& client) { m_clients.add(&client); }
+    void removeClient(Client& client) { m_clients.remove(&client); }
 
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
@@ -1507,8 +1518,7 @@ private:
     std::unique_ptr<GraphicsContext3DPrivate> m_private;
 #endif
 
-    // FIXME: Layering violation.
-    WebGLRenderingContextBase* m_webglContext { nullptr };
+    HashSet<Client*> m_clients;
 
     bool m_isForWebGL2 { false };
     bool m_usingCoreProfile { false };

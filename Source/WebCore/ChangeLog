@@ -1,3 +1,106 @@
+2019-03-21  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Safari Canvas Inspector seems to show the canvas being rendered twice per frame.
+        https://bugs.webkit.org/show_bug.cgi?id=196082
+        <rdar://problem/49113496>
+
+        Reviewed by Dean Jackson.
+
+        Tests: inspector/canvas/recording-2d.html
+               inspector/canvas/recording-bitmaprenderer.html
+               inspector/canvas/recording-html-2d.html
+               inspector/canvas/recording-webgl.html
+               inspector/canvas/setRecordingAutoCaptureFrameCount.html
+
+        WebGL `<canvas>` follow a different "rendering" path such that `HTMLCanvasElement::paint`
+        isn't called. Previously, there was a 0s timer that was started after the first action of a
+        frame was recorded (for the case that the `<canvas>` isn't attached to the DOM) that would
+        automatically stop the recording. It was possible that actions in two different "frame"s
+        were recorded as part of the same frame, because the WebGL `<canvas>` would instead fall
+        back to the timer to know when the "frame" had ended.
+
+        Now, there is additional instrumentation for the WebGL specific rendering path.
+        Additionally, replace the 0s timer with a microtask for more "immediate" calling.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        Ensure that the `InspectorInstrumentation` call is last. This matches what we expect, as
+        before we were instrumenting right before is it about to paint.
+
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::Client::~Client): Added.
+        (WebCore::GraphicsContext3D::addClient): Added.
+        (WebCore::GraphicsContext3D::removeClient): Added.
+        (WebCore::GraphicsContext3D::setWebGLContext): Deleted.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::forceContextLost):
+        (WebCore::GraphicsContext3D::recycleContext):
+        (WebCore::GraphicsContext3D::dispatchContextChangedNotification):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContext3D):
+        (WebCore::WebGLRenderingContextBase::didComposite): Added.
+        (WebCore::WebGLRenderingContextBase::forceContextLost):
+        (WebCore::WebGLRenderingContextBase::recycleContext):
+        (WebCore::WebGLRenderingContextBase::dispatchContextChangedNotification): Added.
+        (WebCore::WebGLRenderingContextBase::dispatchContextChangedEvent): Deleted.
+        Introduce a `GraphicsContext3DClient` abstract class, rather than passing the
+        `WebGLRenderingContextBase` directly to the `GraphicsContext3D` (layering violation).
+        Notify the client whenever the `GraphicsContext3D` composites, which will in turn notify the
+        `InspectorCanvasAgent` so that it knows that the "frame" is over.
+
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::requestNode):
+        (WebCore::InspectorCanvasAgent::requestContent):
+        (WebCore::InspectorCanvasAgent::requestCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::resolveCanvasContext):
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::requestShaderSource):
+        (WebCore::InspectorCanvasAgent::updateShader):
+        (WebCore::InspectorCanvasAgent::setShaderProgramDisabled):
+        (WebCore::InspectorCanvasAgent::setShaderProgramHighlighted):
+        (WebCore::InspectorCanvasAgent::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::consoleStartRecordingCanvas):
+        (WebCore::InspectorCanvasAgent::didEnableExtension):
+        (WebCore::InspectorCanvasAgent::didCreateProgram):
+        (WebCore::InspectorCanvasAgent::willDeleteProgram):
+        (WebCore::InspectorCanvasAgent::isShaderProgramDisabled):
+        (WebCore::InspectorCanvasAgent::isShaderProgramHighlighted):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::assertInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::findInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::assertInspectorProgram):
+        (WebCore::InspectorCanvasAgent::findInspectorProgram):
+        (WebCore::InspectorCanvasAgent::canvasRecordingTimerFired): Deleted.
+        Replace raw pointers with `RefPtr`s. This is primarily used so that the microtask (instead
+        of a timer) that is enqueued after the first action of each frame  is recorded can access a
+        ref-counted instance of an `InspectorCanvas`, ensuring that it isn't destructed.
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::canvasElement):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::finalizeFrame):
+        (WebCore::InspectorCanvas::releaseObjectForRecording): Added.
+        (WebCore::InspectorCanvas::getCanvasContentAsDataURL):
+        (WebCore::InspectorCanvas::appendActionSnapshotIfNeeded):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::releaseInitialState): Deleted.
+        (WebCore::InspectorCanvas::releaseFrames): Deleted.
+        (WebCore::InspectorCanvas::releaseData): Deleted.
+        Move the recording payload construction logic to `InspectorCanvas` so the actual data
+        doesn't need to leave that class.
+        Drive-by: unify the logic for getting the contents of a canvas from `InspectorCanvasAgent`.
+
 2019-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Adopt UIWKDocumentContext
