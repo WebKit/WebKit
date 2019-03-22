@@ -106,6 +106,7 @@ class WebProcessCache;
 struct NetworkProcessCreationParameters;
 struct StatisticsData;
 struct WebProcessCreationParameters;
+struct WebProcessDataStoreParameters;
     
 typedef GenericCallback<API::Dictionary*> DictionaryCallback;
 
@@ -311,8 +312,7 @@ public:
 
     WebProcessProxy& processForRegistrableDomain(WebsiteDataStore&, WebPageProxy*, const WebCore::RegistrableDomain&); // Will return an existing one if limit is met or due to caching.
 
-    enum class MayCreateDefaultDataStore { No, Yes };
-    void prewarmProcess(WebsiteDataStore*, MayCreateDefaultDataStore);
+    void prewarmProcess();
 
     bool shouldTerminate(WebProcessProxy*);
 
@@ -477,7 +477,7 @@ public:
 
     void clearSuspendedPages(AllowProcessCaching);
 
-    void didReachGoodTimeToPrewarm(WebsiteDataStore&);
+    void didReachGoodTimeToPrewarm();
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
 
@@ -517,8 +517,9 @@ private:
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&);
 
-    WebProcessProxy& createNewWebProcess(WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
-    void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore&, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
+    WebProcessProxy& createNewWebProcess(WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
+    void initializeNewWebProcess(WebProcessProxy&, WebsiteDataStore*, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No);
+    void sendWebProcessDataStoreParameters(WebProcessProxy&, WebsiteDataStore&);
 
     void requestWebContentStatistics(StatisticsRequest&);
     void requestNetworkingStatistics(StatisticsRequest&);
@@ -837,7 +838,7 @@ void WebProcessPool::sendToOneProcess(T&& message)
     }
 
     if (!messageSent) {
-        prewarmProcess(nullptr, MayCreateDefaultDataStore::No);
+        prewarmProcess();
         RefPtr<WebProcessProxy> process = m_processes.last();
         if (process->canSendMessage())
             process->send(std::forward<T>(message), 0);

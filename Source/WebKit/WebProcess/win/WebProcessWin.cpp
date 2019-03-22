@@ -34,7 +34,12 @@ WTF_EXPORT RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name
 }
 
 namespace WebKit {
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&&)
+
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&)
+{
+}
+
+void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
 {
 }
 

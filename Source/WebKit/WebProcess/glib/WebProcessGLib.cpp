@@ -49,7 +49,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     WebCore::MemoryCache::singleton().setDisabled(cacheModel == CacheModel::DocumentViewer);
 }
 
-void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& parameters)
+void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
 #if PLATFORM(WPE)
     if (!parameters.isServiceWorkerProcess) {
@@ -67,6 +67,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
 #if USE(GSTREAMER)
     WebCore::initializeGStreamer(WTFMove(parameters.gstreamerOptions));
 #endif
+}
+
+void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&)
+{
 }
 
 void WebProcess::platformTerminate()

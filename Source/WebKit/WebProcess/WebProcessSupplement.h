@@ -30,12 +30,12 @@
 namespace WebKit {
 
 struct WebProcessCreationParameters;
+struct WebProcessDataStoreParameters;
 
 class WebProcessSupplement : public AuxiliaryProcessSupplement {
 public:
-    virtual void initialize(const WebProcessCreationParameters&)
-    {
-    }
+    virtual void initialize(const WebProcessCreationParameters&) { }
+    virtual void setWebsiteDataStore(const WebProcessDataStoreParameters&) { }
 };
 
 } // namespace WebKit

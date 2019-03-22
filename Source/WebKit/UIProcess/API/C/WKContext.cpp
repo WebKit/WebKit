@@ -524,7 +524,7 @@ void WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 
 void WKContextWarmInitialProcess(WKContextRef contextRef)
 {
-    WebKit::toImpl(contextRef)->prewarmProcess(nullptr, WebKit::WebProcessPool::MayCreateDefaultDataStore::Yes);
+    WebKit::toImpl(contextRef)->prewarmProcess();
 }
 
 void WKContextGetStatistics(WKContextRef contextRef, void* context, WKContextGetStatisticsFunction callback)

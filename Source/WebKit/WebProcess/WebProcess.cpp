@@ -61,6 +61,7 @@
 #include "WebPlatformStrategies.h"
 #include "WebPluginInfoProvider.h"
 #include "WebProcessCreationParameters.h"
+#include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
@@ -285,7 +286,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 #endif
 
-    platformInitializeWebProcess(WTFMove(parameters));
+    platformInitializeWebProcess(parameters);
 
     // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
     WTF::Thread::setCurrentThreadIsUserInteractive(-1);
@@ -341,20 +342,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
 
-    auto& databaseManager = DatabaseManager::singleton();
-    databaseManager.initialize(parameters.webSQLDatabaseDirectory);
-
-    // FIXME: This should be constructed per data store, not per process.
-    m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
-#if PLATFORM(IOS_FAMILY)
-    m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
-#endif
-
-#if ENABLE(VIDEO)
-    if (!parameters.mediaCacheDirectory.isEmpty())
-        WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
-#endif
-
     setCacheModel(parameters.cacheModel);
 
     if (!parameters.languages.isEmpty())
@@ -401,8 +388,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         registerURLSchemeAsCanDisplayOnlyIfCanRequest(scheme);
 
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
-
-    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
 
     setAlwaysUsesComplexTextCodePath(parameters.shouldAlwaysUseComplexTextCodePath);
 
@@ -470,6 +455,30 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
+}
+
+void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
+{
+    auto& databaseManager = DatabaseManager::singleton();
+    databaseManager.initialize(parameters.webSQLDatabaseDirectory);
+
+    // FIXME: This should be constructed per data store, not per process.
+    m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
+#if PLATFORM(IOS_FAMILY)
+    m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
+#endif
+
+#if ENABLE(VIDEO)
+    if (!parameters.mediaCacheDirectory.isEmpty())
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(parameters.mediaCacheDirectory);
+#endif
+
+    setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);
+
+    for (auto& supplement : m_supplements.values())
+        supplement->setWebsiteDataStore(parameters);
+
+    platformSetWebsiteDataStoreParameters(WTFMove(parameters));
 }
 
 bool WebProcess::hasPageRequiringPageCacheWhileSuspended() const

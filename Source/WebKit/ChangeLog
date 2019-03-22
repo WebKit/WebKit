@@ -1,3 +1,75 @@
+2019-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Prewarmed processes should be usable with any website data store
+        https://bugs.webkit.org/show_bug.cgi?id=196104
+
+        Reviewed by Alex Christensen.
+
+        Split WebsiteDataStore-specific data out of WebProcessCreationParameters and into a new
+        WebProcessDataStoreParameters struct so that we do not need a WebsiteDataStore in order
+        to lauch and initialize a WebProcess. When the process finally gets used and we thus
+        know which WebsiteDataStore they will be used for, we send the WebProcessDataStoreParameters
+        to the process to that it can do its data store-specific initialization.
+
+        This allows prewarmed processes not not have a WebsiteDataStore assocated with them. They
+        can then be used for any WebsiteDataStore when we need them.
+
+        This is also used by our dummy WebProcessProxy since it does not have a backing process and
+        thus has no associated WebsiteDataStore.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * Shared/WebProcessDataStoreParameters.h: Added.
+        (WebKit::WebProcessDataStoreParameters::encode const):
+        (WebKit::WebProcessDataStoreParameters::decode):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextWarmInitialProcess):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _warmInitialProcess]):
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::ServiceWorkerProcessProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::notifyProcessPoolToPrewarm):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToNetworkProcess):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::tryTakePrewarmedProcess):
+        (WebKit::WebProcessPool::sendWebProcessDataStoreParameters):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::prewarmProcess):
+        (WebKit::WebProcessPool::processForRegistrableDomain):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::didReachGoodTimeToPrewarm):
+        * UIProcess/WebProcessPool.h:
+        (WebKit::WebProcessPool::sendToOneProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::setWebsiteDataStore):
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::websiteDataStore const):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.cpp:
+        (WebKit::WebMediaKeyStorageManager::setWebsiteDataStore):
+        * WebProcess/MediaCache/WebMediaKeyStorageManager.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::setWebsiteDataStoreParameters):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebProcessSupplement.h:
+        (WebKit::WebProcessSupplement::initialize):
+        (WebKit::WebProcessSupplement::setWebsiteDataStore):
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformSetWebsiteDataStoreParameters):
+
 2019-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r242687): Flicker when pinch-zooming pages in macOS Safari

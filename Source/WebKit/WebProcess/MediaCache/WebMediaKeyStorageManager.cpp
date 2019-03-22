@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebMediaKeyStorageManager.h"
 
-#include "WebProcessCreationParameters.h"
+#include "WebProcessDataStoreParameters.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/FileSystem.h>
@@ -35,7 +35,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-void WebMediaKeyStorageManager::initialize(const WebProcessCreationParameters &parameters)
+void WebMediaKeyStorageManager::setWebsiteDataStore(const WebProcessDataStoreParameters& parameters)
 {
     ASSERT(!parameters.mediaKeyStorageDirectory.isEmpty());
     m_mediaKeyStorageDirectory = parameters.mediaKeyStorageDirectory;

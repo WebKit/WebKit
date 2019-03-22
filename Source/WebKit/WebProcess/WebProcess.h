@@ -36,6 +36,7 @@
 #include "TextCheckerState.h"
 #include "ViewUpdateDispatcher.h"
 #include "WebInspectorInterruptDispatcher.h"
+#include "WebProcessCreationParameters.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/RegistrableDomain.h>
 #if PLATFORM(MAC)
@@ -104,12 +105,13 @@ class WebFrame;
 class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
+struct WebProcessCreationParameters;
+struct WebProcessDataStoreParameters;
 class WebProcessSupplement;
 enum class WebsiteDataType;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
-struct WebProcessCreationParameters;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
@@ -262,7 +264,9 @@ private:
     ~WebProcess();
 
     void initializeWebProcess(WebProcessCreationParameters&&);
-    void platformInitializeWebProcess(WebProcessCreationParameters&&);
+    void platformInitializeWebProcess(WebProcessCreationParameters&);
+    void setWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
+    void platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
 
     void prewarmGlobally();
     void prewarmWithDomainInformation(const WebCore::PrewarmInformation&);

@@ -72,6 +72,7 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcessCache.h"
 #include "WebProcessCreationParameters.h"
+#include "WebProcessDataStoreParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxy.h"
@@ -694,7 +695,7 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
     m_serviceWorkerProcesses.add(WTFMove(registrableDomain), serviceWorkerProcessProxy.ptr());
 
     updateProcessAssertions();
-    initializeNewWebProcess(serviceWorkerProcessProxy, *websiteDataStore);
+    initializeNewWebProcess(serviceWorkerProcessProxy, websiteDataStore);
 
     auto* serviceWorkerProcessProxyPtr = serviceWorkerProcessProxy.ptr();
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
@@ -789,7 +790,7 @@ void WebProcessPool::resolvePathsForSandboxExtensions()
     platformResolvePathsForSandboxExtensions();
 }
 
-WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
+WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
 {
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, isPrewarmed);
     auto& process = processProxy.get();
@@ -807,11 +808,11 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     if (!m_prewarmedProcess)
         return nullptr;
 
-    if (&m_prewarmedProcess->websiteDataStore() != &websiteDataStore)
-        return nullptr;
-
     ASSERT(m_prewarmedProcess->isPrewarmed());
     m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
+
+    m_prewarmedProcess->setWebsiteDataStore(websiteDataStore);
+    sendWebProcessDataStoreParameters(*m_prewarmedProcess, websiteDataStore);
 
     return std::exchange(m_prewarmedProcess, nullptr);
 }
@@ -839,36 +840,17 @@ static void registerDisplayConfigurationCallback()
 }
 #endif
 
-void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore& websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
+void WebProcessPool::sendWebProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {
-    auto initializationActivityToken = process.throttler().backgroundActivityToken();
-    auto scopeExit = makeScopeExit([&process, initializationActivityToken] {
-        // Round-trip to the Web Content process before releasing the
-        // initialization activity token, so that we're sure that all
-        // messages sent from this function have been handled.
-        process.isResponsive([initializationActivityToken] (bool) { });
-    });
-
-    ensureNetworkProcess();
-
-    WebProcessCreationParameters parameters;
+    WebProcessDataStoreParameters parameters;
 
     websiteDataStore.resolveDirectoriesIfNecessary();
-
-    parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
-    if (!parameters.injectedBundlePath.isEmpty())
-        SandboxExtension::createHandleWithoutResolvingPath(parameters.injectedBundlePath, SandboxExtension::Type::ReadOnly, parameters.injectedBundlePathExtensionHandle);
-
-    parameters.additionalSandboxExtensionHandles.allocate(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size());
-    for (size_t i = 0, size = m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size(); i < size; ++i)
-        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths[i], SandboxExtension::Type::ReadOnly, parameters.additionalSandboxExtensionHandles[i]);
 
     parameters.applicationCacheDirectory = websiteDataStore.resolvedApplicationCacheDirectory();
     if (parameters.applicationCacheDirectory.isEmpty())
         parameters.applicationCacheDirectory = m_resolvedPaths.applicationCacheDirectory;
     if (!parameters.applicationCacheDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.applicationCacheDirectory, SandboxExtension::Type::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
-
     parameters.applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName();
 
     parameters.webSQLDatabaseDirectory = websiteDataStore.resolvedDatabaseDirectory();
@@ -889,15 +871,42 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     if (!parameters.mediaKeyStorageDirectory.isEmpty())
         SandboxExtension::createHandleWithoutResolvingPath(parameters.mediaKeyStorageDirectory, SandboxExtension::Type::ReadWrite, parameters.mediaKeyStorageDirectoryExtensionHandle);
 
-#if PLATFORM(IOS_FAMILY)
-    setJavaScriptConfigurationFileEnabledFromDefaults();
-#endif
-
     if (javaScriptConfigurationFileEnabled()) {
         parameters.javaScriptConfigurationDirectory = websiteDataStore.resolvedJavaScriptConfigurationDirectory();
         if (!parameters.javaScriptConfigurationDirectory.isEmpty())
             SandboxExtension::createHandleWithoutResolvingPath(parameters.javaScriptConfigurationDirectory, SandboxExtension::Type::ReadWrite, parameters.javaScriptConfigurationDirectoryExtensionHandle);
     }
+
+    parameters.resourceLoadStatisticsEnabled = websiteDataStore.resourceLoadStatisticsEnabled();
+
+    process.send(Messages::WebProcess::SetWebsiteDataStoreParameters(parameters), 0);
+}
+
+void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDataStore* websiteDataStore, WebProcessProxy::IsPrewarmed isPrewarmed)
+{
+    auto initializationActivityToken = process.throttler().backgroundActivityToken();
+    auto scopeExit = makeScopeExit([&process, initializationActivityToken] {
+        // Round-trip to the Web Content process before releasing the
+        // initialization activity token, so that we're sure that all
+        // messages sent from this function have been handled.
+        process.isResponsive([initializationActivityToken] (bool) { });
+    });
+
+    ensureNetworkProcess();
+
+    WebProcessCreationParameters parameters;
+
+    parameters.injectedBundlePath = m_resolvedPaths.injectedBundlePath;
+    if (!parameters.injectedBundlePath.isEmpty())
+        SandboxExtension::createHandleWithoutResolvingPath(parameters.injectedBundlePath, SandboxExtension::Type::ReadOnly, parameters.injectedBundlePathExtensionHandle);
+
+    parameters.additionalSandboxExtensionHandles.allocate(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size());
+    for (size_t i = 0, size = m_resolvedPaths.additionalWebProcessSandboxExtensionPaths.size(); i < size; ++i)
+        SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.additionalWebProcessSandboxExtensionPaths[i], SandboxExtension::Type::ReadOnly, parameters.additionalSandboxExtensionHandles[i]);
+
+#if PLATFORM(IOS_FAMILY)
+    setJavaScriptConfigurationFileEnabledFromDefaults();
+#endif
 
     parameters.cacheModel = cacheModel();
     parameters.languages = configuration().overrideLanguages().isEmpty() ? userPreferredLanguages() : configuration().overrideLanguages();
@@ -958,7 +967,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
         parameters.waylandCompositorDisplayName = WaylandCompositor::singleton().displayName();
 #endif
 
-    parameters.resourceLoadStatisticsEnabled = websiteDataStore.resourceLoadStatisticsEnabled();
 #if ENABLE(MEDIA_STREAM)
     parameters.shouldCaptureAudioInUIProcess = m_configuration->shouldCaptureAudioInUIProcess();
     parameters.shouldCaptureVideoInUIProcess = m_configuration->shouldCaptureVideoInUIProcess();
@@ -989,6 +997,9 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     process.send(Messages::WebProcess::SetQOS(webProcessLatencyQOS(), webProcessThroughputQOS()), 0);
 #endif
 
+    if (websiteDataStore)
+        sendWebProcessDataStoreParameters(process, *websiteDataStore);
+
     if (m_automationSession)
         process.send(Messages::WebProcess::EnsureAutomationSessionProxy(m_automationSession->sessionIdentifier()), 0);
 
@@ -1014,35 +1025,13 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 #endif
 }
 
-void WebProcessPool::prewarmProcess(WebsiteDataStore* websiteDataStore, MayCreateDefaultDataStore mayCreateDefaultDataStore)
+void WebProcessPool::prewarmProcess()
 {
-    if (m_prewarmedProcess && websiteDataStore && &m_prewarmedProcess->websiteDataStore() != websiteDataStore) {
-        RELEASE_LOG(PerformanceLogging, "Shutting down prewarmed process %i because we needed a prewarmed process with a different data store", m_prewarmedProcess->processIdentifier());
-        m_prewarmedProcess->shutDown();
-        ASSERT(!m_prewarmedProcess);
-    }
-
     if (m_prewarmedProcess)
         return;
 
-    if (!websiteDataStore) {
-        websiteDataStore = m_websiteDataStore ? &m_websiteDataStore->websiteDataStore() : nullptr;
-        if (!websiteDataStore) {
-            if (!m_processes.isEmpty())
-                websiteDataStore = &m_processes.last()->websiteDataStore();
-            else if (mayCreateDefaultDataStore == MayCreateDefaultDataStore::Yes || API::WebsiteDataStore::defaultDataStoreExists())
-                websiteDataStore = &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
-            else {
-                RELEASE_LOG(PerformanceLogging, "Unable to prewarming a WebProcess because we could not find a usable data store");
-                return;
-            }
-        }
-    }
-
-    ASSERT(websiteDataStore);
-
     RELEASE_LOG(PerformanceLogging, "Prewarming a WebProcess for performance");
-    createNewWebProcess(*websiteDataStore, WebProcessProxy::IsPrewarmed::Yes);
+    createNewWebProcess(nullptr, WebProcessProxy::IsPrewarmed::Yes);
 }
 
 void WebProcessPool::enableProcessTermination()
@@ -1169,7 +1158,7 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
     }
 
     if (!usesSingleWebProcess())
-        return createNewWebProcess(websiteDataStore);
+        return createNewWebProcess(&websiteDataStore);
 
 #if PLATFORM(COCOA)
     bool mustMatchDataStore = API::WebsiteDataStore::defaultDataStoreExists() && &websiteDataStore != &API::WebsiteDataStore::defaultDataStore()->websiteDataStore();
@@ -1178,15 +1167,17 @@ WebProcessProxy& WebProcessPool::processForRegistrableDomain(WebsiteDataStore& w
 #endif
 
     for (auto& process : m_processes) {
-        if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+        if (process == m_prewarmedProcess || process == m_dummyProcessProxy)
             continue;
 #if ENABLE(SERVICE_WORKER)
         if (is<ServiceWorkerProcessProxy>(*process))
             continue;
 #endif
+        if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
+            continue;
         return *process;
     }
-    return createNewWebProcess(websiteDataStore);
+    return createNewWebProcess(&websiteDataStore);
 }
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
@@ -1221,7 +1212,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
         if (!m_dummyProcessProxy) {
-            auto dummyProcessProxy = WebProcessProxy::create(*this, WebsiteDataStore::createNonPersistent().get(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
+            auto dummyProcessProxy = WebProcessProxy::create(*this, nullptr, WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
             m_dummyProcessProxy = dummyProcessProxy.ptr();
             m_processes.append(WTFMove(dummyProcessProxy));
         }
@@ -1391,7 +1382,7 @@ void WebProcessPool::postMessageToInjectedBundle(const String& messageName, API:
     }
 }
 
-void WebProcessPool::didReachGoodTimeToPrewarm(WebsiteDataStore& dataStore)
+void WebProcessPool::didReachGoodTimeToPrewarm()
 {
     if (!configuration().isAutomaticProcessWarmingEnabled() || !configuration().processSwapsOnNavigation() || usesSingleWebProcess())
         return;
@@ -1402,7 +1393,7 @@ void WebProcessPool::didReachGoodTimeToPrewarm(WebsiteDataStore& dataStore)
         return;
     }
 
-    prewarmProcess(&dataStore, MayCreateDefaultDataStore::No);
+    prewarmProcess();
 }
 
 void WebProcessPool::populateVisitedLinks()

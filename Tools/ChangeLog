@@ -1,3 +1,16 @@
+2019-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Prewarmed processes should be usable with any website data store
+        https://bugs.webkit.org/show_bug.cgi?id=196104
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm:
+        (runInitialWarmedProcessUsedTest):
+        (TEST):
+
 2019-03-22  David Kilzer  <ddkilzer@apple.com>
 
         Back out local changes to Alex's Subversion working directory

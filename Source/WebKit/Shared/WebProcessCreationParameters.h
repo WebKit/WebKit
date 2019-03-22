@@ -75,28 +75,17 @@ struct WebProcessCreationParameters {
 
     UserData initializationUserData;
 
-    String applicationCacheDirectory;
-    String applicationCacheFlatFileSubdirectoryName;
-    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    String webSQLDatabaseDirectory;
-    SandboxExtension::Handle webSQLDatabaseDirectoryExtensionHandle;
-    String mediaCacheDirectory;
-    SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
-    String javaScriptConfigurationDirectory;
-    SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
     SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
     SandboxExtension::Handle containerTemporaryDirectoryExtensionHandle;
 #endif
-    SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::Handle audioCaptureExtensionHandle;
     bool shouldCaptureAudioInUIProcess { false };
     bool shouldCaptureVideoInUIProcess { false };
     bool shouldCaptureDisplayInUIProcess { false };
 #endif
-    String mediaKeyStorageDirectory;
 
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
@@ -128,7 +117,6 @@ struct WebProcessCreationParameters {
     bool shouldEnableMemoryPressureReliefLogging { false };
     bool shouldSuppressMemoryPressureHandler { false };
     bool shouldUseFontSmoothing { true };
-    bool resourceLoadStatisticsEnabled { false };
     bool fullKeyboardAccessEnabled { false };
     bool memoryCacheDisabled { false };
     bool attrStyleEnabled { false };
