@@ -1,3 +1,19 @@
+2019-03-21  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac WK2 ] Layout Test http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=194350
+        <rdar://problem/47937466>
+
+        Reviewed by Alex Christensen.
+
+        Bypass the HTMLPreloadScanner in the test or compass.jpg resource may end up getting loaded twice and log extra
+        lines in the test output.
+
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+        * http/tests/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-image-with-enforced-and-report-policies.php:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-enforced-and-report-policies-expected.txt:
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test gardening.

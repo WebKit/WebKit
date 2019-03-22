@@ -8,6 +8,9 @@
 <script src="dump-securitypolicyviolation-and-notify-done.js"></script>
 </head>
 <body>
-<img src="http://127.0.0.1:8000/security/resources/compass.jpg">
+<script>
+// Use document.write() to bypass the HTMLPreloadScanner and address flakiness.
+document.write('<img src="http://127.0.0.1:8000/security/resources/compass.jpg">');
+</script>
 </body>
 </html>
