@@ -25,7 +25,7 @@
 
 .computed-style-section {
     padding-bottom: 3px;
-    color: hsl(0, 0%, 70%);
+    color: var(--text-color-tertiary);
     -webkit-user-select: text;
 }
 
@@ -132,7 +132,7 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .computed-property-item .property-trace-item .selector {
-    color: hsl(0, 0%, 50%);
+    color: var(--text-color-secondary);
 }
 
 .computed-style-section .computed-property-item .origin {
@@ -143,7 +143,7 @@ body[dir=rtl] .computed-style-section .computed-property-item .disclosure-button
 }
 
 .computed-style-section .computed-property-item .go-to-link {
-    color: hsl(0, 0%, 50%);
+    color: var(--text-color-secondary);
 }
 
 .computed-style-section .property-trace-item .property .name,

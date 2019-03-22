@@ -1,3 +1,15 @@
+2019-03-21  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Use CSS variables for text color in Computed panel
+        https://bugs.webkit.org/show_bug.cgi?id=196117
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/ComputedStyleSection.css:
+        (.computed-style-section):
+        (.computed-style-section .computed-property-item .property-trace-item .selector):
+        (.computed-style-section .computed-property-item .go-to-link):
+
 2019-03-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: flatten the overview to show all records, one per line
