@@ -451,7 +451,7 @@ void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callback
     scheduleCompositingLayerFlush();
 }
 
-void TiledCoreAnimationDrawingArea::flushLayers()
+void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
 {
     if (layerTreeStateIsFrozen())
         return;
@@ -493,7 +493,8 @@ void TiledCoreAnimationDrawingArea::flushLayers()
 #if ENABLE(ASYNC_SCROLLING)
         if (auto* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator()) {
             scrollingCoordinator->commitTreeStateIfNeeded();
-            scrollingCoordinator->applyScrollingTreeLayerPositions();
+            if (flushType == FlushType::TransientZoom)
+                scrollingCoordinator->applyScrollingTreeLayerPositions();
         }
 #endif
 
@@ -923,7 +924,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
     unscrolledOrigin.moveBy(-unobscuredContentRect.location());
     m_webPage.scalePage(scale / m_webPage.viewScaleFactor(), roundedIntPoint(-unscrolledOrigin));
     m_transientZoomScale = 1;
-    flushLayers();
+    flushLayers(FlushType::TransientZoom);
 }
 
 void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)

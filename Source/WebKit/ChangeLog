@@ -1,3 +1,20 @@
+2019-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242687): Flicker when pinch-zooming pages in macOS Safari
+        https://bugs.webkit.org/show_bug.cgi?id=196126
+        rdar://problem/49095791
+
+        Reviewed by Antti Koivisto.
+
+        The scrolling tree doesn't have an accurate picture of the main view's scroll position
+        during pinch-zooming, so don't have it apply layer positions if a transient zoom is
+        in progress.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::applyTransientZoomToPage):
+
 2019-03-22  Antti Koivisto  <antti@apple.com>
 
         Handle UI side hit testing for ScrollPositioningBehavior::Stationary positioned nodes

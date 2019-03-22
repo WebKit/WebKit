@@ -88,7 +88,8 @@ private:
 
     bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
 
-    void flushLayers();
+    enum class FlushType { Normal, TransientZoom };
+    void flushLayers(FlushType = FlushType::Normal);
 
     // Message handlers.
     void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
