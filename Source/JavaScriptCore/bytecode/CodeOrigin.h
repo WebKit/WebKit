@@ -232,12 +232,12 @@ private:
         return bitwise_cast<InlineCallFrame*>(value);
     }
 
-#if CPU(X86_64) && CPU(ADDRESS64)
-    static constexpr unsigned s_freeBitsAtTop = 16;
-    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000fffffffffff8;
-#elif CPU(ARM64) && CPU(ADDRESS64)
+#if CPU(ARM64) && CPU(ADDRESS64)
     static constexpr unsigned s_freeBitsAtTop = 28;
     static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000000ffffffff8;
+#elif CPU(ADDRESS64)
+    static constexpr unsigned s_freeBitsAtTop = 16;
+    static constexpr uintptr_t s_maskCompositeValueForPointer = 0x0000fffffffffff8;
 #endif
 #if CPU(ADDRESS64)
     static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, unsigned bytecodeIndex)
