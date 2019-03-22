@@ -1,3 +1,25 @@
+2019-03-22  Frederic Wang  <fwang@igalia.com>
+
+        Move implementation of mathsize to a single place
+        https://bugs.webkit.org/show_bug.cgi?id=196129
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, mathsize is partially implemented in the MathML UA stylesheet and partially
+        implemented in the MathML DOM classes using addPropertyToPresentationAttributeStyle. This
+        patch moves the whole implementation to the latter place, so that it's easier to understand.
+        It will also allow to conditionally disable the mathsize values removed from MathML Core.
+
+        No new tests, already covered by existing tests.
+
+        * css/mathml.css: Remove mathsize rules.
+        * mathml/MathMLElement.cpp:
+        (WebCore::convertMathSizeIfNeeded): Convert "small", "normal" and "big" to the values that
+        used to be in the UA stylesheet. Also add a comment that we don't support all MathML lengths.
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute): Don't skip "small", "normal"
+        or "big".
+        (WebCore::convertToPercentageIfNeeded): Renamed to convertMathSizeIfNeeded.
+
 2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGNumber, SVGNumberList and SVGAnimatedNumberList
