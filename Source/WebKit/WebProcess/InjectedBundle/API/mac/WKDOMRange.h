@@ -35,7 +35,7 @@ typedef NS_ENUM(NSInteger, WKDOMRangeDirection) {
 };
 
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKDOMRange : NSObject
 
 - (id)initWithDocument:(WKDOMDocument *)document;

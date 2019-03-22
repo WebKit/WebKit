@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @protocol _WKWebsiteDataStoreDelegate <NSObject>
 
 @optional

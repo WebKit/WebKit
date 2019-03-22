@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInScriptWorld : NSObject
 
 + (WKWebProcessPlugInScriptWorld *)world;
@@ -36,7 +36,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic, readonly, copy) NSString *name;
 
 - (void)clearWrappers;
-- (void)makeAllShadowRootsOpen WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-- (void)disableOverrideBuiltinsBehavior WK_API_AVAILABLE(macosx(10.14), ios(12.0));
+- (void)makeAllShadowRootsOpen WK_API_AVAILABLE(macos(10.12), ios(10.0));
+- (void)disableOverrideBuiltinsBehavior WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 @end

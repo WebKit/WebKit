@@ -30,7 +30,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
+WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @interface WKSnapshotConfiguration : NSObject <NSCopying>
 
 /*! @abstract The rect to snapshot in view coordinates.
@@ -51,7 +51,7 @@ WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
  which might not include recent changes.
  @discussion The default value is YES.
  */
-@property (nonatomic) BOOL afterScreenUpdates WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL afterScreenUpdates WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

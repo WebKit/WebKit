@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.12))
+WK_CLASS_AVAILABLE(macos(10.12))
 @interface _WKContextMenuElementInfo : NSObject <NSCopying>
 
 @end

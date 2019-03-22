@@ -30,7 +30,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @constant WKErrorDomain Indicates a WebKit error. */
-WK_EXTERN NSString * const WKErrorDomain WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+WK_EXTERN NSString * const WKErrorDomain WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @enum WKErrorCode
  @abstract Constants used by NSError to indicate errors in the WebKit domain.
@@ -51,13 +51,13 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorWebContentProcessTerminated,
     WKErrorWebViewInvalidated,
     WKErrorJavaScriptExceptionOccurred,
-    WKErrorJavaScriptResultTypeIsUnsupported WK_API_AVAILABLE(macosx(10.11), ios(9.0)),
-    WKErrorContentRuleListStoreCompileFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
-    WKErrorContentRuleListStoreLookUpFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
-    WKErrorContentRuleListStoreRemoveFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
-    WKErrorContentRuleListStoreVersionMismatch WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
-    WKErrorAttributedStringContentFailedToLoad WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKErrorAttributedStringContentLoadTimedOut WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+    WKErrorJavaScriptResultTypeIsUnsupported WK_API_AVAILABLE(macos(10.11), ios(9.0)),
+    WKErrorContentRuleListStoreCompileFailed WK_API_AVAILABLE(macos(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreLookUpFailed WK_API_AVAILABLE(macos(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreRemoveFailed WK_API_AVAILABLE(macos(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreVersionMismatch WK_API_AVAILABLE(macos(10.13), ios(11.0)),
+    WKErrorAttributedStringContentFailedToLoad WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKErrorAttributedStringContentLoadTimedOut WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+} WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 NS_ASSUME_NONNULL_END

@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.13.4), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(10.13.4), ios(WK_IOS_TBA))
 @interface _WKAutomationSessionConfiguration : NSObject <NSCopying>
 
 @property (nonatomic) BOOL allowsInsecureMediaCapture;

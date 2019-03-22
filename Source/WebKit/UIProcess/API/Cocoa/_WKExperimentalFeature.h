@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(macosx(10.12), ios(10.0))
+WK_CLASS_AVAILABLE(macos(10.12), ios(10.0))
 @interface _WKExperimentalFeature : NSObject
 
 @property (nonatomic, readonly, copy) NSString *key;

@@ -29,7 +29,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_API_AVAILABLE(macosx(10.13), ios(11.0))
+WK_API_AVAILABLE(macos(10.13), ios(11.0))
 @protocol WKURLSchemeTask <NSObject>
 
 /*! @abstract The request to load for this task.

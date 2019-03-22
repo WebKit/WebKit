@@ -29,22 +29,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class _WKWebsiteDataSize;
 
-WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-WK_EXTERN NSString * const _WKWebsiteDataTypeSearchFieldRecentSearches WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXTERN NSString * const _WKWebsiteDataTypeResourceLoadStatistics WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-WK_EXTERN NSString * const _WKWebsiteDataTypeCredentials WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeHSTSCache WK_API_AVAILABLE(macos(10.11), ios(9.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeMediaKeys WK_API_AVAILABLE(macos(10.11), ios(9.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeSearchFieldRecentSearches WK_API_AVAILABLE(macos(10.12), ios(10.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeResourceLoadStatistics WK_API_AVAILABLE(macos(10.12), ios(10.0));
+WK_EXTERN NSString * const _WKWebsiteDataTypeCredentials WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 
 #if !TARGET_OS_IPHONE
-WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_API_AVAILABLE(macosx(10.11));
+WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_API_AVAILABLE(macos(10.11));
 #endif
 
 @interface WKWebsiteDataRecord (WKPrivate)
 
 @property (nullable, nonatomic, readonly) _WKWebsiteDataSize *_dataSize;
 
-- (NSArray<NSString *> *)_originsStrings WK_API_AVAILABLE(macosx(10.14), ios(12.0));
+- (NSArray<NSString *> *)_originsStrings WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 @end
 

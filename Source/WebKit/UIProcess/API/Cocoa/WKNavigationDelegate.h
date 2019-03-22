@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
     WKNavigationActionPolicyCancel,
     WKNavigationActionPolicyAllow,
-} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+} WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @enum WKNavigationResponsePolicy
  @abstract The policy to pass back to the decision handler from the webView:decidePolicyForNavigationResponse:decisionHandler: method.
@@ -53,7 +53,7 @@ typedef NS_ENUM(NSInteger, WKNavigationActionPolicy) {
 typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
     WKNavigationResponsePolicyCancel,
     WKNavigationResponsePolicyAllow,
-} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+} WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! A class conforming to the WKNavigationDelegate protocol can provide
  methods for tracking progress for main frame navigations and for deciding
@@ -140,7 +140,7 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
 /*! @abstract Invoked when the web view's web content process is terminated.
  @param webView The web view whose underlying web content process was terminated.
  */
-- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 @end
 

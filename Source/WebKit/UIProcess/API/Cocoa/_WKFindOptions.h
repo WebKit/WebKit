@@ -39,4 +39,4 @@ typedef NS_OPTIONS(NSUInteger, _WKFindOptions) {
     _WKFindOptionsIrrelevantForIncrementalResults = _WKFindOptionsShowOverlay | _WKFindOptionsShowFindIndicator | _WKFindOptionsShowHighlight | _WKFindOptionsDetermineMatchIndex,
     _WKFindOptionsIrrelevantForBatchResults = _WKFindOptionsBackwards | _WKFindOptionsWrapAround | _WKFindOptionsIrrelevantForIncrementalResults
 
-} WK_API_AVAILABLE(macosx(10.10), ios(8.0));
+} WK_API_AVAILABLE(macos(10.10), ios(8.0));

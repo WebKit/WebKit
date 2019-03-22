@@ -36,7 +36,7 @@
  */
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKFrameInfo : NSObject <NSCopying>
 
 /*! @abstract A Boolean value indicating whether the frame is the main frame
@@ -50,11 +50,11 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 /*! @abstract The frame's current security origin.
  */
-@property (nonatomic, readonly) WKSecurityOrigin *securityOrigin WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+@property (nonatomic, readonly) WKSecurityOrigin *securityOrigin WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 /*! @abstract The web view of the webpage that contains this frame.
  */
-@property (nonatomic, readonly, weak) WKWebView *webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nonatomic, readonly, weak) WKWebView *webView WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 @end
 

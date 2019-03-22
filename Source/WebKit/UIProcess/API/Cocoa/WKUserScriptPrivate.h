@@ -31,10 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKUserScript (WKPrivate)
 
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macosx(10.12), ios(10.0));
-- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist associatedURL:(NSURL *)associatedURL userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macos(10.12), ios(10.0));
+- (instancetype)_initWithSource:(NSString *)source injectionTime:(WKUserScriptInjectionTime)injectionTime forMainFrameOnly:(BOOL)forMainFrameOnly legacyWhitelist:(NSArray<NSString *> *)legacyWhitelist legacyBlacklist:(NSArray<NSString *> *)legacyBlacklist associatedURL:(NSURL *)associatedURL userContentWorld:(_WKUserContentWorld *)userContentWorld WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
-@property (nonatomic, readonly) _WKUserContentWorld *_userContentWorld WK_API_AVAILABLE(macosx(10.12), ios(10.0));
+@property (nonatomic, readonly) _WKUserContentWorld *_userContentWorld WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
 @end
 

@@ -57,22 +57,22 @@
 @property
 @discussion Remote inspection setting of the JSContext. Default value is YES.
 */
-@property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+@property (setter=_setRemoteInspectionEnabled:) BOOL _remoteInspectionEnabled JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @property
 @discussion Set whether or not the native call stack is included when reporting exceptions. Default value is YES.
 */
-@property (setter=_setIncludesNativeCallStackWhenReportingExceptions:) BOOL _includesNativeCallStackWhenReportingExceptions JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+@property (setter=_setIncludesNativeCallStackWhenReportingExceptions:) BOOL _includesNativeCallStackWhenReportingExceptions JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @property
 @discussion Set the run loop the Web Inspector debugger should use when evaluating JavaScript in the JSContext.
 */
-@property (setter=_setDebuggerRunLoop:) CFRunLoopRef _debuggerRunLoop JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+@property (setter=_setDebuggerRunLoop:) CFRunLoopRef _debuggerRunLoop JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*! @abstract The delegate the context will use when trying to load a module. Note, this delegate will be ignored for contexts returned by UIWebView. */
-@property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+@property (nonatomic, weak) id <JSModuleLoaderDelegate> moduleLoaderDelegate JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
  @method

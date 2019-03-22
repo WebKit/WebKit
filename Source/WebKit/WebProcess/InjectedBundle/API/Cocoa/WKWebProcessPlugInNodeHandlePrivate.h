@@ -30,14 +30,14 @@ typedef NS_ENUM(NSInteger, _WKAutoFillButtonType) {
     _WKAutoFillButtonTypeCredentials,
     _WKAutoFillButtonTypeContacts,
     _WKAutoFillButtonTypeStrongPassword,
-    _WKAutoFillButtonTypeCreditCard WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-} WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+    _WKAutoFillButtonTypeCreditCard WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+} WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 @interface WKWebProcessPlugInNodeHandle (WKPrivate)
 
-- (BOOL)isHTMLInputElementAutoFillButtonEnabled WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-- (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-- (_WKAutoFillButtonType)htmlInputElementAutoFillButtonType WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-- (_WKAutoFillButtonType)htmlInputElementLastAutoFillButtonType WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (BOOL)isHTMLInputElementAutoFillButtonEnabled WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+- (void)setHTMLInputElementAutoFillButtonEnabledWithButtonType:(_WKAutoFillButtonType)autoFillButtonType WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+- (_WKAutoFillButtonType)htmlInputElementAutoFillButtonType WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+- (_WKAutoFillButtonType)htmlInputElementLastAutoFillButtonType WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 @end

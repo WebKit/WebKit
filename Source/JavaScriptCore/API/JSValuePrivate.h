@@ -42,7 +42,7 @@ typedef id JSValueProperty;
  @param context The JSContext to which the resulting JSValue belongs.
  @result The JSValue representing a unique JavaScript value with type symbol.
  */
-+ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (JSValue *)valueWithNewSymbolFromDescription:(NSString *)description inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
  @method
@@ -89,7 +89,7 @@ typedef id JSValueProperty;
  @property
  @abstract Check if a JSValue is a symbol.
  */
-@property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
+@property (readonly) BOOL isSymbol JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
  @method
@@ -106,7 +106,7 @@ typedef id JSValueProperty;
  as if it were in any other callback, except calleeFunction will be <code>nil</code>. This also means
  means the new promise object may be accessed via <code>[context thisValue]</code>.
  */
-+ (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *resolve, JSValue *reject))callback JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (JSValue *)valueWithNewPromiseInContext:(JSContext *)context fromExecutor:(void (^)(JSValue *resolve, JSValue *reject))callback JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
  @method
@@ -116,7 +116,7 @@ typedef id JSValueProperty;
  @result The JSValue representing a new promise JavaScript object.
  @discussion This method is equivalent to calling <code>[JSValue valueWithNewPromiseFromExecutor:^(JSValue *resolve, JSValue *reject) { [resolve callWithArguments:@[result]]; } inContext:context]</code>
  */
-+ (JSValue *)valueWithNewPromiseResolvedWithResult:(id)result inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (JSValue *)valueWithNewPromiseResolvedWithResult:(id)result inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 /*!
  @method
@@ -126,7 +126,7 @@ typedef id JSValueProperty;
  @result The JSValue representing a new promise JavaScript object.
  @discussion This method is equivalent to calling <code>[JSValue valueWithNewPromiseFromExecutor:^(JSValue *resolve, JSValue *reject) { [reject callWithArguments:@[reason]]; } inContext:context]</code>
  */
-+ (JSValue *)valueWithNewPromiseRejectedWithReason:(id)reason inContext:(JSContext *)context JSC_API_AVAILABLE(macosx(JSC_MAC_TBA), ios(JSC_IOS_TBA));
++ (JSValue *)valueWithNewPromiseRejectedWithReason:(id)reason inContext:(JSContext *)context JSC_API_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA));
 
 @end
 

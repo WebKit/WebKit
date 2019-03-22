@@ -34,7 +34,7 @@
  */
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
+WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 @interface WKSecurityOrigin : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

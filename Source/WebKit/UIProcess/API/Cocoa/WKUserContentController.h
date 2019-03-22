@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  The user content controller associated with a web view is specified by its
  web view configuration.
  */
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKUserContentController : NSObject <NSSecureCoding>
 
 /*! @abstract The user scripts associated with this user content
@@ -72,16 +72,16 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 /*! @abstract Adds a content rule list.
  @param contentRuleList The content rule list to add.
  */
-- (void)addContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)addContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 /*! @abstract Removes a content rule list.
  @param contentRuleList The content rule list to remove.
  */
-- (void)removeContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)removeContentRuleList:(WKContentRuleList *)contentRuleList WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 /*! @abstract Removes all associated content rule lists.
  */
-- (void)removeAllContentRuleLists WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)removeAllContentRuleLists WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 @end
 

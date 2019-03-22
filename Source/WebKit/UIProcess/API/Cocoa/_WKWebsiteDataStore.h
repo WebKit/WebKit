@@ -29,10 +29,10 @@
 
 typedef NS_OPTIONS(NSUInteger, WKWebsiteDataTypes) {
     WKWebsiteDataTypeAll = NSUIntegerMax,
-} WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+} WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataStore", macosx(10.10, 10.11), ios(8.0, 9.0))
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebsiteDataStore", macos(10.10, 10.11), ios(8.0, 9.0))
 @interface _WKWebsiteDataStore : NSObject
 
 + (_WKWebsiteDataStore *)defaultDataStore;

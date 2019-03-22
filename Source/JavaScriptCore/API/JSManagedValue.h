@@ -57,7 +57,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The new JSManagedValue.
 */
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value;
-+ (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
++ (JSManagedValue *)managedValueWithValue:(JSValue *)value andOwner:(id)owner JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @method

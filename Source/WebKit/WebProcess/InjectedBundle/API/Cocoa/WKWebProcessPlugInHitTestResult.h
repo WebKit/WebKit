@@ -29,7 +29,7 @@
 
 @class WKWebProcessPlugInNodeHandle;
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInHitTestResult : NSObject
 
 @property (readonly) WKWebProcessPlugInNodeHandle *nodeHandle;

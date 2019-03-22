@@ -349,13 +349,13 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @property
 @abstract Check if a JSValue is an array.
 */ 
-@property (readonly) BOOL isArray JSC_API_AVAILABLE(macosx(10.11), ios(9.0));
+@property (readonly) BOOL isArray JSC_API_AVAILABLE(macos(10.11), ios(9.0));
 
 /*!
 @property
 @abstract Check if a JSValue is a date.
 */ 
-@property (readonly) BOOL isDate JSC_API_AVAILABLE(macosx(10.11), ios(9.0));
+@property (readonly) BOOL isDate JSC_API_AVAILABLE(macos(10.11), ios(9.0));
 
 /*!
 @method

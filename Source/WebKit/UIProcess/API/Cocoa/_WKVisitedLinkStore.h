@@ -26,13 +26,13 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKVisitedLinkStore : NSObject
 
 - (void)addVisitedLinkWithURL:(NSURL *)URL;
-- (void)addVisitedLinkWithString:(NSString *)string WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (void)addVisitedLinkWithString:(NSString *)string WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 - (void)removeAll;
-- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-- (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+- (BOOL)containsVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+- (void)removeVisitedLinkWithURL:(NSURL *)URL WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
 @end

@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKHTTPCookieStore;
 
-WK_API_AVAILABLE(macosx(10.13), ios(11.0))
+WK_API_AVAILABLE(macos(10.13), ios(11.0))
 @protocol WKHTTPCookieStoreObserver <NSObject>
 @optional
 - (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;
@@ -40,7 +40,7 @@ WK_API_AVAILABLE(macosx(10.13), ios(11.0))
 /*!
  A WKHTTPCookieStore object allows managing the HTTP cookies associated with a particular WKWebsiteDataStore.
  */
-WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
+WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @interface WKHTTPCookieStore : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

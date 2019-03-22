@@ -27,7 +27,7 @@
 
 #if !TARGET_OS_IPHONE
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA))
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA))
 @interface _WKInspectorWindow : NSWindow
 
 @property (nonatomic, getter=isForRemoteTarget) BOOL forRemoteTarget;

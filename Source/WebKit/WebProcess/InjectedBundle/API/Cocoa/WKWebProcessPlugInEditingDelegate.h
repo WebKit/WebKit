@@ -41,9 +41,9 @@ typedef NS_ENUM(NSInteger, WKEditorInsertAction) {
     WKEditorInsertActionTyped,
     WKEditorInsertActionPasted,
     WKEditorInsertActionDropped,
-} WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
+} WK_API_AVAILABLE(macos(10.12.3), ios(10.3));
 
-WK_API_AVAILABLE(macosx(10.12.3), ios(10.3))
+WK_API_AVAILABLE(macos(10.12.3), ios(10.3))
 @protocol WKWebProcessPlugInEditingDelegate <NSObject>
 
 @optional
@@ -52,13 +52,13 @@ WK_API_AVAILABLE(macosx(10.12.3), ios(10.3))
 #if TARGET_OS_IPHONE
 - (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldChangeSelectedRange:(WKDOMRange *)currentRange toRange:(WKDOMRange *)proposedRange affinity:(UITextStorageDirection)selectionAffinity stillSelecting:(BOOL)stillSelecting WK_API_AVAILABLE(ios(11.0));
 #else
-- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldChangeSelectedRange:(WKDOMRange *)currentRange toRange:(WKDOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)stillSelecting WK_API_AVAILABLE(macosx(10.13));
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller shouldChangeSelectedRange:(WKDOMRange *)currentRange toRange:(WKDOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)stillSelecting WK_API_AVAILABLE(macos(10.13));
 #endif
 - (void)_webProcessPlugInBrowserContextControllerDidChangeByEditing:(WKWebProcessPlugInBrowserContextController *)controller;
 - (void)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller willWriteRangeToPasteboard:(WKWebProcessPlugInRangeHandle *)range;
 - (NSDictionary<NSString *, NSData *> *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller pasteboardDataForRange:(WKWebProcessPlugInRangeHandle *)range;
 - (void)_webProcessPlugInBrowserContextControllerDidWriteToPasteboard:(WKWebProcessPlugInBrowserContextController *)controller;
-- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller performTwoStepDrop:(WKWebProcessPlugInNodeHandle *)fragment atDestination:(WKWebProcessPlugInRangeHandle *)destination isMove:(BOOL)isMove WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller performTwoStepDrop:(WKWebProcessPlugInNodeHandle *)fragment atDestination:(WKWebProcessPlugInRangeHandle *)destination isMove:(BOOL)isMove WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 @end
 

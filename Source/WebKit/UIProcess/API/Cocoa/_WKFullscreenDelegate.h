@@ -25,7 +25,7 @@
 
 #import <WebKit/WKFoundation.h>
 
-WK_API_AVAILABLE(macosx(10.13), ios(11.3))
+WK_API_AVAILABLE(macos(10.13), ios(11.3))
 @protocol _WKFullscreenDelegate <NSObject>
 
 @optional

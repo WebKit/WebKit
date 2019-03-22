@@ -31,13 +31,13 @@
 
 @class WKWebProcessPlugInFrame;
 
-WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
+WK_CLASS_AVAILABLE(macos(10.12.3), ios(10.3))
 @interface WKWebProcessPlugInRangeHandle : NSObject
 
 + (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;
 
 @property (nonatomic, readonly) WKWebProcessPlugInFrame *frame;
-@property (nonatomic, readonly, copy) NSString *text WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nonatomic, readonly, copy) NSString *text WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 #if TARGET_OS_IPHONE
 - (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context WK_API_AVAILABLE(ios(11.0));

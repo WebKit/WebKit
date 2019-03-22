@@ -33,14 +33,14 @@ typedef NS_ENUM(NSInteger, _WKAttachmentDisplayMode) {
     _WKAttachmentDisplayModeAuto = 1,
     _WKAttachmentDisplayModeInPlace,
     _WKAttachmentDisplayModeAsIcon
-} WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
+} WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
 
-WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
+WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKAttachmentDisplayOptions : NSObject
 @property (nonatomic) _WKAttachmentDisplayMode mode;
 @end
 
-WK_CLASS_AVAILABLE(macosx(10.14), ios(12.0))
+WK_CLASS_AVAILABLE(macos(10.14), ios(12.0))
 @interface _WKAttachmentInfo : NSObject
 @property (nonatomic, readonly, nullable) NSString *contentType;
 @property (nonatomic, readonly, nullable) NSString *name;
@@ -49,18 +49,18 @@ WK_CLASS_AVAILABLE(macosx(10.14), ios(12.0))
 @property (nonatomic, readonly, nullable) NSFileWrapper *fileWrapper;
 @end
 
-WK_CLASS_AVAILABLE(macosx(10.13.4), ios(11.3))
+WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @interface _WKAttachment : NSObject
 
-- (void)setFileWrapper:(NSFileWrapper *)fileWrapper contentType:(nullable NSString *)contentType completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)setFileWrapper:(NSFileWrapper *)fileWrapper contentType:(nullable NSString *)contentType completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-@property (nonatomic, readonly, nullable) _WKAttachmentInfo *info WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, nullable) _WKAttachmentInfo *info WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, readonly) NSString *uniqueIdentifier;
-@property (nonatomic, readonly, getter=isConnected) BOOL connected WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, getter=isConnected) BOOL connected WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Deprecated SPI.
-- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-info", macosx(10.14, WK_MAC_TBA), ios(12.0, WK_IOS_TBA));
-- (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("Please use -setFileWrapper:contentType:completion: instead.", macosx(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
+- (void)requestInfo:(void(^)(_WKAttachmentInfo * _Nullable, NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-info", macos(10.14, WK_MAC_TBA), ios(12.0, WK_IOS_TBA));
+- (void)setData:(NSData *)data newContentType:(nullable NSString *)newContentType newFilename:(nullable NSString *)newFilename completion:(void(^ _Nullable)(NSError * _Nullable))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("Please use -setFileWrapper:contentType:completion: instead.", macos(10.13.4, WK_MAC_TBA), ios(11.3, WK_IOS_TBA));
 
 @end
 

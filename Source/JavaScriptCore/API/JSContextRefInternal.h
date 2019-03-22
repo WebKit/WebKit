@@ -42,7 +42,7 @@ extern "C" {
 @abstract Gets the run loop used by the Web Inspector debugger when evaluating JavaScript in this context.
 @param ctx The JSGlobalContext whose setting you want to get.
 */
-JS_EXPORT CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+JS_EXPORT CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @function
@@ -50,7 +50,7 @@ JS_EXPORT CFRunLoopRef JSGlobalContextGetDebuggerRunLoop(JSGlobalContextRef ctx)
 @param ctx The JSGlobalContext that you want to change.
 @param runLoop The new value of the setting for the context.
 */
-JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef runLoop) JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+JS_EXPORT void JSGlobalContextSetDebuggerRunLoop(JSGlobalContextRef ctx, CFRunLoopRef runLoop) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 #endif
 
 #ifdef __cplusplus

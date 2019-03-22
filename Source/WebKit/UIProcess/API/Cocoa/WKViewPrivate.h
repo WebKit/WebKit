@@ -77,16 +77,16 @@
 
 @property (nonatomic, setter=_setViewScale:) CGFloat _viewScale;
 
-@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_API_AVAILABLE(macosx(10.11));
+@property (nonatomic, setter=_setOverrideDeviceScaleFactor:) CGFloat _overrideDeviceScaleFactor WK_API_AVAILABLE(macos(10.11));
 
 @property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
 
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (copy, nonatomic) NSColor *underlayColor;
 
-@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macosx(10.14));
+@property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macos(10.14));
 
-@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macosx(10.11));
+@property (strong, nonatomic, setter=_setInspectorAttachmentView:) NSView *_inspectorAttachmentView WK_API_AVAILABLE(macos(10.11));
 
 @property (nonatomic, readwrite, setter=_setRequiresUserActionForEditingControlsManager:) BOOL _requiresUserActionForEditingControlsManager;
 
@@ -133,16 +133,16 @@
 
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
-- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress WK_API_AVAILABLE(macos(10.13.4));
 
 @property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView;
 @property (nonatomic, readonly)  id _mediaPlaybackControlsView;
 - (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView;
 - (void)_removeMediaPlaybackControlsView;
 
-- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macosx(10.13.4));
+- (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock WK_API_AVAILABLE(macos(10.13.4));
 
-@property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macosx(10.14));
+@property (nonatomic, readwrite, setter=_setUseSystemAppearance:) BOOL _useSystemAppearance WK_API_AVAILABLE(macos(10.14));
 
 @end
 

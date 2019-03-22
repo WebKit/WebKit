@@ -53,7 +53,7 @@ extern "C" {
  JSContextGroup's run loop once it has been created.
 @result The created JSContextGroup.
 */
-JS_EXPORT JSContextGroupRef JSContextGroupCreate(void) JSC_API_AVAILABLE(macosx(10.6), ios(7.0));
+JS_EXPORT JSContextGroupRef JSContextGroupCreate(void) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
 /*!
 @function
@@ -61,14 +61,14 @@ JS_EXPORT JSContextGroupRef JSContextGroupCreate(void) JSC_API_AVAILABLE(macosx(
 @param group The JSContextGroup to retain.
 @result A JSContextGroup that is the same as group.
 */
-JS_EXPORT JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group) JSC_API_AVAILABLE(macosx(10.6), ios(7.0));
+JS_EXPORT JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
 /*!
 @function
 @abstract Releases a JavaScript context group.
 @param group The JSContextGroup to release.
 */
-JS_EXPORT void JSContextGroupRelease(JSContextGroupRef group) JSC_API_AVAILABLE(macosx(10.6), ios(7.0));
+JS_EXPORT void JSContextGroupRelease(JSContextGroupRef group) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
 /*!
 @function
@@ -83,7 +83,7 @@ JS_EXPORT void JSContextGroupRelease(JSContextGroupRef group) JSC_API_AVAILABLE(
  NULL to use the default object class.
 @result A JSGlobalContext with a global object of class globalObjectClass.
 */
-JS_EXPORT JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass) JSC_API_AVAILABLE(macosx(10.5), ios(7.0));
+JS_EXPORT JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass) JSC_API_AVAILABLE(macos(10.5), ios(7.0));
 
 /*!
 @function
@@ -97,7 +97,7 @@ JS_EXPORT JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 @result A JSGlobalContext with a global object of class globalObjectClass and a context
  group equal to group.
 */
-JS_EXPORT JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClassRef globalObjectClass) JSC_API_AVAILABLE(macosx(10.6), ios(7.0));
+JS_EXPORT JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClassRef globalObjectClass) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
 /*!
 @function
@@ -128,7 +128,7 @@ JS_EXPORT JSObjectRef JSContextGetGlobalObject(JSContextRef ctx);
 @param ctx The JSContext whose group you want to get.
 @result ctx's group.
 */
-JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) JSC_API_AVAILABLE(macosx(10.6), ios(7.0));
+JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) JSC_API_AVAILABLE(macos(10.6), ios(7.0));
 
 /*!
 @function
@@ -136,7 +136,7 @@ JS_EXPORT JSContextGroupRef JSContextGetGroup(JSContextRef ctx) JSC_API_AVAILABL
 @param ctx The JSContext whose global context you want to get.
 @result ctx's global context.
 */
-JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) JSC_API_AVAILABLE(macosx(10.7), ios(7.0));
+JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) JSC_API_AVAILABLE(macos(10.7), ios(7.0));
 
 /*!
 @function
@@ -146,7 +146,7 @@ JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx) JSC_API
 @discussion A JSGlobalContext's name is exposed for remote debugging to make it
 easier to identify the context you would like to attach to.
 */
-JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 /*!
 @function
@@ -154,7 +154,7 @@ JS_EXPORT JSStringRef JSGlobalContextCopyName(JSGlobalContextRef ctx) JSC_API_AV
 @param ctx The JSGlobalContext that you want to name.
 @param name The remote debugging name to set on ctx.
 */
-JS_EXPORT void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name) JSC_API_AVAILABLE(macosx(10.10), ios(8.0));
+JS_EXPORT void JSGlobalContextSetName(JSGlobalContextRef ctx, JSStringRef name) JSC_API_AVAILABLE(macos(10.10), ios(8.0));
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,7 @@
 @class WKWebProcessPlugInPageGroup;
 @protocol WKWebProcessPlugInLoadDelegate;
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInBrowserContextController : NSObject
 
 @property (readonly) WKDOMDocument *mainFrameDocument;

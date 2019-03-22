@@ -29,7 +29,7 @@
 
 @interface _WKUserContentFilter (WKPrivate)
 
-- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList WK_API_AVAILABLE(macos(10.13), ios(11.0));
 @property (nonatomic, readonly) BOOL usesCopiedMemory;
 
 @end

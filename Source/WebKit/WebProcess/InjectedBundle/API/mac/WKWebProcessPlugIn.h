@@ -39,9 +39,9 @@
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController willDestroyBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController;
 @end
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKWebProcessPlugInController : NSObject
-- (void)extendClassesForParameterCoder:(NSArray *)classes WK_API_AVAILABLE(macosx(10.14), ios(12.0));
+- (void)extendClassesForParameterCoder:(NSArray *)classes WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

@@ -29,17 +29,17 @@
 
 @class WKWebView;
 
-WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
+WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKDownload : NSObject <NSCopying>
 
 - (void)cancel;
 
-- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)publishProgressAtURL:(NSURL *)URL WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSURLRequest *request;
 @property (nonatomic, readonly, weak) WKWebView *originatingWebView;
-@property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macosx(10.13.4), ios(11.3));
-@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSURL *> *redirectChain WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+@property (nonatomic, readonly) BOOL wasUserInitiated WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
+@property (nonatomic, readonly) NSData *resumeData WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end

@@ -52,10 +52,10 @@ WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKNavigationDelegate", macos(10.10, WK_MAC
 /* Sent if the commited load fails. */
 - (void)browsingContextController:(WKBrowsingContextController *)sender didFailLoadWithError:(NSError *)error;
 
-- (void)browsingContextControllerDidStartProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
-- (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
-- (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)browsingContextControllerDidStartProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)browsingContextController:(WKBrowsingContextController *)sender estimatedProgressChangedTo:(double)estimatedProgress WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)browsingContextControllerDidFinishProgress:(WKBrowsingContextController *)sender WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.estimatedProgress", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
-- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.backForwardList", macosx(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+- (void)browsingContextControllerDidChangeBackForwardList:(WKBrowsingContextController *)sender addedItem:(WKBackForwardListItem *)addedItem removedItems:(NSArray *)removedItems WK_API_DEPRECATED_WITH_REPLACEMENT("WKWebView.backForwardList", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 
 @end
