@@ -1,3 +1,39 @@
+2019-03-22  Keith Rollin  <krollin@apple.com>
+
+        Enable ThinLTO support in Production builds
+        https://bugs.webkit.org/show_bug.cgi?id=190758
+        <rdar://problem/45413233>
+
+        Reviewed by Daniel Bates.
+
+        Enable building with Thin LTO in Production when using Xcode 10.2 or
+        later. This change results in a 1.45% progression in PLT5. Full
+        Production build times increase about 2-3%. Incremental build times
+        are more severely affected, and so LTO is not enabled for local
+        engineering builds.
+
+        LTO is enabled only on macOS for now, until rdar://problem/49013399,
+        which affects ARM builds, is fixed.
+
+        Removed the conditionals that disabled LTO on 32-bit systems since we
+        no longer build for those.
+
+        To change the LTO setting when building locally:
+
+        - If building with `make`, specify WK_LTO_MODE={none,thin,full} on the
+          command line.
+        - If building with `build-webkit`, specify --lto-mode={none,thin,full}
+          on the command line.
+        - If building with `build-root`, specify --lto={none,thin,full} on the
+          command line.
+        - If building with Xcode, create a LocalOverrides.xcconfig file at the
+          top level of your repository directory (if needed) and define
+          WK_LTO_MODE to full, thin, or none.
+
+        No new tests since there should be no observable behavior difference.
+
+        * Configurations/Base.xcconfig:
+
 2019-03-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243356.
