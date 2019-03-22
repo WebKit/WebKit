@@ -150,10 +150,6 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include <bmalloc/MemoryStatusSPI.h>
-#endif
-
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
@@ -507,7 +503,7 @@ void WebProcess::setHasSuspendedPageProxy(bool hasSuspendedPageProxy)
 
 void WebProcess::setIsInProcessCache(bool isInProcessCache)
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     if (isInProcessCache) {
         ASSERT(m_processType == ProcessType::WebContent);
         m_processType = ProcessType::CachedWebContent;
@@ -524,7 +520,7 @@ void WebProcess::setIsInProcessCache(bool isInProcessCache)
 
 void WebProcess::markIsNoLongerPrewarmed()
 {
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     ASSERT(m_processType == ProcessType::PrewarmedWebContent);
     m_processType = ProcessType::WebContent;
 
@@ -1469,6 +1465,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 
 #if PLATFORM(IOS_FAMILY)
     accessibilityProcessSuspendedNotification(true);
+    updateFreezerStatus();
 #endif
 
     markAllLayersVolatile([this, shouldAcknowledgeWhenReadyToSuspend](bool success) {
@@ -1882,14 +1879,6 @@ void WebProcess::resumeAllMediaBuffering()
 void WebProcess::clearCurrentModifierStateForTesting()
 {
     PlatformKeyboardEvent::setCurrentModifierState({ });
-}
-
-void WebProcess::setFreezable(bool freezable)
-{
-#if PLATFORM(IOS_FAMILY)
-    auto result = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE, getpid(), freezable ? 1 : 0, nullptr, 0);
-    ASSERT_UNUSED(result, !result);
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)

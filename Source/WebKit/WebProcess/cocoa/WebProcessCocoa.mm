@@ -62,6 +62,7 @@
 #import <WebCore/NSScrollerImpDetails.h>
 #import <WebCore/PerformanceLogging.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SWContextManager.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
@@ -77,6 +78,10 @@
 
 #if PLATFORM(IOS)
 #import "UIKitSPI.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include <bmalloc/MemoryStatusSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -237,9 +242,9 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 #endif
 }
 
-#if PLATFORM(MAC)
 void WebProcess::updateProcessName()
 {
+#if PLATFORM(MAC)
     NSString *applicationName;
     switch (m_processType) {
     case ProcessType::Inspector:
@@ -273,8 +278,8 @@ void WebProcess::updateProcessName()
         ASSERT(!actualApplicationName.isEmpty());
 #endif
     });
-}
 #endif // PLATFORM(MAC)
+}
 
 static void registerWithAccessibility()
 {
@@ -680,6 +685,36 @@ void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
 void WebProcess::accessibilityProcessSuspendedNotification(bool suspended)
 {
     UIAccessibilityPostNotification(kAXPidStatusChangedNotification, @{ @"pid" : @(getpid()), @"suspended" : @(suspended) });
+}
+
+bool WebProcess::shouldFreezeOnSuspension() const
+{
+    switch (m_processType) {
+    case ProcessType::Inspector:
+    case ProcessType::ServiceWorker:
+    case ProcessType::PrewarmedWebContent:
+    case ProcessType::CachedWebContent:
+        return false;
+    case ProcessType::WebContent:
+        break;
+    }
+
+    for (auto& page : m_pageMap.values()) {
+        if (!page->isSuspended())
+            return false;
+    }
+
+    return true;
+}
+
+void WebProcess::updateFreezerStatus()
+{
+    bool isFreezable = shouldFreezeOnSuspension();
+    auto result = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE, getpid(), isFreezable ? 1 : 0, nullptr, 0);
+    if (result)
+        RELEASE_LOG_ERROR(ProcessSuspension, "%p - WebProcess::updateFreezerStatus() isFreezable: %d, error: %d", this, isFreezable, result);
+    else
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcess::updateFreezerStatus() isFreezable: %d, success", this, isFreezable);
 }
 #endif
 

@@ -162,6 +162,4 @@ messages -> WebProcess LegacyReceiver {
 #if PLATFORM(IOS_FAMILY)
     UnblockAccessibilityServer(WebKit::SandboxExtension::Handle handle)
 #endif
-
-    SetFreezable(bool freezable)
 }

@@ -411,7 +411,6 @@ private:
     void didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
 #if PLATFORM(MAC)
-    void updateProcessName();
     void setScreenProperties(const WebCore::ScreenProperties&);
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     void scrollerStylePreferenceChanged(bool useOverlayScrollbars);
@@ -420,8 +419,15 @@ private:
 #endif
 #endif
 
+#if PLATFORM(COCOA)
+    void updateProcessName();
+#endif
+
 #if PLATFORM(IOS)
     void backlightLevelDidChange(float backlightLevel);
+
+    bool shouldFreezeOnSuspension() const;
+    void updateFreezerStatus();
 #endif
 
 #if ENABLE(VIDEO)
@@ -430,7 +436,6 @@ private:
 #endif
 
     void clearCurrentModifierStateForTesting();
-    void setFreezable(bool);
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 
@@ -505,10 +510,13 @@ private:
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     Optional<double> m_cpuLimit;
 
-    enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, CachedWebContent, WebContent };
-    ProcessType m_processType { ProcessType::WebContent };
     String m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
+#endif
+
+#if PLATFORM(COCOA)
+    enum class ProcessType { Inspector, ServiceWorker, PrewarmedWebContent, CachedWebContent, WebContent };
+    ProcessType m_processType { ProcessType::WebContent };
 #endif
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;

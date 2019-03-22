@@ -115,10 +115,10 @@ uint64_t WebProcessProxy::generatePageID()
     return ++uniquePageID;
 }
 
-static WebProcessProxy::WebPageProxyMap::MapType& globalPageMap()
+static WebProcessProxy::WebPageProxyMap& globalPageMap()
 {
     ASSERT(isMainThreadOrCheckDisabled());
-    static NeverDestroyed<WebProcessProxy::WebPageProxyMap::MapType> pageMap;
+    static NeverDestroyed<WebProcessProxy::WebPageProxyMap> pageMap;
     return pageMap;
 }
 
@@ -136,7 +136,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_backgroundResponsivenessTimer(*this)
     , m_processPool(processPool, isPrewarmed == IsPrewarmed::Yes ? IsWeak::Yes : IsWeak::No)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
-    , m_pageMap(*this)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
     , m_isResponsive(NoOrMaybe::Maybe)
@@ -188,18 +187,6 @@ WebProcessProxy::~WebProcessProxy()
 #endif
 }
 
-void WebProcessProxy::validateFreezerStatus()
-{
-#if PLATFORM(IOS_FAMILY)
-    bool value = !m_isPrewarmed && !m_isInProcessCache && !m_pageMap.isEmpty() && !isServiceWorkerProcess();
-    if (m_currentIsFreezableValue != WTF::nullopt && m_currentIsFreezableValue == value)
-        return;
-
-    m_currentIsFreezableValue = value;
-    send(Messages::WebProcess::SetFreezable(value), 0);
-#endif
-}
-
 void WebProcessProxy::setIsInProcessCache(bool value)
 {
     ASSERT(m_isInProcessCache != value);
@@ -215,8 +202,6 @@ void WebProcessProxy::setIsInProcessCache(bool value)
         RELEASE_ASSERT(m_processPool);
         m_processPool.setIsWeak(IsWeak::No);
     }
-    
-    validateFreezerStatus();
 }
 
 void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
@@ -399,8 +384,6 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
     m_processPool.setIsWeak(IsWeak::No);
-
-    validateFreezerStatus();
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 }
@@ -795,8 +778,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 
     unblockAccessibilityServerIfNeeded();
 #endif
-
-    validateFreezerStatus();
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
