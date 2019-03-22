@@ -89,9 +89,8 @@ InspectorCanvas::InspectorCanvas(CanvasRenderingContext& context)
 
 HTMLCanvasElement* InspectorCanvas::canvasElement()
 {
-    auto* canvasBase = &m_context.canvasBase();
-    if (is<HTMLCanvasElement>(canvasBase))
-        return downcast<HTMLCanvasElement>(canvasBase);
+    if (is<HTMLCanvasElement>(m_context.canvasBase()))
+        return &downcast<HTMLCanvasElement>(m_context.canvasBase());
     return nullptr;
 }
 
@@ -137,6 +136,9 @@ static bool shouldSnapshotWebGLAction(const String& name)
 void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasActionVariant>&& parameters)
 {
     if (!m_initialState) {
+        // We should only construct the initial state for the first action of the recording.
+        ASSERT(!m_frames && !m_currentActions);
+
         m_initialState = buildInitialState();
         m_bufferUsed += m_initialState->memoryCost();
     }
@@ -171,26 +173,10 @@ void InspectorCanvas::recordAction(const String& name, Vector<RecordCanvasAction
 #endif
 }
 
-RefPtr<Inspector::Protocol::Recording::InitialState>&& InspectorCanvas::releaseInitialState()
-{
-    return WTFMove(m_initialState);
-}
-
-RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>>&& InspectorCanvas::releaseFrames()
+void InspectorCanvas::finalizeFrame()
 {
     appendActionSnapshotIfNeeded();
 
-    return WTFMove(m_frames);
-}
-
-RefPtr<JSON::ArrayOf<JSON::Value>>&& InspectorCanvas::releaseData()
-{
-    m_indexedDuplicateData.clear();
-    return WTFMove(m_serializedDuplicateData);
-}
-
-void InspectorCanvas::finalizeFrame()
-{
     if (m_frames && m_frames->length() && !std::isnan(m_currentFrameStartTime)) {
         auto currentFrame = static_cast<Inspector::Protocol::Recording::Frame*>(m_frames->get(m_frames->length() - 1).get());
         currentFrame->setDuration((MonotonicTime::now() - m_currentFrameStartTime).milliseconds());
@@ -311,22 +297,61 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(b
     return canvas;
 }
 
-void InspectorCanvas::appendActionSnapshotIfNeeded()
+Ref<Inspector::Protocol::Recording::Recording> InspectorCanvas::releaseObjectForRecording()
 {
-    if (!m_actionNeedingSnapshot)
-        return;
+    ASSERT(!m_currentActions);
+    ASSERT(!m_actionNeedingSnapshot);
+    ASSERT(!m_frames);
 
-    m_actionNeedingSnapshot->addItem(indexForData(getCanvasContentAsDataURL()));
-    m_actionNeedingSnapshot = nullptr;
+    // FIXME: <https://webkit.org/b/176008> Web Inspector: Record actions performed on WebGL2RenderingContext
+
+    Inspector::Protocol::Recording::Type type;
+    if (is<CanvasRenderingContext2D>(m_context))
+        type = Inspector::Protocol::Recording::Type::Canvas2D;
+    else if (is<ImageBitmapRenderingContext>(m_context))
+        type = Inspector::Protocol::Recording::Type::CanvasBitmapRenderer;
+#if ENABLE(WEBGL)
+    else if (is<WebGLRenderingContext>(m_context))
+        type = Inspector::Protocol::Recording::Type::CanvasWebGL;
+#endif
+    else {
+        ASSERT_NOT_REACHED();
+        type = Inspector::Protocol::Recording::Type::Canvas2D;
+    }
+
+    auto recording = Inspector::Protocol::Recording::Recording::create()
+        .setVersion(Inspector::Protocol::Recording::VERSION)
+        .setType(type)
+        .setInitialState(m_initialState.releaseNonNull())
+        .setData(m_serializedDuplicateData.releaseNonNull())
+        .release();
+
+    if (!m_recordingName.isEmpty())
+        recording->setName(m_recordingName);
+
+    resetRecordingData();
+
+    return recording;
 }
 
-String InspectorCanvas::getCanvasContentAsDataURL()
+String InspectorCanvas::getCanvasContentAsDataURL(ErrorString& errorString)
 {
-    // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
+    // FIXME: <https://webkit.org/b/173621> Web Inspector: Support getting the content of WebMetal context;
+    if (!is<CanvasRenderingContext2D>(m_context)
+#if ENABLE(WEBGL)
+        && !is<WebGLRenderingContextBase>(m_context)
+#endif
+        && !is<ImageBitmapRenderingContext>(m_context)) {
+        errorString = "Unsupported canvas context type"_s;
+        return emptyString();
+    }
 
+    // FIXME: <https://webkit.org/b/180833> Web Inspector: support OffscreenCanvas for Canvas related operations
     auto* node = canvasElement();
-    if (!node)
-        return String();
+    if (!node) {
+        errorString = "Context isn't related to an HTMLCanvasElement"_s;
+        return emptyString();
+    }
 
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context))
@@ -340,10 +365,27 @@ String InspectorCanvas::getCanvasContentAsDataURL()
         downcast<WebGLRenderingContextBase>(m_context).setPreventBufferClearForInspector(false);
 #endif
 
-    if (result.hasException())
-        return String();
+    if (result.hasException()) {
+        errorString = result.releaseException().releaseMessage();
+        return emptyString();
+    }
 
     return result.releaseReturnValue().string;
+}
+
+void InspectorCanvas::appendActionSnapshotIfNeeded()
+{
+    if (!m_actionNeedingSnapshot)
+        return;
+
+    m_bufferUsed -= m_actionNeedingSnapshot->memoryCost();
+
+    ErrorString ignored;
+    m_actionNeedingSnapshot->addItem(indexForData(getCanvasContentAsDataURL(ignored)));
+
+    m_bufferUsed += m_actionNeedingSnapshot->memoryCost();
+
+    m_actionNeedingSnapshot = nullptr;
 }
 
 int InspectorCanvas::indexForData(DuplicateDataVariant data)
@@ -561,7 +603,8 @@ Ref<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildInitialS
     if (parametersPayload->length())
         initialStatePayload->setParameters(WTFMove(parametersPayload));
 
-    initialStatePayload->setContent(getCanvasContentAsDataURL());
+    ErrorString ignored;
+    initialStatePayload->setContent(getCanvasContentAsDataURL(ignored));
 
     return initialStatePayload;
 }

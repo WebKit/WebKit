@@ -668,38 +668,40 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
-    if (UNLIKELY(m_context && m_context->callTracingActive()))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
-
     // Clear the dirty rect
     m_dirtyRect = FloatRect();
 
-    if (context.paintingDisabled())
-        return;
-    
-    if (m_context) {
-        if (!paintsIntoCanvasBuffer() && !document().printing())
-            return;
+    if (!context.paintingDisabled()) {
+        bool shouldPaint = true;
 
-        m_context->paintRenderingResultsToCanvas();
-    }
+        if (m_context) {
+            shouldPaint = paintsIntoCanvasBuffer() || document().printing();
+            if (shouldPaint)
+                m_context->paintRenderingResultsToCanvas();
+        }
 
-    if (hasCreatedImageBuffer()) {
-        ImageBuffer* imageBuffer = buffer();
-        if (imageBuffer) {
-            if (m_presentedImage) {
-                ImageOrientationDescription orientationDescription;
+        if (shouldPaint) {
+            if (hasCreatedImageBuffer()) {
+                ImageBuffer* imageBuffer = buffer();
+                if (imageBuffer) {
+                    if (m_presentedImage) {
+                        ImageOrientationDescription orientationDescription;
 #if ENABLE(CSS_IMAGE_ORIENTATION)
-                orientationDescription.setImageOrientationEnum(renderer()->style().imageOrientation());
-#endif 
-                context.drawImage(*m_presentedImage, snappedIntRect(r), ImagePaintingOptions(orientationDescription));
-            } else
-                context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
+                        orientationDescription.setImageOrientationEnum(renderer()->style().imageOrientation());
+#endif
+                        context.drawImage(*m_presentedImage, snappedIntRect(r), ImagePaintingOptions(orientationDescription));
+                    } else
+                        context.drawImageBuffer(*imageBuffer, snappedIntRect(r));
+                }
+            }
+
+            if (isGPUBased())
+                downcast<GPUBasedCanvasRenderingContext>(*m_context).markLayerComposited();
         }
     }
 
-    if (isGPUBased())
-        downcast<GPUBasedCanvasRenderingContext>(*m_context).markLayerComposited();
+    if (UNLIKELY(m_context && m_context->callTracingActive()))
+        InspectorInstrumentation::didFinishRecordingCanvasFrame(*m_context);
 }
 
 bool HTMLCanvasElement::isGPUBased() const

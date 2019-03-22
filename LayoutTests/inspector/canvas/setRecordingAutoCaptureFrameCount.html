@@ -6,11 +6,11 @@
 if (window.internals)
     window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
-let timeoutID = NaN;
+let requestAnimationFrameId = NaN;
 
 function cancelActions() {
-    clearTimeout(timeoutID);
-    timeoutID = NaN;
+    cancelAnimationFrame(requestAnimationFrameId);
+    requestAnimationFrameId = NaN;
 }
 
 function performActions(frames) {
@@ -19,7 +19,7 @@ function performActions(frames) {
         frames[index++]();
 
         if (index < frames.length)
-            timeoutID = setTimeout(executeFrameFunction, 0);
+            requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
         else {
             setTimeout(() => {
                 TestPage.dispatchEventToFrontend("LastFrame");
