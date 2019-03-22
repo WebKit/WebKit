@@ -39,7 +39,7 @@ async function load() {
 
     imageBitmap = await createImageBitmap(image);
 
-    cancelActions();
+    document.body.appendChild(canvas);
 
     context.strokeStyle = "red";
     context.save();
@@ -56,15 +56,7 @@ function ignoreException(func){
     } catch (e) { }
 }
 
-let requestAnimationFrameId = NaN;
-
 function cancelActions() {
-    cancelAnimationFrame(requestAnimationFrameId);
-    requestAnimationFrameId = NaN;
-
-    context.resetTransform();
-    context.beginPath();
-    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 }
 
 function performActions() {
@@ -105,7 +97,7 @@ function performActions() {
     function executeFrameFunction() {
         frames[index++]();
         if (index < frames.length)
-            requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
+            timeoutID = setTimeout(executeFrameFunction, 0);
     };
     executeFrameFunction();
 }

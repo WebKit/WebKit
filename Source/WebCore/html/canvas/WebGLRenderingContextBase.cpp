@@ -661,7 +661,7 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     m_contextGroup = WebGLContextGroup::create();
     m_contextGroup->addContext(*this);
     
-    m_context->addClient(*this);
+    m_context->setWebGLContext(this);
 
     m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
 
@@ -914,7 +914,6 @@ void WebGLRenderingContextBase::destroyGraphicsContext3D()
     removeActivityStateChangeObserver();
 
     if (m_context) {
-        m_context->removeClient(*this);
         m_context->setContextLostCallback(nullptr);
         m_context->setErrorMessageCallback(nullptr);
         m_context = nullptr;
@@ -5043,6 +5042,15 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
     m_contextGroup->loseContextGroup(mode);
 }
 
+void WebGLRenderingContextBase::recycleContext()
+{
+    printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost.");
+    // Using SyntheticLostContext means the developer won't be able to force the restoration
+    // of the context by calling preventDefault() in a "webglcontextlost" event handler.
+    forceLostContext(SyntheticLostContext);
+    destroyGraphicsContext3D();
+}
+
 void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostContextMode mode)
 {
     if (isContextLost())
@@ -6217,6 +6225,15 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
 }
 
+void WebGLRenderingContextBase::dispatchContextChangedEvent()
+{
+    auto* canvas = htmlCanvas();
+    if (!canvas)
+        return;
+
+    canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+}
+
 void WebGLRenderingContextBase::simulateContextChanged()
 {
     if (m_context)
@@ -6495,36 +6512,6 @@ void WebGLRenderingContextBase::setFailNextGPUStatusCheck()
 
     m_context->setFailNextGPUStatusCheck();
 }
-
-void WebGLRenderingContextBase::didComposite()
-{
-    if (UNLIKELY(callTracingActive()))
-        InspectorInstrumentation::didFinishRecordingCanvasFrame(*this);
-}
-
-void WebGLRenderingContextBase::forceContextLost()
-{
-    forceLostContext(WebGLRenderingContextBase::RealLostContext);
-}
-
-void WebGLRenderingContextBase::recycleContext()
-{
-    printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost.");
-    // Using SyntheticLostContext means the developer won't be able to force the restoration
-    // of the context by calling preventDefault() in a "webglcontextlost" event handler.
-    forceLostContext(SyntheticLostContext);
-    destroyGraphicsContext3D();
-}
-
-void WebGLRenderingContextBase::dispatchContextChangedNotification()
-{
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextchangedEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
-}
-
 
 } // namespace WebCore
 

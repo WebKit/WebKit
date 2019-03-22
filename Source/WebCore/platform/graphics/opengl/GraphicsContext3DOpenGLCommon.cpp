@@ -2016,9 +2016,6 @@ void GraphicsContext3D::markContextChanged()
 void GraphicsContext3D::markLayerComposited()
 {
     m_layerComposited = true;
-
-    for (auto* client : m_clients)
-        client->didComposite();
 }
 
 bool GraphicsContext3D::layerComposited() const
@@ -2028,20 +2025,26 @@ bool GraphicsContext3D::layerComposited() const
 
 void GraphicsContext3D::forceContextLost()
 {
-    for (auto* client : m_clients)
-        client->forceContextLost();
+#if ENABLE(WEBGL)
+    if (m_webglContext)
+        m_webglContext->forceLostContext(WebGLRenderingContextBase::RealLostContext);
+#endif
 }
 
 void GraphicsContext3D::recycleContext()
 {
-    for (auto* client : m_clients)
-        client->recycleContext();
+#if ENABLE(WEBGL)
+    if (m_webglContext)
+        m_webglContext->recycleContext();
+#endif
 }
 
 void GraphicsContext3D::dispatchContextChangedNotification()
 {
-    for (auto* client : m_clients)
-        client->dispatchContextChangedNotification();
+#if ENABLE(WEBGL)
+    if (m_webglContext)
+        m_webglContext->dispatchContextChangedEvent();
+#endif
 }
 
 void GraphicsContext3D::texImage2DDirect(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)

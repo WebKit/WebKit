@@ -39,6 +39,8 @@ async function load() {
     pattern = ctx.createPattern(image, "no-repeat");
     bitmap = await createImageBitmap(image);
 
+    document.body.appendChild(canvas);
+
     ctx.save();
     cancelActions();
 
@@ -51,7 +53,7 @@ function ignoreException(func){
     } catch (e) { }
 }
 
-let requestAnimationFrameId = NaN;
+let timeoutID = NaN;
 let saveCount = 1;
 
 function cancelActions() {
@@ -59,8 +61,8 @@ function cancelActions() {
         ctx.restore();
     ctx.restore(); // Ensures the state is reset between test cases.
 
-    cancelAnimationFrame(requestAnimationFrameId);
-    requestAnimationFrameId = NaN;
+    clearTimeout(timeoutID);
+    timeoutID = NaN;
 
     ctx.save(); // Ensures the state is reset between test cases.
     ctx.save(); // This matches the `restore` call in `performActions`.
@@ -397,7 +399,7 @@ function performActions() {
     function executeFrameFunction() {
         frames[index++]();
         if (index < frames.length)
-            requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
+            timeoutID = setTimeout(executeFrameFunction, 0);
     };
     executeFrameFunction();
 }

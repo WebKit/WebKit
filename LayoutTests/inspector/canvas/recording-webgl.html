@@ -49,7 +49,7 @@ function load() {
     shader = context.createShader(context.VERTEX_SHADER);
     texture = context.createTexture();
 
-    cancelActions();
+    document.body.appendChild(context.canvas);
 
     runTest();
 }
@@ -60,11 +60,11 @@ function ignoreException(func){
     } catch (e) { }
 }
 
-let requestAnimationFrameId = NaN;
+let timeoutID = NaN;
 
 function cancelActions() {
-    cancelAnimationFrame(requestAnimationFrameId);
-    requestAnimationFrameId = NaN;
+    clearTimeout(timeoutID);
+    timeoutID = NaN;
 
     context.clearColor(0.0, 0.0, 0.0, 0.0);
     context.clear(context.COLOR_BUFFER_BIT);
@@ -502,7 +502,7 @@ function performActions() {
     function executeFrameFunction() {
         frames[index++]();
         if (index < frames.length)
-            requestAnimationFrameId = requestAnimationFrame(executeFrameFunction);
+            timeoutID = setTimeout(executeFrameFunction, 0);
     };
     executeFrameFunction();
 }

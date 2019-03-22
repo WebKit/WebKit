@@ -112,15 +112,18 @@ private:
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
     void canvasDestroyedTimerFired();
+    void canvasRecordingTimerFired();
     void clearCanvasData();
     InspectorCanvas& bindCanvas(CanvasRenderingContext&, bool captureBacktrace);
     String unbindCanvas(InspectorCanvas&);
-    RefPtr<InspectorCanvas> assertInspectorCanvas(ErrorString&, const String& identifier);
-    RefPtr<InspectorCanvas> findInspectorCanvas(CanvasRenderingContext&);
+    InspectorCanvas* assertInspectorCanvas(ErrorString&, const String& identifier);
+    InspectorCanvas* findInspectorCanvas(CanvasRenderingContext&);
 #if ENABLE(WEBGL)
     String unbindProgram(InspectorShaderProgram&);
-    RefPtr<InspectorShaderProgram> assertInspectorProgram(ErrorString&, const String& identifier);
-    RefPtr<InspectorShaderProgram> findInspectorProgram(WebGLProgram&);
+    InspectorShaderProgram* assertInspectorProgram(ErrorString&, const String& identifier);
+    InspectorShaderProgram* findInspectorProgram(WebGLProgram&);
+
+    HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
 #endif
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
@@ -130,14 +133,10 @@ private:
     Page& m_inspectedPage;
 
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
-#if ENABLE(WEBGL)
-    HashMap<String, RefPtr<InspectorShaderProgram>> m_identifierToInspectorProgram;
-#endif
     Vector<String> m_removedCanvasIdentifiers;
-
     Optional<size_t> m_recordingAutoCaptureFrameCount;
-
     Timer m_canvasDestroyedTimer;
+    Timer m_canvasRecordingTimer;
 };
 
 } // namespace WebCore

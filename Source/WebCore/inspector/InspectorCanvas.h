@@ -44,8 +44,6 @@ class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
 
-typedef String ErrorString;
-
 class InspectorCanvas final : public RefCounted<InspectorCanvas> {
 public:
     static Ref<InspectorCanvas> create(CanvasRenderingContext&);
@@ -60,11 +58,14 @@ public:
     bool currentFrameHasData() const;
     void recordAction(const String&, Vector<RecordCanvasActionVariant>&& = { });
 
-    Ref<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>> releaseFrames() { return m_frames.releaseNonNull(); }
+    RefPtr<Inspector::Protocol::Recording::InitialState>&& releaseInitialState();
+    RefPtr<JSON::ArrayOf<Inspector::Protocol::Recording::Frame>>&& releaseFrames();
+    RefPtr<JSON::ArrayOf<JSON::Value>>&& releaseData();
 
     void finalizeFrame();
     void markCurrentFrameIncomplete();
 
+    const String& recordingName() const { return m_recordingName; }
     void setRecordingName(const String& name) { m_recordingName = name; }
 
     void setBufferLimit(long);
@@ -75,13 +76,11 @@ public:
     bool overFrameCount() const;
 
     Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(bool captureBacktrace);
-    Ref<Inspector::Protocol::Recording::Recording> releaseObjectForRecording();
-
-    String getCanvasContentAsDataURL(ErrorString&);
 
 private:
     InspectorCanvas(CanvasRenderingContext&);
     void appendActionSnapshotIfNeeded();
+    String getCanvasContentAsDataURL();
 
     using DuplicateDataVariant = Variant<
         RefPtr<CanvasGradient>,
