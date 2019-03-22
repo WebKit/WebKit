@@ -158,31 +158,17 @@ SourceCode UnlinkedFunctionExecutable::linkedSourceCode(const SourceCode& passed
 FunctionExecutable* UnlinkedFunctionExecutable::link(VM& vm, const SourceCode& passedParentSource, Optional<int> overrideLineNumber, Intrinsic intrinsic)
 {
     SourceCode source = linkedSourceCode(passedParentSource);
-    unsigned firstLine = source.firstLine().oneBasedInt();
-    unsigned lineCount = m_lineCount;
-    unsigned endColumn = linkedEndColumn(source.startColumn().oneBasedInt());
     FunctionOverrides::OverrideInfo overrideInfo;
     bool hasFunctionOverride = false;
-    if (UNLIKELY(Options::functionOverrides())) {
+    if (UNLIKELY(Options::functionOverrides()))
         hasFunctionOverride = FunctionOverrides::initializeOverrideFor(source, overrideInfo);
-        if (UNLIKELY(hasFunctionOverride)) {
-            firstLine = overrideInfo.firstLine;
-            lineCount = overrideInfo.lineCount;
-            endColumn = overrideInfo.endColumn;
-            source = overrideInfo.sourceCode;
-        }
-    }
 
-    FunctionExecutable* result = FunctionExecutable::create(vm, source, this, firstLine + lineCount, endColumn, intrinsic);
+    FunctionExecutable* result = FunctionExecutable::create(vm, source, this, intrinsic);
     if (overrideLineNumber)
         result->setOverrideLineNumber(*overrideLineNumber);
 
-    if (UNLIKELY(hasFunctionOverride)) {
-        result->overrideParameterAndTypeProfilingStartEndOffsets(
-            overrideInfo.parametersStartOffset,
-            overrideInfo.typeProfilingStartOffset,
-            overrideInfo.typeProfilingEndOffset);
-    }
+    if (UNLIKELY(hasFunctionOverride))
+        result->overrideInfo(overrideInfo);
 
     return result;
 }

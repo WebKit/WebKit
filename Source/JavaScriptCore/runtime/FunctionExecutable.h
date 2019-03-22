@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+struct FunctionOverrideInfo;
+
 class FunctionExecutable final : public ScriptExecutable {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
@@ -46,11 +48,9 @@ public:
         return &vm.functionExecutableSpace.space;
     }
 
-    static FunctionExecutable* create(
-        VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, 
-        unsigned lastLine, unsigned endColumn, Intrinsic intrinsic)
+    static FunctionExecutable* create(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic)
     {
-        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, lastLine, endColumn, intrinsic);
+        FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(vm.heap)) FunctionExecutable(vm, source, unlinkedExecutable, intrinsic);
         executable->finishCreation(vm);
         return executable;
     }
@@ -190,7 +190,36 @@ public:
         return WTF::nullopt;
     }
 
+    int lineCount() const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_lineCount;
+        return m_unlinkedExecutable->lineCount();
+    }
+
+    int endColumn() const
+    {
+        if (UNLIKELY(m_rareData))
+            return m_rareData->m_endColumn;
+        return m_unlinkedExecutable->linkedEndColumn(m_source.startColumn().oneBasedInt());
+    }
+
+    int firstLine() const
+    {
+        return source().firstLine().oneBasedInt();
+    }
+
+    int lastLine() const
+    {
+        return firstLine() + lineCount();
+    }
+
     unsigned typeProfilingStartOffset(VM&) const
+    {
+        return typeProfilingStartOffset();
+    }
+
+    unsigned typeProfilingStartOffset() const
     {
         if (UNLIKELY(m_rareData))
             return m_rareData->m_typeProfilingStartOffset;
@@ -198,6 +227,11 @@ public:
     }
 
     unsigned typeProfilingEndOffset(VM&) const
+    {
+        return typeProfilingEndOffset();
+    }
+
+    unsigned typeProfilingEndOffset() const
     {
         if (UNLIKELY(m_rareData))
             return m_rareData->m_typeProfilingEndOffset;
@@ -211,13 +245,7 @@ public:
         return m_unlinkedExecutable->parametersStartOffset();
     }
 
-    void overrideParameterAndTypeProfilingStartEndOffsets(unsigned parametersStartOffset, unsigned typeProfilingStartOffset, unsigned typeProfilingEndOffset)
-    {
-        auto& rareData = ensureRareData();
-        rareData.m_parametersStartOffset = parametersStartOffset;
-        rareData.m_typeProfilingStartOffset = typeProfilingStartOffset;
-        rareData.m_typeProfilingEndOffset = typeProfilingEndOffset;
-    }
+    void overrideInfo(const FunctionOverrideInfo&);
 
     DECLARE_INFO;
 
@@ -268,9 +296,7 @@ public:
 
 private:
     friend class ExecutableBase;
-    FunctionExecutable(
-        VM&, const SourceCode&, UnlinkedFunctionExecutable*,
-        unsigned lastLine, unsigned endColumn, Intrinsic);
+    FunctionExecutable(VM&, const SourceCode&, UnlinkedFunctionExecutable*, Intrinsic);
     
     void finishCreation(VM&);
 
@@ -278,11 +304,13 @@ private:
 
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        RefPtr<TypeSet> m_returnStatementTypeSet;
+        unsigned m_lineCount;
+        unsigned m_endColumn;
         Markable<int, IntegralMarkableTraits<int, -1>> m_overrideLineNumber;
         unsigned m_parametersStartOffset { 0 };
         unsigned m_typeProfilingStartOffset { UINT_MAX };
         unsigned m_typeProfilingEndOffset { UINT_MAX };
-        RefPtr<TypeSet> m_returnStatementTypeSet;
     };
 
     RareData& ensureRareData()

@@ -30,6 +30,7 @@
 #include "Debugger.h"
 #include "EvalCodeBlock.h"
 #include "FunctionCodeBlock.h"
+#include "GlobalExecutable.h"
 #include "IsoCellSetInlines.h"
 #include "JIT.h"
 #include "JSCInlines.h"
@@ -68,14 +69,10 @@ void ScriptExecutable::destroy(JSCell* cell)
 
 void ScriptExecutable::clearCode(IsoCellSet& clearableCodeSet)
 {
-#if ENABLE(JIT)
     m_jitCodeForCall = nullptr;
     m_jitCodeForConstruct = nullptr;
     m_jitCodeForCallWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
     m_jitCodeForConstructWithArityCheck = MacroAssemblerCodePtr<JSEntryPtrTag>();
-#endif
-    m_numParametersForCall = NUM_PARAMETERS_NOT_COMPILED;
-    m_numParametersForConstruct = NUM_PARAMETERS_NOT_COMPILED;
 
     switch (type()) {
     case FunctionExecutableType: {
@@ -180,12 +177,10 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     case CodeForCall:
         m_jitCodeForCall = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForCallWithArityCheck = nullptr;
-        m_numParametersForCall = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     case CodeForConstruct:
         m_jitCodeForConstruct = genericCodeBlock ? genericCodeBlock->jitCode() : nullptr;
         m_jitCodeForConstructWithArityCheck = nullptr;
-        m_numParametersForConstruct = genericCodeBlock ? genericCodeBlock->numParameters() : NUM_PARAMETERS_NOT_COMPILED;
         break;
     }
 
@@ -218,13 +213,11 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
 
 bool ScriptExecutable::hasClearableCode(VM& vm) const
 {
-#if ENABLE(JIT)
     if (m_jitCodeForCall
         || m_jitCodeForConstruct
         || m_jitCodeForCallWithArityCheck
         || m_jitCodeForConstructWithArityCheck)
         return true;
-#endif
 
     if (structure(vm)->classInfo() == FunctionExecutable::info()) {
         auto* executable = static_cast<const FunctionExecutable*>(this);
@@ -322,7 +315,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     DebuggerMode debuggerMode = globalObject->hasInteractiveDebugger() ? DebuggerOn : DebuggerOff;
     UnlinkedFunctionCodeBlock* unlinkedCodeBlock = 
         executable->m_unlinkedExecutable->unlinkedCodeBlockFor(
-            *vm, executable->m_source, kind, debuggerMode, error, 
+            *vm, executable->source(), kind, debuggerMode, error, 
             executable->parseMode());
     recordParse(
         executable->m_unlinkedExecutable->features(), 
@@ -331,7 +324,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
     if (!unlinkedCodeBlock) {
         exception = throwException(
             globalObject->globalExec(), throwScope,
-            error.toErrorObject(globalObject, executable->m_source));
+            error.toErrorObject(globalObject, executable->source()));
         return nullptr;
     }
 
@@ -459,7 +452,42 @@ unsigned ScriptExecutable::typeProfilingEndOffset(VM& vm) const
         return jsCast<const FunctionExecutable*>(this)->typeProfilingEndOffset(vm);
     if (inherits<EvalExecutable>(vm))
         return UINT_MAX;
-    return m_source.length() - 1;
+    return source().length() - 1;
+}
+
+void ScriptExecutable::recordParse(CodeFeatures features, bool hasCapturedVariables, int lastLine, unsigned endColumn)
+{
+    switch (type()) {
+    case FunctionExecutableType:
+        // Since UnlinkedFunctionExecutable holds the information to calculate lastLine and endColumn, we do not need to remember them in ScriptExecutable's fields.
+        jsCast<FunctionExecutable*>(this)->recordParse(features, hasCapturedVariables);
+        return;
+    default:
+        jsCast<GlobalExecutable*>(this)->recordParse(features, hasCapturedVariables, lastLine, endColumn);
+        return;
+    }
+}
+
+int ScriptExecutable::lastLine() const
+{
+    switch (type()) {
+    case FunctionExecutableType:
+        return jsCast<const FunctionExecutable*>(this)->lastLine();
+    default:
+        return jsCast<const GlobalExecutable*>(this)->lastLine();
+    }
+    return 0;
+}
+
+unsigned ScriptExecutable::endColumn() const
+{
+    switch (type()) {
+    case FunctionExecutableType:
+        return jsCast<const FunctionExecutable*>(this)->endColumn();
+    default:
+        return jsCast<const GlobalExecutable*>(this)->endColumn();
+    }
+    return 0;
 }
 
 } // namespace JSC

@@ -45,9 +45,9 @@ public:
     const SourceOrigin& sourceOrigin() const { return m_source.provider()->sourceOrigin(); }
     const String& sourceURL() const { return m_source.provider()->url(); }
     int firstLine() const { return m_source.firstLine().oneBasedInt(); }
-    int lastLine() const { return m_lastLine; }
+    JS_EXPORT_PRIVATE int lastLine() const;
     unsigned startColumn() const { return m_source.startColumn().oneBasedInt(); }
-    unsigned endColumn() const { return m_endColumn; }
+    JS_EXPORT_PRIVATE unsigned endColumn() const;
 
     Optional<int> overrideLineNumber(VM&) const;
     unsigned typeProfilingStartOffset(VM&) const;
@@ -81,15 +81,7 @@ public:
         
     DECLARE_EXPORT_INFO;
 
-    void recordParse(CodeFeatures features, bool hasCapturedVariables, int lastLine, unsigned endColumn)
-    {
-        m_features = features;
-        m_hasCapturedVariables = hasCapturedVariables;
-        m_lastLine = lastLine;
-        ASSERT(endColumn != UINT_MAX);
-        m_endColumn = endColumn;
-    }
-
+    void recordParse(CodeFeatures, bool hasCapturedVariables, int lastLine, unsigned endColumn);
     void installCode(CodeBlock*);
     void installCode(VM&, CodeBlock*, CodeType, CodeSpecializationKind);
     CodeBlock* newCodeBlockFor(CodeSpecializationKind, JSFunction*, JSScope*, Exception*&);
@@ -102,15 +94,13 @@ public:
         return m_intrinsic;
     }
 
-    static constexpr int NUM_PARAMETERS_NOT_COMPILED = -1;
-
     bool hasJITCodeForCall() const
     {
-        return m_numParametersForCall >= 0;
+        return m_jitCodeForCall;
     }
     bool hasJITCodeForConstruct() const
     {
-        return m_numParametersForConstruct >= 0;
+        return m_jitCodeForConstruct;
     }
 
     // This function has an interesting GC story. Callers of this function are asking us to create a CodeBlock
@@ -141,14 +131,13 @@ protected:
 #endif
     }
 
+    void recordParse(CodeFeatures features, bool hasCapturedVariables)
+    {
+        m_features = features;
+        m_hasCapturedVariables = hasCapturedVariables;
+    }
+
     SourceCode m_source;
-
-    int m_numParametersForCall { NUM_PARAMETERS_NOT_COMPILED };
-    int m_numParametersForConstruct { NUM_PARAMETERS_NOT_COMPILED };
-
-    int m_lastLine { -1 };
-    unsigned m_endColumn { UINT_MAX };
-
     Intrinsic m_intrinsic { NoIntrinsic };
     bool m_didTryToEnterInLoop { false };
     CodeFeatures m_features;

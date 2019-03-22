@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,33 +24,10 @@
  */
 
 #include "config.h"
-#include "EvalExecutable.h"
-
-#include "EvalCodeBlock.h"
-#include "JSCInlines.h"
+#include "GlobalExecutable.h"
 
 namespace JSC {
 
-const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(EvalExecutable) };
-
-EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext, DerivedContextType derivedContextType, bool isArrowFunctionContext, EvalContextType evalContextType)
-    : Base(exec->vm().evalExecutableStructure.get(), exec->vm(), source, inStrictContext, derivedContextType, isArrowFunctionContext, evalContextType, NoIntrinsic)
-{
-    ASSERT(source.provider()->sourceType() == SourceProviderSourceType::Program);
-}
-
-void EvalExecutable::destroy(JSCell* cell)
-{
-    static_cast<EvalExecutable*>(cell)->EvalExecutable::~EvalExecutable();
-}
-
-void EvalExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    EvalExecutable* thisObject = jsCast<EvalExecutable*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_unlinkedEvalCodeBlock);
-    visitor.append(thisObject->m_evalCodeBlock);
-}
+const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
 
 } // namespace JSC

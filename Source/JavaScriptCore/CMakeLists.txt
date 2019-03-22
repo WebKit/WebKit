@@ -803,6 +803,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h
     runtime/GetPutInfo.h
+    runtime/GlobalExecutable.h
     runtime/HashMapImpl.h
     runtime/Identifier.h
     runtime/IdentifierInlines.h

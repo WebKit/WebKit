@@ -1,5 +1,61 @@
 2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Shrink sizeof(FunctionExecutable) by 16bytes
+        https://bugs.webkit.org/show_bug.cgi?id=196122
+
+        Reviewed by Saam Barati.
+
+        This patch reduces sizeof(FunctionExecutable) by 16 bytes.
+
+        1. ScriptExecutable::m_numParametersForCall and ScriptExecutable::m_numParametersForConstruct are not used in a meaningful way. Removed them.
+        2. ScriptExecutable::m_lastLine and ScriptExecutable::m_endColumn can be calculated from UnlinkedFunctionExecutable. So FunctionExecutable does not need to hold it.
+           This patch adds GlobalExecutable, which are non-function ScriptExecutables, and move m_lastLine and m_endColumn to this class.
+        3. FunctionExecutable still needs to have the feature overriding m_lastLine and m_endColumn. We move overridden data in FunctionExecutable::RareData.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::link):
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        * runtime/EvalExecutable.h:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::FunctionExecutable::ensureRareDataSlow):
+        (JSC::FunctionExecutable::overrideInfo):
+        * runtime/FunctionExecutable.h:
+        * runtime/GlobalExecutable.cpp: Copied from Source/JavaScriptCore/tools/FunctionOverrides.h.
+        * runtime/GlobalExecutable.h: Copied from Source/JavaScriptCore/tools/FunctionOverrides.h.
+        (JSC::GlobalExecutable::lastLine const):
+        (JSC::GlobalExecutable::endColumn const):
+        (JSC::GlobalExecutable::recordParse):
+        (JSC::GlobalExecutable::GlobalExecutable):
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::ModuleProgramExecutable):
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::ProgramExecutable):
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::clearCode):
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::hasClearableCode const):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::typeProfilingEndOffset const):
+        (JSC::ScriptExecutable::recordParse):
+        (JSC::ScriptExecutable::lastLine const):
+        (JSC::ScriptExecutable::endColumn const):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::hasJITCodeForCall const):
+        (JSC::ScriptExecutable::hasJITCodeForConstruct const):
+        (JSC::ScriptExecutable::recordParse):
+        (JSC::ScriptExecutable::lastLine const): Deleted.
+        (JSC::ScriptExecutable::endColumn const): Deleted.
+        * tools/FunctionOverrides.h:
+
+2019-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Shrink sizeof(RegExpObject)
         https://bugs.webkit.org/show_bug.cgi?id=196130
 

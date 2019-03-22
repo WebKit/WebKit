@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,37 @@
 
 #pragma once
 
-#include "SourceCode.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
+#include "ExecutableToCodeBlockEdge.h"
+#include "ScriptExecutable.h"
 
 namespace JSC {
 
-class ScriptExecutable;
-
-struct FunctionOverrideInfo {
-    SourceCode sourceCode;
-    unsigned firstLine;
-    unsigned lineCount;
-    unsigned startColumn;
-    unsigned endColumn;
-    unsigned parametersStartOffset;
-    unsigned typeProfilingStartOffset;
-    unsigned typeProfilingEndOffset;
-};
-
-class FunctionOverrides {
+class GlobalExecutable : public ScriptExecutable {
 public:
-    using OverrideInfo = FunctionOverrideInfo;
+    using Base = ScriptExecutable;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
 
-    static FunctionOverrides& overrides();
-    FunctionOverrides(const char* functionOverridesFileName);
+    DECLARE_INFO;
 
-    static bool initializeOverrideFor(const SourceCode& origCode, OverrideInfo& result);
+    unsigned lastLine() const { return m_lastLine; }
+    unsigned endColumn() const { return m_endColumn; }
 
-    JS_EXPORT_PRIVATE static void reinstallOverrides();
+    void recordParse(CodeFeatures features, bool hasCapturedVariables, int lastLine, unsigned endColumn)
+    {
+        Base::recordParse(features, hasCapturedVariables);
+        m_lastLine = lastLine;
+        m_endColumn = endColumn;
+        ASSERT(endColumn != UINT_MAX);
+    }
 
-private:
-    void parseOverridesInFile(const char* fileName);
-    void clear() { m_entries.clear(); }
+protected:
+    GlobalExecutable(Structure* structure, VM& vm, const SourceCode& sourceCode, bool isInStrictContext, DerivedContextType derivedContextType, bool isInArrowFunctionContext, EvalContextType evalContextType, Intrinsic intrinsic)
+        : Base(structure, vm, sourceCode, isInStrictContext, derivedContextType, isInArrowFunctionContext, evalContextType, intrinsic)
+    {
+    }
 
-    HashMap<String, String> m_entries;
+    int m_lastLine { -1 };
+    unsigned m_endColumn { UINT_MAX };
 };
 
 } // namespace JSC
