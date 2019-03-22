@@ -215,6 +215,11 @@ static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contex
 - (void)setDelegate:(id <WKProcessGroupDelegate>)delegate
 {
     _delegate = delegate;
+
+    // If the client can observe when the connection to the WebProcess injected bundle is established, then we cannot
+    // safely delay the launch of the WebProcess until something is loaded in the Web view.
+    if ([delegate respondsToSelector:@selector(processGroup:didCreateConnectionToWebProcessPlugIn:)])
+        _processPool->disableDelayedWebProcessLaunch();
 }
 
 @end

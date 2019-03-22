@@ -1218,10 +1218,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // We do not support several WebsiteDataStores sharing a single process.
         ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());
-    } else if (WebKit::isInspectorProcessPool(*this)) {
-        // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
-        process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
-    } else {
+    } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
         if (!m_dummyProcessProxy) {
             auto dummyProcessProxy = WebProcessProxy::create(*this, WebsiteDataStore::createNonPersistent().get(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
@@ -1229,7 +1226,9 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             m_processes.append(WTFMove(dummyProcessProxy));
         }
         process = m_dummyProcessProxy;
-    }
+    } else
+        process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
+
     ASSERT(process);
 
     auto page = process->createWebPage(pageClient, WTFMove(pageConfiguration));

@@ -505,6 +505,8 @@ public:
     void setWebProcessHasUploads(WebCore::ProcessIdentifier);
     void clearWebProcessHasUploads(WebCore::ProcessIdentifier);
 
+    void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
+
 private:
     void platformInitialize();
 
@@ -785,6 +787,7 @@ private:
 
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesWithUploads;
     std::unique_ptr<ProcessAssertion> m_uiProcessUploadAssertion;
+    bool m_isDelayedWebProcessLaunchDisabled { false };
 };
 
 template<typename T>

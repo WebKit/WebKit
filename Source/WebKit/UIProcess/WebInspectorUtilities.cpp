@@ -82,6 +82,8 @@ WebProcessPool& inspectorProcessPool(unsigned inspectionLevel)
     if (!pool) {
         auto configuration = API::ProcessPoolConfiguration::createWithLegacyOptions();
         pool = &WebProcessPool::create(configuration.get()).leakRef();
+        // Do not delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
+        pool->disableDelayedWebProcessLaunch();
     }
     return *pool;
 }
