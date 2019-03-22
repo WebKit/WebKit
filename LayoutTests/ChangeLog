@@ -1,3 +1,15 @@
+2019-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening of plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=196150
+        
+        For reasons unknown, my machine and bots produce different results for these plug-in tests.
+        My machine behaves like the test plug-in does not exist.
+
+        * platform/mac-wk1/compositing/plugins/composited-plugin-expected.txt: Removed.
+        * platform/mac-wk1/compositing/plugins/no-backing-store-expected.txt: Removed.
+        * platform/mac-wk1/compositing/plugins/small-to-large-composited-plugin-expected.txt: Removed.
+
 2019-03-22  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Don't construct segments on PlaybackPipeline::flush
