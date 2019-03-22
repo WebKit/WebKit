@@ -42,8 +42,6 @@ namespace JSC {
 
 const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionExecutable) };
 
-static_assert(sizeof(FunctionExecutable) <= 128, "FunctionExecutable should fit in a 128-byte cell since it is so frequently allocated.");
-
 FunctionExecutable::FunctionExecutable(VM& vm, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, Intrinsic intrinsic)
     : ScriptExecutable(vm.functionExecutableStructure.get(), vm, source, unlinkedExecutable->isInStrictContext(), unlinkedExecutable->derivedContextType(), false, EvalContextType::None, intrinsic)
     , m_unlinkedExecutable(vm, this, unlinkedExecutable)
