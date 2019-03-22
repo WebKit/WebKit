@@ -43,6 +43,9 @@ public:
 
     CALayer *layer() const { return m_layer.get(); }
 
+    ScrollPositioningBehavior scrollPositioningBehavior() const { return m_constraints.scrollPositioningBehavior(); }
+    const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
+
 private:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);
 

@@ -121,27 +121,28 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndScroll()
 
 void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost& remoteLayerTreeHost)
 {
-    for (auto layerID : m_layersWithNonAncestorScrollingRelations) {
+    for (auto layerID : m_layersWithScrollingRelations) {
         if (auto* layerNode = remoteLayerTreeHost.nodeForID(layerID))
-            layerNode->clearNonAncestorScrollContainerIDs();
+            layerNode->setRelatedScrollContainerBehaviorAndIDs({ }, { });
     }
-    m_layersWithNonAncestorScrollingRelations.clear();
+    m_layersWithScrollingRelations.clear();
 
-    // Usually a scroll view scrolls its descendant layers. In some positioning cases it also controls non-descendants.
+    // Usually a scroll view scrolls its descendant layers. In some positioning cases it also controls non-descendants, or doesn't control a descendant.
     // To do overlap hit testing correctly we tell layers about such relations.
+    for (auto positionedNodeID : m_scrollingTree->positionedNodesWithRelatedOverflow()) {
+        auto* positionedNode = downcast<ScrollingTreePositionedNode>(m_scrollingTree->nodeForID(positionedNodeID));
+        auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
 
-    // FIXME: This doesn't contain ScrollPositioningBehavior::Stationary nodes. They will need to be handled too.
-    //        See https://bugs.webkit.org/show_bug.cgi?id=196100
-    for (auto& overflowAndPositionedNodeIDs : m_scrollingTree->overflowRelatedNodes()) {
-        auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowAndPositionedNodeIDs.key));
-        for (auto positionedNodeID : overflowAndPositionedNodeIDs.value) {
-            auto* positionedNode = downcast<ScrollingTreePositionedNode>(m_scrollingTree->nodeForID(positionedNodeID));
-            auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
+        Vector<GraphicsLayer::PlatformLayerID> scrollContainerLayerIDs;
 
-            positionedLayerNode->addNonAncestorScrollContainerID(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
-
-            m_layersWithNonAncestorScrollingRelations.add(positionedLayerNode->layerID());
+        for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
+            auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
+            scrollContainerLayerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
         }
+
+        positionedLayerNode->setRelatedScrollContainerBehaviorAndIDs(positionedNode->scrollPositioningBehavior(), WTFMove(scrollContainerLayerIDs));
+
+        m_layersWithScrollingRelations.add(positionedLayerNode->layerID());
     }
 }
 

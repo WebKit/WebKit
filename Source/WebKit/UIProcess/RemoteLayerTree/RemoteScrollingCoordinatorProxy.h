@@ -127,7 +127,7 @@ private:
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif
     bool m_propagatesMainFrameScrolls;
-    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithNonAncestorScrollingRelations;
+    HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_layersWithScrollingRelations;
 };
 
 } // namespace WebKit

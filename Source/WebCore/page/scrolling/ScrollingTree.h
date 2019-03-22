@@ -150,6 +150,8 @@ public:
     using RelatedNodesMap = HashMap<ScrollingNodeID, Vector<ScrollingNodeID>>;
     RelatedNodesMap& overflowRelatedNodes() { return m_overflowRelatedNodesMap; }
 
+    HashSet<ScrollingNodeID>& positionedNodesWithRelatedOverflow() { return m_positionedNodesWithRelatedOverflow; }
+
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
     
 protected:
@@ -173,6 +175,7 @@ private:
     ScrollingTreeNodeMap m_nodeMap;
 
     RelatedNodesMap m_overflowRelatedNodesMap;
+    HashSet<ScrollingNodeID> m_positionedNodesWithRelatedOverflow;
 
     struct TreeState {
         ScrollingNodeID latchedNodeID { 0 };

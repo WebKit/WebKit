@@ -1,3 +1,14 @@
+2019-03-22  Antti Koivisto  <antti@apple.com>
+
+        Handle UI side hit testing for ScrollPositioningBehavior::Stationary positioned nodes
+        https://bugs.webkit.org/show_bug.cgi?id=196100
+        <rdar://problem/49117933>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-6-expected.txt: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-6.html: Added.
+
 2019-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed test gardening of plugin tests

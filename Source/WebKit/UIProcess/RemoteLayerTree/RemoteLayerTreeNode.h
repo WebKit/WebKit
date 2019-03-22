@@ -59,10 +59,10 @@ public:
     const WebCore::Region& eventRegion() const { return m_eventRegion; }
     void setEventRegion(const WebCore::Region&);
 
-    // If empty the layer is scrolled by an ancestor scroller.
-    const auto& nonAncestorScrollContainerIDs() const { return m_nonAncestorScrollLayerIDs; }
-    void addNonAncestorScrollContainerID(WebCore::GraphicsLayer::PlatformLayerID layerID) { m_nonAncestorScrollLayerIDs.append(layerID); }
-    void clearNonAncestorScrollContainerIDs() { m_nonAncestorScrollLayerIDs.clear(); }
+    // If empty the layer is scrolled normally by an ancestor scroller.
+    const auto& relatedScrollContainerIDs() const { return m_relatedScrollContainerIDs; }
+    WebCore::ScrollPositioningBehavior relatedScrollContainerPositioningBehavior() const { return m_relatedScrollContainerPositioningBehavior; }
+    void setRelatedScrollContainerBehaviorAndIDs(WebCore::ScrollPositioningBehavior, Vector<WebCore::GraphicsLayer::PlatformLayerID>&&);
 
     void detachFromParent();
 
@@ -82,7 +82,9 @@ private:
 #endif
 
     WebCore::Region m_eventRegion;
-    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_nonAncestorScrollLayerIDs;
+
+    Vector<WebCore::GraphicsLayer::PlatformLayerID> m_relatedScrollContainerIDs;
+    WebCore::ScrollPositioningBehavior m_relatedScrollContainerPositioningBehavior { WebCore::ScrollPositioningBehavior::None };
 };
 
 }

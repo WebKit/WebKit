@@ -74,8 +74,16 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
             return true;
 
         auto* node = RemoteLayerTreeNode::forCALayer(view.layer);
-        if (node && scrollLayerID && node->nonAncestorScrollContainerIDs().contains(scrollLayerID))
-            return true;
+        if (node && scrollLayerID && node->relatedScrollContainerIDs().contains(scrollLayerID)) {
+            switch (node->relatedScrollContainerPositioningBehavior()) {
+            case WebCore::ScrollPositioningBehavior::Moves:
+                return true;
+            case WebCore::ScrollPositioningBehavior::Stationary:
+                return false;
+            case WebCore::ScrollPositioningBehavior::None:
+                ASSERT_NOT_REACHED();
+            }
+        }
     }
 
     return false;

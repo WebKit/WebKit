@@ -72,6 +72,8 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
             }).iterator->value.append(scrollingNodeID());
         }
     }
+    if (!m_relatedOverflowScrollingNodes.isEmpty() && m_constraints.scrollPositioningBehavior() != ScrollPositioningBehavior::None)
+        scrollingTree().positionedNodesWithRelatedOverflow().add(scrollingNodeID());
 }
 
 void ScrollingTreePositionedNode::applyLayerPositions(const FloatRect&, FloatSize& cumulativeDelta)

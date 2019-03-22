@@ -1,3 +1,33 @@
+2019-03-22  Antti Koivisto  <antti@apple.com>
+
+        Handle UI side hit testing for ScrollPositioningBehavior::Stationary positioned nodes
+        https://bugs.webkit.org/show_bug.cgi?id=196100
+        <rdar://problem/49117933>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/scrolling/ios/overflow-scroll-overlap-6.html
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.h:
+        (WebKit::RemoteLayerTreeNode::relatedScrollContainerIDs const):
+        (WebKit::RemoteLayerTreeNode::relatedScrollContainerPositioningBehavior const):
+
+        Make more generic and save the associated positioning behavior.
+
+        (WebKit::RemoteLayerTreeNode::nonAncestorScrollContainerIDs const): Deleted.
+        (WebKit::RemoteLayerTreeNode::addNonAncestorScrollContainerID): Deleted.
+        (WebKit::RemoteLayerTreeNode::clearNonAncestorScrollContainerIDs): Deleted.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeNode.mm:
+        (WebKit::RemoteLayerTreeNode::setRelatedScrollContainerBehaviorAndIDs):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::isScrolledBy):
+
+        Stationary relationship means the layer won't scroll the scroller.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+
 2019-03-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r243094): ePub files do not render or open in Books
