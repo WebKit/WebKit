@@ -1,3 +1,9 @@
+2019-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r243388.
+
+        * WebProcess/WebProcess.h:
+
 2019-03-22  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix sandbox violation

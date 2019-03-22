@@ -425,7 +425,9 @@ private:
 
 #if PLATFORM(IOS)
     void backlightLevelDidChange(float backlightLevel);
+#endif
 
+#if PLATFORM(IOS_FAMILY)
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif
