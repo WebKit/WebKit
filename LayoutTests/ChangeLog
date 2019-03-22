@@ -2,6 +2,14 @@
 
         Unreviewed test gardening.
 
+        Fix this test by turning on async scrolling so that mock scrollbars don't show up.
+
+        * fast/scrolling/ios/overflow-scrolling-touch-disabled-stacking-expected.html:
+
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed test gardening.
+
         Revert some iOS layout test results that were rebaselined with async scrolling enabled.
 
         * platform/ios-wk2/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Removed.
