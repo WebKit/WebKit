@@ -52,10 +52,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVVideoWidthKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVVideoHeightKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeVideo, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeAudio, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVEncoderBitRateKey, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVFormatIDKey, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVNumberOfChannelsKey, NSString *)
-SOFT_LINK_CONSTANT(AVFoundation, AVSampleRateKey, NSString *)
 
 SOFT_LINK_CONSTANT(AVFoundation, AVVideoExpectedSourceFrameRateKey, NSString *)
 SOFT_LINK_CONSTANT(AVFoundation, AVVideoProfileLevelKey, NSString *)
@@ -71,10 +67,6 @@ SOFT_LINK_CONSTANT(AVFoundation, AVVideoCompressionPropertiesKey, NSString *)
 #define AVVideoCodecH264 getAVVideoCodecH264()
 #define AVVideoWidthKey getAVVideoWidthKey()
 #define AVVideoHeightKey getAVVideoHeightKey()
-#define AVEncoderBitRateKey getAVEncoderBitRateKey()
-#define AVFormatIDKey getAVFormatIDKey()
-#define AVNumberOfChannelsKey getAVNumberOfChannelsKey()
-#define AVSampleRateKey getAVSampleRateKey()
 
 #define AVVideoExpectedSourceFrameRateKey getAVVideoExpectedSourceFrameRateKey()
 #define AVVideoProfileLevelKey getAVVideoProfileLevelKey()
@@ -83,9 +75,55 @@ SOFT_LINK_CONSTANT(AVFoundation, AVVideoCompressionPropertiesKey, NSString *)
 #define AVVideoProfileLevelH264MainAutoLevel getAVVideoProfileLevelH264MainAutoLevel()
 #define AVVideoCompressionPropertiesKey getAVVideoCompressionPropertiesKey()
 
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVEncoderBitRateKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVFormatIDKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVNumberOfChannelsKey, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVSampleRateKey, NSString *)
+
+#define AVEncoderBitRateKey getAVEncoderBitRateKeyWithFallback()
+#define AVFormatIDKey getAVFormatIDKeyWithFallback()
+#define AVNumberOfChannelsKey getAVNumberOfChannelsKeyWithFallback()
+#define AVSampleRateKey getAVSampleRateKeyWithFallback()
+
 namespace WebCore {
 
 using namespace PAL;
+
+static NSString *getAVFormatIDKeyWithFallback()
+{
+    if (canLoadAVFormatIDKey())
+        return getAVFormatIDKey();
+
+    RELEASE_LOG_ERROR(Media, "Failed to load AVFormatIDKey");
+    return @"AVFormatIDKey";
+}
+
+static NSString *getAVNumberOfChannelsKeyWithFallback()
+{
+    if (canLoadAVNumberOfChannelsKey())
+        return getAVNumberOfChannelsKey();
+
+    RELEASE_LOG_ERROR(Media, "Failed to load AVNumberOfChannelsKey");
+    return @"AVNumberOfChannelsKey";
+}
+
+static NSString *getAVSampleRateKeyWithFallback()
+{
+    if (canLoadAVSampleRateKey())
+        return getAVSampleRateKey();
+
+    RELEASE_LOG_ERROR(Media, "Failed to load AVSampleRateKey");
+    return @"AVSampleRateKey";
+}
+
+static NSString *getAVEncoderBitRateKeyWithFallback()
+{
+    if (canLoadAVEncoderBitRateKey())
+        return getAVEncoderBitRateKey();
+
+    RELEASE_LOG_ERROR(Media, "Failed to load AVEncoderBitRateKey");
+    return @"AVEncoderBitRateKey";
+}
 
 RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(const MediaStreamTrackPrivate* audioTrack, const MediaStreamTrackPrivate* videoTrack)
 {
