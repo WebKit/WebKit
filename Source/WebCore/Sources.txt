@@ -2273,7 +2273,6 @@ svg/SVGAnimatedAngle.cpp
 svg/SVGAnimatedEnumeration.cpp
 svg/SVGAnimatedLength.cpp
 svg/SVGAnimatedLengthList.cpp
-svg/SVGAnimatedNumberList.cpp
 svg/SVGAnimatedPath.cpp
 svg/SVGAnimatedTransformList.cpp
 svg/SVGAnimatedTypeAnimator.cpp
@@ -2349,7 +2348,6 @@ svg/SVGMarkerElement.cpp
 svg/SVGMaskElement.cpp
 svg/SVGMetadataElement.cpp
 svg/SVGMissingGlyphElement.cpp
-svg/SVGNumberListValues.cpp
 svg/SVGParserUtilities.cpp
 svg/SVGPathBlender.cpp
 svg/SVGPathBuilder.cpp

@@ -31,7 +31,6 @@
 #include "SVGLengthListValues.h"
 #include "SVGLengthValue.h"
 #include "SVGMarkerTypes.h"
-#include "SVGNumberListValues.h"
 #include "SVGPathByteStream.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGPropertyTraits.h"
@@ -46,7 +45,6 @@ using SVGValueVariant = Variant<
     unsigned*,
     SVGLengthValue*,
     SVGLengthListValues*,
-    SVGNumberListValues*,
     SVGPathByteStream*,
     SVGTransformListValues*
 >;

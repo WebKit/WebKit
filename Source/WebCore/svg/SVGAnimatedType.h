@@ -115,7 +115,6 @@ public:
             AnimatedEnumeration,
             AnimatedLength,
             AnimatedLengthList,
-            AnimatedNumberList,
             AnimatedPath,
             AnimatedTransformList
         };

@@ -1,3 +1,89 @@
+2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGNumber, SVGNumberList and SVGAnimatedNumberList
+        https://bugs.webkit.org/show_bug.cgi?id=196084
+
+        Reviewed by Simon Fraser.
+
+        To remove the tear off objects for these interfaces, we need to do the
+        following:
+
+        -- SVGNumber will be a superclass of SVGValueProperty<float>. It provides
+           the DOM interface functions.
+
+        -- SVGNumberList will be a superclass of SVGValuePropertyList<SVGNumber>.
+           It provides creation, parsing and converting to string functions.
+
+        -- SVGAnimatedNumberList will be defined as SVGAnimatedPropertyList<SVGNumberList>.
+
+        To make things work as expected:
+
+        -- Properties of type SVGAnimatedNumberList have to be registered with
+           SVGPropertyOwnerRegistry.
+        -- An accessor, an animator and an animation function should be defined
+           for SVGAnimatedNumberList.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp:
+        (WebCore::updateCharacterData):
+        (WebCore::SVGTextLayoutAttributesBuilder::fillCharacterDataMap):
+        * svg/SVGAnimatedNumberList.cpp: Removed.
+        * svg/SVGAnimatedNumberList.h: Removed.
+        * svg/SVGAnimatedPointList.cpp: Removed.
+        * svg/SVGAnimatedPointList.h: Removed.
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::type const):
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::registerAttributes):
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGComponentTransferFunctionElement::tableValues const):
+        (WebCore::SVGComponentTransferFunctionElement::tableValuesAnimated):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::registerAttributes):
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        (WebCore::SVGFEColorMatrixElement::build const):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::build const):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGNumber.h:
+        (WebCore::SVGNumber::create):
+        (WebCore::SVGNumber::clone const):
+        (WebCore::SVGNumber::valueForBindings):
+        (WebCore::SVGNumber::setValueForBindings):
+        (WebCore::SVGNumber::SVGNumber): Deleted.
+        * svg/SVGNumberList.h:
+        (WebCore::SVGNumberList::create):
+        (WebCore::SVGNumberList::parse):
+        (WebCore::SVGNumberList::SVGNumberList): Deleted.
+        * svg/SVGNumberListValues.cpp: Removed.
+        * svg/SVGNumberListValues.h: Removed.
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::SVGTextPositioningElement):
+        (WebCore::SVGTextPositioningElement::registerAttributes):
+        (WebCore::SVGTextPositioningElement::parseAttribute):
+        * svg/SVGTextPositioningElement.h:
+        (WebCore::SVGTextPositioningElement::rotate const):
+        (WebCore::SVGTextPositioningElement::rotateAnimated):
+        * svg/SVGValue.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimationAdditiveListFunctionImpl.h:
+        (WebCore::SVGAnimationNumberListFunction::progress):
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
 2019-03-21  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Safari Canvas Inspector seems to show the canvas being rendered twice per frame.

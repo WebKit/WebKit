@@ -99,6 +99,28 @@ private:
 };
 
 template<typename OwnerType>
+class SVGAnimatedNumberListAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumberList> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumberList>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedNumberList> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberListAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedNumberListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedNumberListAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType>
 class SVGAnimatedPointListAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPointList> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPointList>;
     using Base::property;

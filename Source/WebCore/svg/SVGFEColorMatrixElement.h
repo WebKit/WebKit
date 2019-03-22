@@ -23,7 +23,6 @@
 
 #include "FEColorMatrix.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumberList.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -72,11 +71,11 @@ public:
 
     String in1() const { return m_in1->currentValue(); }
     ColorMatrixType type() const { return m_type.currentValue(attributeOwnerProxy()); }
-    const SVGNumberListValues& values() const { return m_values.currentValue(attributeOwnerProxy()); }
+    const SVGNumberList& values() const { return m_values->currentValue(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
     RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumberList> valuesAnimated() { return m_values.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumberList& valuesAnimated() { return m_values; }
 
 private:
     SVGFEColorMatrixElement(const QualifiedName&, Document&);
@@ -104,7 +103,7 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     SVGAnimatedEnumerationAttribute<ColorMatrixType> m_type { FECOLORMATRIX_TYPE_MATRIX };
-    SVGAnimatedNumberListAttribute m_values;
+    Ref<SVGAnimatedNumberList> m_values { SVGAnimatedNumberList::create(this) };
 };
 
 } // namespace WebCore

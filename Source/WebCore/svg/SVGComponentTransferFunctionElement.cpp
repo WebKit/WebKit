@@ -24,7 +24,6 @@
 
 #include "SVGFEComponentTransferElement.h"
 #include "SVGNames.h"
-#include "SVGNumberListValues.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -39,6 +38,7 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::tableValuesAttr, &SVGComponentTransferFunctionElement::m_tableValues>();
         PropertyRegistry::registerProperty<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope>();
         PropertyRegistry::registerProperty<SVGNames::interceptAttr, &SVGComponentTransferFunctionElement::m_intercept>();
         PropertyRegistry::registerProperty<SVGNames::amplitudeAttr, &SVGComponentTransferFunctionElement::m_amplitude>();
@@ -53,7 +53,6 @@ void SVGComponentTransferFunctionElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::typeAttr, ComponentTransferType, &SVGComponentTransferFunctionElement::m_type>();
-    registry.registerAttribute<SVGNames::tableValuesAttr, &SVGComponentTransferFunctionElement::m_tableValues>();
 }
 
 void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -66,10 +65,7 @@ void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& na
     }
 
     if (name == SVGNames::tableValuesAttr) {
-        SVGNumberListValues newList;
-        newList.parse(value);
-        m_tableValues.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_tableValues.setValue(WTFMove(newList));
+        m_tableValues->baseVal()->parse(value);
         return;
     }
 

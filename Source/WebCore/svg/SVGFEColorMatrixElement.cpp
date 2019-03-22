@@ -40,6 +40,7 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEColorMatrixElement::m_in1>();
+        PropertyRegistry::registerProperty<SVGNames::valuesAttr, &SVGFEColorMatrixElement::m_values>();
     });
 }
 
@@ -54,7 +55,6 @@ void SVGFEColorMatrixElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::typeAttr, ColorMatrixType, &SVGFEColorMatrixElement::m_type>();
-    registry.registerAttribute<SVGNames::valuesAttr, &SVGFEColorMatrixElement::m_values>();
 }
 
 void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -72,10 +72,7 @@ void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const At
     }
 
     if (name == SVGNames::valuesAttr) {
-        SVGNumberListValues newList;
-        newList.parse(value);
-        m_values.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_values.setValue(WTFMove(newList));
+        m_values->baseVal()->parse(value);
         return;
     }
 
@@ -138,13 +135,14 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuil
             break;
         }
     } else {
-        filterValues = values();
-        unsigned size = filterValues.size();
+        unsigned size = values().size();
 
         if ((filterType == FECOLORMATRIX_TYPE_MATRIX && size != 20)
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)
             || (filterType == FECOLORMATRIX_TYPE_SATURATE && size != 1))
             return nullptr;
+        
+        filterValues = values();
     }
 
     auto effect = FEColorMatrix::create(filter, filterType, filterValues);

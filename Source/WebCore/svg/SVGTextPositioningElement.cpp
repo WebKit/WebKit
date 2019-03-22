@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,6 @@
 #include "SVGAltGlyphElement.h"
 #include "SVGLengthListValues.h"
 #include "SVGNames.h"
-#include "SVGNumberListValues.h"
 #include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
 #include "SVGTextElement.h"
@@ -43,6 +42,11 @@ SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagNam
     : SVGTextContentElement(tagName, document)
 {
     registerAttributes();
+    
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::rotateAttr, &SVGTextPositioningElement::m_rotate>();
+    });
 }
 
 void SVGTextPositioningElement::registerAttributes()
@@ -54,7 +58,6 @@ void SVGTextPositioningElement::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGTextPositioningElement::m_y>();
     registry.registerAttribute<SVGNames::dxAttr, &SVGTextPositioningElement::m_dx>();
     registry.registerAttribute<SVGNames::dyAttr, &SVGTextPositioningElement::m_dy>();
-    registry.registerAttribute<SVGNames::rotateAttr, &SVGTextPositioningElement::m_rotate>();
 }
 
 void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -92,10 +95,7 @@ void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const 
     }
 
     if (name == SVGNames::rotateAttr) {
-        SVGNumberListValues newList;
-        newList.parse(value);
-        m_rotate.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_rotate.setValue(WTFMove(newList));
+        m_rotate->baseVal()->parse(value);
         return;
     }
 

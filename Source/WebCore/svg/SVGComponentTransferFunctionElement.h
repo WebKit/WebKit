@@ -23,7 +23,6 @@
 
 #include "FEComponentTransfer.h"
 #include "SVGAnimatedEnumeration.h"
-#include "SVGAnimatedNumberList.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -75,7 +74,7 @@ public:
     ComponentTransferFunction transferFunction() const;
 
     ComponentTransferType type() const { return m_type.currentValue(attributeOwnerProxy()); }
-    const SVGNumberListValues& tableValues() const { return m_tableValues.currentValue(attributeOwnerProxy()); }
+    const SVGNumberList& tableValues() const { return m_tableValues->currentValue(); }
     float slope() const { return m_slope->currentValue(); }
     float intercept() const { return m_intercept->currentValue(); }
     float amplitude() const { return m_amplitude->currentValue(); }
@@ -83,7 +82,7 @@ public:
     float offset() const { return m_offset->currentValue(); }
 
     RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumberList> tableValuesAnimated() { return m_tableValues.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumberList& tableValuesAnimated() { return m_tableValues; }
     SVGAnimatedNumber& slopeAnimated() { return m_slope; }
     SVGAnimatedNumber& interceptAnimated() { return m_intercept; }
     SVGAnimatedNumber& amplitudeAnimated() { return m_amplitude; }
@@ -115,7 +114,7 @@ private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedEnumerationAttribute<ComponentTransferType> m_type { FECOMPONENTTRANSFER_TYPE_IDENTITY };
-    SVGAnimatedNumberListAttribute m_tableValues;
+    Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
     Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
     Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_amplitude { SVGAnimatedNumber::create(this, 1) };

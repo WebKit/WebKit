@@ -47,6 +47,7 @@
     shouldThrow("text1.rotate.baseVal.insertItemBefore(null)");
 
     shouldBe("text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), 'aString')", "text1.rotate.baseVal.getItem(0)");
+    shouldBeEqualToString("text1.rotate.baseVal.removeItem(2).toString()", "[object SVGNumber]");
     shouldBe("text1.rotate.baseVal.numberOfItems", "3");
     shouldBe("text1.rotate.baseVal.getItem(0).value", "180");
     shouldBe("text1.rotate.baseVal.getItem(1).value", "90");
@@ -54,6 +55,7 @@
     shouldBeEqualToString("text1.getAttribute('rotate')", "180 90 270");
 
     shouldBe("text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), text1)", "text1.rotate.baseVal.getItem(0)");
+    shouldBeEqualToString("text1.rotate.baseVal.removeItem(2).toString()", "[object SVGNumber]");
     shouldBe("text1.rotate.baseVal.numberOfItems", "3");
     shouldBe("text1.rotate.baseVal.getItem(0).value", "90");
     shouldBe("text1.rotate.baseVal.getItem(1).value", "180");
@@ -61,6 +63,7 @@
     shouldBeEqualToString("text1.getAttribute('rotate')", "90 180 270");
 
     shouldBe("text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), null)", "text1.rotate.baseVal.getItem(0)");
+    shouldBeEqualToString("text1.rotate.baseVal.removeItem(2).toString()", "[object SVGNumber]");
     shouldBe("text1.rotate.baseVal.numberOfItems", "3");
     shouldBe("text1.rotate.baseVal.getItem(0).value", "180");
     shouldBe("text1.rotate.baseVal.getItem(1).value", "90");
@@ -68,6 +71,7 @@
     shouldBeEqualToString("text1.getAttribute('rotate')", "180 90 270");
 
     shouldBe("text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), 0)", "text1.rotate.baseVal.getItem(0)");
+    shouldBeEqualToString("text1.rotate.baseVal.removeItem(2).toString()", "[object SVGNumber]");
     shouldBe("text1.rotate.baseVal.numberOfItems", "3");
     shouldBe("text1.rotate.baseVal.getItem(0).value", "90");
     shouldBe("text1.rotate.baseVal.getItem(1).value", "180");

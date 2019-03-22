@@ -1,3 +1,17 @@
+2019-03-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGNumber, SVGNumberList and SVGAnimatedNumberList
+        https://bugs.webkit.org/show_bug.cgi?id=196084
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGNumberList-basics.xhtml:
+        This change is required because SVGNumberList will be following the SVG2
+        specs regarding adding new items to the list. 
+
+        See https://www.w3.org/TR/SVG/types.html#TermListInterface.
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         WebKit1 test gardening.

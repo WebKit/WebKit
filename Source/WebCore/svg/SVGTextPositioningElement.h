@@ -22,7 +22,6 @@
 #pragma once
 
 #include "SVGAnimatedLengthList.h"
-#include "SVGAnimatedNumberList.h"
 #include "SVGTextContentElement.h"
 
 namespace WebCore {
@@ -41,13 +40,13 @@ public:
     const SVGLengthListValues& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthListValues& dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
     const SVGLengthListValues& dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
-    const SVGNumberListValues& rotate() const { return m_rotate.currentValue(attributeOwnerProxy()); }
+    const SVGNumberList& rotate() const { return m_rotate->currentValue(); }
 
     RefPtr<SVGAnimatedLengthList> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLengthList> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLengthList> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLengthList> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedNumberList> rotateAnimated() { return m_rotate.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedNumberList& rotateAnimated() { return m_rotate; }
 
 protected:
     SVGTextPositioningElement(const QualifiedName&, Document&);
@@ -75,7 +74,7 @@ private:
     SVGAnimatedLengthListAttribute m_y;
     SVGAnimatedLengthListAttribute m_dx;
     SVGAnimatedLengthListAttribute m_dy;
-    SVGAnimatedNumberListAttribute m_rotate;
+    Ref<SVGAnimatedNumberList> m_rotate { SVGAnimatedNumberList::create(this) };
 };
 
 } // namespace WebCore

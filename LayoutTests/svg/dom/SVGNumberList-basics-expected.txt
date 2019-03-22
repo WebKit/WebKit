@@ -26,24 +26,28 @@ PASS text1.rotate.baseVal.insertItemBefore('aString') threw exception TypeError:
 PASS text1.rotate.baseVal.insertItemBefore(text1) threw exception TypeError: Not enough arguments.
 PASS text1.rotate.baseVal.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), 'aString') is text1.rotate.baseVal.getItem(0)
+PASS text1.rotate.baseVal.removeItem(2).toString() is "[object SVGNumber]"
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 180
 PASS text1.rotate.baseVal.getItem(1).value is 90
 PASS text1.rotate.baseVal.getItem(2).value is 270
 PASS text1.getAttribute('rotate') is "180 90 270"
 PASS text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), text1) is text1.rotate.baseVal.getItem(0)
+PASS text1.rotate.baseVal.removeItem(2).toString() is "[object SVGNumber]"
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 90
 PASS text1.rotate.baseVal.getItem(1).value is 180
 PASS text1.rotate.baseVal.getItem(2).value is 270
 PASS text1.getAttribute('rotate') is "90 180 270"
 PASS text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), null) is text1.rotate.baseVal.getItem(0)
+PASS text1.rotate.baseVal.removeItem(2).toString() is "[object SVGNumber]"
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 180
 PASS text1.rotate.baseVal.getItem(1).value is 90
 PASS text1.rotate.baseVal.getItem(2).value is 270
 PASS text1.getAttribute('rotate') is "180 90 270"
 PASS text1.rotate.baseVal.insertItemBefore(text1.rotate.baseVal.getItem(1), 0) is text1.rotate.baseVal.getItem(0)
+PASS text1.rotate.baseVal.removeItem(2).toString() is "[object SVGNumber]"
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 90
 PASS text1.rotate.baseVal.getItem(1).value is 180

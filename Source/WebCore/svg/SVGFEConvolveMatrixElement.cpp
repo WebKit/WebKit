@@ -27,7 +27,6 @@
 #include "IntSize.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
-#include "SVGNumberListValues.h"
 #include "SVGParserUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -45,6 +44,7 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEConvolveMatrixElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::orderAttr, &SVGFEConvolveMatrixElement::m_orderX, &SVGFEConvolveMatrixElement::m_orderY>();
+        PropertyRegistry::registerProperty<SVGNames::kernelMatrixAttr, &SVGFEConvolveMatrixElement::m_kernelMatrix>();
         PropertyRegistry::registerProperty<SVGNames::divisorAttr, &SVGFEConvolveMatrixElement::m_divisor>();
         PropertyRegistry::registerProperty<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
         PropertyRegistry::registerProperty<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
@@ -64,7 +64,6 @@ void SVGFEConvolveMatrixElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::kernelMatrixAttr, &SVGFEConvolveMatrixElement::m_kernelMatrix>();
     registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
 }
 
@@ -95,10 +94,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     }
 
     if (name == SVGNames::kernelMatrixAttr) {
-        SVGNumberListValues newList;
-        newList.parse(value);
-        m_kernelMatrix.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_kernelMatrix.setValue(WTFMove(newList));
+        m_kernelMatrix->baseVal()->parse(value);
         return;
     }
 
@@ -219,7 +215,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
     if (orderXValue < 1 || orderYValue < 1)
         return nullptr;
     auto& kernelMatrix = this->kernelMatrix();
-    int kernelMatrixSize = kernelMatrix.size();
+    int kernelMatrixSize = kernelMatrix.items().size();
     // The spec says this is a requirement, and should bail out if fails
     if (orderXValue * orderYValue != kernelMatrixSize)
         return nullptr;
@@ -252,7 +248,7 @@ RefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterB
         return nullptr;
     if (!hasAttribute(SVGNames::divisorAttr)) {
         for (int i = 0; i < kernelMatrixSize; ++i)
-            divisorValue += kernelMatrix.at(i);
+            divisorValue += kernelMatrix.items()[i]->value();
         if (!divisorValue)
             divisorValue = 1;
     }

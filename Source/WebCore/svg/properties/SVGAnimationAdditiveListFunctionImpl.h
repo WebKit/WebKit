@@ -32,6 +32,56 @@ namespace WebCore {
 
 class SVGElement;
 
+class SVGAnimationNumberListFunction : public SVGAnimationAdditiveListFunction<SVGNumberList> {
+public:
+    using Base = SVGAnimationAdditiveListFunction<SVGNumberList>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from->parse(from);
+        m_to->parse(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
+    {
+        if (!adjustAnimatedList(m_animationMode, percentage, animated))
+            return;
+
+        auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
+        auto& toItems = m_to->items();
+        auto& toAtEndOfDurationItems = toAtEndOfDuration()->items();
+        auto& animatedItems = animated->items();
+
+        for (unsigned i = 0; i < toItems.size(); ++i) {
+            float from = i < fromItems.size() ? fromItems[i]->value() : 0;
+            float to = toItems[i]->value();
+            float toAtEndOfDuration = i < toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[i]->value() : 0;
+
+            float& value = animatedItems[i]->value();
+            value = Base::progress(percentage, repeatCount, from, to, toAtEndOfDuration, value);
+        }
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        const Vector<Ref<SVGNumber>>& fromItems = m_from->items();
+        Vector<Ref<SVGNumber>>& toItems = m_to->items();
+
+        if (!fromItems.size() || fromItems.size() != toItems.size())
+            return;
+
+        for (unsigned i = 0; i < fromItems.size(); ++i)
+            toItems[i]->setValue(fromItems[i]->value() + toItems[i]->value());
+    }
+};
+
 class SVGAnimationPointListFunction : public SVGAnimationAdditiveListFunction<SVGPointList> {
 public:
     using Base = SVGAnimationAdditiveListFunction<SVGPointList>;
@@ -53,10 +103,10 @@ public:
         if (!adjustAnimatedList(m_animationMode, percentage, animated))
             return;
 
-        const Vector<Ref<SVGPoint>>& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
-        const Vector<Ref<SVGPoint>>& toItems = m_to->items();
-        const Vector<Ref<SVGPoint>>& toAtEndOfDurationItems = toAtEndOfDuration()->items();
-        Vector<Ref<SVGPoint>>& animatedItems = animated->items();
+        auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
+        auto& toItems = m_to->items();
+        auto& toAtEndOfDurationItems = toAtEndOfDuration()->items();
+        auto& animatedItems = animated->items();
 
         for (unsigned i = 0; i < toItems.size(); ++i) {
             FloatPoint from = i < fromItems.size() ? fromItems[i]->value() : FloatPoint();
