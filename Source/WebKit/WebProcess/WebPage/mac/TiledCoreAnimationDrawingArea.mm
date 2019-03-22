@@ -75,12 +75,9 @@ using namespace WebCore;
 
 TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaTypeTiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
-    , m_layerTreeStateIsFrozen(false)
-    , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
-    , m_transientZoomScale(1)
-    , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
-    , m_viewOverlayRootLayer(nullptr)
     , m_layerFlushThrottlingTimer(*this, &TiledCoreAnimationDrawingArea::layerFlushThrottlingTimerFired)
+    , m_sendDidUpdateActivityStateTimer(RunLoop::main(), this, &TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired)
+    , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
     m_webPage.corePage()->settings().setForceCompositingMode(true);
 
@@ -698,7 +695,6 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
 
     bool hadRootLayer = !!m_rootLayer;
     m_rootLayer = layer;
-    [m_rootLayer setSublayerTransform:m_transform];
 
     updateRootLayers();
 

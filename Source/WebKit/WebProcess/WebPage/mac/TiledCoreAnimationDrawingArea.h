@@ -136,28 +136,25 @@ private:
     void startLayerFlushThrottlingTimer();
     void layerFlushThrottlingTimerFired();
 
-    bool m_layerTreeStateIsFrozen;
-
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
 
     RetainPtr<CALayer> m_hostingLayer;
     RetainPtr<CALayer> m_rootLayer;
     RetainPtr<CALayer> m_debugInfoLayer;
-
     RetainPtr<CALayer> m_pendingRootLayer;
-
-    bool m_isPaintingSuspended;
 
     Optional<WebCore::FloatRect> m_viewExposedRect;
     Optional<WebCore::FloatRect> m_scrolledViewExposedRect;
 
-    WebCore::IntSize m_lastSentIntrinsicContentSize;
-    bool m_inUpdateGeometry;
+    WebCore::IntSize m_lastViewSizeForScaleToFit;
+    WebCore::IntSize m_lastDocumentSizeForScaleToFit;
 
-    double m_transientZoomScale;
+    WebCore::IntSize m_lastSentIntrinsicContentSize;
+
+    double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;
 
-    WebCore::TransformationMatrix m_transform;
+    WebCore::Timer m_layerFlushThrottlingTimer;
 
     RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
     Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
@@ -165,21 +162,19 @@ private:
 
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 
-    bool m_shouldScaleViewToFitDocument { false };
-    bool m_isScalingViewToFitDocument { false };
-    WebCore::IntSize m_lastViewSizeForScaleToFit;
-    WebCore::IntSize m_lastDocumentSizeForScaleToFit;
-
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedLayoutMilestones;
     Vector<CallbackID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;
 
+    bool m_isPaintingSuspended { false };
+    bool m_inUpdateGeometry { false };
+    bool m_layerTreeStateIsFrozen { false };
+    bool m_shouldScaleViewToFitDocument { false };
+    bool m_isScalingViewToFitDocument { false };
     bool m_isThrottlingLayerFlushes { false };
     bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
-
-    WebCore::Timer m_layerFlushThrottlingTimer;
 };
 
 } // namespace WebKit

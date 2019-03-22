@@ -1,3 +1,19 @@
+2019-03-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up some TiledCoreAnimationDrawingArea members
+        https://bugs.webkit.org/show_bug.cgi?id=196124
+
+        Reviewed by Tim Horton.
+
+        The giant m_transform was unused.
+        
+        Group the bools etc.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
 2019-03-21  Brady Eidson  <beidson@apple.com>
 
         Certain WebProcesses should opt-out of the freezer.
