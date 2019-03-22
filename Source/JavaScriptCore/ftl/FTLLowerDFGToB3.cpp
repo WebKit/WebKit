@@ -11290,9 +11290,8 @@ private:
 
         auto structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->regExpStructure());
         LValue fastResultValue = allocateObject<RegExpObject>(structure, m_out.intPtrZero, slowCase);
-        m_out.storePtr(frozenPointer(regexp), fastResultValue, m_heaps.RegExpObject_regExp);
+        m_out.storePtr(frozenPointer(regexp), fastResultValue, m_heaps.RegExpObject_regExpAndLastIndexIsNotWritableFlag);
         m_out.store64(lastIndex, fastResultValue, m_heaps.RegExpObject_lastIndex);
-        m_out.store32As8(m_out.constInt32(true), m_out.address(fastResultValue, m_heaps.RegExpObject_lastIndexIsWritable));
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
         m_out.jump(continuation);
@@ -11378,7 +11377,9 @@ private:
 
             speculate(
                 ExoticObjectMode, noValue(), nullptr,
-                m_out.isZero32(m_out.load8ZeroExt32(regExp, m_heaps.RegExpObject_lastIndexIsWritable)));
+                m_out.testNonZeroPtr(
+                    m_out.loadPtr(regExp, m_heaps.RegExpObject_regExpAndLastIndexIsNotWritableFlag),
+                    m_out.constIntPtr(RegExpObject::lastIndexIsNotWritableFlag)));
 
             m_out.store64(value, regExp, m_heaps.RegExpObject_lastIndex);
             return;

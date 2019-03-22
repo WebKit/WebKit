@@ -38,8 +38,7 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, nullptr, nullp
 
 RegExpObject::RegExpObject(VM& vm, Structure* structure, RegExp* regExp)
     : JSNonFinalObject(vm, structure)
-    , m_regExp(vm, this, regExp)
-    , m_lastIndexIsWritable(true)
+    , m_regExpAndLastIndexIsNotWritableFlag(bitwise_cast<uintptr_t>(regExp)) // lastIndexIsNotWritableFlag is not set.
 {
     m_lastIndex.setWithoutWriteBarrier(jsNumber(0));
 }
@@ -56,7 +55,7 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_regExp);
+    visitor.appendUnbarriered(thisObject->regExp());
     visitor.append(thisObject->m_lastIndex);
 }
 
@@ -65,7 +64,7 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     VM& vm = exec->vm();
     if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = jsCast<RegExpObject*>(object);
-        unsigned attributes = regExp->m_lastIndexIsWritable ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
+        unsigned attributes = regExp->lastIndexIsWritable() ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }
@@ -117,7 +116,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
             return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeEnumerabilityError);
         if (descriptor.isAccessorDescriptor())
             return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeAccessMechanismError);
-        if (!regExp->m_lastIndexIsWritable) {
+        if (!regExp->lastIndexIsWritable()) {
             if (descriptor.writablePresent() && descriptor.writable())
                 return typeError(exec, scope, shouldThrow, UnconfigurablePropertyChangeWritabilityError);
             if (descriptor.value() && !sameValue(exec, regExp->getLastIndex(), descriptor.value()))
@@ -129,7 +128,7 @@ bool RegExpObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
             RETURN_IF_EXCEPTION(scope, false);
         }
         if (descriptor.writablePresent() && !descriptor.writable())
-            regExp->m_lastIndexIsWritable = false;
+            regExp->setLastIndexIsNotWritable();
         return true;
     }
 

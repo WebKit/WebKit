@@ -96,9 +96,8 @@ namespace JSC { namespace FTL {
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
     macro(JSWrapperObject_internalValue, JSWrapperObject::internalValueOffset()) \
-    macro(RegExpObject_regExp, RegExpObject::offsetOfRegExp()) \
+    macro(RegExpObject_regExpAndLastIndexIsNotWritableFlag, RegExpObject::offsetOfRegExpAndLastIndexIsNotWritableFlag()) \
     macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex()) \
-    macro(RegExpObject_lastIndexIsWritable, RegExpObject::offsetOfLastIndexIsWritable()) \
     macro(ShadowChicken_Packet_callee, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)) \
     macro(ShadowChicken_Packet_frame, OBJECT_OFFSETOF(ShadowChicken::Packet, frame)) \
     macro(ShadowChicken_Packet_callerFrame, OBJECT_OFFSETOF(ShadowChicken::Packet, callerFrame)) \

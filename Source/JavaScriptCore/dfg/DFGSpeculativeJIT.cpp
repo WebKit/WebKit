@@ -9790,9 +9790,8 @@ void SpeculativeJIT::compileNewRegexp(Node* node)
 
     m_jit.storePtr(
         TrustedImmPtr(node->cellOperand()),
-        CCallHelpers::Address(resultGPR, RegExpObject::offsetOfRegExp()));
+        CCallHelpers::Address(resultGPR, RegExpObject::offsetOfRegExpAndLastIndexIsNotWritableFlag()));
     m_jit.storeValue(lastIndexRegs, CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndex()));
-    m_jit.store8(TrustedImm32(true), CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndexIsWritable()));
     m_jit.mutatorFence(*m_jit.vm());
 
     addSlowPathGenerator(slowPathCall(slowPath, this, operationNewRegexpWithLastIndex, resultGPR, regexp, lastIndexRegs));
@@ -11130,9 +11129,10 @@ void SpeculativeJIT::compileSetRegExpObjectLastIndex(Node* node)
         speculateRegExpObject(node->child1(), regExpGPR);
         speculationCheck(
             ExoticObjectMode, JSValueRegs(), nullptr,
-            m_jit.branchTest8(
-                JITCompiler::Zero,
-                JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndexIsWritable())));
+            m_jit.branchTestPtr(
+                JITCompiler::NonZero,
+                JITCompiler::Address(regExpGPR, RegExpObject::offsetOfRegExpAndLastIndexIsNotWritableFlag()),
+                JITCompiler::TrustedImm32(RegExpObject::lastIndexIsNotWritableFlag)));
     }
 
     m_jit.storeValue(valueRegs, JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndex()));
