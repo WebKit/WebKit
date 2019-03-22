@@ -426,6 +426,7 @@ private:
 #endif
 
     void clearCurrentModifierStateForTesting();
+    void setFreezable(bool);
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

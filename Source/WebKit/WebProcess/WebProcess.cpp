@@ -149,6 +149,10 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include <bmalloc/MemoryStatusSPI.h>
+#endif
+
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
@@ -1869,6 +1873,14 @@ void WebProcess::resumeAllMediaBuffering()
 void WebProcess::clearCurrentModifierStateForTesting()
 {
     PlatformKeyboardEvent::setCurrentModifierState({ });
+}
+
+void WebProcess::setFreezable(bool freezable)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto result = memorystatus_control(MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE, getpid(), freezable ? 1 : 0, nullptr, 0);
+    ASSERT_UNUSED(result, !result);
+#endif
 }
 
 #if PLATFORM(IOS_FAMILY)

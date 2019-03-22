@@ -1,3 +1,47 @@
+2019-03-21  Brady Eidson  <beidson@apple.com>
+
+        Certain WebProcesses should opt-out of the freezer.
+        <rdar://problem/42846139> and https://bugs.webkit.org/show_bug.cgi?id=196062
+
+        Reviewed by Andy Estes.
+
+        WebProcesses should opt-in and opt-out of the freezer as is appropriate.
+        By default a WebProcess is freezer eligible.
+        If any of the following become true then it should become ineligible:
+        - The WebProcess is a pre-warmed process.
+        - The WebProcess is in the process cache.
+        - The WebProcess is not actively hosting any web pages (e.g. it only has suspending web pages)
+
+        The most complicated part of the above is guaranteeing that any operation that changes
+        the active pages hosted by the process causes a recalculation of the freezer opt-in state.
+
+        To do that this replaces the basic WebPageProxyMap with a custom class.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::globalPageMap):
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::validateFreezerStatus):
+        (WebKit::WebProcessProxy::setIsInProcessCache):
+        (WebKit::WebProcessProxy::markIsNoLongerInPrewarmedPool):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::WebPageProxyMap::WebPageProxyMap):
+        (WebKit::WebProcessProxy::WebPageProxyMap::size const):
+        (WebKit::WebProcessProxy::WebPageProxyMap::values):
+        (WebKit::WebProcessProxy::WebPageProxyMap::values const):
+        (WebKit::WebProcessProxy::WebPageProxyMap::begin):
+        (WebKit::WebProcessProxy::WebPageProxyMap::end):
+        (WebKit::WebProcessProxy::WebPageProxyMap::get):
+        (WebKit::WebProcessProxy::WebPageProxyMap::contains const):
+        (WebKit::WebProcessProxy::WebPageProxyMap::isEmpty const):
+        (WebKit::WebProcessProxy::WebPageProxyMap::set):
+        (WebKit::WebProcessProxy::WebPageProxyMap::take):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setFreezable):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2019-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Adopt UIWKDocumentContext

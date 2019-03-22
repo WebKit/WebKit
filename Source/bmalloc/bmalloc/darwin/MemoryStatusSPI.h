@@ -43,6 +43,8 @@ typedef struct memorystatus_memlimit_properties {
 } memorystatus_memlimit_properties_t;
 
 #define MEMORYSTATUS_CMD_GET_MEMLIMIT_PROPERTIES 8
+#define MEMORYSTATUS_CMD_SET_PROCESS_IS_FREEZABLE 18
+#define MEMORYSTATUS_CMD_GET_PROCESS_IS_FREEZABLE 19
 
 }
 #endif // __has_include(<System/sys/kern_memorystatus.h>)

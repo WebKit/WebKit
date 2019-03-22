@@ -96,7 +96,6 @@ enum class AllowProcessCaching { No, Yes };
 class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy>> WebFrameProxyMap;
-    typedef HashMap<uint64_t, WebPageProxy*> WebPageProxyMap;
     typedef HashMap<uint64_t, RefPtr<API::UserInitiatedAction>> UserInitiatedActionMap;
 
     enum class IsPrewarmed {
@@ -137,6 +136,45 @@ public:
     void addProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(!m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.add(&provisionalPage); }
     void removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage) { ASSERT(m_provisionalPages.contains(&provisionalPage)); m_provisionalPages.remove(&provisionalPage); }
 
+    class WebPageProxyMap {
+    public:
+        WebPageProxyMap(WebProcessProxy& proxy)
+            : m_proxy(proxy)
+        {
+        }
+
+        typedef HashMap<uint64_t, WebPageProxy*> MapType;
+        using ValuesConstIteratorRange = MapType::ValuesConstIteratorRange;
+
+        auto size() const { return m_map.size(); }
+        auto values() { return m_map.values(); }
+        auto values() const { return m_map.values(); }
+        auto begin() { return m_map.begin(); }
+        auto end() { return m_map.end(); }
+        auto get(uint64_t key) { return m_map.get(key); }
+        auto contains(uint64_t key) const { return m_map.contains(key); }
+        auto isEmpty() const { return m_map.isEmpty(); }
+
+        auto set(uint64_t key, WebPageProxy* value)
+        {
+            auto result = m_map.set(key, value);
+            m_proxy.validateFreezerStatus();
+            return result;
+        }
+
+        auto take(uint64_t key)
+        {
+            auto result = m_map.take(key);
+            m_proxy.validateFreezerStatus();
+            return result;
+        }
+
+    private:
+        WebProcessProxy& m_proxy;
+        MapType m_map;
+    };
+
+    
     typename WebPageProxyMap::ValuesConstIteratorRange pages() const { return m_pageMap.values(); }
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned provisionalPageCount() const { return m_provisionalPages.size(); }
@@ -321,6 +359,8 @@ protected:
 
     bool isJITEnabled() const final;
 
+    void validateFreezerStatus();
+
 private:
     // IPC message handlers.
     void updateBackForwardItem(const BackForwardListItemState&);
@@ -469,6 +509,7 @@ private:
     unsigned m_suspendedPageCount { 0 };
     bool m_hasCommittedAnyProvisionalLoads { false };
     bool m_isPrewarmed;
+    Optional<bool> m_currentIsFreezableValue;
 
 #if PLATFORM(WATCHOS)
     ProcessThrottler::BackgroundActivityToken m_backgroundActivityTokenForFullscreenFormControls;

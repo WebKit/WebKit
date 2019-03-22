@@ -131,7 +131,7 @@
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4426E2831C839547008EB042 /* BSoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E2821C839547008EB042 /* BSoftLinking.h */; };
-		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; };
+		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6543DDB420EEAEF3003B23D8 /* PerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6543DDB320EEAEF3003B23D8 /* PerThread.cpp */; };
 		6599C5CC1EC3F15900A2F7BB /* AvailableMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6599C5CA1EC3F15900A2F7BB /* AvailableMemory.cpp */; };
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
