@@ -172,6 +172,11 @@ def expand_submodules_recurse(modules, manifest_path, port_name, command):
         all_modules.extend(expand_submodules_recurse(submanifest, submanifest_path, port_name, command))
         return all_modules
 
+    # The last recurse manifest expand iteration might lead to a single module.
+    if not isinstance(modules, list):
+        all_modules.append(modules)
+        return all_modules
+
     for module in modules:
         if type(module) is str:
             submanifest_path = os.path.join(os.path.dirname(manifest_path), module)
