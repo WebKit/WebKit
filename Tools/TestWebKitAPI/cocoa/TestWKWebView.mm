@@ -509,6 +509,25 @@ static UICalloutBar *suppressUICalloutBar()
     return info.autorelease();
 }
 
+static WKContentView *recursiveFindWKContentView(UIView *view)
+{
+    if ([view isKindOfClass:NSClassFromString(@"WKContentView")])
+        return (WKContentView *)view;
+
+    for (UIView *subview in view.subviews) {
+        WKContentView *contentView = recursiveFindWKContentView(subview);
+        if (contentView)
+            return contentView;
+    }
+
+    return nil;
+}
+
+- (WKContentView *)wkContentView
+{
+    return recursiveFindWKContentView(self);
+}
+
 @end
 
 #endif

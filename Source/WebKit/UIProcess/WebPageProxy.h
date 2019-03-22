@@ -276,6 +276,8 @@ class WebViewDidMoveToWindowObserver;
 
 struct AttributedString;
 struct ColorSpaceData;
+struct DocumentEditingContext;
+struct DocumentEditingContextRequest;
 struct EditingRange;
 struct EditorState;
 struct FrameInfoData;
@@ -708,6 +710,8 @@ public:
     void hardwareKeyboardAvailabilityChanged(bool keyboardIsAttached);
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
+    void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
+    void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest, CompletionHandler<void(WebKit::DocumentEditingContext)>&&);
 #if ENABLE(DATA_INTERACTION)
     void didHandleDragStartRequest(bool started);
     void didHandleAdditionalDragItemsRequest(bool added);

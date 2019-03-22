@@ -110,6 +110,8 @@ messages -> WebPage LegacyReceiver {
     RequestFocusedElementInformation(WebKit::CallbackID callbackID)
     HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
+    UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async
+    RequestDocumentEditingContext(struct WebKit::DocumentEditingContextRequest request) -> (struct WebKit::DocumentEditingContext response) Async
 #endif
 
     SetControlledByAutomation(bool controlled)

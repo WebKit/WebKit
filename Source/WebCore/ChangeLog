@@ -1,3 +1,22 @@
+2019-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt UIWKDocumentContext
+        https://bugs.webkit.org/show_bug.cgi?id=196040
+        <rdar://problem/48642440>
+
+        Reviewed by Ryosuke Niwa.
+
+        New API test: WebKit.DocumentEditingContext
+
+        * dom/Range.h:
+        * editing/TextGranularity.h:
+        Make TextGranularity encodable by providing EnumTraits.
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainTextReplacingNoBreakSpace):
+        * editing/TextIterator.h:
+        Expose an nbsp-replacing variant of plainText that takes Positions instead of Ranges.
+
 2019-03-21  Sihui Liu  <sihui_liu@apple.com>
 
         Fix key path extraction code in IndexedDB to check own property

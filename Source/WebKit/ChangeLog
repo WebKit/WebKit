@@ -1,3 +1,59 @@
+2019-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt UIWKDocumentContext
+        https://bugs.webkit.org/show_bug.cgi?id=196040
+        <rdar://problem/48642440>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Scripts/webkit/messages.py:
+        * Shared/DocumentEditingContext.h: Added.
+        * Shared/DocumentEditingContext.mm: Added.
+        (WebKit::toNSRange):
+        (WebKit::DocumentEditingContext::toPlatformContext):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext::Range>::encode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext::Range>::decode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext::TextRect>::encode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext::TextRect>::decode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext>::encode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContext>::decode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContextRequest>::encode):
+        (IPC::ArgumentCoder<WebKit::DocumentEditingContextRequest>::decode):
+        Add DocumentEditingContext(Request), and coders.
+        Also expose DocumentEditingContext::toPlatformContext, which populates
+        a UIWKDocumentContext with the relevant values.
+
+        * SourcesCocoa.txt:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (toWebDocumentRequestOptions):
+        (toWebRequest):
+        (-[WKContentView adjustSelectionWithDelta:completionHandler:]):
+        (-[WKContentView requestDocumentContext:completionHandler:]):
+        (-[WKContentView selectPositionAtPoint:withContextRequest:completionHandler:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::adjustSelectionWithDelta):
+        (WebKit::WebPageProxy::requestDocumentEditingContext):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Plumb DocumentEditingContext(Request) around.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::adjustSelectionWithDelta):
+        Adjust the current selection given deltas to apply to the location and length.
+
+        (WebKit::visiblePositionAdjacentToVisiblePosition):
+        (WebKit::visiblePositionForPointInRootViewCoordinates):
+        (WebKit::WebPage::requestDocumentEditingContext):
+        Retrieve the relevant part of the selection, as well as the context,
+        given either the selection, or a rect.
+        If we're collecting context for a rect, we split the context between
+        before and after (except for the part that intersects the selection).
+        The three strings will always be directly adjacent, and any of the three
+        can sometimes be null.
+
 2019-03-21  James Magahern  <jmagahern@apple.com>
 
         Long press gesture recognizers in WKWebView are conflicting with internal scroll view long press gesture recognizers

@@ -125,6 +125,7 @@ Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm
 
 Shared/APIWebArchive.mm
 Shared/APIWebArchiveResource.mm
+Shared/DocumentEditingContext.mm
 Shared/FocusedElementInformation.cpp
 Shared/VisibleContentRectUpdateInfo.cpp
 Shared/WebSQLiteDatabaseTracker.cpp

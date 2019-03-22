@@ -686,6 +686,9 @@ public:
 
     bool forceAlwaysUserScalable() const { return m_forceAlwaysUserScalable; }
     void setForceAlwaysUserScalable(bool);
+
+    void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
+    void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest, CompletionHandler<void(WebKit::DocumentEditingContext)>&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
@@ -1165,6 +1168,8 @@ public:
     void resumeAllMediaBuffering();
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+
+    WebCore::Element* elementForTextInputContext(const TextInputContext&);
 
 #if ENABLE(APPLE_PAY)
     WebPaymentCoordinator* paymentCoordinator();

@@ -2684,6 +2684,11 @@ String plainText(Position start, Position end, TextIteratorBehavior defaultBehav
     return result;
 }
 
+String plainTextReplacingNoBreakSpace(Position start, Position end, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+{
+    return plainText(start, end, defaultBehavior, isDisplayString).replace(noBreakSpace, ' ');
+}
+
 String plainText(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     if (!range)

@@ -6587,25 +6587,27 @@ void WebPage::textInputContextsInRect(WebCore::FloatRect searchRect, CompletionH
 
 void WebPage::focusTextInputContext(const TextInputContext& textInputContext, CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler([&] {
-        if (textInputContext.webPageIdentifier != m_pageID)
-            return false;
+    RefPtr<Element> element = elementForTextInputContext(textInputContext);
 
-        auto* document = Document::allDocumentsMap().get(textInputContext.documentIdentifier);
-        if (!document)
-            return false;
-
-        if (document->page() != m_page.get())
-            return false;
-
-        auto* element = document->searchForElementByIdentifier(textInputContext.elementIdentifier);
-        if (!element)
-            return false;
-
+    if (element)
         element->focus();
 
-        return true;
-    }());
+    completionHandler(element);
+}
+
+Element* WebPage::elementForTextInputContext(const TextInputContext& textInputContext)
+{
+    if (textInputContext.webPageIdentifier != m_pageID)
+        return nullptr;
+
+    auto* document = Document::allDocumentsMap().get(textInputContext.documentIdentifier);
+    if (!document)
+        return nullptr;
+
+    if (document->page() != m_page.get())
+        return nullptr;
+
+    return document->searchForElementByIdentifier(textInputContext.elementIdentifier);
 }
 
 void WebPage::configureLoggingChannel(const String& channelName, WTFLogChannelState state, WTFLogLevel level)

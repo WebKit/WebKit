@@ -1,3 +1,30 @@
+2019-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt UIWKDocumentContext
+        https://bugs.webkit.org/show_bug.cgi?id=196040
+        <rdar://problem/48642440>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DocumentEditingContext.mm: Added.
+        (makeRequest):
+        (-[TestWKWebView synchronouslyRequestDocumentContext:]):
+        (-[TestWKWebView synchronouslyAdjustSelectionWithDelta:]):
+        (applyStyle):
+        (TEST):
+        Add tests for UIWKDocumentContext.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        (TEST):
+        (recursiveFindWKContentView): Deleted.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (recursiveFindWKContentView):
+        (-[TestWKWebView wkContentView]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+        Share the WKContentView finding code between tests.
+
 2019-03-21  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Turn on async overflow scrolling by default

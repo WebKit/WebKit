@@ -176,7 +176,7 @@ private:
 WEBCORE_EXPORT Ref<Range> rangeOfContents(Node&);
 
 WEBCORE_EXPORT bool areRangesEqual(const Range*, const Range*);
-bool rangesOverlap(const Range*, const Range*);
+WEBCORE_EXPORT bool rangesOverlap(const Range*, const Range*);
 
 inline bool documentOrderComparator(const Node* a, const Node* b)
 {

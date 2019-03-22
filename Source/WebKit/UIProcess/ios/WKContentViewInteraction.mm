@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
+#import "DocumentEditingContext.h"
 #import "EditableImageController.h"
 #import "EditingRange.h"
 #import "InputViewUpdateDeferrer.h"
@@ -73,6 +74,7 @@
 #import "_WKElementAction.h"
 #import "_WKFocusedElementInfo.h"
 #import "_WKInputDelegate.h"
+#import "_WKTextInputContextInternal.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
@@ -6281,6 +6283,68 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     return nil;
 }
+
+
+static inline OptionSet<WebKit::DocumentEditingContextRequest::Options> toWebDocumentRequestOptions(UIWKDocumentRequestFlags flags)
+{
+    OptionSet<WebKit::DocumentEditingContextRequest::Options> options;
+
+    if (flags & UIWKDocumentRequestText)
+        options.add(WebKit::DocumentEditingContextRequest::Options::Text);
+    if (flags & UIWKDocumentRequestAttributed)
+        options.add(WebKit::DocumentEditingContextRequest::Options::AttributedText);
+    if (flags & UIWKDocumentRequestRects)
+        options.add(WebKit::DocumentEditingContextRequest::Options::Rects);
+    if (flags & UIWKDocumentRequestSpatial)
+        options.add(WebKit::DocumentEditingContextRequest::Options::Spatial);
+    if (flags & UIWKDocumentRequestAnnotation)
+        options.add(WebKit::DocumentEditingContextRequest::Options::Annotation);
+
+    return options;
+}
+
+static WebKit::DocumentEditingContextRequest toWebRequest(UIWKDocumentRequest *request)
+{
+    WebKit::DocumentEditingContextRequest webRequest = {
+        .options = toWebDocumentRequestOptions(request.flags),
+        .surroundingGranularity = toWKTextGranularity(request.surroundingGranularity),
+        .granularityCount = request.granularityCount,
+        .rect = request.documentRect
+    };
+
+    if (auto textInputContext = dynamic_objc_cast<_WKTextInputContext>(request.inputElementIdentifier))
+        webRequest.textInputContext = [textInputContext _textInputContext];
+
+    return webRequest;
+}
+
+- (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler
+{
+    // UIKit is putting casted signed integers into NSRange. Cast them back to reveal any negative values.
+    _page->updateSelectionWithDelta(static_cast<int64_t>(deltaRange.location), static_cast<int64_t>(deltaRange.length), [capturedCompletionHandler = makeBlockPtr(completionHandler)] {
+        capturedCompletionHandler();
+    });
+}
+
+- (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
+{
+    auto webRequest = toWebRequest(request);
+    OptionSet<WebKit::DocumentEditingContextRequest::Options> options = webRequest.options;
+    _page->requestDocumentEditingContext(webRequest, [capturedCompletionHandler = makeBlockPtr(completionHandler), options] (WebKit::DocumentEditingContext editingContext) {
+        capturedCompletionHandler(editingContext.toPlatformContext(options));
+    });
+}
+
+- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler
+{
+    // FIXME: Reduce to 1 message.
+    [self selectPositionAtPoint:point completionHandler:^{
+        [self requestDocumentContext:request completionHandler:^(UIWKDocumentContext *context) {
+            completionHandler(context);
+        }];
+    }];
+}
+
 
 #pragma mark - UIDragInteractionDelegate
 

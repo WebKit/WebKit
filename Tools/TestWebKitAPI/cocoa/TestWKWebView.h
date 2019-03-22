@@ -79,6 +79,9 @@
 @end
 
 #if PLATFORM(IOS_FAMILY)
+@interface WKContentView : UIView
+@end
+
 @interface TestWKWebView (IOSOnly)
 @property (nonatomic, readonly) UIView <UITextInputPrivate, UITextInputMultiDocument> *textInputContentView;
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
@@ -86,6 +89,7 @@
 @property (nonatomic, readonly) NSArray<NSValue *> *selectionViewRectsInContentCoordinates;
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 - (void)evaluateJavaScriptAndWaitForInputSessionToChange:(NSString *)script;
+- (WKContentView *)wkContentView;
 @end
 #endif
 
