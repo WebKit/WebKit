@@ -1034,6 +1034,36 @@ typedef NSInteger UICompositingMode;
 @property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
 @end
 
+@interface UIWKDocumentContext : NSObject
+
+@property (nonatomic, copy) NSObject *contextBefore;
+@property (nonatomic, copy) NSObject *selectedText;
+@property (nonatomic, copy) NSObject *contextAfter;
+@property (nonatomic, copy) NSObject *markedText;
+@property (nonatomic, assign) NSRange selectedRangeInMarkedText;
+@property (nonatomic, copy) NSAttributedString *annotatedText;
+
+- (void)addTextRect:(CGRect)rect forCharacterRange:(NSRange)range;
+
+@end
+
+typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
+    UIWKDocumentRequestNone = 0,
+    UIWKDocumentRequestText = 1 << 0,
+    UIWKDocumentRequestAttributed = 1 << 1,
+    UIWKDocumentRequestRects = 1 << 2,
+    UIWKDocumentRequestSpatial = 1 << 3,
+    UIWKDocumentRequestAnnotation = 1 << 4,
+};
+
+@interface UIWKDocumentRequest : NSObject
+@property (nonatomic, assign) UIWKDocumentRequestFlags flags;
+@property (nonatomic, assign) UITextGranularity surroundingGranularity;
+@property (nonatomic, assign) NSInteger granularityCount;
+@property (nonatomic, assign) CGRect documentRect;
+@property (nonatomic, retain) id <NSCopying> inputElementIdentifier;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 @interface UIGestureRecognizer (Staging_45970040)
@@ -1139,36 +1169,6 @@ static inline bool currentUserInterfaceIdiomIsPad()
     return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
 #endif
 }
-
-@interface UIWKDocumentContext : NSObject
-
-@property (nonatomic, copy) NSObject *contextBefore;
-@property (nonatomic, copy) NSObject *selectedText;
-@property (nonatomic, copy) NSObject *contextAfter;
-@property (nonatomic, copy) NSObject *markedText;
-@property (nonatomic, assign) NSRange selectedRangeInMarkedText;
-@property (nonatomic, copy) NSAttributedString *annotatedText;
-
-- (void)addTextRect:(CGRect)rect forCharacterRange:(NSRange)range;
-
-@end
-
-typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
-    UIWKDocumentRequestNone = 0,
-    UIWKDocumentRequestText = 1 << 0,
-    UIWKDocumentRequestAttributed = 1 << 1,
-    UIWKDocumentRequestRects = 1 << 2,
-    UIWKDocumentRequestSpatial = 1 << 3,
-    UIWKDocumentRequestAnnotation = 1 << 4,
-};
-
-@interface UIWKDocumentRequest : NSObject
-@property (nonatomic, assign) UIWKDocumentRequestFlags flags;
-@property (nonatomic, assign) UITextGranularity surroundingGranularity;
-@property (nonatomic, assign) NSInteger granularityCount;
-@property (nonatomic, assign) CGRect documentRect;
-@property (nonatomic, retain) id <NSCopying> inputElementIdentifier;
-@end
 
 WTF_EXTERN_C_BEGIN
 

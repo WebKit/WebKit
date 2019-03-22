@@ -37,6 +37,7 @@
 #import <UIKit/UITextInputTraits_Private.h>
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
+#import <UIKit/UIWKTextInteractionAssistant.h>
 
 #if ENABLE(DRAG_SUPPORT)
 @protocol UIDragSession;
@@ -98,6 +99,38 @@ WTF_EXTERN_C_END
 + (UICalloutBar *)sharedCalloutBar;
 @end
 
+@interface UIWKDocumentContext : NSObject
+
+@property (nonatomic, copy) NSObject *contextBefore;
+@property (nonatomic, copy) NSObject *selectedText;
+@property (nonatomic, copy) NSObject *contextAfter;
+@property (nonatomic, copy) NSObject *markedText;
+@property (nonatomic, assign) NSRange selectedRangeInMarkedText;
+@property (nonatomic, copy) NSAttributedString *annotatedText;
+
+- (NSArray<NSValue *> *)characterRectsForCharacterRange:(NSRange)range;
+
+@end
+
+typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
+    UIWKDocumentRequestNone = 0,
+    UIWKDocumentRequestText = 1 << 0,
+    UIWKDocumentRequestAttributed = 1 << 1,
+    UIWKDocumentRequestRects = 1 << 2,
+    UIWKDocumentRequestSpatial = 1 << 3,
+    UIWKDocumentRequestAnnotation = 1 << 4,
+};
+
+@interface UIWKDocumentRequest : NSObject
+
+@property (nonatomic, assign) UIWKDocumentRequestFlags flags;
+@property (nonatomic, assign) UITextGranularity surroundingGranularity;
+@property (nonatomic, assign) NSInteger granularityCount;
+@property (nonatomic, assign) CGRect documentRect;
+@property (nonatomic, retain) id <NSCopying> inputElementIdentifier;
+
+@end
+
 #endif
 
 @protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
@@ -139,38 +172,6 @@ WTF_EXTERN_C_END
 
 @interface UIKeyboard ()
 + (BOOL)isInHardwareKeyboardMode;
-@end
-
-@interface UIWKDocumentContext : NSObject
-
-@property (nonatomic, copy) NSObject *contextBefore;
-@property (nonatomic, copy) NSObject *selectedText;
-@property (nonatomic, copy) NSObject *contextAfter;
-@property (nonatomic, copy) NSObject *markedText;
-@property (nonatomic, assign) NSRange selectedRangeInMarkedText;
-@property (nonatomic, copy) NSAttributedString *annotatedText;
-
-- (NSArray<NSValue *> *)characterRectsForCharacterRange:(NSRange)range;
-
-@end
-
-typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
-    UIWKDocumentRequestNone = 0,
-    UIWKDocumentRequestText = 1 << 0,
-    UIWKDocumentRequestAttributed = 1 << 1,
-    UIWKDocumentRequestRects = 1 << 2,
-    UIWKDocumentRequestSpatial = 1 << 3,
-    UIWKDocumentRequestAnnotation = 1 << 4,
-};
-
-@interface UIWKDocumentRequest : NSObject
-
-@property (nonatomic, assign) UIWKDocumentRequestFlags flags;
-@property (nonatomic, assign) UITextGranularity surroundingGranularity;
-@property (nonatomic, assign) NSInteger granularityCount;
-@property (nonatomic, assign) CGRect documentRect;
-@property (nonatomic, retain) id <NSCopying> inputElementIdentifier;
-
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

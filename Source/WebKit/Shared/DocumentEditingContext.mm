@@ -41,6 +41,7 @@ static inline NSRange toNSRange(DocumentEditingContext::Range range)
 
 UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<DocumentEditingContextRequest::Options> options)
 {
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
     RetainPtr<UIWKDocumentContext> platformContext = adoptNS([[NSClassFromString(@"UIWKDocumentContext") alloc] init]);
 
     if (options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
@@ -63,6 +64,10 @@ UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<Documen
     [platformContext setAnnotatedText:annotatedText.string.get()];
 
     return platformContext.autorelease();
+#else
+    UNUSED_PARAM(options);
+    return nil;
+#endif
 }
 
 }
