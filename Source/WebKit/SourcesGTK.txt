@@ -209,6 +209,8 @@ UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+UIProcess/geoclue/GeoclueGeolocationProvider.cpp
+
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp @no-unify
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp @no-unify
 UIProcess/Launcher/glib/FlatpakLauncher.cpp @no-unify

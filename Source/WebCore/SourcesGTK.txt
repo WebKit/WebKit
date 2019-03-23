@@ -61,8 +61,6 @@ platform/UserAgentQuirks.cpp
 
 platform/generic/ScrollAnimatorGeneric.cpp
 
-platform/geoclue/GeolocationProviderGeoclue.cpp
-
 platform/graphics/GLContext.cpp @no-unify
 platform/graphics/GraphicsContext3DPrivate.cpp
 

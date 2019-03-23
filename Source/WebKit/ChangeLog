@@ -1,3 +1,42 @@
+2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove build time dependency on Geoclue2
+        https://bugs.webkit.org/show_bug.cgi?id=195994
+
+        Reviewed by Michael Catanzaro.
+
+        Add GeoclueGeolocationProvider class to provide geolocation position updates using Geoclue2 DBus service.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp:
+        (_WebKitGeolocationPosition::_WebKitGeolocationPosition):
+        (webkitGeolocationManagerStop):
+        (webkitGeolocationManagerSetEnableHighAccuracy):
+        (webkitGeolocationManagerDispose):
+        (webkit_geolocation_manager_class_init):
+        * UIProcess/geoclue/GeoclueGeolocationProvider.cpp: Added.
+        (WebKit::GeoclueGeolocationProvider::GeoclueGeolocationProvider):
+        (WebKit::GeoclueGeolocationProvider::~GeoclueGeolocationProvider):
+        (WebKit::GeoclueGeolocationProvider::start):
+        (WebKit::GeoclueGeolocationProvider::stop):
+        (WebKit::GeoclueGeolocationProvider::setEnableHighAccuracy):
+        (WebKit::GeoclueGeolocationProvider::destroyManagerLater):
+        (WebKit::GeoclueGeolocationProvider::destroyManager):
+        (WebKit::GeoclueGeolocationProvider::setupManager):
+        (WebKit::GeoclueGeolocationProvider::createClient):
+        (WebKit::GeoclueGeolocationProvider::setupClient):
+        (WebKit::GeoclueGeolocationProvider::startClient):
+        (WebKit::GeoclueGeolocationProvider::stopClient):
+        (WebKit::GeoclueGeolocationProvider::requestAccuracyLevel):
+        (WebKit::GeoclueGeolocationProvider::clientLocationUpdatedCallback):
+        (WebKit::GeoclueGeolocationProvider::createLocation):
+        (WebKit::GeoclueGeolocationProvider::locationUpdated):
+        (WebKit::GeoclueGeolocationProvider::didFail):
+        * UIProcess/geoclue/GeoclueGeolocationProvider.h: Added.
+
 2019-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Undo collision with r243390.

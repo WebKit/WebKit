@@ -1,3 +1,18 @@
+2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove build time dependency on Geoclue2
+        https://bugs.webkit.org/show_bug.cgi?id=195994
+
+        Reviewed by Michael Catanzaro.
+
+        Remove old Geoclue implementation.
+
+        * PlatformGTK.cmake:
+        * SourcesGTK.txt:
+        * platform/geoclue/GeolocationProviderGeoclue.cpp: Removed.
+        * platform/geoclue/GeolocationProviderGeoclue.h: Removed.
+        * platform/geoclue/GeolocationProviderGeoclueClient.h: Removed.
+
 2019-03-22  Eric Carlson  <eric.carlson@apple.com>
 
         Flaky AVEncoderBitRateKey symbol not found crash on imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-constructor.html

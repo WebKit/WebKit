@@ -21,16 +21,12 @@
 #include "WebKitGeolocationManager.h"
 
 #include "APIGeolocationProvider.h"
+#include "GeoclueGeolocationProvider.h"
 #include "WebGeolocationPosition.h"
 #include "WebKitGeolocationManagerPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/WallTime.h>
 #include <wtf/glib/WTFGType.h>
-
-#if USE(GEOCLUE)
-#include <WebCore/GeolocationProviderGeoclue.h>
-#include <WebCore/GeolocationProviderGeoclueClient.h>
-#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -66,12 +62,17 @@ enum {
 struct _WebKitGeolocationPosition {
     _WebKitGeolocationPosition() = default;
 
-    _WebKitGeolocationPosition(double latitude, double longitude, double accuracy, Optional<double> timestamp = WTF::nullopt)
+    _WebKitGeolocationPosition(double latitude, double longitude, double accuracy)
     {
-        position.timestamp = timestamp.valueOr(WallTime::now().secondsSinceEpoch().value());
+        position.timestamp = WallTime::now().secondsSinceEpoch().value();
         position.latitude = latitude;
         position.longitude = longitude;
         position.accuracy = accuracy;
+    }
+
+    explicit _WebKitGeolocationPosition(GeolocationPosition&& corePosition)
+        : position(WTFMove(corePosition))
+    {
     }
 
     explicit _WebKitGeolocationPosition(const GeolocationPosition& other)
@@ -228,38 +229,10 @@ void webkit_geolocation_position_set_speed(WebKitGeolocationPosition* position, 
     position->position.speed = speed;
 }
 
-#if USE(GEOCLUE)
-class GeoclueProviderClient final : public GeolocationProviderGeoclueClient {
-public:
-    explicit GeoclueProviderClient(WebKitGeolocationManager* manager)
-        : m_manager(manager)
-    {
-    }
-
-private:
-    void notifyPositionChanged(int timestamp, double latitude, double longitude, double altitude, double accuracy, double) override
-    {
-        WebKitGeolocationPosition position(latitude, longitude, accuracy, static_cast<double>(timestamp));
-        webkit_geolocation_position_set_altitude(&position, altitude);
-        webkit_gelocation_manager_update_position(m_manager, &position);
-    }
-
-    void notifyErrorOccurred(const char* message) override
-    {
-        webkit_gelocation_manager_failed(m_manager, message);
-    }
-
-    WebKitGeolocationManager* m_manager;
-};
-#endif
-
 struct _WebKitGeolocationManagerPrivate {
     RefPtr<WebGeolocationManagerProxy> manager;
     bool highAccuracyEnabled;
-#if USE(GEOCLUE)
-    std::unique_ptr<GeoclueProviderClient> providerClient;
-    std::unique_ptr<GeolocationProviderGeoclue> provider;
-#endif
+    std::unique_ptr<GeoclueGeolocationProvider> geoclueProvider;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -271,30 +244,31 @@ static void webkitGeolocationManagerStart(WebKitGeolocationManager* manager)
     gboolean returnValue;
     g_signal_emit(manager, signals[START], 0, &returnValue);
     if (returnValue) {
-#if USE(GEOCLUE)
-        manager->priv->provider = nullptr;
-        manager->priv->providerClient = nullptr;
-#endif
+        manager->priv->geoclueProvider = nullptr;
         return;
     }
 
-#if USE(GEOCLUE)
-    if (!manager->priv->provider) {
-        manager->priv->providerClient = std::make_unique<GeoclueProviderClient>(manager);
-        manager->priv->provider = std::make_unique<GeolocationProviderGeoclue>(manager->priv->providerClient.get());
+    if (!manager->priv->geoclueProvider) {
+        manager->priv->geoclueProvider = std::make_unique<GeoclueGeolocationProvider>();
+        manager->priv->geoclueProvider->setEnableHighAccuracy(manager->priv->highAccuracyEnabled);
     }
-    manager->priv->provider->startUpdating();
-#endif
+    manager->priv->geoclueProvider->start([manager](GeolocationPosition&& corePosition, Optional<CString> error) {
+        if (error) {
+            webkit_gelocation_manager_failed(manager, error->data());
+            return;
+        }
+
+        WebKitGeolocationPosition position(WTFMove(corePosition));
+        webkit_gelocation_manager_update_position(manager, &position);
+    });
 }
 
 static void webkitGeolocationManagerStop(WebKitGeolocationManager* manager)
 {
     g_signal_emit(manager, signals[STOP], 0, nullptr);
 
-#if USE(GEOCLUE)
-    if (manager->priv->provider)
-        manager->priv->provider->stopUpdating();
-#endif
+    if (manager->priv->geoclueProvider)
+        manager->priv->geoclueProvider->stop();
 }
 
 static void webkitGeolocationManagerSetEnableHighAccuracy(WebKitGeolocationManager* manager, bool enabled)
@@ -304,10 +278,8 @@ static void webkitGeolocationManagerSetEnableHighAccuracy(WebKitGeolocationManag
 
     manager->priv->highAccuracyEnabled = enabled;
     g_object_notify(G_OBJECT(manager), "enable-high-accuracy");
-#if USE(GEOCLUE)
-    if (manager->priv->provider)
-        manager->priv->provider->setEnableHighAccuracy(enabled);
-#endif
+    if (manager->priv->geoclueProvider)
+        manager->priv->geoclueProvider->setEnableHighAccuracy(enabled);
 }
 
 class GeolocationProvider final : public API::GeolocationProvider {

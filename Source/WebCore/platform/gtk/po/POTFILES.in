@@ -37,6 +37,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp
 ../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp
+../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 ../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp
 ../../../WebKit/UIProcess/gtk/WebKitInspectorWindow.cpp
 ../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp

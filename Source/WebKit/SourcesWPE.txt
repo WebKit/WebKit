@@ -183,6 +183,8 @@ UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp
 
 UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp
 
+UIProcess/geoclue/GeoclueGeolocationProvider.cpp
+
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 
