@@ -438,12 +438,16 @@ public:
     bool hasHorizontalScrollbar() const { return horizontalScrollbar(); }
     bool hasVerticalScrollbar() const { return verticalScrollbar(); }
 
+    bool horizontalScrollbarHiddenByStyle() const override;
+    bool verticalScrollbarHiddenByStyle() const override;
+
     // ScrollableArea overrides
     ScrollPosition scrollPosition() const override { return m_scrollPosition; }
 
     Scrollbar* horizontalScrollbar() const override { return m_hBar.get(); }
     Scrollbar* verticalScrollbar() const override { return m_vBar.get(); }
     ScrollableArea* enclosingScrollableArea() const override;
+
     bool isScrollableOrRubberbandable() override;
     bool hasScrollableOrRubberbandableAncestor() override;
     bool useDarkAppearance() const final;

@@ -43,7 +43,7 @@ ScrollingTreeOverflowScrollingNode::~ScrollingTreeOverflowScrollingNode() = defa
 void ScrollingTreeOverflowScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "overflow scrolling node";
-    ScrollingTreeNode::dumpProperties(ts, behavior);
+    ScrollingTreeScrollingNode::dumpProperties(ts, behavior);
 }
 
 } // namespace WebCore

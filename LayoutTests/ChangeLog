@@ -1,3 +1,20 @@
+2019-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (iOS 8): Scrollbar can't be hidden when webkit-overflow-scrolling is set to touch
+        https://bugs.webkit.org/show_bug.cgi?id=137043
+        rdar://problem/16595330
+
+        Reviewed by Zalan Bujtas.
+
+        Test that dumps the UI-side scrolling tree, showing e.g. "horizontal scrollbar hidden by style"
+        in the dump.
+
+        This test was previously a render tree dump, which did not test whether scrollbars were visible.
+
+        * fast/scrolling/ios/scrollbar-hiding-expected.txt:
+        * fast/scrolling/ios/scrollbar-hiding.html:
+        * platform/ios/fast/scrolling/ios/scrollbar-hiding-expected.txt: Removed.
+
 2019-03-23  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Taping on a form control should always result in click.

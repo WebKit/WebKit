@@ -41,7 +41,7 @@ class ScrollingStateFixedNode;
 class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 
-class ScrollingTreeNode : public RefCounted<ScrollingTreeNode> {
+class ScrollingTreeNode : public ThreadSafeRefCounted<ScrollingTreeNode> {
     friend class ScrollingTree;
 public:
     virtual ~ScrollingTreeNode();

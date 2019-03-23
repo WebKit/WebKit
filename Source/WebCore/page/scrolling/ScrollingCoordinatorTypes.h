@@ -66,6 +66,9 @@ struct ScrollableAreaParameters {
     bool hasEnabledHorizontalScrollbar { false };
     bool hasEnabledVerticalScrollbar { false };
 
+    bool horizontalScrollbarHiddenByStyle { false };
+    bool verticalScrollbarHiddenByStyle { false };
+
     bool useDarkAppearanceForScrollbars { false };
 
     bool operator==(const ScrollableAreaParameters& other) const

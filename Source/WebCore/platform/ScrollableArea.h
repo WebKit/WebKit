@@ -110,6 +110,9 @@ public:
     virtual ScrollbarMode horizontalScrollbarMode() const { return ScrollbarAuto; }
     virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarAuto; }
 
+    virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
+    virtual bool verticalScrollbarHiddenByStyle() const { return false; }
+
     bool inLiveResize() const { return m_inLiveResize; }
     WEBCORE_EXPORT virtual void willStartLiveResize();
     WEBCORE_EXPORT virtual void willEndLiveResize();

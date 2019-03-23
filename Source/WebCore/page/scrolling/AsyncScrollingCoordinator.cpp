@@ -653,6 +653,8 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(Scrolling
     scrollParameters.hasEnabledVerticalScrollbar = verticalScrollbar && verticalScrollbar->enabled();
     scrollParameters.horizontalScrollbarMode = scrollableArea.horizontalScrollbarMode();
     scrollParameters.verticalScrollbarMode = scrollableArea.verticalScrollbarMode();
+    scrollParameters.horizontalScrollbarHiddenByStyle = scrollableArea.horizontalScrollbarHiddenByStyle();
+    scrollParameters.verticalScrollbarHiddenByStyle = scrollableArea.verticalScrollbarHiddenByStyle();
     scrollParameters.useDarkAppearanceForScrollbars = scrollableArea.useDarkAppearanceForScrollbars();
 
     scrollingNode.setScrollableAreaParameters(scrollParameters);

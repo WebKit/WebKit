@@ -262,12 +262,29 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
             scrollView.contentInset = insets;
         }
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-        // FIXME: If only one axis snaps in 2D scrolling, the other axis will decelerate fast as well. Is this what we want?
-        if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets))
-            scrollView.decelerationRate = scrollingNode().horizontalSnapOffsets().size() || scrollingNode().verticalSnapOffsets().size() ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal;
+    // FIXME: If only one axis snaps in 2D scrolling, the other axis will decelerate fast as well. Is this what we want?
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::HorizontalSnapOffsets) || scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::VerticalSnapOffsets)) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+
+        scrollView.decelerationRate = scrollingNode().horizontalSnapOffsets().size() || scrollingNode().verticalSnapOffsets().size() ? UIScrollViewDecelerationRateFast : UIScrollViewDecelerationRateNormal;
 #endif
+        END_BLOCK_OBJC_EXCEPTIONS
+    }
+
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollableAreaParams)) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        UIScrollView *scrollView = (UIScrollView *)[scrollLayer() delegate];
+        ASSERT([scrollView isKindOfClass:[UIScrollView self]]);
+
+        [scrollView setShowsHorizontalScrollIndicator:!scrollingNode().horizontalScrollbarHiddenByStyle()];
+        [scrollView setShowsVerticalScrollIndicator:!scrollingNode().verticalScrollbarHiddenByStyle()];
+
         END_BLOCK_OBJC_EXCEPTIONS
     }
 }

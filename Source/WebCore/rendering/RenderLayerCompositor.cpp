@@ -4428,22 +4428,13 @@ void LegacyWebKitScrollingLayerCoordinator::unregisterAllViewportConstrainedLaye
     m_chromeClient.updateViewportConstrainedLayers(layerMap, { });
 }
 
-static bool scrollbarHasDisplayNone(Scrollbar* scrollbar)
-{
-    if (!scrollbar || !scrollbar->isCustomScrollbar())
-        return false;
-
-    std::unique_ptr<RenderStyle> scrollbarStyle = static_cast<RenderScrollbar*>(scrollbar)->getScrollbarPseudoStyle(ScrollbarBGPart, PseudoId::Scrollbar);
-    return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
-}
-
 void LegacyWebKitScrollingLayerCoordinator::updateScrollingLayer(RenderLayer& layer)
 {
     auto* backing = layer.backing();
     ASSERT(backing);
 
-    bool allowHorizontalScrollbar = !scrollbarHasDisplayNone(layer.horizontalScrollbar());
-    bool allowVerticalScrollbar = !scrollbarHasDisplayNone(layer.verticalScrollbar());
+    bool allowHorizontalScrollbar = !layer.horizontalScrollbarHiddenByStyle();
+    bool allowVerticalScrollbar = !layer.verticalScrollbarHiddenByStyle();
     m_chromeClient.addOrUpdateScrollingLayer(layer.renderer().element(), backing->scrollContainerLayer()->platformLayer(), backing->scrolledContentsLayer()->platformLayer(),
         layer.reachableTotalContentsSize(), allowHorizontalScrollbar, allowVerticalScrollbar);
 }
