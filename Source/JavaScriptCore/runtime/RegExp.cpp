@@ -171,12 +171,16 @@ void RegExp::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm.stackLimit());
-    if (!isValid())
+    if (!isValid()) {
         m_state = ParseError;
-    else {
-        m_numSubpatterns = pattern.m_numSubpatterns;
-        m_captureGroupNames.swap(pattern.m_captureGroupNames);
-        m_namedGroupToParenIndex.swap(pattern.m_namedGroupToParenIndex);
+        return;
+    }
+
+    m_numSubpatterns = pattern.m_numSubpatterns;
+    if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndex.isEmpty()) {
+        m_rareData = std::make_unique<RareData>();
+        m_rareData->m_captureGroupNames.swap(pattern.m_captureGroupNames);
+        m_rareData->m_namedGroupToParenIndex.swap(pattern.m_namedGroupToParenIndex);
     }
 }
 
@@ -194,7 +198,8 @@ size_t RegExp::estimatedSize(JSCell* cell, VM& vm)
     RegExp* thisObject = static_cast<RegExp*>(cell);
     size_t regexDataSize = thisObject->m_regExpBytecode ? thisObject->m_regExpBytecode->estimatedSizeInBytes() : 0;
 #if ENABLE(YARR_JIT)
-    regexDataSize += thisObject->m_regExpJITCode.size();
+    if (auto* jitCode = thisObject->m_regExpJITCode.get())
+        regexDataSize += jitCode->size();
 #endif
     return Base::estimatedSize(cell, vm) + regexDataSize;
 }
@@ -237,7 +242,7 @@ void RegExp::byteCodeCompileIfNecessary(VM* vm)
 
 void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 {
-    ConcurrentJSLocker locker(m_lock);
+    auto locker = holdLock(cellLock());
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
     if (hasError(m_constructionErrorCode)) {
@@ -258,8 +263,9 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
         && !pattern.m_containsBackreferences
 #endif
         ) {
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, m_regExpJITCode);
-        if (!m_regExpJITCode.failureReason()) {
+        auto& jitCode = ensureRegExpJITCode();
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode);
+        if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
         }
@@ -283,7 +289,7 @@ int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ov
 bool RegExp::matchConcurrently(
     VM& vm, const String& s, unsigned startOffset, int& position, Vector<int>& ovector)
 {
-    ConcurrentJSLocker locker(m_lock);
+    auto locker = holdLock(cellLock());
 
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -294,7 +300,7 @@ bool RegExp::matchConcurrently(
 
 void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 {
-    ConcurrentJSLocker locker(m_lock);
+    auto locker = holdLock(cellLock());
     
     Yarr::YarrPattern pattern(m_patternString, m_flags, m_constructionErrorCode, vm->stackLimit());
     if (hasError(m_constructionErrorCode)) {
@@ -315,8 +321,9 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
         && !pattern.m_containsBackreferences
 #endif
         ) {
-        Yarr::jitCompile(pattern, m_patternString, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
-        if (!m_regExpJITCode.failureReason()) {
+        auto& jitCode = ensureRegExpJITCode();
+        Yarr::jitCompile(pattern, m_patternString, charSize, vm, jitCode, Yarr::MatchOnly);
+        if (!jitCode.failureReason()) {
             m_state = JITCode;
             return;
         }
@@ -339,7 +346,7 @@ MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
 
 bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
 {
-    ConcurrentJSLocker locker(m_lock);
+    auto locker = holdLock(cellLock());
 
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
@@ -350,13 +357,14 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
 
 void RegExp::deleteCode()
 {
-    ConcurrentJSLocker locker(m_lock);
+    auto locker = holdLock(cellLock());
     
     if (!hasCode())
         return;
     m_state = NotCompiled;
 #if ENABLE(YARR_JIT)
-    m_regExpJITCode.clear();
+    if (m_regExpJITCode)
+        m_regExpJITCode->clear();
 #endif
     m_regExpBytecode = nullptr;
 }
@@ -426,23 +434,29 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
         snprintf(formattedPattern, 41, (pattLen <= 38) ? "/%.38s/" : "/%.36s...", rawPattern);
 
 #if ENABLE(YARR_JIT)
-        Yarr::YarrCodeBlock& codeBlock = m_regExpJITCode;
-
         const size_t jitAddrSize = 20;
-        char jit8BitMatchOnlyAddr[jitAddrSize];
-        char jit16BitMatchOnlyAddr[jitAddrSize];
-        char jit8BitMatchAddr[jitAddrSize];
-        char jit16BitMatchAddr[jitAddrSize];
-        if (m_state == ByteCode) {
+        char jit8BitMatchOnlyAddr[jitAddrSize] { };
+        char jit16BitMatchOnlyAddr[jitAddrSize] { };
+        char jit8BitMatchAddr[jitAddrSize] { };
+        char jit16BitMatchAddr[jitAddrSize] { };
+        switch (m_state) {
+        case ParseError:
+        case NotCompiled:
+            break;
+        case ByteCode:
             snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "fallback    ");
             snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "----      ");
             snprintf(jit8BitMatchAddr, jitAddrSize, "fallback    ");
             snprintf(jit16BitMatchAddr, jitAddrSize, "----      ");
-        } else {
+            break;
+        case JITCode: {
+            Yarr::YarrCodeBlock& codeBlock = *m_regExpJITCode.get();
             snprintf(jit8BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchOnlyAddr()));
             snprintf(jit16BitMatchOnlyAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchOnlyAddr()));
             snprintf(jit8BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get8BitMatchAddr()));
             snprintf(jit16BitMatchAddr, jitAddrSize, "0x%014lx", reinterpret_cast<uintptr_t>(codeBlock.get16BitMatchAddr()));
+            break;
+        }
         }
 #else
         const char* jit8BitMatchOnlyAddr = "JIT Off";

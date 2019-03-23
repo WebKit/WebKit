@@ -88,20 +88,23 @@ public:
 
     bool hasNamedCaptures()
     {
-        return !m_captureGroupNames.isEmpty();
+        return m_rareData && !m_rareData->m_captureGroupNames.isEmpty();
     }
 
     String getCaptureGroupName(unsigned i)
     {
-        if (!i || m_captureGroupNames.size() <= i)
+        if (!i || !m_rareData || m_rareData->m_captureGroupNames.size() <= i)
             return String();
-        return m_captureGroupNames[i];
+        ASSERT(m_rareData);
+        return m_rareData->m_captureGroupNames[i];
     }
 
     unsigned subpatternForName(String groupName)
     {
-        auto it = m_namedGroupToParenIndex.find(groupName);
-        if (it == m_namedGroupToParenIndex.end())
+        if (!m_rareData)
+            return 0;
+        auto it = m_rareData->m_namedGroupToParenIndex.find(groupName);
+        if (it == m_rareData->m_namedGroupToParenIndex.end())
             return 0;
         return it->value;
     }
@@ -157,15 +160,31 @@ private:
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);
 #endif
 
+#if ENABLE(YARR_JIT)
+    Yarr::YarrCodeBlock& ensureRegExpJITCode()
+    {
+        if (!m_regExpJITCode)
+            m_regExpJITCode = std::make_unique<Yarr::YarrCodeBlock>();
+        return *m_regExpJITCode.get();
+    }
+#endif
+
+    struct RareData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        Vector<String> m_captureGroupNames;
+        HashMap<String, unsigned> m_namedGroupToParenIndex;
+    };
+
     String m_patternString;
     RegExpState m_state { NotCompiled };
     OptionSet<Yarr::Flags> m_flags;
-    ConcurrentJSLock m_lock;
     Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
     unsigned m_numSubpatterns { 0 };
-    Vector<String> m_captureGroupNames;
-    HashMap<String, unsigned> m_namedGroupToParenIndex;
     std::unique_ptr<Yarr::BytecodePattern> m_regExpBytecode;
+#if ENABLE(YARR_JIT)
+    std::unique_ptr<Yarr::YarrCodeBlock> m_regExpJITCode;
+#endif
+    std::unique_ptr<RareData> m_rareData;
 #if ENABLE(REGEXP_TRACING)
     double m_rtMatchOnlyTotalSubjectStringLen { 0.0 };
     double m_rtMatchTotalSubjectStringLen { 0.0 };
@@ -173,10 +192,6 @@ private:
     unsigned m_rtMatchOnlyFoundCount { 0 };
     unsigned m_rtMatchCallCount { 0 };
     unsigned m_rtMatchFoundCount { 0 };
-#endif
-
-#if ENABLE(YARR_JIT)
-    Yarr::YarrCodeBlock m_regExpJITCode;
 #endif
 };
 

@@ -73,9 +73,10 @@ ALWAYS_INLINE bool RegExp::hasCodeFor(Yarr::YarrCharSize charSize)
 #if ENABLE(YARR_JIT)
         if (m_state != JITCode)
             return true;
-        if ((charSize == Yarr::Char8) && (m_regExpJITCode.has8BitCode()))
+        ASSERT(m_regExpJITCode);
+        if ((charSize == Yarr::Char8) && (m_regExpJITCode->has8BitCode()))
             return true;
-        if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCode()))
+        if ((charSize == Yarr::Char16) && (m_regExpJITCode->has16BitCode()))
             return true;
 #else
         UNUSED_PARAM(charSize);
@@ -156,8 +157,9 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 #if ENABLE(YARR_JIT)
     if (m_state == JITCode) {
         {
+            ASSERT(m_regExpJITCode);
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode.usesPatternContextBuffer());
+            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
 
 #define EXTRA_JIT_PARAMS  , patternContextBufferHolder.buffer(), patternContextBufferHolder.size()
 #else
@@ -165,9 +167,9 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 #endif
 
             if (s.is8Bit())
-                result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
             else
-                result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
 
 #undef EXTRA_JIT_PARAMS
         }
@@ -230,9 +232,10 @@ ALWAYS_INLINE bool RegExp::hasMatchOnlyCodeFor(Yarr::YarrCharSize charSize)
 #if ENABLE(YARR_JIT)
         if (m_state != JITCode)
             return true;
-        if ((charSize == Yarr::Char8) && (m_regExpJITCode.has8BitCodeMatchOnly()))
+        ASSERT(m_regExpJITCode);
+        if ((charSize == Yarr::Char8) && (m_regExpJITCode->has8BitCodeMatchOnly()))
             return true;
-        if ((charSize == Yarr::Char16) && (m_regExpJITCode.has16BitCodeMatchOnly()))
+        if ((charSize == Yarr::Char16) && (m_regExpJITCode->has16BitCodeMatchOnly()))
             return true;
 #else
         UNUSED_PARAM(charSize);
@@ -277,8 +280,9 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
 
     if (m_state == JITCode) {
         {
+            ASSERT(m_regExpJITCode);
 #if ENABLE(YARR_JIT_ALL_PARENS_EXPRESSIONS)
-            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode.usesPatternContextBuffer());
+            PatternContextBufferHolder patternContextBufferHolder(vm, m_regExpJITCode->usesPatternContextBuffer());
 
 #define EXTRA_JIT_PARAMS  , patternContextBufferHolder.buffer(), patternContextBufferHolder.size()
 #else
@@ -286,9 +290,9 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
 #endif
 
             if (s.is8Bit())
-                result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
+                result = m_regExpJITCode->execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
             else
-                result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
+                result = m_regExpJITCode->execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
 
 #undef EXTRA_JIT_PARAMS
         }

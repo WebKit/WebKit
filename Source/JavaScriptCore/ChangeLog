@@ -1,3 +1,30 @@
+2019-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink sizeof(RegExp)
+        https://bugs.webkit.org/show_bug.cgi?id=196133
+
+        Reviewed by Mark Lam.
+
+        Some applications have many RegExp cells. But RegExp cells are very large (144B).
+        This patch reduces the size from 144B to 48B by,
+
+        1. Allocate Yarr::YarrCodeBlock in non-GC heap. We can avoid this allocation if JIT is disabled.
+        2. m_captureGroupNames and m_namedGroupToParenIndex are moved to RareData. They are only used when RegExp has named capture groups.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        (JSC::RegExp::estimatedSize):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::deleteCode):
+        (JSC::RegExp::printTraceData):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::hasCodeFor):
+        (JSC::RegExp::matchInline):
+        (JSC::RegExp::hasMatchOnlyCodeFor):
+
 2019-03-22  Keith Rollin  <krollin@apple.com>
 
         Enable ThinLTO support in Production builds
