@@ -107,7 +107,6 @@ static String stringForSSLProtocol(SSLProtocol protocol)
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (protocol) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case kDTLSProtocol1:
         return "DTLS 1.0"_s;
     case kSSLProtocol2:
@@ -131,7 +130,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case kSSLProtocolUnknown:
         return "Unknown";
     case kTLSProtocolMaxSupported:
-ALLOW_DEPRECATED_DECLARATIONS_END
     default:
         ASSERT_NOT_REACHED();
         return emptyString();

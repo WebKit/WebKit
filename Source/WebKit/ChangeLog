@@ -1,5 +1,12 @@
 2019-03-22  Simon Fraser  <simon.fraser@apple.com>
 
+        Undo collision with r243390.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (stringForSSLProtocol):
+
+2019-03-22  Simon Fraser  <simon.fraser@apple.com>
+
         Fix internal builds.
 
         * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
