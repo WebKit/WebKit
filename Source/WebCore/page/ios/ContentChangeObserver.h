@@ -173,6 +173,7 @@ private:
         EndedStyleRecalc,
         AddedTransition,
         EndedTransition,
+        CompletedTransition,
         CanceledTransition,
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,

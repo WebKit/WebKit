@@ -152,7 +152,7 @@ void ContentChangeObserver::didFinishTransition(const Element& element, CSSPrope
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didFinishTransition: transition finished (" << &element << ").");
 
-    adjustObservedState(Event::EndedTransition);
+    adjustObservedState(isConsideredHidden(element) ? Event::EndedTransition : Event::CompletedTransition);
 }
 
 void ContentChangeObserver::didRemoveTransition(const Element& element, CSSPropertyID propertyID)
@@ -434,12 +434,20 @@ void ContentChangeObserver::adjustObservedState(Event event)
         break;
     case Event::EndedTransition:
         // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
-        // asynchronously right before the style update is issued.
+        // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
         if (m_document.inStyleRecalc()) {
             // We need to start observing this style change synchronously.
             m_isInObservedStyleRecalc = true;
         } else
             setShouldObserveNextStyleRecalc(true);
+        break;
+    case Event::CompletedTransition:
+        // Set visibility flag on and report visible change synchronously or asynchronously depending whether we are in the middle of style recalc.
+        contentVisibilityDidChange();
+        if (m_document.inStyleRecalc())
+            m_isInObservedStyleRecalc = true;
+        else if (!isObservationTimeWindowActive())
+            adjustStateAndNotifyContentChangeIfNeeded();
         break;
     case Event::EndedFixedObservationTimeWindow:
         adjustStateAndNotifyContentChangeIfNeeded();
