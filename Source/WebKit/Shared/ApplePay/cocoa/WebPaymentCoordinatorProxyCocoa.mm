@@ -52,16 +52,6 @@
 
 namespace WebKit {
 
-bool WebPaymentCoordinatorProxy::platformCanMakePayments()
-{
-#if PLATFORM(MAC)
-    if (!PAL::isPassKitFrameworkAvailable())
-        return false;
-#endif
-
-    return [PAL::getPKPaymentAuthorizationViewControllerClass() canMakePayments];
-}
-
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID sessionID, WTF::Function<void(bool)>&& completionHandler)
 {
 #if PLATFORM(MAC)

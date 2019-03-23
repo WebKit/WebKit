@@ -120,9 +120,10 @@
     if (!(self = [super init]))
         return nil;
 
-    _summaryItems = request.paymentSummaryItems;
-    _shippingMethods = request.shippingMethods;
     _presenter = makeWeakPtr(presenter);
+    _request = request;
+    _shippingMethods = request.shippingMethods;
+    _summaryItems = request.paymentSummaryItems;
     return self;
 }
 
@@ -149,7 +150,7 @@
     ASSERT(!_didRequestMerchantSessionCompletion);
     _didRequestMerchantSessionCompletion = completion;
 
-    [PAL::getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
+    [self _getPaymentServicesMerchantURL:^(NSURL *merchantURL, NSError *error) {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
@@ -214,6 +215,12 @@ static WebCore::ApplePaySessionPaymentRequest::ShippingMethod toShippingMethod(P
         return [self completeShippingMethodSelection:@[ ]];
 
     presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod));
+}
+
+- (void) NO_RETURN_DUE_TO_ASSERT _getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
+{
+    ASSERT_NOT_REACHED();
+    completion(nil, nil);
 }
 
 - (void)_willFinishWithError:(NSError *)error

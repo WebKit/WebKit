@@ -35,6 +35,14 @@
 
 namespace WebKit {
 
+bool WebPaymentCoordinatorProxy::platformCanMakePayments()
+{
+    if (!PAL::isPassKitFrameworkAvailable())
+        return false;
+
+    return [PAL::getPKPaymentAuthorizationViewControllerClass() canMakePayments];
+}
+
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const URL& originatingURL, const Vector<URL>& linkIconURLStrings, PAL::SessionID sessionID, const WebCore::ApplePaySessionPaymentRequest& request, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!PAL::isPassKitFrameworkAvailable())

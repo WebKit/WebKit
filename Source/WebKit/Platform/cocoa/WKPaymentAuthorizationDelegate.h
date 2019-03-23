@@ -27,6 +27,7 @@
 
 #import <pal/spi/cocoa/PassKitSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/RetainPtr.h>
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSError;
@@ -52,7 +53,9 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentAuthorizationSt
 
 }
 
-@interface WKPaymentAuthorizationDelegate : NSObject
+@interface WKPaymentAuthorizationDelegate : NSObject {
+    RetainPtr<PKPaymentRequest> _request;
+}
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -80,6 +83,7 @@ using DidSelectShippingMethodCompletion = BlockPtr<void(PKPaymentAuthorizationSt
 - (void)_didSelectPaymentMethod:(PKPaymentMethod *)paymentMethod completion:(WebKit::DidSelectPaymentMethodCompletion::BlockType)completion;
 - (void)_didSelectShippingContact:(PKContact *)contact completion:(WebKit::DidSelectShippingContactCompletion::BlockType)completion;
 - (void)_didSelectShippingMethod:(PKShippingMethod *)shippingMethod completion:(WebKit::DidSelectShippingMethodCompletion::BlockType)completion;
+- (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion;
 - (void)_willFinishWithError:(NSError *)error;
 
 @end

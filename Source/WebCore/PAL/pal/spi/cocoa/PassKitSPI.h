@@ -49,6 +49,16 @@ WTF_EXTERN_C_END
 
 #else
 
+#import <Foundation/Foundation.h>
+
+#if HAVE(PASSKIT_API_TYPE)
+typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
+    PKPaymentRequestAPITypeInApp = 0,
+    PKPaymentRequestAPITypeWebJS,
+    PKPaymentRequestAPITypeWebPaymentRequest,
+};
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 
 #import <PassKit/PassKit.h>
@@ -58,6 +68,7 @@ WTF_EXTERN_C_END
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PKPaymentAuthorizationController ()
++ (void)paymentServicesMerchantURLForAPIType:(PKPaymentRequestAPIType)APIType completion:(void(^)(NSURL *merchantURL, NSError *error))completion;
 @property (nonatomic, assign, nullable) id<PKPaymentAuthorizationControllerPrivateDelegate> privateDelegate;
 @end
 
@@ -272,6 +283,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PKPaymentAuthorizationViewController ()
 + (void)paymentServicesMerchantURL:(void(^)(NSURL *merchantURL, NSError *error))completion;
+#if HAVE(PASSKIT_API_TYPE)
++ (void)paymentServicesMerchantURLForAPIType:(PKPaymentRequestAPIType)APIType completion:(void(^)(NSURL *merchantURL, NSError *error))completion;
+#endif
 @property (nonatomic, assign, nullable) id<PKPaymentAuthorizationViewControllerPrivateDelegate> privateDelegate;
 @end
 
@@ -282,13 +296,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || PLATFORM(IOS_FAMILY)
-typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
-    PKPaymentRequestAPITypeInApp = 0,
-    PKPaymentRequestAPITypeWebJS,
-    PKPaymentRequestAPITypeWebPaymentRequest,
-};
-
+#if HAVE(PASSKIT_API_TYPE)
 @interface PKPaymentRequest ()
 @property (nonatomic, assign) PKPaymentRequestAPIType APIType;
 @end

@@ -47,6 +47,15 @@
     return self;
 }
 
+- (void)_getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
+{
+    // FIXME: This -respondsToSelector: check can be removed once rdar://problem/48771320 is in an iOS SDK.
+    if ([PAL::getPKPaymentAuthorizationControllerClass() respondsToSelector:@selector(paymentServicesMerchantURLForAPIType:completion:)])
+        [PAL::getPKPaymentAuthorizationControllerClass() paymentServicesMerchantURLForAPIType:[_request APIType] completion:completion];
+    else
+        [PAL::getPKPaymentAuthorizationViewControllerClass() paymentServicesMerchantURLForAPIType:[_request APIType] completion:completion];
+}
+
 #pragma mark PKPaymentAuthorizationControllerDelegate
 
 - (void)paymentAuthorizationControllerDidFinish:(PKPaymentAuthorizationController *)controller
