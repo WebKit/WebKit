@@ -579,6 +579,11 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     if (m_isClosed)
         return;
 
+    if (is<HTMLFormControlElement>(nodeRespondingToClick)) {
+        LOG(ContentObservation, "handleSyntheticClick: Target node is a form control -> click.");
+        completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
+        return;
+    }
     auto& contentChangeObserver = respondingDocument.contentChangeObserver();
     auto observedContentChange = contentChangeObserver.observedContentChange();
     if (observedContentChange == WKContentVisibilityChange) {
