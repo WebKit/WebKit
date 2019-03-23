@@ -1,5 +1,15 @@
 2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK build after r243409.
+
+        Build failure is actually unrelated to r243409, it's yet another unified build failure that happens when source
+        file list changes.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformShowCertificate): Use WebCore namespace for CertificateInfo parameter.
+
+2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove build time dependency on Geoclue2
         https://bugs.webkit.org/show_bug.cgi?id=195994
 
