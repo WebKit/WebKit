@@ -1,3 +1,10 @@
+2019-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix internal builds.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (stringForSSLProtocol):
+
 2019-03-22  Keith Rollin  <krollin@apple.com>
 
         Enable ThinLTO support in Production builds

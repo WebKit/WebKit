@@ -105,6 +105,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 static String stringForSSLProtocol(SSLProtocol protocol)
 {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (protocol) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     case kDTLSProtocol1:
@@ -135,6 +136,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         ASSERT_NOT_REACHED();
         return emptyString();
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static String stringForSSLCipher(SSLCipherSuite cipher)
