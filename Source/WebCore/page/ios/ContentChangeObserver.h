@@ -123,7 +123,7 @@ private:
     bool isObservingDOMTimerScheduling() const { return m_isObservingDOMTimerScheduling; }
     void setShouldObserveTransitions(bool observe) { m_isObservingTransitions = observe; }
     bool isObservingTransitions() const { return m_isObservingTransitions; }
-    bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft; }
+    bool isObservedPropertyForTransition(CSSPropertyID propertyId) const { return propertyId == CSSPropertyLeft || propertyId == CSSPropertyOpacity; }
     void domTimerExecuteDidStart(const DOMTimer&);
     void domTimerExecuteDidFinish(const DOMTimer&);
     void registerDOMTimer(const DOMTimer& timer) { m_DOMTimerList.add(&timer); }

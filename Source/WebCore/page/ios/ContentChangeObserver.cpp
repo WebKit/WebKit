@@ -54,6 +54,9 @@ static bool isConsideredHidden(const Element& element)
     if (style.visibility() == Visibility::Hidden)
         return true;
 
+    if (!style.opacity())
+        return true;
+
     auto width = style.logicalWidth();
     auto height = style.logicalHeight();
     if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
@@ -137,6 +140,9 @@ void ContentChangeObserver::didAddTransition(const Element& element, const Anima
     if (transitionEnd > maximumDelayForTransitions)
         return;
     if (!isConsideredHidden(element))
+        return;
+    // In case of multiple transitions, the first tranistion wins (and it has to produce a visible content change in order to show up as hover).
+    if (m_elementsWithTransition.contains(&element))
         return;
     LOG_WITH_STREAM(ContentObservation, stream << "didAddTransition: transition created on " << &element << " (" << transitionEnd.milliseconds() << "ms).");
 

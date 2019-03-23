@@ -1,5 +1,27 @@
 2019-03-23  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Add support for observing opacity.
+        https://bugs.webkit.org/show_bug.cgi?id=196172
+
+        Reviewed by Simon Fraser.
+
+        This patch adds support for observing opacity changes. At this point we only track one transition at a time.
+        if the page registers transition on both left and opacity, the first is getting observed only.
+
+        Tests: fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-opacity-and-left.html
+               fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-transition.html
+               fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove.html
+               fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition.html
+               fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::isConsideredHidden):
+        (WebCore::ContentChangeObserver::didAddTransition):
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::isObservedPropertyForTransition const):
+
+2019-03-23  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Check if the transitioned content is visible at onAnimationEnd
         https://bugs.webkit.org/show_bug.cgi?id=196171
 

@@ -1,5 +1,23 @@
 2019-03-23  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Add support for observing opacity.
+        https://bugs.webkit.org/show_bug.cgi?id=196172
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-opacity-and-left-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-opacity-and-left.html: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-transition-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-transition.html: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove.html: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition.html: Added.
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart.html: Added.
+
+2019-03-23  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Check if the transitioned content is visible at onAnimationEnd
         https://bugs.webkit.org/show_bug.cgi?id=196171
 
