@@ -49,9 +49,7 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM& vm)
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    // FIXME: The m_key.isStillLive() check should not be needed if this watchpoint was removed
-    // when m_key's m_object died. https://bugs.webkit.org/show_bug.cgi?id=195829
-    if (m_key.isStillLive() && m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
+    if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install(vm);
         return;
     }

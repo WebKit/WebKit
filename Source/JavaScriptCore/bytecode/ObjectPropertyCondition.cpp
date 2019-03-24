@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,7 @@ void ObjectPropertyCondition::dumpInContext(PrintStream& out, DumpContext* conte
         out.print("<invalid>");
         return;
     }
-
-    // FIXME: The m_key.isStillLive() check should not be needed if the watchpoint using this
-    // condition was removed when m_object died. https://bugs.webkit.org/show_bug.cgi?id=195829
-    if (!isStillLive()) {
-        out.print("<not live>");
-        return;
-    }
-
+    
     out.print("<", inContext(JSValue(m_object), context), ": ", inContext(m_condition, context), ">");
 }
 

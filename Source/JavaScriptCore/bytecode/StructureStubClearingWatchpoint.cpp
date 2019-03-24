@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,9 +36,7 @@ namespace JSC {
 
 void StructureStubClearingWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
-    // FIXME: The m_key.isStillLive() check should not be needed if this watchpoint was removed
-    // when m_key's m_object died. https://bugs.webkit.org/show_bug.cgi?id=195829
-    if (!m_key.isStillLive() || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
+    if (!m_key || !m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         // This will implicitly cause my own demise: stub reset removes all watchpoints.
         // That works, because deleting a watchpoint removes it from the set's list, and
         // the set's list traversal for firing is robust against the set changing.

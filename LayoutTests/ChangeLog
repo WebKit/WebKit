@@ -1,3 +1,13 @@
+2019-03-23  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r243032 and r243071 because the fix is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=195892
+        <rdar://problem/48981239>
+
+        Not reviewed.
+
+        * platform/mac/TestExpectations:
+
 2019-03-23  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Prototype compute pipeline with MSL
