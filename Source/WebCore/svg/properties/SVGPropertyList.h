@@ -117,7 +117,7 @@ protected:
         // Spec: Detach item.
         item->detach();
         m_items.remove(index);
-        return WTFMove(item);
+        return item;
     }
 
     Ref<PropertyType> append(Ref<PropertyType>&& newItem) override
