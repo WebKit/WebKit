@@ -49,6 +49,8 @@
 #include "WebGPUBuffer.h"
 #include "WebGPUBufferBinding.h"
 #include "WebGPUCommandEncoder.h"
+#include "WebGPUComputePipeline.h"
+#include "WebGPUComputePipelineDescriptor.h"
 #include "WebGPUPipelineLayout.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUPipelineStageDescriptor.h"
@@ -135,6 +137,16 @@ Ref<WebGPURenderPipeline> WebGPUDevice::createRenderPipeline(const WebGPURenderP
 
     auto pipeline = m_device->createRenderPipeline(WTFMove(*gpuDescriptor));
     return WebGPURenderPipeline::create(WTFMove(pipeline));
+}
+
+Ref<WebGPUComputePipeline> WebGPUDevice::createComputePipeline(const WebGPUComputePipelineDescriptor& descriptor) const
+{
+    auto gpuDescriptor = descriptor.tryCreateGPUComputePipelineDescriptor();
+    if (!gpuDescriptor)
+        return WebGPUComputePipeline::create(nullptr);
+
+    auto pipeline = m_device->tryCreateComputePipeline(*gpuDescriptor);
+    return WebGPUComputePipeline::create(WTFMove(pipeline));
 }
 
 Ref<WebGPUCommandEncoder> WebGPUDevice::createCommandEncoder() const

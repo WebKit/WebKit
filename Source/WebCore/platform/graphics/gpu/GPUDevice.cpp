@@ -33,6 +33,8 @@
 #include "GPUBuffer.h"
 #include "GPUBufferDescriptor.h"
 #include "GPUCommandBuffer.h"
+#include "GPUComputePipeline.h"
+#include "GPUComputePipelineDescriptor.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
 #include "GPURenderPipeline.h"
@@ -42,6 +44,7 @@
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUSwapChain.h"
+#include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 #include <wtf/Optional.h>
@@ -81,6 +84,11 @@ RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&
 RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
 {
     return GPURenderPipeline::create(*this, WTFMove(descriptor));
+}
+
+RefPtr<GPUComputePipeline> GPUDevice::tryCreateComputePipeline(const GPUComputePipelineDescriptor& descriptor) const
+{
+    return GPUComputePipeline::tryCreate(*this, descriptor);
 }
 
 RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const

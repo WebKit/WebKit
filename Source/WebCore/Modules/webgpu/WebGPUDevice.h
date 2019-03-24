@@ -42,6 +42,7 @@ class WebGPUBindGroup;
 class WebGPUBindGroupLayout;
 class WebGPUBuffer;
 class WebGPUCommandEncoder;
+class WebGPUComputePipeline;
 class WebGPUPipelineLayout;
 class WebGPURenderPipeline;
 class WebGPUSampler;
@@ -54,6 +55,7 @@ struct GPUBufferDescriptor;
 struct GPUSamplerDescriptor;
 struct GPUTextureDescriptor;
 struct WebGPUBindGroupDescriptor;
+struct WebGPUComputePipelineDescriptor;
 struct WebGPUPipelineLayoutDescriptor;
 struct WebGPURenderPipelineDescriptor;
 struct WebGPUShaderModuleDescriptor;
@@ -75,6 +77,7 @@ public:
 
     RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
     Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&) const;
+    Ref<WebGPUComputePipeline> createComputePipeline(const WebGPUComputePipelineDescriptor&) const;
 
     Ref<WebGPUCommandEncoder> createCommandEncoder() const;
 

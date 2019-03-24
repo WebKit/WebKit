@@ -1,3 +1,17 @@
+2019-03-23  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Prototype compute pipeline with MSL
+        https://bugs.webkit.org/show_bug.cgi?id=196107
+        <rdar://problem/46289650>
+
+        Reviewed by Myles Maxfield.
+
+        Add a basic test to create, execute, and verify the results of a Web GPU compute pipeline.
+
+        * webgpu/compute-squares-expected.txt: Added.
+        * webgpu/compute-squares.html: Added.
+        * webgpu/whlsl.html: Update some function names to match API changes.
+
 2019-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (iOS 8): Scrollbar can't be hidden when webkit-overflow-scrolling is set to touch

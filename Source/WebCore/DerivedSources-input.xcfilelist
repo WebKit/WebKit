@@ -367,6 +367,9 @@ $(PROJECT_DIR)/Modules/webgpu/WebGPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUColor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUCommandBuffer.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUCommandEncoder.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUComputePassEncoder.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUComputePipeline.idl
+$(PROJECT_DIR)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUDevice.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUIndexFormat.idl
 $(PROJECT_DIR)/Modules/webgpu/WebGPUInputStateDescriptor.idl

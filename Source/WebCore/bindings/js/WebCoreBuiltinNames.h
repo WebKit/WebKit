@@ -86,6 +86,8 @@ namespace WebCore {
     macro(GPUShaderModule) \
     macro(GPUCommandBuffer) \
     macro(GPUCommandEncoder) \
+    macro(GPUComputePassEncoder) \
+    macro(GPUComputePipeline) \
     macro(GPUShaderStageBit) \
     macro(GPUSwapChain) \
     macro(GPUTextureUsage) \

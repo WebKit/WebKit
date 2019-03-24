@@ -497,6 +497,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/WebGPUBufferBinding.idl
     Modules/webgpu/WebGPUCommandBuffer.idl
     Modules/webgpu/WebGPUCommandEncoder.idl
+    Modules/webgpu/WebGPUComputePassEncoder.idl
+    Modules/webgpu/WebGPUComputePipeline.idl
+    Modules/webgpu/WebGPUComputePipelineDescriptor.idl
     Modules/webgpu/WebGPUDevice.idl
     Modules/webgpu/WebGPUPipelineDescriptorBase.idl
     Modules/webgpu/WebGPUPipelineLayout.idl
