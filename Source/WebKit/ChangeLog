@@ -1,3 +1,10 @@
+2019-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix typo in comment added in r243379.
+
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (-[WKProcessGroup setDelegate:]):
+
 2019-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (iOS 8): Scrollbar can't be hidden when webkit-overflow-scrolling is set to touch
