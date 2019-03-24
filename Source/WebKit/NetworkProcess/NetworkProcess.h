@@ -154,9 +154,6 @@ public:
 
     AuthenticationManager& authenticationManager();
     DownloadManager& downloadManager();
-#if ENABLE(PROXIMITY_NETWORKING)
-    NetworkProximityManager& proximityManager();
-#endif
 
     NetworkCache::Cache* cache() { return m_cache.get(); }
 

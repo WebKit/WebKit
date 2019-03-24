@@ -32,7 +32,6 @@
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
 #import "NetworkProcess.h"
-#import "NetworkProximityManager.h"
 #import "NetworkSessionCocoa.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/AuthenticationChallenge.h>
@@ -200,9 +199,6 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
-#if ENABLE(PROXIMITY_NETWORKING)
-    m_session->networkProcess().proximityManager().applyProperties(request, *this, nsRequest);
-#endif
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
     if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {

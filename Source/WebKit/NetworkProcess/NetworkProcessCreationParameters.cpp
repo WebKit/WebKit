@@ -85,10 +85,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredAsCORSEnabled;
     encoder << urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
 
-#if ENABLE(PROXIMITY_NETWORKING)
-    encoder << wirelessContextIdentifier;
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle << shouldDisableServiceWorkerProcessTerminationDelay;
 #endif
@@ -194,11 +190,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest))
         return false;
-
-#if ENABLE(PROXIMITY_NETWORKING)
-    if (!decoder.decode(result.wirelessContextIdentifier))
-        return false;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (!decoder.decode(result.serviceWorkerRegistrationDirectory))

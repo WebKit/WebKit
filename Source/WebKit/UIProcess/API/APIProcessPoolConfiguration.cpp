@@ -126,9 +126,6 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_processSwapsOnWindowOpenWithOpener = this->m_processSwapsOnWindowOpenWithOpener;
     copy->m_isAutomaticProcessWarmingEnabledByClient = this->m_isAutomaticProcessWarmingEnabledByClient;
     copy->m_usesWebProcessCache = this->m_usesWebProcessCache;
-#if ENABLE(PROXIMITY_NETWORKING)
-    copy->m_wirelessContextIdentifier = this->m_wirelessContextIdentifier;
-#endif
 #if PLATFORM(COCOA)
     copy->m_suppressesConnectionTerminationOnSystemChange = this->m_suppressesConnectionTerminationOnSystemChange;
 #endif

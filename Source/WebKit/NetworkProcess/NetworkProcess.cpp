@@ -42,7 +42,6 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessPlatformStrategies.h"
 #include "NetworkProcessProxyMessages.h"
-#include "NetworkProximityManager.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "NetworkSessionCreationParameters.h"
@@ -145,9 +144,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
 #if PLATFORM(COCOA) || USE(SOUP)
     LegacyCustomProtocolManager::networkProcessCreated(*this);
 #endif
-#if ENABLE(PROXIMITY_NETWORKING)
-    addSupplement<NetworkProximityManager>();
-#endif
 
 #if USE(SOUP)
     DNSResolveQueueSoup::setGlobalDefaultNetworkStorageSessionAccessor([this]() -> NetworkStorageSession& {
@@ -182,13 +178,6 @@ DownloadManager& NetworkProcess::downloadManager()
 {
     return m_downloadManager;
 }
-
-#if ENABLE(PROXIMITY_NETWORKING)
-NetworkProximityManager& NetworkProcess::proximityManager()
-{
-    return *supplement<NetworkProximityManager>();
-}
-#endif
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {

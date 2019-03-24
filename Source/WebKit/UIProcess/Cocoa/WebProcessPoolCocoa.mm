@@ -296,10 +296,6 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.storageAccessAPIEnabled = storageAccessAPIEnabled();
     parameters.suppressesConnectionTerminationOnSystemChange = m_configuration->suppressesConnectionTerminationOnSystemChange();
 
-#if ENABLE(PROXIMITY_NETWORKING)
-    parameters.wirelessContextIdentifier = m_configuration->wirelessContextIdentifier();
-#endif
-
     parameters.shouldEnableITPDatabase = [defaults boolForKey:[NSString stringWithFormat:@"InternalDebug%@", WebPreferencesKey::isITPDatabaseEnabledKey().createCFString().get()]];
     parameters.downloadMonitorSpeedMultiplier = m_configuration->downloadMonitorSpeedMultiplier();
 

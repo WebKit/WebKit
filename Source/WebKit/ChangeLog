@@ -1,3 +1,42 @@
+2019-03-24  Andy Estes  <aestes@apple.com>
+
+        [watchOS] Remove unused Proximity Networking code
+        https://bugs.webkit.org/show_bug.cgi?id=196188
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformPrepareToSuspend):
+        (WebKit::NetworkProcess::platformProcessDidResume):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToBackground):
+        (WebKit::NetworkProcess::platformProcessDidTransitionToForeground):
+        * NetworkProcess/watchos/NetworkProximityAssertion.h: Removed.
+        * NetworkProcess/watchos/NetworkProximityAssertion.mm: Removed.
+        * NetworkProcess/watchos/NetworkProximityManager.h: Removed.
+        * NetworkProcess/watchos/NetworkProximityManager.mm: Removed.
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm:
+        (-[_WKProcessPoolConfiguration wirelessContextIdentifier]):
+        (-[_WKProcessPoolConfiguration setWirelessContextIdentifier:]):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-03-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typo in comment added in r243379.

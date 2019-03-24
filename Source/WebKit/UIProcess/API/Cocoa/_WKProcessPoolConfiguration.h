@@ -42,7 +42,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic, copy) NSArray<NSURL *> *additionalReadAccessAllowedURLs WK_API_AVAILABLE(macos(10.13), ios(11.0));
 
 #if TARGET_OS_IPHONE && !TARGET_OS_SIMULATOR
-@property (nonatomic) NSUInteger wirelessContextIdentifier;
+@property (nonatomic) NSUInteger wirelessContextIdentifier WK_API_DEPRECATED("Use of this API is no longer necessary and can be removed", ios(10.12, WK_IOS_TBA));
 #endif
 
 // Network Process properties

@@ -30,7 +30,6 @@
 #import "Logging.h"
 #import "NetworkCache.h"
 #import "NetworkProcessCreationParameters.h"
-#import "NetworkProximityManager.h"
 #import "NetworkResourceLoader.h"
 #import "NetworkSessionCocoa.h"
 #import "SandboxExtension.h"
@@ -247,32 +246,19 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 
 void NetworkProcess::platformPrepareToSuspend(CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(PROXIMITY_NETWORKING)
-    proximityManager().suspend(SuspensionReason::ProcessSuspending, WTFMove(completionHandler));
-#else
     completionHandler();
-#endif
 }
 
 void NetworkProcess::platformProcessDidResume()
 {
-#if ENABLE(PROXIMITY_NETWORKING)
-    proximityManager().resume(ResumptionReason::ProcessResuming);
-#endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToBackground()
 {
-#if ENABLE(PROXIMITY_NETWORKING)
-    proximityManager().suspend(SuspensionReason::ProcessBackgrounding, [] { });
-#endif
 }
 
 void NetworkProcess::platformProcessDidTransitionToForeground()
 {
-#if ENABLE(PROXIMITY_NETWORKING)
-    proximityManager().resume(ResumptionReason::ProcessForegrounding);
-#endif
 }
 
 } // namespace WebKit

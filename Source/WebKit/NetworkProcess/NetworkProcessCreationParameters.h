@@ -100,10 +100,6 @@ struct NetworkProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
 
-#if ENABLE(PROXIMITY_NETWORKING)
-    unsigned wirelessContextIdentifier { 0 };
-#endif
-
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;

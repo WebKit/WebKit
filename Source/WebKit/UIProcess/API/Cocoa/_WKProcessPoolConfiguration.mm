@@ -137,15 +137,14 @@
     _processPoolConfiguration->setAdditionalReadAccessAllowedPaths(WTFMove(paths));
 }
 
-#if ENABLE(PROXIMITY_NETWORKING)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 - (NSUInteger)wirelessContextIdentifier
 {
-    return _processPoolConfiguration->wirelessContextIdentifier();
+    return 0;
 }
 
 - (void)setWirelessContextIdentifier:(NSUInteger)identifier
 {
-    _processPoolConfiguration->setWirelessContextIdentifier(identifier);
 }
 #endif
 

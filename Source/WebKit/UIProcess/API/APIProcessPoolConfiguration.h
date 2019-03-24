@@ -180,11 +180,6 @@ public:
     const WTF::String& customWebContentServiceBundleIdentifier() const { return m_customWebContentServiceBundleIdentifier; }
     void setCustomWebContentServiceBundleIdentifier(const WTF::String& customWebContentServiceBundleIdentifier) { m_customWebContentServiceBundleIdentifier = customWebContentServiceBundleIdentifier; }
 
-#if ENABLE(PROXIMITY_NETWORKING)
-    unsigned wirelessContextIdentifier() const { return m_wirelessContextIdentifier; }
-    void setWirelessContextIdentifier(unsigned wirelessContextIdentifier) { m_wirelessContextIdentifier = wirelessContextIdentifier; }
-#endif
-
 #if PLATFORM(COCOA)
     bool suppressesConnectionTerminationOnSystemChange() const { return m_suppressesConnectionTerminationOnSystemChange; }
     void setSuppressesConnectionTerminationOnSystemChange(bool suppressesConnectionTerminationOnSystemChange) { m_suppressesConnectionTerminationOnSystemChange = suppressesConnectionTerminationOnSystemChange; }
@@ -235,10 +230,6 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     WTF::String m_ctDataConnectionServiceType;
-#endif
-
-#if ENABLE(PROXIMITY_NETWORKING)
-    unsigned m_wirelessContextIdentifier { 0 };
 #endif
 
 #if PLATFORM(COCOA)

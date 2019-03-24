@@ -38,9 +38,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     [configuration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
     [configuration setAttrStyleEnabled:YES];
     [configuration setAdditionalReadAccessAllowedURLs:@[ [NSURL fileURLWithPath:@"/path/to/allow/read/access/"] ]];
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    [configuration setWirelessContextIdentifier:25];
-#endif
     [configuration setDiskCacheSizeOverride:42000];
     [configuration setCachePartitionedURLSchemes:@[ @"ssh", @"vnc" ]];
     [configuration setAlwaysRevalidatedURLSchemes:@[ @"afp", @"smb" ]];
@@ -66,9 +63,6 @@ TEST(WKProcessPoolConfiguration, Copy)
     EXPECT_EQ([configuration ignoreSynchronousMessagingTimeoutsForTesting], [copy ignoreSynchronousMessagingTimeoutsForTesting]);
     EXPECT_EQ([configuration attrStyleEnabled], [copy attrStyleEnabled]);
     EXPECT_TRUE([[configuration additionalReadAccessAllowedURLs] isEqual:[copy additionalReadAccessAllowedURLs]]);
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    EXPECT_EQ([configuration wirelessContextIdentifier], [copy wirelessContextIdentifier]);
-#endif
     EXPECT_EQ([configuration diskCacheSizeOverride], [copy diskCacheSizeOverride]);
     EXPECT_TRUE([[configuration cachePartitionedURLSchemes] isEqual:[copy cachePartitionedURLSchemes]]);
     EXPECT_TRUE([[configuration alwaysRevalidatedURLSchemes] isEqual:[copy alwaysRevalidatedURLSchemes]]);
