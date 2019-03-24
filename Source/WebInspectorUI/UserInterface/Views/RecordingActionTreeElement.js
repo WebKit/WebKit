@@ -254,130 +254,118 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         if (recordingAction.contextReplacer)
             return "has-context-replacer";
 
-        function classNameForActionName(name) {
-            switch (name) {
-            case "arc":
-            case "arcTo":
-                return "arc";
+        switch (recordingAction.name) {
+        case "arc":
+        case "arcTo":
+            return "arc";
 
-            case "globalAlpha":
-            case "globalCompositeOperation":
-            case "setAlpha":
-            case "setGlobalAlpha":
-            case "setCompositeOperation":
-            case "setGlobalCompositeOperation":
-                return "composite";
+        case "globalAlpha":
+        case "globalCompositeOperation":
+        case "setAlpha":
+        case "setGlobalAlpha":
+        case "setCompositeOperation":
+        case "setGlobalCompositeOperation":
+            return "composite";
 
-            case "bezierCurveTo":
-            case "quadraticCurveTo":
-                return "curve";
+        case "bezierCurveTo":
+        case "quadraticCurveTo":
+            return "curve";
 
-            case "clearRect":
-            case "fill":
-            case "fillRect":
-            case "fillText":
-                return "fill";
+        case "clearRect":
+        case "fill":
+        case "fillRect":
+        case "fillText":
+            return "fill";
 
-            case "createImageData":
-            case "drawFocusIfNeeded":
-            case "drawImage":
-            case "drawImageFromRect":
-            case "filter":
-            case "getImageData":
-            case "imageSmoothingEnabled":
-            case "imageSmoothingQuality":
-            case "putImageData":
-            case "transferFromImageBitmap":
-            case "webkitImageSmoothingEnabled":
-                return "image";
+        case "createImageData":
+        case "drawFocusIfNeeded":
+        case "drawImage":
+        case "drawImageFromRect":
+        case "filter":
+        case "getImageData":
+        case "imageSmoothingEnabled":
+        case "imageSmoothingQuality":
+        case "putImageData":
+        case "transferFromImageBitmap":
+        case "webkitImageSmoothingEnabled":
+            return "image";
 
-            case "getLineDash":
-            case "lineCap":
-            case "lineDashOffset":
-            case "lineJoin":
-            case "lineWidth":
-            case "miterLimit":
-            case "setLineCap":
-            case "setLineDash":
-            case "setLineJoin":
-            case "setLineWidth":
-            case "setMiterLimit":
-            case "webkitLineDash":
-            case "webkitLineDashOffset":
-                return "line-style";
+        case "getLineDash":
+        case "lineCap":
+        case "lineDashOffset":
+        case "lineJoin":
+        case "lineWidth":
+        case "miterLimit":
+        case "setLineCap":
+        case "setLineDash":
+        case "setLineJoin":
+        case "setLineWidth":
+        case "setMiterLimit":
+        case "webkitLineDash":
+        case "webkitLineDashOffset":
+            return "line-style";
 
-            case "closePath":
-            case "lineTo":
-                return "line-to";
+        case "closePath":
+        case "lineTo":
+            return "line-to";
 
-            case "beginPath":
-            case "moveTo":
-                return "move-to";
+        case "beginPath":
+        case "moveTo":
+            return "move-to";
 
-            case "isPointInPath":
-                return "point-in-path";
+        case "isPointInPath":
+            return "point-in-path";
 
-            case "isPointInStroke":
-                return "point-in-stroke";
+        case "isPointInStroke":
+            return "point-in-stroke";
 
-            case "clearShadow":
-            case "setShadow":
-            case "shadowBlur":
-            case "shadowColor":
-            case "shadowOffsetX":
-            case "shadowOffsetY":
-                return "shadow";
+        case "clearShadow":
+        case "setShadow":
+        case "shadowBlur":
+        case "shadowColor":
+        case "shadowOffsetX":
+        case "shadowOffsetY":
+            return "shadow";
 
-            case "createLinearGradient":
-            case "createPattern":
-            case "createRadialGradient":
-            case "fillStyle":
-            case "setFillColor":
-            case "setStrokeColor":
-            case "strokeStyle":
-                return "style";
+        case "createLinearGradient":
+        case "createPattern":
+        case "createRadialGradient":
+        case "fillStyle":
+        case "setFillColor":
+        case "setStrokeColor":
+        case "strokeStyle":
+            return "style";
 
-            case "stroke":
-            case "strokeRect":
-            case "strokeText":
-                return "stroke";
+        case "stroke":
+        case "strokeRect":
+        case "strokeText":
+            return "stroke";
 
-            case "direction":
-            case "font":
-            case "measureText":
-            case "textAlign":
-            case "textBaseline":
-                return "text";
+        case "direction":
+        case "font":
+        case "measureText":
+        case "textAlign":
+        case "textBaseline":
+            return "text";
 
-            case "getTransform":
-            case "resetTransform":
-            case "rotate":
-            case "scale":
-            case "setTransform":
-            case "transform":
-            case "translate":
-                return "transform";
+        case "getTransform":
+        case "resetTransform":
+        case "rotate":
+        case "scale":
+        case "setTransform":
+        case "transform":
+        case "translate":
+            return "transform";
 
-            case "clip":
-            case "ellipse":
-            case "rect":
-            case "restore":
-            case "save":
-                return name;
-            }
-
-            console.warn("No class name for action " + name);
-            return "";
+        case "clip":
+        case "ellipse":
+        case "rect":
+        case "restore":
+        case "save":
+            return recordingAction.name;
         }
 
-        const name = recordingAction.name;
-        let className = WI.RecordingActionTreeElement._memoizedActionClassNames.get(name);
-        if (!className) {
-            className = classNameForActionName(name);
-            WI.RecordingActionTreeElement._memoizedActionClassNames.set(name, className);
-        }
-
-        return className;
+        return "name-unknown";
     }
 
     // Public
@@ -464,5 +452,3 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         this.representedObject.removeEventListener(null, null, this);
     }
 };
-
-WI.RecordingActionTreeElement._memoizedActionClassNames = new Map;

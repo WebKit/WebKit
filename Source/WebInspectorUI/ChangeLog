@@ -1,3 +1,24 @@
+2019-03-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: WebGL action icon shouldn't invert when selected
+        https://bugs.webkit.org/show_bug.cgi?id=196135
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._classNameForAction):
+        (WI.RecordingActionTreeElement._classNameForAction.classNameForActionName): Deleted.
+        Remove unnecessary logging and memoization.
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon): Added.
+        (@media (prefers-color-scheme: dark)):
+        (.item.recording-action:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon): Added.
+        (.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon): Deleted.
+        (.item.recording-action.has-context-replacer > .icon): Deleted.
+        (.item.recording-action:not(.invalid, .initial-state, .has-context-replacer) > .icon): Deleted.
+        Simplify styles between light and dark mode.
+
 2019-03-24  Simon Welsh  <simon@welsh-au.com>
 
         Web Inspector: testCellRoleForRequiredChidren accessibility audit checks for rows in cells

@@ -50,7 +50,7 @@ body[dir=rtl] .item.recording-action::before {
     float: right;
 }
 
-.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer) > .icon {
+.tree-outline:focus .item.recording-action.selected:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
     filter: invert();
     opacity: 1;
 }
@@ -129,10 +129,6 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.re
 
 .item.recording-action > .titles .parameters > .inline-swatch {
     vertical-align: -1px;
-}
-
-.item.recording-action.has-context-replacer > .icon {
-    content: url("../Images/Source.svg");
 }
 
 .item.recording-action.composite > .icon {
@@ -229,16 +225,11 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus .item.re
 }
 
 @media (prefers-color-scheme: dark) {
-    .item.recording-action:not(.initial-state)::before {
-        color: unset;
-        opacity: 0.4;
-    }
-
     .tree-outline .item.recording-action.visual:not(.selected, .invalid) {
         color: var(--green-highlight-text-color);
     }
 
-    .item.recording-action:not(.invalid, .initial-state, .has-context-replacer) > .icon {
+    .item.recording-action:not(.invalid, .initial-state, .has-context-replacer, .name-unknown) > .icon {
         filter: invert();
         opacity: 0.8;
     }
