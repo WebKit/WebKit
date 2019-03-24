@@ -1,3 +1,24 @@
+2019-03-24  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: missing icons for WebGL2 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=196136
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.canvas-2d, .bitmaprenderer) .icon): Added.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.webgl, .webgl2, .webgpu, .webmetal) .icon): Added.
+        (@media (prefers-color-scheme: dark)):
+        (.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled): Deleted.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas.canvas-2d .icon): Deleted.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.casnvas.webgl .icon): Deleted.
+        Use the 2D icon for BitmapRenderer and the 3D icon for WebGL2, WebMetals, and WebGPU.
+        Drive-by: the start/stop button text was too dark when disabled in dark mode.
+
+        * UserInterface/Models/Canvas.js:
+        Drive-by: "gpu" => "webgpu", to match the protocol string.
+
 2019-03-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: "Reveal in Resources Tab" still shown when Sources tab is enabled

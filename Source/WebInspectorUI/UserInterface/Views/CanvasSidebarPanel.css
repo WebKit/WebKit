@@ -30,16 +30,16 @@
     overflow-y: hidden;
 }
 
-.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled {
+.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
     filter: grayscale();
     opacity: 0.5;
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas.canvas-2d .icon {
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.canvas-2d, .bitmaprenderer) .icon {
     content: url(../Images/Canvas2D.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas.webgl .icon {
+.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas:matches(.webgl, .webgl2, .webgpu, .webmetal) .icon {
     content: url(../Images/Canvas3D.svg);
 }
 
@@ -100,7 +100,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled {
+    .sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled > .glyph {
         filter: grayscale() invert();
     }
 }

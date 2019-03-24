@@ -412,7 +412,7 @@ WI.Canvas.ContextType = {
     BitmapRenderer: "bitmaprenderer",
     WebGL: "webgl",
     WebGL2: "webgl2",
-    WebGPU: "gpu",
+    WebGPU: "webgpu",
     WebMetal: "webmetal",
 };
 
