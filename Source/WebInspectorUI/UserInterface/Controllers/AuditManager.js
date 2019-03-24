@@ -732,9 +732,9 @@ WI.AuditManager = class AuditManager extends WI.Object
             return {level: domNodes.length ? "fail" : "pass", domNodes, domAttributes: ["aria-label", "aria-labelledby", "title"]};
         };
 
-        const testCellRoleForRequiredChidren = function() {
+        const testRowRoleForRequiredChidren = function() {
             const relationships = {
-                cell: ["row"],
+                row: ["cell", "gridcell", "columnheader", "rowheader"],
             };
             let domNodes = [];
             let visitedParents = new Set;
@@ -901,7 +901,7 @@ WI.AuditManager = class AuditManager extends WI.Object
                 new WI.AuditTestCase(`testFeedRoleForRequiredChidren`, testFeedRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("feed")), supports: 1}),
                 new WI.AuditTestCase(`testTabListRoleForRequiredChidren`, testTabListRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that element of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("tablist")), supports: 1}),
                 new WI.AuditTestCase(`testButtonLabels`, testButtonLabels.toString(), {description: WI.UIString("Ensure that buttons have accessible labels for assistive technology."), supports: 1}),
-                new WI.AuditTestCase(`testCellRoleForRequiredChidren`, testCellRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("cell")), supports: 1}),
+                new WI.AuditTestCase(`testRowRoleForRequiredChidren`, testRowRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("row")), supports: 1}),
                 new WI.AuditTestCase(`testListRoleForRequiredChidren`, testListRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("list")), supports: 1}),
                 new WI.AuditTestCase(`testComboBoxRoleForRequiredChidren`, testComboBoxRoleForRequiredChidren.toString(), {description: WI.UIString("Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.").format(WI.unlocalizedString("combobox")), supports: 1}),
                 new WI.AuditTestCase(`testForMultipleMainContentSections`, testForMultipleMainContentSections.toString(), {description: WI.UIString("Ensure that only one main content section is used on the page."), supports: 1}),
