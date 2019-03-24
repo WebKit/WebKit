@@ -1,3 +1,15 @@
+2019-03-23  Keith Miller  <keith_miller@apple.com>
+
+        Refactor clz/ctz and fix getLSBSet.
+        https://bugs.webkit.org/show_bug.cgi?id=196162
+
+        Reviewed by Saam Barati.
+
+        Add tests for clz, ctz, getLSBSet, and getMSBSet.
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] check-webkit-style doesn't complain about identifiers with underscores in files under glib, gtk or wpe dirs

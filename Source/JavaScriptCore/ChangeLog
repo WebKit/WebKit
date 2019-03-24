@@ -1,3 +1,25 @@
+2019-03-23  Keith Miller  <keith_miller@apple.com>
+
+        Refactor clz/ctz and fix getLSBSet.
+        https://bugs.webkit.org/show_bug.cgi?id=196162
+
+        Reviewed by Saam Barati.
+
+        Refactor references of clz32/64 and ctz32 to use clz and ctz,
+        respectively.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGOperations.cpp:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::digitDiv):
+        (JSC::JSBigInt::absoluteDivWithBigIntDivisor):
+        (JSC::JSBigInt::calculateMaximumCharactersRequired):
+        (JSC::JSBigInt::toStringBasePowerOfTwo):
+        (JSC::JSBigInt::compareToDouble):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncClz32):
+
 2019-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink sizeof(RegExp)

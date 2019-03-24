@@ -1,3 +1,26 @@
+2019-03-23  Keith Miller  <keith_miller@apple.com>
+
+        Refactor clz/ctz and fix getLSBSet.
+        https://bugs.webkit.org/show_bug.cgi?id=196162
+
+        Reviewed by Saam Barati.
+
+        This patch makes clz32/64 and ctz32 generic so they work on any
+        numeric type. Since these methods work on any type we don't need
+        to have a separate implementation of getLSBSet, which also
+        happened to be getMSBSet. This patch also adds getMSBSet as there
+        may be users who want that in the future.
+
+        * wtf/MathExtras.h:
+        (WTF::clz):
+        (WTF::ctz):
+        (WTF::getLSBSet):
+        (WTF::getMSBSet):
+        (getLSBSet): Deleted.
+        (WTF::clz32): Deleted.
+        (WTF::clz64): Deleted.
+        (WTF::ctz32): Deleted.
+
 2019-03-22  Keith Rollin  <krollin@apple.com>
 
         Enable ThinLTO support in Production builds

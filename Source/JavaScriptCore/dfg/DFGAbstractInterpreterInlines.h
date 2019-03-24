@@ -704,7 +704,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
             uint32_t value = toUInt32(*number);
-            setConstant(node, jsNumber(clz32(value)));
+            setConstant(node, jsNumber(clz(value)));
             break;
         }
         switch (node->child1().useKind()) {

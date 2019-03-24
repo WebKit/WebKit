@@ -26,6 +26,7 @@
 #pragma once
 
 #include <algorithm>
+#include <climits>
 #include <cmath>
 #include <float.h>
 #include <limits>
@@ -300,22 +301,6 @@ template<typename T> constexpr bool hasTwoOrMoreBitsSet(T value)
 {
     return !hasZeroOrOneBitsSet(value);
 }
-
-// FIXME: Some Darwin projects shamelessly include WTF headers and don't build with C++14... See: rdar://problem/45395767
-// Since C++11 and before don't support constexpr statements we can't mark this function constexpr.
-#if !defined(WTF_CPP_STD_VER) || WTF_CPP_STD_VER >= 14
-template <typename T> constexpr unsigned getLSBSet(T value)
-{
-    typedef typename std::make_unsigned<T>::type UnsignedT;
-    unsigned result = 0;
-
-    UnsignedT unsignedValue = static_cast<UnsignedT>(value);
-    while (unsignedValue >>= 1)
-        ++result;
-
-    return result;
-}
-#endif
 
 template<typename T> inline T divideRoundedUp(T a, T b)
 {
@@ -630,49 +615,31 @@ void shuffleVector(VectorType& vector, const RandomFunc& randomFunc)
     shuffleVector(vector, vector.size(), randomFunc);
 }
 
-inline unsigned clz32(uint32_t number)
+template<typename T>
+inline unsigned clz(T value)
 {
-#if COMPILER(GCC_COMPATIBLE)
-    if (number)
-        return __builtin_clz(number);
-    return 32;
-#elif COMPILER(MSVC)
-    // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
-    // So we use bit-scan-reverse operation to calculate clz.
-    unsigned long ret = 0;
-    if (_BitScanReverse(&ret, number))
-        return 31 - ret;
-    return 32;
-#else
-    unsigned zeroCount = 0;
-    for (int i = 31; i >= 0; i--) {
-        if (!(number >> i))
-            zeroCount++;
-        else
-            break;
-    }
-    return zeroCount;
-#endif
-}
+    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    constexpr unsigned bitSize64 = sizeof(uint64_t) * CHAR_BIT;
 
-inline unsigned clz64(uint64_t number)
-{
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
 #if COMPILER(GCC_COMPATIBLE)
-    if (number)
-        return __builtin_clzll(number);
-    return 64;
+    if (uValue)
+        return __builtin_clzll(uValue) - (bitSize64 - bitSize);
+    return bitSize;
 #elif COMPILER(MSVC) && !CPU(X86)
     // Visual Studio 2008 or upper have __lzcnt, but we can't detect Intel AVX at compile time.
     // So we use bit-scan-reverse operation to calculate clz.
     // _BitScanReverse64 is defined in X86_64 and ARM in MSVC supported environments.
     unsigned long ret = 0;
     if (_BitScanReverse64(&ret, number))
-        return 63 - ret;
-    return 64;
+        return bitSize - ret;
+    return bitSize;
 #else
     unsigned zeroCount = 0;
-    for (int i = 63; i >= 0; i--) {
-        if (!(number >> i))
+    for (int i = bitSize64 - 1; i >= 0; i--) {
+        if (!(static_cast<uint64_t>(uValue) >> i))
             zeroCount++;
         else
             break;
@@ -681,28 +648,49 @@ inline unsigned clz64(uint64_t number)
 #endif
 }
 
-inline unsigned ctz32(uint32_t number)
+template<typename T>
+inline unsigned ctz(T value)
 {
+    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+
+    using UT = typename std::make_unsigned<T>::type;
+    UT uValue = value;
+
 #if COMPILER(GCC_COMPATIBLE)
-    if (number)
-        return __builtin_ctz(number);
-    return 32;
+    if (uValue)
+        return __builtin_ctzll(uValue);
+    return bitSize;
 #elif COMPILER(MSVC) && !CPU(X86)
     unsigned long ret = 0;
-    if (_BitScanForward(&ret, number))
+    if (_BitScanForward64(&ret, number))
         return ret;
-    return 32;
+    return bitSize;
 #else
     unsigned zeroCount = 0;
-    for (unsigned i = 0; i < 32; i++) {
-        if (number & 1)
+    for (unsigned i = 0; i < bitSize; i++) {
+        if (uValue & 1)
             break;
 
         zeroCount++;
-        number >>= 1;
+        uValue >>= 1;
     }
     return zeroCount;
 #endif
+}
+
+template<typename T>
+inline unsigned getLSBSet(T t)
+{
+    ASSERT(t);
+    return ctz(t);
+}
+
+template<typename T>
+inline unsigned getMSBSet(T t)
+{
+    constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
+    ASSERT(t);
+    return bitSize - 1 - clz(t);
 }
 
 } // namespace WTF
@@ -712,6 +700,7 @@ using WTF::preciseIndexMaskPtr;
 using WTF::preciseIndexMaskShift;
 using WTF::preciseIndexMaskShiftForSize;
 using WTF::shuffleVector;
-using WTF::clz32;
-using WTF::clz64;
-using WTF::ctz32;
+using WTF::clz;
+using WTF::ctz;
+using WTF::getLSBSet;
+using WTF::getMSBSet;

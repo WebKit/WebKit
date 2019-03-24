@@ -647,11 +647,7 @@ inline JSBigInt::Digit JSBigInt::digitDiv(Digit high, Digit low, Digit divisor, 
 #else
     static constexpr Digit halfDigitBase = 1ull << halfDigitBits;
     // Adapted from Warren, Hacker's Delight, p. 152.
-#if USE(JSVALUE64)
-    unsigned s = clz64(divisor);
-#else
-    unsigned s = clz32(divisor);
-#endif
+    unsigned s = clz(divisor);
     // If {s} is digitBits here, it causes an undefined behavior.
     // But {s} is never digitBits since {divisor} is never zero here.
     ASSERT(s != digitBits);
@@ -984,7 +980,7 @@ void JSBigInt::absoluteDivWithBigIntDivisor(ExecState* exec, JSBigInt* dividend,
     // overflowing (they take a two digits wide input, and return a one digit
     // result).
     Digit lastDigit = divisor->digit(n - 1);
-    unsigned shift = sizeof(lastDigit) == 8 ? clz64(lastDigit) : clz32(lastDigit);
+    unsigned shift = clz(lastDigit);
 
     if (shift > 0) {
         divisor = absoluteLeftShiftAlwaysCopy(exec, divisor, shift, LeftShiftMode::SameSizeResult);
@@ -1445,11 +1441,7 @@ static constexpr size_t bitsPerCharTableMultiplier = 1u << bitsPerCharTableShift
 // Divide bit length of the BigInt by bits representable per character.
 uint64_t JSBigInt::calculateMaximumCharactersRequired(unsigned length, unsigned radix, Digit lastDigit, bool sign)
 {
-    unsigned leadingZeros;
-    if (sizeof(lastDigit) == 8)
-        leadingZeros = clz64(lastDigit);
-    else
-        leadingZeros = clz32(lastDigit);
+    unsigned leadingZeros = clz(lastDigit);
 
     size_t bitLength = length * digitBits - leadingZeros;
 
@@ -1482,18 +1474,14 @@ String JSBigInt::toStringBasePowerOfTwo(ExecState* exec, JSBigInt* x, unsigned r
 
     const unsigned length = x->length();
     const bool sign = x->sign();
-    const unsigned bitsPerChar = ctz32(radix);
+    const unsigned bitsPerChar = ctz(radix);
     const unsigned charMask = radix - 1;
     // Compute the length of the resulting string: divide the bit length of the
     // BigInt by the number of bits representable per character (rounding up).
     const Digit msd = x->digit(length - 1);
 
-#if USE(JSVALUE64)
-    const unsigned msdLeadingZeros = clz64(msd);
-#else
-    const unsigned msdLeadingZeros = clz32(msd);
-#endif
-    
+    const unsigned msdLeadingZeros = clz(msd);
+
     const size_t bitLength = length * digitBits - msdLeadingZeros;
     const size_t charsRequired = (bitLength + bitsPerChar - 1) / bitsPerChar + sign;
 
@@ -1876,7 +1864,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
 
     int xLength = x->length();
     Digit xMSD = x->digit(xLength - 1);
-    int msdLeadingZeros = sizeof(xMSD) == 8  ? clz64(xMSD) : clz32(xMSD);
+    int msdLeadingZeros = clz(xMSD);
 
     int xBitLength = xLength * digitBits - msdLeadingZeros;
     int yBitLength = exponent + 1;

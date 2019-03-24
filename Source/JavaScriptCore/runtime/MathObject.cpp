@@ -169,7 +169,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncClz32(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     uint32_t value = exec->argument(0).toUInt32(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSValue(clz32(value)));
+    return JSValue::encode(JSValue(clz(value)));
 }
 
 EncodedJSValue JSC_HOST_CALL mathProtoFuncCos(ExecState* exec)
