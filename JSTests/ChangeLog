@@ -1,3 +1,14 @@
+2019-03-25  Keith Miller  <keith_miller@apple.com>
+
+        ASSERTION FAILED: m_op == CompareStrictEq in JSC::DFG::Node::convertToCompareEqPtr(JSC::DFG::FrozenValue *, JSC::DFG::Edge)
+        https://bugs.webkit.org/show_bug.cgi?id=196176
+
+        Reviewed by Saam Barati.
+
+        * stress/object-is-fold-to-compare-eq-ptr.js: Added.
+        (main.v10):
+        (main):
+
 2019-03-25  Tadeu Zagallo  <tzagallo@apple.com>
 
         WebAssembly: f32.max with NaN generates incorrect result
