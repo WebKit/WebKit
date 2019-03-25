@@ -633,7 +633,7 @@ inline unsigned clz(T value)
     // So we use bit-scan-reverse operation to calculate clz.
     // _BitScanReverse64 is defined in X86_64 and ARM in MSVC supported environments.
     unsigned long ret = 0;
-    if (_BitScanReverse64(&ret, number))
+    if (_BitScanReverse64(&ret, uValue))
         return bitSize - ret;
     return bitSize;
 #else
@@ -662,7 +662,7 @@ inline unsigned ctz(T value)
     return bitSize;
 #elif COMPILER(MSVC) && !CPU(X86)
     unsigned long ret = 0;
-    if (_BitScanForward64(&ret, number))
+    if (_BitScanForward64(&ret, uValue))
         return ret;
     return bitSize;
 #else
