@@ -1,3 +1,17 @@
+2019-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r243465.
+        https://bugs.webkit.org/show_bug.cgi?id=196226
+
+        the test doesn't build (Requested by thorton on #webkit).
+
+        Reverted changeset:
+
+        "Do not terminate the NetworkProcess if a third party
+        application sends a NSCredential with a SecIdentityRef"
+        https://bugs.webkit.org/show_bug.cgi?id=196213
+        https://trac.webkit.org/changeset/243465
+
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef
