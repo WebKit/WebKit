@@ -1,3 +1,12 @@
+2019-03-25  Saam barati  <sbarati@apple.com>
+
+        Update the blurb describing JetStream2 and fix a broken link in the in-depth page.
+
+        Rubber-stamped by Filip Pizlo.
+
+        * JetStream2/in-depth.html:
+        * JetStream2/index.html:
+
 2019-03-18  Saam Barati  <sbarati@apple.com>
 
         Add a plan file for JetStream 2
