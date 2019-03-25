@@ -1,5 +1,14 @@
 2019-03-25  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Gracefully handle missing patch_id in events
+        https://bugs.webkit.org/show_bug.cgi?id=196216
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/events.py:
+
+2019-03-25  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] use lz4 compression for improving buildbot performance
         https://bugs.webkit.org/show_bug.cgi?id=196155
 

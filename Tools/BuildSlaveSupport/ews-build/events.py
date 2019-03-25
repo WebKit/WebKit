@@ -100,7 +100,7 @@ class Events(service.BuildbotService):
         return build.get('properties').get('buildername')[0]
 
     def getPatchID(self, build):
-        if not (build and 'properties' in build):
+        if not (build and 'properties' in build and 'patch_id' in build['properties']):
             return None
 
         return build.get('properties').get('patch_id')[0]
