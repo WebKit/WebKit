@@ -98,7 +98,7 @@ elseif (LOWERCASE_CMAKE_SYSTEM_PROCESSOR MATCHES "(x64|x86_64|amd64)")
     # binaries without setting the build up as a crosscompilation,
     # which is the only way to modify CMAKE_SYSTEM_PROCESSOR.
     if (FORCE_32BIT)
-        set(WTF_CPU X86 1)
+        set(WTF_CPU_X86 1)
     else ()
         set(WTF_CPU_X86_64 1)
     endif ()

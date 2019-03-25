@@ -1,3 +1,14 @@
+2019-03-25  Xan López  <xan@igalia.com>
+
+        [WTF] Fix typo when forcing WTF_CPU_X86
+        https://bugs.webkit.org/show_bug.cgi?id=196204
+
+        Reviewed by Michael Catanzaro.
+
+        Fix a typo when setting the WTF_CPU variable for X86.
+
+        * CMakeLists.txt:
+
 2019-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Remove build time dependency on Geoclue2
