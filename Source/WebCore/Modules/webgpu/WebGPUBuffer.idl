@@ -29,8 +29,7 @@ typedef unsigned long long u64;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
-    InterfaceName=GPUBuffer
+    ImplementationLacksVTable
 ] interface WebGPUBuffer {
     void setSubData(u64 offset, ArrayBuffer data);
 

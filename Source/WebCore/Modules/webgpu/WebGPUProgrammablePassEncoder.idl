@@ -29,7 +29,6 @@ typedef unsigned long u32;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    InterfaceName=GPUProgrammablePassEncoder,
     SkipVTableValidation
 ] interface WebGPUProgrammablePassEncoder {
     void endPass();

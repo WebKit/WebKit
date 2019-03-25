@@ -1,3 +1,16 @@
+2019-03-25  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r243438.
+
+        243319 Caused Mac WK2 testers to crash and become
+        unresponsive.
+
+        Reverted changeset:
+
+        "Update WebGPU class names based on sketch.idl"
+        https://bugs.webkit.org/show_bug.cgi?id=194260
+        https://trac.webkit.org/changeset/243438
+
 2019-03-25  Eric Carlson  <eric.carlson@apple.com>
 
         Delete MetadataPreloadingNotPermitted, it is unused

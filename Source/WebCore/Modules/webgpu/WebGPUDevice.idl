@@ -39,8 +39,7 @@ typedef unsigned long GPUTextureUsageFlags;
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
-    InterfaceName=GPUDevice
+    ImplementationLacksVTable
 ] interface WebGPUDevice {
     readonly attribute WebGPUAdapter adapter;
 

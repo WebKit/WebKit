@@ -15,13 +15,13 @@ promise_test(async t => {
     assert_true(context instanceof GPUCanvasContext, "getContext returned a GPUCanvasContext.");
 
     const adapter = await window.gpu.requestAdapter({});
-    assert_true(adapter instanceof GPUAdapter, "requestAdapter returned a WebGPUAdapter.");
+    assert_true(adapter instanceof WebGPUAdapter, "requestAdapter returned a WebGPUAdapter.");
 
     const device = await adapter.requestDevice();
-    assert_true(device instanceof GPUDevice, "requestDevice returned a WebGPUDevice.");
+    assert_true(device instanceof WebGPUDevice, "requestDevice returned a WebGPUDevice.");
 
     const queue = device.getQueue();
-    assert_true(queue instanceof GPUQueue, "getQueue returned a WebGPUQueue.");
+    assert_true(queue instanceof WebGPUQueue, "getQueue returned a WebGPUQueue.");
 
     queue.label = "Example label";
     assert_equals(queue.label, "Example label", "queue.label was set.");

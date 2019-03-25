@@ -27,7 +27,6 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
-    InterfaceName=GPUBindGroupLayout
+    ImplementationLacksVTable
 ] interface WebGPUBindGroupLayout {
 };

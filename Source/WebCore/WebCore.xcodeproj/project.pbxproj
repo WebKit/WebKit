@@ -14127,6 +14127,7 @@
 		D0615FCC217FE5C6008A48A8 /* WebGPUShaderModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModule.h; sourceTree = "<group>"; };
 		D0615FCD217FE5C6008A48A8 /* WebGPUShaderModule.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUShaderModule.cpp; sourceTree = "<group>"; };
 		D0615FCE217FE5C6008A48A8 /* WebGPUShaderModule.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUShaderModule.idl; sourceTree = "<group>"; };
+		D063AE4621C06626000E6A35 /* WebGPUInputStepMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInputStepMode.h; sourceTree = "<group>"; };
 		D06A9A2122026C7A0083C662 /* GPURequestAdapterOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPURequestAdapterOptions.h; sourceTree = "<group>"; };
 		D06C0D8D0CFD11460065F43F /* RemoveFormatCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveFormatCommand.h; sourceTree = "<group>"; };
 		D06C0D8E0CFD11460065F43F /* RemoveFormatCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveFormatCommand.cpp; sourceTree = "<group>"; };
@@ -26276,6 +26277,7 @@
 				D00F595321701D8C000D71DB /* WebGPUDevice.cpp */,
 				D00F595221701D8C000D71DB /* WebGPUDevice.h */,
 				D00F595421701D8C000D71DB /* WebGPUDevice.idl */,
+				D063AE4621C06626000E6A35 /* WebGPUInputStepMode.h */,
 				D0C419F02183EB31009EC1DE /* WebGPUPipelineDescriptorBase.h */,
 				D0C419F12183EB31009EC1DE /* WebGPUPipelineDescriptorBase.idl */,
 				D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */,

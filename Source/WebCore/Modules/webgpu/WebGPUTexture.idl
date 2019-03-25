@@ -27,8 +27,7 @@
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
-    ImplementationLacksVTable,
-    InterfaceName=GPUTexture
+    ImplementationLacksVTable
 ] interface WebGPUTexture {
     WebGPUTextureView createDefaultView();
     void destroy();

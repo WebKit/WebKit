@@ -24,7 +24,7 @@ promise_test(async () => {
     const bindGroupBinding = { binding: 1, resource: bufferBinding };
 
     const bindGroup = device.createBindGroup({ layout: bindGroupLayout, bindings: [bindGroupBinding]});
-    assert_true(bindGroup instanceof GPUBindGroup, "WebGPUBindGroup successfully created.")
+    assert_true(bindGroup instanceof WebGPUBindGroup, "WebGPUBindGroup successfully created.")
 }, "Create a basic WebGPUBindGroup via WebGPUDevice.")
 </script>
 </body>

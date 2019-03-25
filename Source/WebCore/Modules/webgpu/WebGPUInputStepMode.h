@@ -22,28 +22,17 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long u32;
-typedef unsigned long long u64;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    JSGenerateToJSObject
-] interface WebGPURenderPassEncoder : WebGPUProgrammablePassEncoder {
-    void setPipeline(WebGPURenderPipeline pipeline);
+#if ENABLE(WEBGPU)
 
-    void setVertexBuffers(u32 startSlot, sequence<WebGPUBuffer> buffers, sequence<u64> offsets);
+#include "GPUVertexInputDescriptor.h"
 
-    void draw(u32 vertexCount, u32 instanceCount, u32 firstVertex, u32 firstInstance);
+namespace WebCore {
 
-/* Not Yet Implemented
-    void setBlendColor(float r, float g, float b, float a);
-    void setIndexBuffer(WebGPUBuffer buffer, u64 offset);
+using WebGPUInputStepMode = GPUInputStepMode;
 
-    void drawIndexed(u32 indexCount, u32 instanceCount, u32 firstIndex, i32 baseVertex, u32 firstInstance);
+} // namespace WebCore
 
-    // TODO add missing commands
-*/
-};
+#endif // ENABLE(WEBGPU)
