@@ -68,11 +68,6 @@ uint64_t WebPaymentCoordinatorProxy::messageSenderDestinationID() const
     return *m_destinationID;
 }
 
-void WebPaymentCoordinatorProxy::availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&& completionHandler)
-{
-    completionHandler(platformAvailablePaymentNetworks());
-}
-
 void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&& reply)
 {
     reply(platformCanMakePayments());

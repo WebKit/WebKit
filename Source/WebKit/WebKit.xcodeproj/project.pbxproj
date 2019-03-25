@@ -3903,6 +3903,7 @@
 		A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadInternal.h; sourceTree = "<group>"; };
 		A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadDelegate.h; sourceTree = "<group>"; };
 		A1B89B92221E023300EB4CEA /* SDKVariant.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = SDKVariant.xcconfig; sourceTree = "<group>"; };
+		A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorCocoa.mm; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
 		A1DF631018E0B7C8003A3E2A /* DownloadClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadClient.mm; sourceTree = "<group>"; };
@@ -5296,6 +5297,7 @@
 		1AB1F7701D1B2F5D007C9BD1 /* ApplePay */ = {
 			isa = PBXGroup;
 			children = (
+				A1B9CA372246E525003D6DCA /* cocoa */,
 				1AB1F7711D1B2F7E007C9BD1 /* WebPaymentCoordinator.cpp */,
 				1AB1F7721D1B2F7E007C9BD1 /* WebPaymentCoordinator.h */,
 				1AB1F7731D1B2F7E007C9BD1 /* WebPaymentCoordinator.messages.in */,
@@ -7188,6 +7190,14 @@
 				A1798B502230A0FE000764BD /* PaymentAuthorizationController.mm */,
 			);
 			path = ios;
+			sourceTree = "<group>";
+		};
+		A1B9CA372246E525003D6DCA /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */,
+			);
+			path = cocoa;
 			sourceTree = "<group>";
 		};
 		A1E6886E1F6E2B82007006A6 /* mac */ = {

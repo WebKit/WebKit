@@ -44,8 +44,6 @@
 #import <WebCore/Scrollbar.h>
 #import <wtf/ObjCRuntimeExtras.h>
 
-using namespace WebKit;
-
 @implementation WKAccessibilityWebPageObjectBase
 
 - (WebCore::AXObjectCache*)axObjectCache
@@ -132,7 +130,7 @@ using namespace WebKit;
         return [self isolatedTreeRootObject];
 #endif
 
-    if (AXObjectCache* cache = [self axObjectCache]) {
+    if (auto cache = [self axObjectCache]) {
         if (WebCore::AccessibilityObject* root = cache->rootObject())
             return root->wrapper();
     }
@@ -140,7 +138,7 @@ using namespace WebKit;
     return nil;
 }
 
-- (void)setWebPage:(WebPage*)page
+- (void)setWebPage:(WebKit::WebPage*)page
 {
     m_page = page;
     

@@ -59,28 +59,13 @@ void WebPaymentCoordinator::networkProcessConnectionClosed()
 #endif
 }
 
-const WebPaymentCoordinator::AvailablePaymentNetworksSet& WebPaymentCoordinator::availablePaymentNetworks()
-{
-    if (m_availablePaymentNetworks)
-        return *m_availablePaymentNetworks;
-
-    m_availablePaymentNetworks = WebPaymentCoordinator::AvailablePaymentNetworksSet();
-
-    Vector<String> availablePaymentNetworks;
-    using AvailablePaymentNetworksMessage = Messages::WebPaymentCoordinatorProxy::AvailablePaymentNetworks;
-    if (sendSync(AvailablePaymentNetworksMessage(), AvailablePaymentNetworksMessage::Reply(availablePaymentNetworks))) {
-        for (auto& network : availablePaymentNetworks)
-            m_availablePaymentNetworks->add(network);
-    }
-
-    return *m_availablePaymentNetworks;
-}
-
 Optional<String> WebPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
 {
-    auto& paymentNetworks = availablePaymentNetworks();
-    auto result = paymentNetworks.find(paymentNetwork);
-    if (result == paymentNetworks.end())
+    if (!m_availablePaymentNetworks)
+        m_availablePaymentNetworks = platformAvailablePaymentNetworks();
+
+    auto result = m_availablePaymentNetworks->find(paymentNetwork);
+    if (result == m_availablePaymentNetworks->end())
         return WTF::nullopt;
     return *result;
 }

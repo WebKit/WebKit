@@ -1,3 +1,29 @@
+2019-03-25  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Remove the AvailablePaymentNetworks synchronous message
+        https://bugs.webkit.org/show_bug.cgi?id=196180
+
+        Reviewed by Youenn Fablet.
+
+        Unlike many PassKit interactions, it's ok to call +[PKPaymentRequest availableNetworks]
+        without an entitlement. Therefore, we can call it from the web process directly rather than
+        synchronously messaging the entitled UI or networking process.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::availablePaymentNetworks):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/cocoa/WebPaymentCoordinatorCocoa.mm: Added.
+        (WebKit::WebPaymentCoordinator::platformAvailablePaymentNetworks const):
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm:
+        (-[WKAccessibilityWebPageObjectBase accessibilityRootObjectWrapper]):
+        (-[WKAccessibilityWebPageObjectBase setWebPage:]):
+
 2019-03-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, tiny fix after r243388 to address API test failures on iOS

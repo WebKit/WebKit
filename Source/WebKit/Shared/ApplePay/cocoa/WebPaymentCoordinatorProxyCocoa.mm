@@ -349,21 +349,6 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const Op
     m_authorizationPresenter->completePaymentMethodSelection(update);
 }
 
-Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()
-{
-#if PLATFORM(MAC)
-    if (!PAL::isPassKitFrameworkAvailable())
-        return { };
-#endif
-
-    NSArray<PKPaymentNetwork> *availableNetworks = [PAL::getPKPaymentRequestClass() availableNetworks];
-    Vector<String> result;
-    result.reserveInitialCapacity(availableNetworks.count);
-    for (PKPaymentNetwork network in availableNetworks)
-        result.uncheckedAppend(network);
-    return result;
-}
-
 } // namespace WebKit
 
 #endif // ENABLE(APPLE_PAY)

@@ -494,6 +494,8 @@ WebProcess/API/Cocoa/WKWebProcess.cpp
 
 WebProcess/ApplePay/WebPaymentCoordinator.cpp
 
+WebProcess/ApplePay/cocoa/WebPaymentCoordinatorCocoa.mm
+
 WebProcess/cocoa/PlaybackSessionManager.mm
 WebProcess/cocoa/UserMediaCaptureManager.cpp
 WebProcess/cocoa/VideoFullscreenManager.mm

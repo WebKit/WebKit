@@ -26,7 +26,6 @@
 
 messages -> WebPaymentCoordinatorProxy {
 
-    AvailablePaymentNetworks() -> (Vector<String> availablePaymentNetworks) Synchronous
     CanMakePayments() -> (bool result) Synchronous
     CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName, PAL::SessionID sessionID) -> (bool canMakePayments) Async
     OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result) Async

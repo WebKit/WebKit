@@ -102,7 +102,7 @@ private:
 #endif
 
     using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
-    const AvailablePaymentNetworksSet& availablePaymentNetworks();
+    static AvailablePaymentNetworksSet platformAvailablePaymentNetworks();
 
     WebPage& m_webPage;
 

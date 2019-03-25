@@ -111,7 +111,6 @@ private:
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
 
     // Message handlers
-    void availablePaymentNetworks(CompletionHandler<void(Vector<String>&&)>&&);
     void canMakePayments(CompletionHandler<void(bool)>&&);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID, CompletionHandler<void(bool)>&&);
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, CompletionHandler<void(bool)>&&);
@@ -133,7 +132,6 @@ private:
     void didReachFinalState();
     void hidePaymentUI();
 
-    Vector<String> platformAvailablePaymentNetworks();
     bool platformCanMakePayments();
     void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID, WTF::Function<void(bool)>&& completionHandler);
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void(bool)>&& completionHandler);
