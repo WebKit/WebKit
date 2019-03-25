@@ -109,6 +109,10 @@ def reply_type(message):
     return 'std::tuple<%s>' % (', '.join(reply_parameter_type(parameter.type) for parameter in message.reply_parameters))
 
 
+def reply_arguments_type(message):
+    return 'std::tuple<%s>' % (', '.join(parameter.type for parameter in message.reply_parameters))
+
+
 def message_to_struct_declaration(message):
     result = []
     function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
@@ -137,7 +141,8 @@ def message_to_struct_declaration(message):
             if len(send_parameters):
                 result.append(', %s' % completion_handler_parameters)
             result.append(');\n')
-        result.append('    typedef %s Reply;\n' % reply_type(message))
+        result.append('    using Reply = %s;\n' % reply_type(message))
+        result.append('    using ReplyArguments = %s;\n' % reply_arguments_type(message))
 
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))

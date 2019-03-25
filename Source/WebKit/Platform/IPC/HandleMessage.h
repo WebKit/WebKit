@@ -110,31 +110,34 @@ struct CodingType<std::tuple<Ts...>> {
 template<typename T, typename C, typename MF>
 void handleMessage(Decoder& decoder, C* object, MF function)
 {
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
         ASSERT(decoder.isInvalid());
         return;
     }
 
-    callMemberFunction(WTFMove(arguments), object, function);
+    callMemberFunction(WTFMove(*arguments), object, function);
 }
 
 template<typename T, typename C, typename MF>
 void handleMessage(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
         ASSERT(decoder.isInvalid());
         return;
     }
-    callMemberFunction(connection, WTFMove(arguments), object, function);
+    callMemberFunction(connection, WTFMove(*arguments), object, function);
 }
 
 template<typename T, typename C, typename MF>
 void handleMessageSynchronous(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
 {
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
         ASSERT(decoder.isInvalid());
         return;
     }
@@ -142,14 +145,15 @@ void handleMessageSynchronous(Connection& connection, Decoder& decoder, std::uni
     typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = makeRef(connection)] (auto&&... args) mutable {
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
-    callMemberFunction(WTFMove(arguments), WTFMove(completionHandler), object, function);
+    callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 
 template<typename T, typename C, typename MF>
 void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& decoder, std::unique_ptr<Encoder>& replyEncoder, C* object, MF function)
 {
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
         ASSERT(decoder.isInvalid());
         return;
     }
@@ -157,7 +161,7 @@ void handleMessageSynchronousWantsConnection(Connection& connection, Decoder& de
     typename T::DelayedReply completionHandler = [replyEncoder = WTFMove(replyEncoder), connection = makeRef(connection)] (auto&&... args) mutable {
         T::send(WTFMove(replyEncoder), WTFMove(connection), args...);
     };
-    callMemberFunction(connection, WTFMove(arguments), WTFMove(completionHandler), object, function);
+    callMemberFunction(connection, WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 
 template<typename T, typename C, typename MF>
@@ -170,8 +174,9 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
         return;
     }
     
-    typename CodingType<typename T::Arguments>::Type arguments;
-    if (!decoder.decode(arguments)) {
+    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    decoder >> arguments;
+    if (!arguments) {
         ASSERT(decoder.isInvalid());
         return;
     }
@@ -181,7 +186,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
         *encoder << listenerID;
         T::send(WTFMove(encoder), WTFMove(connection), args...);
     };
-    callMemberFunction(WTFMove(arguments), WTFMove(completionHandler), object, function);
+    callMemberFunction(WTFMove(*arguments), WTFMove(completionHandler), object, function);
 }
 
 } // namespace IPC

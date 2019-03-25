@@ -39,6 +39,8 @@ public:
     MediaDeviceSandboxExtensions()
     {
     }
+    MediaDeviceSandboxExtensions(MediaDeviceSandboxExtensions&&) = default;
+    MediaDeviceSandboxExtensions& operator=(MediaDeviceSandboxExtensions&&) = default;
 
     MediaDeviceSandboxExtensions(Vector<String> ids, SandboxExtension::HandleArray&& handles);
 

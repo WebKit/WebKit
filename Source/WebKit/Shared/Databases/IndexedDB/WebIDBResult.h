@@ -50,6 +50,9 @@ public:
         , m_handles(WTFMove(handles))
     {
     }
+    
+    WebIDBResult(WebIDBResult&&) = default;
+    WebIDBResult& operator=(WebIDBResult&&) = default;
 
     const WebCore::IDBResultData& resultData() const { return m_resultData; }
     const SandboxExtension::HandleArray& handles() const { return m_handles; }

@@ -33,19 +33,19 @@ namespace WebCore {
 WEBCORE_EXPORT bool operator==(const AudioStreamBasicDescription&, const AudioStreamBasicDescription&);
 inline bool operator!=(const AudioStreamBasicDescription& a, const AudioStreamBasicDescription& b) { return !(a == b); }
 
-class CAAudioStreamDescription final : public AudioStreamDescription {
+class WEBCORE_EXPORT CAAudioStreamDescription final : public AudioStreamDescription {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
 
-    WEBCORE_EXPORT CAAudioStreamDescription();
-    WEBCORE_EXPORT CAAudioStreamDescription(const AudioStreamBasicDescription&);
-    WEBCORE_EXPORT CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);
-    WEBCORE_EXPORT ~CAAudioStreamDescription();
+    CAAudioStreamDescription();
+    CAAudioStreamDescription(const AudioStreamBasicDescription&);
+    CAAudioStreamDescription(double, uint32_t, PCMFormat, bool);
+    ~CAAudioStreamDescription();
 
     const PlatformDescription& platformDescription() const final;
 
-    WEBCORE_EXPORT PCMFormat format() const final;
+    PCMFormat format() const final;
 
     double sampleRate() const final { return m_streamDescription.mSampleRate; }
     bool isPCM() const final { return m_streamDescription.mFormatID == kAudioFormatLinearPCM; }

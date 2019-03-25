@@ -43,6 +43,8 @@ class UpdateInfo {
 
 public:
     UpdateInfo() { }
+    UpdateInfo(UpdateInfo&&) = default;
+    UpdateInfo& operator=(UpdateInfo&&) = default;
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, UpdateInfo&);

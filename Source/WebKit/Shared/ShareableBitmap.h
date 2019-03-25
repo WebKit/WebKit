@@ -63,6 +63,8 @@ public:
         WTF_MAKE_NONCOPYABLE(Handle);
     public:
         Handle();
+        Handle(Handle&&) = default;
+        Handle& operator=(Handle&&) = default;
 
         bool isNull() const { return m_handle.isNull(); }
 

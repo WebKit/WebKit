@@ -1,5 +1,24 @@
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
+        Enable IPC sending and receiving non-default-constructible types
+        https://bugs.webkit.org/show_bug.cgi?id=196132
+
+        Reviewed by Geoff Garen.
+
+        This basically just requires the decoding of std::tuple to return an Optional<std::tuple> instead of
+        constructing a std::tuple then decoding into it.  I now decode synchronous replies into an Optional<std::tuple>
+        then move it into the tuple of references where the successfully decoded reply should go.  This required
+        the synchronous reply types be move constructible and move assignable.
+
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        * Modules/indexeddb/shared/IDBTransactionInfo.h:
+        * platform/DragImage.h:
+        * platform/PasteboardWriterData.h:
+        * platform/audio/mac/CAAudioStreamDescription.h:
+        * platform/graphics/RemoteVideoSample.h:
+
+2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
         Stop storing raw pointers to Documents
         https://bugs.webkit.org/show_bug.cgi?id=196042
 

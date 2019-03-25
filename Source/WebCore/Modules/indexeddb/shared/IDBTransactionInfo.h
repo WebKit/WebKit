@@ -50,6 +50,8 @@ public:
     static IDBTransactionInfo versionChange(const IDBServer::IDBConnectionToClient&, const IDBDatabaseInfo& originalDatabaseInfo, uint64_t newVersion);
 
     IDBTransactionInfo(const IDBTransactionInfo&);
+    IDBTransactionInfo(IDBTransactionInfo&&) = default;
+    IDBTransactionInfo& operator=(IDBTransactionInfo&&) = default;
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBTransactionInfo(const IDBTransactionInfo&, IsolatedCopyTag);

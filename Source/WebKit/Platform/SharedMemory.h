@@ -64,6 +64,8 @@ public:
     public:
         Handle();
         ~Handle();
+        Handle(Handle&&);
+        Handle& operator=(Handle&&);
 
         bool isNull() const;
 

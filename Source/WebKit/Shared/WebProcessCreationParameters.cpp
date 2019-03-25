@@ -34,6 +34,9 @@
 
 namespace WebKit {
 
+WebProcessCreationParameters::WebProcessCreationParameters(WebProcessCreationParameters&&) = default;
+WebProcessCreationParameters& WebProcessCreationParameters::operator=(WebProcessCreationParameters&&) = default;
+
 WebProcessCreationParameters::WebProcessCreationParameters()
 {
 }

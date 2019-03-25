@@ -47,7 +47,7 @@ public:
 
     struct WebContent {
         WebContent();
-        ~WebContent();
+        WEBCORE_EXPORT ~WebContent();
 
 #if PLATFORM(COCOA)
         String contentOrigin;

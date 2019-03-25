@@ -150,10 +150,33 @@ public:
         return ArgumentCoder<T>::decode(*this, t);
     }
 
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesLegacyDecoder<T>::value>* = nullptr>
+    bool decode(T& t)
+    {
+        Optional<T> optional;
+        *this >> optional;
+        if (!optional)
+            return false;
+        t = WTFMove(*optional);
+        return true;
+    }
+
     template<typename T, std::enable_if_t<UsesModernDecoder<T>::value>* = nullptr>
     Decoder& operator>>(Optional<T>& t)
     {
         t = ArgumentCoder<T>::decode(*this);
+        return *this;
+    }
+    
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesModernDecoder<T>::value>* = nullptr>
+    Decoder& operator>>(Optional<T>& optional)
+    {
+        T t;
+        if (ArgumentCoder<T>::decode(*this, t)) {
+            optional = WTFMove(t);
+            return *this;
+        }
+        optional = WTF::nullopt;
         return *this;
     }
 

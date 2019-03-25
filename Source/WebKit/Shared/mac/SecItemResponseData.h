@@ -37,11 +37,10 @@ namespace WebKit {
     
 class SecItemResponseData {
 public:
-    SecItemResponseData();
-    SecItemResponseData(OSStatus, CFTypeRef result);
+    SecItemResponseData(OSStatus, RetainPtr<CFTypeRef>&& result);
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, SecItemResponseData&);
+    static Optional<SecItemResponseData> decode(IPC::Decoder&);
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }

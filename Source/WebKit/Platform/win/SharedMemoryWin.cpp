@@ -39,6 +39,19 @@ SharedMemory::Handle::Handle()
 {
 }
 
+SharedMemory::Handle::Handle(Handle&& other)
+{
+    m_handle = std::exchange(other.m_handle, 0);
+    m_size = std::exchange(other.m_size, 0);
+}
+
+auto SharedMemory::Handle::operator=(Handle&& other) -> Handle&
+{
+    m_handle = std::exchange(other.m_handle, 0);
+    m_size = std::exchange(other.m_size, 0);
+    return *this;
+}
+
 SharedMemory::Handle::~Handle()
 {
     clear();

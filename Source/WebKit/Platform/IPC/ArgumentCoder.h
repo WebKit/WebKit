@@ -41,6 +41,8 @@ class Encoder;
 
 template<typename> struct ArgumentCoder;
 
+template<typename> class UsesModernDecoder;
+
 template<typename U>
 class UsesModernDecoder {
 private:
@@ -52,6 +54,13 @@ private:
 public:
     static constexpr bool argumentCoderValue = sizeof(check<U>(nullptr)) == sizeof(uint8_t);
     static constexpr bool value = argumentCoderValue || sizeof(checkArgumentCoder<U>(nullptr)) == sizeof(uint8_t);
+};
+    
+template<typename... Types>
+class UsesModernDecoder<std::tuple<Types...>> {
+public:
+    static constexpr bool value = true;
+    static constexpr bool argumentCoderValue = true;
 };
 
 template<typename U>

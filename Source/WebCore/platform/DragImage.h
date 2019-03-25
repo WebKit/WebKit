@@ -102,10 +102,10 @@ class DragImage final {
 public:
     WEBCORE_EXPORT DragImage();
     explicit DragImage(DragImageRef);
-    DragImage(DragImage&&);
+    WEBCORE_EXPORT DragImage(DragImage&&);
     WEBCORE_EXPORT ~DragImage();
 
-    DragImage& operator=(DragImage&&);
+    WEBCORE_EXPORT DragImage& operator=(DragImage&&);
 
     void setIndicatorData(const TextIndicatorData& data) { m_indicatorData = data; }
     bool hasIndicatorData() const { return !!m_indicatorData; }

@@ -41,6 +41,8 @@ namespace WebCore {
 class RemoteVideoSample {
 public:
     RemoteVideoSample() = default;
+    RemoteVideoSample(RemoteVideoSample&&) = default;
+    RemoteVideoSample& operator=(RemoteVideoSample&&) = default;
     ~RemoteVideoSample() = default;
 
 #if HAVE(IOSURFACE)

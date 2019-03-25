@@ -65,6 +65,8 @@ namespace WebKit {
 struct WebProcessCreationParameters {
     WebProcessCreationParameters();
     ~WebProcessCreationParameters();
+    WebProcessCreationParameters(WebProcessCreationParameters&&);
+    WebProcessCreationParameters& operator=(WebProcessCreationParameters&&);
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, WebProcessCreationParameters&);

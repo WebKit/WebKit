@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebEvent_h
-#define WebEvent_h
+#pragma once
 
 // FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
@@ -34,6 +33,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/KeypressCommand.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
@@ -497,5 +497,3 @@ private:
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit
-
-#endif // WebEvent_h
