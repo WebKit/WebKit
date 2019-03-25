@@ -1,3 +1,66 @@
+2019-03-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        A single leading space is not considered as a word break even when word-break: break-all is set
+        https://bugs.webkit.org/show_bug.cgi?id=195361
+
+        Reviewed by Ryosuke Niwa.
+
+        We must consider leading white-spaces as potential soft-breaking
+        opportunities that may avoid breaking in the middle of the word.
+
+        However, 'break-word: break-all' [1] implies that we should ignore
+        previous opportunities and break at any character (among the ones
+        valid for 'break-all') that prevents the line to overflow. Note,
+        that these breakable characters are different from the ones
+        provided by 'line-break: anywhere' [2].
+
+        This change is covered by the already existent tests of the CSS
+        Text 3 suite of the Web Platform Tests.
+
+        The word-break-break-all-010.html was precisely designed to cover
+        the basic issue fixed with this change, verifying that the word is
+        indeed broken even if a single leading space constitutes a
+        previous soft-breaking opportunity.
+
+        There are other Web Platform Tests. which already pass before this
+        change, to verify that such leading white-space must be used
+        instead of breaking the word in any other case, including
+        overflow-wrap: break-word and even the deprecated word-break:
+        break-word.
+
+           - white-space/pre-wrap-008.html
+           - white-space/pre-wrap-015.html
+           - white-space/pre-wrap-016.html
+           - overflow-wrap/overflow-wrap-break-word-004.html
+           - overflow-wrap/overflow-wrap-break-word-005.html
+           - overflow-wrap/overflow-wrap-break-word-007.html
+           - word-break/word-break-break-all-011.html
+           - word-break/word-break-break-all-014.html
+
+        The reason why the word-break-break-all-010.html passes in Mac
+        platform is that for that case the SimpleLineLayout codepath is
+        executed instead, which doesn't have this bug, present in the old
+        line-breaking logic implemented in the BreakingContext class.
+
+        In order to verify the validity of this change, I've added several
+        tests under fast/text with the SimpleLineLayout disabled.
+
+        Tests: fast/text/overflow-wrap-break-word-004.html
+               fast/text/overflow-wrap-break-word-005.html
+               fast/text/overflow-wrap-break-word-007.html
+               fast/text/whitespace/pre-wrap-008.html
+               fast/text/whitespace/pre-wrap-015.html
+               fast/text/whitespace/pre-wrap-016.html
+               fast/text/word-break-break-all-010.html
+               fast/text/word-break-break-all-011.html
+               fast/text/word-break-break-all-015.html
+               imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/pre-wrap-008.html
+               imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-015.html
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2019-03-25  Rob Buis  <rbuis@igalia.com>
 
         Reflect HTMLLinkElement.as according to the spec

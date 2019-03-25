@@ -47,6 +47,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-fit-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-span-001-expected.html

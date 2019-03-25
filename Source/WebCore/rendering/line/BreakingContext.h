@@ -817,6 +817,11 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         UChar c = m_current.current();
         m_currentCharacterIsSpace = c == ' ' || c == '\t' || (!m_preservesNewline && (c == '\n'));
 
+        // A single preserved leading white-space doesn't fulfill the 'betweenWords' condition, however it's indeed a
+        // soft-breaking opportunty so we may want to avoid breaking in the middle of the word.
+        if (m_atStart && m_currentCharacterIsSpace && !previousCharacterIsSpace)
+            breakWords = false;
+
         if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(m_current.renderer(), true, false)) {
             m_width.addUncommittedWidth(-renderText.hangablePunctuationStartWidth(m_current.offset()));
             canHangPunctuationAtStart = false;
@@ -839,7 +844,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
         m_currentCharacterIsWS = m_currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
 
-        if ((breakAll || breakWords) && !midWordBreak && (!m_currentCharacterIsSpace || style.whiteSpace() != WhiteSpace::PreWrap)) {
+        if ((breakAll || breakWords) && !midWordBreak && (!m_currentCharacterIsSpace || m_atStart || style.whiteSpace() != WhiteSpace::PreWrap)) {
             wrapW += charWidth;
             bool midWordBreakIsBeforeSurrogatePair = U16_IS_LEAD(c) && U16_IS_TRAIL(renderText.characterAt(m_current.offset() + 1));
             charWidth = textWidth(renderText, m_current.offset(), midWordBreakIsBeforeSurrogatePair ? 2 : 1, font, m_width.committedWidth() + wrapW, isFixedPitch, m_collapseWhiteSpace, fallbackFonts, textLayout);

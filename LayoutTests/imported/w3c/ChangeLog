@@ -1,3 +1,24 @@
+2019-03-25  Javier Fernandez  <jfernandez@igalia.com>
+
+        A single leading space is not considered as a word break even when word-break: break-all is set
+        https://bugs.webkit.org/show_bug.cgi?id=195361
+
+        Reviewed by Ryosuke Niwa.
+
+        Imported additonal WPT from the CSS Text Suite that verify the
+        change doesn't regress in any case, specially for the word-break:
+        break-word feature.
+
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/w3c-import.log:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-008-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/pre-wrap-008.html: Added.
+        * web-platform-tests/css/css-text/white-space/w3c-import.log:
+        * web-platform-tests/css/css-text/word-break/w3c-import.log:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-015-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-015.html: Added.
+
 2019-03-25  Rob Buis  <rbuis@igalia.com>
 
         Reflect HTMLLinkElement.as according to the spec
