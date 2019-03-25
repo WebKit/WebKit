@@ -196,6 +196,7 @@ class ExecutableAllocator : public ExecutableAllocatorBase {
 public:
     static ExecutableAllocator& singleton();
     static void initialize();
+    static void initializeUnderlyingAllocator() { }
 
 private:
     ExecutableAllocator() = default;
