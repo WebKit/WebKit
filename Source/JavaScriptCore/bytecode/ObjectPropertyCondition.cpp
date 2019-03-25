@@ -142,15 +142,15 @@ bool ObjectPropertyCondition::isWatchable(PropertyCondition::WatchabilityEffort 
     return isWatchable(m_object->structure(), effort);
 }
 
-bool ObjectPropertyCondition::isStillLive() const
+bool ObjectPropertyCondition::isStillLive(VM& vm) const
 {
     if (!*this)
         return false;
     
-    if (!Heap::isMarked(m_object))
+    if (!vm.heap.isMarked(m_object))
         return false;
     
-    return m_condition.isStillLive();
+    return m_condition.isStillLive(vm);
 }
 
 void ObjectPropertyCondition::validateReferences(const TrackedReferences& tracked) const

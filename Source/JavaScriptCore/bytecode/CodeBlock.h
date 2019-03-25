@@ -919,7 +919,7 @@ private:
     }
 
     bool shouldVisitStrongly(const ConcurrentJSLocker&);
-    bool shouldJettisonDueToWeakReference();
+    bool shouldJettisonDueToWeakReference(VM&);
     bool shouldJettisonDueToOldAge(const ConcurrentJSLocker&);
     
     void propagateTransitions(const ConcurrentJSLocker&, SlotVisitor&);

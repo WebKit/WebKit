@@ -272,14 +272,14 @@ void StructureStubInfo::visitWeakReferences(CodeBlock* codeBlock)
     
     bufferedStructures.genericFilter(
         [&] (Structure* structure) -> bool {
-            return Heap::isMarked(structure);
+            return vm.heap.isMarked(structure);
         });
 
     switch (cacheType) {
     case CacheType::GetByIdSelf:
     case CacheType::PutByIdReplace:
     case CacheType::InByIdSelf:
-        if (Heap::isMarked(u.byIdSelf.baseObjectStructure.get()))
+        if (vm.heap.isMarked(u.byIdSelf.baseObjectStructure.get()))
             return;
         break;
     case CacheType::Stub:

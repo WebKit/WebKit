@@ -285,7 +285,7 @@ void SlotVisitor::appendToMarkStack(JSCell* cell)
 template<typename ContainerType>
 ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCell* cell)
 {
-    ASSERT(Heap::isMarked(cell));
+    ASSERT(m_heap.isMarked(cell));
     ASSERT(!cell->isZapped());
     
     container.noteMarked();
@@ -354,7 +354,7 @@ private:
 
 ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
 {
-    ASSERT(Heap::isMarked(cell));
+    ASSERT(m_heap.isMarked(cell));
     
     SetCurrentCellScope currentCellScope(*this, cell);
     

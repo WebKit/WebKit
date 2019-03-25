@@ -116,7 +116,7 @@ public:
     const PutByIdVariant& operator[](size_t index) const { return at(index); }
     
     void markIfCheap(SlotVisitor&);
-    bool finalize();
+    bool finalize(VM&);
     
     void merge(const PutByIdStatus&);
     

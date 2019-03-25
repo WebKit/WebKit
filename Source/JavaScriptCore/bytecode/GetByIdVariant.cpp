@@ -149,15 +149,15 @@ void GetByIdVariant::markIfCheap(SlotVisitor& visitor)
     m_structureSet.markIfCheap(visitor);
 }
 
-bool GetByIdVariant::finalize()
+bool GetByIdVariant::finalize(VM& vm)
 {
-    if (!m_structureSet.isStillAlive())
+    if (!m_structureSet.isStillAlive(vm))
         return false;
-    if (!m_conditionSet.areStillLive())
+    if (!m_conditionSet.areStillLive(vm))
         return false;
-    if (m_callLinkStatus && !m_callLinkStatus->finalize())
+    if (m_callLinkStatus && !m_callLinkStatus->finalize(vm))
         return false;
-    if (m_intrinsicFunction && !Heap::isMarked(m_intrinsicFunction))
+    if (m_intrinsicFunction && !vm.heap.isMarked(m_intrinsicFunction))
         return false;
     return true;
 }

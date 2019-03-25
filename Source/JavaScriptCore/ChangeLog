@@ -1,3 +1,132 @@
+2019-03-25  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Heap::isMarked and friends should be instance methods
+        https://bugs.webkit.org/show_bug.cgi?id=179988
+
+        Reviewed by Saam Barati.
+
+        Almost all the callers of Heap::isMarked have VM& reference. We should make Heap::isMarked instance function instead of static function
+        so that we do not need to look up Heap from the cell.
+
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        * API/JSMarkingConstraintPrivate.cpp:
+        (JSC::isMarked):
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots):
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::finalizeUnconditionally):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::visitWeak const):
+        (JSC::AccessCase::propagateTransitions const):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::visitWeak):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::finalize):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CallVariant.cpp:
+        (JSC::CallVariant::finalize):
+        * bytecode/CallVariant.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::shouldJettisonDueToWeakReference):
+        (JSC::CodeBlock::shouldJettisonDueToOldAge):
+        (JSC::shouldMarkTransition):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        (JSC::ExecutableToCodeBlockEdge::visitChildren):
+        (JSC::ExecutableToCodeBlockEdge::finalizeUnconditionally):
+        (JSC::ExecutableToCodeBlockEdge::runConstraint):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::finalize):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/GetByIdVariant.cpp:
+        (JSC::GetByIdVariant::finalize):
+        * bytecode/GetByIdVariant.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::finalize):
+        * bytecode/InByIdStatus.h:
+        * bytecode/InByIdVariant.cpp:
+        (JSC::InByIdVariant::finalize):
+        * bytecode/InByIdVariant.h:
+        * bytecode/ObjectPropertyCondition.cpp:
+        (JSC::ObjectPropertyCondition::isStillLive const):
+        * bytecode/ObjectPropertyCondition.h:
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::areStillLive const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::visitWeak const):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillLive const):
+        * bytecode/PropertyCondition.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::finalize):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/PutByIdVariant.cpp:
+        (JSC::PutByIdVariant::finalize):
+        * bytecode/PutByIdVariant.h:
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::finalizeWithoutDeleting):
+        (JSC::RecordedStatuses::finalize):
+        * bytecode/RecordedStatuses.h:
+        * bytecode/StructureSet.cpp:
+        (JSC::StructureSet::isStillAlive const):
+        * bytecode/StructureSet.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::visitWeakReferences):
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::finalizeInGC):
+        (JSC::DFG::Plan::isKnownToBeLiveDuringGC):
+        * heap/GCIncomingRefCounted.h:
+        * heap/GCIncomingRefCountedInlines.h:
+        (JSC::GCIncomingRefCounted<T>::filterIncomingReferences):
+        * heap/GCIncomingRefCountedSet.h:
+        * heap/GCIncomingRefCountedSetInlines.h:
+        (JSC::GCIncomingRefCountedSet<T>::lastChanceToFinalize):
+        (JSC::GCIncomingRefCountedSet<T>::sweep):
+        (JSC::GCIncomingRefCountedSet<T>::removeAll): Deleted.
+        (JSC::GCIncomingRefCountedSet<T>::removeDead): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addToRememberedSet):
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::sweepArrayBuffers):
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::isMarked):
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::appendNode):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendToMarkStack):
+        (JSC::SlotVisitor::visitChildren):
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::visitWeak):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finalizeUnconditionally):
+        * runtime/InferredValueInlines.h:
+        (JSC::InferredValue::finalizeUnconditionally):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::isMarked const):
+        * runtime/Structure.cpp:
+        (JSC::Structure::isCheapDuringGC):
+        (JSC::Structure::markIfCheap):
+        * runtime/Structure.h:
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::invalidateTypeSetCache):
+        * runtime/TypeProfiler.h:
+        * runtime/TypeSet.cpp:
+        (JSC::TypeSet::invalidateCache):
+        * runtime/TypeSet.h:
+        * runtime/WeakMapImpl.cpp:
+        (JSC::WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints):
+        * runtime/WeakMapImplInlines.h:
+        (JSC::WeakMapImpl<WeakMapBucket>::finalizeUnconditionally):
+
 2019-03-25  Keith Miller  <keith_miller@apple.com>
 
         ASSERTION FAILED: m_op == CompareStrictEq in JSC::DFG::Node::convertToCompareEqPtr(JSC::DFG::FrozenValue *, JSC::DFG::Edge)

@@ -664,18 +664,19 @@ void Plan::checkLivenessAndVisitChildren(SlotVisitor& visitor)
 
 void Plan::finalizeInGC()
 {
-    m_recordedStatuses.finalizeWithoutDeleting();
+    ASSERT(m_vm);
+    m_recordedStatuses.finalizeWithoutDeleting(*m_vm);
 }
 
 bool Plan::isKnownToBeLiveDuringGC()
 {
     if (m_stage == Cancelled)
         return false;
-    if (!Heap::isMarked(m_codeBlock->ownerExecutable()))
+    if (!m_vm->heap.isMarked(m_codeBlock->ownerExecutable()))
         return false;
-    if (!Heap::isMarked(m_codeBlock->alternative()))
+    if (!m_vm->heap.isMarked(m_codeBlock->alternative()))
         return false;
-    if (!!m_profiledDFGCodeBlock && !Heap::isMarked(m_profiledDFGCodeBlock))
+    if (!!m_profiledDFGCodeBlock && !m_vm->heap.isMarked(m_profiledDFGCodeBlock))
         return false;
     return true;
 }

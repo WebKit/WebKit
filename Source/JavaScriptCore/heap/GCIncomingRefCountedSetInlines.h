@@ -40,7 +40,7 @@ template<typename T>
 void GCIncomingRefCountedSet<T>::lastChanceToFinalize()
 {
     for (size_t i = m_vector.size(); i--;)
-        m_vector[i]->filterIncomingReferences(removeAll);
+        m_vector[i]->filterIncomingReferences([] (JSCell*) { return false; });
 }
 
 template<typename T>
@@ -59,31 +59,19 @@ bool GCIncomingRefCountedSet<T>::addReference(JSCell* cell, T* object)
 }
 
 template<typename T>
-void GCIncomingRefCountedSet<T>::sweep()
+void GCIncomingRefCountedSet<T>::sweep(VM& vm)
 {
     for (size_t i = 0; i < m_vector.size(); ++i) {
         T* object = m_vector[i];
         size_t size = object->gcSizeEstimateInBytes();
         ASSERT(object->isDeferred());
         ASSERT(object->numberOfIncomingReferences());
-        if (!object->filterIncomingReferences(removeDead))
+        if (!object->filterIncomingReferences([&] (JSCell* cell) { return vm.heap.isMarked(cell); }))
             continue;
         m_bytes -= size;
         m_vector[i--] = m_vector.last();
         m_vector.removeLast();
     }
-}
-
-template<typename T>
-bool GCIncomingRefCountedSet<T>::removeAll(JSCell*)
-{
-    return false;
-}
-
-template<typename T>
-bool GCIncomingRefCountedSet<T>::removeDead(JSCell* cell)
-{
-    return Heap::isMarked(cell);
 }
 
 } // namespace JSC

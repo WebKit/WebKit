@@ -41,14 +41,11 @@ public:
     // Returns true if the native object is new to this set.
     bool addReference(JSCell*, T*);
     
-    void sweep();
+    void sweep(VM&);
     
     size_t size() const { return m_bytes; };
     
 private:
-    static bool removeAll(JSCell*);
-    static bool removeDead(JSCell*);
-    
     Vector<T*> m_vector;
     size_t m_bytes;
 };

@@ -31,9 +31,9 @@
 
 namespace JSC {
 
-bool CallVariant::finalize()
+bool CallVariant::finalize(VM& vm)
 {
-    if (m_callee && !Heap::isMarked(m_callee))
+    if (m_callee && !vm.heap.isMarked(m_callee))
         return false;
     return true;
 }

@@ -80,7 +80,7 @@ void HeapSnapshotBuilder::appendNode(JSCell* cell)
 {
     ASSERT(m_profiler.activeSnapshotBuilder() == this);
 
-    ASSERT(Heap::isMarked(cell));
+    ASSERT(m_profiler.vm().heap.isMarked(cell));
 
     NodeIdentifier identifier;
     if (previousSnapshotHasNodeForCell(cell, identifier))

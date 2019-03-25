@@ -324,7 +324,7 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
     }
     if (Vector<WriteBarrier<JSCell>>* weakReferences = m_weakReferences.get()) {
         for (WriteBarrier<JSCell>& weakReference : *weakReferences) {
-            if (!Heap::isMarked(weakReference.get()))
+            if (!vm.heap.isMarked(weakReference.get()))
                 return false;
         }
     }

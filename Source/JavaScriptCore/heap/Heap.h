@@ -123,7 +123,7 @@ public:
     // our scan to run faster. 
     static const unsigned s_timeCheckResolution = 16;
 
-    static bool isMarked(const void*);
+    bool isMarked(const void*);
     static bool testAndSetMarked(HeapVersion, const void*);
     
     static size_t cellSize(const void*);

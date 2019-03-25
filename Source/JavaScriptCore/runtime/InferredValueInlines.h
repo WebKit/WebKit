@@ -34,7 +34,7 @@ void InferredValue::finalizeUnconditionally(VM& vm)
     JSValue value = m_value.get();
     
     if (value && value.isCell()) {
-        if (Heap::isMarked(value.asCell()))
+        if (vm.heap.isMarked(value.asCell()))
             return;
         
         invalidate(vm, StringFireDetail("InferredValue clean-up during GC"));

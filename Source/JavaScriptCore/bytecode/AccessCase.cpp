@@ -323,34 +323,34 @@ void AccessCase::dump(PrintStream& out) const
 
 bool AccessCase::visitWeak(VM& vm) const
 {
-    if (m_structure && !Heap::isMarked(m_structure.get()))
+    if (m_structure && !vm.heap.isMarked(m_structure.get()))
         return false;
     if (m_polyProtoAccessChain) {
         for (Structure* structure : m_polyProtoAccessChain->chain()) {
-            if (!Heap::isMarked(structure))
+            if (!vm.heap.isMarked(structure))
                 return false;
         }
     }
-    if (!m_conditionSet.areStillLive())
+    if (!m_conditionSet.areStillLive(vm))
         return false;
     if (isAccessor()) {
         auto& accessor = this->as<GetterSetterAccessCase>();
         if (accessor.callLinkInfo())
             accessor.callLinkInfo()->visitWeak(vm);
-        if (accessor.customSlotBase() && !Heap::isMarked(accessor.customSlotBase()))
+        if (accessor.customSlotBase() && !vm.heap.isMarked(accessor.customSlotBase()))
             return false;
     } else if (type() == IntrinsicGetter) {
         auto& intrinsic = this->as<IntrinsicGetterAccessCase>();
-        if (intrinsic.intrinsicFunction() && !Heap::isMarked(intrinsic.intrinsicFunction()))
+        if (intrinsic.intrinsicFunction() && !vm.heap.isMarked(intrinsic.intrinsicFunction()))
             return false;
     } else if (type() == ModuleNamespaceLoad) {
         auto& accessCase = this->as<ModuleNamespaceAccessCase>();
-        if (accessCase.moduleNamespaceObject() && !Heap::isMarked(accessCase.moduleNamespaceObject()))
+        if (accessCase.moduleNamespaceObject() && !vm.heap.isMarked(accessCase.moduleNamespaceObject()))
             return false;
-        if (accessCase.moduleEnvironment() && !Heap::isMarked(accessCase.moduleEnvironment()))
+        if (accessCase.moduleEnvironment() && !vm.heap.isMarked(accessCase.moduleEnvironment()))
             return false;
     } else if (type() == InstanceOfHit || type() == InstanceOfMiss) {
-        if (as<InstanceOfAccessCase>().prototype() && !Heap::isMarked(as<InstanceOfAccessCase>().prototype()))
+        if (as<InstanceOfAccessCase>().prototype() && !vm.heap.isMarked(as<InstanceOfAccessCase>().prototype()))
             return false;
     }
 
@@ -371,7 +371,7 @@ bool AccessCase::propagateTransitions(SlotVisitor& visitor) const
 
     switch (m_type) {
     case Transition:
-        if (Heap::isMarked(m_structure->previousID()))
+        if (visitor.vm().heap.isMarked(m_structure->previousID()))
             visitor.appendUnbarriered(m_structure.get());
         else
             result = false;

@@ -50,8 +50,8 @@ struct RecordedStatuses {
     
     void markIfCheap(SlotVisitor& slotVisitor);
     
-    void finalizeWithoutDeleting();
-    void finalize();
+    void finalizeWithoutDeleting(VM&);
+    void finalize(VM&);
     
     void shrinkToFit();
     

@@ -299,7 +299,7 @@ public:
     // increase in footprint because no other object refers to that global object. This method
     // returns true if all user-controlled (and hence unbounded in size) objects referenced from the
     // Structure are already marked.
-    bool isCheapDuringGC();
+    bool isCheapDuringGC(VM&);
     
     // Returns true if this structure is now marked.
     bool markIfCheap(SlotVisitor&);

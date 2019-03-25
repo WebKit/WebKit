@@ -998,11 +998,11 @@ bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker& locker)
     return false;
 }
 
-bool CodeBlock::shouldJettisonDueToWeakReference()
+bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
 {
     if (!JITCode::isOptimizingJIT(jitType()))
         return false;
-    return !Heap::isMarked(this);
+    return !vm.heap.isMarked(this);
 }
 
 static Seconds timeToLive(JITCode::JITType jitType)
@@ -1040,7 +1040,7 @@ static Seconds timeToLive(JITCode::JITType jitType)
 
 bool CodeBlock::shouldJettisonDueToOldAge(const ConcurrentJSLocker&)
 {
-    if (Heap::isMarked(this))
+    if (m_vm->heap.isMarked(this))
         return false;
 
     if (UNLIKELY(Options::forceCodeBlockToJettisonDueToOldAge()))
@@ -1053,12 +1053,12 @@ bool CodeBlock::shouldJettisonDueToOldAge(const ConcurrentJSLocker&)
 }
 
 #if ENABLE(DFG_JIT)
-static bool shouldMarkTransition(DFG::WeakReferenceTransition& transition)
+static bool shouldMarkTransition(VM& vm, DFG::WeakReferenceTransition& transition)
 {
-    if (transition.m_codeOrigin && !Heap::isMarked(transition.m_codeOrigin.get()))
+    if (transition.m_codeOrigin && !vm.heap.isMarked(transition.m_codeOrigin.get()))
         return false;
     
-    if (!Heap::isMarked(transition.m_from.get()))
+    if (!vm.heap.isMarked(transition.m_from.get()))
         return false;
     
     return true;
@@ -1086,7 +1086,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                     vm.heap.structureIDTable().get(oldStructureID);
                 Structure* newStructure =
                     vm.heap.structureIDTable().get(newStructureID);
-                if (Heap::isMarked(oldStructure))
+                if (vm.heap.isMarked(oldStructure))
                     visitor.appendUnbarriered(newStructure);
                 continue;
             }
@@ -1112,7 +1112,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
             weakReference->markIfCheap(visitor);
 
         for (auto& transition : dfgCommon->transitions) {
-            if (shouldMarkTransition(transition)) {
+            if (shouldMarkTransition(vm, transition)) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
                 //
@@ -1144,7 +1144,8 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
     UNUSED_PARAM(visitor);
     
 #if ENABLE(DFG_JIT)
-    if (Heap::isMarked(this))
+    VM& vm = *m_vm;
+    if (vm.heap.isMarked(this))
         return;
     
     // In rare and weird cases, this could be called on a baseline CodeBlock. One that I found was
@@ -1160,15 +1161,15 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
     bool allAreLiveSoFar = true;
     for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
         JSCell* reference = dfgCommon->weakReferences[i].get();
-        ASSERT(!jsDynamicCast<CodeBlock*>(*reference->vm(), reference));
-        if (!Heap::isMarked(reference)) {
+        ASSERT(!jsDynamicCast<CodeBlock*>(vm, reference));
+        if (!vm.heap.isMarked(reference)) {
             allAreLiveSoFar = false;
             break;
         }
     }
     if (allAreLiveSoFar) {
         for (unsigned i = 0; i < dfgCommon->weakStructureReferences.size(); ++i) {
-            if (!Heap::isMarked(dfgCommon->weakStructureReferences[i].get())) {
+            if (!vm.heap.isMarked(dfgCommon->weakStructureReferences[i].get())) {
                 allAreLiveSoFar = false;
                 break;
             }
@@ -1191,13 +1192,13 @@ void CodeBlock::finalizeLLIntInlineCaches()
     VM& vm = *m_vm;
     const Vector<InstructionStream::Offset>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
 
-    auto handleGetPutFromScope = [](auto& metadata) {
+    auto handleGetPutFromScope = [&] (auto& metadata) {
         GetPutInfo getPutInfo = metadata.m_getPutInfo;
         if (getPutInfo.resolveType() == GlobalVar || getPutInfo.resolveType() == GlobalVarWithVarInjectionChecks 
             || getPutInfo.resolveType() == LocalClosureVar || getPutInfo.resolveType() == GlobalLexicalVar || getPutInfo.resolveType() == GlobalLexicalVarWithVarInjectionChecks)
             return;
         WriteBarrierBase<Structure>& structure = metadata.m_structure;
-        if (!structure || Heap::isMarked(structure.get()))
+        if (!structure || vm.heap.isMarked(structure.get()))
             return;
         if (Options::verboseOSR())
             dataLogF("Clearing scope access with structure %p.\n", structure.get());
@@ -1213,7 +1214,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             if (metadata.m_mode != GetByIdMode::Default)
                 break;
             StructureID oldStructureID = metadata.m_modeMetadata.defaultMode.structureID;
-            if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+            if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
@@ -1223,7 +1224,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
         case op_get_by_id_direct: {
             auto& metadata = curInstruction->as<OpGetByIdDirect>().metadata(this);
             StructureID oldStructureID = metadata.m_structureID;
-            if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+            if (!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
@@ -1236,9 +1237,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
             StructureID oldStructureID = metadata.m_oldStructureID;
             StructureID newStructureID = metadata.m_newStructureID;
             StructureChain* chain = metadata.m_structureChain.get();
-            if ((!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
-                && (!newStructureID || Heap::isMarked(vm.heap.structureIDTable().get(newStructureID)))
-                && (!chain || Heap::isMarked(chain)))
+            if ((!oldStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                && (!newStructureID || vm.heap.isMarked(vm.heap.structureIDTable().get(newStructureID)))
+                && (!chain || vm.heap.isMarked(chain)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt put transition.\n");
@@ -1254,7 +1255,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             break;
         case op_to_this: {
             auto& metadata = curInstruction->as<OpToThis>().metadata(this);
-            if (!metadata.m_cachedStructure || Heap::isMarked(metadata.m_cachedStructure.get()))
+            if (!metadata.m_cachedStructure || vm.heap.isMarked(metadata.m_cachedStructure.get()))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt to_this with structure %p.\n", metadata.m_cachedStructure.get());
@@ -1268,7 +1269,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             if (!cacheWriteBarrier || cacheWriteBarrier.unvalidatedGet() == JSCell::seenMultipleCalleeObjects())
                 break;
             JSCell* cachedFunction = cacheWriteBarrier.get();
-            if (Heap::isMarked(cachedFunction))
+            if (vm.heap.isMarked(cachedFunction))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt create_this with cached callee %p.\n", cachedFunction);
@@ -1281,7 +1282,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
             // to the symbol table strongly. But it's nice to be on the safe side.
             auto& metadata = curInstruction->as<OpResolveScope>().metadata(this);
             WriteBarrierBase<SymbolTable>& symbolTable = metadata.m_symbolTable;
-            if (!symbolTable || Heap::isMarked(symbolTable.get()))
+            if (!symbolTable || vm.heap.isMarked(symbolTable.get()))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing dead symbolTable %p.\n", symbolTable.get());
@@ -1314,11 +1315,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             return true;
         };
 
-        if (!Heap::isMarked(std::get<0>(pair.key)))
+        if (!vm.heap.isMarked(std::get<0>(pair.key)))
             return clear();
 
         for (const LLIntPrototypeLoadAdaptiveStructureWatchpoint* watchpoint : pair.value) {
-            if (!watchpoint->key().isStillLive())
+            if (!watchpoint->key().isStillLive(vm))
                 return clear();
         }
 
@@ -1326,12 +1327,12 @@ void CodeBlock::finalizeLLIntInlineCaches()
     });
 
     forEachLLIntCallLinkInfo([&](LLIntCallLinkInfo& callLinkInfo) {
-        if (callLinkInfo.isLinked() && !Heap::isMarked(callLinkInfo.callee.get())) {
+        if (callLinkInfo.isLinked() && !vm.heap.isMarked(callLinkInfo.callee.get())) {
             if (Options::verboseOSR())
                 dataLog("Clearing LLInt call from ", *this, "\n");
             callLinkInfo.unlink();
         }
-        if (!!callLinkInfo.lastSeenCallee && !Heap::isMarked(callLinkInfo.lastSeenCallee.get()))
+        if (!!callLinkInfo.lastSeenCallee && !vm.heap.isMarked(callLinkInfo.lastSeenCallee.get()))
             callLinkInfo.lastSeenCallee.clear();
     });
 }
@@ -1356,8 +1357,10 @@ void CodeBlock::finalizeBaselineJITInlineCaches()
 }
 #endif
 
-void CodeBlock::finalizeUnconditionally(VM&)
+void CodeBlock::finalizeUnconditionally(VM& vm)
 {
+    UNUSED_PARAM(vm);
+
     updateAllPredictions();
     
     if (JITCode::couldBeInterpreted(jitType()))
@@ -1371,7 +1374,7 @@ void CodeBlock::finalizeUnconditionally(VM&)
 #if ENABLE(DFG_JIT)
     if (JITCode::isOptimizingJIT(jitType())) {
         DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-        dfgCommon->recordedStatuses.finalize();
+        dfgCommon->recordedStatuses.finalize(vm);
     }
 #endif // ENABLE(DFG_JIT)
 
@@ -1952,6 +1955,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     UNUSED_PARAM(mode);
     UNUSED_PARAM(detail);
 #endif
+
+    VM& vm = *m_vm;
     
     CODEBLOCK_LOG_EVENT(this, "jettison", ("due to ", reason, ", counting = ", mode == CountReoptimization, ", detail = ", pointerDump(detail)));
 
@@ -1976,13 +1981,13 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
                 JSCell* origin = transition.m_codeOrigin.get();
                 JSCell* from = transition.m_from.get();
                 JSCell* to = transition.m_to.get();
-                if ((!origin || Heap::isMarked(origin)) && Heap::isMarked(from))
+                if ((!origin || vm.heap.isMarked(origin)) && vm.heap.isMarked(from))
                     continue;
                 dataLog("    Transition under ", RawPointer(origin), ", ", RawPointer(from), " -> ", RawPointer(to), ".\n");
             }
             for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
                 JSCell* weak = dfgCommon->weakReferences[i].get();
-                if (Heap::isMarked(weak))
+                if (vm.heap.isMarked(weak))
                     continue;
                 dataLog("    Weak reference ", RawPointer(weak), ".\n");
             }
@@ -1990,7 +1995,6 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
 #endif // ENABLE(DFG_JIT)
 
-    VM& vm = *m_vm;
     DeferGCForAWhile deferGC(*heap());
     
     // We want to accomplish two things here:
@@ -2010,7 +2014,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.
         if (!jitCode()->dfgCommon()->invalidate()) {
             // We've already been invalidated.
-            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerExecutable())));
+            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !vm.heap.isMarked(ownerExecutable())));
             return;
         }
     }
@@ -2042,7 +2046,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     // Jettison can happen during GC. We don't want to install code to a dead executable
     // because that would add a dead object to the remembered set.
-    if (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerExecutable()))
+    if (vm.heap.isCurrentThreadBusy() && !vm.heap.isMarked(ownerExecutable()))
         return;
 
     // This accomplishes (2).

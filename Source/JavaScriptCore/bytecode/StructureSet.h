@@ -55,7 +55,7 @@ public:
     }
 
     void markIfCheap(SlotVisitor&) const;
-    bool isStillAlive() const;
+    bool isStillAlive(VM&) const;
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;

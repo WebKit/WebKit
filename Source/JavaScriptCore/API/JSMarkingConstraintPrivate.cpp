@@ -40,12 +40,12 @@ struct Marker : JSMarker {
     SlotVisitor* visitor;
 };
 
-bool isMarked(JSMarkerRef, JSObjectRef objectRef)
+bool isMarked(JSMarkerRef markerRef, JSObjectRef objectRef)
 {
     if (!objectRef)
         return true; // Null is an immortal object.
     
-    return Heap::isMarked(toJS(objectRef));
+    return static_cast<Marker*>(markerRef)->visitor->vm().heap.isMarked(toJS(objectRef));
 }
 
 void mark(JSMarkerRef markerRef, JSObjectRef objectRef)

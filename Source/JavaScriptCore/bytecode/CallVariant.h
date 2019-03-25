@@ -137,7 +137,7 @@ public:
         return nullptr;
     }
     
-    bool finalize();
+    bool finalize(VM&);
     
     bool merge(const CallVariant&);
     

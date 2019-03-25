@@ -386,10 +386,10 @@ void PutByIdStatus::markIfCheap(SlotVisitor& visitor)
         variant.markIfCheap(visitor);
 }
 
-bool PutByIdStatus::finalize()
+bool PutByIdStatus::finalize(VM& vm)
 {
     for (PutByIdVariant& variant : m_variants) {
-        if (!variant.finalize())
+        if (!variant.finalize(vm))
             return false;
     }
     return true;

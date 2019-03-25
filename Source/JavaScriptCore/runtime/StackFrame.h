@@ -58,7 +58,7 @@ public:
     }
     
     void visitChildren(SlotVisitor&);
-    bool isMarked() const { return (!m_callee || Heap::isMarked(m_callee.get())) && (!m_codeBlock || Heap::isMarked(m_codeBlock.get())); }
+    bool isMarked(VM& vm) const { return (!m_callee || vm.heap.isMarked(m_callee.get())) && (!m_codeBlock || vm.heap.isMarked(m_codeBlock.get())); }
 
 private:
     WriteBarrier<JSCell> m_callee { };

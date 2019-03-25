@@ -68,15 +68,13 @@ inline bool Heap::worldIsStopped() const
     return m_worldIsStopped;
 }
 
-// FIXME: This should be an instance method, so that it can get the markingVersion() quickly.
-// https://bugs.webkit.org/show_bug.cgi?id=179988
 ALWAYS_INLINE bool Heap::isMarked(const void* rawCell)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
     if (cell->isLargeAllocation())
         return cell->largeAllocation().isMarked();
     MarkedBlock& block = cell->markedBlock();
-    return block.isMarked(block.vm()->heap.objectSpace().markingVersion(), cell);
+    return block.isMarked(m_objectSpace.markingVersion(), cell);
 }
 
 ALWAYS_INLINE bool Heap::testAndSetMarked(HeapVersion markingVersion, const void* rawCell)

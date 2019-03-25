@@ -31,7 +31,7 @@ namespace JSC {
 
 // Note that this function can be executed in parallel as long as the mutator stops.
 template<typename WeakMapBucket>
-void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM&)
+void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM& vm)
 {
     auto* buffer = this->buffer();
     for (uint32_t index = 0; index < m_capacity; ++index) {
@@ -39,7 +39,7 @@ void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM&)
         if (bucket->isEmpty() || bucket->isDeleted())
             continue;
 
-        if (Heap::isMarked(bucket->key()))
+        if (vm.heap.isMarked(bucket->key()))
             continue;
 
         bucket->makeDeleted();

@@ -212,7 +212,7 @@ void ErrorInstance::finalizeUnconditionally(VM& vm)
     // If we did, we might end up keeping functions (and their global objects) alive that happened to
     // get caught in a trace.
     for (const auto& frame : *m_stackTrace.get()) {
-        if (!frame.isMarked()) {
+        if (!frame.isMarked(vm)) {
             computeErrorInfo(vm);
             return;
         }

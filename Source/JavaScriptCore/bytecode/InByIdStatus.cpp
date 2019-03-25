@@ -258,10 +258,10 @@ void InByIdStatus::markIfCheap(SlotVisitor& visitor)
         variant.markIfCheap(visitor);
 }
 
-bool InByIdStatus::finalize()
+bool InByIdStatus::finalize(VM& vm)
 {
     for (InByIdVariant& variant : m_variants) {
-        if (!variant.finalize())
+        if (!variant.finalize(vm))
             return false;
     }
     return true;

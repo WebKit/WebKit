@@ -244,7 +244,7 @@ public:
     }
     
     // This means that the objects involved in this are still live.
-    bool isStillLive() const;
+    bool isStillLive(VM&) const;
     
     void validateReferences(const TrackedReferences&) const;
 

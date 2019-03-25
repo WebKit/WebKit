@@ -148,13 +148,13 @@ TypeLocation* TypeProfiler::nextTypeLocation()
     return m_typeLocationInfo.add(); 
 }
 
-void TypeProfiler::invalidateTypeSetCache()
+void TypeProfiler::invalidateTypeSetCache(VM& vm)
 {
     for (Bag<TypeLocation>::iterator iter = m_typeLocationInfo.begin(); !!iter; ++iter) {
         TypeLocation* location = *iter;
-        location->m_instructionTypeSet->invalidateCache();
+        location->m_instructionTypeSet->invalidateCache(vm);
         if (location->m_globalTypeSet)
-            location->m_globalTypeSet->invalidateCache();
+            location->m_globalTypeSet->invalidateCache(vm);
     }
 }
 

@@ -476,15 +476,15 @@ void GetByIdStatus::markIfCheap(SlotVisitor& visitor)
         variant.markIfCheap(visitor);
 }
 
-bool GetByIdStatus::finalize()
+bool GetByIdStatus::finalize(VM& vm)
 {
     for (GetByIdVariant& variant : m_variants) {
-        if (!variant.finalize())
+        if (!variant.finalize(vm))
             return false;
     }
-    if (m_moduleNamespaceObject && !Heap::isMarked(m_moduleNamespaceObject))
+    if (m_moduleNamespaceObject && !vm.heap.isMarked(m_moduleNamespaceObject))
         return false;
-    if (m_moduleEnvironment && !Heap::isMarked(m_moduleEnvironment))
+    if (m_moduleEnvironment && !vm.heap.isMarked(m_moduleEnvironment))
         return false;
     return true;
 }

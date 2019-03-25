@@ -106,7 +106,7 @@ public:
     
     unsigned maxNumArguments() const { return m_maxNumArguments; }
     
-    bool finalize();
+    bool finalize(VM&);
     
     void merge(const CallLinkStatus&);
     

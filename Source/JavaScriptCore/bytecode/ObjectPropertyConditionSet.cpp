@@ -141,10 +141,10 @@ bool ObjectPropertyConditionSet::needImpurePropertyWatchpoint() const
     return false;
 }
 
-bool ObjectPropertyConditionSet::areStillLive() const
+bool ObjectPropertyConditionSet::areStillLive(VM& vm) const
 {
     for (const ObjectPropertyCondition& condition : *this) {
-        if (!condition.isStillLive())
+        if (!condition.isStillLive(vm))
             return false;
     }
     return true;

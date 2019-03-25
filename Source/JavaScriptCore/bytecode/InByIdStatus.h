@@ -106,7 +106,7 @@ public:
     void filter(const StructureSet&);
     
     void markIfCheap(SlotVisitor&);
-    bool finalize();
+    bool finalize(VM&);
 
     void dump(PrintStream&) const;
 

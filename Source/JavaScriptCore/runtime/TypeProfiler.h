@@ -124,7 +124,7 @@ public:
     TypeLocation* findLocation(unsigned divot, intptr_t sourceID, TypeProfilerSearchDescriptor, VM&);
     GlobalVariableID getNextUniqueVariableID() { return m_nextUniqueVariableID++; }
     TypeLocation* nextTypeLocation();
-    void invalidateTypeSetCache();
+    void invalidateTypeSetCache(VM&);
     void dumpTypeProfilerData(VM&);
     
 private:

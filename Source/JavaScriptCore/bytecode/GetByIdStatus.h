@@ -141,7 +141,7 @@ public:
     ScopeOffset scopeOffset() const { return m_scopeOffset; }
     
     void markIfCheap(SlotVisitor&);
-    bool finalize(); // Return true if this gets to live.
+    bool finalize(VM&); // Return true if this gets to live.
     
     void dump(PrintStream&) const;
     

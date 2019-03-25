@@ -82,7 +82,7 @@ public:
     // to use this with a filter function that can return false unless
     // you're also walking the GC's list.
     template<typename FilterFunctionType>
-    bool filterIncomingReferences(FilterFunctionType&);
+    bool filterIncomingReferences(FilterFunctionType&&);
     
 private:
     static uintptr_t singletonFlag() { return 1; }

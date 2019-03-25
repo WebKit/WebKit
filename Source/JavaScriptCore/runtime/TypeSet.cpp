@@ -79,10 +79,12 @@ void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& pass
     }
 }
 
-void TypeSet::invalidateCache()
+void TypeSet::invalidateCache(VM& vm)
 {
     ConcurrentJSLocker locker(m_lock);
-    auto keepMarkedStructuresFilter = [] (Structure* structure) -> bool { return Heap::isMarked(structure); };
+    auto keepMarkedStructuresFilter = [&] (Structure* structure) -> bool {
+        return vm.heap.isMarked(structure);
+    };
     m_structureSet.genericFilter(keepMarkedStructuresFilter);
 }
 

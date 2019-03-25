@@ -86,7 +86,7 @@ public:
     static Ref<TypeSet> create() { return adoptRef(*new TypeSet); }
     TypeSet();
     void addTypeInformation(RuntimeType, RefPtr<StructureShape>&&, Structure*, bool sawPolyProtoStructure);
-    void invalidateCache();
+    void invalidateCache(VM&);
     String dumpTypes() const;
     String displayName() const;
     Ref<JSON::ArrayOf<Inspector::Protocol::Runtime::StructureDescription>> allStructureRepresentations() const;

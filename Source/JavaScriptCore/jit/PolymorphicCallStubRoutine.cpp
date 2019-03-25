@@ -130,10 +130,10 @@ void PolymorphicCallStubRoutine::clearCallNodesFor(CallLinkInfo* info)
     }
 }
 
-bool PolymorphicCallStubRoutine::visitWeak(VM&)
+bool PolymorphicCallStubRoutine::visitWeak(VM& vm)
 {
     for (auto& variant : m_variants) {
-        if (!Heap::isMarked(variant.get()))
+        if (!vm.heap.isMarked(variant.get()))
             return false;
     }
     return true;

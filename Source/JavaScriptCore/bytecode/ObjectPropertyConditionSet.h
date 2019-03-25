@@ -111,7 +111,7 @@ public:
     bool structuresEnsureValidityAssumingImpurePropertyWatchpoint() const;
     
     bool needImpurePropertyWatchpoint() const;
-    bool areStillLive() const;
+    bool areStillLive(VM&) const;
     
     void dumpInContext(PrintStream&, DumpContext*) const;
     void dump(PrintStream&) const;

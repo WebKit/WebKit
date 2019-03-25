@@ -64,6 +64,7 @@ void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>::visitOutputConstraints(JS
 template <>
 void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstraints(JSCell* cell, SlotVisitor& visitor)
 {
+    VM& vm = visitor.vm();
     auto* thisObject = jsCast<WeakMapImpl*>(cell);
     auto locker = holdLock(thisObject->cellLock());
     auto* buffer = thisObject->buffer();
@@ -71,7 +72,7 @@ void WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>::visitOutputConstrain
         auto* bucket = buffer + index;
         if (bucket->isEmpty() || bucket->isDeleted())
             continue;
-        if (!Heap::isMarked(bucket->key()))
+        if (!vm.heap.isMarked(bucket->key()))
             continue;
         bucket->visitAggregate(visitor);
     }

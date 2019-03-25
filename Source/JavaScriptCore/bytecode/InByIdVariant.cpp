@@ -72,11 +72,11 @@ void InByIdVariant::markIfCheap(SlotVisitor& visitor)
     m_structureSet.markIfCheap(visitor);
 }
 
-bool InByIdVariant::finalize()
+bool InByIdVariant::finalize(VM& vm)
 {
-    if (!m_structureSet.isStillAlive())
+    if (!m_structureSet.isStillAlive(vm))
         return false;
-    if (!m_conditionSet.areStillLive())
+    if (!m_conditionSet.areStillLive(vm))
         return false;
     return true;
 }

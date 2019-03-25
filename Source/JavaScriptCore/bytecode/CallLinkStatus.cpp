@@ -418,10 +418,10 @@ void CallLinkStatus::makeClosureCall()
     m_variants = despecifiedVariantList(m_variants);
 }
 
-bool CallLinkStatus::finalize()
+bool CallLinkStatus::finalize(VM& vm)
 {
     for (CallVariant& variant : m_variants) {
-        if (!variant.finalize())
+        if (!variant.finalize(vm))
             return false;
     }
     return true;
