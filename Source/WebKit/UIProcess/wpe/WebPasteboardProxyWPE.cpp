@@ -27,6 +27,7 @@
 #include "WebPasteboardProxy.h"
 
 #include <WebCore/PlatformPasteboard.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

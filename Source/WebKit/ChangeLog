@@ -1,3 +1,11 @@
+2019-03-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix.
+
+        * UIProcess/wpe/WebPasteboardProxyWPE.cpp:
+        Add an explicit CompletionHandler.h include to avoid a trip-up in
+        unified builds.
+
 2019-03-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] WebProcessDataStoreParameters.h(32): error C2653: 'SandboxExtension': is not a class or namespace name
