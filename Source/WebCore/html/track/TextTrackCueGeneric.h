@@ -70,7 +70,7 @@ public:
     String toJSONString() const;
 
 private:
-    TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
+    WEBCORE_TESTSUPPORT_EXPORT TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
     
     bool isOrderedBefore(const TextTrackCue*) const final;
     bool isPositionedAbove(const TextTrackCue*) const final;
@@ -108,4 +108,9 @@ struct LogArgument<WebCore::TextTrackCueGeneric> {
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrackCueGeneric)
+static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::Generic; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

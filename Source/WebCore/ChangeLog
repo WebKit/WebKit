@@ -1,3 +1,51 @@
+2019-03-25  Jer Noble  <jer.noble@apple.com>
+
+        Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.
+        https://bugs.webkit.org/show_bug.cgi?id=196097
+
+        Reviewed by Eric Carlson.
+
+        Test: media/track/track-in-band-metadata-display-order.html
+
+        Add a method in Internals to create a TextTrackCueGeneric (which can normally only be created
+        by parsing an in-band media track). This requires adding IDL for TextTrackCueGeneric, and exporting
+        TextTrackCueGeneric for testing.
+
+        Drive-by fixes:
+
+        Add runtime logging to MediaControlTextTrackContainerElement. This necessitates modifying the
+        parentMediaElement() method to take a const Node*, and const_cast that constness away in order to return
+        a HTMLMediaElement*
+
+        TextTrackCue, VTTCue, TextTrackCueGeneric, and DataCue should all use the WTF TypeCasts macros to
+        enable use of is<> and downcast<>.
+
+        * Source/WebCore/CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/MediaControlElementTypes.cpp:
+        (WebCore::parentMediaElement):
+        * html/shadow/MediaControlElementTypes.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+        (WebCore::MediaControlTextTrackContainerElement::logger const):
+        (WebCore::MediaControlTextTrackContainerElement::logIdentifier const):
+        (WebCore::MediaControlTextTrackContainerElement::logChannel const):
+        * html/shadow/MediaControlElements.h:
+        * html/track/DataCue.h:
+        (isType):
+        * html/track/TextTrackCueGeneric.h:
+        (isType):
+        * html/track/TextTrackCueGeneric.idl: Added.
+        * html/track/VTTCue.h:
+        (isType):
+        * testing/Internals.cpp:
+        (WebCore::Internals::createGenericCue):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-03-25  Antti Koivisto  <antti@apple.com>
 
         Toggling "display: contents" to "display: none" fails to hide the element

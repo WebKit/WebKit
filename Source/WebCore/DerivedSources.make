@@ -846,6 +846,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/track/DataCue.idl \
     $(WebCore)/html/track/TextTrack.idl \
     $(WebCore)/html/track/TextTrackCue.idl \
+    $(WebCore)/html/track/TextTrackCueGeneric.idl \
     $(WebCore)/html/track/TextTrackCueList.idl \
     $(WebCore)/html/track/TextTrackList.idl \
     $(WebCore)/html/track/TrackEvent.idl \

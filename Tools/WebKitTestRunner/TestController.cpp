@@ -854,6 +854,10 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
     WKPreferencesSetWebSQLDisabled(preferences, false);
 
+    WKPreferencesSetMediaPlaybackRequiresUserGesture(preferences, false);
+    WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
+    WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
+
     platformResetPreferencesToConsistentValues();
 }
 

@@ -1,3 +1,13 @@
+2019-03-25  Jer Noble  <jer.noble@apple.com>
+
+        Add test for fix of #196095
+        https://bugs.webkit.org/show_bug.cgi?id=196097
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-in-band-metadata-display-order-expected.txt: Added.
+        * media/track/track-in-band-metadata-display-order.html: Added.
+
 2019-03-25  Antti Koivisto  <antti@apple.com>
 
         Toggling "display: contents" to "display: none" fails to hide the element

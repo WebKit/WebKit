@@ -33,6 +33,7 @@
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MediaTime.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -122,5 +123,9 @@ struct LogArgument<WebCore::DataCue> {
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DataCue)
+static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::Data; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -1383,6 +1383,7 @@ if (ENABLE_VIDEO_TRACK)
         html/track/DataCue.idl
         html/track/TextTrack.idl
         html/track/TextTrackCue.idl
+        html/track/TextTrackCueGeneric.idl
         html/track/TextTrackCueList.idl
         html/track/TextTrackList.idl
         html/track/TrackEvent.idl

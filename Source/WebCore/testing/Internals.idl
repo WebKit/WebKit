@@ -540,6 +540,7 @@ enum CompositingPolicy {
     [Conditional=VIDEO_TRACK, MayThrowException] void setCaptionsStyleSheetOverride(DOMString override);
     [Conditional=VIDEO_TRACK, MayThrowException] void setPrimaryAudioTrackLanguageOverride(DOMString language);
     [Conditional=VIDEO_TRACK, MayThrowException] void setCaptionDisplayMode(DOMString mode);
+    [Conditional=VIDEO_TRACK] TextTrackCueGeneric createGenericCue(double startTime, double endTime, DOMString text);
 
     [Conditional=VIDEO] TimeRanges createTimeRanges(Float32Array startTimes, Float32Array
      endTimes);
