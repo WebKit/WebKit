@@ -1,3 +1,22 @@
+2019-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Get rid of WebPage::m_shouldResetDrawingAreaAfterSuspend flag
+        https://bugs.webkit.org/show_bug.cgi?id=196210
+        <rdar://problem/48681326>
+
+        Reviewed by Geoffrey Garen.
+
+        Get rid of WebPage::m_shouldResetDrawingAreaAfterSuspend flag and use the drawing area identifier
+        instead to reset the DrawingArea in the WebProcess whenever the UIProcess did.
+
+        This is less error-prone and guarantees that the WebProcess and the UIProcess can reliably
+        communicate via DrawingArea IPC.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::setIsSuspended):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Enable IPC sending and receiving non-default-constructible types

@@ -724,10 +724,10 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setSize(parameters.viewSize);
 
-    if (m_shouldResetDrawingAreaAfterSuspend) {
+    // If the UIProcess created a new DrawingArea, then we need to do the same.
+    if (m_drawingArea->identifier() != parameters.drawingAreaIdentifier) {
         auto oldDrawingArea = std::exchange(m_drawingArea, nullptr);
         oldDrawingArea->removeMessageReceiverIfNeeded();
-        m_shouldResetDrawingAreaAfterSuspend = false;
 
         m_drawingArea = DrawingArea::create(*this, parameters);
         m_drawingArea->setPaintingEnabled(false);
@@ -739,7 +739,6 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
         unfreezeLayerTree(LayerTreeFreezeReason::PageSuspended);
     }
-    RELEASE_ASSERT(m_drawingArea->identifier() == parameters.drawingAreaIdentifier);
 
     setViewLayoutSize(parameters.viewLayoutSize);
 
@@ -6321,15 +6320,15 @@ void WebPage::setIsSuspended(bool suspended)
 
     m_isSuspended = suspended;
 
-    if (m_isSuspended) {
-        // Unfrozen on drawing area reset.
-        freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
+    if (!suspended)
+        return;
 
-        WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
+    // Unfrozen on drawing area reset.
+    freezeLayerTree(LayerTreeFreezeReason::PageSuspended);
 
-        suspendForProcessSwap();
-    } else
-        m_shouldResetDrawingAreaAfterSuspend = true;
+    WebProcess::singleton().sendPrewarmInformation(mainWebFrame()->url());
+
+    suspendForProcessSwap();
 }
 
 void WebPage::frameBecameRemote(uint64_t frameID, GlobalFrameIdentifier&& remoteFrameIdentifier, GlobalWindowIdentifier&& remoteWindowIdentifier)
