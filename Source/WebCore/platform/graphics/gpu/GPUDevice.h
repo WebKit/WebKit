@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUQueue.h"
+#include "GPUSwapChainDescriptor.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -39,7 +40,6 @@ namespace WebCore {
 class GPUBindGroupLayout;
 class GPUBuffer;
 class GPUCommandBuffer;
-class GPUComputePipeline;
 class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUSampler;
@@ -49,13 +49,11 @@ class GPUTexture;
 
 struct GPUBindGroupLayoutDescriptor;
 struct GPUBufferDescriptor;
-struct GPUComputePipelineDescriptor;
 struct GPUPipelineLayoutDescriptor;
 struct GPURenderPipelineDescriptor;
 struct GPURequestAdapterOptions;
 struct GPUSamplerDescriptor;
 struct GPUShaderModuleDescriptor;
-struct GPUSwapChainDescriptor;
 struct GPUTextureDescriptor;
     
 using PlatformDevice = MTLDevice;
@@ -74,7 +72,6 @@ public:
 
     RefPtr<GPUShaderModule> createShaderModule(GPUShaderModuleDescriptor&&) const;
     RefPtr<GPURenderPipeline> createRenderPipeline(GPURenderPipelineDescriptor&&) const;
-    RefPtr<GPUComputePipeline> tryCreateComputePipeline(const GPUComputePipelineDescriptor&) const;
 
     RefPtr<GPUCommandBuffer> tryCreateCommandBuffer() const;
 

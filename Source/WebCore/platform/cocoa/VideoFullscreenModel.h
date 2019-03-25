@@ -34,7 +34,6 @@
 #include "MediaPlayerEnums.h"
 #include "PlaybackSessionModel.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS AVPlayerViewController;

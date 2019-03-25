@@ -28,11 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUComputePassEncoder.h"
 #include "GPURenderPassDescriptor.h"
 #include "GPURenderPassEncoder.h"
 #include "WebGPUBuffer.h"
-#include "WebGPUComputePassEncoder.h"
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPassEncoder.h"
 #include "WebGPUTexture.h"
@@ -78,24 +76,14 @@ Ref<WebGPURenderPassEncoder> WebGPUCommandEncoder::beginRenderPass(WebGPURenderP
 {
     if (!m_commandBuffer) {
         LOG(WebGPU, "WebGPUCommandEncoder::beginRenderPass(): Invalid operation!");
-        return WebGPURenderPassEncoder::create(nullptr);
+        return WebGPURenderPassEncoder::create(*this, nullptr);
     }
     auto gpuDescriptor = descriptor.tryCreateGPURenderPassDescriptor();
     if (!gpuDescriptor)
-        return WebGPURenderPassEncoder::create(nullptr);
+        return WebGPURenderPassEncoder::create(*this, nullptr);
 
     auto encoder = GPURenderPassEncoder::tryCreate(makeRef(*m_commandBuffer), WTFMove(*gpuDescriptor));
-    return WebGPURenderPassEncoder::create(WTFMove(encoder));
-}
-
-Ref<WebGPUComputePassEncoder> WebGPUCommandEncoder::beginComputePass()
-{
-    if (!m_commandBuffer) {
-        LOG(WebGPU, "WebGPUCommandEncoder::beginComputePass(): Invalid operation!");
-        return WebGPUComputePassEncoder::create(nullptr);
-    }
-    auto encoder = GPUComputePassEncoder::tryCreate(makeRef(*m_commandBuffer));
-    return WebGPUComputePassEncoder::create(WTFMove(encoder));
+    return WebGPURenderPassEncoder::create(*this, WTFMove(encoder));
 }
 
 void WebGPUCommandEncoder::copyBufferToBuffer(const WebGPUBuffer& src, unsigned long srcOffset, const WebGPUBuffer& dst, unsigned long dstOffset, unsigned long size)

@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGPU)
 
-#import "GPUDevice.h"
 #import "GPULimits.h"
 #import "GPUUtils.h"
 #import "Logging.h"
@@ -442,6 +441,7 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
 GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPURenderPipelineDescriptor&& descriptor)
     : m_depthStencilState(WTFMove(depthStencil))
     , m_platformRenderPipeline(WTFMove(pipeline))
+    , m_layout(WTFMove(descriptor.layout))
     , m_primitiveTopology(descriptor.primitiveTopology)
 {
 }

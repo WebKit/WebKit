@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUBindGroup.h"
+#import "GPUCommandBuffer.h"
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -37,14 +38,12 @@ namespace WebCore {
 
 void GPUProgrammablePassEncoder::endPass()
 {
-    if (!platformPassEncoder())
-        return;
+    ASSERT(platformPassEncoder());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [platformPassEncoder() endEncoding];
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    invalidateEncoder();
     m_commandBuffer->setIsEncodingPass(false);
 }
 
@@ -59,8 +58,6 @@ void GPUProgrammablePassEncoder::setBindGroup(unsigned index, GPUBindGroup& bind
         setVertexBuffer(bindGroup.vertexArgsBuffer(), 0, index);
     if (bindGroup.fragmentArgsBuffer())
         setFragmentBuffer(bindGroup.fragmentArgsBuffer(), 0, index);
-    if (bindGroup.computeArgsBuffer())
-        setComputeBuffer(bindGroup.computeArgsBuffer(), 0, index);
 
     for (auto& bufferRef : bindGroup.boundBuffers()) {
         useResource(bufferRef->platformBuffer(), bufferRef->isReadOnly() ? MTLResourceUsageRead : MTLResourceUsageRead | MTLResourceUsageWrite);

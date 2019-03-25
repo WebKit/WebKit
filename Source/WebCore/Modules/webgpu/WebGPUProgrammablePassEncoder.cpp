@@ -31,8 +31,14 @@
 #include "GPUProgrammablePassEncoder.h"
 #include "Logging.h"
 #include "WebGPUBindGroup.h"
+#include "WebGPURenderPipeline.h"
 
 namespace WebCore {
+
+WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder(Ref<WebGPUCommandEncoder>&& creator)
+    : m_commandBuffer(WTFMove(creator))
+{
+}
 
 void WebGPUProgrammablePassEncoder::endPass()
 {
@@ -43,7 +49,7 @@ void WebGPUProgrammablePassEncoder::endPass()
     passEncoder()->endPass();
 }
 
-void WebGPUProgrammablePassEncoder::setBindGroup(unsigned index, WebGPUBindGroup& bindGroup)
+void WebGPUProgrammablePassEncoder::setBindGroup(unsigned index, WebGPUBindGroup& bindGroup) const
 {
     if (!passEncoder()) {
         LOG(WebGPU, "GPUProgrammablePassEncoder::setBindGroup(): Invalid operation!");

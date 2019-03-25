@@ -28,6 +28,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPURenderPipeline.h"
+
 namespace WebCore {
 
 Ref<WebGPURenderPipeline> WebGPURenderPipeline::create(RefPtr<GPURenderPipeline>&& pipeline)

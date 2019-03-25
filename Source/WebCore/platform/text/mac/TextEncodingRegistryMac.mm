@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import <Carbon/Carbon.h>
 #import <wtf/spi/cf/CFStringSPI.h>
 
 namespace WebCore {

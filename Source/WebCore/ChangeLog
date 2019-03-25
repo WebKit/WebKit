@@ -1,5 +1,17 @@
 2019-03-25  Truitt Savell  <tsavell@apple.com>
 
+        Unreviewed, rolling out r243419.
+
+        Caused Mac WK2 testers to crash and become unresponsive.
+
+        Reverted changeset:
+
+        "[Web GPU] Prototype compute pipeline with MSL"
+        https://bugs.webkit.org/show_bug.cgi?id=196107
+        https://trac.webkit.org/changeset/243419
+
+2019-03-25  Truitt Savell  <tsavell@apple.com>
+
         Unreviewed, rolling out r243438.
 
         243319 Caused Mac WK2 testers to crash and become

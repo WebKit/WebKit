@@ -53,7 +53,6 @@ typedef unsigned long GPUTextureUsageFlags;
 
     WebGPUShaderModule createShaderModule(WebGPUShaderModuleDescriptor descriptor);
     WebGPURenderPipeline createRenderPipeline(WebGPURenderPipelineDescriptor descriptor);
-    WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
 
     // FIXME: Currently, GPUCommandEncoderDescriptor is an empty dictionary.
     WebGPUCommandEncoder createCommandEncoder(/*GPUCommandEncoderDescriptor descriptor*/);
@@ -66,6 +65,7 @@ typedef unsigned long GPUTextureUsageFlags;
     // readonly attribute WebGPUExtensions extensions;
     // readonly attribute WebGPULimits limits;
 
+    // WebGPUComputePipeline createComputePipeline(WebGPUComputePipelineDescriptor descriptor);
     // WebGPUFence createFence(WebGPUFenceDescriptor descriptor);
 
     // attribute WebGPULogCallback onLog;

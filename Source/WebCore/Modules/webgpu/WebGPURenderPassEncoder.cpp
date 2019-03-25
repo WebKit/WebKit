@@ -33,28 +33,28 @@
 #include "GPURenderPassEncoder.h"
 #include "Logging.h"
 #include "WebGPUBuffer.h"
-#include "WebGPURenderPipeline.h"
 
 namespace WebCore {
 
-Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(RefPtr<GPURenderPassEncoder>&& encoder)
+Ref<WebGPURenderPassEncoder> WebGPURenderPassEncoder::create(Ref<WebGPUCommandEncoder>&& commandBuffer, RefPtr<GPURenderPassEncoder>&& encoder)
 {
-    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(encoder)));
+    return adoptRef(*new WebGPURenderPassEncoder(WTFMove(commandBuffer), WTFMove(encoder)));
 }
 
-WebGPURenderPassEncoder::WebGPURenderPassEncoder(RefPtr<GPURenderPassEncoder>&& encoder)
-    : m_passEncoder { WTFMove(encoder) }
+WebGPURenderPassEncoder::WebGPURenderPassEncoder(Ref<WebGPUCommandEncoder>&& creator, RefPtr<GPURenderPassEncoder>&& encoder)
+    : WebGPUProgrammablePassEncoder(WTFMove(creator))
+    , m_passEncoder(WTFMove(encoder))
 {
 }
 
 void WebGPURenderPassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
 {
     if (!m_passEncoder) {
-        LOG(WebGPU, "GPURenderPassEncoder::setPipeline(): Invalid operation!");
+        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid operation!");
         return;
     }
     if (!pipeline.renderPipeline()) {
-        LOG(WebGPU, "GPURenderPassEncoder::setPipeline(): Invalid pipeline!");
+        LOG(WebGPU, "GPUProgrammablePassEncoder::setPipeline(): Invalid pipeline!");
         return;
     }
     m_passEncoder->setPipeline(makeRef(*pipeline.renderPipeline()));
@@ -108,12 +108,7 @@ void WebGPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long inst
     m_passEncoder->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
-GPUProgrammablePassEncoder* WebGPURenderPassEncoder::passEncoder()
-{
-    return m_passEncoder.get();
-}
-
-const GPUProgrammablePassEncoder* WebGPURenderPassEncoder::passEncoder() const
+GPUProgrammablePassEncoder* WebGPURenderPassEncoder::passEncoder() const
 {
     return m_passEncoder.get();
 }

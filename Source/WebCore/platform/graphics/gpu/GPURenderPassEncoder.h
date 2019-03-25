@@ -51,21 +51,23 @@ class GPURenderPassEncoder : public GPUProgrammablePassEncoder {
 public:
     static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
+    void endPass() final;
     void setPipeline(Ref<const GPURenderPipeline>&&);
+
     void setVertexBuffers(unsigned long, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
     void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
 
 private:
     GPURenderPassEncoder(Ref<GPUCommandBuffer>&&, PlatformRenderPassEncoderSmartPtr&&);
-    ~GPURenderPassEncoder() { endPass(); }
+    ~GPURenderPassEncoder() { endPass(); } // Ensure that encoding has ended before release.
 
-    // GPUProgrammablePassEncoder
-    const PlatformProgrammablePassEncoder* platformPassEncoder() const final;
-    void invalidateEncoder() final { m_platformRenderPassEncoder = nullptr; }
+    PlatformProgrammablePassEncoder* platformPassEncoder() const final;
+
 #if USE(METAL)
-    void useResource(const MTLResource *, unsigned usage) final;
-    void setVertexBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
-    void setFragmentBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
+    // GPUProgrammablePassEncoder
+    void useResource(MTLResource *, unsigned usage) final;
+    void setVertexBuffer(MTLBuffer *, unsigned offset, unsigned index) final;
+    void setFragmentBuffer(MTLBuffer *, unsigned offset, unsigned index) final;
 #endif // USE(METAL)
 
     PlatformRenderPassEncoderSmartPtr m_platformRenderPassEncoder;
