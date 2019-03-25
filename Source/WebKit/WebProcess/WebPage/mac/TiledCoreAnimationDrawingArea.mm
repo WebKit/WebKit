@@ -493,7 +493,7 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
 #if ENABLE(ASYNC_SCROLLING)
         if (auto* scrollingCoordinator = m_webPage.corePage()->scrollingCoordinator()) {
             scrollingCoordinator->commitTreeStateIfNeeded();
-            if (flushType == FlushType::TransientZoom)
+            if (flushType == FlushType::Normal)
                 scrollingCoordinator->applyScrollingTreeLayerPositions();
         }
 #endif
