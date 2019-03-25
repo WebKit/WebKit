@@ -45,6 +45,7 @@ static WeakPtr<WebPaymentCoordinatorProxy>& activePaymentCoordinatorProxy()
 
 WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy(WebPaymentCoordinatorProxy::Client& client)
     : m_client { client }
+    , m_canMakePaymentsQueue { WorkQueue::create("com.apple.WebKit.CanMakePayments") }
 {
     m_client.paymentCoordinatorAddMessageReceiver(*this, Messages::WebPaymentCoordinatorProxy::messageReceiverName(), *this);
     finishConstruction(*this);
@@ -70,7 +71,7 @@ uint64_t WebPaymentCoordinatorProxy::messageSenderDestinationID() const
 
 void WebPaymentCoordinatorProxy::canMakePayments(CompletionHandler<void(bool)>&& reply)
 {
-    reply(platformCanMakePayments());
+    platformCanMakePayments(WTFMove(reply));
 }
 
 void WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)

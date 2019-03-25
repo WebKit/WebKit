@@ -1,5 +1,28 @@
 2019-03-25  Andy Estes  <aestes@apple.com>
 
+        [Apple Pay] Call +canMakePayments on a work queue
+        https://bugs.webkit.org/show_bug.cgi?id=196179
+        <rdar://problem/45388749>
+
+        Reviewed by Brady Eidson.
+
+        Calling +canMakePayments on either PKPaymentAuthorizationController or
+        PKPaymentAuthorizationViewController results in synchronous IPC and is therefore very
+        expensive to call on the main thread. On iOS, these calls are made in the network process,
+        and on Mac in the UI process.
+
+        Call these methods on a work queue to avoid main thread spins.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::canMakePayments):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/ios/WebPaymentCoordinatorProxyIOS.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePayments):
+        * Shared/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformCanMakePayments):
+
+2019-03-25  Andy Estes  <aestes@apple.com>
+
         [Apple Pay] Remove the AvailablePaymentNetworks synchronous message
         https://bugs.webkit.org/show_bug.cgi?id=196180
 
