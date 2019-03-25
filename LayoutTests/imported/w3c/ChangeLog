@@ -1,3 +1,19 @@
+2019-03-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid container baseline alignment for orthogonal items
+        https://bugs.webkit.org/show_bug.cgi?id=196141
+
+        Reviewed by Javier Fernandez.
+
+        Imported test from WPT. This patch is making some of the test cases pass but not all.
+        Some are still failing in WebKit as it never uses the central baseline on vertical writing modes (bug #94410),
+        also "text-orientation" is not supported yet in WebKit (bug #196139),
+        even the prefixed version "-webkit-text-orientation" doesn't fix anything in this test case.
+
+        * web-platform-tests/css/css-grid/alignment/grid-container-baseline-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-container-baseline-001.html: Added.
+        * web-platform-tests/css/css-grid/alignment/w3c-import.log:
+
 2019-03-22  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Don't construct segments on PlaybackPipeline::flush

@@ -1,3 +1,18 @@
+2019-03-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Fix grid container baseline alignment for orthogonal items
+        https://bugs.webkit.org/show_bug.cgi?id=196141
+
+        Reviewed by Javier Fernandez.
+
+        Grid container baseline was wrongly computed when done in reference to an orthogonal item.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/alignment/grid-container-baseline-001.html
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::firstLineBaseline const): Simple change to use logicalTopForChild()
+        so it takes into account grid container and item writing modes.
+
 2019-03-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix -Wpessimizing-move warning

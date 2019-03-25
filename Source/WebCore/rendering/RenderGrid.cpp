@@ -1260,7 +1260,7 @@ Optional<int> RenderGrid::firstLineBaseline() const
         // FIXME: We should pass |direction| into firstLineBaseline and stop bailing out if we're a writing
         // mode root. This would also fix some cases where the grid is orthogonal to its container.
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + baselineChild->logicalTop().toInt();
+        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + logicalTopForChild(*baselineChild).toInt();
     }
     return baseline.value() + baselineChild->logicalTop().toInt();
 }
