@@ -2510,6 +2510,8 @@ webkit.org/b/195135 storage/indexeddb/IDBObject-leak.html [ Timeout Failure Pass
 
 webkit.org/b/196069 inspector/indexeddb/requestData.html [ Timeout ]
 
+webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3805,6 +3807,16 @@ webkit.org/b/196069 storage/indexeddb/transaction-coordination-across-databases.
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
 webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-004.html [ Failure ]
+
+webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
+
+webkit.org/b/196196 inspector/audit/run-resources.html [ Failure ]
+
+webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
+
+webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+
+webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

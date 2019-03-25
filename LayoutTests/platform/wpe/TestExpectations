@@ -1653,6 +1653,10 @@ webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/request-event-orde
 webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm [ Failure ]
 webkit.org/b/196069 storage/indexeddb/transaction-coordination-across-databases.html [ Failure ]
 
+webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
+
+webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 #  >> NOTICE <<
 # Please see guidelines at the top of this file and place new test expectations

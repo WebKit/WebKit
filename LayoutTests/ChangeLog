@@ -1,3 +1,14 @@
+2019-03-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Gardening, update test expectations.
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/ja-sans-serif-expected.png: Removed.
+        Test harnessing suggested to remove this file as it was not being used.
+        * platform/wpe/TestExpectations:
+
 2019-03-25  Rob Buis  <rbuis@igalia.com>
 
         Reflect HTMLLinkElement.as according to the spec
