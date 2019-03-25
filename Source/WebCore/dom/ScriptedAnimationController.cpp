@@ -55,7 +55,7 @@ static const Seconds aggressiveThrottlingAnimationInterval { 10_s };
 namespace WebCore {
 
 ScriptedAnimationController::ScriptedAnimationController(Document& document)
-    : m_document(&document)
+    : m_document(makeWeakPtr(document))
     , m_animationTimer(*this, &ScriptedAnimationController::animationTimerFired)
 {
 }

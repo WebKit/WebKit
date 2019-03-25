@@ -28,6 +28,7 @@
 
 #include "PendingScript.h"
 #include <wtf/Deque.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -71,7 +72,7 @@ private:
     void stopWatchingForLoad(PendingScript&);
     bool isPendingScriptReady(const PendingScript&);
 
-    Document* m_document;
+    WeakPtr<Document> m_document;
     HTMLScriptRunnerHost& m_host;
     RefPtr<PendingScript> m_parserBlockingScript;
     Deque<Ref<PendingScript>> m_scriptsToExecuteAfterParsing; // http://www.whatwg.org/specs/web-apps/current-work/#list-of-scripts-that-will-execute-when-the-document-has-finished-parsing

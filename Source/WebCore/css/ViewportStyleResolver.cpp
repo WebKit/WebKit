@@ -42,7 +42,7 @@
 namespace WebCore {
 
 ViewportStyleResolver::ViewportStyleResolver(Document* document)
-    : m_document(document)
+    : m_document(document ? makeWeakPtr(*document) : nullptr)
 {
     ASSERT(m_document);
 }

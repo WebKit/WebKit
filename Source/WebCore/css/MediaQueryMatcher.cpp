@@ -38,7 +38,7 @@
 namespace WebCore {
 
 MediaQueryMatcher::MediaQueryMatcher(Document& document)
-    : m_document(&document)
+    : m_document(makeWeakPtr(document))
 {
 }
 
@@ -84,7 +84,7 @@ RefPtr<MediaQueryList> MediaQueryMatcher::matchMedia(const String& query)
         return nullptr;
 
     auto media = MediaQuerySet::create(query, MediaQueryParserContext(*m_document));
-    reportMediaQueryWarningIfNeeded(m_document, media.ptr());
+    reportMediaQueryWarningIfNeeded(m_document.get(), media.ptr());
     bool result = evaluate(media.get());
     return MediaQueryList::create(*this, WTFMove(media), result);
 }

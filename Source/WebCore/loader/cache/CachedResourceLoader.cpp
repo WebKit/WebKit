@@ -578,7 +578,7 @@ bool CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox(Cache
         }
         return true;
     case CachedResource::Type::CSSStyleSheet:
-        document = m_document;
+        document = m_document.get();
         break;
     default:
         return true;
@@ -1303,7 +1303,7 @@ CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type, const U
 void CachedResourceLoader::loadDone(LoadCompletionType type, bool shouldPerformPostLoadActions)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
-    RefPtr<Document> protectDocument(m_document);
+    RefPtr<Document> protectDocument(m_document.get());
 
     ASSERT(shouldPerformPostLoadActions || type == LoadCompletionType::Cancel);
 

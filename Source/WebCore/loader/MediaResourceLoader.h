@@ -52,7 +52,7 @@ public:
     RefPtr<PlatformMediaResource> requestResource(ResourceRequest&&, LoadOptions) final;
     void removeResource(MediaResource&);
 
-    Document* document() { return m_document; }
+    Document* document() { return m_document.get(); }
     const String& crossOriginMode() const { return m_crossOriginMode; }
 
     Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
@@ -61,7 +61,7 @@ public:
 private:
     void contextDestroyed() override;
 
-    Document* m_document;
+    WeakPtr<Document> m_document;
     WeakPtr<HTMLMediaElement> m_mediaElement;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;

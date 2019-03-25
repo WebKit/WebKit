@@ -77,7 +77,7 @@ public:
     void registerForInvalidationCallbacks(FontSelectorClient&) final;
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
 
-    Document* document() const { return m_document; }
+    Document* document() const { return m_document.get(); }
 
     void beginLoadingFontSoon(CachedFont&);
 
@@ -103,7 +103,7 @@ private:
     };
     Vector<PendingFontFaceRule> m_stagingArea;
 
-    Document* m_document;
+    WeakPtr<Document> m_document;
     RefPtr<FontFaceSet> m_fontFaceSet;
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;

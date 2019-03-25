@@ -61,7 +61,7 @@ private:
 
     float getViewportArgumentValue(CSSPropertyID) const;
 
-    Document* m_document;
+    WeakPtr<Document> m_document;
     RefPtr<MutableStyleProperties> m_propertySet;
 };
 

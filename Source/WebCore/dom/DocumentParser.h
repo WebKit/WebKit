@@ -62,7 +62,7 @@ public:
     virtual bool processingData() const { return false; }
 
     // document() will return 0 after detach() is called.
-    Document* document() const { ASSERT(m_document); return m_document; }
+    Document* document() const { ASSERT(m_document); return m_document.get(); }
 
     bool isParsing() const { return m_state == ParsingState; }
     bool isStopping() const { return m_state == StoppingState; }
@@ -114,7 +114,7 @@ private:
 
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be 0 after the parser is stopped.
-    Document* m_document;
+    WeakPtr<Document> m_document;
 };
 
 } // namespace WebCore

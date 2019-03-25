@@ -62,7 +62,7 @@ namespace WebCore {
 static unsigned fontSelectorId;
 
 CSSFontSelector::CSSFontSelector(Document& document)
-    : m_document(&document)
+    : m_document(makeWeakPtr(document))
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_beginLoadingTimer(*this, &CSSFontSelector::beginLoadTimerFired)
     , m_uniqueId(++fontSelectorId)
@@ -207,7 +207,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (loadingBehavior)
         fontFace->setLoadingBehavior(*loadingBehavior);
 
-    CSSFontFace::appendSources(fontFace, srcList, m_document, isInitiatingElementInUserAgentShadowTree);
+    CSSFontFace::appendSources(fontFace, srcList, m_document.get(), isInitiatingElementInUserAgentShadowTree);
     if (fontFace->computeFailureState())
         return;
 
@@ -312,7 +312,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == standardFamily;
 
-    AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document, fontDescription, familyName) : familyName;
+    AtomicString familyForLookup = resolveGenericFamilyFirst ? resolveGenericFamily(m_document.get(), fontDescription, familyName) : familyName;
     auto* face = m_cssFontFaceSet->fontFace(fontDescription.fontSelectionRequest(), familyForLookup);
     if (face) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
@@ -322,7 +322,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
         return face->fontRanges(fontDescription);
     }
     if (!resolveGenericFamilyFirst)
-        familyForLookup = resolveGenericFamily(m_document, fontDescription, familyName);
+        familyForLookup = resolveGenericFamily(m_document.get(), fontDescription, familyName);
     auto font = FontCache::singleton().fontForFamily(fontDescription, familyForLookup);
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled()) {
         if (m_document)

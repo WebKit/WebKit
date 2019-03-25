@@ -1,3 +1,52 @@
+2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Stop storing raw pointers to Documents
+        https://bugs.webkit.org/show_bug.cgi?id=196042
+
+        Reviewed by Geoff Garen.
+
+        Use WeakPtr instead!  This could change some UAF bugs into null dereference crashes.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * css/CSSFontSelector.h:
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::MediaQueryMatcher):
+        (WebCore::MediaQueryMatcher::matchMedia):
+        * css/MediaQueryMatcher.h:
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::StyleSheetList):
+        (WebCore::StyleSheetList::ownerNode const):
+        * css/StyleSheetList.h:
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::ViewportStyleResolver):
+        * css/ViewportStyleResolver.h:
+        * dom/Document.h:
+        (WebCore::Document::setTemplateDocumentHost):
+        (WebCore::Document::templateDocumentHost):
+        * dom/DocumentParser.cpp:
+        (WebCore::DocumentParser::DocumentParser):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::document const):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::ScriptedAnimationController):
+        * dom/ScriptedAnimationController.h:
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::HTMLScriptRunner):
+        (WebCore::HTMLScriptRunner::runScript):
+        * html/parser/HTMLScriptRunner.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        * loader/MediaResourceLoader.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequestInContentDispositionAttachmentSandbox const):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore::CachedResourceLoader::document const):
+        (WebCore::CachedResourceLoader::setDocument):
+
 2019-03-25  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r243419.

@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 StyleSheetList::StyleSheetList(Document& document)
-    : m_document(&document)
+    : m_document(makeWeakPtr(document))
 {
 }
 
@@ -57,7 +57,7 @@ inline const Vector<RefPtr<StyleSheet>>& StyleSheetList::styleSheets() const
 Node* StyleSheetList::ownerNode() const
 {
     if (m_document)
-        return m_document;
+        return m_document.get();
     return m_shadowRoot;
 }
 
