@@ -1,3 +1,21 @@
+2019-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pull IPadUserInterfaceSwizzler out into a separate header file
+        https://bugs.webkit.org/show_bug.cgi?id=196193
+
+        Reviewed by Anders Carlsson.
+
+        Pull the IPadUserInterfaceSwizzler helper class out into a separate file, so that it may
+        be used in other API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm:
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::IPadUserInterfaceSwizzler): Deleted.
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::padUserInterfaceIdiom): Deleted.
+        * TestWebKitAPI/ios/IPadUserInterfaceSwizzler.h: Added.
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::IPadUserInterfaceSwizzler):
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::padUserInterfaceIdiom):
+
 2019-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove NavigatorContentUtils in WebCore/Modules
