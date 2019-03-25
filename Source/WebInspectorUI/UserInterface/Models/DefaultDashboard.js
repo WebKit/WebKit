@@ -183,7 +183,10 @@ WI.DefaultDashboard = class DefaultDashboard extends WI.Object
     {
         if (event.target.urlComponents.scheme === "data")
             return;
-        this.resourcesSize += event.target.size - event.data.previousSize;
+
+        let delta = event.target.size - event.data.previousSize;
+        console.assert(!isNaN(delta), "Resource size change should never be NaN.");
+        this.resourcesSize += delta;
     }
 
     _startUpdatingTime()

@@ -789,6 +789,10 @@ WI.Resource = class Resource extends WI.SourceCode
             console.assert(this._responseBodyTransferSize >= 0);
             console.assert(this._responseBodySize >= 0);
 
+            // There may have been no size updates received during load if Content-Length was 0.
+            if (isNaN(this._estimatedSize))
+                this._estimatedSize = 0;
+
             this.dispatchEventToListeners(WI.Resource.Event.SizeDidChange, {previousSize: this._estimatedSize});
             this.dispatchEventToListeners(WI.Resource.Event.TransferSizeDidChange);
         }

@@ -43,6 +43,19 @@ function test()
     });
 
     addResourceSizeTest(suite, {
+        name: "Resource.Size.Network.text",
+        description: "Sizes of an empty text resource",
+        url: "resources/empty.txt?" + Math.random(),
+        statusCode: 200,
+        compressed: false,
+        responseSource: WI.Resource.ResponseSource.Network,
+        headers: true,
+        requestBodyTransferSize: 0,
+        responseBodyTransferSize: 0,
+        size: 0,
+    });
+
+    addResourceSizeTest(suite, {
         name: "Resource.Size.Network.text.gzipped",
         description: "Sizes of a gzipped text resource",
         url: "resources/gzipped-lorem.php?" + Math.random(),

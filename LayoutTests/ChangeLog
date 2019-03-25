@@ -1,3 +1,14 @@
+2019-03-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Page Weight indicator clears on pages with zero length resources (macrumors.com)
+        https://bugs.webkit.org/show_bug.cgi?id=196170
+
+        Reviewed by Timothy Hatcher.
+
+        * http/tests/inspector/network/resource-sizes-network.html:
+        * http/tests/inspector/network/resources/empty.txt: Added.
+        * platform/mac/http/tests/inspector/network/resource-sizes-network-expected.txt:
+
 2019-03-25  Eric Carlson  <eric.carlson@apple.com>
 
         Delete MetadataPreloadingNotPermitted, it is unused
