@@ -4449,7 +4449,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     if (!contentEditable && event.isTabKey)
         return NO;
 
-    if ([_keyboardScrollingAnimator beginWithEvent:event])
+    if ([_keyboardScrollingAnimator beginWithEvent:event] || [_keyboardScrollingAnimator scrollTriggeringKeyIsPressed])
         return YES;
 
     UIKeyboardImpl *keyboard = [UIKeyboardImpl sharedInstance];

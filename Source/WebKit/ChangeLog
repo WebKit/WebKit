@@ -1,3 +1,26 @@
+2019-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Animated keyboard scrolling is extremely chaotic
+        https://bugs.webkit.org/show_bug.cgi?id=196164
+        <rdar://problem/48702444>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]):
+        Consume keyboard events instead of interpreting them traditionally
+        if WKKeyboardScrollingAnimator is animating.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        (-[WKKeyboardScrollingAnimator handleKeyEvent:]):
+        (-[WKKeyboardScrollingAnimator stopAnimatedScroll]):
+        (-[WKKeyboardScrollingAnimator scrollTriggeringKeyIsPressed]):
+        (-[WKKeyboardScrollingAnimator displayLinkFired:]):
+        (-[WKKeyboardScrollViewAnimator scrollTriggeringKeyIsPressed]):
+        Expose the current state of interactive scrolling, and rename the related member.
+
 2019-03-25  Keith Rollin  <krollin@apple.com>
 
         Add WebKit logging for first paint and other interesting layout milestones

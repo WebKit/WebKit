@@ -62,6 +62,8 @@ enum class ScrollingDirection : uint8_t {
 - (BOOL)beginWithEvent:(::WebEvent *)event;
 - (void)handleKeyEvent:(::WebEvent *)event;
 
+- (BOOL)scrollTriggeringKeyIsPressed;
+
 @property (nonatomic, weak) id <WKKeyboardScrollViewAnimatorDelegate> delegate;
 
 @end

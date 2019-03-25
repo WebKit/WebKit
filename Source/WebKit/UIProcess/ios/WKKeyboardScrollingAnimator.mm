@@ -99,7 +99,7 @@ struct KeyboardScrollParameters {
 
     Optional<WebKit::KeyboardScroll> _currentScroll;
 
-    BOOL _hasPressedScrollingKey;
+    BOOL _scrollTriggeringKeyIsPressed;
 
     WebCore::FloatSize _velocity; // Points per second.
 
@@ -295,13 +295,13 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     if (!scroll)
         return NO;
 
-    if (_hasPressedScrollingKey)
+    if (_scrollTriggeringKeyIsPressed)
         return NO;
 
     if (![_scrollable rubberbandableDirections].at(boxSide(scroll->direction)))
         return NO;
 
-    _hasPressedScrollingKey = YES;
+    _scrollTriggeringKeyIsPressed = YES;
     _currentScroll = scroll;
 
 #if ENABLE(ANIMATED_KEYBOARD_SCROLLING)
@@ -328,13 +328,13 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
 
 - (void)handleKeyEvent:(::WebEvent *)event
 {
-    if (!_hasPressedScrollingKey)
+    if (!_scrollTriggeringKeyIsPressed)
         return;
 
     auto scroll = [self keyboardScrollForEvent:event];
     if (!scroll || event.type == WebEventKeyUp) {
         [self stopAnimatedScroll];
-        _hasPressedScrollingKey = NO;
+        _scrollTriggeringKeyIsPressed = NO;
     }
 }
 
@@ -380,6 +380,11 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 #if !ENABLE(ANIMATED_KEYBOARD_SCROLLING)
     [self stopRepeatTimer];
 #endif
+}
+
+- (BOOL)scrollTriggeringKeyIsPressed
+{
+    return _scrollTriggeringKeyIsPressed;
 }
 
 - (void)willStartInteractiveScroll
@@ -458,7 +463,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 
     // If we've effectively stopped scrolling, and no key is pressed,
     // shut down the display link.
-    if (!_hasPressedScrollingKey && _velocity.diagonalLengthSquared() < 1) {
+    if (!_scrollTriggeringKeyIsPressed && _velocity.diagonalLengthSquared() < 1) {
         [_scrollable didFinishScrolling];
         [self stopDisplayLink];
         _velocity = { };
@@ -562,6 +567,11 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
 - (void)handleKeyEvent:(::WebEvent *)event
 {
     return [_animator handleKeyEvent:event];
+}
+
+- (BOOL)scrollTriggeringKeyIsPressed
+{
+    return [_animator scrollTriggeringKeyIsPressed];
 }
 
 - (BOOL)isKeyboardScrollable
