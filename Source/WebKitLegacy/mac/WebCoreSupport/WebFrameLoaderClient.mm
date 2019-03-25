@@ -2243,8 +2243,11 @@ RefPtr<PreviewLoaderClient> WebFrameLoaderClient::createPreviewLoaderClient(cons
     if (!filePath)
         return nullptr;
 
+    auto documentWriter = adoptRef(*new QuickLookDocumentWriter(filePath));
+
     [m_webFrame provisionalDataSource]._quickLookContent = @{ WebQuickLookFileNameKey : filePath, WebQuickLookUTIKey : uti };
-    return adoptRef(*new QuickLookDocumentWriter(filePath));
+    [m_webFrame provisionalDataSource]._quickLookPreviewLoaderClient = documentWriter.ptr();
+    return documentWriter;
 }
 #endif
 

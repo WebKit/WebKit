@@ -42,7 +42,7 @@
 using namespace WebCore;
 
 @interface WebPreviewLoader : NSObject {
-    RefPtr<ResourceLoader> _resourceLoader;
+    WeakPtr<ResourceLoader> _resourceLoader;
     ResourceResponse _response;
     RefPtr<PreviewLoaderClient> _client;
     std::unique_ptr<PreviewConverter> _converter;
@@ -81,7 +81,7 @@ static PreviewLoaderClient& emptyClient()
     if (!self)
         return nil;
 
-    _resourceLoader = &resourceLoader;
+    _resourceLoader = makeWeakPtr(resourceLoader);
     _response = resourceResponse;
     _converter = std::make_unique<PreviewConverter>(self, _response);
     _bufferedDataArray = adoptNS([[NSMutableArray alloc] init]);
@@ -121,6 +121,9 @@ static PreviewLoaderClient& emptyClient()
 
 - (void)_sendDidReceiveResponseIfNecessary
 {
+    if (!_resourceLoader)
+        return;
+
     ASSERT(!_resourceLoader->reachedTerminalState());
     if (_hasSentDidReceiveResponse)
         return;
@@ -137,6 +140,9 @@ static PreviewLoaderClient& emptyClient()
     _hasProcessedResponse = NO;
     _resourceLoader->didReceiveResponse(response, [self, retainedSelf = retainPtr(self)] {
         _hasProcessedResponse = YES;
+
+        if (!_resourceLoader)
+            return;
 
         if (_resourceLoader->reachedTerminalState())
             return;
@@ -158,6 +164,9 @@ static PreviewLoaderClient& emptyClient()
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
 {
+    if (!_resourceLoader)
+        return;
+
     ASSERT_UNUSED(connection, !connection);
     if (_resourceLoader->reachedTerminalState())
         return;
@@ -185,6 +194,9 @@ static PreviewLoaderClient& emptyClient()
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    if (!_resourceLoader)
+        return;
+
     ASSERT_UNUSED(connection, !connection);
     if (_resourceLoader->reachedTerminalState())
         return;
@@ -206,6 +218,9 @@ static inline bool isQuickLookPasswordError(NSError *error)
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+    if (!_resourceLoader)
+        return;
+
     ASSERT_UNUSED(connection, !connection);
     if (_resourceLoader->reachedTerminalState())
         return;

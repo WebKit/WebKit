@@ -1,3 +1,26 @@
+2019-03-25  Andy Estes  <aestes@apple.com>
+
+        [iOS] Break a reference cycle between PreviewLoader and ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=194964
+        <rdar://problem/48279441>
+
+        Reviewed by Alex Christensen.
+
+        When a document's QuickLook preview is loaded, a reference cycle is created between
+        WebPreviewLoader and ResourceLoader. Break the cycle by changing WebPreviewLoader to hold a
+        WeakPtr to its ResourceLoader ResourceLoader::releaseResources().
+
+        Fixes leaks detected by `run-webkit-tests --leaks LayoutTests/quicklook`. Also covered by
+        existing API tests.
+
+        * loader/ResourceLoader.h:
+        * loader/ios/PreviewLoader.mm:
+        (-[WebPreviewLoader initWithResourceLoader:resourceResponse:]):
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]):
+        (-[WebPreviewLoader connection:didReceiveData:lengthReceived:]):
+        (-[WebPreviewLoader connectionDidFinishLoading:]):
+        (-[WebPreviewLoader connection:didFailWithError:]):
+
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Enable IPC sending and receiving non-default-constructible types

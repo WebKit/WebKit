@@ -30,7 +30,8 @@
 #import <wtf/Forward.h>
 
 namespace WebCore {
-    class DocumentLoader;
+class DocumentLoader;
+class PreviewLoaderClient;
 }
 
 class WebDocumentLoaderMac;
@@ -59,5 +60,6 @@ class WebDocumentLoaderMac;
 - (WebCore::DocumentLoader*)_documentLoader;
 #if USE(QUICK_LOOK)
 @property (nonatomic, copy, setter=_setQuickLookContent:) NSDictionary *_quickLookContent;
+@property (nonatomic, setter=_setQuickLookPreviewLoaderClient:) WebCore::PreviewLoaderClient* _quickLookPreviewLoaderClient;
 #endif
 @end

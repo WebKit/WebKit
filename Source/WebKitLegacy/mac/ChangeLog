@@ -1,3 +1,25 @@
+2019-03-25  Andy Estes  <aestes@apple.com>
+
+        [iOS] Break a reference cycle between PreviewLoader and ResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=194964
+        <rdar://problem/48279441>
+
+        Reviewed by Alex Christensen.
+
+        The WebDataSource._quickLookContent SPI accidentally relied on PreviewLoaders being leaked
+        to keep the temporary file referenced by WebQuickLookFileNameKey in existence. Since
+        PreviewLoaders are now being deleted properly, we teach WebDataSource to keep the
+        PreviewLoaderClient alive for its lifetime. This ensures that as long as
+        WebDataSource._quickLookContent can be called, the associated temp file will not be deleted
+        by WebKit.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPreviewLoaderClient):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _quickLookPreviewLoaderClient]):
+        (-[WebDataSource _setQuickLookPreviewLoaderClient:]):
+        * WebView/WebDataSourceInternal.h:
+
 2019-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove NavigatorContentUtils in WebCore/Modules

@@ -53,7 +53,7 @@ class FrameLoader;
 class NetworkLoadMetrics;
 class PreviewLoader;
 
-class ResourceLoader : public RefCounted<ResourceLoader>, protected ResourceHandleClient {
+class ResourceLoader : public CanMakeWeakPtr<ResourceLoader>, public RefCounted<ResourceLoader>, protected ResourceHandleClient {
 public:
     virtual ~ResourceLoader() = 0;
 
