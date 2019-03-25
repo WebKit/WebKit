@@ -1,3 +1,29 @@
+2019-03-25  Keith Rollin  <krollin@apple.com>
+
+        Add WebKit logging for first paint and other interesting layout milestones
+        https://bugs.webkit.org/show_bug.cgi?id=196159
+        <rdar://problem/49128952>
+
+        Reviewed by Simon Fraser.
+
+        Add some logging to indicate what layout milestones have been reached.
+        This should help us determine if there's a client, rendering, layout,
+        or some other issue when page content does not appear in the client
+        window.
+
+        The logging is being added to
+        WebFrameLoaderClient::dispatchDidReachLayoutMilestone. This seems like
+        a nice central place to capture layout milestones. However, it will
+        only log notifications that are being sent to clients. It does not
+        indicate all milestones that have occurred. That is, it does not
+        report milestones that are filtered out due to client disinterest.
+        There doesn't seem to be a good central place to capture all
+        milestones, regardless of client interest.
+
+        * Platform/Logging.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReachLayoutMilestone):
+
 2019-03-25  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Remove network access from web process sandbox

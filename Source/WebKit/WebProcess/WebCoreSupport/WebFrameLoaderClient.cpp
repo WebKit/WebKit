@@ -646,6 +646,8 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
     RefPtr<API::Object> userData;
 
     if (milestones & DidFirstLayout) {
+        RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstLayoutForFrame, page = %p", this, webPage);
+
         // FIXME: We should consider removing the old didFirstLayout API since this is doing double duty with the
         // new didLayout API.
         webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(*webPage, *m_frame, userData);
@@ -654,6 +656,7 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 #if PLATFORM(MAC)
         // FIXME: Do this on DidFirstVisuallyNonEmptyLayout when Mac Safari is able to handle it (<rdar://problem/17580021>)
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
+            RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition, page = %p", this, webPage);
             webPage->didCompletePageTransition();
             m_didCompletePageTransition = true;
         }
@@ -665,17 +668,42 @@ void WebFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCore::La
 #endif
     }
 
+#if !RELEASE_LOG_DISABLED
+    StringBuilder builder;
+    auto addIfSet = [&milestones, &builder] (WebCore::LayoutMilestone milestone, const String& toAdd) {
+        if (milestones.contains(milestone)) {
+            if (!builder.isEmpty())
+                builder.append(", ");
+            builder.append(toAdd);
+        }
+    };
+
+    addIfSet(DidFirstLayout, "DidFirstLayout"_s);
+    addIfSet(DidFirstVisuallyNonEmptyLayout, "DidFirstVisuallyNonEmptyLayout"_s);
+    addIfSet(DidHitRelevantRepaintedObjectsAreaThreshold, "DidHitRelevantRepaintedObjectsAreaThreshold"_s);
+    addIfSet(DidFirstFlushForHeaderLayer, "DidFirstFlushForHeaderLayer"_s);
+    addIfSet(DidFirstLayoutAfterSuppressedIncrementalRendering, "DidFirstLayoutAfterSuppressedIncrementalRendering"_s);
+    addIfSet(DidFirstPaintAfterSuppressedIncrementalRendering, "DidFirstPaintAfterSuppressedIncrementalRendering"_s);
+    addIfSet(ReachedSessionRestorationRenderTreeSizeThreshold, "ReachedSessionRestorationRenderTreeSizeThreshold"_s);
+    addIfSet(DidRenderSignificantAmountOfText, "DidRenderSignificantAmountOfText"_s);
+    addIfSet(DidFirstMeaningfulPaint, "DidFirstMeaningfulPaint"_s);
+
+    RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidReachLayoutMilestone, page = %p, milestones = %{public}s", this, webPage, builder.toString().utf8().data());
+#endif
+
     // Send this after DidFirstLayout-specific calls since some clients expect to get those messages first.
     webPage->dispatchDidReachLayoutMilestone(milestones);
 
     if (milestones & DidFirstVisuallyNonEmptyLayout) {
         if (m_frame->isMainFrame() && !m_didCompletePageTransition && !webPage->corePage()->settings().suppressesIncrementalRendering()) {
+            RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching didCompletePageTransition, page = %p", this, webPage);
             webPage->didCompletePageTransition();
             m_didCompletePageTransition = true;
         }
 
         // FIXME: We should consider removing the old didFirstVisuallyNonEmptyLayoutForFrame API since this is doing
         // double duty with the new didLayout API.
+        RELEASE_LOG(Layout, "%p - WebFrameLoaderClient::dispatchDidReachLayoutMilestone: dispatching DidFirstVisuallyNonEmptyLayoutForFrame, page = %p", this, webPage);
         webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(*webPage, *m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
     }

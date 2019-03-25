@@ -55,6 +55,7 @@ extern "C" {
     M(IPC) \
     M(KeyHandling) \
     M(Layers) \
+    M(Layout) \
     M(Loading) \
     M(LocalStorageDatabaseTracker) \
     M(MouseHandling) \
