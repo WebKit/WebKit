@@ -1,3 +1,24 @@
+2019-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pull some API testing helper methods out of TestWKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=196212
+
+        Reviewed by Tim Horton.
+
+        Refactor some more API testing utility methods, so that they can be used in
+        tests that do not use TestWKWebView.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView loadTestPageNamed:]):
+        (-[WKWebView synchronouslyLoadHTMLString:baseURL:]):
+        (-[WKWebView synchronouslyLoadHTMLString:]):
+        (-[WKWebView synchronouslyLoadTestPageNamed:]):
+        (-[TestWKWebView loadTestPageNamed:]): Deleted.
+        (-[TestWKWebView synchronouslyLoadHTMLString:baseURL:]): Deleted.
+        (-[TestWKWebView synchronouslyLoadHTMLString:]): Deleted.
+        (-[TestWKWebView synchronouslyLoadTestPageNamed:]): Deleted.
+
 2019-03-25  Jer Noble  <jer.noble@apple.com>
 
         Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.

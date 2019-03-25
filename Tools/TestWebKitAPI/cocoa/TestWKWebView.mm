@@ -64,6 +64,29 @@ SOFT_LINK_CLASS(UIKit, UIWindow)
 
 @implementation WKWebView (TestWebKitAPI)
 
+- (void)loadTestPageNamed:(NSString *)pageName
+{
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [self loadRequest:request];
+}
+
+- (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
+{
+    [self loadHTMLString:html baseURL:url];
+    [self _test_waitForDidFinishNavigation];
+}
+
+- (void)synchronouslyLoadHTMLString:(NSString *)html
+{
+    [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
+}
+
+- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName
+{
+    [self loadTestPageNamed:pageName];
+    [self _test_waitForDidFinishNavigation];
+}
+
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
 {
     __block bool done = false;
@@ -341,29 +364,6 @@ static UICalloutBar *suppressUICalloutBar()
     }
 
     [_testHandler addMessage:message withHandler:action];
-}
-
-- (void)loadTestPageNamed:(NSString *)pageName
-{
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:pageName withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [self loadRequest:request];
-}
-
-- (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
-{
-    [self loadHTMLString:html baseURL:url];
-    [self _test_waitForDidFinishNavigation];
-}
-
-- (void)synchronouslyLoadHTMLString:(NSString *)html
-{
-    [self synchronouslyLoadHTMLString:html baseURL:[[[NSBundle mainBundle] bundleURL] URLByAppendingPathComponent:@"TestWebKitAPI.resources"]];
-}
-
-- (void)synchronouslyLoadTestPageNamed:(NSString *)pageName
-{
-    [self loadTestPageNamed:pageName];
-    [self _test_waitForDidFinishNavigation];
 }
 
 - (void)waitForMessage:(NSString *)message
