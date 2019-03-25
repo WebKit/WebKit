@@ -1,3 +1,16 @@
+2019-03-25  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Remove network access from web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=189967
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::createFlatpakInfo):
+        (WebKit::bubblewrapSpawn):
+        * UIProcess/Launcher/glib/FlatpakLauncher.cpp:
+        (WebKit::flatpakSpawn):
+
 2019-03-25  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Call +canMakePayments on a work queue

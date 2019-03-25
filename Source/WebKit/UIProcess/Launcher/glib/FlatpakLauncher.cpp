@@ -51,6 +51,9 @@ GRefPtr<GSubprocess> flatpakSpawn(GSubprocessLauncher* launcher, const WebKit::P
         childProcessSocketArg.get(),
     };
 
+    if (launchOptions.processType == ProcessLauncher::ProcessType::Web)
+        flatpakArgs.append("--no-network");
+
     char** newArgv = g_newa(char*, g_strv_length(argv) + flatpakArgs.size() + 1);
     size_t i = 0;
 

@@ -641,9 +641,6 @@ static int createFlatpakInfo()
 {
     GUniquePtr<GKeyFile> keyFile(g_key_file_new());
 
-    const char* sharedPermissions[] = { "network", nullptr };
-    g_key_file_set_string_list(keyFile.get(), "Context", "shared", sharedPermissions, sizeof(sharedPermissions));
-
     // xdg-desktop-portal relates your name to certain permissions so we want
     // them to be application unique which is best done via GApplication.
     GApplication* app = g_application_get_default();
@@ -686,6 +683,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--die-with-parent",
         "--unshare-pid",
         "--unshare-uts",
+        "--unshare-net",
 
         // We assume /etc has safe permissions.
         // At a later point we can start masking privacy-concerning files.
@@ -748,7 +746,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         }));
     }
 
-    // NOTE: This has network access for HLS via GStreamer.
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         static XDGDBusProxyLauncher proxy;
 
