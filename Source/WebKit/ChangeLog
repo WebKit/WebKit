@@ -1,3 +1,12 @@
+2019-03-25  Brady Eidson  <beidson@apple.com>
+
+        Add socket-delegate to another entitlements config
+        rdar://problem/48090350 and https://bugs.webkit.org/show_bug.cgi?id=196227
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/Network-iOSMac.entitlements:
+
 2019-03-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243465.
