@@ -1,3 +1,18 @@
+2019-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Zoom on macOS is centered around a point lower than the cursor
+        https://bugs.webkit.org/show_bug.cgi?id=196225
+        rdar://problem/49213574
+
+        Reviewed by Tim Horton.
+        
+        The origin handed to ViewGestureController::handleMagnificationGestureEvent is in WKWebView
+        coordinates, but we end up setting the transform on the RenderView's layer, so we need
+        to subtract the topContentInset.
+
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::handleMagnificationGestureEvent):
+
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef

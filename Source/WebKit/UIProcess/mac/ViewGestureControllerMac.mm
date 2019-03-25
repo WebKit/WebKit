@@ -134,6 +134,8 @@ void ViewGestureController::gestureEventWasNotHandledByWebCore(NSEvent *event, F
 
 void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, FloatPoint origin)
 {
+    origin.setY(origin.y() - m_webPageProxy.topContentInset());
+
     ASSERT(m_activeGestureType == ViewGestureType::None || m_activeGestureType == ViewGestureType::Magnification);
 
     if (m_activeGestureType == ViewGestureType::None) {
