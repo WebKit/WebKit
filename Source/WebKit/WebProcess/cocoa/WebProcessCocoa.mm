@@ -399,23 +399,23 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     }
 #endif // ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
 
+    m_uiProcessName = parameters.uiProcessName;
+#endif // PLATFORM(MAC)
+
     if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
         m_processType = ProcessType::Inspector;
 #if ENABLE(SERVICE_WORKER)
     else if (parameters.extraInitializationData.get("service-worker-process"_s) == "1") {
         m_processType = ProcessType::ServiceWorker;
+#if PLATFORM(MAC)
         m_registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(parameters.extraInitializationData.get("registrable-domain"_s));
+#endif
     }
 #endif
     else if (parameters.extraInitializationData.get("is-prewarmed"_s) == "1")
         m_processType = ProcessType::PrewarmedWebContent;
     else
         m_processType = ProcessType::WebContent;
-
-    m_uiProcessName = parameters.uiProcessName;
-#else
-    UNUSED_PARAM(parameters);
-#endif // PLATFORM(MAC)
 
     registerWithAccessibility();
 

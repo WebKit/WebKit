@@ -1,3 +1,12 @@
+2019-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, tiny fix after r243388 to address API test failures on iOS
+
+        m_processType was properly initialized on macOS but not iOS.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess):
+
 2019-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Do not allow changes in active URI before provisional load starts for non-API requests
