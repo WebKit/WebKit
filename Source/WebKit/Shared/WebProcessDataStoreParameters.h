@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "SandboxExtension.h"
+
 namespace WebKit {
 
 struct WebProcessDataStoreParameters {
