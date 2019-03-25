@@ -919,3 +919,5 @@ webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ 
 webkit.org/b/194253 scrollingcoordinator/scrolling-tree/fixed-inside-frame.html [ Pass Failure ]
 
 webkit.org/b/194916 fast/mediastream/MediaStream-video-element.html [ Pass Failure ]
+
+webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]

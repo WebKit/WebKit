@@ -46,3 +46,6 @@ webkit.org/b/187699 [ Debug ] fast/forms/submit-change-fragment.html [ Pass Time
 webkit.org/b/194368 http/tests/workers/service/basic-register-exceptions.html [ Pass Failure ]
 
 webkit.org/b/196218 performance-api/performance-observer-periodic.html [ Pass Failure ]
+
+webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]
+webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
