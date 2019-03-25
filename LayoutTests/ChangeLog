@@ -1,3 +1,13 @@
+2019-03-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Gardening, update expected results for several smart-delete-paragraph tests 
+
+        Unreviewed test gardening.
+
+        * platform/gtk/editing/deleting/smart-delete-paragraph-001-expected.txt: Added.
+        * platform/gtk/editing/deleting/smart-delete-paragraph-002-expected.txt: Added.
+        * platform/gtk/editing/deleting/smart-delete-paragraph-004-expected.txt: Added.
+
 2019-03-25  Justin Fan  <justin_fan@apple.com>
 
         Update WebGPU class names based on sketch.idl
