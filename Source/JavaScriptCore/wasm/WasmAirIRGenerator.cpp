@@ -2790,23 +2790,36 @@ template<> auto AirIRGenerator::addOp<OpType::F32Max>(ExpressionType arg0, Expre
 
     BasicBlock* isEqual = m_code.addBlock();
     BasicBlock* notEqual = m_code.addBlock();
-    BasicBlock* lessThan = m_code.addBlock();
+    BasicBlock* isLessThan = m_code.addBlock();
+    BasicBlock* notLessThan = m_code.addBlock();
+    BasicBlock* isGreaterThan = m_code.addBlock();
+    BasicBlock* isNaN = m_code.addBlock();
     BasicBlock* continuation = m_code.addBlock();
 
     append(m_currentBlock, BranchFloat, Arg::doubleCond(MacroAssembler::DoubleEqual), arg0, arg1);
     m_currentBlock->setSuccessors(isEqual, notEqual);
 
+    append(notEqual, BranchFloat, Arg::doubleCond(MacroAssembler::DoubleLessThan), arg0, arg1);
+    notEqual->setSuccessors(isLessThan, notLessThan);
+
+    append(notLessThan, BranchFloat, Arg::doubleCond(MacroAssembler::DoubleGreaterThan), arg0, arg1);
+    notLessThan->setSuccessors(isGreaterThan, isNaN);
+
     append(isEqual, AndFloat, arg0, arg1, result);
     append(isEqual, Jump);
     isEqual->setSuccessors(continuation);
 
-    append(notEqual, MoveFloat, arg0, result);
-    append(notEqual, BranchFloat, Arg::doubleCond(MacroAssembler::DoubleLessThan), arg0, arg1);
-    notEqual->setSuccessors(lessThan, continuation);
+    append(isLessThan, MoveFloat, arg1, result);
+    append(isLessThan, Jump);
+    isLessThan->setSuccessors(continuation);
 
-    append(lessThan, MoveFloat, arg1, result);
-    append(lessThan, Jump);
-    lessThan->setSuccessors(continuation);
+    append(isGreaterThan, MoveFloat, arg0, result);
+    append(isGreaterThan, Jump);
+    isGreaterThan->setSuccessors(continuation);
+
+    append(isNaN, AddFloat, arg0, arg1, result);
+    append(isNaN, Jump);
+    isNaN->setSuccessors(continuation);
 
     m_currentBlock = continuation;
 
