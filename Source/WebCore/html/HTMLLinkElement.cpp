@@ -245,7 +245,7 @@ String HTMLLinkElement::as() const
         || equalLettersIgnoringASCIICase(as, "track")
 #endif
         || equalLettersIgnoringASCIICase(as, "font"))
-        return as;
+        return as.convertToASCIILowercase();
     return String();
 }
 

@@ -1,3 +1,14 @@
+2019-03-25  Rob Buis  <rbuis@igalia.com>
+
+        Reflect HTMLLinkElement.as according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=196189
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test result.
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/reflection-metadata-expected.txt:
+
 2019-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
 
         Remove NavigatorContentUtils in WebCore/Modules

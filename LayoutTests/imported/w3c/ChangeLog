@@ -1,3 +1,16 @@
+2019-03-25  Rob Buis  <rbuis@igalia.com>
+
+        Reflect HTMLLinkElement.as according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=196189
+
+        Reviewed by Youenn Fablet.
+
+        Update improved test result and import reflected-as-value.html.
+
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/preload/reflected-as-value-expected.txt: Added.
+        * web-platform-tests/preload/reflected-as-value.html: Added.
+
 2019-03-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid container baseline alignment for orthogonal items
