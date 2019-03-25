@@ -1,3 +1,22 @@
+2019-03-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Delete MetadataPreloadingNotPermitted, it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=196202
+        <rdar://problem/49213611>
+
+        Reviewed by Jer Noble.
+
+        No new tests, the flat was unused except in an existing test that was removed.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::restrictionNames):
+        (WebCore::MediaElementSession::effectivePreloadForElement const):
+        * html/MediaElementSession.h:
+        * platform/graphics/cg/UTIRegistry.cpp:
+        (WebCore::defaultSupportedImageTypes):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaElementRestrictions):
+
 2019-03-25  Jer Noble  <jer.noble@apple.com>
 
         Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.

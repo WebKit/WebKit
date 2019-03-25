@@ -85,7 +85,6 @@ static String restrictionNames(MediaElementSession::BehaviorRestrictions restric
     CASE(RequireUserGestureToShowPlaybackTargetPicker)
     CASE(WirelessVideoPlaybackDisabled)
     CASE(RequireUserGestureToAutoplayToExternalDevice)
-    CASE(MetadataPreloadingNotPermitted)
     CASE(AutoPreloadingNotPermitted)
     CASE(InvisibleAutoplayNotPermitted)
     CASE(OverrideUserGestureRequirementForMainContent)
@@ -689,9 +688,6 @@ MediaPlayer::Preload MediaElementSession::effectivePreloadForElement() const
 
     if (pageExplicitlyAllowsElementToAutoplayInline(m_element))
         return preload;
-
-    if (m_restrictions & MetadataPreloadingNotPermitted)
-        return MediaPlayer::None;
 
     if (m_restrictions & AutoPreloadingNotPermitted) {
         if (preload > MediaPlayer::MetaData)

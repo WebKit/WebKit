@@ -117,7 +117,6 @@ public:
         RequireUserGestureToShowPlaybackTargetPicker = 1 << 6,
         WirelessVideoPlaybackDisabled =  1 << 7,
         RequireUserGestureToAutoplayToExternalDevice = 1 << 8,
-        MetadataPreloadingNotPermitted = 1 << 9,
         AutoPreloadingNotPermitted = 1 << 10,
         InvisibleAutoplayNotPermitted = 1 << 11,
         OverrideUserGestureRequirementForMainContent = 1 << 12,

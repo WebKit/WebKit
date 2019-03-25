@@ -1,3 +1,14 @@
+2019-03-25  Eric Carlson  <eric.carlson@apple.com>
+
+        Delete MetadataPreloadingNotPermitted, it is unused
+        https://bugs.webkit.org/show_bug.cgi?id=196202
+        <rdar://problem/49213611>
+
+        Reviewed by Jer Noble.
+
+        * media/video-restricted-no-preload-metadata-expected.txt: Removed.
+        * media/video-restricted-no-preload-metadata.html: Removed.
+
 2019-03-25  Jer Noble  <jer.noble@apple.com>
 
         Add test for fix of #196095
