@@ -187,8 +187,6 @@ Modules/mediastream/UserMediaRequest.cpp
 
 Modules/mediastream/libwebrtc/LibWebRTCCertificateGenerator.cpp
 
-Modules/navigatorcontentutils/NavigatorContentUtils.cpp
-
 Modules/notifications/Notification.cpp
 Modules/notifications/NotificationController.cpp
 
@@ -2967,7 +2965,6 @@ JSMutationRecord.cpp
 JSNamedNodeMap.cpp
 JSNavigator.cpp
 JSNavigatorBeacon.cpp
-// JSNavigatorContentUtils.cpp
 JSNavigatorCredentials.cpp
 JSNavigatorGeolocation.cpp
 JSNavigatorID.cpp

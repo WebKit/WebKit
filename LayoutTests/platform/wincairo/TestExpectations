@@ -47,9 +47,6 @@ fast/css/image-resolution [ Skip ]
 # CSS_SCROLL_SNAP is disabled
 css3/scroll-snap [ Skip ]
 
-# CUSTOM_SCHEME_HANDLER is disabled
-fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
-
 # DEVICE_ORIENTATION is disabled
 fast/dom/DeviceOrientation [ Skip ]
 fast/dom/DeviceMotion [ Skip ]

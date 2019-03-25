@@ -1,3 +1,27 @@
+2019-03-25  Gyuyoung Kim  <gyuyoung.kim@webkit.org>
+
+        Remove NavigatorContentUtils in WebCore/Modules
+        https://bugs.webkit.org/show_bug.cgi?id=196070
+
+        Reviewed by Alex Christensen.
+
+        NavigatorContentUtils was to support the custom scheme spec [1].
+        However, in WebKit side, no port has supported the feature in
+        WebKit layer after EFL port was removed. So there has been the
+        only IDL implementation of the NavigatorContentUtils in WebCore.
+        So we don't need to keep the implementation in WebCore anymore.
+
+        [1] https://html.spec.whatwg.org/multipage/system-state.html#custom-handlers
+
+        No new tests because this patch is just to remove the feature.
+
+        * CMakeLists.txt:
+        * Modules/navigatorcontentutils/NavigatorContentUtils.cpp: Removed.
+        * Modules/navigatorcontentutils/NavigatorContentUtils.h: Removed.
+        * Modules/navigatorcontentutils/NavigatorContentUtils.idl: Removed.
+        * Modules/navigatorcontentutils/NavigatorContentUtilsClient.h: Removed.
+        * Sources.txt:
+
 2019-03-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Fix grid container baseline alignment for orthogonal items

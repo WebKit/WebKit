@@ -364,8 +364,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediastream/RTCStatsReport.idl
     Modules/mediastream/RTCTrackEvent.idl
 
-    Modules/navigatorcontentutils/NavigatorContentUtils.idl
-
     Modules/notifications/Notification.idl
     Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl

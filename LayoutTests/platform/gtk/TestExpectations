@@ -221,9 +221,6 @@ webkit.org/b/98942 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 # GTK doesn't support smart replace.
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 
-# isProtocolHandlerRegistered() isn't supported yet.
-webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
-
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 # See also bug #175578
