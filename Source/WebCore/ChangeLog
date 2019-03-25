@@ -1,3 +1,32 @@
+2019-03-25  Justin Fan  <justin_fan@apple.com>
+
+        Update WebGPU class names based on sketch.idl
+        https://bugs.webkit.org/show_bug.cgi?id=194260
+
+        Reviewed by Dean Jackson.
+
+        Update all exposed Web GPU interface names to GPU* prefix. 
+
+        Existing Web GPU tests updated to expect new names.
+
+        * Modules/webgpu/WebGPU.idl:
+        * Modules/webgpu/WebGPUAdapter.idl:
+        * Modules/webgpu/WebGPUBindGroup.idl:
+        * Modules/webgpu/WebGPUBindGroupLayout.idl:
+        * Modules/webgpu/WebGPUBuffer.idl:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUInputStepMode.h: Removed.
+        * Modules/webgpu/WebGPUPipelineLayout.idl:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPUQueue.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPURenderPipeline.idl:
+        * Modules/webgpu/WebGPUSampler.idl:
+        * Modules/webgpu/WebGPUTexture.idl:
+        * Modules/webgpu/WebGPUTextureView.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2019-03-25  Javier Fernandez  <jfernandez@igalia.com>
 
         A single leading space is not considered as a word break even when word-break: break-all is set

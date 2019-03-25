@@ -38,7 +38,7 @@ promise_test(async () => {
     assert_true(commandEncoder instanceof GPUCommandEncoder, "createCommandEncoder returned a GPUCommandEncoder");
 
     const encoder = beginBasicRenderPass(swapChain, commandEncoder);
-    assert_true(encoder instanceof WebGPURenderPassEncoder, "beginRenderPass() returned a WebGPURenderPassEncoder");
+    assert_true(encoder instanceof GPURenderPassEncoder, "beginRenderPass() returned a WebGPURenderPassEncoder");
 
     encoder.setPipeline(pipeline);
     encoder.endPass();

@@ -12,7 +12,7 @@ async function runTests() {
     // Basic mapReadAsync functionality
     promise_test(async () => {
         const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.TRANSFER_DST | GPUBufferUsage.MAP_READ });
-        assert_true(buffer instanceof WebGPUBuffer, "createBuffer returned a WebGPUBuffer");
+        assert_true(buffer instanceof GPUBuffer, "createBuffer returned a WebGPUBuffer");
 
         let array = new Float32Array([1, 2, 3, 4]);
         buffer.setSubData(0, array.buffer);

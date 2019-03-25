@@ -24,10 +24,10 @@ test(() => {
 promise_test(async () => {
     const device = await getBasicDevice();
     const bindGroupLayout = device.createBindGroupLayout({ bindings: [createBindGroupLayoutBinding()] });
-    assert_true(bindGroupLayout instanceof WebGPUBindGroupLayout, "createBindGroupLayout returned a WebGPUBindGroupLayout");
+    assert_true(bindGroupLayout instanceof GPUBindGroupLayout, "createBindGroupLayout returned a WebGPUBindGroupLayout");
 
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
-    assert_true(pipelineLayout instanceof WebGPUPipelineLayout, "createPipelineLayout returned a WebGPUPipelineLayout");
+    assert_true(pipelineLayout instanceof GPUPipelineLayout, "createPipelineLayout returned a WebGPUPipelineLayout");
 }, "Create a basic WebGPUPipelineLayout wtih a WebGPUDevice.");
 </script>
 </body>

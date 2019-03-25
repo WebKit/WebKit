@@ -13,10 +13,10 @@ promise_test(async () => {
     assert_not_equals(window.gpu, undefined, "window.gpu is defined.");
 
     const adapter = await window.gpu.requestAdapter();
-    assert_true(adapter instanceof WebGPUAdapter, "Created default GPUAdapter.");
+    assert_true(adapter instanceof GPUAdapter, "Created default GPUAdapter.");
     
     const device = await adapter.requestDevice();
-    assert_true(device instanceof WebGPUDevice, "Created GPUDevice.");
+    assert_true(device instanceof GPUDevice, "Created GPUDevice.");
 }, "Web GPU is enabled.");
 </script>
 </html>

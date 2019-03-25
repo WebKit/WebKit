@@ -12,7 +12,7 @@ async function runTests() {
     // Basic mapWriteAsync functionality
     promise_test(async () => {
         const buffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.MAP_WRITE });
-        assert_true(buffer instanceof WebGPUBuffer, "createBuffer returned a WebGPUBuffer");
+        assert_true(buffer instanceof GPUBuffer, "createBuffer returned a WebGPUBuffer");
 
         let arrayBuffer = await buffer.mapWriteAsync();
 
