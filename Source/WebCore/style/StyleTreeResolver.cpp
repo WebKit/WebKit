@@ -158,9 +158,9 @@ static void resetStyleForNonRenderedDescendants(Element& current)
 
 static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle)
 {
-    if (element.renderer())
-        return true;
     if (newStyle.display() != DisplayType::None)
+        return true;
+    if (element.renderOrDisplayContentsStyle())
         return true;
     if (element.rendererIsNeeded(newStyle))
         return true;

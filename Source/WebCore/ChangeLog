@@ -1,3 +1,18 @@
+2019-03-25  Antti Koivisto  <antti@apple.com>
+
+        Toggling "display: contents" to "display: none" fails to hide the element
+        https://bugs.webkit.org/show_bug.cgi?id=188259
+        <rdar://problem/42886896>
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/css/display-contents-to-none.html
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::affectsRenderedSubtree):
+
+        An element with 'display:contents' has a rendered subtree.
+
 2019-03-25  Justin Fan  <justin_fan@apple.com>
 
         Update WebGPU class names based on sketch.idl

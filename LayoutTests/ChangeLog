@@ -1,3 +1,14 @@
+2019-03-25  Antti Koivisto  <antti@apple.com>
+
+        Toggling "display: contents" to "display: none" fails to hide the element
+        https://bugs.webkit.org/show_bug.cgi?id=188259
+        <rdar://problem/42886896>
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/display-contents-to-none-expected.html: Added.
+        * fast/css/display-contents-to-none.html: Added.
+
 2019-03-25  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Gardening, update expected results for several smart-delete-paragraph tests 
