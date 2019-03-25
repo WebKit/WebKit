@@ -1,3 +1,15 @@
+2019-03-24  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [JSC] Move test into directory for WASM tests
+        https://bugs.webkit.org/show_bug.cgi?id=196187
+
+        Reviewed by Mark Lam.
+
+        Move Test into wasm-directory. Otherwise this test
+        is also executed on systems without WASM support.
+
+        * wasm/regress/web-assembly-link-error-exception-check.js: Renamed from JSTests/stress/web-assembly-link-error-exception-check.js.
+
 2019-03-23  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r243032 and r243071 because the fix is incorrect.
