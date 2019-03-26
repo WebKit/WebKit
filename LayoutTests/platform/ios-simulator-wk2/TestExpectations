@@ -51,3 +51,5 @@ webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ 
 webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
 
 webkit.org/b/196233 fast/viewport/ios/initial-scale-after-changing-view-scale.html [ Pass Timeout ]
+
+webkit.org/b/196236 [ Debug ] fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]

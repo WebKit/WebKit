@@ -1,5 +1,14 @@
 2019-03-25  Shawn Roberts  <sroberts@apple.com>
 
+        fast/visual-viewport/ios/min-scale-greater-than-one.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196236
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Changing expectations due to test being flaky
+
+2019-03-25  Shawn Roberts  <sroberts@apple.com>
+
         fast/viewport/ios/initial-scale-after-changing-view-scale.html is a flaky timeout
         https://bugs.webkit.org/show_bug.cgi?id=196233
 
