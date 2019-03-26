@@ -1,3 +1,20 @@
+2019-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix typo in GLib geolocation API after r243285.
+
+        gelocation -> geolocation.
+
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp:
+        (webkit_geolocation_manager_class_init):
+        (webkit_geolocation_manager_update_position):
+        (webkit_geolocation_manager_failed):
+        (webkit_gelocation_manager_update_position): Deleted.
+        (webkit_gelocation_manager_failed): Deleted.
+        * UIProcess/API/gtk/WebKitGeolocationManager.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitGeolocationManager.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2019-03-26  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Disable process warming

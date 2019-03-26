@@ -1371,8 +1371,8 @@ WEBKIT_TYPE_APPLICATION_INFO
 <SECTION>
 <FILE>WebKitGeolocationManager</FILE>
 WebKitGeolocationManager
-webkit_gelocation_manager_update_position
-webkit_gelocation_manager_failed
+webkit_geolocation_manager_update_position
+webkit_geolocation_manager_failed
 webkit_geolocation_manager_get_enable_high_accuracy
 
 <SUBSECTION Position>

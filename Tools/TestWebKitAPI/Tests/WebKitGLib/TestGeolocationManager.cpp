@@ -91,12 +91,12 @@ public:
 
         if (m_errorMessage) {
             g_assert_false(m_checkPosition);
-            webkit_gelocation_manager_failed(m_manager, m_errorMessage.get());
+            webkit_geolocation_manager_failed(m_manager, m_errorMessage.get());
         }
 
         if (m_checkPosition) {
             g_assert_false(m_errorMessage.get());
-            webkit_gelocation_manager_update_position(m_manager, m_checkPosition);
+            webkit_geolocation_manager_update_position(m_manager, m_checkPosition);
         }
 
         g_main_loop_quit(m_mainLoop);
@@ -307,7 +307,7 @@ static void testGeolocationManagerWatchPosition(GeolocationTest* test, gconstpoi
     g_assert_true(test->m_updating);
 
     WebKitGeolocationPosition* position = webkit_geolocation_position_new(37.1760783, -3.59033, 17);
-    webkit_gelocation_manager_update_position(test->m_manager, position);
+    webkit_geolocation_manager_update_position(test->m_manager, position);
     webkit_geolocation_position_free(position);
     auto result = test->lastPosition();
     g_assert_cmpfloat(result.latitude, ==, 37.1760783);
@@ -315,7 +315,7 @@ static void testGeolocationManagerWatchPosition(GeolocationTest* test, gconstpoi
     g_assert_cmpfloat(result.accuracy, ==, 17);
 
     position = webkit_geolocation_position_new(38.1770783, -3.60033, 17);
-    webkit_gelocation_manager_update_position(test->m_manager, position);
+    webkit_geolocation_manager_update_position(test->m_manager, position);
     webkit_geolocation_position_free(position);
     result = test->lastPosition();
     g_assert_cmpfloat(result.latitude, ==, 38.1770783);

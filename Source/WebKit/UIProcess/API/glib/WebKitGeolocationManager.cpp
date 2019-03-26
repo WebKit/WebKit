@@ -41,7 +41,7 @@ using namespace WebCore;
  * Once a #WebKitGeolocationPermissionRequest is allowed, when WebKit needs to know the
  * user location #WebKitGeolocationManager::start signal is emitted. If the signal is handled
  * and returns %TRUE, the application is responsible for providing the position every time it's
- * updated by calling webkit_gelocation_manager_update_position(). The signal #WebKitGeolocationManager::stop
+ * updated by calling webkit_geolocation_manager_update_position(). The signal #WebKitGeolocationManager::stop
  * will be emitted when location updates are no longer needed.
  *
  * Since: 2.26
@@ -87,7 +87,7 @@ struct _WebKitGeolocationPosition {
  * WebKitGeolocationPosition:
  *
  * WebKitGeolocationPosition is an opaque struct used to provide position updates to a
- * #WebKitGeolocationManager using webkit_gelocation_manager_update_position().
+ * #WebKitGeolocationManager using webkit_geolocation_manager_update_position().
  *
  * Since: 2.26
  */
@@ -254,12 +254,12 @@ static void webkitGeolocationManagerStart(WebKitGeolocationManager* manager)
     }
     manager->priv->geoclueProvider->start([manager](GeolocationPosition&& corePosition, Optional<CString> error) {
         if (error) {
-            webkit_gelocation_manager_failed(manager, error->data());
+            webkit_geolocation_manager_failed(manager, error->data());
             return;
         }
 
         WebKitGeolocationPosition position(WTFMove(corePosition));
-        webkit_gelocation_manager_update_position(manager, &position);
+        webkit_geolocation_manager_update_position(manager, &position);
     });
 }
 
@@ -359,8 +359,8 @@ static void webkit_geolocation_manager_class_init(WebKitGeolocationManagerClass*
      *
      * The signal is emitted to notify that @manager needs to start receiving
      * position updates. After this signal is emitted the user should provide
-     * the updates using webkit_gelocation_manager_update_position() every time
-     * the position changes, or use webkit_gelocation_manager_failed() in case
+     * the updates using webkit_geolocation_manager_update_position() every time
+     * the position changes, or use webkit_geolocation_manager_failed() in case
      * it isn't possible to determine the current position.
      *
      * If the signal is not handled, WebKit will try to determine the position
@@ -400,7 +400,7 @@ static void webkit_geolocation_manager_class_init(WebKitGeolocationManagerClass*
 }
 
 /**
- * webkit_gelocation_manager_update_position:
+ * webkit_geolocation_manager_update_position:
  * @manager: a #WebKitGeolocationManager
  * @position: a #WebKitGeolocationPosition
  *
@@ -408,7 +408,7 @@ static void webkit_geolocation_manager_class_init(WebKitGeolocationManagerClass*
  *
  * Since: 2.26
  */
-void webkit_gelocation_manager_update_position(WebKitGeolocationManager* manager, WebKitGeolocationPosition* position)
+void webkit_geolocation_manager_update_position(WebKitGeolocationManager* manager, WebKitGeolocationPosition* position)
 {
     g_return_if_fail(WEBKIT_IS_GEOLOCATION_MANAGER(manager));
     g_return_if_fail(position);
@@ -419,7 +419,7 @@ void webkit_gelocation_manager_update_position(WebKitGeolocationManager* manager
 }
 
 /**
- * webkit_gelocation_manager_failed:
+ * webkit_geolocation_manager_failed:
  * @manager: a #WebKitGeolocationManager
  * @error_message: the error message
  *
@@ -427,7 +427,7 @@ void webkit_gelocation_manager_update_position(WebKitGeolocationManager* manager
  *
  * Since: 2.26
  */
-void webkit_gelocation_manager_failed(WebKitGeolocationManager* manager, const char* errorMessage)
+void webkit_geolocation_manager_failed(WebKitGeolocationManager* manager, const char* errorMessage)
 {
     g_return_if_fail(WEBKIT_IS_GEOLOCATION_MANAGER(manager));
 

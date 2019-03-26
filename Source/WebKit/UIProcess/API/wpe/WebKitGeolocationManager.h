@@ -63,11 +63,11 @@ WEBKIT_API GType
 webkit_geolocation_manager_get_type                 (void);
 
 WEBKIT_API void
-webkit_gelocation_manager_update_position           (WebKitGeolocationManager  *manager,
+webkit_geolocation_manager_update_position           (WebKitGeolocationManager  *manager,
                                                      WebKitGeolocationPosition *position);
 
 WEBKIT_API void
-webkit_gelocation_manager_failed                    (WebKitGeolocationManager  *manager,
+webkit_geolocation_manager_failed                    (WebKitGeolocationManager  *manager,
                                                      const char                *error_message);
 
 WEBKIT_API gboolean

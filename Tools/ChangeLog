@@ -1,3 +1,12 @@
+2019-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix typo in GLib geolocation API after r243285.
+
+        gelocation -> geolocation.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestGeolocationManager.cpp:
+        (testGeolocationManagerWatchPosition):
+
 2019-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef
