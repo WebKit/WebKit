@@ -132,24 +132,18 @@ shouldBeEqualToString("markerElement.getAttribute('orient')", "10deg");
 debug("");
 debug("Test case sensitivity of attributes - try setting invalid values");
 shouldNotThrow("markerElement.setAttribute('orient', 'AUTO-START-REVERSE')");
-// The line below fails as a result of https://bugs.webkit.org/show_bug.cgi?id=154141
-// The attribute value is not updated to the invalid value.
-// The expected result recognises this and should be updated when the above bug
-// is resolved.
-// What's important here though is that the DOM values are unchanged, and this
-// is demonstrated correctly.
 shouldBeEqualToString("markerElement.getAttribute('orient')", "AUTO-START-REVERSE");
-shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE");
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN");
 
 shouldNotThrow("markerElement.setAttribute('orient', 'AUTO')");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "AUTO");
-shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE"); 
+shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN"); 
 
 debug("");
 debug("Switch back to 'auto' value");
 shouldBe("markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
-shouldBe("markerElement.orientAngle.baseVal.value", "10");
-shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_DEG");
+shouldBe("markerElement.orientAngle.baseVal.value", "0");
+shouldBe("markerElement.orientAngle.baseVal.unitType", "SVGAngle.SVG_ANGLETYPE_UNSPECIFIED");
 shouldBe("markerElement.orientType.baseVal", "SVGMarkerElement.SVG_MARKER_ORIENT_AUTO");
 shouldBeEqualToString("markerElement.getAttribute('orient')", "auto");
 

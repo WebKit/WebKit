@@ -5,7 +5,7 @@
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,6 +47,12 @@ inline SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::filterTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::filterUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_filterUnits>();
+        PropertyRegistry::registerProperty<SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_primitiveUnits>();
+    });
 }
 
 Ref<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagName, Document& document)
@@ -59,8 +65,6 @@ void SVGFilterElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::filterUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_filterUnits>();
-    registry.registerAttribute<SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGFilterElement::m_primitiveUnits>();
     registry.registerAttribute<SVGNames::xAttr, &SVGFilterElement::m_x>();
     registry.registerAttribute<SVGNames::yAttr, &SVGFilterElement::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGFilterElement::m_width>();
@@ -74,11 +78,11 @@ void SVGFilterElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == SVGNames::filterUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_filterUnits.setValue(propertyValue);
+            m_filterUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
     } else if (name == SVGNames::primitiveUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_primitiveUnits.setValue(propertyValue);
+            m_primitiveUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
     } else if (name == SVGNames::xAttr)
         m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)

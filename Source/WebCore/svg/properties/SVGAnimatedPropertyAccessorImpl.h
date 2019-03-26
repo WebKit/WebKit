@@ -33,6 +33,16 @@
 namespace WebCore {
 
 template<typename OwnerType>
+class SVGAnimatedAngleAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedAngle> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedAngle>;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedAngle> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleAccessor, property>(); }
+};
+
+template<typename OwnerType>
 class SVGAnimatedBooleanAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedBoolean> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedBoolean>;
     using Base::property;
@@ -51,6 +61,28 @@ private:
     void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
     {
         static_cast<SVGAnimatedBooleanAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType, typename EnumType>
+class SVGAnimatedEnumerationAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedEnumeration> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedEnumeration>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedEnumeration> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedEnumerationAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedEnumerationAnimator<EnumType>::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedEnumerationAnimator<EnumType>&>(animator).appendAnimatedInstance(property(owner));
     }
 };
 
@@ -142,6 +174,16 @@ private:
     }
 };
     
+template<typename OwnerType>
+class SVGAnimatedOrientTypeAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedOrientType> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedOrientType>;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedOrientType> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() {return Base::template singleton<SVGAnimatedOrientTypeAccessor, property>(); }
+};
+
 template<typename OwnerType>
 class SVGAnimatedPreserveAspectRatioAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPreserveAspectRatio> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedPreserveAspectRatio>;

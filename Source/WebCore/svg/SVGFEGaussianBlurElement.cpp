@@ -36,12 +36,12 @@ inline SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& t
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feGaussianBlurTag));
-    registerAttributes();
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEGaussianBlurElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::stdDeviationAttr, &SVGFEGaussianBlurElement::m_stdDeviationX, &SVGFEGaussianBlurElement::m_stdDeviationY>();
+        PropertyRegistry::registerProperty<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEGaussianBlurElement::m_edgeMode>();
     });
 }
 
@@ -55,14 +55,6 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     m_stdDeviationX->setBaseValInternal(x);
     m_stdDeviationY->setBaseValInternal(y);
     invalidate();
-}
-
-void SVGFEGaussianBlurElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEGaussianBlurElement::m_edgeMode>();
 }
 
 void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -84,7 +76,7 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
     if (name == SVGNames::edgeModeAttr) {
         auto propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
         if (propertyValue > 0)
-            m_edgeMode.setValue(propertyValue);
+            m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             document().accessSVGExtensions().reportWarning("feGaussianBlur: problem parsing edgeMode=\"" + value + "\". Filtered element will not be displayed.");
         return;
@@ -95,7 +87,7 @@ void SVGFEGaussianBlurElement::parseAttribute(const QualifiedName& name, const A
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidate();
         return;

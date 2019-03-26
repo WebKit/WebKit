@@ -34,13 +34,14 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feTurbulenceTag));
-    registerAttributes();
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::baseFrequencyAttr, &SVGFETurbulenceElement::m_baseFrequencyX, &SVGFETurbulenceElement::m_baseFrequencyY>();
         PropertyRegistry::registerProperty<SVGNames::numOctavesAttr, &SVGFETurbulenceElement::m_numOctaves>();
         PropertyRegistry::registerProperty<SVGNames::seedAttr, &SVGFETurbulenceElement::m_seed>();
+        PropertyRegistry::registerProperty<SVGNames::stitchTilesAttr, SVGStitchOptions, &SVGFETurbulenceElement::m_stitchTiles>();
+        PropertyRegistry::registerProperty<SVGNames::typeAttr, TurbulenceType, &SVGFETurbulenceElement::m_type>();
     });
 }
 
@@ -49,28 +50,19 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
     return adoptRef(*new SVGFETurbulenceElement(tagName, document));
 }
 
-void SVGFETurbulenceElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::stitchTilesAttr, SVGStitchOptions, &SVGFETurbulenceElement::m_stitchTiles>();
-    registry.registerAttribute<SVGNames::typeAttr, TurbulenceType, &SVGFETurbulenceElement::m_type>();
-}
-
 void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::typeAttr) {
         TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(value);
         if (propertyValue != TurbulenceType::Unknown)
-            m_type.setValue(propertyValue);
+            m_type->setBaseValInternal<TurbulenceType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::stitchTilesAttr) {
         SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(value);
         if (propertyValue > 0)
-            m_stitchTiles.setValue(propertyValue);
+            m_stitchTiles->setBaseValInternal<SVGStitchOptions>(propertyValue);
         return;
     }
 
@@ -116,7 +108,7 @@ bool SVGFETurbulenceElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFETurbulenceElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         primitiveAttributeChanged(attrName);
         return;

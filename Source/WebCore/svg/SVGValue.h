@@ -25,15 +25,9 @@
 
 #pragma once
 
-#include "Color.h"
-#include "FloatRect.h"
-#include "SVGAngleValue.h"
 #include "SVGLengthListValues.h"
 #include "SVGLengthValue.h"
-#include "SVGMarkerTypes.h"
 #include "SVGPathByteStream.h"
-#include "SVGPreserveAspectRatioValue.h"
-#include "SVGPropertyTraits.h"
 #include "SVGTransformListValues.h"
 
 #include <wtf/Variant.h>
@@ -41,8 +35,6 @@
 namespace WebCore {
 
 using SVGValueVariant = Variant<
-    std::pair<SVGAngleValue, unsigned>*,
-    unsigned*,
     SVGLengthValue*,
     SVGLengthListValues*,
     SVGPathByteStream*,

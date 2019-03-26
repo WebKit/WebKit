@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
@@ -92,10 +91,10 @@ public:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
 
     const SVGLengthValue& textLength() const { return m_textLength.currentValue(attributeOwnerProxy()); }
-    SVGLengthAdjustType lengthAdjust() const { return m_lengthAdjust.currentValue(attributeOwnerProxy()); }
+    SVGLengthAdjustType lengthAdjust() const { return m_lengthAdjust->currentValue<SVGLengthAdjustType>(); }
 
     RefPtr<SVGAnimatedLength> textLengthAnimated() { return m_textLength.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> lengthAdjustAnimated() { return m_lengthAdjust.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& lengthAdjustAnimated() { return m_lengthAdjust; }
 
 protected:
     SVGTextContentElement(const QualifiedName&, Document&);
@@ -159,7 +158,7 @@ private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedCustomLengthAttribute m_textLength { *this, LengthModeOther };
-    SVGAnimatedEnumerationAttribute<SVGLengthAdjustType> m_lengthAdjust { SVGLengthAdjustSpacing };
+    Ref<SVGAnimatedEnumeration> m_lengthAdjust { SVGAnimatedEnumeration::create(this, SVGLengthAdjustSpacing) };
     SVGLengthValue m_specifiedTextLength { LengthModeOther };
 };
 

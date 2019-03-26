@@ -112,12 +112,12 @@ public:
     static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
 
     const SVGLengthValue& startOffset() const { return m_startOffset.currentValue(attributeOwnerProxy()); }
-    SVGTextPathMethodType method() const { return m_method.currentValue(attributeOwnerProxy()); }
-    SVGTextPathSpacingType spacing() const { return m_spacing.currentValue(attributeOwnerProxy()); }
+    SVGTextPathMethodType method() const { return m_method->currentValue<SVGTextPathMethodType>(); }
+    SVGTextPathSpacingType spacing() const { return m_spacing->currentValue<SVGTextPathSpacingType>(); }
 
     RefPtr<SVGAnimatedLength> startOffsetAnimated() { return m_startOffset.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> methodAnimated() { return m_method.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> spacingAnimated() { return m_spacing.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& methodAnimated() { return m_method; }
+    SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
 
 protected:
     void didFinishInsertingNode() override;
@@ -156,8 +156,8 @@ private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     SVGAnimatedLengthAttribute m_startOffset { LengthModeOther };
-    SVGAnimatedEnumerationAttribute<SVGTextPathMethodType> m_method { SVGTextPathMethodAlign };
-    SVGAnimatedEnumerationAttribute<SVGTextPathSpacingType> m_spacing { SVGTextPathSpacingExact };
+    Ref<SVGAnimatedEnumeration> m_method { SVGAnimatedEnumeration::create(this, SVGTextPathMethodAlign) };
+    Ref<SVGAnimatedEnumeration> m_spacing { SVGAnimatedEnumeration::create(this, SVGTextPathSpacingExact) };
 };
 
 } // namespace WebCore

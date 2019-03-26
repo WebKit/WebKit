@@ -101,16 +101,16 @@ PASS markerElement.getAttribute('orient') is "10deg"
 
 Test case sensitivity of attributes - try setting invalid values
 PASS markerElement.setAttribute('orient', 'AUTO-START-REVERSE') did not throw exception.
-FAIL markerElement.getAttribute('orient') should be AUTO-START-REVERSE. Was 10deg.
-PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
+PASS markerElement.getAttribute('orient') is "AUTO-START-REVERSE"
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN
 PASS markerElement.setAttribute('orient', 'AUTO') did not throw exception.
-FAIL markerElement.getAttribute('orient') should be AUTO. Was 10deg.
-PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_ANGLE
+PASS markerElement.getAttribute('orient') is "AUTO"
+PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_UNKNOWN
 
 Switch back to 'auto' value
 PASS markerElement.orientType.baseVal = SVGMarkerElement.SVG_MARKER_ORIENT_AUTO is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
-PASS markerElement.orientAngle.baseVal.value is 10
-PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_DEG
+PASS markerElement.orientAngle.baseVal.value is 0
+PASS markerElement.orientAngle.baseVal.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 PASS markerElement.orientType.baseVal is SVGMarkerElement.SVG_MARKER_ORIENT_AUTO
 PASS markerElement.getAttribute('orient') is "auto"
 

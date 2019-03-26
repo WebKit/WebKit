@@ -48,6 +48,11 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     , SVGExternalResourcesRequired(this)
 {
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::lengthAdjustAttr, SVGLengthAdjustType, &SVGTextContentElement::m_lengthAdjust>();
+    });
 }
 
 unsigned SVGTextContentElement::getNumberOfChars()
@@ -164,7 +169,6 @@ void SVGTextContentElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute(SVGAnimatedCustomLengthAttributeAccessor::singleton<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>());
-    registry.registerAttribute<SVGNames::lengthAdjustAttr, SVGLengthAdjustType, &SVGTextContentElement::m_lengthAdjust>();
 }
 
 void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -174,7 +178,7 @@ void SVGTextContentElement::parseAttribute(const QualifiedName& name, const Atom
     if (name == SVGNames::lengthAdjustAttr) {
         auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(value);
         if (propertyValue > 0)
-            m_lengthAdjust.setValue(propertyValue);
+            m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
     } else if (name == SVGNames::textLengthAttr)
         m_textLength.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
 

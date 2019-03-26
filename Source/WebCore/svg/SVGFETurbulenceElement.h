@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FETurbulence.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -100,31 +99,24 @@ public:
     float baseFrequencyY() const { return m_baseFrequencyY->currentValue(); }
     int numOctaves() const { return m_numOctaves->currentValue(); }
     float seed() const { return m_seed->currentValue(); }
-    SVGStitchOptions stitchTiles() const { return m_stitchTiles.currentValue(attributeOwnerProxy()); }
-    TurbulenceType type() const { return m_type.currentValue(attributeOwnerProxy()); }
+    SVGStitchOptions stitchTiles() const { return m_stitchTiles->currentValue<SVGStitchOptions>(); }
+    TurbulenceType type() const { return m_type->currentValue<TurbulenceType>(); }
 
     SVGAnimatedNumber& baseFrequencyXAnimated() { return m_baseFrequencyX; }
     SVGAnimatedNumber& baseFrequencyYAnimated() { return m_baseFrequencyY; }
     SVGAnimatedInteger& numOctavesAnimated() { return m_numOctaves; }
     SVGAnimatedNumber& seedAnimated() { return m_seed; }
-    RefPtr<SVGAnimatedEnumeration> stitchTilesAnimated() { return m_stitchTiles.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& stitchTilesAnimated() { return m_stitchTiles; }
+    SVGAnimatedEnumeration& typeAnimated() { return m_type; }
 
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFETurbulenceElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -138,8 +130,8 @@ private:
     Ref<SVGAnimatedNumber> m_baseFrequencyY { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_numOctaves { SVGAnimatedInteger::create(this, 1) };
     Ref<SVGAnimatedNumber> m_seed { SVGAnimatedNumber::create(this) };
-    SVGAnimatedEnumerationAttribute<SVGStitchOptions> m_stitchTiles { SVG_STITCHTYPE_NOSTITCH };
-    SVGAnimatedEnumerationAttribute<TurbulenceType> m_type { TurbulenceType::Turbulence };
+    Ref<SVGAnimatedEnumeration> m_stitchTiles { SVGAnimatedEnumeration::create(this, SVG_STITCHTYPE_NOSTITCH) };
+    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, TurbulenceType::Turbulence) };
 };
 
 } // namespace WebCore

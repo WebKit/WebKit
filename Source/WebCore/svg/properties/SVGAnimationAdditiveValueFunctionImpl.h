@@ -30,6 +30,33 @@
 
 namespace WebCore {
 
+class SVGAnimationAngleFunction : public SVGAnimationAdditiveValueFunction<SVGAngleValue> {
+public:
+    using Base = SVGAnimationAdditiveValueFunction<SVGAngleValue>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String&, const String&) override
+    {
+        // Values will be set by SVGAnimatedAngleOrientAnimator.
+        ASSERT_NOT_REACHED();
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, SVGAngleValue& animated)
+    {
+        float number = animated.value();
+        number = Base::progress(percentage, repeatCount, m_from.value(), m_to.value(), toAtEndOfDuration().value(), number);
+        animated.setValue(number);
+    }
+
+private:
+    friend class SVGAnimatedAngleOrientAnimator;
+
+    void addFromAndToValues(SVGElement*) override
+    {
+        m_to.setValue(m_to.value() + m_from.value());
+    }
+};
+
 class SVGAnimationColorFunction : public SVGAnimationAdditiveValueFunction<Color> {
 public:
     using Base = SVGAnimationAdditiveValueFunction<Color>;

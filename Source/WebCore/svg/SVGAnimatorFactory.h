@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "SVGAnimatedAngle.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedPath.h"
@@ -38,8 +36,10 @@ public:
         ASSERT(contextElement);
 
         switch (attributeType) {
+        case AnimatedAngle:
         case AnimatedBoolean:
         case AnimatedColor:
+        case AnimatedEnumeration:
         case AnimatedInteger:
         case AnimatedIntegerOptionalInteger:
         case AnimatedNumber:
@@ -51,10 +51,6 @@ public:
         case AnimatedString:
             return nullptr;
 
-        case AnimatedAngle:
-            return std::make_unique<SVGAnimatedAngleAnimator>(animationElement, contextElement);
-        case AnimatedEnumeration:
-            return std::make_unique<SVGAnimatedEnumerationAnimator>(animationElement, contextElement);
         case AnimatedLength:
             return std::make_unique<SVGAnimatedLengthAnimator>(animationElement, contextElement);
         case AnimatedLengthList:

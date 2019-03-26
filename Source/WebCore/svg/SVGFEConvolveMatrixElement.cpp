@@ -38,7 +38,6 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feConvolveMatrixTag));
-    registerAttributes();
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -49,6 +48,7 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
         PropertyRegistry::registerProperty<SVGNames::biasAttr, &SVGFEConvolveMatrixElement::m_bias>();
         PropertyRegistry::registerProperty<SVGNames::targetXAttr, &SVGFEConvolveMatrixElement::m_targetX>();
         PropertyRegistry::registerProperty<SVGNames::targetYAttr, &SVGFEConvolveMatrixElement::m_targetY>();
+        PropertyRegistry::registerProperty<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
         PropertyRegistry::registerProperty<SVGNames::kernelUnitLengthAttr, &SVGFEConvolveMatrixElement::m_kernelUnitLengthX, &SVGFEConvolveMatrixElement::m_kernelUnitLengthY>();
         PropertyRegistry::registerProperty<SVGNames::preserveAlphaAttr, &SVGFEConvolveMatrixElement::m_preserveAlpha>();
     });
@@ -57,14 +57,6 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
 Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGFEConvolveMatrixElement(tagName, document));
-}
-
-void SVGFEConvolveMatrixElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::edgeModeAttr, EdgeModeType, &SVGFEConvolveMatrixElement::m_edgeMode>();
 }
 
 void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -87,7 +79,7 @@ void SVGFEConvolveMatrixElement::parseAttribute(const QualifiedName& name, const
     if (name == SVGNames::edgeModeAttr) {
         EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(value);
         if (propertyValue > 0)
-            m_edgeMode.setValue(propertyValue);
+            m_edgeMode->setBaseValInternal<EdgeModeType>(propertyValue);
         else
             document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing edgeMode=\"" + value + "\". Filtered element will not be displayed.");
         return;

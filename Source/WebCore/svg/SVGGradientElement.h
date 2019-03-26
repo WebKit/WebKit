@@ -22,7 +22,6 @@
 #pragma once
 
 #include "Gradient.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
@@ -89,12 +88,12 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGradientElement, SVGElement, SVGExternalResourcesRequired, SVGURIReference>;
 
-    SVGSpreadMethodType spreadMethod() const { return m_spreadMethod.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits.currentValue(attributeOwnerProxy()); }
+    SVGSpreadMethodType spreadMethod() const { return m_spreadMethod->currentValue<SVGSpreadMethodType>(); }
+    SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     const SVGTransformListValues& gradientTransform() const { return m_gradientTransform.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedEnumeration> spreadMethodAnimated() { return m_spreadMethod.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> gradientUnitsAnimated() { return m_gradientUnits.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& spreadMethodAnimated() { return m_spreadMethod; }
+    SVGAnimatedEnumeration& gradientUnitsAnimated() { return m_gradientUnits; }
     RefPtr<SVGAnimatedTransformList> gradientTransformAnimated() { return m_gradientTransform.animatedProperty(attributeOwnerProxy()); }
 
 protected:
@@ -119,8 +118,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedEnumerationAttribute<SVGSpreadMethodType> m_spreadMethod { SVGSpreadMethodPad };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_gradientUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
+    Ref<SVGAnimatedEnumeration> m_spreadMethod { SVGAnimatedEnumeration::create(this, SVGSpreadMethodPad) };
+    Ref<SVGAnimatedEnumeration> m_gradientUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
     SVGAnimatedTransformListAttribute m_gradientTransform;
 };
 

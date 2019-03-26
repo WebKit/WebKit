@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedEnumeration.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 #include "SVGUnitTypes.h"
@@ -35,24 +34,17 @@ class SVGClipPathElement final : public SVGGraphicsElement, public SVGExternalRe
 public:
     static Ref<SVGClipPathElement> create(const QualifiedName&, Document&);
 
-    SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits.currentValue(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> clipPathUnitsAnimated() { return m_clipPathUnits.animatedProperty(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType clipPathUnits() const { return m_clipPathUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
+    SVGAnimatedEnumeration& clipPathUnitsAnimated() { return m_clipPathUnits; }
 
 private:
     SVGClipPathElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGClipPathElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGClipPathElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -66,7 +58,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_clipPathUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    Ref<SVGAnimatedEnumeration> m_clipPathUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
 };
 
 } // namespace WebCore

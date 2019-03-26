@@ -41,7 +41,6 @@
 #include "SVGNumber.h"
 #include "SVGPoint.h"
 #include "SVGRect.h"
-#include "SVGStaticPropertyTearOff.h"
 #include "SVGTransform.h"
 #include "SVGViewElement.h"
 #include "SVGViewSpec.h"

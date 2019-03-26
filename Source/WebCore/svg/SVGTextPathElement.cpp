@@ -39,6 +39,12 @@ inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Docu
 {
     ASSERT(hasTagName(SVGNames::textPathTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::methodAttr, SVGTextPathMethodType, &SVGTextPathElement::m_method>();
+        PropertyRegistry::registerProperty<SVGNames::spacingAttr, SVGTextPathSpacingType, &SVGTextPathElement::m_spacing>();
+    });
 }
 
 Ref<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& tagName, Document& document)
@@ -62,8 +68,6 @@ void SVGTextPathElement::registerAttributes()
     if (!registry.isEmpty())
         return;
     registry.registerAttribute<SVGNames::startOffsetAttr, &SVGTextPathElement::m_startOffset>();
-    registry.registerAttribute<SVGNames::methodAttr, SVGTextPathMethodType, &SVGTextPathElement::m_method>();
-    registry.registerAttribute<SVGNames::spacingAttr, SVGTextPathSpacingType, &SVGTextPathElement::m_spacing>();
 }
 
 void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -75,11 +79,11 @@ void SVGTextPathElement::parseAttribute(const QualifiedName& name, const AtomicS
     else if (name == SVGNames::methodAttr) {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
         if (propertyValue > 0)
-            m_method.setValue(propertyValue);
+            m_method->setBaseValInternal<SVGTextPathMethodType>(propertyValue);
     } else if (name == SVGNames::spacingAttr) {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
         if (propertyValue > 0)
-            m_spacing.setValue(propertyValue);
+            m_spacing->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
     }
 
     reportAttributeParsingError(parseError, name, value);

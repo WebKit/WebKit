@@ -33,10 +33,31 @@
 
 namespace WebCore {
 
+class SVGAnimatedAngleAnimator;
 class SVGAnimatedIntegerPairAnimator;
+class SVGAnimatedOrientTypeAnimator;
 
 template<typename AnimatedPropertyAnimator1, typename AnimatedPropertyAnimator2>
 class SVGAnimatedPropertyPairAnimator;
+
+class SVGAnimatedAngleAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedAngle, SVGAnimationAngleFunction> {
+    friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator>;
+    friend class SVGAnimatedAngleOrientAnimator;
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedAngle, SVGAnimationAngleFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedAngle>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedAngleAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal()->value());
+    }
+};
 
 class SVGAnimatedBooleanAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedBoolean, SVGAnimationBooleanFunction>  {
     using Base = SVGAnimatedPropertyAnimator<SVGAnimatedBoolean, SVGAnimationBooleanFunction>;
@@ -54,6 +75,28 @@ private:
     {
         bool& animated = m_animated->animVal();
         m_function.progress(targetElement, percentage, repeatCount, animated);
+    }
+};
+
+template<typename EnumType>
+class SVGAnimatedEnumerationAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedEnumeration, SVGAnimationEnumerationFunction<EnumType>> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedEnumeration, SVGAnimationEnumerationFunction<EnumType>>;
+    using Base::Base;
+    using Base::m_animated;
+    using Base::m_function;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedEnumeration>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedEnumerationAnimator<EnumType>>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        EnumType animated;
+        m_function.progress(targetElement, percentage, repeatCount, animated);
+        m_animated->template setAnimVal<EnumType>(animated);
     }
 };
 
@@ -86,7 +129,7 @@ class SVGAnimatedNumberAnimator final : public SVGAnimatedPropertyAnimator<SVGAn
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::unique_ptr<SVGAnimatedNumberAnimator>(new SVGAnimatedNumberAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+        return std::make_unique<SVGAnimatedNumberAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
     }
 
 private:
@@ -127,6 +170,27 @@ private:
     void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
     {
         m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
+    }
+};
+
+class SVGAnimatedOrientTypeAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedOrientType, SVGAnimationOrientTypeFunction> {
+    friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator>;
+    friend class SVGAnimatedAngleOrientAnimator;
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedOrientType, SVGAnimationOrientTypeFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedOrientType>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedOrientTypeAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        SVGMarkerOrientType animated;
+        m_function.progress(targetElement, percentage, repeatCount, animated);
+        m_animated->setAnimVal(animated);
     }
 };
 

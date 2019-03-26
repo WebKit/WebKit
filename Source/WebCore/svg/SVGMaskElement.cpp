@@ -48,6 +48,12 @@ inline SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document& do
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
     ASSERT(hasTagName(SVGNames::maskTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::maskUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskUnits>();
+        PropertyRegistry::registerProperty<SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskContentUnits>();
+    });
 }
 
 Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Document& document)
@@ -64,8 +70,6 @@ void SVGMaskElement::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGMaskElement::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGMaskElement::m_width>();
     registry.registerAttribute<SVGNames::heightAttr, &SVGMaskElement::m_height>();
-    registry.registerAttribute<SVGNames::maskUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskUnits>();
-    registry.registerAttribute<SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGMaskElement::m_maskContentUnits>();
 }
 
 void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -73,13 +77,13 @@ void SVGMaskElement::parseAttribute(const QualifiedName& name, const AtomicStrin
     if (name == SVGNames::maskUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_maskUnits.setValue(propertyValue);
+            m_maskUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
     if (name == SVGNames::maskContentUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_maskContentUnits.setValue(propertyValue);
+            m_maskContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
 

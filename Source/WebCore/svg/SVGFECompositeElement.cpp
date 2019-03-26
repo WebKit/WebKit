@@ -35,12 +35,12 @@ inline SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feCompositeTag));
-    registerAttributes();
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFECompositeElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::in2Attr, &SVGFECompositeElement::m_in2>();
+        PropertyRegistry::registerProperty<SVGNames::operatorAttr, CompositeOperationType, &SVGFECompositeElement::m_svgOperator>();
         PropertyRegistry::registerProperty<SVGNames::k1Attr, &SVGFECompositeElement::m_k1>();
         PropertyRegistry::registerProperty<SVGNames::k2Attr, &SVGFECompositeElement::m_k2>();
         PropertyRegistry::registerProperty<SVGNames::k3Attr, &SVGFECompositeElement::m_k3>();
@@ -53,20 +53,12 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
     return adoptRef(*new SVGFECompositeElement(tagName, document));
 }
 
-void SVGFECompositeElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::operatorAttr, CompositeOperationType, &SVGFECompositeElement::m_svgOperator>();
-}
-
 void SVGFECompositeElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::operatorAttr) {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);
         if (propertyValue > 0)
-            m_svgOperator.setValue(propertyValue);
+            m_svgOperator->setBaseValInternal<CompositeOperationType>(propertyValue);
         return;
     }
 

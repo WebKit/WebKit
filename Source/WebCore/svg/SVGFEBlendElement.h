@@ -23,7 +23,6 @@
 #pragma once
 
 #include "GraphicsTypes.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -31,6 +30,13 @@ namespace WebCore {
 template<>
 struct SVGPropertyTraits<BlendMode> {
     static unsigned highestEnumValue() { return static_cast<unsigned>(BlendMode::Luminosity); }
+
+    static BlendMode fromString(const String& string)
+    {
+        BlendMode mode = BlendMode::Normal;
+        parseBlendMode(string, mode);
+        return mode;
+    }
 
     static String toString(BlendMode type)
     {
@@ -48,27 +54,20 @@ public:
 
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
-    BlendMode mode() const { return m_mode.currentValue(attributeOwnerProxy()); }
+    BlendMode mode() const { return m_mode->currentValue<BlendMode>(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedString& in2Animated() { return m_in2; }
-    RefPtr<SVGAnimatedEnumeration> modeAnimated() { return m_mode.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& modeAnimated() { return m_mode; }
 
 private:
     SVGFEBlendElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEBlendElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEBlendElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -80,7 +79,7 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
-    SVGAnimatedEnumerationAttribute<BlendMode> m_mode { BlendMode::Normal };
+    Ref<SVGAnimatedEnumeration> m_mode { SVGAnimatedEnumeration::create(this, BlendMode::Normal) };
 };
 
 } // namespace WebCore

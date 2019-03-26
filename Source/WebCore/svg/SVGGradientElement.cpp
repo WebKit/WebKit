@@ -45,6 +45,12 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     , SVGURIReference(this)
 {
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::spreadMethodAttr, SVGSpreadMethodType, &SVGGradientElement::m_spreadMethod>();
+        PropertyRegistry::registerProperty<SVGNames::gradientUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGGradientElement::m_gradientUnits>();
+    });
 }
 
 void SVGGradientElement::registerAttributes()
@@ -52,8 +58,6 @@ void SVGGradientElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::spreadMethodAttr, SVGSpreadMethodType, &SVGGradientElement::m_spreadMethod>();
-    registry.registerAttribute<SVGNames::gradientUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGGradientElement::m_gradientUnits>();
     registry.registerAttribute<SVGNames::gradientTransformAttr, &SVGGradientElement::m_gradientTransform>();
 }
 
@@ -62,7 +66,7 @@ void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicS
     if (name == SVGNames::gradientUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_gradientUnits.setValue(propertyValue);
+            m_gradientUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
 
@@ -77,7 +81,7 @@ void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicS
     if (name == SVGNames::spreadMethodAttr) {
         auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(value);
         if (propertyValue > 0)
-            m_spreadMethod.setValue(propertyValue);
+            m_spreadMethod->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
         return;
     }
 

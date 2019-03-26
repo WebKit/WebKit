@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,23 +41,17 @@ inline SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
     ASSERT(hasTagName(SVGNames::markerTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::markerUnitsAttr, SVGMarkerUnitsType, &SVGMarkerElement::m_markerUnits>();
+        PropertyRegistry::registerProperty<SVGNames::orientAttr, &SVGMarkerElement::m_orientAngle, &SVGMarkerElement::m_orientType>();
+    });
 }
 
 Ref<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGMarkerElement(tagName, document));
-}
-
-const AtomicString& SVGMarkerElement::orientTypeIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGOrientType", AtomicString::ConstructFromLiteral);
-    return s_identifier;
-}
-
-const AtomicString& SVGMarkerElement::orientAngleIdentifier()
-{
-    static NeverDestroyed<AtomicString> s_identifier("SVGOrientAngle", AtomicString::ConstructFromLiteral);
-    return s_identifier;
 }
 
 AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
@@ -74,10 +68,6 @@ void SVGMarkerElement::registerAttributes()
     registry.registerAttribute<SVGNames::refYAttr, &SVGMarkerElement::m_refY>();
     registry.registerAttribute<SVGNames::markerWidthAttr, &SVGMarkerElement::m_markerWidth>();
     registry.registerAttribute<SVGNames::markerHeightAttr, &SVGMarkerElement::m_markerHeight>();
-    registry.registerAttribute<SVGNames::markerUnitsAttr, SVGMarkerUnitsType, &SVGMarkerElement::m_markerUnits>();
-    registry.registerAttribute(SVGAnimatedCustomAngleAttributeAccessor::singleton<SVGNames::orientAttr,
-        &SVGMarkerElement::orientAngleIdentifier, &SVGMarkerElement::m_orientAngle,
-        &SVGMarkerElement::orientTypeIdentifier, &SVGMarkerElement::m_orientType>());
 }
 
 void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -85,17 +75,14 @@ void SVGMarkerElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == SVGNames::markerUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
-            m_markerUnits.setValue(propertyValue);
+            m_markerUnits->setBaseValInternal<SVGMarkerUnitsType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::orientAttr) {
-        SVGAngleValue angle;
-        auto orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(value, angle);
-        if (orientType > 0)
-            m_orientType.setValue(orientType);
-        if (orientType == SVGMarkerOrientAngle)
-            m_orientAngle.setValue(angle);
+        auto pair = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(value);
+        m_orientAngle->setBaseValInternal(pair.first);
+        m_orientType->setBaseValInternal(pair.second);
         return;
     }
 
@@ -151,14 +138,9 @@ void SVGMarkerElement::childrenChanged(const ChildChange& change)
 
 void SVGMarkerElement::setOrient(SVGMarkerOrientType orientType, const SVGAngleValue& angle)
 {
-    m_orientType.setValue(orientType);
-    m_orientAngle.setValue(angle);
-
-    // Mark orientAttr dirty - the next XML DOM access of that attribute kicks in synchronization.
-    m_orientAngle.setShouldSynchronize(true);
-    m_orientType.setShouldSynchronize(true);
-    invalidateSVGAttributes();
-    svgAttributeChanged(SVGNames::orientAttr);
+    m_orientType->setBaseValInternal(orientType);
+    m_orientAngle->setBaseValInternal(angle);
+    m_orientAngle->baseVal()->commitChange();
 }
 
 void SVGMarkerElement::setOrientToAuto()
@@ -168,7 +150,7 @@ void SVGMarkerElement::setOrientToAuto()
 
 void SVGMarkerElement::setOrientToAngle(SVGAngle& angle)
 {
-    setOrient(SVGMarkerOrientAngle, angle.propertyReference());
+    setOrient(SVGMarkerOrientAngle, angle.value());
 }
 
 RenderPtr<RenderElement> SVGMarkerElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

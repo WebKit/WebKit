@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,29 @@
 
 #pragma once
 
-#include "SVGAttributeAnimator.h"
-
 namespace WebCore {
 
-class SVGAnimatedProperty;
-
-class SVGPropertyRegistry {
+template<typename DecorationType>
+class SVGDecoratedProperty {
 public:
-    SVGPropertyRegistry() = default;
-    virtual ~SVGPropertyRegistry() = default;
+    SVGDecoratedProperty() = default;
+    virtual ~SVGDecoratedProperty() = default;
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty&) const = 0;
-    virtual Optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+    virtual void setValueInternal(const DecorationType&) = 0;
+    virtual bool setValue(const DecorationType& value)
+    {
+        setValueInternal(value);
+        return true;
+    }
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
-    virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
-    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    // Used internally. It doesn't check for highestExposedEnumValue for example.
+    virtual DecorationType valueInternal() const = 0;
+
+    // Used by the DOM APIs.
+    virtual DecorationType value() const { return valueInternal(); }
+
+    virtual String valueAsString() const = 0;
+    virtual std::unique_ptr<SVGDecoratedProperty<DecorationType>> clone() = 0;
 };
 
 }

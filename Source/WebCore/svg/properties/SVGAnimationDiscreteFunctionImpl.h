@@ -42,6 +42,37 @@ public:
     }
 };
 
+template<typename EnumType>
+class SVGAnimationEnumerationFunction : public SVGAnimationDiscreteFunction<EnumType> {
+    using Base = SVGAnimationDiscreteFunction<EnumType>;
+    using Base::m_from;
+    using Base::m_to;
+
+public:
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPropertyTraits<EnumType>::fromString(from);
+        m_to = SVGPropertyTraits<EnumType>::fromString(to);
+    }
+};
+
+class SVGAnimationOrientTypeFunction : public SVGAnimationDiscreteFunction<SVGMarkerOrientType> {
+public:
+    using Base = SVGAnimationDiscreteFunction<SVGMarkerOrientType>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String&, const String&) override
+    {
+        // Values will be set by SVGAnimatedAngleOrientAnimator.
+        ASSERT_NOT_REACHED();
+    }
+
+private:
+    friend class SVGAnimatedAngleOrientAnimator;
+};
+
 class SVGAnimationPreserveAspectRatioFunction : public SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue> {
 public:
     using Base = SVGAnimationDiscreteFunction<SVGPreserveAspectRatioValue>;

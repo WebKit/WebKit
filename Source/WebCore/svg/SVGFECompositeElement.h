@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FEComposite.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -86,7 +85,7 @@ public:
 
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
-    CompositeOperationType svgOperator() const { return m_svgOperator.currentValue(attributeOwnerProxy()); }
+    CompositeOperationType svgOperator() const { return m_svgOperator->currentValue<CompositeOperationType>(); }
     float k1() const { return m_k1->currentValue(); }
     float k2() const { return m_k2->currentValue(); }
     float k3() const { return m_k3->currentValue(); }
@@ -94,7 +93,7 @@ public:
 
     SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedString& in2Animated() { return m_in2; }
-    RefPtr<SVGAnimatedEnumeration> svgOperatorAnimated() { return m_svgOperator.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& svgOperatorAnimated() { return m_svgOperator; }
     SVGAnimatedNumber& k1Animated() { return m_k1; }
     SVGAnimatedNumber& k2Animated() { return m_k2; }
     SVGAnimatedNumber& k3Animated() { return m_k3; }
@@ -104,17 +103,10 @@ private:
     SVGFECompositeElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFECompositeElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -126,7 +118,7 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
-    SVGAnimatedEnumerationAttribute<CompositeOperationType> m_svgOperator { FECOMPOSITE_OPERATOR_OVER };
+    Ref<SVGAnimatedEnumeration> m_svgOperator { SVGAnimatedEnumeration::create(this, FECOMPOSITE_OPERATOR_OVER) };
     Ref<SVGAnimatedNumber> m_k1 { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_k2 { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_k3 { SVGAnimatedNumber::create(this) };

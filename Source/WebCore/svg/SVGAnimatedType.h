@@ -45,24 +45,6 @@ public:
         return std::make_unique<SVGAnimatedType>(WTFMove(property));
     }
 
-    template<typename PropertyType1, typename PropertyType2>
-    static std::unique_ptr<SVGAnimatedType> create()
-    {
-        return std::make_unique<SVGAnimatedType>(SVGPropertyTraits<std::pair<PropertyType1, PropertyType2>>::initialValue());
-    }
-
-    template<typename PropertyType1, typename PropertyType2>
-    static std::unique_ptr<SVGAnimatedType> create(const std::pair<PropertyType1, PropertyType2>& properties)
-    {
-        return std::make_unique<SVGAnimatedType>(properties);
-    }
-
-    template<typename PropertyType1, typename PropertyType2>
-    static std::unique_ptr<SVGAnimatedType> create(std::pair<PropertyType1, PropertyType2>&& properties)
-    {
-        return std::make_unique<SVGAnimatedType>(WTFMove(properties));
-    }
-
     template<typename PropertyType>
     SVGAnimatedType(const PropertyType& property)
         : m_value(std::make_unique<PropertyType>(property).release())
@@ -72,18 +54,6 @@ public:
     template<typename PropertyType>
     SVGAnimatedType(PropertyType&& property)
         : m_value(std::make_unique<PropertyType>(WTFMove(property)).release())
-    {
-    }
-
-    template<typename PropertyType1, typename PropertyType2>
-    SVGAnimatedType(const std::pair<PropertyType1, PropertyType2>& properties)
-        : m_value(std::make_unique<std::pair<PropertyType1, PropertyType2>>(properties).release())
-    {
-    }
-
-    template<typename PropertyType1, typename PropertyType2>
-    SVGAnimatedType(std::pair<PropertyType1, PropertyType2>&& properties)
-        : m_value(std::make_unique<std::pair<PropertyType1, PropertyType2>>(WTFMove(properties)).release())
     {
     }
 
@@ -111,8 +81,6 @@ public:
     AnimatedPropertyType type() const
     {
         static AnimatedPropertyType animatedTypes[] = {
-            AnimatedAngle,
-            AnimatedEnumeration,
             AnimatedLength,
             AnimatedLengthList,
             AnimatedPath,

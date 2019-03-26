@@ -1,3 +1,17 @@
+2019-03-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGAngle, SVGAnimatedAngle and SVGAnimatedEnumeration
+        https://bugs.webkit.org/show_bug.cgi?id=196087
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement.html:
+        Fixes cases that the tear off objects could not handle correctly for the
+        paired { angle, orientType }. Also when setting the orient type to "auto"
+        or "auto-start-reverse", the orient angle should be reset to
+        SVG_ANGLETYPE_UNSPECIFIED and is not suppsed to keep its original value.
+
 2019-03-25  Shawn Roberts  <sroberts@apple.com>
 
         fast/visual-viewport/ios/min-scale-greater-than-one.html is a flaky failure

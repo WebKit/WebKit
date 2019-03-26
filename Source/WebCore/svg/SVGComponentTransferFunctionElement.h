@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FEComponentTransfer.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGElement.h"
 
 namespace WebCore {
@@ -73,7 +72,7 @@ class SVGComponentTransferFunctionElement : public SVGElement {
 public:
     ComponentTransferFunction transferFunction() const;
 
-    ComponentTransferType type() const { return m_type.currentValue(attributeOwnerProxy()); }
+    ComponentTransferType type() const { return m_type->currentValue<ComponentTransferType>(); }
     const SVGNumberList& tableValues() const { return m_tableValues->currentValue(); }
     float slope() const { return m_slope->currentValue(); }
     float intercept() const { return m_intercept->currentValue(); }
@@ -81,7 +80,7 @@ public:
     float exponent() const { return m_exponent->currentValue(); }
     float offset() const { return m_offset->currentValue(); }
 
-    RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& typeAnimated() { return m_type; }
     SVGAnimatedNumberList& tableValuesAnimated() { return m_tableValues; }
     SVGAnimatedNumber& slopeAnimated() { return m_slope; }
     SVGAnimatedNumber& interceptAnimated() { return m_intercept; }
@@ -93,17 +92,10 @@ protected:
     SVGComponentTransferFunctionElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGComponentTransferFunctionElement, SVGElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGComponentTransferFunctionElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -113,7 +105,7 @@ protected:
 private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedEnumerationAttribute<ComponentTransferType> m_type { FECOMPONENTTRANSFER_TYPE_IDENTITY };
+    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, FECOMPONENTTRANSFER_TYPE_IDENTITY) };
     Ref<SVGAnimatedNumberList> m_tableValues { SVGAnimatedNumberList::create(this) };
     Ref<SVGAnimatedNumber> m_slope { SVGAnimatedNumber::create(this, 1) };
     Ref<SVGAnimatedNumber> m_intercept { SVGAnimatedNumber::create(this) };

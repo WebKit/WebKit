@@ -33,6 +33,79 @@ namespace WebCore {
 
 class SVGElement;
 
+class SVGAnimatedAngleOrientAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator> {
+    using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedAngleAnimator, SVGAnimatedOrientTypeAnimator>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedAngle>& animated1, Ref<SVGAnimatedOrientType>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedAngleOrientAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) final
+    {
+        auto pairFrom = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(from);
+        auto pairTo = SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>>::fromString(to);
+
+        m_animatedPropertyAnimator1->m_function.m_from = pairFrom.first;
+        m_animatedPropertyAnimator1->m_function.m_to = pairTo.first;
+
+        m_animatedPropertyAnimator2->m_function.m_from = pairFrom.second;
+        m_animatedPropertyAnimator2->m_function.m_to = pairTo.second;
+    }
+
+    void setFromAndByValues(SVGElement* targetElement, const String& from, const String& by) final
+    {
+        setFromAndToValues(targetElement, from, by);
+        if (m_animatedPropertyAnimator2->m_function.m_from != SVGMarkerOrientAngle || m_animatedPropertyAnimator2->m_function.m_to != SVGMarkerOrientAngle)
+            return;
+        m_animatedPropertyAnimator1->m_function.addFromAndToValues(targetElement);
+    }
+
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        if (m_animatedPropertyAnimator2->m_function.m_from != m_animatedPropertyAnimator2->m_function.m_to) {
+            // Discrete animation - no linear interpolation possible between values (e.g. auto to angle).
+            m_animatedPropertyAnimator2->progress(targetElement, percentage, repeatCount);
+
+            SVGAngleValue animatedAngle;
+            if (percentage < 0.5f && m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAngle)
+                animatedAngle = m_animatedPropertyAnimator1->m_function.m_from;
+            else if (percentage >= 0.5f && m_animatedPropertyAnimator2->m_function.m_to == SVGMarkerOrientAngle)
+                animatedAngle = m_animatedPropertyAnimator1->m_function.m_to;
+
+            m_animatedPropertyAnimator1->m_animated->setAnimVal(animatedAngle);
+            return;
+        }
+
+        if (m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAngle) {
+            // Regular from- toangle animation, with support for smooth interpolation, and additive and accumulated animation.
+            m_animatedPropertyAnimator2->m_animated->setAnimVal(SVGMarkerOrientAngle);
+
+            m_animatedPropertyAnimator1->progress(targetElement, percentage, repeatCount);
+            return;
+        }
+
+        // auto, auto-start-reverse, or unknown.
+        m_animatedPropertyAnimator1->m_animated->animVal()->value().setValue(0);
+
+        if (m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAuto || m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAutoStartReverse)
+            m_animatedPropertyAnimator2->m_animated->setAnimVal(m_animatedPropertyAnimator2->m_function.m_from);
+        else
+            m_animatedPropertyAnimator2->m_animated->setAnimVal(SVGMarkerOrientUnknown);
+    }
+
+    void stop(SVGElement* targetElement) final
+    {
+        if (!m_animatedPropertyAnimator1->m_animated->isAnimating())
+            return;
+        apply(targetElement);
+        Base::stop(targetElement);
+    }
+};
+
 class SVGAnimatedIntegerPairAnimator final : public SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator> {
     using Base = SVGAnimatedPropertyPairAnimator<SVGAnimatedIntegerAnimator, SVGAnimatedIntegerAnimator>;
     using Base::Base;
@@ -40,7 +113,7 @@ class SVGAnimatedIntegerPairAnimator final : public SVGAnimatedPropertyPairAnima
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedInteger>& animated1, Ref<SVGAnimatedInteger>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::unique_ptr<SVGAnimatedIntegerPairAnimator>(new SVGAnimatedIntegerPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
+        return std::make_unique<SVGAnimatedIntegerPairAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
     }
 
 private:
@@ -83,7 +156,7 @@ class SVGAnimatedNumberPairAnimator final : public SVGAnimatedPropertyPairAnimat
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumber>& animated1, Ref<SVGAnimatedNumber>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::unique_ptr<SVGAnimatedNumberPairAnimator>(new SVGAnimatedNumberPairAnimator(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive));
+        return std::make_unique<SVGAnimatedNumberPairAnimator>(attributeName, animated1, animated2, animationMode, calcMode, isAccumulated, isAdditive);
     }
 
 private:

@@ -35,11 +35,11 @@ inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tag
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feColorMatrixTag));
-    registerAttributes();
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEColorMatrixElement::m_in1>();
+        PropertyRegistry::registerProperty<SVGNames::typeAttr, ColorMatrixType, &SVGFEColorMatrixElement::m_type>();
         PropertyRegistry::registerProperty<SVGNames::valuesAttr, &SVGFEColorMatrixElement::m_values>();
     });
 }
@@ -49,20 +49,12 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
     return adoptRef(*new SVGFEColorMatrixElement(tagName, document));
 }
 
-void SVGFEColorMatrixElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::typeAttr, ColorMatrixType, &SVGFEColorMatrixElement::m_type>();
-}
-
 void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::typeAttr) {
         auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);
         if (propertyValue > 0)
-            m_type.setValue(propertyValue);
+            m_type->setBaseValInternal<ColorMatrixType>(propertyValue);
         return;
     }
 

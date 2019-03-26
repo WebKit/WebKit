@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FEGaussianBlur.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFEConvolveMatrixElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -38,28 +37,21 @@ public:
     String in1() const { return m_in1->currentValue(); }
     float stdDeviationX() const { return m_stdDeviationX->currentValue(); }
     float stdDeviationY() const { return m_stdDeviationY->currentValue(); }
-    EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
+    EdgeModeType edgeMode() const { return m_edgeMode->currentValue<EdgeModeType>(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedNumber& stdDeviationXAnimated() { return m_stdDeviationX; }
     SVGAnimatedNumber& stdDeviationYAnimated() { return m_stdDeviationY; }
-    RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& edgeModeAnimated() { return m_edgeMode; }
 
 private:
     SVGFEGaussianBlurElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEGaussianBlurElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEGaussianBlurElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -71,7 +63,7 @@ private:
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedNumber> m_stdDeviationX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_stdDeviationY { SVGAnimatedNumber::create(this) };
-    SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_NONE };
+    Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EDGEMODE_NONE) };
 };
 
 } // namespace WebCore

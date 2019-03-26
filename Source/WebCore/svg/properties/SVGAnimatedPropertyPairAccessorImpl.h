@@ -35,6 +35,43 @@
 namespace WebCore {
 
 template<typename OwnerType>
+class SVGAnimatedAngleOrientAccessor final : public SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedAngleAccessor<OwnerType>, SVGAnimatedOrientTypeAccessor<OwnerType>> {
+    using Base = SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedAngleAccessor<OwnerType>, SVGAnimatedOrientTypeAccessor<OwnerType>>;
+    using Base::property1;
+    using Base::property2;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedAngle> OwnerType::*property1, Ref<SVGAnimatedOrientType> OwnerType::*property2>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedAngleOrientAccessor, property1, property2>(); }
+
+private:
+    Optional<String> synchronize(const OwnerType& owner) const final
+    {
+        bool dirty1 = property1(owner)->isDirty();
+        bool dirty2 = property2(owner)->isDirty();
+        if (!(dirty1 || dirty2))
+            return WTF::nullopt;
+
+        auto type = property2(owner)->baseVal();
+
+        String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
+        String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
+        return type == SVGMarkerOrientAuto || type == SVGMarkerOrientAutoStartReverse ? string2 : string1;
+    }
+
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedAngleOrientAnimator::create(attributeName, property1(owner), property2(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedAngleOrientAnimator&>(animator).appendAnimatedInstance(property1(owner), property2(owner));
+    }
+};
+
+template<typename OwnerType>
 class SVGAnimatedIntegerPairAccessor final : public SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedIntegerAccessor<OwnerType>, SVGAnimatedIntegerAccessor<OwnerType>> {
     using Base = SVGAnimatedPropertyPairAccessor<OwnerType, SVGAnimatedIntegerAccessor<OwnerType>, SVGAnimatedIntegerAccessor<OwnerType>>;
     using Base::property1;

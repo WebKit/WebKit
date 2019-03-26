@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
@@ -37,15 +36,15 @@ class SVGFilterElement final : public SVGElement, public SVGExternalResourcesReq
 public:
     static Ref<SVGFilterElement> create(const QualifiedName&, Document&);
 
-    SVGUnitTypes::SVGUnitType filterUnits() const { return m_filterUnits.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType filterUnits() const { return m_filterUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return m_primitiveUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
 
-    RefPtr<SVGAnimatedEnumeration> filterUnitsAnimated() { return m_filterUnits.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> primitiveUnitsAnimated() { return m_primitiveUnits.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& filterUnitsAnimated() { return m_filterUnits; }
+    SVGAnimatedEnumeration& primitiveUnitsAnimated() { return m_primitiveUnits; }
     RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
@@ -82,8 +81,8 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_filterUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_primitiveUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    Ref<SVGAnimatedEnumeration> m_filterUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
+    Ref<SVGAnimatedEnumeration> m_primitiveUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
     SVGAnimatedLengthAttribute m_x { LengthModeWidth, "-10%" };
     SVGAnimatedLengthAttribute m_y { LengthModeHeight, "-10%" };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth, "120%" };

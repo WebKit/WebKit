@@ -25,14 +25,16 @@
 
 #pragma once
 
-#include "SVGAnimatedAngle.h"
-#include "SVGAnimatedEnumeration.h"
+#include "SVGAngle.h"
+#include "SVGAnimatedDecoratedProperty.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedPrimitiveProperty.h"
 #include "SVGAnimatedPropertyList.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAnimatedValueProperty.h"
+#include "SVGDecoratedEnumeration.h"
+#include "SVGMarkerTypes.h"
 #include "SVGNumberList.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
@@ -45,10 +47,23 @@ using SVGAnimatedInteger = SVGAnimatedPrimitiveProperty<int>;
 using SVGAnimatedNumber = SVGAnimatedPrimitiveProperty<float>;
 using SVGAnimatedString = SVGAnimatedPrimitiveProperty<String>;
 
+using SVGAnimatedEnumeration = SVGAnimatedDecoratedProperty<SVGDecoratedEnumeration, unsigned>;
+
+using SVGAnimatedAngle = SVGAnimatedValueProperty<SVGAngle>;
 using SVGAnimatedRect = SVGAnimatedValueProperty<SVGRect>;
 using SVGAnimatedPreserveAspectRatio = SVGAnimatedValueProperty<SVGPreserveAspectRatio>;
 
 using SVGAnimatedNumberList = SVGAnimatedPropertyList<SVGNumberList>;
 using SVGAnimatedPointList = SVGAnimatedPropertyList<SVGPointList>;
+
+class SVGAnimatedOrientType : public SVGAnimatedEnumeration {
+public:
+    using SVGAnimatedEnumeration::SVGAnimatedEnumeration;
+
+    static Ref<SVGAnimatedOrientType> create(SVGElement* contextElement, SVGMarkerOrientType baseValue)
+    {
+        return SVGAnimatedEnumeration::create<SVGMarkerOrientType, SVGAnimatedOrientType>(contextElement, baseValue);
+    }
+};
 
 }

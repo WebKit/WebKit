@@ -2267,8 +2267,6 @@ svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
-svg/SVGAnimatedAngle.cpp
-svg/SVGAnimatedEnumeration.cpp
 svg/SVGAnimatedLength.cpp
 svg/SVGAnimatedLengthList.cpp
 svg/SVGAnimatedPath.cpp

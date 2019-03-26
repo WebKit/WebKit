@@ -22,7 +22,6 @@
 #pragma once
 
 #include "FEColorMatrix.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -70,28 +69,21 @@ public:
     static Ref<SVGFEColorMatrixElement> create(const QualifiedName&, Document&);
 
     String in1() const { return m_in1->currentValue(); }
-    ColorMatrixType type() const { return m_type.currentValue(attributeOwnerProxy()); }
+    ColorMatrixType type() const { return m_type->currentValue<ColorMatrixType>(); }
     const SVGNumberList& values() const { return m_values->currentValue(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
-    RefPtr<SVGAnimatedEnumeration> typeAnimated() { return m_type.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& typeAnimated() { return m_type; }
     SVGAnimatedNumberList& valuesAnimated() { return m_values; }
 
 private:
     SVGFEColorMatrixElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEColorMatrixElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEColorMatrixElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -102,7 +94,7 @@ private:
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
-    SVGAnimatedEnumerationAttribute<ColorMatrixType> m_type { FECOLORMATRIX_TYPE_MATRIX };
+    Ref<SVGAnimatedEnumeration> m_type { SVGAnimatedEnumeration::create(this, FECOLORMATRIX_TYPE_MATRIX) };
     Ref<SVGAnimatedNumberList> m_values { SVGAnimatedNumberList::create(this) };
 };
 

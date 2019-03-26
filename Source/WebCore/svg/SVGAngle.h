@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,37 @@
 #pragma once
 
 #include "SVGAngleValue.h"
-#include "SVGPropertyTearOff.h"
+#include "SVGValueProperty.h"
 
 namespace WebCore {
 
-class SVGAngle : public SVGPropertyTearOff<SVGAngleValue> {
+class SVGAngle : public SVGValueProperty<SVGAngleValue> {
+    using Base = SVGValueProperty<SVGAngleValue>;
+    using Base::Base;
+    using Base::m_value;
+
 public:
-    static Ref<SVGAngle> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGAngleValue& value)
+    static Ref<SVGAngle> create(const SVGAngleValue& value = { })
     {
-        return adoptRef(*new SVGAngle(animatedProperty, role, value));
+        return adoptRef(*new SVGAngle(value));
     }
 
-    static Ref<SVGAngle> create(const SVGAngleValue& initialValue = { })
+    static Ref<SVGAngle> create(SVGPropertyOwner* owner, SVGPropertyAccess access, const SVGAngleValue& value = { })
     {
-        return adoptRef(*new SVGAngle(initialValue));
+        return adoptRef(*new SVGAngle(owner, access, value));
     }
 
-    template<typename T> static ExceptionOr<Ref<SVGAngle>> create(ExceptionOr<T>&& initialValue)
+    template<typename T>
+    static ExceptionOr<Ref<SVGAngle>> create(ExceptionOr<T>&& value)
     {
-        if (initialValue.hasException())
-            return initialValue.releaseException();
-        return create(initialValue.releaseReturnValue());
+        if (value.hasException())
+            return value.releaseException();
+        return adoptRef(*new SVGAngle(value.releaseReturnValue()));
     }
 
     SVGAngleValue::Type unitType()
     {
-        return propertyReference().unitType();
+        return m_value.unitType();
     }
 
     ExceptionOr<void> setValueForBindings(float value)
@@ -59,15 +64,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setValue(value);
+        m_value.setValue(value);
         commitChange();
-
         return { };
     }
     
     float valueForBindings()
     {
-        return propertyReference().value();
+        return m_value.value();
     }
 
     ExceptionOr<void> setValueInSpecifiedUnits(float valueInSpecifiedUnits)
@@ -75,15 +79,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setValueInSpecifiedUnits(valueInSpecifiedUnits);
+        m_value.setValueInSpecifiedUnits(valueInSpecifiedUnits);
         commitChange();
-        
         return { };
     }
     
     float valueInSpecifiedUnits()
     {
-        return propertyReference().valueInSpecifiedUnits();
+        return m_value.valueInSpecifiedUnits();
     }
 
     ExceptionOr<void> setValueAsString(const String& value)
@@ -91,7 +94,7 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = propertyReference().setValueAsString(value);
+        auto result = m_value.setValueAsString(value);
         if (result.hasException())
             return result;
         
@@ -99,9 +102,9 @@ public:
         return result;
     }
 
-    String valueAsString()
+    String valueAsString() const override
     {
-        return propertyReference().valueAsString();
+        return m_value.valueAsString();
     }
 
     ExceptionOr<void> newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
@@ -109,7 +112,7 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = propertyReference().newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
+        auto result = m_value.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
         if (result.hasException())
             return result;
         
@@ -122,23 +125,12 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        auto result = propertyReference().convertToSpecifiedUnits(unitType);
+        auto result = m_value.convertToSpecifiedUnits(unitType);
         if (result.hasException())
             return result;
         
         commitChange();
         return result;
-    }
-
-private:
-    SVGAngle(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, SVGAngleValue& value)
-        : SVGPropertyTearOff<SVGAngleValue>(&animatedProperty, role, value)
-    {
-    }
-
-    explicit SVGAngle(const SVGAngleValue& initialValue)
-        : SVGPropertyTearOff<SVGAngleValue>(initialValue)
-    {
     }
 };
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,6 +54,12 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
 {
     ASSERT(hasTagName(SVGNames::patternTag));
     registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
+        PropertyRegistry::registerProperty<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
+    });
 }
 
 Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)
@@ -70,8 +76,6 @@ void SVGPatternElement::registerAttributes()
     registry.registerAttribute<SVGNames::yAttr, &SVGPatternElement::m_y>();
     registry.registerAttribute<SVGNames::widthAttr, &SVGPatternElement::m_width>();
     registry.registerAttribute<SVGNames::heightAttr, &SVGPatternElement::m_height>();
-    registry.registerAttribute<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
-    registry.registerAttribute<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
     registry.registerAttribute<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();
 }
 
@@ -80,13 +84,13 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
     if (name == SVGNames::patternUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_patternUnits.setValue(propertyValue);
+            m_patternUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
     if (name == SVGNames::patternContentUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
-            m_patternContentUnits.setValue(propertyValue);
+            m_patternContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
         return;
     }
     if (name == SVGNames::patternTransformAttr) {

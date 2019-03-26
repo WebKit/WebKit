@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,45 @@
 
 #pragma once
 
-#include "SVGAttributeAnimator.h"
+#include "SVGDecoratedPrimitive.h"
 
 namespace WebCore {
 
-class SVGAnimatedProperty;
+template<typename DecorationType, typename EnumType>
+class SVGDecoratedEnumeration : public SVGDecoratedPrimitive<DecorationType, EnumType> {
+    using Base = SVGDecoratedPrimitive<DecorationType, EnumType>;
+    using Base::Base;
+    using Base::m_value;
 
-class SVGPropertyRegistry {
 public:
-    SVGPropertyRegistry() = default;
-    virtual ~SVGPropertyRegistry() = default;
+    static auto create(const EnumType& value)
+    {
+        static_assert(std::is_integral<DecorationType>::value, "DecorationType form enum should be integral.");
+        return std::make_unique<SVGDecoratedEnumeration>(value);
+    }
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty&) const = 0;
-    virtual Optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+private:
+    bool setValue(const DecorationType& value) override
+    {
+        if (!value || value > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue())
+            return false;
+        Base::setValueInternal(value);
+        return true;
+    }
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
-    virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
-    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    DecorationType value() const override
+    {
+        if (Base::value() > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue())
+            return m_outOfRangeEnumValue;
+        return Base::value();
+    }
+
+    std::unique_ptr<SVGDecoratedProperty<DecorationType>> clone() override
+    {
+        return create(m_value);
+    }
+
+    static const DecorationType m_outOfRangeEnumValue = 0;
 };
 
 }

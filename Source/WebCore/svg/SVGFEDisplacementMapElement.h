@@ -21,7 +21,6 @@
 #pragma once
 
 #include "FEDisplacementMap.h"
-#include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
@@ -72,31 +71,24 @@ public:
 
     String in1() const { return m_in1->currentValue(); }
     String in2() const { return m_in2->currentValue(); }
-    ChannelSelectorType xChannelSelector() const { return m_xChannelSelector.currentValue(attributeOwnerProxy()); }
-    ChannelSelectorType yChannelSelector() const { return m_yChannelSelector.currentValue(attributeOwnerProxy()); }
+    ChannelSelectorType xChannelSelector() const { return m_xChannelSelector->currentValue<ChannelSelectorType>(); }
+    ChannelSelectorType yChannelSelector() const { return m_yChannelSelector->currentValue<ChannelSelectorType>(); }
     float scale() const { return m_scale->currentValue(); }
 
     SVGAnimatedString& in1Animated() { return m_in1; }
     SVGAnimatedString& in2Animated() { return m_in2; }
-    RefPtr<SVGAnimatedEnumeration> xChannelSelectorAnimated() { return m_xChannelSelector.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> yChannelSelectorAnimated() { return m_yChannelSelector.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& xChannelSelectorAnimated() { return m_xChannelSelector; }
+    SVGAnimatedEnumeration& yChannelSelectorAnimated() { return m_yChannelSelector; }
     SVGAnimatedNumber& scaleAnimated() { return m_scale; }
 
 private:
     SVGFEDisplacementMapElement(const QualifiedName& tagName, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEDisplacementMapElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -108,8 +100,8 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedString> m_in1 { SVGAnimatedString::create(this) };
     Ref<SVGAnimatedString> m_in2 { SVGAnimatedString::create(this) };
-    SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_xChannelSelector { CHANNEL_A };
-    SVGAnimatedEnumerationAttribute<ChannelSelectorType> m_yChannelSelector { CHANNEL_A };
+    Ref<SVGAnimatedEnumeration> m_xChannelSelector { SVGAnimatedEnumeration::create(this, CHANNEL_A) };
+    Ref<SVGAnimatedEnumeration> m_yChannelSelector { SVGAnimatedEnumeration::create(this, CHANNEL_A) };
     Ref<SVGAnimatedNumber> m_scale { SVGAnimatedNumber::create(this) };
 };
 

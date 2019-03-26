@@ -24,7 +24,6 @@
 
 #include "Document.h"
 #include "Event.h"
-#include "SVGAnimatedStaticPropertyTearOff.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

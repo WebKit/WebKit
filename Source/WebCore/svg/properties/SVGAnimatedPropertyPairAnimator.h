@@ -37,13 +37,6 @@ public:
     using AnimatedProperty1 = typename AnimatedPropertyAnimator1::AnimatorAnimatedProperty;
     using AnimatedProperty2 = typename AnimatedPropertyAnimator2::AnimatorAnimatedProperty;
 
-    void appendAnimatedInstance(Ref<AnimatedProperty1>& animated1, Ref<AnimatedProperty2>& animated2)
-    {
-        m_animatedPropertyAnimator1->appendAnimatedInstance(animated1);
-        m_animatedPropertyAnimator2->appendAnimatedInstance(animated2);
-    }
-
-protected:
     SVGAnimatedPropertyPairAnimator(const QualifiedName& attributeName, Ref<AnimatedProperty1>& animated1, Ref<AnimatedProperty2>& animated2, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
         : SVGAttributeAnimator(attributeName)
         , m_animatedPropertyAnimator1(AnimatedPropertyAnimator1::create(attributeName, animated1, animationMode, calcMode, isAccumulated, isAdditive))
@@ -51,6 +44,13 @@ protected:
     {
     }
 
+    void appendAnimatedInstance(Ref<AnimatedProperty1>& animated1, Ref<AnimatedProperty2>& animated2)
+    {
+        m_animatedPropertyAnimator1->appendAnimatedInstance(animated1);
+        m_animatedPropertyAnimator2->appendAnimatedInstance(animated2);
+    }
+
+protected:
     void start(SVGElement* targetElement) override
     {
         m_animatedPropertyAnimator1->start(targetElement);

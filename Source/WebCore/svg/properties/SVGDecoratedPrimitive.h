@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,29 @@
 
 #pragma once
 
-#include "SVGAttributeAnimator.h"
+#include "SVGDecoratedProperty.h"
 
 namespace WebCore {
 
-class SVGAnimatedProperty;
+template<typename DecorationType, typename PropertyType>
+class SVGDecoratedPrimitive : public SVGDecoratedProperty<DecorationType> {
+    using Base = SVGDecoratedProperty<DecorationType>;
 
-class SVGPropertyRegistry {
 public:
-    SVGPropertyRegistry() = default;
-    virtual ~SVGPropertyRegistry() = default;
+    SVGDecoratedPrimitive(const PropertyType& value)
+        : m_value(value)
+    {
+    }
 
-    virtual void detachAllProperties() const = 0;
-    virtual QualifiedName propertyAttributeName(const SVGProperty&) const = 0;
-    virtual QualifiedName animatedPropertyAttributeName(const SVGAnimatedProperty&) const = 0;
-    virtual Optional<String> synchronize(const QualifiedName&) const = 0;
-    virtual HashMap<QualifiedName, String> synchronizeAllAttributes() const = 0;
+protected:
+    using Base::Base;
 
-    virtual bool isAnimatedPropertyAttribute(const QualifiedName&) const = 0;
-    virtual bool isAnimatedStylePropertyAttribute(const QualifiedName&) const = 0;
-    virtual std::unique_ptr<SVGAttributeAnimator> createAnimator(const QualifiedName&, AnimationMode, CalcMode, bool isAccumulated, bool isAdditive) const = 0;
-    virtual void appendAnimatedInstance(const QualifiedName& attributeName, SVGAttributeAnimator&) const = 0;
+    void setValueInternal(const DecorationType& value) override { m_value = static_cast<PropertyType>(value); }
+    DecorationType valueInternal() const override { return static_cast<DecorationType>(m_value); }
+
+    String valueAsString() const override { return SVGPropertyTraits<PropertyType>::toString(m_value); }
+
+    PropertyType m_value;
 };
 
 }

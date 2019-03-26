@@ -34,12 +34,13 @@ inline SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedN
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feDisplacementMapTag));
-    registerAttributes();
-    
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEDisplacementMapElement::m_in1>();
         PropertyRegistry::registerProperty<SVGNames::in2Attr, &SVGFEDisplacementMapElement::m_in2>();
+        PropertyRegistry::registerProperty<SVGNames::xChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_xChannelSelector>();
+        PropertyRegistry::registerProperty<SVGNames::yChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_yChannelSelector>();
         PropertyRegistry::registerProperty<SVGNames::scaleAttr, &SVGFEDisplacementMapElement::m_scale>();
     });
 }
@@ -49,28 +50,19 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
     return adoptRef(*new SVGFEDisplacementMapElement(tagName, document));
 }
 
-void SVGFEDisplacementMapElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_xChannelSelector>();
-    registry.registerAttribute<SVGNames::yChannelSelectorAttr, ChannelSelectorType, &SVGFEDisplacementMapElement::m_yChannelSelector>();
-}
-
 void SVGFEDisplacementMapElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::xChannelSelectorAttr) {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
         if (propertyValue > 0)
-            m_xChannelSelector.setValue(propertyValue);
+            m_xChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
         return;
     }
 
     if (name == SVGNames::yChannelSelectorAttr) {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(value);
         if (propertyValue > 0)
-            m_yChannelSelector.setValue(propertyValue);
+            m_yChannelSelector->setBaseValInternal<ChannelSelectorType>(propertyValue);
         return;
     }
 

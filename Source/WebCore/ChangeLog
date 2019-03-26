@@ -1,3 +1,223 @@
+2019-03-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGAngle, SVGAnimatedAngle and SVGAnimatedEnumeration
+        https://bugs.webkit.org/show_bug.cgi?id=196087
+
+        Reviewed by Simon Fraser.
+
+        In this patch, the tear off objects for SVGAnimatedEnumeration will be 
+        removed. Because the angle is paired with the orient type so its tear
+        off objects have to be removed as well. Here is what this patch does:
+
+        -- SVGAngle is now a superclass of SVGValueProperty<SVGAngleValue>. Its 
+        relationship with its owner will be managed by the owner of its base
+        class SVGProperty.
+
+        -- SVGAnimatedAngle is now defined to be SVGAnimatedValueProperty<
+        SVGAngle>. All the DOM interfaces will be handled by the base class
+        given its baseVal and animVal are of type SVGAngle.
+
+        -- SVGAnimatedEnumeration is now defined to be
+        SVGAnimatedDecoratedProperty<SVGDecoratedEnumeration, unsigned>.
+        This can be read: SVGAnimatedEnumeration is an SVGAnimatedProperty which
+        decorates the "SVGDecoratedEnumeration" type to "unsigned". The reason
+        for this complication is the IDL of SVGAnimatedEnumeration defines the
+        baseVal and animVal are of type unsigned. However SVGAnimatedEnumeration
+        should be able to convert a string to its enum value and vice versa.
+
+        -- SVGAnimatedDecoratedProperty is a template class which maps from
+        DecoratedProperty to DecorationType. The DecoratedProperty is actually
+        a template class which exposes a property of type DecorationType.
+
+        -- SVGDecoratedProperty is an abstract class which manages setting and
+        getting a property in DecorationType regardless of how it is actually
+        stored. 
+
+        -- SVGDecoratedPrimitive is a superclass of SVGDecoratedProperty which
+        stores a primitive property whose type is PropertyType but can decorate
+        it to the callers as DecorationType.
+
+        -- SVGDecoratedEnumeration is a superclass of SVGDecoratedPrimitive
+        which stores a primitive type DecorationType like "BlendMode" but
+        decorates it as "unsigned"
+
+        To get the mechanics of this change correct, new accessors, animators
+        and animation functions need to be added for SVGAnimatedAngle,
+        SVGAnimatedEnumeration and SVGAnimatedOrientType. But since angle and
+        the orient type are paired under a single attribute, a pair accessor and
+        animator are also needed for the pair { angle, orientType }.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::create):
+        (WebCore::SVGAngle::unitType):
+        (WebCore::SVGAngle::setValueForBindings):
+        (WebCore::SVGAngle::valueForBindings):
+        (WebCore::SVGAngle::setValueInSpecifiedUnits):
+        (WebCore::SVGAngle::valueInSpecifiedUnits):
+        (WebCore::SVGAngle::setValueAsString):
+        (WebCore::SVGAngle::newValueSpecifiedUnits):
+        (WebCore::SVGAngle::convertToSpecifiedUnits):
+        (WebCore::SVGAngle::valueAsString): Deleted.
+        (WebCore::SVGAngle::SVGAngle): Deleted.
+        * svg/SVGAnimatedAngle.cpp: Removed.
+        * svg/SVGAnimatedAngle.h: Removed.
+        * svg/SVGAnimatedEnumeration.cpp: Removed.
+        * svg/SVGAnimatedEnumeration.h: Removed.
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::type const):
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::SVGClipPathElement):
+        (WebCore::SVGClipPathElement::parseAttribute):
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::registerAttributes): Deleted.
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        (WebCore::SVGComponentTransferFunctionElement::registerAttributes): Deleted.
+        * svg/SVGComponentTransferFunctionElement.h:
+        (WebCore::SVGComponentTransferFunctionElement::type const):
+        (WebCore::SVGComponentTransferFunctionElement::typeAnimated):
+        (WebCore::SVGComponentTransferFunctionElement::attributeRegistry): Deleted.
+        (WebCore::SVGComponentTransferFunctionElement::isKnownAttribute): Deleted.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::commitPropertyChange):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        (WebCore::SVGFEBlendElement::registerAttributes): Deleted.
+        * svg/SVGFEBlendElement.h:
+        (WebCore::SVGPropertyTraits<BlendMode>::fromString):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        (WebCore::SVGFEColorMatrixElement::registerAttributes): Deleted.
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        (WebCore::SVGFECompositeElement::registerAttributes): Deleted.
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement):
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::registerAttributes): Deleted.
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute):
+        (WebCore::SVGFEDisplacementMapElement::registerAttributes): Deleted.
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        (WebCore::SVGFEGaussianBlurElement::registerAttributes): Deleted.
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::SVGFEMorphologyElement):
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        (WebCore::SVGFEMorphologyElement::registerAttributes): Deleted.
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        (WebCore::SVGFETurbulenceElement::registerAttributes): Deleted.
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        (WebCore::SVGFilterElement::registerAttributes):
+        (WebCore::SVGFilterElement::parseAttribute):
+        * svg/SVGFilterElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::registerAttributes):
+        (WebCore::SVGGradientElement::parseAttribute):
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::spreadMethod const):
+        (WebCore::SVGGradientElement::gradientUnits const):
+        (WebCore::SVGGradientElement::spreadMethodAnimated):
+        (WebCore::SVGGradientElement::gradientUnitsAnimated):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::registerAttributes):
+        (WebCore::SVGMarkerElement::parseAttribute):
+        (WebCore::SVGMarkerElement::setOrient):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::orientTypeIdentifier): Deleted.
+        (WebCore::SVGMarkerElement::orientAngleIdentifier): Deleted.
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMarkerTypes.h:
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::autoString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::autoStartReverseString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::fromString):
+        (WebCore::SVGPropertyTraits<SVGMarkerOrientType>::toString):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::registerAttributes):
+        (WebCore::SVGMaskElement::parseAttribute):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::registerAttributes):
+        (WebCore::SVGPatternElement::parseAttribute):
+        * svg/SVGPatternElement.h:
+        * svg/SVGSVGElement.cpp:
+        * svg/SVGScriptElement.cpp:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::registerAttributes):
+        (WebCore::SVGTextContentElement::parseAttribute):
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::lengthAdjust const):
+        (WebCore::SVGTextContentElement::lengthAdjustAnimated):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        (WebCore::SVGTextPathElement::registerAttributes):
+        (WebCore::SVGTextPathElement::parseAttribute):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGValue.h:
+        * svg/properties/SVGAnimatedDecoratedProperty.h: Added.
+        (WebCore::SVGAnimatedDecoratedProperty::create):
+        (WebCore::SVGAnimatedDecoratedProperty::SVGAnimatedDecoratedProperty):
+        (WebCore::SVGAnimatedDecoratedProperty::setBaseVal):
+        (WebCore::SVGAnimatedDecoratedProperty::setBaseValInternal):
+        (WebCore::SVGAnimatedDecoratedProperty::baseVal const):
+        (WebCore::SVGAnimatedDecoratedProperty::setAnimVal):
+        (WebCore::SVGAnimatedDecoratedProperty::animVal const):
+        (WebCore::SVGAnimatedDecoratedProperty::currentValue const):
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h: Removed.
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        (WebCore::SVGAnimatedOrientType::create):
+        * svg/properties/SVGAnimatedPropertyPairAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyPairAnimator.h:
+        (WebCore::SVGAnimatedPropertyPairAnimator::appendAnimatedInstance):
+        * svg/properties/SVGAnimatedPropertyPairAnimatorImpl.h:
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h: Removed.
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationAngleFunction::progress):
+        * svg/properties/SVGAnimationDiscreteFunctionImpl.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGDecoratedEnumeration.h: Added.
+        (WebCore::SVGDecoratedEnumeration::create):
+        * svg/properties/SVGDecoratedPrimitive.h: Added.
+        (WebCore::SVGDecoratedPrimitive::SVGDecoratedPrimitive):
+        * svg/properties/SVGDecoratedProperty.h: Added.
+        (WebCore::SVGDecoratedProperty::setValue):
+        (WebCore::SVGDecoratedProperty::value const):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+        (WebCore::SVGPropertyOwnerRegistry::isAnimatedLengthAttribute):
+        * svg/properties/SVGPropertyRegistry.h:
+        * svg/properties/SVGStaticPropertyTearOff.h: Removed.
+
 2019-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [iOS] Break a reference cycle between PreviewLoader and ResourceLoader

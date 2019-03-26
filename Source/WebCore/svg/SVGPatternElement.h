@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
@@ -49,16 +48,16 @@ public:
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
+    SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     const SVGTransformListValues& patternTransform() const { return m_patternTransform.currentValue(attributeOwnerProxy()); }
 
     RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> patternUnitsAnimated() { return m_patternUnits.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> patternContentUnitsAnimated() { return m_patternContentUnits.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& patternUnitsAnimated() { return m_patternUnits; }
+    SVGAnimatedEnumeration& patternContentUnitsAnimated() { return m_patternContentUnits; }
     RefPtr<SVGAnimatedTransformList> patternTransformAnimated() { return m_patternTransform.animatedProperty(attributeOwnerProxy()); }
 
 private:
@@ -94,8 +93,8 @@ private:
     SVGAnimatedLengthAttribute m_y { LengthModeHeight };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth };
     SVGAnimatedLengthAttribute m_height { LengthModeHeight };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_patternUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_patternContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    Ref<SVGAnimatedEnumeration> m_patternUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
+    Ref<SVGAnimatedEnumeration> m_patternContentUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
     SVGAnimatedTransformListAttribute m_patternTransform;
 };
 

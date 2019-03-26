@@ -35,11 +35,11 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
 {
     ASSERT(hasTagName(SVGNames::feMorphologyTag));
-    registerAttributes();
     
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::inAttr, &SVGFEMorphologyElement::m_in1>();
+        PropertyRegistry::registerProperty<SVGNames::operatorAttr, MorphologyOperatorType, &SVGFEMorphologyElement::m_svgOperator>();
         PropertyRegistry::registerProperty<SVGNames::radiusAttr, &SVGFEMorphologyElement::m_radiusX, &SVGFEMorphologyElement::m_radiusY>();
     });
 }
@@ -56,20 +56,12 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
     invalidate();
 }
 
-void SVGFEMorphologyElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::operatorAttr, MorphologyOperatorType, &SVGFEMorphologyElement::m_svgOperator>();
-}
-
 void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
         if (propertyValue > 0)
-            m_svgOperator.setValue(propertyValue);
+            m_svgOperator->setBaseValInternal<MorphologyOperatorType>(propertyValue);
         return;
     }
 

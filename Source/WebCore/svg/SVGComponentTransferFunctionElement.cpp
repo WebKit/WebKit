@@ -34,10 +34,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGComponentTransferFunctionElement);
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document& document)
     : SVGElement(tagName, document)
 {
-    registerAttributes();
-    
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::typeAttr, ComponentTransferType, &SVGComponentTransferFunctionElement::m_type>();
         PropertyRegistry::registerProperty<SVGNames::tableValuesAttr, &SVGComponentTransferFunctionElement::m_tableValues>();
         PropertyRegistry::registerProperty<SVGNames::slopeAttr, &SVGComponentTransferFunctionElement::m_slope>();
         PropertyRegistry::registerProperty<SVGNames::interceptAttr, &SVGComponentTransferFunctionElement::m_intercept>();
@@ -47,20 +46,12 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
     });
 }
 
-void SVGComponentTransferFunctionElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::typeAttr, ComponentTransferType, &SVGComponentTransferFunctionElement::m_type>();
-}
-
 void SVGComponentTransferFunctionElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::typeAttr) {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);
         if (propertyValue > 0)
-            m_type.setValue(propertyValue);
+            m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
         return;
     }
 

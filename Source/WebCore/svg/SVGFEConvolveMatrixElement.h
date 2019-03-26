@@ -75,7 +75,7 @@ public:
     float bias() const { return m_bias->currentValue(); }
     int targetX() const { return m_targetX->currentValue(); }
     int targetY() const { return m_targetY->currentValue(); }
-    EdgeModeType edgeMode() const { return m_edgeMode.currentValue(attributeOwnerProxy()); }
+    EdgeModeType edgeMode() const { return m_edgeMode->currentValue<EdgeModeType>(); }
     float kernelUnitLengthX() const { return m_kernelUnitLengthX->currentValue(); }
     float kernelUnitLengthY() const { return m_kernelUnitLengthY->currentValue(); }
     bool preserveAlpha() const { return m_preserveAlpha->currentValue(); }
@@ -88,7 +88,7 @@ public:
     SVGAnimatedNumber& biasAnimated() { return m_bias; }
     SVGAnimatedInteger& targetXAnimated() { return m_targetX; }
     SVGAnimatedInteger& targetYAnimated() { return m_targetY; }
-    RefPtr<SVGAnimatedEnumeration> edgeModeAnimated() { return m_edgeMode.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& edgeModeAnimated() { return m_edgeMode; }
     SVGAnimatedNumber& kernelUnitLengthXAnimated() { return m_kernelUnitLengthX; }
     SVGAnimatedNumber& kernelUnitLengthYAnimated() { return m_kernelUnitLengthY; }
     SVGAnimatedBoolean& preserveAlphaAnimated() { return m_preserveAlpha; }
@@ -97,17 +97,10 @@ private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEConvolveMatrixElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -125,7 +118,7 @@ private:
     Ref<SVGAnimatedNumber> m_bias { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedInteger> m_targetX { SVGAnimatedInteger::create(this) };
     Ref<SVGAnimatedInteger> m_targetY { SVGAnimatedInteger::create(this) };
-    SVGAnimatedEnumerationAttribute<EdgeModeType> m_edgeMode { EDGEMODE_DUPLICATE };
+    Ref<SVGAnimatedEnumeration> m_edgeMode { SVGAnimatedEnumeration::create(this, EDGEMODE_DUPLICATE) };
     Ref<SVGAnimatedNumber> m_kernelUnitLengthX { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_kernelUnitLengthY { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedBoolean> m_preserveAlpha { SVGAnimatedBoolean::create(this) };

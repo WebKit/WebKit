@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "SVGAnimatedEnumeration.h"
 #include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
@@ -39,15 +38,15 @@ public:
     const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
     const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType maskUnits() const { return m_maskUnits.currentValue(attributeOwnerProxy()); }
-    SVGUnitTypes::SVGUnitType maskContentUnits() const { return m_maskContentUnits.currentValue(attributeOwnerProxy()); }
+    SVGUnitTypes::SVGUnitType maskUnits() const { return m_maskUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
+    SVGUnitTypes::SVGUnitType maskContentUnits() const { return m_maskContentUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
 
     RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
     RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> maskUnitsAnimated() { return m_maskUnits.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedEnumeration> maskContentUnitsAnimated() { return m_maskContentUnits.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedEnumeration& maskUnitsAnimated() { return m_maskUnits; }
+    SVGAnimatedEnumeration& maskContentUnitsAnimated() { return m_maskContentUnits; }
 
 private:
     SVGMaskElement(const QualifiedName&, Document&);
@@ -82,8 +81,8 @@ private:
     SVGAnimatedLengthAttribute m_y { LengthModeHeight, "-10%" };
     SVGAnimatedLengthAttribute m_width { LengthModeWidth, "120%" };
     SVGAnimatedLengthAttribute m_height { LengthModeHeight, "120%" };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_maskUnits { SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX };
-    SVGAnimatedEnumerationAttribute<SVGUnitTypes::SVGUnitType> m_maskContentUnits { SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE };
+    Ref<SVGAnimatedEnumeration> m_maskUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
+    Ref<SVGAnimatedEnumeration> m_maskContentUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
 };
 
 } // namespace WebCore

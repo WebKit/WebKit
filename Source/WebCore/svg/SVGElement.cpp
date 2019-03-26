@@ -740,7 +740,13 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
 void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
 {
     QualifiedName attributeName = propertyRegistry().animatedPropertyAttributeName(animatedProperty);
-    setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
+
+    // A change in a style property, e.g SVGRectElement::x should be serialized to
+    // the attribute immediately. Otherwise it is okay to be lazy in this regard.
+    if (!propertyRegistry().isAnimatedStylePropertyAttribute(attributeName))
+        animatedProperty.setDirty();
+    else
+        setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
 
     invalidateSVGAttributes();
     svgAttributeChanged(attributeName);

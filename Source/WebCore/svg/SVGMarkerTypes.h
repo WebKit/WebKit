@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,17 +75,32 @@ struct SVGPropertyTraits<SVGMarkerUnitsType> {
 
 template<>
 struct SVGPropertyTraits<SVGMarkerOrientType> {
-    static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
-    static SVGMarkerOrientType fromString(const String& value, SVGAngleValue& angle)
+    static const String autoString()
     {
-        if (value == "auto")
+        static const NeverDestroyed<String> autoString = MAKE_STATIC_STRING_IMPL("auto");
+        return autoString;
+    }
+    static const String autoStartReverseString()
+    {
+        static const NeverDestroyed<String> autoStartReverseString = MAKE_STATIC_STRING_IMPL("auto-start-reverse");
+        return autoStartReverseString;
+    }
+    static unsigned highestEnumValue() { return SVGMarkerOrientAutoStartReverse; }
+    static SVGMarkerOrientType fromString(const String& string)
+    {
+        if (string == autoString())
             return SVGMarkerOrientAuto;
-        if (value == "auto-start-reverse")
+        if (string == autoStartReverseString())
             return SVGMarkerOrientAutoStartReverse;
-        auto setValueResult = angle.setValueAsString(value);
-        if (setValueResult.hasException())
-            return SVGMarkerOrientUnknown;
-        return SVGMarkerOrientAngle;
+        return SVGMarkerOrientUnknown;
+    }
+    static String toString(SVGMarkerOrientType type)
+    {
+        if (type == SVGMarkerOrientAuto)
+            return autoString();
+        if (type == SVGMarkerOrientAutoStartReverse)
+            return autoStartReverseString();
+        return emptyString();
     }
 };
 
@@ -93,18 +108,18 @@ template<>
 inline unsigned SVGIDLEnumLimits<SVGMarkerOrientType>::highestExposedEnumValue() { return SVGMarkerOrientAngle; }
 
 template<>
-struct SVGPropertyTraits<std::pair<SVGAngleValue, unsigned>> {
-    static std::pair<SVGAngleValue, unsigned> initialValue() { return { }; }
-    static std::pair<SVGAngleValue, unsigned> fromString(const String& string)
+struct SVGPropertyTraits<std::pair<SVGAngleValue, SVGMarkerOrientType>> {
+    static std::pair<SVGAngleValue, SVGMarkerOrientType> fromString(const String& string)
     {
         SVGAngleValue angle;
-        SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string, angle);
-        if (orientType != SVGMarkerOrientAngle)
-            angle = { };
-        return std::pair<SVGAngleValue, unsigned>(angle, orientType);
+        SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(string);
+        if (orientType == SVGMarkerOrientUnknown) {
+            auto result = angle.setValueAsString(string);
+            if (!result.hasException())
+                orientType = SVGMarkerOrientAngle;
+        }
+        return std::make_pair(angle, orientType);
     }
-    static Optional<std::pair<SVGAngleValue, unsigned>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
-    static String toString(const std::pair<SVGAngleValue, unsigned>&) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 } // namespace WebCore
