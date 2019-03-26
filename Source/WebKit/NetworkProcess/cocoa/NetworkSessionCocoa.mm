@@ -800,6 +800,9 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     if (session.isEphemeral()) {
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
         configuration._shouldSkipPreferredClientCertificateLookup = YES;
+#if HAVE(ALLOWS_SENSITIVE_LOGGING)
+        configuration._allowsSensitiveLogging = NO;
+#endif
         return configuration;
     }
     return [NSURLSessionConfiguration defaultSessionConfiguration];
