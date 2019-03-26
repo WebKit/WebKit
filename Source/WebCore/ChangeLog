@@ -1,3 +1,18 @@
+2019-03-26  Antoine Quint  <graouts@apple.com>
+
+        Remove mousemoveEventHandlingPreventsDefault internal setting and quirk
+        https://bugs.webkit.org/show_bug.cgi?id=196254
+        <rdar://problem/49124334>
+
+        Unreviewed. Fix build broken by previous commit.
+
+        * dom/Event.cpp:
+        * dom/Event.h:
+        (WebCore::Event::hasEncounteredListener const): Deleted.
+        (WebCore::Event::setHasEncounteredListener): Deleted.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::innerInvokeEventListeners):
+
 2019-03-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Skip anonymous renderers when checking for "willRespondToMouseClickEvents"

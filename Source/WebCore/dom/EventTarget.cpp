@@ -301,16 +301,6 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         registeredListener->callback().handleEvent(context, event);
         InspectorInstrumentation::didHandleEvent(context);
 
-#if ENABLE(TOUCH_EVENTS)
-        if (RuntimeEnabledFeatures::sharedFeatures().mousemoveEventHandlingPreventsDefaultEnabled() && event.type() == eventNames().mousemoveEvent) {
-            if (is<Element>(event.currentTarget())) {
-                auto* element = downcast<Element>(event.currentTarget());
-                if (!is<HTMLBodyElement>(element) && !is<HTMLHtmlElement>(element))
-                    event.setHasEncounteredListener();
-            }
-        }
-#endif
-
         if (registeredListener->isPassive())
             event.setInPassiveListener(false);
     }
