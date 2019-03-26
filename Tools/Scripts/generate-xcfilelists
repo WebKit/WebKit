@@ -607,13 +607,14 @@ function get_canonical_configuration()
     log_callstack_and_parameters "$@"
 
     local GX_PROVISIONAL_CONFIGURATION=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    local GX_RESULT=$2
 
-    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "" ]] && { echo ""; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "" ]]           && { eval $GX_RESULT=""; return; }
 
-    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "debug" ]] && { echo "Debug"; return; }
-    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "release" ]] && { echo "Release"; return; }
-    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "production" ]] && { echo "Production"; return; }
-    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "profiling" ]] && { echo "Profiling"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "debug" ]]      && { eval $GX_RESULT="Debug"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "release" ]]    && { eval $GX_RESULT="Release"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "production" ]] && { eval $GX_RESULT="Production"; return; }
+    [[ "${GX_PROVISIONAL_CONFIGURATION}" == "profiling" ]]  && { eval $GX_RESULT="Profiling"; return; }
 
     die "Unrecognized configuration: $1"
 }
@@ -624,27 +625,28 @@ function get_canonical_platform_name()
     log_callstack_and_parameters "$@"
 
     local GX_PROVISIONAL_PLATFORM_NAME=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    local GX_RESULT=$2
 
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "" ]] && { echo ""; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "" ]]                   && { eval $GX_RESULT=""; return; }
 
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ios" ]] && { echo "iphoneos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphone" ]] && { echo "iphoneos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ipad" ]] && { echo "iphoneos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphoneos" ]] && { echo "iphoneos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphonesimulator" ]] && { echo "iphonesimulator"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ios" ]]                && { eval $GX_RESULT="iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphone" ]]             && { eval $GX_RESULT="iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "ipad" ]]               && { eval $GX_RESULT="iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphoneos" ]]           && { eval $GX_RESULT="iphoneos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "iphonesimulator" ]]    && { eval $GX_RESULT="iphonesimulator"; return; }
 
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "mac" ]] && { echo "macosx"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "osx" ]] && { echo "macosx"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macos" ]] && { echo "macosx"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macosx" ]] && { echo "macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "mac" ]]                && { eval $GX_RESULT="macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "osx" ]]                && { eval $GX_RESULT="macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macos" ]]              && { eval $GX_RESULT="macosx"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "macosx" ]]             && { eval $GX_RESULT="macosx"; return; }
 
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvos" ]] && { echo "appletvos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvos" ]] && { echo "appletvos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvsimulator" ]] && { echo "appletvsimulator"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvsimulator" ]] && { echo "appletvsimulator"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvos" ]]               && { eval $GX_RESULT="appletvos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvos" ]]          && { eval $GX_RESULT="appletvos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "tvsimulator" ]]        && { eval $GX_RESULT="appletvsimulator"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "appletvsimulator" ]]   && { eval $GX_RESULT="appletvsimulator"; return; }
 
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchos" ]] && { echo "watchos"; return; }
-    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchsimulator" ]] && { echo "watchsimulator"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchos" ]]            && { eval $GX_RESULT="watchos"; return; }
+    [[ "${GX_PROVISIONAL_PLATFORM_NAME}" == "watchsimulator" ]]     && { eval $GX_RESULT="watchsimulator"; return; }
 
     die "Unrecognized platform name: $1"
 }
@@ -654,15 +656,17 @@ function get_sdk_name()
 {
     log_callstack_and_parameters "$@"
 
-    local GX_SDK=$(get_canonical_platform_name "$1")
+    local GX_SDK=$1
+    local GX_RESULT=$2
+    get_canonical_platform_name "${GX_SDK}" GX_SDK
     local GX_INTERNAL_SDK="${GX_SDK}.internal"
 
     get_sdks
 
     # Prefer an internal SDK if one exists.
 
-    [[ " ${GX_SDKS[@]} " =~ " ${GX_INTERNAL_SDK} " ]] && { echo "${GX_INTERNAL_SDK}"; return; }
-    [[ " ${GX_SDKS[@]} " =~ " ${GX_SDK} " ]] && { echo "${GX_SDK}"; return; }
+    [[ " ${GX_SDKS[@]} " =~ " ${GX_INTERNAL_SDK} " ]]   && { eval $GX_RESULT="${GX_INTERNAL_SDK}"; return; }
+    [[ " ${GX_SDKS[@]} " =~ " ${GX_SDK} " ]]            && { eval $GX_RESULT="${GX_SDK}"; return; }
 
     die "Unsupported SDK: ${GX_SDK}."
 }
@@ -844,7 +848,8 @@ function sublaunch_under_xcode()
     (( ${GX_DEBUG} )) && { for n in $(seq $GX_DEBUG); do GX_ARGS+=("--debug"); done; }
     (( ${GX_QUIET} )) && GX_ARGS+=("--quiet")
 
-    local GX_SDK_NAME=$(get_sdk_name "${GX_PLATFORM_NAME}")
+    local GX_SDK_NAME
+    get_sdk_name "${GX_PLATFORM_NAME}" GX_SDK_NAME
 
     log_debug "Sublaunching for: ${GX_PROJECT_TAG}/${GX_PLATFORM_NAME}/${GX_CONFIGURATION}"
 
@@ -1232,8 +1237,8 @@ function main()
     fi
 
     [[ -z "${GX_PROJECT_TAG}" || ( " ${GX_PROJECT_TAGS[@]} " =~ " ${GX_PROJECT_TAG} " ) ]] || { die "Unrecognized project: ${GX_PROJECT_TAG}";  }
-    GX_PLATFORM_NAME=$(get_canonical_platform_name "${GX_PLATFORM_NAME}")
-    GX_CONFIGURATION=$(get_canonical_configuration "${GX_CONFIGURATION}")
+    get_canonical_platform_name "${GX_PLATFORM_NAME}" GX_PLATFORM_NAME
+    get_canonical_configuration "${GX_CONFIGURATION}" GX_CONFIGURATION
 
     if (( ${GX_DO_GENERATE} ))
     then

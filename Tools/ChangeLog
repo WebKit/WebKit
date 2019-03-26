@@ -1,3 +1,51 @@
+2019-03-26  Keith Rollin  <krollin@apple.com>
+
+        Update the way generate-xcfilelists returns strings from functions
+        https://bugs.webkit.org/show_bug.cgi?id=195975
+        <rdar://problem/49040807>
+
+        Reviewed by Dean Jackson.
+
+        There are places where generate-xcfilelists executes assignments with
+        statements like:
+
+            FOO=$(some_function)
+
+        where "some_function" return a string by echoing it. E.g.
+
+            some_function()
+            {
+                echo "Hello, World"
+            }
+
+        This is a common idiom, but it has a problem if "some_function" needs
+        to call "exit" in an attempt to halt the entire script right then and
+        there. Since "some_function" is called inside of $(), it's being
+        executed in a sub-shell. Calling exit in that sub-shell simply exits
+        that shell; it doesn't not exit the outer shell in which the main part
+        of the script is still running. As such, the main script keeps
+        executing when the intent was for the script to halt.
+
+        The solution to this is to use a different idiom for returning
+        strings. The one we now is to pass in the name of the variable to
+        receive the string result:
+
+            some_function()
+            {
+                variable_name=$1
+                eval $variable_name ="Hello, World"
+            }
+
+        The call site now looks like
+
+            some_function FOO
+
+        Because there's no invocation of a sub-shell, some_function can now
+        call "exit" if it wants to, and the entire script will exit at that
+        point.
+
+        * Scripts/generate-xcfilelists:
+
 2019-03-26  Chris Dumez  <cdumez@apple.com>
 
         Add basic layout test coverage for File Picker on iOS
