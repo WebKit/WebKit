@@ -1,3 +1,12 @@
+2019-03-26  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews] Reset simctl states on reboot
+        https://bugs.webkit.org/show_bug.cgi?id=196260
+
+        Rubber-stamped by Aakash Jain.
+
+        * EWSTools/start-queue-mac.sh:
+
 2019-03-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Use PostgreSQL for ews-build database

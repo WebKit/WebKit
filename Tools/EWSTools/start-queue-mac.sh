@@ -61,6 +61,12 @@ if [ -s $QUEUE_NAME.log ]; then
         mv -f $QUEUE_NAME.log ${QUEUE_NAME}_$(date +%Y-%m-%d_%H-%m).log
     fi
 fi
+
+# Fix-up rotten Simulator state
+/bin/rm -rf ~/Library/Developer/CoreSimulator/Devices/*
+/usr/bin/sudo /usr/bin/killall -9 com.apple.CoreSimulator.CoreSimulatorServer
+/usr/bin/xcrun simctl delete unavailable
+
 cd $WEBKIT_HOME
 
 # Delete WebKitBuild to force a clean build
