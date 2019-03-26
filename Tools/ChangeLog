@@ -1,3 +1,25 @@
+2019-03-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Address NSWindow sometimes using WebKitTestRunnerEvent too early
+        https://bugs.webkit.org/show_bug.cgi?id=196211
+        rdar://problem/49110552
+
+        Reviewed by Tim Horton.
+
+        * WebKitTestRunner/TestController.cpp: (WTR::TestController::initialize):
+        Make sure that EventSenderProxy always exists when running tests. We used to create
+        it when resetting before the first test, which is a bit too late.
+
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateWebView):
+        (WTR::TestController::platformCreateOtherPage):
+        (WTR::TestController::finishCreatingPlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        Moved some code that made NSWindow use NSEvent during web view creation. We may
+        need to move more if some other case us found, but this is enough for now.
+
 2019-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix typo in GLib geolocation API after r243285.

@@ -80,10 +80,6 @@ PlatformWebView::PlatformWebView(WKWebViewConfiguration* configuration, const Te
     [m_window setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameAqua]];
     [m_window setCollectionBehavior:NSWindowCollectionBehaviorStationary];
     [[m_window contentView] addSubview:m_view];
-    if (m_options.shouldShowWebView)
-        [m_window orderFront:nil];
-    else
-        [m_window orderBack:nil];
     [m_window setReleasedWhenClosed:NO];
 }
 

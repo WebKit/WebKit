@@ -458,6 +458,8 @@ void TestController::initialize(int argc, const char* argv[])
 
     WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
+
+    m_eventSenderProxy = std::make_unique<EventSenderProxy>(this);
 }
 
 WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfiguration(const TestOptions::ContextOptions& options) const

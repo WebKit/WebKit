@@ -453,6 +453,10 @@ private:
     static void runModal(WKPageRef, const void* clientInfo);
     static void runModal(PlatformWebView*);
 
+#if PLATFORM(COCOA)
+    static void finishCreatingPlatformWebView(PlatformWebView*, const TestOptions&);
+#endif
+
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 

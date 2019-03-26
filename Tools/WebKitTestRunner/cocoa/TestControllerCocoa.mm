@@ -166,6 +166,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     }
 
     m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
+    finishCreatingPlatformWebView(m_mainWebView.get(), options);
 
     if (options.punchOutWhiteBackgroundsInDarkMode)
         m_mainWebView->setDrawsBackground(false);
@@ -178,7 +179,20 @@ PlatformWebView* TestController::platformCreateOtherPage(PlatformWebView* parent
 {
     WKWebViewConfiguration *newConfiguration = [[globalWebViewConfiguration copy] autorelease];
     newConfiguration._relatedWebView = static_cast<WKWebView*>(parentView->platformView());
-    return new PlatformWebView(newConfiguration, options);
+    PlatformWebView* view = new PlatformWebView(newConfiguration, options);
+    finishCreatingPlatformWebView(view, options);
+    return view;
+}
+
+// Code that needs to run after TestController::m_mainWebView is initialized goes into this function.
+void TestController::finishCreatingPlatformWebView(PlatformWebView* view, const TestOptions& options)
+{
+#if PLATFORM(MAC)
+    if (options.shouldShowWebView)
+        [view->platformWindow() orderFront:nil];
+    else
+        [view->platformWindow() orderBack:nil];
+#endif
 }
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
