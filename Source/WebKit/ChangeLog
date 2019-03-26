@@ -1,5 +1,19 @@
 2019-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Enable IPC sending and receiving non-default-constructible types
+        https://bugs.webkit.org/show_bug.cgi?id=196132
+        <rdar://problem/49229221>
+
+        Unreviewed build fix for WinCairo port.
+
+        error C2440: '=': cannot convert from 'int' to 'HANDLE'
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::Handle): std::exchange HANDLE with nullptr, not 0.
+        (WebKit::SharedMemory::Handle::operator=): Ditto.
+
+2019-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [Coordinated Graphics][WinCairo] ASSERTION FAILED: state.id == m_nicosia.state.id
         https://bugs.webkit.org/show_bug.cgi?id=196190
 
