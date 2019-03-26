@@ -39,7 +39,7 @@ class StatusBubble(View):
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     ALL_QUEUES = ['api-ios', 'api-mac', 'bindings', 'gtk', 'ios', 'ios-sim', 'ios-wk2', 'jsc', 'mac', 'mac-32bit', 'mac-32bit-wk2',
                     'mac-debug', 'mac-debug-wk1', 'mac-wk1', 'mac-wk2', 'style', 'webkitperl', 'webkitpy', 'win', 'wincairo', 'wpe']
-    ENABLED_QUEUES = ['api-ios', 'api-mac']
+    ENABLED_QUEUES = ['api-ios', 'api-mac', 'webkitperl']
 
     def _build_bubble(self, patch, queue):
         bubble = {
