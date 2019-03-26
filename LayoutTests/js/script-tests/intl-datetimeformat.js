@@ -423,7 +423,7 @@ shouldBe("Intl.DateTimeFormat('en', { month:'long', day:'numeric', timeZone: 'UT
 shouldThrow("Intl.DateTimeFormat('en', { hour: { toString() { throw 'hour' } } })", "'hour'");
 shouldThrow("Intl.DateTimeFormat('en', { hour:[] })", '\'RangeError: hour must be "2-digit" or "numeric"\'');
 shouldBe("Intl.DateTimeFormat('en').resolvedOptions().hour", "undefined");
-shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour", "'numeric'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour", "'2-digit'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour", "'numeric'");
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
@@ -434,7 +434,9 @@ shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolv
 shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'12:00 AM'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle", "'h23'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "false");
-shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'00:00'");
+shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'0:00'");
+shouldBe("Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0)", "'00:00'");
+shouldBe("Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7)", "'02:46 ДП'");
 
 shouldThrow("Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } })", "'minute'");
 shouldThrow("Intl.DateTimeFormat('en', { minute:null })", '\'RangeError: minute must be "2-digit" or "numeric"\'');

@@ -1,3 +1,13 @@
+2019-03-26  Andy VanWagoner  <andy@vanwagoner.family>
+
+        Intl.DateTimeFormat should obey 2-digit hour
+        https://bugs.webkit.org/show_bug.cgi?id=195974
+
+        Reviewed by Keith Miller.
+
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+
 2019-03-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Heap::isMarked and friends should be instance methods

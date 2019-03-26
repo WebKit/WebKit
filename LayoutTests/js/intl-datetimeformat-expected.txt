@@ -310,7 +310,7 @@ PASS Intl.DateTimeFormat('en', { month:'long', day:'numeric', timeZone: 'UTC' })
 PASS Intl.DateTimeFormat('en', { hour: { toString() { throw 'hour' } } }) threw exception hour.
 PASS Intl.DateTimeFormat('en', { hour:[] }) threw exception RangeError: hour must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().hour is undefined
-PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour is 'numeric'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit' }).resolvedOptions().hour is '2-digit'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour is 'numeric'
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
@@ -320,7 +320,9 @@ PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric' }).resolvedOpt
 PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '12:00 AM'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle is 'h23'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is false
-PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '00:00'
+PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '0:00'
+PASS Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0) is '00:00'
+PASS Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7) is '02:46 ДП'
 PASS Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } }) threw exception minute.
 PASS Intl.DateTimeFormat('en', { minute:null }) threw exception RangeError: minute must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().minute is undefined
