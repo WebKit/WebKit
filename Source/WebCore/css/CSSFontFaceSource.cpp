@@ -79,7 +79,8 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
     , m_face(owner)
     , m_immediateSource(WTFMove(arrayBufferView))
 #if ENABLE(SVG_FONTS)
-    , m_svgFontFaceElement(fontFace)
+    , m_svgFontFaceElement(makeWeakPtr(fontFace))
+    , m_hasSVGFontFaceElement(m_svgFontFaceElement)
 #endif
 {
 #if !ENABLE(SVG_FONTS)
@@ -154,8 +155,8 @@ void CSSFontFaceSource::load(CSSFontSelector* fontSelector)
     } else {
         bool success = false;
 #if ENABLE(SVG_FONTS)
-        if (m_svgFontFaceElement) {
-            if (is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
+        if (m_hasSVGFontFaceElement) {
+            if (m_svgFontFaceElement && is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
                 ASSERT(!m_inDocumentCustomPlatformData);
                 SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
                 if (auto otfFont = convertSVGToOTFFont(fontElement))
@@ -195,12 +196,11 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 {
     ASSERT(status() == Status::Success);
 
-    SVGFontFaceElement* fontFaceElement = nullptr;
 #if ENABLE(SVG_FONTS)
-    fontFaceElement = m_svgFontFaceElement.get();
+    bool usesInDocumentSVGFont = m_hasSVGFontFaceElement;
 #endif
 
-    if (!m_font && !fontFaceElement) {
+    if (!m_font && !usesInDocumentSVGFont) {
         if (m_immediateSource) {
             if (!m_immediateFontCustomPlatformData)
                 return nullptr;
@@ -222,12 +222,11 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         return result;
     }
 
-    // In-Document SVG Fonts
-    if (!fontFaceElement)
+    if (!usesInDocumentSVGFont)
         return nullptr;
 
 #if ENABLE(SVG_FONTS)
-    if (!is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
+    if (!m_svgFontFaceElement || !is<SVGFontElement>(m_svgFontFaceElement->parentNode()))
         return nullptr;
     if (!m_inDocumentCustomPlatformData)
         return nullptr;
@@ -241,7 +240,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 #if ENABLE(SVG_FONTS)
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    return m_svgFontFaceElement || is<CachedSVGFont>(m_font.get());
+    return m_hasSVGFontFaceElement || is<CachedSVGFont>(m_font.get());
 }
 #endif
 
