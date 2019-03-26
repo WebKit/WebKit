@@ -4812,22 +4812,36 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return _focusedElementInformation.selectOptions;
 }
 
-static bool shouldDeferZoomingToSelectionWhenRevealingFocusedElement(WebKit::InputType type)
+// Note that selectability is also affected by the CSS property user-select.
+static bool mayContainSelectableText(WebKit::InputType type)
 {
     switch (type) {
+    case WebKit::InputType::None:
+    // The following types have custom UI and do not look or behave like a text field.
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+#endif
+    case WebKit::InputType::Date:
+    case WebKit::InputType::DateTimeLocal:
+    case WebKit::InputType::Drawing:
+    case WebKit::InputType::Month:
+    case WebKit::InputType::Select:
+    case WebKit::InputType::Time:
+        return false;
+    // The following types look and behave like a text field.
     case WebKit::InputType::ContentEditable:
-    case WebKit::InputType::Text:
-    case WebKit::InputType::Password:
-    case WebKit::InputType::TextArea:
-    case WebKit::InputType::Search:
+    case WebKit::InputType::DateTime:
     case WebKit::InputType::Email:
-    case WebKit::InputType::URL:
-    case WebKit::InputType::Phone:
     case WebKit::InputType::Number:
     case WebKit::InputType::NumberPad:
+    case WebKit::InputType::Password:
+    case WebKit::InputType::Phone:
+    case WebKit::InputType::Search:
+    case WebKit::InputType::Text:
+    case WebKit::InputType::TextArea:
+    case WebKit::InputType::URL:
+    case WebKit::InputType::Week:
         return true;
-    default:
-        return false;
     }
 }
 
@@ -4837,7 +4851,7 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     if (elementInfo.elementRect.contains(elementInfo.lastInteractionLocation))
         elementInteractionRect = { elementInfo.lastInteractionLocation, { 1, 1 } };
 
-    if (!shouldDeferZoomingToSelectionWhenRevealingFocusedElement(elementInfo.elementType))
+    if (!mayContainSelectableText(elementInfo.elementType))
         return elementInteractionRect;
 
     if (editorState.isMissingPostLayoutData) {
@@ -4973,28 +4987,19 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
 #else
     [self reloadInputViews];
 #endif
-    
-    switch (information.elementType) {
-    case WebKit::InputType::Select:
-    case WebKit::InputType::DateTimeLocal:
-    case WebKit::InputType::Time:
-    case WebKit::InputType::Month:
-    case WebKit::InputType::Date:
-    case WebKit::InputType::Drawing:
-#if ENABLE(INPUT_TYPE_COLOR)
-    case WebKit::InputType::Color:
-#endif
-        break;
-    default:
+
+    if (mayContainSelectableText(_focusedElementInformation.elementType))
         [self _showKeyboard];
-        break;
-    }
-    
+
     // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.
     if (editableChanged)
         [_webView _scheduleVisibleContentRectUpdate];
-    
-    if (!shouldDeferZoomingToSelectionWhenRevealingFocusedElement(_focusedElementInformation.elementType))
+
+    // For elements that have selectable content (e.g. text field) we need to wait for the web process to send an up-to-date
+    // selection rect before we can zoom and reveal the selection. Non-selectable elements (e.g. <select>) can be zoomed
+    // immediately because they have no selection to reveal.
+    BOOL needsEditorStateUpdate = mayContainSelectableText(_focusedElementInformation.elementType);
+    if (!needsEditorStateUpdate)
         [self _zoomToRevealFocusedElement];
 
     [self _updateAccessory];
@@ -5146,7 +5151,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
     // FIXME: If the initial writing direction just changed, we should wait until we get the next post-layout editor state
     // before zooming to reveal the selection rect.
-    if (shouldDeferZoomingToSelectionWhenRevealingFocusedElement(_focusedElementInformation.elementType))
+    if (mayContainSelectableText(_focusedElementInformation.elementType))
         [self _zoomToRevealFocusedElement];
 }
 

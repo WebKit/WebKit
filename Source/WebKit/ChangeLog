@@ -1,3 +1,27 @@
+2019-03-26  Daniel Bates  <dabates@apple.com>
+
+        [iOS][WK2] Use a better concept to describe the reason we defer zooming a focused element: selectabiltiy
+        https://bugs.webkit.org/show_bug.cgi?id=196264
+
+        Reviewed by Wenson Hsieh.
+
+        Rename shouldDeferZoomingToSelectionWhenRevealingFocusedElement() to mayContainSelectableText() to describe
+        the criterion that we will use to decide whether to defer zooming or not. We defer zooming only for elements
+        that may support text selection on initial focus because we do not have an up-to-date selection rect at that
+        time. For element, like <select>, that do not support text selection, we can zoom them immediately when focused.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (mayContainSelectableText): Renamed from shouldDeferZoomingToSelectionWhenRevealingFocusedElement.
+        List all the input types in the switch block and remove the default case to force the compiler to check that we
+        covered all cases. This will prevent unforseen keyboard issues (why isn't the keyboard shown? or why is the keyboard shown?)
+        for future input types that we may add.
+        (rectToRevealWhenZoomingToFocusedElement): Update for renaming.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]): Add a
+        comment to explain why we may need to defer the zoom: the focused element supports text selection and we need
+        to wait for the web process to call back to provide an up-to-date selection rect for us to zoom and reveal.
+        (-[WKContentView _didReceiveEditorStateUpdateAfterFocus]): Update for renaming.
+        (shouldDeferZoomingToSelectionWhenRevealingFocusedElement): Deleted.
+
 2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement async paste method on UIWKInteractionViewProtocol
