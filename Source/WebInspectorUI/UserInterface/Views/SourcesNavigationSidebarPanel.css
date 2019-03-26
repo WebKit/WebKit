@@ -72,7 +72,7 @@
     border-bottom-width: 1px !important;
 }
 
-.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,
+.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoints).collapsed > .header > .options,
 .sidebar > .panel.navigation.sources > .content > .details-section > .content,
 .sidebar > .panel.navigation.sources > .content > .details-section > .content > .group {
     display: block;

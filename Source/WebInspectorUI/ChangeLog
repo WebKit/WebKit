@@ -1,3 +1,14 @@
+2019-03-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: fix typo in CSS selector to always show add breakpoint button
+        https://bugs.webkit.org/show_bug.cgi?id=196241
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoints).collapsed > .header > .options,):
+        (.sidebar > .panel.navigation.sources > .content > .details-section:matches(.paused-reason, .breakpoins).collapsed > .header > .options,): Deleted.
+
 2019-03-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Page Weight indicator clears on pages with zero length resources (macrumors.com)
