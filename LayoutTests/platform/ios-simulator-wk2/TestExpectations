@@ -49,3 +49,5 @@ webkit.org/b/196218 performance-api/performance-observer-periodic.html [ Pass Fa
 
 webkit.org/b/196228 http/tests/cache-storage/cache-clearing-origin.https.html [ Pass Failure ]
 webkit.org/b/196228 http/tests/cache-storage/cache-records-persistency.https.html [ Pass Failure ]
+
+webkit.org/b/196233 fast/viewport/ios/initial-scale-after-changing-view-scale.html [ Pass Timeout ]
