@@ -1,5 +1,16 @@
 2019-03-26  Shawn Roberts  <sroberts@apple.com>
 
+        Layout tests editing/deleting/delete-emoji-1.html
+        editing/deleting/delete-emoji-9.html
+        editing/deleting/delete-emoji.html are failing
+        webkit.org/b/191709
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating test expectations waiting for rebaseline
+
+2019-03-26  Shawn Roberts  <sroberts@apple.com>
+
         imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm is a flaky crash and a failing test
         https://bugs.webkit.org/show_bug.cgi?id=196274
 

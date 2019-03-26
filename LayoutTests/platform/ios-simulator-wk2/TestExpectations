@@ -58,3 +58,7 @@ webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html [ Pass Timeout ]
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html [ Pass Timeout ]
 webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html [ Pass Timeout ]
+
+webkit.org/b/191709 editing/deleting/delete-emoji-1.html [ Pass Failure ]
+webkit.org/b/191709 editing/deleting/delete-emoji-9.html [ Pass Failure ]
+webkit.org/b/191709 editing/deleting/delete-emoji.html [ Pass Failure ]
