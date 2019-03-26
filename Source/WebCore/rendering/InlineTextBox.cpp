@@ -502,6 +502,12 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     boxOrigin.moveBy(localPaintOffset);
     FloatRect boxRect(boxOrigin, FloatSize(logicalWidth(), logicalHeight()));
 
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (visibleToHitTesting())
+            paintInfo.eventRegion->unite(enclosingIntRect(boxRect));
+        return;
+    }
+
     auto* combinedText = this->combinedText();
 
     bool shouldRotate = !isHorizontal() && !combinedText;

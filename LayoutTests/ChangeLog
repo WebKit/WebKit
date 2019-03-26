@@ -1,3 +1,13 @@
+2019-03-26  Antti Koivisto  <antti@apple.com>
+
+        Hit-testing on layers overlapping scrollers should hit-test on text boxes
+        https://bugs.webkit.org/show_bug.cgi?id=195373
+        <rdar://problem/48649865>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-3.html:
+
 2019-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed, rolling out r243450.

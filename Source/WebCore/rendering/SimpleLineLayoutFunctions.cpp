@@ -76,6 +76,18 @@ FloatRect computeOverflow(const RenderBlockFlow& flow, const FloatRect& layoutRe
 
 void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    if (paintInfo.phase == PaintPhase::EventRegion) {
+        if (!flow.visibleToHitTesting())
+            return;
+        auto paintRect = paintInfo.rect;
+        paintRect.moveBy(-paintOffset);
+        for (auto run : layout.runResolver().rangeForRect(paintRect)) {
+            FloatRect visualOverflowRect = computeOverflow(flow, run.rect());
+            paintInfo.eventRegion->unite(enclosingIntRect(visualOverflowRect));
+        }
+        return;
+    }
+
     if (paintInfo.phase != PaintPhase::Foreground)
         return;
 

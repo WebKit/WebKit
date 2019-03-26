@@ -71,6 +71,75 @@ Test that scrollable areas with text overlap are correctly targeted.
     </div>
 </div>
 
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; pointer-events:none">
+    Text text text text text text text text text text text text text text text text text text text text text text
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px">
+        <b>
+            Text text text text text text text text text text text text
+            <i>text text text text text text text text text text</i>
+        </b>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; padding-left:40px">
+        <b>
+            Text text text text text text text text text text text text
+            <i>text text text text text text text text text text</i>
+        </b>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; pointer-events:none">
+        <b>
+            Text text text text text text text text text text text text
+            <i>text text text text text text text text text text</i>
+        </b>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; visibility:hidden">
+        <b style="visibility:visible">
+            Text text text text text text text text text text text text
+            <i>text text text text text text text text text text</i>
+        </b>
+    </div>
+</div>
+
+<div class="case">
+    <div class="overflowscroll target">
+        <div class="scrollcontent"></div>
+    </div>
+    <div class="overlapping" style="top:-60px; visibility:hidden">
+        <b style="visibility:visible">
+            Text text text text text text text text text text text text
+            <i style="visibility:hidden">text text text text text text text text text text</i>
+        </b>
+    </div>
+</div>
+
 <div id=log></div>
 
 </body>
