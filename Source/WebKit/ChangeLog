@@ -1,3 +1,23 @@
+2019-03-25  Tim Horton  <timothy_horton@apple.com>
+
+        Get rid of ENABLE(ANIMATED_KEYBOARD_SCROLLING)
+        https://bugs.webkit.org/show_bug.cgi?id=196224
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/AccessibilitySupportSPI.h:
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator invalidate]):
+        (perpendicularAbsoluteUnitVector):
+        (-[WKKeyboardScrollingAnimator beginWithEvent:]):
+        (-[WKKeyboardScrollingAnimator stopAnimatedScroll]):
+        (-[WKKeyboardScrollingAnimator willStartInteractiveScroll]):
+        (-[WKKeyboardScrollViewAnimator scrollToContentOffset:animated:]):
+        (-[WKKeyboardScrollViewAnimator scrollWithScrollToExtentAnimationTo:]):
+        (-[WKKeyboardScrollingAnimator startRepeatTimerIfNeeded]): Deleted.
+        (-[WKKeyboardScrollingAnimator stopRepeatTimer]): Deleted.
+        (-[WKKeyboardScrollingAnimator performDiscreteScroll]): Deleted.
+
 2019-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Enable IPC sending and receiving non-default-constructible types
