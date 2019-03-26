@@ -1,3 +1,12 @@
+2019-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][Qt] Uninitialized racy ViewBackend
+        https://bugs.webkit.org/show_bug.cgi?id=196247
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/wpe/qt/WPEQtView.h: Initialize the backend pointer to nullptr.
+
 2019-03-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix typo in GLib geolocation API after r243285.
