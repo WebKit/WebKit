@@ -1,3 +1,21 @@
+2019-03-26  Tadeu Zagallo  <tzagallo@apple.com>
+
+        WebAssembly: Fix f32.min, f64.min and f64.max operations on NaN
+        https://bugs.webkit.org/show_bug.cgi?id=196217
+
+        Reviewed by Saam Barati.
+
+        Generalize the fix for f32.max to properly handle NaN by doing an extra GreatherThan
+        comparison in r243446 to all min and max float operations.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Min>):
+        (JSC::Wasm::AirIRGenerator::addFloatingPointMinOrMax):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F32Max>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Min>):
+        (JSC::Wasm::AirIRGenerator::addOp<OpType::F64Max>):
+        * wasm/wasm.json:
+
 2019-03-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         Intl.DateTimeFormat should obey 2-digit hour
