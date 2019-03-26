@@ -34,7 +34,7 @@ _log = logging.getLogger(__name__)
 
 
 class Build(models.Model):
-    patch = models.ForeignKey(Patch, on_delete=models.CASCADE)
+    patch = models.ForeignKey(Patch, on_delete=models.CASCADE, db_constraint=False)
     uid = models.TextField(primary_key=True)
     builder_id = models.IntegerField()
     builder_name = models.TextField()

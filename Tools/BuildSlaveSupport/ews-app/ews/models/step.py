@@ -35,7 +35,7 @@ _log = logging.getLogger(__name__)
 
 class Step(models.Model):
     uid = models.TextField(primary_key=True)
-    build_uid = models.ForeignKey(Build, on_delete=models.CASCADE, db_column='build_uid')
+    build_uid = models.ForeignKey(Build, on_delete=models.CASCADE, db_column='build_uid', db_constraint=False)
     result = models.IntegerField(null=True, blank=True)
     state_string = models.TextField()
     started_at = models.IntegerField(null=True, blank=True)

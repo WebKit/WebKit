@@ -1,5 +1,15 @@
 2019-03-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Set db_constraint to False for Foreign Keys
+        https://bugs.webkit.org/show_bug.cgi?id=196252
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/models/build.py:
+        * BuildSlaveSupport/ews-app/ews/models/step.py:
+
+2019-03-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] is_test_mode_enabled should default to True
         https://bugs.webkit.org/show_bug.cgi?id=196248
 
