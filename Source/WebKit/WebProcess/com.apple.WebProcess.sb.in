@@ -164,6 +164,7 @@
         "hw.model"
         "hw.ncpu"
         "hw.vectorunit"
+        "kern.bootargs" ;; <rdar://problem/47738015>
         "kern.hostname"
         "kern.maxfilesperproc"
         "kern.memorystatus_level"
@@ -183,6 +184,7 @@
 
 (deny iokit-get-properties)
 (allow iokit-get-properties
+    (iokit-property "AAPL,LCD-PowerState-ON") ;; <rdar://problem/47738015>
     (iokit-property "AGCInfo")
     (iokit-property-regex #"^Accel(Caps|NativeDMARowByteAlignment)")
     (iokit-property-regex #"^(Accurate|Extended)MaxDigitizerPressureValue")
@@ -198,6 +200,7 @@
     (iokit-property "BlockSize")
     (iokit-property-regex #"^CEA(ModeID|PixelRepetition)")
     (iokit-property "CFBundleIdentifier")
+    (iokit-property "CFBundleIdentifierKernel") ;; <rdar://problem/47738015>
     (iokit-property "CapsLockDelay")
     (iokit-property "CaseSensitive")
     (iokit-property "ConfigState")

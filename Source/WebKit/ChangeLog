@@ -1,3 +1,16 @@
+2019-03-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=196262
+        <rdar://problem/47738015>
+
+        Reviewed by Brent Fulgham.
+
+        Fix various observed sandbox violations.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-03-26  Tomoki Imai  <Tomoki.Imai@sony.com>
 
         Assertion failure !isInAcceleratedCompositingMode() in DrawingAreaProxyCoordinatedGraphics::incorporateUpdate when forceCompositingMode is turned on
