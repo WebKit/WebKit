@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +44,14 @@ inline SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& t
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
     ASSERT(hasTagName(SVGNames::linearGradientTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::x1Attr, &SVGLinearGradientElement::m_x1>();
+        PropertyRegistry::registerProperty<SVGNames::y1Attr, &SVGLinearGradientElement::m_y1>();
+        PropertyRegistry::registerProperty<SVGNames::x2Attr, &SVGLinearGradientElement::m_x2>();
+        PropertyRegistry::registerProperty<SVGNames::y2Attr, &SVGLinearGradientElement::m_y2>();
+    });
 }
 
 Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedName& tagName, Document& document)
@@ -52,29 +59,18 @@ Ref<SVGLinearGradientElement> SVGLinearGradientElement::create(const QualifiedNa
     return adoptRef(*new SVGLinearGradientElement(tagName, document));
 }
 
-void SVGLinearGradientElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::x1Attr, &SVGLinearGradientElement::m_x1>();
-    registry.registerAttribute<SVGNames::y1Attr, &SVGLinearGradientElement::m_y1>();
-    registry.registerAttribute<SVGNames::x2Attr, &SVGLinearGradientElement::m_x2>();
-    registry.registerAttribute<SVGNames::y2Attr, &SVGLinearGradientElement::m_y2>();
-}
-
 void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::x1Attr)
-        m_x1.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x1->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y1Attr)
-        m_y1.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y1->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::x2Attr)
-        m_x2.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x2->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y2Attr)
-        m_y2.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y2->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -83,7 +79,7 @@ void SVGLinearGradientElement::parseAttribute(const QualifiedName& name, const A
 
 void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
         if (RenderObject* object = renderer())

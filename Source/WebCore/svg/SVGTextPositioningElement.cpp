@@ -27,7 +27,6 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
 #include "SVGAltGlyphElement.h"
-#include "SVGLengthListValues.h"
 #include "SVGNames.h"
 #include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
@@ -41,56 +40,35 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SVGTextPositioningElement);
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document& document)
     : SVGTextContentElement(tagName, document)
 {
-    registerAttributes();
-    
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGTextPositioningElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGTextPositioningElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::dxAttr, &SVGTextPositioningElement::m_dx>();
+        PropertyRegistry::registerProperty<SVGNames::dyAttr, &SVGTextPositioningElement::m_dy>();
         PropertyRegistry::registerProperty<SVGNames::rotateAttr, &SVGTextPositioningElement::m_rotate>();
     });
-}
-
-void SVGTextPositioningElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGTextPositioningElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGTextPositioningElement::m_y>();
-    registry.registerAttribute<SVGNames::dxAttr, &SVGTextPositioningElement::m_dx>();
-    registry.registerAttribute<SVGNames::dyAttr, &SVGTextPositioningElement::m_dy>();
 }
 
 void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::xAttr) {
-        SVGLengthListValues newList;
-        newList.parse(value, LengthModeWidth);
-        m_x.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_x.setValue(WTFMove(newList));
+        m_x->baseVal()->parse(value);
         return;
     }
 
     if (name == SVGNames::yAttr) {
-        SVGLengthListValues newList;
-        newList.parse(value, LengthModeHeight);
-        m_y.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_y.setValue(WTFMove(newList));
+        m_y->baseVal()->parse(value);
         return;
     }
 
     if (name == SVGNames::dxAttr) {
-        SVGLengthListValues newList;
-        newList.parse(value, LengthModeWidth);
-        m_dx.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_dx.setValue(WTFMove(newList));
+        m_dx->baseVal()->parse(value);
         return;
     }
 
     if (name == SVGNames::dyAttr) {
-        SVGLengthListValues newList;
-        newList.parse(value, LengthModeHeight);
-        m_dy.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_dy.setValue(WTFMove(newList));
+        m_dy->baseVal()->parse(value);
         return;
     }
 
@@ -118,7 +96,7 @@ bool SVGTextPositioningElement::isPresentationAttribute(const QualifiedName& nam
 
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
 
         if (attrName != SVGNames::rotateAttr)

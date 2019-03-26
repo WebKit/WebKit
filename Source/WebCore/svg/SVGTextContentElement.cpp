@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,10 +47,9 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     : SVGGraphicsElement(tagName, document)
     , SVGExternalResourcesRequired(this)
 {
-    registerAttributes();
-
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>();
         PropertyRegistry::registerProperty<SVGNames::lengthAdjustAttr, SVGLengthAdjustType, &SVGTextContentElement::m_lengthAdjust>();
     });
 }
@@ -163,14 +162,6 @@ void SVGTextContentElement::collectStyleForPresentationAttribute(const Qualified
     SVGGraphicsElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
-void SVGTextContentElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute(SVGAnimatedCustomLengthAttributeAccessor::singleton<SVGNames::textLengthAttr, &SVGTextContentElement::m_textLength>());
-}
-
 void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
@@ -180,7 +171,7 @@ void SVGTextContentElement::parseAttribute(const QualifiedName& name, const Atom
         if (propertyValue > 0)
             m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
     } else if (name == SVGNames::textLengthAttr)
-        m_textLength.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+        m_textLength->setBaseValInternal(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -190,9 +181,9 @@ void SVGTextContentElement::parseAttribute(const QualifiedName& name, const Atom
 
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         if (attrName == SVGNames::textLengthAttr)
-            m_specifiedTextLength = m_textLength.value();
+            m_specifiedTextLength = m_textLength->baseVal()->value();
 
         if (auto renderer = this->renderer()) {
             InstanceInvalidationGuard guard(*this);
@@ -203,6 +194,14 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 
     SVGGraphicsElement::svgAttributeChanged(attrName);
     SVGExternalResourcesRequired::svgAttributeChanged(attrName);
+}
+
+SVGAnimatedLength& SVGTextContentElement::textLengthAnimated()
+{
+    static NeverDestroyed<SVGLengthValue> defaultTextLength(LengthModeOther);
+    if (m_textLength->baseVal()->value() == defaultTextLength)
+        m_textLength->baseVal()->value().newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength());
+    return m_textLength;
 }
 
 bool SVGTextContentElement::selfHasRelativeLengths() const

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +35,13 @@ inline SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document
     , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::circleTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGCircleElement::m_cx>();
+        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGCircleElement::m_cy>();
+        PropertyRegistry::registerProperty<SVGNames::rAttr, &SVGCircleElement::m_r>();
+    });
 }
 
 Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Document& document)
@@ -43,26 +49,16 @@ Ref<SVGCircleElement> SVGCircleElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new SVGCircleElement(tagName, document));
 }
 
-void SVGCircleElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::cxAttr, &SVGCircleElement::m_cx>();
-    registry.registerAttribute<SVGNames::cyAttr, &SVGCircleElement::m_cy>();
-    registry.registerAttribute<SVGNames::rAttr, &SVGCircleElement::m_r>();
-}
-
 void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::cxAttr)
-        m_cx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_cx->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
-        m_cy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_cy->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rAttr)
-        m_r.setValue(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+        m_r->setBaseValInternal(SVGLengthValue::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -72,7 +68,7 @@ void SVGCircleElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;

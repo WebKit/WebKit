@@ -762,6 +762,11 @@ bool SVGElement::isAnimatedAttribute(const QualifiedName& attributeName) const
     return SVGPropertyAnimatorFactory::isKnownAttribute(attributeName) || isAnimatedPropertyAttribute(attributeName);
 }
 
+bool SVGElement::isAnimatedStyleAttribute(const QualifiedName& attributeName) const
+{
+    return SVGPropertyAnimatorFactory::isKnownAttribute(attributeName) || propertyRegistry().isAnimatedStylePropertyAttribute(attributeName);
+}
+
 std::unique_ptr<SVGAttributeAnimator> SVGElement::createAnimator(const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
 {
     // Property animator, e.g. "fill" or "fill-opacity".

@@ -57,6 +57,10 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGPatternElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGPatternElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGPatternElement::m_width>();
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGPatternElement::m_height>();
         PropertyRegistry::registerProperty<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
     });
@@ -72,10 +76,6 @@ void SVGPatternElement::registerAttributes()
     auto& registry = attributeRegistry();
     if (!registry.isEmpty())
         return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGPatternElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGPatternElement::m_y>();
-    registry.registerAttribute<SVGNames::widthAttr, &SVGPatternElement::m_width>();
-    registry.registerAttribute<SVGNames::heightAttr, &SVGPatternElement::m_height>();
     registry.registerAttribute<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();
 }
 
@@ -104,13 +104,13 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_width->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
-        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_height->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -123,7 +123,7 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isAnimatedLengthAttribute(attrName)) {
+    if (PropertyRegistry::isAnimatedLengthAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;

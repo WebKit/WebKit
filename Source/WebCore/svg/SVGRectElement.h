@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
@@ -33,35 +32,28 @@ class SVGRectElement final : public SVGGeometryElement, public SVGExternalResour
 public:
     static Ref<SVGRectElement> create(const QualifiedName&, Document&);
 
-    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& rx() const { return m_rx.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& ry() const { return m_ry.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& x() const { return m_x->currentValue(); }
+    const SVGLengthValue& y() const { return m_y->currentValue(); }
+    const SVGLengthValue& width() const { return m_width->currentValue(); }
+    const SVGLengthValue& height() const { return m_height->currentValue(); }
+    const SVGLengthValue& rx() const { return m_rx->currentValue(); }
+    const SVGLengthValue& ry() const { return m_ry->currentValue(); }
 
-    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> rxAnimated() { return m_rx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> ryAnimated() { return m_ry.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& xAnimated() { return m_x; }
+    SVGAnimatedLength& yAnimated() { return m_y; }
+    SVGAnimatedLength& widthAnimated() { return m_width; }
+    SVGAnimatedLength& heightAnimated() { return m_height; }
+    SVGAnimatedLength& rxAnimated() { return m_rx; }
+    SVGAnimatedLength& ryAnimated() { return m_ry; }
 
 private:
     SVGRectElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGRectElement, SVGGeometryElement, SVGExternalResourcesRequired>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRectElement, SVGGeometryElement, SVGExternalResourcesRequired>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -73,12 +65,12 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_x { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_y { LengthModeHeight };
-    SVGAnimatedLengthAttribute m_width { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_height { LengthModeHeight };
-    SVGAnimatedLengthAttribute m_rx { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_ry { LengthModeHeight};
+    Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLength> m_rx { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_ry { SVGAnimatedLength::create(this, LengthModeHeight) };
 };
 
 } // namespace WebCore

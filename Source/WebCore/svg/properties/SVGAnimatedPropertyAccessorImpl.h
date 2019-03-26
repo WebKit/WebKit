@@ -109,6 +109,53 @@ private:
 };
 
 template<typename OwnerType>
+class SVGAnimatedLengthAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedLength> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedLength>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedLength> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedLengthAccessor, property>(); }
+
+private:
+    bool isAnimatedLength() const override { return true; }
+
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        SVGLengthMode lengthMode = property(owner)->baseVal()->value().unitMode();
+        return SVGAnimatedLengthAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive, lengthMode);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedLengthAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType>
+class SVGAnimatedLengthListAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedLengthList> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedLengthList>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedLengthList> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedLengthListAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedLengthListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive, LengthModeWidth);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedLengthListAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
+template<typename OwnerType>
 class SVGAnimatedNumberAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumber> {
     using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedNumber>;
 

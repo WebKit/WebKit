@@ -71,11 +71,12 @@
     itemInAnotherList.value = 50;
     shouldBe("text2.x.baseVal.getItem(1).value", "50");
 
-    // Spec: If the inserted item is already in a list, it is removed from its previous list before it is inserted into this list.
-    //       The inserted item is the item itself and not a copy.
+    // Spec: If the inserted item is already in a list, a copy of the item will be inserted.
     debug("");
     debug("Override the third text elements x list with the item x=50 from the second text element, where it should be removed afterwards");
-    shouldBe("text3.x.baseVal.initialize(itemInAnotherList)", "itemInAnotherList");
+    shouldBe("text3.x.baseVal.initialize(itemInAnotherList)", "text3.x.baseVal.getItem(0)");
+    shouldBeEqualToString("text2.x.baseVal.removeItem(1).toString()", "[object SVGLength]");
+    itemInAnotherList = text3.x.baseVal.getItem(0);
     shouldBe("text3.x.baseVal.getItem(0).value", "50");
     shouldBe("text2.x.baseVal.getItem(0).value", "50");
     shouldThrow("text2.x.baseVal.getItem(1)");
@@ -91,7 +92,8 @@
 
     debug("");
     debug("Move item from text3 to text4");
-    shouldBe("text4.x.baseVal.initialize(text3.x.baseVal.getItem(0))", "itemInAnotherList");
+    shouldBe("text4.x.baseVal.initialize(text3.x.baseVal.getItem(0))", "text4.x.baseVal.getItem(0)");
+    shouldBeEqualToString("text3.x.baseVal.removeItem(0).toString()", "[object SVGLength]");
     shouldBe("text4.x.baseVal.getItem(0).value", "50");
     shouldThrow("text3.x.baseVal.getItem(0)");
 

@@ -46,6 +46,7 @@ PASS text2.x.baseVal.getItem(4) threw exception IndexSizeError: The index is not
 
 Replace the first item in text2 x list with the third item in the list
 PASS text2.x.baseVal.replaceItem(text2.x.baseVal.getItem(2), 0).value is 50
+PASS text2.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text2.x.baseVal.numberOfItems is 3
 PASS text2.x.baseVal.getItem(0).value is 50
 PASS text2.x.baseVal.getItem(1).value is 100
@@ -70,6 +71,7 @@ PASS text4.x.baseVal.getItem(4) threw exception IndexSizeError: The index is not
 
 Replace the first item in text4 x list with the second item in the text3 x list
 PASS text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(1), 0).value is 50
+PASS text3.x.baseVal.removeItem(1).toString() is "[object SVGLength]"
 PASS text3.x.baseVal.numberOfItems is 4
 PASS text3.x.baseVal.getItem(0).value is 50
 PASS text3.x.baseVal.getItem(1).value is 100
@@ -85,6 +87,7 @@ PASS text4.x.baseVal.getItem(4) threw exception IndexSizeError: The index is not
 
 Replace the second item in text4 x list with the second item in the text4 x list
 PASS text4.x.baseVal.replaceItem(text3.x.baseVal.getItem(2), 1).value is 100
+PASS text3.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text4.x.baseVal.numberOfItems is 4
 PASS text4.x.baseVal.getItem(0).value is 50
 PASS text4.x.baseVal.getItem(1).value is 100

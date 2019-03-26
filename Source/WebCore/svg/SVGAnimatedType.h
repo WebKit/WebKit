@@ -81,8 +81,6 @@ public:
     AnimatedPropertyType type() const
     {
         static AnimatedPropertyType animatedTypes[] = {
-            AnimatedLength,
-            AnimatedLengthList,
             AnimatedPath,
             AnimatedTransformList
         };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,92 @@
 
 #pragma once
 
-#include "SVGAnimatedListPropertyTearOff.h"
-#include "SVGLengthListValues.h"
-#include "SVGListPropertyTearOff.h"
+#include "SVGLength.h"
+#include "SVGValuePropertyList.h"
 
 namespace WebCore {
 
-class SVGLengthList : public SVGListPropertyTearOff<SVGLengthListValues> {
+class SVGLengthList : public SVGValuePropertyList<SVGLength> {
+    using Base = SVGValuePropertyList<SVGLength>;
+    using Base::Base;
+
 public:
-    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGLengthListValues>;
-    using ListWrapperCache = AnimatedListPropertyTearOff::ListWrapperCache;
-
-    static Ref<SVGLengthList> create(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGLengthListValues& values, ListWrapperCache& wrappers)
+    static Ref<SVGLengthList> create(SVGLengthMode lengthMode = LengthModeOther)
     {
-        return adoptRef(*new SVGLengthList(animatedProperty, role, values, wrappers));
+        return adoptRef(*new SVGLengthList(lengthMode));
     }
 
+    static Ref<SVGLengthList> create(SVGPropertyOwner* owner, SVGPropertyAccess access, SVGLengthMode lengthMode)
+    {
+        return adoptRef(*new SVGLengthList(owner, access, lengthMode));
+    }
+
+    static Ref<SVGLengthList> create(const SVGLengthList& other, SVGPropertyAccess access)
+    {
+        return adoptRef(*new SVGLengthList(other, access));
+    }
+
+    SVGLengthMode lengthMode() const { return m_lengthMode; }
+
+    bool parse(const String& value)
+    {
+        clearItems();
+
+        auto upconvertedCharacters = StringView(value).upconvertedCharacters();
+        const UChar* ptr = upconvertedCharacters;
+        const UChar* end = ptr + value.length();
+        while (ptr < end) {
+            const UChar* start = ptr;
+            while (ptr < end && *ptr != ',' && !isSVGSpace(*ptr))
+                ptr++;
+            if (ptr == start)
+                break;
+
+            String valueString(start, ptr - start);
+            SVGLengthValue value(m_lengthMode);
+            if (value.setValueAsString(valueString).hasException())
+                break;
+
+            append(SVGLength::create(value));
+            skipOptionalSVGSpacesOrDelimiter(ptr, end);
+        }
+
+        return ptr == end;
+    }
+
+    String valueAsString() const override
+    {
+        StringBuilder builder;
+
+        for (const auto& length : m_items) {
+            if (builder.length())
+                builder.append(' ');
+
+            builder.append(length->value().valueAsString());
+        }
+
+        return builder.toString();
+    }
+    
 private:
-    SVGLengthList(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGLengthListValues& values, ListWrapperCache& wrappers)
-        : SVGListPropertyTearOff<SVGLengthListValues>(animatedProperty, role, values, wrappers)
+    SVGLengthList(SVGLengthMode lengthMode)
+        : m_lengthMode(lengthMode)
     {
     }
+
+    SVGLengthList(SVGPropertyOwner* owner, SVGPropertyAccess access, SVGLengthMode lengthMode)
+        : Base(owner, access)
+        , m_lengthMode(lengthMode)
+    {
+    }
+
+    SVGLengthList(const SVGLengthList& other, SVGPropertyAccess access)
+        : Base(other, access)
+        , m_lengthMode(other.lengthMode())
+    {
+    }
+
+    SVGLengthMode m_lengthMode { LengthModeOther };
 };
 
 } // namespace WebCore

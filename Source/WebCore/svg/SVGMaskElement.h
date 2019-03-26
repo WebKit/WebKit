@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
@@ -34,17 +33,17 @@ class SVGMaskElement final : public SVGElement, public SVGExternalResourcesRequi
 public:
     static Ref<SVGMaskElement> create(const QualifiedName&, Document&);
 
-    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& x() const { return m_x->currentValue(); }
+    const SVGLengthValue& y() const { return m_y->currentValue(); }
+    const SVGLengthValue& width() const { return m_width->currentValue(); }
+    const SVGLengthValue& height() const { return m_height->currentValue(); }
     SVGUnitTypes::SVGUnitType maskUnits() const { return m_maskUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGUnitTypes::SVGUnitType maskContentUnits() const { return m_maskContentUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
 
-    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& xAnimated() { return m_x; }
+    SVGAnimatedLength& yAnimated() { return m_y; }
+    SVGAnimatedLength& widthAnimated() { return m_width; }
+    SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedEnumeration& maskUnitsAnimated() { return m_maskUnits; }
     SVGAnimatedEnumeration& maskContentUnitsAnimated() { return m_maskContentUnits; }
 
@@ -59,7 +58,6 @@ private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMaskElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    static bool isAnimatedLengthAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isAnimatedLengthAttribute(attributeName); }
     static bool isKnownAttribute(const QualifiedName& attributeName)
     {
         return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
@@ -77,10 +75,10 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_x { LengthModeWidth, "-10%" };
-    SVGAnimatedLengthAttribute m_y { LengthModeHeight, "-10%" };
-    SVGAnimatedLengthAttribute m_width { LengthModeWidth, "120%" };
-    SVGAnimatedLengthAttribute m_height { LengthModeHeight, "120%" };
+    Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth, "-10%") };
+    Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, LengthModeHeight, "-10%") };
+    Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, LengthModeWidth, "120%") };
+    Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, LengthModeHeight, "120%") };
     Ref<SVGAnimatedEnumeration> m_maskUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
     Ref<SVGAnimatedEnumeration> m_maskContentUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
 };

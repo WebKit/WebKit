@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 
@@ -36,26 +35,24 @@ public:
 
     bool collectGradientAttributes(RadialGradientAttributes&);
 
-    const SVGLengthValue& cx() const { return m_cx.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& cy() const { return m_cy.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& r() const { return m_r.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& fx() const { return m_fx.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& fy() const { return m_fy.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& fr() const { return m_fr.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& cx() const { return m_cx->currentValue(); }
+    const SVGLengthValue& cy() const { return m_cy->currentValue(); }
+    const SVGLengthValue& r() const { return m_r->currentValue(); }
+    const SVGLengthValue& fx() const { return m_fx->currentValue(); }
+    const SVGLengthValue& fy() const { return m_fy->currentValue(); }
+    const SVGLengthValue& fr() const { return m_fr->currentValue(); }
 
-    RefPtr<SVGAnimatedLength> cxAnimated() { return m_cx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> cyAnimated() { return m_cy.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> rAnimated() { return m_r.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> fxAnimated() { return m_fx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> fyAnimated() { return m_fy.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> frAnimated() { return m_fr.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& cxAnimated() { return m_cx; }
+    SVGAnimatedLength& cyAnimated() { return m_cy; }
+    SVGAnimatedLength& rAnimated() { return m_r; }
+    SVGAnimatedLength& fxAnimated() { return m_fx; }
+    SVGAnimatedLength& fyAnimated() { return m_fy; }
+    SVGAnimatedLength& frAnimated() { return m_fr; }
 
 private:
     SVGRadialGradientElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGRadialGradientElement, SVGGradientElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
@@ -70,12 +67,12 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_cx { LengthModeWidth, "50%" };
-    SVGAnimatedLengthAttribute m_cy { LengthModeHeight, "50%" };
-    SVGAnimatedLengthAttribute m_r { LengthModeOther, "50%" };
-    SVGAnimatedLengthAttribute m_fx { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_fy { LengthModeHeight };
-    SVGAnimatedLengthAttribute m_fr { LengthModeOther, "0%" };
+    Ref<SVGAnimatedLength> m_cx { SVGAnimatedLength::create(this, LengthModeWidth, "50%") };
+    Ref<SVGAnimatedLength> m_cy { SVGAnimatedLength::create(this, LengthModeHeight, "50%") };
+    Ref<SVGAnimatedLength> m_r { SVGAnimatedLength::create(this, LengthModeOther, "50%") };
+    Ref<SVGAnimatedLength> m_fx { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_fy { SVGAnimatedLength::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLength> m_fr { SVGAnimatedLength::create(this, LengthModeOther, "0%") };
 };
 
 } // namespace WebCore

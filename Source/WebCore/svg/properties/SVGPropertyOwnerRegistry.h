@@ -66,6 +66,18 @@ public:
     {
         registerProperty(attributeName, SVGAnimatedIntegerAccessor<OwnerType>::template singleton<property>());
     }
+    
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedLength> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedLengthAccessor<OwnerType>::template singleton<property>());
+    }
+
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedLengthList> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedLengthListAccessor<OwnerType>::template singleton<property>());
+    }
 
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedNumber> OwnerType::*property>
     static void registerProperty()

@@ -2267,8 +2267,6 @@ svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
-svg/SVGAnimatedLength.cpp
-svg/SVGAnimatedLengthList.cpp
 svg/SVGAnimatedPath.cpp
 svg/SVGAnimatedTransformList.cpp
 svg/SVGAnimatedTypeAnimator.cpp
@@ -2334,7 +2332,6 @@ svg/SVGImageLoader.cpp
 svg/SVGLangSpace.cpp
 svg/SVGLegacyAttributeAnimationController.cpp
 svg/SVGLengthContext.cpp
-svg/SVGLengthListValues.cpp
 svg/SVGLengthValue.cpp
 svg/SVGLineElement.cpp
 svg/SVGLinearGradientElement.cpp

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +35,14 @@ inline SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Docume
     , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::ellipseTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::cxAttr, &SVGEllipseElement::m_cx>();
+        PropertyRegistry::registerProperty<SVGNames::cyAttr, &SVGEllipseElement::m_cy>();
+        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
+        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
+    });
 }    
 
 Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, Document& document)
@@ -43,29 +50,18 @@ Ref<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tagName, D
     return adoptRef(*new SVGEllipseElement(tagName, document));
 }
 
-void SVGEllipseElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::cxAttr, &SVGEllipseElement::m_cx>();
-    registry.registerAttribute<SVGNames::cyAttr, &SVGEllipseElement::m_cy>();
-    registry.registerAttribute<SVGNames::rxAttr, &SVGEllipseElement::m_rx>();
-    registry.registerAttribute<SVGNames::ryAttr, &SVGEllipseElement::m_ry>();
-}
-
 void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::cxAttr)
-        m_cx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_cx->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::cyAttr)
-        m_cy.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_cy->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rxAttr)
-        m_rx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_rx->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::ryAttr)
-        m_ry.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_ry->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -75,7 +71,7 @@ void SVGEllipseElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;

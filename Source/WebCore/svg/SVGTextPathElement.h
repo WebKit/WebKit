@@ -111,11 +111,11 @@ public:
 
     static Ref<SVGTextPathElement> create(const QualifiedName&, Document&);
 
-    const SVGLengthValue& startOffset() const { return m_startOffset.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& startOffset() const { return m_startOffset->currentValue(); }
     SVGTextPathMethodType method() const { return m_method->currentValue<SVGTextPathMethodType>(); }
     SVGTextPathSpacingType spacing() const { return m_spacing->currentValue<SVGTextPathSpacingType>(); }
 
-    RefPtr<SVGAnimatedLength> startOffsetAnimated() { return m_startOffset.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& startOffsetAnimated() { return m_startOffset; }
     SVGAnimatedEnumeration& methodAnimated() { return m_method; }
     SVGAnimatedEnumeration& spacingAnimated() { return m_spacing; }
 
@@ -127,17 +127,10 @@ private:
     virtual ~SVGTextPathElement();
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPathElement, SVGTextContentElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -155,7 +148,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_startOffset { LengthModeOther };
+    Ref<SVGAnimatedLength> m_startOffset { SVGAnimatedLength::create(this, LengthModeOther) };
     Ref<SVGAnimatedEnumeration> m_method { SVGAnimatedEnumeration::create(this, SVGTextPathMethodAlign) };
     Ref<SVGAnimatedEnumeration> m_spacing { SVGAnimatedEnumeration::create(this, SVGTextPathSpacingExact) };
 };

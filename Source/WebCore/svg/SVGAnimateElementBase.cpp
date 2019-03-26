@@ -25,6 +25,7 @@
 #include "SVGAnimateElementBase.h"
 
 #include "QualifiedName.h"
+#include "SVGAnimatorFactory.h"
 #include "SVGAttributeAnimationController.h"
 #include "SVGElement.h"
 #include "SVGLegacyAttributeAnimationController.h"
@@ -63,7 +64,7 @@ bool SVGAnimateElementBase::hasValidAttributeType() const
     if (!targetElement() || hasInvalidCSSAttributeType())
         return false;
 
-    if (determineAnimatedPropertyType(*targetElement()) != AnimatedUnknown)
+    if (SVGAnimatorFactory::isSupportedAttributeType(determineAnimatedPropertyType(*targetElement())))
         return true;
 
     return targetElement()->isAnimatedAttribute(attributeName());

@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +36,16 @@ inline SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document& do
     , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::rectTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGRectElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGRectElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGRectElement::m_width>();
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGRectElement::m_height>();
+        PropertyRegistry::registerProperty<SVGNames::rxAttr, &SVGRectElement::m_rx>();
+        PropertyRegistry::registerProperty<SVGNames::ryAttr, &SVGRectElement::m_ry>();
+    });
 }
 
 Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Document& document)
@@ -44,35 +53,22 @@ Ref<SVGRectElement> SVGRectElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGRectElement(tagName, document));
 }
 
-void SVGRectElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGRectElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGRectElement::m_y>();
-    registry.registerAttribute<SVGNames::widthAttr, &SVGRectElement::m_width>();
-    registry.registerAttribute<SVGNames::heightAttr, &SVGRectElement::m_height>();
-    registry.registerAttribute<SVGNames::rxAttr, &SVGRectElement::m_rx>();
-    registry.registerAttribute<SVGNames::ryAttr, &SVGRectElement::m_ry>();
-}
-
 void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::rxAttr)
-        m_rx.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_rx->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::ryAttr)
-        m_ry.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_ry->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::widthAttr)
-        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_width->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
-        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_height->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -82,7 +78,7 @@ void SVGRectElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         invalidateSVGPresentationAttributeStyle();
         return;

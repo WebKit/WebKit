@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 
@@ -36,31 +35,24 @@ public:
 
     bool collectGradientAttributes(LinearGradientAttributes&);
 
-    const SVGLengthValue& x1() const { return m_x1.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& y1() const { return m_y1.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& x2() const { return m_x2.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& y2() const { return m_y2.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& x1() const { return m_x1->currentValue(); }
+    const SVGLengthValue& y1() const { return m_y1->currentValue(); }
+    const SVGLengthValue& x2() const { return m_x2->currentValue(); }
+    const SVGLengthValue& y2() const { return m_y2->currentValue(); }
 
-    RefPtr<SVGAnimatedLength> x1Animated() { return m_x1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> y1Animated() { return m_y1.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> x2Animated() { return m_x2.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> y2Animated() { return m_y2.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& x1Animated() { return m_x1; }
+    SVGAnimatedLength& y1Animated() { return m_y1; }
+    SVGAnimatedLength& x2Animated() { return m_x2; }
+    SVGAnimatedLength& y2Animated() { return m_y2; }
 
 private:
     SVGLinearGradientElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGLinearGradientElement, SVGGradientElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGLinearGradientElement, SVGGradientElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -71,10 +63,10 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_x1 { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_y1 { LengthModeHeight };
-    SVGAnimatedLengthAttribute m_x2 { LengthModeWidth, "100%" };
-    SVGAnimatedLengthAttribute m_y2 { LengthModeHeight };
+    Ref<SVGAnimatedLength> m_x1 { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_y1 { SVGAnimatedLength::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLength> m_x2 { SVGAnimatedLength::create(this, LengthModeWidth, "100%") };
+    Ref<SVGAnimatedLength> m_y2 { SVGAnimatedLength::create(this, LengthModeHeight) };
 };
 
 } // namespace WebCore

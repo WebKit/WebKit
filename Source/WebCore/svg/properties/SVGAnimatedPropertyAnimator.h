@@ -75,6 +75,8 @@ public:
 
     void apply(SVGElement* targetElement) override
     {
+        if (isAnimatedStylePropertyAniamtor(targetElement))
+            applyAnimatedStylePropertyChange(targetElement, m_animated->animValAsString());
         applyAnimatedPropertyChange(targetElement);
     }
 
@@ -88,6 +90,8 @@ public:
             instance->instanceStopAnimation();
 
         applyAnimatedPropertyChange(targetElement);
+        if (isAnimatedStylePropertyAniamtor(targetElement))
+            removeAnimatedStyleProperty(targetElement);
     }
 
     float calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override

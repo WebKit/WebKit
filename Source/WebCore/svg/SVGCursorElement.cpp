@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,12 @@ inline SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::cursorTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGCursorElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGCursorElement::m_y>();
+    });
 }
 
 Ref<SVGCursorElement> SVGCursorElement::create(const QualifiedName& tagName, Document& document)
@@ -54,23 +59,14 @@ SVGCursorElement::~SVGCursorElement()
         client->cursorElementRemoved(*this);
 }
 
-void SVGCursorElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGCursorElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGCursorElement::m_y>();
-}
-
 void SVGCursorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -92,7 +88,7 @@ void SVGCursorElement::removeClient(CSSCursorImageValue& value)
 
 void SVGCursorElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         for (auto& client : m_clients)
             client->cursorElementChanged(*this);

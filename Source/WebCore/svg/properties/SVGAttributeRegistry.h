@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
 #include "SVGLegacyAnimatedProperty.h"
@@ -51,18 +49,6 @@ public:
     }
 
     // Animatable attributes
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedLengthAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedLengthAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedLengthListAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedLengthListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedTransformListAttribute OwnerType::*attribute>
     void registerAttribute()
     {

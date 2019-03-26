@@ -46,7 +46,8 @@
 
     debug("");
     debug("Append fourth item x=900 to the text1 x list");
-    shouldBe("text1.x.baseVal.appendItem(text1.x.baseVal.getItem(3))", "text1.x.baseVal.getItem(4)");
+    shouldBe("text1.x.baseVal.appendItem(text1.x.baseVal.getItem(3))", "text1.x.baseVal.getItem(5)");
+    shouldBeEqualToString("text1.x.baseVal.removeItem(3).toString()", "[object SVGLength]");
     shouldBe("text1.x.baseVal.numberOfItems", "5");
     shouldBe("text1.x.baseVal.getItem(0).value", "500");
     shouldBe("text1.x.baseVal.getItem(1).value", "50");
@@ -57,7 +58,8 @@
 
     debug("");
     debug("Append first item x=500 to the text1 x list");
-    shouldBe("text1.x.baseVal.appendItem(text1.x.baseVal.getItem(0))", "text1.x.baseVal.getItem(4)");
+    shouldBe("text1.x.baseVal.appendItem(text1.x.baseVal.getItem(0))", "text1.x.baseVal.getItem(5)");
+    shouldBeEqualToString("text1.x.baseVal.removeItem(0).toString()", "[object SVGLength]");
     shouldBe("text1.x.baseVal.numberOfItems", "5");
     shouldBe("text1.x.baseVal.getItem(0).value", "50");
     shouldBe("text1.x.baseVal.getItem(1).value", "100");
@@ -81,7 +83,9 @@
     debug("");
     debug("Append third and fourth item of the text1 x list to the text2 x list");
     shouldBe("text2.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value", "1000");
+    shouldBeEqualToString("text1.x.baseVal.removeItem(2).toString()", "[object SVGLength]");
     shouldBe("text2.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value", "900");
+    shouldBeEqualToString("text1.x.baseVal.removeItem(2).toString()", "[object SVGLength]");
     shouldBe("text1.x.baseVal.numberOfItems", "4");
     shouldBe("text1.x.baseVal.getItem(0).value", "50");
     shouldBe("text1.x.baseVal.getItem(1).value", "100");
@@ -103,10 +107,14 @@
     debug("");
     debug("Shuffle around items in text1 and text2 list using appendItem, to get x=50,100,150,... in both lists");
     shouldBe("text1.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value", "500");
+    shouldBeEqualToString("text1.x.baseVal.removeItem(2).toString()", "[object SVGLength]");
     shouldBe("text2.x.baseVal.appendItem(newLength2).value", "150");
     shouldBe("text2.x.baseVal.appendItem(text2.x.baseVal.getItem(2)).value", "1000");
+    shouldBeEqualToString("text2.x.baseVal.removeItem(2).toString()", "[object SVGLength]");
     shouldBe("text2.x.baseVal.appendItem(text2.x.baseVal.getItem(3)).value", "900");
+    shouldBeEqualToString("text2.x.baseVal.removeItem(3).toString()", "[object SVGLength]");
     shouldBe("text2.x.baseVal.appendItem(text2.x.baseVal.getItem(2)).value", "1000");
+    shouldBeEqualToString("text2.x.baseVal.removeItem(2).toString()", "[object SVGLength]");
     shouldBe("text1.x.baseVal.numberOfItems", "4");
     shouldBe("text1.x.baseVal.getItem(0).value", "50");
     shouldBe("text1.x.baseVal.getItem(1).value", "100");

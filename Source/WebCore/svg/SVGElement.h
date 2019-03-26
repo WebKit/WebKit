@@ -156,6 +156,7 @@ public:
 
     bool isAnimatedPropertyAttribute(const QualifiedName&) const;
     bool isAnimatedAttribute(const QualifiedName&) const;
+    bool isAnimatedStyleAttribute(const QualifiedName&) const;
 
     void commitPropertyChange(SVGProperty*) override;
     void commitPropertyChange(SVGAnimatedProperty&);

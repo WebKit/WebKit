@@ -148,6 +148,59 @@ private:
     }
 };
 
+class SVGAnimationLengthFunction : public SVGAnimationAdditiveValueFunction<SVGLengthValue> {
+    using Base = SVGAnimationAdditiveValueFunction<SVGLengthValue>;
+
+public:
+    SVGAnimationLengthFunction(AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive, SVGLengthMode lengthMode)
+        : Base(animationMode, calcMode, isAccumulated, isAdditive)
+        , m_lengthMode(lengthMode)
+    {
+    }
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGLengthValue(m_lengthMode, from);
+        m_to = SVGLengthValue(m_lengthMode, to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration = SVGLengthValue(m_lengthMode, toAtEndOfDuration);
+    }
+
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount, SVGLengthValue& animated)
+    {
+        SVGLengthContext lengthContext(targetElement);
+        SVGLengthType unitType = percentage < 0.5 ? m_from.unitType() : m_to.unitType();
+
+        float from = (m_animationMode == AnimationMode::To ? animated : m_from).value(lengthContext);
+        float to = m_to.value(lengthContext);
+        float toAtEndOfDuration = this->toAtEndOfDuration().value(lengthContext);
+        float value = animated.value(lengthContext);
+
+        value = Base::progress(percentage, repeatCount, from, to, toAtEndOfDuration, value);
+        animated = { lengthContext, value, m_lengthMode, unitType };
+    }
+
+    float calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    {
+        SVGLengthContext lengthContext(targetElement);
+        auto fromLength = SVGLengthValue(m_lengthMode, from);
+        auto toLength = SVGLengthValue(m_lengthMode, to);
+        return fabsf(toLength.value(lengthContext) - fromLength.value(lengthContext));
+    }
+
+private:
+    void addFromAndToValues(SVGElement* targetElement) override
+    {
+        SVGLengthContext lengthContext(targetElement);
+        m_to.setValue(m_to.value(lengthContext) + m_from.value(lengthContext), lengthContext);
+    }
+
+    SVGLengthMode m_lengthMode;
+};
+
 class SVGAnimationNumberFunction : public SVGAnimationAdditiveValueFunction<float> {
     friend class SVGAnimatedNumberPairAnimator;
 

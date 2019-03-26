@@ -62,7 +62,8 @@ PASS text1.x.baseVal.getItem(5).value is 50
 PASS text1.x.baseVal.getItem(6) threw exception IndexSizeError: The index is not in the allowed range..
 
 Insert item 'newLength3' at position=1, between '100' and '500', remove it from the old position=2 afterwards.
-PASS text1.x.baseVal.insertItemBefore(newLength3, 1) is newLength3
+PASS text1.x.baseVal.insertItemBefore(newLength3, 1) is text1.x.baseVal.getItem(1)
+PASS text1.x.baseVal.removeItem(3).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 6
 PASS text1.x.baseVal.getItem(0).value is 100
 PASS text1.x.baseVal.getItem(1).value is 150
@@ -73,7 +74,8 @@ PASS text1.x.baseVal.getItem(5).value is 50
 PASS text1.x.baseVal.getItem(6) threw exception IndexSizeError: The index is not in the allowed range..
 
 Insert item 'newLength3' at position=0, before '100', remove it from the old position=5 afterwards.
-PASS text1.x.baseVal.insertItemBefore(newLength1, 0) is newLength1
+PASS text1.x.baseVal.insertItemBefore(newLength1, 0) is text1.x.baseVal.getItem(0)
+PASS text1.x.baseVal.removeItem(6).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 6
 PASS text1.x.baseVal.getItem(0).value is 50
 PASS text1.x.baseVal.getItem(1).value is 100

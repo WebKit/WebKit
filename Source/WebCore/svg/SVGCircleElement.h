@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGeometryElement.h"
 #include "SVGNames.h"
@@ -33,29 +32,22 @@ class SVGCircleElement final : public SVGGeometryElement, public SVGExternalReso
 public:
     static Ref<SVGCircleElement> create(const QualifiedName&, Document&);
 
-    const SVGLengthValue& cx() const { return m_cx.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& cy() const { return m_cy.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& r() const { return m_r.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& cx() const { return m_cx->currentValue(); }
+    const SVGLengthValue& cy() const { return m_cy->currentValue(); }
+    const SVGLengthValue& r() const { return m_r->currentValue(); }
 
-    RefPtr<SVGAnimatedLength> cxAnimated() { return m_cx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> cyAnimated() { return m_cy.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> rAnimated() { return m_r.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& cxAnimated() { return m_cx; }
+    SVGAnimatedLength& cyAnimated() { return m_cy; }
+    SVGAnimatedLength& rAnimated() { return m_r; }
 
 private:
     SVGCircleElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGCircleElement, SVGGeometryElement, SVGExternalResourcesRequired>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGCircleElement, SVGGeometryElement, SVGExternalResourcesRequired>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -67,9 +59,9 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthAttribute m_cx { LengthModeWidth };
-    SVGAnimatedLengthAttribute m_cy { LengthModeHeight };
-    SVGAnimatedLengthAttribute m_r { LengthModeOther };
+    Ref<SVGAnimatedLength> m_cx { SVGAnimatedLength::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLength> m_cy { SVGAnimatedLength::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLength> m_r { SVGAnimatedLength::create(this, LengthModeOther) };
 };
 
 } // namespace WebCore

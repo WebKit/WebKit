@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,10 +43,12 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
     , SVGURIReference(this)
     , m_imageLoader(*this)
 {
-    registerAttributes();
-
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGImageElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGImageElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGImageElement::m_width>();
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGImageElement::m_height>();
         PropertyRegistry::registerProperty<SVGNames::preserveAspectRatioAttr, &SVGImageElement::m_preserveAspectRatio>();
     });
 }
@@ -65,17 +67,6 @@ bool SVGImageElement::hasSingleSecurityOrigin() const
     return !image || image->hasSingleSecurityOrigin();
 }
 
-void SVGImageElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGImageElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGImageElement::m_y>();
-    registry.registerAttribute<SVGNames::widthAttr, &SVGImageElement::m_width>();
-    registry.registerAttribute<SVGNames::heightAttr, &SVGImageElement::m_height>();
-}
-
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::preserveAspectRatioAttr) {
@@ -88,13 +79,13 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicStri
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+        m_width->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
     else if (name == SVGNames::heightAttr)
-        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+        m_height->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
 
     reportAttributeParsingError(parseError, name, value);
 

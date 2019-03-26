@@ -23,7 +23,6 @@
 
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceFilterPrimitive.h"
-#include "SVGAnimatedLength.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include <wtf/RefPtr.h>
@@ -48,16 +47,16 @@ public:
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
 
-    const SVGLengthValue& x() const { return m_x.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& y() const { return m_y.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& width() const { return m_width.currentValue(attributeOwnerProxy()); }
-    const SVGLengthValue& height() const { return m_height.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& x() const { return m_x->currentValue(); }
+    const SVGLengthValue& y() const { return m_y->currentValue(); }
+    const SVGLengthValue& width() const { return m_width->currentValue(); }
+    const SVGLengthValue& height() const { return m_height->currentValue(); }
     String result() const { return m_result->currentValue(); }
 
-    RefPtr<SVGAnimatedLength> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> widthAnimated() { return m_width.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLength> heightAnimated() { return m_height.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& xAnimated() { return m_x; }
+    SVGAnimatedLength& yAnimated() { return m_y; }
+    SVGAnimatedLength& widthAnimated() { return m_width; }
+    SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedString& resultAnimated() { return m_result; }
 
 protected:
@@ -71,15 +70,8 @@ protected:
     void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     bool isFilterEffect() const override { return true; }
 
@@ -91,10 +83,10 @@ private:
     PropertyRegistry m_propertyRegistry { *this };
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
-    SVGAnimatedLengthAttribute m_x { LengthModeWidth, "0%" };
-    SVGAnimatedLengthAttribute m_y { LengthModeHeight, "0%" };
-    SVGAnimatedLengthAttribute m_width { LengthModeWidth, "100%" };
-    SVGAnimatedLengthAttribute m_height { LengthModeHeight, "100%" };
+    Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth, "0%") };
+    Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, LengthModeHeight, "0%") };
+    Ref<SVGAnimatedLength> m_width { SVGAnimatedLength::create(this, LengthModeWidth, "100%") };
+    Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, LengthModeHeight, "100%") };
     Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
 

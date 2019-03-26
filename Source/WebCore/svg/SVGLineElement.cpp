@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,7 +35,14 @@ inline SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document& do
     , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::lineTag));
-    registerAttributes();
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::x1Attr, &SVGLineElement::m_x1>();
+        PropertyRegistry::registerProperty<SVGNames::y1Attr, &SVGLineElement::m_y1>();
+        PropertyRegistry::registerProperty<SVGNames::x2Attr, &SVGLineElement::m_x2>();
+        PropertyRegistry::registerProperty<SVGNames::y2Attr, &SVGLineElement::m_y2>();
+    });
 }
 
 Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Document& document)
@@ -43,29 +50,18 @@ Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Documen
     return adoptRef(*new SVGLineElement(tagName, document));
 }
 
-void SVGLineElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::x1Attr, &SVGLineElement::m_x1>();
-    registry.registerAttribute<SVGNames::y1Attr, &SVGLineElement::m_y1>();
-    registry.registerAttribute<SVGNames::x2Attr, &SVGLineElement::m_x2>();
-    registry.registerAttribute<SVGNames::y2Attr, &SVGLineElement::m_y2>();
-}
-
 void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::x1Attr)
-        m_x1.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x1->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y1Attr)
-        m_y1.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y1->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::x2Attr)
-        m_x2.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x2->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::y2Attr)
-        m_y2.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y2->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 
@@ -75,7 +71,7 @@ void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicStrin
 
 void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         updateRelativeLengthsInformation();
 

@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGPrimitivePropertyAnimatorImpl.h"
+#include "SVGValuePropertyAnimatorImpl.h"
+#include "SVGValuePropertyListAnimatorImpl.h"
 
 namespace WebCore {
 
@@ -80,6 +83,16 @@ private:
         return SVGColorAnimator::create(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
     }
 
+    static auto createLengthAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return SVGLengthAnimator::create(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    static auto createLengthListAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return SVGLengthListAnimator::create(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
     static auto createNumberAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
         return SVGNumberAnimator::create(attributeName,  WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive);
@@ -93,13 +106,22 @@ private:
     static const AttributeAnimatorCreator& attributeAnimatorCreator()
     {
         static NeverDestroyed<AttributeAnimatorCreator> map = AttributeAnimatorCreator({
-            { SVGNames::colorAttr->impl(),          std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
-            { SVGNames::fillAttr->impl(),           std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
-            { SVGNames::flood_colorAttr->impl(),    std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
-            { SVGNames::lighting_colorAttr->impl(), std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
-            { SVGNames::stop_colorAttr->impl(),     std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
-            { SVGNames::strokeAttr->impl(),         std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::colorAttr->impl(),              std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::fillAttr->impl(),               std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::flood_colorAttr->impl(),        std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::lighting_colorAttr->impl(),     std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::stop_colorAttr->impl(),         std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
+            { SVGNames::strokeAttr->impl(),             std::make_pair(SVGValueProperty<Color>::create, SVGPropertyAnimatorFactory::createColorAnimator) },
 
+            { SVGNames::font_sizeAttr->impl(),          std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+            { SVGNames::kerningAttr->impl(),            std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+            { SVGNames::letter_spacingAttr->impl(),     std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+            { SVGNames::stroke_dashoffsetAttr->impl(),  std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+            { SVGNames::stroke_widthAttr->impl(),       std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+            { SVGNames::word_spacingAttr->impl(),       std::make_pair([]() { return SVGLength::create(); }, SVGPropertyAnimatorFactory::createLengthAnimator) },
+
+            { SVGNames::stroke_dasharrayAttr->impl(),   std::make_pair([]() { return SVGLengthList::create(); }, SVGPropertyAnimatorFactory::createLengthListAnimator) },
+            
             { SVGNames::fill_opacityAttr->impl(),       std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
             { SVGNames::flood_opacityAttr->impl(),      std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },
             { SVGNames::opacityAttr->impl(),            std::make_pair(SVGValueProperty<float>::create, SVGPropertyAnimatorFactory::createNumberAnimator) },

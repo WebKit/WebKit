@@ -28,6 +28,7 @@
 
 #include "FloatPoint.h"
 #include "SVGMatrix.h"
+#include "SVGPropertyTraits.h"
 #include "SVGValueProperty.h"
 
 namespace WebCore {

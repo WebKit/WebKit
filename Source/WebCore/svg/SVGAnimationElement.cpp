@@ -336,13 +336,9 @@ bool SVGAnimationElement::isAccumulated() const
     return value == sum && animationMode() != AnimationMode::To;
 }
 
-bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* element, const QualifiedName& attributeName)
+bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement, const QualifiedName& attributeName)
 {
-    if (element->isTextContent()
-        && (attributeName == SVGNames::xAttr || attributeName == SVGNames::yAttr))
-        return false;
-
-    return SVGElement::isAnimatableCSSProperty(attributeName);
+    return targetElement->isAnimatedStyleAttribute(attributeName);
 }
 
 SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName)
@@ -645,13 +641,13 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
     computeCSSPropertyValue(&svgParent, cssPropertyID(attributeName.localName()), value);
 }
 
-static bool inheritsFromProperty(SVGElement*, const QualifiedName& attributeName, const String& value)
+static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
 {
     static NeverDestroyed<const AtomicString> inherit("inherit", AtomicString::ConstructFromLiteral);
     
     if (value.isEmpty() || value != inherit)
         return false;
-    return SVGElement::isAnimatableCSSProperty(attributeName);
+    return targetElement->isAnimatedStyleAttribute(attributeName);
 }
 
 void SVGAnimationElement::determinePropertyValueTypes(const String& from, const String& to)

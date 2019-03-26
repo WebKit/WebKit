@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,31 @@
 
 #pragma once
 
-#include "SVGPathByteStream.h"
-#include "SVGTransformListValues.h"
-
-#include <wtf/Variant.h>
+#include "SVGAnimationFunction.h"
+#include "SVGValuePropertyAnimator.h"
 
 namespace WebCore {
 
-using SVGValueVariant = Variant<
-    SVGPathByteStream*,
-    SVGTransformListValues*
->;
+class SVGLengthAnimator final : public SVGValuePropertyAnimator<SVGLength, SVGAnimationLengthFunction> {
+    using Base = SVGValuePropertyAnimator<SVGLength, SVGAnimationLengthFunction>;
+    using Base::Base;
+    using Base::m_attributeName;
+    using Base::m_property;
 
-} // namespace WebCore
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGProperty>&& property, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGLengthAnimator>(attributeName, WTFMove(property), animationMode, calcMode, isAccumulated, isAdditive, LengthModeOther);
+    }
+
+    void start(SVGElement* targetElement) override
+    {
+        String baseValue = computeCSSPropertyValue(targetElement, cssPropertyID(m_attributeName.localName()));
+        SVGLengthValue value(LengthModeOther);
+        if (!value.setValueAsString(baseValue).hasException())
+            m_property->setValue(value);
+    }
+};
+
+}
+

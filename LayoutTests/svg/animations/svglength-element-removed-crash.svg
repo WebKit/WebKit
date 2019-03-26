@@ -32,8 +32,8 @@ function load() {
     // The rest of this test should FAIL without requiring gmalloc if this test has regressed.
     var liveDelta = window.internals.numberOfLiveNodes() - originalLiveElements;
     
-    // Make sure that the <rect> is still alive; if it's not, liveDelta will be -1.
-    if (liveDelta == 0)
+    // Make sure that the <rect> is deleted; if it's not, liveDelta will be 0.
+    if (liveDelta == -1)
         log(" PASS");
     else
         log(" FAIL: " + liveDelta + " extra live node(s)");

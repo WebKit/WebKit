@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,40 @@
 
 #pragma once
 
-#include "SVGPathByteStream.h"
-#include "SVGTransformListValues.h"
-
-#include <wtf/Variant.h>
+#include "SVGPropertyAnimator.h"
 
 namespace WebCore {
 
-using SVGValueVariant = Variant<
-    SVGPathByteStream*,
-    SVGTransformListValues*
->;
+template<typename PropertyType, typename AnimationFunction>
+class SVGValuePropertyAnimator : public SVGPropertyAnimator<AnimationFunction> {
+    using Base = SVGPropertyAnimator<AnimationFunction>;
+    using Base::Base;
+    using Base::applyAnimatedStylePropertyChange;
+    using Base::m_function;
 
-} // namespace WebCore
+public:
+    template<typename... Arguments>
+    SVGValuePropertyAnimator(const QualifiedName& attributeName, Ref<SVGProperty>&& property, Arguments&&... arguments)
+        : Base(attributeName, std::forward<Arguments>(arguments)...)
+        , m_property(static_reference_cast<PropertyType>(WTFMove(property)))
+    {
+    }
+
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) override
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_property->value());
+    }
+
+    void apply(SVGElement* targetElement) override
+    {
+        applyAnimatedStylePropertyChange(targetElement, m_property->valueAsString());
+    }
+
+protected:
+    using Base::computeCSSPropertyValue;
+    using Base::m_attributeName;
+
+    Ref<PropertyType> m_property;
+};
+
+}

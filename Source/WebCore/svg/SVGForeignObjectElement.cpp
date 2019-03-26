@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -40,7 +40,13 @@ inline SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tag
     , SVGExternalResourcesRequired(this)
 {
     ASSERT(hasTagName(SVGNames::foreignObjectTag));
-    registerAttributes();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGForeignObjectElement::m_x>();
+        PropertyRegistry::registerProperty<SVGNames::yAttr, &SVGForeignObjectElement::m_y>();
+        PropertyRegistry::registerProperty<SVGNames::widthAttr, &SVGForeignObjectElement::m_width>();
+        PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGForeignObjectElement::m_height>();
+    });
 }
 
 Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName& tagName, Document& document)
@@ -48,29 +54,18 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
     return adoptRef(*new SVGForeignObjectElement(tagName, document));
 }
 
-void SVGForeignObjectElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::xAttr, &SVGForeignObjectElement::m_x>();
-    registry.registerAttribute<SVGNames::yAttr, &SVGForeignObjectElement::m_y>();
-    registry.registerAttribute<SVGNames::widthAttr, &SVGForeignObjectElement::m_width>();
-    registry.registerAttribute<SVGNames::heightAttr, &SVGForeignObjectElement::m_height>();
-}
-
 void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
     if (name == SVGNames::xAttr)
-        m_x.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_x->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::yAttr)
-        m_y.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_y->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
     else if (name == SVGNames::widthAttr)
-        m_width.setValue(SVGLengthValue::construct(LengthModeWidth, value, parseError));
+        m_width->setBaseValInternal(SVGLengthValue::construct(LengthModeWidth, value, parseError));
     else if (name == SVGNames::heightAttr)
-        m_height.setValue(SVGLengthValue::construct(LengthModeHeight, value, parseError));
+        m_height->setBaseValInternal(SVGLengthValue::construct(LengthModeHeight, value, parseError));
 
     reportAttributeParsingError(parseError, name, value);
 

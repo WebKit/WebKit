@@ -27,7 +27,8 @@ PASS text2.x.baseVal.getItem(2).value is 1000
 PASS text2.x.baseVal.getItem(3) threw exception IndexSizeError: The index is not in the allowed range..
 
 Append fourth item x=900 to the text1 x list
-PASS text1.x.baseVal.appendItem(text1.x.baseVal.getItem(3)) is text1.x.baseVal.getItem(4)
+PASS text1.x.baseVal.appendItem(text1.x.baseVal.getItem(3)) is text1.x.baseVal.getItem(5)
+PASS text1.x.baseVal.removeItem(3).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 5
 PASS text1.x.baseVal.getItem(0).value is 500
 PASS text1.x.baseVal.getItem(1).value is 50
@@ -37,7 +38,8 @@ PASS text1.x.baseVal.getItem(4).value is 900
 PASS text1.x.baseVal.getItem(5) threw exception IndexSizeError: The index is not in the allowed range..
 
 Append first item x=500 to the text1 x list
-PASS text1.x.baseVal.appendItem(text1.x.baseVal.getItem(0)) is text1.x.baseVal.getItem(4)
+PASS text1.x.baseVal.appendItem(text1.x.baseVal.getItem(0)) is text1.x.baseVal.getItem(5)
+PASS text1.x.baseVal.removeItem(0).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 5
 PASS text1.x.baseVal.getItem(0).value is 50
 PASS text1.x.baseVal.getItem(1).value is 100
@@ -59,7 +61,9 @@ PASS text1.x.baseVal.getItem(6) threw exception IndexSizeError: The index is not
 
 Append third and fourth item of the text1 x list to the text2 x list
 PASS text2.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value is 1000
+PASS text1.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text2.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value is 900
+PASS text1.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 4
 PASS text1.x.baseVal.getItem(0).value is 50
 PASS text1.x.baseVal.getItem(1).value is 100
@@ -77,10 +81,14 @@ PASS newLength2.value is 150
 
 Shuffle around items in text1 and text2 list using appendItem, to get x=50,100,150,... in both lists
 PASS text1.x.baseVal.appendItem(text1.x.baseVal.getItem(2)).value is 500
+PASS text1.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text2.x.baseVal.appendItem(newLength2).value is 150
 PASS text2.x.baseVal.appendItem(text2.x.baseVal.getItem(2)).value is 1000
+PASS text2.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text2.x.baseVal.appendItem(text2.x.baseVal.getItem(3)).value is 900
+PASS text2.x.baseVal.removeItem(3).toString() is "[object SVGLength]"
 PASS text2.x.baseVal.appendItem(text2.x.baseVal.getItem(2)).value is 1000
+PASS text2.x.baseVal.removeItem(2).toString() is "[object SVGLength]"
 PASS text1.x.baseVal.numberOfItems is 4
 PASS text1.x.baseVal.getItem(0).value is 50
 PASS text1.x.baseVal.getItem(1).value is 100

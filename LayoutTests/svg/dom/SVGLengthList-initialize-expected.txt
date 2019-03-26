@@ -45,7 +45,8 @@ PASS text2.x.baseVal.getItem(1).value is 500
 PASS text2.x.baseVal.getItem(1).value is 50
 
 Override the third text elements x list with the item x=50 from the second text element, where it should be removed afterwards
-PASS text3.x.baseVal.initialize(itemInAnotherList) is itemInAnotherList
+PASS text3.x.baseVal.initialize(itemInAnotherList) is text3.x.baseVal.getItem(0)
+PASS text2.x.baseVal.removeItem(1).toString() is "[object SVGLength]"
 PASS text3.x.baseVal.getItem(0).value is 50
 PASS text2.x.baseVal.getItem(0).value is 50
 PASS text2.x.baseVal.getItem(1) threw exception IndexSizeError: The index is not in the allowed range..
@@ -59,7 +60,8 @@ PASS itemInAnotherList.value is 50
 PASS text3.x.baseVal.getItem(0).value is 50
 
 Move item from text3 to text4
-PASS text4.x.baseVal.initialize(text3.x.baseVal.getItem(0)) is itemInAnotherList
+PASS text4.x.baseVal.initialize(text3.x.baseVal.getItem(0)) is text4.x.baseVal.getItem(0)
+PASS text3.x.baseVal.removeItem(0).toString() is "[object SVGLength]"
 PASS text4.x.baseVal.getItem(0).value is 50
 PASS text3.x.baseVal.getItem(0) threw exception IndexSizeError: The index is not in the allowed range..
 

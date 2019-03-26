@@ -160,16 +160,16 @@ void SVGTextLayoutAttributesBuilder::buildCharacterDataMap(RenderSVGText& textRo
         fillCharacterDataMap(m_textPositions[i]);
 }
 
-static inline void updateCharacterData(unsigned i, float& lastRotation, SVGCharacterData& data, const SVGLengthContext& lengthContext, const SVGLengthListValues* xList, const SVGLengthListValues* yList, const SVGLengthListValues* dxList, const SVGLengthListValues* dyList, const SVGNumberList* rotateList)
+static inline void updateCharacterData(unsigned i, float& lastRotation, SVGCharacterData& data, const SVGLengthContext& lengthContext, const SVGLengthList* xList, const SVGLengthList* yList, const SVGLengthList* dxList, const SVGLengthList* dyList, const SVGNumberList* rotateList)
 {
     if (xList)
-        data.x = xList->at(i).value(lengthContext);
+        data.x = xList->items()[i]->value().value(lengthContext);
     if (yList)
-        data.y = yList->at(i).value(lengthContext);
+        data.y = yList->items()[i]->value().value(lengthContext);
     if (dxList)
-        data.dx = dxList->at(i).value(lengthContext);
+        data.dx = dxList->items()[i]->value().value(lengthContext);
     if (dyList)
-        data.dy = dyList->at(i).value(lengthContext);
+        data.dy = dyList->items()[i]->value().value(lengthContext);
     if (rotateList) {
         data.rotate = rotateList->items()[i]->value();
         lastRotation = data.rotate;
@@ -195,10 +195,10 @@ void SVGTextLayoutAttributesBuilder::fillCharacterDataMap(const TextPosition& po
     float lastRotation = SVGTextLayoutAttributes::emptyValue();
     SVGLengthContext lengthContext(position.element);
     for (unsigned i = 0; i < position.length; ++i) {
-        const SVGLengthListValues* xListPtr = i < xListSize ? &xList : 0;
-        const SVGLengthListValues* yListPtr = i < yListSize ? &yList : 0;
-        const SVGLengthListValues* dxListPtr = i < dxListSize ? &dxList : 0;
-        const SVGLengthListValues* dyListPtr = i < dyListSize ? &dyList : 0;
+        const SVGLengthList* xListPtr = i < xListSize ? &xList : nullptr;
+        const SVGLengthList* yListPtr = i < yListSize ? &yList : nullptr;
+        const SVGLengthList* dxListPtr = i < dxListSize ? &dxList : nullptr;
+        const SVGLengthList* dyListPtr = i < dyListSize ? &dyList : nullptr;
         const SVGNumberList* rotateListPtr = i < rotateListSize ? &rotateList : nullptr;
         if (!xListPtr && !yListPtr && !dxListPtr && !dyListPtr && !rotateListPtr)
             break;

@@ -120,6 +120,48 @@ private:
     }
 };
 
+class SVGAnimatedLengthAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedLength, SVGAnimationLengthFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedLength, SVGAnimationLengthFunction>;
+
+public:
+    SVGAnimatedLengthAnimator(const QualifiedName& attributeName, Ref<SVGAnimatedLength>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive, SVGLengthMode lengthMode)
+        : Base(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive, lengthMode)
+    {
+    }
+
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedLength>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive, SVGLengthMode lengthMode)
+    {
+        return std::make_unique<SVGAnimatedLengthAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive, lengthMode);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal()->value());
+    }
+};
+
+class SVGAnimatedLengthListAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedLengthList, SVGAnimationLengthListFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedLengthList, SVGAnimationLengthListFunction>;
+
+public:
+    SVGAnimatedLengthListAnimator(const QualifiedName& attributeName, Ref<SVGAnimatedLengthList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive, SVGLengthMode lengthMode)
+        : Base(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive, lengthMode)
+    {
+    }
+
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedLengthList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive, SVGLengthMode lengthMode)
+    {
+        return std::make_unique<SVGAnimatedLengthListAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive, lengthMode);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
+    }
+};
+
 class SVGAnimatedNumberAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedNumber, SVGAnimationNumberFunction> {
     friend class SVGAnimatedPropertyPairAnimator<SVGAnimatedNumberAnimator, SVGAnimatedNumberAnimator>;
     friend class SVGAnimatedNumberPairAnimator;

@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
-#include "SVGAnimatedLengthList.h"
 #include "SVGAnimatedPath.h"
 #include "SVGAnimatedTransformList.h"
 
@@ -30,6 +28,33 @@ class SVGAnimationElement;
 
 class SVGAnimatorFactory {
 public:
+    static bool isSupportedAttributeType(AnimatedPropertyType attributeType)
+    {
+        switch (attributeType) {
+        case AnimatedAngle:
+        case AnimatedBoolean:
+        case AnimatedColor:
+        case AnimatedEnumeration:
+        case AnimatedInteger:
+        case AnimatedIntegerOptionalInteger:
+        case AnimatedLength:
+        case AnimatedLengthList:
+        case AnimatedNumber:
+        case AnimatedNumberList:
+        case AnimatedNumberOptionalNumber:
+        case AnimatedPoints:
+        case AnimatedPreserveAspectRatio:
+        case AnimatedRect:
+        case AnimatedString:
+        case AnimatedUnknown:
+            return false;
+
+        case AnimatedPath:
+        case AnimatedTransformList:
+            return true;
+        }
+    }
+
     static std::unique_ptr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)
     {
         ASSERT(animationElement);
@@ -42,6 +67,8 @@ public:
         case AnimatedEnumeration:
         case AnimatedInteger:
         case AnimatedIntegerOptionalInteger:
+        case AnimatedLength:
+        case AnimatedLengthList:
         case AnimatedNumber:
         case AnimatedNumberList:
         case AnimatedNumberOptionalNumber:
@@ -49,18 +76,13 @@ public:
         case AnimatedPreserveAspectRatio:
         case AnimatedRect:
         case AnimatedString:
-            return nullptr;
+        case AnimatedUnknown:
+            break;
 
-        case AnimatedLength:
-            return std::make_unique<SVGAnimatedLengthAnimator>(animationElement, contextElement);
-        case AnimatedLengthList:
-            return std::make_unique<SVGAnimatedLengthListAnimator>(animationElement, contextElement);
         case AnimatedPath:
             return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
         case AnimatedTransformList:
             return std::make_unique<SVGAnimatedTransformListAnimator>(animationElement, contextElement);
-        case AnimatedUnknown:
-            break;
         }
 
         ASSERT_NOT_REACHED();

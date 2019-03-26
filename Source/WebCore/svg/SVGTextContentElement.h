@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGraphicsElement.h"
 
@@ -83,17 +82,17 @@ public:
     ExceptionOr<void> selectSubString(unsigned charnum, unsigned nchars);
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
-    const SVGLengthValue& specifiedTextLength() { return m_specifiedTextLength; }
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
     static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
 
-    const SVGLengthValue& textLength() const { return m_textLength.currentValue(attributeOwnerProxy()); }
+    const SVGLengthValue& specifiedTextLength() const { return m_specifiedTextLength; }
+    const SVGLengthValue& textLength() const { return m_textLength->currentValue(); }
     SVGLengthAdjustType lengthAdjust() const { return m_lengthAdjust->currentValue<SVGLengthAdjustType>(); }
 
-    RefPtr<SVGAnimatedLength> textLengthAnimated() { return m_textLength.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLength& textLengthAnimated();
     SVGAnimatedEnumeration& lengthAdjustAnimated() { return m_lengthAdjust; }
 
 protected:
@@ -112,52 +111,11 @@ private:
     bool isTextContent() const final { return true; }
 
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    static void registerAttributes();
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
-
-    class SVGAnimatedCustomLengthAttribute : public SVGAnimatedLengthAttribute {
-    public:
-        using SVGAnimatedLengthAttribute::operator=;
-
-        SVGAnimatedCustomLengthAttribute(SVGTextContentElement& element, SVGLengthMode lengthMode)
-            : SVGAnimatedLengthAttribute(lengthMode)
-            , m_element(element)
-        {
-        }
-
-        void synchronize(Element&, const QualifiedName& attributeName)
-        {
-            if (!shouldSynchronize())
-                return;
-            String string(SVGPropertyTraits<SVGLengthValue>::toString(m_element.m_specifiedTextLength));
-            static_cast<Element&>(m_element).setSynchronizedLazyAttribute(attributeName, string);
-        }
-
-        RefPtr<SVGAnimatedLength> animatedProperty(const SVGAttributeOwnerProxy& attributeOwnerProxy)
-        {
-            static NeverDestroyed<SVGLengthValue> defaultTextLength(LengthModeOther);
-            if (m_element.m_specifiedTextLength == defaultTextLength)
-                m_element.m_textLength.value().newValueSpecifiedUnits(LengthTypeNumber, m_element.getComputedTextLength());
-
-            setShouldSynchronize(true);
-            return static_reference_cast<SVGAnimatedLength>(attributeOwnerProxy.lookupOrCreateAnimatedProperty(*this).releaseNonNull());
-        }
-
-    private:
-        SVGTextContentElement& m_element;
-    };
-
-    using SVGAnimatedCustomLengthAttributeAccessor = SVGAnimatedAttributeAccessor<SVGTextContentElement, SVGAnimatedCustomLengthAttribute, AnimatedLength>;
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedCustomLengthAttribute m_textLength { *this, LengthModeOther };
+    Ref<SVGAnimatedLength> m_textLength { SVGAnimatedLength::create(this, LengthModeOther) };
     Ref<SVGAnimatedEnumeration> m_lengthAdjust { SVGAnimatedEnumeration::create(this, SVGLengthAdjustSpacing) };
     SVGLengthValue m_specifiedTextLength { LengthModeOther };
 };

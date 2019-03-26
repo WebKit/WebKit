@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedLengthList.h"
 #include "SVGTextContentElement.h"
 
 namespace WebCore {
@@ -36,16 +35,16 @@ public:
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPositioningElement, SVGTextContentElement>;
 
-    const SVGLengthListValues& x() const { return m_x.currentValue(attributeOwnerProxy()); }
-    const SVGLengthListValues& y() const { return m_y.currentValue(attributeOwnerProxy()); }
-    const SVGLengthListValues& dx() const { return m_dx.currentValue(attributeOwnerProxy()); }
-    const SVGLengthListValues& dy() const { return m_dy.currentValue(attributeOwnerProxy()); }
+    const SVGLengthList& x() const { return m_x->currentValue(); }
+    const SVGLengthList& y() const { return m_y->currentValue(); }
+    const SVGLengthList& dx() const { return m_dx->currentValue(); }
+    const SVGLengthList& dy() const { return m_dy->currentValue(); }
     const SVGNumberList& rotate() const { return m_rotate->currentValue(); }
 
-    RefPtr<SVGAnimatedLengthList> xAnimated() { return m_x.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLengthList> yAnimated() { return m_y.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLengthList> dxAnimated() { return m_dx.animatedProperty(attributeOwnerProxy()); }
-    RefPtr<SVGAnimatedLengthList> dyAnimated() { return m_dy.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedLengthList& xAnimated() { return m_x; }
+    SVGAnimatedLengthList& yAnimated() { return m_y; }
+    SVGAnimatedLengthList& dxAnimated() { return m_dx; }
+    SVGAnimatedLengthList& dyAnimated() { return m_dy; }
     SVGAnimatedNumberList& rotateAnimated() { return m_rotate; }
 
 protected:
@@ -59,21 +58,14 @@ private:
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    static void registerAttributes();
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedLengthListAttribute m_x;
-    SVGAnimatedLengthListAttribute m_y;
-    SVGAnimatedLengthListAttribute m_dx;
-    SVGAnimatedLengthListAttribute m_dy;
+    Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, LengthModeHeight) };
+    Ref<SVGAnimatedLengthList> m_dx { SVGAnimatedLengthList::create(this, LengthModeWidth) };
+    Ref<SVGAnimatedLengthList> m_dy { SVGAnimatedLengthList::create(this, LengthModeHeight) };
     Ref<SVGAnimatedNumberList> m_rotate { SVGAnimatedNumberList::create(this) };
 };
 
