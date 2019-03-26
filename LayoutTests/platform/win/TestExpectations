@@ -4299,3 +4299,5 @@ webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/cross-origin-http-h
 webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/cross-origin-http.https.html [ Failure ]
 webkit.org/b/195461 http/tests/referrer-policy-iframe/origin/same-origin.html [ Failure ]
 webkit.org/b/195461 http/tests/referrer-policy-iframe/unsafe-url/cross-origin-http.https.html [ Failure ]
+
+webkit.org/b/196209 js/math-clz32.html [ Failure ]
