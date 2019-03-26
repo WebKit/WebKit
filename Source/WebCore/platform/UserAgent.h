@@ -31,7 +31,8 @@
 namespace WebCore {
 
 #if PLATFORM(COCOA)
-WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applicationName);
+enum class UserAgentType { Default, Desktop };
+WEBCORE_EXPORT String standardUserAgentWithApplicationName(const String& applicationName, UserAgentType = UserAgentType::Default);
 
 String systemMarketingVersionForUserAgentString();
 #else

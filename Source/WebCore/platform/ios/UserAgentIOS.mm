@@ -76,8 +76,13 @@ static inline String deviceNameForUserAgent()
     return name;
 }
 
-String standardUserAgentWithApplicationName(const String& applicationName)
+String standardUserAgentWithApplicationName(const String& applicationName, UserAgentType type)
 {
+    if (type == UserAgentType::Desktop) {
+        String appNameSuffix = applicationName.isEmpty() ? "" : makeString(" ", applicationName);
+        return makeString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14) AppleWebKit/605.1.15 (KHTML, like Gecko)", appNameSuffix);
+    }
+
     // FIXME: Is this needed any more? Mac doesn't have this check,
     // Check to see if there is a user agent override for all WebKit clients.
     CFPropertyListRef override = CFPreferencesCopyAppValue(CFSTR("UserAgent"), CFSTR("com.apple.WebFoundation"));

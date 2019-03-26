@@ -1,3 +1,26 @@
+2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Refactor some helper functions for building UserAgent strings
+        https://bugs.webkit.org/show_bug.cgi?id=195990
+
+        Reviewed by Brent Fulgham.
+
+        Add an optional argument to standardUserAgentWithApplicationName to request the desktop version of the user
+        agent in Cocoa platforms. Work towards refactoring some codepaths to make the implementation of the "Request
+        Desktop Site" feature in Safari a bit more straightforward.
+
+        No change in behavior.
+
+        * platform/UserAgent.h:
+        * platform/ios/UserAgentIOS.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
+        The corresponding macOS version is currently hard-coded — the followup bug webkit.org/b/196275 tracks making
+        this dynamically fetch the paired macOS version when building for iOS.
+
+        * platform/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+
 2019-03-26  Said Abou-Hallawa  <said@apple.com>
 
         Remove the SVG tear off objects for SVGLength, SVGLengthList and SVGAnimatedLengthList
