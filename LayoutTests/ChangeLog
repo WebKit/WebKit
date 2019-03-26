@@ -1,3 +1,16 @@
+2019-03-26  Dean Jackson  <dino@apple.com>
+
+        vertexAttribPointer must restrict offset parameter
+        https://bugs.webkit.org/show_bug.cgi?id=196261
+        <rdar://problem/48458086>
+
+        Reviewed by Antoine Quint.
+
+        Add a test where the offset parameter is out of bounds.
+
+        * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt: Added.
+        * fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html: Added.
+
 2019-03-26  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Skip anonymous renderers when checking for "willRespondToMouseClickEvents"

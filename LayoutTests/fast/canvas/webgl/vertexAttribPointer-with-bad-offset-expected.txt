@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 49: WebGL: INVALID_VALUE: vertexAttribPointer: bad offset
+CONSOLE MESSAGE: line 56: WebGL: INVALID_OPERATION: drawArrays: attempt to access out of bounds arrays
+PASS: vertexAttribPointer should have an error.
+

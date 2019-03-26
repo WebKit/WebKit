@@ -1,3 +1,19 @@
+2019-03-26  Dean Jackson  <dino@apple.com>
+
+        vertexAttribPointer must restrict offset parameter
+        https://bugs.webkit.org/show_bug.cgi?id=196261
+        <rdar://problem/48458086>
+
+        Reviewed by Antoine Quint.
+
+        This WebGL function should fail if the offset parameter is
+        not within [0, max 32-bit int].
+
+        Test: fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+
 2019-03-26  Antoine Quint  <graouts@apple.com>
 
         Remove mousemoveEventHandlingPreventsDefault internal setting and quirk
