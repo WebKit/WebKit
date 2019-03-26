@@ -1,3 +1,15 @@
+2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Expected shouldn't assume its contained types are copyable
+        https://bugs.webkit.org/show_bug.cgi?id=195986
+
+        Reviewed by JF Bastien.
+
+        * TestWebKitAPI/Tests/WTF/Expected.cpp:
+        (TestWebKitAPI::NonCopyable::operator== const):
+        (TestWebKitAPI::NonCopyable::operator!= const):
+        (TestWebKitAPI::TEST):
+
 2019-03-25  Tim Horton  <timothy_horton@apple.com>
 
         Remove some now-unnecessary dynamic class lookup

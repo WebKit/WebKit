@@ -289,6 +289,17 @@ TEST(WTF_Expected, void)
     }
 }
 
+template<typename T>
+struct NonCopyable {
+    NonCopyable(NonCopyable&&) = default;
+    NonCopyable(const NonCopyable&) = delete;
+    NonCopyable& operator=(const NonCopyable&) = delete;
+    NonCopyable& operator=(NonCopyable&&) = default;
+    bool operator==(const NonCopyable<T>& other) const { return value == other.value; }
+    bool operator!=(const NonCopyable<T>& other) const { return value != other.value; }
+    T value;
+};
+
 TEST(WTF_Expected, comparison)
 {
     typedef Expected<int, const char*> Ex;
@@ -334,6 +345,32 @@ TEST(WTF_Expected, comparison)
 
     EXPECT_FALSE(makeUnexpected(oops) == Ex(42));
     EXPECT_NE(makeUnexpected(oops), Ex(42));
+    
+    NonCopyable<int> a { 5 };
+    NonCopyable<int> b { 6 };
+    Unexpected<NonCopyable<double>> c { makeUnexpected(NonCopyable<double> { 5.0 }) };
+    Expected<NonCopyable<int>, NonCopyable<double>> d { NonCopyable<int> { 5 } };
+    Expected<NonCopyable<int>, NonCopyable<double>> e { makeUnexpected(NonCopyable<double> { 5.0 }) };
+
+    EXPECT_TRUE(a != e);
+    EXPECT_TRUE(e != a);
+    EXPECT_FALSE(a == e);
+    EXPECT_FALSE(e == a);
+
+    EXPECT_TRUE(b != e);
+    EXPECT_TRUE(e != b);
+    EXPECT_FALSE(b == e);
+    EXPECT_FALSE(e == b);
+
+    EXPECT_TRUE(c != d);
+    EXPECT_TRUE(d != c);
+    EXPECT_FALSE(c == d);
+    EXPECT_FALSE(d == c);
+
+    EXPECT_TRUE(c == e);
+    EXPECT_TRUE(e == c);
+    EXPECT_FALSE(c != e);
+    EXPECT_FALSE(e != c);
 }
 
 struct NonTrivialDtor {

@@ -249,8 +249,10 @@ union constexpr_storage {
     constexpr constexpr_storage() : dummy() { }
     constexpr constexpr_storage(value_tag_t) : val() { }
     constexpr constexpr_storage(error_tag_t) : err() { }
-    constexpr constexpr_storage(value_tag_t, const value_type& v) : val(v) { }
-    constexpr constexpr_storage(error_tag_t, const error_type& e) : err(e) { }
+    template<typename U = T>
+    constexpr constexpr_storage(value_tag_t, U&& v) : val(std::forward<U>(v)) { }
+    template<typename U = E>
+    constexpr constexpr_storage(error_tag_t, U&& e) : err(std::forward<U>(e)) { }
     ~constexpr_storage() = default;
 };
 
@@ -311,8 +313,10 @@ struct constexpr_base {
     constexpr constexpr_base() : s(), has(true) { }
     constexpr constexpr_base(value_tag_t tag) : s(tag), has(true) { }
     constexpr constexpr_base(error_tag_t tag) : s(tag), has(false) { }
-    constexpr constexpr_base(value_tag_t tag, const value_type& val) : s(tag, val), has(true) { }
-    constexpr constexpr_base(error_tag_t tag, const error_type& err) : s(tag, err), has(false) { }
+    template<typename U = T>
+    constexpr constexpr_base(value_tag_t tag, U&& val) : s(tag, std::forward<U>(val)), has(true) { }
+    template<typename U = E>
+    constexpr constexpr_base(error_tag_t tag, U&& err) : s(tag, std::forward<U>(err)), has(false) { }
     ~constexpr_base() = default;
 };
 
@@ -558,15 +562,15 @@ template<class T, class E> constexpr bool operator!=(const expected<T, E>& x, co
 
 template<class E> constexpr bool operator==(const expected<void, E>& x, const expected<void, E>& y) { return bool(x) == bool(y) && (x ? true : x.error() == y.error()); }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x == expected<T, E>(y); }
-template<class T, class E> constexpr bool operator==(const T& x, const expected<T, E>& y) { return expected<T, E>(x) == y; }
-template<class T, class E> constexpr bool operator!=(const expected<T, E>& x, const T& y) { return x != expected<T, E>(y); }
-template<class T, class E> constexpr bool operator!=(const T& x, const expected<T, E>& y) { return expected<T, E>(x) != y; }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const T& y) { return x ? *x == y : false; }
+template<class T, class E> constexpr bool operator==(const T& x, const expected<T, E>& y) { return y ? x == *y : false; }
+template<class T, class E> constexpr bool operator!=(const expected<T, E>& x, const T& y) { return x ? *x != y : true; }
+template<class T, class E> constexpr bool operator!=(const T& x, const expected<T, E>& y) { return y ? x != *y : true; }
 
-template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return x == expected<T, E>(y); }
-template<class T, class E> constexpr bool operator==(const unexpected<E>& x, const expected<T, E>& y) { return expected<T, E>(x) == y; }
-template<class T, class E> constexpr bool operator!=(const expected<T, E>& x, const unexpected<E>& y) { return x != expected<T, E>(y); }
-template<class T, class E> constexpr bool operator!=(const unexpected<E>& x, const expected<T, E>& y) { return expected<T, E>(x) != y; }
+template<class T, class E> constexpr bool operator==(const expected<T, E>& x, const unexpected<E>& y) { return x ? false : x.error() == y.value(); }
+template<class T, class E> constexpr bool operator==(const unexpected<E>& x, const expected<T, E>& y) { return y ? false : x.value() == y.error(); }
+template<class T, class E> constexpr bool operator!=(const expected<T, E>& x, const unexpected<E>& y) { return x ? true : x.error() != y.value(); }
+template<class T, class E> constexpr bool operator!=(const unexpected<E>& x, const expected<T, E>& y) { return y ? true : x.value() != y.error(); }
 
 template<typename T, typename E> void swap(expected<T, E>& x, expected<T, E>& y) { x.swap(y); }
 

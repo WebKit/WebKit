@@ -49,8 +49,8 @@ inline namespace fundamentals_v3 {
     class unexpected {
     public:
         unexpected() = delete;
-        constexpr explicit unexpected(const E&);
-        constexpr explicit unexpected(E&&);
+        template <class U = E>
+          constexpr explicit unexpected(E&&);
         constexpr const E& value() const &;
         constexpr E& value() &;
         constexpr E&& value() &&;
@@ -75,8 +75,8 @@ template<class E>
 class unexpected {
 public:
     unexpected() = delete;
-    constexpr explicit unexpected(const E& e) : val(e) { }
-    constexpr explicit unexpected(E&& e) : val(std::forward<E>(e)) { }
+    template <class U = E>
+    constexpr explicit unexpected(U&& u) : val(std::forward<U>(u)) { }
     constexpr const E& value() const & { return val; }
     constexpr E& value() & { return val; }
     constexpr E&& value() && { return WTFMove(val); }

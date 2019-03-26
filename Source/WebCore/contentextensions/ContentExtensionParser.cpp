@@ -256,11 +256,11 @@ static Expected<Optional<Action>, std::error_code> loadAction(ExecState& exec, c
     String actionType = asString(typeObject)->value(&exec);
 
     if (actionType == "block")
-        return {{ ActionType::BlockLoad }};
+        return { Action(ActionType::BlockLoad) };
     if (actionType == "ignore-previous-rules")
-        return {{ ActionType::IgnorePreviousRules }};
+        return { Action(ActionType::IgnorePreviousRules) };
     if (actionType == "block-cookies")
-        return {{ ActionType::BlockCookies }};
+        return { Action(ActionType::BlockCookies) };
     if (actionType == "css-display-none") {
         JSValue selector = actionObject.get(&exec, Identifier::fromString(&exec, "selector"));
         if (scope.exception() || !selector.isString())
@@ -274,7 +274,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(ExecState& exec, c
         return { Action(ActionType::CSSDisplayNoneSelector, selectorString) };
     }
     if (actionType == "make-https")
-        return {{ ActionType::MakeHTTPS }};
+        return { Action(ActionType::MakeHTTPS) };
     if (actionType == "notify") {
         JSValue notification = actionObject.get(&exec, Identifier::fromString(&exec, "notification"));
         if (scope.exception() || !notification.isString())

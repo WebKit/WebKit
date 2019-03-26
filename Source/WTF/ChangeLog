@@ -1,3 +1,17 @@
+2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Expected shouldn't assume its contained types are copyable
+        https://bugs.webkit.org/show_bug.cgi?id=195986
+
+        Reviewed by JF Bastien.
+
+        * wtf/Expected.h:
+        (std::experimental::fundamentals_v3::__expected_detail::constexpr_base::constexpr_base):
+        (std::experimental::fundamentals_v3::operator==):
+        (std::experimental::fundamentals_v3::operator!=):
+        * wtf/Unexpected.h:
+        (std::experimental::fundamentals_v3::unexpected::unexpected):
+
 2019-03-24  Keith Miller  <keith_miller@apple.com>
 
         Unreviewed, forgot to refactor variable name for windows build in
