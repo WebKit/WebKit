@@ -1,3 +1,16 @@
+2019-03-26  Jon Davis  <jond@apple.com>
+
+        Update BrowserBench for JetStream2.
+        https://bugs.webkit.org/show_bug.cgi?id=196273
+
+        Reviewed by Saam Barati.
+
+        * index.html:
+        * resources/JetStream2-Logo.png: Added.
+        * resources/JetStream2-Logo@2x.png: Added.
+        * resources/main.css:
+        (.benchmark:hover img): Improved hover effect for the JetStream2 logo.
+
 2019-03-25  Saam barati  <sbarati@apple.com>
 
         Update browserbench.org/JetStream2.0 to the latest version.

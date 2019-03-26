@@ -91,9 +91,9 @@ hr {
 }
 
 .benchmark:hover img {
-    -moz-filter: invert(100%) brightness(200);
-    -webkit-filter: invert(100%) brightness(200);
-    filter: invert(100%) brightness(200);
+    -moz-filter: brightness(0) invert(100%);
+    -webkit-filter: brightness(0) invert(100%);
+    filter: brightness(0) invert(100%);
 }
 
 .benchmark:hover {
