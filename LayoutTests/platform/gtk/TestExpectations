@@ -2504,6 +2504,10 @@ webkit.org/b/196069 inspector/indexeddb/requestData.html [ Timeout ]
 
 webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout ]
 
+webkit.org/b/196250 inspector/console/heapSnapshot.html
+
+webkit.org/b/196251 http/wpt/service-workers/third-party-registration.html
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,13 @@
+2019-03-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed gardening, update test expectations and baselines
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/compositing/overflow/textarea-scroll-touch-expected.txt:
+        New expected results after r243031.
+        * platform/gtk/http/tests/inspector/network/har/har-page-expected.txt:
+        New expected results after r243347.
+
 2019-03-26  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Sound loop with Google Hangouts and WhatsApp notifications
