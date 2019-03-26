@@ -502,6 +502,8 @@ bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
     // In case when the visible content already had renderers it's not sufficient to check the "newly visible" element only since it might just be the container for the clickable content.  
     ASSERT(m_element.renderer());
     for (auto& descendant : descendantsOfType<RenderElement>(*element.renderer())) {
+        if (!descendant.element())
+            continue;
         if (descendant.element()->willRespondToMouseClickEvents())
             return true;
     }
