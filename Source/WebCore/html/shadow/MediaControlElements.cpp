@@ -1172,10 +1172,10 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         removeChildren();
 
     activeCues.removeAllMatching([] (CueInterval& cueInterval) {
-        if (!is<VTTCue>(cueInterval.data()))
+        if (!cueInterval.data() || !cueInterval.data()->isRenderable())
             return true;
 
-        Ref<VTTCue> cue = downcast<VTTCue>(*cueInterval.data());
+        RefPtr<VTTCue> cue = toVTTCue(cueInterval.data());
 
         return !cue->isRenderable()
             || !cue->track()
@@ -1197,9 +1197,12 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         if (!mediaController()->closedCaptionsVisible())
             continue;
 
-        RefPtr<VTTCue> cue = downcast<VTTCue>(activeCues[i].data());
+        RefPtr<VTTCue> cue = toVTTCue(activeCues[i].data());
+        ASSERT(cue);
+        if (!cue)
+            continue;
 
-        DEBUG_LOG(LOGIDENTIFIER, "adding and positioning cue ", i, ": \"", cue->text(), "\", start=", cue->startTime(), ", end=", cue->endTime(), ", line=", cue->line());
+        LOG(Media, "MediaControlTextTrackContainerElement::updateDisplay(%p) - adding and positioning cue #%zu: \"%s\", start=%.2f, end=%.2f, line=%.2f", this, i, cue->text().utf8().data(), cue->startTime(), cue->endTime(), cue->line());
         Ref<VTTCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size(), m_fontSize);
         RefPtr<VTTRegion> region = cue->track()->regions()->getRegionById(cue->regionId());
         if (!region) {
@@ -1450,25 +1453,6 @@ void MediaControlTextTrackContainerElement::textTrackRepresentationBoundsChanged
         updateTextTrackRepresentation();
     updateSizes();
 }
-
-#if !RELEASE_LOG_DISABLED
-const Logger& MediaControlTextTrackContainerElement::logger() const
-{
-    return document().logger();
-}
-
-const void* MediaControlTextTrackContainerElement::logIdentifier() const
-{
-    if (auto mediaElement = parentMediaElement(this))
-        return mediaElement->logIdentifier();
-    return nullptr;
-}
-
-WTFLogChannel& MediaControlTextTrackContainerElement::logChannel() const
-{
-    return LogMedia;
-}
-#endif // !RELEASE_LOG_DISABLED
 
 #endif // ENABLE(VIDEO_TRACK)
 

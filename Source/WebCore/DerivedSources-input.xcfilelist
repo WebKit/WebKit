@@ -864,7 +864,6 @@ $(PROJECT_DIR)/html/track/AudioTrackList.idl
 $(PROJECT_DIR)/html/track/DataCue.idl
 $(PROJECT_DIR)/html/track/TextTrack.idl
 $(PROJECT_DIR)/html/track/TextTrackCue.idl
-$(PROJECT_DIR)/html/track/TextTrackCueGeneric.idl
 $(PROJECT_DIR)/html/track/TextTrackCueList.idl
 $(PROJECT_DIR)/html/track/TextTrackList.idl
 $(PROJECT_DIR)/html/track/TrackEvent.idl

@@ -1739,8 +1739,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCue.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCue.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCueGeneric.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCueGeneric.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCueList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackCueList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSTextTrackList.cpp

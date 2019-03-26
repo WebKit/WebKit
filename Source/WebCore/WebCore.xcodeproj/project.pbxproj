@@ -4223,7 +4223,6 @@
 		CDF7483F18FEBCEC0006ECC0 /* GridPositionsResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF7483D18FEBCEC0006ECC0 /* GridPositionsResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDF756A3215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF756A1215C29E900EFCB50 /* JSMediaKeyEncryptionScheme.h */; };
 		CDFC360618CA61C20026E56F /* RemoteCommandListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CDFC360418CA61C20026E56F /* RemoteCommandListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CDFD78C32242FCC600D7208A /* JSTextTrackCueGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDFD78BB2242C4FF00D7208A /* JSTextTrackCueGeneric.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE08C3D2152B599A0021B8C2 /* AlternativeTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE08C3D0152B599A0021B8C2 /* AlternativeTextController.h */; settings = {ATTRIBUTES = (); }; };
 		CE1866451F72E5B400A0CAB6 /* MarkedText.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1866431F72E5B400A0CAB6 /* MarkedText.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13930,9 +13929,6 @@
 		CDFC360218CA61630026E56F /* RemoteCommandListenerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteCommandListenerIOS.mm; sourceTree = "<group>"; };
 		CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCommandListener.cpp; sourceTree = "<group>"; };
 		CDFC360418CA61C20026E56F /* RemoteCommandListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCommandListener.h; sourceTree = "<group>"; };
-		CDFD78BA2242C4FE00D7208A /* JSTextTrackCueGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTextTrackCueGeneric.h; sourceTree = "<group>"; };
-		CDFD78BB2242C4FF00D7208A /* JSTextTrackCueGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTextTrackCueGeneric.cpp; sourceTree = "<group>"; };
-		CDFD78C22242FC4900D7208A /* TextTrackCueGeneric.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextTrackCueGeneric.idl; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
 		CE08C3CF152B599A0021B8C2 /* AlternativeTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlternativeTextController.cpp; sourceTree = "<group>"; };
@@ -23112,8 +23108,6 @@
 				0707568F1422668C00414161 /* JSTextTrack.h */,
 				070756D714239B4B00414161 /* JSTextTrackCue.cpp */,
 				070756D814239B4B00414161 /* JSTextTrackCue.h */,
-				CDFD78BB2242C4FF00D7208A /* JSTextTrackCueGeneric.cpp */,
-				CDFD78BA2242C4FE00D7208A /* JSTextTrackCueGeneric.h */,
 				070756D914239B4C00414161 /* JSTextTrackCueList.cpp */,
 				070756DA14239B4E00414161 /* JSTextTrackCueList.h */,
 				07B5A2D91464320A00A81ECE /* JSTextTrackList.cpp */,
@@ -24055,7 +24049,6 @@
 				9759E93A14EF1CF80026A2DD /* TextTrackCue.idl */,
 				071A9EC0168FB56C002629F9 /* TextTrackCueGeneric.cpp */,
 				071A9EC1168FB56C002629F9 /* TextTrackCueGeneric.h */,
-				CDFD78C22242FC4900D7208A /* TextTrackCueGeneric.idl */,
 				9759E93B14EF1CF80026A2DD /* TextTrackCueList.cpp */,
 				9759E93C14EF1CF80026A2DD /* TextTrackCueList.h */,
 				9759E93D14EF1CF80026A2DD /* TextTrackCueList.idl */,
@@ -33070,7 +33063,6 @@
 				BE16C59417CFE17200852C04 /* InbandWebVTTTextTrack.cpp in Sources */,
 				CD063F821E23FA8900812BE3 /* InitDataRegistry.cpp in Sources */,
 				538EC93E1F99BF5A004D22A8 /* JSQuickTimePluginReplacement.cpp in Sources */,
-				CDFD78C32242FCC600D7208A /* JSTextTrackCueGeneric.cpp in Sources */,
 				935C477009AC4D7300A6AAB4 /* KeyEventMac.mm in Sources */,
 				CDA98E0B1603CD6000FEA3B1 /* LegacyCDM.cpp in Sources */,
 				CDE8B5EC1A69777300B4B66A /* LegacyCDMPrivateClearKey.cpp in Sources */,

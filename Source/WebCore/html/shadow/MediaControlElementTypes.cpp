@@ -54,13 +54,13 @@ using namespace HTMLNames;
 
 class Event;
 
-RefPtr<HTMLMediaElement> parentMediaElement(const Node* node)
+RefPtr<HTMLMediaElement> parentMediaElement(Node* node)
 {
     if (!node)
         return nullptr;
     RefPtr<Node> mediaNode = node->shadowHost();
     if (!mediaNode)
-        mediaNode = const_cast<Node*>(node);
+        mediaNode = node;
     if (!is<HTMLMediaElement>(*mediaNode))
         return nullptr;
     return downcast<HTMLMediaElement>(mediaNode.get());

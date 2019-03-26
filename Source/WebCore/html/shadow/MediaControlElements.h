@@ -33,7 +33,6 @@
 
 #include "MediaControlElementTypes.h"
 #include "TextTrackRepresentation.h"
-#include <wtf/LoggerHelper.h>
 
 namespace WebCore {
 
@@ -467,13 +466,7 @@ private:
 
 #if ENABLE(VIDEO_TRACK)
 
-class MediaControlTextTrackContainerElement final
-    : public MediaControlDivElement
-    , public TextTrackRepresentationClient
-#if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
-#endif
-{
+class MediaControlTextTrackContainerElement final : public MediaControlDivElement, public TextTrackRepresentationClient {
     WTF_MAKE_ISO_ALLOCATED(MediaControlTextTrackContainerElement);
 public:
     static Ref<MediaControlTextTrackContainerElement> create(Document&);
@@ -487,14 +480,7 @@ private:
     void updateTimerFired();
     void updateActiveCuesFontSize();
     void updateTextStrokeStyle();
-
-#if !RELEASE_LOG_DISABLED
-    const Logger& logger() const final;
-    const void* logIdentifier() const final;
-    WTFLogChannel& logChannel() const final;
-    const char* logClassName() const final { return "MediaControlTextTrackContainerElement"; }
-#endif
-
+    
     explicit MediaControlTextTrackContainerElement(Document&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;

@@ -91,7 +91,6 @@ class SerializedScriptValue;
 class SourceBuffer;
 class StringCallback;
 class StyleSheet;
-class TextTrackCueGeneric;
 class TimeRanges;
 class TypeConversions;
 class VoidCallback;
@@ -544,7 +543,6 @@ public:
     ExceptionOr<void> setCaptionsStyleSheetOverride(const String&);
     ExceptionOr<void> setPrimaryAudioTrackLanguageOverride(const String&);
     ExceptionOr<void> setCaptionDisplayMode(const String&);
-    RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
 
 #if ENABLE(VIDEO)
     Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);
