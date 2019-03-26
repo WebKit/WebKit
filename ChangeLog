@@ -1,3 +1,17 @@
+2019-03-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Make building WebVR (w/OpenVR) not depend on ENABLE_EXPERIMENTAL_FEATURES
+        https://bugs.webkit.org/show_bug.cgi?id=196223
+
+        Reviewed by Michael Catanzaro.
+
+        Disentangle USE_OPENVR from ENABLE_EXPERIMENTAL_FEATURES, making it
+        unneeded to include ThirdParty/openvr/ in release tarballs.
+
+        * Source/cmake/OptionsGTK.cmake: Set USE_OPENVR to OFF by default,
+        instead of making it use the value of ENABLE_EXPERIMENTAL_FEATURES.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2019-03-25  Xan López  <xan@igalia.com>
 
         [WTF] Fix typo when forcing WTF_CPU_X86
