@@ -59,7 +59,7 @@
 
 static UIWKDocumentRequest *makeRequest(UIWKDocumentRequestFlags flags, UITextGranularity granularity, NSInteger granularityCount, CGRect documentRect = CGRectZero, id <NSCopying> inputElementIdentifier = nil)
 {
-    RetainPtr<UIWKDocumentRequest> request = adoptNS([[NSClassFromString(@"UIWKDocumentRequest") alloc] init]);
+    auto request = adoptNS([[UIWKDocumentRequest alloc] init]);
     [request setFlags:flags];
     [request setSurroundingGranularity:granularity];
     [request setGranularityCount:granularityCount];
@@ -117,9 +117,6 @@ static NSString *applyAhemStyle(NSString *HTMLString)
 
 TEST(WebKit, DocumentEditingContext)
 {
-    if (!NSClassFromString(@"UIWKDocumentRequest"))
-        return;
-
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
     UIWKDocumentContext *context;

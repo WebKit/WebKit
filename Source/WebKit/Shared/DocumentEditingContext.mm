@@ -42,7 +42,7 @@ static inline NSRange toNSRange(DocumentEditingContext::Range range)
 UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<DocumentEditingContextRequest::Options> options)
 {
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
-    RetainPtr<UIWKDocumentContext> platformContext = adoptNS([[NSClassFromString(@"UIWKDocumentContext") alloc] init]);
+    auto platformContext = adoptNS([[UIWKDocumentContext alloc] init]);
 
     if (options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
         [platformContext setContextBefore:contextBefore.string.get()];
