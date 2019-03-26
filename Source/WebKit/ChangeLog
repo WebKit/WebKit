@@ -1,3 +1,19 @@
+2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement async paste method on UIWKInteractionViewProtocol
+        https://bugs.webkit.org/show_bug.cgi?id=196267
+        <rdar://problem/49236346>
+
+        Reviewed by Tim Horton.
+
+        Implement a new UIWKInteractionViewProtocol hook to perform a paste command, and invoke the given completion
+        handler when pasting is finished.
+
+        Test: UIPasteboardTests.PasteWithCompletionHandler
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pasteWithCompletionHandler:]):
+
 2019-03-26  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix sandbox violations

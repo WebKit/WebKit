@@ -2382,6 +2382,14 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     }
 }
 
+- (void)pasteWithCompletionHandler:(void (^)(void))completionHandler
+{
+    _page->executeEditCommand("Paste"_s, { }, [completion = makeBlockPtr(completionHandler)] (auto) {
+        if (completion)
+            completion();
+    });
+}
+
 - (void)clearSelection
 {
     [self _elementDidBlur];

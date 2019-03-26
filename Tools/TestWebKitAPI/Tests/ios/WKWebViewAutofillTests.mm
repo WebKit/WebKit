@@ -35,7 +35,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/BlockPtr.h>
 
-typedef UIView <UITextInputTraits_Private_Proposed_SPI_34583628> AutofillInputView;
+typedef UIView <UITextInputPrivate> AutofillInputView;
 
 @interface AutofillTestView : TestWKWebView
 @end

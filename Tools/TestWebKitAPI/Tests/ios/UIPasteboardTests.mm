@@ -38,7 +38,7 @@
 
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+#if PLATFORM(IOS)
 
 static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
 {
@@ -48,7 +48,7 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
         NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
 }
 
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+#endif // PLATFORM(IOS)
 
 namespace TestWebKitAPI {
 
@@ -145,7 +145,26 @@ TEST(UIPasteboardTests, PasteURLWithPlainTextAsURL)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!rich.querySelector('a')"].boolValue);
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+TEST(UIPasteboardTests, PasteWithCompletionHandler)
+{
+    auto webView = setUpWebViewForPasteboardTests(@"DataTransfer");
+    [UIPasteboard generalPasteboard].URL = [NSURL URLWithString:@"https://www.apple.com/"];
+
+    bool done = false;
+    [(id <UIWKInteractionViewProtocol_Staging_49236384>)[webView textInputContentView] pasteWithCompletionHandler:[webView, &done] {
+        [UIPasteboard generalPasteboard].items = @[ ];
+        done = true;
+    }];
+
+    Util::run(&done);
+
+    EXPECT_WK_STREQ("text/uri-list, text/plain", [webView stringByEvaluatingJavaScript:@"types.textContent"]);
+    EXPECT_WK_STREQ("(STRING, text/uri-list), (STRING, text/plain)", [webView stringByEvaluatingJavaScript:@"items.textContent"]);
+    EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"urlData.textContent"]);
+    EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
+}
+
+#if PLATFORM(IOS)
 
 TEST(UIPasteboardTests, DataTransferGetDataWhenPastingURL)
 {
@@ -283,7 +302,7 @@ TEST(UIPasteboardTests, DataTransferURIListContainsMultipleURLs)
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"textData.textContent"]);
 }
 
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+#endif // PLATFORM(IOS)
 
 } // namespace TestWebKitAPI
 

@@ -1,3 +1,25 @@
+2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Implement async paste method on UIWKInteractionViewProtocol
+        https://bugs.webkit.org/show_bug.cgi?id=196267
+        <rdar://problem/49236346>
+
+        Reviewed by Tim Horton.
+
+        Add a new test to exercise the new SPI. Additionally, add staging forward declarations for
+        -pasteWithCompletionHandler:, and remove some old existing staging declarations for other bits of UIKit SPI that
+        are now a part of all iOS 12 internal SDKs.
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+
+        While we're here, also change a few iOS 11.3 checks to just be about PLATFORM(IOS) (since we don't build for iOS
+        prior to 12, these version checks are effectively only about iOS vs. tvOS or watchOS).
+
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm:
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator _sendQueuedAdditionalItemRequest]):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-03-26  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Use PostgreSQL for ews.webkit.org database

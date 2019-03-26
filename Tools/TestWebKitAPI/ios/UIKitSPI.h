@@ -39,13 +39,13 @@
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
 
-#if ENABLE(DRAG_SUPPORT)
+#if PLATFORM(IOS)
 @protocol UIDragSession;
 @class UIDragInteraction;
 @class UIDragItem;
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #import <UIKit/UIDragInteraction_Private.h>
-#endif // ENABLE(DRAG_SUPPORT)
+#endif // PLATFORM(IOS)
 
 #else
 
@@ -65,6 +65,7 @@ WTF_EXTERN_C_END
 @protocol UIDragInteractionDelegate_ForWebKitOnly <UIDragInteractionDelegate>
 @optional
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
 @end
 
 @protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
@@ -79,6 +80,7 @@ WTF_EXTERN_C_END
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion;
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 - (BOOL)_shouldSuppressSelectionCommands;
+- (NSDictionary *)_autofillContext;
 @end
 
 @protocol UITextInputMultiDocument <NSObject>
@@ -133,16 +135,6 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 #endif
 
-@protocol UITextInputTraits_Private_Proposed_SPI_34583628 <UITextInputPrivate>
-- (NSDictionary *)_autofillContext;
-@end
-
-#if ENABLE(DRAG_SUPPORT)
-@protocol UIDragInteractionDelegate_Proposed_SPI_33146803 <UIDragInteractionDelegate>
-- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
-@end
-#endif
-
 #if __has_include(<UIKit/UITextAutofillSuggestion.h>)
 // FIXME: Move this import under USE(APPLE_INTERNAL_SDK) once <rdar://problem/34583628> lands in the SDK.
 #import <UIKit/UITextAutofillSuggestion.h>
@@ -172,6 +164,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 @interface UIKeyboard ()
 + (BOOL)isInHardwareKeyboardMode;
+@end
+
+@protocol UIWKInteractionViewProtocol_Staging_49236384
+- (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

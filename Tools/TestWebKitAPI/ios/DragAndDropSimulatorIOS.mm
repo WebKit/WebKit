@@ -504,7 +504,7 @@ static NSArray *dragAndDropEventNames()
     [_queuedAdditionalItemRequestLocations removeObjectAtIndex:0];
 
     auto requestLocation = [[_webView window] convertPoint:[requestLocationValue CGPointValue] toView:_webView.get()];
-    [(id <UIDragInteractionDelegate_Proposed_SPI_33146803>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
+    [(id <UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
         [dragSession addItems:items];
         [dropSession addItems:items];
     }];
