@@ -29,6 +29,7 @@
 
 #include "GStreamerCommon.h"
 #include "GraphicsContext.h"
+#include "GraphicsContext3D.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
 #include "IntRect.h"
@@ -85,7 +86,6 @@
 #include <gst/gl/gl.h>
 #undef GST_USE_UNSTABLE_API
 
-#include "GraphicsContext3D.h"
 #include "GLContext.h"
 #if USE(GLX)
 #include "GLContextGLX.h"
