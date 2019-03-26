@@ -286,13 +286,14 @@ window.UIHelper = class UIHelper {
         });
     }
 
-    static immediateScrollElementAtContentPointToOffset(x, y, scrollX, scrollY)
+    static immediateScrollElementAtContentPointToOffset(x, y, scrollX, scrollY, scrollUpdatesDisabled = false)
     {
         if (!this.isWebKit2())
             return Promise.resolve();
 
         return new Promise(resolve => {
             testRunner.runUIScript(`
+                uiController.scrollUpdatesDisabled = ${scrollUpdatesDisabled};
                 uiController.immediateScrollElementAtContentPointToOffset(${x}, ${y}, ${scrollX}, ${scrollY});`, resolve);
         });
     }

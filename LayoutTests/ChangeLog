@@ -1,3 +1,24 @@
+2019-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] position:fixed inside oveflow:scroll is jumpy
+        https://bugs.webkit.org/show_bug.cgi?id=196238
+
+        Reviewed by Antti Koivisto.
+
+        fixed-in-overflow-scroll-scrolling-tree.html actually tests the fix.
+        For some reason fixed-in-overflow-scroll.html doesn't show the jumpiness, but it's
+        a good test to have nonetheless.
+
+        Other minor cleanup.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.immediateScrollElementAtContentPointToOffset):
+        * scrollingcoordinator/ios/fixed-in-overflow-scroll-expected.html: Added.
+        * scrollingcoordinator/ios/fixed-in-overflow-scroll-scrolling-tree-expected.txt: Added.
+        * scrollingcoordinator/ios/fixed-in-overflow-scroll-scrolling-tree.html: Copied from LayoutTests/scrollingcoordinator/ios/ui-scrolling-tree.html.
+        * scrollingcoordinator/ios/fixed-in-overflow-scroll.html: Added.
+        * scrollingcoordinator/ios/ui-scrolling-tree.html:
+
 2019-03-26  Andy VanWagoner  <andy@vanwagoner.family>
 
         Intl.DateTimeFormat should obey 2-digit hour

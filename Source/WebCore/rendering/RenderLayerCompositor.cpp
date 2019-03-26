@@ -2944,6 +2944,9 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
     if (layer.isRenderViewLayer())
         return ScrollPositioningBehavior::None;
 
+    if (layer.renderer().isFixedPositioned())
+        return ScrollPositioningBehavior::None;
+
     auto* scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator)
         return ScrollPositioningBehavior::None;
