@@ -153,9 +153,7 @@ class MeasurementSetFetcher {
             $reached_end = !$row;
             if ($reached_end)
                 $this->queries[$name] = NULL;
-            else {
-                $this->next_cluster_results[$name] = array_slice($results_by_config[$name], -2);
-            }
+            $this->next_cluster_results[$name] = array_slice($results_by_config[$name], -2);
         }
 
         return array(

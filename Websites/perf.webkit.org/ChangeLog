@@ -1,3 +1,17 @@
+2019-03-25  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Primary cluster of measurement set should always contain latest point.
+        https://bugs.webkit.org/show_bug.cgi?id=196243
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a bug in measurement-set api that primary cluster may not contain latest data point as
+        'carry_over' row may not be updated.
+
+        * public/api/measurement-set.php: Should always keep 'carry_over' data points up to date.
+        * server-tests/api-measurement-set-tests.js: Added an unit test for this change.
+        Fixed a typo.
+
 2019-03-21  Dewei Zhu  <dewei_zhu@apple.com>
 
         'custom-configuration-test-group-form' should update test name when selected test or platform changes.
