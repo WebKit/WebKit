@@ -1,5 +1,14 @@
 2019-03-26  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] is_test_mode_enabled should default to True
+        https://bugs.webkit.org/show_bug.cgi?id=196248
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/master.cfg: Reverse the environment variable used to decide is_test_mode_enabled.
+
+2019-03-26  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Add webkitperl to ENABLED_QUEUES
         https://bugs.webkit.org/show_bug.cgi?id=196253
 
