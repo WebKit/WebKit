@@ -1316,3 +1316,8 @@ webkit.org/b/196013 compositing/rtl/rtl-overflow-scrolling.html [ Failure ]
 webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
 webkit.org/b/196013 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/196013 fast/scrolling/rubber-band-shows-background.html [ ImageOnlyFailure ]
+
+webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-fragment-from-prevalent-resource.html [ Pass Timeout ]
+webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-and-fragment-from-prevalent-resource.html [ Pass Timeout ]
+webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-with-link-query-from-prevalent-resource.html [ Pass Timeout ]
+webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js-without-link-decoration-from-prevalent-resource.html [ Pass Timeout ]
