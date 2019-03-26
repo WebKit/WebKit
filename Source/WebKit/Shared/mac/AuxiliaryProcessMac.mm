@@ -695,13 +695,6 @@ void AuxiliaryProcess::stopNSRunLoop()
 }
 #endif
 
-#if PLATFORM(IOSMAC)
-void AuxiliaryProcess::platformStopRunLoop()
-{
-    XPCServiceExit(WTFMove(m_priorityBoostMessage));
-}
-#endif
-
 void AuxiliaryProcess::setQOS(int latencyQOS, int throughputQOS)
 {
     if (!latencyQOS && !throughputQOS)

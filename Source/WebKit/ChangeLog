@@ -1,3 +1,31 @@
+2019-03-26  Chris Dumez  <cdumez@apple.com>
+
+        [macOS] The network process is not exiting reliably when the WebProcessPool is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=196277
+        <rdar://problem/49127581>
+
+        Reviewed by Alex Christensen.
+
+        When, an AuxiliaryProcess receives the AuxiliaryProcess::Terminate IPC, it calls stopRunLoop()
+        to exit. WebProcess overrides AuxiliaryProcess::stopRunLoop() to call exit(0) on the main
+        thread. Other auxiliary processes such as the NetworkProcess would end up calling
+        platformStopRunLoop(). On iOS and iOSMac, platformStopRunLoop() calls XPCServiceExit(), which
+        makes sense since auxiliary processes run their run loop by calling xpc_main(). However, on
+        macOS, platformStopRunLoop() was calling RunLoop::main().stop() to exit instead, which was
+        unreliable as demonstrated by the test app attached to the radar.
+
+        Updating platformStopRunLoop() to call XPCServiceExit() on macOS fixes the problem and I now
+        see the NetworkProcess exiting reliably there. This is the approach I have chosen in this
+        patch since it appears to be reliable and it makes the code consistent on all Cocoa platforms.
+
+        * Shared/AuxiliaryProcess.cpp:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::AuxiliaryProcess::platformStopRunLoop):
+        * Shared/ios/AuxiliaryProcessIOS.mm:
+        (WebKit::AuxiliaryProcess::platformStopRunLoop): Deleted.
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::AuxiliaryProcess::platformStopRunLoop): Deleted.
+
 2019-03-26  Keith Rollin  <krollin@apple.com>
 
         Inhibit CFNetwork logging in private sessions

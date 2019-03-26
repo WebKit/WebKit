@@ -174,7 +174,7 @@ void AuxiliaryProcess::stopRunLoop()
     platformStopRunLoop();
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformStopRunLoop()
 {
     RunLoop::main().stop();

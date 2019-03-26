@@ -27,6 +27,7 @@
 #import "AuxiliaryProcess.h"
 
 #import "WKCrashReporter.h"
+#import "XPCServiceEntryPoint.h"
 #import <wtf/cocoa/Entitlements.h>
 
 namespace WebKit {
@@ -40,6 +41,11 @@ void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringRef
 bool AuxiliaryProcess::parentProcessHasEntitlement(const char* entitlement)
 {
     return WTF::hasEntitlement(m_connection->xpcConnection(), entitlement);
+}
+
+void AuxiliaryProcess::platformStopRunLoop()
+{
+    XPCServiceExit(WTFMove(m_priorityBoostMessage));
 }
 
 }

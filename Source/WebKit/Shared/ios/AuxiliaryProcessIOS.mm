@@ -113,11 +113,6 @@ void AuxiliaryProcess::setQOS(int, int)
 
 }
 
-void AuxiliaryProcess::platformStopRunLoop()
-{
-    XPCServiceExit(WTFMove(m_priorityBoostMessage));
-}
-
 } // namespace WebKit
 
 #endif
