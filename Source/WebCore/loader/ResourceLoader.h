@@ -35,6 +35,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ResourceLoadInfo.h"
