@@ -1,3 +1,22 @@
+2019-03-26  Tomoki Imai  <Tomoki.Imai@sony.com>
+
+        Assertion failure !isInAcceleratedCompositingMode() in DrawingAreaProxyCoordinatedGraphics::incorporateUpdate when forceCompositingMode is turned on
+        https://bugs.webkit.org/show_bug.cgi?id=195879
+
+        Reviewed by Carlos Garcia Campos.
+
+        The root cause is that DrawingAreaProxyCoordinatedGraphics::isInAcceleratedCompositingMode checks both of alwaysUseCompositing() and !m_layerTreeContext.isEmpty().
+        alwaysUseCompositing() refers preferences, which is written by the application (UIProcess).
+        On the other hand, m_layerTreeContext is changed when it receives enterAcceleratedCompositingMode/exitAcceleratedCompositingMode from WebProcess.
+
+        It results when we set forceCompositingMode and acceleratedCompositingEnabled to true, WebProcess and UIProcess is out of sync until WebProcess sends enterAcceleratedCompositingMode message.
+        In such situation, WebProcess sends incorporateUpdate to UIProcess because WebProcess is in non-AC mode, but isInAcceleratedCompositingMode becomes true in UIProcess side.
+
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics): Should call exitAcceleratedCompositingMode even when alwaysUseCompositing is true.
+        (WebKit::DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode): enterAcceleratedCompositingMode should check enterAcceleratedCompositingMode is not called twice.
+        * UIProcess/CoordinatedGraphics/DrawingAreaProxyCoordinatedGraphics.h: Remove alwaysUseCompositing from isInAcceleratedCompositingMode
+
 2019-03-26  Antoine Quint  <graouts@apple.com>
 
         Remove mousemoveEventHandlingPreventsDefault internal setting and quirk
