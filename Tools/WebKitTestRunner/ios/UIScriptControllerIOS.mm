@@ -482,6 +482,19 @@ void UIScriptController::dismissFormAccessoryView()
     [webView dismissFormAccessoryView];
 }
 
+void UIScriptController::dismissFilePicker(JSValueRef callback)
+{
+    TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();
+    [webView _dismissFilePicker];
+
+    // Round-trip with the WebProcess to make sure it has been notified of the dismissal.
+    unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
+    [webView evaluateJavaScript:@"" completionHandler:^(id result, NSError *error) {
+        if (m_context)
+            m_context->asyncTaskComplete(callbackID);
+    }];
+}
+
 JSRetainPtr<JSStringRef> UIScriptController::selectFormPopoverTitle() const
 {
     TestRunnerWKWebView *webView = TestController::singleton().mainWebView()->platformView();

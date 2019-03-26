@@ -43,6 +43,8 @@ class WebOpenPanelResultListenerProxy;
 - (instancetype)initWithView:(WKContentView *)view;
 - (void)presentWithParameters:(API::OpenPanelParameters*)parameters resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener;
 - (void)dismiss;
+
+- (NSArray<NSString *> *)currentAvailableActionTitles;
 @end
 
 @protocol WKFileUploadPanelDelegate <NSObject>

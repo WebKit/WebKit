@@ -607,7 +607,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota,
-        runOpenPanel,
+        options.shouldHandleRunOpenPanel ? runOpenPanel : 0,
         decidePolicyForGeolocationPermissionRequest,
         0, // headerHeight
         0, // footerHeight
@@ -1316,6 +1316,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.editable = parseBooleanTestHeaderValue(value);
         else if (key == "enableUndoManagerAPI")
             testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
+        else if (key == "shouldHandleRunOpenPanel")
+            testOptions.shouldHandleRunOpenPanel = parseBooleanTestHeaderValue(value);
         else if (key == "contentInset.top")
             testOptions.contentInsetTop = std::stod(value);
         else if (key == "ignoreSynchronousMessagingTimeouts")

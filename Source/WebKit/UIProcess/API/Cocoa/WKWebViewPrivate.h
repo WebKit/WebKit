@@ -451,6 +451,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)keyboardAccessoryBarNext WK_API_AVAILABLE(ios(10.0));
 - (void)keyboardAccessoryBarPrevious WK_API_AVAILABLE(ios(10.0));
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(10.3));
+- (void)_dismissFilePicker WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(10.3));
 @property (nonatomic, readonly) NSString *textContentTypeForTesting WK_API_AVAILABLE(ios(12.0));
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle WK_API_AVAILABLE(ios(12.0));

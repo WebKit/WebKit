@@ -1,3 +1,15 @@
+2019-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Add basic layout test coverage for File Picker on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=196265
+
+        Reviewed by Wenson Hsieh.
+
+        Add new layout test.
+
+        * fast/forms/ios/file-upload-panel-expected.txt: Added.
+        * fast/forms/ios/file-upload-panel.html: Added.
+
 2019-03-26  Shawn Roberts  <sroberts@apple.com>
 
         Layout tests editing/deleting/delete-emoji-1.html

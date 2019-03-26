@@ -1,3 +1,29 @@
+2019-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Add basic layout test coverage for File Picker on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=196265
+
+        Reviewed by Wenson Hsieh.
+
+        Add layout test infrastructure to test the file picker on iOS.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::dismissFilePicker):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::dismissFilePicker):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+        (WTR::updateTestOptionsFromTestHeader):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::hasSameInitializationOptions const):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (overridePresentViewController):
+        (WTR::TestController::platformInitialize):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::dismissFilePicker):
+
 2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Implement async paste method on UIWKInteractionViewProtocol

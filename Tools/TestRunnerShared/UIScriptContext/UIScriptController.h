@@ -106,6 +106,7 @@ public:
 
     void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef callback);
     
+    void dismissFilePicker(JSValueRef callback);
     void dismissFormAccessoryView();
     void selectFormAccessoryPickerRow(long);
     JSRetainPtr<JSStringRef> textContentType() const;

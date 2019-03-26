@@ -312,6 +312,26 @@ static inline UIImage *cameraIcon()
     }
 }
 
+- (NSArray<NSString *> *)currentAvailableActionTitles
+{
+    NSMutableArray<NSString *> *actionTitles = [NSMutableArray array];
+
+    NSArray *mediaTypes = UTIsForMIMETypes(_mimeTypes.get()).allObjects;
+    BOOL containsImageMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeImage);
+    BOOL containsVideoMediaType = !mediaTypes.count || arrayContainsUTIThatConformsTo(mediaTypes, kUTTypeMovie);
+    if (containsImageMediaType || containsVideoMediaType) {
+        [actionTitles addObject:@"Photo Library"];
+        if (containsImageMediaType && containsVideoMediaType)
+            [actionTitles addObject:@"Take Photo or Video"];
+        else if (containsVideoMediaType)
+            [actionTitles addObject:@"Take Video"];
+        else
+            [actionTitles addObject:@"Take Photo"];
+    }
+    [actionTitles addObject:@"Browse"];
+    return actionTitles;
+}
+
 #pragma mark - Media Types
 
 static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)

@@ -4509,6 +4509,11 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return NO;
 }
 
+- (void)dismissFilePicker
+{
+    [_fileUploadPanel dismiss];
+}
+
 - (BOOL)isScrollableForKeyboardScrollViewAnimator:(WKKeyboardScrollViewAnimator *)animator
 {
     if (_page->editorState().isContentEditable)
@@ -7019,6 +7024,12 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
         return @{ userInterfaceItem: @{ @"pageURL": url } };
     }
 #endif
+
+    if ([userInterfaceItem isEqualToString:@"fileUploadPanelMenu"]) {
+        if (!_fileUploadPanel)
+            return @{ userInterfaceItem: @[] };
+        return @{ userInterfaceItem: [_fileUploadPanel currentAvailableActionTitles] };
+    }
     
     return nil;
 }

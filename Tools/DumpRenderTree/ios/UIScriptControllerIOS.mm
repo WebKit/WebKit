@@ -175,6 +175,10 @@ void UIScriptController::dismissFormAccessoryView()
 {
 }
 
+void UIScriptController::dismissFilePicker(JSValueRef)
+{
+}
+
 void UIScriptController::setTimePickerValue(long, long)
 {
 }

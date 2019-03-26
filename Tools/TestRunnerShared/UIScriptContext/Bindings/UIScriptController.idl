@@ -187,6 +187,8 @@ interface UIScriptController {
     // Equivalent of pressing the Done button in the form accessory bar.
     void dismissFormAccessoryView();
 
+    void dismissFilePicker(object callback);
+
     readonly attribute DOMString textContentType;
 
     // Form control handling

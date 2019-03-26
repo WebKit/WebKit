@@ -6669,6 +6669,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView accessoryDone];
 }
 
+- (void)_dismissFilePicker
+{
+    [_contentView dismissFilePicker];
+}
+
 - (void)setTimePickerValueToHour:(NSInteger)hour minute:(NSInteger)minute
 {
     [_contentView setTimePickerValueToHour:hour minute:minute];
