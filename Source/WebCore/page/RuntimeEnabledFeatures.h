@@ -350,9 +350,6 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     bool mouseEventsSimulationEnabled() const { return m_mouseEventsSimulationEnabled; }
     void setMouseEventsSimulationEnabled(bool isEnabled) { m_mouseEventsSimulationEnabled = isEnabled; }
-
-    bool mousemoveEventHandlingPreventsDefaultEnabled() const { return m_mousemoveEventHandlingPreventsDefaultEnabled; }
-    void setMousemoveEventHandlingPreventsDefaultEnabled(bool isEnabled) { m_mousemoveEventHandlingPreventsDefaultEnabled = isEnabled; }
 #endif
     
     bool referrerPolicyAttributeEnabled() const { return m_referrerPolicyAttributeEnabled; }
@@ -536,7 +533,6 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool m_mouseEventsSimulationEnabled { false };
-    bool m_mousemoveEventHandlingPreventsDefaultEnabled { false };
 #endif
 
     bool m_isITPDatabaseEnabled { false };

@@ -200,9 +200,4 @@ bool Quirks::shouldDispatchSimulateMouseEvents() const
     return false;
 }
 
-bool Quirks::shouldMousemoveEventHandlingPreventDefault() const
-{
-    return false;
-}
-
 }

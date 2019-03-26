@@ -46,7 +46,6 @@ public:
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
     bool hasWebSQLSupportQuirk() const;
     bool shouldDispatchSimulateMouseEvents() const;
-    bool shouldMousemoveEventHandlingPreventDefault() const;
 
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
