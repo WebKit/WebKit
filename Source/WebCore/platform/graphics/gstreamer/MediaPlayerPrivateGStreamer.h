@@ -91,6 +91,7 @@ public:
     bool paused() const override;
     bool seeking() const override;
 
+    MediaTime platformDuration() const;
     MediaTime durationMediaTime() const override;
     MediaTime currentMediaTime() const override;
     void seek(const MediaTime&) override;
@@ -187,18 +188,16 @@ private:
 #endif
 
 protected:
-    void cacheDuration();
-
     bool m_buffering;
     int m_bufferingPercentage;
     mutable MediaTime m_cachedPosition;
+    mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition;
     bool m_changingRate;
     bool m_downloadFinished;
     bool m_errorOccured;
     mutable bool m_isEndReached;
     mutable bool m_isStreaming;
-    mutable MediaTime m_durationAtEOS;
     bool m_paused;
     float m_playbackRate;
     GstState m_currentState;

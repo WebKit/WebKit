@@ -1460,13 +1460,7 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
 webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass Crash ]
 
-webkit.org/b/116977 media/event-attributes.html [ Crash Failure Timeout Pass ]
-
 webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
-
-webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
-
-webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
 
 webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Failure Pass ]
 
@@ -1677,8 +1671,6 @@ webkit.org/b/134761 svg/custom/animate-initial-pause-unpause.html [ Failure Pass
 webkit.org/b/134994 fast/forms/select/listbox-click-on-scrollbar.html [ Failure Pass ]
 
 webkit.org/b/134981 fast/parser/document-write-during-load.html [ Timeout Pass Crash ]
-
-webkit.org/b/81604 media/video-loop.html [ Timeout Pass ]
 
 webkit.org/b/134998 plugins/change-widget-and-click-crash.html [ Timeout Pass Crash ]
 
@@ -3816,6 +3808,8 @@ webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
 
 webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
+
+webkit.org/b/116977 media/event-attributes.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

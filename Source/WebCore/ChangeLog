@@ -1,3 +1,31 @@
+2019-03-26  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Sound loop with Google Hangouts and WhatsApp notifications
+        https://bugs.webkit.org/show_bug.cgi?id=189471
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The media duration is now cached (again). The loop issue was
+        triggered by the previous version of the code returning positive
+        infinite duration in didEnd(), followed by the timeupdate event
+        propagation that would trick the HTMLMediaElement into a new call
+        to play(). Now the cached duration is updated to current position
+        at EOS (for forward playback direction only), so the media element
+        no longer triggers a new play call for those cases.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::platformDuration const):
+        (WebCore::MediaPlayerPrivateGStreamer::durationMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime const):
+
 2019-03-26  Antti Koivisto  <antti@apple.com>
 
         Hit-testing on layers overlapping scrollers should hit-test on text boxes
