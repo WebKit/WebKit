@@ -1,3 +1,12 @@
+2019-03-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Use PostgreSQL for ews.webkit.org database
+        https://bugs.webkit.org/show_bug.cgi?id=196270
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews-app/settings.py:
+
 2019-03-26  Jonathan Bedard  <jbedard@apple.com>
 
         [ews] Reset simctl states on reboot

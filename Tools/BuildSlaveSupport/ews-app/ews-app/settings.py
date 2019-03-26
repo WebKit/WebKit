@@ -95,12 +95,24 @@ WSGI_APPLICATION = 'ews-app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+is_test_mode_enabled = os.getenv('EWS_PRODUCTION') is None
+if is_test_mode_enabled:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('DB_NAME', None),
+            'USER': os.environ.get('DB_USERNAME', None),
+            'PASSWORD': os.environ.get('DB_PASSWORD', None),
+            'HOST': os.environ.get('DB_URL', None),
+        }
+    }
 
 
 # Password validation
