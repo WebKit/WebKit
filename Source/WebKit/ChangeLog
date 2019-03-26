@@ -1,3 +1,16 @@
+2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef
+        https://bugs.webkit.org/show_bug.cgi?id=196213
+
+        Reviewed by Geoff Garen.
+
+        A release assertion added in r230225 was reachable.  I reached it in a unit test that responds to a challenge
+        with a SecIdentityRef wrapped in an NSCredential.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::decode):
+
 2019-03-25  Chris Dumez  <cdumez@apple.com>
 
         Regression(r242369) Trying to change profile picture on linked in shows file picker, not the image picker
