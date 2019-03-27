@@ -64,3 +64,5 @@ webkit.org/b/191709 editing/deleting/delete-emoji-9.html [ Pass Failure ]
 webkit.org/b/191709 editing/deleting/delete-emoji.html [ Pass Failure ]
 
 webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ Pass Failure ]
+
+webkit.org/b/196298 fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [ Pass Failure ]
