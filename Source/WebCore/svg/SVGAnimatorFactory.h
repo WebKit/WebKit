@@ -47,12 +47,14 @@ public:
         case AnimatedRect:
         case AnimatedString:
         case AnimatedUnknown:
-            return false;
+            break;
 
         case AnimatedPath:
         case AnimatedTransformList:
             return true;
         }
+
+        return false;
     }
 
     static std::unique_ptr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)

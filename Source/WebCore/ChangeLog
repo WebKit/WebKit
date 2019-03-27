@@ -1,3 +1,12 @@
+2019-03-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed Windows build fix
+        https://bugs.webkit.org/show_bug.cgi?id=196083
+        <rdar://problem/49121836>
+
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::isSupportedAttributeType):
+
 2019-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Refactor some helper functions for building UserAgent strings
