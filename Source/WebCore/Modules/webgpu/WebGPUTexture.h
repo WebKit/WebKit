@@ -39,7 +39,7 @@ class WebGPUTexture : public RefCounted<WebGPUTexture> {
 public:
     static Ref<WebGPUTexture> create(RefPtr<GPUTexture>&&);
 
-    RefPtr<GPUTexture> texture() const { return m_texture; }
+    GPUTexture* texture() { return m_texture.get(); }
 
     Ref<WebGPUTextureView> createDefaultView();
     void destroy();

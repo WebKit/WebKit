@@ -46,7 +46,7 @@ RefPtr<GPUCommandBuffer> GPUCommandBuffer::tryCreate(const GPUDevice& device)
         return nullptr;
     }
 
-    auto gpuCommandQueue = device.getQueue();
+    auto gpuCommandQueue = device.tryGetQueue();
     if (!gpuCommandQueue)
         return nullptr;
 

@@ -27,35 +27,10 @@ fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
 }
 `
 
-const incompleteShaders = `
-#include <metal_stdlib>
-    
-using namespace metal;
-
-vertex Vertex vertex_main(uint vid [[vertex_id]])
-{
-    return Vertex { float4(0, 0, 0, 1) };
-}
-
-fragment float4 fragment_main(Vertex vertexIn [[stage_in]])
-{
-    rreturn vertexIn.position;
-}
-`
-
 promise_test(async () => {
     const device = await getBasicDevice();
 
-    const shaderDescriptor0 = {
-        code : "Hello World"
-    };
-    let shaderModule = device.createShaderModule(shaderDescriptor0);
-    assert_equals(shaderModule, null, "Bad shader code did not create a module.");
-
-    shaderModule = device.createShaderModule({ code: incompleteShaders });
-    assert_equals(shaderModule, null, "Incomplete shader code did not create a module.");
-
-    shaderModule = device.createShaderModule({ code: shaders });
+    let shaderModule = device.createShaderModule({ code: shaders });
     assert_true(shaderModule instanceof GPUShaderModule, "Shader module created successfully.");
 }, "Test shader code validation when creating modules.");
 </script>

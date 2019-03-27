@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBindGroupLayout.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -38,7 +37,7 @@ class WebGPUBindGroupLayout : public RefCounted<WebGPUBindGroupLayout> {
 public:
     static Ref<WebGPUBindGroupLayout> create(RefPtr<GPUBindGroupLayout>&&);
 
-    RefPtr<GPUBindGroupLayout> bindGroupLayout() const { return m_bindGroupLayout; }
+    const GPUBindGroupLayout* bindGroupLayout() const { return m_bindGroupLayout.get(); }
 
 private:
     explicit WebGPUBindGroupLayout(RefPtr<GPUBindGroupLayout>&&);

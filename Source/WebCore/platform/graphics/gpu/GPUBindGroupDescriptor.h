@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct GPUBindGroupDescriptor {
-    Ref<GPUBindGroupLayout> layout;
+    Ref<const GPUBindGroupLayout> layout;
     Vector<GPUBindGroupBinding> bindings;
 };
 

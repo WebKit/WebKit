@@ -57,8 +57,8 @@ class WebGPUCommandEncoder : public RefCounted<WebGPUCommandEncoder> {
 public:
     static Ref<WebGPUCommandEncoder> create(RefPtr<GPUCommandBuffer>&&);
 
-    Ref<WebGPURenderPassEncoder> beginRenderPass(WebGPURenderPassDescriptor&&);
-    void copyBufferToBuffer(const WebGPUBuffer&, unsigned long srcOffset, const WebGPUBuffer&, unsigned long dstOffset, unsigned long size);
+    Ref<WebGPURenderPassEncoder> beginRenderPass(const WebGPURenderPassDescriptor&);
+    void copyBufferToBuffer(WebGPUBuffer&, unsigned long srcOffset, WebGPUBuffer&, unsigned long dstOffset, unsigned long size);
     void copyBufferToTexture(const WebGPUBufferCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);
     void copyTextureToBuffer(const WebGPUTextureCopyView&, const WebGPUBufferCopyView&, const GPUExtent3D&);
     void copyTextureToTexture(const WebGPUTextureCopyView&, const WebGPUTextureCopyView&, const GPUExtent3D&);

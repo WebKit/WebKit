@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct GPUPipelineLayoutDescriptor {
-    Vector<RefPtr<const GPUBindGroupLayout>> bindGroupLayouts;
+    Vector<Ref<const GPUBindGroupLayout>> bindGroupLayouts;
 };
 
 } // namespace WebCore

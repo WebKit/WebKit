@@ -40,7 +40,7 @@ class WebGPUSwapChain : public RefCounted<WebGPUSwapChain> {
 public:
     static Ref<WebGPUSwapChain> create(RefPtr<GPUSwapChain>&&);
 
-    GPUSwapChain* swapChain() const { return m_swapChain.get(); }
+    GPUSwapChain* swapChain() { return m_swapChain.get(); }
 
     Ref<WebGPUTexture> getCurrentTexture();
 

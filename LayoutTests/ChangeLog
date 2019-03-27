@@ -1,3 +1,14 @@
+2019-03-27  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Standardize Web GPU object reference counting and creation logic
+        https://bugs.webkit.org/show_bug.cgi?id=196183
+
+        Reviewed by Dean Jackson.
+
+        GPUShaderModule is no longer nullable.
+
+        * webgpu/shader-modules.html:
+
 2019-03-27  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r243346.

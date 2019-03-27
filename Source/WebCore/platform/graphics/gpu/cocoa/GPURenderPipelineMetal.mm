@@ -417,7 +417,7 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const c
     return pipeline;
 }
 
-RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPURenderPipelineDescriptor&& descriptor)
+RefPtr<GPURenderPipeline> GPURenderPipeline::tryCreate(const GPUDevice& device, const GPURenderPipelineDescriptor& descriptor)
 {
     const char* const functionName = "GPURenderPipeline::create()";
 
@@ -435,14 +435,13 @@ RefPtr<GPURenderPipeline> GPURenderPipeline::create(const GPUDevice& device, GPU
     if (!pipeline)
         return nullptr;
 
-    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), WTFMove(descriptor)));
+    return adoptRef(new GPURenderPipeline(WTFMove(depthStencil), WTFMove(pipeline), descriptor.primitiveTopology));
 }
 
-GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPURenderPipelineDescriptor&& descriptor)
+GPURenderPipeline::GPURenderPipeline(RetainPtr<MTLDepthStencilState>&& depthStencil, RetainPtr<MTLRenderPipelineState>&& pipeline, GPUPrimitiveTopology topology)
     : m_depthStencilState(WTFMove(depthStencil))
     , m_platformRenderPipeline(WTFMove(pipeline))
-    , m_layout(WTFMove(descriptor.layout))
-    , m_primitiveTopology(descriptor.primitiveTopology)
+    , m_primitiveTopology(topology)
 {
 }
 

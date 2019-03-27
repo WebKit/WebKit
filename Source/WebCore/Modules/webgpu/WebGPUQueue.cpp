@@ -35,18 +35,22 @@
 
 namespace WebCore {
 
-RefPtr<WebGPUQueue> WebGPUQueue::create(RefPtr<GPUQueue>&& queue)
+Ref<WebGPUQueue> WebGPUQueue::create(RefPtr<GPUQueue>&& queue)
 {
-    return queue ? adoptRef(new WebGPUQueue(queue.releaseNonNull())) : nullptr;
+    return adoptRef(*new WebGPUQueue(WTFMove(queue)));
 }
 
-WebGPUQueue::WebGPUQueue(Ref<GPUQueue>&& queue)
+WebGPUQueue::WebGPUQueue(RefPtr<GPUQueue>&& queue)
     : m_queue(WTFMove(queue))
 {
 }
 
 void WebGPUQueue::submit(const Vector<RefPtr<WebGPUCommandBuffer>>& buffers)
 {
+    if (!m_queue) {
+        LOG(WebGPU, "GPUQueue::submit(): Invalid operation!");
+        return;
+    }
     Vector<Ref<GPUCommandBuffer>> gpuBuffers;
     gpuBuffers.reserveCapacity(buffers.size());
     

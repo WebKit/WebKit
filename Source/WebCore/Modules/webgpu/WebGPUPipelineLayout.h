@@ -36,14 +36,14 @@ namespace WebCore {
 
 class WebGPUPipelineLayout : public RefCounted<WebGPUPipelineLayout> {
 public:
-    static Ref<WebGPUPipelineLayout> create(Ref<GPUPipelineLayout>&&);
+    static Ref<WebGPUPipelineLayout> create(RefPtr<GPUPipelineLayout>&&);
 
-    GPUPipelineLayout& pipelineLayout() { return m_pipelineLayout.get(); }
+    GPUPipelineLayout* pipelineLayout() { return m_pipelineLayout.get(); }
 
 private:
-    explicit WebGPUPipelineLayout(Ref<GPUPipelineLayout>&&);
+    explicit WebGPUPipelineLayout(RefPtr<GPUPipelineLayout>&&);
 
-    Ref<GPUPipelineLayout> m_pipelineLayout;
+    RefPtr<GPUPipelineLayout> m_pipelineLayout;
 };
 
 } // namespace WebCore

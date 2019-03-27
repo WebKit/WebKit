@@ -13930,6 +13930,7 @@
 		D003288621C9A4E500622AA6 /* GPUPipelineLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUPipelineLayout.h; sourceTree = "<group>"; };
 		D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineLayout.cpp; sourceTree = "<group>"; };
 		D003914122248D400098998C /* GPUProgrammablePassEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProgrammablePassEncoder.cpp; sourceTree = "<group>"; };
+		D00487D222457BEA00EED7D9 /* WebGPUPipelineLayoutDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipelineLayoutDescriptor.cpp; sourceTree = "<group>"; };
 		D00F5940216ECC7A000D71DB /* DOMWindowWebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMWindowWebGPU.h; sourceTree = "<group>"; };
 		D00F5941216ECC7A000D71DB /* DOMWindowWebGPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowWebGPU.cpp; sourceTree = "<group>"; };
 		D00F5942216ECC7A000D71DB /* DOMWindowWebGPU.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = DOMWindowWebGPU.idl; sourceTree = "<group>"; };
@@ -26135,6 +26136,7 @@
 				D05A99E521C9BF2C00032B75 /* WebGPUPipelineLayout.cpp */,
 				D05A99E421C9BF2C00032B75 /* WebGPUPipelineLayout.h */,
 				D05A99E621C9BF2C00032B75 /* WebGPUPipelineLayout.idl */,
+				D00487D222457BEA00EED7D9 /* WebGPUPipelineLayoutDescriptor.cpp */,
 				D05A99E121C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.h */,
 				D05A99E221C9B50F00032B75 /* WebGPUPipelineLayoutDescriptor.idl */,
 				D0C419EB2183CFA2009EC1DE /* WebGPUPipelineStageDescriptor.h */,
@@ -26175,6 +26177,7 @@
 				D0EACF882193EE4E000FA75C /* WebGPUTextureView.cpp */,
 				D0EACF872193EE4E000FA75C /* WebGPUTextureView.h */,
 				D0EACF892193EE4E000FA75C /* WebGPUTextureView.idl */,
+				D00487D222457BEA00EED7D9 /* WebGPUPipelineLayoutDescriptor.cpp */,
 			);
 			path = webgpu;
 			sourceTree = "<group>";

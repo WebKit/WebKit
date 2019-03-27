@@ -37,7 +37,7 @@ class WebGPUSampler : public RefCounted<WebGPUSampler> {
 public:
     static Ref<WebGPUSampler> create(RefPtr<GPUSampler>&&);
 
-    GPUSampler* sampler() const { return m_sampler.get(); }
+    const GPUSampler* sampler() const { return m_sampler.get(); }
 
 private:
     WebGPUSampler(RefPtr<GPUSampler>&&);

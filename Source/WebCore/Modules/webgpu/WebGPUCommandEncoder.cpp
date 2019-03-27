@@ -47,7 +47,7 @@ Optional<GPUBufferCopyView> WebGPUBufferCopyView::tryCreateGPUBufferCopyView() c
 
     // FIXME: Add Web GPU validation.
 
-    return GPUBufferCopyView { buffer->buffer().releaseNonNull(), *this };
+    return GPUBufferCopyView { makeRef(*buffer->buffer()), *this };
 }
 
 Optional<GPUTextureCopyView> WebGPUTextureCopyView::tryCreateGPUTextureCopyView() const
@@ -59,7 +59,7 @@ Optional<GPUTextureCopyView> WebGPUTextureCopyView::tryCreateGPUTextureCopyView(
 
     // FIXME: Add Web GPU validation.
 
-    return GPUTextureCopyView { texture->texture().releaseNonNull(), *this };
+    return GPUTextureCopyView { makeRef(*texture->texture()), *this };
 }
 
 Ref<WebGPUCommandEncoder> WebGPUCommandEncoder::create(RefPtr<GPUCommandBuffer>&& buffer)
@@ -72,7 +72,7 @@ WebGPUCommandEncoder::WebGPUCommandEncoder(RefPtr<GPUCommandBuffer>&& buffer)
 {
 }
 
-Ref<WebGPURenderPassEncoder> WebGPUCommandEncoder::beginRenderPass(WebGPURenderPassDescriptor&& descriptor)
+Ref<WebGPURenderPassEncoder> WebGPUCommandEncoder::beginRenderPass(const WebGPURenderPassDescriptor& descriptor)
 {
     if (!m_commandBuffer) {
         LOG(WebGPU, "WebGPUCommandEncoder::beginRenderPass(): Invalid operation!");
@@ -86,7 +86,7 @@ Ref<WebGPURenderPassEncoder> WebGPUCommandEncoder::beginRenderPass(WebGPURenderP
     return WebGPURenderPassEncoder::create(*this, WTFMove(encoder));
 }
 
-void WebGPUCommandEncoder::copyBufferToBuffer(const WebGPUBuffer& src, unsigned long srcOffset, const WebGPUBuffer& dst, unsigned long dstOffset, unsigned long size)
+void WebGPUCommandEncoder::copyBufferToBuffer(WebGPUBuffer& src, unsigned long srcOffset, WebGPUBuffer& dst, unsigned long dstOffset, unsigned long size)
 {
     if (!m_commandBuffer) {
         LOG(WebGPU, "WebGPUCommandEncoder::copyBufferToBuffer(): Invalid operation!");

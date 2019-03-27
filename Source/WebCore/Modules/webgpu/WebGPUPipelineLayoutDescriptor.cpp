@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,30 @@
  */
 
 #include "config.h"
-#include "WebGPUPipelineLayout.h"
+#include "WebGPUPipelineLayoutDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
+#include "GPUPipelineLayoutDescriptor.h"
+#include "Logging.h"
+
 namespace WebCore {
-
-Ref<WebGPUPipelineLayout> WebGPUPipelineLayout::create(RefPtr<GPUPipelineLayout>&& layout)
+    
+Optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor() const
 {
-    return adoptRef(*new WebGPUPipelineLayout(WTFMove(layout)));
-}
-
-WebGPUPipelineLayout::WebGPUPipelineLayout(RefPtr<GPUPipelineLayout>&& layout)
-    : m_pipelineLayout(WTFMove(layout))
-{
+    Vector<Ref<const GPUBindGroupLayout>> gpuLayouts;
+    gpuLayouts.reserveCapacity(bindGroupLayouts.size());
+    
+    for (const auto& layout : bindGroupLayouts) {
+        if (!layout || !layout->bindGroupLayout()) {
+            LOG(WebGPU, "GPUDevice::createPipelineLayout(): Invalid GPUBindGroupLayout!");
+            return WTF::nullopt;
+        }
+        
+        gpuLayouts.uncheckedAppend(makeRef(*layout->bindGroupLayout()));
+    }
+    
+    return GPUPipelineLayoutDescriptor { WTFMove(gpuLayouts) };
 }
 
 } // namespace WebCore

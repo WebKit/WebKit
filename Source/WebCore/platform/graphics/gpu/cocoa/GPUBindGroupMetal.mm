@@ -77,21 +77,21 @@ static void setBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBuf
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
-static RefPtr<GPUSampler> tryGetResourceAsSampler(const GPUBindingResource& resource, const char* const functionName)
+static MTLSamplerState *tryGetResourceAsMtlSampler(const GPUBindingResource& resource, const char* const functionName)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);
 #endif
-    if (!WTF::holds_alternative<Ref<GPUSampler>>(resource)) {
+    if (!WTF::holds_alternative<Ref<const GPUSampler>>(resource)) {
         LOG(WebGPU, "%s: Resource is not a GPUSampler!", functionName);
         return nullptr;
     }
-    auto& samplerRef = WTF::get<Ref<GPUSampler>>(resource);
-    if (!samplerRef->platformSampler()) {
+    auto samplerState = WTF::get<Ref<const GPUSampler>>(resource)->platformSampler();
+    if (!samplerState) {
         LOG(WebGPU, "%s: Invalid MTLSamplerState in GPUSampler binding!", functionName);
         return nullptr;
     }
-    return samplerRef.copyRef();
+    return samplerState;
 }
 
 static void setSamplerOnEncoder(MTLArgumentEncoder *argumentEncoder, MTLSamplerState *sampler, unsigned index)
@@ -186,13 +186,13 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
             break;
         }
         case GPUBindingType::Sampler: {
-            auto samplerResource = tryGetResourceAsSampler(resourceBinding.resource, functionName);
-            if (!samplerResource)
+            auto sampler = tryGetResourceAsMtlSampler(resourceBinding.resource, functionName);
+            if (!sampler)
                 return nullptr;
             if (layoutBinding.visibility & GPUShaderStageBit::Flags::Vertex)
-                setSamplerOnEncoder(vertexEncoder, samplerResource->platformSampler(), resourceBinding.binding);
+                setSamplerOnEncoder(vertexEncoder, sampler, resourceBinding.binding);
             if (layoutBinding.visibility & GPUShaderStageBit::Flags::Fragment)
-                setSamplerOnEncoder(fragmentEncoder, samplerResource->platformSampler(), resourceBinding.binding);
+                setSamplerOnEncoder(fragmentEncoder, sampler, resourceBinding.binding);
             break;
         }
         case GPUBindingType::SampledTexture: {

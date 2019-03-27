@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-using GPUBindingResource = Variant<Ref<GPUSampler>, Ref<GPUTexture>, GPUBufferBinding>;
+using GPUBindingResource = Variant<Ref<const GPUSampler>, Ref<GPUTexture>, GPUBufferBinding>;
 
 struct GPUBindGroupBinding {
     unsigned long binding;

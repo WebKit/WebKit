@@ -68,7 +68,7 @@ public:
 
     ~GPUBuffer();
 
-    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, GPUBufferDescriptor&&);
+    static RefPtr<GPUBuffer> tryCreate(Ref<GPUDevice>&&, const GPUBufferDescriptor&);
 
     PlatformBuffer *platformBuffer() const { return m_platformBuffer.get(); }
     unsigned long byteLength() const { return m_byteLength; }
@@ -109,7 +109,7 @@ private:
 
     static bool validateBufferUsage(const GPUDevice&, OptionSet<GPUBufferUsage::Flags>);
 
-    GPUBuffer(PlatformBufferSmartPtr&&, const GPUBufferDescriptor&, OptionSet<GPUBufferUsage::Flags>, Ref<GPUDevice>&&);
+    GPUBuffer(PlatformBufferSmartPtr&&, unsigned long, OptionSet<GPUBufferUsage::Flags>, Ref<GPUDevice>&&);
 
     JSC::ArrayBuffer* stagingBufferForRead();
     JSC::ArrayBuffer* stagingBufferForWrite();

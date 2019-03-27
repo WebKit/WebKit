@@ -65,22 +65,22 @@ public:
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
     const GPUDevice& device() const { return m_device.get(); }
 
-    Ref<WebGPUBuffer> createBuffer(GPUBufferDescriptor&&) const;
-    Ref<WebGPUTexture> createTexture(GPUTextureDescriptor&&) const;
+    Ref<WebGPUBuffer> createBuffer(const GPUBufferDescriptor&) const;
+    Ref<WebGPUTexture> createTexture(const GPUTextureDescriptor&) const;
     Ref<WebGPUSampler> createSampler(const GPUSamplerDescriptor&) const;
 
     Ref<WebGPUBindGroupLayout> createBindGroupLayout(const GPUBindGroupLayoutDescriptor&) const;
-    Ref<WebGPUPipelineLayout> createPipelineLayout(WebGPUPipelineLayoutDescriptor&&) const;
-    Ref<WebGPUBindGroup> createBindGroup(WebGPUBindGroupDescriptor&&) const;
+    Ref<WebGPUPipelineLayout> createPipelineLayout(const WebGPUPipelineLayoutDescriptor&) const;
+    Ref<WebGPUBindGroup> createBindGroup(const WebGPUBindGroupDescriptor&) const;
 
-    RefPtr<WebGPUShaderModule> createShaderModule(WebGPUShaderModuleDescriptor&&) const;
+    Ref<WebGPUShaderModule> createShaderModule(const WebGPUShaderModuleDescriptor&) const;
     Ref<WebGPURenderPipeline> createRenderPipeline(const WebGPURenderPipelineDescriptor&) const;
 
     Ref<WebGPUCommandEncoder> createCommandEncoder() const;
 
     Ref<WebGPUSwapChain> createSwapChain(const WebGPUSwapChainDescriptor&) const;
 
-    RefPtr<WebGPUQueue> getQueue() const;
+    Ref<WebGPUQueue> getQueue() const;
 
 private:
     WebGPUDevice(Ref<const WebGPUAdapter>&&, Ref<GPUDevice>&&);

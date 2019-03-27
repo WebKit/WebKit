@@ -32,11 +32,11 @@ namespace WebCore {
 
 Ref<GPUPipelineLayout> GPUPipelineLayout::create(GPUPipelineLayoutDescriptor&& descriptor)
 {
-    return adoptRef(*new GPUPipelineLayout(WTFMove(descriptor)));
+    return adoptRef(*new GPUPipelineLayout(WTFMove(descriptor.bindGroupLayouts)));
 }
 
-GPUPipelineLayout::GPUPipelineLayout(GPUPipelineLayoutDescriptor&& descriptor)
-    : m_bindGroupLayouts(WTFMove(descriptor.bindGroupLayouts))
+GPUPipelineLayout::GPUPipelineLayout(Vector<Ref<const GPUBindGroupLayout>>&& layouts)
+    : m_bindGroupLayouts(WTFMove(layouts))
 {
 }
 

@@ -62,7 +62,7 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
     return true;
 }
 
-RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescriptor&& descriptor)
+RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor)
 {
     auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
     if (!validateBufferUsage(device.get(), usage))
@@ -88,13 +88,13 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, GPUBufferDescrip
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor, usage, WTFMove(device)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor.size, usage, WTFMove(device)));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, const GPUBufferDescriptor& descriptor, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, unsigned long size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
     : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
-    , m_byteLength(descriptor.size)
+    , m_byteLength(size)
     , m_usage(usage)
 {
 }
@@ -121,6 +121,10 @@ GPUBuffer::State GPUBuffer::state() const
 
 void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
 {
+    MTLCommandQueue *queue;
+    if (!m_device->tryGetQueue() || !(queue = m_device->tryGetQueue()->platformQueue()))
+        return;
+    
     if (!isTransferDestination() || state() != State::Unmapped) {
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid operation!");
         return;
@@ -156,7 +160,7 @@ void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    auto commandBuffer = retainPtr([m_device->getQueue()->platformQueue() commandBuffer]);
+    auto commandBuffer = retainPtr([queue commandBuffer]);
     auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
 
     [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:offset size:stagingMtlBuffer.get().length];

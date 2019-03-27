@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-RefPtr<GPUShaderModule> GPUShaderModule::create(const GPUDevice& device, GPUShaderModuleDescriptor&& descriptor)
+RefPtr<GPUShaderModule> GPUShaderModule::tryCreate(const GPUDevice& device, const GPUShaderModuleDescriptor& descriptor)
 {
     if (!device.platformDevice()) {
         LOG(WebGPU, "GPUShaderModule::create(): Invalid GPUDevice!");

@@ -358,6 +358,7 @@ Modules/webgpu/WebGPUBuffer.cpp
 Modules/webgpu/WebGPUDevice.cpp
 Modules/webgpu/WebGPUQueue.cpp
 Modules/webgpu/WebGPUPipelineLayout.cpp
+Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp
 Modules/webgpu/WebGPUProgrammablePassEncoder.cpp
 Modules/webgpu/WebGPURenderPassDescriptor.cpp
 Modules/webgpu/WebGPURenderPassEncoder.cpp

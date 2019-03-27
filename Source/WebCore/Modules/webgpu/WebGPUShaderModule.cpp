@@ -30,15 +30,14 @@
 
 namespace WebCore {
 
-Ref<WebGPUShaderModule> WebGPUShaderModule::create(Ref<GPUShaderModule>&& module)
+Ref<WebGPUShaderModule> WebGPUShaderModule::create(RefPtr<GPUShaderModule>&& module)
 {
     return adoptRef(*new WebGPUShaderModule(WTFMove(module)));
 }
 
-WebGPUShaderModule::WebGPUShaderModule(Ref<GPUShaderModule>&& module)
+WebGPUShaderModule::WebGPUShaderModule(RefPtr<GPUShaderModule>&& module)
     : m_module(WTFMove(module))
 {
-    UNUSED_PARAM(m_module);
 }
 
 } // namespace WebCore

@@ -92,7 +92,7 @@ void WebGPURenderPassEncoder::setVertexBuffers(unsigned long startSlot, Vector<R
             return;
         }
 
-        gpuBuffers.uncheckedAppend(buffer->buffer().releaseNonNull());
+        gpuBuffers.uncheckedAppend(makeRef(*buffer->buffer()));
     }
 
     m_passEncoder->setVertexBuffers(startSlot, WTFMove(gpuBuffers), WTFMove(offsets));

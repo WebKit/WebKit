@@ -1,3 +1,122 @@
+2019-03-27  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Standardize Web GPU object reference counting and creation logic
+        https://bugs.webkit.org/show_bug.cgi?id=196183
+
+        Reviewed by Dean Jackson.
+
+        Make getters return raw refs/pointers and provide const versions if necessary.
+        All Web GPU objects are non-nullable, but become no-op if invalid, and descriptors are not moved unless needed.
+
+        No new tests; no change in behavior.
+
+        Getter updates and const qualifications:
+        * Modules/webgpu/WebGPUAdapter.h:
+        (WebCore::WebGPUAdapter::options const):
+        * Modules/webgpu/WebGPUBindGroup.h:
+        (WebCore::WebGPUBindGroup::bindGroup):
+        (WebCore::WebGPUBindGroup::bindGroup const): Deleted.
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor const):
+        * Modules/webgpu/WebGPUBindGroupDescriptor.h:
+        * Modules/webgpu/WebGPUBindGroupLayout.h:
+        (WebCore::WebGPUBindGroupLayout::bindGroupLayout const):
+        * Modules/webgpu/WebGPUBuffer.h:
+        (WebCore::WebGPUBuffer::buffer):
+        (WebCore::WebGPUBuffer::buffer const):
+        * Modules/webgpu/WebGPURenderPassDescriptor.cpp:
+        (WebCore::WebGPURenderPassDescriptor::tryCreateGPURenderPassDescriptor const):
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers):
+        * Modules/webgpu/WebGPUSampler.h:
+        (WebCore::WebGPUSampler::sampler const):
+        * Modules/webgpu/WebGPUSwapChain.h:
+        (WebCore::WebGPUSwapChain::swapChain):
+        (WebCore::WebGPUSwapChain::swapChain const): Deleted.
+        * Modules/webgpu/WebGPUTexture.h:
+        (WebCore::WebGPUTexture::texture):
+        (WebCore::WebGPUTexture::texture const): Deleted.
+        * Modules/webgpu/WebGPUTextureView.h:
+        (WebCore::WebGPUTextureView::texture):
+        (WebCore::WebGPUTextureView::texture const): Deleted.
+        * platform/graphics/gpu/GPUBindGroupBinding.h:
+        * platform/graphics/gpu/GPUBindGroupDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::tryGetResourceAsMTLSamplerState):
+
+        Web GPU object creation logic:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp:
+        (WebCore::WebGPUBufferCopyView::tryCreateGPUBufferCopyView const):
+        (WebCore::WebGPUTextureCopyView::tryCreateGPUTextureCopyView const):
+        (WebCore::WebGPUCommandEncoder::beginRenderPass):
+        (WebCore::WebGPUCommandEncoder::copyBufferToBuffer):
+        * Modules/webgpu/WebGPUCommandEncoder.h:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createBuffer const):
+        (WebCore::WebGPUDevice::createTexture const):
+        (WebCore::WebGPUDevice::createPipelineLayout const):
+        (WebCore::WebGPUDevice::createBindGroup const):
+        (WebCore::WebGPUDevice::createShaderModule const):
+        (WebCore::WebGPUDevice::createRenderPipeline const):
+        (WebCore::WebGPUDevice::getQueue const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUPipelineLayout.cpp:
+        (WebCore::WebGPUPipelineLayout::create):
+        (WebCore::WebGPUPipelineLayout::WebGPUPipelineLayout):
+        * Modules/webgpu/WebGPUPipelineLayout.h:
+        (WebCore::WebGPUPipelineLayout::pipelineLayout):
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.cpp: 
+        (WebCore::WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor const):
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.h:
+        * Modules/webgpu/WebGPUQueue.cpp:
+        (WebCore::WebGPUQueue::create):
+        (WebCore::WebGPUQueue::WebGPUQueue):
+        (WebCore::WebGPUQueue::submit):
+        * Modules/webgpu/WebGPUQueue.h:
+        * Modules/webgpu/WebGPUShaderModule.cpp:
+        (WebCore::WebGPUShaderModule::create):
+        (WebCore::WebGPUShaderModule::WebGPUShaderModule):
+        * Modules/webgpu/WebGPUShaderModule.h:
+        (WebCore::WebGPUShaderModule::module const):
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateBuffer):
+        (WebCore::GPUDevice::tryCreateTexture const):
+        (WebCore::GPUDevice::tryCreateShaderModule const):
+        (WebCore::GPUDevice::tryCreateRenderPipeline const):
+        (WebCore::GPUDevice::tryGetQueue const):
+        (WebCore::GPUDevice::createShaderModule const): Deleted.
+        (WebCore::GPUDevice::createRenderPipeline const): Deleted.
+        (WebCore::GPUDevice::getQueue const): Deleted.
+        * platform/graphics/gpu/GPUDevice.h:
+        * platform/graphics/gpu/GPUPipelineLayout.cpp:
+        (WebCore::GPUPipelineLayout::create):
+        (WebCore::GPUPipelineLayout::GPUPipelineLayout):
+        * platform/graphics/gpu/GPUPipelineLayout.h:
+        (WebCore::GPUPipelineLayout::bindGroupLayouts const):
+        * platform/graphics/gpu/GPUPipelineLayoutDescriptor.h:
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        * platform/graphics/gpu/GPUShaderModule.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::setSubData):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUDeviceMetal.mm:
+        (WebCore::GPUDevice::tryCreate):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::tryCreate):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+        (WebCore::GPURenderPipeline::create): Deleted.
+        * platform/graphics/gpu/cocoa/GPUShaderModuleMetal.mm:
+        (WebCore::GPUShaderModule::tryCreate):
+        (WebCore::GPUShaderModule::create): Deleted.
+
+        Add WebGPUPipelineLayoutDescriptor.cpp to project:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        
 2019-03-27  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r243346.

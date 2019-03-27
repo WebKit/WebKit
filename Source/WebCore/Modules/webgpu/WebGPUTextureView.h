@@ -38,7 +38,7 @@ public:
     static Ref<WebGPUTextureView> create(RefPtr<GPUTexture>&&);
     ~WebGPUTextureView() { destroy(); }
 
-    RefPtr<GPUTexture> texture() const { return m_texture; }
+    GPUTexture* texture() { return m_texture.get(); }
 
     void destroy();
 private:

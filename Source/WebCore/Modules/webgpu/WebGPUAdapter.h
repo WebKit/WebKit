@@ -45,7 +45,7 @@ public:
     using DeviceRequestPromise = DOMPromiseDeferred<IDLInterface<WebGPUDevice>>;
     void requestDevice(DeviceRequestPromise&&) const;
     
-    Optional<GPURequestAdapterOptions> options() const { return m_options; }
+    const Optional<GPURequestAdapterOptions>& options() const { return m_options; }
 
 private:
     explicit WebGPUAdapter(Optional<GPURequestAdapterOptions>&&);

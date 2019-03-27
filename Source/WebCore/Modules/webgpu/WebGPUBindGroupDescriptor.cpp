@@ -103,7 +103,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
             if (!texture)
                 return WTF::nullopt;
 
-            return static_cast<GPUBindingResource>(texture.releaseNonNull());
+            return static_cast<GPUBindingResource>(makeRef(*texture));
         }, [&layoutBinding, functionName] (WebGPUBufferBinding bufferBinding) -> Optional<GPUBindingResource> {
             if (!bufferBinding.buffer)
                 return WTF::nullopt;
@@ -111,10 +111,10 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
             if (!buffer)
                 return WTF::nullopt;
 
-            if (!validateBufferBindingType(buffer.get(), layoutBinding, functionName))
+            if (!validateBufferBindingType(buffer, layoutBinding, functionName))
                 return WTF::nullopt;
 
-            return static_cast<GPUBindingResource>(GPUBufferBinding { buffer.releaseNonNull(), bufferBinding.offset, bufferBinding.size });
+            return static_cast<GPUBindingResource>(GPUBufferBinding { makeRef(*buffer), bufferBinding.offset, bufferBinding.size });
         });
 
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
@@ -126,7 +126,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
         bindGroupBindings.uncheckedAppend(GPUBindGroupBinding { binding.binding, WTFMove(bindingResource.value()) });
     }
 
-    return GPUBindGroupDescriptor { layout->bindGroupLayout().releaseNonNull(), WTFMove(bindGroupBindings) };
+    return GPUBindGroupDescriptor { makeRef(*layout->bindGroupLayout()), WTFMove(bindGroupBindings) };
 }
 
 } // namespace WebCore

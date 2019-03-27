@@ -48,14 +48,14 @@
 
 namespace WebCore {
 
-RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(GPUBufferDescriptor&& descriptor)
+RefPtr<GPUBuffer> GPUDevice::tryCreateBuffer(const GPUBufferDescriptor& descriptor)
 {
-    return GPUBuffer::tryCreate(makeRef(*this), WTFMove(descriptor));
+    return GPUBuffer::tryCreate(makeRef(*this), descriptor);
 }
 
-RefPtr<GPUTexture> GPUDevice::tryCreateTexture(GPUTextureDescriptor&& descriptor) const
+RefPtr<GPUTexture> GPUDevice::tryCreateTexture(const GPUTextureDescriptor& descriptor) const
 {
-    return GPUTexture::tryCreate(*this, WTFMove(descriptor));
+    return GPUTexture::tryCreate(*this, descriptor);
 }
 
 RefPtr<GPUSampler> GPUDevice::tryCreateSampler(const GPUSamplerDescriptor& descriptor) const
@@ -73,14 +73,14 @@ Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(GPUPipelineLayoutDescript
     return GPUPipelineLayout::create(WTFMove(descriptor));
 }
 
-RefPtr<GPUShaderModule> GPUDevice::createShaderModule(GPUShaderModuleDescriptor&& descriptor) const
+RefPtr<GPUShaderModule> GPUDevice::tryCreateShaderModule(const GPUShaderModuleDescriptor& descriptor) const
 {
-    return GPUShaderModule::create(*this, WTFMove(descriptor));
+    return GPUShaderModule::tryCreate(*this, descriptor);
 }
 
-RefPtr<GPURenderPipeline> GPUDevice::createRenderPipeline(GPURenderPipelineDescriptor&& descriptor) const
+RefPtr<GPURenderPipeline> GPUDevice::tryCreateRenderPipeline(const GPURenderPipelineDescriptor& descriptor) const
 {
-    return GPURenderPipeline::create(*this, WTFMove(descriptor));
+    return GPURenderPipeline::tryCreate(*this, descriptor);
 }
 
 RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const
@@ -94,7 +94,7 @@ RefPtr<GPUSwapChain> GPUDevice::tryCreateSwapChain(const GPUSwapChainDescriptor&
     return m_swapChain;
 }
 
-RefPtr<GPUQueue> GPUDevice::getQueue() const
+RefPtr<GPUQueue> GPUDevice::tryGetQueue() const
 {
     if (!m_queue)
         m_queue = GPUQueue::tryCreate(*this);
