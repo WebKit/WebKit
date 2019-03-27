@@ -46,6 +46,7 @@
 #include "DFGDoesGC.h"
 #include "DFGDominators.h"
 #include "DFGInPlaceAbstractState.h"
+#include "DFGLivenessAnalysisPhase.h"
 #include "DFGMayExit.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSRExitFuzz.h"
@@ -82,6 +83,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
 #include "OperandsInlines.h"
+#include "ProbeContext.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
 #include "ScopedArgumentsTable.h"
@@ -155,6 +157,29 @@ public:
         , m_interpreter(state.graph, m_state)
         , m_indexMaskingMode(Options::enableSpectreMitigations() ?  IndexMaskingEnabled : IndexMaskingDisabled)
     {
+        if (Options::validateAbstractInterpreterState()) {
+            performLivenessAnalysis(m_graph);
+
+            // We only use node liveness here, not combined liveness, as we only track
+            // AI state for live nodes.
+            for (DFG::BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+                NodeSet live;
+
+                for (NodeFlowProjection node : block->ssa->liveAtTail) {
+                    if (node.kind() == NodeFlowProjection::Primary)
+                        live.addVoid(node.node());
+                }
+
+                for (unsigned i = block->size(); i--; ) {
+                    Node* node = block->at(i);
+                    live.remove(node);
+                    m_graph.doToChildren(node, [&] (Edge child) {
+                        live.addVoid(child.node());
+                    });
+                    m_liveInToNode.add(node, live);
+                }
+            }
+        }
     }
     
     void lower()
@@ -473,6 +498,8 @@ private:
             crash(m_highBlock, nullptr);
             return;
         }
+
+        m_aiCheckedNodes.clear();
         
         m_availabilityCalculator.beginBlock(m_highBlock);
         
@@ -508,6 +535,129 @@ private:
         }
     }
 
+    void validateAIState(Node* node)
+    {
+        if (!m_graphDump) {
+            StringPrintStream out;
+            m_graph.dump(out);
+            m_graphDump = out.toString();
+        }
+
+        switch (node->op()) {
+        case MovHint:
+        case ZombieHint:
+        case JSConstant:
+        case LazyJSConstant:
+        case DoubleConstant:
+        case Int52Constant:
+        case GetStack:
+        case PutStack:
+        case KillStack:
+        case ExitOK:
+            return;
+        default:
+            break;
+        }
+
+        // Before we execute node.
+        NodeSet& live = m_liveInToNode.find(node)->value;
+        unsigned highParentIndex = node->index();
+        {
+            uint64_t hash = WTF::intHash(highParentIndex);
+            if (hash >= static_cast<uint64_t>((static_cast<double>(std::numeric_limits<unsigned>::max()) + 1) * Options::validateAbstractInterpreterStateProbability()))
+                return;
+        }
+
+        for (Node* node : live) {
+            if (node->isPhantomAllocation())
+                continue;
+
+            if (node->op() == CheckInBounds)
+                continue;
+
+            AbstractValue value = m_interpreter.forNode(node);
+            {
+                auto iter = m_aiCheckedNodes.find(node);
+                if (iter != m_aiCheckedNodes.end()) {
+                    AbstractValue checkedValue = iter->value;
+                    if (checkedValue == value) {
+                        if (!(value.m_type & SpecCell))
+                            continue;
+                    }
+                }
+                m_aiCheckedNodes.set(node, value);
+            }
+
+            FlushFormat flushFormat;
+            LValue input;
+            if (node->hasJSResult()) {
+                input = lowJSValue(Edge(node, UntypedUse));
+                flushFormat = FlushedJSValue;
+            } else if (node->hasDoubleResult()) {
+                input = lowDouble(Edge(node, DoubleRepUse));
+                flushFormat = FlushedDouble;
+            } else if (node->hasInt52Result()) {
+                input = strictInt52ToJSValue(lowStrictInt52(Edge(node, Int52RepUse)));
+                flushFormat = FlushedInt52;
+            } else
+                continue;
+
+            unsigned highChildIndex = node->index();
+
+            String graphDump = m_graphDump;
+
+            PatchpointValue* patchpoint = m_out.patchpoint(Void);
+            patchpoint->effects = Effects::none();
+            patchpoint->effects.writesLocalState = true;
+            patchpoint->appendSomeRegister(input);
+            patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                GPRReg reg = InvalidGPRReg;
+                FPRReg fpReg = InvalidFPRReg;
+                if (flushFormat == FlushedDouble)
+                    fpReg = params[0].fpr();
+                else
+                    reg = params[0].gpr();
+                jit.probe([=] (Probe::Context& context) {
+                    JSValue input;
+                    double doubleInput;
+
+                    auto dumpAndCrash = [&] {
+                        dataLogLn("Validation failed at node: @", highParentIndex);
+                        dataLogLn("Failed validating live value: @", highChildIndex);
+                        dataLogLn();
+                        dataLogLn("Expected AI value = ", value);
+                        if (flushFormat != FlushedDouble)
+                            dataLogLn("Unexpected value = ", input);
+                        else
+                            dataLogLn("Unexpected double value = ", doubleInput);
+                        dataLogLn();
+                        dataLogLn(graphDump);
+                        CRASH();
+                    };
+
+                    if (flushFormat == FlushedDouble) {
+                        doubleInput = context.fpr(fpReg);
+                        SpeculatedType type;
+                        if (!std::isnan(doubleInput))
+                            type = speculationFromValue(jsDoubleNumber(doubleInput));
+                        else if (isImpureNaN(doubleInput))
+                            type = SpecDoubleImpureNaN;
+                        else
+                            type = SpecDoublePureNaN;
+
+                        if (!value.couldBeType(type))
+                            dumpAndCrash();
+                    } else {
+                        input = JSValue::decode(context.gpr(reg)); 
+                        if (!value.validateOSREntryValue(input, flushFormat))
+                            dumpAndCrash();
+                    }
+
+                });
+            });
+        }
+    }
+
     bool compileNode(unsigned nodeIndex)
     {
         if (!m_state.isValid()) {
@@ -526,6 +676,9 @@ private:
         
         m_interpreter.startExecuting();
         m_interpreter.executeKnownEdgeTypes(m_node);
+
+        if (Options::validateAbstractInterpreterState())
+            validateAIState(m_node);
 
         if (validateDFGDoesGC) {
             bool expectDoesGC = doesGC(m_graph, m_node);
@@ -15182,7 +15335,7 @@ private:
             return result;
         }
         
-        DFG_CRASH(m_graph, m_node, "Value not defined");
+        DFG_CRASH(m_graph, m_node, makeString("Value not defined: ", String::number(edge.node()->index())).ascii().data());
         return 0;
     }
 
@@ -17208,6 +17361,11 @@ private:
     NodeOrigin m_origin;
     unsigned m_nodeIndex;
     Node* m_node;
+
+    // These are used for validating AI state.
+    HashMap<Node*, NodeSet> m_liveInToNode;
+    HashMap<Node*, AbstractValue> m_aiCheckedNodes;
+    String m_graphDump;
 };
 
 } // anonymous namespace
