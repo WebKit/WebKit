@@ -1,5 +1,15 @@
 2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add GLib API test cases after r243434.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (testWebViewActiveURI):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (sendRequestCallback):
+
+2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Geolocation request not complete when watch request was started in a different web process
         https://bugs.webkit.org/show_bug.cgi?id=195996
 

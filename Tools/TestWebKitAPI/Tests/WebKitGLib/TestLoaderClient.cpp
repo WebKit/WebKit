@@ -368,6 +368,55 @@ static void testWebViewActiveURI(ViewURITrackingTest* test, gconstpointer)
     test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, "/normal-change-request");
     test->checkURIAtState(ViewURITrackingTest::State::Commited, "/request-changed-on-redirect");
     test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed-on-redirect");
+
+    // Non-API request loads.
+    test->loadURI(kServer->getURIForPath("/redirect-js/normal").data());
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/redirect-js/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/redirect-js/normal");
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal");
+
+    test->loadURI(kServer->getURIForPath("/redirect-js/redirect").data());
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/redirect-js/redirect");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/redirect-js/redirect");
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, "/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/normal");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/normal");
+
+    test->loadURI(kServer->getURIForPath("/redirect-js/normal-change-request").data());
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/redirect-js/normal-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/redirect-js/normal-change-request");
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/normal-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/request-changed");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed");
+
+    test->loadURI(kServer->getURIForPath("/redirect-js/redirect-to-change-request").data());
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect-to-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, nullptr);
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/redirect-js/redirect-to-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/redirect-js/redirect-to-change-request");
+    test->waitUntilLoadFinished();
+    test->checkURIAtState(ViewURITrackingTest::State::Provisional, "/redirect-js/redirect-to-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::ProvisionalAfterRedirect, "/normal-change-request");
+    test->checkURIAtState(ViewURITrackingTest::State::Commited, "/request-changed-on-redirect");
+    test->checkURIAtState(ViewURITrackingTest::State::Finished, "/request-changed-on-redirect");
 }
 
 class ViewIsLoadingTest: public LoadTrackingTest {
@@ -618,16 +667,6 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
         "Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!Testing!</body></html>";
 
-    static const char* unfinishedSubresourceLoadResponseString = "<html><body>"
-        "<img src=\"/stall\"/>"
-        "<script>"
-        "  function run() {"
-        "      location = '/normal';"
-        "  }"
-        "  setInterval(run(), 50);"
-        "</script>"
-        "</body></html>";
-
     if (message->method != SOUP_METHOD_GET) {
         soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
         return;
@@ -645,6 +684,10 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
     } else if (g_str_equal(path, "/redirect-to-change-request")) {
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "/normal-change-request");
+    } else if (g_str_has_prefix(path, "/redirect-js/")) {
+        static const char* redirectJSFormat = "<html><body><script>location = '%s';</script></body></html>";
+        char* redirectJS = g_strdup_printf(redirectJSFormat, g_strrstr(path, "/"));
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, redirectJS, strlen(redirectJS));
     } else if (g_str_equal(path, "/cancelled")) {
         soup_message_headers_set_encoding(message->response_headers, SOUP_ENCODING_CHUNKED);
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, responseString, strlen(responseString));
@@ -664,6 +707,15 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
         soup_message_set_status(message, SOUP_STATUS_MOVED_PERMANENTLY);
         soup_message_headers_append(message->response_headers, "Location", "data:text/plain;charset=utf-8,data-uri");
     } else if (g_str_equal(path, "/unfinished-subresource-load")) {
+        static const char* unfinishedSubresourceLoadResponseString = "<html><body>"
+            "<img src=\"/stall\"/>"
+            "<script>"
+            "  function run() {"
+            "      location = '/normal';"
+            "  }"
+            "  setInterval(run(), 50);"
+            "</script>"
+            "</body></html>";
         soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, unfinishedSubresourceLoadResponseString, strlen(unfinishedSubresourceLoadResponseString));
     } else if (g_str_equal(path, "/stall")) {
         // This request is never unpaused and stalls forever.

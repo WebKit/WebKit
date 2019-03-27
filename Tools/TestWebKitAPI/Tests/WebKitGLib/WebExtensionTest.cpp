@@ -205,7 +205,7 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
         SoupMessageHeaders* headers = webkit_uri_request_get_http_headers(request);
         g_assert_nonnull(headers);
         soup_message_headers_append(headers, "DNT", "1");
-    } else if (g_str_has_suffix(requestURI, "/normal-change-request")) {
+    } else if (g_str_has_suffix(requestURI, "/normal-change-request") && !g_strrstr(requestURI, "/redirect-js/")) {
         GUniquePtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen("/normal-change-request")));
         GUniquePtr<char> newURI(g_strdup_printf("%s/request-changed%s", prefix.get(), redirectResponse ? "-on-redirect" : ""));
         webkit_uri_request_set_uri(request, newURI.get());
