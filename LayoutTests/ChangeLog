@@ -1,3 +1,12 @@
+2019-03-27  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test js/math-clz32.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=196209
+
+        Reviewed by Ross Kirsling.
+
+        * platform/win/TestExpectations:
+
 2019-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fixed elements in frames can be misplaced sometimes

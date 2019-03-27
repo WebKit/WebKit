@@ -619,12 +619,12 @@ template<typename T>
 inline unsigned clz(T value)
 {
     constexpr unsigned bitSize = sizeof(T) * CHAR_BIT;
-    constexpr unsigned bitSize64 = sizeof(uint64_t) * CHAR_BIT;
 
     using UT = typename std::make_unsigned<T>::type;
     UT uValue = value;
 
 #if COMPILER(GCC_COMPATIBLE)
+    constexpr unsigned bitSize64 = sizeof(uint64_t) * CHAR_BIT;
     if (uValue)
         return __builtin_clzll(uValue) - (bitSize64 - bitSize);
     return bitSize;
@@ -634,15 +634,14 @@ inline unsigned clz(T value)
     // _BitScanReverse64 is defined in X86_64 and ARM in MSVC supported environments.
     unsigned long ret = 0;
     if (_BitScanReverse64(&ret, uValue))
-        return bitSize - ret;
+        return bitSize - 1 - ret;
     return bitSize;
 #else
     unsigned zeroCount = 0;
-    for (int i = bitSize64 - 1; i >= 0; i--) {
-        if (!(static_cast<uint64_t>(uValue) >> i))
-            zeroCount++;
-        else
+    for (int i = bitSize - 1; i >= 0; i--) {
+        if (uValue >> i)
             break;
+        zeroCount++;
     }
     return zeroCount;
 #endif
