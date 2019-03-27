@@ -115,6 +115,6 @@ private:
     QString m_html;
     QUrl m_baseUrl;
     QSizeF m_size;
-    WPEQtViewBackend* m_backend;
+    WPEQtViewBackend* m_backend { nullptr };
     bool m_errorOccured { false };
 };
