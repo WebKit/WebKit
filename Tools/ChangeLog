@@ -1,3 +1,19 @@
+2019-03-27  Andy Estes  <aestes@apple.com>
+
+        REGRESSION (r242686): package-root creates roots with broken symlinks in WebKit.framework/XPCServices/
+        https://bugs.webkit.org/show_bug.cgi?id=196317
+
+        Reviewed by Dan Bernstein.
+
+        package-root copies built products into a staging directory using ditto(1), which does not
+        follow symbolic links as it traverses a directory. Now that the files in
+        WebKit.framework/XPCServices/ are symbolic links to a location outside of the framework
+        itself, these become broken links when ditto'd into the staging directory.
+
+        To account for this, change package-root to copy using cp(1) in a mode that follows symlinks.
+
+        * Scripts/package-root:
+
 2019-03-27  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Update display text of Submit for ews analysis

@@ -80,21 +80,24 @@ my $configuration = configuration();
 my $platform = xcodeSDKPlatformName();
 my $productDir = productDir();
 my $stagingRoot = tempdir(CLEANUP => 1);
-my $stagingPrivatePath = "/$stagingRoot$privateInstallPath";
-my $stagingPublicPath = "/$stagingRoot/$publicInstallPath";
+my $stagingPrivatePath = "$stagingRoot$privateInstallPath";
+my $stagingPublicPath = "$stagingRoot$publicInstallPath";
 my $archiveName = "webkit-$configuration-$platform";
 my $archivePath = "$productDir/$archiveName.tar.gz";
 my ($fh, $tempArchiveName) = tempfile( "/tmp/$archiveName-XXXXXXX");
 
+system 'mkdir', '-p', $stagingPrivatePath;
+system 'mkdir', '-p', $stagingPublicPath;
+
 foreach my $framework (@privateFrameworks) {
     print "Copying Private $framework from $productDir ...\n";
-    system 'ditto', $productDir . "/$framework.framework/", "$stagingPrivatePath/$framework.framework/";
+    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPrivatePath/";
     die "Check to see that you have built $framework for $configuration-$platform" if $? and $framework ne 'WebKit2';
 }
 
 foreach my $framework (@publicFrameworks) {
     print "Copying Public $framework from $productDir ...\n";
-    system 'ditto', $productDir . "/$framework.framework/", "$stagingPublicPath/$framework.framework/";
+    system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPublicPath/";
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
 }
 

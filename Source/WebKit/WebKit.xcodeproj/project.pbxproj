@@ -3958,7 +3958,6 @@
 		A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageDebuggable.h; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
-		A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Storage.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Storage.sb; sourceTree = "<group>"; };
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb; sourceTree = "<group>"; };
 		A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
@@ -7219,7 +7218,6 @@
 			isa = PBXGroup;
 			children = (
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
-				A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Storage.sb */,
 				A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */,
 			);
 			path = ios;
@@ -10737,7 +10735,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../..\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Versions/A/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../../../..\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\" \"${XPC_SERVICES_PATH}/${WK_STORAGE_SERVICE_PRODUCT_NAME}.xpc\"\n\nif [[ ${WK_PLATFORM_NAME} == macosx ]]; then\n    ln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nfi\n";
+			shellScript = "if [[ \"${CONFIGURATION}\" == \"Production\" ]]; then\n    exit\nfi\n\nif [[ ${WK_PLATFORM_NAME} != \"macosx\" ]]; then\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../..\"\nelse\n    XPC_SERVICES_PATH=\"${BUILT_PRODUCTS_DIR}/WebKit.framework/Versions/A/XPCServices\"\n    BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES=\"../../../..\"\nfi\n\nmkdir -p \"${XPC_SERVICES_PATH}\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.WebContent.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.WebContent.xpc\"\nln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Networking.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Networking.xpc\"\n\nif [[ ${WK_PLATFORM_NAME} == macosx ]]; then\n    ln -sFh \"${BUILT_PRODUCTS_DIR_RELATIVE_PATH_FROM_XPC_SERVICES}/com.apple.WebKit.Plugin.64.xpc\" \"${XPC_SERVICES_PATH}/com.apple.WebKit.Plugin.64.xpc\"\nfi\n";
 		};
 		99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */ = {
 			isa = PBXShellScriptBuildPhase;
