@@ -1,3 +1,16 @@
+2019-03-26  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Correct kerberos-related sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=196279
+        <rdar://problem/48622502>
+
+        Reviewed by Per Arne Vollan.
+
+        We need to allow communications with a Kerberos-related service on macOS
+        until <rdar://problem/35542803> is fixed.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2019-03-26  Chris Dumez  <cdumez@apple.com>
 
         [macOS] The network process is not exiting reliably when the WebProcessPool is destroyed

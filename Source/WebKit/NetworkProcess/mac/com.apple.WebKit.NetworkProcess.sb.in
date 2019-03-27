@@ -94,6 +94,7 @@
         "kCFPreferencesAnyApplication"
         "com.apple.DownloadAssessment"
         "com.apple.WebFoundation"
+        "com.apple.ist.ds.appleconnect2.uat" ;; Remove after <rdar://problem/35542803> ships
         "com.apple.networkConnect"))
 (allow file-read*
     ;; Basic system paths
@@ -226,6 +227,7 @@
 (allow mach-lookup
     (global-name "org.h5l.kcm")
     (global-name "com.apple.GSSCred")
+    (global-name "com.apple.ist.ds.appleconnect.service.kdctunnel") ;; Remove after <rdar://problem/35542803> ships
     (global-name "com.apple.system.logger")
     (global-name "com.apple.system.notification_center"))
 (allow network-outbound
