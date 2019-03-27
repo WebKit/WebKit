@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-append-twice-overlapping-sync-frame</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script src="samples.js"></script>
+    <script>
+    let source;
+    let sourceBuffer;
+    let initSegment;
+    let bufferedSamples;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function sampleRun(generation) {
+        return concatenateSamples([
+            makeASample(     0,      0, 166667, 1000000, 1, SAMPLE_FLAG.SYNC, generation),
+            makeASample(167000, 167000, 166667, 1000000, 1, SAMPLE_FLAG.NONE, generation),
+            makeASample(333000, 333000, 166667, 1000000, 1, SAMPLE_FLAG.SYNC, generation), // overlaps previous frame
+            makeASample(500000, 500000, 166667, 1000000, 1, SAMPLE_FLAG.NONE, generation),
+        ]);
+    }
+
+    window.addEventListener('load', async () => {
+        findMediaElement();
+        source = new MediaSource();
+        testExpected('source.readyState', 'closed');
+        const sourceOpened = waitFor(source, 'sourceopen');
+
+        const videoSource = document.createElement('source');
+        videoSource.type = 'video/mock; codecs=mock';
+        videoSource.src = URL.createObjectURL(source);
+        video.appendChild(videoSource);
+
+        await sourceOpened;
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+
+        initSegment = makeAInit(5, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(sampleRun(1))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(sampleRun(2))');
+        await waitFor(sourceBuffer, 'updateend');
+
+        bufferedSamples = internals.bufferedSamplesForTrackID(sourceBuffer, 1);
+        consoleWrite(bufferedSamples.join("<br/>"));
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>
