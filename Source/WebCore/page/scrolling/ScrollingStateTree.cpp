@@ -364,6 +364,31 @@ ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLay
     return it->value;
 }
 
+void ScrollingStateTree::reconcileLayerPositionsRecursive(ScrollingStateNode& currNode, const LayoutRect& layoutViewport, ScrollingLayerPositionAction action)
+{
+    currNode.reconcileLayerPositionForViewportRect(layoutViewport, action);
+
+    if (!currNode.children())
+        return;
+    
+    for (auto& child : *currNode.children()) {
+        // Never need to cross frame boundaries, since viewport rect reconciliation is per frame.
+        if (is<ScrollingStateFrameScrollingNode>(child))
+            continue;
+
+        reconcileLayerPositionsRecursive(*child, layoutViewport, action);
+    }
+}
+
+void ScrollingStateTree::reconcileViewportConstrainedLayerPositions(ScrollingNodeID scrollingNodeID, const LayoutRect& layoutViewport, ScrollingLayerPositionAction action)
+{
+    auto* scrollingNode = stateNodeForID(scrollingNodeID);
+    if (!scrollingNode)
+        return;
+    
+    reconcileLayerPositionsRecursive(*scrollingNode, layoutViewport, action);
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

@@ -1,3 +1,38 @@
+2019-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fixed elements in frames can be misplaced sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=196290
+
+        Reviewed by Frédéric Wang.
+
+        In a page containing position:fixed inside an async-scrolling iframe, if the 
+        main page is scrolled down, and you reload, then the fixed element in the iframe can
+        get misplaced or disappear.
+
+        The bug was that the reconcileViewportConstrainedLayerPositions() recursive state node
+        walk would cross frame boundaries, hitting subframe ScrollingStateFixedNodes with a viewport rect
+        for the main page.
+
+        Fix by giving ScrollingStateTree the responsibility for the recursive tree walk, and
+        have it bail at at frame boundaries.
+
+        Test: scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions):
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::reconcileLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::reconcileLayerPositionForViewportRect): Deleted.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::reconcileLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::reconcileLayerPositionForViewportRect):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::reconcileLayerPositionsRecursive):
+        (WebCore::ScrollingStateTree::reconcileViewportConstrainedLayerPositions):
+        * page/scrolling/ScrollingStateTree.h:
+
 2019-03-27  Philippe Normand  <pnormand@igalia.com>
 
         Build failure with gstreamer 1.12.5 if USE_GSTREAMER_GL is enabled

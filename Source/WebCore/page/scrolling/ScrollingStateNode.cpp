@@ -151,15 +151,6 @@ size_t ScrollingStateNode::indexOfChild(ScrollingStateNode& childNode) const
     return m_children->find(&childNode);
 }
 
-void ScrollingStateNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
-{
-    if (!m_children)
-        return;
-
-    for (auto& child : *m_children)
-        child->reconcileLayerPositionForViewportRect(viewportRect, action);
-}
-
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_layer)

@@ -1,3 +1,13 @@
+2019-03-26  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Fixed elements in frames can be misplaced sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=196290
+
+        Reviewed by Frédéric Wang.
+
+        * scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position-expected.txt: Added.
+        * scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html: Added.
+
 2019-03-26  Chris Dumez  <cdumez@apple.com>
 
         Add basic layout test coverage for File Picker on iOS

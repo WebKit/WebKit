@@ -75,6 +75,8 @@ public:
     LayerRepresentation::Type preferredLayerRepresentation() const { return m_preferredLayerRepresentation; }
     void setPreferredLayerRepresentation(LayerRepresentation::Type representation) { m_preferredLayerRepresentation = representation; }
 
+    void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
+
 private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
     void addNode(ScrollingStateNode&);
@@ -87,8 +89,10 @@ private:
 
     void removeNodeAndAllDescendants(ScrollingStateNode*);
 
-    void recursiveNodeWillBeRemoved(ScrollingStateNode* currNode);
+    void recursiveNodeWillBeRemoved(ScrollingStateNode*);
     void willRemoveNode(ScrollingStateNode*);
+
+    void reconcileLayerPositionsRecursive(ScrollingStateNode&, const LayoutRect& viewportRect, ScrollingLayerPositionAction);
 
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
