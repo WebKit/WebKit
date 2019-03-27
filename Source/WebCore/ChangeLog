@@ -1,3 +1,62 @@
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r242917. rdar://problem/49307956
+
+    Fix an edge case where HTMLFormElement::removeFormElement is invoked twice with the same element
+    https://bugs.webkit.org/show_bug.cgi?id=195663
+    <rdar://problem/48576391>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Currently, it's possible for HTMLFormControlElement's destructor to be reentrant. This may happen if the form
+    control element is ref'd while carrying out its destructor's logic. This may happen in two places in
+    HTMLFormControlElement (didChangeForm and resetDefaultButton), both of which actually don't require ensuring a
+    protected reference to the form control element since they should never result in any script execution.
+    
+    To fix the bug, convert these strong references into raw pointers, and add ScriptDisallowedScope to ensure that
+    we don't change these codepaths in the future, such that they trigger arbitrary script execution.
+    
+    Test: fast/forms/remove-associated-element-after-gc.html
+    
+    * html/HTMLFormControlElement.cpp:
+    (WebCore::HTMLFormControlElement::didChangeForm):
+    * html/HTMLFormElement.cpp:
+    (WebCore::HTMLFormElement::resetDefaultButton):
+    
+    LayoutTests:
+    
+    Add a layout test to exercise the scenario described in the WebCore ChangeLog.
+    
+    * fast/forms/remove-associated-element-after-gc-expected.txt: Added.
+    * fast/forms/remove-associated-element-after-gc.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242917 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Fix an edge case where HTMLFormElement::removeFormElement is invoked twice with the same element
+            https://bugs.webkit.org/show_bug.cgi?id=195663
+            <rdar://problem/48576391>
+
+            Reviewed by Ryosuke Niwa.
+
+            Currently, it's possible for HTMLFormControlElement's destructor to be reentrant. This may happen if the form
+            control element is ref'd while carrying out its destructor's logic. This may happen in two places in
+            HTMLFormControlElement (didChangeForm and resetDefaultButton), both of which actually don't require ensuring a
+            protected reference to the form control element since they should never result in any script execution.
+
+            To fix the bug, convert these strong references into raw pointers, and add ScriptDisallowedScope to ensure that
+            we don't change these codepaths in the future, such that they trigger arbitrary script execution.
+
+            Test: fast/forms/remove-associated-element-after-gc.html
+
+            * html/HTMLFormControlElement.cpp:
+            (WebCore::HTMLFormControlElement::didChangeForm):
+            * html/HTMLFormElement.cpp:
+            (WebCore::HTMLFormElement::resetDefaultButton):
+
 2019-03-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/48839387
