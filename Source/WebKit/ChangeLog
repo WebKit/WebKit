@@ -1,3 +1,19 @@
+2019-03-27  Keith Rollin  <krollin@apple.com>
+
+        Include the CFNetworking task UUID to the NSError when a resource-load fails
+        https://bugs.webkit.org/show_bug.cgi?id=196156
+
+        Reviewed by Alex Christensen.
+
+        In order to help track the connection between a failed resource-load
+        and a user-visible error message, include the CFNetworking task UUID
+        in the associated error as an element of the userInfo property. This
+        can then be pulled out and reported in the logging at the point the
+        error is reported to the user.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]):
+
 2019-03-27  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Sim ] REGRESSION (r242277) Layout Test http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.php is a flaky timeout

@@ -606,6 +606,14 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa *session, NS
         return;
 
     LOG(NetworkSession, "%llu didCompleteWithError %@", task.taskIdentifier, error);
+
+    if (error) {
+        NSDictionary *oldUserInfo = [error userInfo];
+        NSMutableDictionary *newUserInfo = oldUserInfo ? [NSMutableDictionary dictionaryWithDictionary:oldUserInfo] : [NSMutableDictionary dictionary];
+        newUserInfo[@"networkTaskDescription"] = [task description];
+        error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:newUserInfo];
+    }
+
     if (auto* networkDataTask = [self existingTask:task])
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
     else if (error) {
