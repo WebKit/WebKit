@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "ArrayBufferNeuteringWatchpoint.h"
+#include "ArrayBufferNeuteringWatchpointSet.h"
 #include "CodeBlock.h"
 #include "JSCInlines.h"
 
@@ -39,8 +39,8 @@ void ArrayBufferViewWatchpointAdaptor::add(
 {
     VM& vm = *codeBlock->vm();
     Watchpoint* watchpoint = common.watchpoints.add(codeBlock);
-    ArrayBufferNeuteringWatchpoint* neuteringWatchpoint =
-        ArrayBufferNeuteringWatchpoint::create(vm);
+    ArrayBufferNeuteringWatchpointSet* neuteringWatchpoint =
+        ArrayBufferNeuteringWatchpointSet::create(vm);
     neuteringWatchpoint->set().add(watchpoint);
     codeBlock->addConstant(neuteringWatchpoint);
     // FIXME: We don't need to set this watchpoint at all for shared buffers.

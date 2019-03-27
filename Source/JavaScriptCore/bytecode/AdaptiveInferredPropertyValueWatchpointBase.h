@@ -50,13 +50,13 @@ protected:
     virtual void handleFire(VM&, const FireDetail&) = 0;
 
 private:
-    class StructureWatchpoint : public Watchpoint {
+    class StructureWatchpoint final : public Watchpoint {
     public:
         StructureWatchpoint() { }
     protected:
         void fireInternal(VM&, const FireDetail&) override;
     };
-    class PropertyWatchpoint : public Watchpoint {
+    class PropertyWatchpoint final : public Watchpoint {
     public:
         PropertyWatchpoint() { }
     protected:

@@ -744,7 +744,7 @@
 		0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 930DAD030FB1EB1A0082D205 /* NodeConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFC92161B94FB3E0071DD66 /* DFGPropertyTypeKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC92151B94FB3E0071DD66 /* DFGPropertyTypeKey.h */; };
 		0FFC99D1184EC8AD009C10AB /* ConstantMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC99D0184EC8AD009C10AB /* ConstantMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; };
 		0FFFC95A14EF90A900C72532 /* DFGCSEPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94E14EF909500C72532 /* DFGCSEPhase.h */; };
 		0FFFC95C14EF90AF00C72532 /* DFGPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC95014EF909500C72532 /* DFGPhase.h */; };
@@ -3113,8 +3113,8 @@
 		0FFB80BB20A794700006AAF6 /* JITCodeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCodeInlines.h; sourceTree = "<group>"; };
 		0FFC92151B94FB3E0071DD66 /* DFGPropertyTypeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGPropertyTypeKey.h; path = dfg/DFGPropertyTypeKey.h; sourceTree = "<group>"; };
 		0FFC99D0184EC8AD009C10AB /* ConstantMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantMode.h; sourceTree = "<group>"; };
-		0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferNeuteringWatchpoint.cpp; sourceTree = "<group>"; };
-		0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferNeuteringWatchpoint.h; sourceTree = "<group>"; };
+		0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBufferNeuteringWatchpointSet.cpp; sourceTree = "<group>"; };
+		0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBufferNeuteringWatchpointSet.h; sourceTree = "<group>"; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
 		0FFFC94D14EF909500C72532 /* DFGCSEPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCSEPhase.cpp; path = dfg/DFGCSEPhase.cpp; sourceTree = "<group>"; };
@@ -6632,8 +6632,8 @@
 				0F6B1CB71861244C00845D97 /* ArityCheckMode.h */,
 				A7A8AF2517ADB5F2005AB174 /* ArrayBuffer.cpp */,
 				A7A8AF2617ADB5F3005AB174 /* ArrayBuffer.h */,
-				0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.cpp */,
-				0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h */,
+				0FFC99D2184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.cpp */,
+				0FFC99D3184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.h */,
 				0F30FB601DC2DE96003124F2 /* ArrayBufferSharingMode.h */,
 				A7A8AF2717ADB5F3005AB174 /* ArrayBufferView.cpp */,
 				A7A8AF2817ADB5F3005AB174 /* ArrayBufferView.h */,
@@ -8512,7 +8512,7 @@
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				0F8335B81639C1EA001443B5 /* ArrayAllocationProfile.h in Headers */,
 				A7A8AF3517ADB5F3005AB174 /* ArrayBuffer.h in Headers */,
-				0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpoint.h in Headers */,
+				0FFC99D5184EE318009C10AB /* ArrayBufferNeuteringWatchpointSet.h in Headers */,
 				0F30FB611DC2DE99003124F2 /* ArrayBufferSharingMode.h in Headers */,
 				A7A8AF3717ADB5F3005AB174 /* ArrayBufferView.h in Headers */,
 				BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */,

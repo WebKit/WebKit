@@ -1,3 +1,93 @@
+2019-03-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Owner of watchpoints should validate at GC finalizing phase
+        https://bugs.webkit.org/show_bug.cgi?id=195827
+
+        Reviewed by Filip Pizlo.
+
+        This patch fixes JSC's watchpoint liveness issue by the following two policies.
+
+        1. Watchpoint should have owner cell, and "fire" operation should be gaurded with owner cell's isLive check.
+
+        Watchpoints should hold its owner cell, and fire procedure should be guarded by `owner->isLive()`.
+        When the owner cell is destroyed, these watchpoints are destroyed too. But this destruction can
+        be delayed due to incremental sweeper. So the following condition can happen.
+
+        When we have a watchpoint like the following.
+
+            class XXXWatchpoint {
+                ObjectPropertyCondition m_key;
+                JSCell* m_owner;
+            };
+
+        Both m_key's cell and m_owner is now unreachable from the root. So eventually, m_owner cell's destructor
+        is called and this watchpoint will be destroyed. But before that, m_key's cell can be destroyed. And this
+        watchpoint's fire procedure can be called since m_owner's destructor is not called yet. In this situation,
+        we encounter the destroyed cell held in m_key. This problem can be avoided if we guard fire procedure with
+        `m_owner->isLive()`. Until the owner cell is destroyed, this guard avoids "fire" procedure execution. And
+        once the destructor of m_owner is called, this watchpoint will be destroyed too.
+
+        2. Watchpoint liveness should be maintained by owner cell's unconditional finalizer
+
+        Watchpoints often hold weak references to the other cell (like, m_key in the above example). If we do not
+        delete watchpoints with dead cells when these weak cells become dead, these watchpoints continue holding dead cells,
+        and watchpoint's fire operation can use these dead cells accidentally. isLive / isStillLive check for these weak cells
+        in fire operation is not useful. Because these dead cells can be reused to the other live cells eventually, and this
+        isLive / isStillLive checks fail to see these cells are live if they are reused. Appropriate way is deleting watchpoints
+        with dead cells when finalizing GC. In this patch, we do this in unconditional finalizers in owner cells of watchpoints.
+        We already did this in CodeBlock etc. We add the same thing to StructureRareData which owns watchpoints for toString operations.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::StructureWatchpoint::StructureWatchpoint): Deleted.
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::PropertyWatchpoint::PropertyWatchpoint): Deleted.
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        (JSC::CodeBlockJettisoningWatchpoint::CodeBlockJettisoningWatchpoint): Deleted.
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::key const): Deleted.
+        * bytecode/StructureStubClearingWatchpoint.cpp:
+        (JSC::StructureStubClearingWatchpoint::fireInternal):
+        (JSC::WatchpointsOnStructureStubInfo::isValid const):
+        * bytecode/StructureStubClearingWatchpoint.h:
+        (JSC::StructureStubClearingWatchpoint::StructureStubClearingWatchpoint): Deleted.
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::isValid const):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::fireInternal):
+        * dfg/DFGAdaptiveStructureWatchpoint.h:
+        (JSC::DFG::AdaptiveStructureWatchpoint::key const): Deleted.
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBuffer::notifyIncommingReferencesOfTransfer):
+        * runtime/ArrayBufferNeuteringWatchpointSet.cpp: Renamed from Source/JavaScriptCore/runtime/ArrayBufferNeuteringWatchpoint.cpp.
+        (JSC::ArrayBufferNeuteringWatchpointSet::ArrayBufferNeuteringWatchpointSet):
+        (JSC::ArrayBufferNeuteringWatchpointSet::destroy):
+        (JSC::ArrayBufferNeuteringWatchpointSet::create):
+        (JSC::ArrayBufferNeuteringWatchpointSet::createStructure):
+        (JSC::ArrayBufferNeuteringWatchpointSet::fireAll):
+        * runtime/ArrayBufferNeuteringWatchpointSet.h: Renamed from Source/JavaScriptCore/runtime/ArrayBufferNeuteringWatchpoint.h.
+        * runtime/FunctionRareData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::tryInstallArraySpeciesWatchpoint):
+        * runtime/ObjectPropertyChangeAdaptiveWatchpoint.h:
+        (JSC::ObjectPropertyChangeAdaptiveWatchpoint::ObjectPropertyChangeAdaptiveWatchpoint): Deleted.
+        * runtime/StructureRareData.cpp:
+        (JSC::StructureRareData::finalizeUnconditionally):
+        * runtime/StructureRareData.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2019-03-26  Saam Barati  <sbarati@apple.com>
 
         FTL: Emit code to validate AI's state when running the compiled code

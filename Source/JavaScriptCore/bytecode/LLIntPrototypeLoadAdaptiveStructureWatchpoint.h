@@ -31,9 +31,9 @@
 
 namespace JSC {
 
-class LLIntPrototypeLoadAdaptiveStructureWatchpoint : public Watchpoint {
+class LLIntPrototypeLoadAdaptiveStructureWatchpoint final : public Watchpoint {
 public:
-    LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition&, OpGetById::Metadata&);
+    LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, OpGetById::Metadata&);
 
     void install(VM&);
 
@@ -45,6 +45,7 @@ protected:
     void fireInternal(VM&, const FireDetail&) override;
 
 private:
+    CodeBlock* m_owner;
     ObjectPropertyCondition m_key;
     OpGetById::Metadata& m_getByIdMetadata;
 };

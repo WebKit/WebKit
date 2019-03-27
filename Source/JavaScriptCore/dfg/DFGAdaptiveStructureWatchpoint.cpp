@@ -52,6 +52,9 @@ void AdaptiveStructureWatchpoint::install(VM& vm)
 
 void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
 {
+    if (!m_codeBlock->isLive())
+        return;
+
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install(vm);
         return;

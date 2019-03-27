@@ -32,8 +32,9 @@
 
 namespace JSC {
 
-LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(const ObjectPropertyCondition& key, OpGetById::Metadata& getByIdMetadata)
-    : m_key(key)
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock* owner, const ObjectPropertyCondition& key, OpGetById::Metadata& getByIdMetadata)
+    : m_owner(owner)
+    , m_key(key)
     , m_getByIdMetadata(getByIdMetadata)
 {
     RELEASE_ASSERT(key.watchingRequiresStructureTransitionWatchpoint());
@@ -49,6 +50,9 @@ void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM& vm)
 
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail&)
 {
+    if (!m_owner->isLive())
+        return;
+
     if (m_key.isWatchable(PropertyCondition::EnsureWatchability)) {
         install(vm);
         return;

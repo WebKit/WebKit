@@ -40,7 +40,7 @@ class CodeBlock;
 class StructureStubInfo;
 class WatchpointsOnStructureStubInfo;
 
-class StructureStubClearingWatchpoint : public Watchpoint {
+class StructureStubClearingWatchpoint final : public Watchpoint {
     WTF_MAKE_NONCOPYABLE(StructureStubClearingWatchpoint);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -78,6 +78,8 @@ public:
     
     CodeBlock* codeBlock() const { return m_codeBlock; }
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
+
+    bool isValid() const;
     
 private:
     CodeBlock* m_codeBlock;

@@ -90,6 +90,8 @@ public:
 
     DECLARE_EXPORT_INFO;
 
+    void finalizeUnconditionally(VM&);
+
 private:
     friend class Structure;
     friend class ObjectToStringAdaptiveStructureWatchpoint;

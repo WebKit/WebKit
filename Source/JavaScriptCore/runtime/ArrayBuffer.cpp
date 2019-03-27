@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ArrayBuffer.h"
 
-#include "ArrayBufferNeuteringWatchpoint.h"
+#include "ArrayBufferNeuteringWatchpointSet.h"
 #include "JSArrayBufferView.h"
 #include "JSCInlines.h"
 #include <wtf/Gigacage.h>
@@ -382,7 +382,7 @@ void ArrayBuffer::notifyIncommingReferencesOfTransfer(VM& vm)
         JSCell* cell = incomingReferenceAt(i);
         if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, cell))
             view->neuter();
-        else if (ArrayBufferNeuteringWatchpoint* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpoint*>(vm, cell))
+        else if (ArrayBufferNeuteringWatchpointSet* watchpoint = jsDynamicCast<ArrayBufferNeuteringWatchpointSet*>(vm, cell))
             watchpoint->fireAll();
     }
 }

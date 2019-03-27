@@ -32,7 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-class AdaptiveStructureWatchpoint : public Watchpoint {
+class AdaptiveStructureWatchpoint final : public Watchpoint {
 public:
     AdaptiveStructureWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
     

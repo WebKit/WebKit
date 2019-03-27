@@ -31,7 +31,7 @@ namespace JSC {
 
 class CodeBlock;
 
-class CodeBlockJettisoningWatchpoint : public Watchpoint {
+class CodeBlockJettisoningWatchpoint final : public Watchpoint {
 public:
     CodeBlockJettisoningWatchpoint(CodeBlock* codeBlock)
         : m_codeBlock(codeBlock)

@@ -116,7 +116,7 @@ protected:
 
 private:
 
-    class AllocationProfileClearingWatchpoint : public Watchpoint {
+    class AllocationProfileClearingWatchpoint final : public Watchpoint {
     public:
         AllocationProfileClearingWatchpoint(FunctionRareData* rareData)
             : m_rareData(rareData)

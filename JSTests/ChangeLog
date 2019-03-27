@@ -1,3 +1,15 @@
+2019-03-27  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Owner of watchpoints should validate at GC finalizing phase
+        https://bugs.webkit.org/show_bug.cgi?id=195827
+
+        Reviewed by Filip Pizlo.
+
+        * stress/gc-should-reap-dead-watchpoints.js: Added.
+        (foo):
+        (A.prototype.y):
+        (A):
+
 2019-03-26  Dominik Infuehr  <dinfuehr@igalia.com>
 
         Skip WebAssembly test on 32-bit systems

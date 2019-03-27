@@ -595,6 +595,7 @@ void Heap::finalizeUnconditionalFinalizers()
             this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set);
         });
     finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm()->executableToCodeBlockEdgesWithFinalizers);
+    finalizeMarkedUnconditionalFinalizers<StructureRareData>(vm()->structureRareDataSpace);
     if (vm()->m_weakSetSpace)
         finalizeMarkedUnconditionalFinalizers<JSWeakSet>(*vm()->m_weakSetSpace);
     if (vm()->m_weakMapSpace)

@@ -23,35 +23,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "ArrayBufferNeuteringWatchpointSet.h"
 
-#include "JSCast.h"
-#include "Watchpoint.h"
+#include "JSCInlines.h"
 
 namespace JSC {
 
-class ArrayBufferNeuteringWatchpoint final : public JSCell {
-public:
-    typedef JSCell Base;
-    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-
-    DECLARE_INFO;
-    
-    static ArrayBufferNeuteringWatchpoint* create(VM&);
-
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-    
-    static Structure* createStructure(VM&);
-    
-    WatchpointSet& set() { return m_set.get(); }
-    
-    void fireAll();
-
-private:
-    explicit ArrayBufferNeuteringWatchpoint(VM&);
-    
-    Ref<WatchpointSet> m_set;
+const ClassInfo ArrayBufferNeuteringWatchpointSet::s_info = {
+    "ArrayBufferNeuteringWatchpointSet", nullptr, nullptr, nullptr,
+    CREATE_METHOD_TABLE(ArrayBufferNeuteringWatchpointSet)
 };
 
+ArrayBufferNeuteringWatchpointSet::ArrayBufferNeuteringWatchpointSet(VM& vm)
+    : Base(vm, vm.arrayBufferNeuteringWatchpointStructure.get())
+    , m_set(adoptRef(*new WatchpointSet(IsWatched)))
+{
+}
+
+void ArrayBufferNeuteringWatchpointSet::destroy(JSCell* cell)
+{
+    static_cast<ArrayBufferNeuteringWatchpointSet*>(cell)->ArrayBufferNeuteringWatchpointSet::~ArrayBufferNeuteringWatchpointSet();
+}
+
+ArrayBufferNeuteringWatchpointSet* ArrayBufferNeuteringWatchpointSet::create(VM& vm)
+{
+    ArrayBufferNeuteringWatchpointSet* result = new
+        (NotNull, allocateCell<ArrayBufferNeuteringWatchpointSet>(vm.heap))
+        ArrayBufferNeuteringWatchpointSet(vm);
+    result->finishCreation(vm);
+    return result;
+}
+
+Structure* ArrayBufferNeuteringWatchpointSet::createStructure(VM& vm)
+{
+    return Structure::create(vm, 0, jsNull(), TypeInfo(CellType, StructureFlags), info());
+}
+
+void ArrayBufferNeuteringWatchpointSet::fireAll()
+{
+    m_set->fireAll(*vm(), "Array buffer was neutered");
+}
+
 } // namespace JSC
+

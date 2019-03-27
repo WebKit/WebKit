@@ -51,6 +51,11 @@ void AdaptiveInferredPropertyValueWatchpoint::handleFire(VM&, const FireDetail& 
     m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &lazyDetail);
 }
 
+bool AdaptiveInferredPropertyValueWatchpoint::isValid() const
+{
+    return m_codeBlock->isLive();
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

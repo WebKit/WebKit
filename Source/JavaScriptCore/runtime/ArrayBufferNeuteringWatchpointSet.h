@@ -23,47 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "ArrayBufferNeuteringWatchpoint.h"
+#pragma once
 
-#include "JSCInlines.h"
+#include "JSCast.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
-const ClassInfo ArrayBufferNeuteringWatchpoint::s_info = {
-    "ArrayBufferNeuteringWatchpoint", nullptr, nullptr, nullptr,
-    CREATE_METHOD_TABLE(ArrayBufferNeuteringWatchpoint)
+class ArrayBufferNeuteringWatchpointSet final : public JSCell {
+public:
+    typedef JSCell Base;
+    static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+
+    DECLARE_INFO;
+    
+    static ArrayBufferNeuteringWatchpointSet* create(VM&);
+
+    static const bool needsDestruction = true;
+    static void destroy(JSCell*);
+    
+    static Structure* createStructure(VM&);
+    
+    WatchpointSet& set() { return m_set.get(); }
+    
+    void fireAll();
+
+private:
+    explicit ArrayBufferNeuteringWatchpointSet(VM&);
+    
+    Ref<WatchpointSet> m_set;
 };
 
-ArrayBufferNeuteringWatchpoint::ArrayBufferNeuteringWatchpoint(VM& vm)
-    : Base(vm, vm.arrayBufferNeuteringWatchpointStructure.get())
-    , m_set(adoptRef(*new WatchpointSet(IsWatched)))
-{
-}
-
-void ArrayBufferNeuteringWatchpoint::destroy(JSCell* cell)
-{
-    static_cast<ArrayBufferNeuteringWatchpoint*>(cell)->ArrayBufferNeuteringWatchpoint::~ArrayBufferNeuteringWatchpoint();
-}
-
-ArrayBufferNeuteringWatchpoint* ArrayBufferNeuteringWatchpoint::create(VM& vm)
-{
-    ArrayBufferNeuteringWatchpoint* result = new
-        (NotNull, allocateCell<ArrayBufferNeuteringWatchpoint>(vm.heap))
-        ArrayBufferNeuteringWatchpoint(vm);
-    result->finishCreation(vm);
-    return result;
-}
-
-Structure* ArrayBufferNeuteringWatchpoint::createStructure(VM& vm)
-{
-    return Structure::create(vm, 0, jsNull(), TypeInfo(CellType, StructureFlags), info());
-}
-
-void ArrayBufferNeuteringWatchpoint::fireAll()
-{
-    m_set->fireAll(*vm(), "Array buffer was neutered");
-}
-
 } // namespace JSC
-
