@@ -1,5 +1,81 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243298. rdar://problem/49308011
+
+    Hardening: Use WeakPtrs in VideoFullscreenInterface{Mac,AVKit}
+    https://bugs.webkit.org/show_bug.cgi?id=196052
+    <rdar://problem/48778571>
+    
+    Reviewed by Eric Carlson.
+    
+    The VideoFullscreenInterface{Mac,AVKit} implementations store their fullscreen model
+    and fullscreen change observer members as bare pointers, something we've been working
+    to eliminate.
+    
+    This patch corrects this oversight.
+    
+    No new tests since no changes in behavior.
+    
+    * platform/cocoa/VideoFullscreenChangeObserver.h:
+    * platform/cocoa/VideoFullscreenModel.h:
+    * platform/ios/VideoFullscreenInterfaceAVKit.h:
+    * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+    (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel):
+    (VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver):
+    (VideoFullscreenInterfaceAVKit::presentingViewController):
+    (VideoFullscreenInterfaceAVKit::invalidate):
+    (VideoFullscreenInterfaceAVKit::preparedToExitFullscreen):
+    (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+    (VideoFullscreenInterfaceAVKit::doSetup):
+    * platform/mac/VideoFullscreenInterfaceMac.h:
+    (WebCore::VideoFullscreenInterfaceMac::videoFullscreenModel const):
+    (WebCore::VideoFullscreenInterfaceMac::videoFullscreenChangeObserver const):
+    * platform/mac/VideoFullscreenInterfaceMac.mm:
+    (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenModel):
+    (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver):
+    (WebCore::VideoFullscreenInterfaceMac::enterFullscreen):
+    (WebCore::VideoFullscreenInterfaceMac::invalidate):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243298 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+            Hardening: Use WeakPtrs in VideoFullscreenInterface{Mac,AVKit}
+            https://bugs.webkit.org/show_bug.cgi?id=196052
+            <rdar://problem/48778571>
+
+            Reviewed by Eric Carlson.
+
+            The VideoFullscreenInterface{Mac,AVKit} implementations store their fullscreen model
+            and fullscreen change observer members as bare pointers, something we've been working
+            to eliminate.
+
+            This patch corrects this oversight.
+
+            No new tests since no changes in behavior.
+
+            * platform/cocoa/VideoFullscreenChangeObserver.h:
+            * platform/cocoa/VideoFullscreenModel.h:
+            * platform/ios/VideoFullscreenInterfaceAVKit.h:
+            * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+            (VideoFullscreenInterfaceAVKit::setVideoFullscreenModel):
+            (VideoFullscreenInterfaceAVKit::setVideoFullscreenChangeObserver):
+            (VideoFullscreenInterfaceAVKit::presentingViewController):
+            (VideoFullscreenInterfaceAVKit::invalidate):
+            (VideoFullscreenInterfaceAVKit::preparedToExitFullscreen):
+            (VideoFullscreenInterfaceAVKit::shouldExitFullscreenWithReason):
+            (VideoFullscreenInterfaceAVKit::doSetup):
+            * platform/mac/VideoFullscreenInterfaceMac.h:
+            (WebCore::VideoFullscreenInterfaceMac::videoFullscreenModel const):
+            (WebCore::VideoFullscreenInterfaceMac::videoFullscreenChangeObserver const):
+            * platform/mac/VideoFullscreenInterfaceMac.mm:
+            (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenModel):
+            (WebCore::VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver):
+            (WebCore::VideoFullscreenInterfaceMac::enterFullscreen):
+            (WebCore::VideoFullscreenInterfaceMac::invalidate):
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r242946. rdar://problem/49308005
 
     Certain videos are causing a crash when used as WebGL texture

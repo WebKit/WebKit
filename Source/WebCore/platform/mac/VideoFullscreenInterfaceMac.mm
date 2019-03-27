@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -376,14 +376,14 @@ void VideoFullscreenInterfaceMac::setVideoFullscreenModel(VideoFullscreenModel* 
 {
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
-    m_videoFullscreenModel = model;
+    m_videoFullscreenModel = makeWeakPtr(model);
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->addClient(*this);
 }
 
 void VideoFullscreenInterfaceMac::setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver* observer)
 {
-    m_fullscreenChangeObserver = observer;
+    m_fullscreenChangeObserver = makeWeakPtr(observer);
 }
 
 void VideoFullscreenInterfaceMac::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode)
@@ -447,6 +447,7 @@ void VideoFullscreenInterfaceMac::enterFullscreen()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::enterFullscreen(%p)", this);
 
+    RELEASE_ASSERT(m_videoFullscreenModel);
     if (mode() == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture) {
         m_videoFullscreenModel->willEnterPictureInPicture();
         [m_webVideoFullscreenInterfaceObjC enterPIP];
@@ -510,8 +511,8 @@ void VideoFullscreenInterfaceMac::invalidate()
 {
     LOG(Fullscreen, "VideoFullscreenInterfaceMac::invalidate(%p)", this);
 
-    m_videoFullscreenModel = nil;
-    m_fullscreenChangeObserver = nil;
+    m_videoFullscreenModel = nullptr;
+    m_fullscreenChangeObserver = nullptr;
 
     cleanupFullscreen();
 
