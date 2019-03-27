@@ -1,3 +1,24 @@
+2019-03-27  Chris Dumez  <cdumez@apple.com>
+
+        [ iOS Simulator ] REGRESSION (r237702) Layout Test http/tests/security/xss-DENIED-script-inject-into-inactive-window.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=195385
+        <rdar://problem/48657425>
+
+        Reviewed by Alex Christensen.
+
+        Before r237702, the test used to detect that _openedWindowDocument had become frameless (i.e. lost its browsing context)
+        by checking if _openedWindowDocument.location.href is the empty String. However, r237702 updating Location to return
+        "about:blank" instead of "" when frameless, to match the latest specification. As a result, I had updated the test to
+        expect _openedWindowDocument.location.href to be "about:blank". However, I had not noticed that the document's initial
+        URL (while it had a browsing context) was also "about:blank". Therefore, checking that location.href is "about:blank"
+        would actually not guarantee that the document has no browsing context.
+
+        To address the issue, check that _openedWindowDocument.defaultView is null instead since this is guaranteed to be null
+        for Documents that do not have a browsing context as per:
+        - https://html.spec.whatwg.org/multipage/window-object.html#dom-document-defaultview
+
+        * http/tests/security/xss-DENIED-script-inject-into-inactive-window.html:
+
 2019-03-27  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Stop using the global _WKContentChange
