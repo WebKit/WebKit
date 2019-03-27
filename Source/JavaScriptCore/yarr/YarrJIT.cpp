@@ -1200,8 +1200,6 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
             // PatternTemp should contain pattern end index at this point
             sub32(patternIndex, patternTemp);
-            if (m_checkedOffset - term->inputPosition)
-                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
             op.m_jumps.append(checkNotEnoughInput(patternTemp));
 
             matchBackreference(opIndex, op.m_jumps, characterOrTemp, patternIndex, patternTemp);
@@ -1226,8 +1224,6 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
             // PatternTemp should contain pattern end index at this point
             sub32(patternIndex, patternTemp);
-            if (m_checkedOffset - term->inputPosition)
-                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
             matches.append(checkNotEnoughInput(patternTemp));
 
             matchBackreference(opIndex, incompleteMatches, characterOrTemp, patternIndex, patternTemp);
@@ -1272,8 +1268,6 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
             // Check if we have input remaining to match
             sub32(patternIndex, patternTemp);
-            if (m_checkedOffset - term->inputPosition)
-                sub32(Imm32((m_checkedOffset - term->inputPosition).unsafeGet()), patternTemp);
             matches.append(checkNotEnoughInput(patternTemp));
 
             storeToFrame(index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
@@ -1330,6 +1324,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         case QuantifierNonGreedy: {
             const RegisterID matchAmount = regT0;
 
+            failures.append(atEndOfInput());
             loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex(), matchAmount);
             if (term->quantityMaxCount != quantifyInfinite)
                 failures.append(branch32(AboveOrEqual, Imm32(term->quantityMaxCount.unsafeGet()), matchAmount));
