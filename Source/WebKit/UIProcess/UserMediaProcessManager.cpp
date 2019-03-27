@@ -46,7 +46,11 @@ public:
 
     void addRequestManager(UserMediaPermissionRequestManagerProxy&);
     void removeRequestManager(UserMediaPermissionRequestManagerProxy&);
-    Vector<UserMediaPermissionRequestManagerProxy*>& managers() { return m_managers; }
+    Vector<WeakPtr<UserMediaPermissionRequestManagerProxy>>& managers()
+    {
+        m_managers.removeAllMatching([](auto&& manager) { return !manager; });
+        return m_managers;
+    }
 
     enum SandboxExtensionType : uint32_t {
         None = 0,
@@ -64,8 +68,7 @@ public:
     void revokeAudioExtension()  { m_pageSandboxExtensionsGranted &= ~Audio; }
 
 private:
-
-    Vector<UserMediaPermissionRequestManagerProxy*> m_managers;
+    Vector<WeakPtr<UserMediaPermissionRequestManagerProxy>> m_managers;
     SandboxExtensionsGranted m_pageSandboxExtensionsGranted { SandboxExtensionType::None };
 };
 
@@ -88,14 +91,14 @@ static ProcessState& processState(WebProcessProxy& process)
 void ProcessState::addRequestManager(UserMediaPermissionRequestManagerProxy& proxy)
 {
     ASSERT(!m_managers.contains(&proxy));
-    m_managers.append(&proxy);
+    m_managers.append(makeWeakPtr(proxy));
 }
 
 void ProcessState::removeRequestManager(UserMediaPermissionRequestManagerProxy& proxy)
 {
     ASSERT(m_managers.contains(&proxy));
-    m_managers.removeFirstMatching([&proxy](auto other) {
-        return other == &proxy;
+    m_managers.removeFirstMatching([&proxy](auto&& other) {
+        return other.get() == &proxy;
     });
 }
 

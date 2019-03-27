@@ -1,3 +1,30 @@
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
+        Apply patch. rdar://problem/49307967
+
+    fix-radar-48878188
+
+    2019-03-14  Youenn Fablet  <youenn@apple.com>
+
+            v2: CrashTracer: MobileSafari at WebKit: WebKit::WebPageProxy::setMediaStreamCaptureMuted.
+            rdar://problem/48878188.
+
+            There are cases where we might not update correctly the stateMap in UserMediaProcessManager.cpp.
+            One such case is:
+            - UserMediaPermissionRequestManagerProxy registers itself at construction time in a map whose key is the page process
+            - UserMediaPermissionRequestManagerProxy unregisters itself at destruction time by using the page process as well.
+            - Page changed process in some cases without UserMediaPermissionRequestManagerProxy being destroyed.
+
+            In Jazzkon, a new model was implemented that removed the need for this map.
+
+            For F, to ensure that we do not use wrong managers, keep a Vector of WeakPtr instead of a Vector of raw pointers.
+            Whenever getting the managers, check whether some of them are destroyed and remove them from the vector.
+
+            * UIProcess/UserMediaProcessManager.cpp:
+            (WebKit::ProcessState::managers):
+            (WebKit::ProcessState::addRequestManager):
+            (WebKit::ProcessState::removeRequestManager):
+
 2019-03-18  Kocsen Chung  <kocsen_chung@apple.com>
 
         Apply patch. rdar://problem/48839387
