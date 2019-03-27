@@ -782,7 +782,6 @@ MediaTime MediaPlayerPrivateGStreamerMSE::currentMediaTime() const
         m_eosPending = false;
         m_isEndReached = true;
         m_cachedPosition = m_mediaTimeDuration;
-        m_durationAtEOS = m_mediaTimeDuration;
         m_player->timeChanged();
     }
     return position;

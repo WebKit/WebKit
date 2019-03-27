@@ -1485,13 +1485,7 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 
 webkit.org/b/116976 media/video-played-collapse.html [ Failure Pass Crash ]
 
-webkit.org/b/116977 media/event-attributes.html [ Crash Failure Timeout Pass ]
-
 webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
-
-webkit.org/b/105191 media/video-playing-and-pause.html [ Failure Pass ]
-
-webkit.org/b/118460 media/media-element-play-after-eos.html [ Timeout Pass ]
 
 webkit.org/b/119009 http/tests/cache/subresource-failover-to-network.html [ Failure Pass ]
 
@@ -1701,8 +1695,6 @@ webkit.org/b/134761 svg/custom/animate-initial-pause-unpause.html [ Failure Pass
 webkit.org/b/134994 fast/forms/select/listbox-click-on-scrollbar.html [ Failure Pass ]
 
 webkit.org/b/134981 fast/parser/document-write-during-load.html [ Timeout Pass Crash ]
-
-webkit.org/b/81604 media/video-loop.html [ Timeout Pass ]
 
 webkit.org/b/134998 plugins/change-widget-and-click-crash.html [ Timeout Pass Crash ]
 
@@ -3754,6 +3746,84 @@ webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [
 webkit.org/b/194609 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Failure ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
+
+webkit.org/b/195133 imported/w3c/web-platform-tests/mathml/relations/css-styling/lengths-3.html [ Failure ]
+
+webkit.org/b/195134 inspector/cpu-profiler/threads.html [ Failure ]
+webkit.org/b/195134 inspector/cpu-profiler/tracking.html [ Failure ]
+
+webkit.org/b/195259 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-control.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-br.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-source.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-insert-text.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source-after.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-source.html [ Failure ]
+webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-pointer-remove-text.html [ Failure ]
+
+webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_allow_downloads_without_user_activation.sub.tentative.html [ Failure ]
+webkit.org/b/195671 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigation_download_block_downloads_without_user_activation.sub.tentative.html [ Failure ]
+
+webkit.org/b/195712 inspector/canvas/recording-html-2d.html [ Failure ]
+
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/event-dispatch-active-flag.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idb-binary-key-roundtrip.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-continue-async.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance-invalid.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-advance.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continue-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-continuePrimaryKey-exceptions.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-delete-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-index-keyrange.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-index.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore-keyrange.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction-objectstore.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-direction.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-iterating-update.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-key.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-primarykey.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor-update-exception-order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbcursor_iterating.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbindex-query-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbindex-request-source.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-deleteIndex-exception-order.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_createIndex14-exception_order.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_openKeyCursor.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbrequest-onupgradeneeded.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/idbtransaction_objectStoreNames.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key-conversion-exceptions.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/key_valid.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-explicit.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator-inject.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keygenerator.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keypath-special-identifiers.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/list_ordering.htm [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/request-event-ordering.html [ Failure ]
+webkit.org/b/196069 imported/w3c/web-platform-tests/IndexedDB/value_recursive.htm [ Failure ]
+webkit.org/b/196069 storage/indexeddb/transaction-coordination-across-databases.html [ Failure ]
+
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-001.html [ Failure ]
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-002.html [ Failure ]
+webkit.org/b/196061 editing/pasteboard/smart-paste-paragraph-004.html [ Failure ]
+
+webkit.org/b/196195 inspector/console/console-screenshot.html [ Failure ]
+
+webkit.org/b/196196 inspector/audit/run-resources.html [ Failure ]
+
+webkit.org/b/196197 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
+
+webkit.org/b/196199 http/tests/IndexedDB/storage-limit-1.https.html [ Failure ]
+
+webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
+
+webkit.org/b/116977 media/event-attributes.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
