@@ -1,5 +1,29 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243338. rdar://problem/49307958
+
+    Fix iOS build after r243337
+    https://bugs.webkit.org/show_bug.cgi?id=195935
+    
+    * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+    (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+    (WebCore::playbackSessionModel const): Deleted.
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243338 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Alex Christensen  <achristensen@webkit.org>
+
+            Fix iOS build after r243337
+            https://bugs.webkit.org/show_bug.cgi?id=195935
+
+            * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+            (WebCore::PlaybackSessionInterfaceAVKit::playbackSessionModel const):
+            (WebCore::playbackSessionModel const): Deleted.
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243337. rdar://problem/49307958
 
     Hardening: Use WeakPtrs in PlaybackSessionInterface{Mac,AVKit}
