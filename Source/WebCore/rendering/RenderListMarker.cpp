@@ -1122,7 +1122,7 @@ String listMarkerText(ListStyleType type, int value)
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
     : RenderBox(listItem.document(), WTFMove(style), 0)
-    , m_listItem(listItem)
+    , m_listItem(makeWeakPtr(listItem))
 {
     // init RenderObject attributes
     setInline(true);   // our object is Inline
@@ -1210,7 +1210,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         if (selectionState() != SelectionNone) {
             LayoutRect selRect = localSelectionRect();
             selRect.moveBy(boxOrigin);
-            context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor());
+            context.fillRect(snappedIntRect(selRect), m_listItem->selectionBackgroundColor());
         }
         return;
     }
@@ -1218,7 +1218,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (selectionState() != SelectionNone) {
         LayoutRect selRect = localSelectionRect();
         selRect.moveBy(boxOrigin);
-        context.fillRect(snappedIntRect(selRect), m_listItem.selectionBackgroundColor());
+        context.fillRect(snappedIntRect(selRect), m_listItem->selectionBackgroundColor());
     }
 
     const Color color(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
@@ -1343,7 +1343,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (type == ListStyleType::Asterisks || type == ListStyleType::Footnotes)
         context.drawText(font, textRun, textOrigin);
     else {
-        const UChar suffix = listMarkerSuffix(type, m_listItem.value());
+        const UChar suffix = listMarkerSuffix(type, m_listItem->value());
 
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
         // and we only need to handle the direction U_RIGHT_TO_LEFT for now.
@@ -1382,12 +1382,12 @@ void RenderListMarker::layout()
     ASSERT(needsLayout());
 
     LayoutUnit blockOffset;
-    for (auto* ancestor = parentBox(); ancestor && ancestor != &m_listItem; ancestor = ancestor->parentBox())
+    for (auto* ancestor = parentBox(); ancestor && ancestor != m_listItem.get(); ancestor = ancestor->parentBox())
         blockOffset += ancestor->logicalTop();
     if (style().isLeftToRightDirection())
-        m_lineOffsetForListItem = m_listItem.logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
+        m_lineOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
     else
-        m_lineOffsetForListItem = m_listItem.logicalRightOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
+        m_lineOffsetForListItem = m_listItem->logicalRightOffsetForLine(blockOffset, DoNotIndentText, 0_lu);
  
     if (isImage()) {
         updateMarginsAndContent();
@@ -1534,7 +1534,7 @@ void RenderListMarker::updateContent()
     case ListStyleType::UpperNorwegian:
     case ListStyleType::UpperRoman:
     case ListStyleType::Urdu:
-        m_text = listMarkerText(type, m_listItem.value());
+        m_text = listMarkerText(type, m_listItem->value());
         break;
     }
 }
@@ -1650,7 +1650,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         else {
             TextRun run = RenderBlock::constructTextRun(m_text, style());
             LayoutUnit itemWidth = font.width(run);
-            UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
+            UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
             LayoutUnit suffixSpaceWidth = font.width(RenderBlock::constructTextRun(suffixSpace, 2, style()));
             logicalWidth = itemWidth + suffixSpaceWidth;
         }
@@ -1733,21 +1733,21 @@ void RenderListMarker::updateMargins()
 LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem.lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
+        return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
     return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 }
 
 int RenderListMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem.baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
+        return m_listItem->baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 String RenderListMarker::suffix() const
 {
     ListStyleType type = style().listStyleType();
-    const UChar suffix = listMarkerSuffix(type, m_listItem.value());
+    const UChar suffix = listMarkerSuffix(type, m_listItem->value());
 
     if (suffix == ' ')
         return " "_str;
@@ -1767,7 +1767,7 @@ String RenderListMarker::suffix() const
 
 bool RenderListMarker::isInside() const
 {
-    return m_listItem.notInList() || style().listStylePosition() == ListStylePosition::Inside;
+    return m_listItem->notInList() || style().listStylePosition() == ListStylePosition::Inside;
 }
 
 FloatRect RenderListMarker::getRelativeMarkerRect()
@@ -1877,7 +1877,7 @@ FloatRect RenderListMarker::getRelativeMarkerRect()
         const FontCascade& font = style().fontCascade();
         TextRun run = RenderBlock::constructTextRun(m_text, style());
         float itemWidth = font.width(run);
-        UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem.value()), ' ' };
+        UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
         float suffixSpaceWidth = font.width(RenderBlock::constructTextRun(suffixSpace, 2, style()));
         relativeRect = FloatRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }
