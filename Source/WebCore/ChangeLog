@@ -1,3 +1,20 @@
+2019-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242687): Fullscreen YouTube videos show blank white space at top
+        https://bugs.webkit.org/show_bug.cgi?id=196304
+        rdar://problem/49175760
+
+        Reviewed by Zalan Bujtas.
+
+        repositionRelatedLayers() should not short-circuit when topContentInset is zero,
+        because topContentInset might be changing from non-zero to zero, and then we need
+        to move layers around.
+
+        Test: scrollingcoordinator/mac/top-content-inset-to-zero.html
+
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers):
+
 2019-03-26  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] Fixed elements in frames can be misplaced sometimes

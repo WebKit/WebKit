@@ -1,3 +1,14 @@
+2019-03-27  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r242687): Fullscreen YouTube videos show blank white space at top
+        https://bugs.webkit.org/show_bug.cgi?id=196304
+        rdar://problem/49175760
+
+        Reviewed by Zalan Bujtas.
+
+        * scrollingcoordinator/mac/top-content-inset-to-zero-expected.html: Added.
+        * scrollingcoordinator/mac/top-content-inset-to-zero.html: Added.
+
 2019-03-27  Shawn Roberts  <sroberts@apple.com>
 
         http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html is a flaky failure

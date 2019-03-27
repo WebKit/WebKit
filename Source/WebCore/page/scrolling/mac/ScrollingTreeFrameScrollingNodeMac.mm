@@ -211,7 +211,7 @@ void ScrollingTreeFrameScrollingNodeMac::repositionRelatedLayers()
         m_counterScrollingLayer.get().position = layoutViewport.location();
 
     float topContentInset = this->topContentInset();
-    if (m_insetClipLayer && m_rootContentsLayer && topContentInset) {
+    if (m_insetClipLayer && m_rootContentsLayer) {
         m_insetClipLayer.get().position = FloatPoint(m_insetClipLayer.get().position.x, FrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
         m_rootContentsLayer.get().position = FrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
         if (m_contentShadowLayer)
