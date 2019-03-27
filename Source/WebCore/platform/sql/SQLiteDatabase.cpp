@@ -30,6 +30,7 @@
 #include "DatabaseAuthorizer.h"
 #include "Logging.h"
 #include "MemoryRelease.h"
+#include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
 #include "SQLiteStatement.h"
 #include <mutex>
@@ -125,6 +126,7 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
     }
 
     {
+        SQLiteTransactionInProgressAutoCounter transactionCounter;
         SQLiteStatement checkpointStatement(*this, "PRAGMA wal_checkpoint(TRUNCATE)"_s);
         if (checkpointStatement.prepareAndStep() == SQLITE_ROW) {
             if (checkpointStatement.getColumnInt(0))
@@ -146,6 +148,7 @@ void SQLiteDatabase::close()
             LockHolder locker(m_databaseClosingMutex);
             m_db = 0;
         }
+        SQLiteTransactionInProgressAutoCounter transactionCounter;
         sqlite3_close(db);
     }
 
