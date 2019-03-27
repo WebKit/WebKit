@@ -1,5 +1,47 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243506. rdar://problem/49307987
+
+    vertexAttribPointer must restrict offset parameter
+    https://bugs.webkit.org/show_bug.cgi?id=196261
+    <rdar://problem/48458086>
+    
+    Reviewed by Antoine Quint.
+    
+    Source/WebCore:
+    
+    This WebGL function should fail if the offset parameter is
+    not within [0, max 32-bit int].
+    
+    Test: fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::vertexAttribPointer):
+    
+    LayoutTests:
+    
+    Add a test where the offset parameter is out of bounds.
+    
+    * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt: Added.
+    * fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243506 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-26  Dean Jackson  <dino@apple.com>
+
+            vertexAttribPointer must restrict offset parameter
+            https://bugs.webkit.org/show_bug.cgi?id=196261
+            <rdar://problem/48458086>
+
+            Reviewed by Antoine Quint.
+
+            Add a test where the offset parameter is out of bounds.
+
+            * fast/canvas/webgl/vertexAttribPointer-with-bad-offset-expected.txt: Added.
+            * fast/canvas/webgl/vertexAttribPointer-with-bad-offset.html: Added.
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243331. rdar://problem/49308068
 
     Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.
