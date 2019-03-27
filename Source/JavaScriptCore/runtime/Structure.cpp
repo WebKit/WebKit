@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -777,10 +777,10 @@ Structure* Structure::flattenDictionaryStructure(VM& vm, JSObject* object)
             (inlineCapacity() - inlineSize()) * sizeof(EncodedJSValue));
 
         Butterfly* butterfly = object->butterfly();
-        memset(
-            butterfly->base(butterfly->indexingHeader()->preCapacity(this), beforeOutOfLineCapacity),
-            0,
-            (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));
+        size_t preCapacity = butterfly->indexingHeader()->preCapacity(this);
+        void* base = butterfly->base(preCapacity, beforeOutOfLineCapacity);
+        void* startOfPropertyStorageSlots = reinterpret_cast<EncodedJSValue*>(base) + preCapacity;
+        memset(startOfPropertyStorageSlots, 0, (beforeOutOfLineCapacity - outOfLineSize()) * sizeof(EncodedJSValue));
         checkOffsetConsistency();
     }
 
