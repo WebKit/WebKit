@@ -48,6 +48,14 @@ function process_definitions () {
     source "${DEFINITIONS_FILE}"
 }
 
+function replace_webkit_additions_includes () {
+    if [[ -z `grep '#import <WebKitAdditions/.*\.h>' "${1}"` ]]; then
+        return 0
+    fi
+    python "$(dirname $0)/replace-webkit-additions-includes.py" "${1}" "${BUILT_PRODUCTS_DIR}" "${SDKROOT}"
+    return $?
+}
+
 function rewrite_headers () {
     if [[ "${WK_PLATFORM_NAME}" == "macosx" ]]; then
         [[ -n ${OSX_VERSION} ]] || OSX_VERSION=${MACOSX_DEPLOYMENT_TARGET}
@@ -81,6 +89,7 @@ function rewrite_headers () {
     for HEADER_PATH in "${1}/"*.h; do
         if [[ "$HEADER_PATH" -nt $TIMESTAMP_PATH ]]; then
             ditto "${HEADER_PATH}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}"
+            replace_webkit_additions_includes "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}"
             sed -i .tmp -E "${SED_OPTIONS[@]}" "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" || exit $?
             mv "${TARGET_TEMP_DIR}/${HEADER_PATH##*/}" "$HEADER_PATH"
         fi

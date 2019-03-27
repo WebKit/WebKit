@@ -1,3 +1,34 @@
+2019-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Need a way to include WebKitAdditions code in WebKit API headers
+        https://bugs.webkit.org/show_bug.cgi?id=196173
+
+        Reviewed by Tim Horton.
+
+        Introduce a mechanism that allows us to insert code from WebKitAdditions into public or private SDK headers
+        using `#import`s of the form:
+
+        ```
+        #if USE(APPLE_INTERNAL_SDK)
+        #import <WebKitAdditions/WKWebViewConfigurationAdditions.h>
+        #endif
+        ```
+
+        The resulting header in the built products directory will contain the contents of the imported file inserted in
+        place of the `#if USE(APPLE_INTERNAL_SDK) … #endif` block; however, when building with the Apple internal SDK,
+        the additions header content will be imported by the usual means.
+
+        * mac/postprocess-framework-headers.sh:
+        * mac/replace-webkit-additions-includes.py: Added.
+
+        Add a step when post-processing framework headers to replace instances of `#if USE(APPLE_INTERNAL_SDK) … #endif`
+        with the text content of the additions files. The replacement script first searches in the built products
+        directory for the matching additions file, and falls back to the SDK if no matching file is found. If neither
+        are present (e.g. a build using the public SDK), then the block is simply replaced by the empty string.
+
+        (read_content_from_webkit_additions):
+        (main):
+
 2019-03-27  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r242686): package-root creates roots with broken symlinks in WebKit.framework/XPCServices/
