@@ -172,8 +172,12 @@ AppendPipeline::AppendPipeline(Ref<MediaSourceClientGStreamerMSE> mediaSourceCli
             return;
         }
 
-        appendPipeline->m_taskQueue.enqueueTask([appendPipeline]() {
+        // The streaming thread has just received a new caps and is about to let samples using the
+        // new caps flow. Let's block it until the main thread has consumed the samples with the old
+        // caps and has processed the caps change.
+        appendPipeline->m_taskQueue.enqueueTaskAndWait<AbortableTaskQueue::Void>([appendPipeline]() {
             appendPipeline->appsinkCapsChanged();
+            return AbortableTaskQueue::Void();
         });
     }), this);
 
@@ -407,11 +411,20 @@ void AppendPipeline::appsinkCapsChanged()
 {
     ASSERT(isMainThread());
 
+    // Consume any pending samples with the previous caps.
+    consumeAppsinkAvailableSamples();
+
     GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(m_appsink.get(), "sink"));
     GRefPtr<GstCaps> caps = adoptGRef(gst_pad_get_current_caps(pad.get()));
 
     if (!caps)
         return;
+
+    if (doCapsHaveType(caps.get(), GST_VIDEO_CAPS_TYPE_PREFIX)) {
+        Optional<FloatSize> size = getVideoResolutionFromCaps(caps.get());
+        if (size.hasValue())
+            m_presentationSize = size.value();
+    }
 
     // This means that we're right after a new track has appeared. Otherwise, it's a caps change inside the same track.
     bool previousCapsWereNull = !m_appsinkCaps;
