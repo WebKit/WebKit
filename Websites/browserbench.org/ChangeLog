@@ -1,3 +1,10 @@
+2019-03-27  Saam barati  <sbarati@apple.com>
+
+        Unreviewed. Fix individual benchmark description urls to go to in-depth.html instead of about.html
+
+        * JetStream2.0/JetStreamDriver.js:
+        (Driver.prototype.prepareToRun.text.div.id.string_appeared_here.h3):
+
 2019-03-26  Jon Davis  <jond@apple.com>
 
         Update BrowserBench for JetStream2.
