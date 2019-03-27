@@ -7671,6 +7671,10 @@ void SpeculativeJIT::compileCreateRest(Node* node)
         GPRReg arrayLengthGPR = arrayLength.gpr();
         GPRReg arrayResultGPR = arrayResult.gpr();
 
+        // We can tell compileAllocateNewArrayWithSize() that it does not need to check
+        // for large arrays and use ArrayStorage structure because arrayLength here will
+        // always be bounded by stack size. Realistically, we won't be able to push enough
+        // arguments to have arrayLength exceed MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
         bool shouldAllowForArrayStorageStructureForLargeArrays = false;
         ASSERT(m_jit.graph().globalObjectFor(node->origin.semantic)->restParameterStructure()->indexingMode() == ArrayWithContiguous || m_jit.graph().globalObjectFor(node->origin.semantic)->isHavingABadTime());
         compileAllocateNewArrayWithSize(m_jit.graph().globalObjectFor(node->origin.semantic), arrayResultGPR, arrayLengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
@@ -8024,7 +8028,12 @@ void SpeculativeJIT::compileNewArrayWithSpread(Node* node)
                 }
             }
 
+            speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::AboveOrEqual, lengthGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
 
+            // We can tell compileAllocateNewArrayWithSize() that it does not need to
+            // check for large arrays and use ArrayStorage structure because we already
+            // ensured above that the spread array length will definitely fit in a
+            // non-ArrayStorage shaped array.
             bool shouldAllowForArrayStorageStructureForLargeArrays = false;
             ASSERT(m_jit.graph().globalObjectFor(node->origin.semantic)->restParameterStructure()->indexingType() == ArrayWithContiguous || m_jit.graph().globalObjectFor(node->origin.semantic)->isHavingABadTime());
             compileAllocateNewArrayWithSize(m_jit.graph().globalObjectFor(node->origin.semantic), resultGPR, lengthGPR, ArrayWithContiguous, shouldAllowForArrayStorageStructureForLargeArrays);
@@ -11700,6 +11709,11 @@ void SpeculativeJIT::emitAllocateButterfly(GPRReg storageResultGPR, GPRReg sizeG
     m_jit.zeroExtend32ToPtr(sizeGPR, scratch1);
     m_jit.lshift32(TrustedImm32(3), scratch1);
     m_jit.add32(TrustedImm32(sizeof(IndexingHeader)), scratch1, scratch2);
+#if !ASSERT_DISABLED
+    MacroAssembler::Jump didNotOverflow = m_jit.branch32(MacroAssembler::AboveOrEqual, scratch2, sizeGPR);
+    m_jit.abortWithReason(UncheckedOverflow);
+    didNotOverflow.link(&m_jit);
+#endif
     m_jit.emitAllocateVariableSized(
         storageResultGPR, m_jit.vm()->jsValueGigacageAuxiliarySpace, scratch2, scratch1, scratch3, slowCases);
     m_jit.addPtr(TrustedImm32(sizeof(IndexingHeader)), storageResultGPR);
@@ -13005,6 +13019,14 @@ void SpeculativeJIT::compileAllocateNewArrayWithSize(JSGlobalObject* globalObjec
     MacroAssembler::JumpList slowCases;
     if (shouldConvertLargeSizeToArrayStorage)
         slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)));
+#if !ASSERT_DISABLED
+    else {
+        MacroAssembler::Jump lengthIsWithinLimits;
+        lengthIsWithinLimits = m_jit.branch32(MacroAssembler::Below, sizeGPR, TrustedImm32(MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH));
+        m_jit.abortWithReason(UncheckedOverflow);
+        lengthIsWithinLimits.link(&m_jit);
+    }
+#endif
 
     // We can use resultGPR as a scratch right now.
     emitAllocateButterfly(storageGPR, sizeGPR, scratchGPR, scratch2GPR, resultGPR, slowCases);

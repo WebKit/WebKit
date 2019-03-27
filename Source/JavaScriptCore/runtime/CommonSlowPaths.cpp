@@ -1257,6 +1257,9 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
         THROW(createOutOfMemoryError(exec));
 
     unsigned arraySize = checkedArraySize.unsafeGet();
+    if (UNLIKELY(arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH))
+        THROW(createOutOfMemoryError(exec));
+
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 

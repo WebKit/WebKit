@@ -1,5 +1,81 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243280. rdar://problem/49308036
+
+    Cap length of an array with spread to MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
+    https://bugs.webkit.org/show_bug.cgi?id=196055
+    <rdar://problem/49067448>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/new_array_with_spread-should-cap-array-size-to-MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    We are doing this because:
+    1. We expect the array to be densely packed.
+    2. SpeculativeJIT::compileAllocateNewArrayWithSize() (and the FTL equivalent)
+       expects the array length to be less than MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH
+       if we don't want to use an ArrayStorage shape.
+    3. There's no reason why an array with spread needs to be that large anyway.
+       MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH is plenty.
+    
+    In this patch, we also add a debug assert in compileAllocateNewArrayWithSize() and
+    emitAllocateButterfly() to check for overflows.
+    
+    * assembler/AbortReason.h:
+    * dfg/DFGOperations.cpp:
+    * dfg/DFGSpeculativeJIT.cpp:
+    (JSC::DFG::SpeculativeJIT::compileCreateRest):
+    (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+    (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+    (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+    * ftl/FTLLowerDFGToB3.cpp:
+    (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+    * runtime/ArrayConventions.h:
+    * runtime/CommonSlowPaths.cpp:
+    (JSC::SLOW_PATH_DECL):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243280 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Mark Lam  <mark.lam@apple.com>
+
+            Cap length of an array with spread to MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH.
+            https://bugs.webkit.org/show_bug.cgi?id=196055
+            <rdar://problem/49067448>
+
+            Reviewed by Yusuke Suzuki.
+
+            We are doing this because:
+            1. We expect the array to be densely packed.
+            2. SpeculativeJIT::compileAllocateNewArrayWithSize() (and the FTL equivalent)
+               expects the array length to be less than MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH
+               if we don't want to use an ArrayStorage shape.
+            3. There's no reason why an array with spread needs to be that large anyway.
+               MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH is plenty.
+
+            In this patch, we also add a debug assert in compileAllocateNewArrayWithSize() and
+            emitAllocateButterfly() to check for overflows.
+
+            * assembler/AbortReason.h:
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compileCreateRest):
+            (JSC::DFG::SpeculativeJIT::compileNewArrayWithSpread):
+            (JSC::DFG::SpeculativeJIT::emitAllocateButterfly):
+            (JSC::DFG::SpeculativeJIT::compileAllocateNewArrayWithSize):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+            * runtime/ArrayConventions.h:
+            * runtime/CommonSlowPaths.cpp:
+            (JSC::SLOW_PATH_DECL):
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243069. rdar://problem/49308056
 
     Structure::flattenDictionary() should clear unused property slots.
