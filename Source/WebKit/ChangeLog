@@ -1,3 +1,17 @@
+2019-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Always dispatch the synthetic click asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=196278
+        <rdar://problem/49299968>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that all completeSyntheticClick() calls happen in an asynchronous manner (unless the feature is turned off).
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::dispatchSyntheticMouseMove):
+        (WebKit::WebPage::handleSyntheticClick):
+
 2019-03-27  Tim Horton  <timothy_horton@apple.com>
 
         Fix some more deprecation warnings in WKDrawingView

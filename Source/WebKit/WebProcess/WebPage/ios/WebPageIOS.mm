@@ -561,17 +561,22 @@ static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoi
     auto altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     auto metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
     auto mouseEvent = PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    // FIXME: Pass caps lock state.
     mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
 }
 
 void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
 {
+    if (!nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
+        completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
+        return;
+    }
+
     auto& respondingDocument = nodeRespondingToClick.document();
-    auto& mainFrame = m_page->mainFrame();
-    // FIXME: Pass caps lock state.
     {
         LOG_WITH_STREAM(ContentObservation, stream << "handleSyntheticClick: node(" << &nodeRespondingToClick << ") " << location);
         ContentChangeObserver::MouseMovedScope observingScope(respondingDocument);
+        auto& mainFrame = m_page->mainFrame();
         dispatchSyntheticMouseMove(mainFrame, location, modifiers);
         mainFrame.document()->updateStyleIfNeeded();
     }
@@ -579,32 +584,34 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
     if (m_isClosed)
         return;
 
-    if (is<HTMLFormControlElement>(nodeRespondingToClick)) {
-        LOG(ContentObservation, "handleSyntheticClick: Target node is a form control -> click.");
-        completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
-        return;
-    }
     auto& contentChangeObserver = respondingDocument.contentChangeObserver();
     auto observedContentChange = contentChangeObserver.observedContentChange();
-    if (observedContentChange == WKContentVisibilityChange) {
-        // The move event caused new contents to appear. Don't send the click event, but just ensure that the mouse is on the most recent content.
-        dispatchSyntheticMouseMove(mainFrame, location, modifiers);
-        LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
-        return;
-    }
-    const Seconds observationDuration = 32_ms;
-    contentChangeObserver.startContentObservationForDuration(observationDuration);
-    if (contentChangeObserver.observedContentChange() == WKContentNoChange) {
-        ASSERT(!respondingDocument.settings().contentChangeObserverEnabled());
-        completeSyntheticClick(nodeRespondingToClick, location, modifiers, WebCore::OneFingerTap);
+
+    auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || is<HTMLFormControlElement>(nodeRespondingToClick));
+    if (continueContentObservation) {
+        // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
+        const Seconds observationDuration = 32_ms;
+        contentChangeObserver.startContentObservationForDuration(observationDuration);
+        LOG(ContentObservation, "handleSyntheticClick: Can't decide it yet -> wait.");
+        m_pendingSyntheticClickNode = &nodeRespondingToClick;
+        m_pendingSyntheticClickLocation = location;
+        m_pendingSyntheticClickModifiers = modifiers;
         return;
     }
 
-    LOG(ContentObservation, "handleSyntheticClick: Can't decide it yet -> wait.");
-    // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
-    m_pendingSyntheticClickNode = &nodeRespondingToClick;
-    m_pendingSyntheticClickLocation = location;
-    m_pendingSyntheticClickModifiers = modifiers;
+    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange] {
+        if (protectedThis->m_isClosed || !protectedThis->corePage())
+            return;
+
+        if (observedContentChange == WKContentVisibilityChange) {
+            // The move event caused new contents to appear. Don't send synthetic click event, but just ensure that the mouse is on the most recent content.
+            dispatchSyntheticMouseMove(protectedThis->corePage()->mainFrame(), location, modifiers);
+            LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
+            return;
+        }
+        LOG(ContentObservation, "handleSyntheticClick: calling completeSyntheticClick -> click.");
+        protectedThis->completeSyntheticClick(targetNode, location, modifiers, WebCore::OneFingerTap);
+    });
 }
 
 void WebPage::completePendingSyntheticClickForContentChangeObserver()
