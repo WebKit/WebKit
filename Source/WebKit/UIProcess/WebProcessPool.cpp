@@ -2287,18 +2287,20 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
         }
 
         if (RefPtr<WebProcessProxy> process = WebProcessProxy::processForIdentifier(targetItem->lastProcessIdentifier())) {
-            // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
-            // In the case where this WebProcess has a SuspendedPageProxy for this WebPage, we can throw it away to support
-            // WebProcess re-use.
-            removeAllSuspendedPagesForPage(page, process.get());
+            if (process->state() != WebProcessProxy::State::Terminated) {
+                // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
+                // In the case where this WebProcess has a SuspendedPageProxy for this WebPage, we can throw it away to support
+                // WebProcess re-use.
+                removeAllSuspendedPagesForPage(page, process.get());
 
-            // Make sure we remove the process from the cache if it is in there since we're about to use it.
-            if (process->isInProcessCache()) {
-                webProcessCache().removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
-                ASSERT(!process->isInProcessCache());
+                // Make sure we remove the process from the cache if it is in there since we're about to use it.
+                if (process->isInProcessCache()) {
+                    webProcessCache().removeProcess(*process, WebProcessCache::ShouldShutDownProcess::No);
+                    ASSERT(!process->isInProcessCache());
+                }
+
+                return completionHandler(process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s);
             }
-
-            return completionHandler(process.releaseNonNull(), nullptr, "Using target back/forward item's process"_s);
         }
     }
 
