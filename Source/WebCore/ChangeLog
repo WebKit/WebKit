@@ -1,3 +1,26 @@
+2019-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Stop using the global _WKContentChange
+        https://bugs.webkit.org/show_bug.cgi?id=196288
+        <rdar://problem/49228081>
+
+        Reviewed by Simon Fraser.
+
+        This patch ensures that activities on frames don't overwrite the observed state on other frames.  
+        (Unfortunately the global variable is still used in WebKitLegacy (see webkit.org/b/196286)).
+
+        Tests: fast/events/touch/ios/content-observation/remove-subframe-while-observing.html
+               fast/events/touch/ios/content-observation/subframe.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::observedContentChange const): Deleted.
+        * page/ios/ContentChangeObserver.h:
+        (WebCore::ContentChangeObserver::observedContentChange const):
+        (WebCore::ContentChangeObserver::setHasNoChangeState):
+        (WebCore::ContentChangeObserver::setHasIndeterminateState):
+        (WebCore::ContentChangeObserver::setHasVisibleChangeState):
+        (WebCore::ContentChangeObserver::setObservedContentState):
+
 2019-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGPathSeg, SVGPathSegList and SVGAnimatedPathSegList

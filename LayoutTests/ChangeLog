@@ -1,3 +1,17 @@
+2019-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Stop using the global _WKContentChange
+        https://bugs.webkit.org/show_bug.cgi?id=196288
+        <rdar://problem/49228081>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/remove-subframe-while-observing-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/remove-subframe-while-observing.html: Added.
+        * fast/events/touch/ios/content-observation/subframe.html: Added.
+        * platform/ios-device-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+
 2019-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGPathSeg, SVGPathSegList and SVGAnimatedPathSegList

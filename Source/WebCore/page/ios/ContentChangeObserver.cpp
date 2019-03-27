@@ -334,11 +334,6 @@ void ContentChangeObserver::mouseMovedDidFinish()
     m_mouseMovedEventIsBeingDispatched = false;
 }
 
-WKContentChange ContentChangeObserver::observedContentChange() const
-{
-    return WKObservedContentChange();
-}
-
 void ContentChangeObserver::setShouldObserveNextStyleRecalc(bool shouldObserve)
 {
     if (shouldObserve)
