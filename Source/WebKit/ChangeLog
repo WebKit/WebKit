@@ -1,5 +1,43 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243291. rdar://problem/49307996
+
+    Fix possible memory leak when dismissing a color picker
+    https://bugs.webkit.org/show_bug.cgi?id=196026
+    <rdar://problem/48778568>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Fix a problem with WebPageProxy::endColorPicker where an early return could leave a color picker
+    with a +1 reference count after dismissing it.
+    
+    * UIProcess/WebColorPicker.cpp:
+    (WebKit::WebColorPicker::endPicker):
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::endColorPicker):
+    (WebKit::WebPageProxy::didEndColorPicker):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243291 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+            Fix possible memory leak when dismissing a color picker
+            https://bugs.webkit.org/show_bug.cgi?id=196026
+            <rdar://problem/48778568>
+
+            Reviewed by Wenson Hsieh.
+
+            Fix a problem with WebPageProxy::endColorPicker where an early return could leave a color picker
+            with a +1 reference count after dismissing it.
+
+            * UIProcess/WebColorPicker.cpp:
+            (WebKit::WebColorPicker::endPicker):
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::endColorPicker):
+            (WebKit::WebPageProxy::didEndColorPicker):
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Apply patch. rdar://problem/49307967
 
     fix-radar-48878188
