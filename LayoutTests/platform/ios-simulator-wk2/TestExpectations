@@ -68,3 +68,5 @@ webkit.org/b/196300 fast/visual-viewport/ios/min-scale-greater-than-one.html [ P
 webkit.org/b/196298 fast/viewport/ios/use-minimum-device-width-for-page-without-viewport-meta.html [ Pass Failure ]
 
 webkit.org/b/162975 http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html [ Pass Failure ]
+
+webkit.org/b/196307 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Failure ]
