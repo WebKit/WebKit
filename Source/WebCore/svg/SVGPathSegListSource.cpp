@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,16 +21,13 @@
 #include "config.h"
 #include "SVGPathSegListSource.h"
 
-#include "SVGPathSegArc.h"
-#include "SVGPathSegCurvetoCubic.h"
-#include "SVGPathSegCurvetoCubicSmooth.h"
-#include "SVGPathSegCurvetoQuadratic.h"
-#include "SVGPathSegLinetoHorizontal.h"
-#include "SVGPathSegLinetoVertical.h"
+#include "SVGPathSeg.h"
+#include "SVGPathSegList.h"
+#include "SVGPathSegValue.h"
 
 namespace WebCore {
 
-SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegListValues& pathSegList)
+SVGPathSegListSource::SVGPathSegListSource(const SVGPathSegList& pathSegList)
     : m_pathSegList(pathSegList)
 {
     m_itemCurrent = 0;

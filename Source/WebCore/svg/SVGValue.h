@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "SVGPathByteStream.h"
 #include "SVGTransformListValues.h"
 
 #include <wtf/Variant.h>
@@ -33,7 +32,6 @@
 namespace WebCore {
 
 using SVGValueVariant = Variant<
-    SVGPathByteStream*,
     SVGTransformListValues*
 >;
 

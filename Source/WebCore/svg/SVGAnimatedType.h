@@ -80,13 +80,8 @@ public:
 
     AnimatedPropertyType type() const
     {
-        static AnimatedPropertyType animatedTypes[] = {
-            AnimatedPath,
-            AnimatedTransformList
-        };
-
-        ASSERT(static_cast<size_t>(m_value.index()) < sizeof(animatedTypes) / sizeof(animatedTypes[0]));
-        return animatedTypes[m_value.index()];
+        ASSERT(!m_value.index());
+        return AnimatedTransformList;
     }
 
     String valueAsString() const

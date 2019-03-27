@@ -188,7 +188,7 @@ class SVGAnimatedNumberListAnimator final : public SVGAnimatedPropertyAnimator<S
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedNumberList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::unique_ptr<SVGAnimatedNumberListAnimator>(new SVGAnimatedNumberListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+        return std::make_unique<SVGAnimatedNumberListAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
     }
     
 private:
@@ -197,7 +197,25 @@ private:
         m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal());
     }
 };
-    
+
+class SVGAnimatedPathSegListAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPathSegList, SVGAnimationPathSegListFunction> {
+    using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPathSegList, SVGAnimationPathSegListFunction>;
+    using Base::Base;
+
+public:
+    static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedPathSegList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
+    {
+        return std::make_unique<SVGAnimatedPathSegListAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+private:
+    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    {
+        m_animated->animVal()->pathByteStreamWillChange();
+        m_function.progress(targetElement, percentage, repeatCount, m_animated->animVal()->pathByteStream());
+    }
+};
+
 class SVGAnimatedPointListAnimator final : public SVGAnimatedPropertyAnimator<SVGAnimatedPointList, SVGAnimationPointListFunction> {
     using Base = SVGAnimatedPropertyAnimator<SVGAnimatedPointList, SVGAnimationPointListFunction>;
     using Base::Base;
@@ -205,7 +223,7 @@ class SVGAnimatedPointListAnimator final : public SVGAnimatedPropertyAnimator<SV
 public:
     static auto create(const QualifiedName& attributeName, Ref<SVGAnimatedPointList>& animated, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive)
     {
-        return std::unique_ptr<SVGAnimatedPointListAnimator>(new SVGAnimatedPointListAnimator(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive));
+        return std::make_unique<SVGAnimatedPointListAnimator>(attributeName, animated, animationMode, calcMode, isAccumulated, isAdditive);
     }
     
 private:

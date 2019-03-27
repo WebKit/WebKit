@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "SVGAnimatedPath.h"
 #include "SVGAnimatedTransformList.h"
 
 namespace WebCore {
@@ -30,64 +29,17 @@ class SVGAnimatorFactory {
 public:
     static bool isSupportedAttributeType(AnimatedPropertyType attributeType)
     {
-        switch (attributeType) {
-        case AnimatedAngle:
-        case AnimatedBoolean:
-        case AnimatedColor:
-        case AnimatedEnumeration:
-        case AnimatedInteger:
-        case AnimatedIntegerOptionalInteger:
-        case AnimatedLength:
-        case AnimatedLengthList:
-        case AnimatedNumber:
-        case AnimatedNumberList:
-        case AnimatedNumberOptionalNumber:
-        case AnimatedPoints:
-        case AnimatedPreserveAspectRatio:
-        case AnimatedRect:
-        case AnimatedString:
-        case AnimatedUnknown:
-            break;
-
-        case AnimatedPath:
-        case AnimatedTransformList:
-            return true;
-        }
-
-        return false;
+        return attributeType == AnimatedTransformList;
     }
 
     static std::unique_ptr<SVGAnimatedTypeAnimator> create(SVGAnimationElement* animationElement, SVGElement* contextElement, AnimatedPropertyType attributeType)
     {
         ASSERT(animationElement);
         ASSERT(contextElement);
-
-        switch (attributeType) {
-        case AnimatedAngle:
-        case AnimatedBoolean:
-        case AnimatedColor:
-        case AnimatedEnumeration:
-        case AnimatedInteger:
-        case AnimatedIntegerOptionalInteger:
-        case AnimatedLength:
-        case AnimatedLengthList:
-        case AnimatedNumber:
-        case AnimatedNumberList:
-        case AnimatedNumberOptionalNumber:
-        case AnimatedPoints:
-        case AnimatedPreserveAspectRatio:
-        case AnimatedRect:
-        case AnimatedString:
-        case AnimatedUnknown:
-            break;
-
-        case AnimatedPath:
-            return std::make_unique<SVGAnimatedPathAnimator>(animationElement, contextElement);
-        case AnimatedTransformList:
+        ASSERT(attributeType == AnimatedTransformList);
+        
+        if (attributeType == AnimatedTransformList)
             return std::make_unique<SVGAnimatedTransformListAnimator>(animationElement, contextElement);
-        }
-
-        ASSERT_NOT_REACHED();
         return nullptr;
     }
 

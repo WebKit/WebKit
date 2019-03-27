@@ -38,6 +38,7 @@
     debug("");
     debug("Insert fourth item at position three using insertItemBefore()");
     shouldBeEqualToString("path1.pathSegList.insertItemBefore(path1.pathSegList.getItem(3), 2).toString()", "[object SVGPathSegLinetoAbs]");
+    shouldBeEqualToString("path1.pathSegList.removeItem(4).toString()", "[object SVGPathSegLinetoAbs]");
 
     debug("");
     debug("Check final 'pathSegList' value of path1");

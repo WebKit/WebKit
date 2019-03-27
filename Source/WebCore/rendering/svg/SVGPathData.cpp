@@ -95,7 +95,7 @@ static Path pathFromLineElement(const SVGElement& element)
 
 static Path pathFromPathElement(const SVGElement& element)
 {
-    return downcast<SVGPathElement>(element).pathForByteStream();
+    return downcast<SVGPathElement>(element).path();
 }
 
 static Path pathFromPolygonElement(const SVGElement& element)

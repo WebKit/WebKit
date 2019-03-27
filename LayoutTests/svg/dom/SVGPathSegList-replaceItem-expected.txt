@@ -39,9 +39,11 @@ PASS path2.pathSegList.getItem(3).x is -100
 
 Replace second item with third item of path1
 PASS path1.pathSegList.replaceItem(path1.pathSegList.getItem(2), 1).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.removeItem(2).toString() is "[object SVGPathSegLinetoAbs]"
 
 Replace third item of path2 with fourth item of path1
 PASS path2.pathSegList.replaceItem(path1.pathSegList.getItem(3), 2).toString() is "[object SVGPathSegLinetoVerticalRel]"
+PASS path1.pathSegList.removeItem(3).toString() is "[object SVGPathSegLinetoVerticalRel]"
 
 Check final 'pathSegList' value of path1
 PASS path1.pathSegList.numberOfItems is 4

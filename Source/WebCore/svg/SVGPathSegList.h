@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,120 +20,200 @@
 
 #pragma once
 
-#include "SVGAnimatedListPropertyTearOff.h"
-#include "SVGPathSegListValues.h"
+#include "Path.h"
+#include "SVGPathByteStream.h"
+#include "SVGPathSeg.h"
+#include "SVGPropertyList.h"
 
 namespace WebCore {
 
-class SVGPathElement;
+class SVGPathSegList final : public SVGPropertyList<SVGPathSeg> {
+    friend class SVGAnimatedPathSegListAnimator;
+    friend class SVGPathSegListBuilder;
+    friend class SVGPathSegListSource;
 
-class SVGPathSegList final : public SVGListProperty<SVGPathSegListValues> {
+    using Base = SVGPropertyList<SVGPathSeg>;
+    using Base::Base;
+
 public:
-    using Base = SVGListProperty<SVGPathSegListValues>;
-    using AnimatedListPropertyTearOff = SVGAnimatedListPropertyTearOff<SVGPathSegListValues>;
-    using ListItemType = SVGPropertyTraits<SVGPathSegListValues>::ListItemType;
-
-    static Ref<SVGPathSegList> create(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole, SVGPathSegListValues& values, ListWrapperCache& wrappers)
+    static Ref<SVGPathSegList> create(SVGPropertyOwner* owner, SVGPropertyAccess access)
     {
-        return adoptRef(*new SVGPathSegList(animatedProperty, role, pathSegRole, values, wrappers));
+        return adoptRef(*new SVGPathSegList(owner, access));
     }
 
-    static Ref<SVGPathSegList> create(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGPathSegListValues& values, ListWrapperCache& wrappers)
+    static Ref<SVGPathSegList> create(const SVGPathSegList& other, SVGPropertyAccess access)
     {
-        ASSERT_NOT_REACHED();
-        return adoptRef(*new SVGPathSegList(animatedProperty, role, PathSegUndefinedRole, values, wrappers));
+        return adoptRef(*new SVGPathSegList(other, access));
     }
 
-    int findItem(const ListItemType& item) const
+    static Ref<SVGPathSegList> create(Ref<SVGPathSeg>&& newItem)
     {
-        ASSERT(m_values);
-
-        unsigned size = m_values->size();
-        for (size_t i = 0; i < size; ++i) {
-            if (item == m_values->at(i))
-                return i;
-        }
-
-        return -1;
+        return adoptRef(*new SVGPathSegList(WTFMove(newItem)));
     }
 
-    void removeItemFromList(size_t itemIndex, bool shouldSynchronizeWrappers)
+    SVGPathSegList& operator=(const SVGPathSegList& other)
     {
-        ASSERT(m_values);
-        ASSERT_WITH_SECURITY_IMPLICATION(itemIndex < m_values->size());
-
-        m_values->remove(itemIndex);
-
-        if (shouldSynchronizeWrappers)
-            commitChange();
+        pathByteStreamWillChange();
+        m_pathByteStream = other.pathByteStream();
+        return *this;
     }
 
-    // SVGList API
-    ExceptionOr<void> clear();
-
-    ExceptionOr<RefPtr<SVGPathSeg>> initialize(Ref<SVGPathSeg>&& newItem)
+    unsigned numberOfItems() const
     {
-        return Base::initializeValues(WTFMove(newItem));
+        const_cast<SVGPathSegList*>(this)->ensureItems();
+        return Base::numberOfItems();
     }
 
-    ExceptionOr<RefPtr<SVGPathSeg>> getItem(unsigned index);
-
-    ExceptionOr<RefPtr<SVGPathSeg>> insertItemBefore(Ref<SVGPathSeg>&& newItem, unsigned index)
+    ExceptionOr<void> clear()
     {
-        return Base::insertItemBeforeValues(WTFMove(newItem), index);
+        itemsWillChange();
+        return Base::clear();
     }
 
-    ExceptionOr<RefPtr<SVGPathSeg>> replaceItem(Ref<SVGPathSeg>&&, unsigned index);
-
-    ExceptionOr<RefPtr<SVGPathSeg>> removeItem(unsigned index);
-
-    ExceptionOr<RefPtr<SVGPathSeg>> appendItem(Ref<SVGPathSeg>&& newItem)
+    ExceptionOr<Ref<SVGPathSeg>> getItem(unsigned index)
     {
-        return Base::appendItemValues(WTFMove(newItem));
+        ensureItems();
+        return Base::getItem(index);
+    }
+
+    ExceptionOr<Ref<SVGPathSeg>> initialize(Ref<SVGPathSeg>&& newItem)
+    {
+        itemsWillChange();
+        return Base::initialize(WTFMove(newItem));
+    }
+
+    ExceptionOr<Ref<SVGPathSeg>> insertItemBefore(Ref<SVGPathSeg>&& newItem, unsigned index)
+    {
+        ensureItems();
+        itemsWillChange();
+        return Base::insertItemBefore(WTFMove(newItem), index);
+    }
+
+    ExceptionOr<Ref<SVGPathSeg>> replaceItem(Ref<SVGPathSeg>&& newItem, unsigned index)
+    {
+        ensureItems();
+        itemsWillChange();
+        return Base::replaceItem(WTFMove(newItem), index);
+    }
+
+    ExceptionOr<Ref<SVGPathSeg>> removeItem(unsigned index)
+    {
+        ensureItems();
+        itemsWillChange();
+        return Base::removeItem(index);
+    }
+
+    ExceptionOr<Ref<SVGPathSeg>> appendItem(Ref<SVGPathSeg>&& newItem)
+    {
+        ensureItems();
+        appendPathSegToPathByteStream(newItem);
+        clearPath();
+        return Base::appendItem(WTFMove(newItem));
+    }
+
+    const SVGPathByteStream& pathByteStream() const { return const_cast<SVGPathSegList*>(this)->pathByteStream(); }
+    SVGPathByteStream& pathByteStream()
+    {
+        ensurePathByteStream();
+        return m_pathByteStream;
+    }
+
+    bool parse(const String& value)
+    {
+        pathByteStreamWillChange();
+        return buildSVGPathByteStreamFromString(value, m_pathByteStream, UnalteredParsing);
+    }
+
+    Path path() const
+    {
+        if (!m_path)
+            m_path = buildPathFromByteStream(pathByteStream());
+        return *m_path;
+    }
+
+    size_t approximateMemoryCost() const
+    {
+        // This is an approximation for path memory cost since the path is parsed on demand.
+        size_t pathMemoryCost = (m_pathByteStream.size() / 10) * sizeof(FloatPoint);
+        // We need to account for the memory which is allocated by the m_path.
+        return m_path ? pathMemoryCost + sizeof(*m_path) : pathMemoryCost;
+    }
+
+    String valueAsString() const override
+    {
+        String value;
+        buildStringFromByteStream(pathByteStream(), value, UnalteredParsing);
+        return value;
     }
 
 private:
-    SVGPathSegList(AnimatedListPropertyTearOff& animatedProperty, SVGPropertyRole role, SVGPathSegRole pathSegRole, SVGPathSegListValues& values, ListWrapperCache& wrappers)
-        : SVGListProperty<SVGPathSegListValues>(role, values, &wrappers)
-        , m_animatedProperty(&animatedProperty)
-        , m_pathSegRole(pathSegRole)
+    SVGPathSegList(const SVGPathSegList& other, SVGPropertyAccess access)
+        : Base(other.owner(), access)
+        , m_pathByteStream(other.pathByteStream())
     {
     }
 
-    SVGPathElement* contextElement() const;
-    using Base::m_role;
-
-    bool isReadOnly() const final
+    // Used by appendPathSegToPathByteStream() to create a temporary SVGPathSegList with one item.
+    SVGPathSegList(Ref<SVGPathSeg>&& newItem)
     {
-        if (m_role == AnimValRole)
-            return true;
-        if (m_animatedProperty && m_animatedProperty->isReadOnly())
-            return true;
-        return false;
+        append(WTFMove(newItem));
     }
 
-    void commitChange() final
+    // Called when changing an item in the list.
+    void commitPropertyChange(SVGProperty* property) override
     {
-        ASSERT(m_values);
-        m_values->commitChange(*m_animatedProperty->contextElement(), ListModificationUnknown);
+        itemsWillChange();
+        Base::commitPropertyChange(property);
     }
 
-    void commitChange(ListModification listModification) final
+    void ensureItems()
     {
-        ASSERT(m_values);
-        m_values->commitChange(*m_animatedProperty->contextElement(), listModification);
+        if (!m_items.isEmpty() || m_pathByteStream.isEmpty())
+            return;
+        buildSVGPathSegListFromByteStream(m_pathByteStream, *this, UnalteredParsing);
     }
 
-    bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) final;
-    bool processIncomingListItemWrapper(Ref<ListItemTearOff>&, unsigned*) final
+    void ensurePathByteStream()
     {
-        ASSERT_NOT_REACHED();
-        return true;
+        if (!m_pathByteStream.isEmpty() || m_items.isEmpty())
+            return;
+        buildSVGPathByteStreamFromSVGPathSegList(*this, m_pathByteStream, UnalteredParsing);
     }
 
-private:
-    RefPtr<AnimatedListPropertyTearOff> m_animatedProperty;
-    SVGPathSegRole m_pathSegRole;
+    // Optimize appending an SVGPathSeg to the list. Instead of creating the whole
+    // byte stream, a temporary byte stream will be creating just for the new item
+    // and this temporary byte stream will be appended to m_pathByteStream.
+    void appendPathSegToPathByteStream(const Ref<SVGPathSeg>& item)
+    {
+        if (m_pathByteStream.isEmpty())
+            return;
+
+        Ref<SVGPathSegList> pathSegList = SVGPathSegList::create(item.copyRef());
+        SVGPathByteStream pathSegStream;
+
+        if (!buildSVGPathByteStreamFromSVGPathSegList(pathSegList, pathSegStream, UnalteredParsing, false))
+            return;
+
+        m_pathByteStream.append(pathSegStream);
+    }
+
+    void clearPathByteStream() { m_pathByteStream.clear(); }
+    void clearPath() { m_path = WTF::nullopt; }
+
+    void pathByteStreamWillChange()
+    {
+        clearItems();
+        clearPath();
+    }
+
+    void itemsWillChange()
+    {
+        clearPathByteStream();
+        clearPath();
+    }
+
+    SVGPathByteStream m_pathByteStream;
+    mutable Optional<Path> m_path;
 };
 
-} // namespace WebCore
+}

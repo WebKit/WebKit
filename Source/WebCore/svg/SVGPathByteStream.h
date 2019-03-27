@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,6 +49,12 @@ public:
     typedef Data::const_iterator DataIterator;
 
     SVGPathByteStream() { }
+
+    SVGPathByteStream(const String& string)
+    {
+        buildSVGPathByteStreamFromString(string, *this, UnalteredParsing);
+    }
+
     SVGPathByteStream(const SVGPathByteStream& other)
     {
         *this = other;
@@ -92,24 +98,8 @@ public:
     bool isEmpty() const { return m_data.isEmpty(); }
     unsigned size() const { return m_data.size(); }
 
-    // Only defined to let SVGAnimatedPathAnimator use the standard list code paths - this method is never called.
-    void resize(unsigned) { }
-
 private:
     Data m_data;
-};
-
-template<>
-struct SVGPropertyTraits<SVGPathByteStream> {
-    static SVGPathByteStream initialValue() { return SVGPathByteStream(); }
-    static SVGPathByteStream fromString(const String& string)
-    {
-        SVGPathByteStream byteStream;
-        buildSVGPathByteStreamFromString(string, byteStream, UnalteredParsing);
-        return byteStream;
-    }
-    static Optional<SVGPathByteStream> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return { }; }
-    static String toString(const SVGPathByteStream&) { ASSERT_NOT_REACHED(); return emptyString(); }
 };
 
 } // namespace WebCore

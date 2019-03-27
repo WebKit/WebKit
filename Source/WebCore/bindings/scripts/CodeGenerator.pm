@@ -619,6 +619,22 @@ sub IsSVGAnimatedType
     return $object->IsSVGAnimatedTypeName($type->name);
 }
 
+sub IsSVGPathSegTypeName
+{
+    my ($object, $typeName) = @_;
+
+    return $typeName =~ /^SVGPathSeg/;
+}
+
+sub IsSVGPathSegType
+{
+    my ($object, $type) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    return $object->IsSVGPathSegTypeName($type->name);
+}
+
 sub IsConstructorType
 {
     my ($object, $type) = @_;

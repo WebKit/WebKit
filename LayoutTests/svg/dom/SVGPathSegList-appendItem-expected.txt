@@ -36,9 +36,11 @@ PASS path2.pathSegList.getItem(3).x = -path2.pathSegList.getItem(3).x is -100
 
 Swap segment four and five of path2 - now should look like a rectangle
 PASS path2.pathSegList.appendItem(path2.pathSegList.getItem(3)).toString() is "[object SVGPathSegLinetoHorizontalRel]"
+PASS path2.pathSegList.removeItem(3).toString() is "[object SVGPathSegLinetoHorizontalRel]"
 
 Append second item from path2 to path1 list
 PASS path1.pathSegList.appendItem(path2.pathSegList.getItem(1)).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path2.pathSegList.removeItem(1).toString() is "[object SVGPathSegLinetoAbs]"
 
 Change last item of path1 list, that came from path2 list, assure it's updating path1
 PASS path1.pathSegList.getItem(3).x -= 50 is 0

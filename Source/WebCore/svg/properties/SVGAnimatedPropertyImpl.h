@@ -36,6 +36,7 @@
 #include "SVGLengthList.h"
 #include "SVGMarkerTypes.h"
 #include "SVGNumberList.h"
+#include "SVGPathSegList.h"
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRect.h"
@@ -65,6 +66,34 @@ public:
     static Ref<SVGAnimatedOrientType> create(SVGElement* contextElement, SVGMarkerOrientType baseValue)
     {
         return SVGAnimatedEnumeration::create<SVGMarkerOrientType, SVGAnimatedOrientType>(contextElement, baseValue);
+    }
+};
+
+class SVGAnimatedPathSegList : public SVGAnimatedPropertyList<SVGPathSegList> {
+    using Base = SVGAnimatedPropertyList<SVGPathSegList>;
+    using Base::Base;
+
+public:
+    static Ref<SVGAnimatedPathSegList> create(SVGElement* contextElement)
+    {
+        return adoptRef(*new SVGAnimatedPathSegList(contextElement));
+    }
+
+    SVGPathByteStream& currentPathByteStream()
+    {
+        return isAnimating() ? animVal()->pathByteStream() : baseVal()->pathByteStream();
+    }
+
+    Path currentPath()
+    {
+        return isAnimating() ? animVal()->path() : baseVal()->path();
+    }
+
+    size_t approximateMemoryCost() const
+    {
+        if (isAnimating())
+            return baseVal()->approximateMemoryCost() + animVal()->approximateMemoryCost();
+        return baseVal()->approximateMemoryCost();
     }
 };
 

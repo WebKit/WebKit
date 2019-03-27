@@ -26,6 +26,7 @@
 #pragma once
 
 #include "SVGAnimationAdditiveValueFunction.h"
+#include "SVGPathByteStream.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -238,6 +239,55 @@ private:
     void addFromAndToValues(SVGElement*) override
     {
         m_to += m_from;
+    }
+};
+
+class SVGAnimationPathSegListFunction : public SVGAnimationAdditiveValueFunction<SVGPathByteStream> {
+public:
+    using Base = SVGAnimationAdditiveValueFunction<SVGPathByteStream>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from = SVGPathByteStream(from);
+        m_to = SVGPathByteStream(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration = SVGPathByteStream(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, SVGPathByteStream& animated)
+    {
+        SVGPathByteStream underlyingPath;
+        if (m_animationMode == AnimationMode::To)
+            underlyingPath = animated;
+
+        const SVGPathByteStream& from = m_animationMode == AnimationMode::To ? underlyingPath : m_from;
+
+        // Cache the current animated value before the buildAnimatedSVGPathByteStream() clears animatedPath.
+        SVGPathByteStream lastAnimated;
+        if (!from.size() || (m_isAdditive && m_animationMode != AnimationMode::To))
+            lastAnimated = animated;
+
+        buildAnimatedSVGPathByteStream(from, m_to, animated, percentage);
+
+        // Handle additive='sum'.
+        if (!lastAnimated.isEmpty())
+            addToSVGPathByteStream(animated, lastAnimated);
+
+        // Handle accumulate='sum'.
+        if (m_isAccumulated && repeatCount)
+            addToSVGPathByteStream(animated, toAtEndOfDuration(), repeatCount);
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        if (!m_from.size() || m_from.size() != m_to.size())
+            return;
+        addToSVGPathByteStream(m_to, m_from);
     }
 };
 

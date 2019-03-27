@@ -57,10 +57,12 @@
     debug("")
     debug("Swap segment four and five of path2 - now should look like a rectangle");
     shouldBeEqualToString("path2.pathSegList.appendItem(path2.pathSegList.getItem(3)).toString()", "[object SVGPathSegLinetoHorizontalRel]");
+    shouldBeEqualToString("path2.pathSegList.removeItem(3).toString()", "[object SVGPathSegLinetoHorizontalRel]");
 
     debug("");
     debug("Append second item from path2 to path1 list");
     shouldBeEqualToString("path1.pathSegList.appendItem(path2.pathSegList.getItem(1)).toString()", "[object SVGPathSegLinetoAbs]");
+    shouldBeEqualToString("path2.pathSegList.removeItem(1).toString()", "[object SVGPathSegLinetoAbs]");
 
     debug("");
     debug("Change last item of path1 list, that came from path2 list, assure it's updating path1");

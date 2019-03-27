@@ -1,6 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010, 2012. All rights reserved.
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,28 +28,25 @@ namespace WebCore {
 class FloatPoint;
 class Path;
 class SVGPathByteStream;
-class SVGPathElement;
 class SVGPathSeg;
-class SVGPathSegListValues;
+class SVGPathSegList;
+
+// Path -> String
+String buildStringFromPath(const Path&);
 
 // String/SVGPathByteStream -> Path
 Path buildPathFromString(const String&);
 Path buildPathFromByteStream(const SVGPathByteStream&);
 
-// Path -> String
-String buildStringFromPath(const Path&);
-
-// SVGPathSegListValues/String -> SVGPathByteStream
-bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues&, SVGPathByteStream& result, PathParsingMode);
-bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&&, SVGPathByteStream&, PathParsingMode);
+// SVGPathSegList/String -> SVGPathByteStream
+bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList&, SVGPathByteStream& result, PathParsingMode, bool checkForInitialMoveTo = true);
 bool buildSVGPathByteStreamFromString(const String&, SVGPathByteStream&, PathParsingMode);
 
-// SVGPathByteStream/SVGPathSegListValues -> String
-bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode);
-bool buildStringFromSVGPathSegListValues(const SVGPathSegListValues&, String&, PathParsingMode);
+// SVGPathByteStream -> String
+bool buildStringFromByteStream(const SVGPathByteStream&, String&, PathParsingMode, bool checkForInitialMoveTo = true);
 
-// SVGPathByteStream -> SVGPathSegListValues
-bool buildSVGPathSegListValuesFromByteStream(const SVGPathByteStream&, SVGPathElement&, SVGPathSegListValues&, PathParsingMode);
+// SVGPathByteStream -> SVGPathSegList
+bool buildSVGPathSegListFromByteStream(const SVGPathByteStream&, SVGPathSegList&, PathParsingMode);
 
 bool canBlendSVGPathByteStreams(const SVGPathByteStream& from, const SVGPathByteStream& to);
 

@@ -59,6 +59,7 @@ PASS path2.pathSegList.getItem(2).y is 0
 
 Initialize path1 list with first item of path2
 PASS path1.pathSegList.initialize(path2.pathSegList.getItem(0)).toString() is "[object SVGPathSegMovetoAbs]"
+PASS path2.pathSegList.removeItem(0).toString() is "[object SVGPathSegMovetoAbs]"
 
 Check intermediate list state of path1
 PASS path1.pathSegList.numberOfItems is 1

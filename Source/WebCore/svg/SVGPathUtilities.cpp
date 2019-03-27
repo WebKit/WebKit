@@ -104,32 +104,14 @@ String buildStringFromPath(const Path& path)
     return builder.toString();
 }
 
-bool buildSVGPathByteStreamFromSVGPathSegListValues(const SVGPathSegListValues& list, SVGPathByteStream& result, PathParsingMode parsingMode)
+bool buildSVGPathByteStreamFromSVGPathSegList(const SVGPathSegList& list, SVGPathByteStream& stream, PathParsingMode parsingMode, bool checkForInitialMoveTo)
 {
-    result.clear();
+    stream.clear();
     if (list.isEmpty())
         return true;
 
     SVGPathSegListSource source(list);
-    return SVGPathParser::parseToByteStream(source, result, parsingMode);
-}
-
-bool appendSVGPathByteStreamFromSVGPathSeg(RefPtr<SVGPathSeg>&& pathSeg, SVGPathByteStream& result, PathParsingMode parsingMode)
-{
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=15412 - Implement normalized path segment lists!
-    ASSERT(parsingMode == UnalteredParsing);
-
-    SVGPathSegListValues appendedItemList(PathSegUnalteredRole);
-    appendedItemList.append(WTFMove(pathSeg));
-
-    SVGPathByteStream appendedByteStream;
-    SVGPathSegListSource source(appendedItemList);
-    bool ok = SVGPathParser::parseToByteStream(source, result, parsingMode, false);
-
-    if (ok)
-        result.append(appendedByteStream);
-
-    return ok;
+    return SVGPathParser::parseToByteStream(source, stream, parsingMode, checkForInitialMoveTo);
 }
 
 Path buildPathFromByteStream(const SVGPathByteStream& stream)
@@ -144,33 +126,23 @@ Path buildPathFromByteStream(const SVGPathByteStream& stream)
     return path;
 }
 
-bool buildSVGPathSegListValuesFromByteStream(const SVGPathByteStream& stream, SVGPathElement& element, SVGPathSegListValues& result, PathParsingMode parsingMode)
+bool buildSVGPathSegListFromByteStream(const SVGPathByteStream& stream, SVGPathSegList& list, PathParsingMode mode)
 {
     if (stream.isEmpty())
         return true;
 
-    SVGPathSegListBuilder builder(element, result, parsingMode == NormalizedParsing ? PathSegNormalizedRole : PathSegUnalteredRole);
+    SVGPathSegListBuilder builder(list);
     SVGPathByteStreamSource source(stream);
-    return SVGPathParser::parse(source, builder, parsingMode);
+    return SVGPathParser::parse(source, builder, mode);
 }
 
-bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, PathParsingMode parsingMode)
+bool buildStringFromByteStream(const SVGPathByteStream& stream, String& result, PathParsingMode parsingMode, bool checkForInitialMoveTo)
 {
     if (stream.isEmpty())
         return true;
 
     SVGPathByteStreamSource source(stream);
-    return SVGPathParser::parseToString(source, result, parsingMode);
-}
-
-bool buildStringFromSVGPathSegListValues(const SVGPathSegListValues& list, String& result, PathParsingMode parsingMode)
-{
-    result = String();
-    if (list.isEmpty())
-        return true;
-
-    SVGPathSegListSource source(list);
-    return SVGPathParser::parseToString(source, result, parsingMode);
+    return SVGPathParser::parseToString(source, result, parsingMode, checkForInitialMoveTo);
 }
 
 bool buildSVGPathByteStreamFromString(const String& d, SVGPathByteStream& result, PathParsingMode parsingMode)

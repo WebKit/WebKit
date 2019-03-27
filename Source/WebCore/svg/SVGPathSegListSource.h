@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,15 +22,16 @@
 
 #include "FloatPoint.h"
 #include "SVGPathSeg.h"
-#include "SVGPathSegListValues.h"
 #include "SVGPathSource.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class SVGPathSegList;
+
 class SVGPathSegListSource final : public SVGPathSource {
 public:
-    explicit SVGPathSegListSource(const SVGPathSegListValues&);
+    explicit SVGPathSegListSource(const SVGPathSegList&);
 
 private:
     bool hasMoreData() const final;
@@ -47,10 +49,10 @@ private:
     bool parseCurveToQuadraticSmoothSegment(FloatPoint&) final;
     bool parseArcToSegment(float&, float&, float&, bool&, bool&, FloatPoint&) final;
 
-    const SVGPathSegListValues& m_pathSegList;
+    const SVGPathSegList& m_pathSegList;
     RefPtr<SVGPathSeg> m_segment;
-    int m_itemCurrent;
-    int m_itemEnd;
+    size_t m_itemCurrent;
+    size_t m_itemEnd;
 };
 
 } // namespace WebCore

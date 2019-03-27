@@ -59,10 +59,12 @@
     debug("");
     debug("Replace second item with third item of path1");
     shouldBeEqualToString("path1.pathSegList.replaceItem(path1.pathSegList.getItem(2), 1).toString()", "[object SVGPathSegLinetoAbs]");
+    shouldBeEqualToString("path1.pathSegList.removeItem(2).toString()", "[object SVGPathSegLinetoAbs]");
 
     debug("");
     debug("Replace third item of path2 with fourth item of path1");
     shouldBeEqualToString("path2.pathSegList.replaceItem(path1.pathSegList.getItem(3), 2).toString()", "[object SVGPathSegLinetoVerticalRel]");
+    shouldBeEqualToString("path1.pathSegList.removeItem(3).toString()", "[object SVGPathSegLinetoVerticalRel]");
 
     debug("");
     debug("Check final 'pathSegList' value of path1");

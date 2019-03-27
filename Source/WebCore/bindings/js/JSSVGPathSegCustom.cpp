@@ -41,20 +41,6 @@
 #include "JSSVGPathSegMovetoAbs.h"
 #include "JSSVGPathSegMovetoRel.h"
 #include "SVGPathSeg.h"
-#include "SVGPathSegArc.h"
-#include "SVGPathSegClosePath.h"
-#include "SVGPathSegCurvetoCubic.h"
-#include "SVGPathSegCurvetoCubicSmooth.h"
-#include "SVGPathSegCurvetoQuadratic.h"
-#include "SVGPathSegCurvetoQuadraticSmoothAbs.h"
-#include "SVGPathSegCurvetoQuadraticSmoothRel.h"
-#include "SVGPathSegLinetoAbs.h"
-#include "SVGPathSegLinetoHorizontal.h"
-#include "SVGPathSegLinetoRel.h"
-#include "SVGPathSegLinetoVertical.h"
-#include "SVGPathSegMovetoAbs.h"
-#include "SVGPathSegMovetoRel.h"
-
 
 namespace WebCore {
 using namespace JSC;

@@ -85,6 +85,7 @@
     debug("");
     debug("Initialize path1 list with first item of path2");
     shouldBeEqualToString("path1.pathSegList.initialize(path2.pathSegList.getItem(0)).toString()", "[object SVGPathSegMovetoAbs]");
+    shouldBeEqualToString("path2.pathSegList.removeItem(0).toString()", "[object SVGPathSegMovetoAbs]");
 
     debug("");
     debug("Check intermediate list state of path1");

@@ -2267,7 +2267,6 @@ svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
-svg/SVGAnimatedPath.cpp
 svg/SVGAnimatedTransformList.cpp
 svg/SVGAnimatedTypeAnimator.cpp
 svg/SVGAnimationElement.cpp
@@ -2348,10 +2347,8 @@ svg/SVGPathByteStreamBuilder.cpp
 svg/SVGPathByteStreamSource.cpp
 svg/SVGPathElement.cpp
 svg/SVGPathParser.cpp
-svg/SVGPathSegList.cpp
 svg/SVGPathSegListBuilder.cpp
 svg/SVGPathSegListSource.cpp
-svg/SVGPathSegListValues.cpp
 svg/SVGPathStringBuilder.cpp
 svg/SVGPathStringSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
@@ -2405,7 +2402,6 @@ svg/graphics/filters/SVGFEImage.cpp
 svg/graphics/filters/SVGFilter.cpp
 svg/graphics/filters/SVGFilterBuilder.cpp
 
-svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp
 svg/properties/SVGAnimatedProperty.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp

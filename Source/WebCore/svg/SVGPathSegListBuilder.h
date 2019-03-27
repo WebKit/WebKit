@@ -4,6 +4,7 @@
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,15 +26,14 @@
 
 #include "FloatPoint.h"
 #include "SVGPathConsumer.h"
-#include "SVGPathSegListValues.h"
 
 namespace WebCore {
 
-class SVGPathElement;
+class SVGPathSegList;
 
 class SVGPathSegListBuilder final : public SVGPathConsumer {
 public:
-    SVGPathSegListBuilder(SVGPathElement&, SVGPathSegListValues&, SVGPathSegRole);
+    SVGPathSegListBuilder(SVGPathSegList&);
 
 private:
     void incrementPathSegmentCount() final { }
@@ -53,9 +53,7 @@ private:
     void curveToQuadraticSmooth(const FloatPoint&, PathCoordinateMode) final;
     void arcTo(float, float, float, bool largeArcFlag, bool sweepFlag, const FloatPoint&, PathCoordinateMode) final;
 
-    SVGPathElement& m_pathElement;
-    SVGPathSegListValues& m_pathSegList;
-    SVGPathSegRole m_pathSegRole { PathSegUndefinedRole };
+    SVGPathSegList& m_pathSegList;
 };
 
 } // namespace WebCore

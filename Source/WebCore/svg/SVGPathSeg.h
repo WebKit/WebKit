@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include "SVGProperty.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -48,15 +49,8 @@ enum SVGPathSegType {
     PathSegCurveToQuadraticSmoothRel = 19
 };
 
-enum SVGPathSegRole {
-    PathSegUnalteredRole = 0,
-    PathSegNormalizedRole = 1,
-    PathSegUndefinedRole = 2
-};
-
-class SVGPathSeg : public RefCounted<SVGPathSeg> {
+class SVGPathSeg : public SVGProperty {
 public:
-    SVGPathSeg() = default;
     virtual ~SVGPathSeg() = default;
 
     // Forward declare these enums in the w3c naming scheme, for IDL generation
@@ -85,6 +79,10 @@ public:
 
     virtual unsigned short pathSegType() const = 0;
     virtual String pathSegTypeAsLetter() const = 0;
+    virtual Ref<SVGPathSeg> clone() const = 0;
+
+protected:
+    using SVGProperty::SVGProperty;
 };
 
 } // namespace WebCore

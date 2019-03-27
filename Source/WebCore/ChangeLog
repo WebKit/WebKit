@@ -1,3 +1,263 @@
+2019-03-27  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGPathSeg, SVGPathSegList and SVGAnimatedPathSegList
+        https://bugs.webkit.org/show_bug.cgi?id=196085
+
+        Reviewed by Simon Fraser.
+
+        The SVGPathSegList is similar to the other SVGLists, e.g. SVGNUmberList
+        and SVGPointList except in two things:
+
+        1. Its items can be different but they are derived from the same base 
+           class SVGPathSeg.
+
+        2. The SVGPathSeg items are only used for DOM. When drawing or animating
+           we have to have an SVGPathByteStream and convert it to a Path. Converting
+           an SVGPathByteStream to SVGPathSeg items and vice versa is expensive.
+           Building a Path from an SVGPathByteStream is also expensive. So an extra
+           care needs to be taken for when these conversions happen.
+
+        In addition to handling the SVGPathSeg items, SVGPathSegList will manage
+        the associated SVGPathByteStream and Path objects. SVGPathSegList will be
+        lazy in getting updated objects when a change happens. For example, when
+        the byte stream changes, SVGPathSegList will clear its items and nullify
+        the Path object. But it will not build any of them until they are explicitly
+        requested.
+
+        Like what was done for other SVG properties when removing their tear off
+        objects, a new accessor, a new animator and a new animation function will
+        be added for the SVGAnimatedPathSegList.
+
+        All the header files of the concrete classes of SVGPathSeg will be removed
+        because they are small structures which hold some data items and they provide
+        setters and getters for these items. Here is the new file structures and
+        their contents:
+
+        -- SVGPathSeg.h still has the class SVGPathSeg which is now a superclass
+           of SVGProperty. 
+
+        -- SVGPathSegValue.h will have the template class SVGPathSegValue which 
+           holds an std::tuple of packed arguments. It provides setters and getters
+           for these arguments. SVGPathSegValue.h will also have specialized 
+           classed derived from SVGPathSegValue and hold different arguments.
+
+        -- SVGPathSegImpl.h will have the final concrete SVGPathSeg classes.
+
+        Note SVGPathSeg concrete classes do not need to have a reference to the
+        the context SVGPathElement. SVGPathSeg will be owned by its SVGPathSegList
+        which will be owned by the SVGAnimatedPathSegList which will be owned by
+        the SVGPathElement.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        * bindings/scripts/CodeGenerator.pm:
+        (IsSVGPathSegTypeName):
+        (IsSVGPathSegType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        * rendering/svg/SVGPathData.cpp:
+        (WebCore::pathFromPathElement):
+        * svg/SVGAnimatedPath.cpp: Removed.
+        * svg/SVGAnimatedPath.h: Removed.
+        * svg/SVGAnimatedType.h:
+        (WebCore::SVGAnimatedType::type const):
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGPathByteStream.h:
+        (WebCore::SVGPathByteStream::SVGPathByteStream):
+        This constructor is used by SVGAnimationPathSegListFunction to convert
+        the 'form', 'to' and 'toAtEndOfDuration' strings to SVGPathByteStreams.
+
+        (WebCore::SVGPathByteStream::resize): Deleted.
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::initialValue): Deleted.
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::fromString): Deleted.
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::parse): Deleted.
+        (WebCore::SVGPropertyTraits<SVGPathByteStream>::toString): Deleted.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        (WebCore::SVGPathElement::parseAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::getTotalLength const):
+        (WebCore::SVGPathElement::getPointAtLength const):
+        (WebCore::SVGPathElement::getPathSegAtLength const):
+        (WebCore::SVGPathElement::createSVGPathSegClosePath): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegMovetoAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegMovetoRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegArcAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegArcRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoHorizontalRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegLinetoVerticalRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoCubicSmoothRel): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothAbs): Deleted.
+        (WebCore::SVGPathElement::createSVGPathSegCurvetoQuadraticSmoothRel): Deleted.
+        The SVGPathSeg creation functions are moved to the header file.
+
+        (WebCore::SVGPathElement::registerAttributes): Deleted.
+        (WebCore::SVGPathElement::pathByteStream const): Deleted.
+        (WebCore::SVGPathElement::pathForByteStream const): Deleted.
+        (WebCore::SVGPathElement::lookupOrCreateDWrapper): Deleted.
+        (WebCore::SVGPathElement::animatedPropertyWillBeDeleted): Deleted.
+        (WebCore::SVGPathElement::pathSegList): Deleted.
+        (WebCore::SVGPathElement::normalizedPathSegList): Deleted.
+        (WebCore::SVGPathElement::animatedPathSegList): Deleted.
+        (WebCore::SVGPathElement::animatedNormalizedPathSegList): Deleted.
+        (WebCore::SVGPathElement::approximateMemoryCost const): Deleted.
+        (WebCore::SVGPathElement::pathSegListChanged): Deleted.
+        Managing the SVGPathByteStream and the drawing Path objects will be the
+        responsibility of SVGPathSegList.
+
+        * svg/SVGPathElement.h:
+        * svg/SVGPathSeg.h:
+        * svg/SVGPathSegArc.h: Removed.
+        * svg/SVGPathSegArcAbs.h: Removed.
+        * svg/SVGPathSegArcRel.h: Removed.
+        * svg/SVGPathSegClosePath.h: Removed.
+        * svg/SVGPathSegCurvetoCubic.h: Removed.
+        * svg/SVGPathSegCurvetoCubicAbs.h: Removed.
+        * svg/SVGPathSegCurvetoCubicRel.h: Removed.
+        * svg/SVGPathSegCurvetoCubicSmooth.h: Removed.
+        * svg/SVGPathSegCurvetoCubicSmoothAbs.h: Removed.
+        * svg/SVGPathSegCurvetoCubicSmoothRel.h: Removed.
+        * svg/SVGPathSegCurvetoQuadratic.h: Removed.
+        * svg/SVGPathSegCurvetoQuadraticAbs.h: Removed.
+        * svg/SVGPathSegCurvetoQuadraticRel.h: Removed.
+        * svg/SVGPathSegCurvetoQuadraticSmoothAbs.h: Removed.
+        * svg/SVGPathSegCurvetoQuadraticSmoothRel.h: Removed.
+        * svg/SVGPathSegImpl.h: Added.
+        * svg/SVGPathSegLinetoAbs.h: Removed.
+        * svg/SVGPathSegLinetoHorizontal.h: Removed.
+        * svg/SVGPathSegLinetoHorizontalAbs.h: Removed.
+        * svg/SVGPathSegLinetoHorizontalRel.h: Removed.
+        * svg/SVGPathSegLinetoRel.h: Removed.
+        * svg/SVGPathSegLinetoVertical.h: Removed.
+        * svg/SVGPathSegLinetoVerticalAbs.h: Removed.
+        * svg/SVGPathSegLinetoVerticalRel.h: Removed.
+        The definition of these classes are now in SVGPathSegImpl.h.
+
+        * svg/SVGPathSegList.cpp: Removed.
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegListBuilder.cpp:
+        (WebCore::SVGPathSegListBuilder::SVGPathSegListBuilder):
+        (WebCore::SVGPathSegListBuilder::moveTo):
+        (WebCore::SVGPathSegListBuilder::lineTo):
+        (WebCore::SVGPathSegListBuilder::lineToHorizontal):
+        (WebCore::SVGPathSegListBuilder::lineToVertical):
+        (WebCore::SVGPathSegListBuilder::curveToCubic):
+        (WebCore::SVGPathSegListBuilder::curveToCubicSmooth):
+        (WebCore::SVGPathSegListBuilder::curveToQuadratic):
+        (WebCore::SVGPathSegListBuilder::curveToQuadraticSmooth):
+        (WebCore::SVGPathSegListBuilder::arcTo):
+        (WebCore::SVGPathSegListBuilder::closePath):        
+        * svg/SVGPathSegListBuilder.h:
+        The concrete SVGPathSeg classes can now create instances of their classes
+        without having to go through the SVGPathElement.
+
+        * svg/SVGPathSegListSource.cpp:
+        (WebCore::SVGPathSegListSource::SVGPathSegListSource):
+        * svg/SVGPathSegListSource.h:
+        * svg/SVGPathSegListValues.cpp: Removed.
+        * svg/SVGPathSegListValues.h: Removed.
+        * svg/SVGPathSegMovetoAbs.h: Removed.
+        * svg/SVGPathSegMovetoRel.h: Removed.
+        * svg/SVGPathSegValue.h: Added.
+        (WebCore::SVGPathSegValue::create):
+        (WebCore::SVGPathSegValue::clone const):
+        (WebCore::SVGPathSegValue::SVGPathSegValue):
+        (WebCore::SVGPathSegValue::argument const):
+        (WebCore::SVGPathSegValue::setArgument):
+        (WebCore::SVGPathSegLinetoHorizontal::x const):
+        (WebCore::SVGPathSegLinetoHorizontal::setX):
+        (WebCore::SVGPathSegLinetoVertical::y const):
+        (WebCore::SVGPathSegLinetoVertical::setY):
+        (WebCore::SVGPathSegSingleCoordinate::x const):
+        (WebCore::SVGPathSegSingleCoordinate::setX):
+        (WebCore::SVGPathSegSingleCoordinate::y const):
+        (WebCore::SVGPathSegSingleCoordinate::setY):
+        (WebCore::SVGPathSegCurvetoQuadratic::x const):
+        (WebCore::SVGPathSegCurvetoQuadratic::setX):
+        (WebCore::SVGPathSegCurvetoQuadratic::y const):
+        (WebCore::SVGPathSegCurvetoQuadratic::setY):
+        (WebCore::SVGPathSegCurvetoQuadratic::x1 const):
+        (WebCore::SVGPathSegCurvetoQuadratic::setX1):
+        (WebCore::SVGPathSegCurvetoQuadratic::y1 const):
+        (WebCore::SVGPathSegCurvetoQuadratic::setY1):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::x const):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setX):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::y const):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setY):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::x2 const):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setX2):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::y2 const):
+        (WebCore::SVGPathSegCurvetoCubicSmooth::setY2):
+        (WebCore::SVGPathSegCurvetoCubic::x const):
+        (WebCore::SVGPathSegCurvetoCubic::setX):
+        (WebCore::SVGPathSegCurvetoCubic::y const):
+        (WebCore::SVGPathSegCurvetoCubic::setY):
+        (WebCore::SVGPathSegCurvetoCubic::x1 const):
+        (WebCore::SVGPathSegCurvetoCubic::setX1):
+        (WebCore::SVGPathSegCurvetoCubic::y1 const):
+        (WebCore::SVGPathSegCurvetoCubic::setY1):
+        (WebCore::SVGPathSegCurvetoCubic::x2 const):
+        (WebCore::SVGPathSegCurvetoCubic::setX2):
+        (WebCore::SVGPathSegCurvetoCubic::y2 const):
+        (WebCore::SVGPathSegCurvetoCubic::setY2):
+        (WebCore::SVGPathSegArc::x const):
+        (WebCore::SVGPathSegArc::setX):
+        (WebCore::SVGPathSegArc::y const):
+        (WebCore::SVGPathSegArc::setY):
+        (WebCore::SVGPathSegArc::r1 const):
+        (WebCore::SVGPathSegArc::setR1):
+        (WebCore::SVGPathSegArc::r2 const):
+        (WebCore::SVGPathSegArc::setR2):
+        (WebCore::SVGPathSegArc::angle const):
+        (WebCore::SVGPathSegArc::setAngle):
+        (WebCore::SVGPathSegArc::largeArcFlag const):
+        (WebCore::SVGPathSegArc::setLargeArcFlag):
+        (WebCore::SVGPathSegArc::sweepFlag const):
+        (WebCore::SVGPathSegArc::setSweepFlag):
+        * svg/SVGPathSegWithContext.h: Removed.
+
+        * svg/SVGPathUtilities.cpp:
+        (WebCore::buildSVGPathByteStreamFromSVGPathSegList):
+        (WebCore::buildSVGPathSegListFromByteStream):
+        (WebCore::buildStringFromByteStream):
+        (WebCore::buildSVGPathByteStreamFromSVGPathSegListValues): Deleted.
+        (WebCore::appendSVGPathByteStreamFromSVGPathSeg): Deleted.
+        (WebCore::buildSVGPathSegListValuesFromByteStream): Deleted.
+        (WebCore::buildStringFromSVGPathSegListValues): Deleted.
+        * svg/SVGPathUtilities.h:
+        Since the class SVGPathSegListValues is removed, all the parsing functions
+        have now to deal with SVGPathSegList directly.
+
+        * svg/SVGPoint.h:
+        * svg/SVGValue.h:
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.cpp: Removed.
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h: Removed.
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        (WebCore::SVGAnimatedPathSegList::create):
+        (WebCore::SVGAnimatedPathSegList::currentPathByteStream):
+        (WebCore::SVGAnimatedPathSegList::currentPath):
+        (WebCore::SVGAnimatedPathSegList::approximateMemoryCost const):
+        Provides an easy way to access the current SVGPathByteStream and Path
+        objects from the SVGAnimatedPathSegList.
+
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        (WebCore::SVGAnimationPathSegListFunction::progress):
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
 2019-03-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         AVAudioSessionRouteSharingPolicyLongForm has been deprecated

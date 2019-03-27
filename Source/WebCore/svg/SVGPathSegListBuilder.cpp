@@ -4,6 +4,7 @@
  * Copyright (C) 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007, 2009, 2015 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,112 +25,91 @@
 #include "config.h"
 #include "SVGPathSegListBuilder.h"
 
-#include "SVGPathElement.h"
-#include "SVGPathSegArcAbs.h"
-#include "SVGPathSegArcRel.h"
-#include "SVGPathSegClosePath.h"
-#include "SVGPathSegCurvetoCubicAbs.h"
-#include "SVGPathSegCurvetoCubicRel.h"
-#include "SVGPathSegCurvetoCubicSmoothAbs.h"
-#include "SVGPathSegCurvetoCubicSmoothRel.h"
-#include "SVGPathSegCurvetoQuadraticAbs.h"
-#include "SVGPathSegCurvetoQuadraticRel.h"
-#include "SVGPathSegCurvetoQuadraticSmoothAbs.h"
-#include "SVGPathSegCurvetoQuadraticSmoothRel.h"
-#include "SVGPathSegLinetoAbs.h"
-#include "SVGPathSegLinetoHorizontalAbs.h"
-#include "SVGPathSegLinetoHorizontalRel.h"
-#include "SVGPathSegLinetoRel.h"
-#include "SVGPathSegLinetoVerticalAbs.h"
-#include "SVGPathSegLinetoVerticalRel.h"
-#include "SVGPathSegListValues.h"
-#include "SVGPathSegMovetoAbs.h"
-#include "SVGPathSegMovetoRel.h"
+#include "SVGPathSegImpl.h"
+#include "SVGPathSegList.h"
 
 namespace WebCore {
 
-SVGPathSegListBuilder::SVGPathSegListBuilder(SVGPathElement& pathElement, SVGPathSegListValues& pathSegList, SVGPathSegRole role)
-    : m_pathElement(pathElement)
-    , m_pathSegList(pathSegList)
-    , m_pathSegRole(role)
+SVGPathSegListBuilder::SVGPathSegListBuilder(SVGPathSegList& pathSegList)
+    : m_pathSegList(pathSegList)
 {
 }
 
 void SVGPathSegListBuilder::moveTo(const FloatPoint& targetPoint, bool, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegMovetoAbs(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegMovetoAbs::create(targetPoint.x(), targetPoint.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegMovetoRel(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegMovetoRel::create(targetPoint.x(), targetPoint.y()));
 }
 
 void SVGPathSegListBuilder::lineTo(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoAbs(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoAbs::create(targetPoint.x(), targetPoint.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoRel(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoRel::create(targetPoint.x(), targetPoint.y()));
 }
 
 void SVGPathSegListBuilder::lineToHorizontal(float x, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoHorizontalAbs(x, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoHorizontalAbs::create(x));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoHorizontalRel(x, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoHorizontalRel::create(x));
 }
 
 void SVGPathSegListBuilder::lineToVertical(float y, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoVerticalAbs(y, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoVerticalAbs::create(y));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegLinetoVerticalRel(y, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegLinetoVerticalRel::create(y));
 }
 
 void SVGPathSegListBuilder::curveToCubic(const FloatPoint& point1, const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoCubicAbs(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), point2.x(), point2.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoCubicAbs::create(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), point2.x(), point2.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoCubicRel(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), point2.x(), point2.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoCubicRel::create(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), point2.x(), point2.y()));
 }
 
 void SVGPathSegListBuilder::curveToCubicSmooth(const FloatPoint& point2, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoCubicSmoothAbs(targetPoint.x(), targetPoint.y(), point2.x(), point2.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoCubicSmoothAbs::create(targetPoint.x(), targetPoint.y(), point2.x(), point2.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoCubicSmoothRel(targetPoint.x(), targetPoint.y(), point2.x(), point2.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoCubicSmoothRel::create(targetPoint.x(), targetPoint.y(), point2.x(), point2.y()));
 }
 
 void SVGPathSegListBuilder::curveToQuadratic(const FloatPoint& point1, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoQuadraticAbs(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoQuadraticAbs::create(targetPoint.x(), targetPoint.y(), point1.x(), point1.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoQuadraticRel(targetPoint.x(), targetPoint.y(), point1.x(), point1.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoQuadraticRel::create(targetPoint.x(), targetPoint.y(), point1.x(), point1.y()));
 }
 
 void SVGPathSegListBuilder::curveToQuadraticSmooth(const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoQuadraticSmoothAbs(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoQuadraticSmoothAbs::create(targetPoint.x(), targetPoint.y()));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegCurvetoQuadraticSmoothRel(targetPoint.x(), targetPoint.y(), m_pathSegRole));
+        m_pathSegList.append(SVGPathSegCurvetoQuadraticSmoothRel::create(targetPoint.x(), targetPoint.y()));
 }
 
 void SVGPathSegListBuilder::arcTo(float r1, float r2, float angle, bool largeArcFlag, bool sweepFlag, const FloatPoint& targetPoint, PathCoordinateMode mode)
 {
     if (mode == AbsoluteCoordinates)
-        m_pathSegList.append(m_pathElement.createSVGPathSegArcAbs(targetPoint.x(), targetPoint.y(), r1, r2, angle, largeArcFlag, sweepFlag, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegArcAbs::create(targetPoint.x(), targetPoint.y(), r1, r2, angle, largeArcFlag, sweepFlag));
     else
-        m_pathSegList.append(m_pathElement.createSVGPathSegArcRel(targetPoint.x(), targetPoint.y(), r1, r2, angle, largeArcFlag, sweepFlag, m_pathSegRole));
+        m_pathSegList.append(SVGPathSegArcRel::create(targetPoint.x(), targetPoint.y(), r1, r2, angle, largeArcFlag, sweepFlag));
 }
 
 void SVGPathSegListBuilder::closePath()
 {
-    m_pathSegList.append(m_pathElement.createSVGPathSegClosePath(m_pathSegRole));
+    m_pathSegList.append(SVGPathSegClosePath::create());
 }
 
 }

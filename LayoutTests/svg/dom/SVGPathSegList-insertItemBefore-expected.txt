@@ -21,6 +21,7 @@ PASS path1.pathSegList.getItem(3).y is 100
 
 Insert fourth item at position three using insertItemBefore()
 PASS path1.pathSegList.insertItemBefore(path1.pathSegList.getItem(3), 2).toString() is "[object SVGPathSegLinetoAbs]"
+PASS path1.pathSegList.removeItem(4).toString() is "[object SVGPathSegLinetoAbs]"
 
 Check final 'pathSegList' value of path1
 PASS path1.pathSegList.numberOfItems is 4
