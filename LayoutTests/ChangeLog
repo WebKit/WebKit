@@ -1,5 +1,45 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r242943. rdar://problem/49307995
+
+    Cleanup inline boxes when list marker gets blockified
+    https://bugs.webkit.org/show_bug.cgi?id=195746
+    <rdar://problem/48049175>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Normally when an element gets blockified (inline -> block) we destroy its renderer and construct a new one (RenderInline -> RenderBlock).
+    During this process the associated inline boxtree gets destroyed as well. Since RenderListMarker is just a generic RenderBox, the blockifying
+    change does not require a new renderer.
+    This patch takes care of destroying the inline boxtree when the marker gains block display type.
+    
+    Test: fast/block/float/list-marker-is-float-crash.html
+    
+    * rendering/RenderListMarker.cpp:
+    (WebCore::RenderListMarker::styleDidChange):
+    
+    LayoutTests:
+    
+    * fast/block/float/list-marker-is-float-crash-expected.txt: Added.
+    * fast/block/float/list-marker-is-float-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242943 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-14  Zalan Bujtas  <zalan@apple.com>
+
+            Cleanup inline boxes when list marker gets blockified
+            https://bugs.webkit.org/show_bug.cgi?id=195746
+            <rdar://problem/48049175>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/block/float/list-marker-is-float-crash-expected.txt: Added.
+            * fast/block/float/list-marker-is-float-crash.html: Added.
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243506. rdar://problem/49307987
 
     vertexAttribPointer must restrict offset parameter

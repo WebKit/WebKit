@@ -1145,8 +1145,14 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
 {
     RenderBox::styleDidChange(diff, oldStyle);
 
-    if (oldStyle && (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType()))
-        setNeedsLayoutAndPrefWidthsRecalc();
+    if (oldStyle) {
+        if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType())
+            setNeedsLayoutAndPrefWidthsRecalc();
+        if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType()) {
+            delete m_inlineBoxWrapper;
+            m_inlineBoxWrapper = nullptr;
+        }
+    }
 
     if (m_image != style().listStyleImage()) {
         if (m_image)
