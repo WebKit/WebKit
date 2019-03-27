@@ -1,5 +1,58 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r242964. rdar://problem/49359851
+
+    Storing a Node in Ref/RefPtr inside its destructor results in double delete
+    https://bugs.webkit.org/show_bug.cgi?id=195661
+    
+    Reviewed by Brent Fulgham.
+    
+    Set Node::m_refCount to 1 before calling its virtual destructor.
+    
+    This is a security mitigation to prevent any code which ends up storing the node to Ref / RefPtr
+    inside the destructor, which is a programming error caught by debug assertions, from triggering
+    a double-delete on the same Node.
+    
+    Such a code would hit the debug assertions in Node::deref() because m_inRemovedLastRefFunction
+    had been set to true by then.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::removedLastRef):
+    * dom/Document.h:
+    (WebCore::Document::decrementReferencingNodeCount):
+    * dom/Node.cpp:
+    (WebCore::Node::~Node):
+    (WebCore::Node::removedLastRef):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@242964 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Storing a Node in Ref/RefPtr inside its destructor results in double delete
+            https://bugs.webkit.org/show_bug.cgi?id=195661
+
+            Reviewed by Brent Fulgham.
+
+            Set Node::m_refCount to 1 before calling its virtual destructor.
+
+            This is a security mitigation to prevent any code which ends up storing the node to Ref / RefPtr
+            inside the destructor, which is a programming error caught by debug assertions, from triggering
+            a double-delete on the same Node.
+
+            Such a code would hit the debug assertions in Node::deref() because m_inRemovedLastRefFunction
+            had been set to true by then.
+
+            * dom/Document.cpp:
+            (WebCore::Document::removedLastRef):
+            * dom/Document.h:
+            (WebCore::Document::decrementReferencingNodeCount):
+            * dom/Node.cpp:
+            (WebCore::Node::~Node):
+            (WebCore::Node::removedLastRef):
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243506. rdar://problem/49307987
 
     vertexAttribPointer must restrict offset parameter

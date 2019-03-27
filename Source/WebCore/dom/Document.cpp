@@ -721,6 +721,7 @@ void Document::removedLastRef()
         m_inRemovedLastRefFunction = false;
         m_deletionHasBegun = true;
 #endif
+        m_refCount = 1; // Avoid double destruction through use of RefPtr<T>. (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
         delete this;
     }
 }
