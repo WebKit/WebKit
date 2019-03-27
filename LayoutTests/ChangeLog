@@ -1,3 +1,16 @@
+2019-03-27  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed, rolling out r243346.
+
+        Causing timeouts in animation tests across 10 builds
+
+        Reverted changeset:
+
+        "[Web Animations] JS wrapper may be deleted while animation is
+        yet to dispatch its finish event"
+        https://bugs.webkit.org/show_bug.cgi?id=196118
+        https://trac.webkit.org/changeset/243346
+
 2019-03-27  Chris Dumez  <cdumez@apple.com>
 
         [ iOS Simulator ] REGRESSION (r237702) Layout Test http/tests/security/xss-DENIED-script-inject-into-inactive-window.html is a flaky failure
