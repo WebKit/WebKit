@@ -29,7 +29,6 @@
 
 #include "GStreamerCommon.h"
 #include "GraphicsContext.h"
-#include "GraphicsContext3D.h"
 #include "ImageGStreamer.h"
 #include "ImageOrientation.h"
 #include "IntRect.h"
@@ -118,6 +117,7 @@
 #if USE(TEXTURE_MAPPER_GL)
 #include "BitmapTextureGL.h"
 #include "BitmapTexturePool.h"
+#include "GraphicsContext3D.h"
 #include "TextureMapperContextAttributes.h"
 #include "TextureMapperGL.h"
 #include "TextureMapperPlatformLayerBuffer.h"
@@ -192,6 +192,9 @@ public:
             if (m_isMapped)
                 m_textureID = *reinterpret_cast<GLuint*>(m_videoFrame.data[0]);
         } else
+#else
+        UNUSED_PARAM(flags);
+        UNUSED_PARAM(gstGLEnabled);
 #endif // USE(GSTREAMER_GL)
 
         {
