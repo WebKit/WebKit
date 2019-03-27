@@ -65,7 +65,6 @@ void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
 
 Optional<GeolocationPosition> WebGeolocationClient::lastPosition()
 {
-    // FIXME: Implement this.
     return WTF::nullopt;
 }
 

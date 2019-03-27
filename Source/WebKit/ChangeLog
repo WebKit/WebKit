@@ -1,3 +1,24 @@
+2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Geolocation request not complete when watch request was started in a different web process
+        https://bugs.webkit.org/show_bug.cgi?id=195996
+
+        Reviewed by Alex Christensen.
+
+        In WebGeolocationManagerProxy::startUpdating() we do nothing when the provider is already updating. We should
+        reply with a DidChangePosition using the last known position, if available. If we are updating, but we still
+        don't have a known position, the request will be completed when
+        WebGeolocationManagerProxy::providerDidChangePosition() is called since it always notifies all web
+        processes.
+
+        * UIProcess/WebGeolocationManagerProxy.cpp:
+        (WebKit::WebGeolocationManagerProxy::providerDidChangePosition): Cache the position.
+        (WebKit::WebGeolocationManagerProxy::startUpdating): Reply using cached position if already known.
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebKit::WebGeolocationManagerProxy::lastPosition const): Return cached position.
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::lastPosition): Remove the FIXME since we don't want this feature.
+
 2019-03-26  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Correct kerberos-related sandbox violations

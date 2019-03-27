@@ -88,10 +88,12 @@ void WebGeolocationManagerProxy::derefWebContextSupplement()
 
 void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPosition* position)
 {
+    m_lastPosition = position->corePosition();
+
     if (!processPool())
         return;
 
-    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->corePosition()));
+    processPool()->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(m_lastPosition.value()));
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition(const String& errorMessage)
@@ -116,7 +118,8 @@ void WebGeolocationManagerProxy::startUpdating(IPC::Connection& connection)
     if (!wasUpdating) {
         m_provider->setEnableHighAccuracy(*this, isHighAccuracyEnabled());
         m_provider->startUpdating(*this);
-    }
+    } else if (m_lastPosition)
+        connection.send(Messages::WebGeolocationManager::DidChangePosition(m_lastPosition.value()), 0);
 }
 
 void WebGeolocationManagerProxy::stopUpdating(IPC::Connection& connection)

@@ -315,9 +315,16 @@ struct GeolocationTransitionToLowAccuracyStateTracker : GeolocationStateTracker 
     }
 };
 
+struct JavaScriptAlertContext {
+    bool didRun { false };
+    std::string alertText;
+};
+
 static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
-    *static_cast<bool*>(const_cast<void*>(clientInfo)) = true;
+    auto* context = static_cast<JavaScriptAlertContext*>(const_cast<void*>(clientInfo));
+    context->didRun = true;
+    context->alertText = Util::toSTD(alertText);
 }
 
 TEST(WebKit, GeolocationTransitionToLowAccuracy)
@@ -336,19 +343,20 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
     PlatformWebView lowAccuracyWebView(context.get());
     setupView(lowAccuracyWebView);
 
-    bool finishedSecondStep = false;
+    JavaScriptAlertContext secondStepContext;
 
     WKPageUIClientV2 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
     uiClient.base.version = 2;
-    uiClient.base.clientInfo = &finishedSecondStep;
+    uiClient.base.clientInfo = &secondStepContext;
     uiClient.decidePolicyForGeolocationPermissionRequest = decidePolicyForGeolocationPermissionRequestCallBack;
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(lowAccuracyWebView.page(), &uiClient.base);
 
     WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());
-    Util::run(&finishedSecondStep);
+    Util::run(&secondStepContext.didRun);
+    EXPECT_EQ(secondStepContext.alertText, "SUCCESS");
 
     WKRetainPtr<WKURLRef> resetUrl = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
     WKPageLoadURL(highAccuracyWebView.page(), resetUrl.get());
@@ -357,6 +365,42 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
 
     WKPageLoadURL(lowAccuracyWebView.page(), resetUrl.get());
     Util::run(&stateTracker.finished);
+
+    clearGeolocationProvider(context.get());
+}
+
+TEST(WebKit, GeolocationWatchMultiprocess)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+
+    GeolocationStateTracker stateTracker;
+    setupGeolocationProvider(context.get(), &stateTracker);
+
+    JavaScriptAlertContext testContext;
+
+    WKPageUIClientV2 uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.base.version = 2;
+    uiClient.base.clientInfo = &testContext;
+    uiClient.decidePolicyForGeolocationPermissionRequest = decidePolicyForGeolocationPermissionRequestCallBack;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+
+    PlatformWebView view1(context.get());
+    WKPageSetPageUIClient(view1.page(), &uiClient.base);
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
+    WKPageLoadURL(view1.page(), url.get());
+    Util::run(&testContext.didRun);
+    EXPECT_EQ(testContext.alertText, "SUCCESS");
+    WKPageSetPageUIClient(view1.page(), nullptr);
+
+    testContext.didRun = false;
+    testContext.alertText = { };
+
+    PlatformWebView view2(context.get());
+    WKPageSetPageUIClient(view2.page(), &uiClient.base);
+    WKPageLoadURL(view2.page(), url.get());
+    Util::run(&testContext.didRun);
+    EXPECT_EQ(testContext.alertText, "SUCCESS");
 
     clearGeolocationProvider(context.get());
 }
