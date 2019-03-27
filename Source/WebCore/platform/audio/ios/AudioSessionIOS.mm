@@ -123,8 +123,10 @@ void AudioSession::setCategory(CategoryType newCategory)
         break;
     case MediaPlayback:
         categoryString = AVAudioSessionCategoryPlayback;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         policy = AVAudioSessionRouteSharingPolicyLongForm;
         break;
+ALLOW_DEPRECATED_DECLARATIONS_END
     case RecordAudio:
         categoryString = AVAudioSessionCategoryRecord;
         break;
@@ -169,7 +171,9 @@ AudioSession::CategoryType AudioSession::category() const
 RouteSharingPolicy AudioSession::routeSharingPolicy() const
 {
     static_assert(static_cast<size_t>(RouteSharingPolicy::Default) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not AVAudioSessionRouteSharingPolicyDefault as expected");
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     static_assert(static_cast<size_t>(RouteSharingPolicy::LongForm) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not AVAudioSessionRouteSharingPolicyLongForm as expected");
+ALLOW_DEPRECATED_DECLARATIONS_END
     static_assert(static_cast<size_t>(RouteSharingPolicy::Independent) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyIndependent), "RouteSharingPolicy::Independent is not AVAudioSessionRouteSharingPolicyIndependent as expected");
 
     AVAudioSessionRouteSharingPolicy policy = [[AVAudioSession sharedInstance] routeSharingPolicy];
