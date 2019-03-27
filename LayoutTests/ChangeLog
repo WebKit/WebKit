@@ -1,5 +1,45 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243331. rdar://problem/49308068
+
+    Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.
+    https://bugs.webkit.org/show_bug.cgi?id=195919
+    <rdar://problem/48573434>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    When the container is injected too early, we might end up removing it as part of the collapsing logic
+    while the text renderer is being removed (replaced with the first letter + remaining text).
+    
+    Test: fast/css/first-letter-and-float-crash.html
+    
+    * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+    (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+    
+    LayoutTests:
+    
+    * fast/css/first-letter-and-float-crash-expected.txt: Added.
+    * fast/css/first-letter-and-float-crash.html: Added.
+    * platform/mac/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243331 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Zalan Bujtas  <zalan@apple.com>
+
+            Do not insert the first-letter anonymous container until after we've constructed the first-letter renderer.
+            https://bugs.webkit.org/show_bug.cgi?id=195919
+            <rdar://problem/48573434>
+
+            Reviewed by Brent Fulgham.
+
+            * fast/css/first-letter-and-float-crash-expected.txt: Added.
+            * fast/css/first-letter-and-float-crash.html: Added.
+            * platform/mac/TestExpectations:
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r242919. rdar://problem/49307949
 
     Use RenderBox::previousSiblingBox/nextSiblingBox in RenderMultiColumnFlow
