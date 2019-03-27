@@ -1,5 +1,44 @@
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243341. rdar://problem/49308013
+
+    Inband Text Track cues interspersed with Data cues can display out of order.
+    https://bugs.webkit.org/show_bug.cgi?id=196095
+    
+    Reviewed by Eric Carlson.
+    
+    The compareCueIntervalForDisplay() comparator depends on a virtual function, isPositionedAbove(TextTrackCue* other),
+    but this comparison returns inconsistent results for cueA->isPositionedAbove(cueB) and cueB->isPositionedAbove(cueA)
+    if the two cues are different subclasses of TextTrackCue.
+    
+    The underlying algorithm should be fixed in a future patch, but for now, remove all non-displaying cues from the array
+    of activeCues before sorting, rather than after when iterating over the sorted list of activeCues.
+    
+    * html/shadow/MediaControlElements.cpp:
+    (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243341 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-21  Jer Noble  <jer.noble@apple.com>
+
+            Inband Text Track cues interspersed with Data cues can display out of order.
+            https://bugs.webkit.org/show_bug.cgi?id=196095
+
+            Reviewed by Eric Carlson.
+
+            The compareCueIntervalForDisplay() comparator depends on a virtual function, isPositionedAbove(TextTrackCue* other),
+            but this comparison returns inconsistent results for cueA->isPositionedAbove(cueB) and cueB->isPositionedAbove(cueA)
+            if the two cues are different subclasses of TextTrackCue.
+
+            The underlying algorithm should be fixed in a future patch, but for now, remove all non-displaying cues from the array
+            of activeCues before sorting, rather than after when iterating over the sorted list of activeCues.
+
+            * html/shadow/MediaControlElements.cpp:
+            (WebCore::MediaControlTextTrackContainerElement::updateDisplay):
+
+2019-03-27  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243338. rdar://problem/49307958
 
     Fix iOS build after r243337
