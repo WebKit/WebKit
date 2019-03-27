@@ -366,8 +366,8 @@ VideoFullscreenInterfaceMac::VideoFullscreenInterfaceMac(PlaybackSessionInterfac
 
 VideoFullscreenInterfaceMac::~VideoFullscreenInterfaceMac()
 {
-    if (m_playbackSessionInterface->playbackSessionModel())
-        m_playbackSessionInterface->playbackSessionModel()->removeClient(*this);
+    if (auto* model = m_playbackSessionInterface->playbackSessionModel())
+        model->removeClient(*this);
     if (m_videoFullscreenModel)
         m_videoFullscreenModel->removeClient(*this);
 }

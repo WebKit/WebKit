@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,7 +94,8 @@ using WebCore::PlaybackSessionInterfaceMac;
 {
     UNUSED_PARAM(toleranceBefore);
     UNUSED_PARAM(toleranceAfter);
-    _playbackSessionInterfaceMac->playbackSessionModel()->seekToTime(time);
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->seekToTime(time);
 }
 
 - (void)cancelThumbnailAndAudioAmplitudeSampleGeneration
@@ -193,7 +194,8 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (audioMediaSelectionOption && _audioTouchBarMediaSelectionOptions)
         index = [_audioTouchBarMediaSelectionOptions indexOfObject:audioMediaSelectionOption];
 
-    _playbackSessionInterfaceMac->playbackSessionModel()->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->selectAudioMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 - (NSArray<AVTouchBarMediaSelectionOption *> *)legibleTouchBarMediaSelectionOptions
@@ -223,7 +225,8 @@ using WebCore::PlaybackSessionInterfaceMac;
     if (legibleMediaSelectionOption && _legibleTouchBarMediaSelectionOptions)
         index = [_legibleTouchBarMediaSelectionOptions indexOfObject:legibleMediaSelectionOption];
 
-    _playbackSessionInterfaceMac->playbackSessionModel()->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
+    if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
+        model->selectLegibleMediaOption(index != NSNotFound ? index : UINT64_MAX);
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
