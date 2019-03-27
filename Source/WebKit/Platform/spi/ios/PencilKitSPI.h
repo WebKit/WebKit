@@ -31,8 +31,6 @@
 #import <PencilKit/PKCanvasView_Private.h>
 #import <PencilKit/PKDrawing_Private.h>
 #import <PencilKit/PKImageRenderer.h>
-#import <PencilKit/PKInlineInkPicker.h>
-#import <PencilKit/PKInlineInkPicker_Private.h>
 #import <PencilKit/PKStroke.h>
 
 #else

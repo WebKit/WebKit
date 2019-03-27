@@ -48,7 +48,6 @@
 #import "WKFormInputControl.h"
 #import "WKFormSelectControl.h"
 #import "WKImagePreviewViewController.h"
-#import "WKInkPickerView.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
 #import "WKPreviewActionItemIdentifiers.h"

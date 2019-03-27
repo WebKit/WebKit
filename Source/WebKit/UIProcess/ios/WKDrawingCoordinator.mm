@@ -30,16 +30,20 @@
 
 #import "EditableImageController.h"
 #import "WKContentViewInteraction.h"
-#import "WKInkPickerView.h"
+#import "WKDrawingView.h"
 #import "WKWebView.h"
+#import <WebKitAdditions/WKDrawingCoordinatorAdditions.mm>
 #import <wtf/RetainPtr.h>
 
 #import "PencilKitSoftLink.h"
 
+@interface WKDrawingCoordinator () <WKInkPickerDelegate>
+@end
+
 @implementation WKDrawingCoordinator {
     __weak WKContentView *_contentView;
 
-    RetainPtr<WKInkPickerView> _inkPicker;
+    RetainPtr<WKInkPicker> _inkPicker;
 
     WebCore::GraphicsLayer::EmbeddedViewID _focusedEmbeddedViewID;
 }
@@ -51,14 +55,13 @@
         return nil;
 
     _contentView = contentView;
-    _inkPicker = adoptNS([[WKInkPickerView alloc] initWithContentView:_contentView]);
 
     return self;
 }
 
-- (WKInkPickerView *)inkPicker
+- (PKInk *)currentInk
 {
-    return _inkPicker.get();
+    return [_inkPicker currentInk];
 }
 
 - (UIView *)rulerHostingView
@@ -79,41 +82,44 @@
     return focusedEditableImage->drawingView.get();
 }
 
-- (void)didChangeRulerState:(BOOL)rulerEnabled
+- (NSUndoManager *)undoManagerForInkPicker:(WKInkPicker *)inkPicker
 {
-    [self._focusedDrawingView didChangeRulerState:rulerEnabled];
+    return [_contentView undoManager];
 }
 
-- (void)didChangeInk:(PKInk *)ink
+- (UIView *)containingViewForInkPicker:(WKInkPicker *)inkPicker
 {
-    [self._focusedDrawingView didChangeInk:ink];
+    return _contentView;
+}
+
+- (void)inkPickerDidToggleRuler:(WKInkPicker *)inkPicker
+{
+    _rulerEnabled = !_rulerEnabled;
+    [self._focusedDrawingView didChangeRulerState:_rulerEnabled];
+}
+
+- (void)inkPickerDidChangeInk:(WKInkPicker *)inkPicker
+{
+    [self._focusedDrawingView didChangeInk:self.currentInk];
 }
 
 - (void)installInkPickerForDrawing:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID
 {
     _focusedEmbeddedViewID = embeddedViewID;
 
-    WKWebView *webView = _contentView->_webView;
-
-    [_inkPicker sizeToFit];
-    [_inkPicker setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [webView addSubview:_inkPicker.get()];
-
-    [NSLayoutConstraint activateConstraints:@[
-        [[_inkPicker heightAnchor] constraintEqualToConstant:[_inkPicker frame].size.height],
-        [[_inkPicker bottomAnchor] constraintEqualToAnchor:webView.safeAreaLayoutGuide.bottomAnchor],
-        [[_inkPicker leftAnchor] constraintEqualToAnchor:webView.safeAreaLayoutGuide.leftAnchor],
-        [[_inkPicker rightAnchor] constraintEqualToAnchor:webView.safeAreaLayoutGuide.rightAnchor],
-    ]];
+    if (!_inkPicker)
+        _inkPicker = adoptNS([[WKInkPicker alloc] initWithDelegate:self]);
+    [_inkPicker show];
 
     // When focused, push the ruler state down to the canvas so that it doesn't get out of sync
     // and early-return from later changes.
-    [self._focusedDrawingView didChangeRulerState:[_inkPicker rulerEnabled]];
+    [self._focusedDrawingView didChangeRulerState:_rulerEnabled];
 }
 
 - (void)uninstallInkPicker
 {
-    [_inkPicker removeFromSuperview];
+    [_inkPicker hide];
+    [self._focusedDrawingView didChangeRulerState:NO];
     _focusedEmbeddedViewID = 0;
 }
 

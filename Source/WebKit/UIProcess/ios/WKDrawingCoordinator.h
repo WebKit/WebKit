@@ -30,7 +30,6 @@
 
 OBJC_CLASS PKInk;
 OBJC_CLASS WKContentView;
-OBJC_CLASS WKInkPickerView;
 
 @interface WKDrawingCoordinator : NSObject <PKRulerHostingDelegate>
 
@@ -40,10 +39,8 @@ OBJC_CLASS WKInkPickerView;
 - (void)installInkPickerForDrawing:(WebCore::GraphicsLayer::EmbeddedViewID)embeddedViewID;
 - (void)uninstallInkPicker;
 
-- (void)didChangeRulerState:(BOOL)rulerEnabled;
-- (void)didChangeInk:(PKInk *)ink;
-
-@property (nonatomic, readonly, retain) WKInkPickerView *inkPicker;
+@property (nonatomic) BOOL rulerEnabled;
+@property (nonatomic, readonly, retain) PKInk *currentInk;
 
 @end
 

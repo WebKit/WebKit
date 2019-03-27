@@ -31,7 +31,6 @@
 #import "EditableImageController.h"
 #import "WKContentViewInteraction.h"
 #import "WKDrawingCoordinator.h"
-#import "WKInkPickerView.h"
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -173,7 +172,7 @@ static UIImage *emptyImage()
 - (void)_canvasViewWillBeginDrawing:(PKCanvasView *)canvasView
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_pencilView setInk:_contentView._drawingCoordinator.inkPicker.ink];
+    [_pencilView setInk:_contentView._drawingCoordinator.currentInk];
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 

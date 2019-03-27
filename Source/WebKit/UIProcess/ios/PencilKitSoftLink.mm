@@ -34,6 +34,5 @@ SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebKit, PencilKit);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKCanvasView);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKDrawing);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKImageRenderer);
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, PencilKit, PKInlineInkPicker);
 
 #endif // HAVE(PENCILKIT)

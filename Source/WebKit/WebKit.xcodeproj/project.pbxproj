@@ -2810,8 +2810,6 @@
 		2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContext.h; sourceTree = "<group>"; };
 		2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTextInputContextInternal.h; sourceTree = "<group>"; };
 		2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFindOptions.h; sourceTree = "<group>"; };
-		2DF3962A21C8DC50008835E3 /* WKInkPickerView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKInkPickerView.mm; path = ios/WKInkPickerView.mm; sourceTree = "<group>"; };
-		2DF3962B21C8DC50008835E3 /* WKInkPickerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKInkPickerView.h; path = ios/WKInkPickerView.h; sourceTree = "<group>"; };
 		2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewGestureControllerIOS.mm; path = ios/ViewGestureControllerIOS.mm; sourceTree = "<group>"; };
 		2DF9EEE31A781FB400B6CFBE /* APIFrameInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameInfo.cpp; sourceTree = "<group>"; };
 		2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFrameInfo.h; sourceTree = "<group>"; };
@@ -5923,8 +5921,6 @@
 				0FCB4E4118BBE044000FCFC9 /* WKGeolocationProviderIOSObjCSecurityOrigin.mm */,
 				933DF82D1B3BC09000AEA9E3 /* WKImagePreviewViewController.h */,
 				933DF82F1B3BC0B400AEA9E3 /* WKImagePreviewViewController.mm */,
-				2DF3962B21C8DC50008835E3 /* WKInkPickerView.h */,
-				2DF3962A21C8DC50008835E3 /* WKInkPickerView.mm */,
 				0F3C7259196F5F6800AEDD0C /* WKInspectorHighlightView.h */,
 				0F3C7257196F5F5000AEDD0C /* WKInspectorHighlightView.mm */,
 				A54293A2195A43C6002782C7 /* WKInspectorNodeSearchGestureRecognizer.h */,

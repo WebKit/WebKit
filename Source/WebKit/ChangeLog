@@ -1,3 +1,36 @@
+2019-03-27  Tim Horton  <timothy_horton@apple.com>
+
+        Fix some more deprecation warnings in WKDrawingView
+        https://bugs.webkit.org/show_bug.cgi?id=196282
+        <rdar://problem/47637608>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/PencilKitSPI.h:
+        * SourcesCocoa.txt:
+        * UIProcess/ios/PencilKitSoftLink.h:
+        * UIProcess/ios/PencilKitSoftLink.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/ios/WKDrawingCoordinator.h:
+        * UIProcess/ios/WKDrawingCoordinator.mm:
+        (-[WKDrawingCoordinator initWithContentView:]):
+        (-[WKDrawingCoordinator currentInk]):
+        (-[WKDrawingCoordinator undoManagerForInkPicker:]):
+        (-[WKDrawingCoordinator containingViewForInkPicker:]):
+        (-[WKDrawingCoordinator inkPickerDidToggleRuler:]):
+        (-[WKDrawingCoordinator inkPickerDidChangeInk:]):
+        (-[WKDrawingCoordinator installInkPickerForDrawing:]):
+        (-[WKDrawingCoordinator uninstallInkPicker]):
+        (-[WKDrawingCoordinator inkPicker]): Deleted.
+        (-[WKDrawingCoordinator didChangeRulerState:]): Deleted.
+        (-[WKDrawingCoordinator didChangeInk:]): Deleted.
+        * UIProcess/ios/WKDrawingView.mm:
+        (-[WKDrawingView _canvasViewWillBeginDrawing:]):
+        * UIProcess/ios/WKInkPickerView.h: Removed.
+        * UIProcess/ios/WKInkPickerView.mm: Removed.
+        * WebKit.xcodeproj/project.pbxproj:
+        Adopt the new names.
+
 2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Geolocation request not complete when watch request was started in a different web process
