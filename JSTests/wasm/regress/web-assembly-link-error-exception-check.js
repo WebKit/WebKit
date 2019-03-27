@@ -1,3 +1,1 @@
-//@ runDefault
-
 new WebAssembly.LinkError([]);

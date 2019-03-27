@@ -1,3 +1,16 @@
+2019-03-26  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        Skip WebAssembly test on 32-bit systems
+        https://bugs.webkit.org/show_bug.cgi?id=196206
+
+        Reviewed by Saam Barati.
+
+        Invoking runDefault executes test immediately even though
+        that test should be skipped due to missing WASM support.
+        Therefore remove runDefault.
+
+        * wasm/regress/web-assembly-link-error-exception-check.js:
+
 2019-03-26  Tadeu Zagallo  <tzagallo@apple.com>
 
         WebAssembly: Fix f32.min, f64.min and f64.max operations on NaN
