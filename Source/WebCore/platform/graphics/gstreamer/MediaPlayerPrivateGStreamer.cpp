@@ -1374,8 +1374,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 }
             }
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
-            if (gst_structure_get_uint64(structure, "read-position", &m_networkReadPosition))
-                GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT, m_networkReadPosition);
+            if (gst_structure_get(structure, "read-position", G_TYPE_UINT64, &m_networkReadPosition, "size", G_TYPE_UINT64, &m_httpResponseTotalSize, nullptr))
+                GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
@@ -1582,62 +1582,26 @@ void MediaPlayerPrivateGStreamer::purgeInvalidTextTracks(Vector<String> validTra
 }
 #endif
 
-static gint findHLSQueue(gconstpointer a, gconstpointer)
-{
-    GValue* item = static_cast<GValue*>(const_cast<gpointer>(a));
-    GstElement* element = GST_ELEMENT(g_value_get_object(item));
-    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "queue")) {
-        GstElement* parent = GST_ELEMENT(GST_ELEMENT_PARENT(element));
-        if (!GST_IS_OBJECT(parent))
-            return 1;
-
-        if (g_str_has_prefix(GST_ELEMENT_NAME(GST_ELEMENT_PARENT(parent)), "hlsdemux"))
-            return 0;
-    }
-
-    return 1;
-}
-
-static bool isHLSProgressing(GstElement* playbin, GstQuery* query)
-{
-    GValue item = { };
-    GstIterator* binIterator = gst_bin_iterate_recurse(GST_BIN(playbin));
-    bool foundHLSQueue = gst_iterator_find_custom(binIterator, reinterpret_cast<GCompareFunc>(findHLSQueue), &item, nullptr);
-    gst_iterator_free(binIterator);
-
-    if (!foundHLSQueue)
-        return false;
-
-    GstElement* queueElement = GST_ELEMENT(g_value_get_object(&item));
-    bool queryResult = gst_element_query(queueElement, query);
-    g_value_unset(&item);
-
-    return queryResult;
-}
-
 void MediaPlayerPrivateGStreamer::fillTimerFired()
 {
-    GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
+    GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
+    double fillStatus = 100.0;
 
-    if (G_UNLIKELY(!gst_element_query(m_pipeline.get(), query))) {
-        // This query always fails for live pipelines. In the case of HLS, try and find
-        // the queue inside the HLS element to get a proxy measure of progress. Note
-        // that the percentage value is rather meaningless as used below.
-        // This is a hack, see https://bugs.webkit.org/show_bug.cgi?id=141469.
-        if (!isHLSProgressing(m_pipeline.get(), query)) {
-            gst_query_unref(query);
-            return;
-        }
+    if (gst_element_query(m_pipeline.get(), query.get())) {
+        int64_t stop;
+        GstFormat format;
+        gst_query_parse_buffering_range(query.get(), &format, nullptr, &stop, nullptr);
+        ASSERT(format == GST_FORMAT_PERCENT);
+
+        if (stop != -1)
+            fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
+    } else if (m_httpResponseTotalSize) {
+        GST_DEBUG_OBJECT(pipeline(), "[Buffering] Query failed, falling back to network read position estimation");
+        fillStatus = 100.0 * (m_networkReadPosition / m_httpResponseTotalSize);
+    } else {
+        GST_DEBUG_OBJECT(pipeline(), "[Buffering] Unable to determine on-disk buffering status");
+        return;
     }
-
-    gint64 start, stop;
-    gdouble fillStatus = 100.0;
-
-    gst_query_parse_buffering_range(query, nullptr, &start, &stop, nullptr);
-    gst_query_unref(query);
-
-    if (stop != -1)
-        fillStatus = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
 
     GST_DEBUG_OBJECT(pipeline(), "[Buffering] Download buffer filled up to %f%%", fillStatus);
 
