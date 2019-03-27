@@ -120,6 +120,9 @@ class SimulatorProcess(ServerProcess):
         # Only bother to check for leaks or stderr if the process is still running.
         if self.poll() is None:
             self._port.check_for_leaks(self.process_name(), self.pid())
+            for child_process_name in self._child_processes.keys():
+                for child_process_id in self._child_processes[child_process_name]:
+                    self._port.check_for_leaks(child_process_name, child_process_id)
 
         if self._proc and self._proc.pid:
             self._target_host.executive.kill_process(self._proc.pid)

@@ -1,4 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
+# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -46,7 +47,7 @@ class TrivialMockPort(object):
     def results_directory(self):
         return "/mock-results"
 
-    def check_for_leaks(self, process_name, process_pid):
+    def check_for_leaks(self, process_name, process_id):
         pass
 
     def process_kill_time(self):

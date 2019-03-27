@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -56,11 +56,12 @@ class DarwinPort(ApplePort):
     def _port_specific_expectations_files(self, device_type=None):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path(device_type=device_type)]))
 
-    def check_for_leaks(self, process_name, process_pid):
+    def check_for_leaks(self, process_name, process_id):
         if not self.get_option('leaks'):
             return
+
         # We could use http://code.google.com/p/psutil/ to get the process_name from the pid.
-        self._leak_detector.check_for_leaks(process_name, process_pid)
+        self._leak_detector.check_for_leaks(process_name, process_id)
 
     def print_leaks_summary(self):
         if not self.get_option('leaks'):

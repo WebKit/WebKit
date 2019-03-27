@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2013 Apple Inc. All rights reserved.
+# Copyright (C) 2013-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -371,7 +371,7 @@ class Port(object):
                 result += '\n\ No newline at end of file\n'
         return result
 
-    def check_for_leaks(self, process_name, process_pid):
+    def check_for_leaks(self, process_name, process_id):
         # Subclasses should check for leaks in the running process
         # and print any necessary warnings if leaks are found.
         # FIXME: We should consider moving much of this logic into

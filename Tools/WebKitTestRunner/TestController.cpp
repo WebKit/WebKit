@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1034,6 +1034,41 @@ void TestController::checkForWorldLeaks()
     }, 20_s).run();
 }
 
+void TestController::dumpResponse(const String& result)
+{
+    unsigned resultLength = result.length();
+    printf("Content-Type: text/plain\n");
+    printf("Content-Length: %u\n", resultLength);
+    fwrite(result.utf8().data(), 1, resultLength, stdout);
+    printf("#EOF\n");
+    fprintf(stderr, "#EOF\n");
+    fflush(stdout);
+    fflush(stderr);
+}
+
+void TestController::findAndDumpWebKitProcessIdentifiers()
+{
+    StringBuilder builder;
+
+#if PLATFORM(COCOA)
+    builder.append(TestController::webProcessName());
+    builder.appendLiteral(": ");
+    pid_t webContentPID = WKPageGetProcessIdentifier(TestController::singleton().mainWebView()->page());
+    builder.appendNumber(webContentPID);
+    builder.append('\n');
+
+    builder.append(TestController::networkProcessName());
+    builder.appendLiteral(": ");
+    pid_t networkingPID = WKContextGetNetworkProcessIdentifier(m_context.get());
+    builder.appendNumber(networkingPID);
+    builder.append('\n');
+#else
+    builder.append('\n');
+#endif
+
+    dumpResponse(builder.toString());
+}
+
 void TestController::findAndDumpWorldLeaks()
 {
     if (!m_checkForWorldLeaks)
@@ -1056,16 +1091,9 @@ void TestController::findAndDumpWorldLeaks()
             builder.append('\n');
         }
     } else
-        builder.append("no abandoned documents");
+        builder.append("no abandoned documents\n");
 
-    String result = builder.toString();
-    printf("Content-Type: text/plain\n");
-    printf("Content-Length: %u\n", result.length());
-    fwrite(result.utf8().data(), 1, result.length(), stdout);
-    printf("#EOF\n");
-    fprintf(stderr, "#EOF\n");
-    fflush(stdout);
-    fflush(stderr);
+    dumpResponse(builder.toString());
 }
 
 void TestController::willDestroyWebView()
@@ -1595,14 +1623,19 @@ bool TestController::waitForCompletion(const WTF::Function<void ()>& function, W
 
 bool TestController::handleControlCommand(const char* command)
 {
-    if (!strcmp("#CHECK FOR WORLD LEAKS", command)) {
-        if (!m_checkForWorldLeaks) {
+    if (!strncmp("#CHECK FOR WORLD LEAKS", command, 22)) {
+        if (m_checkForWorldLeaks)
+            findAndDumpWorldLeaks();
+        else
             WTFLogAlways("WebKitTestRunner asked to check for world leaks, but was not run with --world-leaks");
-            return true;
-        }
-        findAndDumpWorldLeaks();
         return true;
     }
+
+    if (!strncmp("#LIST CHILD PROCESSES", command, 21)) {
+        findAndDumpWebKitProcessIdentifiers();
+        return true;
+    }
+
     return false;
 }
 

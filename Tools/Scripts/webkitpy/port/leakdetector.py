@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -75,6 +76,8 @@ class LeakDetector(object):
         return leaks_args
 
     def _parse_leaks_output(self, leaks_output):
+        if not leaks_output:
+            return 0, 0, 0
         _, count, bytes = re.search(r'Process (?P<pid>\d+): (?P<count>\d+) leaks? for (?P<bytes>\d+) total', leaks_output).groups()
         excluded_match = re.search(r'(?P<excluded>\d+) leaks? excluded', leaks_output)
         excluded = excluded_match.group('excluded') if excluded_match else 0
@@ -116,15 +119,15 @@ class LeakDetector(object):
             total_leaks += count
         return total_leaks
 
-    def check_for_leaks(self, process_name, process_pid):
+    def check_for_leaks(self, process_name, process_id):
         _log.debug("Checking for leaks in %s" % process_name)
         try:
-            leaks_filename = self.leaks_file_name(process_name, process_pid)
+            leaks_filename = self.leaks_file_name(process_name, process_id)
             leaks_output_path = self._filesystem.join(self._port.results_directory(), leaks_filename)
             # Oddly enough, run-leaks (or the underlying leaks tool) does not seem to always output utf-8,
             # thus we pass decode_output=False.  Without this code we've seen errors like:
             # "UnicodeDecodeError: 'utf8' codec can't decode byte 0x88 in position 779874: unexpected code byte"
-            self._port._run_script("run-leaks", self._leaks_args(process_name, process_pid), include_configuration_arguments=False, decode_output=False)
+            self._port._run_script("run-leaks", self._leaks_args(process_name, process_id), include_configuration_arguments=False, decode_output=False)
             leaks_output = self._filesystem.read_binary_file(leaks_output_path)
         except ScriptError as e:
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())

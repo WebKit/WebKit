@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2019 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1167,12 +1167,13 @@ static bool useLongRunningServerMode(int argc, const char *argv[])
 
 static bool handleControlCommand(const char* command)
 {
-    if (!strcmp("#CHECK FOR WORLD LEAKS", command)) {
-        // DumpRenderTree does not support checking for world leaks.
+    if (!strncmp("#CHECK FOR WORLD LEAKS", command, 22) || !strncmp("#LIST CHILD PROCESSES", command, 21)) {
+        // DumpRenderTree does not support checking for world leaks or listing child processes.
         WTF::String result("\n");
+        unsigned resultLength = result.length();
         printf("Content-Type: text/plain\n");
-        printf("Content-Length: %u\n", result.length());
-        fwrite(result.utf8().data(), 1, result.length(), stdout);
+        printf("Content-Length: %u\n", resultLength);
+        fwrite(result.utf8().data(), 1, resultLength, stdout);
         printf("#EOF\n");
         fprintf(stderr, "#EOF\n");
         fflush(stdout);

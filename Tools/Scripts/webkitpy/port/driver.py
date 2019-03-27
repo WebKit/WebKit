@@ -1,5 +1,5 @@
 # Copyright (C) 2011 Google Inc. All rights reserved.
-# Copyright (c) 2015, 2016 Apple Inc. All rights reserved.
+# Copyright (c) 2015-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -251,20 +251,40 @@ class Driver(object):
             crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
 
     def do_post_tests_work(self):
-        if not self._port.get_option('world_leaks'):
-            return None
-
         if not self._server_process:
             return None
 
-        _log.debug('Checking for world leaks...')
-        self._server_process.write('#CHECK FOR WORLD LEAKS\n')
-        deadline = time.time() + 20
-        block = self._read_block(deadline, '', wait_for_stderr_eof=True)
+        if self._port.get_option('leaks'):
+            _log.debug('Gathering child processes...')
+            self._server_process.write('#LIST CHILD PROCESSES\n')
+            deadline = time.time() + 20
+            block = self._read_block(deadline, '', wait_for_stderr_eof=True)
+            self._server_process.set_child_processes(self._parse_child_processes_output(block.decoded_content))
 
-        _log.debug('World leak result: %s' % (block.decoded_content))
+        if self._port.get_option('world_leaks'):
+            _log.debug('Checking for world leaks...')
+            self._server_process.write('#CHECK FOR WORLD LEAKS\n')
+            deadline = time.time() + 20
+            block = self._read_block(deadline, '', wait_for_stderr_eof=True)
 
-        return self._parse_world_leaks_output(block.decoded_content)
+            _log.debug('World leak result: %s' % (block.decoded_content))
+
+            return self._parse_world_leaks_output(block.decoded_content)
+
+        return None
+
+    @staticmethod
+    def _parse_child_processes_output(output):
+        child_processes = defaultdict(list)
+
+        for line in output.splitlines():
+            m = re.match('^([^:]+): ([0-9]+)$', line)
+            if m:
+                process_name = m.group(1)
+                process_id = m.group(2)
+                child_processes[process_name].append(process_id)
+
+        return child_processes
 
     def _parse_world_leaks_output(self, output):
         tests_with_world_leaks = defaultdict(list)

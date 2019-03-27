@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2019 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -77,11 +77,18 @@ class ServerProcess(object):
         self._treat_no_data_as_crash = treat_no_data_as_crash
         self._target_host = target_host or port_obj.host
         self._pid = None
+        self._child_processes = {}
         self._reset()
 
         # See comment in imports for why we need the win32 APIs and can't just use select.
         # FIXME: there should be a way to get win32 vs. cygwin from platforminfo.
         self._use_win32_apis = sys.platform.startswith('win')
+
+    def child_processes(self):
+        return self._child_processes
+
+    def set_child_processes(self, child_processes):
+        self._child_processes = child_processes
 
     def pid(self):
         return self._pid
@@ -123,6 +130,7 @@ class ServerProcess(object):
             env=self._env,
             universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
+        self._child_processes = {}
         if not self._use_win32_apis:
             self._set_file_nonblocking(self._proc.stdout)
             self._set_file_nonblocking(self._proc.stderr)
@@ -364,6 +372,9 @@ class ServerProcess(object):
         # Only bother to check for leaks or stderr if the process is still running.
         if self.poll() is None:
             self._port.check_for_leaks(self.process_name(), self.pid())
+            for child_process_name in self._child_processes.keys():
+                for child_process_id in self._child_processes[child_process_name]:
+                    self._port.check_for_leaks(child_process_name, child_process_id)
 
         if self._proc.stdin:
             self._proc.stdin.close()

@@ -1,3 +1,99 @@
+2019-03-27  David Kilzer  <ddkilzer@apple.com>
+
+        run-webkit-tests should check for leaks in WebKit processes
+        <https://webkit.org/b/193772>
+        <rdar://problem/46526680>
+
+        Reviewed by Ryosuke Niwa.
+
+        This works by doing the following:
+        - Add a "#LIST CHILD PROCESSES" command to WebKitTestRunnner.
+          The list of child processes are returned one per line:
+          process.name: pid
+        - Run the "#LIST CHILD PROCESSES" command just before the
+          "#CHECK FOR WORLD LEAKS" command, and store the list of child
+          processes on the ServerProcess object.
+        - When the `--leaks` switch is handled, run check_for_leaks() on
+          each child process after the main test harness.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (handleControlCommand):
+        - Use strncmp() instead of strcmp().
+        - Add support for handling "#LIST CHILD PROCESSES" command.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.check_for_leaks):
+        * Scripts/webkitpy/port/darwin.py:
+        (DarwinPort.check_for_leaks):
+        - Rename redundant 'process_pid' argument to 'process_id'.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.do_post_tests_work):
+        - Restructure the logic since "#CHECK FOR WORLD LEAKS" is no
+          longer the only command this sends to WebKitTestRunner.
+        - If the `--leaks` switch is present, send the
+          "#LIST CHILD PROCESSES" to WebKitTestRunner and store the
+          result using Port.set_webkit_processes().
+        (Driver._parse_child_processes_output):
+        - Add helper method to parse list of child process names and
+          process IDs returned from WebKitTestRunner.
+
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.check_for_leaks):
+        - Rename redundant 'process_pid' argument to 'process_id'.
+
+        * Scripts/webkitpy/port/leakdetector.py:
+        (LeakDetector._parse_leaks_output):
+        - Return early if there is no leaks_output.
+        (LeakDetector.check_for_leaks):
+        - Rename redundant 'process_pid' argument to 'process_id'.
+
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.__init__):
+        (ServerProcess.child_processes):
+        (ServerProcess.set_child_processes):
+        - Add instance variable to Port to store list of child process
+          names and process IDs returned from WebKitTestRunner.
+        (ServerProcess._start):
+        - Clear self._child_processes.
+        (ServerProcess.stop):
+        - If self._child_processes is set, call
+          self._port.check_for_leaks() for each child process.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TrivialMockPort.check_for_leaks):
+        - Rename redundant 'process_pid' argument to 'process_id'.
+
+        * Scripts/webkitpy/port/simulator_process.py:
+        (SimulatorProcess.stop):
+        - If self._child_processes is set, call
+          self._port.check_for_leaks() for each child process.
+
+        * Scripts/webkitpy/port/watch_device.py:
+        (WatchDevicePort.check_for_leaks):
+        - Rename redundant 'process_pid' argument to 'process_id'.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::dumpResponse):
+        - Extract method from findAndDumpWorldLeaks() so that it may be
+          reused by findAndDumpWebKitProcessIdentifiers().
+        (WTR::TestController::findAndDumpWebKitProcessIdentifiers):
+        - Add method to output process name and process ID of both the
+          WebContent and Networking processes.
+        (WTR::TestController::findAndDumpWorldLeaks):
+        - Fix missing newline in output when there were no abandoned
+          documents.
+        - Call dumpResponse() for extracted code.
+        (WTR::TestController::handleControlCommand):
+        - Restructure the logic for "#CHECK FOR WORLD LEAKS".
+        - Use strncmp() instead of strcmp().
+        - Call findAndDumpWebKitProcessIdentifiers() when
+          "#LIST CHILD PROCESSES" command is sent.
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::dumpResponse):
+        (WTR::TestController::findAndDumpWebKitProcessIdentifiers):
+        - Declare methods.
+
 2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Add GLib API test cases after r243434.
