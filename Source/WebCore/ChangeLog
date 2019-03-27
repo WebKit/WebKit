@@ -1,3 +1,44 @@
+2019-03-27  Chris Dumez  <cdumez@apple.com>
+
+        XMLHttpRequestUpload's loadstart event not correct initialized
+        https://bugs.webkit.org/show_bug.cgi?id=196174
+        <rdar://problem/49191412>
+
+        Reviewed by Alex Christensen.
+
+        Align progress event firing with the XHR specification.
+
+        No new tests, rebaselined existing tests.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        As per [1], the loadstart event fired on the XMLHttpRequestUpload object should use
+        loaded=0 and total=`req’s body’s total bytes`.
+        [1] https://xhr.spec.whatwg.org/#the-send()-method (step 11.2.)
+
+        (WebCore::XMLHttpRequest::didSendData):
+        As per [2], the progress / load / loadend should use loaded=transmitted and total=length.
+        [2] https://xhr.spec.whatwg.org/#ref-for-process-request-end-of-body (steps 5, 6 and 7)
+
+        (WebCore::XMLHttpRequest::didReceiveData):
+        As per [3], we should fire the readystatechange event *before* the progress event.
+        This is covered by web-platform-tests/xhr/send-response-event-order.htm which was failing
+        differently after the other changes in this patch.
+        [3] https://xhr.spec.whatwg.org/#ref-for-process-response (steps 9.4 and 9.5)
+
+        (WebCore::XMLHttpRequest::dispatchErrorEvents):
+        As per [4], in case of an error, we should fire the provided 'event' and 'loadend' with
+        loaded=0 and total=0.
+        [4] https://xhr.spec.whatwg.org/#request-error-steps (steps 7 and 8)
+
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent):
+        * xml/XMLHttpRequestUpload.h:
+        Simplify XMLHttpRequestUpload. It no longer needs to store loaded / total as data
+        members now that they are always passed by the call site. lengthComputable is set
+        to !!total as [5] says to set it to true if length/total is not 0. 
+        [5] https://xhr.spec.whatwg.org/#concept-event-fire-progress
+
 2019-03-27  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r242687): Fullscreen YouTube videos show blank white space at top

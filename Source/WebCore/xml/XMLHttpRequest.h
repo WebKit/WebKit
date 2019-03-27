@@ -218,6 +218,7 @@ private:
     String m_responseEncoding;
 
     ResourceResponse m_response;
+    Function<void()> m_didReceiveResponseHandler;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
