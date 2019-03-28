@@ -1,3 +1,13 @@
+2019-03-27  Saam Barati  <sbarati@apple.com>
+
+        validateOSREntryValue with Int52 should box the value being checked into double format
+        https://bugs.webkit.org/show_bug.cgi?id=196313
+        <rdar://problem/49306703>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/validate-int-52-ai-state.js: Added.
+
 2019-03-27  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Owner of watchpoints should validate at GC finalizing phase

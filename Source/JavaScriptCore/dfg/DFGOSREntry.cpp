@@ -214,7 +214,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
                     "machine int.");
                 return nullptr;
             }
-            // Constant AnyInt value is stored as usual boxed value in AbstractValue.
+            value = jsDoubleNumber(value.asAnyInt());
             format = FlushedInt52;
         }
 

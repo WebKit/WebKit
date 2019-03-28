@@ -649,6 +649,10 @@ private:
                             dumpAndCrash();
                     } else {
                         input = JSValue::decode(context.gpr(reg)); 
+                        if (flushFormat == FlushedInt52) {
+                            RELEASE_ASSERT(input.isAnyInt());
+                            input = jsDoubleNumber(input.asAnyInt());
+                        }
                         if (!value.validateOSREntryValue(input, flushFormat))
                             dumpAndCrash();
                     }
