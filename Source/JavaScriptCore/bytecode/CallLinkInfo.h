@@ -270,9 +270,19 @@ public:
         return m_clearedByVirtual;
     }
 
+    bool clearedByJettison()
+    {
+        return m_clearedByJettison;
+    }
+
     void setClearedByVirtual()
     {
         m_clearedByVirtual = true;
+    }
+
+    void setClearedByJettison()
+    {
+        m_clearedByJettison = true;
     }
     
     void setCallType(CallType callType)
@@ -350,7 +360,7 @@ private:
     bool m_clearedByGC : 1;
     bool m_clearedByVirtual : 1;
     bool m_allowStubs : 1;
-    bool m_isLinked : 1;
+    bool m_clearedByJettison : 1;
     unsigned m_callType : 4; // CallType
     unsigned m_calleeGPR : 8;
     uint32_t m_maxNumArguments; // For varargs: the profiled maximum number of arguments. For direct: the number of stack slots allocated for arguments.
