@@ -1,3 +1,9 @@
+2019-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline web-platform-tests/html/dom/interfaces.html
+
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+
 2019-03-27  Chris Dumez  <cdumez@apple.com>
 
         XMLHttpRequestUpload's loadstart event not correct initialized
