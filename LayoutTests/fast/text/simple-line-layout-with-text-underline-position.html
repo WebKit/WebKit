@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that simple line layout is disabled for text-underline-position: under</title>
+<style>
+div {
+    color: white;      
+}
+
+.first {
+    overflow: hidden;
+}
+.second, .first {
+	text-underline-position: under;
+}
+</style>
+<script>
+if (window.internals) {
+    internals.settings.setSimpleLineLayoutDebugBordersEnabled(true);
+    internals.settings.setSimpleLineLayoutEnabled(true);
+}
+</script>
+</head>
+<body>
+<div class=first>Pass if after selecting these 2 lines</div>
+<div class=second>this line is still visible</div>
+</body>
+</html>

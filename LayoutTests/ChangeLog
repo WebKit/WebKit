@@ -1,3 +1,14 @@
+2019-03-28  Zalan Bujtas  <zalan@apple.com>
+
+        [SimpleLineLayout] Disable SLL when text-underline-position is not auto.
+        https://bugs.webkit.org/show_bug.cgi?id=196338
+        <rdar://problem/47975167>
+
+        Reviewed by Daniel Bates.
+
+        * fast/text/simple-line-layout-with-text-underline-position-expected.html: Added.
+        * fast/text/simple-line-layout-with-text-underline-position.html: Added.
+
 2019-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Incorrect application of glyph positioning in the Y direction
