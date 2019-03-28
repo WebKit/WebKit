@@ -591,11 +591,6 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, 
     // Default values for rate >= 0.
     MediaTime startTime = position, endTime = MediaTime::invalidTime();
 
-    // TODO: Should do more than that, need to notify the media source
-    // and probably flush the pipeline at least.
-    if (isMediaSource())
-        return true;
-
     if (rate < 0) {
         startTime = MediaTime::zeroTime();
         // If we are at beginning of media, start from the end to
