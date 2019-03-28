@@ -91,12 +91,6 @@ static NSString *getUTIForSystemPreviewMIMEType(const String& mimeType)
 
 - (void)web_setContentProviderData:(NSData *)data suggestedFilename:(NSString *)filename
 {
-    RefPtr<WebKit::WebPageProxy> page = _webView->_page;
-    UIViewController *presentingViewController = page->uiClient().presentingViewController();
-
-    if (!presentingViewController)
-        return;
-
     _suggestedFilename = adoptNS([filename copy]);
     _data = adoptNS([data copy]);
 

@@ -1,3 +1,19 @@
+2019-03-27  Dean Jackson  <dino@apple.com>
+
+        [ARKit] Black view when opening a 3D model usdz file in new tab
+        https://bugs.webkit.org/show_bug.cgi?id=196333
+        <rdar://problem/47693367>
+
+        Reviewed by Tim Horton.
+
+        When opening a new WKSystemPreviewView, we were exiting if there was no
+        presentingViewController. This code was unnecessary, and causing blank
+        content when opening a new tab.
+
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (-[WKSystemPreviewView web_setContentProviderData:suggestedFilename:]):
+        Remove the code looking for a presentingViewController.
+
 2019-03-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Need a way to include WebKitAdditions code in WebKit API headers
