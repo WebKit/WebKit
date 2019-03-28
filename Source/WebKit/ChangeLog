@@ -1,3 +1,36 @@
+2019-03-28  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Automatic focus of input field is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=196302
+
+        Reviewed by Brent Fulgham.
+
+        Sometimes the status of whether a keyboard is connected can be incorrect, both in the UI process, and in
+        the WebContent process. Fix this by sending the keyboard status to the WebContent process as part of the
+        Web page creation parameters. Stop caching the keyboard status in the Web process proxy, and call
+        [UIKeyboard isInHardwareKeyboardMode] instead, since this method is swizzled in the test harness.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::setKeyboardIsAttached): Deleted.
+        (WebKit::WebProcessProxy::keyboardIsAttached const): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::isInHardwareKeyboardMode):
+        (WebKit::WebPageProxy::applicationWillEnterForeground):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+
 2019-03-28  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build.

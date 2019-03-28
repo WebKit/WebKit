@@ -406,6 +406,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_availableScreenSize(parameters.availableScreenSize)
     , m_overrideScreenSize(parameters.overrideScreenSize)
     , m_deviceOrientation(parameters.deviceOrientation)
+    , m_keyboardIsAttached(parameters.keyboardIsAttached)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)

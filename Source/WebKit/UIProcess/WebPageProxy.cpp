@@ -7022,6 +7022,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.viewportConfigurationLayoutSizeScaleFactor = m_viewportConfigurationLayoutSizeScaleFactor;
     parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
     parameters.deviceOrientation = m_deviceOrientation;
+    parameters.keyboardIsAttached = isInHardwareKeyboardMode();
 #endif
 
 #if PLATFORM(MAC)

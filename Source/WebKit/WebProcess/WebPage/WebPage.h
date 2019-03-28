@@ -1804,6 +1804,7 @@ private:
     WebCore::IntSize m_blockSelectionDesiredSize;
     WebCore::FloatSize m_maximumUnobscuredSize;
     int32_t m_deviceOrientation { 0 };
+    bool m_keyboardIsAttached { false };
     bool m_inDynamicSizeUpdate { false };
     HashMap<std::pair<WebCore::IntSize, double>, WebCore::IntPoint> m_dynamicSizeUpdateHistory;
     RefPtr<WebCore::Node> m_pendingSyntheticClickNode;
@@ -1884,9 +1885,6 @@ private:
     OptionSet<LayerTreeFreezeReason> m_LayerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
-#if PLATFORM(IOS_FAMILY)
-    bool m_keyboardIsAttached { false };
-#endif
 };
 
 } // namespace WebKit

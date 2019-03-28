@@ -663,12 +663,16 @@ void WebPageProxy::applicationDidFinishSnapshottingAfterEnteringBackground()
     m_process->send(Messages::WebPage::ApplicationDidFinishSnapshottingAfterEnteringBackground(), m_pageID);
 }
 
+bool WebPageProxy::isInHardwareKeyboardMode()
+{
+    return [UIKeyboard isInHardwareKeyboardMode];
+}
+
 void WebPageProxy::applicationWillEnterForeground()
 {
     bool isSuspendedUnderLock = [UIApp isSuspendedUnderLock];
     m_process->send(Messages::WebPage::ApplicationWillEnterForeground(isSuspendedUnderLock), m_pageID);
-    m_process->setKeyboardIsAttached([UIKeyboard isInHardwareKeyboardMode]);
-    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(m_process->keyboardIsAttached()), m_pageID);
+    m_process->send(Messages::WebPage::HardwareKeyboardAvailabilityChanged(isInHardwareKeyboardMode()), m_pageID);
 }
 
 void WebPageProxy::applicationWillResignActive()

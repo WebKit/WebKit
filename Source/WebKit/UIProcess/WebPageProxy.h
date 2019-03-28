@@ -2050,6 +2050,10 @@ private:
     SpeechSynthesisData& speechSynthesisData();
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    static bool isInHardwareKeyboardMode();
+#endif
+
     WeakPtr<PageClient> m_pageClient;
     Ref<API::PageConfiguration> m_configuration;
 

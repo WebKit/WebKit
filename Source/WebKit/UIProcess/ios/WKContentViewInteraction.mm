@@ -4930,7 +4930,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
                 if (_isChangingFocus)
                     return YES;
 
-                if (_page->process().keyboardIsAttached())
+                if ([UIKeyboard isInHardwareKeyboardMode])
                     return YES;
 #endif
             }

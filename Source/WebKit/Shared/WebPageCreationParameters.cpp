@@ -93,6 +93,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << viewportConfigurationViewSize;
     encoder << maximumUnobscuredSize;
     encoder << deviceOrientation;
+    encoder << keyboardIsAttached;
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
@@ -272,6 +273,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.maximumUnobscuredSize))
         return WTF::nullopt;
     if (!decoder.decode(parameters.deviceOrientation))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.keyboardIsAttached))
         return WTF::nullopt;
 #endif
 
