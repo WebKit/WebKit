@@ -1,3 +1,17 @@
+2019-03-28  Tadeu Zagallo  <tzagallo@apple.com>
+
+        In-memory code cache should not share bytecode across domains
+        https://bugs.webkit.org/show_bug.cgi?id=196321
+
+        Reviewed by Geoffrey Garen.
+
+        Use the SourceProvider's URL to make sure that the hosts match for the
+        two SourceCodeKeys in operator==.
+
+        * parser/SourceCodeKey.h:
+        (JSC::SourceCodeKey::host const):
+        (JSC::SourceCodeKey::operator== const):
+
 2019-03-28  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Silence lot of warnings when compiling with clang

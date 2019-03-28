@@ -110,6 +110,8 @@ public:
     // providers cache their strings to make this efficient.
     StringView string() const { return m_sourceCode.view(); }
 
+    StringView host() const { return m_sourceCode.provider().url().host(); }
+
     bool operator==(const SourceCodeKey& other) const
     {
         return m_hash == other.m_hash
@@ -117,6 +119,7 @@ public:
             && m_flags == other.m_flags
             && m_functionConstructorParametersEndPosition == other.m_functionConstructorParametersEndPosition
             && m_name == other.m_name
+            && host() == other.host()
             && string() == other.string();
     }
 
