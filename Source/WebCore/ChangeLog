@@ -1,3 +1,23 @@
+2019-03-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: unbinding a canvas should always remove the agent as an observer
+        https://bugs.webkit.org/show_bug.cgi?id=196324
+        <rdar://problem/49357109>
+
+        Reviewed by Matt Baker.
+
+        No change in functionality.
+
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::notifyObserversCanvasChanged):
+        (WebCore::CanvasBase::notifyObserversCanvasResized):
+        (WebCore::CanvasBase::notifyObserversCanvasDestroyed):
+
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::bindCanvas):
+        (WebCore::InspectorCanvasAgent::unbindCanvas):
+
 2019-03-28  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] Remove dead code in MediaPlayerPrivateGStreamer::doSeek()
