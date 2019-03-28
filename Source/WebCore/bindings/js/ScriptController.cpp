@@ -570,6 +570,8 @@ bool ScriptController::shouldAllowUserAgentScripts(Document& document) const
 #if ENABLE(APPLE_PAY)
     if (auto page = m_frame.page())
         return page->paymentCoordinator().shouldAllowUserAgentScripts(document);
+#else
+    UNUSED_PARAM(document);
 #endif
     return true;
 }

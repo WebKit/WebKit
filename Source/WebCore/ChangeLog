@@ -1,3 +1,10 @@
+2019-03-28  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the !ENABLE(APPLE_PAY) build
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::shouldAllowUserAgentScripts const):
+
 2019-03-28  Sihui Liu  <sihui_liu@apple.com>
 
         Crash at IDBDatabaseInfo::infoForExistingObjectStore and IDBDatabaseInfo::infoForExistingObjectStore
