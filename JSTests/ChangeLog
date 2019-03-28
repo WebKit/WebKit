@@ -1,3 +1,21 @@
+2019-03-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] imports-oom.js intermittently fails
+        https://bugs.webkit.org/show_bug.cgi?id=196373
+
+        Reviewed by Saam Barati.
+
+        imports-oom.js ensures that a wasm module compilation / instantiation throws an OOM error instead of crashing when compiling / instantiating their entry points
+        with extremely low executable memory amount. And this test expects we at least once successfully compile, instantiate, and execute a wasm module to test that
+        wasm implementation is always throwing an OOM error. However, maybe due to wasm changes, the amount of executable memory consumed by wasm compilation is changed,
+        and now we may encounter an OOM error at the first compilation. Since imports-oom.js randomize the amount of executable memory used by the generated wasm module,
+        imports-oom.js intermittently fails when it first generates large wasm module which cannot be compiled.
+
+        This patch reduces the maxParams from 32 to 8 to reduce the size of randomly generated wasm module. Since we repeatedly generate wasm modules, this test soon encounter
+        an expected OOM error. But this avoids the situation that we get an OOM error when we compile a first wasm module.
+
+        * wasm/lowExecutableMemory/imports-oom.js:
+
 2019-03-27  Saam Barati  <sbarati@apple.com>
 
         validateOSREntryValue with Int52 should box the value being checked into double format
