@@ -1,3 +1,14 @@
+2019-03-27  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=196329
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/http/tests/inspector/network/har/har-page-expected.txt:
+        * platform/gtk/http/tests/inspector/network/resource-sizes-network-expected.txt:
+        * platform/gtk/js/intl-datetimeformat-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2019-03-27  Shawn Roberts  <sroberts@apple.com>
 
         The following layout tests are flaky Image Only Failures
