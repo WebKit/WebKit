@@ -415,7 +415,9 @@ bool DOMSelection::containsNode(Node& node, bool allowPartial) const
     unsigned nodeIndex = node.computeNodeIndex();
 
     auto startsResult = Range::compareBoundaryPoints(parentNode, nodeIndex, &selectedRange->startContainer(), selectedRange->startOffset());
-    ASSERT(!startsResult.hasException());
+    if (startsResult.hasException())
+        return false;
+
     auto endsResult = Range::compareBoundaryPoints(parentNode, nodeIndex + 1, &selectedRange->endContainer(), selectedRange->endOffset());
     ASSERT(!endsResult.hasException());
     bool isNodeFullySelected = !startsResult.hasException() && startsResult.releaseReturnValue() >= 0

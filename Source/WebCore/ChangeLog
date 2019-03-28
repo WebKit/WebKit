@@ -1,3 +1,21 @@
+2019-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Debug assert in DOMSelection::containsNode when node belongs to a different tree
+        https://bugs.webkit.org/show_bug.cgi?id=196342
+
+        Reviewed by Antti Koivisto.
+
+        The assertion was wrong. It's possible for Range::compareBoundaryPoints to return WRONG_DOCUMENT_ERR
+        when the node and the start container belong to two different trees.
+
+        Return false in such a case for now since it's unclear (unspecified) what these methods on Selection
+        should do with respect to shadow trees, preserving the current behavior of release builds.
+
+        Test: editing/selection/containsNode-with-no-common-ancestor.html
+
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::containsNode const):
+
 2019-03-28  Tim Horton  <timothy_horton@apple.com>
 
         Fix the !ENABLE(APPLE_PAY) build

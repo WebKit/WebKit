@@ -1,3 +1,15 @@
+2019-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Debug assert in DOMSelection::containsNode when node belongs to a different tree
+        https://bugs.webkit.org/show_bug.cgi?id=196342
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test to catch the debug assertion failure. The test always passed in release builds.
+
+        * editing/selection/containsNode-with-no-common-ancestor-expected.txt: Added.
+        * editing/selection/containsNode-with-no-common-ancestor.html: Added.
+
 2019-03-28  Shawn Roberts  <sroberts@apple.com>
 
         http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
