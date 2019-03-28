@@ -1001,9 +1001,16 @@ void UniqueIDBDatabase::performCreateIndex(uint64_t callbackIdentifier, const ID
     ASSERT(!isMainThread());
     LOG(IndexedDB, "(db) UniqueIDBDatabase::performCreateIndex");
 
+    IDBError error;
     ASSERT(m_backingStore);
-    IDBError error = m_backingStore->createIndex(transactionIdentifier, info);
+    if (!m_backingStore) {
+        RELEASE_LOG_ERROR(IndexedDB, "%p - UniqueIDBDatabase::performCreateIndex: m_backingStore is null", this);
+        error = IDBError(InvalidStateError, "Backing store is invalid for call to create index"_s);
+        postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateIndex, callbackIdentifier, error, info));
+        return;
+    }
 
+    error = m_backingStore->createIndex(transactionIdentifier, info);
     postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformCreateIndex, callbackIdentifier, error, info));
 }
 
@@ -1199,6 +1206,13 @@ void UniqueIDBDatabase::performPutOrAdd(uint64_t callbackIdentifier, const IDBRe
 
     IDBKeyData usedKey;
     IDBError error;
+
+    if (!m_backingStore) {
+        RELEASE_LOG_ERROR(IndexedDB, "%p - UniqueIDBDatabase::performPutOrAdd: m_backingStore is null", this);
+        error = IDBError(InvalidStateError, "Backing store is invalid for call to put or add"_s);
+        postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didPerformPutOrAdd, callbackIdentifier, error, usedKey));
+        return;
+    }
 
     auto* objectStoreInfo = m_backingStore->infoForObjectStore(objectStoreIdentifier);
     if (!objectStoreInfo) {

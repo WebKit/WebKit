@@ -1294,6 +1294,12 @@ IDBError SQLiteIDBBackingStore::createIndex(const IDBResourceIdentifier& transac
         }
     }
 
+    ASSERT(m_databaseInfo);
+    if (!m_databaseInfo) {
+        RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::clearObjectStore: m_databaseInfo is null", this);
+        return IDBError { UnknownError, "Database info is invalid"_s };
+    }
+
     auto* objectStore = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
     ASSERT(objectStore);
     objectStore->addExistingIndex(info);
