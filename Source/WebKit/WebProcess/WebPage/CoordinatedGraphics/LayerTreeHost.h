@@ -137,7 +137,7 @@ private:
             m_layerTreeHost.didDestroyGLContext();
         }
 
-        void resize(const WebCore::IntSize& size)
+        void resize(const WebCore::IntSize& size) override
         {
             if (m_layerTreeHost.m_surface)
                 m_layerTreeHost.m_surface->clientResize(size);
@@ -158,7 +158,7 @@ private:
             m_layerTreeHost.requestDisplayRefreshMonitorUpdate();
         }
 
-        void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled)
+        void handleDisplayRefreshMonitorUpdate(bool hasBeenRescheduled) override
         {
             m_layerTreeHost.handleDisplayRefreshMonitorUpdate(hasBeenRescheduled);
         }

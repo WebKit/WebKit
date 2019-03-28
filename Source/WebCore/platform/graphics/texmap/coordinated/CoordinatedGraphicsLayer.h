@@ -124,7 +124,7 @@ public:
     const RefPtr<Nicosia::CompositionLayer>& compositionLayer() const;
 
 private:
-    bool isCoordinatedGraphicsLayer() const;
+    bool isCoordinatedGraphicsLayer() const override;
 
     void updatePlatformLayer();
 
@@ -166,7 +166,6 @@ private:
     bool m_isPurging;
 #endif
     bool m_shouldUpdateVisibleRect: 1;
-    bool m_shouldSyncLayerState: 1;
     bool m_movingVisibleRect : 1;
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;

@@ -1,3 +1,15 @@
+2019-03-28  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Silence lot of warnings when compiling with clang
+        https://bugs.webkit.org/show_bug.cgi?id=196310
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp: add missing
+        override clause.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.h: add
+        missing override clause.
+
 2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown

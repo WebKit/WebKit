@@ -617,7 +617,7 @@ void jsc_options_foreach(JSCOptionsFunc function, gpointer userData)
 #define FOR_EACH_OPTION(type_, name_, defaultValue_, availability_, description_) \
     if (Options::Availability::availability_ == Options::Availability::Normal \
         || Options::isAvailable(Options::name_##ID, Options::Availability::availability_)) { \
-        type_ defaultValue;                                             \
+        type_ defaultValue { };                                         \
         auto optionType = jscOptionsType(defaultValue);                 \
         if (function (#name_, optionType, description_, userData))      \
             return;                                                     \

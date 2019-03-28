@@ -937,7 +937,7 @@ public:
     
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)
-    AccessibilityObjectWrapper* wrapper() const;
+    AccessibilityObjectWrapper* wrapper() const override;
     void setWrapper(AccessibilityObjectWrapper*);
 #else
     AccessibilityObjectWrapper* wrapper() const override { return m_wrapper.get(); }

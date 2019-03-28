@@ -1,3 +1,21 @@
+2019-03-28  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Silence lot of warnings when compiling with clang
+        https://bugs.webkit.org/show_bug.cgi?id=196310
+
+        Reviewed by Michael Catanzaro.
+
+        No change in behavior.
+
+        * accessibility/AccessibilityObject.h: add missing override
+        clause.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcChangeState): add missing format string to log.
+        * platform/graphics/texmap/TextureMapperPlatformLayerBuffer.h: add
+        missing virtual destructor.
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        add missing override clause and remove unused private member.
+
 2019-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [FreeType] Incorrect application of glyph positioning in the Y direction

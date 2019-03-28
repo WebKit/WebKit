@@ -1,3 +1,15 @@
+2019-03-28  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        Silence lot of warnings when compiling with clang
+        https://bugs.webkit.org/show_bug.cgi?id=196310
+
+        Reviewed by Michael Catanzaro.
+
+        Initialize variable with default constructor.
+
+        * API/glib/JSCOptions.cpp:
+        (jsc_options_foreach):
+
 2019-03-27  Saam Barati  <sbarati@apple.com>
 
         validateOSREntryValue with Int52 should box the value being checked into double format

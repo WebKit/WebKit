@@ -131,7 +131,7 @@ private:
             ASSERT_NOT_REACHED();
     }
 
-    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&)
+    RefPtr<API::Object> getInjectedBundleInitializationUserData(WebProcessPool&) override
     {
         GRefPtr<GVariant> data = webkitWebContextInitializeWebExtensions(m_webContext);
         GUniquePtr<gchar> dataString(g_variant_print(data.get(), TRUE));

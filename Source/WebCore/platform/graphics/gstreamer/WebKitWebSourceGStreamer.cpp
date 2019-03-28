@@ -738,7 +738,7 @@ static GstStateChangeReturn webKitWebSrcChangeState(GstElement* element, GstStat
     WebKitWebSrc* src = WEBKIT_WEB_SRC(element);
 
 #if GST_CHECK_VERSION(1, 14, 0)
-    GST_DEBUG_OBJECT(src, gst_state_change_get_name(transition));
+    GST_DEBUG_OBJECT(src, "%s", gst_state_change_get_name(transition));
 #endif
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_NULL:
