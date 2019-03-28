@@ -75,6 +75,6 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b196357 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
+webkit.org/b/196357 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
 
 webkit.org/b/196358 http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
