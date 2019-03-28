@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#import "GPUDevice.h"
 #import "GPULimits.h"
 #import "GPUUtils.h"
 #import "Logging.h"

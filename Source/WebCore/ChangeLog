@@ -1,3 +1,145 @@
+2019-03-28  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Prototype compute pipeline with MSL
+        https://bugs.webkit.org/show_bug.cgi?id=196107
+        <rdar://problem/46289650>
+
+        Reviewed by Myles Maxfield.
+
+        Add GPUComputePassEncoder, GPUComputePipeline, and GPUComputePipelineDescriptor.
+        Implement everything needed to prototype a compute pipeline in Web GPU using Metal shaders and bound resources.
+
+        Test: webgpu/compute-squares.html
+
+        Add files and symbols:
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
+        Misc fixes:
+        * Modules/webgpu/WHLSL/WHLSLNameResolver.h: Missing include.
+        * Modules/webgpu/WHLSL/WHLSLSynthesizeConstructors.cpp: Missing include.
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.cpp: Added. Move pipeline stage validation logic here.
+        (WebCore::WebGPUPipelineStageDescriptor::tryCreateGPUPipelineStageDescriptor const):
+        * Modules/webgpu/WebGPURenderPipeline.cpp: Remove unnecessary include.
+        * Modules/webgpu/WebGPURenderPipeline.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp: Add missing inlcude.
+        (WebCore::WebGPUPipelineStageDescriptor::tryCreateGPUPipelineStageDescriptor const): Moved to WebGPUPipelineStageDescriptor.cpp.
+        * platform/graphics/gpu/GPUPipelineDescriptorBase.h: Add missing include.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm: Add missing include.
+        (WebCore::GPURenderPipeline::GPURenderPipeline): Remove unecessary ref of GPUPipelineLayout.
+        * platform/text/mac/TextEncodingRegistryMac.mm: Carbon.h was causing ambiguous reference build errors in this file.
+
+        Enable creating a GPUComputePassEncoder from a GPUCommandEncoder:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp:
+        (WebCore::WebGPUCommandEncoder::beginRenderPass): No longer passing this WebGPUCommandEncoder to pass encoders.
+        (WebCore::WebGPUCommandEncoder::beginComputePass): Added.
+        * Modules/webgpu/WebGPUCommandEncoder.h:
+        * Modules/webgpu/WebGPUCommandEncoder.idl:
+
+        Add GPUComputePassEncoder:
+        * Modules/webgpu/WebGPUComputePassEncoder.cpp: Added.
+        (WebCore::WebGPUComputePassEncoder::create):
+        (WebCore::WebGPUComputePassEncoder::WebGPUComputePassEncoder):
+        (WebCore::WebGPUComputePassEncoder::setPipeline):
+        (WebCore::WebGPUComputePassEncoder::dispatch):
+        (WebCore::WebGPUComputePassEncoder::passEncoder):
+        (WebCore::WebGPUComputePassEncoder::passEncoder const):
+        * Modules/webgpu/WebGPUComputePassEncoder.h: Added.
+        * Modules/webgpu/WebGPUComputePassEncoder.idl: Added.
+        * platform/graphics/gpu/GPUComputePassEncoder.h: Added.
+        (WebCore::GPUComputePassEncoder::~GPUComputePassEncoder):
+        * platform/graphics/gpu/cocoa/GPUComputePassEncoderMetal.mm: Added.
+        (WebCore::GPUComputePassEncoder::tryCreate):
+        (WebCore::GPUComputePassEncoder::GPUComputePassEncoder):
+        (WebCore::GPUComputePassEncoder::setPipeline):
+        (WebCore::GPUComputePassEncoder::dispatch): Use a default calculation for threadsPerThreadgroup while MSL is still an accepted shader format.
+        (WebCore::GPUComputePassEncoder::platformPassEncoder const):
+        (WebCore::GPUComputePassEncoder::useResource):
+        (WebCore::GPUComputePassEncoder::setComputeBuffer):
+
+        Add GPUComputePipeline:
+        * Modules/webgpu/WebGPUComputePipeline.cpp: Added.
+        (WebCore::WebGPUComputePipeline::create):
+        (WebCore::WebGPUComputePipeline::WebGPUComputePipeline):
+        * Modules/webgpu/WebGPUComputePipeline.h: Added.
+        (WebCore::WebGPUComputePipeline::computePipeline const):
+        * Modules/webgpu/WebGPUComputePipeline.idl: Added.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.cpp: Added.
+        (WebCore::WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor const):
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.h: Added.
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.idl: Added.
+        * platform/graphics/gpu/GPUComputePipeline.h: Added.
+        (WebCore::GPUComputePipeline::platformComputePipeline const):
+        * platform/graphics/gpu/GPUComputePipelineDescriptor.h: Added.
+        (WebCore::GPUComputePipelineDescriptor::GPUComputePipelineDescriptor):
+        * platform/graphics/gpu/cocoa/GPUComputePipelineMetal.mm: Added.
+        (WebCore::tryCreateMtlComputeFunction):
+        (WebCore::tryCreateMTLComputePipelineState):
+        (WebCore::GPUComputePipeline::tryCreate):
+        (WebCore::GPUComputePipeline::GPUComputePipeline):
+
+        Enable creating a GPUComputePipeline from a GPUDevice:
+        * Modules/webgpu/WebGPUDevice.cpp:
+        (WebCore::WebGPUDevice::createComputePipeline const):
+        * Modules/webgpu/WebGPUDevice.h:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * platform/graphics/gpu/GPUDevice.cpp:
+        (WebCore::GPUDevice::tryCreateComputePipeline const):
+        * platform/graphics/gpu/GPUDevice.h:
+
+        No longer unnecessarily ref the WebGPUCommandEncoder when creating pass encoder:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.cpp:
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup):
+        (WebCore::WebGPUProgrammablePassEncoder::WebGPUProgrammablePassEncoder): Deleted.
+        (WebCore::WebGPUProgrammablePassEncoder::setBindGroup const): Deleted.
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::create):
+        (WebCore::WebGPURenderPassEncoder::WebGPURenderPassEncoder):
+        (WebCore::WebGPURenderPassEncoder::setPipeline):
+        (WebCore::WebGPURenderPassEncoder::passEncoder):
+        (WebCore::WebGPURenderPassEncoder::passEncoder const):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+
+        Updates to GPUBindGroup and *setBindGroup for compute function arguments:
+        * platform/graphics/gpu/GPUBindGroup.h:
+        (WebCore::GPUBindGroup::vertexArgsBuffer const):
+        (WebCore::GPUBindGroup::fragmentArgsBuffer const):
+        (WebCore::GPUBindGroup::computeArgsBuffer const):
+        (WebCore::GPUBindGroup::vertexArgsBuffer): Deleted. Const-qualified.
+        (WebCore::GPUBindGroup::fragmentArgsBuffer): Ditto.
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::tryGetResourceAsMTLSamplerState): Now just returns the MTLSamplerState to reduce reference churning.
+        (WebCore::GPUBindGroup::tryCreate):
+        (WebCore::GPUBindGroup::GPUBindGroup):
+        (WebCore::tryGetResourceAsSampler): Renamed to tryGetResourceAsMTLSamplerState.
+
+        Updates to GPUProgrammablePassEncoder and GPURenderPassEncoder:
+        * platform/graphics/gpu/GPUProgrammablePassEncoder.h:
+        (WebCore::GPUProgrammablePassEncoder::setVertexBuffer):
+        (WebCore::GPUProgrammablePassEncoder::setFragmentBuffer):
+        (WebCore::GPUProgrammablePassEncoder::setComputeBuffer): Added.
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        (WebCore::GPURenderPassEncoder::~GPURenderPassEncoder):
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        * platform/graphics/gpu/cocoa/GPUProgrammablePassEncoderMetal.mm: Remove unecessary include.
+        (WebCore::GPUProgrammablePassEncoder::endPass): No longer virtual. Delegates shared behavior for derived classes.
+        (WebCore::GPUProgrammablePassEncoder::setBindGroup):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::platformPassEncoder const):
+        (WebCore::GPURenderPassEncoder::setPipeline):
+        (WebCore::GPURenderPassEncoder::draw):
+        (WebCore::GPURenderPassEncoder::useResource): These private overrides are called only by base after checking for encoder existence.
+        (WebCore::GPURenderPassEncoder::setVertexBuffer): Ditto.
+        (WebCore::GPURenderPassEncoder::setFragmentBuffer): Ditto.
+        (WebCore::GPURenderPassEncoder::endPass): Deleted. Now handled by base class.
+
 2019-03-27  Jiewen Tan  <jiewen_tan@apple.com>
 
         IDBRequest::dispatchEvent should check nullability of m_transaction before operations that rely on it to be non null

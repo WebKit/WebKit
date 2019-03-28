@@ -178,17 +178,9 @@ GPURenderPassEncoder::GPURenderPassEncoder(Ref<GPUCommandBuffer>&& commandBuffer
 {
 }
 
-MTLCommandEncoder *GPURenderPassEncoder::platformPassEncoder() const
+const MTLCommandEncoder *GPURenderPassEncoder::platformPassEncoder() const
 {
     return m_platformRenderPassEncoder.get();
-}
-
-void GPURenderPassEncoder::endPass()
-{
-    if (!m_platformRenderPassEncoder)
-        return;
-    GPUProgrammablePassEncoder::endPass();
-    m_platformRenderPassEncoder = nullptr;
 }
 
 void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
@@ -198,7 +190,7 @@ void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
         return;
     }
 
-    // FIXME: Metal throws an error if the MTLPipelineState's attachment formats do not match the MTLCommandEncoder's attachment formats. Does this have to be validated at the Web GPU level?
+    // FIXME: Metal throws an error if the MTLPipelineState's attachment formats do not match the MTLCommandEncoder's attachment formats.
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -265,44 +257,40 @@ void GPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanc
         return;
     }
 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder 
         drawPrimitives:primitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
         vertexStart:firstVertex
         vertexCount:vertexCount
         instanceCount:instanceCount
         baseInstance:firstInstance];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 #if USE(METAL)
 
-void GPURenderPassEncoder::useResource(MTLResource *resource, unsigned usage)
+void GPURenderPassEncoder::useResource(const MTLResource *resource, unsigned usage)
 {
-    if (!m_platformRenderPassEncoder) {
-        LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
-        return;
-    }
+    ASSERT(m_platformRenderPassEncoder);
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder useResource:resource usage:usage];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPURenderPassEncoder::setVertexBuffer(MTLBuffer *buffer, unsigned offset, unsigned index)
+void GPURenderPassEncoder::setVertexBuffer(const MTLBuffer *buffer, unsigned offset, unsigned index)
 {
-    if (!m_platformRenderPassEncoder) {
-        LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
-        return;
-    }
+    ASSERT(m_platformRenderPassEncoder);
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder setVertexBuffer:buffer offset:offset atIndex:index];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPURenderPassEncoder::setFragmentBuffer(MTLBuffer *buffer, unsigned offset, unsigned index)
+void GPURenderPassEncoder::setFragmentBuffer(const MTLBuffer *buffer, unsigned offset, unsigned index)
 {
-    if (!m_platformRenderPassEncoder) {
-        LOG(WebGPU, "GPURenderPassEncoder: Invalid operation: Encoding is ended!");
-        return;
-    }
+    ASSERT(m_platformRenderPassEncoder);
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder setFragmentBuffer:buffer offset:offset atIndex:index];
     END_BLOCK_OBJC_EXCEPTIONS;

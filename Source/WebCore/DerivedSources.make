@@ -407,6 +407,9 @@ JS_BINDING_IDLS = \
 	$(WebCore)/Modules/webgpu/WebGPUBufferBinding.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandBuffer.idl \
     $(WebCore)/Modules/webgpu/WebGPUCommandEncoder.idl \
+    $(WebCore)/Modules/webgpu/WebGPUComputePassEncoder.idl \
+    $(WebCore)/Modules/webgpu/WebGPUComputePipeline.idl \
+    $(WebCore)/Modules/webgpu/WebGPUComputePipelineDescriptor.idl \
     $(WebCore)/Modules/webgpu/WebGPUDevice.idl \
     $(WebCore)/Modules/webgpu/WebGPUQueue.idl \
     $(WebCore)/Modules/webgpu/WebGPUPipelineDescriptorBase.idl \

@@ -29,7 +29,7 @@
 
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineStageDescriptor.h"
-
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

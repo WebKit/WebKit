@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TextEncodingRegistry.h"
+#pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(WEBGPU)
 
-#import <wtf/spi/cf/CFStringSPI.h>
+#include "GPUComputePipeline.h"
+#include "GPUProgrammablePassEncoder.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
+
+OBJC_PROTOCOL(MTLComputeCommandEncoder);
 
 namespace WebCore {
 
-CFStringEncoding webDefaultCFStringEncoding()
-{
-    UInt32 script = 0;
-    UInt32 region = 0;
-    ::TextEncoding encoding;
-    OSErr err;
-    ItemCount dontcare;
+using PlatformComputePassEncoder = MTLComputeCommandEncoder;
+using PlatformComputePassEncoderSmartPtr = RetainPtr<MTLComputeCommandEncoder>;
 
-    // FIXME: Switch away from using Script Manager, as it does not support some languages newly added in OS X.
-    // <rdar://problem/4433165> Need API that can get preferred web (and mail) encoding(s) w/o region code.
-    // Alternatively, we could have our own table of preferred encodings in WebKit.
-    //
-    // Also, language changes do not apply to _CFStringGetUserDefaultEncoding() until re-login, which could be very confusing.
+class GPUComputePassEncoder : public GPUProgrammablePassEncoder {
+public:
+    static RefPtr<GPUComputePassEncoder> tryCreate(Ref<GPUCommandBuffer>&&);
 
-    _CFStringGetUserDefaultEncoding(&script, &region);
-    err = TECGetWebTextEncodings(region, &encoding, 1, &dontcare);
-    if (err != noErr)
-        encoding = kCFStringEncodingISOLatin1;
-    return encoding;
-}
+    void setPipeline(Ref<const GPUComputePipeline>&&);
+    void dispatch(unsigned x, unsigned y, unsigned z);
+
+private:
+    GPUComputePassEncoder(Ref<GPUCommandBuffer>&&, PlatformComputePassEncoderSmartPtr&&);
+    ~GPUComputePassEncoder() { endPass(); }
+
+    // GPUProgrammablePassEncoder
+    const PlatformProgrammablePassEncoder* platformPassEncoder() const final;
+    void invalidateEncoder() final { m_platformComputePassEncoder = nullptr; }
+#if USE(METAL)
+    void useResource(const MTLResource *, unsigned usage) final;
+    void setComputeBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
+#endif
+
+    PlatformComputePassEncoderSmartPtr m_platformComputePassEncoder;
+    RefPtr<const GPUComputePipeline> m_pipeline;
+};
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC)
+#endif // ENABLE(WEBGPU)

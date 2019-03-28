@@ -61,7 +61,6 @@ private:
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
-    RefPtr<GPUPipelineLayout> m_layout;
     GPUPrimitiveTopology m_primitiveTopology;
 };
 

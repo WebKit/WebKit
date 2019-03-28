@@ -93,7 +93,7 @@ async function start() {
     const swapChainDescriptor = {context, format: "bgra8unorm"};
     const swapChain = device.createSwapChain(swapChainDescriptor);
     const outputTexture = swapChain.getCurrentTexture();
-    const outputTextureView = outputTexture.createDefaultView(); // createDefaultView()
+    const outputTextureView = outputTexture.createDefaultView();
 
     const commandEncoder = device.createCommandEncoder(); // {}
     const red = {r: 0, g: 0, b: 1, a: 1};

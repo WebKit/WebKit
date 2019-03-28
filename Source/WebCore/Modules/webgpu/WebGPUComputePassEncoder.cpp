@@ -23,57 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUComputePassEncoder.h"
 
 #if ENABLE(WEBGPU)
 
-#include "WHLSLNameContext.h"
-#include "WHLSLVisitor.h"
-#include <wtf/HashSet.h>
+#include "GPUComputePassEncoder.h"
+#include "GPUProgrammablePassEncoder.h"
+#include "WebGPUComputePipeline.h"
 
 namespace WebCore {
 
-namespace WHLSL {
+Ref<WebGPUComputePassEncoder> WebGPUComputePassEncoder::create(RefPtr<GPUComputePassEncoder>&& encoder)
+{
+    return adoptRef(*new WebGPUComputePassEncoder(WTFMove(encoder)));
+}
 
-class Program;
+WebGPUComputePassEncoder::WebGPUComputePassEncoder(RefPtr<GPUComputePassEncoder>&& encoder)
+    : m_passEncoder { WTFMove(encoder) }
+{
+}
 
-class NameResolver : public Visitor {
-public:
-    NameResolver(NameContext&);
+void WebGPUComputePassEncoder::setPipeline(const WebGPUComputePipeline& pipeline)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPUComputePassEncoder::setPipeline(): Invalid operation!");
+        return;
+    }
+    if (!pipeline.computePipeline()) {
+        LOG(WebGPU, "GPUComputePassEncoder::setPipeline(): Invalid pipeline!");
+        return;
+    }
+    m_passEncoder->setPipeline(makeRef(*pipeline.computePipeline()));
+}
 
-    virtual ~NameResolver() = default;
-
-    void visit(AST::FunctionDefinition&) override;
-
-    void setCurrentFunctionDefinition(AST::FunctionDefinition* functionDefinition)
-    {
-        m_currentFunction = functionDefinition;
+void WebGPUComputePassEncoder::dispatch(unsigned x, unsigned y, unsigned z)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPUComputePassEncoder::dispatch(): Invalid operation!");
+        return;
     }
 
-private:
-    void visit(AST::TypeReference&) override;
-    void visit(AST::Block&) override;
-    void visit(AST::IfStatement&) override;
-    void visit(AST::WhileLoop&) override;
-    void visit(AST::DoWhileLoop&) override;
-    void visit(AST::ForLoop&) override;
-    void visit(AST::VariableDeclaration&) override;
-    void visit(AST::VariableReference&) override;
-    void visit(AST::Return&) override;
-    void visit(AST::PropertyAccessExpression&) override;
-    void visit(AST::DotExpression&) override;
-    void visit(AST::CallExpression&) override;
-    void visit(AST::EnumerationMemberLiteral&) override;
+    // FIXME: Add Web GPU validation.
+    m_passEncoder->dispatch(x, y, z);
+}
 
-    NameContext& m_nameContext;
-    HashSet<AST::TypeReference*> m_typeReferences;
-    AST::FunctionDefinition* m_currentFunction { nullptr };
-};
+GPUProgrammablePassEncoder* WebGPUComputePassEncoder::passEncoder()
+{
+    return m_passEncoder.get();
+}
 
-bool resolveNamesInTypes(Program&, NameResolver&);
-bool resolveNamesInFunctions(Program&, NameResolver&);
-
-} // namespace WHLSL
+const GPUProgrammablePassEncoder* WebGPUComputePassEncoder::passEncoder() const
+{
+    return m_passEncoder.get();
+}
 
 } // namespace WebCore
 

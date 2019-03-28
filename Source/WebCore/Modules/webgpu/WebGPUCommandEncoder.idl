@@ -56,6 +56,7 @@ typedef unsigned long long u64;
     InterfaceName=GPUCommandEncoder
 ] interface WebGPUCommandEncoder {
     WebGPURenderPassEncoder beginRenderPass(WebGPURenderPassDescriptor descriptor);
+    WebGPUComputePassEncoder beginComputePass();
 
     void copyBufferToBuffer(
         WebGPUBuffer src,
@@ -80,7 +81,4 @@ typedef unsigned long long u64;
         GPUExtent3D copySize);
 
     WebGPUCommandBuffer finish();
-
-    // Not Yet Implemented
-    // WebGPUComputePassEncoder beginComputePass();
 };

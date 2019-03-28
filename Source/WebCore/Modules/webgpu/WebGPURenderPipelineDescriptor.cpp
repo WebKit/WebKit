@@ -28,15 +28,9 @@
 
 #if ENABLE(WEBGPU)
 
+#include "Logging.h"
+
 namespace WebCore {
-
-Optional<GPUPipelineStageDescriptor> WebGPUPipelineStageDescriptor::tryCreateGPUPipelineStageDescriptor() const
-{
-    if (!module || !module->module() || entryPoint.isEmpty())
-        return WTF::nullopt;
-
-    return GPUPipelineStageDescriptor { makeRef(*module->module()), *this };
-}
 
 Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor() const
 {
