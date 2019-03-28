@@ -1,3 +1,14 @@
+2019-03-27  Saam Barati  <sbarati@apple.com>
+
+        JetStream 2 should not report time values as scores
+        https://bugs.webkit.org/show_bug.cgi?id=196334
+
+        Reviewed by Yusuke Suzuki.
+
+        * JetStream2.0/JetStreamDriver.js:
+        (toTimeValue):
+        (Driver.prototype.async.reportScoreToRunBenchmarkRunner):
+
 2019-03-27  Saam barati  <sbarati@apple.com>
 
         Unreviewed. Fix individual benchmark description urls to go to in-depth.html instead of about.html

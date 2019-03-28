@@ -82,6 +82,10 @@ function toScore(timeValue) {
     return 5000 / timeValue;
 }
 
+function toTimeValue(score) {
+    return 5000 / score;
+}
+
 function updateUI() {
     return new Promise((resolve) => {
         if (isInBrowser)
@@ -319,7 +323,7 @@ class Driver {
             const subResults = {}
             const subTimes = benchmark.subTimes();
             for (const name in subTimes) {
-                subResults[name] = {"metrics": {"Time": {"current": [subTimes[name]]}}};
+                subResults[name] = {"metrics": {"Time": {"current": [toTimeValue(subTimes[name])]}}};
             }
             results[benchmark.name] = {
                 "metrics" : {
