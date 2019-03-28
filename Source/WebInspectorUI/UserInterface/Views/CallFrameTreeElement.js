@@ -44,6 +44,7 @@ WI.CallFrameTreeElement = class CallFrameTreeElement extends WI.GeneralTreeEleme
 
         if (this._callFrame.nativeCode || !this._callFrame.sourceCodeLocation) {
             this.subtitle = "";
+            this.selectable = false;
             return;
         }
 

@@ -47,3 +47,32 @@ body[dir] .resource-headers > section:matches(.redirect, .headers) > .details {
 .resource-headers .h2-pseudo-header > .key {
     color: var(--network-pseudo-header-color);
 }
+
+.resource-headers .go-to-link {
+    -webkit-user-select: text;
+}
+
+.resource-headers .pair.initiator > .value {
+    display: inline-flex;
+    align-items: center;
+}
+
+.resource-headers .call-stack {
+    position: relative;
+    width: 16px;
+    height: 13px;
+    margin-left: 3px;
+    content: url(../Images/CallStack.svg);
+    opacity: 0.5;
+    -webkit-user-select: none;
+}
+
+.resource-headers .call-stack:hover {
+    opacity: 0.8;
+}
+
+@media (prefers-color-scheme: dark) {
+    .resource-headers .call-stack {
+        filter: invert();
+    }
+}

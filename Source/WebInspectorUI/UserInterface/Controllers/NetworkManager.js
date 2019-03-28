@@ -306,6 +306,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestData: request.postData,
             requestSentTimestamp: elapsedTime,
             requestSentWalltime: walltime,
+            initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),
             originalRequestWillBeSentTimestamp,
@@ -450,6 +451,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             requestIdentifier,
             requestMethod: "GET",
             requestSentTimestamp: elapsedTime,
+            initiatorCallFrames: this._initiatorCallFramesFromPayload(initiator),
             initiatorSourceCodeLocation: this._initiatorSourceCodeLocationFromPayload(initiator),
             initiatorNode: this._initiatorNodeFromPayload(initiator),
         });
@@ -760,6 +762,18 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         console.assert(resource);
 
         target.addResource(resource);
+    }
+
+    _initiatorCallFramesFromPayload(initiatorPayload)
+    {
+        if (!initiatorPayload)
+            return null;
+
+        let callFrames = initiatorPayload.stackTrace;
+        if (!callFrames)
+            return null;
+        
+        return callFrames.map((payload) => WI.CallFrame.fromPayload(WI.assumingMainTarget(), payload));
     }
 
     _initiatorSourceCodeLocationFromPayload(initiatorPayload)
