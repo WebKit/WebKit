@@ -1,3 +1,17 @@
+2019-03-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] webkit_web_resource_get_data_finish can return NULL without setting error
+        https://bugs.webkit.org/show_bug.cgi?id=186276
+
+        Reviewed by Carlos Garcia Campos.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp:
+        (webViewLoadChanged):
+        (testWebResourceGetDataError):
+        (testWebResourceGetDataEmpty):
+        (beforeAll):
+        (webViewloadChanged): Deleted.
+
 2019-03-27  Andy Estes  <aestes@apple.com>
 
         REGRESSION (r242686): package-root creates roots with broken symlinks in WebKit.framework/XPCServices/

@@ -1,3 +1,26 @@
+2019-03-28  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] webkit_web_resource_get_data_finish can return NULL without setting error
+        https://bugs.webkit.org/show_bug.cgi?id=186276
+
+        Reviewed by Carlos Garcia Campos.
+
+        Currently it's possible for webkit_web_resource_get_data_finish() to return NULL without
+        setting the error parameter. This is illegal because it is an API guarantee (and a GObject
+        convention) that if an error parameter exists, it should be set whenever a function call
+        returns NULL. Epiphany correctly dereferences the error in this case without checking if it
+        is NULL, because it knows it does not have to, and crashes. Fix this. We'll return a byte
+        array of length 1 containing a NUL character. This isn't great, but there's not really any
+        better solution without deprecating the API or returning an error code to indicate an empty
+        resource, and it at least fixes the Epiphany crash.
+
+        This does not fix bug #186276, in which this function incorrectly returns no data when it
+        ought to. But that is a different bug. Now, at least we won't crash when no data is
+        available.
+
+        * UIProcess/API/glib/WebKitWebResource.cpp:
+        (resourceDataCallback):
+
 2019-03-28  Daniel Bates  <dabates@apple.com>
 
         [iPad] Tapping on a popup form control may not show a popover
