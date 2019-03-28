@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" type="text/css" href="<?php echo get_stylesheet_uri(); ?>?20181220" media="all">
     <link rel="stylesheet" href="https://www.apple.com/wss/fonts?families=SF+Pro,v1" type="text/css">
+    <link rel="stylesheet" href="https://www.apple.com/wss/fonts?families=SF+Mono,v2" type="text/css">
     <meta name="supported-color-schemes" content="light dark">
 
     <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="<?php bloginfo('rss2_url'); ?>">

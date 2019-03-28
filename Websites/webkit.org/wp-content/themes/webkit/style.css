@@ -262,7 +262,7 @@ footer, header, hgroup, menu, nav, section {
     display: block;
 }
 html {
-    font-family: "SF Hello", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-family: -apple-system, "SF Pro Text", Helvetica, sans-serif;
     font-size: 62.5%;
     font-synthesis: none;
 }
@@ -397,6 +397,7 @@ h4,
 h5,
 h6 {
     text-rendering: optimizeLegibility;
+    font-family: -apple-system, "SF Pro Display", Helvetica, sans-serif;
 }
 
 h1 a[name],
@@ -693,6 +694,7 @@ a.download {
     font-weight: 500;
     line-height: 1.09375;
     letter-spacing: 0.011rem;
+    font-family: -apple-system, "SF Pro Display", Helvetica, sans-serif;
 }
 
 .nextrouter .label {

@@ -1,3 +1,16 @@
+2019-03-28  Jon Davis  <jond@apple.com>
+
+        Fix font family for WebKit.org
+        https://bugs.webkit.org/show_bug.cgi?id=196311
+
+        Reviewed by Myles C. Maxfield.
+
+        * wp-content/themes/webkit/header.php: Added SF Mono loading
+        * wp-content/themes/webkit/style.css:
+        (html): Use Text font by default
+        (h1,): Use Display font for large headings
+        (.nextrouter-copy): Use Display font for routers
+
 2019-02-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Codify the naming convention for fooIfExists
