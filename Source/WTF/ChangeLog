@@ -1,3 +1,10 @@
+2019-03-28  Tim Horton  <timothy_horton@apple.com>
+
+        Un-fix the build
+
+        * wtf/Platform.h:
+        It is no longer necessary to exclude this from PLATFORM(IOSMAC).
+
 2019-03-27  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test js/math-clz32.html is failing
