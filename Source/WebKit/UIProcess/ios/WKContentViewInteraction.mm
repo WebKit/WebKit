@@ -1642,21 +1642,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (!hasFocusedElement(_focusedElementInformation))
         return nil;
 
-    if (!_inputPeripheral) {
-        switch (_focusedElementInformation.elementType) {
-        case WebKit::InputType::Select:
-            _inputPeripheral = adoptNS([[WKFormSelectControl alloc] initWithView:self]);
-            break;
-#if ENABLE(INPUT_TYPE_COLOR)
-        case WebKit::InputType::Color:
-            _inputPeripheral = adoptNS([[WKFormColorControl alloc] initWithView:self]);
-            break;
-#endif
-        default:
-            _inputPeripheral = adoptNS([[WKFormInputControl alloc] initWithView:self]);
-            break;
-        }
-    } else {
+    if (_inputPeripheral) {
         // FIXME: UIKit may invoke -[WKContentView inputView] at any time when WKContentView is the first responder;
         // as such, it doesn't make sense to change the enclosing scroll view's zoom scale and content offset to reveal
         // the focused element here. It seems this behavior was added to match logic in legacy WebKit (refer to
@@ -1666,6 +1652,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         // For instance, one use case that currently relies on this detail is adjusting the zoom scale and viewport upon
         // rotation, when a select element is focused. See <https://webkit.org/b/192878> for more information.
         [self _zoomToRevealFocusedElement];
+
         [self _updateAccessory];
     }
 
@@ -3770,8 +3757,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryTab:(BOOL)isNext
 {
+    // The input peripheral may need to update the focused DOM node before we switch focus. The UI process does
+    // not maintain a handle to the actual focused DOM node – only the web process has such a handle. So, we need
+    // to end the editing session now before we tell the web process to switch focus. Once the web process tells
+    // us the newly focused element we are no longer are in a position to effect the previously focused element.
+    // See <https://bugs.webkit.org/show_bug.cgi?id=134409>.
     [self _endEditing];
-    _inputPeripheral = nil;
+    _inputPeripheral = nil; // Nullify so that we don't tell the input peripheral to end editing again in -_elementDidBlur.
 
     _isChangingFocusUsingAccessoryTab = YES;
     [self beginSelectionChange];
@@ -4878,6 +4870,20 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
     return selectionBoundingRect;
 }
 
+static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebKit::InputType type, WKContentView *view)
+{
+    switch (type) {
+    case WebKit::InputType::Select:
+        return adoptNS([[WKFormSelectControl alloc] initWithView:view]);
+#if ENABLE(INPUT_TYPE_COLOR)
+    case WebKit::InputType::Color:
+        return adoptNS([[WKFormColorControl alloc] initWithView:view]);
+#endif
+    default:
+        return adoptNS([[WKFormInputControl alloc] initWithView:view]);
+    }
+}
+
 - (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
@@ -4978,11 +4984,12 @@ static WebCore::FloatRect rectToRevealWhenZoomingToFocusedElement(const WebKit::
 
     BOOL editableChanged = [self setIsEditable:YES];
     _focusedElementInformation = information;
-    _inputPeripheral = nil;
     _traits = nil;
 
     if (![self isFirstResponder])
         [self becomeFirstResponder];
+
+    _inputPeripheral = createInputPeripheralWithView(_focusedElementInformation.elementType, self);
 
 #if PLATFORM(WATCHOS)
     [self addFocusedFormControlOverlay];

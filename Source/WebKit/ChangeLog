@@ -1,3 +1,30 @@
+2019-03-28  Daniel Bates  <dabates@apple.com>
+
+        [iPad] Tapping on a popup form control may not show a popover
+        https://bugs.webkit.org/show_bug.cgi?id=196322
+        <rdar://problem/49229632>
+
+        Reviewed by Wenson Hsieh.
+
+        Stop taking advantage of -[WKContentView inputView] being called when we invoke -reloadInputViews
+        to "lazily" allocate the input peripheral for the currently focused element. In theory, UIKit only
+        needs to call -inputView when it actually needs to display the input view (the keyboard). For
+        popup menu buttons, like <select>, no keyboard is needed. Instead we should create the peripheral
+        as part of the logic in the UI process to focus a new element before we call -reloadInputViews.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView inputView]): Extract logic to allocate the peripheral from here and moved it to createInputPeripheralWithView().
+        (-[WKContentView accessoryTab:]): While I am here, add a FIXME comment to explain why we need to
+        end the input sessions and nullify the input peripheral before we tell the web process to switch
+        focus as opposed to letting this happen after the web process tells us it focused a new element.
+        (createInputPeripheralWithView): Added.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        Write in terms of createInputPeripheralWithView(). Create the input peripheral after becoming
+        first responder because creating the peripheral has known side-effects: for popup buttons it
+        tells the popup controller to present the popover. For key input to popovers to work from the get-go,
+        the content view must be the first responder. See <https://bugs.webkit.org/show_bug.cgi?id=196272>
+        for more details.
+
 2019-03-28  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         Silence lot of warnings when compiling with clang
