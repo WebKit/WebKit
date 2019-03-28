@@ -1,3 +1,12 @@
+2019-03-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (r242911?): High Sierra Release WK2 Perf bot timing out while running IndexedDB/large-number-of-inserts.html
+        https://bugs.webkit.org/show_bug.cgi?id=195952
+
+        Unreviewed test gardening.
+
+        * Skipped: Skip the affected test so the bot will finish the run.
+
 2019-03-27  Saam Barati  <sbarati@apple.com>
 
         JetStream 2 should not report time values as scores

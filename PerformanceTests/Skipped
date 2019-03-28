@@ -125,3 +125,6 @@ MediaTime/
 
 # Bug 167616 - Performance test IndexedDB/large-binary-keys.html creates a DB of more than 6GB and takes more than 10 minutes to run.
 [GTK] IndexedDB/large-binary-keys.html
+
+# REGRESSION (r242911?): High Sierra Release WK2 Perf bot timing out while running IndexedDB/large-number-of-inserts.html
+IndexedDB/large-number-of-inserts.html
