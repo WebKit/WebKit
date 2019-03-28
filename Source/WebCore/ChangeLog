@@ -1,3 +1,19 @@
+2019-03-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Incorrect application of glyph positioning in the Y direction
+        https://bugs.webkit.org/show_bug.cgi?id=161493
+
+        Reviewed by Michael Catanzaro.
+
+        Use the first glyph origin as the initial advance of every complex text run.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs): Update the yOffset using the height advance.
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::drawGlyphs): Ditto.
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Set the initial advance.
+
 2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown

@@ -168,6 +168,9 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
         float advanceX = harfBuzzPositionToFloat(glyphPositions[i].x_advance);
         float advanceY = harfBuzzPositionToFloat(glyphPositions[i].y_advance);
 
+        if (!i)
+            m_initialAdvance = { offsetX, -offsetY };
+
         m_glyphs[i] = glyph;
         m_baseAdvances[i] = { advanceX, advanceY };
         m_glyphOrigins[i] = { offsetX, offsetY };

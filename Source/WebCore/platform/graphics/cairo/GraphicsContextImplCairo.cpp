@@ -248,6 +248,7 @@ void GraphicsContextImplCairo::drawGlyphs(const Font& font, const GlyphBuffer& g
         for (size_t i = 0; i < numGlyphs; ++i) {
             glyphs[i] = { glyphsData[i], xOffset, yOffset };
             xOffset += advances[i].width();
+            yOffset -= advances[i].height();
         }
     }
 
