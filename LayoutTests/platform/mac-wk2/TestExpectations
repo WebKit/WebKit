@@ -7,6 +7,7 @@
 
 editing/find [ Pass ]
 editing/undo-manager [ Pass ]
+fast/forms/select/mac-wk2 [ Pass ]
 fast/visual-viewport/tiled-drawing [ Pass ]
 fast/web-share [ Pass ]
 scrollingcoordinator [ Pass ]

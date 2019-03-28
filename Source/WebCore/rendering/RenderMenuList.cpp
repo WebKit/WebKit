@@ -612,6 +612,7 @@ int RenderMenuList::selectedIndex() const
 void RenderMenuList::popupDidHide()
 {
 #if !PLATFORM(IOS_FAMILY)
+    // PopupMenuMac::show in WebKitLegacy can call this callback even when popup had already been dismissed.
     m_popupIsVisible = false;
 #endif
 }

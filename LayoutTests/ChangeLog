@@ -1,3 +1,21 @@
+2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown
+        https://bugs.webkit.org/show_bug.cgi?id=196336
+
+        Reviewed by Tim Horton.
+
+        Added regression tests for dismissing the select element's popup menu by bluring the element then re-opening the popup.
+        Unfortunately these tests are only enabled in WebKit2 since intenals.isSelectPopupVisible would always return false in WebKit1.
+
+        * TestExpectations:
+        * fast/forms/select/mac-wk2: Added.
+        * fast/forms/select/mac-wk2/blur-dismisses-select-popup-expected.html: Added.
+        * fast/forms/select/mac-wk2/blur-dismisses-select-popup.html: Added.
+        * fast/forms/select/mac-wk2/open-select-popup-after-dismissing-by-blur-expected.txt: Added.
+        * fast/forms/select/mac-wk2/open-select-popup-after-dismissing-by-blur.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2019-03-27  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Unreviewed test gardening

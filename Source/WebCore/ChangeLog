@@ -1,3 +1,13 @@
+2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown
+        https://bugs.webkit.org/show_bug.cgi?id=196336
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::popupDidHide): Added a comment.
+
 2019-03-27  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Standardize Web GPU object reference counting and creation logic

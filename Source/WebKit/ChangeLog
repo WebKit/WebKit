@@ -1,3 +1,25 @@
+2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown
+        https://bugs.webkit.org/show_bug.cgi?id=196336
+
+        Reviewed by Tim Horton.
+
+        The bug was caused by WebPopupMenu::hide never notifying PopupClient that the popup had been dismissed.
+        This resulted in RenderMenuList::m_popupIsVisible to be never reset.
+
+        Also fixed a bug in WebPopupMenuProxyMac::hidePopupMenu that this function was never dismissing
+        the popup as the selector "dismissPopUp", on the contrary to its name, does not dimiss the popup.
+        Send cancelTracking to NSMenu instead, which DOES dismiss the popup.
+
+        Tests: fast/forms/select/mac-wk2/blur-dismisses-select-popup.html
+               fast/forms/select/mac-wk2/open-select-popup-after-dismissing-by-blur.html
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::hidePopupMenu):
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::hide):
+
 2019-03-27  Dean Jackson  <dino@apple.com>
 
         [ARKit] Black view when opening a 3D model usdz file in new tab

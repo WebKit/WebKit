@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p tabindex="1">This tests re-opening the select element popup after closing it by bluring the focus.
+WebKit should re-open the popup intead of hitting a debug assert.<br>
+To manually test, after the popup which opened as this test is dismissed (click elsewhere to dismiss it if not).
+Clicking on the select element should then open the popup menu.</p>
+<select>
+  <option>Click here</option>
+  <option>You should see this</option>
+</select>
+<pre id="result"></pre>
+<script>
+
+const select = document.querySelector('select');
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+} else {
+    let count = 0;
+    select.addEventListener('mousedown', () => {
+        if (count++)
+            return;
+        setTimeout(() => document.querySelector('p').focus(), 0);
+    });
+}
+
+function log(text) {
+    document.getElementById('result').textContent += text + '\n';
+}
+
+function clickOnSelectElement() {
+    const event = document.createEvent("MouseEvent");
+    event.initMouseEvent("mousedown", true, true, document.defaultView, 1, select.offsetLeft + 5, select.offsetTop + 5, select.offsetLeft + 5, select.offsetTop + 5, false, false, false, false, 0, document);
+    select.dispatchEvent(event);
+}
+
+function roundTripToUIProcess() {
+    return new Promise((resolve) => {
+        testRunner.runUIScript(`uiController.uiScriptComplete()`, resolve);
+    });
+}
+
+window.onload = async () => {
+    clickOnSelectElement();
+
+    if (!window.testRunner)
+        return;
+
+    await roundTripToUIProcess();
+    document.querySelector('p').focus();
+    log(internals.isSelectPopupVisible(select) ? 'FAIL - popup was open after moving the focus' : 'PASS - popup closed by blur');
+
+    clickOnSelectElement();
+    log(internals.isSelectPopupVisible(select) ? 'PASS - popup opened after closed by blur' : 'FAIL - popup failed to open for the second time');
+
+    await roundTripToUIProcess();
+    document.querySelector('p').focus();
+
+    testRunner.notifyDone();
+}
+
+</script>
+</body>
+</html>

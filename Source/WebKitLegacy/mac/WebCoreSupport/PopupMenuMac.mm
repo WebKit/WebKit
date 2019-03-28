@@ -234,9 +234,11 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
 
 void PopupMenuMac::hide()
 {
-    [m_popup dismissPopUp];
+    [[m_popup menu] cancelTracking];
+    if (m_client)
+        m_client->popupDidHide();
 }
-    
+
 void PopupMenuMac::updateFromElement()
 {
 }

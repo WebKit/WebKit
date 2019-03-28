@@ -203,7 +203,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void WebPopupMenuProxyMac::hidePopupMenu()
 {
-    [m_popup dismissPopUp];
+    [[m_popup menu] cancelTracking];
 }
 
 void WebPopupMenuProxyMac::cancelTracking()

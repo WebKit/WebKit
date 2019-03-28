@@ -1,3 +1,17 @@
+2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown
+        https://bugs.webkit.org/show_bug.cgi?id=196336
+
+        Reviewed by Tim Horton.
+
+        Fixed the bug that we were not actually dismissing the popup in PopupMenuMac::hide as done in WebKit2.
+
+        Unfortunately no new tests since intenals.isSelectPopupVisible would always return false in WebKit1.
+
+        * WebCoreSupport/PopupMenuMac.mm:
+        (PopupMenuMac::hide):
+
 2019-03-25  Andy Estes  <aestes@apple.com>
 
         [iOS] Break a reference cycle between PreviewLoader and ResourceLoader
