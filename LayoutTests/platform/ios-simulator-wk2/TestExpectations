@@ -74,3 +74,5 @@ webkit.org/b/196307 http/tests/resourceLoadStatistics/website-data-removal-for-s
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b196357 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
