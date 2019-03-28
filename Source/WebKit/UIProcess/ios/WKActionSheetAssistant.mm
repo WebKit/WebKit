@@ -406,7 +406,9 @@ static const CGFloat presentationElementRectPadding = 15;
             return;
 
         if (!alternateURL && userInfo) {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             [UIApp _cancelAllTouches];
+ALLOW_DEPRECATED_DECLARATIONS_END
             return;
         }
 

@@ -1,3 +1,12 @@
+2019-03-28  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView actionSheetAssistant:showCustomSheetForElement:]):
+
 2019-03-28  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] webkit_web_resource_get_data_finish can return NULL without setting error

@@ -5849,9 +5849,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 #else
             BOOL shouldCancelAllTouches = YES;
 #endif
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             // Prevent tap-and-hold and panning.
             if (shouldCancelAllTouches)
                 [UIApp _cancelAllTouches];
+ALLOW_DEPRECATED_DECLARATIONS_END
 
             return YES;
         }
