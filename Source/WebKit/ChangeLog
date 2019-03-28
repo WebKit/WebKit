@@ -1,3 +1,14 @@
+2019-03-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        API::Data::createWithoutCopying should do a null check before calling CFRelease
+        https://bugs.webkit.org/show_bug.cgi?id=196276
+        <rdar://problem/48059859>
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Cocoa/APIDataCocoa.mm:
+        (API::Data::createWithoutCopying):
+
 2019-03-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Automatic focus of input field is flaky

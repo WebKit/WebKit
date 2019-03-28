@@ -54,13 +54,17 @@ crypto.subtle.importKey("jwk", privateKeyJSON, { name: 'RSASSA-PKCS1-v1_5', hash
 
     function storeKey() {
         var objectStore = db.transaction("rsa-indexeddb", "readwrite").objectStore("rsa-indexeddb");
-        var req = objectStore.put(key, "mykey");
-        req.onerror = function(event) {
-            alert('failed to store key');
-        }
-        req.onsuccess = function(event) {
-            alert('successfully stored key');
-            readKey();
+        try {
+            var req = objectStore.put(key, "mykey");
+            req.onerror = function(event) {
+                alert('failed to store key');
+            }
+            req.onsuccess = function(event) {
+                alert('successfully stored key');
+                readKey();
+            }
+        } catch (e) {
+            alert(e.name);
         }
     }
 
