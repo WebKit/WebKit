@@ -69,7 +69,7 @@ public:
     virtual void invalidate() { }
     WEBCORE_EXPORT virtual void commitTreeState(std::unique_ptr<ScrollingStateTree>);
     
-    WEBCORE_EXPORT void applyLayerPositions();
+    WEBCORE_EXPORT virtual void applyLayerPositions();
 
     virtual Ref<ScrollingTreeNode> createScrollingTreeNode(ScrollingNodeType, ScrollingNodeID) = 0;
     
@@ -153,7 +153,7 @@ public:
     HashSet<ScrollingNodeID>& positionedNodesWithRelatedOverflow() { return m_positionedNodesWithRelatedOverflow; }
 
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal);
-    
+
 protected:
     void setMainFrameScrollPosition(FloatPoint);
 

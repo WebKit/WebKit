@@ -122,6 +122,8 @@ void ScrollingCoordinatorMac::commitTreeState()
     RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
     ScrollingStateTree* unprotectedTreeState = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation).release();
 
+    threadedScrollingTree->incrementPendingCommitCount();
+
     ScrollingThread::dispatch([threadedScrollingTree, unprotectedTreeState] {
         std::unique_ptr<ScrollingStateTree> treeState(unprotectedTreeState);
         threadedScrollingTree->commitTreeState(WTFMove(treeState));

@@ -29,6 +29,7 @@
 
 #include "ScrollingStateTree.h"
 #include "ScrollingTree.h"
+#include <wtf/Condition.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -54,6 +55,9 @@ public:
 
     void invalidate() override;
 
+    void incrementPendingCommitCount();
+    void decrementPendingCommitCount();
+
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
 
@@ -74,8 +78,15 @@ protected:
 
 private:
     bool isThreadedScrollingTree() const override { return true; }
+    void applyLayerPositions() override;
 
     RefPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
+
+    void waitForPendingCommits();
+
+    Lock m_pendingCommitCountMutex;
+    unsigned m_pendingCommitCount { 0 };
+    Condition m_commitCondition;
 };
 
 } // namespace WebCore

@@ -1,3 +1,43 @@
+2019-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS WK2] Overlays on instagram.com are shifted if you click on a photo after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=196330
+        rdar://problem/49100304
+
+        Reviewed by Antti Koivisto.
+
+        When we call ScrollingTree::applyLayerPositions() on the main thread after a flush,
+        we need to ensure that the most recent version of the scrolling tree has been committed,
+        because it has to have state (like requested scroll position and layout viewport rect)
+        that match the layer flush.
+
+        To fix this we have to have the main thread wait for the commit to complete, so
+        ThreadedScrollingTree keeps track of a pending commit count, and uses a condition
+        variable to allow the main thread to safely wait for it to reach zero.
+
+        Tracing shows that this works as expected, and the main thread is never blocked for
+        more than a few tens of microseconds.
+
+        Also lock the tree mutex in ScrollingTree::handleWheelEvent(), since we enter the
+        scrolling tree here and we don't want that racing with applyLayerPositions() on the
+        main thread.
+
+        Test: scrollingcoordinator/mac/fixed-scrolled-body.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEvent):
+        (WebCore::ScrollingTree::applyLayerPositions):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::commitTreeState):
+        (WebCore::ThreadedScrollingTree::incrementPendingCommitCount):
+        (WebCore::ThreadedScrollingTree::decrementPendingCommitCount):
+        (WebCore::ThreadedScrollingTree::waitForPendingCommits):
+        (WebCore::ThreadedScrollingTree::applyLayerPositions):
+        * page/scrolling/ThreadedScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState):
+
 2019-03-28  Zalan Bujtas  <zalan@apple.com>
 
         [SimpleLineLayout] Disable SLL when text-underline-position is not auto.

@@ -1,3 +1,14 @@
+2019-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        [macOS WK2] Overlays on instagram.com are shifted if you click on a photo after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=196330
+        rdar://problem/49100304
+
+        Reviewed by Antti Koivisto.
+
+        * scrollingcoordinator/mac/fixed-scrolled-body-expected.html: Added.
+        * scrollingcoordinator/mac/fixed-scrolled-body.html: Added.
+
 2019-03-28  Zalan Bujtas  <zalan@apple.com>
 
         [SimpleLineLayout] Disable SLL when text-underline-position is not auto.
