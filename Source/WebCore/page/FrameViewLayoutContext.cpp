@@ -456,6 +456,14 @@ void FrameViewLayoutContext::layoutTimerFired()
         LOG(Layout, "FrameView %p layout timer fired at %.3fs", this, frame().document()->timeSinceDocumentCreation().value());
 #endif
     layout();
+
+#if ENABLE(RESIZE_OBSERVER)
+    // After this layout, it might not trigger display timer. E.g.: Running layout test for WK1.
+    // So scheduleResizeObservations() here to make sure ResizeObserver could be fired properly.
+    auto page = frame().page();
+    if (page && page->needsCheckResizeObservations())
+        page->scheduleResizeObservations();
+#endif
 }
 
 void FrameViewLayoutContext::convertSubtreeLayoutToFullLayout()
@@ -624,7 +632,7 @@ void FrameViewLayoutContext::popLayoutState()
 {
     m_layoutStateStack.removeLast();
 }
-    
+
 #ifndef NDEBUG
 void FrameViewLayoutContext::checkLayoutState()
 {

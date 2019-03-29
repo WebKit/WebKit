@@ -1,3 +1,21 @@
+2019-03-29  Cathie Chen  <cathiechen@igalia.com>
+
+        Implement ResizeObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=157743
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences resizeObserverEnabled]):
+        (-[WebPreferences setResizeObserverEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+        (-[WebView _flushCompositingChanges]): checkResizeObservations() in the begining.
+
 2019-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         [macOS] Select element doesn't show popup if select element had lost focus while popup was previosuly shown

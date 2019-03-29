@@ -1547,6 +1547,8 @@ page/ProcessWarming.cpp
 page/Quirks.cpp
 page/RemoteDOMWindow.cpp
 page/RemoteFrame.cpp
+page/ResizeObservation.cpp
+page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/RuntimeEnabledFeatures.cpp
@@ -3090,6 +3092,9 @@ JSReadableStreamSink.cpp
 JSReadableStreamSource.cpp
 JSRemoteDOMWindow.cpp
 JSRequestAnimationFrameCallback.cpp
+JSResizeObserver.cpp
+JSResizeObserverCallback.cpp
+JSResizeObserverEntry.cpp
 JSRsaHashedImportParams.cpp
 JSRsaHashedKeyGenParams.cpp
 JSRsaKeyGenParams.cpp

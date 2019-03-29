@@ -1,7 +1,11 @@
-CONSOLE MESSAGE: line 50: ReferenceError: Can't find variable: ResizeObserver
+CONSOLE MESSAGE: ResizeObserver loop completed with undelivered notifications.
 ResizeObserver notification event loop tests
 
 t1
 
-FAIL ResizeObserver implemented assert_own_property: expected property "ResizeObserver" missing
+Harness Error (TIMEOUT), message = null
+
+PASS ResizeObserver implemented 
+NOTRUN guard 
+FAIL test0: multiple notifications inside same event loop assert_equals: new loop expected 1 but got 0
 

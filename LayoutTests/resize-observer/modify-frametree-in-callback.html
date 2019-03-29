@@ -1,0 +1,26 @@
+<!doctype html><!-- webkit-test-runner [ experimental:ResizeObserverEnabled=true ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+
+<div>Test pass if no crash.</div>
+
+<iframe src="./resources/frameset1.html"></iframe>
+
+<script>
+
+function test0() {
+    let test = async_test('test0: Frametree changed in callback');
+    setInterval(function() {
+        let frameset = document.querySelector('iframe').contentDocument.querySelector('frameset');
+        if (frameset && frameset.childElementCount == 0) {
+            test.done();
+        }
+    }, 10);
+}
+
+test(_ => {
+    assert_own_property(window, "ResizeObserver");
+}, "ResizeObserver implemented");
+
+test0();
+</script>

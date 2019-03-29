@@ -329,6 +329,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitCSSOMViewScrollingAPIEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitResizeObserverEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2258,5 +2260,19 @@ HRESULT WebPreferences::serverTimingEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setServerTimingEnabled(BOOL enabled)
 {
     setBoolValue(WebKitServerTimingEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::resizeObserverEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitResizeObserverEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setResizeObserverEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitResizeObserverEnabledPreferenceKey, enabled);
     return S_OK;
 }

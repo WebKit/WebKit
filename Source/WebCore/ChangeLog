@@ -1,3 +1,124 @@
+2019-03-29  Cathie Chen  <cathiechen@igalia.com>
+
+        Implement ResizeObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=157743
+
+        Reviewed by Simon Fraser.
+
+        Tests: resize-observer/modify-frametree-in-callback.html
+               resize-observer/multi-frames.html
+               resize-observer/observe-element-from-other-frame.html
+               Imported from WPT by https://bugs.webkit.org/show_bug.cgi?id=193821
+
+        The data structure: Document has a ResizeObserver slot. ResizeObserver has a ResizeObservation slot.
+        ResizeObservation is related to one Element and the last reported size.
+        On the other hand, Element has a ResizeObservation slot.
+
+        At the beginning of willDisplayPage, it will check resize observations for current page if:
+        1. There is FrameView be layout and there are ResizeObservers in this page.
+        2. m_resizeObserverTimer has been started by observe() or hasSkippedResizeObservers().
+        During checkResizeObservations(), we'll gatherDocumentsNeedingResizeObservationCheck() first,
+        then notifyResizeObservers() for each document. During notifyResizeObservers(), it will gather
+        the m_activeObservations whose size changed and target element deeper than require depth.
+        The size changed shallower observations are skipped observations which will be delivered
+        in the next time. And an ErrorEvent will be reported.
+        After gathering, deliverResizeObservations create entries and invoke the callbacks with them.
+
+        The Element from other document could be observed.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getParserLocation const):
+        (WebCore::Document::addResizeObserver):
+        (WebCore::Document::removeResizeObserver):
+        (WebCore::Document::hasResizeObservers):
+        (WebCore::Document::gatherResizeObservations): Gather m_activeObservations at depth and return the shallowest depth.
+        (WebCore::Document::deliverResizeObservations): Deliver m_activeObservations, generate ResizeObserverEntries, and invoke the m_callbacks.
+        (WebCore::Document::hasSkippedResizeObservations const): To determine if Document has the size changed but not delivered observations.
+        (WebCore::Document::setHasSkippedResizeObservations):
+        (WebCore::Document::scheduleResizeObservations):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::disconnectFromResizeObservers):
+        (WebCore::Element::ensureResizeObserverData):
+        (WebCore::Element::resizeObserverData):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::resizeObserverData):
+        (WebCore::ElementRareData::setResizeObserverData):
+        (WebCore::ElementRareData::useTypes const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didLayout):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layoutTimerFired): We need to start a ResizeObserver timer here, because for WK1 this might not trigger flushCompositingChanges.
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::willDisplayPage):
+        (WebCore::Page::hasResizeObservers const):
+        (WebCore::Page::gatherDocumentsNeedingResizeObservationCheck): Gather the documents with resize observers.
+        (WebCore::Page::checkResizeObservations): Gather documents then notifyResizeObservers for each document.
+        (WebCore::Page::scheduleResizeObservations):
+        (WebCore::Page::notifyResizeObservers): Gather m_activeObservations and deliver them. Report ErrorEvent if it has skipped observations.
+        * page/Page.h:
+        (WebCore::Page::setNeedsCheckResizeObservations): Page needs to check ResizeObservations if FrameView layout or m_resizeObserverTimer has been started.
+        (WebCore::Page::needsCheckResizeObservations const):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        (WebCore::getParserLocationForConsoleMessage): Deleted.
+        * page/ResizeObservation.cpp: Added.
+        (WebCore::ResizeObservation::create):
+        (WebCore::ResizeObservation::ResizeObservation):
+        (WebCore::ResizeObservation::~ResizeObservation):
+        (WebCore::ResizeObservation::updateObservationSize):
+        (WebCore::ResizeObservation::computeObservedSize const):
+        (WebCore::ResizeObservation::computeTargetLocation const):
+        (WebCore::ResizeObservation::computeContentRect const):
+        (WebCore::ResizeObservation::elementSizeChanged const):
+        (WebCore::ResizeObservation::targetElementDepth const):
+        * page/ResizeObservation.h: Copied from Tools/DumpRenderTree/TestOptions.h.
+        (WebCore::ResizeObservation::target const):
+        * page/ResizeObserver.cpp: Added.
+        (WebCore::ResizeObserver::create):
+        (WebCore::ResizeObserver::ResizeObserver):
+        (WebCore::ResizeObserver::~ResizeObserver):
+        (WebCore::ResizeObserver::scheduleObservations):
+        (WebCore::ResizeObserver::observe):
+        (WebCore::ResizeObserver::unobserve):
+        (WebCore::ResizeObserver::disconnect):
+        (WebCore::ResizeObserver::targetDestroyed):
+        (WebCore::ResizeObserver::gatherObservations):
+        (WebCore::ResizeObserver::deliverObservations):
+        (WebCore::ResizeObserver::removeTarget):
+        (WebCore::ResizeObserver::removeAllTargets):
+        (WebCore::ResizeObserver::removeObservation):
+        (WebCore::ResizeObserver::hasPendingActivity const):
+        (WebCore::ResizeObserver::activeDOMObjectName const):
+        (WebCore::ResizeObserver::canSuspendForDocumentSuspension const):
+        (WebCore::ResizeObserver::stop):
+        * page/ResizeObserver.h: Added.
+        (WebCore::ResizeObserver::hasObservations const):
+        (WebCore::ResizeObserver::hasActiveObservations const):
+        (WebCore::ResizeObserver::maxElementDepth):
+        (WebCore::ResizeObserver::hasSkippedObservations const):
+        (WebCore::ResizeObserver::setHasSkippedObservations):
+        * page/ResizeObserver.idl: Copied from Tools/DumpRenderTree/TestOptions.h.
+        * page/ResizeObserverCallback.h: Copied from Tools/DumpRenderTree/TestOptions.h.
+        * page/ResizeObserverCallback.idl: Copied from Tools/DumpRenderTree/TestOptions.h.
+        * page/ResizeObserverEntry.h: Copied from Tools/DumpRenderTree/TestOptions.h.
+        (WebCore::ResizeObserverEntry::create):
+        (WebCore::ResizeObserverEntry::target const):
+        (WebCore::ResizeObserverEntry::contentRect const):
+        (WebCore::ResizeObserverEntry::ResizeObserverEntry):
+        * page/ResizeObserverEntry.idl: Copied from Tools/DumpRenderTree/TestOptions.h.
+        * page/Settings.yaml:
+
 2019-03-28  Chris Dumez  <cdumez@apple.com>
 
         Support <object>.contentWindow

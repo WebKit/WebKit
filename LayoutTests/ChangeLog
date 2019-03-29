@@ -1,3 +1,37 @@
+2019-03-29  Cathie Chen  <cathiechen@igalia.com>
+
+        Implement ResizeObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=157743
+
+        Reviewed by Simon Fraser.
+
+        Add tests for resize-observer of multiframe.
+
+        * resize-observer/modify-frametree-in-callback-expected.txt: Added.
+        * resize-observer/modify-frametree-in-callback.html: Added.
+        * resize-observer/multi-frames-expected.txt: Added.
+        * resize-observer/multi-frames.html: Added.
+        * resize-observer/observe-element-from-other-frame-expected.txt: Added.
+        * resize-observer/observe-element-from-other-frame.html: Added.
+        * resize-observer/resources/frame1.html: Added.
+        * resize-observer/resources/frame2.html: Added.
+        * resize-observer/resources/frame3.html: Added.
+        * resize-observer/resources/frame4.html: Added.
+        * resize-observer/resources/frameset1.html: Added.
+        * resize-observer/resources/frameset2.html: Added.
+        * resize-observer/resources/iframe1.html: Added.
+        * resize-observer/resources/resizeTestHelper.js: Added.
+        (ResizeTestHelper):
+        (ResizeTestHelper.prototype.get _currentStep):
+        (ResizeTestHelper.prototype._nextStep):
+        (ResizeTestHelper.prototype._handleNotification):
+        (ResizeTestHelper.prototype._handleTimeout):
+        (ResizeTestHelper.prototype._done):
+        (ResizeTestHelper.prototype.start):
+        (ResizeTestHelper.prototype.get rafCount):
+        (ResizeTestHelper.prototype._incrementRaf):
+        (ResizeTestHelper.prototype.startCountingRaf):
+
 2019-03-28  Chris Dumez  <cdumez@apple.com>
 
         Support <object>.contentWindow

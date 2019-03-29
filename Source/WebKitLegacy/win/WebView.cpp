@@ -5597,6 +5597,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled(!!enabled);
 
+    hr = prefsPrivate->resizeObserverEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings.setResizeObserverEnabled(!!enabled);
+
     return S_OK;
 }
 

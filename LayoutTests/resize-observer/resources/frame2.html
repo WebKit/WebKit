@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<body>
+    <h1>frame2</h1>
+</body>
+
+<script type="text/javascript">
+function test0() {
+    let ro = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            if (entry.target.parentNode) {
+                entry.target.parentNode.removeChild(entry.target);
+            }
+        }
+    });
+    let frame1 = parent.document.querySelector('#frame1');
+    let frame2 = parent.document.querySelector('#frame2');
+    ro.observe(frame1);
+    ro.observe(frame2);
+}
+
+window.addEventListener('message', function(event) {
+    switch(event.data) {
+        case 'readyToTest':
+            test0();
+        break;
+    }
+});
+</script>
+</html>

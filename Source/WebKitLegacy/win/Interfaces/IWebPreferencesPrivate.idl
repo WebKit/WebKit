@@ -238,4 +238,6 @@ interface IWebPreferencesPrivate7 : IWebPreferencesPrivate6
 {
     HRESULT crossOriginWindowPolicySupportEnabled([out, retval] BOOL* enabled);
     HRESULT setCrossOriginWindowPolicySupportEnabled([in] BOOL enabled);
+    HRESULT resizeObserverEnabled([out, retval] BOOL*);
+    HRESULT setResizeObserverEnabled([in] BOOL enabled);
 }

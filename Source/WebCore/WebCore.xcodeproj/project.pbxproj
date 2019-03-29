@@ -1881,6 +1881,13 @@
 		582DE3251C30C85400BE02A8 /* TextDecorationPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = 582DE3231C30C85400BE02A8 /* TextDecorationPainter.h */; };
 		585D6E041A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */; };
 		589556ED18D4A44000764B03 /* BorderEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 589556EC18D4A44000764B03 /* BorderEdge.h */; };
+		58B2F9F42232D45300938D63 /* ResizeObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2F9F32232D43F00938D63 /* ResizeObservation.h */; };
+		58B2F9F52232D45800938D63 /* ResizeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2F9EC2232D43B00938D63 /* ResizeObserver.h */; };
+		58B2F9F62232D45C00938D63 /* ResizeObserverCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2F9F02232D43E00938D63 /* ResizeObserverCallback.h */; };
+		58B2F9F72232D46100938D63 /* ResizeObserverEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2F9EE2232D43D00938D63 /* ResizeObserverEntry.h */; };
+		58B2FA042232D9BE00938D63 /* JSResizeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2FA012232D60A00938D63 /* JSResizeObserver.h */; };
+		58B2FA052232DC4F00938D63 /* JSResizeObserverEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2FA022232D60A00938D63 /* JSResizeObserverEntry.h */; };
+		58B2FA062232DC5500938D63 /* JSResizeObserverCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 58B2F9FF2232D60800938D63 /* JSResizeObserverCallback.h */; };
 		58CD35CB18EB4C3900B9F3AC /* FloatSizeHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */; };
 		590E1B4911E4EF4B0069F784 /* DeviceOrientationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 590E1B4811E4EF4B0069F784 /* DeviceOrientationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8872,6 +8879,21 @@
 		585D6E021A1A792E00FA4F12 /* SimpleLineLayoutFlowContents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutFlowContents.h; sourceTree = "<group>"; };
 		589556EC18D4A44000764B03 /* BorderEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderEdge.h; sourceTree = "<group>"; };
 		58AEE2F318D4BCCF0022E7FE /* BorderEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BorderEdge.cpp; sourceTree = "<group>"; };
+		58B2F9EA2232D43B00938D63 /* ResizeObserverEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResizeObserverEntry.idl; sourceTree = "<group>"; };
+		58B2F9EC2232D43B00938D63 /* ResizeObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResizeObserver.h; sourceTree = "<group>"; };
+		58B2F9ED2232D43C00938D63 /* ResizeObserverCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResizeObserverCallback.idl; sourceTree = "<group>"; };
+		58B2F9EE2232D43D00938D63 /* ResizeObserverEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResizeObserverEntry.h; sourceTree = "<group>"; };
+		58B2F9EF2232D43D00938D63 /* ResizeObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeObserver.cpp; sourceTree = "<group>"; };
+		58B2F9F02232D43E00938D63 /* ResizeObserverCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResizeObserverCallback.h; sourceTree = "<group>"; };
+		58B2F9F12232D43E00938D63 /* ResizeObserver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResizeObserver.idl; sourceTree = "<group>"; };
+		58B2F9F22232D43F00938D63 /* ResizeObservation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResizeObservation.cpp; sourceTree = "<group>"; };
+		58B2F9F32232D43F00938D63 /* ResizeObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResizeObservation.h; sourceTree = "<group>"; };
+		58B2F9FE2232D60700938D63 /* JSResizeObserverCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSResizeObserverCallback.cpp; sourceTree = "<group>"; };
+		58B2F9FF2232D60800938D63 /* JSResizeObserverCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSResizeObserverCallback.h; sourceTree = "<group>"; };
+		58B2FA002232D60900938D63 /* JSResizeObserverEntry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSResizeObserverEntry.cpp; sourceTree = "<group>"; };
+		58B2FA012232D60A00938D63 /* JSResizeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSResizeObserver.h; sourceTree = "<group>"; };
+		58B2FA022232D60A00938D63 /* JSResizeObserverEntry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSResizeObserverEntry.h; sourceTree = "<group>"; };
+		58B2FA032232D60B00938D63 /* JSResizeObserver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSResizeObserver.cpp; sourceTree = "<group>"; };
 		58CD35CA18EB4C3900B9F3AC /* FloatSizeHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatSizeHash.h; sourceTree = "<group>"; };
 		58DEED8519873FF000888FF3 /* RenderSelectionInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSelectionInfo.cpp; sourceTree = "<group>"; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
@@ -20544,6 +20566,15 @@
 				46BCBBC3208500A700710638 /* RemoteDOMWindow.idl */,
 				46B9518C207D632900A7D2DD /* RemoteFrame.cpp */,
 				46B95192207D632E00A7D2DD /* RemoteFrame.h */,
+				58B2F9F22232D43F00938D63 /* ResizeObservation.cpp */,
+				58B2F9F32232D43F00938D63 /* ResizeObservation.h */,
+				58B2F9EF2232D43D00938D63 /* ResizeObserver.cpp */,
+				58B2F9EC2232D43B00938D63 /* ResizeObserver.h */,
+				58B2F9F12232D43E00938D63 /* ResizeObserver.idl */,
+				58B2F9F02232D43E00938D63 /* ResizeObserverCallback.h */,
+				58B2F9ED2232D43C00938D63 /* ResizeObserverCallback.idl */,
+				58B2F9EE2232D43D00938D63 /* ResizeObserverEntry.h */,
+				58B2F9EA2232D43B00938D63 /* ResizeObserverEntry.idl */,
 				A5071E821C56D079009951BE /* ResourceUsageData.h */,
 				ADBAD6EC1BCDD95000381325 /* ResourceUsageOverlay.cpp */,
 				ADBAD6ED1BCDD95000381325 /* ResourceUsageOverlay.h */,
@@ -25259,6 +25290,12 @@
 				8A9A587711E84C98008ACFD1 /* JSPerformanceTiming.h */,
 				46C3765F2085176C00C73829 /* JSRemoteDOMWindow.cpp */,
 				46C376612085176D00C73829 /* JSRemoteDOMWindow.h */,
+				58B2FA032232D60B00938D63 /* JSResizeObserver.cpp */,
+				58B2FA012232D60A00938D63 /* JSResizeObserver.h */,
+				58B2F9FE2232D60700938D63 /* JSResizeObserverCallback.cpp */,
+				58B2F9FF2232D60800938D63 /* JSResizeObserverCallback.h */,
+				58B2FA002232D60900938D63 /* JSResizeObserverEntry.cpp */,
+				58B2FA022232D60A00938D63 /* JSResizeObserverEntry.h */,
 				BCEC01C00C274DDD009F4EC9 /* JSScreen.cpp */,
 				BCEC01C10C274DDD009F4EC9 /* JSScreen.h */,
 				83E9B3001DA5A51E00FFD8E5 /* JSScrollIntoViewOptions.cpp */,
@@ -30339,6 +30376,9 @@
 				46C376622085177D00C73829 /* JSRemoteDOMWindow.h in Headers */,
 				46BCBBC22085008F00710638 /* JSRemoteDOMWindowBase.h in Headers */,
 				4998AECE13F9D6C90090B1AA /* JSRequestAnimationFrameCallback.h in Headers */,
+				58B2FA042232D9BE00938D63 /* JSResizeObserver.h in Headers */,
+				58B2FA062232DC5500938D63 /* JSResizeObserverCallback.h in Headers */,
+				58B2FA052232DC4F00938D63 /* JSResizeObserverEntry.h in Headers */,
 				57E233711DCD468F00F28D01 /* JSRsaHashedImportParams.h in Headers */,
 				5768E4341DB7524500D0A4F7 /* JSRsaHashedKeyGenParams.h in Headers */,
 				57FEDD411DB6D73A00EB96F5 /* JSRsaKeyGenParams.h in Headers */,
@@ -31424,6 +31464,10 @@
 				93309E0A099E64920056E581 /* ReplaceSelectionCommand.h in Headers */,
 				4998AEC613F9D0EA0090B1AA /* RequestAnimationFrameCallback.h in Headers */,
 				F55B3DD01251F12D003EF269 /* ResetInputType.h in Headers */,
+				58B2F9F42232D45300938D63 /* ResizeObservation.h in Headers */,
+				58B2F9F52232D45800938D63 /* ResizeObserver.h in Headers */,
+				58B2F9F62232D45C00938D63 /* ResizeObserverCallback.h in Headers */,
+				58B2F9F72232D46100938D63 /* ResizeObserverEntry.h in Headers */,
 				7C2FA6121EA95A3C00A03108 /* ResourceCryptographicDigest.h in Headers */,
 				7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */,
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,

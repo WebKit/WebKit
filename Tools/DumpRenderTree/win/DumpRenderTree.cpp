@@ -787,6 +787,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
     // FIXME: SubtleCrypto
     prefsPrivate->setVisualViewportAPIEnabled(TRUE);
     prefsPrivate->setCSSOMViewScrollingAPIEnabled(TRUE);
+    prefsPrivate->setResizeObserverEnabled(TRUE);
     prefsPrivate->setWebAnimationsEnabled(TRUE);
     prefsPrivate->setServerTimingEnabled(TRUE);
     // FIXME: WebGL2

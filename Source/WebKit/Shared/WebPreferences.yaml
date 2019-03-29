@@ -1389,6 +1389,14 @@ IsITPFirstPartyWebsiteDataRemovalEnabled:
     webcoreBinding: RuntimeEnabledFeatures
     category: experimental
 
+ResizeObserverEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Resize Observer"
+  humanReadableDescription: "Enable Resize Observer support"
+  category: experimental
+  condition: ENABLE(RESIZE_OBSERVER)
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They

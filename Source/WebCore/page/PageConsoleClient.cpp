@@ -99,29 +99,6 @@ void PageConsoleClient::unmute()
     muteCount--;
 }
 
-static void getParserLocationForConsoleMessage(Document* document, String& url, unsigned& line, unsigned& column)
-{
-    if (!document)
-        return;
-
-    // We definitely cannot associate the message with a location being parsed if we are not even parsing.
-    if (!document->parsing())
-        return;
-
-    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-    if (!parser)
-        return;
-
-    // When the parser waits for scripts, any messages must be coming from some other source, and are not related to the location of the script element that made the parser wait.
-    if (!parser->shouldAssociateConsoleMessagesWithTextPosition())
-        return;
-
-    url = document->url().string();
-    TextPosition position = parser->textPosition();
-    line = position.m_line.oneBasedInt();
-    column = position.m_column.oneBasedInt();
-}
-
 void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
 {
     if (consoleMessage->source() != MessageSource::CSS && consoleMessage->type() != MessageType::Image && !m_page.usesEphemeralSession()) {
@@ -139,7 +116,8 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     String url;
     unsigned line = 0;
     unsigned column = 0;
-    getParserLocationForConsoleMessage(document, url, line, column);
+    if (document)
+        document->getParserLocation(url, line, column);
 
     addMessage(source, level, message, url, line, column, 0, JSExecState::currentState(), requestIdentifier);
 }

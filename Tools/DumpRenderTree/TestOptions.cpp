@@ -111,6 +111,8 @@ TestOptions::TestOptions(const std::string& pathOrURL, const std::string& absolu
             enableCSSLogical = parseBooleanTestHeaderValue(value);
         else if (key == "internal:AdClickAttributionEnabled")
             adClickAttributionEnabled = parseBooleanTestHeaderValue(value);
+        else if (key == "experimental:ResizeObserverEnabled")
+            enableResizeObserver = parseBooleanTestHeaderValue(value);
         pairStart = pairEnd + 1;
     }
 }

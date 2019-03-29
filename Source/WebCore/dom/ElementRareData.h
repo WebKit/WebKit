@@ -29,6 +29,7 @@
 #include "NodeRareData.h"
 #include "PseudoElement.h"
 #include "RenderElement.h"
+#include "ResizeObserver.h"
 #include "ShadowRoot.h"
 #include "StylePropertyMap.h"
 
@@ -131,6 +132,11 @@ public:
     void setIntersectionObserverData(std::unique_ptr<IntersectionObserverData>&& data) { m_intersectionObserverData = WTFMove(data); }
 #endif
 
+#if ENABLE(RESIZE_OBSERVER)
+    ResizeObserverData* resizeObserverData() { return m_resizeObserverData.get(); }
+    void setResizeObserverData(std::unique_ptr<ResizeObserverData>&& data) { m_resizeObserverData = WTFMove(data); }
+#endif
+
 #if ENABLE(CSS_TYPED_OM)
     StylePropertyMap* attributeStyleMap() { return m_attributeStyleMap.get(); }
     void setAttributeStyleMap(Ref<StylePropertyMap>&& map) { m_attributeStyleMap = WTFMove(map); }
@@ -165,6 +171,10 @@ public:
             result.add(UseType::AttributeMap);
         if (m_intersectionObserverData)
             result.add(UseType::InteractionObserver);
+#if ENABLE(RESIZE_OBSERVER)
+        if (m_resizeObserverData)
+            result.add(UseType::ResizeObserver);
+#endif
         if (m_beforePseudoElement || m_afterPseudoElement)
             result.add(UseType::PseudoElements);
         return result;
@@ -207,6 +217,10 @@ private:
     std::unique_ptr<NamedNodeMap> m_attributeMap;
 #if ENABLE(INTERSECTION_OBSERVER)
     std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+#endif
+
+#if ENABLE(RESIZE_OBSERVER)
+    std::unique_ptr<ResizeObserverData> m_resizeObserverData;
 #endif
 
     RefPtr<PseudoElement> m_beforePseudoElement;

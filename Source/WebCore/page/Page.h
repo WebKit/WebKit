@@ -471,6 +471,17 @@ public:
     void updateIntersectionObservations();
 #endif
 
+#if ENABLE(RESIZE_OBSERVER)
+    WEBCORE_EXPORT void checkResizeObservations();
+    bool hasResizeObservers() const;
+    void gatherDocumentsNeedingResizeObservationCheck(Vector<WeakPtr<Document>>&);
+    void scheduleResizeObservations();
+    void notifyResizeObservers(WeakPtr<Document>);
+    void setNeedsCheckResizeObservations(bool check) { m_needsCheckResizeObservations = check; }
+    bool needsCheckResizeObservations() const { return m_needsCheckResizeObservations; }
+
+#endif
+
     WEBCORE_EXPORT void suspendScriptedAnimations();
     WEBCORE_EXPORT void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
@@ -935,6 +946,11 @@ private:
 
 #if ENABLE(VIDEO)
     Timer m_playbackControlsManagerUpdateTimer;
+#endif
+
+#if ENABLE(RESIZE_OBSERVER)
+    Timer m_resizeObserverTimer;
+    bool m_needsCheckResizeObservations { false };
 #endif
 
     bool m_allowsMediaDocumentInlinePlayback { false };

@@ -3221,6 +3221,10 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setServerTimingEnabled([preferences serverTimingEnabled]);
 
     settings.setSelectionAcrossShadowBoundariesEnabled(preferences.selectionAcrossShadowBoundariesEnabled);
+
+#if ENABLE(RESIZE_OBSERVER)
+    settings.setResizeObserverEnabled([preferences resizeObserverEnabled]);
+#endif
 }
 
 static inline IMP getMethod(id o, SEL s)
@@ -9388,6 +9392,11 @@ bool LayerFlushController::flushLayers()
 
 - (BOOL)_flushCompositingChanges
 {
+#if ENABLE(RESIZE_OBSERVER)
+    if (_private->page)
+        _private->page->checkResizeObservations();
+#endif
+
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
         return frame->view()->flushCompositingStateIncludingSubframes();

@@ -63,6 +63,10 @@ struct ScrollIntoViewOptions;
 struct IntersectionObserverData;
 #endif
 
+#if ENABLE(RESIZE_OBSERVER)
+struct ResizeObserverData;
+#endif
+
 enum SpellcheckAttributeState {
     SpellcheckAttributeTrue,
     SpellcheckAttributeFalse,
@@ -587,6 +591,11 @@ public:
     IntersectionObserverData* intersectionObserverData();
 #endif
 
+#if ENABLE(RESIZE_OBSERVER)
+    ResizeObserverData& ensureResizeObserverData();
+    ResizeObserverData* resizeObserverData();
+#endif
+
     Element* findAnchorElementForLink(String& outAnchorName);
 
     ExceptionOr<Ref<WebAnimation>> animate(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeAnimationOptions>>&&);
@@ -680,6 +689,10 @@ private:
 
 #if ENABLE(INTERSECTION_OBSERVER)
     void disconnectFromIntersectionObservers();
+#endif
+
+#if ENABLE(RESIZE_OBSERVER)
+    void disconnectFromResizeObservers();
 #endif
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.

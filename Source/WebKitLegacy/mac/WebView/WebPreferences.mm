@@ -695,6 +695,9 @@ public:
         @NO, WebKitFetchAPIKeepAliveEnabledPreferenceKey,
         @NO, WebKitServerTimingEnabledPreferenceKey,
         @NO, WebKitReferrerPolicyAttributeEnabledPreferenceKey,
+#if ENABLE(RESIZE_OBSERVER)
+        @NO, WebKitResizeObserverEnabledPreferenceKey,
+#endif
         nil];
 
 #if !PLATFORM(IOS_FAMILY)
@@ -3463,6 +3466,15 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitReferrerPolicyAttributeEnabledPreferenceKey];
 }
 
+- (BOOL)resizeObserverEnabled
+{
+    return [self _boolValueForKey:WebKitResizeObserverEnabledPreferenceKey];
+}
+
+- (void)setResizeObserverEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitResizeObserverEnabledPreferenceKey];
+}
 @end
 
 @implementation WebPreferences (WebInternal)

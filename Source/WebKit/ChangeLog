@@ -1,3 +1,15 @@
+2019-03-29  Cathie Chen  <cathiechen@igalia.com>
+
+        Implement ResizeObserver.
+        https://bugs.webkit.org/show_bug.cgi?id=157743
+
+        Reviewed by Simon Fraser.
+
+        Add WebPreferences and FeatureDefines for ResizeObserver.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferences.yaml:
+
 2019-03-28  Timothy Hatcher  <timothy@apple.com>
 
         CFDictionary encoder crashes on non-string keys.
