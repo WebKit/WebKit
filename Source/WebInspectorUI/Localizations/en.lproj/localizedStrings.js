@@ -449,6 +449,7 @@ localizedStrings["Expand All"] = "Expand All";
 localizedStrings["Expand columns"] = "Expand columns";
 localizedStrings["Expanded"] = "Expanded";
 localizedStrings["Experimental"] = "Experimental";
+localizedStrings["Expires"] = "Expires";
 localizedStrings["Export"] = "Export";
 localizedStrings["Export (%s)"] = "Export (%s)";
 localizedStrings["Export HAR"] = "Export HAR";
