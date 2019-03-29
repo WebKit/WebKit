@@ -489,6 +489,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     Vector<std::unique_ptr<InstanceMethodSwizzler>> m_inputModeSwizzlers;
     RetainPtr<UIKeyboardInputMode> m_overriddenKeyboardInputMode;
+    Vector<std::unique_ptr<InstanceMethodSwizzler>> m_presentPopoverSwizzlers;
 #endif
 
     enum State {

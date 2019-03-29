@@ -1346,6 +1346,8 @@ static void updateTestOptionsFromTestHeader(TestOptions& testOptions, const std:
             testOptions.enableUndoManagerAPI = parseBooleanTestHeaderValue(value);
         else if (key == "shouldHandleRunOpenPanel")
             testOptions.shouldHandleRunOpenPanel = parseBooleanTestHeaderValue(value);
+        else if (key == "shouldPresentPopovers")
+            testOptions.shouldPresentPopovers = parseBooleanTestHeaderValue(value);
         else if (key == "contentInset.top")
             testOptions.contentInsetTop = std::stod(value);
         else if (key == "ignoreSynchronousMessagingTimeouts")

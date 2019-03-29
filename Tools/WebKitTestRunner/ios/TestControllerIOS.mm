@@ -100,9 +100,6 @@ void TestController::platformInitialize()
     // Override the implementation of +[UIKeyboard isInHardwareKeyboardMode] to ensure that test runs are deterministic
     // regardless of whether a hardware keyboard is attached. We intentionally never restore the original implementation.
     method_setImplementation(class_getClassMethod([UIKeyboard class], @selector(isInHardwareKeyboardMode)), reinterpret_cast<IMP>(overrideIsInHardwareKeyboardMode));
-
-    method_setImplementation(class_getInstanceMethod([UIViewController class], @selector(presentViewController:animated:completion:)), reinterpret_cast<IMP>(overridePresentViewControllerOrPopover));
-    method_setImplementation(class_getInstanceMethod([UIPopoverController class], @selector(presentPopoverFromRect:inView:permittedArrowDirections:animated:)), reinterpret_cast<IMP>(overridePresentViewControllerOrPopover));
 }
 
 void TestController::platformDestroy()
@@ -147,6 +144,12 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     m_inputModeSwizzlers.clear();
     m_overriddenKeyboardInputMode = nil;
+
+    m_presentPopoverSwizzlers.clear();
+    if (!options.shouldPresentPopovers) {
+        m_presentPopoverSwizzlers.append(std::make_unique<InstanceMethodSwizzler>([UIViewController class], @selector(presentViewController:animated:completion:), reinterpret_cast<IMP>(overridePresentViewControllerOrPopover)));
+        m_presentPopoverSwizzlers.append(std::make_unique<InstanceMethodSwizzler>([UIPopoverController class], @selector(presentPopoverFromRect:inView:permittedArrowDirections:animated:), reinterpret_cast<IMP>(overridePresentViewControllerOrPopover)));
+    }
     
     BOOL shouldRestoreFirstResponder = NO;
     if (PlatformWebView* platformWebView = mainWebView()) {
