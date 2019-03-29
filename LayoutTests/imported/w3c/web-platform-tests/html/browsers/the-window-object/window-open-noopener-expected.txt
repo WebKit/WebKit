@@ -1,17 +1,4 @@
-CONSOLE MESSAGE: line 1: TypeError: this.checkValues is not a function. (In 'this.checkValues(w2)', 'this.checkValues' is undefined)
-CONSOLE MESSAGE: line 1: TypeError: this.checkValues is not a function. (In 'this.checkValues(w2)', 'this.checkValues' is undefined)
-CONSOLE MESSAGE: line 1: TypeError: this.checkValues is not a function. (In 'this.checkValues(w2)', 'this.checkValues' is undefined)
+CONSOLE MESSAGE: line 117: testError: special target must be one of: _self, _parent, _top
 
-Harness Error (FAIL), message = Test named 'window.open() with 'noopener' should not reuse existing target' specified 1 'cleanup' function, and 1 failed.
-
-FAIL window.open() with 'noopener' should not reuse existing target Can't find variable: BroadcastChannel
-NOTRUN noopener needs to be present as a token on its own 
-NOTRUN noopener needs to be present as a token on its own again 
-NOTRUN noopener needs to be present as a token on its own yet again 
-NOTRUN Trailing noopener should work 
-NOTRUN Leading noopener should work 
-NOTRUN Interior noopener should work 
-NOTRUN noopener window.open targeting _self 
-NOTRUN noopener window.open targeting _parent 
-NOTRUN noopener window.open targeting _top 
+FAIL window.open() with "noopener" tests testError: special target must be one of: _self, _parent, _top
 

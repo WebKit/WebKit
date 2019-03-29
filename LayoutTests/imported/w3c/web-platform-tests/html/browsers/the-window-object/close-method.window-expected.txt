@@ -1,0 +1,4 @@
+
+FAIL window.close() queues a task to discard, but window.closed knows immediately assert_equals: expected true but got false
+FAIL window.close() affects name targeting immediately assert_equals: expected true but got false
+

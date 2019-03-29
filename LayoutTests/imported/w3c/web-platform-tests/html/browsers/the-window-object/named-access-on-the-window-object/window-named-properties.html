@@ -13,6 +13,7 @@
 <iframe name="baz"></iframe>
 <iframe name="baz"></iframe>
 <iframe name="constructor"></iframe>
+<iframe id="quux"></iframe>
 <script>
 function assert_data_propdesc(pd, Writable, Enumerable, Configurable) {
   assert_equals(typeof pd, "object");
@@ -25,6 +26,13 @@ test(function() {
   assert_equals(window["bar"],
                 document.getElementsByTagName("iframe")[0].contentWindow);
 }, "Static name");
+
+test(function() {
+  assert_true("quux" in window, "quux not in window");
+  assert_equals(window["quux"],
+                document.getElementsByTagName("iframe")[4]);
+}, "Static id");
+
 test(function() {
   assert_true("bar" in Window.prototype, "bar in Window.prototype");
   assert_false(Window.prototype.hasOwnProperty("bar"), "Window.prototype.hasOwnProperty(\"bar\")");
