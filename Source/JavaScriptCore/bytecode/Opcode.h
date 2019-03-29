@@ -147,20 +147,7 @@ typedef void* Opcode;
 typedef OpcodeID Opcode;
 #endif
 
-#define PADDING_STRING "                                "
-#define PADDING_STRING_LENGTH static_cast<unsigned>(strlen(PADDING_STRING))
-
 extern const char* const opcodeNames[];
-
-inline const char* padOpcodeName(OpcodeID op, unsigned width)
-{
-    unsigned pad = width - strlen(opcodeNames[op]);
-    pad = std::min(pad, PADDING_STRING_LENGTH);
-    return PADDING_STRING + PADDING_STRING_LENGTH - pad;
-}
-
-#undef PADDING_STRING_LENGTH
-#undef PADDING_STRING
 
 #if ENABLE(OPCODE_STATS)
 

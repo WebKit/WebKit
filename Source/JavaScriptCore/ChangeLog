@@ -1,3 +1,21 @@
+2019-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Opcode.h(159,27): warning: adding 'unsigned int' to a string does not append to the string [-Wstring-plus-int]
+        https://bugs.webkit.org/show_bug.cgi?id=196343
+
+        Reviewed by Saam Barati.
+
+        Clang reports a compilation warning and recommend '&PADDING_STRING[PADDING_STRING_LENGTH]'
+        instead of 'PADDING_STRING + PADDING_STRING_LENGTH'.
+
+        * bytecode/Opcode.cpp:
+        (JSC::padOpcodeName): Moved padOpcodeName from Opcode.h because
+        this function is used only in Opcode.cpp. Changed macros
+        PADDING_STRING and PADDING_STRING_LENGTH to simple variables.
+        (JSC::compareOpcodePairIndices): Replaced pair with std::pair.
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName): Moved.
+
 2019-03-28  Tadeu Zagallo  <tzagallo@apple.com>
 
         CodeBlock::jettison() should disallow repatching its own calls
