@@ -729,7 +729,6 @@ webkit.org/b/180932 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.htm [ Pass Failure ]
 webkit.org/b/179607 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async-same-origin.htm [ Pass Failure ]
-webkit.org/b/159724 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]
 
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp-doctype.xhtml [ Pass Failure ]
 Bug(WPE) fast/doctypes/xhtml-with-xhtmlmp12-doctype.xhtml [ Pass Failure ]

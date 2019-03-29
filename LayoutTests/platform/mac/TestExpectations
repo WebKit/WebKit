@@ -1114,7 +1114,6 @@ imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ 
 
 webkit.org/b/150806 imported/w3c/web-platform-tests/xhr/send-timeout-events.htm [ Pass Failure ]
 webkit.org/b/150823 imported/w3c/web-platform-tests/xhr/getresponseheader-chunked-trailer.htm [ Pass Failure ]
-webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
 webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ ImageOnlyFailure ]
 
@@ -1799,7 +1798,8 @@ webgl/2.0.0/conformance/glsl/bugs/conditional-discard-in-loop.html [ Skip ]
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Skip ]
 webkit.org/b/153588 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Skip ]
 
-webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Crash Failure ]
+# <rdar://problem/28233746>
+webkit.org/b/196274 [ Mojave ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]

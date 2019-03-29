@@ -3063,4 +3063,4 @@ imported/w3c/web-platform-tests/css/css-lists/list-with-image-display-changed-00
 
 [ Debug ] fast/css/first-letter-and-float-crash.html [ Skip ]
 
-webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Crash Failure ]
+webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Pass Failure ]

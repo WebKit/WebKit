@@ -2001,3 +2001,5 @@ webkit.org/b/188762 fast/writing-mode/english-rl-text-with-spelling-marker.html 
 
 # WK1 Inspector cannot leverage InspectorAdditions runtime enabled features
 inspector/canvas/recording-html-2d.html
+
+webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]

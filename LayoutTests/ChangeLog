@@ -1,3 +1,20 @@
+2019-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed test gardening for imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm
+        https://bugs.webkit.org/show_bug.cgi?id=159724
+        <rdar://problem/48116418>
+
+        * TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+        This test asserts on Cocoa WebKitLegacy platforms.  A patch I uploaded to https://bugs.webkit.org/show_bug.cgi?id=159724 shows why we do not intend to fix this.
+        This test crashes on iOS12 and Mojave because of rdar://problem/28233746
+        This test should not crash anywhere else, but it is flaky in WebKit and Gecko. This is being taken care of in https://github.com/w3c/web-platform-tests/issues/8191
+        Updated test expectations to reflect the sad state of things.
+
 2019-03-29  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Add Server Trust Evaluation Support.
