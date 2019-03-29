@@ -1,3 +1,26 @@
+2019-03-28  Antoine Quint  <graouts@apple.com>
+
+        All PointerEvent.isTrusted is always false.
+        https://bugs.webkit.org/show_bug.cgi?id=196075
+        <rdar://problem/49158778>
+
+        Reviewed by Chris Dumez.
+
+        Test: pointerevents/ios/pointer-events-is-trusted.html
+
+        The constructors we were using for some PointerEvent::create() methods were using initializers which are expected to be used with JS APIs
+        and thus generate untrusted events. We switch to using constructors using dedicated parameters which will set isTrusted to true.
+
+        * dom/PointerEvent.cpp:
+        (WebCore::PointerEvent::create):
+        (WebCore::PointerEvent::createPointerCancelEvent):
+        (WebCore::PointerEvent::PointerEvent):
+        (WebCore::m_isPrimary):
+        (WebCore::m_pointerType):
+        * dom/PointerEvent.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::cancelPointer):
+
 2019-03-29  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] imxvpudecoder detection and handling

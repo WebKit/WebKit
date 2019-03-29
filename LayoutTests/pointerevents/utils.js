@@ -67,7 +67,8 @@ class EventTracker
             type: event.type,
             x: event.clientX,
             y: event.clientY,
-            isPrimary: event.isPrimary
+            isPrimary: event.isPrimary,
+            isTrusted: event.isTrusted
         });
     }
 

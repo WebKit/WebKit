@@ -281,7 +281,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     if (!target)
         return;
 
-    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType);
+    auto event = PointerEvent::createPointerCancelEvent(pointerId, capturingData.pointerType);
     target->dispatchEvent(event);
     processPendingPointerCapture(WTFMove(event));
 }

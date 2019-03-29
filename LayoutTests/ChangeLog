@@ -1,3 +1,20 @@
+2019-03-28  Antoine Quint  <graouts@apple.com>
+
+        All PointerEvent.isTrusted is always false.
+        https://bugs.webkit.org/show_bug.cgi?id=196075
+        <rdar://problem/49158778>
+
+        Reviewed by Chris Dumez.
+
+        Add tests to the macOS and iOS series of tests that check that isTrusted is indeed true. This uncovered a couple of issues with how some tests were written.
+
+        * pointerevents/ios/pointer-events-is-primary.html: Ensure we end both touches so that further tests run cleanly.
+        * pointerevents/ios/pointer-events-is-trusted-expected.txt: Added.
+        * pointerevents/ios/pointer-events-is-trusted.html: Added.
+        * pointerevents/mouse/pointer-event-basic-properties.html: Ensure we wait for the event to be handled before finishing the test.
+        * pointerevents/utils.js:
+        (prototype._handlePointerEvent):
+
 2019-03-29  Cathie Chen  <cathiechen@igalia.com>
 
         Implement ResizeObserver.

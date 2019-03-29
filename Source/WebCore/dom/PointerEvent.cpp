@@ -71,6 +71,24 @@ static AtomicString pointerEventType(const AtomicString& mouseEventType)
     return nullAtom();
 }
 
+RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
+{
+    auto type = pointerEventType(mouseEvent.type());
+    if (type.isEmpty())
+        return nullptr;
+
+    auto isEnterOrLeave = type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent;
+    auto canBubble = isEnterOrLeave ? CanBubble::No : CanBubble::Yes;
+    auto isCancelable = isEnterOrLeave ? IsCancelable::No : IsCancelable::Yes;
+    auto isComposed = isEnterOrLeave ? IsComposed::No : IsComposed::Yes;
+    return adoptRef(*new PointerEvent(type, canBubble, isCancelable, isComposed, mouseEvent));
+}
+
+Ref<PointerEvent> PointerEvent::createPointerCancelEvent(PointerID pointerId, const String& pointerType)
+{
+    return adoptRef(*new PointerEvent(eventNames().pointercancelEvent, CanBubble::Yes, IsCancelable::No, IsComposed::Yes, pointerId, pointerType));
+}
+
 PointerEvent::PointerEvent() = default;
 
 PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
@@ -88,35 +106,17 @@ PointerEvent::PointerEvent(const AtomicString& type, Init&& initializer)
 {
 }
 
-RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
+PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, const MouseEvent& mouseEvent)
+    : MouseEvent(type, canBubble, isCancelable, isComposed, mouseEvent.view(), mouseEvent.detail(), mouseEvent.screenLocation(), { mouseEvent.clientX(), mouseEvent.clientY() }, mouseEvent.modifierKeys(), mouseEvent.button(), mouseEvent.buttons(), mouseEvent.syntheticClickType(), mouseEvent.relatedTarget())
+    , m_isPrimary(true)
 {
-    auto type = pointerEventType(mouseEvent.type());
-    if (type.isEmpty())
-        return nullptr;
+}
 
-    auto isEnterOrLeave = type == eventNames().pointerenterEvent || type == eventNames().pointerleaveEvent;
-
-    PointerEvent::Init init;
-    init.bubbles = !isEnterOrLeave;
-    init.cancelable = !isEnterOrLeave;
-    init.composed = !isEnterOrLeave;
-    init.view = mouseEvent.view();
-    init.ctrlKey = mouseEvent.ctrlKey();
-    init.shiftKey = mouseEvent.shiftKey();
-    init.altKey = mouseEvent.altKey();
-    init.metaKey = mouseEvent.metaKey();
-    init.modifierAltGraph = mouseEvent.altGraphKey();
-    init.modifierCapsLock = mouseEvent.capsLockKey();
-    init.screenX = mouseEvent.screenX();
-    init.screenY = mouseEvent.screenY();
-    init.clientX = mouseEvent.clientX();
-    init.clientY = mouseEvent.clientY();
-    init.button = mouseEvent.button();
-    init.buttons = mouseEvent.buttons();
-    init.relatedTarget = mouseEvent.relatedTarget();
-    init.isPrimary = true;
-
-    return PointerEvent::create(type, WTFMove(init));
+PointerEvent::PointerEvent(const AtomicString& type, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed, PointerID pointerId, const String& pointerType)
+    : MouseEvent(type, canBubble, isCancelable, isComposed, nullptr, 0, { }, { }, { }, 0, 0, 0, nullptr)
+    , m_pointerId(pointerId)
+    , m_pointerType(pointerType)
+{
 }
 
 PointerEvent::~PointerEvent() = default;

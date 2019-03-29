@@ -57,15 +57,6 @@ public:
         return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
     }
 
-    static Ref<PointerEvent> create(const AtomicString& type, PointerID pointerId, String pointerType)
-    {
-        Init initializer;
-        initializer.bubbles = true;
-        initializer.pointerId = pointerId;
-        initializer.pointerType = pointerType;
-        return adoptRef(*new PointerEvent(type, WTFMove(initializer)));
-    }
-
     static Ref<PointerEvent> createForPointerCapture(const AtomicString& type, const PointerEvent& pointerEvent)
     {
         Init initializer;
@@ -82,6 +73,7 @@ public:
     }
 
     static RefPtr<PointerEvent> create(const MouseEvent&);
+    static Ref<PointerEvent> createPointerCancelEvent(PointerID, const String& pointerType);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     static Ref<PointerEvent> create(const PlatformTouchEvent&, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
@@ -113,6 +105,8 @@ public:
 private:
     PointerEvent();
     PointerEvent(const AtomicString&, Init&&);
+    PointerEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, const MouseEvent&);
+    PointerEvent(const AtomicString& type, CanBubble, IsCancelable, IsComposed, PointerID, const String& pointerType);
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     PointerEvent(const AtomicString& type, const PlatformTouchEvent&, IsCancelable isCancelable, unsigned touchIndex, bool isPrimary, Ref<WindowProxy>&&);
 #endif

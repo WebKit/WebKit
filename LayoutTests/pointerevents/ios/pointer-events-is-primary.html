@@ -24,7 +24,8 @@ target_test((target, test) => {
         two.move({ x: 70, y: 70 }),
         one.move({ x: 30, y: 30 }),
         one.end(),
-        two.move({ x: 50, y: 50 })
+        two.move({ x: 50, y: 50 }),
+        two.end()
     ]).then(() => {
         eventTracker.assertMatchesEvents([
             { id: 1, type: "pointerdown", x: 10, y: 10, isPrimary: true },
