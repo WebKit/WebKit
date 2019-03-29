@@ -1,3 +1,19 @@
+2019-03-28  Timothy Hatcher  <timothy@apple.com>
+
+        CFDictionary encoder crashes on non-string keys.
+        https://bugs.webkit.org/show_bug.cgi?id=196388
+        rdar://problem/49339242
+
+        Reviewed by Ryosuke Niwa.
+
+        Allow non-string keys in CFDictionary encoding/decoding. Encode the correct
+        size for dictionaries and arrays when unknown keys or values are skipped.
+        Allow null array encoding and decoding like dictionary already allowed.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode):
+        (IPC::decode):
+
 2019-03-28  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: IPC to the WebsiteDataStore in the UI process from NetworkProcess::deleteWebsiteDataForRegistrableDomains()

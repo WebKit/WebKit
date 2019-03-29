@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include <wtf/HashSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/Vector.h>
 #include <wtf/cf/CFURLExtras.h>
@@ -326,22 +327,46 @@ bool decode(Decoder& decoder, RetainPtr<CFTypeRef>& result)
 
 void encode(Encoder& encoder, CFArrayRef array)
 {
+    if (!array) {
+        encoder << true;
+        return;
+    }
+
+    encoder << false;
+
     CFIndex size = CFArrayGetCount(array);
     Vector<CFTypeRef, 32> values(size);
 
     CFArrayGetValues(array, CFRangeMake(0, size), values.data());
 
-    encoder << static_cast<uint64_t>(size);
+    HashSet<CFIndex> invalidIndicies;
+    for (CFIndex i = 0; i < size; ++i) {
+        // Ignore values we don't support.
+        ASSERT(typeFromCFTypeRef(values[i]) != Unknown);
+        if (typeFromCFTypeRef(values[i]) == Unknown)
+            invalidIndicies.add(i);
+    }
+
+    encoder << static_cast<uint64_t>(size - invalidIndicies.size());
 
     for (CFIndex i = 0; i < size; ++i) {
-        ASSERT(values[i]);
-
+        if (invalidIndicies.contains(i))
+            continue;
         encode(encoder, values[i]);
     }
 }
 
 bool decode(Decoder& decoder, RetainPtr<CFArrayRef>& result)
 {
+    bool isNull = false;
+    if (!decoder.decode(isNull))
+        return false;
+
+    if (isNull) {
+        result = nullptr;
+        return true;
+    }
+
     uint64_t size;
     if (!decoder.decode(size))
         return false;
@@ -414,6 +439,7 @@ void encode(Encoder& encoder, CFDictionaryRef dictionary)
         encoder << true;
         return;
     }
+
     encoder << false;
 
     CFIndex size = CFDictionaryGetCount(dictionary);
@@ -422,18 +448,25 @@ void encode(Encoder& encoder, CFDictionaryRef dictionary)
     
     CFDictionaryGetKeysAndValues(dictionary, keys.data(), values.data());
 
-    encoder << static_cast<uint64_t>(size);
-
+    HashSet<CFTypeRef> invalidKeys;
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(keys[i]);
-        ASSERT(CFGetTypeID(keys[i]) == CFStringGetTypeID());
         ASSERT(values[i]);
 
-        // Ignore values we don't recognize.
-        if (typeFromCFTypeRef(values[i]) == Unknown)
+        // Ignore keys/values we don't support.
+        ASSERT(typeFromCFTypeRef(keys[i]) != Unknown);
+        ASSERT(typeFromCFTypeRef(values[i]) != Unknown);
+        if (typeFromCFTypeRef(keys[i]) == Unknown || typeFromCFTypeRef(values[i]) == Unknown)
+            invalidKeys.add(keys[i]);
+    }
+
+    encoder << static_cast<uint64_t>(size - invalidKeys.size());
+
+    for (CFIndex i = 0; i < size; ++i) {
+        if (invalidKeys.contains(keys[i]))
             continue;
 
-        encode(encoder, static_cast<CFStringRef>(keys[i]));
+        encode(encoder, keys[i]);
         encode(encoder, values[i]);
     }
 }
@@ -443,6 +476,7 @@ bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
     bool isNull = false;
     if (!decoder.decode(isNull))
         return false;
+
     if (isNull) {
         result = nullptr;
         return true;
@@ -454,8 +488,7 @@ bool decode(Decoder& decoder, RetainPtr<CFDictionaryRef>& result)
 
     RetainPtr<CFMutableDictionaryRef> dictionary = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     for (uint64_t i = 0; i < size; ++i) {
-        // Try to decode the key name.
-        RetainPtr<CFStringRef> key;
+        RetainPtr<CFTypeRef> key;
         if (!decode(decoder, key))
             return false;
 
