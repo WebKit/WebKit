@@ -175,7 +175,7 @@ public:
     std::unique_ptr<HashSet<String>> customPaintWatchedProperties;
 
 #if ENABLE(POINTER_EVENTS)
-    unsigned touchActions : 5; // TouchAction
+    unsigned touchActions : 6; // TouchAction
 #endif
 
     unsigned pageSizeType : 2; // PageSizeType
