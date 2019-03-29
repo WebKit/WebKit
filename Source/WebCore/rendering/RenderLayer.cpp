@@ -6648,8 +6648,17 @@ bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
             return true;
     }
 
-    for (auto* layer = this; layer; layer = enclosingFrameRenderLayer(*layer)) {
-        if (layer->selfClipRect().isEmpty())
+    RenderLayer* enclosingClipLayer = nullptr;
+    for (auto* layer = this; layer; layer = enclosingClipLayer ? enclosingClipLayer->parent() : enclosingFrameRenderLayer(*layer)) {
+        enclosingClipLayer = layer->enclosingOverflowClipLayer(IncludeSelfOrNot::IncludeSelf);
+        if (!enclosingClipLayer)
+            continue;
+
+        LayoutRect layerBounds;
+        ClipRect backgroundRect;
+        ClipRect foregroundRect;
+        layer->calculateRects({ enclosingClipLayer, TemporaryClipRects }, LayoutRect::infiniteRect(), layerBounds, backgroundRect, foregroundRect, layer->offsetFromAncestor(enclosingClipLayer));
+        if (backgroundRect.isEmpty())
             return true;
     }
 

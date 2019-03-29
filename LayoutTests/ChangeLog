@@ -1,3 +1,17 @@
+2019-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r243250): Text interactions are no longer suppressed when editing in some websites
+        https://bugs.webkit.org/show_bug.cgi?id=196378
+        <rdar://problem/49231299>
+
+        Reviewed by Simon Fraser.
+
+        Add a new layout test to exercise the scenario in which a transformed textarea is hidden inside an empty
+        overflow: hidden container.
+
+        * editing/selection/ios/hide-selection-in-textarea-with-transform-expected.txt: Added.
+        * editing/selection/ios/hide-selection-in-textarea-with-transform.html: Added.
+
 2019-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed test gardening for imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm

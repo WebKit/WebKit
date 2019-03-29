@@ -1,3 +1,35 @@
+2019-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r243250): Text interactions are no longer suppressed when editing in some websites
+        https://bugs.webkit.org/show_bug.cgi?id=196378
+        <rdar://problem/49231299>
+
+        Reviewed by Simon Fraser.
+
+        Enabling async overflow scrolling by default in r243250 exposed an issue with hidden editable area detection
+        heuristics. Currently, an empty value for RenderLayer::selfClipRect is used to determine whether the layer
+        enclosing the editable element or form control is completely clipped by a parent (in other words, the clip rect
+        is empty). With async overflow scrolling, the enclosing layer of the editable element (as seen in the websites
+        affected by this bug) will now be a clipping root for painting, since it is composited. This means selfClipRect
+        returns a non-empty rect despite the layer being entirely clipped, which negates the heuristic.
+
+        To address this, we adjust the clipping heuristic to instead walk up the layer tree (crossing frame boundaries)
+        and look for enclosing ancestors with overflow clip. For each layer we find with an overflow clip, compute the
+        clip rect of the previous layer relative to the ancestor with overflow clip. If the clipping rect is empty, we
+        know that the layer is hidden.
+
+        This isn't a perfect strategy, since it may still report false negatives (reporting a layer as visible when it
+        is not) in some cases. One such edge case is a series of overflow hidden containers, nested in such a way that
+        each container is only partially clipped relative to its ancestor, but the deepest layer is completely clipped
+        relative to the topmost layer. However, this heuristic is relatively cheap (entailing a layer tree walk at
+        worst) and works for common use cases on the web without risking scenarios in which text selection that
+        shouldn't be suppressed ends up becoming suppressed.
+
+        Test: editing/selection/ios/hide-selection-in-textarea-with-transform.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isTransparentOrFullyClippedRespectingParentFrames const):
+
 2019-03-29  Takashi Komori  <Takashi.Komori@sony.com>
 
         [Curl] Add Server Trust Evaluation Support.

@@ -1,0 +1,64 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+div.container {
+    position: relative;
+    height: 0;
+}
+
+textarea {
+    top: 100px;
+    position: absolute;
+    transform: translateZ(0);
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <textarea></textarea>
+</div>
+<button id="visible" onclick="focusTextarea('visible')">The caret should appear</button>
+<br>
+<button id="hidden" onclick="focusTextarea('hidden')">The caret should not appear</button>
+<p id="description">This test verifies that a textarea with a transform that is completely clipped by an overflow: hidden container can be treated as a hidden editable area. To run the test manually, tap the top button and verify that a caret is shown and the keyboard appears. Then, tap the bottom button and verify that the caret is hidden, but the keyboard is still shown.</p>
+<p id="console"></p>
+<script>
+jsTestIsAsync = true;
+textarea = document.querySelector("textarea");
+
+async function expectCaretVisibility(caretShouldBeVisible)
+{
+    let rect = null;
+    while (!rect || (!caretShouldBeVisible && rect.width && rect.height) || (caretShouldBeVisible && (!rect.width || !rect.height)))
+        rect = await UIHelper.getUICaretViewRect();
+    testPassed(`Caret is ${caretShouldBeVisible ? "visible" : "hidden"}.`);
+}
+
+function focusTextarea(overflow)
+{
+    document.querySelector("div.container").style.overflow = overflow;
+    textarea.focus();
+}
+
+async function tapButtonAndWaitForKeyboard(button, caretShouldBeVisible)
+{
+    debug(`Tapping button: ${button.id}`);
+    await UIHelper.activateElementAndWaitForInputSession(button);
+    shouldBe("document.activeElement", "textarea");
+    await expectCaretVisibility(caretShouldBeVisible);
+    document.activeElement.blur();
+    await UIHelper.waitForKeyboardToHide();
+}
+
+addEventListener("load", async () => {
+    await tapButtonAndWaitForKeyboard(document.getElementById("visible"), true);
+    await tapButtonAndWaitForKeyboard(document.getElementById("hidden"), false);
+    finishJSTest();
+});
+</script>
+</body>
+</html>
