@@ -47,7 +47,7 @@ class GPUBindGroupLayout : public RefCounted<GPUBindGroupLayout> {
 public:
     static RefPtr<GPUBindGroupLayout> tryCreate(const GPUDevice&, const GPUBindGroupLayoutDescriptor&);
 
-    using BindingsMapType = HashMap<unsigned long, GPUBindGroupLayoutBinding, WTF::IntHash<unsigned long>, WTF::UnsignedWithZeroKeyHashTraits<unsigned long>>;
+    using BindingsMapType = HashMap<uint64_t, GPUBindGroupLayoutBinding, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     const BindingsMapType& bindingsMap() const { return m_bindingsMap; }
 #if USE(METAL)
     MTLArgumentEncoder *vertexEncoder() const { return m_vertexEncoder.get(); }

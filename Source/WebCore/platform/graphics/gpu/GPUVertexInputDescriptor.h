@@ -36,7 +36,7 @@ enum class GPUInputStepMode {
 
 struct GPUVertexInputDescriptor {
     unsigned inputSlot;
-    unsigned long stride;
+    uint64_t stride;
     GPUInputStepMode stepMode;
 };
 

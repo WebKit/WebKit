@@ -93,7 +93,7 @@ void GPUCommandBuffer::endBlitEncoding()
     m_blitEncoder = nullptr;
 }
 
-void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, unsigned long srcOffset, Ref<GPUBuffer>&& dst, unsigned long dstOffset, unsigned long size)
+void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, uint64_t srcOffset, Ref<GPUBuffer>&& dst, uint64_t dstOffset, uint64_t size)
 {
     if (!src->isTransferSource() || !dst->isTransferDestination()) {
         LOG(WebGPU, "GPUCommandBuffer::copyBufferToBuffer(): Invalid operation!");
@@ -107,8 +107,8 @@ void GPUCommandBuffer::copyBufferToBuffer(Ref<GPUBuffer>&& src, unsigned long sr
     }
 #endif
 
-    auto srcLength = checkedSum<unsigned long>(size, srcOffset);
-    auto dstLength = checkedSum<unsigned long>(size, dstOffset);
+    auto srcLength = checkedSum<uint64_t>(size, srcOffset);
+    auto dstLength = checkedSum<uint64_t>(size, dstOffset);
     if (srcLength.hasOverflowed() || dstLength.hasOverflowed()
         || srcLength.unsafeGet() > src->byteLength() || dstLength.unsafeGet() > dst->byteLength()) {
         LOG(WebGPU, "GPUCommandBuffer::copyBufferToBuffer(): Invalid offset or copy size!");

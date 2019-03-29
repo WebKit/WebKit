@@ -52,7 +52,7 @@ public:
     static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
     void setPipeline(Ref<const GPURenderPipeline>&&);
-    void setVertexBuffers(unsigned, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
+    void setVertexBuffers(unsigned, Vector<Ref<GPUBuffer>>&&, Vector<uint64_t>&&);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
 
 private:

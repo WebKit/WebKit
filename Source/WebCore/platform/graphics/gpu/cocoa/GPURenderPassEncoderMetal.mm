@@ -204,7 +204,7 @@ void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
     m_pipeline = WTFMove(pipeline);
 }
 
-void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
+void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)
 {
     if (!m_platformRenderPassEncoder) {
         LOG(WebGPU, "GPURenderPassEncoder::setVertexBuffers(): Invalid operation: Encoding is ended!");

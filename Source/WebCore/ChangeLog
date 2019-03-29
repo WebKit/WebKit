@@ -1,3 +1,43 @@
+2019-03-29  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Replace unsigned longs in WebGPU with uint64_t
+        https://bugs.webkit.org/show_bug.cgi?id=196401
+
+        Reviewed by Myles C. Maxfield.
+
+        Unsigned long is not guaranteed to be 64 bits on all platforms. In addition, rowPitch is updated
+        to u32 in the API and the implementation to match.
+
+        No new tests. No new behavior.
+
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::setSubData):
+        * Modules/webgpu/WebGPUBuffer.h:
+        * Modules/webgpu/WebGPUBufferBinding.h:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp:
+        (WebCore::WebGPUCommandEncoder::copyBufferToBuffer):
+        * Modules/webgpu/WebGPUCommandEncoder.h:
+        * Modules/webgpu/WebGPUCommandEncoder.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::byteLength const):
+        * platform/graphics/gpu/GPUBufferBinding.h:
+        * platform/graphics/gpu/GPUBufferDescriptor.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h:
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::setSubData):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+
 2019-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r243250): Text interactions are no longer suppressed when editing in some websites

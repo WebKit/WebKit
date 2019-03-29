@@ -60,7 +60,7 @@ void WebGPURenderPassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
     m_passEncoder->setPipeline(makeRef(*pipeline.renderPipeline()));
 }
 
-void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
+void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)
 {
 #if !LOG_DISABLED
     const char* const functionName = "GPURenderPassEncoder::setVertexBuffers()";

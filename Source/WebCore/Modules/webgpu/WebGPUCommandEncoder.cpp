@@ -98,7 +98,7 @@ Ref<WebGPUComputePassEncoder> WebGPUCommandEncoder::beginComputePass()
     return WebGPUComputePassEncoder::create(WTFMove(encoder));
 }
 
-void WebGPUCommandEncoder::copyBufferToBuffer(WebGPUBuffer& src, unsigned long srcOffset, WebGPUBuffer& dst, unsigned long dstOffset, unsigned long size)
+void WebGPUCommandEncoder::copyBufferToBuffer(WebGPUBuffer& src, uint64_t srcOffset, WebGPUBuffer& dst, uint64_t dstOffset, uint64_t size)
 {
     if (!m_commandBuffer) {
         LOG(WebGPU, "WebGPUCommandEncoder::copyBufferToBuffer(): Invalid operation!");

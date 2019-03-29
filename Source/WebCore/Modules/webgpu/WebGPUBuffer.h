@@ -48,7 +48,7 @@ public:
     GPUBuffer* buffer() { return m_buffer.get(); }
     const GPUBuffer* buffer() const { return m_buffer.get(); }
 
-    void setSubData(unsigned long, const JSC::ArrayBuffer&);
+    void setSubData(uint64_t, const JSC::ArrayBuffer&);
     using BufferMappingPromise = DOMPromiseDeferred<IDLInterface<JSC::ArrayBuffer>>;
     void mapReadAsync(BufferMappingPromise&&);
     void mapWriteAsync(BufferMappingPromise&&);

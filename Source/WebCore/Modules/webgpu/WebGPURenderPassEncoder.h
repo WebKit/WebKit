@@ -43,7 +43,7 @@ public:
     static Ref<WebGPURenderPassEncoder> create(RefPtr<GPURenderPassEncoder>&&);
 
     void setPipeline(const WebGPURenderPipeline&);
-    void setVertexBuffers(unsigned, Vector<RefPtr<WebGPUBuffer>>&&, Vector<unsigned long long>&&);
+    void setVertexBuffers(unsigned, Vector<RefPtr<WebGPUBuffer>>&&, Vector<uint64_t>&&);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
 
 private:

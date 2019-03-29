@@ -48,8 +48,8 @@ using PlatformCommandBuffer = MTLCommandBuffer;
 using PlatformCommandBufferSmartPtr = RetainPtr<MTLCommandBuffer>;
 
 struct GPUBufferCopyViewBase {
-    unsigned long offset;
-    unsigned long rowPitch;
+    uint64_t offset;
+    unsigned rowPitch;
     unsigned imageHeight;
 };
 
@@ -94,7 +94,7 @@ public:
     void endBlitEncoding();
 #endif
 
-    void copyBufferToBuffer(Ref<GPUBuffer>&&, unsigned long srcOffset, Ref<GPUBuffer>&&, unsigned long dstOffset, unsigned long size);
+    void copyBufferToBuffer(Ref<GPUBuffer>&&, uint64_t srcOffset, Ref<GPUBuffer>&&, uint64_t dstOffset, uint64_t size);
     void copyBufferToTexture(GPUBufferCopyView&&, GPUTextureCopyView&&, const GPUExtent3D&);
     void copyTextureToBuffer(GPUTextureCopyView&&, GPUBufferCopyView&&, const GPUExtent3D&);
     void copyTextureToTexture(GPUTextureCopyView&&, GPUTextureCopyView&&, const GPUExtent3D&);

@@ -41,7 +41,7 @@ enum class GPUVertexFormat {
 struct GPUVertexAttributeDescriptor {
     unsigned shaderLocation;
     unsigned inputSlot;
-    unsigned long offset;
+    uint64_t offset;
     GPUVertexFormat format;
 };
 

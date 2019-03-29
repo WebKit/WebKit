@@ -91,7 +91,7 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
     return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor.size, usage, WTFMove(device)));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, unsigned long size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, uint64_t size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
     : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
     , m_byteLength(size)
@@ -119,7 +119,7 @@ GPUBuffer::State GPUBuffer::state() const
     return State::Unmapped;
 }
 
-void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
+void GPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
 {
     MTLCommandQueue *queue;
     if (!m_device->tryGetQueue() || !(queue = m_device->tryGetQueue()->platformQueue()))
@@ -137,7 +137,7 @@ void GPUBuffer::setSubData(unsigned long offset, const JSC::ArrayBuffer& data)
     }
 #endif
 
-    auto subDataLength = checkedSum<unsigned long>(data.byteLength(), offset);
+    auto subDataLength = checkedSum<uint64_t>(data.byteLength(), offset);
     if (subDataLength.hasOverflowed() || subDataLength.unsafeGet() > m_byteLength) {
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid offset or data size!");
         return;
