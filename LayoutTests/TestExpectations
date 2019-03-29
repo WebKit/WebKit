@@ -1904,14 +1904,7 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-017a.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-014.xht [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-loose-015.xht [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-001.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-003.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-005.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-span-001.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-spacing-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-min-rendered-width-1.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/tab-size/tab-size-inheritance-001.html [ ImageOnlyFailure ]
@@ -1969,6 +1962,22 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-008.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-009.html [ ImageOnlyFailure Pass ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-animations/animation-delay-010.html [ ImageOnlyFailure ]
+
+# overflow-wrap:anywhere feature is not implemented yet.
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-001.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-002.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-003.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-004.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-005.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-span-001.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-span-002.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-anywhere-fit-content-001.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-002.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-003.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-004.html [ Skip ]
+webkit.org/b/195345 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions.html [ Skip ]
+
 
 ########################################
 ### START OF display: contents failures
@@ -2959,7 +2968,6 @@ imported/w3c/web-platform-tests/css/css-display/run-in/run-in-fixedpos-between-0
 imported/w3c/web-platform-tests/css/css-pseudo/placeholder-input-number.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-below-right-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/quotes-applies-to-011.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-min-content-size-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-display/run-in/run-in-basic-012.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-006.html [ ImageOnlyFailure ]

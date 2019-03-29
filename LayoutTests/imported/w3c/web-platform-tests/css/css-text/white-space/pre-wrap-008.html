@@ -9,10 +9,9 @@
 <meta name="assert" content="The word is not broken despite the 'word-break: break-word' if there are previous breaking opportunities, honoring the white-space: pre-wrap value.">
 <style>
 div {
-  position: relative;
-  font-size: 20px;
-  font-family: Ahem;
-  line-height: 1em;
+   position: relative;
+   font-size: 20px;
+   font-family: Ahem;
 }
 .red {
   position: absolute;
@@ -25,6 +24,7 @@ div {
 }
 .test {
   color: green;
+  line-height: 1em;
   width: 5ch;
 
   white-space: pre-wrap;

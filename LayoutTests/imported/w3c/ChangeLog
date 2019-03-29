@@ -1,3 +1,41 @@
+2019-03-29  Javier Fernandez  <jfernandez@igalia.com>
+
+        Update the CSS Text WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=196397
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Updated several tests from the CSS Text test suite.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-text/META.yml:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-006.html:
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-007.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-004.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-005.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-006.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-007.html:
+        * web-platform-tests/css/css-text/white-space/break-spaces-008.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-008.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-015.html:
+        * web-platform-tests/css/css-text/white-space/pre-wrap-016.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-001.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-002-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-002.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-003-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-003.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004-expected.html:
+        * web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-004.html:
+        * web-platform-tests/css/css-text/word-break/w3c-import.log:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-010.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-011.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-012.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-013.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-015.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions-expected.html: Added.
+        * web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions.html: Added.
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         Set window.closed immediately when close() is invoked

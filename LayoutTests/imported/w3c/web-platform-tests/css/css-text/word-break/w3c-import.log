@@ -46,6 +46,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-020-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-020.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-word-overflow-wrap-interactions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-000-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/word-break/word-break-keep-all-001-expected.html
