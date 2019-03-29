@@ -321,6 +321,7 @@ interface TestRunner {
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
     void statisticsClearThroughWebsiteDataRemoval(object callback);
     void statisticsDeleteCookiesForHost(DOMString hostName, boolean includeHttpOnlyCookies);
+    boolean isStatisticsHasLocalStorage(DOMString hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState(object completionHandler);
 

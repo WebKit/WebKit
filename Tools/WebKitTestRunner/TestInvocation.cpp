@@ -1427,6 +1427,15 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "IsStatisticsHasLocalStorage")) {
+        ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());
+        
+        WKStringRef hostName = static_cast<WKStringRef>(messageBody);
+        bool hasLocalStorage = TestController::singleton().isStatisticsHasLocalStorage(hostName);
+        auto result = adoptWK(WKBooleanCreate(hasLocalStorage));
+        return result;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetStatisticsCacheMaxAgeCap")) {
         ASSERT(WKGetTypeID(messageBody) == WKDoubleGetTypeID());
         WKDoubleRef seconds = static_cast<WKDoubleRef>(messageBody);

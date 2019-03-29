@@ -61,6 +61,7 @@ class HTTPCookieStore;
 }
 
 namespace WebCore {
+class RegistrableDomain;
 class SecurityOrigin;
 }
 
@@ -125,6 +126,7 @@ public:
     void removeData(OptionSet<WebsiteDataType>, const Vector<WebsiteDataRecord>&, Function<void()>&& completionHandler);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
+    void fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&&);
     void clearPrevalentResource(const URL&, CompletionHandler<void()>&&);
     void clearUserInteraction(const URL&, CompletionHandler<void()>&&);
     void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&);
@@ -171,6 +173,7 @@ public:
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, CompletionHandler<void()>&&);
     void resetCrossSiteLoadsWithLinkDecorationForTesting(CompletionHandler<void()>&&);
     void deleteCookiesForTesting(const URL&, bool includeHttpOnlyCookies, CompletionHandler<void()>&&);
+    void hasLocalStorageForTesting(const URL&, CompletionHandler<void(bool)>&&) const;
 #endif
     void setCacheMaxAgeCapForPrevalentResources(Seconds, CompletionHandler<void()>&&);
     void resetCacheMaxAgeCapForPrevalentResources(CompletionHandler<void()>&&);

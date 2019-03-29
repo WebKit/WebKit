@@ -99,6 +99,8 @@ typedef void (*WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunctio
 WK_EXPORT void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunction callback);
 typedef void (*WKWebsiteDataStoreStatisticsDeleteCookiesForTestingFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool includeHttpOnlyCookies, void* context, WKWebsiteDataStoreStatisticsDeleteCookiesForTestingFunction callback);
+typedef void (*WKWebsiteDataStoreStatisticsHasLocalStorageFunction)(bool hasLocalStorage, void* functionContext);
+WK_EXPORT void WKWebsiteDataStoreStatisticsHasLocalStorage(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasLocalStorageFunction callback);
 typedef void (*WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction)(void* functionContext);
 WK_EXPORT void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction);
 typedef void (*WKWebsiteDataStoreStatisticsResetToConsistentStateFunction)(void* functionContext);

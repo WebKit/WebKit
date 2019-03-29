@@ -33,6 +33,7 @@
 #include "NetworkHTTPSUpgradeChecker.h"
 #include "SandboxExtension.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include "WebsiteData.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/DiagnosticLoggingClient.h>

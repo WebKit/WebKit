@@ -1,3 +1,25 @@
+2019-03-28  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: IPC to the WebsiteDataStore in the UI process from NetworkProcess::deleteWebsiteDataForRegistrableDomains()
+        https://bugs.webkit.org/show_bug.cgi?id=196281
+        <rdar://problem/48938748>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds the function isStatisticsHasLocalStorage() to the
+        TestRunner. With it, the page can query the WebsiteDataStore in the
+        UI process to make sure that it sees LocalStorage.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::isStatisticsHasLocalStorage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::isStatisticsHasLocalStorage):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2019-03-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         API::Data::createWithoutCopying should do a null check before calling CFRelease

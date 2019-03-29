@@ -623,37 +623,44 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
     callbackAggregator->callIfNeeded();
 }
 
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<WebCore::RegistrableDomain>& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    fetchDataAndApply(dataTypes, fetchOptions, m_queue.copyRef(), [domains = crossThreadCopy(domains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
+        ASSERT(!RunLoop::isMain());
+        
+        Vector<WebsiteDataRecord> matchingDataRecords;
+        HashSet<WebCore::RegistrableDomain> domainsWithMatchingDataRecords;
+        for (auto&& dataRecord : existingDataRecords) {
+            for (auto& domain : domains) {
+                if (dataRecord.matches(domain)) {
+                    matchingDataRecords.append(WTFMove(dataRecord));
+                    domainsWithMatchingDataRecords.add(domain.isolatedCopy());
+                    break;
+                }
+            }
+        }
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
+            completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
+        });
+    });
+}
+#endif
+
 static ProcessAccessType computeNetworkProcessAccessTypeForDataRemoval(OptionSet<WebsiteDataType> dataTypes, bool isNonPersistentStore)
 {
     ProcessAccessType processAccessType = ProcessAccessType::None;
 
-    if (dataTypes.contains(WebsiteDataType::Cookies)) {
-        if (isNonPersistentStore)
-            processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
-        else
-            processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+    for (auto dataType : dataTypes) {
+        if (dataType == WebsiteDataType::Cookies) {
+            if (isNonPersistentStore)
+                processAccessType = std::max(processAccessType, ProcessAccessType::OnlyIfLaunched);
+            else
+                processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
+        } else if (WebsiteData::ownerProcess(dataType) == WebsiteDataProcessType::Network)
+            return ProcessAccessType::Launch;
     }
-
-    if (dataTypes.contains(WebsiteDataType::DiskCache) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-    if (dataTypes.contains(WebsiteDataType::HSTSCache))
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-    if (dataTypes.contains(WebsiteDataType::Credentials))
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-    if (dataTypes.contains(WebsiteDataType::DOMCache))
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-
-    if (dataTypes.contains(WebsiteDataType::IndexedDBDatabases) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
     
-#if ENABLE(SERVICE_WORKER)
-    if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && !isNonPersistentStore)
-        processAccessType = std::max(processAccessType, ProcessAccessType::Launch);
-#endif
-
     return processAccessType;
 }
 
@@ -1794,6 +1801,25 @@ void WebsiteDataStore::deleteCookiesForTesting(const URL& url, bool includeHttpO
         if (auto* networkProcess = processPool->networkProcess())
             networkProcess->deleteCookiesForTesting(m_sessionID, WebCore::RegistrableDomain { url }, includeHttpOnlyCookies, [callbackAggregator = callbackAggregator.copyRef()] { });
     }
+}
+
+void WebsiteDataStore::hasLocalStorageForTesting(const URL& url, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    if (!m_storageManager) {
+        completionHandler(false);
+        return;
+    }
+
+    m_storageManager->getLocalStorageOrigins([url, completionHandler = WTFMove(completionHandler)](HashSet<WebCore::SecurityOriginData>&& origins) mutable {
+        for (auto& origin : origins) {
+            if (origin.host == url.host()) {
+                completionHandler(true);
+                return;
+            }
+        }
+
+        completionHandler(false);
+    });
 }
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 

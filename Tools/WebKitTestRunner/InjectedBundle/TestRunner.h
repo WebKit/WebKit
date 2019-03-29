@@ -431,6 +431,7 @@ public:
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsDeleteCookiesForHost(JSStringRef hostName, bool includeHttpOnlyCookies);
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
+    bool isStatisticsHasLocalStorage(JSStringRef hostName);
     void setStatisticsCacheMaxAgeCap(double seconds);
     void statisticsResetToConsistentState(JSValueRef completionHandler);
     void statisticsCallDidResetToConsistentStateCallback();

@@ -449,6 +449,17 @@ void WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(WKWebsiteDataStoreRef d
 #endif
 }
 
+void WKWebsiteDataStoreStatisticsHasLocalStorage(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreStatisticsHasLocalStorageFunction callback)
+{
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().hasLocalStorageForTesting(URL(URL(), WebKit::toImpl(host)->string()), [context, callback](bool hasLocalStorage) {
+        callback(hasLocalStorage, context);
+    });
+#else
+    callback(false, context);
+#endif
+}
+
 void WKWebsiteDataStoreSetStatisticsCacheMaxAgeCap(WKWebsiteDataStoreRef dataStoreRef, double seconds, void* context, WKWebsiteDataStoreSetStatisticsCacheMaxAgeCapFunction callback)
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)

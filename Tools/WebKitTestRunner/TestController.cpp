@@ -3420,6 +3420,15 @@ void TestController::statisticsDeleteCookiesForHost(WKStringRef host, bool inclu
     runUntil(context.done, noTimeout);
 }
 
+bool TestController::isStatisticsHasLocalStorage(WKStringRef host)
+{
+    auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
+    ResourceStatisticsCallbackContext context(*this);
+    WKWebsiteDataStoreStatisticsHasLocalStorage(dataStore, host, &context, resourceStatisticsBooleanResultCallback);
+    runUntil(context.done, noTimeout);
+    return context.result;
+}
+
 void TestController::setStatisticsCacheMaxAgeCap(double seconds)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());

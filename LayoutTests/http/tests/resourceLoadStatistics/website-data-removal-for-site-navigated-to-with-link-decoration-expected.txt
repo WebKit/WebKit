@@ -3,13 +3,13 @@ Check that non-cookie website data gets removed after a navigation with link dec
 Before deletion: Client-side cookie exists.
 Before deletion: HttpOnly cookie exists.
 Before deletion: Regular server-side cookie exists.
-
+Before deletion: LocalStorage entry does exist.
 Before deletion: IDB entry does exist.
 
 After deletion: HttpOnly cookie exists.
 After deletion: Client-side cookie exists.
 After deletion: Regular server-side cookie exists.
-
+After deletion: LocalStorage entry does not exist.
 After deletion: IDB entry does not exist.
 
 

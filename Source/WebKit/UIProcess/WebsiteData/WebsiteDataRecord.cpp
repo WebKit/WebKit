@@ -28,6 +28,7 @@
 
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/PublicSuffix.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SecurityOrigin.h>
 
 #if PLATFORM(COCOA)
@@ -113,20 +114,20 @@ static inline bool hostIsInDomain(StringView host, StringView domain)
     return !suffixOffset || host[suffixOffset - 1] == '.';
 }
 
-bool WebsiteDataRecord::matchesTopPrivatelyControlledDomain(const String& topPrivatelyControlledDomain) const
+bool WebsiteDataRecord::matches(const WebCore::RegistrableDomain& domain) const
 {
-    if (topPrivatelyControlledDomain.isEmpty())
+    if (domain.isEmpty())
         return false;
 
     if (types.contains(WebsiteDataType::Cookies)) {
         for (const auto& hostName : cookieHostNames) {
-            if (hostIsInDomain(hostName, topPrivatelyControlledDomain))
+            if (hostIsInDomain(hostName, domain.string()))
                 return true;
         }
     }
 
     for (const auto& dataRecordOriginData : origins) {
-        if (hostIsInDomain(dataRecordOriginData.host, topPrivatelyControlledDomain))
+        if (hostIsInDomain(dataRecordOriginData.host, domain.string()))
             return true;
     }
 

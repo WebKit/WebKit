@@ -27,6 +27,7 @@
 #include "WebsiteData.h"
 
 #include "ArgumentCoders.h"
+#include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
 
@@ -84,6 +85,61 @@ bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
     if (!decoder.decode(result.hostNamesWithHSTSCache))
         return false;
     return true;
+}
+
+WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
+{
+    switch (dataType) {
+    case WebsiteDataType::Cookies:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::DiskCache:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::MemoryCache:
+        return WebsiteDataProcessType::Web;
+    case WebsiteDataType::OfflineWebApplicationCache:
+        return WebsiteDataProcessType::UI;
+    case WebsiteDataType::SessionStorage:
+        return WebsiteDataProcessType::UI;
+    case WebsiteDataType::LocalStorage:
+        return WebsiteDataProcessType::UI;
+    case WebsiteDataType::WebSQLDatabases:
+        return WebsiteDataProcessType::UI;
+    case WebsiteDataType::IndexedDBDatabases:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::MediaKeys:
+        return WebsiteDataProcessType::UI;
+    case WebsiteDataType::HSTSCache:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::SearchFieldRecentSearches:
+        return WebsiteDataProcessType::UI;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    case WebsiteDataType::PlugInData:
+        return WebsiteDataProcessType::UI;
+#endif
+    case WebsiteDataType::ResourceLoadStatistics:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::Credentials:
+        return WebsiteDataProcessType::Network;
+#if ENABLE(SERVICE_WORKER)
+    case WebsiteDataType::ServiceWorkerRegistrations:
+        return WebsiteDataProcessType::Network;
+#endif
+    case WebsiteDataType::DOMCache:
+        return WebsiteDataProcessType::Network;
+    case WebsiteDataType::DeviceIdHashSalt:
+        return WebsiteDataProcessType::UI;
+    }
+}
+
+OptionSet<WebsiteDataType> WebsiteData::filter(OptionSet<WebsiteDataType> unfilteredWebsiteDataTypes, WebsiteDataProcessType WebsiteDataProcessType)
+{
+    OptionSet<WebsiteDataType> filtered;
+    for (auto dataType : unfilteredWebsiteDataTypes) {
+        if (ownerProcess(dataType) == WebsiteDataProcessType)
+            filtered.add(dataType);
+    }
+    
+    return filtered;
 }
 
 }

@@ -991,6 +991,22 @@ void NetworkProcessProxy::deleteCookiesForTesting(PAL::SessionID sessionID, cons
     
     sendWithAsyncReply(Messages::NetworkProcess::DeleteCookiesForTesting(sessionID, domain, includeHttpOnlyCookies), WTFMove(completionHandler));
 }
+
+void NetworkProcessProxy::deleteWebsiteDataInUIProcessForRegistrableDomains(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<RegistrableDomain> domains, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    auto* websiteDataStore = websiteDataStoreFromSessionID(sessionID);
+    if (!websiteDataStore || dataTypes.isEmpty() || domains.isEmpty()) {
+        completionHandler({ });
+        return;
+    }
+
+    websiteDataStore->fetchDataForRegistrableDomains(dataTypes, fetchOptions, domains, [dataTypes, websiteDataStore = makeRef(*websiteDataStore), completionHandler = WTFMove(completionHandler)] (Vector<WebsiteDataRecord>&& matchingDataRecords, HashSet<WebCore::RegistrableDomain>&& domainsWithMatchingDataRecords) mutable {
+        websiteDataStore->removeData(dataTypes, WTFMove(matchingDataRecords), [domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(WTFMove(domainsWithMatchingDataRecords));
+        });
+    });
+}
+
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()

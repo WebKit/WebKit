@@ -36,6 +36,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class RegistrableDomain;
 class SecurityOrigin;
 }
 
@@ -72,7 +73,7 @@ struct WebsiteDataRecord {
     HashSet<String> originsWithCredentials;
     HashSet<String> HSTSCacheHostNames;
 
-    bool matchesTopPrivatelyControlledDomain(const String&) const;
+    bool matches(const WebCore::RegistrableDomain&) const;
     String topPrivatelyControlledDomain();
 };
 

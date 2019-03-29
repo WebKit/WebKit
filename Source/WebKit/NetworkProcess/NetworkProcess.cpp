@@ -57,7 +57,6 @@
 #include "WebSWOriginStore.h"
 #include "WebSWServerConnection.h"
 #include "WebSWServerToContextConnection.h"
-#include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
@@ -1525,23 +1524,13 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
         
         ~CallbackAggregator()
         {
-            RunLoop::main().dispatch([completionHandler = WTFMove(m_completionHandler), websiteData = WTFMove(m_websiteData)] () mutable {
-                HashSet<RegistrableDomain> domains;
-                for (const auto& hostnameWithCookies : websiteData.hostNamesWithCookies)
-                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithCookies));
-
-                for (const auto& hostnameWithHSTS : websiteData.hostNamesWithHSTSCache)
-                    domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithHSTS));
-
-                for (const auto& entry : websiteData.entries)
-                    domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
-
+            RunLoop::main().dispatch([completionHandler = WTFMove(m_completionHandler), domains = WTFMove(m_domains)] () mutable {
                 completionHandler(domains);
             });
         }
         
         CompletionHandler<void(const HashSet<RegistrableDomain>&)> m_completionHandler;
-        WebsiteData m_websiteData;
+        HashSet<RegistrableDomain> m_domains;
     };
     
     auto callbackAggregator = adoptRef(*new CallbackAggregator([this, completionHandler = WTFMove(completionHandler), shouldNotifyPage] (const HashSet<RegistrableDomain>& domainsWithData) mutable {
@@ -1553,7 +1542,8 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
         });
     }));
 
-    auto& websiteDataStore = callbackAggregator->m_websiteData;
+    HashSet<String> hostNamesWithCookies;
+    HashSet<String> hostNamesWithHSTSCache;
 
     Vector<RegistrableDomain> domainsToDeleteCookiesFor;
     Vector<RegistrableDomain> domainsToDeleteAllButHttpOnlyCookiesFor;
@@ -1575,13 +1565,19 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
             }
         }
         if (auto* networkStorageSession = storageSession(sessionID)) {
-            networkStorageSession->getHostnamesWithCookies(websiteDataStore.hostNamesWithCookies);
+            networkStorageSession->getHostnamesWithCookies(hostNamesWithCookies);
 
-            hostnamesWithCookiesToDelete = filterForRegistrableDomains(domainsToDeleteCookiesFor, websiteDataStore.hostNamesWithCookies);
+            hostnamesWithCookiesToDelete = filterForRegistrableDomains(domainsToDeleteCookiesFor, hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete, WebCore::IncludeHttpOnlyCookies::Yes);
 
-            hostnamesWithCookiesToDelete = filterForRegistrableDomains(domainsToDeleteAllButHttpOnlyCookiesFor, websiteDataStore.hostNamesWithCookies);
+            for (const auto& host : hostnamesWithCookiesToDelete)
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
+
+            hostnamesWithCookiesToDelete = filterForRegistrableDomains(domainsToDeleteAllButHttpOnlyCookiesFor, hostNamesWithCookies);
             networkStorageSession->deleteCookiesForHostnames(hostnamesWithCookiesToDelete, WebCore::IncludeHttpOnlyCookies::No);
+
+            for (const auto& host : hostnamesWithCookiesToDelete)
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
         }
     } else {
         for (auto& domain : domains.keys())
@@ -1592,8 +1588,12 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
 #if PLATFORM(COCOA)
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache)) {
         if (auto* networkStorageSession = storageSession(sessionID)) {
-            getHostNamesWithHSTSCache(*networkStorageSession, websiteDataStore.hostNamesWithHSTSCache);
-            hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllButCookiesFor, websiteDataStore.hostNamesWithHSTSCache);
+            getHostNamesWithHSTSCache(*networkStorageSession, hostNamesWithHSTSCache);
+            hostnamesWithHSTSToDelete = filterForRegistrableDomains(domainsToDeleteAllButCookiesFor, hostNamesWithHSTSCache);
+
+            for (const auto& host : hostnamesWithHSTSToDelete)
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(host));
+
             deleteHSTSCacheForHostNames(*networkStorageSession, hostnamesWithHSTSToDelete);
         }
     }
@@ -1601,9 +1601,10 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
 
     /*
     // FIXME: No API to delete credentials by origin
+    HashSet<String> originsWithCredentials;
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
         if (storageSession(sessionID))
-            websiteDataStore.originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
+            originsWithCredentials = storageSession(sessionID)->credentialStorage().originsWithCredentials();
     }
     */
     
@@ -1612,8 +1613,9 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
             
             auto entriesToDelete = filterForRegistrableDomains(domainsToDeleteAllButCookiesFor, entries);
 
-            callbackAggregator->m_websiteData.entries.appendVector(entriesToDelete);
-            
+            for (const auto& entry : entriesToDelete)
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
+
             for (auto& entry : entriesToDelete)
                 CacheStorage::Engine::clearCachesForOrigin(*this, sessionID, SecurityOriginData { entry.origin }, [callbackAggregator = callbackAggregator.copyRef()] { });
         });
@@ -1627,11 +1629,12 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
             RunLoop::main().dispatch([this, sessionID, domainsToDeleteAllButCookiesFor = crossThreadCopy(domainsToDeleteAllButCookiesFor), callbackAggregator = callbackAggregator.copyRef(), securityOrigins = indexedDatabaseOrigins(path)] {
                 Vector<SecurityOriginData> entriesToDelete;
                 for (const auto& securityOrigin : securityOrigins) {
-                    if (!domainsToDeleteAllButCookiesFor.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
+                    auto domain = RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host);
+                    if (!domainsToDeleteAllButCookiesFor.contains(domain))
                         continue;
 
                     entriesToDelete.append(securityOrigin);
-                    callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::IndexedDBDatabases, 0 });
+                    callbackAggregator->m_domains.add(domain);
                 }
 
                 idbServer(sessionID).closeAndDeleteDatabasesForOrigins(entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
@@ -1647,7 +1650,7 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
             for (auto& securityOrigin : securityOrigins) {
                 if (!domainsToDeleteAllButCookiesFor.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
                     continue;
-                callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::ServiceWorkerRegistrations, 0 });
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host));
                 swServerForSession(sessionID).clear(securityOrigin, [callbackAggregator = callbackAggregator.copyRef()] { });
             }
         });
@@ -1662,10 +1665,19 @@ void NetworkProcess::deleteWebsiteDataForRegistrableDomains(PAL::SessionID sessi
                 if (!domainsToDeleteAllButCookiesFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host)))
                     continue;
                 entriesToDelete.append(entry.origin);
-                callbackAggregator->m_websiteData.entries.append(entry);
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
             }
             clearDiskCacheEntries(cache(), entriesToDelete, [callbackAggregator = callbackAggregator.copyRef()] { });
         });
+    }
+
+    auto dataTypesForUIProcess = WebsiteData::filter(websiteDataTypes, WebsiteDataProcessType::UI);
+    if (!dataTypesForUIProcess.isEmpty() && !domainsToDeleteAllButCookiesFor.isEmpty()) {
+        CompletionHandler<void(const HashSet<RegistrableDomain>&)> completionHandler = [callbackAggregator = callbackAggregator.copyRef()] (const HashSet<RegistrableDomain>& domains) {
+            for (auto& domain : domains)
+                callbackAggregator->m_domains.add(domain);
+        };
+        parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInUIProcessForRegistrableDomains(sessionID, dataTypesForUIProcess, fetchOptions, domainsToDeleteAllButCookiesFor), WTFMove(completionHandler));
     }
 }
 
