@@ -1,3 +1,13 @@
+2019-03-29  Shawn Roberts  <sroberts@apple.com>
+
+        imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196403
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations: Updating test expectations for flaky test
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r243523): Six form-related watchOS layout tests are timing out

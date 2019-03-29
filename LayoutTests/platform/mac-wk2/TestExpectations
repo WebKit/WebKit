@@ -939,3 +939,5 @@ webkit.org/b/194780 http/wpt/webauthn/public-key-credential-create-success-hid.h
 webkit.org/b/196377 http/wpt/webauthn/public-key-credential-get-success-hid.https.html [ Pass Failure ]
 
 webkit.org/b/196400 fast/mediastream/MediaStreamTrack-getSettings.html [ Pass Failure ]
+
+webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
