@@ -1,3 +1,38 @@
+2019-03-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add fast returns for instrumentation hooks that have no affect before a frontend is connected
+        https://bugs.webkit.org/show_bug.cgi?id=196382
+        <rdar://problem/49403417>
+
+        Reviewed by Joseph Pecoraro.
+
+        Ensure that all instrumentation hooks use `FAST_RETURN_IF_NO_FRONTENDS` or check that
+        `developerExtrasEnabled`. There should be no activity to/from any inspector objects until
+        developer extras are enabled.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorld):
+        (WebCore::InspectorInstrumentation::scriptExecutionBlockedByCSP):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParent):
+        (WebCore::InspectorInstrumentation::loaderDetachedFromFrame):
+        (WebCore::InspectorInstrumentation::frameStartedLoading):
+        (WebCore::InspectorInstrumentation::frameStoppedLoading):
+        (WebCore::InspectorInstrumentation::frameScheduledNavigation):
+        (WebCore::InspectorInstrumentation::frameClearedScheduledNavigation):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameWindowDiscardedImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+
+        * inspector/agents/WebConsoleAgent.cpp:
+        (WebCore::WebConsoleAgent::frameWindowDiscarded):
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         Set window.closed immediately when close() is invoked

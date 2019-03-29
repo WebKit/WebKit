@@ -475,6 +475,7 @@ private:
 
 inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame& frame, DOMWrapperWorld& world)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         didClearWindowObjectInWorldImpl(*instrumentingAgents, frame, world);
 }
@@ -1088,6 +1089,7 @@ inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext& con
 
 inline void InspectorInstrumentation::scriptExecutionBlockedByCSP(ScriptExecutionContext* context, const String& directiveText)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         scriptExecutionBlockedByCSPImpl(*instrumentingAgents, directiveText);
 }
@@ -1101,18 +1103,21 @@ inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionCo
 
 inline void InspectorInstrumentation::domContentLoadedEventFired(Frame& frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         domContentLoadedEventFiredImpl(*instrumentingAgents, frame);
 }
 
 inline void InspectorInstrumentation::loadEventFired(Frame* frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         loadEventFiredImpl(*instrumentingAgents, frame);
 }
 
 inline void InspectorInstrumentation::frameDetachedFromParent(Frame& frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameDetachedFromParentImpl(*instrumentingAgents, frame);
 }
@@ -1132,30 +1137,35 @@ inline void InspectorInstrumentation::frameDocumentUpdated(Frame& frame)
 
 inline void InspectorInstrumentation::loaderDetachedFromFrame(Frame& frame, DocumentLoader& loader)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         loaderDetachedFromFrameImpl(*instrumentingAgents, loader);
 }
 
 inline void InspectorInstrumentation::frameStartedLoading(Frame& frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameStartedLoadingImpl(*instrumentingAgents, frame);
 }
 
 inline void InspectorInstrumentation::frameStoppedLoading(Frame& frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameStoppedLoadingImpl(*instrumentingAgents, frame);
 }
 
 inline void InspectorInstrumentation::frameScheduledNavigation(Frame& frame, Seconds delay)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameScheduledNavigationImpl(*instrumentingAgents, frame, delay);
 }
 
 inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame& frame)
 {
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameClearedScheduledNavigationImpl(*instrumentingAgents, frame);
 }

@@ -204,6 +204,9 @@ void InspectorInstrumentation::documentDetachedImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents& instrumentingAgents, DOMWindow* window)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->frameWindowDiscarded(window);
 }
@@ -605,6 +608,9 @@ void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InstrumentingA
 
 void InspectorInstrumentation::didReceiveResourceResponseImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response, ResourceLoader* resourceLoader)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
         networkAgent->didReceiveResponse(identifier, loader, response, resourceLoader);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -631,6 +637,9 @@ void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (InspectorNetworkAgent* networkAgent = instrumentingAgents.inspectorNetworkAgent())
         networkAgent->didFailLoading(identifier, loader, error);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -821,6 +830,9 @@ static bool isConsoleAssertMessage(MessageSource source, MessageType type)
 
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, std::unique_ptr<ConsoleMessage> message)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     MessageSource source = message->source();
     MessageType type = message->type();
     String messageText = message->message();
@@ -836,6 +848,9 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents& instrumentingAgents, JSC::ExecState* state, Ref<ScriptArguments>&& arguments)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->count(state, WTFMove(arguments));
 }
@@ -848,6 +863,9 @@ void InspectorInstrumentation::takeHeapSnapshotImpl(InstrumentingAgents& instrum
 
 void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& title)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
         timelineAgent->time(frame, title);
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
@@ -856,12 +874,18 @@ void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instr
 
 void InspectorInstrumentation::startConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, const String& title)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->startTiming(title);
 }
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, const String& title, Ref<ScriptCallStack>&& stack)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->stopTiming(title, WTFMove(stack));
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
@@ -870,6 +894,9 @@ void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instru
 
 void InspectorInstrumentation::stopConsoleTimingImpl(InstrumentingAgents& instrumentingAgents, const String& title, Ref<ScriptCallStack>&& stack)
 {
+    if (!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     if (WebConsoleAgent* consoleAgent = instrumentingAgents.webConsoleAgent())
         consoleAgent->stopTiming(title, WTFMove(stack));
 }

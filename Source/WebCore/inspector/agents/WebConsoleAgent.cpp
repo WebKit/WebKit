@@ -50,6 +50,9 @@ WebConsoleAgent::WebConsoleAgent(AgentContext& context)
 
 void WebConsoleAgent::frameWindowDiscarded(DOMWindow* window)
 {
+    if (!m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled())
+        return;
+
     for (auto& message : m_consoleMessages) {
         JSC::ExecState* exec = message->scriptState();
         if (!exec)
