@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests copying and pasting content with "overflow: auto" would not strip its content.');
+
+function startTest() {
+    const iframe = document.createElement('iframe');
+    document.body.appendChild(iframe);
+    iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
+    <body><button onclick="document.execCommand('selectAll'); document.execCommand('copy'); getSelection().removeAllRanges();">Start</button>
+    <script>
+    document.addEventListener('copy', () => {
+        event.preventDefault();
+        event.clipboardData.setData('text/html', '<div>Start</div><div style="height: 1000px;"></div><!-- secret -->'
+            + '<div style="visibility: hidden;">secret</div><p style="overflow: auto;">Content</p><div style="height: 1000px;"></div><span id="end">End</span>');
+        window.parent.postMessage({}, '*');
+    });
+    window.onload = () => {
+        document.execCommand('selectAll');
+        document.execCommand('copy');
+    }
+    </sc` + `ript>
+    </body>`;
+}
+
+
+function continueTest() {
+    editor.focus();
+    document.execCommand('selectAll');
+    if (window.testRunner)
+        testRunner.execCommand('paste');
+}
+
+function didPaste(event) {
+    window.markup = event.clipboardData.getData('text/html');
+    shouldBeFalse('markup.includes("secret")');
+    shouldBeTrue('markup.includes("Start</div>")');
+    shouldBeTrue('markup.includes("Content</p>")');
+    shouldBeTrue('markup.includes("End</span>")');
+
+    setTimeout(() => {
+        shouldBeEqualToString('editor.querySelector("div").textContent', 'Start');
+        shouldBeEqualToString('editor.querySelector("p").textContent', 'Content');
+        shouldBeEqualToString('editor.querySelector("span").textContent', 'End');
+        editor.textContent = editor.innerHTML;
+        editor.contentEditable = false;
+        if (window.testRunner)
+            editor.style.display = 'none';
+        finishJSTest();
+    }, 0);
+}
+
+onload = startTest;
+onmessage = continueTest;
+jsTestIsAsync = true;
+
+</script>
+<div id="editor" onpaste="didPaste(event)" contenteditable>Paste now</div>
+</body>
+</html>

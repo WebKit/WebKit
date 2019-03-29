@@ -1,3 +1,15 @@
+2019-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Pasting a table from Confluence strip of table cell content
+        https://bugs.webkit.org/show_bug.cgi?id=196390
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * editing/pasteboard/paste-content-with-overflow-auto-parent-across-origin-expected.txt: Added.
+        * editing/pasteboard/paste-content-with-overflow-auto-parent-across-origin.html: Added.
+
 2019-03-29  Shawn Roberts  <sroberts@apple.com>
 
         fast/mediastream/MediaStreamTrack-getSettings.html is a flaky failure

@@ -183,7 +183,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     page->settings().setAcceleratedCompositingEnabled(false);
 
     Frame& frame = page->mainFrame();
-    frame.setView(FrameView::create(frame));
+    frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
     frame.init();
 
     FrameLoader& loader = frame.loader();
