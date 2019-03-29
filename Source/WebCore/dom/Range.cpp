@@ -1842,7 +1842,7 @@ FloatRect Range::boundingRect(CoordinateSpace space, RespectClippingForTextRects
 {
     FloatRect result;
     for (auto& rect : borderAndTextRects(space, respectClippingForTextRects))
-        result.unite(rect);
+        result.uniteIfNonZero(rect);
     return result;
 }
 

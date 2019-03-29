@@ -1,3 +1,19 @@
+2019-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getBoundingClientRect always returns empty rect on a collapsed range
+        https://bugs.webkit.org/show_bug.cgi?id=196380
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by Range::boundingRect merging rects via FloatRect::unite which ignores empty rects.
+        Use uniteIfNonZero instead to fix the bug. Note that we can't use uniteEvenIfEmpty because that would
+        set x, y to always 0, 0 as we would end up merging any rect with the initial empty rect.
+
+        Test: fast/dom/Range/getBoundingClientRect-on-collapsed-selection-range.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::boundingRect const):
+
 2019-03-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Prototype compute pipeline with MSL

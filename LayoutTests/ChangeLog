@@ -1,3 +1,15 @@
+2019-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getBoundingClientRect always returns empty rect on a collapsed range
+        https://bugs.webkit.org/show_bug.cgi?id=196380
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test.
+
+        * fast/dom/Range/getBoundingClientRect-on-collapsed-selection-range-expected.txt: Added.
+        * fast/dom/Range/getBoundingClientRect-on-collapsed-selection-range.html: Added.
+
 2019-03-28  Chris Dumez  <cdumez@apple.com>
 
         Re-sync web-platform-tests/html/browsers/the-window-object/ from upstream
