@@ -1,3 +1,17 @@
+2019-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove distancing for LargeAllocation
+        https://bugs.webkit.org/show_bug.cgi?id=196335
+
+        Reviewed by Saam Barati.
+
+        In r230226, we removed distancing feature from our GC. This patch removes remaining distancing thing in LargeAllocation.
+
+        * heap/HeapCell.h:
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryCreate):
+        * heap/MarkedBlock.h:
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

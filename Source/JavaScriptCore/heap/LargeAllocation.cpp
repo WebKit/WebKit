@@ -39,17 +39,11 @@ LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* s
     if (validateDFGDoesGC)
         RELEASE_ASSERT(heap.expectDoesGC());
 
-    // This includes padding at the end of the allocation to maintain the distancing constraint.
-    constexpr size_t distancing = minimumDistanceBetweenCellsFromDifferentOrigins;
-    size_t sizeBeforeDistancing = headerSize() + size;
-    size_t sizeIncludingDistancing = sizeBeforeDistancing + distancing;
+    size_t allocationSize = headerSize() + size;
     
-    void* space = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(alignment, sizeIncludingDistancing);
+    void* space = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(alignment, allocationSize);
     if (!space)
         return nullptr;
-    
-    // Make sure that the padding does not contain useful things.
-    memset(static_cast<char*>(space) + sizeBeforeDistancing, 0, distancing);
     
     if (scribbleFreeCells())
         scribble(space, size);

@@ -37,8 +37,6 @@ class Subspace;
 class VM;
 struct CellAttributes;
 
-static constexpr unsigned minimumDistanceBetweenCellsFromDifferentOrigins = sizeof(void*) == 8 ? 304 : 288;
-
 class HeapCell {
 public:
     enum Kind : int8_t {
