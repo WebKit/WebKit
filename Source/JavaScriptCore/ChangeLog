@@ -1,3 +1,14 @@
+2019-03-28  Saam Barati  <sbarati@apple.com>
+
+        BackwardsGraph needs to consider back edges as the backward's root successor
+        https://bugs.webkit.org/show_bug.cgi?id=195991
+
+        Reviewed by Filip Pizlo.
+
+        * b3/testb3.cpp:
+        (JSC::B3::testInfiniteLoopDoesntCauseBadHoisting):
+        (JSC::B3::run):
+
 2019-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Opcode.h(159,27): warning: adding 'unsigned int' to a string does not append to the string [-Wstring-plus-int]
