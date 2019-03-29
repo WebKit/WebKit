@@ -1,3 +1,19 @@
+2019-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        FontFace constructor throws an exception when there is a name which starts with a number
+        https://bugs.webkit.org/show_bug.cgi?id=196232
+        <rdar://problem/49293978>
+
+        Reviewed by Ryosuke Niwa.
+
+        We were technically following the spec, but Chrome and Firefox are both consistent and it was making a website break.
+        This is just a short-term fix until the underlying https://bugs.webkit.org/show_bug.cgi?id=196381 is fixed.
+
+        Test: fast/text/font-face-family.html
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::setFamily):
+
 2019-03-28  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Replace 'unsigned long' with 'unsigned' when implementing u32 variables

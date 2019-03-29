@@ -1087,7 +1087,7 @@ static RefPtr<CSSValueList> consumeFontFamily(CSSParserTokenRange& range)
 
 static RefPtr<CSSValueList> consumeFontFamilyDescriptor(CSSParserTokenRange& range)
 {
-    // FIXME-NEWPARSER: For compatibility with the old parser, we have to make
+    // FIXME-NEWPARSER: https://bugs.webkit.org/show_bug.cgi?id=196381 For compatibility with the old parser, we have to make
     // a list here, even though the list always contains only a single family name.
     // Once the old parser is gone, we can delete this function, make the caller
     // use consumeFamilyName instead, and then patch the @font-face code to

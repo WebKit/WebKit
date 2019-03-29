@@ -1,0 +1,12 @@
+PASS new FontFace('a', 'url(garbage.otf)') is non-null.
+PASS new FontFace('4a', 'url(garbage.otf)') is non-null.
+PASS new FontFace('4"a', 'url(garbage.otf)') is non-null.
+PASS new FontFace('4\'a', 'url(garbage.otf)') is non-null.
+PASS new FontFace('4\'a"b', 'url(garbage.otf)') is non-null.
+PASS (new FontFace('a b', 'url(garbage.otf)')).family is "a b"
+PASS (new FontFace('a b, c', 'url(garbage.otf)')).family is "a b, c"
+PASS (new FontFace('ab,c', 'url(garbage.otf)')).family is "ab,c"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

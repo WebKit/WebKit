@@ -153,9 +153,11 @@ ExceptionOr<void> FontFace::setFamily(const String& family)
     if (family.isEmpty())
         return Exception { SyntaxError };
 
-    bool success = false;
-    if (auto value = parseString(family, CSSPropertyFontFamily))
-        success = m_backing->setFamilies(*value);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=196381 Don't use a list here.
+    // See consumeFontFamilyDescriptor() in CSSPropertyParser.cpp for why we're using it.
+    auto list = CSSValueList::createCommaSeparated();
+    list->append(CSSValuePool::singleton().createFontFamilyValue(family));
+    bool success = m_backing->setFamilies(list);
     if (!success)
         return Exception { SyntaxError };
     return { };
@@ -293,6 +295,21 @@ ExceptionOr<void> FontFace::setDisplay(const String& display)
 String FontFace::family() const
 {
     m_backing->updateStyleIfNeeded();
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=196381 This is only here because CSSFontFace erroneously uses a list of values instead of a single value.
+    // See consumeFontFamilyDescriptor() in CSSPropertyParser.cpp.
+    if (m_backing->families()->length() == 1) {
+        if (m_backing->families()->item(0)) {
+            auto& item = *m_backing->families()->item(0);
+            if (item.isPrimitiveValue()) {
+                auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
+                if (primitiveValue.isFontFamily()) {
+                    auto& fontFamily = primitiveValue.fontFamily();
+                    return fontFamily.familyName;
+                }
+            }
+        }
+    }
     return m_backing->families()->cssText();
 }
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+shouldBeNonNull("new FontFace('a', 'url(garbage.otf)')");
+shouldBeNonNull("new FontFace('4a', 'url(garbage.otf)')");
+shouldBeNonNull("new FontFace('4\"a', 'url(garbage.otf)')");
+shouldBeNonNull("new FontFace('4\\'a', 'url(garbage.otf)')");
+shouldBeNonNull("new FontFace('4\\'a\"b', 'url(garbage.otf)')");
+shouldBeEqualToString("(new FontFace('a b', 'url(garbage.otf)')).family", "a b");
+shouldBeEqualToString("(new FontFace('a b, c', 'url(garbage.otf)')).family", "a b, c");
+shouldBeEqualToString("(new FontFace('ab,c', 'url(garbage.otf)')).family", "ab,c");
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
