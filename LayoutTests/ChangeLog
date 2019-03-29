@@ -1,3 +1,14 @@
+2019-03-29  Zalan Bujtas  <zalan@apple.com>
+
+        [Simple line layout] Turn off inline boxtree generation for multiline content
+        https://bugs.webkit.org/show_bug.cgi?id=196404
+        <rdar://problem/49234033>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/simple-line-layout-and-multiline-inlineboxtree-expected.html: Added.
+        * fast/text/simple-line-layout-and-multiline-inlineboxtree.html: Added.
+
 2019-03-29  Shawn Roberts  <sroberts@apple.com>
 
         imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html is a flaky failure

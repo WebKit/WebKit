@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that we can reconstruct the line tree when a dynamic change is triggered on the block after switching out of simple line layout.</title>
+<script>
+if (window.internals)
+    internals.settings.setSimpleLineLayoutEnabled(true);
+</script>
+</head>
+<body>
+<div id=container style="width: 200px;">
+This long long long long long text should not get cut off after "extra text" is added to the end.
+</div>
+<script>
+const selection = window.getSelection();
+const range = document.createRange();
+range.selectNodeContents(container);
+selection.addRange(range);
+document.body.offsetHeight;
+selection.removeAllRanges();
+document.body.offsetHeight;
+
+let span = document.createElement("span");
+span.innerText = "extra text";
+container.appendChild(span);
+</script>
+</body>
+</html>
