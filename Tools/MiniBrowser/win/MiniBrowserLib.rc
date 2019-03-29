@@ -280,6 +280,17 @@ BEGIN
     LTEXT           "Comma separated hostnames.",IDC_STATIC,80,101,194,8
 END
 
+IDD_SERVER_TRUST DIALOGEX 0, 0, 319, 184
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Server Trust Evaluation Request"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Yes",IDOK,197,163,50,14
+    PUSHBUTTON      "No",IDCANCEL,262,163,50,14
+    LTEXT           "Certificate information",IDC_STATIC,7,7,294,17
+    EDITTEXT        IDC_SERVER_TRUST_TEXT,7,24,305,130,ES_MULTILINE | ES_READONLY | WS_VSCROLL | WS_HSCROLL | NOT WS_TABSTOP
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -356,6 +367,14 @@ BEGIN
         VERTGUIDE, 22
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
+    END
+
+    IDD_SERVER_TRUST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 312
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 177
     END
 END
 #endif    // APSTUDIO_INVOKED

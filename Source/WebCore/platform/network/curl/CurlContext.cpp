@@ -324,6 +324,12 @@ void CurlHandle::enableSSLForHost(const String& host)
         setCACertPath(path->utf8().data());
 }
 
+void CurlHandle::disableServerTrustEvaluation()
+{
+    setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
+    setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
+}
+
 CURLcode CurlHandle::willSetupSslCtx(void* sslCtx)
 {
     if (!sslCtx)

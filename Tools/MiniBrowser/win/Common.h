@@ -70,6 +70,9 @@ void createCrashReport(EXCEPTION_POINTERS*);
 Optional<Credential> askCredential(HWND, const std::wstring& realm);
 bool askProxySettings(HWND, ProxySettings&);
 
+bool askServerTrustEvaluation(HWND, const std::wstring& pems);
+std::wstring replaceString(std::wstring src, const std::wstring& oldValue, const std::wstring& newValue);
+
 extern HINSTANCE hInst;
 extern POINT s_windowPosition;
 extern SIZE s_windowSize;

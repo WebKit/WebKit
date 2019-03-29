@@ -213,6 +213,9 @@ CURL* CurlRequest::setupTransfer()
         m_curlHandle->setHttpAuthUserPass(m_user, m_password, m_authType);
     }
 
+    if (m_shouldDisableServerTrustEvaluation)
+        m_curlHandle->disableServerTrustEvaluation();
+
     m_curlHandle->setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle->setWriteCallbackFunction(didReceiveDataCallback, this);
 

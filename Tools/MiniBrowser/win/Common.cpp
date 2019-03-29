@@ -231,6 +231,34 @@ Optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
     return WTF::nullopt;
 }
 
+bool askServerTrustEvaluation(HWND hwnd, const std::wstring& pems)
+{
+    class ServerTrustEvaluationDialog : public Dialog {
+    public:
+        ServerTrustEvaluationDialog(const std::wstring& pems)
+            : m_pems { pems }
+        {
+            SendMessage(GetDlgItem(this->hDlg(), IDC_SERVER_TRUST_TEXT), WM_SETFONT, (WPARAM)GetStockObject(ANSI_FIXED_FONT), TRUE);
+        }
+
+    protected:
+        std::wstring m_pems;
+
+        void setup()
+        {
+            setText(IDC_SERVER_TRUST_TEXT, m_pems);
+        }
+
+        void ok() final
+        {
+
+        }
+    };
+
+    ServerTrustEvaluationDialog dialog { pems };
+    return dialog.run(hInst, hwnd, IDD_SERVER_TRUST);
+}
+
 CommandLineOptions parseCommandLine()
 {
     CommandLineOptions options;
@@ -255,4 +283,18 @@ CommandLineOptions parseCommandLine()
     }
 
     return options;
+}
+
+std::wstring replaceString(std::wstring src, const std::wstring& oldValue, const std::wstring& newValue)
+{
+    if (src.empty() || oldValue.empty())
+        return src;
+
+    size_t pos = 0;
+    while ((pos = src.find(oldValue, pos)) != src.npos) {
+        src.replace(pos, oldValue.length(), newValue);
+        pos += newValue.length();
+    }
+
+    return src;
 }

@@ -28,6 +28,7 @@
 #include "Common.h"
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WebKit2_C.h>
+#include <unordered_map>
 
 class WebKitBrowserWindow : public BrowserWindow {
 public:
@@ -61,6 +62,8 @@ private:
 
     void updateProxySettings();
 
+    bool canTrustServerCertificate(WKProtectionSpaceRef);
+
     static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didCommitNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*);
     static void didReceiveAuthenticationChallenge(WKPageRef, WKAuthenticationChallengeRef, const void*);
@@ -70,4 +73,5 @@ private:
     HWND m_hMainWnd { nullptr };
     HWND m_urlBarWnd { nullptr };
     ProxySettings m_proxy { };
+    std::unordered_map<std::wstring, std::wstring> m_acceptedServerTrustCerts;
 };

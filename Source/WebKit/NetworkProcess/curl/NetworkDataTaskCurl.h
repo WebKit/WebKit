@@ -78,6 +78,8 @@ private:
     void tryProxyAuthentication(WebCore::AuthenticationChallenge&&);
     void restartWithCredential(const WebCore::ProtectionSpace&, const WebCore::Credential&);
 
+    void tryServerTrustEvaluation(WebCore::AuthenticationChallenge&&);
+
     void appendCookieHeader(WebCore::ResourceRequest&);
     void handleCookieHeaders(const WebCore::ResourceRequest&, const WebCore::CurlResponse&);
 

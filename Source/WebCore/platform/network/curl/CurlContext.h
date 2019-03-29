@@ -253,6 +253,7 @@ public:
 
     void setHttpAuthUserPass(const String&, const String&, long authType = CURLAUTH_ANY);
 
+    void disableServerTrustEvaluation();
     void setCACertPath(const char*);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);

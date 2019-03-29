@@ -31,7 +31,6 @@
 #include "CurlMultipartHandleClient.h"
 #include "CurlRequestSchedulerClient.h"
 #include "CurlResponse.h"
-#include "CurlSSLVerifier.h"
 #include "NetworkLoadMetrics.h"
 #include "ProtectionSpace.h"
 #include "ResourceRequest.h"
@@ -75,6 +74,7 @@ public:
     void invalidateClient();
     WEBCORE_EXPORT void setAuthenticationScheme(ProtectionSpaceAuthenticationScheme);
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
+    void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
     void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime; }
 
     void start();
@@ -173,6 +173,7 @@ private:
     String m_user;
     String m_password;
     unsigned long m_authType { CURLAUTH_ANY };
+    bool m_shouldDisableServerTrustEvaluation { false };
     bool m_shouldSuspend { false };
     bool m_enableMultipart { false };
 

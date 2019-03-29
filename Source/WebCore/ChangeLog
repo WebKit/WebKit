@@ -1,3 +1,28 @@
+2019-03-29  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [Curl] Add Server Trust Evaluation Support.
+        https://bugs.webkit.org/show_bug.cgi?id=191646
+
+        Reviewed by Fujii Hironori.
+
+        Tests: http/tests/ssl/iframe-upgrade.https.html
+               http/tests/ssl/mixedContent/insecure-websocket.html
+               http/tests/ssl/upgrade-origin-usage.html
+
+        * platform/network/curl/AuthenticationChallenge.h:
+        * platform/network/curl/AuthenticationChallengeCurl.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::protectionSpaceForPasswordBased):
+        (WebCore::AuthenticationChallenge::protectionSpaceForServerTrust):
+        (WebCore::AuthenticationChallenge::protectionSpaceFromHandle): Deleted.
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::disableServerTrustEvaluation):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::disableServerTrustEvaluation):
+
 2019-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Pasting a table from Confluence strip of table cell content

@@ -29,9 +29,11 @@
 #include "common.h"
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
+#include <WebKit/WKCertificateInfoCurl.h>
 #include <WebKit/WKCredential.h>
 #include <WebKit/WKInspector.h>
 #include <WebKit/WKProtectionSpace.h>
+#include <WebKit/WKProtectionSpaceCurl.h>
 #include <WebKit/WKWebsiteDataStoreRefCurl.h>
 #include <vector>
 
@@ -56,6 +58,25 @@ std::string createUTF8String(const wchar_t* src, size_t srcLength)
     std::vector<char> buffer(length);
     size_t actualLength = WideCharToMultiByte(CP_UTF8, 0, src, srcLength, buffer.data(), length, nullptr, nullptr);
     return { buffer.data(), actualLength };
+}
+
+std::wstring createPEMString(WKProtectionSpaceRef protectionSpace)
+{
+    auto certificateInfo = WKProtectionSpaceCopyCertificateInfo(protectionSpace);
+    auto chainSize = WKCertificateInfoGetCertificateChainSize(certificateInfo);
+
+    std::wstring pems;
+
+    for (auto i = 0; i < chainSize; i++) {
+        auto certificate = adoptWK(WKCertificateInfoCopyCertificateAtIndex(certificateInfo, i));
+        auto size = WKDataGetSize(certificate.get());
+        auto data = WKDataGetBytes(certificate.get());
+
+        for (size_t i = 0; i < size; i++)
+            pems.push_back(data[i]);
+    }
+
+    return replaceString(pems, L"\n", L"\r\n");
 }
 
 WKRetainPtr<WKStringRef> createWKString(_bstr_t str)
@@ -286,17 +307,46 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
     auto& thisWindow = toWebKitBrowserWindow(clientInfo);
     auto protectionSpace = WKAuthenticationChallengeGetProtectionSpace(challenge);
     auto decisionListener = WKAuthenticationChallengeGetDecisionListener(challenge);
+    auto authenticationScheme = WKProtectionSpaceGetAuthenticationScheme(protectionSpace);
 
-    WKRetainPtr<WKStringRef> realm(WKProtectionSpaceCopyRealm(protectionSpace));
-    if (auto credential = askCredential(thisWindow.hwnd(), createString(realm.get()))) {
-        WKRetainPtr<WKStringRef> username = createWKString(credential->username);
-        WKRetainPtr<WKStringRef> password = createWKString(credential->password);
-        WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
-        WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
-        return;
+    if (authenticationScheme == kWKProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
+        if (thisWindow.canTrustServerCertificate(protectionSpace)) {
+            WKRetainPtr<WKStringRef> username = createWKString("accept server trust");
+            WKRetainPtr<WKStringRef> password = createWKString("");
+            WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+            WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
+            return;
+        }
+    } else {
+        WKRetainPtr<WKStringRef> realm(WKProtectionSpaceCopyRealm(protectionSpace));
+
+        if (auto credential = askCredential(thisWindow.hwnd(), createString(realm.get()))) {
+            WKRetainPtr<WKStringRef> username = createWKString(credential->username);
+            WKRetainPtr<WKStringRef> password = createWKString(credential->password);
+            WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+            WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
+            return;
+        }
     }
 
     WKAuthenticationDecisionListenerUseCredential(decisionListener, nullptr);
+}
+
+bool WebKitBrowserWindow::canTrustServerCertificate(WKProtectionSpaceRef protectionSpace)
+{
+    auto host = createString(adoptWK(WKProtectionSpaceCopyHost(protectionSpace)).get());
+    auto pem = createPEMString(protectionSpace);
+
+    auto it = m_acceptedServerTrustCerts.find(host);
+    if (it != m_acceptedServerTrustCerts.end() && it->second == pem)
+        return true;
+
+    if (askServerTrustEvaluation(hwnd(), pem)) {
+        m_acceptedServerTrustCerts.emplace(host, pem);
+        return true;
+    }
+
+    return false;
 }
 
 WKPageRef WebKitBrowserWindow::createNewPage(WKPageRef page, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures, const void *clientInfo)
