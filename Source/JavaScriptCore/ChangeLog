@@ -1,3 +1,92 @@
+2019-03-28  Michael Saboff  <msaboff@apple.com>
+
+        [YARR] Precompute BMP / non-BMP status when constructing character classes
+        https://bugs.webkit.org/show_bug.cgi?id=196296
+
+        Reviewed by Keith Miller.
+
+        Changed CharacterClass::m_hasNonBMPCharacters into a character width bit field which
+        indicateis if the class includes characters from either BMP, non-BMP or both ranges.
+        This allows the recognizing code to eliminate checks for the width of a matched
+        characters when the class has only one width.  The character width is needed to
+        determine if we advance 1 or 2 character.  Also, the pre-computed width of character
+        classes that contains either all BMP or all non-BMP characters allows the parser to
+        use fixed widths for terms using those character classes.  Changed both the code gen
+        scripts and Yarr compiler to compute this bit field during the construction of
+        character classes.
+
+        For JIT'ed code of character classes that contain either all BMP or all non-BMP
+        characters, we can eliminate the generic check we were doing do compute how much
+        to advance after sucessfully matching a character in the class.
+
+                Generic isBMP check      BMP only            non-BMP only
+                --------------           --------------      --------------
+                inc %r9d                 inc %r9d            add $0x2, %r9d
+                cmp $0x10000, %eax
+                jl isBMP
+                cmp %edx, %esi
+                jz atEndOfString
+                inc %r9d
+                inc %esi
+         isBMP:
+
+        For character classes that contained non-BMP characters, we were always generating
+        the code in the left column.  The middle column is the code we generate for character
+        classes that contain only BMP characters.  The right column is the code we now
+        generate if the character class has only non-BMP characters.  In the fix width cases,
+        we can eliminate both the isBMP check as well as the atEndOfString check.  The
+        atEndOfstring check is eliminated since we know how many characters this character
+        class requires and that check can be factored out to the beginning of the current
+        alternative.  For character classes that contain both BMP and non-BMP characters,
+        we still generate the generic left column.
+
+        This change is a ~8% perf progression on UniPoker and a ~2% improvement on RexBench
+        as a whole.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::matchCompareWithInterpreter):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::checkCharacterClassDontAdvanceInputForNonBMP):
+        (JSC::Yarr::Interpreter::matchCharacterClass):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::optimizeAlternative):
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        (JSC::Yarr::YarrGenerator::advanceIndexAfterCharacterClassTermMatch):
+        (JSC::Yarr::YarrGenerator::tryReadUnicodeCharImpl):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::Yarr::CharacterClassConstructor::reset):
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::CharacterClassConstructor::addSorted):
+        (JSC::Yarr::CharacterClassConstructor::addSortedRange):
+        (JSC::Yarr::CharacterClassConstructor::hasNonBMPCharacters):
+        (JSC::Yarr::CharacterClassConstructor::characterWidths):
+        (JSC::Yarr::PatternTerm::dump):
+        (JSC::Yarr::anycharCreate):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::operator|):
+        (JSC::Yarr::operator&):
+        (JSC::Yarr::operator|=):
+        (JSC::Yarr::CharacterClass::CharacterClass):
+        (JSC::Yarr::CharacterClass::hasNonBMPCharacters):
+        (JSC::Yarr::CharacterClass::hasOneCharacterSize):
+        (JSC::Yarr::CharacterClass::hasOnlyNonBMPCharacters):
+        (JSC::Yarr::PatternTerm::invert const):
+        (JSC::Yarr::PatternTerm::invert): Deleted.
+        * yarr/create_regex_tables:
+        * yarr/generateYarrUnicodePropertyTables.py:
+
 2019-03-28  Saam Barati  <sbarati@apple.com>
 
         BackwardsGraph needs to consider back edges as the backward's root successor

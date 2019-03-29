@@ -45,8 +45,8 @@ class CharacterClassConstructor {
 public:
     CharacterClassConstructor(bool isCaseInsensitive, CanonicalMode canonicalMode)
         : m_isCaseInsensitive(isCaseInsensitive)
-        , m_hasNonBMPCharacters(false)
         , m_anyCharacter(false)
+        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_canonicalMode(canonicalMode)
     {
     }
@@ -57,8 +57,8 @@ public:
         m_ranges.clear();
         m_matchesUnicode.clear();
         m_rangesUnicode.clear();
-        m_hasNonBMPCharacters = false;
         m_anyCharacter = false;
+        m_characterWidths = CharacterClassWidths::Unknown;
     }
 
     void append(const CharacterClass* other)
@@ -246,11 +246,11 @@ public:
         characterClass->m_ranges.swap(m_ranges);
         characterClass->m_matchesUnicode.swap(m_matchesUnicode);
         characterClass->m_rangesUnicode.swap(m_rangesUnicode);
-        characterClass->m_hasNonBMPCharacters = hasNonBMPCharacters();
         characterClass->m_anyCharacter = anyCharacter();
+        characterClass->m_characterWidths = characterWidths();
 
-        m_hasNonBMPCharacters = false;
         m_anyCharacter = false;
+        m_characterWidths = CharacterClassWidths::Unknown;
 
         return characterClass;
     }
@@ -266,8 +266,7 @@ private:
         unsigned pos = 0;
         unsigned range = matches.size();
 
-        if (!U_IS_BMP(ch))
-            m_hasNonBMPCharacters = true;
+        m_characterWidths |= (U_IS_BMP(ch) ? CharacterClassWidths::HasBMPChars : CharacterClassWidths::HasNonBMPChars);
 
         // binary chop, find position to insert char.
         while (range) {
@@ -316,8 +315,10 @@ private:
     {
         size_t end = ranges.size();
 
+        if (U_IS_BMP(lo))
+            m_characterWidths |= CharacterClassWidths::HasBMPChars;
         if (!U_IS_BMP(hi))
-            m_hasNonBMPCharacters = true;
+            m_characterWidths |= CharacterClassWidths::HasNonBMPChars;
 
         // Simple linear scan - I doubt there are that many ranges anyway...
         // feel free to fix this with something faster (eg binary chop).
@@ -408,7 +409,12 @@ private:
 
     bool hasNonBMPCharacters()
     {
-        return m_hasNonBMPCharacters;
+        return m_characterWidths & CharacterClassWidths::HasNonBMPChars;
+    }
+
+    CharacterClassWidths characterWidths()
+    {
+        return m_characterWidths;
     }
 
     bool anyCharacter()
@@ -417,8 +423,9 @@ private:
     }
 
     bool m_isCaseInsensitive : 1;
-    bool m_hasNonBMPCharacters : 1;
     bool m_anyCharacter : 1;
+    CharacterClassWidths m_characterWidths;
+    
     CanonicalMode m_canonicalMode;
 
     Vector<UChar32> m_matches;
@@ -836,8 +843,16 @@ public:
                 } else if (m_pattern.unicode()) {
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
-                    currentInputPosition += term.quantityMaxCount;
-                    alternative->m_hasFixedSize = false;
+                    if (term.characterClass->hasOneCharacterSize() && !term.invert()) {
+                        Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
+                        tempCount *= term.characterClass->hasNonBMPCharacters() ? 2 : 1;
+                        if (tempCount.hasOverflowed())
+                            return ErrorCode::OffsetTooLarge;
+                        currentInputPosition += tempCount;
+                    } else {
+                        currentInputPosition += term.quantityMaxCount;
+                        alternative->m_hasFixedSize = false;
+                    }
                 } else
                     currentInputPosition += term.quantityMaxCount;
                 break;
@@ -1318,6 +1333,7 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         break;
     case TypeCharacterClass:
         out.print("character class ");
+        out.printf("inputPosition %u ", inputPosition);
         dumpCharacterClass(out, thisPattern, characterClass);
         dumpQuantifier(out);
         if (quantityType != QuantifierFixedCount || thisPattern->unicode())
@@ -1461,7 +1477,7 @@ std::unique_ptr<CharacterClass> anycharCreate()
     auto characterClass = std::make_unique<CharacterClass>();
     characterClass->m_ranges.append(CharacterRange(0x00, 0x7f));
     characterClass->m_rangesUnicode.append(CharacterRange(0x0080, 0x10ffff));
-    characterClass->m_hasNonBMPCharacters = true;
+    characterClass->m_characterWidths = CharacterClassWidths::HasBothBMPAndNonBMP;
     characterClass->m_anyCharacter = true;
     return characterClass;
 }

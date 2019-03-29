@@ -52,6 +52,29 @@ struct CharacterRange {
     }
 };
 
+enum struct CharacterClassWidths : unsigned char {
+    Unknown = 0x0,
+    HasBMPChars = 0x1,
+    HasNonBMPChars = 0x2,
+    HasBothBMPAndNonBMP = HasBMPChars | HasNonBMPChars
+};
+
+inline CharacterClassWidths operator|(CharacterClassWidths lhs, CharacterClassWidths rhs)
+{
+    return static_cast<CharacterClassWidths>(static_cast<unsigned>(lhs) | static_cast<unsigned>(rhs));
+}
+
+inline bool operator&(CharacterClassWidths lhs, CharacterClassWidths rhs)
+{
+    return static_cast<unsigned>(lhs) & static_cast<unsigned>(rhs);
+}
+
+inline CharacterClassWidths& operator|=(CharacterClassWidths& lhs, CharacterClassWidths rhs)
+{
+    lhs = lhs | rhs;
+    return lhs;
+}
+
 struct CharacterClass {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -60,37 +83,42 @@ public:
     // specified matches and ranges)
     CharacterClass()
         : m_table(0)
-        , m_hasNonBMPCharacters(false)
+        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_anyCharacter(false)
     {
     }
     CharacterClass(const char* table, bool inverted)
         : m_table(table)
+        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_tableInverted(inverted)
-        , m_hasNonBMPCharacters(false)
         , m_anyCharacter(false)
     {
     }
-    CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode)
+    CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
         : m_matches(matches)
         , m_ranges(ranges)
         , m_matchesUnicode(matchesUnicode)
         , m_rangesUnicode(rangesUnicode)
         , m_table(0)
+        , m_characterWidths(widths)
         , m_tableInverted(false)
-        , m_hasNonBMPCharacters(false)
         , m_anyCharacter(false)
     {
     }
 
+    bool hasNonBMPCharacters() { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
+
+    bool hasOneCharacterSize() { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    bool hasOnlyNonBMPCharacters() { return m_characterWidths == CharacterClassWidths::HasNonBMPChars; }
+    
     Vector<UChar32> m_matches;
     Vector<CharacterRange> m_ranges;
     Vector<UChar32> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
 
     const char* m_table;
+    CharacterClassWidths m_characterWidths;
     bool m_tableInverted : 1;
-    bool m_hasNonBMPCharacters : 1;
     bool m_anyCharacter : 1;
 };
 
@@ -220,7 +248,7 @@ struct PatternTerm {
         return PatternTerm(TypeAssertionWordBoundary, invert);
     }
     
-    bool invert()
+    bool invert() const
     {
         return m_invert;
     }

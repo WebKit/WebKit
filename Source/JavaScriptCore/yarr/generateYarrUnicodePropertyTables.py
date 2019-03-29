@@ -35,7 +35,7 @@ import re
 from hasher import stringHash
 
 header = """/*
-* Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+* Copyright (C) 2017-2019 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -225,6 +225,7 @@ class PropertyData:
         self.name = name
         self.aliases = []
         self.index = len(PropertyData.allPropertyData)
+        self.hasBMPCharacters = False
         self.hasNonBMPCharacters = False
         self.matches = []
         self.ranges = []
@@ -249,7 +250,9 @@ class PropertyData:
         return "createCharacterClass{}".format(self.index)
 
     def addMatch(self, codePoint):
-        if codePoint > MaxBMP:
+        if codePoint <= MaxBMP:
+            self.hasBMPCharacters = True
+        else:
             self.hasNonBMPCharacters = True
         if codePoint <= lastASCIICodePoint:
             if (len(self.matches) and self.matches[-1] > codePoint) or (len(self.ranges) and self.ranges[-1][1] > codePoint):
@@ -281,6 +284,8 @@ class PropertyData:
                 self.unicodeMatches.append(codePoint)
 
     def addRange(self, lowCodePoint, highCodePoint):
+        if lowCodePoint <= MaxBMP:
+            self.hasBMPCharacters = True
         if highCodePoint > MaxBMP:
             self.hasNonBMPCharacters = True
         if highCodePoint <= lastASCIICodePoint:
@@ -536,9 +541,9 @@ class PropertyData:
         file.write("),\n")
         file.write("        std::initializer_list<CharacterRange>(")
         self.dumpMatchData(file, 4, self.unicodeRanges, lambda file, range: (file.write("{{{0:0=#6x}, {1:0=#6x}}}".format(range[0], range[1]))))
-        file.write("));\n")
+        file.write("),\n")
 
-        file.write("    characterClass->m_hasNonBMPCharacters = {};\n".format(("false", "true")[self.hasNonBMPCharacters]))
+        file.write("        CharacterClassWidths::{});\n".format(("Unknown", "HasBMPChars", "HasNonBMPChars", "HasBothBMPAndNonBMP")[int(self.hasNonBMPCharacters) * 2 + int(self.hasBMPCharacters)]))
         file.write("    return characterClass;\n}\n\n")
 
     @classmethod

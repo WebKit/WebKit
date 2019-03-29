@@ -181,7 +181,10 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
         }
 
 #if ENABLE(YARR_JIT_DEBUG)
-        matchCompareWithInterpreter(s, startOffset, offsetVector, result);
+        if (m_state == JITCode) {
+            byteCodeCompileIfNecessary(&vm);
+            matchCompareWithInterpreter(s, startOffset, offsetVector, result);
+        }
 #endif
     } else
 #endif

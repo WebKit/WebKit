@@ -385,7 +385,7 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
     for (unsigned j = 0, i = 0; i < m_numSubpatterns + 1; j += 2, i++)
         interpreterOffsetVector[j] = -1;
 
-    interpreterResult = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, interpreterOffsetVector);
+    interpreterResult = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(interpreterOffsetVector));
 
     if (jitResult != interpreterResult)
         differences++;
@@ -402,7 +402,7 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
         dataLogF((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8().data() + startOffset);
 
         if (jitResult != interpreterResult) {
-            dataLogF("    JIT result = %d, blah interpreted result = %d\n", jitResult, interpreterResult);
+            dataLogF("    JIT result = %d, interpreted result = %d\n", jitResult, interpreterResult);
             differences--;
         } else {
             dataLogF("    Correct result = %d\n", jitResult);

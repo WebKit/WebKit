@@ -100,8 +100,13 @@ for name, classes in types.items():
             function += ("    auto characterClass = std::make_unique<CharacterClass>(_%sData, false);\n" % (name))
     else:
         function += ("    auto characterClass = std::make_unique<CharacterClass>();\n")
+    hasBMPCharacters = False
     hasNonBMPCharacters = False
     for (min, max) in ranges:
+        if min < 0x10000:
+            hasBMPCharacters = True
+        if max >= 0x10000:
+            hasNonBMPCharacters = True
         if (min == max):
             if (min > 127):
                 function += ("    characterClass->m_matchesUnicode.append(0x%04x);\n" % min)
@@ -112,9 +117,7 @@ for name, classes in types.items():
             function += ("    characterClass->m_rangesUnicode.append(CharacterRange(0x%04x, 0x%04x));\n" % (min, max))
         else:
             function += ("    characterClass->m_ranges.append(CharacterRange(0x%02x, 0x%02x));\n" % (min, max))
-        if max >= 0x10000:
-            hasNonBMPCharacters = True
-    function += ("    characterClass->m_hasNonBMPCharacters = %s;\n" % ("true" if hasNonBMPCharacters else "false"))
+    function += ("    characterClass->m_characterWidths = CharacterClassWidths::%s;\n" % (("Unknown", "HasBMPChars", "HasNonBMPChars", "HasBothBMPAndNonBMP")[int(hasNonBMPCharacters) * 2 + int(hasBMPCharacters)]))
     function += ("    return characterClass;\n")
     function += ("}\n\n")
     functions += function

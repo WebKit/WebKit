@@ -428,6 +428,12 @@ public:
         bool match = testCharacterClass(characterClass, input.readChecked(negativeInputOffset));
         return invert ? !match : match;
     }
+    
+    bool checkCharacterClassDontAdvanceInputForNonBMP(CharacterClass* characterClass, unsigned negativeInputOffset)
+    {
+        int readCharacter = characterClass->hasOnlyNonBMPCharacters() ? input.readSurrogatePairChecked(negativeInputOffset) :  input.readChecked(negativeInputOffset);
+        return testCharacterClass(characterClass, readCharacter);
+    }
 
     bool tryConsumeBackReference(int matchBegin, int matchEnd, unsigned negativeInputOffset)
     {
@@ -558,12 +564,21 @@ public:
         switch (term.atom.quantityType) {
         case QuantifierFixedCount: {
             if (unicode) {
+                CharacterClass* charClass = term.atom.characterClass;
                 backTrack->begin = input.getPos();
                 unsigned matchAmount = 0;
                 for (matchAmount = 0; matchAmount < term.atom.quantityMaxCount; ++matchAmount) {
-                    if (!checkCharacterClass(term.atom.characterClass, term.invert(), term.inputPosition - matchAmount)) {
-                        input.setPos(backTrack->begin);
-                        return false;
+                    if (term.invert()) {
+                        if (!checkCharacterClass(charClass, term.invert(), term.inputPosition - matchAmount)) {
+                            input.setPos(backTrack->begin);
+                            return false;
+                        }
+                    } else {
+                        unsigned matchOffset = matchAmount * (charClass->hasOnlyNonBMPCharacters() ? 2 : 1);
+                        if (!checkCharacterClassDontAdvanceInputForNonBMP(charClass, term.inputPosition - matchOffset)) {
+                            input.setPos(backTrack->begin);
+                            return false;
+                        }
                     }
                 }
 
