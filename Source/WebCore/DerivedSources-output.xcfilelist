@@ -1317,6 +1317,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRemoteDOMWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserver.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverEntry.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverEntry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRsaHashedImportParams.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRsaHashedImportParams.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRsaHashedKeyGenParams.cpp

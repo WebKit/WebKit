@@ -1,3 +1,9 @@
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline WPT test after r243638.
+
+        * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window-expected.txt:
+
 2019-03-29  Cathie Chen  <cathiechen@igalia.com>
 
         Implement ResizeObserver.

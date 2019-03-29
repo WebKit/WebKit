@@ -2,7 +2,7 @@
 PASS Window's associated Document object is used for finding named objects (<div> via srcdoc <iframe>) 
 PASS Window's associated Document object is used for finding named objects (<object> via srcdoc <iframe>) 
 PASS Window's associated Document object is used for finding named objects (<iframe> via srcdoc <iframe>) 
-FAIL Window's associated Document object is used for finding named objects (<object> with browsing ccontext via srcdoc <iframe)> assert_equals: expected (object) null but got (undefined) undefined
+PASS Window's associated Document object is used for finding named objects (<object> with browsing ccontext via srcdoc <iframe)> 
 FAIL Window's associated Document object is used for finding named objects (<div> via same-origin <iframe>) f is not a function. (In 'f()', 'f' is undefined)
 FAIL Window's associated Document object is used for finding named objects (<object> via same-origin <iframe>) f is not a function. (In 'f()', 'f' is undefined)
 FAIL Window's associated Document object is used for finding named objects (<iframe> via same-origin <iframe>) f is not a function. (In 'f()', 'f' is undefined)
