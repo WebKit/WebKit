@@ -1,3 +1,30 @@
+2019-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] imxvpudecoder detection and handling
+        https://bugs.webkit.org/show_bug.cgi?id=196346
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When the imxvpudecoder is used, the texture sampling of the
+        directviv-uploaded texture returns an RGB value, so there's no need
+        to convert it. This patch also includes a refactoring of the
+        ImageRotation flag handling. The flag is now computed once only
+        and stored in an instance variable.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamerBase::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamerBase::copyVideoTextureToPlatformTexture):
+        (WebCore::MediaPlayerPrivateGStreamerBase::nativeImageForCurrentTime):
+        (WebCore::MediaPlayerPrivateGStreamerBase::setVideoSourceOrientation):
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags):
+        (WebCore::texMapFlagFromOrientation): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
 2019-03-29  Cathie Chen  <cathiechen@igalia.com>
 
         Implement ResizeObserver.

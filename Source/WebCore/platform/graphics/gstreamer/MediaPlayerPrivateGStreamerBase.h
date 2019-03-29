@@ -38,6 +38,7 @@
 #include <wtf/WeakPtr.h>
 
 #if USE(TEXTURE_MAPPER_GL)
+#include "TextureMapperGL.h"
 #if USE(NICOSIA)
 #include "NicosiaContentLayerTextureMapperImpl.h"
 #else
@@ -221,6 +222,11 @@ protected:
     static void volumeChangedCallback(MediaPlayerPrivateGStreamerBase*);
     static void muteChangedCallback(MediaPlayerPrivateGStreamerBase*);
 
+#if USE(TEXTURE_MAPPER_GL)
+    void updateTextureMapperFlags();
+    TextureMapperGL::Flags m_textureMapperFlags;
+#endif
+
     enum MainThreadNotification {
         VideoChanged = 1 << 0,
         VideoCapsChanged = 1 << 1,
@@ -283,7 +289,9 @@ protected:
     bool m_waitingForKey { false };
 #endif
 
-    mutable bool m_isVideoDecoderVideo4Linux { false };
+    enum class WebKitGstVideoDecoderPlatform { ImxVPU, Video4Linux };
+
+    WebKitGstVideoDecoderPlatform m_videoDecoderPlatform;
 };
 
 }

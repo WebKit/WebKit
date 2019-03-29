@@ -2392,7 +2392,12 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const gchar* playbinName, con
             return;
 
         GUniquePtr<char> elementName(gst_element_get_name(element));
-        player->m_isVideoDecoderVideo4Linux = g_str_has_prefix(elementName.get(), "v4l2");
+        if (g_str_has_prefix(elementName.get(), "v4l2"))
+            player->m_videoDecoderPlatform = WebKitGstVideoDecoderPlatform::Video4Linux;
+        else if (g_str_has_prefix(elementName.get(), "imxvpudecoder"))
+            player->m_videoDecoderPlatform = WebKitGstVideoDecoderPlatform::ImxVPU;
+
+        player->updateTextureMapperFlags();
     }), this);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(sourceSetupCallback), this);
