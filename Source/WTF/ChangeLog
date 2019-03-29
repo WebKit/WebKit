@@ -1,3 +1,9 @@
+2019-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix.
+
+        * wtf/CMakeLists.txt: Added SpanningTree.h to WTF_PUBLIC_HEADERS.
+
 2019-03-28  Saam Barati  <sbarati@apple.com>
 
         BackwardsGraph needs to consider back edges as the backward's root successor
