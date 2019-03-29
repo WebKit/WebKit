@@ -1,3 +1,16 @@
+2019-03-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        HTMLInputElement::setEditingValue should not fail if renderer doesn't exist
+        https://bugs.webkit.org/show_bug.cgi?id=195708
+
+        Reviewed by Wenson Hsieh.
+
+        This is a copy of fast/forms/editing-value.html, except the form is not displayed. The input
+        value should still change.
+
+        * fast/forms/editing-value-null-renderer-expected.txt: Added.
+        * fast/forms/editing-value-null-renderer.html: Added.
+
 2019-03-28  Antoine Quint  <graouts@apple.com>
 
         All PointerEvent.isTrusted is always false.

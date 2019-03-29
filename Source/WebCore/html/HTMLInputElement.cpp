@@ -1036,8 +1036,9 @@ void HTMLInputElement::setValueForUser(const String& value)
 
 void HTMLInputElement::setEditingValue(const String& value)
 {
-    if (!renderer() || !isTextField())
+    if (!isTextField())
         return;
+
     setInnerTextValue(value);
     subtreeHasChanged();
 
