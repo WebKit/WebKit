@@ -879,28 +879,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/OffscreenCanvasRenderingContext2D.idl
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
-    html/canvas/WebMetalBuffer.idl
-    html/canvas/WebMetalCommandBuffer.idl
-    html/canvas/WebMetalCommandQueue.idl
-    html/canvas/WebMetalComputeCommandEncoder.idl
-    html/canvas/WebMetalComputePipelineState.idl
-    html/canvas/WebMetalDepthStencilDescriptor.idl
-    html/canvas/WebMetalDepthStencilState.idl
-    html/canvas/WebMetalDrawable.idl
-    html/canvas/WebMetalFunction.idl
-    html/canvas/WebMetalLibrary.idl
-    html/canvas/WebMetalRenderCommandEncoder.idl
-    html/canvas/WebMetalRenderPassAttachmentDescriptor.idl
-    html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl
-    html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl
-    html/canvas/WebMetalRenderPassDescriptor.idl
-    html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl
-    html/canvas/WebMetalRenderPipelineDescriptor.idl
-    html/canvas/WebMetalRenderPipelineState.idl
-    html/canvas/WebMetalRenderingContext.idl
-    html/canvas/WebMetalSize.idl
-    html/canvas/WebMetalTexture.idl
-    html/canvas/WebMetalTextureDescriptor.idl
 
     inspector/CommandLineAPIHost.idl
     inspector/InspectorAuditAccessibilityObject.idl

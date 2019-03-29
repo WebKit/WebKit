@@ -1,3 +1,29 @@
+2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete WebMetal implementation in favor of WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=195418
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures):
+        (resetWebPreferencesToConsistentValues):
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/mac/GPUCommandQueue.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyBuffer.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyCommandQueue.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyDevice.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyFunction.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyLibrary.mm: Removed.
+        * TestWebKitAPI/Tests/WebCore/mac/GPULegacyTest.h: Removed.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setWebMetalEnabled): Deleted.
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r243523): Six form-related watchOS layout tests are timing out

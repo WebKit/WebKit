@@ -179,7 +179,6 @@ my (
     $webgl2Support,
     $webglSupport,
     $webgpuSupport,
-    $webmetalSupport,
     $wirelessPlaybackTargetSupport,
     $xsltSupport,
 );
@@ -558,9 +557,6 @@ my @features = (
 
     { option => "webgpu", desc => "Toggle WebGPU support",
       define => "ENABLE_WEBGPU", value => \$webgpuSupport },
-
-    { option => "webmetal", desc => "Toggle WebMetal support",
-      define => "ENABLE_WEBMETAL", value => \$webmetalSupport },
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", value => \$webAudioSupport },

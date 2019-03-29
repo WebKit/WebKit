@@ -102,7 +102,6 @@ namespace WebCore {
     M(WebAudio) \
     M(WebGL) \
     M(WebGPU) \
-    M(WebMetal) \
     M(WebRTC) \
     M(WebRTCStats) \
     M(WheelEventTestTriggers) \

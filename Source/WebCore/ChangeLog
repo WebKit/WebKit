@@ -1,3 +1,196 @@
+2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete WebMetal implementation in favor of WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=195418
+
+        Reviewed by Dean Jackson.
+
+        WebMetal was only ever intended to be a proof-of-concept, and was never intended to be shipped.
+        Now that our WebGPU implementation is achieving good functionality, we're hitting conflicts
+        because we have both implementations. We should delete the non-standard implementation in favor
+        of the standards-based implementation.
+
+        Deletes relevant tests.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebMetalRenderPassAttachmentDescriptorCustom.cpp: Removed.
+        * bindings/js/JSWebMetalRenderingContextCustom.cpp: Removed.
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasContext):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::isWebMetalType): Deleted.
+        (WebCore::HTMLCanvasElement::createContextWebMetal): Deleted.
+        (WebCore::HTMLCanvasElement::getContextWebMetal): Deleted.
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.idl:
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::isWebGPU const):
+        (WebCore::CanvasRenderingContext::isWebMetal const): Deleted.
+        * html/canvas/WebMetalBuffer.cpp: Removed.
+        * html/canvas/WebMetalBuffer.h: Removed.
+        * html/canvas/WebMetalBuffer.idl: Removed.
+        * html/canvas/WebMetalCommandBuffer.cpp: Removed.
+        * html/canvas/WebMetalCommandBuffer.h: Removed.
+        * html/canvas/WebMetalCommandBuffer.idl: Removed.
+        * html/canvas/WebMetalCommandQueue.cpp: Removed.
+        * html/canvas/WebMetalCommandQueue.h: Removed.
+        * html/canvas/WebMetalCommandQueue.idl: Removed.
+        * html/canvas/WebMetalComputeCommandEncoder.cpp: Removed.
+        * html/canvas/WebMetalComputeCommandEncoder.h: Removed.
+        * html/canvas/WebMetalComputeCommandEncoder.idl: Removed.
+        * html/canvas/WebMetalComputePipelineState.cpp: Removed.
+        * html/canvas/WebMetalComputePipelineState.h: Removed.
+        * html/canvas/WebMetalComputePipelineState.idl: Removed.
+        * html/canvas/WebMetalDepthStencilDescriptor.cpp: Removed.
+        * html/canvas/WebMetalDepthStencilDescriptor.h: Removed.
+        * html/canvas/WebMetalDepthStencilDescriptor.idl: Removed.
+        * html/canvas/WebMetalDepthStencilState.cpp: Removed.
+        * html/canvas/WebMetalDepthStencilState.h: Removed.
+        * html/canvas/WebMetalDepthStencilState.idl: Removed.
+        * html/canvas/WebMetalDrawable.cpp: Removed.
+        * html/canvas/WebMetalDrawable.h: Removed.
+        * html/canvas/WebMetalDrawable.idl: Removed.
+        * html/canvas/WebMetalEnums.cpp: Removed.
+        * html/canvas/WebMetalEnums.h: Removed.
+        * html/canvas/WebMetalEnums.idl: Removed.
+        * html/canvas/WebMetalFunction.cpp: Removed.
+        * html/canvas/WebMetalFunction.h: Removed.
+        * html/canvas/WebMetalFunction.idl: Removed.
+        * html/canvas/WebMetalLibrary.cpp: Removed.
+        * html/canvas/WebMetalLibrary.h: Removed.
+        * html/canvas/WebMetalLibrary.idl: Removed.
+        * html/canvas/WebMetalRenderCommandEncoder.cpp: Removed.
+        * html/canvas/WebMetalRenderCommandEncoder.h: Removed.
+        * html/canvas/WebMetalRenderCommandEncoder.idl: Removed.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPassAttachmentDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPassDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPassDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPassDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPipelineDescriptor.cpp: Removed.
+        * html/canvas/WebMetalRenderPipelineDescriptor.h: Removed.
+        * html/canvas/WebMetalRenderPipelineDescriptor.idl: Removed.
+        * html/canvas/WebMetalRenderPipelineState.cpp: Removed.
+        * html/canvas/WebMetalRenderPipelineState.h: Removed.
+        * html/canvas/WebMetalRenderPipelineState.idl: Removed.
+        * html/canvas/WebMetalRenderingContext.cpp: Removed.
+        * html/canvas/WebMetalRenderingContext.h: Removed.
+        * html/canvas/WebMetalRenderingContext.idl: Removed.
+        * html/canvas/WebMetalSize.h: Removed.
+        * html/canvas/WebMetalSize.idl: Removed.
+        * html/canvas/WebMetalTexture.cpp: Removed.
+        * html/canvas/WebMetalTexture.h: Removed.
+        * html/canvas/WebMetalTexture.idl: Removed.
+        * html/canvas/WebMetalTextureDescriptor.cpp: Removed.
+        * html/canvas/WebMetalTextureDescriptor.h: Removed.
+        * html/canvas/WebMetalTextureDescriptor.idl: Removed.
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestContent):
+        (WebCore::contextAsScriptValue):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebMetalEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webMetalEnabled const): Deleted.
+        * platform/Logging.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::layerTypeForPlatformLayer):
+        (WebCore::PlatformCALayerCocoa::PlatformCALayerCocoa):
+        * platform/graphics/cocoa/WebMetalLayer.h: Removed.
+        * platform/graphics/cocoa/WebMetalLayer.mm: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyBuffer.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyBuffer.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyCommandBuffer.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyCommandBuffer.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyCommandQueue.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyCommandQueue.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyComputeCommandEncoder.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyComputeCommandEncoder.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyComputePipelineState.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyComputePipelineState.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilState.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDepthStencilState.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDevice.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDevice.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDrawable.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyDrawable.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyEnums.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyFunction.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyFunction.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyLibrary.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyLibrary.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderCommandEncoder.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderCommandEncoder.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassAttachmentDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassAttachmentDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassColorAttachmentDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassColorAttachmentDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDepthAttachmentDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDepthAttachmentDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPassDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineColorAttachmentDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineColorAttachmentDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineState.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyRenderPipelineState.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacySize.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyTexture.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyTexture.h: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyTextureDescriptor.cpp: Removed.
+        * platform/graphics/gpu/legacy/GPULegacyTextureDescriptor.h: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyBufferMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyCommandBufferMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyCommandQueueMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyComputeCommandEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyComputePipelineStateMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDepthStencilStateMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDeviceMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyDrawableMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyFunctionMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyLibraryMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderCommandEncoderMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassAttachmentDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassColorAttachmentDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDepthAttachmentDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPassDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineColorAttachmentDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyRenderPipelineStateMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyTextureDescriptorMetal.mm: Removed.
+        * platform/graphics/gpu/legacy/cocoa/GPULegacyTextureMetal.mm: Removed.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setWebMetalEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2019-03-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add fast returns for instrumentation hooks that have no affect before a frontend is connected

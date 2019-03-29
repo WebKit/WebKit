@@ -215,11 +215,6 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
 #endif
 
-#if ENABLE(WEBMETAL)
-    if (preference == "WebKitWebMetalEnabled")
-        RuntimeEnabledFeatures::sharedFeatures().setWebMetalEnabled(enabled);
-#endif
-
     if (preference == "WebKitModernMediaControlsEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setModernMediaControlsEnabled(enabled);
 

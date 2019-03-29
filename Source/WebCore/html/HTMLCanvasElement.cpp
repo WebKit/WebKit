@@ -79,10 +79,6 @@
 #include "GPUCanvasContext.h"
 #endif
 
-#if ENABLE(WEBMETAL)
-#include "WebMetalRenderingContext.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include "MediaSampleAVFObjC.h"
 #include <pal/cf/CoreMediaSoftLink.h>
@@ -250,14 +246,6 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecS
         }
 #endif
 
-#if ENABLE(WEBMETAL)
-        if (m_context->isWebMetal()) {
-            if (!isWebMetalType(contextId))
-                return Optional<RenderingContext> { WTF::nullopt };
-            return Optional<RenderingContext> { RefPtr<WebMetalRenderingContext> { &downcast<WebMetalRenderingContext>(*m_context) } };
-        }
-#endif
-
         ASSERT_NOT_REACHED();
         return Optional<RenderingContext> { WTF::nullopt };
     }
@@ -308,15 +296,6 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::ExecS
     }
 #endif
 
-#if ENABLE(WEBMETAL)
-    if (isWebMetalType(contextId)) {
-        auto context = createContextWebMetal(contextId);
-        if (!context)
-            return Optional<RenderingContext> { WTF::nullopt };
-        return Optional<RenderingContext> { RefPtr<WebMetalRenderingContext> { context } };
-    }
-#endif
-
     return Optional<RenderingContext> { WTF::nullopt };
 }
 
@@ -327,11 +306,6 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 
     if (HTMLCanvasElement::isBitmapRendererType(type))
         return getContextBitmapRenderer(type);
-
-#if ENABLE(WEBMETAL)
-    if (HTMLCanvasElement::isWebMetalType(type) && RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
-        return getContextWebMetal(type);
-#endif
 
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::isWebGLType(type))
@@ -503,46 +477,6 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 }
 
 #endif // ENABLE(WEBGPU)
-
-#if ENABLE(WEBMETAL)
-
-bool HTMLCanvasElement::isWebMetalType(const String& type)
-{
-    return type == "webmetal";
-}
-
-WebMetalRenderingContext* HTMLCanvasElement::createContextWebMetal(const String& type)
-{
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebMetalType(type));
-    ASSERT(!m_context);
-
-    if (!RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
-        return nullptr;
-
-    m_context = WebMetalRenderingContext::create(*this);
-    if (m_context) {
-        // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
-        invalidateStyleAndLayerComposition();
-    }
-
-    return static_cast<WebMetalRenderingContext*>(m_context.get());
-}
-
-WebMetalRenderingContext* HTMLCanvasElement::getContextWebMetal(const String& type)
-{
-    ASSERT_UNUSED(type, HTMLCanvasElement::isWebMetalType(type));
-
-    if (!RuntimeEnabledFeatures::sharedFeatures().webMetalEnabled())
-        return nullptr;
-
-    if (m_context && !m_context->isWebMetal())
-        return nullptr;
-
-    if (!m_context)
-        return createContextWebMetal(type);
-    return static_cast<WebMetalRenderingContext*>(m_context.get());
-}
-#endif
 
 bool HTMLCanvasElement::isBitmapRendererType(const String& type)
 {

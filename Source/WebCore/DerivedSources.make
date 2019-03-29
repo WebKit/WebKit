@@ -819,28 +819,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
-    $(WebCore)/html/canvas/WebMetalBuffer.idl \
-    $(WebCore)/html/canvas/WebMetalCommandBuffer.idl \
-    $(WebCore)/html/canvas/WebMetalCommandQueue.idl \
-    $(WebCore)/html/canvas/WebMetalComputeCommandEncoder.idl \
-    $(WebCore)/html/canvas/WebMetalComputePipelineState.idl \
-    $(WebCore)/html/canvas/WebMetalDepthStencilDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalDepthStencilState.idl \
-    $(WebCore)/html/canvas/WebMetalDrawable.idl \
-    $(WebCore)/html/canvas/WebMetalFunction.idl \
-    $(WebCore)/html/canvas/WebMetalLibrary.idl \
-    $(WebCore)/html/canvas/WebMetalRenderCommandEncoder.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPassAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPassColorAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPassDepthAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPassDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPipelineColorAttachmentDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPipelineDescriptor.idl \
-    $(WebCore)/html/canvas/WebMetalRenderPipelineState.idl \
-    $(WebCore)/html/canvas/WebMetalRenderingContext.idl \
-    $(WebCore)/html/canvas/WebMetalSize.idl \
-    $(WebCore)/html/canvas/WebMetalTexture.idl \
-    $(WebCore)/html/canvas/WebMetalTextureDescriptor.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
     $(WebCore)/html/track/DataCue.idl \

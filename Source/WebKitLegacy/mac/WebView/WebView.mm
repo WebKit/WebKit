@@ -3143,10 +3143,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled([preferences webGPUEnabled]);
 #endif
 
-#if ENABLE(WEBMETAL)
-    RuntimeEnabledFeatures::sharedFeatures().setWebMetalEnabled([preferences webMetalEnabled]);
-#endif
-
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
     RuntimeEnabledFeatures::sharedFeatures().setDownloadAttributeEnabled([preferences downloadAttributeEnabled]);
 #endif

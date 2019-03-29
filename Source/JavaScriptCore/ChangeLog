@@ -1,3 +1,14 @@
+2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete WebMetal implementation in favor of WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=195418
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * inspector/protocol/Canvas.json:
+        * inspector/scripts/codegen/generator.py:
+
 2019-03-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Assertion failed in JSC::createError

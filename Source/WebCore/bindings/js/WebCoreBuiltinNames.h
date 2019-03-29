@@ -219,28 +219,6 @@ namespace WebCore {
     macro(WebGPUTexture) \
     macro(WebGPUTextureView) \
     macro(WebGPUVertexFormat) \
-    macro(WebMetalBuffer) \
-    macro(WebMetalCommandBuffer) \
-    macro(WebMetalCommandQueue) \
-    macro(WebMetalComputeCommandEncoder) \
-    macro(WebMetalComputePipelineState) \
-    macro(WebMetalDepthStencilDescriptor) \
-    macro(WebMetalDepthStencilState) \
-    macro(WebMetalDrawable) \
-    macro(WebMetalFunction) \
-    macro(WebMetalLibrary) \
-    macro(WebMetalRenderCommandEncoder) \
-    macro(WebMetalRenderPassAttachmentDescriptor) \
-    macro(WebMetalRenderPassColorAttachmentDescriptor) \
-    macro(WebMetalRenderPassDepthAttachmentDescriptor) \
-    macro(WebMetalRenderPassDescriptor) \
-    macro(WebMetalRenderPipelineColorAttachmentDescriptor) \
-    macro(WebMetalRenderPipelineDescriptor) \
-    macro(WebMetalRenderPipelineState) \
-    macro(WebMetalRenderingContext) \
-    macro(WebMetalSize) \
-    macro(WebMetalTexture) \
-    macro(WebMetalTextureDescriptor) \
     macro(WebKitMediaKeyError) \
     macro(WebKitMediaKeyMessageEvent) \
     macro(WebKitMediaKeyNeededEvent) \

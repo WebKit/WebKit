@@ -197,7 +197,6 @@ class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
 class GPUCanvasContext;
-class WebMetalRenderingContext;
 class WindowProxy;
 class Worklet;
 class XPathEvaluator;
@@ -327,9 +326,6 @@ using RenderingContext = Variant<
 #endif
 #if ENABLE(WEBGPU)
     RefPtr<GPUCanvasContext>,
-#endif
-#if ENABLE(WEBMETAL)
-    RefPtr<WebMetalRenderingContext>,
 #endif
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>

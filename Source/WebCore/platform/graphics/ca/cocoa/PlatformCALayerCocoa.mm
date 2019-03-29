@@ -54,10 +54,6 @@
 #import "WebGPULayer.h"
 #endif
 
-#if ENABLE(WEBMETAL)
-#import "WebMetalLayer.h"
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #import "FontAntialiasingStateSaver.h"
 #import "WAKWindow.h"
@@ -218,11 +214,6 @@ PlatformCALayer::LayerType PlatformCALayerCocoa::layerTypeForPlatformLayer(Platf
         return LayerTypeContentsProvidedLayer;
 #endif
 
-#if ENABLE(WEBMETAL)
-    if ([layer isKindOfClass:[WebMetalLayer class]])
-        return LayerTypeContentsProvidedLayer;
-#endif
-
     return LayerTypeCustom;
 }
 
@@ -275,7 +266,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = getAVPlayerLayerClass();
         break;
     case LayerTypeContentsProvidedLayer:
-        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers, WebGPULayers or WebMetalLayers.
+        // We don't create PlatformCALayerCocoas wrapped around WebGLLayers or WebGPULayers.
         ASSERT_NOT_REACHED();
         break;
     case LayerTypeShapeLayer:

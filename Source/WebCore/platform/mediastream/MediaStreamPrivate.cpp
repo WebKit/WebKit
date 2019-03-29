@@ -38,6 +38,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "Logging.h"
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>

@@ -52,7 +52,6 @@ class MediaSample;
 class MediaStream;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
-class WebMetalRenderingContext;
 struct UncachedString;
 
 namespace DisplayList {
@@ -102,11 +101,6 @@ public:
     static bool isWebGPUType(const String&);
     GPUCanvasContext* createContextWebGPU(const String&);
     GPUCanvasContext* getContextWebGPU(const String&);
-#endif
-#if ENABLE(WEBMETAL)
-    static bool isWebMetalType(const String&);
-    WebMetalRenderingContext* createContextWebMetal(const String&);
-    WebMetalRenderingContext* getContextWebMetal(const String&);
 #endif
 
     static bool isBitmapRendererType(const String&);

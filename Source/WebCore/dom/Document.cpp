@@ -319,9 +319,6 @@
 #if ENABLE(WEBGPU)
 #include "GPUCanvasContext.h"
 #endif
-#if ENABLE(WEBMETAL)
-#include "WebMetalRenderingContext.h"
-#endif
 
 namespace WebCore {
 
@@ -6066,10 +6063,6 @@ Optional<RenderingContext> Document::getCSSCanvasContext(const String& type, con
 #if ENABLE(WEBGPU)
     if (is<GPUCanvasContext>(*context))
         return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
-#endif
-#if ENABLE(WEBMETAL)
-    if (is<WebMetalRenderingContext>(*context))
-        return RenderingContext { RefPtr<WebMetalRenderingContext> { &downcast<WebMetalRenderingContext>(*context) } };
 #endif
 
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };

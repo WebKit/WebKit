@@ -1,3 +1,25 @@
+2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Delete WebMetal implementation in favor of WebGPU
+        https://bugs.webkit.org/show_bug.cgi?id=195418
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webmetal/webmetal-dispatch-expected.txt: Removed.
+        * fast/canvas/webmetal/webmetal-dispatch.html: Removed.
+        * fast/canvas/webmetal/webmetal-runtime-flag-expected.txt: Removed.
+        * fast/canvas/webmetal/webmetal-runtime-flag.html: Removed.
+        * inspector/canvas/create-context-webmetal-expected.txt: Removed.
+        * inspector/canvas/create-context-webmetal.html: Removed.
+        * inspector/canvas/resolveCanvasContext-webmetal-expected.txt: Removed.
+        * inspector/canvas/resolveCanvasContext-webmetal.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-03-29  Zalan Bujtas  <zalan@apple.com>
 
         [Simple line layout] Turn off inline boxtree generation for multiline content

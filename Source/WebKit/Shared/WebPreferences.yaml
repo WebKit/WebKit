@@ -1288,15 +1288,6 @@ WebGPUEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGPU)
 
-WebMetalEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "WebMetal"
-  humanReadableDescription: "WebMetal prototype"
-  category: experimental
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBMETAL)
-
 AccessibilityObjectModelEnabled:
   type: bool
   defaultValue: false

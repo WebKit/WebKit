@@ -635,9 +635,6 @@ public:
 #if ENABLE(WEBGPU)
         [NSNumber numberWithBool:NO], WebKitWebGPUEnabledPreferenceKey,
 #endif
-#if ENABLE(WEBMETAL)
-        [NSNumber numberWithBool:NO], WebKitWebMetalEnabledPreferenceKey,
-#endif
         [NSNumber numberWithBool:NO], WebKitCacheAPIEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitFetchAPIEnabledPreferenceKey,
 
@@ -2177,16 +2174,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setWebGPUEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitWebGPUEnabledPreferenceKey];
-}
-
-- (BOOL)webMetalEnabled
-{
-    return [self _boolValueForKey:WebKitWebMetalEnabledPreferenceKey];
-}
-
-- (void)setWebMetalEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitWebMetalEnabledPreferenceKey];
 }
 
 - (BOOL)accelerated2dCanvasEnabled

@@ -296,11 +296,6 @@ public:
     bool webGPUEnabled() const { return m_isWebGPUEnabled; }
 #endif
 
-#if ENABLE(WEBMETAL)
-    void setWebMetalEnabled(bool isEnabled) { m_isWebMetalEnabled = isEnabled; }
-    bool webMetalEnabled() const { return m_isWebMetalEnabled; }
-#endif
-
 #if ENABLE(STREAMS_API)
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
     bool readableByteStreamAPIEnabled() const { return m_isReadableByteStreamAPIEnabled; }
@@ -495,10 +490,6 @@ private:
     
 #if ENABLE(WEBGPU)
     bool m_isWebGPUEnabled { false };
-#endif
-
-#if ENABLE(WEBMETAL)
-    bool m_isWebMetalEnabled { false };
 #endif
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)

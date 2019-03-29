@@ -64,11 +64,6 @@
 #include "JSGPUCanvasContext.h"
 #endif
 
-#if ENABLE(WEBMETAL)
-#include "JSWebMetalRenderingContext.h"
-#endif
-
-
 namespace WebCore {
 
 using namespace Inspector;
@@ -206,10 +201,6 @@ static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingC
 #if ENABLE(WEBGPU)
     if (is<GPUCanvasContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<GPUCanvasContext>(context));
-#endif
-#if ENABLE(WEBMETAL)
-    if (is<WebMetalRenderingContext>(context))
-        return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<WebMetalRenderingContext>(context));
 #endif
     if (is<ImageBitmapRenderingContext>(context))
         return toJS(&state, deprecatedGlobalObjectForPrototype(&state), downcast<ImageBitmapRenderingContext>(context));

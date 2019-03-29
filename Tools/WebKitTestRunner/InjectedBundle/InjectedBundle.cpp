@@ -500,7 +500,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     m_testRunner->setXSSAuditorEnabled(false);
 
     m_testRunner->setWebGL2Enabled(true);
-    m_testRunner->setWebMetalEnabled(true);
 
     m_testRunner->setWritableStreamAPIEnabled(true);
     m_testRunner->setReadableByteStreamAPIEnabled(true);

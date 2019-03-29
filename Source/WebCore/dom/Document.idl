@@ -28,9 +28,6 @@ typedef (
 #if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
     GPUCanvasContext or
 #endif
-#if defined(ENABLE_WEBMETAL) && ENABLE_WEBMETAL
-    WebMetalRenderingContext or
-#endif
     ImageBitmapRenderingContext or 
     CanvasRenderingContext2D) RenderingContext;
 

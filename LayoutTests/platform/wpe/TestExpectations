@@ -293,8 +293,7 @@ Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-1.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-2.html [ Skip ]
 Bug(WPE) js/stringimpl-to-jsstring-on-large-strings-3.html [ Skip ]
 
-# No WebMetal or WebGPU support yet
-fast/canvas/webmetal [ Skip ]
+# No WebGPU support yet
 webgpu [ Skip ]
 
 # Skipped due to untestable DRM key system. ClearKey counterparts are tested instead.
