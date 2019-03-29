@@ -1,3 +1,15 @@
+2019-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Support <object>.contentWindow
+        https://bugs.webkit.org/show_bug.cgi?id=195562
+
+        Reviewed by Sam Weinig.
+
+        Update existing test to extend test coverage.
+
+        * fast/dom/HTMLObjectElement/object-as-frame-expected.txt:
+        * fast/dom/HTMLObjectElement/object-as-frame.html:
+
 2019-03-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         FontFace constructor throws an exception when there is a name which starts with a number

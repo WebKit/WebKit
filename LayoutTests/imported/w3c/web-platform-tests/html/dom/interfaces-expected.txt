@@ -1338,7 +1338,7 @@ PASS HTMLObjectElement interface: attribute form
 PASS HTMLObjectElement interface: attribute width 
 PASS HTMLObjectElement interface: attribute height 
 PASS HTMLObjectElement interface: attribute contentDocument 
-FAIL HTMLObjectElement interface: attribute contentWindow assert_true: The prototype object must have a property "contentWindow" expected true got false
+PASS HTMLObjectElement interface: attribute contentWindow 
 PASS HTMLObjectElement interface: operation getSVGDocument() 
 PASS HTMLObjectElement interface: attribute willValidate 
 PASS HTMLObjectElement interface: attribute validity 
@@ -1367,7 +1367,7 @@ PASS HTMLObjectElement interface: document.createElement("object") must inherit 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "width" with the proper type 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "height" with the proper type 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "contentDocument" with the proper type 
-FAIL HTMLObjectElement interface: document.createElement("object") must inherit property "contentWindow" with the proper type assert_inherits: property "contentWindow" not found in prototype chain
+PASS HTMLObjectElement interface: document.createElement("object") must inherit property "contentWindow" with the proper type 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "getSVGDocument()" with the proper type 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "willValidate" with the proper type 
 PASS HTMLObjectElement interface: document.createElement("object") must inherit property "validity" with the proper type 
