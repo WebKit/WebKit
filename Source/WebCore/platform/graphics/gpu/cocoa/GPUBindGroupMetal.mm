@@ -160,7 +160,7 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
         auto index = resourceBinding.binding;
         auto layoutIterator = layoutBindingsMap.find(index);
         if (layoutIterator == layoutBindingsMap.end()) {
-            LOG(WebGPU, "%s: GPUBindGroupBinding %lu not found in GPUBindGroupLayout!", functionName, index);
+            LOG(WebGPU, "%s: GPUBindGroupBinding %u not found in GPUBindGroupLayout!", functionName, index);
             return nullptr;
         }
         auto layoutBinding = layoutIterator->value;
@@ -172,15 +172,15 @@ RefPtr<GPUBindGroup> GPUBindGroup::tryCreate(const GPUBindGroupDescriptor& descr
         bool isForCompute = layoutBinding.visibility & GPUShaderStageBit::Flags::Compute;
 
         if (isForVertex && !vertexEncoder) {
-            LOG(WebGPU, "%s: No vertex argument encoder found for binding %lu!", functionName, index);
+            LOG(WebGPU, "%s: No vertex argument encoder found for binding %u!", functionName, index);
             return nullptr;
         }
         if (isForFragment && !fragmentEncoder) {
-            LOG(WebGPU, "%s: No fragment argument encoder found for binding %lu!", functionName, index);
+            LOG(WebGPU, "%s: No fragment argument encoder found for binding %u!", functionName, index);
             return nullptr;
         }
         if (isForCompute && !computeEncoder) {
-            LOG(WebGPU, "%s: No compute argument encoder found for binding %lu!", functionName, index);
+            LOG(WebGPU, "%s: No compute argument encoder found for binding %u!", functionName, index);
             return nullptr;
         }
 

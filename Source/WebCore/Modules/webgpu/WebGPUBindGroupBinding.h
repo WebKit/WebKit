@@ -37,7 +37,7 @@ namespace WebCore {
 using WebGPUBindingResource = Variant<RefPtr<WebGPUSampler>, RefPtr<WebGPUTextureView>, WebGPUBufferBinding>;
 
 struct WebGPUBindGroupBinding {
-    unsigned long binding;
+    unsigned binding;
     WebGPUBindingResource resource;
 };
 

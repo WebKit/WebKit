@@ -52,8 +52,8 @@ public:
     static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
     void setPipeline(Ref<const GPURenderPipeline>&&);
-    void setVertexBuffers(unsigned long, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
-    void draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance);
+    void setVertexBuffers(unsigned, Vector<Ref<GPUBuffer>>&&, Vector<unsigned long long>&&);
+    void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
 
 private:
     GPURenderPassEncoder(Ref<GPUCommandBuffer>&&, PlatformRenderPassEncoderSmartPtr&&);

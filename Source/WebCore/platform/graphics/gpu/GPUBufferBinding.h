@@ -34,8 +34,8 @@ namespace WebCore {
 
 struct GPUBufferBinding {
     Ref<GPUBuffer> buffer;
-    unsigned long long offset;
-    unsigned long long size;
+    unsigned long offset;
+    unsigned long size;
 };
 
 } // namespace WebCore

@@ -1,3 +1,50 @@
+2019-03-28  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Replace 'unsigned long' with 'unsigned' when implementing u32 variables
+        https://bugs.webkit.org/show_bug.cgi?id=194618
+        <rdar://problem/48055796>
+
+        Reviewed by Myles C. Maxfield.
+
+        WebIDL for "unsigned" on 64-bit is "unsigned long". Update Web GPU to match.
+
+        No new tests; no change in behavior.
+
+        * Modules/webgpu/GPUBindGroupLayoutBinding.h:
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.cpp:
+        (WebCore::WHLSL::Metal::calculateVertexBufferIndex):
+        * Modules/webgpu/WHLSL/Metal/WHLSLVertexBufferIndexCalculator.h:
+        * Modules/webgpu/WebGPUBindGroupBinding.h:
+        * Modules/webgpu/WebGPUBindGroupDescriptor.cpp:
+        (WebCore::validateBufferBindingType):
+        (WebCore::WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor const):
+        * Modules/webgpu/WebGPUBuffer.cpp:
+        (WebCore::WebGPUBuffer::setSubData):
+        * Modules/webgpu/WebGPUBuffer.h:
+        * Modules/webgpu/WebGPUBufferBinding.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers):
+        (WebCore::WebGPURenderPassEncoder::draw):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUBindGroupBinding.h:
+        * platform/graphics/gpu/GPUBindGroupLayout.h:
+        * platform/graphics/gpu/GPUBufferBinding.h:
+        * platform/graphics/gpu/GPUExtent3D.h:
+        * platform/graphics/gpu/GPULimits.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/GPUTextureDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm:
+        (WebCore::GPUBindGroupLayout::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::GPUBindGroup::tryCreate):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+        (WebCore::GPURenderPassEncoder::draw):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetInputStateForPipelineDescriptor):
+        * platform/graphics/gpu/cocoa/GPUTextureMetal.mm:
+        (WebCore::storageModeForPixelFormatAndSampleCount):
+
 2019-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         getBoundingClientRect always returns empty rect on a collapsed range

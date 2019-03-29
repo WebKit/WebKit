@@ -83,7 +83,7 @@ static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSe
 }
 
 #if !PLATFORM(MAC)
-static MTLStorageMode storageModeForPixelFormatAndSampleCount(MTLPixelFormat format, unsigned long samples)
+static MTLStorageMode storageModeForPixelFormatAndSampleCount(MTLPixelFormat format, unsigned samples)
 {
     // Depth, Stencil, DepthStencil, and Multisample textures must be allocated with the MTLStorageModePrivate resource option.
     if (format == MTLPixelFormatDepth32Float_Stencil8 || samples > 1)

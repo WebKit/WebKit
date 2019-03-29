@@ -44,18 +44,18 @@ static bool validateBufferBindingType(const GPUBuffer* buffer, const GPUBindGrou
     switch (binding.type) {
     case GPUBindingType::UniformBuffer:
         if (!buffer->isUniform()) {
-            LOG(WebGPU, "%s: GPUBuffer resource for binding %lu does not have UNIFORM usage!", functionName, binding.binding);
+            LOG(WebGPU, "%s: GPUBuffer resource for binding %u does not have UNIFORM usage!", functionName, binding.binding);
             return false;
         }
         return true;
     case GPUBindingType::StorageBuffer:
         if (!buffer->isStorage()) {
-            LOG(WebGPU, "%s: GPUBuffer resource for binding %lu does not have STORAGE usage!", functionName, binding.binding);
+            LOG(WebGPU, "%s: GPUBuffer resource for binding %u does not have STORAGE usage!", functionName, binding.binding);
             return false;
         }
         return true;
     default:
-        LOG(WebGPU, "%s: Layout binding %lu is not a buffer-type resource!", functionName, binding.binding);
+        LOG(WebGPU, "%s: Layout binding %u is not a buffer-type resource!", functionName, binding.binding);
         return false;
     }
 }
@@ -82,7 +82,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
     for (const auto& binding : bindings) {
         auto iterator = layoutMap.find(binding.binding);
         if (iterator == layoutMap.end()) {
-            LOG(WebGPU, "%s: GPUBindGroupLayoutBinding %lu not found in GPUBindGroupLayout!", functionName, binding.binding);
+            LOG(WebGPU, "%s: GPUBindGroupLayoutBinding %u not found in GPUBindGroupLayout!", functionName, binding.binding);
             return WTF::nullopt;
         }
 
@@ -119,7 +119,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
 
         auto bindingResource = WTF::visit(bindingResourceVisitor, binding.resource);
         if (!bindingResource) {
-            LOG(WebGPU, "%s: Invalid resource for binding %lu!", functionName, layoutBinding.binding);
+            LOG(WebGPU, "%s: Invalid resource for binding %u!", functionName, layoutBinding.binding);
             return WTF::nullopt;
         }
 

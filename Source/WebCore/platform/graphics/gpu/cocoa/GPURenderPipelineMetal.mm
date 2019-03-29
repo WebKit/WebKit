@@ -331,11 +331,11 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
         auto location = attributes[i].shaderLocation;
         // Maximum number of vertex attributes to be supported by Web GPU.
         if (location >= 16) {
-            LOG(WebGPU, "%s: Invalid shaderLocation %lu for vertex attribute!", functionName, location);
+            LOG(WebGPU, "%s: Invalid shaderLocation %u for vertex attribute!", functionName, location);
             return false;
         }
         if (attributes[i].inputSlot >= maxVertexBuffers) {
-            LOG(WebGPU, "%s: Invalid inputSlot %lu for vertex attribute %lu!", functionName, attributes[i].inputSlot, location);
+            LOG(WebGPU, "%s: Invalid inputSlot %u for vertex attribute %u!", functionName, attributes[i].inputSlot, location);
             return false;
         }
 

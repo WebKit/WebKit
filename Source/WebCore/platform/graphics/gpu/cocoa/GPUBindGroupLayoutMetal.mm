@@ -89,7 +89,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
 
     for (const auto& binding : descriptor.bindings) {
         if (!bindingsMap.add(binding.binding, binding)) {
-            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Duplicate binding %lu found in GPUBindGroupLayoutDescriptor!", binding.binding);
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Duplicate binding %u found in GPUBindGroupLayoutDescriptor!", binding.binding);
             return nullptr;
         }
 
@@ -99,7 +99,7 @@ RefPtr<GPUBindGroupLayout> GPUBindGroupLayout::tryCreate(const GPUDevice& device
         mtlArgument = adoptNS([MTLArgumentDescriptor new]);
         END_BLOCK_OBJC_EXCEPTIONS;
         if (!mtlArgument) {
-            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor for binding %lu!", binding.binding);
+            LOG(WebGPU, "GPUBindGroupLayout::tryCreate(): Unable to create MTLArgumentDescriptor for binding %u!", binding.binding);
             return nullptr;
         }
 

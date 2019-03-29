@@ -33,7 +33,7 @@ namespace WHLSL {
 
 namespace Metal {
 
-unsigned long calculateVertexBufferIndex(unsigned long);
+unsigned calculateVertexBufferIndex(unsigned);
 
 }
 

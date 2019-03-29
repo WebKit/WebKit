@@ -204,7 +204,7 @@ void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
     m_pipeline = WTFMove(pipeline);
 }
 
-void GPURenderPassEncoder::setVertexBuffers(unsigned long index, Vector<Ref<GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
+void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer>>&& buffers, Vector<unsigned long long>&& offsets)
 {
     if (!m_platformRenderPassEncoder) {
         LOG(WebGPU, "GPURenderPassEncoder::setVertexBuffers(): Invalid operation: Encoding is ended!");
@@ -245,7 +245,7 @@ static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(GPUPrimitiveTopolog
     ASSERT_NOT_REACHED();
 }
 
-void GPURenderPassEncoder::draw(unsigned long vertexCount, unsigned long instanceCount, unsigned long firstVertex, unsigned long firstInstance)
+void GPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance)
 {
     if (!m_platformRenderPassEncoder) {
         LOG(WebGPU, "GPURenderPassEncoder::draw(): Invalid operation: Encoding is ended!");

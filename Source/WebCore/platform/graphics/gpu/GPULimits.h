@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-const unsigned long maxVertexBuffers = 16;
+const unsigned maxVertexBuffers = 16;
 
 } // namespace WebCore
 

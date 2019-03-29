@@ -41,7 +41,7 @@ enum class GPUBindingType {
 };
 
 struct GPUBindGroupLayoutBinding {
-    unsigned long binding;
+    unsigned binding;
     GPUShaderStageFlags visibility;
     GPUBindingType type;
 };
