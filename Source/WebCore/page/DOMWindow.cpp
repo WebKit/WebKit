@@ -1314,7 +1314,12 @@ int DOMWindow::scrollY() const
 
 bool DOMWindow::closed() const
 {
-    return !frame();
+    auto* frame = this->frame();
+    if (!frame)
+        return true;
+
+    auto* page = frame->page();
+    return !page || page->isClosing();
 }
 
 unsigned DOMWindow::length() const

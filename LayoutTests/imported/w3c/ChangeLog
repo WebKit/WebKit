@@ -1,5 +1,17 @@
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
+        Set window.closed immediately when close() is invoked
+        https://bugs.webkit.org/show_bug.cgi?id=195409
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/browsers/the-window-object/close-method.window-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/closed-attribute.window-expected.txt:
+
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline WPT test after r243638.
 
         * web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window-expected.txt:

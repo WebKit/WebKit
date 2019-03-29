@@ -1,3 +1,21 @@
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Set window.closed immediately when close() is invoked
+        https://bugs.webkit.org/show_bug.cgi?id=195409
+
+        Reviewed by Alex Christensen.
+
+        Window.closed should return true if it is closing:
+        - https://html.spec.whatwg.org/#dom-window-closed
+
+        Window.close() sets the 'is closing' flag to true synchronously, as per:
+        - https://html.spec.whatwg.org/#dom-window-close (step 3.1)
+
+        No new tests, rebaselined existing tests.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::closed const):
+
 2019-03-29  Zalan Bujtas  <zalan@apple.com>
 
         [Simple line layout] Turn off inline boxtree generation for multiline content
