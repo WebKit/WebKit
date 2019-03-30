@@ -1,3 +1,14 @@
+2019-03-29  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Expand DOM timer observation to 350ms
+        https://bugs.webkit.org/show_bug.cgi?id=196411
+        <rdar://problem/49391144>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/350ms-hover-intent-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/350ms-hover-intent.html: Added.
+
 2019-03-29  John Wilander  <wilander@apple.com>
 
         Move WebResourceLoadStatisticsStore IPC calls from the UI process to the network process
