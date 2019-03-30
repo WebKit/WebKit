@@ -565,9 +565,25 @@ static void runJITThreadLimitTests()
 static void testObjectiveCAPIMain()
 {
     @autoreleasepool {
-        JSVirtualMachine* vm = [[JSVirtualMachine alloc] init];
-        JSContext* context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
         [context evaluateScript:@"bad"];
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSValue *number1 = [context evaluateScript:@"42092389"];
+        JSValue *number2 = [context evaluateScript:@"42092389"];
+        checkResult(@"wrapper cache for numbers", number1 == number2 && number1.isNumber && [number1 toInt32] == 42092389);
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        JSValue *object1 = [context evaluateScript:@"({})"];
+        JSValue *object2 = [context evaluateScript:@"({})"];
+        checkResult(@"wrapper cache for objects", object1 != object2);
     }
 
     @autoreleasepool {

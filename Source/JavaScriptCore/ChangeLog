@@ -1,3 +1,45 @@
+2019-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSWrapperMap should not use Objective-C Weak map (NSMapTable with NSPointerFunctionsWeakMemory) for m_cachedObjCWrappers
+        https://bugs.webkit.org/show_bug.cgi?id=196392
+
+        Reviewed by Saam Barati.
+
+        Weak representation in Objective-C is surprisingly costly in terms of memory. We can see that very easy program shows 10KB memory consumption due to
+        this weak wrapper map in JavaScriptCore.framework. But we do not need this weak map since Objective-C JSValue has a dealloc. We can unregister itself
+        from the map when it is deallocated without using Objective-C weak mechanism. And since Objective-C JSValue is tightly coupled to a specific JSContext,
+        and wrapper map is created per JSContext, JSValue wrapper and actual JavaScriptCore value is one-on-one, and [JSValue dealloc] knows which JSContext's
+        wrapper map holds itself.
+
+        1. We do not use Objective-C weak mechanism. We use WTF::HashSet instead. When JSValue is allocated, we register it to JSWrapperMap's HashSet. And unregister
+           JSValue from this map when JSValue is deallocated.
+        2. We use HashSet<JSValue> (logically) instead of HashMap<JSValueRef, JSValue> to keep JSValueRef and JSValue relationship. We can achieve it because JSValue
+           holds JSValueRef inside it.
+
+        * API/JSContext.mm:
+        (-[JSContext removeWrapper:]):
+        * API/JSContextInternal.h:
+        * API/JSValue.mm:
+        (-[JSValue dealloc]):
+        (-[JSValue initWithValue:inContext:]):
+        * API/JSWrapperMap.h:
+        * API/JSWrapperMap.mm:
+        (WrapperKey::hashTableDeletedValue):
+        (WrapperKey::WrapperKey):
+        (WrapperKey::isHashTableDeletedValue const):
+        (WrapperKey::Hash::hash):
+        (WrapperKey::Hash::equal):
+        (WrapperKey::Traits::isEmptyValue):
+        (WrapperKey::Translator::hash):
+        (WrapperKey::Translator::equal):
+        (WrapperKey::Translator::translate):
+        (-[JSWrapperMap initWithGlobalContextRef:]):
+        (-[JSWrapperMap dealloc]):
+        (-[JSWrapperMap objcWrapperForJSValueRef:inContext:]):
+        (-[JSWrapperMap removeWrapper:]):
+        * API/tests/testapi.mm:
+        (testObjectiveCAPIMain):
+
 2019-03-29  Robin Morisset  <rmorisset@apple.com>
 
         B3ReduceStrength should know that Mul distributes over Add and Sub

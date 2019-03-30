@@ -71,6 +71,7 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 - (void)dealloc
 {
+    [_context removeWrapper:self];
     JSValueUnprotect([_context JSGlobalContextRef], m_value);
     [_context release];
     _context = nil;
@@ -1075,6 +1076,7 @@ JSValueRef valueInternalValue(JSValue * value)
     if (!self)
         return nil;
 
+    ASSERT(context);
     _context = [context retain];
     m_value = value;
     JSValueProtect([_context JSGlobalContextRef], m_value);

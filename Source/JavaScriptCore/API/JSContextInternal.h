@@ -54,6 +54,7 @@ struct CallbackData {
 - (JSWrapperMap *)wrapperMap;
 - (JSValue *)wrapperForObjCObject:(id)object;
 - (JSValue *)wrapperForJSObject:(JSValueRef)value;
+- (void)removeWrapper:(JSValue *)value;
 
 @end
 
