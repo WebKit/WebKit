@@ -1,3 +1,16 @@
+2019-03-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: JSC Sampling Profiler thread not getting subtracted in CPU Usage Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=196419
+        <rdar://problem/49444023>
+
+        Reviewed by Devin Rousso.
+
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::addObserver):
+        We forgot to call the function that would setup platform state
+        allowing us to subtract out the sampling profiler thread.
+
 2019-03-30  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add iFrame elements to the list of "considered clickable" elements.

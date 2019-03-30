@@ -58,8 +58,10 @@ void ResourceUsageThread::addObserver(void* key, ResourceUsageCollectionMode mod
 
         resourceUsageThread.recomputeCollectionMode();
 
-        if (wasEmpty)
+        if (wasEmpty) {
+            resourceUsageThread.platformSaveStateBeforeStarting();
             resourceUsageThread.m_condition.notifyAll();
+        }
     }
 }
 
