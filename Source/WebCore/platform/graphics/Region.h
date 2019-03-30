@@ -208,6 +208,8 @@ inline bool operator!=(const Region::Span& a, const Region::Span& b)
     return !(a == b);
 }
 
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Region&);
+
 template<class Encoder>
 void Region::Span::encode(Encoder& encoder) const
 {

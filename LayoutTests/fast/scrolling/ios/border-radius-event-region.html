@@ -1,0 +1,39 @@
+<html>
+<style>
+.testdiv {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid blue;
+    position: relative;
+    height: 200px;
+    width: 200px;
+    will-change: transform;
+}
+
+</style>
+<script>
+window.onload = function () {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    const properties = [ 'border-top-left-radius', 'border-top-right-radius', 'border-bottom-left-radius', 'border-bottom-right-radius' ];
+    const values = [ '5px', '20px', '50px', '200px', '40px 150px', '50px 20px'];
+
+    for (const property of properties) {
+        for (const value of values) {
+            const div = document.createElement("div");
+            div.setAttribute("class", "testdiv");
+            div.setAttribute("style", property + ": " + value);
+            document.body.appendChild(div);
+        }
+    }
+
+    if (window.internals)
+        results.innerText = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<body>
+<pre id="results"></pre>
+</body>
+</html>
+

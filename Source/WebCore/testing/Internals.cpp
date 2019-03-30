@@ -2518,6 +2518,8 @@ static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
         layerTreeFlags |= LayerTreeFlagsIncludeBackingStoreAttached;
     if (flags & Internals::LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES)
         layerTreeFlags |= LayerTreeFlagsIncludeRootLayerProperties;
+    if (flags & Internals::LAYER_TREE_INCLUDES_EVENT_REGION)
+        layerTreeFlags |= LayerTreeFlagsIncludeEventRegion;
 
     return layerTreeFlags;
 }

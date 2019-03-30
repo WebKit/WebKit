@@ -650,5 +650,17 @@ void Region::setShape(Shape&& shape)
         *m_shape = WTFMove(shape);
 }
 
+TextStream& operator<<(TextStream& ts, const Region& region)
+{
+    ts << "\n";
+    {
+        TextStream::IndentScope indentScope(ts);
+        for (auto& rect : region.rects())
+            ts << indent << "(rect " << rect << ")\n";
+    }
+    ts << indent;
+
+    return ts;
+}
 
 } // namespace WebCore

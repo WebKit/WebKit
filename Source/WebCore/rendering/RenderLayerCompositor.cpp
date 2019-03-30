@@ -1943,6 +1943,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludeBackingStoreAttached;
     if (flags & LayerTreeFlagsIncludeRootLayerProperties)
         layerTreeBehavior |= LayerTreeAsTextIncludeRootLayerProperties;
+    if (flags & LayerTreeFlagsIncludeEventRegion)
+        layerTreeBehavior |= LayerTreeAsTextIncludeEventRegion;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.

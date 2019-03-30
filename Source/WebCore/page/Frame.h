@@ -106,15 +106,16 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 #endif
 
 enum {
-    LayerTreeFlagsIncludeDebugInfo = 1 << 0,
-    LayerTreeFlagsIncludeVisibleRects = 1 << 1,
-    LayerTreeFlagsIncludeTileCaches = 1 << 2,
-    LayerTreeFlagsIncludeRepaintRects = 1 << 3,
-    LayerTreeFlagsIncludePaintingPhases = 1 << 4,
-    LayerTreeFlagsIncludeContentLayers = 1 << 5,
-    LayerTreeFlagsIncludeAcceleratesDrawing = 1 << 6,
-    LayerTreeFlagsIncludeBackingStoreAttached = 1 << 7,
-    LayerTreeFlagsIncludeRootLayerProperties = 1 << 8,
+    LayerTreeFlagsIncludeDebugInfo              = 1 << 0,
+    LayerTreeFlagsIncludeVisibleRects           = 1 << 1,
+    LayerTreeFlagsIncludeTileCaches             = 1 << 2,
+    LayerTreeFlagsIncludeRepaintRects           = 1 << 3,
+    LayerTreeFlagsIncludePaintingPhases         = 1 << 4,
+    LayerTreeFlagsIncludeContentLayers          = 1 << 5,
+    LayerTreeFlagsIncludeAcceleratesDrawing     = 1 << 6,
+    LayerTreeFlagsIncludeBackingStoreAttached   = 1 << 7,
+    LayerTreeFlagsIncludeRootLayerProperties    = 1 << 8,
+    LayerTreeFlagsIncludeEventRegion            = 1 << 9,
 };
 typedef unsigned LayerTreeFlags;
 

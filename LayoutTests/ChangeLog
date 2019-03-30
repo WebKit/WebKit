@@ -1,3 +1,15 @@
+2019-03-30  Antti Koivisto  <antti@apple.com>
+
+        Hit-testing of boxes over scrollers should account for border-radius
+        https://bugs.webkit.org/show_bug.cgi?id=195374
+        <rdar://problem/48649993>
+
+        Reviewed by Simon Fraser.
+
+        * fast/scrolling/ios/border-radius-event-region-expected.txt: Added.
+        * fast/scrolling/ios/border-radius-event-region.html: Added.
+        * fast/scrolling/ios/overflow-scroll-overlap-2-expected.txt:
+
 2019-03-29  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Expand DOM timer observation to 350ms

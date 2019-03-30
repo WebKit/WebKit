@@ -73,6 +73,7 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextIncludeAcceleratesDrawing    = 1 << 7,
     LayerTreeAsTextIncludeBackingStoreAttached  = 1 << 8,
     LayerTreeAsTextIncludeRootLayerProperties   = 1 << 9,
+    LayerTreeAsTextIncludeEventRegion           = 1 << 10,
     LayerTreeAsTextShowAll                      = 0xFFFF
 };
 typedef unsigned LayerTreeAsTextBehavior;

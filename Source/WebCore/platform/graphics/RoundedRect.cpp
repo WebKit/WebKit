@@ -32,6 +32,7 @@
 #include "GeometryUtilities.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
+#include "Region.h"
 
 #include <algorithm>
 
@@ -303,6 +304,71 @@ FloatRoundedRect RoundedRect::pixelSnappedRoundedRectForPainting(float deviceSca
     }
     ASSERT(snappedRoundedRect.isRenderable());
     return snappedRoundedRect;
+}
+
+Region approximateAsRegion(const RoundedRect& roundedRect, unsigned stepLength)
+{
+    Region region;
+
+    auto& rect = roundedRect.rect();
+    region.unite(enclosingIntRect(rect));
+
+    if (!roundedRect.isRounded())
+        return region;
+
+    auto& radii = roundedRect.radii();
+
+    auto makeIntRect = [] (LayoutPoint a, LayoutPoint b) {
+        return enclosingIntRect(LayoutRect {
+            LayoutPoint { std::min(a.x(), b.x()), std::min(a.y(), b.y()) },
+            LayoutPoint { std::max(a.x(), b.x()), std::max(a.y(), b.y()) }
+        });
+    };
+
+    auto subtractCornerRects = [&] (LayoutPoint corner, LayoutPoint ellipsisCenter, LayoutSize axes, double fromAngle) {
+        double toAngle = fromAngle + M_PI / 2;
+
+        // Substract more rects for longer, more rounded arcs.
+        auto arcLengthFactor = roundToInt(std::min(axes.width(), axes.height()));
+        auto count = (arcLengthFactor + (stepLength / 2)) / stepLength;
+
+        for (auto i = 0u; i < count; ++i) {
+            auto angle = fromAngle + (i + 1) * (toAngle - fromAngle) / (count + 1);
+            auto ellipsisPoint = LayoutPoint { axes.width() * cos(angle), axes.height() * sin(angle) };
+            auto cornerRect = makeIntRect(corner, ellipsisCenter + ellipsisPoint);
+            region.subtract(cornerRect);
+        }
+    };
+
+    {
+        auto corner = rect.maxXMaxYCorner();
+        auto axes = radii.bottomRight();
+        auto ellipsisCenter = LayoutPoint(corner.x() - axes.width(), corner.y() - axes.height());
+        subtractCornerRects(corner, ellipsisCenter, axes, 0);
+    }
+
+    {
+        auto corner = rect.minXMaxYCorner();
+        auto axes = radii.bottomLeft();
+        auto ellipsisCenter = LayoutPoint(corner.x() + axes.width(), corner.y() - axes.height());
+        subtractCornerRects(corner, ellipsisCenter, axes, M_PI / 2);
+    }
+
+    {
+        auto corner = rect.minXMinYCorner();
+        auto axes = radii.topLeft();
+        auto ellipsisCenter = LayoutPoint(corner.x() + axes.width(), corner.y() + axes.height());
+        subtractCornerRects(corner, ellipsisCenter, axes, M_PI);
+    }
+
+    {
+        auto corner = rect.maxXMinYCorner();
+        auto axes = radii.topRight();
+        auto ellipsisCenter = LayoutPoint(corner.x() - axes.width(), corner.y() + axes.height());
+        subtractCornerRects(corner, ellipsisCenter, axes, M_PI * 3 / 2);
+    }
+
+    return region;
 }
 
 } // namespace WebCore

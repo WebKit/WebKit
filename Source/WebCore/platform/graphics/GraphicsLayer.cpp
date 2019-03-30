@@ -926,6 +926,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << ")\n";
     }
 
+    if (behavior & LayerTreeAsTextIncludeEventRegion && !m_eventRegion.isEmpty())
+        ts << indent << "(event region" << m_eventRegion << ")\n";
+
     if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase()) {
         ts << indent << "(paintingPhases\n";
         TextStream::IndentScope indentScope(ts);
