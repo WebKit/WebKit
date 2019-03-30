@@ -548,4 +548,19 @@ void JSDOMWindow::setOpener(JSC::ExecState& state, JSC::JSValue value)
     replaceStaticPropertySlot(state.vm(), this, Identifier::fromString(&state.vm(), "opener"), value);
 }
 
+JSValue JSDOMWindow::self(JSC::ExecState&) const
+{
+    return globalThis();
+}
+
+JSValue JSDOMWindow::window(JSC::ExecState&) const
+{
+    return globalThis();
+}
+
+JSValue JSDOMWindow::frames(JSC::ExecState&) const
+{
+    return globalThis();
+}
+
 } // namespace WebCore

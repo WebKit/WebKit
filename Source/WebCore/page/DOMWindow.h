@@ -210,8 +210,6 @@ public:
     String defaultStatus() const;
     void setDefaultStatus(const String&);
 
-    WindowProxy* self() const;
-
     WindowProxy* opener() const;
     void disownOpener();
     WindowProxy* parent() const;

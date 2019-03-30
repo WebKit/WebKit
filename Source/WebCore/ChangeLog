@@ -1,3 +1,30 @@
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Make someWindow.frames, .self, .window always return someWindow
+        https://bugs.webkit.org/show_bug.cgi?id=195406
+
+        Reviewed by Alex Christensen.
+
+        Make someWindow.frames, .self, .window always return someWindow. Previously, they
+        would return null when the window would lose its browsing context.
+
+        This aligns our behavior with Firefox and the HTML specification:
+        - https://github.com/whatwg/html/pull/4410
+
+        Chrome has also recently aligned with Firefox and the HTML specification here so
+        it makes sense for WebKit to follow.
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::self const):
+        (WebCore::JSDOMWindow::window const):
+        (WebCore::JSDOMWindow::frames const):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::focus):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

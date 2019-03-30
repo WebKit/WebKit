@@ -940,8 +940,9 @@ Element* DOMWindow::frameElement() const
 
 void DOMWindow::focus(DOMWindow& incumbentWindow)
 {
-    auto* opener = this->opener();
-    focus(opener && opener != self() && incumbentWindow.self() == opener);
+    auto* frame = this->frame();
+    auto* openerFrame = frame ? frame->loader().opener() : nullptr;
+    focus(openerFrame && openerFrame != frame && incumbentWindow.frame() == openerFrame);
 }
 
 void DOMWindow::focus(bool allowFocus)
@@ -1378,15 +1379,6 @@ void DOMWindow::setDefaultStatus(const String& string)
 
     ASSERT(frame->document()); // Client calls shouldn't be made when the frame is in inconsistent state.
     page->chrome().setStatusbarText(*frame, m_defaultStatus);
-}
-
-WindowProxy* DOMWindow::self() const
-{
-    auto* frame = this->frame();
-    if (!frame)
-        return nullptr;
-
-    return &frame->windowProxy();
 }
 
 WindowProxy* DOMWindow::opener() const

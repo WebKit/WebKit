@@ -15,9 +15,9 @@ PASS detachedWindow.top is null
 PASS detachedWindow.opener is null
 PASS detachedWindow.parent is null
 PASS detachedWindow.frameElement is null
-PASS detachedWindow.window is null
-PASS detachedWindow.frames is null
-PASS detachedWindow.self is null
+PASS detachedWindow.window is detachedWindow
+PASS detachedWindow.frames is detachedWindow
+PASS detachedWindow.self is detachedWindow
 PASS !detachedWindow.localStorage is true
 PASS !!detachedWindow.document is true
 PASS !!detachedWindow.XMLHttpRequest is true

@@ -1,3 +1,14 @@
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Make someWindow.frames, .self, .window always return someWindow
+        https://bugs.webkit.org/show_bug.cgi?id=195406
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT test now that all its checks are passing.
+
+        * web-platform-tests/html/browsers/the-window-object/self-et-al.window-expected.txt:
+
 2019-03-29  Javier Fernandez  <jfernandez@igalia.com>
 
         Update the CSS Text WPT test suite

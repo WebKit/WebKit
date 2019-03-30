@@ -19,10 +19,9 @@ onload = function()
     shouldBeNull("detachedWindow.opener");
     shouldBeNull("detachedWindow.parent");
     shouldBeNull("detachedWindow.frameElement"); // Technically, Chrome returns undefined here, not null.
-    // Chrome agrees with us but Firefox returns the detachedWindow.
-    shouldBeNull("detachedWindow.window");
-    shouldBeNull("detachedWindow.frames");
-    shouldBeNull("detachedWindow.self");
+    shouldBe("detachedWindow.window", "detachedWindow");
+    shouldBe("detachedWindow.frames", "detachedWindow");
+    shouldBe("detachedWindow.self", "detachedWindow");
 
     // Chrome returns undefined but Firefox has a valid object.
     shouldBeTrue("!detachedWindow.localStorage");

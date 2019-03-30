@@ -1,3 +1,15 @@
+2019-03-29  Chris Dumez  <cdumez@apple.com>
+
+        Make someWindow.frames, .self, .window always return someWindow
+        https://bugs.webkit.org/show_bug.cgi?id=195406
+
+        Reviewed by Alex Christensen.
+
+        Update / rebaseline existing test to reflect behavior change.
+
+        * fast/frames/detached-frame-property-expected.txt:
+        * fast/frames/detached-frame-property.html:
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

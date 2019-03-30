@@ -970,9 +970,7 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_self(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    auto* selfWindowProxy = item->self();
-    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(item);
 }
 
 WebKitDOMDOMWindow* webkit_dom_dom_window_get_window(WebKitDOMDOMWindow* self)
@@ -980,9 +978,7 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_window(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    auto* selfWindowProxy = item->self();
-    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(item);
 }
 
 WebKitDOMDOMWindow* webkit_dom_dom_window_get_frames(WebKitDOMDOMWindow* self)
@@ -990,9 +986,7 @@ WebKitDOMDOMWindow* webkit_dom_dom_window_get_frames(WebKitDOMDOMWindow* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_DOM_WINDOW(self), 0);
     WebCore::DOMWindow* item = WebKit::core(self);
-    auto* selfWindowProxy = item->self();
-    RefPtr<WebCore::DOMWindow> gobjectResult = downcast<WebCore::DOMWindow>(selfWindowProxy->window());
-    return WebKit::kit(gobjectResult.get());
+    return WebKit::kit(item);
 }
 
 WebKitDOMDOMWindow* webkit_dom_dom_window_get_opener(WebKitDOMDOMWindow* self)
