@@ -1,3 +1,19 @@
+2019-03-30  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Add iFrame elements to the list of "considered clickable" elements.
+        https://bugs.webkit.org/show_bug.cgi?id=196410
+        <rdar://problem/49436828>
+
+        Reviewed by Simon Fraser.
+
+        163.com constructs an iFrame to display the login pane on hover. This patch ensures that we take iFrames into account while observing for visible content change by considering iFrame elements "clickable".
+        (While iFrames don't necessarily have clickable content, we can't just sit and wait until they are fully loaded.)
+
+        Test: fast/events/touch/ios/content-observation/iframe-is-shown-on-hover.html
+
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::StyleChangeScope::isConsideredClickable const):
+
 2019-03-30  Antti Koivisto  <antti@apple.com>
 
         Try to fix Windows build.

@@ -1,5 +1,16 @@
 2019-03-30  Zalan Bujtas  <zalan@apple.com>
 
+        [ContentChangeObserver] Add iFrame elements to the list of "considered clickable" elements.
+        https://bugs.webkit.org/show_bug.cgi?id=196410
+        <rdar://problem/49436828>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/iframe-is-shown-on-hover-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/iframe-is-shown-on-hover.html: Added.
+
+2019-03-30  Zalan Bujtas  <zalan@apple.com>
+
         [ContentChangeObserver] Subframe load should not reset content observation on the mainframe
         https://bugs.webkit.org/show_bug.cgi?id=196408
         <rdar://problem/49436797>

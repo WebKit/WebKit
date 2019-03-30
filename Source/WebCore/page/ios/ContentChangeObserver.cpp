@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "DOMTimer.h"
 #include "Document.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "Logging.h"
 #include "NodeRenderStyle.h"
@@ -486,6 +487,9 @@ bool ContentChangeObserver::StyleChangeScope::isConsideredClickable() const
         return false;
 
     auto& element = const_cast<Element&>(m_element);
+    if (is<HTMLIFrameElement>(element))
+        return true;
+
     if (is<HTMLImageElement>(element)) {
         // This is required to avoid HTMLImageElement's touch callout override logic. See rdar://problem/48937767.
         return element.Element::willRespondToMouseClickEvents();
