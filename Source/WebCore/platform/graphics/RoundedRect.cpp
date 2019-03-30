@@ -35,6 +35,7 @@
 #include "Region.h"
 
 #include <algorithm>
+#include <math.h>
 
 namespace WebCore {
 
