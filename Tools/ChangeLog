@@ -1,3 +1,15 @@
+2019-03-30  Dominik Infuehr  <dinfuehr@igalia.com>
+
+        [CMake] add testdfg as target with build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=196393
+
+        Reviewed by Saam Barati.
+
+        Added testdfg as one of the targets to build when
+        using CMake.
+
+        * Scripts/build-jsc:
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU
