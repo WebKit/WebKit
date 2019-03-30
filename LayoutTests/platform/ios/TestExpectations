@@ -2765,6 +2765,9 @@ fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ]
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ]
 
+# rendering to floating point FBOs not supported on iOS
+fast/canvas/webgl/readPixels-float.html [ Skip ]
+
 # Skipped on iOS since UIHelper.activateAt() doesn't produce a user gesture that ITP captures on iOS
 webkit.org/b/174120 http/tests/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html [ Skip ]

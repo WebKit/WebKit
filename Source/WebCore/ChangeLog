@@ -1,3 +1,34 @@
+2019-03-29  Dean Jackson  <dino@apple.com>
+
+        gl.readPixels with type gl.FLOAT does not work
+        https://bugs.webkit.org/show_bug.cgi?id=171432
+        <rdar://problem/31905150>
+
+        Reviewed by Antoine Quint.
+
+        Our validation code was identifying readPixels of
+        type FLOAT as invalid, for three reasons:
+        - we didn't support the FLOAT type at all.
+        - we only allowed the combination of RGBA and
+        UNSIGNED_BYTE in WebGL 1 [*].
+        - if we had a framebuffer of format RGBA, we assumed
+        we could only read into a Uint8 ArrayBuffer.
+
+        [*] This bug isn't completely fixed, so I opened
+        https://bugs.webkit.org/show_bug.cgi?id=196418
+
+        Test: fast/canvas/webgl/readPixels-float.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::readPixels):
+        - flip the logic in a conditional that was clearly wrong yet
+          thankfully had no impact.
+        - support type FLOAT when the relevant extension is enabled.
+        - allow FLOAT as a valid type (see new bug above)
+        - create a new macro for CHECK_COMPONENT_COUNT
+        - update the existing macros to not be case statements,
+          so that we can put logic in the switch.
+
 2019-03-30  Antti Koivisto  <antti@apple.com>
 
         Try to fix Windows build.

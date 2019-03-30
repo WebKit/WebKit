@@ -1,3 +1,19 @@
+2019-03-29  Dean Jackson  <dino@apple.com>
+
+        gl.readPixels with type gl.FLOAT does not work
+        https://bugs.webkit.org/show_bug.cgi?id=171432
+        <rdar://problem/31905150>
+
+        Reviewed by Antoine Quint.
+
+        New test that exercises reading a framebuffer object
+        with a floating point texture attached.
+
+        * platform/ios/TestExpectations: Skip this test on iOS, where floating-point
+        FBOs are not supported.
+        * fast/canvas/webgl/readPixels-float-expected.txt: Added.
+        * fast/canvas/webgl/readPixels-float.html: Added.
+
 2019-03-30  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Add iFrame elements to the list of "considered clickable" elements.

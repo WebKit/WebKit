@@ -1,0 +1,80 @@
+<style>
+canvas {
+    width: 2px;
+    height: 2px;
+}
+</style>
+</head>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const width = 2;
+const height = 2;
+let canvas;
+let gl;
+
+function output(msg) {
+    const div = document.getElementById("output");
+    div.innerHTML += `${msg}<br>`;
+}
+
+function isRed(buffer, x, y) {
+    let offset = (y * width + x) * 4;
+    return buffer[offset] == 1.0 && buffer[offset+1] == 0.0 && buffer[offset+2] == 0.0 && buffer[offset+3] == 1.0;
+}
+
+function runTest() {
+
+    canvas = document.querySelector("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    output("Create WebGL context");
+
+    gl = canvas.getContext("webgl");
+    gl.getExtension("OES_texture_float");
+
+    output("Clear to black");
+
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    output("Create a floating point texture");
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
+
+    output("Create and bind framebuffer");
+
+    const framebuffer = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    output("Clear framebuffer to red");
+
+    gl.clearColor(1.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    let pixels = new Float32Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.FLOAT, pixels);
+
+    if (isRed(pixels, 1, 1))
+        output("PASS: Framebuffer is floating-point red.");
+    else
+        output("FAIL: Framebuffer is not floating-point red.");
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+<body>
+    <canvas></canvas>
+    <div id="output">
+    </div>
+</body>

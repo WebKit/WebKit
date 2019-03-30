@@ -3449,9 +3449,9 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
         internalFormat = m_framebufferBinding->getColorBufferFormat();
     } else {
         if (m_attributes.alpha)
-            internalFormat = GraphicsContext3D::RGB8;
-        else
             internalFormat = GraphicsContext3D::RGBA8;
+        else
+            internalFormat = GraphicsContext3D::RGB8;
     }
 
     if (!internalFormat) {
@@ -3475,12 +3475,18 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
         case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
         case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
             break;
+        case GraphicsContext3D::FLOAT:
+            if (!m_oesTextureFloat && !m_oesTextureHalfFloat) {
+                synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "invalid type");
+                return;
+            }
+            break;
         default:
             synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "invalid type");
             return;
         }
-        if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
-            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "readPixels", "format not RGBA or type not UNSIGNED_BYTE");
+        if (format != GraphicsContext3D::RGBA || (type != GraphicsContext3D::UNSIGNED_BYTE && type != GraphicsContext3D::FLOAT)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "readPixels", "format not RGBA or type not UNSIGNED_BYTE|FLOAT");
             return;
         }
     }
@@ -3492,71 +3498,84 @@ void WebGLRenderingContextBase::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width
         return;
     }
 
-#define INTERNAL_FORMAT_CHECK(themeMacro, typeMacro, pixelTypeMacro) case InternalFormatTheme::themeMacro: \
-        if (type != GraphicsContext3D::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
-            return; \
-        } \
-        if (format != GraphicsContext3D::RED && format != GraphicsContext3D::RG && format != GraphicsContext3D::RGB && format != GraphicsContext3D::RGBA) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Unknown format"); \
-            return; \
-        } \
-        if (numberOfComponentsForFormat(format) < internalFormatComponentCount) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Not enough components in format"); \
-            return; \
-        } \
-        break;
+#define CHECK_COMPONENT_COUNT \
+    if (numberOfComponentsForFormat(format) < internalFormatComponentCount) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Not enough components in format"); \
+        return; \
+    }
 
-#define INTERNAL_FORMAT_INTEGER_CHECK(themeMacro, typeMacro, pixelTypeMacro) case InternalFormatTheme::themeMacro: \
-        if (type != GraphicsContext3D::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
-            return; \
-        } \
-        if (format != GraphicsContext3D::RED_INTEGER && format != GraphicsContext3D::RG_INTEGER && format != GraphicsContext3D::RGB_INTEGER && format != GraphicsContext3D::RGBA_INTEGER) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Unknown format"); \
-            return; \
-        } \
-        if (numberOfComponentsForFormat(format) < internalFormatComponentCount) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Not enough components in format"); \
-            return; \
-        } \
-        break;
+#define INTERNAL_FORMAT_CHECK(typeMacro, pixelTypeMacro) \
+    if (type != GraphicsContext3D::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
+        return; \
+    } \
+    if (format != GraphicsContext3D::RED && format != GraphicsContext3D::RG && format != GraphicsContext3D::RGB && format != GraphicsContext3D::RGBA) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Unknown format"); \
+        return; \
+    } \
+    CHECK_COMPONENT_COUNT
 
-#define PACKED_INTERNAL_FORMAT_CHECK(internalFormatMacro, formatMacro, type0Macro, pixelType0Macro, type1Macro, pixelType1Macro) case GraphicsContext3D::internalFormatMacro: \
-        if (!(type == GraphicsContext3D::type0Macro && pixels.getType() == JSC::pixelType0Macro) \
-            && !(type == GraphicsContext3D::type1Macro && pixels.getType() == JSC::pixelType1Macro)) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
-            return; \
-        } \
-        if (format != GraphicsContext3D::formatMacro) { \
-            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Invalid format"); \
-            return; \
-        } \
-        break;
+#define INTERNAL_FORMAT_INTEGER_CHECK(typeMacro, pixelTypeMacro) \
+    if (type != GraphicsContext3D::typeMacro || pixels.getType() != JSC::pixelTypeMacro) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
+        return; \
+    } \
+    if (format != GraphicsContext3D::RED_INTEGER && format != GraphicsContext3D::RG_INTEGER && format != GraphicsContext3D::RGB_INTEGER && format != GraphicsContext3D::RGBA_INTEGER) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Unknown format"); \
+        return; \
+    } \
+    CHECK_COMPONENT_COUNT
+
+#define CASE_PACKED_INTERNAL_FORMAT_CHECK(internalFormatMacro, formatMacro, type0Macro, pixelType0Macro, type1Macro, pixelType1Macro) case GraphicsContext3D::internalFormatMacro: \
+    if (!(type == GraphicsContext3D::type0Macro && pixels.getType() == JSC::pixelType0Macro) \
+        && !(type == GraphicsContext3D::type1Macro && pixels.getType() == JSC::pixelType1Macro)) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "type does not match internal format"); \
+        return; \
+    } \
+    if (format != GraphicsContext3D::formatMacro) { \
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "readPixels", "Invalid format"); \
+        return; \
+    } \
+    break;
 
     switch (internalFormatTheme) {
-    INTERNAL_FORMAT_CHECK        (NormalizedFixedPoint      , UNSIGNED_BYTE, TypeUint8  );
-    INTERNAL_FORMAT_CHECK        (SignedNormalizedFixedPoint, BYTE         , TypeInt8   );
-    INTERNAL_FORMAT_CHECK        (FloatingPoint             , FLOAT        , TypeFloat32);
-    INTERNAL_FORMAT_INTEGER_CHECK(SignedInteger             , INT          , TypeInt32  );
-    INTERNAL_FORMAT_INTEGER_CHECK(UnsignedInteger           , UNSIGNED_INT , TypeUint32 );
+    case InternalFormatTheme::NormalizedFixedPoint:
+        if (type == GraphicsContext3D::FLOAT) {
+            INTERNAL_FORMAT_CHECK(FLOAT, TypeFloat32);
+        } else {
+            INTERNAL_FORMAT_CHECK(UNSIGNED_BYTE, TypeUint8);
+        }
+        break;
+    case InternalFormatTheme::SignedNormalizedFixedPoint:
+        INTERNAL_FORMAT_CHECK(BYTE, TypeInt8);
+        break;
+    case InternalFormatTheme::FloatingPoint:
+        INTERNAL_FORMAT_CHECK(FLOAT, TypeFloat32);
+        break;
+    case InternalFormatTheme::SignedInteger:
+        INTERNAL_FORMAT_INTEGER_CHECK(INT, TypeInt32);
+        break;
+    case InternalFormatTheme::UnsignedInteger:
+        INTERNAL_FORMAT_INTEGER_CHECK(UNSIGNED_INT, TypeUint32);
+        break;
     case InternalFormatTheme::Packed:
         switch (internalFormat) {
-        PACKED_INTERNAL_FORMAT_CHECK(RGB565        , RGB         , UNSIGNED_SHORT_5_6_5        , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
-        PACKED_INTERNAL_FORMAT_CHECK(RGB5_A1       , RGBA        , UNSIGNED_SHORT_5_5_5_1      , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
-        PACKED_INTERNAL_FORMAT_CHECK(RGBA4         , RGBA        , UNSIGNED_SHORT_4_4_4_4      , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
-        PACKED_INTERNAL_FORMAT_CHECK(RGB9_E5       , RGB         , UNSIGNED_INT_5_9_9_9_REV    , TypeUint32, UNSIGNED_INT_5_9_9_9_REV   , TypeUint32 );
-        PACKED_INTERNAL_FORMAT_CHECK(RGB10_A2      , RGBA        , UNSIGNED_INT_2_10_10_10_REV , TypeUint32, UNSIGNED_INT_2_10_10_10_REV, TypeUint32 );
-        PACKED_INTERNAL_FORMAT_CHECK(R11F_G11F_B10F, RGB         , UNSIGNED_INT_10F_11F_11F_REV, TypeUint32, FLOAT                      , TypeFloat32);
-        PACKED_INTERNAL_FORMAT_CHECK(RGB10_A2UI    , RGBA_INTEGER, UNSIGNED_INT_2_10_10_10_REV , TypeUint32, UNSIGNED_INT_2_10_10_10_REV, TypeUint32 );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGB565        , RGB         , UNSIGNED_SHORT_5_6_5        , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGB5_A1       , RGBA        , UNSIGNED_SHORT_5_5_5_1      , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGBA4         , RGBA        , UNSIGNED_SHORT_4_4_4_4      , TypeUint16, UNSIGNED_BYTE              , TypeUint8  );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGB9_E5       , RGB         , UNSIGNED_INT_5_9_9_9_REV    , TypeUint32, UNSIGNED_INT_5_9_9_9_REV   , TypeUint32 );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGB10_A2      , RGBA        , UNSIGNED_INT_2_10_10_10_REV , TypeUint32, UNSIGNED_INT_2_10_10_10_REV, TypeUint32 );
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(R11F_G11F_B10F, RGB         , UNSIGNED_INT_10F_11F_11F_REV, TypeUint32, FLOAT                      , TypeFloat32);
+            CASE_PACKED_INTERNAL_FORMAT_CHECK(RGB10_A2UI    , RGBA_INTEGER, UNSIGNED_INT_2_10_10_10_REV , TypeUint32, UNSIGNED_INT_2_10_10_10_REV, TypeUint32 );
         }
         break;
     case InternalFormatTheme::None:
         ASSERT_NOT_REACHED();
     }
+#undef CHECK_COMPONENT_COUNT
 #undef INTERNAL_FORMAT_CHECK
 #undef INTERNAL_FORMAT_INTEGER_CHECK
-#undef PACKED_INTERNAL_FORMAT_CHECK
+#undef CASE_PACKED_INTERNAL_FORMAT_CHECK
 
     // Calculate array size, taking into consideration of PACK_ALIGNMENT.
     unsigned totalBytesRequired = 0;
