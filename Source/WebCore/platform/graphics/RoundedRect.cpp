@@ -33,9 +33,8 @@
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
 #include "Region.h"
-
 #include <algorithm>
-#include <math.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -327,7 +326,7 @@ Region approximateAsRegion(const RoundedRect& roundedRect, unsigned stepLength)
     };
 
     auto subtractCornerRects = [&] (LayoutPoint corner, LayoutPoint ellipsisCenter, LayoutSize axes, double fromAngle) {
-        double toAngle = fromAngle + M_PI / 2;
+        double toAngle = fromAngle + piDouble / 2;
 
         // Substract more rects for longer, more rounded arcs.
         auto arcLengthFactor = roundToInt(std::min(axes.width(), axes.height()));
@@ -352,21 +351,21 @@ Region approximateAsRegion(const RoundedRect& roundedRect, unsigned stepLength)
         auto corner = rect.minXMaxYCorner();
         auto axes = radii.bottomLeft();
         auto ellipsisCenter = LayoutPoint(corner.x() + axes.width(), corner.y() - axes.height());
-        subtractCornerRects(corner, ellipsisCenter, axes, M_PI / 2);
+        subtractCornerRects(corner, ellipsisCenter, axes, piDouble / 2);
     }
 
     {
         auto corner = rect.minXMinYCorner();
         auto axes = radii.topLeft();
         auto ellipsisCenter = LayoutPoint(corner.x() + axes.width(), corner.y() + axes.height());
-        subtractCornerRects(corner, ellipsisCenter, axes, M_PI);
+        subtractCornerRects(corner, ellipsisCenter, axes, piDouble);
     }
 
     {
         auto corner = rect.maxXMinYCorner();
         auto axes = radii.topRight();
         auto ellipsisCenter = LayoutPoint(corner.x() - axes.width(), corner.y() + axes.height());
-        subtractCornerRects(corner, ellipsisCenter, axes, M_PI * 3 / 2);
+        subtractCornerRects(corner, ellipsisCenter, axes, piDouble * 3 / 2);
     }
 
     return region;

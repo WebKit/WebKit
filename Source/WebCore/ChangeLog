@@ -1,3 +1,10 @@
+2019-03-30  Antti Koivisto  <antti@apple.com>
+
+        Try to fix Windows build.
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::approximateAsRegion):
+
 2019-03-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: JSC Sampling Profiler thread not getting subtracted in CPU Usage Timeline
