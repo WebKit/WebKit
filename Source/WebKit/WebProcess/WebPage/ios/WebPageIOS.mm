@@ -910,13 +910,14 @@ void WebPage::commitPotentialTapFailed()
 
 void WebPage::cancelPotentialTap()
 {
+    if (m_potentialTapNode)
+        m_potentialTapNode->document().contentChangeObserver().willNotProceedWithClick();
     cancelPotentialTapInFrame(*m_mainFrame);
 }
 
 void WebPage::cancelPotentialTapInFrame(WebFrame& frame)
 {
     if (m_potentialTapNode) {
-        m_potentialTapNode->document().contentChangeObserver().willNotProceedWithClick();
         auto* potentialTapFrame = m_potentialTapNode->document().frame();
         if (potentialTapFrame && !potentialTapFrame->tree().isDescendantOf(frame.coreFrame()))
             return;

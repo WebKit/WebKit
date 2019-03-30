@@ -1,3 +1,19 @@
+2019-03-30  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Subframe load should not reset content observation on the mainframe
+        https://bugs.webkit.org/show_bug.cgi?id=196408
+        <rdar://problem/49436797>
+
+        Reviewed by Simon Fraser.
+
+        Hover intent fails when an unrelated frame commits a load the same time.
+        cancelPotentialTapInFrame is called from didCommitLoad, but what we are looking for here is the user initiated cancel of a tap (cancelPotentialTap).
+        (If the current frame navigates away, willDetachPage takes care of canceling the observation.)
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::cancelPotentialTap):
+        (WebKit::WebPage::cancelPotentialTapInFrame):
+
 2019-03-29  John Wilander  <wilander@apple.com>
 
         Move WebResourceLoadStatisticsStore IPC calls from the UI process to the network process

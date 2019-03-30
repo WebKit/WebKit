@@ -1,3 +1,14 @@
+2019-03-30  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Subframe load should not reset content observation on the mainframe
+        https://bugs.webkit.org/show_bug.cgi?id=196408
+        <rdar://problem/49436797>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/hover-while-loading-subframe-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/hover-while-loading-subframe.html: Added.
+
 2019-03-30  Antti Koivisto  <antti@apple.com>
 
         Hit-testing of boxes over scrollers should account for border-radius
