@@ -891,6 +891,32 @@ void testAddArgsFloatWithEffectfulDoubleConversion(float a, float b)
     CHECK(isIdentical(effect, static_cast<double>(a) + static_cast<double>(b)));
 }
 
+void testAddMulMulArgs(int64_t a, int64_t b, int64_t c)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a * b) + (a * c))
+    // ((a * b) + (c * a))
+    // ((b * a) + (a * c))
+    // ((b * a) + (c * a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* argC = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* mulAB = i & 2 ? root->appendNew<Value>(proc, Mul, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, Mul, Origin(), argB, argA);
+        Value* mulAC = i & 1 ? root->appendNew<Value>(proc, Mul, Origin(), argA, argC)
+            : root->appendNew<Value>(proc, Mul, Origin(), argC, argA);
+        root->appendNew<Value>(proc, Return, Origin(),
+            root->appendNew<Value>(proc, Add, Origin(),
+                mulAB,
+                mulAC));
+
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b, c), ((a * b) + (a * c)));
+    }
+}
+
 void testMulArg(int a)
 {
     Procedure proc;
@@ -961,6 +987,32 @@ void testMulArgs(int a, int b)
             root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1)));
 
     CHECK(compileAndRun<int>(proc, a, b) == a * b);
+}
+
+void testMulArgNegArg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* negB = root->appendNew<Value>(proc, Neg, Origin(), argB);
+    Value* result = root->appendNew<Value>(proc, Mul, Origin(), argA, negB);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int>(proc, a, b) == a * (-b));
+}
+
+void testMulNegArgArg(int a, int b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* negA = root->appendNew<Value>(proc, Neg, Origin(), argA);
+    Value* result = root->appendNew<Value>(proc, Mul, Origin(), negA, argB);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int>(proc, a, b) == (-a) * b);
 }
 
 void testMulArgImm(int64_t a, int64_t b)
@@ -2178,6 +2230,45 @@ void testNegValueSubOne32(int a)
         root->appendNew<Const32Value>(proc, Origin(), 1));
     root->appendNewControlValue(proc, Return, Origin(), negArgumentMinusOne);
     CHECK(compileAndRun<int>(proc, a) == -a - 1);
+}
+
+void testNegMulArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* constant = root->appendNew<Const64Value>(proc, Origin(), b);
+    Value* mul = root->appendNew<Value>(proc, Mul, Origin(), argument, constant);
+    Value* result = root->appendNew<Value>(proc, Neg, Origin(), mul);
+    root->appendNew<Value>(proc, Return, Origin(), result);
+
+    CHECK(compileAndRun<int64_t>(proc, a) == -(a * b));
+}
+
+void testSubMulMulArgs(int64_t a, int64_t b, int64_t c)
+{
+    // We want to check every possible ordering of arguments (to properly check every path in B3ReduceStrength):
+    // ((a * b) - (a * c))
+    // ((a * b) - (c * a))
+    // ((b * a) - (a * c))
+    // ((b * a) - (c * a))
+    for (int i = 0; i < 4; ++i) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+        Value* argC = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR2);
+        Value* mulAB = i & 2 ? root->appendNew<Value>(proc, Mul, Origin(), argA, argB)
+            : root->appendNew<Value>(proc, Mul, Origin(), argB, argA);
+        Value* mulAC = i & 1 ? root->appendNew<Value>(proc, Mul, Origin(), argA, argC)
+            : root->appendNew<Value>(proc, Mul, Origin(), argC, argA);
+        root->appendNew<Value>(proc, Return, Origin(),
+            root->appendNew<Value>(proc, Sub, Origin(),
+                mulAB,
+                mulAC));
+
+        CHECK_EQ(compileAndRun<int64_t>(proc, a, b, c), ((a * b) - (a * c)));
+    }
 }
 
 void testSubArgDouble(double a)
@@ -16979,6 +17070,7 @@ void run(const char* filter)
     RUN_BINARY(testAddNeg2, int32Operands(), int32Operands());
     RUN(testAddArgZeroImmZDef());
     RUN(testAddLoadTwice());
+    RUN_TERNARY(testAddMulMulArgs, int64Operands(), int64Operands(), int64Operands());
 
     RUN(testAddArgDouble(M_PI));
     RUN(testAddArgsDouble(M_PI, 1));
@@ -17063,6 +17155,8 @@ void run(const char* filter)
     RUN(testMulNegArgs());
     RUN(testMulNegArgs32());
 
+    RUN_BINARY(testMulArgNegArg, int64Operands(), int64Operands())
+    RUN_BINARY(testMulNegArgArg, int64Operands(), int64Operands())
     RUN_UNARY(testMulArgDouble, floatingPointOperands<double>());
     RUN_BINARY(testMulArgsDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
     RUN_BINARY(testMulArgImmDouble, floatingPointOperands<double>(), floatingPointOperands<double>());
@@ -17147,6 +17241,8 @@ void run(const char* filter)
     RUN_BINARY(testSubNeg, int32Operands(), int32Operands());
     RUN_BINARY(testNegSub, int32Operands(), int32Operands());
     RUN_UNARY(testNegValueSubOne, int32Operands());
+    RUN_BINARY(testNegMulArgImm, int64Operands(), int64Operands());
+    RUN_TERNARY(testSubMulMulArgs, int64Operands(), int64Operands(), int64Operands());
 
     RUN(testSubArgs32(1, 1));
     RUN(testSubArgs32(1, 2));

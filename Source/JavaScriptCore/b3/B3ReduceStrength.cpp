@@ -602,6 +602,9 @@ private:
                     replaceWithNew<Value>(BitXor, m_value->origin(), m_value->child(0)->child(1), m_value->child(1));
                     break;
                 }
+
+                if (handleMulDistributivity())
+                    break;
             }
 
             break;
@@ -644,6 +647,9 @@ private:
                     replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(1)->child(0));
                     break;
                 }
+
+                if (handleMulDistributivity())
+                    break;
             }
 
             break;
@@ -662,13 +668,29 @@ private:
                 replaceWithIdentity(m_value->child(0)->child(0));
                 break;
             }
-            
-            // Turn this: Integer Neg(Sub(value, otherValue))
-            // Into this: Sub(otherValue, value)
-            if (m_value->isInteger() && m_value->child(0)->opcode() == Sub) {
-                replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0)->child(1), m_value->child(0)->child(0));
-                break;
+
+            if (m_value->isInteger()) {
+                // Turn this: Integer Neg(Sub(value, otherValue))
+                // Into this: Sub(otherValue, value)
+                if (m_value->child(0)->opcode() == Sub) {
+                    replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0)->child(1), m_value->child(0)->child(0));
+                    break;
+                }
+
+                // Turn this: Integer Neg(Mul(value, c))
+                // Into this: Mul(value, -c), as long as -c does not overflow
+                if (m_value->child(0)->opcode() == Mul && m_value->child(0)->child(1)->hasInt()) {
+                    int64_t factor = m_value->child(0)->child(1)->asInt();
+                    if (m_value->type() == Int32 && factor != std::numeric_limits<int32_t>::min()) {
+                        Value* newFactor = m_insertionSet.insert<Const32Value>(m_index, m_value->child(0)->child(1)->origin(), -factor);
+                        replaceWithNew<Value>(Mul, m_value->origin(), m_value->child(0)->child(0), newFactor);
+                    } else if (m_value->type() == Int64 && factor != std::numeric_limits<int64_t>::min()) {
+                        Value* newFactor = m_insertionSet.insert<Const64Value>(m_index, m_value->child(0)->child(1)->origin(), -factor);
+                        replaceWithNew<Value>(Mul, m_value->origin(), m_value->child(0)->child(0), newFactor);
+                    }
+                }
             }
+
 
             break;
 
@@ -702,13 +724,9 @@ private:
                 }
 
                 // Turn this: Mul(value, -1)
-                // Into this: Sub(0, value)
+                // Into this: Neg(value)
                 if (factor == -1) {
-                    replaceWithNewValue(
-                        m_proc.add<Value>(
-                            Sub, m_value->origin(),
-                            m_insertionSet.insertIntConstant(m_index, m_value, 0),
-                            m_value->child(0)));
+                    replaceWithNew<Value>(Neg, m_value->origin(), m_value->child(0));
                     break;
                 }
                 
@@ -730,6 +748,23 @@ private:
                 // Into this: value
                 if (factor == 1) {
                     replaceWithIdentity(m_value->child(0));
+                    break;
+                }
+            }
+
+            if (m_value->isInteger()) {
+                // Turn this: Integer Mul(value, Neg(otherValue))
+                // Into this: Neg(Mul(value, otherValue))
+                if (m_value->child(1)->opcode() == Neg) {
+                    Value* newMul = m_insertionSet.insert<Value>(m_index, Mul, m_value->origin(), m_value->child(0), m_value->child(1)->child(0));
+                    replaceWithNew<Value>(Neg, m_value->origin(), newMul);
+                    break;
+                }
+                // Turn this: Integer Mul(Neg(value), otherValue)
+                // Into this: Neg(Mul(value, value2))
+                if (m_value->child(0)->opcode() == Neg) {
+                    Value* newMul = m_insertionSet.insert<Value>(m_index, Mul, m_value->origin(), m_value->child(0)->child(0), m_value->child(1));
+                    replaceWithNew<Value>(Neg, m_value->origin(), newMul);
                     break;
                 }
             }
@@ -2296,6 +2331,53 @@ private:
         }
     }
 
+    // For Op==Add or Sub, turn any of these:
+    //      Op(Mul(x1, x2), Mul(x1, x3))
+    //      Op(Mul(x2, x1), Mul(x1, x3))
+    //      Op(Mul(x1, x2), Mul(x3, x1))
+    //      Op(Mul(x2, x1), Mul(x3, x1))
+    // Into this: Mul(x1, Op(x2, x3))
+    bool handleMulDistributivity()
+    {
+        ASSERT(m_value->opcode() == Add || m_value->opcode() == Sub);
+        Value* x1 = nullptr;
+        Value* x2 = nullptr;
+        Value* x3 = nullptr;
+        if (m_value->child(0)->opcode() == Mul && m_value->child(1)->opcode() == Mul) {
+            Value* x1 = nullptr;
+            Value* x2 = nullptr;
+            Value* x3 = nullptr;
+            if (m_value->child(0)->child(0) == m_value->child(1)->child(0)) {
+                // Op(Mul(x1, x2), Mul(x1, x3))
+                x1 = m_value->child(0)->child(0);
+                x2 = m_value->child(0)->child(1);
+                x3 = m_value->child(1)->child(1);
+            } else if (m_value->child(0)->child(1) == m_value->child(1)->child(0)) {
+                // Op(Mul(x2, x1), Mul(x1, x3))
+                x1 = m_value->child(0)->child(1);
+                x2 = m_value->child(0)->child(0);
+                x3 = m_value->child(1)->child(1);
+            } else if (m_value->child(0)->child(0) == m_value->child(1)->child(1)) {
+                // Op(Mul(x1, x2), Mul(x3, x1))
+                x1 = m_value->child(0)->child(0);
+                x2 = m_value->child(0)->child(1);
+                x3 = m_value->child(1)->child(0);
+            } else if (m_value->child(0)->child(1) == m_value->child(1)->child(1)) {
+                // Op(Mul(x2, x1), Mul(x3, x1))
+                x1 = m_value->child(0)->child(1);
+                x2 = m_value->child(0)->child(0);
+                x3 = m_value->child(1)->child(0);
+            }
+        }
+        if (x1 != nullptr) {
+            ASSERT(x2 != nullptr && x3 != nullptr);
+            Value* newOp = m_insertionSet.insert<Value>(m_index, m_value->opcode(), m_value->origin(), x2, x3);
+            replaceWithNew<Value>(Mul, m_value->origin(), x1, newOp);
+            return true;
+        }
+        return false;
+    }
+
     // For Op==BitOr or BitXor, turn any of these:
     //      Op(BitAnd(x1, x2), BitAnd(x1, x3))
     //      Op(BitAnd(x2, x1), BitAnd(x1, x3))
@@ -2354,7 +2436,7 @@ private:
         if (x1 != nullptr) {
             ASSERT(x2 != nullptr && x3 != nullptr);
             Value* bitOp = m_insertionSet.insert<Value>(m_index, m_value->opcode(), m_value->origin(), x2, x3);
-            replaceWithNew<Value>(BitAnd, m_value->origin(), bitOp, x1);
+            replaceWithNew<Value>(BitAnd, m_value->origin(), x1, bitOp);
             return true;
         }
         return false;
