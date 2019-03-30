@@ -42,7 +42,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/CookieJar.h>
@@ -249,11 +248,6 @@ void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing(
             m_statisticsStore->processStatisticsAndDataRecords();
         postTaskReply(WTFMove(completionHandler));
     });
-}
-
-void WebResourceLoadStatisticsStore::requestUpdate()
-{
-    resourceLoadStatisticsUpdated({ });
 }
 
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)

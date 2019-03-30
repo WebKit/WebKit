@@ -65,7 +65,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
-#include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebSWContextManagerConnection.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include "WebServiceWorkerProvider.h"
@@ -211,14 +210,12 @@ WebProcess::WebProcess()
     m_plugInAutoStartOriginHashes.add(PAL::SessionID::defaultSessionID(), HashMap<unsigned, WallTime>());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    ResourceLoadObserver::shared().setNotificationCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
-        parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
-
-        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestResourceLoadStatisticsUpdate(), 0);
+    ResourceLoadObserver::shared().setStatisticsUpdatedCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 
-    ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain) {
-        parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::RequestStorageAccessUnderOpener(domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
+    ResourceLoadObserver::shared().setRequestStorageAccessUnderOpenerCallback([this] (PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain) {
+        ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RequestStorageAccessUnderOpener(sessionID, domainInNeedOfStorageAccess, openerPageID, openerDomain), 0);
     });
 #endif
     

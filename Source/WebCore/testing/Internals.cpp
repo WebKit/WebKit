@@ -4916,7 +4916,7 @@ size_t Internals::pluginCount()
 
 void Internals::notifyResourceLoadObserver()
 {
-    ResourceLoadObserver::shared().notifyObserver();
+    ResourceLoadObserver::shared().updateCentralStatisticsStore();
 }
 
 unsigned Internals::primaryScreenDisplayID()

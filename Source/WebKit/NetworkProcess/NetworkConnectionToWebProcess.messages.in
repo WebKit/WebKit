@@ -62,9 +62,10 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     LogWebSocketLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceLoading(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain, WebCore::RegistrableDomain topFrameDomain, WallTime lastSeen)
     LogSubresourceRedirect(PAL::SessionID sessionID, WebCore::RegistrableDomain sourceDomain, WebCore::RegistrableDomain targetDomain)
-    RequestResourceLoadStatisticsUpdate();
+    ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics)
     HasStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (bool hasStorageAccess) Async
     RequestStorageAccess(PAL::SessionID sessionID, WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, uint64_t frameID, uint64_t pageID) -> (bool accessGranted) Async
+    RequestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain domainInNeedOfStorageAccess, uint64_t openerPageID, WebCore::RegistrableDomain openerDomain)
 #endif
 
     AddOriginAccessWhitelistEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);

@@ -1,3 +1,38 @@
+2019-03-29  John Wilander  <wilander@apple.com>
+
+        Move WebResourceLoadStatisticsStore IPC calls from the UI process to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=196407
+        <rdar://problem/47859936>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.html
+
+        This patch removes old code for the batching into "statistics updated" calls.
+        Since the move of Resource Load Statistics to the network process, all such
+        collection is done directly through dedicated calls to the network process.
+
+        The remaining functionality was renamed to make it more clear, i.e.
+        ResourceLoadObserver::notifyObserver() renamed to
+        ResourceLoadObserver::updateCentralStatisticsStore().
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setStatisticsUpdatedCallback):
+        (WebCore::ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::requestStorageAccessUnderOpener):
+        (WebCore::ResourceLoadObserver::updateCentralStatisticsStore):
+        (WebCore::ResourceLoadObserver::clearState):
+        (WebCore::ResourceLoadObserver::setNotificationCallback): Deleted.
+        (WebCore::ResourceLoadObserver::ResourceLoadObserver): Deleted.
+        (WebCore::ResourceLoadObserver::scheduleNotificationIfNeeded): Deleted.
+        (WebCore::ResourceLoadObserver::notifyObserver): Deleted.
+        * loader/ResourceLoadObserver.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::notifyResourceLoadObserver):
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         Make someWindow.frames, .self, .window always return someWindow

@@ -144,7 +144,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/WebPasteboardProxy.messages.in
     UIProcess/WebProcessPool.messages.in
     UIProcess/WebProcessProxy.messages.in
-    UIProcess/WebResourceLoadStatisticsStore.messages.in
 
     UIProcess/Automation/WebAutomationSession.messages.in
 

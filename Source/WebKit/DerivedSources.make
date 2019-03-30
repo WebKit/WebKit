@@ -178,7 +178,6 @@ MESSAGE_RECEIVERS = \
     WebRTCMonitor \
     WebRTCResolver \
     WebRTCSocket \
-    WebResourceLoadStatisticsStore \
     WebResourceLoader \
     WebSWClientConnection \
     WebSWContextManagerConnection \

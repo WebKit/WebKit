@@ -66,7 +66,7 @@ enum class WebsiteDataToRemove : uint8_t {
     AllButCookies
 };
 
-class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main>, public IPC::MessageReceiver {
+class WebResourceLoadStatisticsStore final : public ThreadSafeRefCounted<WebResourceLoadStatisticsStore, WTF::DestructionThread::Main> {
 public:
     using ResourceLoadStatistics = WebCore::ResourceLoadStatistics;
     using RegistrableDomain = WebCore::RegistrableDomain;
@@ -120,7 +120,6 @@ public:
     bool hasStorageAccessForFrame(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID);
     void requestStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<FrameID>, PageID, CompletionHandler<void(StorageAccessStatus)>&&);
     void requestStorageAccessGranted(const SubFrameDomain&, const TopFrameDomain&, FrameID, PageID, CompletionHandler<void(bool)>&&);
-    void requestUpdate();
     void setLastSeen(const RegistrableDomain&, Seconds, CompletionHandler<void()>&&);
     void setPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
     void setVeryPrevalentResource(const RegistrableDomain&, CompletionHandler<void()>&&);
@@ -178,18 +177,14 @@ public:
     void sendDiagnosticMessageWithValue(const String& message, const String& description, unsigned value, unsigned sigDigits, WebCore::ShouldSample) const;
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins) const;
 
+    void resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&&);
+    void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, uint64_t openerPageID, OpenerDomain&&);
+
 private:
     explicit WebResourceLoadStatisticsStore(NetworkSession&, const String&, ShouldIncludeLocalhost);
 
     void postTask(WTF::Function<void()>&&);
     static void postTaskReply(WTF::Function<void()>&&);
-
-    // IPC::MessageReceiver.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-
-    // IPC message handlers.
-    void resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& origins);
-    void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, uint64_t openerPageID, OpenerDomain&&);
 
     void performDailyTasks();
 

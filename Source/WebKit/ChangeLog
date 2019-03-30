@@ -1,3 +1,46 @@
+2019-03-29  John Wilander  <wilander@apple.com>
+
+        Move WebResourceLoadStatisticsStore IPC calls from the UI process to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=196407
+        <rdar://problem/47859936>
+
+        Reviewed by Brent Fulgham.
+
+        The two WebResourceLoadStatisticsStore IPC endpoints were left behind when we
+        moved Resource Load Statistics from the UI process to the network process. One
+        of the endpoints is the message RequestStorageAccessUnderOpener which underpins
+        our compatibility fix for federated logins using popups. This patch redirects
+        these IPC calls to the network process and cleans up some assumptions around
+        them.
+
+        * CMakeLists.txt:
+            Removed the old IPC receiver.
+        * DerivedSources.make:
+            Removed the old IPC receiver.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestUpdate): Deleted.
+            This is no longer needed since there is a dedicated update mechanism
+            that actually sends the update.
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccessUnderOpener):
+            Two new IPC receivers to pipe the calls to the network process.
+        (WebKit::NetworkConnectionToWebProcess::requestResourceLoadStatisticsUpdate): Deleted.
+            NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated now serves
+            this purpose.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * UIProcess/WebResourceLoadStatisticsStore.messages.in: Removed.
+            Removed the old IPC receiver.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleResourceLoadStatisticsNotifyObserver):
+            Function name update.
+        * WebProcess/WebProcess.cpp:
+            Now calls IPC to the network process instead of the UI process.
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

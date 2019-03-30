@@ -653,14 +653,14 @@ void NetworkConnectionToWebProcess::logSubresourceRedirect(PAL::SessionID sessio
     }
 }
 
-void NetworkConnectionToWebProcess::requestResourceLoadStatisticsUpdate()
+void NetworkConnectionToWebProcess::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& statistics)
 {
     for (auto& networkSession : networkProcess().networkSessions().values()) {
         if (networkSession->sessionID().isEphemeral())
             continue;
 
         if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
-            resourceLoadStatistics->requestUpdate();
+            resourceLoadStatistics->resourceLoadStatisticsUpdated(WTFMove(statistics));
     }
 }
 
@@ -672,6 +672,14 @@ void NetworkConnectionToWebProcess::hasStorageAccess(PAL::SessionID sessionID, c
 void NetworkConnectionToWebProcess::requestStorageAccess(PAL::SessionID sessionID, const RegistrableDomain& subFrameDomain, const RegistrableDomain& topFrameDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& completionHandler)
 {
     networkProcess().requestStorageAccessGranted(sessionID, subFrameDomain, topFrameDomain, frameID, pageID, WTFMove(completionHandler));
+}
+
+void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(PAL::SessionID sessionID, WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, uint64_t openerPageID, WebCore::RegistrableDomain&& openerDomain)
+{
+    if (auto networkSession = networkProcess().networkSession(sessionID)) {
+        if (auto* resourceLoadStatistics = networkSession->resourceLoadStatistics())
+            resourceLoadStatistics->requestStorageAccessUnderOpener(WTFMove(domainInNeedOfStorageAccess), openerPageID, WTFMove(openerDomain));
+    }
 }
 #endif
 

@@ -40,7 +40,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebResourceLoadStatisticsStore.h"
-#include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"

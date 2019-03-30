@@ -53,13 +53,13 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
-void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
+void ResourceLoadObserver::setStatisticsUpdatedCallback(WTF::Function<void(Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
 {
     ASSERT(!m_notificationCallback);
     m_notificationCallback = WTFMove(notificationCallback);
 }
 
-void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain)>&& callback)
+void ResourceLoadObserver::setRequestStorageAccessUnderOpenerCallback(WTF::Function<void(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, const RegistrableDomain& openerDomain)>&& callback)
 {
     ASSERT(!m_requestStorageAccessUnderOpenerCallback);
     m_requestStorageAccessUnderOpenerCallback = WTFMove(callback);
@@ -89,11 +89,6 @@ void ResourceLoadObserver::setLogSubresourceRedirectNotificationCallback(Functio
     m_logSubresourceRedirectNotificationCallback = WTFMove(callback);
 }
     
-ResourceLoadObserver::ResourceLoadObserver()
-    : m_notificationTimer(*this, &ResourceLoadObserver::notifyObserver)
-{
-}
-
 static inline bool is3xxRedirect(const ResourceResponse& response)
 {
     return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
@@ -133,31 +128,23 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (targetDomain == topFrameDomain || (isRedirect && targetDomain == redirectedFromDomain))
         return;
 
-    bool shouldCallNotificationCallback = false;
     {
         auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
         auto lastSeen = ResourceLoadStatistics::reduceTimeResolution(WallTime::now());
         targetStatistics.lastSeen = lastSeen;
-        if (targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain).isNewEntry)
-            shouldCallNotificationCallback = true;
+        targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain);
 
         m_logSubresourceLoadingNotificationCallback(page->sessionID(), targetDomain, topFrameDomain, lastSeen);
     }
 
     if (isRedirect) {
         auto& redirectingOriginStatistics = ensureResourceStatisticsForRegistrableDomain(redirectedFromDomain);
-        bool isNewRedirectToEntry = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetDomain).isNewEntry;
+        redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetDomain);
         auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
-        bool isNewRedirectFromEntry = targetStatistics.subresourceUniqueRedirectsFrom.add(redirectedFromDomain).isNewEntry;
-
-        if (isNewRedirectToEntry || isNewRedirectFromEntry)
-            shouldCallNotificationCallback = true;
+        targetStatistics.subresourceUniqueRedirectsFrom.add(redirectedFromDomain);
 
         m_logSubresourceRedirectNotificationCallback(page->sessionID(), redirectedFromDomain, targetDomain);
     }
-
-    if (shouldCallNotificationCallback)
-        scheduleNotificationIfNeeded();
 }
 
 void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& mainFrameURL, PAL::SessionID sessionID)
@@ -181,8 +168,7 @@ void ResourceLoadObserver::logWebSocketLoading(const URL& targetURL, const URL& 
 
     auto& targetStatistics = ensureResourceStatisticsForRegistrableDomain(targetDomain);
     targetStatistics.lastSeen = lastSeen;
-    if (targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain).isNewEntry)
-        scheduleNotificationIfNeeded();
+    targetStatistics.subresourceUnderTopFrameDomains.add(topFrameDomain);
 
     m_logWebSocketLoadingNotificationCallback(sessionID, targetDomain, topFrameDomain, lastSeen);
 }
@@ -215,7 +201,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
             if (auto* openerDocument = opener->document()) {
                 if (auto* openerFrame = openerDocument->frame()) {
                     if (auto openerPageID = openerFrame->loader().client().pageID())
-                        requestStorageAccessUnderOpener(topFrameDomain, openerPageID.value(), *openerDocument);
+                        requestStorageAccessUnderOpener(document.sessionID(), topFrameDomain, openerPageID.value(), *openerDocument);
                 }
             }
         }
@@ -223,9 +209,6 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 
     m_logUserInteractionNotificationCallback(document.sessionID(), topFrameDomain);
 #endif
-
-    m_notificationTimer.stop();
-    notifyObserver();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (shouldLogUserInteraction()) {
@@ -250,14 +233,14 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-void ResourceLoadObserver::requestStorageAccessUnderOpener(const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument)
+void ResourceLoadObserver::requestStorageAccessUnderOpener(PAL::SessionID sessionID, const RegistrableDomain& domainInNeedOfStorageAccess, uint64_t openerPageID, Document& openerDocument)
 {
     auto openerUrl = openerDocument.url();
     RegistrableDomain openerDomain { openerUrl };
     if (domainInNeedOfStorageAccess != openerDomain
         && !openerDocument.hasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess)
         && !equalIgnoringASCIICase(openerUrl.string(), WTF::blankURL())) {
-        m_requestStorageAccessUnderOpenerCallback(domainInNeedOfStorageAccess, openerPageID, openerDomain);
+        m_requestStorageAccessUnderOpenerCallback(sessionID, domainInNeedOfStorageAccess, openerPageID, openerDomain);
         // Remember user interaction-based requests since they don't need to be repeated.
         openerDocument.setHasRequestedPageSpecificStorageAccessWithUserInteraction(domainInNeedOfStorageAccess);
     }
@@ -382,22 +365,8 @@ ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForRegistr
     return addResult.iterator->value;
 }
 
-void ResourceLoadObserver::scheduleNotificationIfNeeded()
+void ResourceLoadObserver::updateCentralStatisticsStore()
 {
-    ASSERT(m_notificationCallback);
-    if (m_resourceStatisticsMap.isEmpty()) {
-        m_notificationTimer.stop();
-        return;
-    }
-
-    if (!m_notificationTimer.isActive())
-        m_notificationTimer.startOneShot(minimumNotificationInterval);
-}
-
-void ResourceLoadObserver::notifyObserver()
-{
-    ASSERT(m_notificationCallback);
-    m_notificationTimer.stop();
     m_notificationCallback(takeStatistics());
 }
 
@@ -424,7 +393,6 @@ Vector<ResourceLoadStatistics> ResourceLoadObserver::takeStatistics()
 
 void ResourceLoadObserver::clearState()
 {
-    m_notificationTimer.stop();
     m_resourceStatisticsMap.clear();
     m_lastReportedUserInteractionMap.clear();
 }

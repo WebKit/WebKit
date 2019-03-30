@@ -14,5 +14,4 @@ Frame: '<!--frame1-->'
 --------
 Should not receive first-party cookie.
 Did not receive cookie named 'firstPartyCookie'.
-Did not receive cookie named ''.
 Client-side document.cookie:

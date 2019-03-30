@@ -323,7 +323,7 @@ void WKBundleClearResourceLoadStatistics(WKBundleRef)
 
 void WKBundleResourceLoadStatisticsNotifyObserver(WKBundleRef)
 {
-    WebCore::ResourceLoadObserver::shared().notifyObserver();
+    WebCore::ResourceLoadObserver::shared().updateCentralStatisticsStore();
 }
 
 
