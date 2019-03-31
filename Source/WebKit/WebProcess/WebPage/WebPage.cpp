@@ -173,7 +173,9 @@
 #include <WebCore/HTMLOListElement.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HTMLPlugInImageElement.h>
+#include <WebCore/HTMLSelectElement.h>
 #include <WebCore/HTMLTextAreaElement.h>
+#include <WebCore/HTMLTextFormControlElement.h>
 #include <WebCore/HTMLUListElement.h>
 #include <WebCore/HistoryController.h>
 #include <WebCore/HistoryItem.h>
@@ -5345,6 +5347,11 @@ bool WebPage::shouldDispatchUpdateAfterFocusingElement(const Element& element) c
     return true;
 }
 
+static bool isTextFormControlOrEditableContent(const WebCore::Element& element)
+{
+    return is<HTMLTextFormControlElement>(element) || element.hasEditableStyle();
+}
+
 void WebPage::elementDidFocus(WebCore::Element& element)
 {
     if (!shouldDispatchUpdateAfterFocusingElement(element)) {
@@ -5353,7 +5360,7 @@ void WebPage::elementDidFocus(WebCore::Element& element)
         return;
     }
 
-    if (element.hasTagName(WebCore::HTMLNames::selectTag) || element.hasTagName(WebCore::HTMLNames::inputTag) || element.hasTagName(WebCore::HTMLNames::textareaTag) || element.hasEditableStyle()) {
+    if (is<HTMLSelectElement>(element) || isTextFormControlOrEditableContent(element)) {
         m_focusedElement = &element;
 
 #if PLATFORM(IOS_FAMILY)
@@ -5399,17 +5406,18 @@ void WebPage::elementDidBlur(WebCore::Element& element)
 
 void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCore::InputMode mode)
 {
+    if (m_focusedElement != &element)
+        return;
+
 #if PLATFORM(IOS_FAMILY)
-    ASSERT(m_focusedElement == &element);
     ASSERT(is<HTMLElement>(element));
     ASSERT(downcast<HTMLElement>(element).canonicalInputMode() == mode);
 
-    if (!is<HTMLTextAreaElement>(*m_focusedElement) && !is<HTMLInputElement>(*m_focusedElement) && !m_focusedElement->hasEditableStyle())
+    if (!isTextFormControlOrEditableContent(element))
         return;
 
     send(Messages::WebPageProxy::FocusedElementDidChangeInputMode(mode));
 #else
-    UNUSED_PARAM(element);
     UNUSED_PARAM(mode);
 #endif
 }

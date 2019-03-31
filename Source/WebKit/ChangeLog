@@ -1,3 +1,32 @@
+2019-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Crash when changing inputmode for certain types of focusable elements
+        https://bugs.webkit.org/show_bug.cgi?id=196431
+        <rdar://problem/49454962>
+
+        Reviewed by Tim Horton.
+
+        The crash is happening because WebPage::focusedElementDidChangeInputMode assumes that the document's focused
+        element must be the same as m_focusedElement in WebPage. However, this is not the case, since m_focusedElement
+        is only set for certain types of elements that require user input (e.g. text fields, editable content, select
+        menus, etc.). The function then attempts to dereference m_focusedElement, which may be null if the document's
+        focused element doesn't fall into one of the aforementioned categories.
+
+        To fix this, bail if the element that is changing inputmode is not equal to the WebPage's current focused
+        element. See below for more details.
+
+        Test: fast/forms/change-inputmode-crash.html
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::isTextFormControlOrEditableContent):
+
+        Clean up some existing logic by introducing a helper method for determining whether an element should
+        propagate inputmode attribute changes to the UI process. Also, check the element type using type traits instead
+        of checking against the tag name.
+
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::focusedElementDidChangeInputMode):
+
 2019-03-31  Sam Weinig  <weinig@apple.com>
 
         Remove more i386 specific configurations

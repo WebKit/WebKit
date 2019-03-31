@@ -1,3 +1,16 @@
+2019-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Crash when changing inputmode for certain types of focusable elements
+        https://bugs.webkit.org/show_bug.cgi?id=196431
+        <rdar://problem/49454962>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test that exercises the edge case; see WebKit ChangeLogs for more details.
+
+        * fast/forms/change-inputmode-crash-expected.txt: Added.
+        * fast/forms/change-inputmode-crash.html: Added.
+
 2019-03-29  Dean Jackson  <dino@apple.com>
 
         gl.readPixels with type gl.FLOAT does not work
