@@ -1,3 +1,36 @@
+2019-03-31  Andy Estes  <aestes@apple.com>
+
+        [iOS] WebKit should consult the navigation response policy delegate before previewing a QuickLook document
+        https://bugs.webkit.org/show_bug.cgi?id=196433
+        <rdar://problem/49293305>
+
+        Reviewed by Tim Horton.
+
+        Added WKWebViewConfiguration SPI for setting the QuickLook navigation response policy
+        decision behavior. The configuration setting defaults to YES for clients linked on or after
+        this WebKit change and NO otherwise.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions):
+        * Shared/WebPreferences.yaml:
+        * Shared/ios/QuickLookDocumentData.cpp:
+        (WebKit::QuickLookDocumentData::isEmpty const):
+        * Shared/ios/QuickLookDocumentData.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (defaultShouldDecidePolicyBeforeLoadingQuickLookPreview):
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _shouldDecidePolicyBeforeLoadingQuickLookPreview]):
+        (-[WKWebViewConfiguration _setShouldDecidePolicyBeforeLoadingQuickLookPreview:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/Cocoa/VersionChecks.h:
+        * WebProcess/WebCoreSupport/ios/WebPreviewLoaderClient.cpp:
+        (WebKit::WebPreviewLoaderClient::didReceiveDataArray):
+
 2019-03-30  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Subframe load should not reset content observation on the mainframe

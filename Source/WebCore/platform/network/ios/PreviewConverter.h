@@ -41,6 +41,8 @@ public:
     PreviewConverter(id delegate, const ResourceResponse&, const String& password = { });
     PreviewConverter(NSData *, const String& uti, const String& password = { });
 
+    WEBCORE_EXPORT static bool supportsMIMEType(const String& mimeType);
+
     QLPreviewConverter *platformConverter() const { return m_platformConverter.get(); }
     ResourceRequest safeRequest(const ResourceRequest&) const;
     ResourceRequest previewRequest() const;

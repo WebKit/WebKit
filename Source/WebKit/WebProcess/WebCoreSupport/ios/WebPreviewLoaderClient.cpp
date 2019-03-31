@@ -49,7 +49,6 @@ WebPreviewLoaderClient::WebPreviewLoaderClient(const String& fileName, const Str
     , m_uti { uti }
     , m_pageID { pageID }
 {
-    WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
 }
 
 WebPreviewLoaderClient::~WebPreviewLoaderClient()
@@ -59,6 +58,9 @@ WebPreviewLoaderClient::~WebPreviewLoaderClient()
 
 void WebPreviewLoaderClient::didReceiveDataArray(CFArrayRef dataArray)
 {
+    if (m_data.isEmpty())
+        WebProcess::singleton().send(Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame(m_fileName, m_uti), m_pageID);
+
     CFArrayApplyFunction(dataArray, CFRangeMake(0, CFArrayGetCount(dataArray)), [](const void* value, void* context) {
         ASSERT(CFGetTypeID(value) == CFDataGetTypeID());
         static_cast<QuickLookDocumentData*>(context)->append((CFDataRef)value);

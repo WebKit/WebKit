@@ -40,6 +40,7 @@ class QuickLookDocumentData {
 public:
     void append(CFDataRef);
     CFDataRef decodedData() const;
+    bool isEmpty() const;
     void clear();
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, QuickLookDocumentData&);

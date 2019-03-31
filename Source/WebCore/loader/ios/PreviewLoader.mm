@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if USE(QUICK_LOOK)
 
 #import "DocumentLoader.h"
+#import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "Logging.h"
@@ -36,6 +37,7 @@
 #import "PreviewLoaderClient.h"
 #import "QuickLook.h"
 #import "ResourceLoader.h"
+#import "Settings.h"
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -47,7 +49,7 @@ using namespace WebCore;
     RefPtr<PreviewLoaderClient> _client;
     std::unique_ptr<PreviewConverter> _converter;
     RetainPtr<NSMutableArray> _bufferedDataArray;
-    BOOL _hasSentDidReceiveResponse;
+    BOOL _hasLoadedPreview;
     BOOL _hasProcessedResponse;
     RefPtr<SharedBuffer> _bufferedData;
     long long _lengthReceived;
@@ -58,6 +60,8 @@ using namespace WebCore;
 - (void)appendDataArray:(NSArray<NSData *> *)dataArray;
 - (void)finishedAppending;
 - (void)failed;
+
+@property (nonatomic, readonly) BOOL shouldDecidePolicyBeforeLoading;
 
 @end
 
@@ -77,14 +81,14 @@ static PreviewLoaderClient& emptyClient()
 
 - (instancetype)initWithResourceLoader:(ResourceLoader&)resourceLoader resourceResponse:(const ResourceResponse&)resourceResponse
 {
-    self = [super init];
-    if (!self)
+    if (!(self = [super init]))
         return nil;
 
     _resourceLoader = makeWeakPtr(resourceLoader);
     _response = resourceResponse;
     _converter = std::make_unique<PreviewConverter>(self, _response);
     _bufferedDataArray = adoptNS([[NSMutableArray alloc] init]);
+    _shouldDecidePolicyBeforeLoading = resourceLoader.frame()->settings().shouldDecidePolicyBeforeLoadingQuickLookPreview();
 
     if (testingClient())
         _client = testingClient();
@@ -119,15 +123,16 @@ static PreviewLoaderClient& emptyClient()
     _client->didFail();
 }
 
-- (void)_sendDidReceiveResponseIfNecessary
+- (void)_loadPreviewIfNeeded
 {
     if (!_resourceLoader)
         return;
 
     ASSERT(!_resourceLoader->reachedTerminalState());
-    if (_hasSentDidReceiveResponse)
+    if (_hasLoadedPreview)
         return;
 
+    _hasLoadedPreview = YES;
     [_bufferedDataArray removeAllObjects];
 
     ResourceResponse response { _converter->previewResponse() };
@@ -136,7 +141,12 @@ static PreviewLoaderClient& emptyClient()
 
     _resourceLoader->documentLoader()->setPreviewConverter(WTFMove(_converter));
 
-    _hasSentDidReceiveResponse = YES;
+    if (_shouldDecidePolicyBeforeLoading) {
+        _hasProcessedResponse = YES;
+        _resourceLoader->documentLoader()->setResponse(response);
+        return;
+    }
+
     _hasProcessedResponse = NO;
     _resourceLoader->didReceiveResponse(response, [self, retainedSelf = retainPtr(self)] {
         _hasProcessedResponse = YES;
@@ -170,8 +180,8 @@ static PreviewLoaderClient& emptyClient()
     ASSERT_UNUSED(connection, !connection);
     if (_resourceLoader->reachedTerminalState())
         return;
-    
-    [self _sendDidReceiveResponseIfNecessary];
+
+    [self _loadPreviewIfNeeded];
 
     auto dataLength = data.length;
 
@@ -201,7 +211,7 @@ static PreviewLoaderClient& emptyClient()
     if (_resourceLoader->reachedTerminalState())
         return;
     
-    ASSERT(_hasSentDidReceiveResponse);
+    ASSERT(_hasLoadedPreview);
 
     if (!_hasProcessedResponse) {
         _needsToCallDidFinishLoading = YES;
@@ -226,7 +236,6 @@ static inline bool isQuickLookPasswordError(NSError *error)
         return;
 
     if (!isQuickLookPasswordError(error)) {
-        [self _sendDidReceiveResponseIfNecessary];
         _resourceLoader->didFail(error);
         return;
     }
@@ -256,28 +265,15 @@ PreviewLoader::~PreviewLoader()
 {
 }
 
-bool PreviewLoader::shouldCreateForMIMEType(const String& mimeType)
-{
-    if (equalLettersIgnoringASCIICase(mimeType, "text/html") || equalLettersIgnoringASCIICase(mimeType, "text/plain"))
-        return false;
-
-    static std::once_flag onceFlag;
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes;
-    std::call_once(onceFlag, [] {
-        for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSet())
-            supportedMIMETypes.get().add(mimeType);
-    });
-
-    if (mimeType.isNull())
-        return false;
-
-    return supportedMIMETypes.get().contains(mimeType);
-}
-
 std::unique_ptr<PreviewLoader> PreviewLoader::create(ResourceLoader& loader, const ResourceResponse& response)
 {
-    ASSERT(shouldCreateForMIMEType(response.mimeType()));
+    ASSERT(PreviewConverter::supportsMIMEType(response.mimeType()));
     return std::make_unique<PreviewLoader>(loader, response);
+}
+
+bool PreviewLoader::didReceiveResponse(const ResourceResponse&)
+{
+    return ![m_previewLoader shouldDecidePolicyBeforeLoading];
 }
 
 bool PreviewLoader::didReceiveData(const char* data, unsigned length)

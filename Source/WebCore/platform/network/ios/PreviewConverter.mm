@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if USE(QUICK_LOOK)
 
+#import "QuickLook.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
 #import <pal/ios/QuickLookSoftLink.h>
@@ -51,6 +52,24 @@ PreviewConverter::PreviewConverter(id delegate, const ResourceResponse& response
 PreviewConverter::PreviewConverter(NSData *data, const String& uti, const String& password)
     : m_platformConverter { adoptNS([PAL::allocQLPreviewConverterInstance() initWithData:data name:nil uti:uti options:optionsWithPassword(password)]) }
 {
+}
+
+bool PreviewConverter::supportsMIMEType(const String& mimeType)
+{
+    if (equalLettersIgnoringASCIICase(mimeType, "text/html") || equalLettersIgnoringASCIICase(mimeType, "text/plain"))
+        return false;
+
+    static std::once_flag onceFlag;
+    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> supportedMIMETypes;
+    std::call_once(onceFlag, [] {
+        for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSet())
+            supportedMIMETypes->add(mimeType);
+    });
+
+    if (mimeType.isNull())
+        return false;
+
+    return supportedMIMETypes->contains(mimeType);
 }
 
 ResourceRequest PreviewConverter::safeRequest(const ResourceRequest& request) const

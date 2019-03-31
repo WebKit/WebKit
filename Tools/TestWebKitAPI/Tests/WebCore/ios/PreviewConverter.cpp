@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,19 +27,21 @@
 
 #if PLATFORM(IOS_FAMILY) && USE(QUICK_LOOK)
 
-#include <WebCore/PreviewLoader.h>
+#include <WebCore/PreviewConverter.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-TEST(QuickLook, ShouldCreateForMIMEType)
+TEST(QuickLook, SupportsMIMEType)
 {
     // FIXME: Expand this to cover all the MIME types we expect to support.
-    EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(String()));
-    EXPECT_FALSE(PreviewLoader::shouldCreateForMIMEType(emptyString()));
-    EXPECT_TRUE(PreviewLoader::shouldCreateForMIMEType("application/vnd.ms-excel.sheet.macroEnabled.12"_s));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType(String()));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType(emptyString()));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/html"_s));
+    EXPECT_FALSE(PreviewConverter::supportsMIMEType("text/plain"_s));
+    EXPECT_TRUE(PreviewConverter::supportsMIMEType("application/vnd.ms-excel.sheet.macroEnabled.12"_s));
 }
 
 } // namespace TestWebKitAPI

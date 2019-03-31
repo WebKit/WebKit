@@ -1192,6 +1192,10 @@ EditableImagesEnabled:
   type: bool
   defaultValue: false
 
+ShouldDecidePolicyBeforeLoadingQuickLookPreview:
+  defaultValue: false
+  type: bool
+
 # For experimental features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all experimental features. They

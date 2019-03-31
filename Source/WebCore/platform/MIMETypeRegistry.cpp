@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,10 @@
 #if HAVE(AVASSETREADER)
 #include "ContentType.h"
 #include "ImageDecoderAVFObjC.h"
+#endif
+
+#if USE(QUICK_LOOK)
+#include "PreviewConverter.h"
 #endif
 
 namespace WebCore {
@@ -642,6 +646,11 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 
     if (isSupportedJavaScriptMIMEType(mimeType) || isSupportedJSONMIMEType(mimeType))
         return true;
+
+#if USE(QUICK_LOOK)
+    if (PreviewConverter::supportsMIMEType(mimeType))
+        return true;
+#endif
 
     if (startsWithLettersIgnoringASCIICase(mimeType, "text/"))
         return !isUnsupportedTextMIMEType(mimeType);

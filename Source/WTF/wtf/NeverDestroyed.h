@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,8 +60,12 @@ public:
     operator T&() { return *storagePointer(); }
     T& get() { return *storagePointer(); }
 
+    T* operator->() { return storagePointer(); }
+
     operator const T&() const { return *storagePointer(); }
     const T& get() const { return *storagePointer(); }
+
+    const T* operator->() const { return storagePointer(); }
 
 private:
     using PointerType = typename std::remove_const<T>::type*;

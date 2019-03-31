@@ -1,3 +1,53 @@
+2019-03-31  Andy Estes  <aestes@apple.com>
+
+        [iOS] WebKit should consult the navigation response policy delegate before previewing a QuickLook document
+        https://bugs.webkit.org/show_bug.cgi?id=196433
+        <rdar://problem/49293305>
+
+        Reviewed by Tim Horton.
+
+        Enhanced API test coverage to include all navigation response policy decisions in both
+        linked-before and linked-on-or-after modes. Also added new expectations for all tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ios/PreviewConverter.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebCore/ios/PreviewLoader.cpp.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (readFile):
+        (-[QuickLookDelegate initWithExpectedFileURL:responsePolicy:]):
+        (-[QuickLookDelegate initWithExpectedFileURL:previewMIMEType:responsePolicy:]):
+        (-[QuickLookDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[QuickLookDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]):
+        (-[QuickLookDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]):
+        (-[QuickLookDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[QuickLookDelegate _webViewWebProcessDidCrash:]):
+        (-[QuickLookDelegate _downloadDidStart:]):
+        (-[QuickLookDelegate _download:didReceiveResponse:]):
+        (-[QuickLookDelegate _download:didReceiveData:]):
+        (-[QuickLookDelegate _download:decideDestinationWithSuggestedFilename:completionHandler:]):
+        (-[QuickLookDelegate _downloadDidFinish:]):
+        (-[QuickLookDelegate _download:didFailWithError:]):
+        (-[QuickLookDelegate _downloadDidCancel:]):
+        (-[QuickLookDelegate verifyDownload]):
+        (runTest):
+        (runTestDecideBeforeLoading):
+        (runTestDecideAfterLoading):
+        (TEST):
+        (-[QuickLookAsyncDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[QuickLookPasswordDelegate _webViewDidRequestPasswordForQuickLookDocument:]):
+        (-[QuickLookFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[QuickLookNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]): Deleted.
+        (-[QuickLookNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]): Deleted.
+        (-[QuickLookNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        (-[QuickLookAsyncNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Deleted.
+        (-[QuickLookAsyncNavigationDelegate _webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:]): Deleted.
+        (-[QuickLookAsyncNavigationDelegate _webView:didFinishLoadForQuickLookDocumentInMainFrame:]): Deleted.
+        (-[QuickLookAsyncNavigationDelegate webView:didFinishNavigation:]): Deleted.
+        (-[QuickLookDecidePolicyDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]): Deleted.
+        (-[QuickLookDecidePolicyDelegate webView:didFailProvisionalNavigation:withError:]): Deleted.
+        (-[QuickLookDecidePolicyDelegate _webViewWebProcessDidCrash:]): Deleted.
+        (-[QuickLookPasswordNavigationDelegate _webViewDidRequestPasswordForQuickLookDocument:]): Deleted.
+
 2019-03-30  Dominik Infuehr  <dinfuehr@igalia.com>
 
         [CMake] add testdfg as target with build-jsc

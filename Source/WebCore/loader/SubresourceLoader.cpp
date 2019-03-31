@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,7 @@
 #endif
 
 #if USE(QUICK_LOOK)
+#include "PreviewConverter.h"
 #include "PreviewLoader.h"
 #endif
 
@@ -304,7 +305,7 @@ bool SubresourceLoader::shouldCreatePreviewLoaderForResponse(const ResourceRespo
     if (m_previewLoader)
         return false;
 
-    return PreviewLoader::shouldCreateForMIMEType(response.mimeType());
+    return PreviewConverter::supportsMIMEType(response.mimeType());
 }
 
 #endif
@@ -319,7 +320,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
 #if USE(QUICK_LOOK)
     if (shouldCreatePreviewLoaderForResponse(response)) {
         m_previewLoader = PreviewLoader::create(*this, response);
-        return;
+        if (m_previewLoader->didReceiveResponse(response))
+            return;
     }
 #endif
 #if ENABLE(SERVICE_WORKER)

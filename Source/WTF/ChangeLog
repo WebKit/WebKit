@@ -1,3 +1,15 @@
+2019-03-31  Andy Estes  <aestes@apple.com>
+
+        [iOS] WebKit should consult the navigation response policy delegate before previewing a QuickLook document
+        https://bugs.webkit.org/show_bug.cgi?id=196433
+        <rdar://problem/49293305>
+
+        Reviewed by Tim Horton.
+
+        * wtf/NeverDestroyed.h:
+        (WTF::NeverDestroyed::operator->):
+        (WTF::NeverDestroyed::operator-> const):
+
 2019-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unreviewed build fix.

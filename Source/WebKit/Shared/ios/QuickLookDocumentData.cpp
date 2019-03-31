@@ -46,6 +46,11 @@ CFDataRef QuickLookDocumentData::decodedData() const
     return m_data[0].get();
 }
 
+bool QuickLookDocumentData::isEmpty() const
+{
+    return m_data.isEmpty();
+}
+
 void QuickLookDocumentData::clear()
 {
     m_data.clear();

@@ -55,7 +55,7 @@
 #include <wtf/RunLoop.h>
 
 #if USE(QUICK_LOOK)
-#include <WebCore/PreviewLoader.h>
+#include <WebCore/PreviewConverter.h>
 #endif
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkResourceLoader::" fmt, this, ##__VA_ARGS__)
@@ -386,7 +386,7 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
     ASSERT(isMainResource());
 
 #if USE(QUICK_LOOK)
-    if (PreviewLoader::shouldCreateForMIMEType(response.mimeType()))
+    if (PreviewConverter::supportsMIMEType(response.mimeType()))
         return false;
 #endif
 

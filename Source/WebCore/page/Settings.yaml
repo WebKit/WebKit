@@ -827,6 +827,9 @@ adClickAttributionEnabled:
 blockingOfSmallPluginsEnabled:
   initial: true
 
+shouldDecidePolicyBeforeLoadingQuickLookPreview:
+  initial: false
+
 # Deprecated
 
 iceCandidateFilteringEnabled:

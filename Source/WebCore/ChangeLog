@@ -1,3 +1,52 @@
+2019-03-31  Andy Estes  <aestes@apple.com>
+
+        [iOS] WebKit should consult the navigation response policy delegate before previewing a QuickLook document
+        https://bugs.webkit.org/show_bug.cgi?id=196433
+        <rdar://problem/49293305>
+
+        Reviewed by Tim Horton.
+
+        When ResourceLoader would encounter a response with a MIME type that QuickLook supports, the
+        response would be implicitly allowed and a QuickLook preview would be generated. After
+        generating, the client's navigation response policy delegate would be notified of the
+        preview response, but not the underlying response. Notably, the preview response has a URL
+        scheme of "x-apple-ql-id", does not include any underlying HTTP headers, and usually has a
+        MIME type of "text/html" or "application/pdf" rather than the underlying response MIME type.
+
+        To allow clients to make better navigation response policy decisions, this patch changes the
+        above behavior for WKWebView clients that have linked against a version of WebKit that
+        includes this change. Rather than notifying the client's navigation response policy delegate
+        of the preview response, we notify the client of the underlying response. Only if the client
+        responds with a policy of "allow" will the QuickLook preview response be loaded (without
+        another call to the navigation response policy delegate).
+
+        Non-WKWebView clients and clients that have linked against a version of WebKit that does not
+        include this change will retain the original behavior.
+
+        Covered by existing layout tests and new and existing API tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::shouldCreatePreviewLoaderForResponse const):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        * loader/ios/PreviewLoader.h:
+        * loader/ios/PreviewLoader.mm:
+        (-[WebPreviewLoader initWithResourceLoader:resourceResponse:]):
+        (-[WebPreviewLoader _loadPreviewIfNeeded]):
+        (-[WebPreviewLoader connection:didReceiveData:lengthReceived:]):
+        (-[WebPreviewLoader connectionDidFinishLoading:]):
+        (-[WebPreviewLoader connection:didFailWithError:]):
+        (WebCore::PreviewLoader::create):
+        (WebCore::PreviewLoader::didReceiveResponse):
+        (-[WebPreviewLoader _sendDidReceiveResponseIfNecessary]): Deleted.
+        (WebCore::PreviewLoader::shouldCreateForMIMEType): Deleted.
+        * page/Settings.yaml:
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::canShowMIMEType):
+        * platform/network/ios/PreviewConverter.h:
+        * platform/network/ios/PreviewConverter.mm:
+        (WebCore::PreviewConverter::supportsMIMEType):
+
 2019-03-29  Dean Jackson  <dino@apple.com>
 
         gl.readPixels with type gl.FLOAT does not work
