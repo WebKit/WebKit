@@ -1,3 +1,13 @@
+2019-03-31  Sam Weinig  <weinig@apple.com>
+
+        Remove more i386 specific configurations
+        https://bugs.webkit.org/show_bug.cgi?id=196430
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/FeatureDefines.xcconfig:
+        ENABLE_WEB_AUTHN_macosx can now be enabled unconditionally on macOS.
+
 2019-03-31  Andy Estes  <aestes@apple.com>
 
         [iOS] WebKit should consult the navigation response policy delegate before previewing a QuickLook document
