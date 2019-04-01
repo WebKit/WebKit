@@ -4488,9 +4488,6 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (!hasSelfPaintingLayerDescendant())
         return;
 
-    if (paintFlags.contains(PaintLayerCollectingEventRegion) && renderBox() && !renderBox()->hasRenderOverflow())
-        return;
-
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(*this);
 #endif

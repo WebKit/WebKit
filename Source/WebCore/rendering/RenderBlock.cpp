@@ -1248,8 +1248,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             paintInfo.eventRegion->unite(borderRegion);
         }
 
-        // No need to check descendants if we don't have overflow.
-        if (!hasVisualOverflow())
+        // No need to check descendants if we don't have overflow and the area is already covered.
+        if (!hasVisualOverflow() && paintInfo.eventRegion->contains(enclosingIntRect(borderRect)))
             return;
     }
 

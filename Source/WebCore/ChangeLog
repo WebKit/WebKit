@@ -1,3 +1,25 @@
+2019-04-01  Antti Koivisto  <antti@apple.com>
+
+        Trying to scroll the compose pane on gmail.com scrolls the message list behind
+        https://bugs.webkit.org/show_bug.cgi?id=196426
+        <rdar://problem/49402667>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/scrolling/ios/event-region-visibility-hidden.html
+
+        We fail to gather event region from desdendants of non-overflowing elements with 'visibility:hidden'.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+
+        Skip the subtree walk only if the current region covers the box already.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintList):
+
+        Remove the (wrong) optimization, we bail out quickly on first renderer if possible so this is not high value.
+
 2019-04-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Be less strict about closing blocks in attribute and functional pseudo-element selectors.
