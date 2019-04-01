@@ -42,6 +42,8 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
     launchOptions.extraInitializationData.set("enable-sandbox", m_processPool->sandboxEnabled() ? "true" : "false");
 
     websiteDataStore().resolveDirectoriesIfNecessary();
+    launchOptions.extraInitializationData.set("webSQLDatabaseDirectory", websiteDataStore().resolvedDatabaseDirectory());
+    launchOptions.extraInitializationData.set("mediaKeysDirectory", websiteDataStore().resolvedMediaKeysDirectory());
     launchOptions.extraInitializationData.set("applicationCacheDirectory", websiteDataStore().resolvedApplicationCacheDirectory());
 
     launchOptions.extraWebProcessSandboxPaths = m_processPool->sandboxPaths();

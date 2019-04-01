@@ -765,7 +765,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
             }));
         }
 
-        Vector<String> extraPaths = { "applicationCacheDirectory", "waylandSocket"};
+        Vector<String> extraPaths = { "applicationCacheDirectory", "mediaKeysDirectory", "waylandSocket", "webSQLDatabaseDirectory" };
         for (const auto& path : extraPaths) {
             String extraPath = launchOptions.extraInitializationData.get(path);
             if (!extraPath.isEmpty())
