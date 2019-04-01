@@ -75,6 +75,9 @@ WI.Canvas = class Canvas extends WI.Object
         case CanvasAgent.ContextType.WebGPU:
             contextType = WI.Canvas.ContextType.WebGPU;
             break;
+        case CanvasAgent.ContextType.WebMetal:
+            contextType = WI.Canvas.ContextType.WebMetal;
+            break;
         default:
             console.error("Invalid canvas context type", payload.contextType);
         }
@@ -101,6 +104,8 @@ WI.Canvas = class Canvas extends WI.Object
             return WI.unlocalizedString("WebGL2");
         case WI.Canvas.ContextType.WebGPU:
             return WI.unlocalizedString("Web GPU");
+        case WI.Canvas.ContextType.WebMetal:
+            return WI.unlocalizedString("WebMetal");
         default:
             console.error("Invalid canvas context type", contextType);
         }
@@ -408,6 +413,7 @@ WI.Canvas.ContextType = {
     WebGL: "webgl",
     WebGL2: "webgl2",
     WebGPU: "webgpu",
+    WebMetal: "webmetal",
 };
 
 WI.Canvas.RecordingState = {
