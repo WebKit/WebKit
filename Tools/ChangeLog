@@ -1,5 +1,17 @@
 2019-04-01  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Display OS and Xcode configuration in status-bubble's hover-over message
+        https://bugs.webkit.org/show_bug.cgi?id=196449
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble.get_os_details): Method to get OS and Xcode details.
+        (StatusBubble._build_bubble): Moved the timestamp logic to common method.
+        (StatusBubble.get_build_timestamp): Method to get the timestamp to display for the build.
+
+2019-04-01  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Remove force schedulers from OpenSource EWS Buildbot
         https://bugs.webkit.org/show_bug.cgi?id=196444
 

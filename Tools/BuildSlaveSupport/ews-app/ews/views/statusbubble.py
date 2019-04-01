@@ -59,16 +59,16 @@ class StatusBubble(View):
 
         if build.result is None:  # In-progress build
             bubble['state'] = 'started'
-            bubble['details_message'] = 'Recent messages:\n\n' + self._steps_messages(build) + '\n\n' + self._iso_time(build.step_set.last().started_at)
+            bubble['details_message'] = 'Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             bubble['state'] = 'pass'
-            bubble['details_message'] = 'Pass\n\n' + self._iso_time(build.complete_at)
+            bubble['details_message'] = 'Pass\n\n'
         elif build.result == Buildbot.WARNINGS:
             bubble['state'] = 'pass'
-            bubble['details_message'] = 'Warning\n\n' + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at)
+            bubble['details_message'] = 'Warning\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.FAILURE:
             bubble['state'] = 'fail'
-            bubble['details_message'] = self._most_recent_step_message(build) + '\n\n' + self._iso_time(build.complete_at)
+            bubble['details_message'] = self._most_recent_step_message(build)
         elif build.result == Buildbot.SKIPPED:
             bubble['state'] = 'none'
             bubble['details_message'] = 'The patch is no longer eligible for processing.'
@@ -79,29 +79,42 @@ class StatusBubble(View):
             elif re.search(r'Patch .* is obsolete', build.state_string):
                 bubble['details_message'] += ' Patch was obsolete when EWS attempted to process it.'
             bubble['details_message'] += '\nSome messages were logged while the patch was still eligible:\n\n'
-            bubble['details_message'] += self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at)
+            bubble['details_message'] += self._steps_messages(build)
 
         elif build.result == Buildbot.EXCEPTION:
             bubble['state'] = 'error'
-            bubble['details_message'] = ('An unexpected error occured. Recent messages:\n\n'
-                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+            bubble['details_message'] = 'An unexpected error occured. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.RETRY:
             bubble['state'] = 'provisional-fail'
-            bubble['details_message'] = ('Build is being retried. Recent messages:\n\n'
-                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+            bubble['details_message'] = 'Build is being retried. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.CANCELLED:
             bubble['state'] = 'provisional-fail'
-            bubble['details_message'] = ('Build was cancelled. Recent messages:\n\n'
-                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+            bubble['details_message'] = 'Build was cancelled. Recent messages:\n\n' + self._steps_messages(build)
         else:
             bubble['state'] = 'error'
-            bubble['details_message'] = ('An unexpected error occured. Recent messages:\n\n'
-                + self._steps_messages(build) + '\n\n' + self._iso_time(build.complete_at))
+            bubble['details_message'] = 'An unexpected error occured. Recent messages:\n\n' + self._steps_messages(build)
 
         if 'details_message' in bubble:
             bubble['details_message'] = builder_full_name + '\n\n' + bubble['details_message']
+            os_details = self.get_os_details(build)
+            timestamp = self.get_build_timestamp(build)
+            if os_details:
+                bubble['details_message'] += '\n\n' + os_details + '\n' + timestamp
+            else:
+                bubble['details_message'] += '\n\n' + timestamp
 
         return bubble
+
+    def get_os_details(self, build):
+        for step in build.step_set.all():
+            if step.state_string.startswith('OS:'):
+                return step.state_string
+        return ''
+
+    def get_build_timestamp(self, build):
+        if not build.complete_at:  # In-progress build
+            return self._iso_time(build.step_set.last().started_at)
+        return self._iso_time(build.complete_at)
 
     def _iso_time(self, time):
         return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'
