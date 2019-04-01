@@ -1,3 +1,14 @@
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOMDebugger: breakpoints for attribute modifications still fire when breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=196456
+        <rdar://problem/49489747>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom-debugger/dom-breakpoints.html:
+        * inspector/dom-debugger/dom-breakpoints-expected.txt:
+
 2019-04-01  Per Arne Vollan  <pvollan@apple.com>
 
         [Win10] Look into platform specific layout test failures

@@ -1,3 +1,17 @@
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: DOMDebugger: breakpoints for attribute modifications still fire when breakpoints are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=196456
+        <rdar://problem/49489747>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/dom-debugger/dom-breakpoints.html
+
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMDebuggerAgent::descriptionForDOMEvent):
+
 2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to copy and paste a PDF from Notes into Mail compose body

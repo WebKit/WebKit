@@ -26,20 +26,26 @@ function test()
     const nodeRemovedTestId = "node-removed-test";
     const multipleBreakpointsTestId = "multiple-breakpoints-test";
 
+    let debuggerPausedListener = null;
+
     let suite = InspectorTest.createAsyncSuite("DOMBreakpoints");
 
     function teardown(resolve) {
         let breakpoints = WI.domDebuggerManager.domBreakpoints;
         for (let breakpoint of breakpoints)
             WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+        InspectorTest.assert(!WI.domDebuggerManager.domBreakpoints.length);
+
+        WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, debuggerPausedListener);
+        debuggerPausedListener = null;
 
         resolve();
     }
 
     function rejectOnPause() {
         return new Promise((resolve, reject) => {
-            WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused)
-            .then((event) => {
+            InspectorTest.assert(!debuggerPausedListener);
+            debuggerPausedListener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
                 WI.debuggerManager.resume();
                 InspectorTest.fail("Should not pause.");
                 reject();
@@ -98,14 +104,14 @@ function test()
                     resolve(event);
                 });
 
-                WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(node, type, disabled));
+                WI.domDebuggerManager.addDOMBreakpoint(new WI.DOMBreakpoint(node, type, {disabled}));
             });
         });
     }
 
-    function addSimpleTestCase({name, elementIdentifier, type, expression}) {
+    function addTestsForBreakpointType({name, elementIdentifier, type, expression}) {
         suite.addTestCase({
-            name: `BreakOn${name}`,
+            name: `DOMBreakpoints.${name}.BreakpointEnabled`,
             description: "Check that debugger pauses for breakpoint type.",
             teardown,
             test(resolve, reject) {
@@ -129,6 +135,62 @@ function test()
                 .then(resolve, reject);
             }
         });
+
+        suite.addTestCase({
+            name: `DOMBreakpoints.${name}.BreakpointDisabled`,
+            description: "Check that debugger does not pause for disabled breakpoint.",
+            teardown,
+            test(resolve, reject) {
+                const disabled = true;
+                addBreakpointForElementIdentifier(elementIdentifier, type, disabled)
+                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
+                .then(() => {
+                    InspectorTest.pass("Should not pause for disabled breakpoint.");
+                    resolve();
+                })
+                .catch(reject);
+            }
+        });
+
+        suite.addTestCase({
+            name: `DOMBreakpoints.${name}.DebuggerDisabled`,
+            description: "Check that debugger does not pause when the debugger is disabled.",
+            teardown,
+            test(resolve, reject) {
+                addBreakpointForElementIdentifier(elementIdentifier, type)
+                .then(() => DebuggerAgent.setBreakpointsActive(false))
+                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
+                .then(() => DebuggerAgent.setBreakpointsActive(true))
+                .then(() => {
+                    InspectorTest.pass("Should not pause for disabled breakpoint.");
+                    resolve();
+                })
+                .catch(reject);
+            }
+        });
+
+        suite.addTestCase({
+            name: `DOMBreakpoints.${name}.RemoveBreakpoint`,
+            description: "Check that debugger does not pause for removed breakpoint.",
+            teardown,
+            test(resolve, reject) {
+                addBreakpointForElementIdentifier(elementIdentifier, type)
+                .then((event) => {
+                    let promise = WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved);
+                    let breakpoint = event.data.breakpoint;
+
+                    InspectorTest.log("Remove breakpoint.");
+                    WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
+                    return promise;
+                })
+                .then(() => Promise.race([awaitEvaluateInPage(expression), rejectOnPause()]))
+                .then(() => {
+                    InspectorTest.pass("Should not pause for removed breakpoint.");
+                    resolve();
+                })
+                .catch(reject);
+            }
+        });
     }
 
     suite.addTestCase({
@@ -150,64 +212,25 @@ function test()
         }
     });
 
-    addSimpleTestCase({
+    addTestsForBreakpointType({
         name: "SubtreeModified",
         elementIdentifier: subtreeModifiedTestId,
         type: WI.DOMBreakpoint.Type.SubtreeModified,
         expression: "subtreeModifiedTest()",
     });
 
-    addSimpleTestCase({
+    addTestsForBreakpointType({
         name: "AttributeModified",
         elementIdentifier: attributeModifiedTestId,
         type: WI.DOMBreakpoint.Type.AttributeModified,
         expression: "attributeModifiedTest()",
     });
 
-    addSimpleTestCase({
+    addTestsForBreakpointType({
         name: "NodeRemoved",
         elementIdentifier: nodeRemovedTestId,
         type: WI.DOMBreakpoint.Type.NodeRemoved,
         expression: "nodeRemovedTest()",
-    });
-
-    suite.addTestCase({
-        name: "ShouldNotPauseOnDisabledBreakpoint",
-        description: "Check that debugger does not pause for disabled breakpoint.",
-        teardown,
-        test(resolve, reject) {
-            const disabled = true;
-            addBreakpointForElementIdentifier(subtreeModifiedTestId, WI.DOMBreakpoint.Type.SubtreeModified, disabled)
-            .then(() => Promise.race([awaitEvaluateInPage("modifySubtreeTest()"), rejectOnPause()]))
-            .then(() => {
-                InspectorTest.pass("Should not pause for disabled breakpoint.");
-                resolve();
-            })
-            .catch(reject);
-        }
-    });
-
-    suite.addTestCase({
-        name: "RemoveBreakpoint",
-        description: "Check that debugger does not pause for removed breakpoint.",
-        teardown,
-        test(resolve, reject) {
-            addBreakpointForElementIdentifier(subtreeModifiedTestId, WI.DOMBreakpoint.Type.SubtreeModified)
-            .then((event) => {
-                let promise = WI.domDebuggerManager.awaitEvent(WI.DOMDebuggerManager.Event.DOMBreakpointRemoved);
-                let breakpoint = event.data.breakpoint;
-
-                InspectorTest.log("Remove breakpoint.");
-                WI.domDebuggerManager.removeDOMBreakpoint(breakpoint);
-                return promise;
-            })
-            .then(() => Promise.race([awaitEvaluateInPage("modifySubtreeTest()"), rejectOnPause()]))
-            .then(() => {
-                InspectorTest.pass("Should not pause for removed breakpoint.");
-                resolve();
-            })
-            .catch(reject);
-        }
     });
 
     suite.addTestCase({

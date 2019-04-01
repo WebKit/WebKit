@@ -9,7 +9,7 @@ PASS: Breakpoint should have node identifier.
 PASS: Breakpoint URL should match document URL.
 -- Running test teardown.
 
--- Running test case: BreakOnSubtreeModified
+-- Running test case: DOMBreakpoints.SubtreeModified.BreakpointEnabled
 PASS: Added 'subtree-modified' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
@@ -20,7 +20,26 @@ CALL STACK:
 1: [P] Global Code
 -- Running test teardown.
 
--- Running test case: BreakOnAttributeModified
+-- Running test case: DOMBreakpoints.SubtreeModified.BreakpointDisabled
+PASS: Added 'subtree-modified' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.SubtreeModified.DebuggerDisabled
+PASS: Added 'subtree-modified' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.SubtreeModified.RemoveBreakpoint
+PASS: Added 'subtree-modified' breakpoint.
+Remove breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.AttributeModified.BreakpointEnabled
 PASS: Added 'attribute-modified' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
@@ -31,7 +50,26 @@ CALL STACK:
 1: [P] Global Code
 -- Running test teardown.
 
--- Running test case: BreakOnNodeRemoved
+-- Running test case: DOMBreakpoints.AttributeModified.BreakpointDisabled
+PASS: Added 'attribute-modified' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.AttributeModified.DebuggerDisabled
+PASS: Added 'attribute-modified' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.AttributeModified.RemoveBreakpoint
+PASS: Added 'attribute-modified' breakpoint.
+Remove breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for removed breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemoved.BreakpointEnabled
 PASS: Added 'node-removed' breakpoint.
 PASS: Breakpoint should have expected type.
 Call DOM operation.
@@ -42,14 +80,20 @@ CALL STACK:
 1: [P] Global Code
 -- Running test teardown.
 
--- Running test case: ShouldNotPauseOnDisabledBreakpoint
-PASS: Added 'subtree-modified' breakpoint.
+-- Running test case: DOMBreakpoints.NodeRemoved.BreakpointDisabled
+PASS: Added 'node-removed' breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for disabled breakpoint.
 -- Running test teardown.
 
--- Running test case: RemoveBreakpoint
-PASS: Added 'subtree-modified' breakpoint.
+-- Running test case: DOMBreakpoints.NodeRemoved.DebuggerDisabled
+PASS: Added 'node-removed' breakpoint.
+Wait for evaluate in page to return.
+PASS: Should not pause for disabled breakpoint.
+-- Running test teardown.
+
+-- Running test case: DOMBreakpoints.NodeRemoved.RemoveBreakpoint
+PASS: Added 'node-removed' breakpoint.
 Remove breakpoint.
 Wait for evaluate in page to return.
 PASS: Should not pause for removed breakpoint.

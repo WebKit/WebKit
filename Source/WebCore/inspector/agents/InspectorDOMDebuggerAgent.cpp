@@ -172,6 +172,9 @@ void InspectorDOMDebuggerAgent::removeEventBreakpoint(ErrorString& error, const 
 
 void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node& node)
 {
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
     if (hasBreakpoint(&node, AttributeModified)) {
         Ref<JSON::Object> eventData = JSON::Object::create();
         descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
@@ -326,6 +329,7 @@ void InspectorDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 
 void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node& target, int breakpointType, bool insertion, JSON::Object& description)
 {
+    ASSERT(m_debuggerAgent->breakpointsActive());
     ASSERT(hasBreakpoint(&target, breakpointType));
 
     auto* domAgent = m_instrumentingAgents.inspectorDOMAgent();
