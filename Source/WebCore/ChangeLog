@@ -1,3 +1,13 @@
+2019-04-01  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Build failure after r243644 in GTK Linux 64-bit stable builds
+        https://bugs.webkit.org/show_bug.cgi?id=196440
+
+        Reviewed by Philippe Normand.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::updateTextureMapperFlags):
+
 2019-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Scroll position gets reset when overflow:scroll is inside grid
