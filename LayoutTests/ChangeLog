@@ -1,3 +1,14 @@
+2019-04-01  Cathie Chen  <cathiechen@igalia.com>
+
+        Change expectation for imported/w3c/web-platform-tests/resize-observer/eventloop.html.
+        https://bugs.webkit.org/show_bug.cgi?id=196422
+
+        Reviewed by Frédéric Wang.
+
+        At current implement, notifyResizeObservers is not synchronized to requestAnimationFrame, so the test would be flaky.
+
+        * TestExpectations: eventloop.html is flaky because it depend on the order of requestAnimationFrame and ResizeObserver timer.
+
 2019-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Scroll position gets reset when overflow:scroll is inside grid
