@@ -255,12 +255,13 @@ private:
 class CharacterIterator {
 public:
     explicit CharacterIterator(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    WEBCORE_EXPORT explicit CharacterIterator(Position start, Position end, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     bool atEnd() const { return m_underlyingIterator.atEnd(); }
-    void advance(int numCharacters);
+    WEBCORE_EXPORT void advance(int numCharacters);
     
     StringView text() const { return m_underlyingIterator.text().substring(m_runOffset); }
-    Ref<Range> range() const;
+    WEBCORE_EXPORT Ref<Range> range() const;
 
     bool atBreak() const { return m_atBreak; }
     int characterOffset() const { return m_offset; }
@@ -268,9 +269,9 @@ public:
 private:
     TextIterator m_underlyingIterator;
 
-    int m_offset;
-    int m_runOffset;
-    bool m_atBreak;
+    int m_offset { 0 };
+    int m_runOffset { 0 };
+    bool m_atBreak { true };
 };
     
 class BackwardsCharacterIterator {

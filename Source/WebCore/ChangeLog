@@ -1,3 +1,21 @@
+2019-04-01  Tim Horton  <timothy_horton@apple.com>
+
+        Make UIWKDocumentContext rects per-character instead of per-word
+        https://bugs.webkit.org/show_bug.cgi?id=196459
+
+        Reviewed by Wenson Hsieh.
+
+        No new tests; adjusted expected results of WebKit.DocumentEditingContext.
+
+        * editing/TextIterator.cpp:
+        (WebCore::CharacterIterator::CharacterIterator):
+        * editing/TextIterator.h:
+        (WebCore::CharacterIterator::atEnd const):
+        (WebCore::CharacterIterator::text const):
+        Add WEBCORE_EXPORT to some things.
+        Introduce a CharacterIterator constructor that takes Positions, like one that TextIterator has.
+        Move initializers to the header.
+
 2019-04-01  Antti Koivisto  <antti@apple.com>
 
         Update event region when toggling pointer-events:none

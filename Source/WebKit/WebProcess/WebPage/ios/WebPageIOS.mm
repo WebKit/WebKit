@@ -3518,22 +3518,22 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     }
 
     if (wantsRects) {
-        TextIterator contextIterator(contextBeforeStart.deepEquivalent(), contextAfterEnd.deepEquivalent());
+        CharacterIterator contextIterator(contextBeforeStart.deepEquivalent(), contextAfterEnd.deepEquivalent());
         unsigned currentLocation = 0;
         while (!contextIterator.atEnd()) {
             unsigned length = contextIterator.text().length();
             if (!length) {
-                contextIterator.advance();
+                contextIterator.advance(1);
                 continue;
             }
 
             DocumentEditingContext::TextRectAndRange rect;
             rect.rect = contextIterator.range()->absoluteBoundingBox();
-            rect.range = { currentLocation, length };
+            rect.range = { currentLocation, 1 };
             context.textRects.append(rect);
 
-            currentLocation += length;
-            contextIterator.advance();
+            currentLocation++;
+            contextIterator.advance(1);
         }
     }
 

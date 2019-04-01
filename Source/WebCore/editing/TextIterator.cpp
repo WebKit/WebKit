@@ -1528,9 +1528,13 @@ Ref<Range> SimplifiedBackwardsTextIterator::range() const
 
 CharacterIterator::CharacterIterator(const Range& range, TextIteratorBehavior behavior)
     : m_underlyingIterator(&range, behavior)
-    , m_offset(0)
-    , m_runOffset(0)
-    , m_atBreak(true)
+{
+    while (!atEnd() && !m_underlyingIterator.text().length())
+        m_underlyingIterator.advance();
+}
+
+CharacterIterator::CharacterIterator(Position start, Position end, TextIteratorBehavior behavior)
+    : m_underlyingIterator(start, end, behavior)
 {
     while (!atEnd() && !m_underlyingIterator.text().length())
         m_underlyingIterator.advance();
