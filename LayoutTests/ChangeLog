@@ -1,3 +1,12 @@
+2019-04-01  Shawn Roberts  <sroberts@apple.com>
+
+        accessibility/Mac/async-increment-decrement-action.html is crashing and blaming other tests on bots
+        https://bugs.webkit.org/show_bug.cgi?id=187391
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to skip crashing test
+
 2019-04-01  Antti Koivisto  <antti@apple.com>
 
         Update event region when toggling pointer-events:none
