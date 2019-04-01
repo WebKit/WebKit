@@ -1,3 +1,16 @@
+2019-04-01  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Add initialization for JSC shell for PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=195411
+
+        Reviewed by Ross Kirsling.
+
+        Add functions for doing the automatic libc, floating point
+        initializations, signing of binaries and libraries and 
+        wrapping of libc functions on PlayStation port.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

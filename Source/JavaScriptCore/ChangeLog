@@ -1,3 +1,16 @@
+2019-04-01  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Add initialization for JSC shell for PlayStation port
+        https://bugs.webkit.org/show_bug.cgi?id=195411
+
+        Reviewed by Ross Kirsling.
+
+        Add ps options
+
+        * shell/PlatformPlayStation.cmake: Added.
+        * shell/playstation/Initializer.cpp: Added.
+        (initializer):
+
 2019-04-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Stop trying to support building JSC with clang 3.8
