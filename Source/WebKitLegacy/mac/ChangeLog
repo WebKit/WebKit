@@ -1,3 +1,17 @@
+2019-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to canonicalize NSURLs with WTF::URL
+        https://bugs.webkit.org/show_bug.cgi?id=196415
+        <rdar://problem/44980271>
+
+        Reviewed by Darin Adler.
+
+        * Misc/WebNSURLExtras.h:
+        * Misc/WebNSURLExtras.mm:
+        (-[NSURL _webkit_canonicalize_with_wtf]):
+        _webkit_canonicalize is old and changing it causes strange bugs like rdar://problem/5315926
+        Instead, make a new version that uses WTF::URL to canonicalize an NSURL.
+
 2019-03-31  Sam Weinig  <weinig@apple.com>
 
         Remove more i386 specific configurations

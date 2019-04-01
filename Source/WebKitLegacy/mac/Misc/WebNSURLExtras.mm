@@ -133,6 +133,12 @@ using namespace WTF;
     return URLByCanonicalizingURL(self);
 }
 
+- (NSURL *)_webkit_canonicalize_with_wtf
+{
+    auto url = WTF::URL(self);
+    return url.isValid() ? (NSURL *)url : nil;
+}
+
 - (NSURL *)_webkit_URLByRemovingFragment 
 {
     return URLByTruncatingOneCharacterBeforeComponent(self, kCFURLComponentFragment);

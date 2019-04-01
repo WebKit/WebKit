@@ -60,6 +60,7 @@
 - (BOOL)_web_isEmpty;
 
 - (NSURL *)_webkit_canonicalize;
+- (NSURL *)_webkit_canonicalize_with_wtf;
 - (NSURL *)_webkit_URLByRemovingFragment;
 - (NSURL *)_web_URLByRemovingUserInfo;
 

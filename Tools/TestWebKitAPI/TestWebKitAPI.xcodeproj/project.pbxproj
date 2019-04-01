@@ -312,6 +312,7 @@
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
 		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
 		5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */; };
+		5C6E27A7224EEBEA00128736 /* URLCanonicalization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */; };
 		5C7148952123A40A00FDE3C5 /* WKWebsiteDatastore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */; };
 		5C75716122124C5200B9E5AC /* BundleRetainPagePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */; };
 		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
@@ -1718,6 +1719,7 @@
 		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
 		5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptDuringNavigation.mm; sourceTree = "<group>"; };
+		5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLCanonicalization.mm; sourceTree = "<group>"; };
 		5C7148942123A40700FDE3C5 /* WKWebsiteDatastore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebsiteDatastore.mm; sourceTree = "<group>"; };
 		5C75715F221249BD00B9E5AC /* BundleRetainPagePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleRetainPagePlugIn.mm; sourceTree = "<group>"; };
 		5C79640F1EB0269B0075D74C /* EventModifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventModifiers.cpp; sourceTree = "<group>"; };
@@ -2850,6 +2852,7 @@
 			children = (
 				9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */,
 				6B306105218A372900F5A802 /* ClosingWebView.mm */,
+				5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4340,6 +4343,7 @@
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,
 				F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */,
+				5C6E27A7224EEBEA00128736 /* URLCanonicalization.mm in Sources */,
 				E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */,
 				7CCE7F271A411AF600447C4C /* UserContentController.mm in Sources */,
 				7CCE7F2D1A411B1000447C4C /* UserContentTest.mm in Sources */,

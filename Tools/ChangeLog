@@ -1,3 +1,15 @@
+2019-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to canonicalize NSURLs with WTF::URL
+        https://bugs.webkit.org/show_bug.cgi?id=196415
+        <rdar://problem/44980271>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/URLCanonicalization.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2019-04-01  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] EventSenderProxy constructor is called before a PlatformWindow is usable
