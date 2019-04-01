@@ -1,3 +1,35 @@
+2019-04-01  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline - Adjust Energy Impact Threshholds
+        https://bugs.webkit.org/show_bug.cgi?id=196421
+        <rdar://problem/49125703>
+
+        Reviewed by Devin Rousso.
+
+        - Low - Keep Below 3% to continue to encourage idle pages stay below 3%
+          Might want to reduce to 2.5 or 2 after fixing bug 196419.
+
+        - High - Make Above 30% instead of 50% to encourage long running interactivity to stay below 30%
+          Depends on interaction, but sustained (1-2min) at 30%+ will certainly impact battery.
+
+        - Very High - Make above 100% instead of 150%
+          CPU Usage spikes around page load and is quite often still under 100% despite many threads.
+          Drop this a bit as we dropped High down.
+
+        Reduce the size of the Medium section, and increase the High section
+        Having 70% of the chart be "Medium" is just too much Medium, and
+        we've now made it more possible to be in the High range.
+
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.get mediumEnergyThreshold):
+        (WI.CPUTimelineView.prototype.get highEnergyThreshold):
+        (WI.CPUTimelineView.prototype.get lowEnergyGraphBoundary):
+        (WI.CPUTimelineView.prototype.get mediumEnergyGraphBoundary):
+        (WI.CPUTimelineView.prototype.get highEnergyGraphBoundary):
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype.layout.bestThreadLayoutMax):
+        (WI.CPUTimelineView.prototype._layoutEnergyChart):
+
 2019-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete WebMetal implementation in favor of WebGPU

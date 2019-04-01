@@ -71,8 +71,12 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
     static get indicatorViewHeight() { return 15; }
 
     static get lowEnergyThreshold() { return 3; }
-    static get mediumEnergyThreshold() { return 50; }
-    static get highEnergyThreshold() { return 150; }
+    static get mediumEnergyThreshold() { return 30; }
+    static get highEnergyThreshold() { return 100; }
+
+    static get lowEnergyGraphBoundary() { return 10; }
+    static get mediumEnergyGraphBoundary() { return 70; }
+    static get highEnergyGraphBoundary() { return 100; }
 
     static get defaultSectionLimit() { return 5; }
 
@@ -261,9 +265,9 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             height: 110,
             strokeWidth: 20,
             segments: [
-                {className: "low", limit: 10},
-                {className: "medium", limit: 80},
-                {className: "high", limit: 100},
+                {className: "low", limit: CPUTimelineView.lowEnergyGraphBoundary},
+                {className: "medium", limit: CPUTimelineView.mediumEnergyGraphBoundary},
+                {className: "high", limit: CPUTimelineView.highEnergyGraphBoundary},
             ]
         });
         this.addSubview(this._energyChart);
@@ -591,7 +595,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
 
         function bestThreadLayoutMax(value) {
             if (value > 100)
-                return Math.ceil(value);            
+                return Math.ceil(value);
             return (Math.floor(value / 25) + 1) * 25;
         }
 
@@ -1102,19 +1106,19 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
             // Low. (<=3% CPU, mapped to 0-10)
             this._energyImpactLabelElement.textContent = WI.UIString("Low");
             this._energyImpactLabelElement.classList.add("low");
-            this._energyChart.value = mapWithBias(average, 0, CPUTimelineView.lowEnergyThreshold, 0, 10, 0.85);
+            this._energyChart.value = mapWithBias(average, 0, CPUTimelineView.lowEnergyThreshold, 0, CPUTimelineView.lowEnergyGraphBoundary, 0.85);
         } else if (average <= CPUTimelineView. mediumEnergyThreshold) {
-            // Medium (3%-90% CPU, mapped to 10-80)
+            // Medium (3%-30% CPU, mapped to 10-70)
             this._energyImpactLabelElement.textContent = WI.UIString("Medium");
             this._energyImpactLabelElement.classList.add("medium");
-            this._energyChart.value = mapWithBias(average, CPUTimelineView.lowEnergyThreshold, CPUTimelineView.mediumEnergyThreshold, 10, 80, 0.6);
+            this._energyChart.value = mapWithBias(average, CPUTimelineView.lowEnergyThreshold, CPUTimelineView.mediumEnergyThreshold, CPUTimelineView.lowEnergyGraphBoundary, CPUTimelineView.mediumEnergyGraphBoundary, 0.6);
         } else if (average < CPUTimelineView. highEnergyThreshold) {
-            // High. (50-150% CPU, mapped to 80-100)
+            // High. (30%-100% CPU, mapped to 70-100)
             this._energyImpactLabelElement.textContent = WI.UIString("High");
             this._energyImpactLabelElement.classList.add("high");
-            this._energyChart.value = mapWithBias(average, CPUTimelineView.mediumEnergyThreshold, CPUTimelineView.highEnergyThreshold, 80, 100, 0.9);
+            this._energyChart.value = mapWithBias(average, CPUTimelineView.mediumEnergyThreshold, CPUTimelineView.highEnergyThreshold, CPUTimelineView.mediumEnergyGraphBoundary, CPUTimelineView.highEnergyGraphBoundary, 0.9);
         } else {
-            // Very High. (>150% CPU, mapped to 100)
+            // Very High. (>100% CPU, mapped to 100)
             this._energyImpactLabelElement.textContent = WI.UIString("Very High");
             this._energyImpactLabelElement.classList.add("high");
             this._energyChart.value = 100;
