@@ -26,17 +26,18 @@ namespace WebCore {
 
 class SVGMatrixTearOff final : public SVGMatrix {
 public:
-    static Ref<SVGMatrixTearOff> create(SVGTransform& parent, SVGMatrixValue& value)
+    static Ref<SVGMatrixTearOff> create(SVGTransform& parent, AffineTransform& value)
     {
-        ASSERT_UNUSED(value, &parent.propertyReference().svgMatrix() == &value);
+        ASSERT_UNUSED(value, &parent.propertyReference().matrix() == &value);
         auto result = adoptRef(*new SVGMatrixTearOff(parent));
         parent.addChild(makeWeakPtr(result.get()));
         return result;
     }
 
-    SVGMatrixValue& propertyReference() final { return m_parent->propertyReference().svgMatrix(); }
+    const AffineTransform& propertyReference() const final { return m_parent->propertyReference().matrix(); }
+    AffineTransform& propertyReference() final { return m_parent->propertyReference().matrix(); }
 
-    void setValue(SVGMatrixValue& value) final { m_parent->propertyReference().setMatrix(value); }
+    void setValue(AffineTransform& value) final { m_parent->propertyReference().setMatrix(value); }
 
     void commitChange() final
     {

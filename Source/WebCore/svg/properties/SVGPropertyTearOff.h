@@ -60,6 +60,7 @@ public:
         return create(initialValue.releaseReturnValue());
     }
 
+    virtual const PropertyType& propertyReference() const { return *m_value; }
     virtual PropertyType& propertyReference() { return *m_value; }
     SVGLegacyAnimatedProperty* animatedProperty() const { return m_animatedProperty.get(); }
 

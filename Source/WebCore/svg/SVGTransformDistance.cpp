@@ -160,7 +160,7 @@ SVGTransformValue SVGTransformDistance::addSVGTransforms(const SVGTransformValue
 
 SVGTransformValue SVGTransformDistance::addToSVGTransform(const SVGTransformValue& transform) const
 {
-    ASSERT(m_type == transform.type() || transform == SVGTransformValue());
+    ASSERT(m_type == transform.type() || !transform.isValid());
     
     SVGTransformValue newTransform(transform);
     

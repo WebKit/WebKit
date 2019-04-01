@@ -1,3 +1,80 @@
+2019-04-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGMatrix.IDL methods do not conform to the specs
+        https://bugs.webkit.org/show_bug.cgi?id=196263
+
+        Reviewed by Simon Fraser.
+
+        I think there was a misconception about these functions. The specs link
+        is: https://www.w3.org/TR/SVG11/coords.html#InterfaceSVGMatrix.
+
+        Notice that the specs does not state that the SVGMethod methods should
+        raise the exception NO_MODIFICATION_ALLOWED_ERR if the object is read
+        only. Notice setting the attribute 'a' for example may raise this
+        exception. Therefore, I think the specs wanted to make these operations
+        read-only. None of the methods should raise the exception
+        NO_MODIFICATION_ALLOWED_ERR.
+
+        In fact the SVG code was doing the right thing. For example SVGMatrix::scale()
+        was calling SVGMatrixValue::scale() which was making a copy of itself,
+        applying the scale on the copy and then returning the copy. When 
+        SVGMatrix::scale() receives the copy of the SVGMatrixValue it creates and
+        returns a new SVGMatrix object.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::create):
+        (WebCore::SVGMatrix::a const):
+        (WebCore::SVGMatrix::b const):
+        (WebCore::SVGMatrix::c const):
+        (WebCore::SVGMatrix::d const):
+        (WebCore::SVGMatrix::e const):
+        (WebCore::SVGMatrix::f const):
+        (WebCore::SVGMatrix::multiply const):
+        (WebCore::SVGMatrix::inverse const):
+        (WebCore::SVGMatrix::translate const):
+        (WebCore::SVGMatrix::scale const):
+        (WebCore::SVGMatrix::scaleNonUniform const):
+        (WebCore::SVGMatrix::rotate const):
+        (WebCore::SVGMatrix::rotateFromVector const):
+        (WebCore::SVGMatrix::flipX const):
+        (WebCore::SVGMatrix::flipY const):
+        (WebCore::SVGMatrix::skewX const):
+        (WebCore::SVGMatrix::skewY const):
+        (WebCore::SVGMatrix::a): Deleted.
+        (WebCore::SVGMatrix::b): Deleted.
+        (WebCore::SVGMatrix::c): Deleted.
+        (WebCore::SVGMatrix::d): Deleted.
+        (WebCore::SVGMatrix::e): Deleted.
+        (WebCore::SVGMatrix::f): Deleted.
+        (WebCore::SVGMatrix::multiply): Deleted.
+        (WebCore::SVGMatrix::inverse): Deleted.
+        (WebCore::SVGMatrix::translate): Deleted.
+        (WebCore::SVGMatrix::scale): Deleted.
+        (WebCore::SVGMatrix::scaleNonUniform): Deleted.
+        (WebCore::SVGMatrix::rotate): Deleted.
+        (WebCore::SVGMatrix::rotateFromVector): Deleted.
+        (WebCore::SVGMatrix::flipX): Deleted.
+        (WebCore::SVGMatrix::flipY): Deleted.
+        (WebCore::SVGMatrix::skewX): Deleted.
+        (WebCore::SVGMatrix::skewY): Deleted.
+        (WebCore::SVGMatrix::SVGMatrix): Deleted.
+        * svg/SVGMatrix.idl:
+        * svg/SVGMatrixValue.h: Removed.
+        * svg/SVGTransform.cpp:
+        (WebCore::SVGTransform::matrix):
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::addToSVGTransform const):
+        * svg/SVGTransformValue.h:
+        (WebCore::SVGTransformValue::matrix const):
+        (WebCore::SVGTransformValue::matrix):
+        (WebCore::SVGTransformValue::svgMatrix): Deleted.
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        * svg/properties/SVGMatrixTearOff.h:
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::propertyReference const):
+
 2019-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Plumb through a ScrollType value that indicates whether a scroll was a user or programmatic scroll

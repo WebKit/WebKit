@@ -1,3 +1,17 @@
+2019-04-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGMatrix.IDL methods do not conform to the specs
+        https://bugs.webkit.org/show_bug.cgi?id=196263
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/SVGMatrix-expected.txt:
+        * svg/dom/SVGMatrix.html:
+        Clean this test. Make it test the case when valid arguments are passed to
+        the methods of the SVGMatrix. Make sure the methods are read-only. All
+        of them should be making a copy of the matrix, applying the transform and
+        returning the copy.
+
 2019-04-01  Shawn Roberts  <sroberts@apple.com>
 
         storage/indexeddb/modern/deletedatabase-2-private.html is a flaky failure on Mac Debug

@@ -33,15 +33,15 @@
     attribute unrestricted double e;
     attribute unrestricted double f;
 
-    [MayThrowException] SVGMatrix multiply(SVGMatrix secondMatrix);
-    [MayThrowException] SVGMatrix inverse();
-    [MayThrowException] SVGMatrix translate(unrestricted float x, unrestricted float y);
-    [MayThrowException] SVGMatrix scale(unrestricted float scaleFactor);
-    [MayThrowException] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
-    [MayThrowException] SVGMatrix rotate(unrestricted float angle);
-    [MayThrowException] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
-    [MayThrowException] SVGMatrix flipX();
-    [MayThrowException] SVGMatrix flipY();
-    [MayThrowException] SVGMatrix skewX(unrestricted float angle);
-    [MayThrowException] SVGMatrix skewY(unrestricted float angle);
+    [NewObject] SVGMatrix multiply(SVGMatrix secondMatrix);
+    [MayThrowException, NewObject] SVGMatrix inverse();
+    [NewObject] SVGMatrix translate(unrestricted float x, unrestricted float y);
+    [NewObject] SVGMatrix scale(unrestricted float scaleFactor);
+    [NewObject] SVGMatrix scaleNonUniform(unrestricted float scaleFactorX, unrestricted float scaleFactorY);
+    [NewObject] SVGMatrix rotate(unrestricted float angle);
+    [MayThrowException, NewObject] SVGMatrix rotateFromVector(unrestricted float x, unrestricted float y);
+    [NewObject] SVGMatrix flipX();
+    [NewObject] SVGMatrix flipY();
+    [NewObject] SVGMatrix skewX(unrestricted float angle);
+    [NewObject] SVGMatrix skewY(unrestricted float angle);
 };

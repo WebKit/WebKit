@@ -2337,7 +2337,6 @@
 		7CE58D4A1DD64A5B00128552 /* SVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D491DD64A5B00128552 /* SVGPoint.h */; };
 		7CE58D501DD69A1E00128552 /* SVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D4F1DD69A1E00128552 /* SVGNumber.h */; };
 		7CE58D581DD7D96D00128552 /* SVGTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D561DD7D96D00128552 /* SVGTransformValue.h */; };
-		7CE58D5C1DD7EC9C00128552 /* SVGMatrixValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D5B1DD7EC9C00128552 /* SVGMatrixValue.h */; };
 		7CE68344192143A800F4D928 /* UserMessageHandlerDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CE68342192143A800F4D928 /* UserMessageHandlerDescriptor.cpp */; };
 		7CE68345192143A800F4D928 /* UserMessageHandlerDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE68343192143A800F4D928 /* UserMessageHandlerDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CE683471921821500F4D928 /* UserMessageHandlerDescriptorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE683461921821500F4D928 /* UserMessageHandlerDescriptorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9875,7 +9874,6 @@
 		7CE58D551DD7D96D00128552 /* SVGTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransformValue.cpp; sourceTree = "<group>"; };
 		7CE58D561DD7D96D00128552 /* SVGTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTransformValue.h; sourceTree = "<group>"; };
 		7CE58D591DD7DE5200128552 /* SVGTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTransform.cpp; sourceTree = "<group>"; };
-		7CE58D5B1DD7EC9C00128552 /* SVGMatrixValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrixValue.h; sourceTree = "<group>"; };
 		7CE68342192143A800F4D928 /* UserMessageHandlerDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserMessageHandlerDescriptor.cpp; sourceTree = "<group>"; };
 		7CE68343192143A800F4D928 /* UserMessageHandlerDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandlerDescriptor.h; sourceTree = "<group>"; };
 		7CE683461921821500F4D928 /* UserMessageHandlerDescriptorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMessageHandlerDescriptorTypes.h; sourceTree = "<group>"; };
@@ -24030,7 +24028,6 @@
 				B22278B20D00BF200071B782 /* SVGMaskElement.idl */,
 				0806E57912893045007CED32 /* SVGMatrix.h */,
 				B22278B30D00BF200071B782 /* SVGMatrix.idl */,
-				7CE58D5B1DD7EC9C00128552 /* SVGMatrixValue.h */,
 				B22278B40D00BF200071B782 /* SVGMetadataElement.cpp */,
 				B22278B50D00BF200071B782 /* SVGMetadataElement.h */,
 				B22278B60D00BF200071B782 /* SVGMetadataElement.idl */,
@@ -31640,7 +31637,6 @@
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
 				08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */,
-				7CE58D5C1DD7EC9C00128552 /* SVGMatrixValue.h in Headers */,
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
 				B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */,
 				B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */,

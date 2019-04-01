@@ -32,7 +32,7 @@ namespace WebCore {
 
 Ref<SVGMatrix> SVGTransform::matrix()
 {
-    return SVGMatrixTearOff::create(*this, propertyReference().svgMatrix());
+    return SVGMatrixTearOff::create(*this, propertyReference().matrix());
 }
 
 } // namespace WebCore

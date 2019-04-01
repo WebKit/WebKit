@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
+ * Copyright (C) 2019 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,8 +21,8 @@
 
 #pragma once
 
+#include "AffineTransform.h"
 #include "FloatPoint.h"
-#include "SVGMatrixValue.h"
 
 namespace WebCore {
 
@@ -50,8 +51,8 @@ public:
 
     SVGTransformType type() const { return m_type; }
 
-    SVGMatrixValue& svgMatrix() { return static_cast<SVGMatrixValue&>(m_matrix); }
-    AffineTransform matrix() const { return m_matrix; }
+    const AffineTransform& matrix() const { return m_matrix; }
+    AffineTransform& matrix() { return m_matrix; }
     void updateSVGMatrix();
 
     float angle() const { return m_angle; }
@@ -73,22 +74,10 @@ public:
     static const String& transformTypePrefixForParsing(SVGTransformType);
 
 private:
-    friend bool operator==(const SVGTransformValue&, const SVGTransformValue&);
-
     SVGTransformType m_type { SVG_TRANSFORM_UNKNOWN };
     float m_angle { 0 };
     FloatPoint m_center;
     AffineTransform m_matrix;
 };
-
-inline bool operator==(const SVGTransformValue& a, const SVGTransformValue& b)
-{
-    return a.m_type == b.m_type && a.m_angle == b.m_angle && a.m_matrix == b.m_matrix;
-}
-
-inline bool operator!=(const SVGTransformValue& a, const SVGTransformValue& b)
-{
-    return !(a == b);
-}
 
 } // namespace WebCore

@@ -5,12 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Check initial matrix values
-PASS matrix.a is 1
-PASS matrix.b is 0
-PASS matrix.c is 0
-PASS matrix.d is 1
-PASS matrix.e is 0
-PASS matrix.f is 0
+PASS matrixToString(matrix) is "{ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0}"
 
 Check assigning matrices
 PASS matrix.a = 2 is 2
@@ -25,6 +20,8 @@ PASS matrix.a is NaN
 PASS matrix.a = 0 is 0
 PASS matrix.a = 'aString' is 'aString'
 PASS matrix.a is NaN
+PASS matrix.a = null is null
+PASS matrix.a is 0
 PASS matrix.a = 2 is 2
 PASS matrix.b = matrix is matrix
 PASS matrix.b is NaN
@@ -34,6 +31,8 @@ PASS matrix.b is NaN
 PASS matrix.b = 0 is 0
 PASS matrix.b = 'aString' is 'aString'
 PASS matrix.b is NaN
+PASS matrix.b = null is null
+PASS matrix.b is 0
 PASS matrix.b = 0 is 0
 PASS matrix.c = matrix is matrix
 PASS matrix.c is NaN
@@ -43,6 +42,8 @@ PASS matrix.c is NaN
 PASS matrix.c = 0 is 0
 PASS matrix.c = 'aString' is 'aString'
 PASS matrix.c is NaN
+PASS matrix.c = null is null
+PASS matrix.c is 0
 PASS matrix.c = 0 is 0
 PASS matrix.d = matrix is matrix
 PASS matrix.d is NaN
@@ -52,6 +53,8 @@ PASS matrix.d is NaN
 PASS matrix.d = 0 is 0
 PASS matrix.d = 'aString' is 'aString'
 PASS matrix.d is NaN
+PASS matrix.d = null is null
+PASS matrix.d is 0
 PASS matrix.d = 1 is 1
 PASS matrix.e = matrix is matrix
 PASS matrix.e is NaN
@@ -61,6 +64,8 @@ PASS matrix.e is NaN
 PASS matrix.e = 0 is 0
 PASS matrix.e = 'aString' is 'aString'
 PASS matrix.e is NaN
+PASS matrix.e = null is null
+PASS matrix.e is 0
 PASS matrix.e = 0 is 0
 PASS matrix.f = matrix is matrix
 PASS matrix.f is NaN
@@ -70,24 +75,12 @@ PASS matrix.f is NaN
 PASS matrix.f = 0 is 0
 PASS matrix.f = 'aString' is 'aString'
 PASS matrix.f is NaN
+PASS matrix.f = null is null
+PASS matrix.f is 0
 PASS matrix.f = 200 is 200
 
 Check that the matrix is still containing the correct values
-PASS matrix.a is 2
-PASS matrix.b is 0
-PASS matrix.c is 0
-PASS matrix.d is 1
-PASS matrix.e is 0
-PASS matrix.f is 200
-
-Check assigning null works as expected
-PASS matrix.f = null is null
-PASS matrix.a is 2
-PASS matrix.b is 0
-PASS matrix.c is 0
-PASS matrix.d is 1
-PASS matrix.e is 0
-PASS matrix.f is 0
+PASS matrixToString(matrix) is "{ a: 2, b: 0, c: 0, d: 1, e: 0, f: 200}"
 
 Check calling 'multiply' with invalid arguments
 PASS matrix.multiply() threw exception TypeError: Not enough arguments.
@@ -154,6 +147,23 @@ Check calling 'skewY' with invalid arguments
 PASS matrix.skewY() threw exception TypeError: Not enough arguments.
 PASS matrix.skewY('aString') is non-null.
 PASS matrix.skewY(svgElement) is non-null.
+
+Check calling SVGMatrix methods with valid arguments
+PASS matrixToString(matrix.translate(10, 20)) is "{ a: 2, b: 0, c: 0, d: 1, e: 20, f: 220}"
+PASS matrixToString(matrix.scale(5)) is "{ a: 10, b: 0, c: 0, d: 5, e: 0, f: 200}"
+PASS matrixToString(matrix.scaleNonUniform(2, 3)) is "{ a: 4, b: 0, c: 0, d: 3, e: 0, f: 200}"
+PASS matrixToString(matrix.skewX(90)) is "{ a: 2, b: 0, c: 32662478706390740, d: 1, e: 0, f: 200}"
+PASS matrixToString(matrix.skewY(90)) is "{ a: 2, b: 16331239353195370, c: 0, d: 1, e: 0, f: 200}"
+
+Check that the matrix is still containing the correct values
+PASS matrixToString(matrix) is "{ a: 2, b: 0, c: 0, d: 1, e: 0, f: 200}"
+
+Calling methods that throw exceptions
+PASS matrix.rotateFromVector(0, 4) threw exception TypeError: Type error.
+PASS matrix.rotateFromVector(4, 0) threw exception TypeError: Type error.
+PASS matrix.a = 0 is 0
+PASS matrix.inverse() threw exception InvalidStateError: Matrix is not invertible.
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
