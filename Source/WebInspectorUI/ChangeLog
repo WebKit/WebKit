@@ -1,5 +1,37 @@
 2019-04-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Canvas: auto-record after page load sometimes shows the wrong UI
+        https://bugs.webkit.org/show_bug.cgi?id=196320
+        <rdar://problem/49356686>
+
+        Reviewed by Joseph Pecoraro.
+
+        It was previously possible that the timing of a recording being started and the preview
+        image being loaded would not always be in the same order.
+
+        Utilize the existing `View.prototype.layout` mechanics to ensure that updates are coalesced
+        and that the changes are always applied in a particular order.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.refreshPreview): Added.
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.layout):
+        (WI.CanvasContentView.prototype.shown):
+        (WI.CanvasContentView.prototype.attached):
+        (WI.CanvasContentView.prototype._refreshPixelSize):
+        (WI.CanvasContentView.prototype.refresh): Deleted.
+        (WI.CanvasContentView.prototype._recordingStarted): Deleted.
+        (WI.CanvasContentView.prototype._recordingProgress): Deleted.
+        (WI.CanvasContentView.prototype._recordingStopped): Deleted.
+        (WI.CanvasContentView.prototype._shaderProgramAdded): Deleted.
+        (WI.CanvasContentView.prototype._shaderProgramRemoved): Deleted.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView.prototype._refreshPreviews):
+
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: add compatibility support for WebMetal
         https://bugs.webkit.org/show_bug.cgi?id=196412
         <rdar://problem/49439417>

@@ -146,7 +146,7 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     _refreshPreviews()
     {
         for (let canvasContentView of this.subviews)
-            canvasContentView.refresh();
+            canvasContentView.refreshPreview();
     }
 
     _updateNavigationItems()

@@ -45,7 +45,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         this._refreshButtonNavigationItem = new WI.ButtonNavigationItem("refresh", WI.UIString("Refresh"), "Images/ReloadFull.svg", 13, 13);
         this._refreshButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refresh, this);
+        this._refreshButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this.refreshPreview, this);
 
         this._showGridButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-grid", WI.UIString("Show Grid"), WI.UIString("Hide Grid"), "Images/NavigationItemCheckers.svg", 13, 13);
         this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
@@ -62,7 +62,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         return [this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
     }
 
-    refresh()
+    refreshPreview()
     {
         this._pendingContent = null;
 
@@ -158,36 +158,36 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (this._errorElement)
             this._showError();
 
-        if (isCard) {
+        if (isCard)
             this._refreshPixelSize();
-            this._updateMemoryCost();
-            this._updateProgressView();
-        }
     }
 
     layout()
     {
         super.layout();
 
-        if (!this._pendingContent)
-            return;
+        if (this._pendingContent) {
+            if (this._errorElement) {
+                this._errorElement.remove();
+                this._errorElement = null;
+            }
 
-        if (this._errorElement) {
-            this._errorElement.remove();
-            this._errorElement = null;
+            if (!this._previewImageElement) {
+                this._previewImageElement = document.createElement("img");
+                this._previewImageElement.addEventListener("error", this._showError.bind(this));
+            }
+
+            this._previewImageElement.src = this._pendingContent;
+            this._pendingContent = null;
+
+            if (!this._previewImageElement.parentNode)
+                this._previewContainerElement.appendChild(this._previewImageElement);
         }
 
-        if (!this._previewImageElement) {
-            this._previewImageElement = document.createElement("img");
-            this._previewImageElement.addEventListener("error", this._showError.bind(this));
-        }
-
-        this._previewImageElement.src = this._pendingContent;
-        this._pendingContent = null;
-
-        if (!this._previewImageElement.parentNode)
-            this._previewContainerElement.appendChild(this._previewImageElement);
-
+        this._updateRecordNavigationItem();
+        this._updateProgressView();
+        this._updateViewRelatedItems();
+        this._updateMemoryCost();
         this._updateImageGrid();
     }
 
@@ -195,10 +195,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     {
         super.shown();
 
-        this.refresh();
-
-        this._updateRecordNavigationItem();
-        this._updateProgressView();
+        this.refreshPreview();
     }
 
     attached()
@@ -206,11 +203,11 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         super.attached();
 
         this.representedObject.addEventListener(WI.Canvas.Event.MemoryChanged, this._updateMemoryCost, this);
-        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStarted, this._recordingStarted, this);
-        this.representedObject.addEventListener(WI.Canvas.Event.RecordingProgress, this._recordingProgress, this);
-        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStopped, this._recordingStopped, this);
-        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this._shaderProgramAdded, this);
-        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this._shaderProgramRemoved, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStarted, this.needsLayout, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingProgress, this.needsLayout, this);
+        this.representedObject.addEventListener(WI.Canvas.Event.RecordingStopped, this.needsLayout, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemAdded, this.needsLayout, this);
+        this.representedObject.shaderProgramCollection.addEventListener(WI.Collection.Event.ItemRemoved, this.needsLayout, this);
 
         this.representedObject.requestNode().then((node) => {
             console.assert(!this._canvasNode || this._canvasNode === node);
@@ -266,34 +263,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         }
     }
 
-    _recordingStarted(event)
-    {
-        this._updateRecordNavigationItem();
-        this._updateProgressView();
-    }
-
-    _recordingProgress(event)
-    {
-        this._updateProgressView();
-    }
-
-    _recordingStopped(event)
-    {
-        this._updateRecordNavigationItem();
-        this._updateProgressView();
-        this._updateViewRelatedItems();
-    }
-
-    _shaderProgramAdded(event)
-    {
-        this._updateViewRelatedItems();
-    }
-
-    _shaderProgramRemoved(event)
-    {
-        this._updateViewRelatedItems();
-    }
-
     _refreshPixelSize()
     {
         let updatePixelSize = (size) => {
@@ -309,7 +278,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
                     this._pixelSizeElement.textContent = emDash;
             }
 
-            this.refresh();
+            this.refreshPreview();
         };
 
         this.representedObject.requestSize()
