@@ -332,8 +332,6 @@ Node::Node(Document& document, ConstructionType type)
 Node::~Node()
 {
     ASSERT(isMainThread());
-    // We set m_refCount to 2 before calling delete to avoid double destruction through use of Ref<T>/RefPtr<T>.
-    // This is a security mitigation in case of programmer errorm (caught by a debug assertion).
     ASSERT(m_refCountAndParentBit == s_refCountIncrement);
     ASSERT(m_deletionHasBegun);
     ASSERT(!m_adoptionIsRequired);
@@ -2514,8 +2512,6 @@ bool Node::willRespondToMouseWheelEvents()
 // delete a Node at each deref call site.
 void Node::removedLastRef()
 {
-    // This avoids double destruction even when there is a programming error to use Ref<T> / RefPtr<T> on this node.
-    // There are debug assertions in Node::ref() / Node::deref() to catch such a programming error.
     ASSERT(m_refCountAndParentBit == s_refCountIncrement);
 
     // An explicit check for Document here is better than a virtual function since it is

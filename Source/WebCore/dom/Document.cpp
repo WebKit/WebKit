@@ -668,7 +668,7 @@ void Document::removedLastRef()
     ASSERT(!m_deletionHasBegun);
     if (m_referencingNodeCount) {
         // Node::removedLastRef doesn't set refCount() to zero because it's not observable.
-        // But we need to remember that our refCount reached zero in subsequent calls to decrementReferencingNodeCount()
+        // But we need to remember that our refCount reached zero in subsequent calls to decrementReferencingNodeCount().
         m_refCountAndParentBit = 0;
 
         // If removing a child removes the last node reference, we don't want the scope to be destroyed

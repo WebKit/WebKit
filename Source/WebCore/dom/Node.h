@@ -618,7 +618,7 @@ protected:
     Node(Document&, ConstructionType);
 
     static constexpr uint32_t s_refCountIncrement = 2;
-    static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(0x1);
+    static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
@@ -707,15 +707,17 @@ ALWAYS_INLINE void Node::deref()
     ASSERT(!m_deletionHasBegun);
     ASSERT(!m_inRemovedLastRefFunction);
     ASSERT(!m_adoptionIsRequired);
-    auto tempRefCount = m_refCountAndParentBit - s_refCountIncrement;
-    if (!tempRefCount) {
+    auto updatedRefCount = m_refCountAndParentBit - s_refCountIncrement;
+    if (!updatedRefCount) {
+        // Don't update m_refCountAndParentBit to avoid double destruction through use of Ref<T>/RefPtr<T>.
+        // (This is a security mitigation in case of programmer error. It will ASSERT in debug builds.)
 #ifndef NDEBUG
         m_inRemovedLastRefFunction = true;
 #endif
         removedLastRef();
         return;
     }
-    m_refCountAndParentBit = tempRefCount;
+    m_refCountAndParentBit = updatedRefCount;
 }
 
 ALWAYS_INLINE bool Node::hasOneRef() const
@@ -741,8 +743,7 @@ inline void Node::setParentNode(ContainerNode* parent)
 {
     ASSERT(isMainThread());
     m_parentNode = parent;
-    auto refCountWithoutParentBit = m_refCountAndParentBit & s_refCountMask;
-    m_refCountAndParentBit = refCountWithoutParentBit | !!parent;
+    m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
 }
 
 inline ContainerNode* Node::parentNode() const
