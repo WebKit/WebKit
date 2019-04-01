@@ -52,5 +52,20 @@ void GigacageAlignedMemoryAllocator::dump(PrintStream& out) const
     out.print(Gigacage::name(m_kind), "Gigacage");
 }
 
+void* GigacageAlignedMemoryAllocator::tryAllocateMemory(size_t size)
+{
+    return Gigacage::tryMalloc(m_kind, size);
+}
+
+void GigacageAlignedMemoryAllocator::freeMemory(void* pointer)
+{
+    Gigacage::free(m_kind, pointer);
+}
+
+void* GigacageAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_t size)
+{
+    return Gigacage::tryRealloc(m_kind, pointer, size);
+}
+
 } // namespace JSC
 

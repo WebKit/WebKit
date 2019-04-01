@@ -38,6 +38,10 @@ public:
     void freeAlignedMemory(void*) override;
     
     void dump(PrintStream&) const override;
+
+    void* tryAllocateMemory(size_t) override;
+    void freeMemory(void*) override;
+    void* tryReallocateMemory(void*, size_t) override;
 };
 
 } // namespace JSC

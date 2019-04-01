@@ -194,6 +194,37 @@ inline Butterfly* Butterfly::growArrayRight(
         newIndexingPayloadSizeInBytes);
 }
 
+inline Butterfly* Butterfly::reallocArrayRightIfPossible(
+    VM& vm, GCDeferralContext& deferralContext, JSObject* intendedOwner, Structure* oldStructure, size_t propertyCapacity,
+    bool hadIndexingHeader, size_t oldIndexingPayloadSizeInBytes,
+    size_t newIndexingPayloadSizeInBytes)
+{
+    ASSERT_UNUSED(oldStructure, !indexingHeader()->preCapacity(oldStructure));
+    ASSERT_UNUSED(intendedOwner, hadIndexingHeader == oldStructure->hasIndexingHeader(intendedOwner));
+
+    void* theBase = base(0, propertyCapacity);
+    size_t oldSize = totalSize(0, propertyCapacity, hadIndexingHeader, oldIndexingPayloadSizeInBytes);
+    size_t newSize = totalSize(0, propertyCapacity, true, newIndexingPayloadSizeInBytes);
+    ASSERT(newSize >= oldSize);
+
+    // We can eagerly destroy butterfly backed by LargeAllocation if (1) concurrent collector is not active and (2) the butterfly does not contain any property storage.
+    // This is because during deallocation concurrent collector can access butterfly and DFG concurrent compilers accesses properties.
+    // Objects with no properties are common in arrays, and we are focusing on very large array crafted by repeating Array#push, so... that's fine!
+    bool canRealloc = !propertyCapacity && !vm.heap.mutatorShouldBeFenced() && bitwise_cast<HeapCell*>(theBase)->isLargeAllocation();
+    if (canRealloc) {
+        void* newBase = vm.jsValueGigacageAuxiliarySpace.reallocateLargeAllocationNonVirtual(vm, bitwise_cast<HeapCell*>(theBase), newSize, &deferralContext, AllocationFailureMode::ReturnNull);
+        if (!newBase)
+            return nullptr;
+        return fromBase(newBase, 0, propertyCapacity);
+    }
+
+    void* newBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, newSize, &deferralContext, AllocationFailureMode::ReturnNull);
+    if (!newBase)
+        return nullptr;
+    memcpy(newBase, theBase, oldSize);
+    return fromBase(newBase, 0, propertyCapacity);
+}
+
 inline Butterfly* Butterfly::resizeArray(
     VM& vm, JSObject* intendedOwner, size_t propertyCapacity, bool oldHasIndexingHeader,
     size_t oldIndexingPayloadSizeInBytes, size_t newPreCapacity, bool newHasIndexingHeader,

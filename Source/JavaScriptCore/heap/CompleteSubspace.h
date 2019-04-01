@@ -44,6 +44,7 @@ public:
     
     void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
     void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    void* reallocateLargeAllocationNonVirtual(VM&, HeapCell*, size_t, GCDeferralContext*, AllocationFailureMode);
     
     static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
     

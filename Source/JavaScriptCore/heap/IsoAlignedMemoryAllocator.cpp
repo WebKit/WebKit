@@ -88,5 +88,20 @@ void IsoAlignedMemoryAllocator::dump(PrintStream& out) const
     out.print("Iso(", RawPointer(this), ")");
 }
 
+void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void IsoAlignedMemoryAllocator::freeMemory(void*)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 } // namespace JSC
 

@@ -201,6 +201,15 @@ struct FastMalloc {
     }
     
     static void* realloc(void* p, size_t size) { return fastRealloc(p, size); }
+
+    static void* tryRealloc(void* p, size_t size)
+    {
+        auto result = tryFastRealloc(p, size);
+        void* realResult;
+        if (result.getValue(realResult))
+            return realResult;
+        return nullptr;
+    }
     
     static void free(void* p) { fastFree(p); }
 };

@@ -120,6 +120,7 @@ inline bool isCaged(Kind, const void*) { return false; }
 inline void* tryAlignedMalloc(Kind, size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
 inline void alignedFree(Kind, void* p) { fastAlignedFree(p); }
 WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t size);
+WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
 inline void free(Kind, void* p) { fastFree(p); }
 
 WTF_EXPORT_PRIVATE void* tryAllocateZeroedVirtualPages(Kind, size_t size);
@@ -134,6 +135,7 @@ namespace Gigacage {
 WTF_EXPORT_PRIVATE void* tryAlignedMalloc(Kind, size_t alignment, size_t size);
 WTF_EXPORT_PRIVATE void alignedFree(Kind, void*);
 WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t);
+WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
 WTF_EXPORT_PRIVATE void free(Kind, void*);
 
 WTF_EXPORT_PRIVATE void* tryAllocateZeroedVirtualPages(Kind, size_t size);

@@ -1,3 +1,76 @@
+2019-03-31  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Butterfly allocation from LargeAllocation should try "realloc" behavior if collector thread is not active
+        https://bugs.webkit.org/show_bug.cgi?id=196160
+
+        Reviewed by Saam Barati.
+
+        "realloc" can be effective in terms of peak/current memory footprint when realloc succeeds because,
+
+        1. It does not allocate additional memory while expanding a vector
+        2. It does not deallocate an old memory, just reusing the current memory by expanding, so that memory footprint is tight even before scavenging
+
+        We found that we can "realloc" large butterflies in certain conditions are met because,
+
+        1. If it goes to LargeAllocation, this memory region is never reused until GC sweeps it.
+        2. Butterflies are owned by owner JSObjects, so we know the lifetime of Butterflies.
+
+        This patch attempts to use "realloc" onto butterflies if,
+
+        1. Butterflies are allocated in LargeAllocation kind
+        2. Concurrent collector is not active
+        3. Butterflies do not have property storage
+
+        The condition (2) is required to avoid deallocating butterflies while the concurrent collector looks into it. The condition (3) is
+        also required to avoid deallocating butterflies while the concurrent compiler looks into it.
+
+        We also change LargeAllocation mechanism to using "malloc" and "free" instead of "posix_memalign". This allows us to use "realloc"
+        safely in all the platforms. Since LargeAllocation uses alignment to distinguish LargeAllocation and MarkedBlock, we manually adjust
+        16B alignment by allocating 8B more memory in "malloc".
+
+        Speedometer2 and JetStream2 are neutral. RAMification shows about 1% progression (even in some of JIT tests).
+
+        * heap/AlignedMemoryAllocator.h:
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        (JSC::CompleteSubspace::reallocateLargeAllocationNonVirtual):
+        * heap/CompleteSubspace.h:
+        * heap/FastMallocAlignedMemoryAllocator.cpp:
+        (JSC::FastMallocAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::freeMemory):
+        (JSC::FastMallocAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/FastMallocAlignedMemoryAllocator.h:
+        * heap/GigacageAlignedMemoryAllocator.cpp:
+        (JSC::GigacageAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::GigacageAlignedMemoryAllocator::freeMemory):
+        (JSC::GigacageAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/GigacageAlignedMemoryAllocator.h:
+        * heap/IsoAlignedMemoryAllocator.cpp:
+        (JSC::IsoAlignedMemoryAllocator::tryAllocateMemory):
+        (JSC::IsoAlignedMemoryAllocator::freeMemory):
+        (JSC::IsoAlignedMemoryAllocator::tryReallocateMemory):
+        * heap/IsoAlignedMemoryAllocator.h:
+        * heap/LargeAllocation.cpp:
+        (JSC::isAlignedForLargeAllocation):
+        (JSC::LargeAllocation::tryCreate):
+        (JSC::LargeAllocation::tryReallocate):
+        (JSC::LargeAllocation::LargeAllocation):
+        (JSC::LargeAllocation::destroy):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::indexInSpace):
+        (JSC::LargeAllocation::setIndexInSpace):
+        (JSC::LargeAllocation::basePointer const):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweepLargeAllocations):
+        (JSC::MarkedSpace::prepareForConservativeScan):
+        * heap/WeakSet.h:
+        (JSC::WeakSet::isTriviallyDestructible const):
+        * runtime/Butterfly.h:
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::reallocArrayRightIfPossible):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ensureLengthSlow):
+
 2019-03-31  Sam Weinig  <weinig@apple.com>
 
         Remove more i386 specific configurations

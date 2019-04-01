@@ -30,6 +30,7 @@
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "Exception.h"
+#include "GCDeferralContextInlines.h"
 #include "GetterSetter.h"
 #include "HeapSnapshotBuilder.h"
 #include "IndexingHeaderInlines.h"
@@ -3357,6 +3358,8 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     Structure* structure = this->structure(vm);
     unsigned propertyCapacity = structure->outOfLineCapacity();
     
+    GCDeferralContext deferralContext(vm.heap);
+    DisallowGC disallowGC;
     unsigned availableOldLength =
         Butterfly::availableContiguousVectorLength(propertyCapacity, oldVectorLength);
     Butterfly* newButterfly = nullptr;
@@ -3368,8 +3371,8 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     } else {
         newVectorLength = Butterfly::optimalContiguousVectorLength(
             propertyCapacity, std::min(length * 2, MAX_STORAGE_VECTOR_LENGTH));
-        butterfly = butterfly->growArrayRight(
-            vm, this, structure, propertyCapacity, true,
+        butterfly = butterfly->reallocArrayRightIfPossible(
+            vm, deferralContext, this, structure, propertyCapacity, true,
             oldVectorLength * sizeof(EncodedJSValue),
             newVectorLength * sizeof(EncodedJSValue));
         if (!butterfly)

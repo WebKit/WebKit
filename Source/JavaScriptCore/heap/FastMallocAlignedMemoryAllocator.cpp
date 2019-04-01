@@ -54,5 +54,20 @@ void FastMallocAlignedMemoryAllocator::dump(PrintStream& out) const
     out.print("FastMalloc");
 }
 
+void* FastMallocAlignedMemoryAllocator::tryAllocateMemory(size_t size)
+{
+    return FastMalloc::tryMalloc(size);
+}
+
+void FastMallocAlignedMemoryAllocator::freeMemory(void* pointer)
+{
+    FastMalloc::free(pointer);
+}
+
+void* FastMallocAlignedMemoryAllocator::tryReallocateMemory(void* pointer, size_t size)
+{
+    return FastMalloc::tryRealloc(pointer, size);
+}
+
 } // namespace JSC
 

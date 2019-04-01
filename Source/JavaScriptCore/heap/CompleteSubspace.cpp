@@ -140,16 +140,66 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
     vm.heap.collectIfNecessaryOrDefer(deferralContext);
     
     size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(size);
-    LargeAllocation* allocation = LargeAllocation::tryCreate(vm.heap, size, this);
+    LargeAllocation* allocation = LargeAllocation::tryCreate(vm.heap, size, this, m_space.m_largeAllocations.size());
     if (!allocation)
         return nullptr;
     
     m_space.m_largeAllocations.append(allocation);
+    ASSERT(allocation->indexInSpace() == m_space.m_largeAllocations.size() - 1);
     vm.heap.didAllocate(size);
     m_space.m_capacity += size;
     
     m_largeAllocations.append(allocation);
         
+    return allocation->cell();
+}
+
+void* CompleteSubspace::reallocateLargeAllocationNonVirtual(VM& vm, HeapCell* oldCell, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+{
+    if (validateDFGDoesGC)
+        RELEASE_ASSERT(vm.heap.expectDoesGC());
+
+    // The following conditions are met in Butterfly for example.
+    ASSERT(oldCell->isLargeAllocation());
+
+    LargeAllocation* oldAllocation = &oldCell->largeAllocation();
+    ASSERT(oldAllocation->cellSize() <= size);
+    ASSERT(oldAllocation->weakSet().isTriviallyDestructible());
+    ASSERT(oldAllocation->attributes().destruction == DoesNotNeedDestruction);
+    ASSERT(oldAllocation->attributes().cellKind == HeapCell::Auxiliary);
+    ASSERT(size > MarkedSpace::largeCutoff);
+
+    sanitizeStackForVM(&vm);
+
+    if (size <= Options::largeAllocationCutoff()
+        && size <= MarkedSpace::largeCutoff) {
+        dataLog("FATAL: attampting to allocate small object using large allocation.\n");
+        dataLog("Requested allocation size: ", size, "\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    vm.heap.collectIfNecessaryOrDefer(deferralContext);
+
+    size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(size);
+    size_t difference = size - oldAllocation->cellSize();
+    unsigned oldIndexInSpace = oldAllocation->indexInSpace();
+    if (oldAllocation->isOnList())
+        oldAllocation->remove();
+
+    LargeAllocation* allocation = oldAllocation->tryReallocate(size, this);
+    if (!allocation) {
+        RELEASE_ASSERT(failureMode != AllocationFailureMode::Assert);
+        m_largeAllocations.append(oldAllocation);
+        return nullptr;
+    }
+    ASSERT(oldIndexInSpace == allocation->indexInSpace());
+
+    m_space.m_largeAllocations[oldIndexInSpace] = allocation;
+    vm.heap.didAllocate(difference);
+    m_space.m_capacity += difference;
+
+    m_largeAllocations.append(allocation);
+
     return allocation->cell();
 }
 

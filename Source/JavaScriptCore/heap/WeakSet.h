@@ -52,6 +52,7 @@ public:
     VM* vm() const;
 
     bool isEmpty() const;
+    bool isTriviallyDestructible() const;
 
     void visit(SlotVisitor&);
 
@@ -93,6 +94,15 @@ inline bool WeakSet::isEmpty() const
             return false;
     }
 
+    return true;
+}
+
+inline bool WeakSet::isTriviallyDestructible() const
+{
+    if (!m_blocks.isEmpty())
+        return false;
+    if (isOnList())
+        return false;
     return true;
 }
 
