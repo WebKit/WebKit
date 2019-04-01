@@ -964,6 +964,7 @@
         (syscall-number SYS_gettid) ;; Needed for base system, see <rdar://problem/48651255>
         (syscall-number SYS_memorystatus_control) ;; Needed for memory measurement infrastructure, see <rdar://problem/48647263>
         (syscall-number SYS_kdebug_trace_string) ;; Needed for performance sampling, see <rdar://problem/48829655>.
+        (syscall-number SYS_psynch_rw_rdlock) ;; <rdar://problem/49060359>
     )
 )
 
