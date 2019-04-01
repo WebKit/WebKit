@@ -26,7 +26,6 @@ import os
 import re
 
 from buildbot.scheduler import AnyBranchScheduler, Periodic, Dependent, Triggerable, Nightly
-from buildbot.schedulers.forcesched import ForceScheduler, WorkerChoiceParameter
 from buildbot.schedulers.trysched import Try_Userpass
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
@@ -82,11 +81,6 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
             # FIXME: Read the credentials from local file on disk.
             scheduler['userpass'] = [('sampleuser', 'samplepass')]
         c['schedulers'].append(schedulerClass(**scheduler))
-
-        force_scheduler = ForceScheduler(name='force-{0}'.format(scheduler['name']),
-                                         builderNames=scheduler['builderNames'],
-                                         properties=[WorkerChoiceParameter()])
-        c['schedulers'].append(force_scheduler)
 
 
 def checkValidWorker(worker):

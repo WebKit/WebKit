@@ -1,3 +1,12 @@
+2019-04-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Remove force schedulers from OpenSource EWS Buildbot
+        https://bugs.webkit.org/show_bug.cgi?id=196444
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py: Remove ForceSchedulers.
+
 2019-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to canonicalize NSURLs with WTF::URL
