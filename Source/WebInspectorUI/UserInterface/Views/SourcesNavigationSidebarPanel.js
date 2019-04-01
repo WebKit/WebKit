@@ -863,6 +863,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
     _addBreakpoint(breakpoint)
     {
+        if (this._breakpointsTreeOutline.findTreeElement(breakpoint))
+            return null;
+
         let constructor = WI.BreakpointTreeElement;
         let options = {};
         let parentTreeElement = this._breakpointsTreeOutline;
@@ -875,7 +878,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let domNodeTreeElement = this._breakpointsTreeOutline.findTreeElement(domNode);
             if (!domNodeTreeElement) {
                 domNodeTreeElement = new WI.DOMNodeTreeElement(domNode);
-                this._insertDebuggerTreeElement(domNodeTreeElement, parentTreeElement);
+                this._insertDebuggerTreeElement(domNodeTreeElement, this._breakpointsTreeOutline);
             }
             return domNodeTreeElement;
         };
@@ -910,7 +913,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                     if (!eventTargetTreeElement) {
                         const subtitle = null;
                         eventTargetTreeElement = new WI.GeneralTreeElement(["event-target-window"], WI.unlocalizedString("window"), subtitle, SourcesNavigationSidebarPanel.__windowEventTargetRepresentedObject);
-                        this._insertDebuggerTreeElement(eventTargetTreeElement, parentTreeElement);
+                        this._insertDebuggerTreeElement(eventTargetTreeElement, this._breakpointsTreeOutline);
                     }
                 } else if (breakpoint.eventListener.node)
                     eventTargetTreeElement = getDOMNodeTreeElement(breakpoint.eventListener.node);
@@ -927,9 +930,6 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         } else {
             let sourceCode = breakpoint.sourceCodeLocation && breakpoint.sourceCodeLocation.displaySourceCode;
             if (!sourceCode)
-                return null;
-
-            if (this._breakpointsTreeOutline.findTreeElement(breakpoint))
                 return null;
 
             parentTreeElement = this._addDebuggerTreeElementForSourceCode(sourceCode);
@@ -1032,7 +1032,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
     _addBreakpointsForSourceCode(sourceCode)
     {
         for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(sourceCode))
-            this._addBreakpoint(breakpoint, sourceCode);
+            this._addBreakpoint(breakpoint);
     }
 
     _addIssuesForSourceCode(sourceCode)
@@ -1761,22 +1761,25 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let newDebuggerTreeElement = null;
         if (debuggerObject instanceof WI.Breakpoint) {
             oldDebuggerTreeElement = this._breakpointsTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement) {
-                newDebuggerTreeElement = this._addBreakpoint(debuggerObject);
+            if (oldDebuggerTreeElement)
                 wasSelected = oldDebuggerTreeElement.selected;
-            }
+
+            newDebuggerTreeElement = this._addBreakpoint(debuggerObject);
         } else if (debuggerObject instanceof WI.IssueMessage) {
             oldDebuggerTreeElement = this._resourcesTreeOutline.findTreeElement(debuggerObject);
-            if (oldDebuggerTreeElement) {
-                newDebuggerTreeElement = this._addIssue(debuggerObject);
+            if (oldDebuggerTreeElement)
                 wasSelected = oldDebuggerTreeElement.selected;
-            }
+
+            newDebuggerTreeElement = this._addIssue(debuggerObject);
         }
+
+        if (!newDebuggerTreeElement)
+            return;
 
         if (oldDebuggerTreeElement)
             this._removeDebuggerTreeElement(oldDebuggerTreeElement);
 
-        if (newDebuggerTreeElement && wasSelected)
+        if (wasSelected)
             newDebuggerTreeElement.revealAndSelect(true, false, true);
     }
 

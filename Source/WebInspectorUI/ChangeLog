@@ -1,3 +1,26 @@
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: breakpoints don't populate in inspector2 on first load
+        https://bugs.webkit.org/show_bug.cgi?id=196063
+        <rdar://problem/49097787>
+
+        Reviewed by Joseph Pecoraro.
+
+        In the case that a breakpoint becomes resolved after the resource has finished loaded, there
+        won't be an already existing `TreeElement` for the breakpoint to replace.
+
+        This can realistically only happen if the IndexedDB lookup is super slow, or the resource is
+        extremely fast (e.g. a `data` url).
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+        (WI.DebuggerSidebarPanel.prototype._addDebuggerObject): Deleted.
+
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpoint):
+        (WI.SourcesNavigationSidebarPanel.prototype._addBreakpointsForSourceCode):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleDebuggerObjectDisplayLocationDidChange):
+
 2019-04-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage Timeline - Adjust Energy Impact Threshholds
