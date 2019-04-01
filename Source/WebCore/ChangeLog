@@ -1,3 +1,33 @@
+2019-04-01  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Be less strict about closing blocks in attribute and functional pseudo-element selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=142167
+
+        Reviewed by Antti Koivisto.
+
+        This was also an issue for, e.g., "::slotted(foo", turns out.
+
+        This matches Chromium, Firefox, and the spec:
+
+        https://drafts.csswg.org/css-syntax/#parse-error:
+
+        > Certain points in the parsing algorithm are said to be parse errors. The error
+        > handling for parse errors is well-defined: user agents must either act as
+        > described below when encountering such problems, or must abort processing at
+        > the first error that they encounter for which they do not wish to apply the
+        > rules described below.
+
+        https://drafts.csswg.org/css-syntax/#consume-simple-block:
+
+        > <EOF-token>
+        >   This is a parse error. Return the block.
+
+        Tests: web-platform-tests/dom/nodes/selectors.js (and probably others)
+
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeAttribute):
+        (WebCore::CSSSelectorParser::consumePseudo):
+
 2019-04-01  Pablo Saavedra  <psaavedra@igalia.com>
 
         Build failure after r243644 in GTK Linux 64-bit stable builds

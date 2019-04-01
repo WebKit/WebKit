@@ -398,9 +398,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeAttribute(CSSParser
 {
     ASSERT(range.peek().type() == LeftBracketToken);
     CSSParserTokenRange block = range.consumeBlock();
-    if (block.end() == range.end())
-        return nullptr; // No ] was found. Be strict about this.
-
     block.consumeWhitespace();
 
     AtomicString namespacePrefix;
@@ -520,8 +517,6 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
     }
 
     CSSParserTokenRange block = range.consumeBlock();
-    if (block.end() == range.end())
-        return nullptr; // No ) was found. Be strict about this.
     block.consumeWhitespace();
     if (token.type() != FunctionToken)
         return nullptr;

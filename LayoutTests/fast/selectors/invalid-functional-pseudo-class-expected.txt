@@ -15,7 +15,6 @@ PASS document.querySelectorAll(":-webkit-any\ .foo").length threw exception Synt
 PASS document.querySelectorAll(":-webkit-any\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":-webkit-any\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -56,7 +55,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":dir\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":dir\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -69,7 +67,6 @@ PASS document.querySelectorAll(":dir\ .foo").length threw exception SyntaxError:
 PASS document.querySelectorAll(":dir\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":dir\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -110,7 +107,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":lang\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":lang\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -123,7 +119,6 @@ PASS document.querySelectorAll(":lang\ .foo").length threw exception SyntaxError
 PASS document.querySelectorAll(":lang\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":lang\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -164,7 +159,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":not\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":not\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -177,7 +171,6 @@ PASS document.querySelectorAll(":not\ .foo").length threw exception SyntaxError:
 PASS document.querySelectorAll(":not\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":not\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -218,7 +211,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-child\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":nth-child\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -231,7 +223,6 @@ PASS document.querySelectorAll(":nth-child\ .foo").length threw exception Syntax
 PASS document.querySelectorAll(":nth-child\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-child\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -272,7 +263,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-last-child\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":nth-last-child\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -285,7 +275,6 @@ PASS document.querySelectorAll(":nth-last-child\ .foo").length threw exception S
 PASS document.querySelectorAll(":nth-last-child\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-child\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -326,7 +315,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-last-of-type\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":nth-last-of-type\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -339,7 +327,6 @@ PASS document.querySelectorAll(":nth-last-of-type\ .foo").length threw exception
 PASS document.querySelectorAll(":nth-last-of-type\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -380,7 +367,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-of-type\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":nth-of-type\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -393,7 +379,6 @@ PASS document.querySelectorAll(":nth-of-type\ .foo").length threw exception Synt
 PASS document.querySelectorAll(":nth-of-type\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":nth-of-type\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -434,7 +419,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":matches\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":matches\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -447,7 +431,6 @@ PASS document.querySelectorAll(":matches\ .foo").length threw exception SyntaxEr
 PASS document.querySelectorAll(":matches\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":matches\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":matches\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -488,7 +471,6 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":role\").length threw exception SyntaxError: Unexpected EOF.
 PASS document.querySelectorAll(":role\\").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\").length threw exception SyntaxError: Unexpected EOF.
@@ -501,7 +483,6 @@ PASS document.querySelectorAll(":role\ .foo").length threw exception SyntaxError
 PASS document.querySelectorAll(":role\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":role\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
@@ -516,7 +497,6 @@ PASS document.querySelectorAll(":role\\\\ .foo)").length threw exception SyntaxE
 PASS document.querySelectorAll(":role\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
 PASS document.querySelectorAll(":role\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0

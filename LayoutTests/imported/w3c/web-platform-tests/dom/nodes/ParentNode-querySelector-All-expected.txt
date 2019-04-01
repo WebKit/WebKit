@@ -345,8 +345,8 @@ PASS Document.querySelectorAll: Attribute presence selector, matching multiple o
 PASS Document.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Document.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Document.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
-FAIL Document.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
-FAIL Document.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+PASS Document.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
+PASS Document.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
 PASS Document.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Document.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Document.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -733,6 +733,10 @@ PASS Document.querySelector: Syntax, group of selectors separator, whitespace be
 ,#group strong 
 PASS Document.querySelectorAll: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
 PASS Document.querySelector: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
+PASS Document.querySelectorAll: Slotted selector: ::slotted(foo) 
+PASS Document.querySelector: Slotted selector: ::slotted(foo) 
+PASS Document.querySelectorAll: Slotted selector (no matching closing paren): ::slotted(foo 
+PASS Document.querySelector: Slotted selector (no matching closing paren): ::slotted(foo 
 PASS Detached Element.querySelectorAll: Type selector, matching html element: html 
 PASS Detached Element.querySelector: Type selector, matching html element: html 
 PASS Detached Element.querySelectorAll: Type selector, matching body element: body 
@@ -765,8 +769,8 @@ PASS Detached Element.querySelectorAll: Attribute presence selector, matching mu
 PASS Detached Element.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Detached Element.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Detached Element.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
-FAIL Detached Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+PASS Detached Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
+PASS Detached Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
 PASS Detached Element.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Detached Element.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Detached Element.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -1153,6 +1157,10 @@ PASS Detached Element.querySelector: Syntax, group of selectors separator, white
 ,#group strong 
 PASS Detached Element.querySelectorAll: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
 PASS Detached Element.querySelector: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
+PASS Detached Element.querySelectorAll: Slotted selector: ::slotted(foo) 
+PASS Detached Element.querySelector: Slotted selector: ::slotted(foo) 
+PASS Detached Element.querySelectorAll: Slotted selector (no matching closing paren): ::slotted(foo 
+PASS Detached Element.querySelector: Slotted selector (no matching closing paren): ::slotted(foo 
 PASS Fragment.querySelectorAll: Type selector, matching html element: html 
 PASS Fragment.querySelector: Type selector, matching html element: html 
 PASS Fragment.querySelectorAll: Type selector, matching body element: body 
@@ -1185,8 +1193,8 @@ PASS Fragment.querySelectorAll: Attribute presence selector, matching multiple o
 PASS Fragment.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS Fragment.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS Fragment.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
-FAIL Fragment.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
-FAIL Fragment.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+PASS Fragment.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
+PASS Fragment.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
 PASS Fragment.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Fragment.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS Fragment.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -1573,6 +1581,10 @@ PASS Fragment.querySelector: Syntax, group of selectors separator, whitespace be
 ,#group strong 
 PASS Fragment.querySelectorAll: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
 PASS Fragment.querySelector: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
+PASS Fragment.querySelectorAll: Slotted selector: ::slotted(foo) 
+PASS Fragment.querySelector: Slotted selector: ::slotted(foo) 
+PASS Fragment.querySelectorAll: Slotted selector (no matching closing paren): ::slotted(foo 
+PASS Fragment.querySelector: Slotted selector (no matching closing paren): ::slotted(foo 
 PASS In-document Element.querySelectorAll: Type selector, matching html element: html 
 PASS In-document Element.querySelector: Type selector, matching html element: html 
 PASS In-document Element.querySelectorAll: Type selector, matching body element: body 
@@ -1605,8 +1617,8 @@ PASS In-document Element.querySelectorAll: Attribute presence selector, matching
 PASS In-document Element.querySelector: Attribute presence selector, matching multiple options with selected attributes: #attr-presence-select3 option[selected] 
 PASS In-document Element.querySelectorAll: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
 PASS In-document Element.querySelector: Attribute value selector, matching align attribute with value: #attr-value [align="center"] 
-FAIL In-document Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" The string did not match the expected pattern.
+PASS In-document Element.querySelectorAll: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
+PASS In-document Element.querySelector: Attribute value selector, matching align attribute with value, unclosed bracket: #attr-value [align="center" 
 PASS In-document Element.querySelectorAll: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS In-document Element.querySelector: Attribute value selector, matching align attribute with empty value: #attr-value [align=""] 
 PASS In-document Element.querySelectorAll: Attribute value selector, not matching align attribute with partial value: #attr-value [align="c"] 
@@ -1995,4 +2007,8 @@ PASS In-document Element.querySelector: Syntax, group of selectors separator, wh
 ,#group strong 
 PASS In-document Element.querySelectorAll: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
 PASS In-document Element.querySelector: Syntax, group of selectors separator, no whitespace: #group em,#group strong 
+PASS In-document Element.querySelectorAll: Slotted selector: ::slotted(foo) 
+PASS In-document Element.querySelector: Slotted selector: ::slotted(foo) 
+PASS In-document Element.querySelectorAll: Slotted selector (no matching closing paren): ::slotted(foo 
+PASS In-document Element.querySelector: Slotted selector (no matching closing paren): ::slotted(foo 
 

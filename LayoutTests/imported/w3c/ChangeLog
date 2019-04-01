@@ -1,3 +1,12 @@
+2019-04-01  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Be less strict about closing blocks in attribute and functional pseudo-element selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=142167
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/dom/nodes/selectors.js: Add tests for ::slotted
+
 2019-03-29  Chris Dumez  <cdumez@apple.com>
 
         Make someWindow.frames, .self, .window always return someWindow
