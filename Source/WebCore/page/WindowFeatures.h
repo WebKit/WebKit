@@ -55,6 +55,7 @@ struct WindowFeatures {
     bool fullscreen { false };
     bool dialog { false };
     bool noopener { false };
+    bool noreferrer { false };
 
     Vector<String> additionalFeatures;
 };
