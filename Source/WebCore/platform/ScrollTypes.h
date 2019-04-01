@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+enum class ScrollType : uint8_t {
+    User,
+    Programmatic
+};
+
 enum ScrollDirection : uint8_t {
     ScrollUp,
     ScrollDown,

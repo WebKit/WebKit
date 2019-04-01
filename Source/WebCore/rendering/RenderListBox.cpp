@@ -749,7 +749,7 @@ int RenderListBox::scrollLeft() const
     return 0;
 }
 
-void RenderListBox::setScrollLeft(int, ScrollClamping)
+void RenderListBox::setScrollLeft(int, ScrollType, ScrollClamping)
 {
 }
 
@@ -766,7 +766,7 @@ static void setupWheelEventTestTrigger(RenderListBox& renderer)
     renderer.scrollAnimator().setWheelEventTestTrigger(renderer.page().testTrigger());
 }
 
-void RenderListBox::setScrollTop(int newTop, ScrollClamping)
+void RenderListBox::setScrollTop(int newTop, ScrollType, ScrollClamping)
 {
     // Determine an index and scroll to it.    
     int index = newTop / itemHeight();

@@ -2321,13 +2321,13 @@ void RenderLayer::applyPostLayoutScrollPositionIfNeeded()
     m_postLayoutScrollPosition = WTF::nullopt;
 }
 
-void RenderLayer::scrollToXPosition(int x, ScrollClamping clamping)
+void RenderLayer::scrollToXPosition(int x, ScrollType, ScrollClamping clamping)
 {
     ScrollPosition position(x, m_scrollPosition.y());
     scrollToOffset(scrollOffsetFromPosition(position), clamping);
 }
 
-void RenderLayer::scrollToYPosition(int y, ScrollClamping clamping)
+void RenderLayer::scrollToYPosition(int y, ScrollType, ScrollClamping clamping)
 {
     ScrollPosition position(m_scrollPosition.x(), y);
     scrollToOffset(scrollOffsetFromPosition(position), clamping);

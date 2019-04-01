@@ -414,8 +414,8 @@ public:
     void scrollToXOffset(int x, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamping); }
     void scrollToYOffset(int y, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamping); }
 
-    void scrollToXPosition(int x, ScrollClamping = ScrollClamping::Clamped);
-    void scrollToYPosition(int y, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped);
+    void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped);
 
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
