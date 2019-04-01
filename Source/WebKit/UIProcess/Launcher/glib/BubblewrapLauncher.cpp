@@ -555,7 +555,7 @@ static int setupSeccomp()
     //  https://git.gnome.org/browse/linux-user-chroot
     //    in src/setup-seccomp.c
     struct scmp_arg_cmp cloneArg = SCMP_A0(SCMP_CMP_MASKED_EQ, CLONE_NEWUSER, CLONE_NEWUSER);
-    struct scmp_arg_cmp ttyArg = SCMP_A1(SCMP_CMP_EQ, static_cast<scmp_datum_t>(TIOCSTI), static_cast<scmp_datum_t>(0));
+    struct scmp_arg_cmp ttyArg = SCMP_A1(SCMP_CMP_MASKED_EQ, 0xFFFFFFFFu, TIOCSTI);
     struct {
         int scall;
         struct scmp_arg_cmp* arg;

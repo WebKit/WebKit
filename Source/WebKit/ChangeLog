@@ -1,3 +1,18 @@
+2019-04-01  Patrick Griffis  <pgriffis@igalia.com>
+
+        [GTK][WPE] Fix seccomp rule for blacklisting TIOCSTI
+        https://bugs.webkit.org/show_bug.cgi?id=196297
+
+        Reviewed by Michael Catanzaro.
+
+        More information can be found here: https://www.exploit-db.com/exploits/46594
+
+        Note that this sandbox never made it into production so does not
+        warrant any CVE specific to WebKit.
+
+        * UIProcess/Launcher/glib/BubblewrapLauncher.cpp:
+        (WebKit::setupSeccomp):
+
 2019-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Crash when changing inputmode for certain types of focusable elements
