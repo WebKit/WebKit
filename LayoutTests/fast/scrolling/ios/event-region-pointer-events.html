@@ -1,0 +1,58 @@
+<html>
+<style>
+.testdiv {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 2px solid blue;
+    position: relative;
+    height: 200px;
+    width: 200px;
+    will-change: transform;
+}
+.inner {
+    height: 200px;
+    width: 200px;
+    background-color: green;
+}
+
+</style>
+<script>
+window.onload = function () {
+    if (!window.internals)
+        return;
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    results.innerText = "Before:\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+
+    test1.style.pointerEvents = "auto";
+    test2.style.pointerEvents = "auto";
+    test3.style.pointerEvents = "auto";
+
+    results.innerText += "After setting 'pointer-events:auto':\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+
+    test1.style.pointerEvents = "none";
+    test2.style.pointerEvents = "none";
+    test3.style.pointerEvents = "none";
+
+    results.innerText += "After setting 'pointer-events:none':\n\n"
+    results.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+}
+</script>
+<body>
+<div class="testdiv" id="test1" style="pointer-events:none">
+</div>
+<div class="testdiv" style="pointer-events:none">
+    <div id="test2" class="inner"></div>
+</div>
+<div class="testdiv" style="pointer-events:none">
+    <div class="inner" style="position:relative">
+        <div id="test3" class="inner"></div>
+    </div>
+</div>
+
+<pre id="results"></pre>
+</body>
+</html>

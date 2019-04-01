@@ -6662,6 +6662,12 @@ bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
     return false;
 }
 
+void RenderLayer::invalidateEventRegion()
+{
+    if (auto* compositingLayer = enclosingCompositingLayerForRepaint())
+        compositingLayer->setNeedsCompositingConfigurationUpdate();
+}
+
 TextStream& operator<<(TextStream& ts, const RenderLayer& layer)
 {
     ts << "RenderLayer " << &layer << " " << layer.size();

@@ -865,6 +865,8 @@ public:
 
     WEBCORE_EXPORT bool isTransparentOrFullyClippedRespectingParentFrames() const;
 
+    void invalidateEventRegion();
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }

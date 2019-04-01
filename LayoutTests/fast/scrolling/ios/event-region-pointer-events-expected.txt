@@ -1,0 +1,99 @@
+ 
+ 
+ Before:
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 212.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 416.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+After setting 'pointer-events:auto':
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 673.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 673.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+          (event region
+            (rect (0,0) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 212.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+          (event region
+            (rect (2,2) width=200 height=200)
+          )
+        )
+        (GraphicsLayer
+          (position 416.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+          (event region
+            (rect (2,2) width=200 height=200)
+          )
+        )
+      )
+    )
+  )
+)
+After setting 'pointer-events:none':
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 1205.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 1205.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 200.00 200.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 212.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 416.00 8.00)
+          (bounds 202.00 202.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+
