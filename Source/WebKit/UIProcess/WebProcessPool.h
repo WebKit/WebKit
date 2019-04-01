@@ -232,6 +232,7 @@ public:
     void clearSupportedPlugins();
 
     ProcessID networkProcessIdentifier();
+    ProcessID prewarmedProcessIdentifier();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
     bool networkProcessHasEntitlementForTesting(const String&);
 

@@ -1,3 +1,29 @@
+2019-04-01  Chris Dumez  <cdumez@apple.com>
+
+        UIProcess crash when a prewarmed process is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=196451
+        <rdar://problem/49245471>
+
+        Reviewed by Geoffrey Garen.
+
+        Stop assuming that WebProcessProxy::m_websiteDataStore is non-null as this is no longer
+        true after r243384. For example, prewarmed WebContent processe do not get a data store
+        until they actually get used.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _prewarmedProcessIdentifier]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessIdentifier):
+        (WebKit::WebProcessPool::prewarmedProcessIdentifier):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        (WebKit::WebProcessProxy::requestTermination):
+        (WebKit::WebProcessProxy::isReleaseLoggingAllowed const):
+        * UIProcess/WebProcessProxy.h:
+
 2019-04-01  Patrick Griffis  <pgriffis@igalia.com>
 
         [GTK][WPE] Add more websitedatastore directories to web process sandbox

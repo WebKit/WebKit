@@ -440,6 +440,12 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->networkProcessIdentifier();
 }
 
+- (pid_t)_prewarmedProcessIdentifier
+{
+    return _processPool->prewarmedProcessIdentifier();
+}
+
+
 - (void)_syncNetworkProcessCookies
 {
     _processPool->syncNetworkProcessCookies();

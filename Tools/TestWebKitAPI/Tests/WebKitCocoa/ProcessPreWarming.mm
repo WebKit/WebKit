@@ -120,3 +120,24 @@ TEST(WKProcessPool, AutomaticProcessWarming)
     EXPECT_FALSE([pool _hasPrewarmedWebProcess]);
     EXPECT_EQ(2U, [pool _webPageContentProcessCount]);
 }
+
+TEST(WKProcessPool, PrewarmedProcessCrash)
+{
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().prewarmsProcessesAutomatically = NO;
+
+    auto pool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    [pool _warmInitialProcess];
+
+    EXPECT_TRUE([pool _hasPrewarmedWebProcess]);
+    EXPECT_EQ(1U, [pool _webPageContentProcessCount]);
+
+    // Wait for prewarmed process to finish launching.
+    while (![pool _prewarmedProcessIdentifier])
+        TestWebKitAPI::Util::sleep(0.01);
+
+    kill([pool _prewarmedProcessIdentifier], 9);
+
+    while ([pool _hasPrewarmedWebProcess])
+        TestWebKitAPI::Util::sleep(0.01);
+}

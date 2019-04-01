@@ -89,6 +89,7 @@
 
 // Test only.
 - (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macos(10.13), ios(11.0));
+- (pid_t)_prewarmedProcessIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only.
 - (size_t)_webProcessCount WK_API_AVAILABLE(macos(10.13), ios(11.0));

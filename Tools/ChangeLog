@@ -1,3 +1,16 @@
+2019-04-01  Chris Dumez  <cdumez@apple.com>
+
+        UIProcess crash when a prewarmed process is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=196451
+        <rdar://problem/49245471>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessPreWarming.mm:
+        (TEST):
+
 2019-04-01  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Display OS and Xcode configuration in status-bubble's hover-over message

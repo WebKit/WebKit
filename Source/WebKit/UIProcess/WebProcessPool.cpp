@@ -1440,10 +1440,12 @@ void WebProcessPool::refreshPlugins()
 
 ProcessID WebProcessPool::networkProcessIdentifier()
 {
-    if (!m_networkProcess)
-        return 0;
+    return m_networkProcess ? m_networkProcess->processIdentifier() : 0;
+}
 
-    return m_networkProcess->processIdentifier();
+ProcessID WebProcessPool::prewarmedProcessIdentifier()
+{
+    return m_prewarmedProcess ? m_prewarmedProcess->processIdentifier() : 0;
 }
 
 void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
