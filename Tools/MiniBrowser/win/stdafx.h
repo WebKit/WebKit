@@ -68,3 +68,5 @@
 #include <crtdbg.h>
 #endif
 #endif
+
+#define WEBCORE_EXPORT WTF_IMPORT

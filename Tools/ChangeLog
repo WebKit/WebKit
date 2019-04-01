@@ -1,3 +1,15 @@
+2019-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WebKit] MiniBrowser should support high DPI display
+        https://bugs.webkit.org/show_bug.cgi?id=196391
+
+        Reviewed by Alex Christensen.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::WebKitBrowserWindow): Call resetZoom to set the page zoom factor.
+        (WebKitBrowserWindow::resetZoom): Changed the default page zoom factor from 1 to the device scale factor.
+        * MiniBrowser/win/stdafx.h: Define WEBCORE_EXPORT.
+
 2019-03-31  Sam Weinig  <weinig@apple.com>
 
         Remove more i386 specific configurations

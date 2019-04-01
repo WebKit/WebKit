@@ -27,6 +27,7 @@
 
 #include "MiniBrowserLibResource.h"
 #include "common.h"
+#include <WebCore/GDIUtilities.h>
 #include <WebKit/WKAuthenticationChallenge.h>
 #include <WebKit/WKAuthenticationDecisionListener.h>
 #include <WebKit/WKCertificateInfoCurl.h>
@@ -140,6 +141,7 @@ WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainW
     WKPageSetPageUIClient(page, &uiClient.base);
 
     updateProxySettings();
+    resetZoom();
 }
 
 void WebKitBrowserWindow::updateProxySettings()
@@ -263,7 +265,7 @@ void WebKitBrowserWindow::updateStatistics(HWND hDlg)
 void WebKitBrowserWindow::resetZoom()
 {
     auto page = WKViewGetPage(m_view.get());
-    WKPageSetPageZoomFactor(page, 1);
+    WKPageSetPageZoomFactor(page, WebCore::deviceScaleFactorForWindow(hwnd()));
 }
 
 void WebKitBrowserWindow::zoomIn()
