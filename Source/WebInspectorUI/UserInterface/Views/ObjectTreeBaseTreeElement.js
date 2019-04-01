@@ -242,27 +242,5 @@ WI.ObjectTreeBaseTreeElement = class ObjectTreeBaseTreeElement extends WI.Genera
             }
             return;
         }
-
-        if (resolvedValue.subtype === "node") {
-            contextMenu.appendItem(WI.UIString("Copy as HTML"), function() {
-                resolvedValue.pushNodeToFrontend(function(nodeId) {
-                    WI.domManager.nodeForId(nodeId).copyNode();
-                });
-            });
-
-            contextMenu.appendItem(WI.UIString("Scroll Into View"), function() {
-                function scrollIntoView() { this.scrollIntoViewIfNeeded(true); }
-                resolvedValue.callFunction(scrollIntoView, undefined, false, function() {});
-            });
-
-            contextMenu.appendSeparator();
-
-            contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), function() {
-                resolvedValue.pushNodeToFrontend(function(nodeId) {
-                    WI.domManager.inspectElement(nodeId);
-                });
-            });
-            return;
-        }
     }
 };

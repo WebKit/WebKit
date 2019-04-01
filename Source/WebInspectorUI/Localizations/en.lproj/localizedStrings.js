@@ -283,7 +283,6 @@ localizedStrings["Copy Path to Property"] = "Copy Path to Property";
 localizedStrings["Copy Row"] = "Copy Row";
 localizedStrings["Copy Selected"] = "Copy Selected";
 localizedStrings["Copy Table"] = "Copy Table";
-localizedStrings["Copy as HTML"] = "Copy as HTML";
 localizedStrings["Copy as cURL"] = "Copy as cURL";
 localizedStrings["Could not fetch properties. Object may no longer exist."] = "Could not fetch properties. Object may no longer exist.";
 localizedStrings["Count"] = "Count";
