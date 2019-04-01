@@ -1,3 +1,34 @@
+2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Refactor some logic for inserting pasted or dropped virtual card files as attachment elements
+        https://bugs.webkit.org/show_bug.cgi?id=196435
+        Work towards <rdar://problem/48573098>
+
+        Reviewed by Darin Adler.
+
+        Refactor some existing codepaths on iOS for inserting VCard files as attachment elements. Instead of using a
+        separate readVirtualContactFile method for converting a vcard file or data into an attachment element (possibly
+        accompanied by a link), use the existing readFilePaths WebContentReader method.
+
+        To handle links which may accompany the attachment element, add a helper method in PasteboardIOS that reads a
+        titled URL prior to inserting an attachment element, in the case of pasting or dropping a VCF.
+
+        This means we no longer need to handle attachment reading in readPasteboardWebContentDataForType, so we can
+        simply bail before reading "public.vcard" here and defer to reading other data types.
+
+        Covered by existing API tests in WKAttachmentTests and DragAndDropTestsIOS.
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readVirtualContactFile): Deleted.
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::readPasteboardWebContentDataForType):
+        (WebCore::readURLAlongsideAttachmentIfNecessary):
+        (WebCore::prefersAttachmentRepresentation):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
 2019-04-01  Antti Koivisto  <antti@apple.com>
 
         Trying to scroll the compose pane on gmail.com scrolls the message list behind

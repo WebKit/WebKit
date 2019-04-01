@@ -774,28 +774,6 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
     return true;
 }
 
-bool WebContentReader::readVirtualContactFile(const String& filePath, const URL& url, const String& urlTitle)
-{
-    if (filePath.isEmpty() || !frame.document())
-        return false;
-
-    auto& document = *frame.document();
-    if (!fragment)
-        fragment = document.createDocumentFragment();
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-    if (!url.isEmpty())
-        readURL(url, urlTitle);
-
-    auto attachmentContainer = HTMLDivElement::create(*frame.document());
-    attachmentContainer->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock, true);
-    attachmentContainer->appendChild(attachmentForFilePath(frame, filePath));
-    fragment->appendChild(WTFMove(attachmentContainer));
-#endif
-
-    return true;
-}
-
 bool WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.isEmpty())
