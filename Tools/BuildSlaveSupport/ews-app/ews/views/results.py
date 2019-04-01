@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import os
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -41,6 +42,10 @@ _log = logging.getLogger(__name__)
 class Results(View):
     def post(self, request):
         data = json.loads(request.body)
+
+        if data.get('EWS_API_KEY') != os.getenv('EWS_API_KEY', None):
+            _log.error('Incorrect API Key {}. Host: {}. Ignoring data.'.format(data.get('EWS_API_KEY'), data.get('hostname')))
+            return HttpResponse('Incorrect API Key received')
 
         if data.get('type') == u'ews-build':
             return self.build_event(data)

@@ -1,3 +1,15 @@
+2019-04-01  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Use API_KEY to accept results data
+        https://bugs.webkit.org/show_bug.cgi?id=196461
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-app/ews/views/results.py:
+        (Results.post): Validate EWS_API_KEY before accepting any data.
+        * BuildSlaveSupport/ews-build/events.py:
+        (Events.sendData): Send EWS_API_KEY if available along with event data.
+
 2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unable to copy and paste a PDF from Notes into Mail compose body

@@ -22,6 +22,7 @@
 
 import datetime
 import json
+import os
 import time
 
 from buildbot.util import service
@@ -88,6 +89,8 @@ class Events(service.BuildbotService):
         self.master_hostname = master_hostname
 
     def sendData(self, data):
+        if os.getenv('EWS_API_KEY', None):
+            data['EWS_API_KEY'] = os.getenv('EWS_API_KEY')
         agent = Agent(reactor)
         body = JSONProducer(data)
 
