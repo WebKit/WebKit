@@ -1,3 +1,29 @@
+2019-04-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Stop trying to support building JSC with clang 3.8
+        https://bugs.webkit.org/show_bug.cgi?id=195947
+        <rdar://problem/49069219>
+
+        Reviewed by Darin Adler.
+
+        It seems WebKit hasn't built with clang 3.8 in a while, no devs are using this compiler, we
+        don't know how much effort it would be to make JSC work again, and it's making the code
+        worse. Remove my hacks to support clang 3.8 from JSC.
+
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::clone const):
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::clone const):
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::clone const):
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::clone const):
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::clone const):
+
 2019-03-31  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Butterfly allocation from LargeAllocation should try "realloc" behavior if collector thread is not active
