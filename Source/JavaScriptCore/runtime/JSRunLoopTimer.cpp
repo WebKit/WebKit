@@ -121,7 +121,7 @@ void JSRunLoopTimer::Manager::timerDidFire()
 #endif
         EpochTime nowEpochTime = epochTime(0_s);
         for (auto& entry : m_mapping) {
-            PerVMData& data = entry.value;
+            PerVMData& data = *entry.value;
 #if USE(CF)
             if (data.runLoop.get() != currentRunLoop)
                 continue;
@@ -172,9 +172,9 @@ JSRunLoopTimer::Manager& JSRunLoopTimer::Manager::shared()
 
 void JSRunLoopTimer::Manager::registerVM(VM& vm)
 {
-    PerVMData data { *this };
+    auto data = std::make_unique<PerVMData>(*this);
 #if USE(CF)
-    data.setRunLoop(this, vm.runLoop());
+    data->setRunLoop(this, vm.runLoop());
 #endif
 
     auto locker = holdLock(m_lock);
@@ -199,7 +199,7 @@ void JSRunLoopTimer::Manager::scheduleTimer(JSRunLoopTimer& timer, Seconds delay
     auto iter = m_mapping.find(timer.m_apiLock);
     RELEASE_ASSERT(iter != m_mapping.end()); // We don't allow calling this after the VM dies.
 
-    PerVMData& data = iter->value;
+    PerVMData& data = *iter->value;
     EpochTime scheduleTime = fireEpochTime;
     bool found = false;
     for (auto& entry : data.timers) {
@@ -229,7 +229,7 @@ void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
         return;
     }
 
-    PerVMData& data = iter->value;
+    PerVMData& data = *iter->value;
     EpochTime scheduleTime = epochTime(s_decade);
     for (unsigned i = 0; i < data.timers.size(); ++i) {
         {
@@ -261,7 +261,7 @@ Optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
     auto iter = m_mapping.find(timer.m_apiLock);
     RELEASE_ASSERT(iter != m_mapping.end()); // We only allow this to be called with a live VM.
 
-    PerVMData& data = iter->value;
+    PerVMData& data = *iter->value;
     for (auto& entry : data.timers) {
         if (entry.first.ptr() == &timer) {
             EpochTime nowEpochTime = epochTime(0_s);
@@ -279,7 +279,7 @@ void JSRunLoopTimer::Manager::didChangeRunLoop(VM& vm, CFRunLoopRef newRunLoop)
     auto iter = m_mapping.find({ vm.apiLock() });
     RELEASE_ASSERT(iter != m_mapping.end());
 
-    PerVMData& data = iter->value;
+    PerVMData& data = *iter->value;
     data.setRunLoop(this, newRunLoop);
 }
 #endif
