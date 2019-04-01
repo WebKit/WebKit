@@ -1,5 +1,38 @@
 2019-04-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOMDebugger: disabling a breakpoint for a specific event listener removes it from the UI
+        https://bugs.webkit.org/show_bug.cgi?id=196453
+        <rdar://problem/49489318>
+
+        Reviewed by Joseph Pecoraro.
+
+        Allow breakpoints for specific event listeners to be disabled, rather than immeditately
+        removing/deleting them when they are about to become disabled. This preserves the existing
+        functionality, but now allows for the tree element to stay in the UI in a disabled state.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager):
+        (WI.DOMManager.prototype.setBreakpointForEventListener):
+        (WI.DOMManager.prototype.removeBreakpointForEventListener):
+        (WI.DOMManager.prototype.removeEventListenerBreakpointsForNode): Added.
+        (WI.DOMManager.prototype._updateEventBreakpoint): Added.
+        (WI.DOMManager.prototype._handleEventBreakpointDisabledStateChanged): Added.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointDisabledStateChanged):
+
+        * UserInterface/Views/EventBreakpointTreeElement.js:
+        (WI.EventBreakpointTreeElement.prototype.populateContextMenu):
+        (WI.EventBreakpointTreeElement.prototype._toggleBreakpoint):
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNodeBreakpoints):
+
+        * UserInterface/Views/DOMNodeTreeElement.js:
+        (WI.DOMNodeTreeElement.prototype.ondelete):
+
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: auto-record after page load sometimes shows the wrong UI
         https://bugs.webkit.org/show_bug.cgi?id=196320
         <rdar://problem/49356686>

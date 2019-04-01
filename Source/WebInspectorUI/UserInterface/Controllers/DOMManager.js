@@ -50,6 +50,8 @@ WI.DOMManager = class DOMManager extends WI.Object
         this._hasRequestedDocument = false;
         this._pendingDocumentRequestCallbacks = null;
 
+        WI.EventBreakpoint.addEventListener(WI.EventBreakpoint.Event.DisabledStateChanged, this._handleEventBreakpointDisabledStateChanged, this);
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
 
@@ -592,40 +594,54 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     setBreakpointForEventListener(eventListener)
     {
-        let breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, eventListener.type, {eventListener});
+        let breakpoint = this._breakpointsForEventListeners.get(eventListener.eventListenerId);
+        if (breakpoint) {
+            console.assert(breakpoint.disabled);
+            breakpoint.disabled = false;
+            return;
+        }
+
+        breakpoint = new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, eventListener.type, {eventListener});
+        console.assert(!breakpoint.disabled);
+
         this._breakpointsForEventListeners.set(eventListener.eventListenerId, breakpoint);
 
-        DOMAgent.setBreakpointForEventListener(eventListener.eventListenerId, (error) => {
-            if (error) {
-                console.error(error);
-                return;
-            }
+        for (let target of WI.targets) {
+            if (target.DOMAgent)
+                this._updateEventBreakpoint(breakpoint, target);
+        }
 
-            WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointAdded, {breakpoint});
-        });
+        WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointAdded, {breakpoint});
     }
 
     removeBreakpointForEventListener(eventListener)
     {
-        let breakpoint = this._breakpointsForEventListeners.get(eventListener.eventListenerId);
+        let breakpoint = this._breakpointsForEventListeners.take(eventListener.eventListenerId);
         console.assert(breakpoint);
 
-        this._breakpointsForEventListeners.delete(eventListener.eventListenerId);
+        for (let target of WI.targets) {
+            if (target.DOMAgent)
+                target.DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId);
+        }
 
-        DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId, (error) => {
-            if (error) {
-                console.error(error);
-                return;
-            }
+        WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
+    }
 
-            WI.domDebuggerManager.dispatchEventToListeners(WI.DOMDebuggerManager.Event.EventBreakpointRemoved, {breakpoint});
-        });
+    removeEventListenerBreakpointsForNode(domNode)
+    {
+        for (let breakpoint of Array.from(this._breakpointsForEventListeners.values())) {
+            let eventListener = breakpoint.eventListener;
+            if (eventListener.nodeId === domNode.id)
+                this.removeBreakpointForEventListener(eventListener);
+        }
     }
 
     breakpointForEventListenerId(eventListenerId)
     {
         return this._breakpointsForEventListeners.get(eventListenerId) || null;
     }
+
+    // Private
 
     _buildHighlightConfig(mode = "all")
     {
@@ -646,7 +662,30 @@ WI.DOMManager = class DOMManager extends WI.Object
         return highlightConfig;
     }
 
-    // Private
+    _updateEventBreakpoint(breakpoint, target)
+    {
+        let eventListener = breakpoint.eventListener;
+        console.assert(eventListener);
+
+        if (breakpoint.disabled)
+            target.DOMAgent.removeBreakpointForEventListener(eventListener.eventListenerId);
+        else
+            target.DOMAgent.setBreakpointForEventListener(eventListener.eventListenerId);
+    }
+
+    _handleEventBreakpointDisabledStateChanged(event)
+    {
+        let breakpoint = event.target;
+
+        // Non-specific event listener breakpoints are handled by `DOMDebuggerManager`.
+        if (!breakpoint.eventListener)
+            return;
+
+        for (let target of WI.targets) {
+            if (target.DOMAgent)
+                this._updateEventBreakpoint(breakpoint, target);
+        }
+    }
 
     _mainResourceDidChange(event)
     {

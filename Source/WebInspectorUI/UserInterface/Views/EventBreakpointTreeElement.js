@@ -110,10 +110,9 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
     populateContextMenu(contextMenu, event)
     {
         let breakpoint = this.representedObject;
-        if (!breakpoint.eventListener) {
-            let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
-            contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
-        }
+
+        let label = breakpoint.disabled ? WI.UIString("Enable Breakpoint") : WI.UIString("Disable Breakpoint");
+        contextMenu.appendItem(label, this._toggleBreakpoint.bind(this));
 
         contextMenu.appendSeparator();
 
@@ -146,11 +145,6 @@ WI.EventBreakpointTreeElement = class EventBreakpointTreeElement extends WI.Gene
 
     _toggleBreakpoint()
     {
-        if (this.representedObject.eventListener) {
-            WI.domManager.removeBreakpointForEventListener(this.representedObject.eventListener);
-            return;
-        }
-
         this.representedObject.disabled = !this.representedObject.disabled;
     }
 

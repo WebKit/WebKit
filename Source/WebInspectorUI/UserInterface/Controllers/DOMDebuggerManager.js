@@ -554,6 +554,11 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     _handleEventBreakpointDisabledStateChanged(event)
     {
         let breakpoint = event.target;
+
+        // Specific event listener breakpoints are handled by `DOMManager`.
+        if (breakpoint.eventListener)
+            return;
+
         for (let target of WI.targets) {
             if (target.DOMDebuggerAgent)
                 this._updateEventBreakpoint(breakpoint, target);

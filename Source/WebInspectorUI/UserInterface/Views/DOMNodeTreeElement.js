@@ -46,11 +46,7 @@ WI.DOMNodeTreeElement = class DOMNodeTreeElement extends WI.GeneralTreeElement
         this.__deletedViaDeleteKeyboardShortcut = true;
 
         WI.domDebuggerManager.removeDOMBreakpointsForNode(this.representedObject);
-
-        for (let treeElement of this.children) {
-            if (treeElement instanceof WI.EventBreakpointTreeElement)
-                treeElement.ondelete();
-        }
+        WI.domManager.removeEventListenerBreakpointsForNode(this.representedObject);
 
         return true;
     }

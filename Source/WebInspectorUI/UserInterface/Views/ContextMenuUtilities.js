@@ -306,6 +306,7 @@ WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, 
 
         contextMenu.appendItem(WI.UIString("Delete Breakpoints"), function() {
             WI.domDebuggerManager.removeDOMBreakpointsForNode(domNode);
+            WI.domManager.removeEventListenerBreakpointsForNode(domNode);
         });
     }
 };
