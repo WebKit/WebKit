@@ -1,3 +1,16 @@
+2019-03-31  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Scroll position gets reset when overflow:scroll is inside grid
+        https://bugs.webkit.org/show_bug.cgi?id=196337
+        <rdar://problem/49385784>
+
+        Reviewed by Simon Fraser.
+
+        Fix scroll position when there are changes inside a grid item with "overflow: scroll".
+
+        * fast/css-grid-layout/grid-item-content-scroll-position-expected.txt: Added.
+        * fast/css-grid-layout/grid-item-content-scroll-position.html: Added.
+
 2019-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Crash when changing inputmode for certain types of focusable elements
