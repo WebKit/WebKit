@@ -143,7 +143,6 @@ private:
     Vector<GUniquePtr<GdkEvent>> m_touchEvents;
     HashSet<int> m_updatedTouchEvents;
 #elif PLATFORM(WPE)
-    struct wpe_view_backend* m_viewBackend;
     uint32_t m_buttonState;
     uint32_t m_mouseButtonsCurrentlyDown { 0 };
     Vector<struct wpe_input_touch_event_raw> m_touchEvents;

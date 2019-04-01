@@ -1,3 +1,27 @@
+2019-04-01  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] EventSenderProxy constructor is called before a PlatformWindow is usable
+        https://bugs.webkit.org/show_bug.cgi?id=196441
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't cache the wpe_view_backend object that might not exist yet at the
+        time of EventSenderProxy constructor invocation, but instead retrieve
+        that object whenever it's required for event dispatching. This should
+        avoid crashes in this constructor now that it's invoked before any
+        PlatformWindow has been set up (as changed in r243496).
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        * WebKitTestRunner/wpe/EventSenderProxyWPE.cpp:
+        (WTR::viewBackend):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::mouseDown):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::prepareAndDispatchTouchEvent):
+
 2019-03-31  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WebKit] MiniBrowser should support high DPI display
