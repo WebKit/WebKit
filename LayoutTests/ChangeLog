@@ -1,3 +1,12 @@
+2019-04-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win10] Look into platform specific layout test failures
+        https://bugs.webkit.org/show_bug.cgi?id=196463
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2019-04-01  Shawn Roberts  <sroberts@apple.com>
 
         accessibility/Mac/async-increment-decrement-action.html is crashing and blaming other tests on bots
