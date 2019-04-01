@@ -1,3 +1,20 @@
+2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to copy and paste a PDF from Notes into Mail compose body
+        https://bugs.webkit.org/show_bug.cgi?id=196442
+        <rdar://problem/48573098>
+
+        Reviewed by Tim Horton.
+
+        Relax the -canPerformAction: logic in the case of pasting an attachment. Consider an NSItemProvider to possibly
+        paste as an attachment if either it has a preferred presentation style of UIPreferredPresentationStyleAttachment
+        or has a style of UIPreferredPresentationStyleUnspecified, but has a suggested file name.
+
+        This allows for the "Paste" action to be shown in the callout menu when copying and pasting a non-text file.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2019-04-01  Tim Horton  <timothy_horton@apple.com>
 
         Make UIWKDocumentContext rects per-character instead of per-word

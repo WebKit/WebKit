@@ -143,26 +143,14 @@ Pasteboard::FileContentState Pasteboard::fileContentState()
         // On iOS, files are not written to the pasteboard using file URLs, so we need a heuristic to determine
         // whether or not the pasteboard contains items that represent files. An example of when this gets tricky
         // is differentiating between cases where the user is dragging a plain text file, versus selected text.
-        // Some common signs that indicate a file drop as opposed to dropping inline data are:
-        //
-        //  1. Multiple items - the system generally does not give opportunities to flock multiple pieces of
-        //     selected text.
-        //  2. Preferred attachment presentation style - this means the source has explicitly marked the item
-        //     as a file-like entity, as opposed to inline data.
-        //  3. A suggested name - this means that the source has explicitly specified a potential file name for
-        //     the item when dropped.
-        //  4. The presence of any other declared non-text data in the same item indicates that the content being
-        //     dropped can take on another non-text format, which could be a file.
-        //
-        // If none of these four conditions are satisfied, it's very likely that the content being dropped is just
+        // Also, the presence of any other declared non-text data in the same item indicates that the content
+        // being dropped can take on another non-text format, which could be a file.
+        // If the item can't be treated as an attachment, it's very likely that the content being dropped is just
         // an inline piece of text, with no files in the pasteboard (and therefore, no risk of leaking file paths
         // to web content). In cases such as these, we should not suppress DataTransfer access.
         auto items = platformStrategies()->pasteboardStrategy()->allPasteboardItemInfo(m_pasteboardName);
         mayContainFilePaths = items.size() != 1 || notFound != items.findMatching([] (auto& item) {
-            if (item.preferredPresentationStyle != PasteboardItemPresentationStyle::Unspecified)
-                return item.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment;
-
-            return !item.suggestedFileName.isEmpty() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
+            return item.canBeTreatedAsAttachmentOrFile() || item.isNonTextType || item.containsFileURLAndFileUploadContent;
         });
     }
 #endif

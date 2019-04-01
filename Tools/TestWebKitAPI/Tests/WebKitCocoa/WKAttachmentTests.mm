@@ -1804,16 +1804,33 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     [dragAndDropSimulator endDataTransfer];
 }
 
-TEST(WKAttachmentTestsIOS, InsertDroppedMapItemAsAttachment)
+static RetainPtr<NSItemProvider> mapItemForTesting()
 {
     auto placemark = adoptNS([allocMKPlacemarkInstance() initWithCoordinate:CLLocationCoordinate2DMake(37.3327, -122.0053)]);
     auto mapItem = adoptNS([allocMKMapItemInstance() initWithPlacemark:placemark.get()]);
-    [mapItem setName:@"Apple Park"];
+    [mapItem setName:@"Apple Park.vcf"];
 
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider registerObject:mapItem.get() visibility:NSItemProviderRepresentationVisibilityAll];
     [itemProvider setSuggestedName:[mapItem name]];
+    return itemProvider;
+}
 
+static RetainPtr<NSItemProvider> contactItemForTesting()
+{
+    auto contact = adoptNS([allocCNMutableContactInstance() init]);
+    [contact setGivenName:@"Foo"];
+    [contact setFamilyName:@"Bar"];
+
+    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+    [itemProvider registerObject:contact.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [itemProvider setSuggestedName:@"Foo Bar.vcf"];
+    return itemProvider;
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedMapItemAsAttachment)
+{
+    auto itemProvider = mapItemForTesting();
     auto webView = webViewForTestingAttachments();
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
@@ -1832,14 +1849,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedMapItemAsAttachment)
 
 TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
 {
-    auto contact = adoptNS([allocCNMutableContactInstance() init]);
-    [contact setGivenName:@"Foo"];
-    [contact setFamilyName:@"Bar"];
-
-    auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
-    [itemProvider registerObject:contact.get() visibility:NSItemProviderRepresentationVisibilityAll];
-    [itemProvider setSuggestedName:@"Foo Bar"];
-
+    auto itemProvider = contactItemForTesting();
     auto webView = webViewForTestingAttachments();
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
     [simulator setExternalItemProviders:@[ itemProvider.get() ]];
@@ -1854,16 +1864,49 @@ TEST(WKAttachmentTestsIOS, InsertDroppedContactAsAttachment)
     EXPECT_WK_STREQ("text/vcard", info.contentType);
 }
 
+TEST(WKAttachmentTestsIOS, InsertPastedContactAsAttachment)
+{
+    UIPasteboard.generalPasteboard.itemProviders = @[ contactItemForTesting().autorelease() ];
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView paste:nil];
+
+    [webView expectElementCount:0 querySelector:@"a"];
+    EXPECT_WK_STREQ("Foo Bar.vcf", [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').title"]);
+    EXPECT_WK_STREQ("text/vcard", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+    _WKAttachment *attachment = observer.observer().inserted.firstObject;
+    EXPECT_WK_STREQ("Foo Bar.vcf", attachment.info.name);
+    EXPECT_WK_STREQ("text/vcard", attachment.info.contentType);
+}
+
+TEST(WKAttachmentTestsIOS, InsertPastedMapItemAsAttachment)
+{
+    UIApplicationInitialize();
+    UIPasteboard.generalPasteboard.itemProviders = @[ mapItemForTesting().autorelease() ];
+    auto webView = webViewForTestingAttachments();
+    ObserveAttachmentUpdatesForScope observer(webView.get());
+    [webView paste:nil];
+
+    NSURL *pastedLinkURL = [NSURL URLWithString:[webView valueOfAttribute:@"href" forQuerySelector:@"a"]];
+    [webView expectElementTag:@"A" toComeBefore:@"ATTACHMENT"];
+    EXPECT_WK_STREQ("maps.apple.com", pastedLinkURL.host);
+    EXPECT_WK_STREQ("Apple Park.vcf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("text/vcard", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_EQ(1U, observer.observer().inserted.count);
+    _WKAttachment *attachment = observer.observer().inserted.firstObject;
+    EXPECT_WK_STREQ("Apple Park.vcf", attachment.info.name);
+    EXPECT_WK_STREQ("text/vcard", attachment.info.contentType);
+}
+
 TEST(WKAttachmentTestsIOS, InsertPastedFilesAsAttachments)
 {
     auto pdfItem = adoptNS([[NSItemProvider alloc] init]);
     [pdfItem setSuggestedName:@"doc"];
-    [pdfItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
     [pdfItem registerData:testPDFData() type:(__bridge NSString *)kUTTypePDF];
 
     auto textItem = adoptNS([[NSItemProvider alloc] init]);
     [textItem setSuggestedName:@"hello"];
-    [textItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
     [textItem registerData:[@"helloworld" dataUsingEncoding:NSUTF8StringEncoding] type:(__bridge NSString *)kUTTypePlainText];
 
     UIPasteboard.generalPasteboard.itemProviders = @[ pdfItem.get(), textItem.get() ];

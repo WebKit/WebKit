@@ -2826,7 +2826,14 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #if PLATFORM(IOS)
         if (editorState.isContentRichlyEditable && _webView.configuration._attachmentElementEnabled) {
             for (NSItemProvider *itemProvider in pasteboard.itemProviders) {
-                if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleAttachment && itemProvider.web_fileUploadContentTypes.count)
+                auto preferredPresentationStyle = itemProvider.preferredPresentationStyle;
+                if (preferredPresentationStyle == UIPreferredPresentationStyleInline)
+                    continue;
+
+                if (preferredPresentationStyle == UIPreferredPresentationStyleUnspecified && !itemProvider.suggestedName.length)
+                    continue;
+
+                if (itemProvider.web_fileUploadContentTypes.count)
                     return YES;
             }
         }

@@ -1,3 +1,55 @@
+2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to copy and paste a PDF from Notes into Mail compose body
+        https://bugs.webkit.org/show_bug.cgi?id=196442
+        <rdar://problem/48573098>
+
+        Reviewed by Tim Horton.
+
+        Refactor some logic for inserting attachment elements upon paste or drop. Currently, we only prefer inserting
+        content as attachment elements if the items are annotated with UIPreferredPresentationStyleAttachment. However,
+        many data sources around the system (both first and third party) have not adopted this API, which makes it
+        difficult to determine whether a given item provider should be treated as a file or not. In this bug in
+        particular, no preferred presentation style is set, so we fail to handle the paste command by inserting an
+        attachment element.
+
+        However, most apps around the system that write file or attachment-like data to the pasteboard will at least
+        offer a suggested name for the file, in the form of -[NSItemProvider suggestedName]. To address this, instead of
+        relying solely on the preferredPresentationStyle, additionally take a suggested name as an indicator that the
+        item is probably a file.
+
+        In fact, Pasteboard::fileContentState already has similar logic to check for either a suggested file name or
+        explicitly specified presentation style. We pull this out into a separate helper method on PasteboardItemInfo,
+        and use it for both Pasteboard::fileContentState and prefersAttachmentRepresentation.
+
+        Tests:  WKAttachmentTestsIOS.InsertPastedContactAsAttachment
+                WKAttachmentTestsIOS.InsertPastedMapItemAsAttachment
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::mimeTypeFromContentType):
+
+        Work around <rdar://problem/49478229> by using the "text/vcard" MIME type to handle "public.vcard". CoreServices
+        currently maps "public.vcard" to "text/directory" when using UTTypeCopyPreferredTagWithClass, despite the SPI
+        -[NSURLFileTypeMappings MIMETypeForExtension:] returning "text/vcard" for a ".vcf" file.
+
+        * platform/PasteboardItemInfo.h:
+        (WebCore::PasteboardItemInfo::canBeTreatedAsAttachmentOrFile const):
+
+        Add a helper method to determine whether the PasteboardItemInfo prefers to be represented as inline data, or an
+        attachment, or neither. This differs slightly from the existing value of preferredPresentationStyle in that we
+        consider having a suggested file name as a strong indicator that the item should be treated as an attachment,
+        even if the presentation style is unspecified.
+
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::fileContentState):
+
+        Use PasteboardItemInfo::canBeTreatedAsAttachmentOrFile().
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::prefersAttachmentRepresentation):
+
+        Use PasteboardItemInfo::canBeTreatedAsAttachmentOrFile().
+
 2019-04-01  Tim Horton  <timothy_horton@apple.com>
 
         Make UIWKDocumentContext rects per-character instead of per-word

@@ -270,10 +270,10 @@ static bool prefersAttachmentRepresentation(const PasteboardItemInfo& info)
     if (contentTypeForHighestFidelityItem.isEmpty())
         return false;
 
-    if (info.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment)
-        return true;
+    if (info.preferredPresentationStyle == PasteboardItemPresentationStyle::Inline)
+        return false;
 
-    return UTTypeConformsTo(contentTypeForHighestFidelityItem.createCFString().get(), kUTTypeVCard);
+    return info.canBeTreatedAsAttachmentOrFile() || UTTypeConformsTo(contentTypeForHighestFidelityItem.createCFString().get(), kUTTypeVCard);
 }
 
 void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy)

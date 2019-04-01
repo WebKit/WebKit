@@ -1,3 +1,19 @@
+2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unable to copy and paste a PDF from Notes into Mail compose body
+        https://bugs.webkit.org/show_bug.cgi?id=196442
+        <rdar://problem/48573098>
+
+        Reviewed by Tim Horton.
+
+        Add new API tests to exercise pasting CNContact and MKMapItem-backed item providers. Additionally, adjust an
+        existing test that pastes a PDF file as an attachment to not require UIPreferredPresentationStyleAttachment
+        to be specified on the item providers.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::mapItemForTesting):
+        (TestWebKitAPI::contactItemForTesting):
+
 2019-04-01  Tim Horton  <timothy_horton@apple.com>
 
         Make UIWKDocumentContext rects per-character instead of per-word
