@@ -165,7 +165,7 @@ async function test() {
 
     // WebGPUPipelineLayout and WebGPURenderPipeline
     const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [leftTriangleBGLayout, rightTriangleBGLayout] });
-    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputState, null, "triangle-list");
+    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, inputState, null, "triangle-list");
 
     // WebGPUBufferBindings
     const bindingUL = createBufferBinding(upperLeft);

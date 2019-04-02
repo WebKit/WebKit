@@ -13957,6 +13957,10 @@
 		D0ADB28C2237842E00A22935 /* GPUColorStateDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUColorStateDescriptor.idl; sourceTree = "<group>"; };
 		D0B0556609C6700100307E43 /* CreateLinkCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateLinkCommand.h; sourceTree = "<group>"; };
 		D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CreateLinkCommand.cpp; sourceTree = "<group>"; };
+		D0B56EAA224EC6240061049C /* GPUBlendDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBlendDescriptor.h; sourceTree = "<group>"; };
+		D0B56EAB224EC6240061049C /* GPUBlendDescriptor.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUBlendDescriptor.idl; sourceTree = "<group>"; };
+		D0B56EAD224ECE200061049C /* GPUColorWriteBits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUColorWriteBits.h; sourceTree = "<group>"; };
+		D0B56EAE224ECE200061049C /* GPUColorWriteBits.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = GPUColorWriteBits.idl; sourceTree = "<group>"; };
 		D0B8BB0121C46E78000C7681 /* GPUBindGroupLayoutBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUBindGroupLayoutBinding.h; sourceTree = "<group>"; };
 		D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedStyleSheetClient.h; sourceTree = "<group>"; };
 		D0BD4F5A1408850F006839B6 /* DictationCommandIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DictationCommandIOS.cpp; sourceTree = "<group>"; };
@@ -18213,6 +18217,7 @@
 				D0BE104E21E695E200E42A89 /* GPUBindGroupBinding.h */,
 				D0BE105121E6A70E00E42A89 /* GPUBindGroupDescriptor.h */,
 				D02454D021C4A41C00B73628 /* GPUBindGroupLayout.h */,
+				D0B56EAA224EC6240061049C /* GPUBlendDescriptor.h */,
 				D084033A221CBF5400007205 /* GPUBuffer.cpp */,
 				D0D8649221B760F2003C983C /* GPUBuffer.h */,
 				D0BE104A21E6872F00E42A89 /* GPUBufferBinding.h */,
@@ -18220,6 +18225,7 @@
 				D01B811D2213636E00627B6C /* GPUBufferUsage.h */,
 				D001D9AB21B0C7BF0023B9BC /* GPUColor.h */,
 				D0ADB28B2237842E00A22935 /* GPUColorStateDescriptor.h */,
+				D0B56EAD224ECE200061049C /* GPUColorWriteBits.h */,
 				312FF8BD21A4C2F100EB199D /* GPUCommandBuffer.h */,
 				D03C849C21FFC7FC0002227F /* GPUCompareFunction.h */,
 				D089033F2241CE4600F3F440 /* GPUComputePassEncoder.h */,
@@ -25778,6 +25784,7 @@
 				D0D69C9F222E015E0032927E /* GPUBindGroupLayoutBinding.idl */,
 				D0D69C9C222E00C20032927E /* GPUBindGroupLayoutDescriptor.h */,
 				D0D69C9D222E00C20032927E /* GPUBindGroupLayoutDescriptor.idl */,
+				D0B56EAB224EC6240061049C /* GPUBlendDescriptor.idl */,
 				D01B811922135EB900627B6C /* GPUBufferDescriptor.idl */,
 				D01B811C2213627300627B6C /* GPUBufferUsage.idl */,
 				D093D2292179541600329217 /* GPUCanvasContext.cpp */,
@@ -25785,6 +25792,7 @@
 				D093D227217951D400329217 /* GPUCanvasContext.idl */,
 				D01B811222125AFC00627B6C /* GPUColor.idl */,
 				D0ADB28C2237842E00A22935 /* GPUColorStateDescriptor.idl */,
+				D0B56EAE224ECE200061049C /* GPUColorWriteBits.idl */,
 				D03C849E21FFCF000002227F /* GPUCompareFunction.idl */,
 				D03C84A221FFD7230002227F /* GPUDepthStencilStateDescriptor.idl */,
 				D026F480220A2B7000AC5F49 /* GPUExtent3D.idl */,

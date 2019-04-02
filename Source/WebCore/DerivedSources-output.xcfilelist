@@ -587,6 +587,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutBinding.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutBinding.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBindGroupLayoutDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBlendDescriptor.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBlendDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferDescriptor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUBufferUsage.cpp
@@ -597,6 +599,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColor.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorStateDescriptor.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWriteBits.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorWriteBits.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCompareFunction.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUDepthStencilStateDescriptor.cpp

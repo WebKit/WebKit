@@ -23,8 +23,8 @@ async function start() {
     const fragmentStage = {module: shaderModule, entryPoint: "fragmentShader"};
     const primitiveTopology = "triangle-strip";
     const rasterizationState = {frontFace: "cw", cullMode: "none"};
-    const alphaBlend = {srcFactor: "zero", dstFactor: "one", operation: "add"};
-    const colorBlend = {srcFactor: "zero", dstFactor: "one", operation: "add"};
+    const alphaBlend = {srcFactor: "one", dstFactor: "zero", operation: "add"};
+    const colorBlend = {srcFactor: "one", dstFactor: "zero", operation: "add"};
     const colorStates = [{format: "rgba8unorm", alphaBlend, colorBlend, writeMask: 15}]; // GPUColorWriteBits.ALL
     const depthStencilState = null;
     

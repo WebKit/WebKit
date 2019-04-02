@@ -2720,8 +2720,10 @@ JSFontFaceSet.cpp
 JSGPUCanvasContext.cpp
 JSGPUColor.cpp
 JSGPUColorStateDescriptor.cpp
+JSGPUColorWriteBits.cpp
 JSGPUBindGroupLayoutBinding.cpp
 JSGPUBindGroupLayoutDescriptor.cpp
+JSGPUBlendDescriptor.cpp
 JSGPUBufferDescriptor.cpp
 JSGPUBufferUsage.cpp
 JSGPUCompareFunction.cpp

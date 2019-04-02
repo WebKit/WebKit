@@ -378,8 +378,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webgpu/GPUCanvasContext.idl \
     $(WebCore)/Modules/webgpu/GPUColor.idl \
     $(WebCore)/Modules/webgpu/GPUColorStateDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUColorWriteBits.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutBinding.idl \
     $(WebCore)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl \
+    $(WebCore)/Modules/webgpu/GPUBlendDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBufferDescriptor.idl \
     $(WebCore)/Modules/webgpu/GPUBufferUsage.idl \
     $(WebCore)/Modules/webgpu/GPUCompareFunction.idl \

@@ -465,11 +465,13 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webgpu/DOMWindowWebGPU.idl
     Modules/webgpu/GPUBindGroupLayoutBinding.idl
     Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
+    Modules/webgpu/GPUBlendDescriptor.idl
     Modules/webgpu/GPUBufferDescriptor.idl
     Modules/webgpu/GPUBufferUsage.idl
     Modules/webgpu/GPUCanvasContext.idl
     Modules/webgpu/GPUColor.idl
     Modules/webgpu/GPUColorStateDescriptor.idl
+    Modules/webgpu/GPUColorWriteBits.idl
     Modules/webgpu/GPUCompareFunction.idl
     Modules/webgpu/GPUDepthStencilStateDescriptor.idl
     Modules/webgpu/GPUExtent3D.idl

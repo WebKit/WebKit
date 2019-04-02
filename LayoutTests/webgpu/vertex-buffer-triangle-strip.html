@@ -90,7 +90,7 @@ async function test() {
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const vertexBuffer = createVertexBuffer(device);
     const inputStateDescriptor = createInputStateDescriptor();
-    const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, inputStateDescriptor);
     const commandEncoder = device.createCommandEncoder();
     const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
     encodeBasicCommands(passEncoder, pipeline, vertexBuffer);

@@ -330,11 +330,13 @@ $(PROJECT_DIR)/Modules/webdriver/NavigatorWebDriver.idl
 $(PROJECT_DIR)/Modules/webgpu/DOMWindowWebGPU.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBindGroupLayoutBinding.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBindGroupLayoutDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUBlendDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBufferDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUBufferUsage.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCanvasContext.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUColorStateDescriptor.idl
+$(PROJECT_DIR)/Modules/webgpu/GPUColorWriteBits.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUCompareFunction.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUDepthStencilStateDescriptor.idl
 $(PROJECT_DIR)/Modules/webgpu/GPUExtent3D.idl

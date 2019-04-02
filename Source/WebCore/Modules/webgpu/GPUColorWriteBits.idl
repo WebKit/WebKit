@@ -24,15 +24,18 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long GPUColorWriteFlags;
+typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary GPUColorStateDescriptor {
-    GPUTextureFormat format;
-
-    GPUBlendDescriptor alphaBlend;
-    GPUBlendDescriptor colorBlend;
-    GPUColorWriteFlags writeMask;
+    DoNotCheckConstants,
+    EnabledAtRuntime=WebGPU,
+    ImplementationLacksVTable
+] interface GPUColorWriteBits {
+    const u32 NONE = 0;
+    const u32 RED = 1;
+    const u32 GREEN = 2;
+    const u32 BLUE = 4;
+    const u32 ALPHA = 8;
+    const u32 ALL = 15;
 };

@@ -22,17 +22,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-// https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long GPUColorWriteFlags;
+#pragma once
 
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
-] dictionary GPUColorStateDescriptor {
-    GPUTextureFormat format;
+#if ENABLE(WEBGPU)
 
-    GPUBlendDescriptor alphaBlend;
-    GPUBlendDescriptor colorBlend;
-    GPUColorWriteFlags writeMask;
+#include <wtf/RefCounted.h>
+
+namespace WebCore {
+
+using GPUColorWriteFlags = unsigned;
+
+class GPUColorWriteBits : public RefCounted<GPUColorWriteBits> {
+public:
+    enum class Flags : GPUColorWriteFlags {
+        None = 0,
+        Red = 1 << 0,
+        Green = 1 << 1,
+        Blue = 1 << 2,
+        Alpha = 1 << 3,
+        All = (1 << 4) - 1,
+    };
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(WEBGPU)

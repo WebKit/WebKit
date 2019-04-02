@@ -27,12 +27,18 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUBlendDescriptor.h"
+#include "GPUColorWriteBits.h"
 #include "GPUTextureFormat.h"
 
 namespace WebCore {
 
 struct GPUColorStateDescriptor {
     GPUTextureFormat format;
+
+    GPUBlendDescriptor alphaBlend;
+    GPUBlendDescriptor colorBlend;
+    GPUColorWriteFlags writeMask;
 };
 
 } // namespace WebCore

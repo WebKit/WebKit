@@ -1,3 +1,26 @@
+2019-04-02  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Implement blend states and color write mask for  GPUColorStateDescriptor
+        https://bugs.webkit.org/show_bug.cgi?id=196474
+
+        Reviewed by Myles C. Maxfield.
+
+        Add blend-triangle-strip to test color blending and color-write-mask-triangle-strip.html to test color write mask.
+        Update other tests to specify blend states when creating a GPURenderPipeline.
+
+        * webgpu/blend-triangle-strip-expected.html: Added.
+        * webgpu/blend-triangle-strip.html: Added.
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/color-write-mask-triangle-strip-expected.html: Added.
+        * webgpu/color-write-mask-triangle-strip.html: Added.
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/js/webgpu-functions.js:
+        * webgpu/render-pipelines.html:
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/whlsl.html:
+
 2019-04-02  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Ignore reconstructed renderers when checking for visibility change

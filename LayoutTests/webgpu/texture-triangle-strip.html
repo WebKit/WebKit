@@ -185,7 +185,7 @@ async function test() {
     const bindGroup = device.createBindGroup(bindGroupDescriptor);
 
     // Pipeline and render
-    const pipeline = createBasicPipeline(shaderModule, device, pipelineLayout, inputStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, null, pipelineLayout, inputStateDescriptor);
     const commandEncoder = device.createCommandEncoder();
 
     const bufferCopyView = {

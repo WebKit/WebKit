@@ -92,7 +92,7 @@ async function test() {
     // FIXME: Replace with non-MSL shaders.
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const inputStateDescriptor = createInputStateDescriptor();
-    const pipeline = createBasicPipeline(shaderModule, device, null, inputStateDescriptor);
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, inputStateDescriptor);
 
     const upperLeftBuffer = createAndSetVertexBuffer(device, [-1, 1, -1, -1, 0, 1]);
     const middleBuffer = createAndSetVertexBuffer(device, [0, 1, -1, -1, 1, -1]);

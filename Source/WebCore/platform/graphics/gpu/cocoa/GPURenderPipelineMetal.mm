@@ -36,6 +36,7 @@
 #import "WHLSLVertexBufferIndexCalculator.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/OptionSet.h>
 #import <wtf/Optional.h>
 
 namespace WebCore {
@@ -367,13 +368,93 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
     return true;
 }
 
-static bool trySetColorStatesForColorAttachmentArray(MTLRenderPipelineColorAttachmentDescriptorArray* array, const Vector<GPUColorStateDescriptor>& colorStates)
+static MTLColorWriteMask mtlColorWriteMaskForGPUColorWriteFlags(GPUColorWriteFlags flags)
 {
-    // FIXME: Implement and validate the rest of GPUColorStateDescriptor.
-    for (unsigned i = 0; i < colorStates.size(); ++i)
-        [array[i] setPixelFormat:static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(colorStates[i].format))];
+    if (flags == static_cast<GPUColorWriteFlags>(GPUColorWriteBits::Flags::All))
+        return MTLColorWriteMaskAll;
 
-    return true;
+    auto options = OptionSet<GPUColorWriteBits::Flags>::fromRaw(flags);
+
+    MTLColorWriteMask mask = MTLColorWriteMaskNone;
+    if (options & GPUColorWriteBits::Flags::Red)
+        mask |= MTLColorWriteMaskRed;
+    if (options & GPUColorWriteBits::Flags::Green)
+        mask |= MTLColorWriteMaskGreen;
+    if (options & GPUColorWriteBits::Flags::Blue)
+        mask |= MTLColorWriteMaskBlue;
+    if (options & GPUColorWriteBits::Flags::Alpha)
+        mask |= MTLColorWriteMaskAlpha;
+
+    return mask;
+}
+
+static MTLBlendOperation mtlBlendOperationForGPUBlendOperation(GPUBlendOperation op)
+{
+    switch (op) {
+    case GPUBlendOperation::Add:
+        return MTLBlendOperationAdd;
+    case GPUBlendOperation::Subtract:
+        return MTLBlendOperationSubtract;
+    case GPUBlendOperation::ReverseSubtract:
+        return MTLBlendOperationReverseSubtract;
+    case GPUBlendOperation::Min:
+        return MTLBlendOperationMin;
+    case GPUBlendOperation::Max:
+        return MTLBlendOperationMax;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+static MTLBlendFactor mtlBlendFactorForGPUBlendFactor(GPUBlendFactor factor)
+{
+    switch (factor) {
+    case GPUBlendFactor::Zero:
+        return MTLBlendFactorZero;
+    case GPUBlendFactor::One:
+        return MTLBlendFactorOne;
+    case GPUBlendFactor::SrcColor:
+        return MTLBlendFactorSourceColor;
+    case GPUBlendFactor::OneMinusSrcColor:
+        return MTLBlendFactorOneMinusSourceColor;
+    case GPUBlendFactor::SrcAlpha:
+        return MTLBlendFactorSourceAlpha;
+    case GPUBlendFactor::OneMinusSrcAlpha:
+        return MTLBlendFactorOneMinusSourceAlpha;
+    case GPUBlendFactor::DstColor:
+        return MTLBlendFactorDestinationColor;
+    case GPUBlendFactor::OneMinusDstColor:
+        return MTLBlendFactorOneMinusDestinationColor;
+    case GPUBlendFactor::DstAlpha:
+        return MTLBlendFactorDestinationAlpha;
+    case GPUBlendFactor::OneMinusDstAlpha:
+        return MTLBlendFactorOneMinusDestinationAlpha;
+    case GPUBlendFactor::SrcAlphaSaturated:
+        return MTLBlendFactorSourceAlpha;
+    case GPUBlendFactor::BlendColor:
+        return MTLBlendFactorBlendColor;
+    case GPUBlendFactor::OneMinusBlendColor:
+        return MTLBlendFactorOneMinusBlendColor;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+static void setColorStatesForColorAttachmentArray(MTLRenderPipelineColorAttachmentDescriptorArray* array, const Vector<GPUColorStateDescriptor>& colorStates)
+{
+    for (unsigned i = 0; i < colorStates.size(); ++i) {
+        auto& state = colorStates[i];
+        auto descriptor = retainPtr([array objectAtIndexedSubscript:i]);
+        [descriptor setPixelFormat:static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(state.format))];
+        [descriptor setWriteMask:mtlColorWriteMaskForGPUColorWriteFlags(state.writeMask)];
+        [descriptor setBlendingEnabled:YES];
+        [descriptor setAlphaBlendOperation:mtlBlendOperationForGPUBlendOperation(state.alphaBlend.operation)];
+        [descriptor setRgbBlendOperation:mtlBlendOperationForGPUBlendOperation(state.colorBlend.operation)];
+        [descriptor setDestinationAlphaBlendFactor:mtlBlendFactorForGPUBlendFactor(state.alphaBlend.dstFactor)];
+        [descriptor setDestinationRGBBlendFactor:mtlBlendFactorForGPUBlendFactor(state.colorBlend.dstFactor)];
+        [descriptor setSourceAlphaBlendFactor:mtlBlendFactorForGPUBlendFactor(state.alphaBlend.srcFactor)];
+        [descriptor setSourceRGBBlendFactor:mtlBlendFactorForGPUBlendFactor(state.colorBlend.srcFactor)];
+    }
 }
 
 static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const char* const functionName, const GPURenderPipelineDescriptor& descriptor, const GPUDevice& device)
@@ -391,17 +472,17 @@ static RetainPtr<MTLRenderPipelineState> tryCreateMtlRenderPipelineState(const c
         return nullptr;
     }
 
-    bool didSetFunctions = false, didSetInputState = false, didSetColorStates = false;
+    bool didSetFunctions = false, didSetInputState = false;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     didSetFunctions = trySetFunctionsForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor, device);
     didSetInputState = trySetInputStateForPipelineDescriptor(functionName, mtlDescriptor.get(), descriptor.inputState);
-    didSetColorStates = trySetColorStatesForColorAttachmentArray(mtlDescriptor.get().colorAttachments, descriptor.colorStates);
+    setColorStatesForColorAttachmentArray(mtlDescriptor.get().colorAttachments, descriptor.colorStates);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
-    if (!didSetFunctions || !didSetInputState || !didSetColorStates)
+    if (!didSetFunctions || !didSetInputState)
         return nullptr;
 
     RetainPtr<MTLRenderPipelineState> pipeline;

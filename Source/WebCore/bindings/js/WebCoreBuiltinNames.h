@@ -83,11 +83,12 @@ namespace WebCore {
     macro(GamepadEvent) \
     macro(GPUBufferUsage) \
     macro(GPUCanvasContext) \
-    macro(GPUShaderModule) \
+    macro(GPUColorWriteBits) \
     macro(GPUCommandBuffer) \
     macro(GPUCommandEncoder) \
     macro(GPUComputePassEncoder) \
     macro(GPUComputePipeline) \
+    macro(GPUShaderModule) \
     macro(GPUShaderStageBit) \
     macro(GPUSwapChain) \
     macro(GPUTextureUsage) \
