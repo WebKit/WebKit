@@ -699,3 +699,5 @@ webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html 
 webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
 
 webkit.org/b/196448 [ Debug ] inspector/audit/basic.html [ Pass Timeout ]
+
+webkit.org/b/196502 media/video-background-tab-playback.html [ Pass Failure ]
