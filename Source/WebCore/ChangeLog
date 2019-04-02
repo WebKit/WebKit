@@ -1,3 +1,18 @@
+2019-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Nullptr crash in Document::open after calling policyChecker().stopCheck()
+        https://bugs.webkit.org/show_bug.cgi?id=196479
+
+        Reviewed by Antti Koivisto.
+
+        Added a missing nullptr check in Document::open after calling m_frame->loader().policyChecker().stopCheck()
+        since it invokes m_willSubmitFormCompletionHandlers in WebKit2, and that could clear m_frame.
+
+        Unfortunately, we don't have any reproducible test case.
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
 2019-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Unreviewed build fix.

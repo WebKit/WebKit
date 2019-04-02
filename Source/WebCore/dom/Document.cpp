@@ -2738,7 +2738,7 @@ ExceptionOr<void> Document::open(Document* responsibleDocument)
 
         if (m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
             m_frame->loader().policyChecker().stopCheck();
-        if (m_frame->loader().state() == FrameStateProvisional)
+        if (m_frame && m_frame->loader().state() == FrameStateProvisional)
             m_frame->loader().stopAllLoaders();
     }
 
