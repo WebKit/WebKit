@@ -1134,6 +1134,21 @@
         "comment": "The implementation does not support ReadableStreamBYOBReader."
     },
     {
+        "name": "Resize Observer",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://drafts.csswg.org/resize-observer/",
+        "webkit-url": "https://bugs.webkit.org/show_bug.cgi?id=157743",
+        "keywords": ["resize", "resize observer", "resizeobserver"],
+        "description": "An API for observing changes to Element's size.",
+        "contact": {
+            "name": "Cathie Chen",
+            "email": "cathiechen@igalia.com"
+        }
+    },
+    {
         "name": "Scroll Anchoring",
         "status": {
             "status": "Under Consideration"
