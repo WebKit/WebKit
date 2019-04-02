@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPagePrivate.h>
@@ -36,6 +37,7 @@
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/WKWebsitePolicies.h>
 #import <WebKit/_WKUserContentExtensionStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsitePolicies.h>
@@ -236,6 +238,22 @@ TEST(WebKit, WebsitePoliciesContentBlockersEnabled)
     receivedAutoplayEvent = event;
 }
 #endif
+
+@end
+
+@interface WebsitePoliciesNavigationDelegate : TestNavigationDelegate <WKNavigationDelegatePrivate>
+@property (nonatomic, copy) void (^decidePolicyForNavigationActionWithWebsitePolicies)(WKNavigationAction *, id <NSSecureCoding>, void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *));
+@end
+
+@implementation WebsitePoliciesNavigationDelegate
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction userInfo:(id <NSSecureCoding>)userInfo decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    if (_decidePolicyForNavigationActionWithWebsitePolicies)
+        _decidePolicyForNavigationActionWithWebsitePolicies(navigationAction, userInfo, decisionHandler);
+    else
+        decisionHandler(WKNavigationActionPolicyAllow, nil);
+}
 
 @end
 
@@ -512,6 +530,46 @@ TEST(WebKit, WebsitePoliciesUserInterferenceWithPlaying)
     [webView mouseUpAtPoint:playButtonClickPoint];
     runUntilReceivesAutoplayEvent(kWKAutoplayEventUserDidInterfereWithPlayback);
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
+}
+
+TEST(WebKit, WebsitePoliciesWithBridgingCast)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
+    auto delegate = adoptNS([[WebsitePoliciesNavigationDelegate alloc] init]);
+
+    __block bool didInvokeDecisionHandler = false;
+    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, id <NSSecureCoding>, void (^decisionHandler)(WKNavigationActionPolicy, _WKWebsitePolicies *)) {
+        auto policies = adoptWK(WKWebsitePoliciesCreate());
+        decisionHandler(WKNavigationActionPolicyAllow, (__bridge _WKWebsitePolicies *)policies.get());
+        didInvokeDecisionHandler = true;
+    }];
+
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadTestPageNamed:@"simple"];
+    [delegate waitForDidFinishNavigation];
+    EXPECT_TRUE(didInvokeDecisionHandler);
+}
+
+TEST(WebKit, WebsitePoliciesWithUnexpectedType)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
+    auto delegate = adoptNS([[WebsitePoliciesNavigationDelegate alloc] init]);
+
+    __block bool didCatchException = false;
+    [delegate setDecidePolicyForNavigationActionWithWebsitePolicies:^(WKNavigationAction *, id <NSSecureCoding>, void (^decisionHandler)(WKNavigationActionPolicy, _WKWebsitePolicies *)) {
+        @try {
+            id fakePolicies = @"Hello";
+            decisionHandler(WKNavigationActionPolicyAllow, (_WKWebsitePolicies *)fakePolicies);
+        } @catch (NSException *exception) {
+            didCatchException = true;
+        }
+    }];
+
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadTestPageNamed:@"simple"];
+    TestWebKitAPI::Util::run(&didCatchException);
 }
 
 struct ParsedRange {

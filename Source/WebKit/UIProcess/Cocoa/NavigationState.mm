@@ -552,12 +552,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
-    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), webPageProxy = makeRef(webPageProxy), subframeNavigation](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), webPageProxy = makeRef(webPageProxy), subframeNavigation](WKNavigationActionPolicy actionPolicy, id policiesOrPreferences) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
 
-        RefPtr<API::WebsitePolicies> apiWebsitePolicies = [websitePolicies webpagePreferences] ? [websitePolicies webpagePreferences]->_websitePolicies.get() : nullptr;
+        RefPtr<API::WebsitePolicies> apiWebsitePolicies;
+        if ([policiesOrPreferences isKindOfClass:WKWebpagePreferences.self])
+            apiWebsitePolicies = ((WKWebpagePreferences *)policiesOrPreferences)->_websitePolicies.get();
+        else if ([policiesOrPreferences isKindOfClass:_WKWebsitePolicies.self])
+            apiWebsitePolicies = [policiesOrPreferences webpagePreferences]->_websitePolicies.get();
+        else if (policiesOrPreferences)
+            [NSException raise:NSInvalidArgumentException format:@"Expected policies of class %@, but got %@", NSStringFromClass(_WKWebsitePolicies.self), [policiesOrPreferences class]];
+
         if (apiWebsitePolicies) {
             if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
                 auto sessionID = websiteDataStore->websiteDataStore().sessionID();

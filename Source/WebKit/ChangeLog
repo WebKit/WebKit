@@ -1,3 +1,27 @@
+2019-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r243726): Crash at unrecognized selector: -[WKWebpagePreferences webpagePreferences]
+        https://bugs.webkit.org/show_bug.cgi?id=196496
+        <rdar://problem/49521634>
+
+        Reviewed by Chris Dumez.
+
+        r243726 made an incorrect assumption that all callers of -decidePolicyForNavigationAction:decisionHandler: and
+        -decidePolicyForNavigationAction:userInfo:decisionHandler: must be instances of _WKWebsitePolicies, as opposed
+        to the new WKWebpagePreferences. However, it's possible for clients (in this case, Safari) to already generate
+        and pass in an instance of WKWebpagePreferences by bridging the C API opaque ref (WKWebsitePoliciesRef) into the
+        Objective-C object (which is now WKWebpagePreferences, after my change).
+
+        To maintain binary compatibility of trunk WebKit against prior versions of Safari, we need to handle both
+        WKWebpagePreferences and the soon-to-be-deprecated _WKWebsitePolicies in the navigation action policy decision
+        handler.
+
+        Tests:  WebKit.WebsitePoliciesWithBridgingCast
+                WebKit.WebsitePoliciesWithUnexpectedType
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
 2019-04-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop debug logging landed as part of r242903 by mistake.
