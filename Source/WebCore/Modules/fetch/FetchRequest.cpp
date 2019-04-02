@@ -203,9 +203,6 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 
 ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
-    if (input.isDisturbedOrLocked())
-        return Exception {TypeError, "Request input is disturbed or locked."_s };
-
     m_request = input.m_request;
     m_options = input.m_options;
     m_referrer = input.m_referrer;
@@ -240,6 +237,9 @@ ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
         if (setBodyResult.hasException())
             return setBodyResult.releaseException();
     } else {
+        if (input.isDisturbedOrLocked())
+            return Exception { TypeError, "Request input is disturbed or locked."_s };
+
         auto setBodyResult = setBody(input);
         if (setBodyResult.hasException())
             return setBodyResult.releaseException();

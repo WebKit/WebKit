@@ -1,5 +1,21 @@
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
+        [Fetch API] Allow used body replacement in Request constructor
+        https://bugs.webkit.org/show_bug.cgi?id=183703
+        <rdar://problem/49425609>
+
+        Reviewed by Youenn Fablet.
+
+        Allow used body replacement in Request constructor as per:
+        - https://github.com/whatwg/fetch/pull/675
+
+        No new tests, rebaseline existing test.
+
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::initializeWith):
+
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r243551.
 
         Seems to have broken file uploads to SoundCloud
