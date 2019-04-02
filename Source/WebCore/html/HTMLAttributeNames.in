@@ -202,6 +202,7 @@ onaccessibleincrement
 onaccessiblescrollintoview
 onaccessiblesetvalue
 onaccessibleselect
+onafterprint
 onanimationstart
 onanimationiteration
 onanimationend
@@ -213,6 +214,7 @@ onbeforecut
 onbeforeinput
 onbeforeload
 onbeforepaste
+onbeforeprint
 onbeforeunload
 onblur
 oncanplay

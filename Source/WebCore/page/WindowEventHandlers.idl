@@ -31,8 +31,8 @@
     // Commented out event handlers are defined by the HTML5 specification but
     // are not yet implemented.
 
-    // [WindowEventHandler] attribute EventHandler onafterprint;.
-    // [WindowEventHandler] attribute EventHandler onbeforeprint;.
+    [WindowEventHandler] attribute EventHandler onafterprint;
+    [WindowEventHandler] attribute EventHandler onbeforeprint;
     [WindowEventHandler] attribute EventHandler onbeforeunload;
     [WindowEventHandler] attribute EventHandler onhashchange;
     [WindowEventHandler] attribute EventHandler onlanguagechange;

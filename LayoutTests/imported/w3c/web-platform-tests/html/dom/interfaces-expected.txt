@@ -5,8 +5,6 @@ CONSOLE MESSAGE: line 482: callback not yet supported
 CONSOLE MESSAGE: line 482: callback not yet supported
 CONSOLE MESSAGE: line 482: callback not yet supported
 CONSOLE MESSAGE: line 482: callback not yet supported
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. (kCFErrorDomainCFNetwork error 2.)
-CONSOLE MESSAGE: WebSocket network error: The operation couldn’t be completed. (kCFErrorDomainCFNetwork error 2.)
 HTML IDL tests
 
 
@@ -896,8 +894,8 @@ PASS HTMLBodyElement interface: attribute vLink
 PASS HTMLBodyElement interface: attribute aLink 
 PASS HTMLBodyElement interface: attribute bgColor 
 PASS HTMLBodyElement interface: attribute background 
-FAIL HTMLBodyElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
-FAIL HTMLBodyElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
+PASS HTMLBodyElement interface: attribute onafterprint 
+PASS HTMLBodyElement interface: attribute onbeforeprint 
 PASS HTMLBodyElement interface: attribute onbeforeunload 
 PASS HTMLBodyElement interface: attribute onhashchange 
 PASS HTMLBodyElement interface: attribute onlanguagechange 
@@ -920,8 +918,8 @@ PASS HTMLBodyElement interface: document.createElement("body") must inherit prop
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "aLink" with the proper type 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "bgColor" with the proper type 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "background" with the proper type 
-FAIL HTMLBodyElement interface: document.createElement("body") must inherit property "onafterprint" with the proper type assert_inherits: property "onafterprint" not found in prototype chain
-FAIL HTMLBodyElement interface: document.createElement("body") must inherit property "onbeforeprint" with the proper type assert_inherits: property "onbeforeprint" not found in prototype chain
+PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onafterprint" with the proper type 
+PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onbeforeprint" with the proper type 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onbeforeunload" with the proper type 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onhashchange" with the proper type 
 PASS HTMLBodyElement interface: document.createElement("body") must inherit property "onlanguagechange" with the proper type 
@@ -4684,8 +4682,8 @@ PASS Window interface: attribute ontimeupdate
 PASS Window interface: attribute ontoggle 
 PASS Window interface: attribute onvolumechange 
 PASS Window interface: attribute onwaiting 
-FAIL Window interface: attribute onafterprint assert_own_property: The global object must have a property "onafterprint" expected property "onafterprint" missing
-FAIL Window interface: attribute onbeforeprint assert_own_property: The global object must have a property "onbeforeprint" expected property "onbeforeprint" missing
+PASS Window interface: attribute onafterprint 
+PASS Window interface: attribute onbeforeprint 
 PASS Window interface: attribute onbeforeunload 
 PASS Window interface: attribute onhashchange 
 PASS Window interface: attribute onlanguagechange 
@@ -4827,8 +4825,8 @@ PASS Window interface: window must inherit property "ontimeupdate" with the prop
 PASS Window interface: window must inherit property "ontoggle" with the proper type 
 PASS Window interface: window must inherit property "onvolumechange" with the proper type 
 PASS Window interface: window must inherit property "onwaiting" with the proper type 
-FAIL Window interface: window must inherit property "onafterprint" with the proper type assert_own_property: expected property "onafterprint" missing
-FAIL Window interface: window must inherit property "onbeforeprint" with the proper type assert_own_property: expected property "onbeforeprint" missing
+PASS Window interface: window must inherit property "onafterprint" with the proper type 
+PASS Window interface: window must inherit property "onbeforeprint" with the proper type 
 PASS Window interface: window must inherit property "onbeforeunload" with the proper type 
 PASS Window interface: window must inherit property "onhashchange" with the proper type 
 PASS Window interface: window must inherit property "onlanguagechange" with the proper type 
@@ -5359,8 +5357,8 @@ PASS HTMLFrameSetElement interface: existence and properties of interface protot
 PASS HTMLFrameSetElement interface: existence and properties of interface prototype object's @@unscopables property 
 PASS HTMLFrameSetElement interface: attribute cols 
 PASS HTMLFrameSetElement interface: attribute rows 
-FAIL HTMLFrameSetElement interface: attribute onafterprint assert_true: The prototype object must have a property "onafterprint" expected true got false
-FAIL HTMLFrameSetElement interface: attribute onbeforeprint assert_true: The prototype object must have a property "onbeforeprint" expected true got false
+PASS HTMLFrameSetElement interface: attribute onafterprint 
+PASS HTMLFrameSetElement interface: attribute onbeforeprint 
 PASS HTMLFrameSetElement interface: attribute onbeforeunload 
 PASS HTMLFrameSetElement interface: attribute onhashchange 
 PASS HTMLFrameSetElement interface: attribute onlanguagechange 
@@ -5379,8 +5377,8 @@ PASS HTMLFrameSetElement must be primary interface of document.createElement("fr
 PASS Stringification of document.createElement("frameset") 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "cols" with the proper type 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "rows" with the proper type 
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onafterprint" with the proper type assert_inherits: property "onafterprint" not found in prototype chain
-FAIL HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeprint" with the proper type assert_inherits: property "onbeforeprint" not found in prototype chain
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onafterprint" with the proper type 
+PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeprint" with the proper type 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onbeforeunload" with the proper type 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onhashchange" with the proper type 
 PASS HTMLFrameSetElement interface: document.createElement("frameset") must inherit property "onlanguagechange" with the proper type 

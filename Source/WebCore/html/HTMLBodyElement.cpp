@@ -98,6 +98,8 @@ void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& 
 HTMLElement::EventHandlerNameMap HTMLBodyElement::createWindowEventHandlerNameMap()
 {
     static const QualifiedName* const table[] = {
+        &onafterprintAttr.get(),
+        &onbeforeprintAttr.get(),
         &onbeforeunloadAttr.get(),
         &onblurAttr.get(),
         &onerrorAttr.get(),

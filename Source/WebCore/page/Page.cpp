@@ -2988,6 +2988,28 @@ void Page::removeLatchingStateForTarget(Element& targetNode)
 }
 #endif // PLATFORM(MAC)
 
+static void dispatchPrintEvent(Frame& mainFrame, const AtomicString& eventType)
+{
+    Vector<Ref<Frame>> frames;
+    for (auto* frame = &mainFrame; frame; frame = frame->tree().traverseNext())
+        frames.append(*frame);
+
+    for (auto& frame : frames) {
+        if (auto* window = frame->window())
+            window->dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No), window->document());
+    }
+}
+
+void Page::dispatchBeforePrintEvent()
+{
+    dispatchPrintEvent(m_mainFrame, eventNames().beforeprintEvent);
+}
+
+void Page::dispatchAfterPrintEvent()
+{
+    dispatchPrintEvent(m_mainFrame, eventNames().afterprintEvent);
+}
+
 #if ENABLE(APPLE_PAY)
 void Page::setPaymentCoordinator(std::unique_ptr<PaymentCoordinator>&& paymentCoordinator)
 {

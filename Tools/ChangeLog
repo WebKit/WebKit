@@ -1,3 +1,17 @@
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add support for Window's beforeprint / afterprint events
+        https://bugs.webkit.org/show_bug.cgi?id=196478
+
+        Reviewed by Alex Christensen.
+
+        Add minimal implementation for printFrame in WebKitTestRunner.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::printFrame):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2019-04-02  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Status bubble hover over message should clearly indicate that build is in-progress

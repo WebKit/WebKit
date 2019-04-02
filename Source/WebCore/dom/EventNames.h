@@ -63,6 +63,7 @@ namespace WebCore {
     macro(addsourcebuffer) \
     macro(addstream) \
     macro(addtrack) \
+    macro(afterprint) \
     macro(animationcancel) \
     macro(animationend) \
     macro(animationiteration) \
@@ -77,6 +78,7 @@ namespace WebCore {
     macro(beforeinput) \
     macro(beforeload) \
     macro(beforepaste) \
+    macro(beforeprint) \
     macro(beforeunload) \
     macro(beginEvent) \
     macro(blocked) \

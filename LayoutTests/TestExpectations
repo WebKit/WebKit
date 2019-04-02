@@ -58,6 +58,9 @@ pointerevents/ios [ Skip ]
 editing/pasteboard/ios [ Skip ]
 editing/pasteboard/mac [ Skip ]
 
+# WebKit2 only.
+printing/printing-events.html [ Skip ]
+
 http/tests/security/xss-DENIED-xsl-external-entity-no-logging.xml [ Skip ]
 
 # window.showModalDialog is only tested in DumpRenderTree on Mac.

@@ -262,6 +262,12 @@ static void requestPointerLock(WKPageRef page, const void*)
     WKPageDidAllowPointerLock(page);
 }
 
+static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
+{
+    WKPageBeginPrinting(page, frame, WKPrintInfo { 1.0, 21.0, 29.7 });
+    WKPageEndPrinting(page);
+}
+
 static bool shouldAllowDeviceOrientationAndMotionAccess(WKPageRef, WKSecurityOriginRef origin, const void*)
 {
     return TestController::singleton().handleDeviceOrientationAndMotionAccessRequest(origin);
@@ -320,7 +326,7 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
         0, // footerHeight
         0, // drawHeader
         0, // drawFooter
-        0, // printFrame
+        printFrame,
         runModal,
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
@@ -613,7 +619,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // footerHeight
         0, // drawHeader
         0, // drawFooter
-        0, // printFrame
+        printFrame,
         runModal,
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder

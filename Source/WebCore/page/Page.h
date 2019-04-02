@@ -296,6 +296,9 @@ public:
 
     WEBCORE_EXPORT void unmarkAllTextMatches();
 
+    WEBCORE_EXPORT void dispatchBeforePrintEvent();
+    WEBCORE_EXPORT void dispatchAfterPrintEvent();
+
     // find all the Ranges for the matching text.
     // Upon return, indexForSelection will be one of the following:
     // 0 if there is no user selection

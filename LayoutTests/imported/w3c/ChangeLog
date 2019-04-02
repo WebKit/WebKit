@@ -1,5 +1,21 @@
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Add support for Window's beforeprint / afterprint events
+        https://bugs.webkit.org/show_bug.cgi?id=196478
+
+        Reviewed by Alex Christensen.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.https-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/security-window/window-security.sub-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-properties.https-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/body-exposed-window-event-handlers-expected.txt:
+        * web-platform-tests/html/webappapis/scripting/events/event-handler-attributes-body-window-expected.txt:
+
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
         [Fetch API] Allow used body replacement in Request constructor
         https://bugs.webkit.org/show_bug.cgi?id=183703
         <rdar://problem/49425609>

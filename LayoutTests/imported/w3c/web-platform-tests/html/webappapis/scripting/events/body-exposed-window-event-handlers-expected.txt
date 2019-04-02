@@ -9,10 +9,10 @@ PASS Return null when getting the focus event handler of a windowless body
 PASS Ignore setting of focus window event handlers on windowless body 
 PASS Return null when getting the scroll event handler of a windowless body 
 PASS Ignore setting of scroll window event handlers on windowless body 
-FAIL Return null when getting the afterprint event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of afterprint window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
-FAIL Return null when getting the beforeprint event handler of a windowless body assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of beforeprint window event handlers on windowless body assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the afterprint event handler of a windowless body 
+PASS Ignore setting of afterprint window event handlers on windowless body 
+PASS Return null when getting the beforeprint event handler of a windowless body 
+PASS Ignore setting of beforeprint window event handlers on windowless body 
 PASS Return null when getting the beforeunload event handler of a windowless body 
 PASS Ignore setting of beforeunload window event handlers on windowless body 
 PASS Return null when getting the hashchange event handler of a windowless body 
@@ -49,10 +49,10 @@ PASS Return null when getting the focus event handler of a windowless frameset
 PASS Ignore setting of focus window event handlers on windowless frameset 
 PASS Return null when getting the scroll event handler of a windowless frameset 
 PASS Ignore setting of scroll window event handlers on windowless frameset 
-FAIL Return null when getting the afterprint event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of afterprint window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
-FAIL Return null when getting the beforeprint event handler of a windowless frameset assert_equals: expected (object) null but got (undefined) undefined
-FAIL Ignore setting of beforeprint window event handlers on windowless frameset assert_equals: expected (object) null but got (function) function "function () { return "Handler attached to windowless element"; }"
+PASS Return null when getting the afterprint event handler of a windowless frameset 
+PASS Ignore setting of afterprint window event handlers on windowless frameset 
+PASS Return null when getting the beforeprint event handler of a windowless frameset 
+PASS Ignore setting of beforeprint window event handlers on windowless frameset 
 PASS Return null when getting the beforeunload event handler of a windowless frameset 
 PASS Ignore setting of beforeunload window event handlers on windowless frameset 
 PASS Return null when getting the hashchange event handler of a windowless frameset 

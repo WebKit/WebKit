@@ -4607,8 +4607,10 @@ void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
         return;
 #endif
 
-    if (!m_printContext)
+    if (!m_printContext) {
         m_printContext = std::make_unique<PrintContext>(coreFrame);
+        m_page->dispatchBeforePrintEvent();
+    }
 
     freezeLayerTree(LayerTreeFreezeReason::Printing);
 
@@ -4627,7 +4629,10 @@ void WebPage::endPrinting()
 {
     unfreezeLayerTree(LayerTreeFreezeReason::Printing);
 
-    m_printContext = nullptr;
+    if (m_printContext) {
+        m_printContext = nullptr;
+        m_page->dispatchAfterPrintEvent();
+    }
 }
 
 void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, CallbackID callbackID)
