@@ -113,6 +113,7 @@ class SimulatedDeviceManager(object):
             udid=device_info['udid'],
             host=host,
             device_type=device_type,
+            build_version=runtime.build_version,
         ))
         SimulatedDeviceManager.AVAILABLE_DEVICES.append(result)
         return result
@@ -488,12 +489,13 @@ class SimulatedDevice(object):
         'SHUTTING DOWN',
     ]
 
-    def __init__(self, name, udid, host, device_type):
+    def __init__(self, name, udid, host, device_type, build_version):
         assert device_type.software_version
 
         self.name = name
         self.udid = udid
         self.device_type = device_type
+        self.build_version = build_version
         self._state = SimulatedDevice.DeviceState.SHUTTING_DOWN
         self._last_updated_state = time.time()
 

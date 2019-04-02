@@ -45,6 +45,7 @@ from functools import partial
 
 from webkitpy.common import find_files
 from webkitpy.common import read_checksum_from_png
+from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.memoized import memoized
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import path, pemfile
@@ -61,6 +62,7 @@ from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
+from webkitpy.results.upload import Upload
 
 _log = logging.getLogger(__name__)
 
@@ -1634,3 +1636,38 @@ class Port(object):
         # This is overridden by ports that need to do work in the parent process after a worker subprocess is spawned,
         # such as closing file descriptors that were implicitly cloned to the worker.
         pass
+
+    def configuration_for_upload(self, host=None):
+        configuration = self.test_configuration()
+        host = self.host or host
+
+        return Upload.create_configuration(
+            platform=host.platform.os_name,
+            version=str(host.platform.os_version),
+            version_name=host.platform.os_version_name(INTERNAL_TABLE) or host.platform.os_version_name(),
+            architecture=configuration.architecture,
+            style='guard-malloc' if self.get_option('guard_malloc') else configuration.build_type,
+            sdk=host.platform.build_version(),
+        )
+
+    @memoized
+    def commits_for_upload(self):
+        self.host.initialize_scm()
+
+        if port_config.apple_additions() and getattr(port_config.apple_additions(), 'repos', False):
+            repos = port_config.apple_additions().repos()
+        else:
+            repos = {}
+
+        up = os.path.dirname
+        repos['webkit'] = up(up(up(up(up(os.path.abspath(__file__))))))
+
+        commits = []
+        for repo_id, path in repos.iteritems():
+            scm = SCMDetector(self._filesystem, self._executive).detect_scm_system(path)
+            commits.append(Upload.create_commit(
+                repository_id=repo_id,
+                id=scm.native_revision(path),
+                branch=scm.native_branch(path),
+            ))
+        return commits

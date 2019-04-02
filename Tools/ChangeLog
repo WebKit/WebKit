@@ -1,3 +1,43 @@
+2019-04-01  Jonathan Bedard  <jbedard@apple.com>
+
+        run-api-tests: Upload test results
+        https://bugs.webkit.org/show_bug.cgi?id=196323
+        <rdar://problem/49356714>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/api_tests/manager.py:
+        (Manager):
+        (Manager.run): Upload results to a results database.
+        * Scripts/webkitpy/api_tests/run_api_tests.py:
+        (parse_args): Add upload arguments.
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.configuration_for_upload): Creates a configuration dictionary for uploading results.
+        (Port.commits_for_upload): Create a list of commits from the WebKit repository tests are run from along
+        with commits from any other associated repositories.
+        * Scripts/webkitpy/port/device.py:
+        (Device):
+        (Device.build_version): Access build_versoin of underlying platform device.
+        * Scripts/webkitpy/port/ios_simulator_unittest.py:
+        (IOSSimulatorTest):
+        (IOSSimulatorTest.test_configuration_for_upload):
+        * Scripts/webkitpy/port/device_port.py:
+        (DevicePort):
+        (DevicePort.configuration_for_upload): Devices are unique because their configuration is not
+        the same as the machine uploading results.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort):
+        (MacPort.configuration_for_upload): Define SDK in upload configuration for Mac.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest):
+        (MacTest.test_configuration_for_upload):
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._create_device_with_runtime):
+        (SimulatedDevice.__init__): Create simulated device with a build_version.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (test_existing_simulator):
+
 2019-04-01  Aakash Jain  <aakash_jain@apple.com>
 
         Remove extra newline characters (Follow-up fix to r243707)

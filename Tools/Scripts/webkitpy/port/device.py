@@ -101,6 +101,10 @@ class Device(object):
     def device_type(self):
         return self.platform_device.device_type
 
+    @property
+    def build_version(self):
+        return self.platform_device.build_version
+
     def __nonzero__(self):
         return self.platform_device is not None
 
