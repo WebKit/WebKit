@@ -98,6 +98,7 @@ SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 #define PlatformNSColorClass        getNSColorClass()
 #define PlatformFont                UIFont
 #define PlatformFontClass           PAL::getUIFontClass()
+#define PlatformImageClass          PAL::getUIImageClass()
 
 #else
 
@@ -113,6 +114,7 @@ SOFT_LINK_CLASS(UIFoundation, NSTextTab)
 #define PlatformNSColorClass        NSColor
 #define PlatformFont                NSFont
 #define PlatformFontClass           NSFont
+#define PlatformImageClass          NSImage
 
 #endif
 
@@ -772,28 +774,6 @@ bool HTMLConverterCaches::floatPropertyValueForNode(Node& node, CSSPropertyID pr
     return false;
 }
 
-#if PLATFORM(IOS_FAMILY)
-static NSString *_NSFirstPathForDirectoriesInDomains(NSSearchPathDirectory directory, NSSearchPathDomainMask domainMask, BOOL expandTilde)
-{
-    NSArray *array = NSSearchPathForDirectoriesInDomains(directory, domainMask, expandTilde);
-    return [array count] >= 1 ? [array objectAtIndex:0] : nil;
-}
-
-static NSString *_NSSystemLibraryPath(void)
-{
-    return _NSFirstPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES);
-}
-
-static NSBundle *_webKitBundle()
-{
-    // FIXME: This should probably use the WebCore bundle to avoid the layering violation.
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit"];
-    if (!bundle)
-        bundle = [NSBundle bundleWithPath:[_NSSystemLibraryPath() stringByAppendingPathComponent:@"Frameworks/WebKit.framework"]];
-    return bundle;
-}
-#endif
-
 static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
 {
     NSShadow *shadow = nil;
@@ -1359,19 +1339,15 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
                 [attachment setIgnoresOrientation:YES];
 #endif
         } else {
+            NSBundle *webCoreBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
 #if PLATFORM(IOS_FAMILY)
-            [attachment release];
-            NSURL *missingImageURL = [_webKitBundle() URLForResource:@"missing_image" withExtension:@"tiff"];
-            ASSERT_WITH_MESSAGE(missingImageURL != nil, "Unable to find missing_image.tiff!");
-            NSFileWrapper *missingImageFileWrapper = [[[NSFileWrapper alloc] initWithURL:missingImageURL options:0 error:NULL] autorelease];
-            attachment = [[PlatformNSTextAttachment alloc] initWithFileWrapper:missingImageFileWrapper];
+            UIImage *missingImage = [PlatformImageClass imageNamed:@"missingImage" inBundle:webCoreBundle compatibleWithTraitCollection:nil];
 #else
-            static NSImage *missingImage = nil;
-            NSTextAttachmentCell *cell;
-            cell = [[NSTextAttachmentCell alloc] initImageCell:missingImage];
-            [attachment setAttachmentCell:cell];
-            [cell release];
+            NSImage *missingImage = [webCoreBundle imageForResource:@"missingImage"];
 #endif
+            ASSERT_WITH_MESSAGE(missingImage != nil, "Unable to find missingImage.");
+            attachment = adoptNS([[PlatformNSTextAttachment alloc] initWithData:nil ofType:nil]);
+            attachment.get().image = missingImage;
         }
         [_attrStr replaceCharactersInRange:rangeToReplace withString:string.get()];
         rangeToReplace.length = [string length];

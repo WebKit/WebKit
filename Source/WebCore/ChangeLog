@@ -1,3 +1,30 @@
+2019-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        NSAttributedString crashes when encoding text attachment cell for missing image.
+        https://bugs.webkit.org/show_bug.cgi?id=196504
+        rdar://problem/49161281
+
+        Reviewed by Tim Horton.
+
+        Clean up and fix a couple of errors and crashes in the missing image path of our
+        attributed string converter.
+
+        Fixes include:
+        * Removed manual call to release on a RetainPtr, leading to autorelease pool crash.
+        * No longer try to load an image that is missing on disk and has long been renamed.
+        * No longer use a NSTextAttachmentCell in the Mac code path which can't be encoded
+          for sending to the UIProcess, so it was pretty useless in the web content process.
+        * Stopped using NSFileWrapper for the missing image so the attachment can contain the
+          retina versions of the missing image.
+        * Simplified bundle finding code, since WebCore is assumed to be loaded.
+        * Fix leak of attachment by adding missing adoptNS().
+
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement): Unify and simplify missing image path.
+        (_NSFirstPathForDirectoriesInDomains): Deleted.
+        (_NSSystemLibraryPath): Deleted.
+        (_webKitBundle): Deleted.
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         [Fetch API] Allow used body replacement in Request constructor
