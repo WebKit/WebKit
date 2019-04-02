@@ -1,3 +1,10 @@
+2019-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, drop debug logging landed as part of r242903 by mistake.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2019-04-01  Remy Demarest  <rdemarest@apple.com>
 
         Add SPI to give injected bundles access to displayed PDFDocuments

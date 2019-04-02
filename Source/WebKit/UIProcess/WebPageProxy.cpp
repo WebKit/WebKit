@@ -4545,7 +4545,6 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                 auto* fromItem = navigationActionData.sourceBackForwardItemIdentifier ? m_backForwardList->itemForID(*navigationActionData.sourceBackForwardItemIdentifier) : nullptr;
                 if (!fromItem)
                     fromItem = m_backForwardList->currentItem();
-                WTFLogAlways("WebPageProxy::decidePolicyForNavigationAction() creates back/forward navigation from item %s", fromItem ? fromItem->url().utf8().data() : "null");
                 navigation = m_navigationState->createBackForwardNavigation(*item, fromItem, FrameLoadType::IndexedBackForward);
             }
         }
