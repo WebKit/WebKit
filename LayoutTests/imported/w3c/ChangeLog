@@ -1,3 +1,16 @@
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r243551.
+
+        Seems to have broken file uploads to SoundCloud
+
+        Reverted changeset:
+
+        "XMLHttpRequestUpload's loadstart event not correct
+        initialized"
+        https://bugs.webkit.org/show_bug.cgi?id=196174
+        https://trac.webkit.org/changeset/243551
+
 2019-04-01  Chris Dumez  <cdumez@apple.com>
 
         Attr nodes are not cloned properly
