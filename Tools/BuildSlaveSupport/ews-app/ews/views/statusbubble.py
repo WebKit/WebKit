@@ -59,7 +59,7 @@ class StatusBubble(View):
 
         if build.result is None:  # In-progress build
             bubble['state'] = 'started'
-            bubble['details_message'] = 'Recent messages:\n\n' + self._steps_messages(build)
+            bubble['details_message'] = 'Build is in-progress. Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             bubble['state'] = 'pass'
             bubble['details_message'] = 'Pass'

@@ -1,5 +1,14 @@
 2019-04-02  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Status bubble hover over message should clearly indicate that build is in-progress
+        https://bugs.webkit.org/show_bug.cgi?id=196491
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+
+2019-04-02  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Configure buildbot try credentials in environment variables
         https://bugs.webkit.org/show_bug.cgi?id=196501
 
