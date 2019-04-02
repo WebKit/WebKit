@@ -1,3 +1,9 @@
+2019-04-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Reassign bots to queues
+
+        * BuildSlaveSupport/ews-build/config.json: Reassigned ews150 and ews152.
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add support for Window's beforeprint / afterprint events

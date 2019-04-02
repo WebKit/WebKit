@@ -302,7 +302,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggers": ["api-tests-ios-sim-ews", "ios-12-sim-wk2-tests-ews"],
-      "workernames": ["ews150", "ews154"]
+      "workernames": ["ews152", "ews154"]
     },
     {
       "name": "iOS-12-Simulator-WK2-Tests-EWS",
