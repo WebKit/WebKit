@@ -62,7 +62,7 @@ class StatusBubble(View):
             bubble['details_message'] = 'Recent messages:\n\n' + self._steps_messages(build)
         elif build.result == Buildbot.SUCCESS:
             bubble['state'] = 'pass'
-            bubble['details_message'] = 'Pass\n\n'
+            bubble['details_message'] = 'Pass'
         elif build.result == Buildbot.WARNINGS:
             bubble['state'] = 'pass'
             bubble['details_message'] = 'Warning\n\n' + self._steps_messages(build)

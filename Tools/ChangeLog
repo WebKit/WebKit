@@ -1,5 +1,11 @@
 2019-04-01  Aakash Jain  <aakash_jain@apple.com>
 
+        Remove extra newline characters (Follow-up fix to r243707)
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+
+2019-04-01  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Use API_KEY to accept results data
         https://bugs.webkit.org/show_bug.cgi?id=196461
 
