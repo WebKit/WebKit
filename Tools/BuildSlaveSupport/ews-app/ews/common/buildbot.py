@@ -43,8 +43,8 @@ class Buildbot():
         command = ['buildbot', 'try',
                    '--connect=pb',
                    '--master={}:{}'.format(config.BUILDBOT_SERVER_HOST, config.BUILDBOT_SERVER_PORT),
-                   '--username={}'.format(config.BUILDBOT_PB_USERNAME),
-                   '--passwd={}'.format(config.BUILDBOT_PB_PASSWORD),
+                   '--username={}'.format(config.BUILDBOT_TRY_USERNAME),
+                   '--passwd={}'.format(config.BUILDBOT_TRY_PASSWORD),
                    '--diff={}'.format(patch_path),
                    '--repository=']
 

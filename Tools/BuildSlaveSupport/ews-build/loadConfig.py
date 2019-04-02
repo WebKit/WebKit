@@ -79,7 +79,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
         scheduler = dict(map(lambda key_value_pair: (str(key_value_pair[0]), key_value_pair[1]), scheduler.items()))
         if (schedulerClassName == 'Try_Userpass'):
             # FIXME: Read the credentials from local file on disk.
-            scheduler['userpass'] = [('sampleuser', 'samplepass')]
+            scheduler['userpass'] = [(os.getenv('BUILDBOT_TRY_USERNAME', 'sampleuser'), os.getenv('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
         c['schedulers'].append(schedulerClass(**scheduler))
 
 

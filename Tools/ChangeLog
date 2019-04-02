@@ -1,3 +1,14 @@
+2019-04-02  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Configure buildbot try credentials in environment variables
+        https://bugs.webkit.org/show_bug.cgi?id=196501
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/loadConfig.py: Read credentials from environment variables.
+        * BuildSlaveSupport/ews-app/ews/common/buildbot.py: Rename BUILDBOT_PB_USERNAME to BUILDBOT_TRY_USERNAME.
+        * BuildSlaveSupport/ews-app/ews/config.py: Ditto.
+
 2019-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r243726): Crash at unrecognized selector: -[WKWebpagePreferences webpagePreferences]
