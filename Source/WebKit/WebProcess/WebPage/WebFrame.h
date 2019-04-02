@@ -188,6 +188,7 @@ private:
     LoadListener* m_loadListener { nullptr };
     
     uint64_t m_frameID { 0 };
+    bool m_navigationIsContinuingInAnotherProcess { false };
 
 #if PLATFORM(IOS_FAMILY)
     uint64_t m_firstLayerTreeTransactionIDAfterDidCommitLoad { 0 };
