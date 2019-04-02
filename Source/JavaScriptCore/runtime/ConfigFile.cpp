@@ -465,9 +465,8 @@ void ConfigFile::parse()
             WTF::setDataFile(logPathname);
 
         if (!jscOptionsBuilder.isEmpty()) {
-            const char* optionsStr = jscOptionsBuilder.toString().utf8().data();
             Options::enableRestrictedOptions(true);
-            Options::setOptions(optionsStr);
+            Options::setOptions(jscOptionsBuilder.toString().utf8().data());
         }
     } else
         WTF::dataLogF("Error in JSC Config file on or near line %u, parsing '%s'\n", scanner.lineNumber(), scanner.currentBuffer());
