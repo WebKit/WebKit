@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -224,3 +224,18 @@ class MacTest(darwin_testcase.DarwinTest):
 
         port = self.make_port(options=MockOptions(webkit_test_runner=False), port_name='mac-wk2')
         self.assertEqual(port.driver_name(), 'WebKitTestRunner')
+
+    def test_configuration_for_upload(self):
+        port = self.make_port()
+        self.assertEqual(
+            dict(
+                platform='mac',
+                is_simulator=False,
+                architecture='x86_64',
+                version='10.7',
+                version_name='Lion',
+                sdk='17A405',
+                style='release',
+            ),
+            port.configuration_for_upload(),
+        )

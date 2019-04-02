@@ -30,6 +30,7 @@ from webkitpy.api_tests.manager import Manager
 from webkitpy.common.host import Host
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
 from webkitpy.port import configuration_options, platform_options, base, win
+from webkitpy.results.options import upload_options
 
 EXCEPTIONAL_EXIT_STATUS = -1
 INTERRUPT_EXIT_STATUS = -2
@@ -134,6 +135,7 @@ def parse_args(args):
         optparse.make_option('--force', action='store_true', default=False,
                              help='Run all tests, even DISABLED tests'),
     ]))
+    option_group_definitions.append(('Upload Options', upload_options()))
 
     option_parser = optparse.OptionParser(
         usage='run-api-tests [options] [<test names>...]',

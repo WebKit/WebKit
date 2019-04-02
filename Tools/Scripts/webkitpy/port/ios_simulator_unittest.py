@@ -1,4 +1,4 @@
-# Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+# Copyright (C) 2014-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -120,3 +120,17 @@ class IOSSimulatorTest(ios_testcase.IOSTest):
     def test_max_child_processes(self):
         port = self.make_port()
         self.assertEqual(port.max_child_processes(DeviceType.from_string('Apple Watch')), 0)
+
+    def test_configuration_for_upload(self):
+        port = self.make_port()
+        self.assertEqual(
+            dict(
+                platform='ios',
+                is_simulator=True,
+                architecture='x86_64',
+                version='11',
+                version_name='iOS 11',
+                style='release',
+            ),
+            port.configuration_for_upload(),
+        )

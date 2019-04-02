@@ -605,6 +605,7 @@ class SimulatedDeviceTest(unittest.TestCase):
 
         self.assertEquals(1, len(SimulatedDeviceManager.INITIALIZED_DEVICES))
         self.assertEquals('34FB476C-6FA0-43C8-8945-1BD7A4EBF0DE', SimulatedDeviceManager.INITIALIZED_DEVICES[0].udid)
+        self.assertEquals('15A8401', SimulatedDeviceManager.INITIALIZED_DEVICES[0].build_version)
         self.assertEquals(SimulatedDevice.DeviceState.BOOTED, SimulatedDeviceManager.INITIALIZED_DEVICES[0].platform_device.state())
 
         SimulatedDeviceManager.tear_down(host)

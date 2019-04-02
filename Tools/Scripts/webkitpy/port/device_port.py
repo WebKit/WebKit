@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,9 +23,11 @@
 import logging
 import traceback
 
+from webkitpy.common.version_name_map import VersionNameMap, PUBLIC_TABLE, INTERNAL_TABLE
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.darwin import DarwinPort
 from webkitpy.port.simulator_process import SimulatorProcess
+from webkitpy.results.upload import Upload
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
@@ -222,3 +224,29 @@ class DevicePort(DarwinPort):
 
     def device_version(self):
         raise NotImplementedError
+
+    def configuration_for_upload(self, host=None):
+        configuration = self.test_configuration()
+
+        device_type = host.device_type if host else self.DEVICE_TYPE
+        model = device_type.hardware_family
+        if model and device_type.hardware_type:
+            model += ' {}'.format(device_type.hardware_type)
+
+        version = self.device_version()
+        version_name = None
+        for table in [INTERNAL_TABLE, PUBLIC_TABLE]:
+            version_name = VersionNameMap.map(self.host.platform).to_name(version, platform=device_type.software_variant.lower(), table=table)
+            if version_name:
+                break
+
+        return Upload.create_configuration(
+            platform=device_type.software_variant.lower(),
+            is_simulator=self.DEVICE_MANAGER == SimulatedDeviceManager,
+            version=str(version),
+            version_name=version_name,
+            architecture=configuration.architecture,
+            style='guard-malloc' if self.get_option('guard_malloc') else configuration.build_type,
+            model=model,
+            sdk=host.build_version if host else None,
+        )

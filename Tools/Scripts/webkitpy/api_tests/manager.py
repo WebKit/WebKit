@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,10 +22,12 @@
 
 import json
 import logging
-import os
+import time
 
 from webkitpy.api_tests.runner import Runner
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.results.upload import Upload
+
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
 _log = logging.getLogger(__name__)
@@ -39,6 +41,7 @@ class Manager(object):
     FAILED_BUILD_CHECK = 1
     FAILED_COLLECT_TESTS = 2
     FAILED_TESTS = 3
+    FAILED_UPLOAD = 4
 
     def __init__(self, port, options, stream):
         self._port = port
@@ -154,6 +157,8 @@ class Manager(object):
             if not self.host.filesystem.isdir(self.host.filesystem.dirname(json_output)) or self.host.filesystem.isdir(json_output):
                 raise RuntimeError('Cannot write to {}'.format(json_output))
 
+        start_time = time.time()
+
         self._stream.write_update('Checking build ...')
         if not self._port.check_api_test_build(self._binaries_for_arguments(args)):
             _log.error('Build check failed')
@@ -185,6 +190,8 @@ class Manager(object):
             # If we receive a KeyboardInterrupt, print results.
             self._stream.writeln('')
 
+        end_time = time.time()
+
         successful = runner.result_map_by_status(runner.STATUS_PASSED)
         disabled = len(runner.result_map_by_status(runner.STATUS_DISABLED))
         _log.info('Ran {} tests of {} with {} successful'.format(len(runner.results) - disabled, len(test_names), len(successful)))
@@ -197,42 +204,73 @@ class Manager(object):
         }
 
         self._stream.writeln('-' * 30)
+        result = Manager.SUCCESS
         if len(successful) + disabled == len(test_names):
             self._stream.writeln('All tests successfully passed!')
             if json_output:
                 self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
-            return Manager.SUCCESS
-
-        self._stream.writeln('Test suite failed')
-        self._stream.writeln('')
-
-        skipped = []
-        for test in test_names:
-            if test not in runner.results:
-                skipped.append(test)
-                result_dictionary['Skipped'].append({'name': test, 'output': None})
-        if skipped:
-            self._stream.writeln('Skipped {} tests'.format(len(skipped)))
+        else:
+            self._stream.writeln('Test suite failed')
             self._stream.writeln('')
-            if self._options.verbose:
-                for test in skipped:
-                    self._stream.writeln('    {}'.format(test))
 
-        self._print_tests_result_with_status(runner.STATUS_FAILED, runner)
-        self._print_tests_result_with_status(runner.STATUS_CRASHED, runner)
-        self._print_tests_result_with_status(runner.STATUS_TIMEOUT, runner)
+            skipped = []
+            for test in test_names:
+                if test not in runner.results:
+                    skipped.append(test)
+                    result_dictionary['Skipped'].append({'name': test, 'output': None})
+            if skipped:
+                self._stream.writeln('Skipped {} tests'.format(len(skipped)))
+                self._stream.writeln('')
+                if self._options.verbose:
+                    for test in skipped:
+                        self._stream.writeln('    {}'.format(test))
 
-        for test, result in runner.results.iteritems():
-            status_to_string = {
-                runner.STATUS_FAILED: 'Failed',
-                runner.STATUS_CRASHED: 'Crashed',
-                runner.STATUS_TIMEOUT: 'Timedout',
-            }.get(result[0])
-            if not status_to_string:
-                continue
-            result_dictionary[status_to_string].append({'name': test, 'output': result[1]})
+            self._print_tests_result_with_status(runner.STATUS_FAILED, runner)
+            self._print_tests_result_with_status(runner.STATUS_CRASHED, runner)
+            self._print_tests_result_with_status(runner.STATUS_TIMEOUT, runner)
 
-        if json_output:
-            self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
+            for test, result in runner.results.iteritems():
+                status_to_string = {
+                    runner.STATUS_FAILED: 'Failed',
+                    runner.STATUS_CRASHED: 'Crashed',
+                    runner.STATUS_TIMEOUT: 'Timedout',
+                }.get(result[0])
+                if not status_to_string:
+                    continue
+                result_dictionary[status_to_string].append({'name': test, 'output': result[1]})
 
-        return Manager.FAILED_TESTS
+            if json_output:
+                self.host.filesystem.write_text_file(json_output, json.dumps(result_dictionary, indent=4))
+
+            result = Manager.FAILED_TESTS
+
+        if self._options.report_urls:
+            self._stream.writeln('\n')
+            self._stream.write_update('Preparing upload data ...')
+
+            status_to_test_result = {
+                runner.STATUS_PASSED: None,
+                runner.STATUS_FAILED: Upload.Expectations.FAIL,
+                runner.STATUS_CRASHED: Upload.Expectations.CRASH,
+                runner.STATUS_TIMEOUT: Upload.Expectations.TIMEOUT,
+            }
+            upload = Upload(
+                suite='api-tests',
+                configuration=self._port.configuration_for_upload(self._port.target_host(0)),
+                details=Upload.create_details(options=self._options),
+                commits=self._port.commits_for_upload(),
+                run_stats=Upload.create_run_stats(
+                    start_time=start_time,
+                    end_time=end_time,
+                    tests_skipped=len(result_dictionary['Skipped']),
+                ),
+                results={test: Upload.create_test_result(actual=status_to_test_result[result[0]])
+                         for test, result in runner.results.iteritems() if result[0] in status_to_test_result},
+            )
+            for url in self._options.report_urls:
+                self._stream.write_update('Uploading to {} ...'.format(url))
+                if not upload.upload(url, log_line_func=self._stream.writeln):
+                    result = Manager.FAILED_UPLOAD
+            self._stream.writeln('Uploads completed!')
+
+        return result

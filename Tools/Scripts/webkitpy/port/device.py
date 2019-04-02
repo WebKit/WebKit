@@ -97,6 +97,14 @@ class Device(object):
     def udid(self):
         return self.platform_device.udid
 
+    @property
+    def device_type(self):
+        return self.platform_device.device_type
+
+    @property
+    def build_version(self):
+        return self.platform_device.build_version
+
     def __nonzero__(self):
         return self.platform_device is not None
 
