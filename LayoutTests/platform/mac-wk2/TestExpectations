@@ -943,3 +943,5 @@ webkit.org/b/196400 fast/mediastream/MediaStreamTrack-getSettings.html [ Pass Fa
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure ]
 
 webkit.org/b/187391 accessibility/Mac/async-increment-decrement-action.html [ Skip ]
+
+webkit.org/b/196448 [ Debug ] inspector/audit/basic.html [ Pass Timeout ]
