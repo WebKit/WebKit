@@ -1,3 +1,11 @@
+2019-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed build fix.
+
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey): Add ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END
+        around SecTrustedApplicationCreateFromPath call.
+
 2019-04-01  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some unused iOS scrolling-related code in Frame
