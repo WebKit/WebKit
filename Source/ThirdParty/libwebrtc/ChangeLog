@@ -1,3 +1,14 @@
+2019-04-02  Thibault Saunier  <tsaunier@igalia.com>
+
+        [GSteamer][WebRTC] Fix building libwebrtc on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=196157
+
+        Reviewed by Philippe Normand.
+
+        Making sure neon files are built as required
+
+        * CMakeLists.txt:
+
 2019-03-22  Keith Rollin  <krollin@apple.com>
 
         Enable ThinLTO support in Production builds
