@@ -1,5 +1,14 @@
 2019-04-02  Shawn Roberts  <sroberts@apple.com>
 
+        accessibility/mac/press-not-work-for-disabled-menu-list.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196505
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations for flaky failure
+
+2019-04-02  Shawn Roberts  <sroberts@apple.com>
+
         media/video-background-tab-playback.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=196502
 

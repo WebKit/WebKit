@@ -1803,3 +1803,5 @@ webkit.org/b/196274 [ Mojave ] imported/w3c/web-platform-tests/xhr/send-redirect
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-bold.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck.html [ Pass ImageOnlyFailure ]
 webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-italic.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/19650 [ HighSierra+ ] accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
