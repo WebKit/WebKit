@@ -1,3 +1,12 @@
+2019-04-02  Shawn Roberts  <sroberts@apple.com>
+
+        fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196495
+
+        Unreviewed test gardening
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating test expectations for flaky failure
+
 2019-04-02  Diego Pino Garcia  <dpino@igalia.com>
 
         REGRESSION(r243512): Change locale of test in intl-datetimeformat.js
