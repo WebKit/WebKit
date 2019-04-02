@@ -1,5 +1,44 @@
 2019-04-01  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: modernize serialization of breakpoints and the maps that hold them
+        https://bugs.webkit.org/show_bug.cgi?id=196230
+        <rdar://problem/49236485>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype.breakpointsForSourceCode):
+        (WI.DebuggerManager.prototype.addBreakpoint):
+        (WI.DebuggerManager.prototype.removeBreakpoint):
+        (WI.DebuggerManager.prototype._setBreakpoint):
+        (WI.DebuggerManager.prototype._setBreakpoint.didSetBreakpoint):
+
+        * UserInterface/Models/Breakpoint.js:
+        (WI.Breakpoint):
+        (WI.Breakpoint.fromJSON): Added.
+        (WI.Breakpoint.prototype.toJSON):
+        (WI.Breakpoint.prototype.set resolved):
+        (WI.Breakpoint.prototype.recreateAction):
+        (WI.Breakpoint.prototype.saveIdentityToCookie):
+        (WI.Breakpoint.prototype._isSpecial): Added.
+        (WI.Breakpoint.set resolved.isSpecialBreakpoint): Deleted.
+        (WI.Breakpoint.serializeOptions): Deleted.
+
+        * UserInterface/Models/BreakpointAction.js:
+        (WI.BreakpointAction):
+        (WI.BreakpointAction.fromJSON): Added.
+        (WI.BreakpointAction.prototype.toProtocol): Added.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype._addBreakpointsForSourceCode):
+
+        * UserInterface/Views/SourceCodeTextEditor.js:
+        (WI.SourceCodeTextEditor.prototype._prepareEditorForInitialContent):
+        (WI.SourceCodeTextEditor.prototype._breakpointsEnabledDidChange):
+
+2019-04-01  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: DOMDebugger: disabling a breakpoint for a specific event listener removes it from the UI
         https://bugs.webkit.org/show_bug.cgi?id=196453
         <rdar://problem/49489318>

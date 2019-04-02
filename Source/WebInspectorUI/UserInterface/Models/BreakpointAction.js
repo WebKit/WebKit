@@ -25,24 +25,32 @@
 
 WI.BreakpointAction = class BreakpointAction
 {
-    constructor(breakpoint, typeOrInfo, data)
+    constructor(breakpoint, type, data)
     {
-        console.assert(breakpoint);
-        console.assert(typeOrInfo);
+        console.assert(breakpoint instanceof WI.Breakpoint);
+        console.assert(Object.values(WI.BreakpointAction.Type).includes(type));
 
         this._breakpoint = breakpoint;
-
-        if (typeof typeOrInfo === "string") {
-            this._type = typeOrInfo;
-            this._data = data || null;
-        } else if (typeof typeOrInfo === "object") {
-            this._type = typeOrInfo.type;
-            this._data = typeOrInfo.data || null;
-        } else
-            console.error("Unexpected type passed to WI.BreakpointAction");
-
-        console.assert(typeof this._type === "string");
+        this._type = type;
+        this._data = data || null;
         this._id = WI.debuggerManager.nextBreakpointActionIdentifier();
+    }
+
+    // Import / Export
+
+    static fromJSON(json, breakpoint)
+    {
+        return new BreakpointAction(breakpoint, json.type, json.data);
+    }
+
+    toJSON()
+    {
+        let json = {
+            type: this._type,
+        };
+        if (this._data)
+            json.data = this._data;
+        return json;
     }
 
     // Public
@@ -66,14 +74,10 @@ WI.BreakpointAction = class BreakpointAction
         this._breakpoint.breakpointActionDidChange(this);
     }
 
-    toJSON()
+    toProtocol()
     {
-        let json = {
-            type: this._type,
-            id: this._id,
-        };
-        if (this._data)
-            json.data = this._data;
+        let json = this.toJSON();
+        json.id = this._id;
         return json;
     }
 };

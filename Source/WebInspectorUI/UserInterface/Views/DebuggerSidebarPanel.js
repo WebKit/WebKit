@@ -560,9 +560,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
     _addBreakpointsForSourceCode(sourceCode)
     {
-        var breakpoints = WI.debuggerManager.breakpointsForSourceCode(sourceCode);
-        for (var i = 0; i < breakpoints.length; ++i)
-            this._addBreakpoint(breakpoints[i], sourceCode);
+        for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(sourceCode))
+            this._addBreakpoint(breakpoint, sourceCode);
     }
 
     _addIssuesForSourceCode(sourceCode)

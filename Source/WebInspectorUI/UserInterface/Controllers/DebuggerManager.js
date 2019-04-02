@@ -58,17 +58,24 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         let specialBreakpointLocation = new WI.SourceCodeLocation(null, Infinity, Infinity);
 
-        this._allExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, !this._allExceptionsBreakpointEnabledSetting.value);
+        this._allExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
+            disabled: !this._allExceptionsBreakpointEnabledSetting.value,
+        });
         this._allExceptionsBreakpoint.resolved = true;
 
-        this._uncaughtExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, !this._uncaughtExceptionsBreakpointEnabledSetting.value);
+        this._uncaughtExceptionsBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
+            disabled: !this._uncaughtExceptionsBreakpointEnabledSetting.value,
+        });
+        this._uncaughtExceptionsBreakpoint.resolved = true;
 
-        this._assertionFailuresBreakpoint = new WI.Breakpoint(specialBreakpointLocation, !this._assertionFailuresBreakpointEnabledSetting.value);
+        this._assertionFailuresBreakpoint = new WI.Breakpoint(specialBreakpointLocation, {
+            disabled: !this._assertionFailuresBreakpointEnabledSetting.value,
+        });
         this._assertionFailuresBreakpoint.resolved = true;
 
         this._breakpoints = [];
-        this._breakpointContentIdentifierMap = new Map;
-        this._breakpointScriptIdentifierMap = new Map;
+        this._breakpointContentIdentifierMap = new Multimap;
+        this._breakpointScriptIdentifierMap = new Multimap;
         this._breakpointIdMap = new Map;
 
         this._breakOnExceptionsState = "none";
@@ -103,14 +110,14 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             let existingSerializedBreakpoints = WI.Setting.migrateValue("breakpoints");
             if (existingSerializedBreakpoints) {
                 for (let existingSerializedBreakpoint of existingSerializedBreakpoints)
-                    await WI.objectStores.breakpoints.putObject(new WI.Breakpoint(existingSerializedBreakpoint));
+                    await WI.objectStores.breakpoints.putObject(WI.Breakpoint.fromJSON(existingSerializedBreakpoint));
             }
 
             let serializedBreakpoints = await WI.objectStores.breakpoints.getAll();
 
             this._restoringBreakpoints = true;
             for (let serializedBreakpoint of serializedBreakpoints) {
-                let breakpoint = new WI.Breakpoint(serializedBreakpoint);
+                let breakpoint = WI.Breakpoint.fromJSON(serializedBreakpoint);
 
                 const key = null;
                 WI.objectStores.breakpoints.associateObject(breakpoint, key, serializedBreakpoint);
@@ -211,12 +218,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
     {
         console.assert(sourceCode instanceof WI.Resource || sourceCode instanceof WI.Script);
 
-        if (sourceCode instanceof WI.SourceMapResource) {
-            let originalSourceCodeBreakpoints = this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode);
-            return originalSourceCodeBreakpoints.filter(function(breakpoint) {
-                return breakpoint.sourceCodeLocation.displaySourceCode === sourceCode;
-            });
-        }
+        if (sourceCode instanceof WI.SourceMapResource)
+            return Array.from(this.breakpointsForSourceCode(sourceCode.sourceMap.originalSourceCode)).filter((breakpoint) => breakpoint.sourceCodeLocation.displaySourceCode === sourceCode);
 
         let contentIdentifierBreakpoints = this._breakpointContentIdentifierMap.get(sourceCode.contentIdentifier);
         if (contentIdentifierBreakpoints) {
@@ -480,23 +483,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return;
         }
 
-        if (breakpoint.contentIdentifier) {
-            let contentIdentifierBreakpoints = this._breakpointContentIdentifierMap.get(breakpoint.contentIdentifier);
-            if (!contentIdentifierBreakpoints) {
-                contentIdentifierBreakpoints = [];
-                this._breakpointContentIdentifierMap.set(breakpoint.contentIdentifier, contentIdentifierBreakpoints);
-            }
-            contentIdentifierBreakpoints.push(breakpoint);
-        }
+        if (breakpoint.contentIdentifier)
+            this._breakpointContentIdentifierMap.add(breakpoint.contentIdentifier, breakpoint);
 
-        if (breakpoint.scriptIdentifier) {
-            let scriptIdentifierBreakpoints = this._breakpointScriptIdentifierMap.get(breakpoint.scriptIdentifier);
-            if (!scriptIdentifierBreakpoints) {
-                scriptIdentifierBreakpoints = [];
-                this._breakpointScriptIdentifierMap.set(breakpoint.scriptIdentifier, scriptIdentifierBreakpoints);
-            }
-            scriptIdentifierBreakpoints.push(breakpoint);
-        }
+        if (breakpoint.scriptIdentifier)
+            this._breakpointScriptIdentifierMap.add(breakpoint.scriptIdentifier, breakpoint);
 
         this._breakpoints.push(breakpoint);
 
@@ -537,23 +528,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         if (breakpoint.identifier)
             this._removeBreakpoint(breakpoint);
 
-        if (breakpoint.contentIdentifier) {
-            let contentIdentifierBreakpoints = this._breakpointContentIdentifierMap.get(breakpoint.contentIdentifier);
-            if (contentIdentifierBreakpoints) {
-                contentIdentifierBreakpoints.remove(breakpoint);
-                if (!contentIdentifierBreakpoints.length)
-                    this._breakpointContentIdentifierMap.delete(breakpoint.contentIdentifier);
-            }
-        }
+        if (breakpoint.contentIdentifier)
+            this._breakpointContentIdentifierMap.delete(breakpoint.contentIdentifier, breakpoint);
 
-        if (breakpoint.scriptIdentifier) {
-            let scriptIdentifierBreakpoints = this._breakpointScriptIdentifierMap.get(breakpoint.scriptIdentifier);
-            if (scriptIdentifierBreakpoints) {
-                scriptIdentifierBreakpoints.remove(breakpoint);
-                if (!scriptIdentifierBreakpoints.length)
-                    this._breakpointScriptIdentifierMap.delete(breakpoint.scriptIdentifier);
-            }
-        }
+        if (breakpoint.scriptIdentifier)
+            this._breakpointScriptIdentifierMap.delete(breakpoint.scriptIdentifier, breakpoint);
 
         // Disable the breakpoint first, so removing actions doesn't re-add the breakpoint.
         breakpoint.disabled = true;
@@ -903,14 +882,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _debuggerBreakpointOptions(breakpoint)
     {
-        const templatePlaceholderRegex = /\$\{.*?\}/;
-
-        let options = breakpoint.serializeOptions();
-        options.actions = options.actions.filter((action) => {
+        let actions = breakpoint.actions;
+        actions = actions.map((action) => action.toProtocol());
+        actions = actions.filter((action) => {
             if (action.type !== WI.BreakpointAction.Type.Log)
                 return true;
 
-            if (!templatePlaceholderRegex.test(action.data))
+            if (!/\$\{.*?\}/.test(action.data))
                 return true;
 
             let lexer = new WI.BreakpointLogMessageLexer;
@@ -930,7 +908,13 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             action.type = WI.BreakpointAction.Type.Evaluate;
             return true;
         });
-        return options;
+
+        return {
+            condition: breakpoint.condition,
+            ignoreCount: breakpoint.ignoreCount,
+            autoContinue: breakpoint.autoContinue,
+            actions,
+        };
     }
 
     _setBreakpoint(breakpoint, specificTarget, callback)
@@ -946,10 +930,11 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             this.breakpointsEnabled = true;
         }
 
-        function didSetBreakpoint(target, error, breakpointIdentifier, locations)
-        {
-            if (error)
+        function didSetBreakpoint(target, error, breakpointIdentifier, locations) {
+            if (error) {
+                WI.reportInternalError(error);
                 return;
+            }
 
             this._breakpointIdMap.set(breakpointIdentifier, breakpoint);
 
@@ -995,7 +980,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
                 location: {scriptId: breakpoint.scriptIdentifier, lineNumber: breakpoint.sourceCodeLocation.lineNumber, columnNumber: breakpoint.sourceCodeLocation.columnNumber},
                 options
             }, didSetBreakpoint.bind(this, target), target.DebuggerAgent);
-        }
+        } else
+            WI.reportInternalError("Unknown source for breakpoint.");
     }
 
     _removeBreakpoint(breakpoint, callback)

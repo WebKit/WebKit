@@ -499,9 +499,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
         if (this._supportsDebugging) {
             this._breakpointMap = {};
 
-            var breakpoints = WI.debuggerManager.breakpointsForSourceCode(this._sourceCode);
-            for (var i = 0; i < breakpoints.length; ++i) {
-                var breakpoint = breakpoints[i];
+            for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(this._sourceCode)) {
                 console.assert(this._matchesBreakpoint(breakpoint));
                 var lineInfo = this._editorLineInfoForSourceCodeLocation(breakpoint.sourceCodeLocation);
                 this._addBreakpointWithEditorLineInfo(breakpoint, lineInfo);
@@ -562,8 +560,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
     {
         console.assert(this._supportsDebugging);
 
-        var breakpoints = WI.debuggerManager.breakpointsForSourceCode(this._sourceCode);
-        for (var breakpoint of breakpoints)
+        for (let breakpoint of WI.debuggerManager.breakpointsForSourceCode(this._sourceCode))
             this._updateBreakpointStatus(breakpoint);
     }
 
