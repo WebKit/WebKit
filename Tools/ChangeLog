@@ -1,3 +1,13 @@
+2019-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        Rename CLANG_ADDRESS_SANITIZER Xcode variable to ENABLE_ADDRESS_SANITIZER
+        <https://webkit.org/b/196499>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * asan/asan.xcconfig: Change CLANG_ADDRESS_SANITIZER to
+        ENABLE_ADDRESS_SANITIZER.
+
 2019-04-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] WEBKIT_MAKE_FORWARDING_HEADERS shouldn't use POST_BUILD to copy generated headers
