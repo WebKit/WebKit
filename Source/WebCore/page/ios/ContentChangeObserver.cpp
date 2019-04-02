@@ -248,6 +248,28 @@ void ContentChangeObserver::styleRecalcDidFinish()
     adjustObservedState(Event::EndedStyleRecalc);
 }
 
+void ContentChangeObserver::renderTreeUpdateDidStart()
+{
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    if (!isObservingContentChanges())
+        return;
+
+    LOG(ContentObservation, "renderTreeUpdateDidStart: RenderTree update started");
+    m_isInObservedRenderTreeUpdate = true;
+    m_elementsWithDestroyedVisibleRenderer.clear();
+}
+
+void ContentChangeObserver::renderTreeUpdateDidFinish()
+{
+    if (!m_isInObservedRenderTreeUpdate)
+        return;
+
+    LOG(ContentObservation, "renderTreeUpdateDidStart: RenderTree update finished");
+    m_isInObservedRenderTreeUpdate = false;
+    m_elementsWithDestroyedVisibleRenderer.clear();
+}
+
 void ContentChangeObserver::stopObservingPendingActivities()
 {
     setShouldObserveNextStyleRecalc(false);
@@ -265,10 +287,12 @@ void ContentChangeObserver::reset()
 
     m_touchEventIsBeingDispatched = false;
     m_isInObservedStyleRecalc = false;
+    m_isInObservedRenderTreeUpdate = false;
     m_observedDomTimerIsBeingExecuted = false;
     m_mouseMovedEventIsBeingDispatched = false;
 
     m_contentObservationTimer.stop();
+    m_elementsWithDestroyedVisibleRenderer.clear();
 }
 
 void ContentChangeObserver::didSuspendActiveDOMObjects()
@@ -281,6 +305,20 @@ void ContentChangeObserver::willDetachPage()
 {
     LOG(ContentObservation, "willDetachPage");
     reset();
+}
+
+void ContentChangeObserver::willDestroyRenderer(const Element& element)
+{ 
+    if (!m_document.settings().contentChangeObserverEnabled())
+        return;
+    if (!m_isInObservedRenderTreeUpdate)
+        return;
+    if (hasVisibleChangeState())
+        return;
+    LOG_WITH_STREAM(ContentObservation, stream << "willDestroyRenderer element: " << &element);
+
+    if (!isConsideredHidden(element))
+        m_elementsWithDestroyedVisibleRenderer.add(&element);
 }
 
 void ContentChangeObserver::contentVisibilityDidChange()
@@ -462,12 +500,17 @@ void ContentChangeObserver::adjustObservedState(Event event)
     }
 }
 
+bool ContentChangeObserver::shouldObserveVisibilityChangeForElement(const Element& element)
+{
+    return isObservingContentChanges() && !hasVisibleChangeState() && !visibleRendererWasDestroyed(element);
+}
+
 ContentChangeObserver::StyleChangeScope::StyleChangeScope(Document& document, const Element& element)
     : m_contentChangeObserver(document.contentChangeObserver())
     , m_element(element)
     , m_hadRenderer(element.renderer())
 {
-    if (m_contentChangeObserver.isObservingContentChanges() && !m_contentChangeObserver.hasVisibleChangeState())
+    if (m_contentChangeObserver.shouldObserveVisibilityChangeForElement(element))
         m_wasHidden = isConsideredHidden(m_element);
 }
 
@@ -556,6 +599,17 @@ ContentChangeObserver::DOMTimerScope::~DOMTimerScope()
 {
     if (m_contentChangeObserver)
         m_contentChangeObserver->domTimerExecuteDidFinish(m_domTimer);
+}
+
+ContentChangeObserver::RenderTreeUpdateScope::RenderTreeUpdateScope(Document& document)
+    : m_contentChangeObserver(document.contentChangeObserver())
+{
+    m_contentChangeObserver.renderTreeUpdateDidStart();
+}
+
+ContentChangeObserver::RenderTreeUpdateScope::~RenderTreeUpdateScope()
+{
+    m_contentChangeObserver.renderTreeUpdateDidFinish();
 }
 
 }

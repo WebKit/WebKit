@@ -61,6 +61,8 @@ public:
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
+    void willDestroyRenderer(const Element&);
+
     class StyleChangeScope {
     public:
         StyleChangeScope(Document&, const Element&);
@@ -87,6 +89,14 @@ public:
     public:
         WEBCORE_EXPORT MouseMovedScope(Document&);
         WEBCORE_EXPORT ~MouseMovedScope();
+    private:
+        ContentChangeObserver& m_contentChangeObserver;
+    };
+
+    class RenderTreeUpdateScope {
+    public:
+        RenderTreeUpdateScope(Document&);
+        ~RenderTreeUpdateScope();
     private:
         ContentChangeObserver& m_contentChangeObserver;
     };
@@ -160,6 +170,11 @@ private:
     void completeDurationBasedContentObservation();
     void setObservedContentState(WKContentChange);
 
+    void renderTreeUpdateDidStart();
+    void renderTreeUpdateDidFinish();
+    bool visibleRendererWasDestroyed(const Element& element) const { return m_elementsWithDestroyedVisibleRenderer.contains(&element); }
+    bool shouldObserveVisibilityChangeForElement(const Element&);
+
     enum class Event {
         StartedTouchStartEventDispatching,
         EndedTouchStartEventDispatching,
@@ -187,6 +202,7 @@ private:
     HashSet<const DOMTimer*> m_DOMTimerList;
     // FIXME: Move over to WeakHashSet when it starts supporting const.
     HashSet<const Element*> m_elementsWithTransition;
+    HashSet<const Element*> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };
@@ -196,6 +212,7 @@ private:
     bool m_mouseMovedEventIsBeingDispatched { false };
     bool m_isBetweenTouchEndAndMouseMoved { false };
     bool m_isObservingTransitions { false };
+    bool m_isInObservedRenderTreeUpdate { false };
 };
 
 inline void ContentChangeObserver::setObservedContentState(WKContentChange observedContentChange)

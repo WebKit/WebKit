@@ -136,6 +136,10 @@ static bool shouldCreateRenderer(const Element& element, const RenderElement& pa
 
 void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 {
+#if PLATFORM(IOS_FAMILY)
+    ContentChangeObserver::RenderTreeUpdateScope observingScope(m_document);
+#endif
+
     ASSERT(root.renderer());
     ASSERT(m_parentStack.isEmpty());
 
@@ -556,6 +560,9 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             GeneratedContent::removeAfterPseudoElement(element, builder);
 
             if (auto* renderer = element.renderer()) {
+#if PLATFORM(IOS_FAMILY)
+                document.contentChangeObserver().willDestroyRenderer(element);
+#endif
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer);
                 element.setRenderer(nullptr);
             }

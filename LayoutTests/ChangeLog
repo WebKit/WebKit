@@ -1,3 +1,14 @@
+2019-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Ignore reconstructed renderers when checking for visibility change
+        https://bugs.webkit.org/show_bug.cgi?id=196483
+        <rdar://problem/49288174>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/visible-content-gains-new-renderer-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/visible-content-gains-new-renderer.html: Added.
+
 2019-04-02  Shawn Roberts  <sroberts@apple.com>
 
         accessibility/mac/press-not-work-for-disabled-menu-list.html is a flaky failure
