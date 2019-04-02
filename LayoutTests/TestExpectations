@@ -217,6 +217,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandbox
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-client-id.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/xhr/event-timeout-order.htm [ Pass Failure ]
 
 # This test is timing out because it relies on http://www1.localhost:8800 host for cross origin checks.
 imported/w3c/web-platform-tests/cors/remote-origin.htm [ Skip ]

@@ -38,8 +38,7 @@ public:
     void ref() { m_request.ref(); }
     void deref() { m_request.deref(); }
 
-    void dispatchThrottledProgressEvent(bool lengthComputable, unsigned long long loaded, unsigned long long total);
-    void dispatchProgressEvent(const AtomicString& type);
+    void dispatchProgressEvent(const AtomicString& type, unsigned long long loaded, unsigned long long total);
 
 private:
     void refEventTarget() final { ref(); }
@@ -49,9 +48,6 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return m_request.scriptExecutionContext(); }
 
     XMLHttpRequest& m_request;
-    bool m_lengthComputable { false };
-    unsigned long long m_loaded { 0 };
-    unsigned long long m_total { 0 };
 };
     
 } // namespace WebCore

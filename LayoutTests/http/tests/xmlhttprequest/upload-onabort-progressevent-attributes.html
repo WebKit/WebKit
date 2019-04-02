@@ -26,6 +26,15 @@ function onProgressEvent(e)
             + "(" + e.loaded + " / " + e.total + "), expected (" + loaded + " / " + total + ")");
 }
 
+function onErrorProgressEvent(e)
+{
+    if (e.lengthComputable)
+        fail("Event " + e.type + " lengthComputable is true");
+    if (e.total != 0 || e.loaded != 0)
+        fail("Event " + e.type + " total/loaded values not matching: "
+            + "(" + e.loaded + " / " + e.total + "), expected (0 / 0)");
+}
+
 function onUnexpectedProgressEvent(e)
 {
     fail("unexpected ProgressEvent: " + e.type);
@@ -50,13 +59,13 @@ function test()
     var req = new XMLHttpRequest();
     req.upload.onerror = onUnexpectedProgressEvent;
     req.upload.onload = onUnexpectedProgressEvent;
-    req.upload.onabort = onProgressEvent;
+    req.upload.onabort = onErrorProgressEvent;
     req.upload.onprogress = function(e) {
         onProgressEvent(e);
         req.abort();
     }
     req.upload.onloadend = function(e) {
-        onProgressEvent(e);
+        onErrorProgressEvent(e);
         completeTest();
     }
 
