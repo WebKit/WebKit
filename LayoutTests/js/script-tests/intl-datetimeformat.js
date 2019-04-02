@@ -435,8 +435,8 @@ shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle", "'h23'");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12", "false");
 shouldBe("Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0)", "'0:00'");
-shouldBe("Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0)", "'00:00'");
-shouldBe("Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7)", "'02:46 ДП'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0)", "'00:00'");
+shouldBe("Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7)", "'02:46 AM'");
 
 shouldThrow("Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } })", "'minute'");
 shouldThrow("Intl.DateTimeFormat('en', { minute:null })", '\'RangeError: minute must be "2-digit" or "numeric"\'');

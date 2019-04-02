@@ -1,3 +1,23 @@
+2019-04-02  Diego Pino Garcia  <dpino@igalia.com>
+
+        REGRESSION(r243512): Change locale of test in intl-datetimeformat.js
+        https://bugs.webkit.org/show_bug.cgi?id=196395
+
+        r243512 modifes Intl.DateTimeFormat to obey 2-digit hour. A test was
+        added to test 2-digit hour in Russian using 12-hour setting as true and
+        false. In the former case, the expected string appends the string 'AM'
+        in Russian. This localised string made GTK-based ports fail since
+        according to Glib the 'am_pm' values in Russian are not localised.
+        
+        This patch keeps the same test but changes locale to 'en' to prevent
+        the test from failing.
+
+        Reviewed by Michael Catanzaro.
+
+        * js/intl-datetimeformat-expected.txt:
+        * js/script-tests/intl-datetimeformat.js:
+        * platform/gtk/js/intl-datetimeformat-expected.txt:
+
 2019-04-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the tests added in r236519 on iOS. This feature was never implemented in iOS.

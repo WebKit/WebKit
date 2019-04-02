@@ -321,8 +321,8 @@ PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'numeric', timeZone: 'UT
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hourCycle is 'h23'
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric' }).resolvedOptions().hour12 is false
 PASS Intl.DateTimeFormat('pt-BR', { minute:'2-digit', hour:'numeric', timeZone: 'UTC' }).format(0) is '0:00'
-PASS Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0) is '00:00'
-FAIL Intl.DateTimeFormat('ru', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7) should be 02:46 ДП. Was 02:46 AM.
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', hour12: false, timeZone: 'UTC' }).format(0) is '00:00'
+PASS Intl.DateTimeFormat('en', { minute:'2-digit', hour:'2-digit', hour12: true, timeZone: 'UTC' }).format(1e7) is '02:46 AM'
 PASS Intl.DateTimeFormat('en', { minute: { toString() { throw 'minute' } } }) threw exception minute.
 PASS Intl.DateTimeFormat('en', { minute:null }) threw exception RangeError: minute must be "2-digit" or "numeric".
 PASS Intl.DateTimeFormat('en').resolvedOptions().minute is undefined
