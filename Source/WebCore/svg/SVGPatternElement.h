@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
@@ -49,7 +48,7 @@ public:
     const SVGLengthValue& height() const { return m_height->currentValue(); }
     SVGUnitTypes::SVGUnitType patternUnits() const { return m_patternUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
     SVGUnitTypes::SVGUnitType patternContentUnits() const { return m_patternContentUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
-    const SVGTransformListValues& patternTransform() const { return m_patternTransform.currentValue(attributeOwnerProxy()); }
+    const SVGTransformList& patternTransform() const { return m_patternTransform->currentValue(); }
 
     SVGAnimatedLength& xAnimated() { return m_x; }
     SVGAnimatedLength& yAnimated() { return m_y; }
@@ -57,23 +56,16 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedEnumeration& patternUnitsAnimated() { return m_patternUnits; }
     SVGAnimatedEnumeration& patternContentUnitsAnimated() { return m_patternContentUnits; }
-    RefPtr<SVGAnimatedTransformList> patternTransformAnimated() { return m_patternTransform.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedTransformList& patternTransformAnimated() { return m_patternTransform; }
 
 private:
     SVGPatternElement(const QualifiedName&, Document&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGPatternElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGTests, SVGURIReference>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static void registerAttributes();
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGPatternElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGTests, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
     void svgAttributeChanged(const QualifiedName&) final;
@@ -93,7 +85,7 @@ private:
     Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, LengthModeHeight) };
     Ref<SVGAnimatedEnumeration> m_patternUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
     Ref<SVGAnimatedEnumeration> m_patternContentUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE) };
-    SVGAnimatedTransformListAttribute m_patternTransform;
+    Ref<SVGAnimatedTransformList> m_patternTransform { SVGAnimatedTransformList::create(this) };
 };
 
 } // namespace WebCore

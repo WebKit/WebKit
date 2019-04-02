@@ -40,4 +40,14 @@ public:
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGStringListAccessor, property>(); }
 };
 
+template<typename OwnerType>
+class SVGTransformListAccessor final : public SVGPropertyAccessor<OwnerType, SVGTransformList> {
+    using Base = SVGPropertyAccessor<OwnerType, SVGTransformList>;
+
+public:
+    using Base::Base;
+    template<Ref<SVGTransformList> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGTransformListAccessor, property>(); }
+};
+
 }

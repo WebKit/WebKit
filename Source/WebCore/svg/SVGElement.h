@@ -24,6 +24,7 @@
 
 #include "SVGAnimatedPropertyImpl.h"
 #include "SVGAttributeOwnerProxy.h"
+#include "SVGAttributeOwnerProxyImpl.h"
 #include "SVGLangSpace.h"
 #include "SVGLocatable.h"
 #include "SVGNames.h"
@@ -135,11 +136,12 @@ public:
     class InstanceInvalidationGuard;
 
     // The definition of the owner proxy has to match the class inheritance but we are interested in the SVG objects only.
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGElement, SVGLangSpace>;
+    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGElement>;
 
     // A super class will override this function to return its owner proxy. The attributes of the super class will
     // be accessible through the registry of the owner proxy.
     virtual const SVGAttributeOwnerProxy& attributeOwnerProxy() const { return m_attributeOwnerProxy; }
+    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
     // Helper functions which return info for the super class' attributes.
     void synchronizeAttribute(const QualifiedName& name) { attributeOwnerProxy().synchronizeAttribute(name); }

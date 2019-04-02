@@ -36,5 +36,5 @@ interface SVGTransformList {
     [MayThrowException] SVGTransform appendItem(SVGTransform item);
 
     [MayThrowException, NewObject] SVGTransform createSVGTransformFromMatrix(SVGMatrix matrix);
-    [MayThrowException, NewObject] SVGTransform consolidate();
+    [MayThrowException] SVGTransform consolidate();
 };

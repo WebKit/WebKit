@@ -53,7 +53,6 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
     , SVGURIReference(this)
 {
     ASSERT(hasTagName(SVGNames::patternTag));
-    registerAttributes();
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
@@ -63,20 +62,13 @@ inline SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Docume
         PropertyRegistry::registerProperty<SVGNames::heightAttr, &SVGPatternElement::m_height>();
         PropertyRegistry::registerProperty<SVGNames::patternUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternUnits>();
         PropertyRegistry::registerProperty<SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGPatternElement::m_patternContentUnits>();
+        PropertyRegistry::registerProperty<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();
     });
 }
 
 Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, Document& document)
 {
     return adoptRef(*new SVGPatternElement(tagName, document));
-}
-
-void SVGPatternElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::patternTransformAttr, &SVGPatternElement::m_patternTransform>();
 }
 
 void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -94,10 +86,7 @@ void SVGPatternElement::parseAttribute(const QualifiedName& name, const AtomicSt
         return;
     }
     if (name == SVGNames::patternTransformAttr) {
-        SVGTransformListValues newList;
-        newList.parse(value);
-        m_patternTransform.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_patternTransform.setValue(WTFMove(newList));
+        m_patternTransform->baseVal()->parse(value);
         return;
     }
 
@@ -129,7 +118,7 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName) || SVGFitToViewBox::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
         if (RenderObject* object = renderer())
             object->setNeedsLayout();
         return;
@@ -181,11 +170,8 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
     if (!attributes.hasPatternContentUnits() && hasAttribute(SVGNames::patternContentUnitsAttr))
         attributes.setPatternContentUnits(patternContentUnits());
 
-    if (!attributes.hasPatternTransform() && hasAttribute(SVGNames::patternTransformAttr)) {
-        AffineTransform transform;
-        patternTransform().concatenate(transform);
-        attributes.setPatternTransform(transform);
-    }
+    if (!attributes.hasPatternTransform() && hasAttribute(SVGNames::patternTransformAttr))
+        attributes.setPatternTransform(patternTransform().concatenate());
 
     if (!attributes.hasPatternContentElement() && childElementCount())
         attributes.setPatternContentElement(this);
@@ -193,9 +179,7 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
 
 AffineTransform SVGPatternElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
 {
-    AffineTransform matrix;
-    patternTransform().concatenate(matrix);
-    return matrix;
+    return patternTransform().concatenate();
 }
 
 }

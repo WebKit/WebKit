@@ -42,7 +42,10 @@ SVGGraphicsElement::SVGGraphicsElement(const QualifiedName& tagName, Document& d
     , SVGTests(this)
     , m_shouldIsolateBlending(false)
 {
-    registerAttributes();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        PropertyRegistry::registerProperty<SVGNames::transformAttr, &SVGGraphicsElement::m_transform>();
+    });
 }
 
 SVGGraphicsElement::~SVGGraphicsElement() = default;
@@ -106,7 +109,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
         }
 
     } else
-        transform().concatenate(matrix);
+        matrix = transform().concatenate();
 
     if (m_supplementalTransform)
         return *m_supplementalTransform * matrix;
@@ -120,21 +123,10 @@ AffineTransform* SVGGraphicsElement::supplementalTransform()
     return m_supplementalTransform.get();
 }
 
-void SVGGraphicsElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::transformAttr, &SVGGraphicsElement::m_transform>();
-}
-
 void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::transformAttr) {
-        SVGTransformListValues newList;
-        newList.parse(value);
-        m_transform.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_transform.setValue(newList);
+        m_transform->baseVal()->parse(value);
         return;
     }
 
@@ -144,18 +136,15 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::transformAttr) {
         InstanceInvalidationGuard guard(*this);
 
-        auto renderer = this->renderer();
-        if (!renderer)
-            return;
-
-        if (attrName == SVGNames::transformAttr) {
+        if (auto renderer = this->renderer()) {
             renderer->setNeedsTransformUpdate();
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-            return;
         }
+
+        return;
     }
 
     SVGElement::svgAttributeChanged(attrName);

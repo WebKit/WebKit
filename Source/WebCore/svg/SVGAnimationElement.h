@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class ConditionEventListener;
-class SVGAnimatedType;
 class TimeContainer;
 
 // If we have 'currentColor' or 'inherit' as animation value, we need to grab
@@ -69,52 +68,6 @@ public:
 
     AnimatedPropertyValueType fromPropertyValueType() const { return m_fromPropertyValueType; }
     AnimatedPropertyValueType toPropertyValueType() const { return m_toPropertyValueType; }
-
-    template<typename AnimatedType> void adjustForInheritance(AnimatedType (*parseTypeFromString)(SVGAnimationElement*, const String&), AnimatedPropertyValueType valueType, AnimatedType& animatedType, SVGElement* contextElement)
-    {
-        if (valueType != InheritValue)
-            return;
-        // Replace 'inherit' by its computed property value.
-        ASSERT(parseTypeFromString);
-        String typeString;
-        adjustForInheritance(contextElement, attributeName(), typeString);
-        animatedType = (*parseTypeFromString)(this, typeString);
-    }
-
-    template<typename AnimatedType> bool adjustFromToListValues(const AnimatedType& fromList, const AnimatedType& toList, AnimatedType& animatedList, float percentage, bool resizeAnimatedListIfNeeded = true)
-    {
-        // If no 'to' value is given, nothing to animate.
-        unsigned toListSize = toList.size();
-        if (!toListSize)
-            return false;
-
-        // If the 'from' value is given and it's length doesn't match the 'to' value list length, fallback to a discrete animation.
-        unsigned fromListSize = fromList.size();
-        if (fromListSize != toListSize && fromListSize) {
-            if (percentage < 0.5) {
-                if (animationMode() != AnimationMode::To)
-                    animatedList = AnimatedType(fromList);
-            } else
-                animatedList = AnimatedType(toList);
-
-            return false;
-        }
-
-        ASSERT(!fromListSize || fromListSize == toListSize);
-        if (resizeAnimatedListIfNeeded && animatedList.size() < toListSize)
-            animatedList.resize(toListSize);
-
-        return true;
-    }
-
-    template<typename AnimatedType> void animateDiscreteType(float percentage, const AnimatedType& fromType, const AnimatedType& toType, AnimatedType& animatedType)
-    {
-        if ((animationMode() == AnimationMode::FromTo && percentage > 0.5) || animationMode() == AnimationMode::To || percentage == 1) {
-            animatedType = AnimatedType(toType);
-            return;
-        }
-        animatedType = AnimatedType(fromType);
-    }
 
     void animateAdditiveNumber(float percentage, unsigned repeatCount, float fromNumber, float toNumber, float toAtEndOfDurationNumber, float& animatedNumber)
     {
@@ -191,9 +144,6 @@ private:
     float calculatePercentForSpline(float percent, unsigned splineIndex) const;
     float calculatePercentForFromTo(float percent) const;
     unsigned calculateKeyTimesIndex(float percent) const;
-
-    void applyAnimatedValue(ShouldApplyAnimation, SVGElement* targetElement, const QualifiedName& attributeName, SVGAnimatedType*);
-    void adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String&);
 
     void setCalcMode(const AtomicString&);
 

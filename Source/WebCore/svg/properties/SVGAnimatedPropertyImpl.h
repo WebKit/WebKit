@@ -29,7 +29,6 @@
 #include "SVGAnimatedDecoratedProperty.h"
 #include "SVGAnimatedPrimitiveProperty.h"
 #include "SVGAnimatedPropertyList.h"
-#include "SVGAnimatedTransformList.h"
 #include "SVGAnimatedValueProperty.h"
 #include "SVGDecoratedEnumeration.h"
 #include "SVGLength.h"
@@ -40,6 +39,7 @@
 #include "SVGPointList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGRect.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
@@ -58,6 +58,7 @@ using SVGAnimatedPreserveAspectRatio = SVGAnimatedValueProperty<SVGPreserveAspec
 using SVGAnimatedLengthList = SVGAnimatedPropertyList<SVGLengthList>;
 using SVGAnimatedNumberList = SVGAnimatedPropertyList<SVGNumberList>;
 using SVGAnimatedPointList = SVGAnimatedPropertyList<SVGPointList>;
+using SVGAnimatedTransformList = SVGAnimatedPropertyList<SVGTransformList>;
 
 class SVGAnimatedOrientType : public SVGAnimatedEnumeration {
 public:

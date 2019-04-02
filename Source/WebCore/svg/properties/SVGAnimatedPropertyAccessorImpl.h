@@ -319,4 +319,26 @@ private:
     }
 };
 
+template<typename OwnerType>
+class SVGAnimatedTransformListAccessor final : public SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedTransformList> {
+    using Base = SVGAnimatedPropertyAccessor<OwnerType, SVGAnimatedTransformList>;
+    using Base::property;
+
+public:
+    using Base::Base;
+    template<Ref<SVGAnimatedTransformList> OwnerType::*property>
+    constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedTransformListAccessor, property>(); }
+
+private:
+    std::unique_ptr<SVGAttributeAnimator> createAnimator(OwnerType& owner, const QualifiedName& attributeName, AnimationMode animationMode, CalcMode calcMode, bool isAccumulated, bool isAdditive) const final
+    {
+        return SVGAnimatedTransformListAnimator::create(attributeName, property(owner), animationMode, calcMode, isAccumulated, isAdditive);
+    }
+
+    void appendAnimatedInstance(OwnerType& owner, SVGAttributeAnimator& animator) const final
+    {
+        static_cast<SVGAnimatedTransformListAnimator&>(animator).appendAnimatedInstance(property(owner));
+    }
+};
+
 }

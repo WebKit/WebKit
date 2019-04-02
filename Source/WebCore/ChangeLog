@@ -1,3 +1,276 @@
+2019-04-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Remove the SVG tear off objects for SVGMatrix, SVGTransfrom, SVGTransformList and SVGAnimatedTransformList
+        https://bugs.webkit.org/show_bug.cgi?id=196086
+
+        Reviewed by Simon Fraser.
+
+        The IDL changes:
+
+        SVGTransform.idl:
+            Remove the NewObject qualifier from matrix attribute. This matches 
+            the specs: https://www.w3.org/TR/SVG11/coords.html#InterfaceSVGTransform.
+            SVGTransform will internally hold an SVGMatrix. A change in this
+            SVGMatrix will affect the container SVGTransform.
+
+        SVGTransformList.idl:
+            Remove the NewObject qualifier from consolidate() method. This matches
+            the specs:
+            https://www.w3.org/TR/SVG11/coords.html#__svg__SVGTransformList__consolidate
+            The method consolidate() should return a reference to the first item
+            in the list after consolidating it.
+
+        Code changes:
+
+        -- SVGMatrix is now a superclass of SVGValueProperty<AffineTransform>.
+           No need for SVGMatrixValue since it was wrapper of AffineTransform.
+
+        -- SVGTransformValue now holds a Ref<SVGMatrix> member in addition to the
+           angle and the rotationCenter. Ref<SVGMatrix> is what SVGTransform.matrix
+           will return. So a change in this matrix will change the owner SVGTransform.
+
+        -- SVGTransform is now the owner of SVGMatrix via its SVGTransformValue.
+
+        -- SVGTransformList is now a superclass of SVGValuePropertyList<SVGTransform>.
+           It is responsible for parsing a String to items of SVGTransform.
+
+        -- SVGAnimatedTransformList is now defined as SVGAnimatedPropertyList<
+           SVGTransformList>.
+
+        Note the ownership chain of these objects is the following:
+
+        -- SVGAnimatedTransformList owns the SVGTransformList via its baseVal 
+           and animVal members.
+
+        -- SVGTransformList owns SVGTransform via its list of items
+
+        -- SVGTransform owns SVGMatrix via its SVGTransformValue.
+
+           So a change in SVGMatrix will propagate to the owner SVGElement through
+           the following ownership chain:
+
+           SVGMatrix
+             |_ SVGTransfrom
+                  |_ SVGTransformList
+                       |_ SVGAmimatedTransformList
+                            |_ SVGElement
+
+        To get the mechanics of this change right, a new accessor, a new animator
+        and animation functions are added for the SVGAnimatedTransformList.
+
+        -- SVGViewSpec used to hold an SVGAnimatedTransformListAttribute for the
+        member m_transform although this member should not be animated. See the
+        comment in the old SVGViewSpec::transform(). This has been changed in this
+        patch. SVGViewSpec now holds Ref<SVGTransformList> which matches the specs:
+        https://www.w3.org/TR/SVG11/types.html#InterfaceSVGViewSpec.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGAnimateElementBase.cpp:
+        (WebCore::SVGAnimateElementBase::attributeAnimationController):
+        (WebCore::SVGAnimateElementBase::hasValidAttributeType const):
+        (WebCore::SVGAnimateElementBase::calculateToAtEndOfDurationValue):
+        (WebCore::SVGAnimateElementBase::calculateFromAndToValues):
+        (WebCore::SVGAnimateElementBase::calculateFromAndByValues):
+        * svg/SVGAnimateElementBase.h:
+        (WebCore::SVGAnimateElementBase::animateRangeString const):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::animateRangeString const):
+        * svg/SVGAnimateTransformElement.h:
+                This change is needed because animating the transform attribute can be
+        written as
+            <animate ... from="translate(100)" to="translate(200)"/>
+        or
+            <animateTransform type="translate" from="100" to="200"/>"
+        So we need to surround the animation range string with the type qualifier
+        for animateTransform.
+
+        * svg/SVGAnimatedTransformList.cpp: Removed.
+        * svg/SVGAnimatedTransformList.h: Removed.
+        * svg/SVGAnimatedType.h: Removed.
+        * svg/SVGAnimatedTypeAnimator.cpp: Removed.
+        * svg/SVGAnimatedTypeAnimator.h: Removed.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::adjustForInheritance): Deleted.
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::adjustForInheritance): Deleted.
+        (WebCore::SVGAnimationElement::adjustFromToListValues): Deleted.
+        (WebCore::SVGAnimationElement::animateDiscreteType): Deleted.
+        These functions were used by SVGLegacyAttributeAnimationController.
+
+        * svg/SVGAnimatorFactory.h: Removed.
+        * svg/SVGExternalResourcesRequired.h:
+        (WebCore::SVGExternalResourcesRequired::isKnownAttribute):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::isKnownAttribute):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement):
+        (WebCore::SVGGradientElement::parseAttribute):
+        (WebCore::SVGGradientElement::registerAttributes): Deleted.
+        * svg/SVGGradientElement.h:
+        (WebCore::SVGGradientElement::gradientTransform const):
+        (WebCore::SVGGradientElement::gradientTransformAnimated):
+        (WebCore::SVGGradientElement::isKnownAttribute):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::SVGGraphicsElement):
+        (WebCore::SVGGraphicsElement::animatedLocalTransform const):
+        (WebCore::SVGGraphicsElement::parseAttribute):
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        There is one attribute for this element which is "SVGNames::transformAttr"
+        So there is no need to check for it twice.
+
+        (WebCore::SVGGraphicsElement::registerAttributes): Deleted.
+        * svg/SVGGraphicsElement.h:
+        (WebCore::SVGGraphicsElement::transform const):
+        (WebCore::SVGGraphicsElement::transformAnimated):
+        (WebCore::SVGGraphicsElement::isKnownAttribute): Deleted.
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::SVGLangSpace):
+        (WebCore::SVGLangSpace::xmlspace const):
+        (WebCore::SVGLangSpace::isKnownAttribute):
+        (WebCore::SVGLangSpace::svgAttributeChanged):
+        (WebCore::SVGLangSpace::registerAttributes): Deleted.
+        * svg/SVGLangSpace.h:
+        (WebCore::SVGLangSpace::xmllang const):
+        (WebCore::SVGLangSpace::setXmllang):
+        (WebCore::SVGLangSpace::setXmlspace):
+        (WebCore::SVGLangSpace::attributeRegistry): Deleted.
+        (WebCore::SVGLangSpace::isKnownAttribute): Deleted.
+        * svg/SVGLegacyAttributeAnimationController.cpp: Removed.
+        * svg/SVGLegacyAttributeAnimationController.h: Removed.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        * svg/SVGMaskElement.h:
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::create):
+        (WebCore::SVGMatrix::a const):
+        (WebCore::SVGMatrix::setA):
+        (WebCore::SVGMatrix::b const):
+        (WebCore::SVGMatrix::setB):
+        (WebCore::SVGMatrix::c const):
+        (WebCore::SVGMatrix::setC):
+        (WebCore::SVGMatrix::d const):
+        (WebCore::SVGMatrix::setD):
+        (WebCore::SVGMatrix::e const):
+        (WebCore::SVGMatrix::setE):
+        (WebCore::SVGMatrix::f const):
+        (WebCore::SVGMatrix::setF):
+        (WebCore::SVGMatrix::multiply const):
+        (WebCore::SVGMatrix::inverse const):
+        (WebCore::SVGMatrix::translate const):
+        (WebCore::SVGMatrix::scale const):
+        (WebCore::SVGMatrix::scaleNonUniform const):
+        (WebCore::SVGMatrix::rotate const):
+        (WebCore::SVGMatrix::rotateFromVector const):
+        (WebCore::SVGMatrix::flipX const):
+        (WebCore::SVGMatrix::flipY const):
+        (WebCore::SVGMatrix::skewX const):
+        (WebCore::SVGMatrix::skewY const):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::parseAttribute):
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::collectPatternAttributes const):
+        (WebCore::SVGPatternElement::localCoordinateSpaceTransform const):
+        (WebCore::SVGPatternElement::registerAttributes): Deleted.
+        * svg/SVGPatternElement.h:
+        * svg/SVGPoint.h:
+        (WebCore::SVGPoint::matrixTransform const):
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::isKnownAttribute): Deleted.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::setGradientAttributes):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGTransform):
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform const):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::animatedLocalTransform const):
+        * svg/SVGTransform.cpp: Removed.
+        * svg/SVGTransform.h:
+        (WebCore::SVGTransform::create):
+        (WebCore::SVGTransform::~SVGTransform):
+        (WebCore::SVGTransform::clone const):
+        (WebCore::SVGTransform::type):
+        (WebCore::SVGTransform::angle):
+        (WebCore::SVGTransform::matrix):
+        (WebCore::SVGTransform::setMatrix):
+        (WebCore::SVGTransform::setTranslate):
+        (WebCore::SVGTransform::setScale):
+        (WebCore::SVGTransform::setRotate):
+        (WebCore::SVGTransform::setSkewX):
+        (WebCore::SVGTransform::setSkewY):
+        (WebCore::SVGTransform::SVGTransform):
+        * svg/SVGTransform.idl:
+        * svg/SVGTransformList.h:
+        * svg/SVGTransformList.idl:
+        * svg/SVGTransformListValues.cpp: Removed.
+        * svg/SVGTransformListValues.h: Removed.
+        * svg/SVGTransformValue.cpp: Removed.
+        * svg/SVGTransformValue.h:
+        (WebCore::SVGTransformValue::SVGTransformValue):
+        (WebCore::SVGTransformValue::operator=):
+        (WebCore::SVGTransformValue::matrix const):
+        (WebCore::SVGTransformValue::rotationCenter const):
+        (WebCore::SVGTransformValue::isValid const):
+        (WebCore::SVGTransformValue::setMatrix):
+        (WebCore::SVGTransformValue::matrixDidChange):
+        (WebCore::SVGTransformValue::translate const):
+        (WebCore::SVGTransformValue::setTranslate):
+        (WebCore::SVGTransformValue::scale const):
+        (WebCore::SVGTransformValue::setScale):
+        (WebCore::SVGTransformValue::setRotate):
+        (WebCore::SVGTransformValue::setSkewX):
+        (WebCore::SVGTransformValue::setSkewY):
+        (WebCore::SVGTransformValue::valueAsString const):
+        (WebCore::SVGTransformValue::prefixForTransfromType):
+        (WebCore::SVGTransformValue::appendNumbers const):
+        (WebCore::SVGTransformValue::appendMatrix const):
+        (WebCore::SVGTransformValue::appendTranslate const):
+        (WebCore::SVGTransformValue::appendScale const):
+        (WebCore::SVGTransformValue::appendRotate const):
+        (WebCore::SVGTransformValue::appendSkewX const):
+        (WebCore::SVGTransformValue::appendSkewY const):
+        (WebCore::SVGTransformValue::matrix): Deleted.
+        * svg/SVGTransformable.cpp:
+        (WebCore::SVGTransformable::parseAndSkipType):
+        (WebCore::parseAndSkipType): Deleted.
+        (WebCore::SVGTransformable::parseTransformAttribute): Deleted.
+        The code of this function was moved to SVGTransformList::parse().
+
+        * svg/SVGTransformable.h:
+        There is no need for enum TransformParsingMode. It was used by 
+        SVGViewSpec::parseViewSpec() to tell SVGTransformable::parseTransformAttribute()
+        not to clear the list. SVGTransfromList now has two parse() functions:
+        one public and the second is private. The public one clear the list
+        before parsing the input String. The private one just does the parsing.
+        SVGViewSpec::parseViewSpec() calls the private once since it is a friend
+        of SVGTransfromList.
+
+        * svg/SVGValue.h: Removed.
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec):
+        (WebCore::SVGViewSpec::reset):
+        (WebCore::SVGViewSpec::parseViewSpec):
+        (WebCore::SVGViewSpec::registerAttributes): Deleted.
+        (WebCore::SVGViewSpec::transform): Deleted.
+        * svg/SVGViewSpec.h:
+        * svg/properties/SVGAnimatedPropertyAccessorImpl.h:
+        * svg/properties/SVGAnimatedPropertyAnimatorImpl.h:
+        * svg/properties/SVGAnimatedPropertyImpl.h:
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h: Removed.
+        * svg/properties/SVGAnimationAdditiveListFunctionImpl.h:
+        (WebCore::SVGAnimationTransformListFunction::progress):
+        * svg/properties/SVGAnimationAdditiveValueFunctionImpl.h:
+        * svg/properties/SVGAttributeRegistry.h:
+        * svg/properties/SVGMatrixTearOff.h: Removed.
+        * svg/properties/SVGPropertyAccessorImpl.h:
+        * svg/properties/SVGPropertyOwnerRegistry.h:
+        (WebCore::SVGPropertyOwnerRegistry::registerProperty):
+
 2019-04-01  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOMDebugger: breakpoints for attribute modifications still fire when breakpoints are disabled

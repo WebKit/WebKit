@@ -61,6 +61,8 @@ protected:
     void setAttributeName(const QualifiedName&) override;
     void resetAnimation() override;
 
+    virtual String animateRangeString(const String& string) const { return string; }
+
 private:
     bool hasInvalidCSSAttributeType() const;
 

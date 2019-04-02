@@ -627,20 +627,6 @@ void SVGAnimationElement::computeCSSPropertyValue(SVGElement* element, CSSProper
     element->setUseOverrideComputedStyle(false);
 }
 
-void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
-{
-    // FIXME: At the moment the computed style gets returned as a String and needs to get parsed again.
-    // In the future we might want to work with the value type directly to avoid the String parsing.
-    ASSERT(targetElement);
-
-    auto parent = makeRefPtr(targetElement->parentElement());
-    if (!parent || !parent->isSVGElement())
-        return;
-
-    SVGElement& svgParent = downcast<SVGElement>(*parent);
-    computeCSSPropertyValue(&svgParent, cssPropertyID(attributeName.localName()), value);
-}
-
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
 {
     static NeverDestroyed<const AtomicString> inherit("inherit", AtomicString::ConstructFromLiteral);

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
 #include "SVGTests.h"
 #include "SVGTransformable.h"
@@ -68,8 +67,8 @@ public:
     
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
 
-    const auto& transform() const { return m_transform.currentValue(attributeOwnerProxy()); }
-    auto transformAnimated() { return m_transform.animatedProperty(attributeOwnerProxy()); }
+    const SVGTransformList& transform() const { return m_transform->currentValue(); }
+    SVGAnimatedTransformList& transformAnimated() { return m_transform; }
 
 protected:
     SVGGraphicsElement(const QualifiedName&, Document&);
@@ -83,14 +82,7 @@ private:
     bool isSVGGraphicsElement() const override { return true; }
 
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    static void registerAttributes();
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
 
     // Used by <animateMotion>
     std::unique_ptr<AffineTransform> m_supplementalTransform;
@@ -100,7 +92,7 @@ private:
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
-    SVGAnimatedTransformListAttribute m_transform;
+    Ref<SVGAnimatedTransformList> m_transform { SVGAnimatedTransformList::create(this) };
 };
 
 } // namespace WebCore

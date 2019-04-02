@@ -386,12 +386,12 @@ Ref<SVGRect> SVGSVGElement::createSVGRect()
 
 Ref<SVGTransform> SVGSVGElement::createSVGTransform()
 {
-    return SVGTransform::create(SVGTransformValue { SVGTransformValue::SVG_TRANSFORM_MATRIX });
+    return SVGTransform::create(SVGTransformValue::SVG_TRANSFORM_MATRIX);
 }
 
 Ref<SVGTransform> SVGSVGElement::createSVGTransformFromMatrix(SVGMatrix& matrix)
 {
-    return SVGTransform::create(SVGTransformValue { matrix.propertyReference() });
+    return SVGTransform::create(matrix.value());
 }
 
 AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const
@@ -608,7 +608,7 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
         return SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), preserveAspectRatio(), viewWidth, viewHeight);
 
     AffineTransform transform = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), m_viewSpec->preserveAspectRatio(), viewWidth, viewHeight);
-    m_viewSpec->transformValue().concatenate(transform);
+    transform *= m_viewSpec->transform()->concatenate();
     return transform;
 }
 

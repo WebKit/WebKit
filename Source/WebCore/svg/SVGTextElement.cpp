@@ -59,7 +59,7 @@ AffineTransform SVGTextElement::animatedLocalTransform() const
         // Flatten any 3D transform
         matrix = t.toAffineTransform();
     } else
-        transform().concatenate(matrix);
+        matrix = transform().concatenate();
 
     const AffineTransform* transform = const_cast<SVGTextElement*>(this)->supplementalTransform();
     if (transform)

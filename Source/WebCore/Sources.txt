@@ -2229,8 +2229,6 @@ svg/SVGAnimateElement.cpp
 svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
-svg/SVGAnimatedTransformList.cpp
-svg/SVGAnimatedTypeAnimator.cpp
 svg/SVGAnimationElement.cpp
 svg/SVGAttributeAnimationController.cpp
 svg/SVGAttributeAnimationControllerBase.cpp
@@ -2291,7 +2289,6 @@ svg/SVGHKernElement.cpp
 svg/SVGImageElement.cpp
 svg/SVGImageLoader.cpp
 svg/SVGLangSpace.cpp
-svg/SVGLegacyAttributeAnimationController.cpp
 svg/SVGLengthContext.cpp
 svg/SVGLengthValue.cpp
 svg/SVGLineElement.cpp
@@ -2338,10 +2335,7 @@ svg/SVGTextPathElement.cpp
 svg/SVGTextPositioningElement.cpp
 svg/SVGTitleElement.cpp
 svg/SVGToOTFFontConversion.cpp
-svg/SVGTransform.cpp
 svg/SVGTransformDistance.cpp
-svg/SVGTransformListValues.cpp
-svg/SVGTransformValue.cpp
 svg/SVGTransformable.cpp
 svg/SVGURIReference.cpp
 svg/SVGUnknownElement.cpp

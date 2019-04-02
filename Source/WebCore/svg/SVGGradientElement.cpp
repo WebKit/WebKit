@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,6 @@
 #include "RenderSVGResourceRadialGradient.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
-#include "SVGTransformListValues.h"
 #include "SVGTransformable.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
@@ -44,21 +43,12 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
     , SVGExternalResourcesRequired(this)
     , SVGURIReference(this)
 {
-    registerAttributes();
-
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::spreadMethodAttr, SVGSpreadMethodType, &SVGGradientElement::m_spreadMethod>();
         PropertyRegistry::registerProperty<SVGNames::gradientUnitsAttr, SVGUnitTypes::SVGUnitType, &SVGGradientElement::m_gradientUnits>();
+        PropertyRegistry::registerProperty<SVGNames::gradientTransformAttr, &SVGGradientElement::m_gradientTransform>();
     });
-}
-
-void SVGGradientElement::registerAttributes()
-{
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute<SVGNames::gradientTransformAttr, &SVGGradientElement::m_gradientTransform>();
 }
 
 void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -71,10 +61,7 @@ void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicS
     }
 
     if (name == SVGNames::gradientTransformAttr) {
-        SVGTransformListValues newList;
-        newList.parse(value);
-        m_gradientTransform.detachAnimatedListWrappers(attributeOwnerProxy(), newList.size());
-        m_gradientTransform.setValue(WTFMove(newList));
+        m_gradientTransform->baseVal()->parse(value);
         return;
     }
 

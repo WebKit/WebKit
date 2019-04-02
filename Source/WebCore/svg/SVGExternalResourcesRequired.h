@@ -56,10 +56,7 @@ public:
 protected:
     SVGExternalResourcesRequired(SVGElement* contextElement);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
     virtual void setHaveFiredLoadEvent(bool) { }
     virtual bool isParserInserted() const { return false; }

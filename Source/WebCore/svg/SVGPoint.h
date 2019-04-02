@@ -84,7 +84,7 @@ public:
 
     Ref<SVGPoint> matrixTransform(SVGMatrix& matrix) const
     {
-        auto newPoint = m_value.matrixTransform(matrix.propertyReference());
+        auto newPoint = m_value.matrixTransform(matrix.value());
         return adoptRef(*new SVGPoint(newPoint));
     }
 

@@ -66,4 +66,9 @@ void SVGAnimateTransformElement::parseAttribute(const QualifiedName& name, const
     SVGAnimateElementBase::parseAttribute(name, value);
 }
 
+String SVGAnimateTransformElement::animateRangeString(const String& string) const
+{
+    return SVGTransformValue::prefixForTransfromType(m_type) + string + ')';
+}
+
 }

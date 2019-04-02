@@ -25,10 +25,8 @@
 #include "SVGAnimateElementBase.h"
 
 #include "QualifiedName.h"
-#include "SVGAnimatorFactory.h"
 #include "SVGAttributeAnimationController.h"
 #include "SVGElement.h"
-#include "SVGLegacyAttributeAnimationController.h"
 #include "SVGNames.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -49,12 +47,8 @@ SVGAttributeAnimationControllerBase& SVGAnimateElementBase::attributeAnimationCo
     ASSERT(targetElement());
     ASSERT(!hasInvalidCSSAttributeType());
 
-    if (!m_attributeAnimationController) {
-        if (targetElement()->isAnimatedAttribute(attributeName()))
-            m_attributeAnimationController = std::make_unique<SVGAttributeAnimationController>(*this, *targetElement());
-        else
-            m_attributeAnimationController = std::make_unique<SVGLegacyAttributeAnimationController>(*this, *targetElement());
-    }
+    if (!m_attributeAnimationController)
+        m_attributeAnimationController = std::make_unique<SVGAttributeAnimationController>(*this, *targetElement());
 
     return *m_attributeAnimationController;
 }
@@ -63,9 +57,6 @@ bool SVGAnimateElementBase::hasValidAttributeType() const
 {
     if (!targetElement() || hasInvalidCSSAttributeType())
         return false;
-
-    if (SVGAnimatorFactory::isSupportedAttributeType(determineAnimatedPropertyType(*targetElement())))
-        return true;
 
     return targetElement()->isAnimatedAttribute(attributeName());
 }
@@ -91,21 +82,21 @@ bool SVGAnimateElementBase::calculateToAtEndOfDurationValue(const String& toAtEn
 {
     if (!targetElement())
         return false;
-    return attributeAnimationController().calculateToAtEndOfDurationValue(toAtEndOfDurationString);
+    return attributeAnimationController().calculateToAtEndOfDurationValue(animateRangeString(toAtEndOfDurationString));
 }
 
 bool SVGAnimateElementBase::calculateFromAndToValues(const String& fromString, const String& toString)
 {
     if (!targetElement())
         return false;
-    return attributeAnimationController().calculateFromAndToValues(fromString, toString);
+    return attributeAnimationController().calculateFromAndToValues(animateRangeString(fromString), animateRangeString(toString));
 }
 
 bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, const String& byString)
 {
     if (!this->targetElement())
         return false;
-    return attributeAnimationController().calculateFromAndByValues(fromString, byString);
+    return attributeAnimationController().calculateFromAndByValues(animateRangeString(fromString), animateRangeString(byString));
 }
 
 void SVGAnimateElementBase::resetAnimatedType()

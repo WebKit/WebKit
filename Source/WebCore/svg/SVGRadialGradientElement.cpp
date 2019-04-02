@@ -109,11 +109,8 @@ static void setGradientAttributes(SVGGradientElement& element, RadialGradientAtt
     if (!attributes.hasGradientUnits() && element.hasAttribute(SVGNames::gradientUnitsAttr))
         attributes.setGradientUnits(element.gradientUnits());
 
-    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr)) {
-        AffineTransform transform;
-        element.gradientTransform().concatenate(transform);
-        attributes.setGradientTransform(transform);
-    }
+    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr))
+        attributes.setGradientTransform(element.gradientTransform().concatenate());
 
     if (!attributes.hasStops()) {
         const Vector<Gradient::ColorStop>& stops(element.buildStops());

@@ -27,20 +27,14 @@
 namespace WebCore {
     
 class AffineTransform;
-class SVGTransformListValues;
 
 class SVGTransformable : public SVGLocatable {
 public:
-    enum TransformParsingMode {
-        ClearList,
-        DoNotClearList
-    };
-
     virtual ~SVGTransformable();
 
-    static bool parseTransformAttribute(SVGTransformListValues&, const UChar*& ptr, const UChar* end, TransformParsingMode = ClearList);
     static bool parseTransformValue(SVGTransformValue::SVGTransformType, const UChar*& ptr, const UChar* end, SVGTransformValue&);
     static SVGTransformValue::SVGTransformType parseTransformType(const String&);
+    static bool parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType&);
 
     AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const override { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;

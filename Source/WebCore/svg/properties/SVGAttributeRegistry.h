@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "SVGAnimatedTransformList.h"
 #include "SVGAttributeAccessor.h"
 #include "SVGLegacyAnimatedProperty.h"
 #include "SVGZoomAndPanType.h"
@@ -40,19 +39,6 @@ public:
     {
         static NeverDestroyed<SVGAttributeRegistry<OwnerType, BaseTypes...>> map;
         return map;
-    }
-
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGZoomAndPanTypeAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGZoomAndPanTypeAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
-    }
-
-    // Animatable attributes
-    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, SVGAnimatedTransformListAttribute OwnerType::*attribute>
-    void registerAttribute()
-    {
-        registerAttribute(SVGAnimatedTransformListAttributeAccessor<OwnerType>::template singleton<attributeName, attribute>());
     }
 
     bool isEmpty() const { return m_map.isEmpty(); }

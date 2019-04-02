@@ -27,7 +27,6 @@
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGTransformListValues.h"
 #include <wtf/text/StringView.h>
 
 namespace WebCore {
@@ -144,7 +143,7 @@ static const UChar translateDesc[] =  {'t', 'r', 'a', 'n', 's', 'l', 'a', 't', '
 static const UChar rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
 static const UChar matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
 
-static inline bool parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType& type)
+bool SVGTransformable::parseAndSkipType(const UChar*& currTransform, const UChar* end, SVGTransformValue::SVGTransformType& type)
 {
     if (currTransform >= end)
         return false;
@@ -177,36 +176,6 @@ SVGTransformValue::SVGTransformType SVGTransformable::parseTransformType(const S
     const UChar* characters = upconvertedCharacters;
     parseAndSkipType(characters, characters + typeString.length(), type);
     return type;
-}
-
-bool SVGTransformable::parseTransformAttribute(SVGTransformListValues& list, const UChar*& currTransform, const UChar* end, TransformParsingMode mode)
-{
-    if (mode == ClearList)
-        list.clear();
-
-    bool delimParsed = false;
-    while (currTransform < end) {
-        delimParsed = false;
-        SVGTransformValue::SVGTransformType type = SVGTransformValue::SVG_TRANSFORM_UNKNOWN;
-        skipOptionalSVGSpaces(currTransform, end);
-
-        if (!parseAndSkipType(currTransform, end, type))
-            return false;
-
-        SVGTransformValue transform;
-        if (!parseTransformValue(type, currTransform, end, transform))
-            return false;
-
-        list.append(transform);
-        skipOptionalSVGSpaces(currTransform, end);
-        if (currTransform < end && *currTransform == ',') {
-            delimParsed = true;
-            ++currTransform;
-        }
-        skipOptionalSVGSpaces(currTransform, end);
-    }
-
-    return !delimParsed;
 }
 
 }

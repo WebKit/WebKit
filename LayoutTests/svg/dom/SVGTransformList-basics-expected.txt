@@ -27,21 +27,25 @@ PASS circle1.transform.baseVal.insertItemBefore('aString') threw exception TypeE
 PASS circle1.transform.baseVal.insertItemBefore(circle1) threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.insertItemBefore(circle1.transform.baseVal.getItem(1), 'aString') is circle1.transform.baseVal.getItem(0)
+PASS dumpTransform(circle1.transform.baseVal.removeItem(2)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS circle1.getAttribute('transform') is "translate(10 10) scale(2 2)"
 PASS circle1.transform.baseVal.insertItemBefore(circle1.transform.baseVal.getItem(1), circle1) is circle1.transform.baseVal.getItem(0)
+PASS dumpTransform(circle1.transform.baseVal.removeItem(2)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS circle1.getAttribute('transform') is "scale(2 2) translate(10 10)"
 PASS circle1.transform.baseVal.insertItemBefore(circle1.transform.baseVal.getItem(1), null) is circle1.transform.baseVal.getItem(0)
+PASS dumpTransform(circle1.transform.baseVal.removeItem(2)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS circle1.getAttribute('transform') is "translate(10 10) scale(2 2)"
 PASS circle1.transform.baseVal.insertItemBefore(circle1.transform.baseVal.getItem(1), 0) is circle1.transform.baseVal.getItem(0)
+PASS dumpTransform(circle1.transform.baseVal.removeItem(2)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
 PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"

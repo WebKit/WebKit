@@ -41,6 +41,7 @@ private:
     
     bool hasValidAttributeType() const final;
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
+    String animateRangeString(const String&) const final;
 
     SVGTransformValue::SVGTransformType m_type;
 };

@@ -27,7 +27,10 @@
 
 #include "SVGAnimationAdditiveListFunction.h"
 #include "SVGLengthList.h"
+#include "SVGNumberList.h"
 #include "SVGPointList.h"
+#include "SVGTransformDistance.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
@@ -196,6 +199,75 @@ private:
 
         for (unsigned i = 0; i < fromItems.size(); ++i)
             toItems[i]->setValue(fromItems[i]->value() + toItems[i]->value());
+    }
+};
+
+class SVGAnimationTransformListFunction : public SVGAnimationAdditiveListFunction<SVGTransformList> {
+public:
+    using Base = SVGAnimationAdditiveListFunction<SVGTransformList>;
+    using Base::Base;
+
+    void setFromAndToValues(SVGElement*, const String& from, const String& to) override
+    {
+        m_from->parse(from);
+        m_to->parse(to);
+    }
+
+    void setToAtEndOfDurationValue(const String& toAtEndOfDuration) override
+    {
+        m_toAtEndOfDuration->parse(toAtEndOfDuration);
+    }
+
+    void progress(SVGElement*, float percentage, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
+    {
+        // Pass false to 'resizeAnimatedIfNeeded', as the special post-multiplication behavior of <animateTransform> needs to be respected below.
+        if (!adjustAnimatedList(m_animationMode, percentage, animated, false))
+            return;
+
+        // Spec: To animations provide specific functionality to get a smooth change from the underlying
+        // value to the âtoâ attribute value, which conflicts mathematically with the requirement for
+        // additive transform animations to be post-multiplied. As a consequence, in SVG 1.1 the behavior
+        // of to animations for âanimateTransformâ is undefined.
+        const Vector<Ref<SVGTransform>>& fromItems = m_from->items();
+        const Vector<Ref<SVGTransform>>& toItems = m_to->items();
+        const Vector<Ref<SVGTransform>>& toAtEndOfDurationItems = toAtEndOfDuration()->items();
+        Vector<Ref<SVGTransform>>& animatedItems = animated->items();
+
+        // Never resize the animatedList to the m_to size, instead either clear the list
+        // or append to it.
+        if (!animatedItems.isEmpty() && (!m_isAdditive || m_animationMode == AnimationMode::To))
+            animatedItems.clear();
+
+        auto fromItemsSize = fromItems.size();
+
+        static const AffineTransform zerosAffineTransform = { 0, 0, 0, 0, 0, 0 };
+        const SVGTransformValue& to = toItems[0]->value();
+        const SVGTransformValue zerosTransform = SVGTransformValue(to.type(), zerosAffineTransform);
+
+        const SVGTransformValue& from = fromItemsSize ? fromItems[0]->value() : zerosTransform;
+        SVGTransformValue current = SVGTransformDistance(from, to).scaledDistance(percentage).addToSVGTransform(from);
+
+        if (m_isAccumulated && repeatCount) {
+            const SVGTransformValue& toAtEndOfDuration = toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[0]->value() : zerosTransform;
+            animatedItems.append(SVGTransform::create(SVGTransformDistance::addSVGTransforms(current, toAtEndOfDuration, repeatCount)));
+        } else
+            animatedItems.append(SVGTransform::create(current));
+    }
+
+private:
+    void addFromAndToValues(SVGElement*) override
+    {
+        const Vector<Ref<SVGTransform>>& fromItems = m_from->items();
+        Vector<Ref<SVGTransform>>& toItems = m_to->items();
+
+        if (!fromItems.size() || fromItems.size() != toItems.size())
+            return;
+
+        ASSERT(fromItems.size() == 1);
+        const Ref<SVGTransform>& from = fromItems[0];
+        Ref<SVGTransform>& to = toItems[0];
+
+        to->setValue(SVGTransformDistance::addSVGTransforms(from->value(), to->value()));
     }
 };
 

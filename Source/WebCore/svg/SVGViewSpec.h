@@ -21,7 +21,6 @@
 #pragma once
 
 #include "SVGFitToViewBox.h"
-#include "SVGTransformListValues.h"
 #include "SVGZoomAndPan.h"
 
 namespace WebCore {
@@ -43,9 +42,8 @@ public:
     SVGElement* viewTarget() const;
     const String& viewTargetString() const { return m_viewTargetString; }
 
-    String transformString() const { return m_transform.toString(); }
-    RefPtr<SVGTransformList> transform();
-    SVGTransformListValues transformValue() const { return m_transform.value(); }
+    String transformString() const { return m_transform->valueAsString(); }
+    Ref<SVGTransformList>& transform() { return m_transform; }
 
     const WeakPtr<SVGElement>& contextElementConcurrently() const { return m_contextElement; }
 
@@ -53,17 +51,12 @@ private:
     explicit SVGViewSpec(SVGElement&);
 
     using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewSpec, SVGFitToViewBox>;
-    static void registerAttributes();
-
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    static bool isKnownAttribute(const QualifiedName& attributeName) { return AttributeOwnerProxy::isKnownAttribute(attributeName); }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
 
     WeakPtr<SVGElement> m_contextElement;
     String m_viewTargetString;
     AttributeOwnerProxy m_attributeOwnerProxy;
-    SVGAnimatedTransformListAttribute m_transform;
+    Ref<SVGTransformList> m_transform;
 };
 
 } // namespace WebCore

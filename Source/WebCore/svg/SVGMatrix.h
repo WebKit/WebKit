@@ -26,36 +26,37 @@
 #pragma once
 
 #include "AffineTransform.h"
-#include "SVGPropertyTearOff.h"
+#include "SVGValueProperty.h"
 
 namespace WebCore {
 
 // FIXME: Remove this class once SVGMatrix becomes an alias to DOMMatrix.
-class SVGMatrix : public SVGPropertyTearOff<AffineTransform> {
-    using Base = SVGPropertyTearOff<AffineTransform>;
+class SVGMatrix : public SVGValueProperty<AffineTransform> {
+    using Base = SVGValueProperty<AffineTransform>;
     using Base::Base;
 
 public:
-    static Ref<SVGMatrix> create(SVGLegacyAnimatedProperty& animatedProperty, SVGPropertyRole role, AffineTransform& value)
+    static Ref<SVGMatrix> create(const AffineTransform& value = { })
     {
-        return adoptRef(*new SVGMatrix(&animatedProperty, role, value));
+        return adoptRef(*new SVGMatrix(value));
     }
 
-    static Ref<SVGMatrix> create(const AffineTransform& initialValue = { })
+    static Ref<SVGMatrix> create(SVGPropertyOwner* owner, SVGPropertyAccess access, const AffineTransform& value = { })
     {
-        return adoptRef(*new SVGMatrix(initialValue));
+        return adoptRef(*new SVGMatrix(owner, access, value));
     }
 
-    template<typename T> static ExceptionOr<Ref<SVGMatrix>> create(ExceptionOr<T>&& initialValue)
+    template<typename T>
+    static ExceptionOr<Ref<SVGMatrix>> create(ExceptionOr<T>&& value)
     {
-        if (initialValue.hasException())
-            return initialValue.releaseException();
-        return create(initialValue.releaseReturnValue());
+        if (value.hasException())
+            return value.releaseException();
+        return create(value.releaseReturnValue());
     }
 
     double a() const
     {
-        return propertyReference().a();
+        return m_value.a();
     }
 
     ExceptionOr<void> setA(double value)
@@ -63,15 +64,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setA(value);
+        m_value.setA(value);
         commitChange();
-
         return { };
     }
 
     double b() const
     {
-        return propertyReference().b();
+        return m_value.b();
     }
 
     ExceptionOr<void> setB(double value)
@@ -79,15 +79,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setB(value);
+        m_value.setB(value);
         commitChange();
-
         return { };
     }
 
     double c() const
     {
-        return propertyReference().c();
+        return m_value.c();
     }
 
     ExceptionOr<void> setC(double value)
@@ -95,15 +94,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setC(value);
+        m_value.setC(value);
         commitChange();
-
         return { };
     }
 
     double d() const
     {
-        return propertyReference().d();
+        return m_value.d();
     }
 
     ExceptionOr<void> setD(double value)
@@ -111,15 +109,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setD(value);
+        m_value.setD(value);
         commitChange();
-
         return { };
     }
 
     double e() const
     {
-        return propertyReference().e();
+        return m_value.e();
     }
 
     ExceptionOr<void> setE(double value)
@@ -127,15 +124,14 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setE(value);
+        m_value.setE(value);
         commitChange();
-
         return { };
     }
 
     double f() const
     {
-        return propertyReference().f();
+        return m_value.f();
     }
 
     ExceptionOr<void> setF(double value)
@@ -143,52 +139,50 @@ public:
         if (isReadOnly())
             return Exception { NoModificationAllowedError };
 
-        propertyReference().setF(value);
+        m_value.setF(value);
         commitChange();
-
         return { };
     }
 
     Ref<SVGMatrix> multiply(SVGMatrix& secondMatrix) const
     {
-        auto copy = propertyReference();
-        copy.multiply(secondMatrix.propertyReference());
+        auto copy = m_value;
+        copy.multiply(secondMatrix.value());
         return SVGMatrix::create(copy);
     }
 
     ExceptionOr<Ref<SVGMatrix>> inverse() const
     {
-        auto inverse = propertyReference().inverse();
+        auto inverse = m_value.inverse();
         if (!inverse)
             return Exception { InvalidStateError, "Matrix is not invertible"_s };
-
         return SVGMatrix::create(*inverse);
     }
 
     Ref<SVGMatrix> translate(float x, float y) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.translate(x, y);
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> scale(float scaleFactor) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.scale(scaleFactor);
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> scaleNonUniform(float scaleFactorX, float scaleFactorY) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.scaleNonUniform(scaleFactorX, scaleFactorY);
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> rotate(float angle) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.rotate(angle);
         return SVGMatrix::create(copy);
     }
@@ -198,35 +192,35 @@ public:
         if (!x || !y)
             return Exception { TypeError };
 
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.rotateFromVector(x, y);
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> flipX() const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.flipX();
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> flipY() const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.flipY();
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> skewX(float angle) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.skewX(angle);
         return SVGMatrix::create(copy);
     }
 
     Ref<SVGMatrix> skewY(float angle) const
     {
-        auto copy = propertyReference();
+        auto copy = m_value;
         copy.skewY(angle);
         return SVGMatrix::create(copy);
     }

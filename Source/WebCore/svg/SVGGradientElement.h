@@ -22,7 +22,6 @@
 #pragma once
 
 #include "Gradient.h"
-#include "SVGAnimatedTransformList.h"
 #include "SVGElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGNames.h"
@@ -90,19 +89,16 @@ public:
 
     SVGSpreadMethodType spreadMethod() const { return m_spreadMethod->currentValue<SVGSpreadMethodType>(); }
     SVGUnitTypes::SVGUnitType gradientUnits() const { return m_gradientUnits->currentValue<SVGUnitTypes::SVGUnitType>(); }
-    const SVGTransformListValues& gradientTransform() const { return m_gradientTransform.currentValue(attributeOwnerProxy()); }
+    const SVGTransformList& gradientTransform() const { return m_gradientTransform->currentValue(); }
 
     SVGAnimatedEnumeration& spreadMethodAnimated() { return m_spreadMethod; }
     SVGAnimatedEnumeration& gradientUnitsAnimated() { return m_gradientUnits; }
-    RefPtr<SVGAnimatedTransformList> gradientTransformAnimated() { return m_gradientTransform.animatedProperty(attributeOwnerProxy()); }
+    SVGAnimatedTransformList& gradientTransformAnimated() { return m_gradientTransform; }
 
 protected:
     SVGGradientElement(const QualifiedName&, Document&);
 
-    static bool isKnownAttribute(const QualifiedName& attributeName)
-    {
-        return AttributeOwnerProxy::isKnownAttribute(attributeName) || PropertyRegistry::isKnownAttribute(attributeName);
-    }
+    static bool isKnownAttribute(const QualifiedName& attributeName) { return PropertyRegistry::isKnownAttribute(attributeName); }
 
     void parseAttribute(const QualifiedName&, const AtomicString&) override;
     void svgAttributeChanged(const QualifiedName&) override;
@@ -112,15 +108,13 @@ private:
     void childrenChanged(const ChildChange&) override;
 
     const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    static void registerAttributes();
-
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
     AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedEnumeration> m_spreadMethod { SVGAnimatedEnumeration::create(this, SVGSpreadMethodPad) };
     Ref<SVGAnimatedEnumeration> m_gradientUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
-    SVGAnimatedTransformListAttribute m_gradientTransform;
+    Ref<SVGAnimatedTransformList> m_gradientTransform { SVGAnimatedTransformList::create(this) };
 };
 
 } // namespace WebCore

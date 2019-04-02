@@ -32,7 +32,7 @@
     const unsigned short SVG_TRANSFORM_SKEWY = 6;
 
     readonly attribute unsigned short type;
-    [NewObject] readonly attribute SVGMatrix matrix;
+    readonly attribute SVGMatrix matrix;
     readonly attribute unrestricted float angle;
 
     [MayThrowException] void setMatrix(SVGMatrix matrix);

@@ -49,6 +49,12 @@ public:
         registerProperty(attributeName, SVGStringListAccessor<OwnerType>::template singleton<property>());
     }
 
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGTransformList> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGTransformListAccessor<OwnerType>::template singleton<property>());
+    }
+
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedBoolean> OwnerType::*property>
     static void registerProperty()
     {
@@ -126,7 +132,13 @@ public:
     {
         registerProperty(attributeName, SVGAnimatedStringAccessor<OwnerType>::template singleton<property>());
     }
-    
+
+    template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedTransformList> OwnerType::*property>
+    static void registerProperty()
+    {
+        registerProperty(attributeName, SVGAnimatedTransformListAccessor<OwnerType>::template singleton<property>());
+    }
+
     template<const LazyNeverDestroyed<const QualifiedName>& attributeName, Ref<SVGAnimatedInteger> OwnerType::*property1, Ref<SVGAnimatedInteger> OwnerType::*property2>
     static void registerProperty()
     {

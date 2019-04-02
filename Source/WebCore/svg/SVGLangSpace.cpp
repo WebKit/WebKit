@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,25 +33,20 @@ namespace WebCore {
 SVGLangSpace::SVGLangSpace(SVGElement* contextElement)
     : m_contextElement(*contextElement)
 {
-    registerAttributes();
 }
 
-void SVGLangSpace::registerAttributes()
+const AtomicString& SVGLangSpace::xmlspace() const
 {
-    auto& registry = attributeRegistry();
-    if (!registry.isEmpty())
-        return;
-    registry.registerAttribute(SVGStringAttributeAccessor::singleton<XMLNames::langAttr, &SVGLangSpace::m_lang>());
-    registry.registerAttribute(SVGStringAttributeAccessor::singleton<XMLNames::spaceAttr, &SVGLangSpace::m_space>());
-}
-
-const String& SVGLangSpace::xmlspace() const
-{
-    if (!m_space.value()) {
-        static NeverDestroyed<String> defaultString("default");
+    if (!m_space) {
+        static NeverDestroyed<const AtomicString> defaultString("default", AtomicString::ConstructFromLiteral);
         return defaultString;
     }
-    return m_space.value();
+    return m_space;
+}
+    
+bool SVGLangSpace::isKnownAttribute(const QualifiedName& attributeName)
+{
+    return attributeName.matches(XMLNames::langAttr) || attributeName.matches(XMLNames::spaceAttr);
 }
 
 void SVGLangSpace::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -62,9 +57,9 @@ void SVGLangSpace::parseAttribute(const QualifiedName& name, const AtomicString&
         setXmlspace(value);
 }
 
-void SVGLangSpace::svgAttributeChanged(const QualifiedName& attrName)
+void SVGLangSpace::svgAttributeChanged(const QualifiedName& attributeName)
 {
-    if (!isKnownAttribute(attrName))
+    if (!isKnownAttribute(attributeName))
         return;
 
     auto* renderer = m_contextElement.renderer();
