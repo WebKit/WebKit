@@ -1,3 +1,9 @@
+2019-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the tests added in r236519 on iOS. This feature was never implemented in iOS.
+
+        * platform/ios/TestExpectations:
+
 2019-04-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGMatrix, SVGTransfrom, SVGTransformList and SVGAnimatedTransformList
