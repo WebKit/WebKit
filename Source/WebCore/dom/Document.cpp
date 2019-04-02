@@ -988,10 +988,10 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)
     case COMMENT_NODE:
         return nodeToImport.cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf);
 
-    case ATTRIBUTE_NODE:
-        // FIXME: This will "Attr::normalize" child nodes of Attr.
-        return Ref<Node> { Attr::create(*this, QualifiedName(nullAtom(), downcast<Attr>(nodeToImport).name(), nullAtom()), downcast<Attr>(nodeToImport).value()) };
-
+    case ATTRIBUTE_NODE: {
+        auto& attribute = downcast<Attr>(nodeToImport);
+        return Ref<Node> { Attr::create(*this, attribute.qualifiedName(), attribute.value()) };
+    }
     case DOCUMENT_NODE: // Can't import a document into another document.
     case DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
         break;

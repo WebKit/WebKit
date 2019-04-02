@@ -1,3 +1,22 @@
+2019-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Attr nodes are not cloned properly
+        https://bugs.webkit.org/show_bug.cgi?id=196466
+
+        Reviewed by Ryosuke Niwa.
+
+        Attr nodes are not cloned properly according to:
+        - https://dom.spec.whatwg.org/#concept-node-clone
+
+        A cloned Attr node should retain its prefix and namespace.
+
+        Both Gecko and Blink agree with the DOM specification here.
+
+        No new tests, rebaselined existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::importNode):
+
 2019-04-01  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Remove the SVG tear off objects for SVGMatrix, SVGTransfrom, SVGTransformList and SVGAnimatedTransformList
