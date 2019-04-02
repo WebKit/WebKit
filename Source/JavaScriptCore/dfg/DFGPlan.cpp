@@ -71,6 +71,7 @@
 #include "DFGTypeCheckHoistingPhase.h"
 #include "DFGUnificationPhase.h"
 #include "DFGValidate.h"
+#include "DFGValueRepReductionPhase.h"
 #include "DFGVarargsForwardingPhase.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "DFGWatchpointCollectionPhase.h"
@@ -424,6 +425,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             RUN_PHASE(performCriticalEdgeBreaking);
             RUN_PHASE(performObjectAllocationSinking);
         }
+        if (Options::useValueRepElimination())
+            RUN_PHASE(performValueRepReduction);
         if (changed) {
             // State-at-tail and state-at-head will be invalid if we did strength reduction since
             // it might increase live ranges.

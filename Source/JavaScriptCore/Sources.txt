@@ -416,6 +416,7 @@ dfg/DFGTypeCheckHoistingPhase.cpp
 dfg/DFGUnificationPhase.cpp
 dfg/DFGUseKind.cpp
 dfg/DFGValidate.cpp
+dfg/DFGValueRepReductionPhase.cpp
 dfg/DFGValueSource.cpp
 dfg/DFGValueStrength.cpp
 dfg/DFGVarargsForwardingPhase.cpp

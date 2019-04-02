@@ -883,6 +883,7 @@
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52CD0F5D2242F569004A18A5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		52CD0F5E2242F569004A18A5 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -3389,6 +3390,8 @@
 		52B311001975B4670080857C /* TypeLocationCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeLocationCache.h; sourceTree = "<group>"; };
 		52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowProfiler.cpp; sourceTree = "<group>"; };
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
+		52C55564224C2AE70099F5CC /* DFGValueRepReductionPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValueRepReductionPhase.cpp; path = dfg/DFGValueRepReductionPhase.cpp; sourceTree = "<group>"; };
+		52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DFGValueRepReductionPhase.h; path = dfg/DFGValueRepReductionPhase.h; sourceTree = "<group>"; };
 		52C952B619A289850069B386 /* TypeProfiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeProfiler.h; sourceTree = "<group>"; };
 		52C952B819A28A1C0069B386 /* TypeProfiler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeProfiler.cpp; sourceTree = "<group>"; };
 		52CD0F642242F569004A18A5 /* testdfg */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testdfg; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7651,6 +7654,8 @@
 				0F34B14816D4200E001CDA5A /* DFGUseKind.h */,
 				0F3B3A2915474FF4003ED0FF /* DFGValidate.cpp */,
 				0F3B3A2A15474FF4003ED0FF /* DFGValidate.h */,
+				52C55564224C2AE70099F5CC /* DFGValueRepReductionPhase.cpp */,
+				52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */,
 				0F2BDC4E15228BE700CD8910 /* DFGValueSource.cpp */,
 				0F2BDC401522801700CD8910 /* DFGValueSource.h */,
 				0F0123301944EA1B00843A0C /* DFGValueStrength.cpp */,
@@ -9379,6 +9384,7 @@
 				D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */,
 				996B73201BDA08EF00331B84 /* JSModuleLoader.lut.h in Headers */,
 				E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */,
+				52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */,
 				E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */,
 				E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */,
 				E38D999C221B78BB00D50474 /* JSNonDestructibleProxy.h in Headers */,

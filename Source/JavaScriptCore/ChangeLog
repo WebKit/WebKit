@@ -1,3 +1,54 @@
+2019-04-02  Saam barati  <sbarati@apple.com>
+
+        Add a ValueRepReduction phase
+        https://bugs.webkit.org/show_bug.cgi?id=196234
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a ValueRepReduction phase. The main idea here is
+        to try to reduce DoubleRep(RealNumberUse:ValueRep(DoubleRepUse:@x))
+        to just be @x. This patch handles such above strengh reduction rules
+        as long as we prove that all users of the ValueRep can be converted
+        to using the incoming double value. That way we prevent introducing
+        a parallel live range for the double value.
+        
+        This patch tracks the uses of the ValueRep through Phi variables,
+        so we can convert entire Phi variables to being Double instead
+        of JSValue if the Phi also has only double uses.
+        
+        This is implemented through a simple escape analysis. DoubleRep(RealNumberUse:)
+        and OSR exit hints are not counted as escapes. All other uses are counted
+        as escapes. Connected Phi graphs are converted to being Double only if the
+        entire graph is ok with the result being Double.
+        
+        Some ways we could extend this phase in the future:
+        - There are a lot of DoubleRep(NumberUse:@ValueRep(@x)) uses. This ensures
+          that the result of the DoubleRep of @x is not impure NaN. We could
+          handle this case if we introduced a PurifyNaN node and replace the DoubleRep
+          with PurifyNaN(@x). Alternatively, we could see if certain users of this
+          DoubleRep are okay with impure NaN flowing into them and we'd need to ensure
+          their output type is always treated as if the input is impure NaN.
+        - We could do sinking of ValueRep where we think it's profitable. So instead
+          of an escape making it so we never represent the variable as a Double, we
+          could make the escape reconstruct the JSValueRep where profitable.
+        - We can extend this phase to handle Int52Rep if it's profitable.
+        - We can opt other nodes into accepting incoming Doubles so we no longer
+          treat them as escapes.
+        
+        This patch is somewhere between neutral and a 1% progression on JetStream 2.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGValueRepReductionPhase.cpp: Added.
+        (JSC::DFG::ValueRepReductionPhase::ValueRepReductionPhase):
+        (JSC::DFG::ValueRepReductionPhase::run):
+        (JSC::DFG::ValueRepReductionPhase::convertValueRepsToDouble):
+        (JSC::DFG::performValueRepReduction):
+        * dfg/DFGValueRepReductionPhase.h: Added.
+        * runtime/Options.h:
+
 2019-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSRunLoopTimer::Manager should be small

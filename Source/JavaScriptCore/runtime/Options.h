@@ -283,6 +283,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, useMovHintRemoval, true, Normal, nullptr) \
     v(bool, usePutStackSinking, true, Normal, nullptr) \
     v(bool, useObjectAllocationSinking, true, Normal, nullptr) \
+    v(bool, useValueRepElimination, true, Normal, nullptr) \
     v(bool, useArityFixupInlining, true, Normal, nullptr) \
     v(bool, logExecutableAllocation, false, Normal, nullptr) \
     \
