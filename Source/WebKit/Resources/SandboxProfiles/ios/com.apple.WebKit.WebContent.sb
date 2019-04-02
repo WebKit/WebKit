@@ -291,6 +291,9 @@
     (iokit-property "software-behavior")
     (iokit-property "vendor-id")
     (iokit-property "ui-pip") ;; <rdar://problem/48867037>
+    (iokit-property "product-description") ;; <rdar://problem/49497788>
+    (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
+    (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
 )
 
 ;; Read-only preferences and data

@@ -1,3 +1,16 @@
+2019-04-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Fix iokit-get-properties sandbox violation in the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=196500
+        <rdar://problem/49497788>
+
+        Reviewed by Brent Fulgham.
+
+        Attempting to get the iokit properties 'product-description', 'artwork-display-gamut' and
+        'artwork-scale-factor' is causing sandbox violations.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add support for Window's beforeprint / afterprint events
