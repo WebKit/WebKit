@@ -399,6 +399,13 @@ set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
 )
 
 set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
+
     API/APICallbackFunction.h
     API/APICast.h
     API/APIUtils.h
@@ -1274,7 +1281,6 @@ WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
 WEBKIT_MAKE_FORWARDING_HEADERS(JavaScriptCore
     TARGET_NAME JavaScriptCorePrivateForwardingHeaders
     FILES ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS}
-    DERIVED_SOURCE_DIRECTORIES ${DERIVED_SOURCES_DIR}/JavaScriptCore ${DERIVED_SOURCES_DIR}/JavaScriptCore/inspector
     FLATTENED
 )
 

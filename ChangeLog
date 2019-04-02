@@ -1,3 +1,24 @@
+2019-04-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake] WEBKIT_MAKE_FORWARDING_HEADERS shouldn't use POST_BUILD to copy generated headers
+        https://bugs.webkit.org/show_bug.cgi?id=182757
+
+        Reviewed by Don Olmstead.
+
+        Some generated headers need to be exported to its client modules.
+        Before this change, WEBKIT_MAKE_FORWARDING_HEADERS copies all *.h
+        files in the directory specified by DERIVED_SOURCE_DIRECTORIES
+        parameter. The copy operation was triggered by POST_BUILD event.
+
+        This caused build dependency issues for Ninja builds. This change
+        remove the DERIVED_SOURCE_DIRECTORIES parameter. And list all
+        generated headers explicitly which need to be copied.
+
+        * Source/cmake/WebKitMacros.cmake: Removed
+        DERIVED_SOURCE_DIRECTORIES parameter of
+        WEBKIT_MAKE_FORWARDING_HEADERS. Accept absolute paths for FILES
+        parameter.
+
 2019-04-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Remove EXTRA_DIRECTORIES parameter of WEBKIT_MAKE_FORWARDING_HEADERS
