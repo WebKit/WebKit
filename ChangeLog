@@ -1,3 +1,15 @@
+2019-04-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake] Remove EXTRA_DIRECTORIES parameter of WEBKIT_MAKE_FORWARDING_HEADERS
+        https://bugs.webkit.org/show_bug.cgi?id=196436
+
+        Reviewed by Darin Adler.
+
+        The parameter was only for WebCore/ForwardingHeaders which was
+        removed in Bug 182347.
+
+        * Source/cmake/WebKitMacros.cmake: Remove unused EXTRA_DIRECTORIES parameter.
+
 2019-04-01  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Add initialization for JSC shell for PlayStation port
