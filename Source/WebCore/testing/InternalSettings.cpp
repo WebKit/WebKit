@@ -758,6 +758,15 @@ void InternalSettings::setWebGL2Enabled(bool enabled)
 #endif
 }
 
+void InternalSettings::setWebGPUEnabled(bool enabled)
+{
+#if ENABLE(WEBGPU)
+    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 void InternalSettings::setWebVREnabled(bool enabled)
 {
     RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(enabled);

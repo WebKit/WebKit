@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUBasedCanvasRenderingContext.h"
+#include "HTMLCanvasElement.h"
 #include "WebGPUSwapChain.h"
 #include <wtf/RefPtr.h>
 
@@ -36,6 +37,8 @@ namespace WebCore {
 class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
 public:
     static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
+
+    HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
 
     void replaceSwapChain(Ref<WebGPUSwapChain>&&);
 

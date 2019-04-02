@@ -1,3 +1,44 @@
+2019-04-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: add support for showing WebGPU contexts
+        https://bugs.webkit.org/show_bug.cgi?id=196413
+        <rdar://problem/49438898>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/canvas/create-context-webgpu.html: Added.
+        * inspector/canvas/create-context-webgpu-expected.txt: Added.
+        * inspector/canvas/resolveCanvasContext-webgpu.html: Added.
+        * inspector/canvas/resolveCanvasContext-webgpu-expected.txt: Added.
+
+        * inspector/canvas/resources/create-context-utilities.js:
+        (createDetachedCanvas):
+        (createCSSCanvas):
+        (destroyCanvases):
+        (TestPage.registerInitializer.InspectorTest.CreateContextUtilities.initializeTestSuite): Added.
+        (TestPage.registerInitializer.InspectorTest.CreateContextUtilities.addSimpleTestCase): Added.
+        (TestPage.registerInitializer.InspectorTest.CreateContextUtilities.addCSSCanvasTestCase): Added.
+        (TestPage.registerInitializer.window.initializeTestSuite): Deleted.
+        (TestPage.registerInitializer.window.addSimpleTestCase): Deleted.
+        (TestPage.registerInitializer.window.addCSSCanvasTestCase): Deleted.
+
+        * inspector/canvas/create-context-2d.html:
+        * inspector/canvas/create-context-2d-expected.txt:
+        * inspector/canvas/create-context-bitmaprenderer.html:
+        * inspector/canvas/create-context-bitmaprenderer-expected.txt:
+        * inspector/canvas/create-context-webgl.html:
+        * inspector/canvas/create-context-webgl-expected.txt:
+        * inspector/canvas/create-context-webgl2.html:
+        * inspector/canvas/create-context-webgl2-expected.txt:
+
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add support for Window's beforeprint / afterprint events

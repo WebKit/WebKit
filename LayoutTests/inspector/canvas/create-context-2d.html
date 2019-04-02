@@ -6,21 +6,21 @@
 <script src="resources/create-context-utilities.js"></script>
 <script>
 function test() {
-    let suite = initializeTestSuite("Canvas.CreateContext2D");
+    let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContext2D");
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Attached",
         expression: `createAttachedCanvas("2d")`,
         contextType: WI.Canvas.ContextType.Canvas2D,
     });
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Detached",
         expression: `createDetachedCanvas("2d")`,
         contextType: WI.Canvas.ContextType.Canvas2D,
     });
 
-    addCSSCanvasTestCase(WI.Canvas.ContextType.Canvas2D);
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.Canvas2D);
 
     suite.runTestCasesAndFinish();
 }

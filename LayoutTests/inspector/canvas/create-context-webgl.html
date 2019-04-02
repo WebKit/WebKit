@@ -6,21 +6,21 @@
 <script src="resources/create-context-utilities.js"></script>
 <script>
 function test() {
-    let suite = initializeTestSuite("Canvas.CreateContextWebGL");
+    let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextWebGL");
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Attached",
         expression: `createAttachedCanvas("webgl")`,
         contextType: WI.Canvas.ContextType.WebGL,
     });
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Detached",
         expression: `createDetachedCanvas("webgl")`,
         contextType: WI.Canvas.ContextType.WebGL,
     });
 
-    addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL);
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL);
 
     suite.runTestCasesAndFinish();
 }

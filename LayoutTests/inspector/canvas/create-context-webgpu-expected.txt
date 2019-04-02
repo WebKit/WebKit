@@ -1,12 +1,12 @@
-Test that CanvasManager tracks creation and destruction of WebGL2 canvases.
+Test that CanvasManager tracks creation and destruction of WebGPU canvases.
 
 
-== Running test suite: Canvas.CreateContextWebGL2
--- Running test case: Canvas.CreateContextWebGL2.NoCanvases
+== Running test suite: Canvas.CreateContextWebGPU
+-- Running test case: Canvas.CreateContextWebGPU.NoCanvases
 PASS: CanvasManager should have no canvases.
 
--- Running test case: Canvas.CreateContextWebGL2.Attached
-PASS: Canvas context should be WebGL2.
+-- Running test case: Canvas.CreateContextWebGPU.Attached
+PASS: Canvas context should be Web GPU.
   0: getContext - [native code]
   1: createAttachedCanvas - inspector/canvas/resources/create-context-utilities.js:4:36
   2: Global Code - [program code]
@@ -16,8 +16,8 @@ PASS: Canvas context should be WebGL2.
 
 PASS: Removed canvas has expected ID.
 
--- Running test case: Canvas.CreateContextWebGL2.Detached
-PASS: Canvas context should be WebGL2.
+-- Running test case: Canvas.CreateContextWebGPU.Detached
+PASS: Canvas context should be Web GPU.
   0: getContext - [native code]
   1: createDetachedCanvas - inspector/canvas/resources/create-context-utilities.js:11:62
   2: Global Code - [program code]
@@ -27,9 +27,9 @@ PASS: Canvas context should be WebGL2.
 
 PASS: Removed canvas has expected ID.
 
--- Running test case: Canvas.CreateContextWebGL2.CSSCanvas
+-- Running test case: Canvas.CreateContextWebGPU.CSSCanvas
 Create CSS canvas from -webkit-canvas(css-canvas).
-PASS: Canvas context should be WebGL2.
+PASS: Canvas context should be Web GPU.
   0: getCSSCanvasContext - [native code]
   1: createCSSCanvas - inspector/canvas/resources/create-context-utilities.js:18:47
   2: Global Code - [program code]

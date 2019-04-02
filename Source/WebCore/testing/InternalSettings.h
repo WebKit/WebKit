@@ -123,6 +123,7 @@ public:
     // RuntimeEnabledFeatures.
     static void setIndexedDBWorkersEnabled(bool);
     static void setWebGL2Enabled(bool);
+    static void setWebGPUEnabled(bool);
     static void setWebVREnabled(bool);
     static void setScreenCaptureEnabled(bool);
 

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUCanvasContext.h"
 
+#include "InspectorInstrumentation.h"
+
 #if ENABLE(WEBGPU)
 
 namespace WebCore {
@@ -34,6 +36,9 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
 {
     auto context = std::unique_ptr<GPUCanvasContext>(new GPUCanvasContext(canvas));
     context->suspendIfNeeded();
+
+    InspectorInstrumentation::didCreateCanvasRenderingContext(*context);
+
     return context;
 }
 

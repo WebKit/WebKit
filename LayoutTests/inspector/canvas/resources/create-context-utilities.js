@@ -2,19 +2,31 @@ let contexts = [];
 
 function createAttachedCanvas(contextType) {
     let canvas = document.body.appendChild(document.createElement("canvas"));
-    contexts.push(canvas.getContext(contextType));
+    let context = canvas.getContext(contextType);
+    if (!context)
+        TestPage.addResult("FAIL: missing context for type " + contextType);
+    contexts.push(context);
 }
 
 function createDetachedCanvas(contextType) {
-    contexts.push(document.createElement("canvas").getContext(contextType));
+    let context = document.createElement("canvas").getContext(contextType);
+    if (!context)
+        TestPage.addResult("FAIL: missing context for type " + contextType);
+    contexts.push(context);
 }
 
 function createCSSCanvas(contextType, canvasName) {
-    contexts.push(document.getCSSCanvasContext(contextType, canvasName, 10, 10));
+    let context = document.getCSSCanvasContext(contextType, canvasName, 10, 10);
+    if (!context)
+        TestPage.addResult("FAIL: missing context for type " + contextType);
+    contexts.push();
 }
 
 function destroyCanvases() {
     for (let context of contexts) {
+        if (!context)
+            continue;
+
         let canvasElement = context.canvas;
         if (canvasElement && canvasElement.parentNode)
             canvasElement.remove();
@@ -68,7 +80,9 @@ TestPage.registerInitializer(() => {
         });
     }
 
-    window.initializeTestSuite = function(name) {
+    InspectorTest.CreateContextUtilities = {};
+
+    InspectorTest.CreateContextUtilities.initializeTestSuite = function(name) {
         suite = InspectorTest.createAsyncSuite(name);
 
         suite.addTestCase({
@@ -83,7 +97,7 @@ TestPage.registerInitializer(() => {
         return suite;
     };
 
-    window.addSimpleTestCase = function({name, description, expression, contextType}) {
+    InspectorTest.CreateContextUtilities.addSimpleTestCase = function({name, description, expression, contextType}) {
         suite.addTestCase({
             name: suite.name + "." + name,
             description,
@@ -108,7 +122,7 @@ TestPage.registerInitializer(() => {
     };
 
     let previousCSSCanvasContextType = null;
-    window.addCSSCanvasTestCase = function(contextType) {
+    InspectorTest.CreateContextUtilities.addCSSCanvasTestCase = function(contextType) {
         InspectorTest.assert(!previousCSSCanvasContextType || previousCSSCanvasContextType === contextType, "addCSSCanvasTestCase cannot be called more than once with different context types.");
         if (!previousCSSCanvasContextType)
             previousCSSCanvasContextType = contextType;
@@ -123,7 +137,14 @@ TestPage.registerInitializer(() => {
                 })
                 .then(resolve, reject);
 
-                let contextId = contextType === WI.Canvas.ContextType.Canvas2D ? "2d" : contextType;
+                let contextId = null;
+                if (contextType === WI.Canvas.ContextType.Canvas2D)
+                    contextId = "2d";
+                else if (contextType === WI.Canvas.ContextType.WebGPU)
+                    contextId = "gpu";
+                else
+                    contextId = contextType;
+
                 InspectorTest.log(`Create CSS canvas from -webkit-canvas(css-canvas).`);
                 InspectorTest.evaluateInPage(`createCSSCanvas("${contextId}", "css-canvas")`);
             },

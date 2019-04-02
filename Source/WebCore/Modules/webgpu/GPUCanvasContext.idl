@@ -28,4 +28,6 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] interface GPUCanvasContext {
+    // back-reference to the canvas
+    readonly attribute HTMLCanvasElement canvas;
 };

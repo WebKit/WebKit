@@ -1,3 +1,25 @@
+2019-04-02  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: add support for showing WebGPU contexts
+        https://bugs.webkit.org/show_bug.cgi?id=196413
+        <rdar://problem/49438898>
+
+        Reviewed by Timothy Hatcher.
+
+        Tests: inspector/canvas/create-context-webgpu.html
+               inspector/canvas/resolveCanvasContext-webgpu.html
+
+        * Modules/webgpu/GPUCanvasContext.idl:
+        * Modules/webgpu/GPUCanvasContext.h:
+        (WebCore::GPUCanvasContext::canvas const): Added.
+        * Modules/webgpu/GPUCanvasContext.cpp:
+        (WebCore::GPUCanvasContext::create):
+
+        * testing/InternalSettings.idl:
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setWebGPUEnabled): Added.
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add support for Window's beforeprint / afterprint events

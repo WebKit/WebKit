@@ -1236,6 +1236,8 @@ webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls
 
 # No support for WebGPU yet
 webkit.org/b/191005 webgpu/ [ Skip ]
+webkit.org/b/191005 inspector/canvas/create-context-webgpu.html [ Skip ]
+webkit.org/b/191005 inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
 # No support for resource load statistics yet
 http/tests/resourceLoadStatistics/ [ Skip ]

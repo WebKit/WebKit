@@ -4217,6 +4217,8 @@ webkit.org/b/190520 editing/pasteboard/copy-paste-across-shadow-boundaries-with-
 
 # WebGPU is not supported on Windows
 webgpu [ Skip ]
+inspector/canvas/create-context-webgpu.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-image.html [ Failure ]
 webkit.org/b/191194 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]

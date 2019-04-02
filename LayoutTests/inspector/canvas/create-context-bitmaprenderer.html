@@ -6,15 +6,15 @@
 <script src="resources/create-context-utilities.js"></script>
 <script>
 function test() {
-    let suite = initializeTestSuite("Canvas.CreateContextBitmapRenderer");
+    let suite = InspectorTest.CreateContextUtilities.initializeTestSuite("Canvas.CreateContextBitmapRenderer");
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Attached",
         expression: `createAttachedCanvas("bitmaprenderer")`,
         contextType: WI.Canvas.ContextType.BitmapRenderer,
     });
 
-    addSimpleTestCase({
+    InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Detached",
         expression: `createDetachedCanvas("bitmaprenderer")`,
         contextType: WI.Canvas.ContextType.BitmapRenderer,
