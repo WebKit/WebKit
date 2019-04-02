@@ -1,3 +1,14 @@
+2019-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Hover menus do not function on fidelity.com
+        https://bugs.webkit.org/show_bug.cgi?id=196507
+        <rdar://problem/49496520>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/400ms-hover-intent-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/400ms-hover-intent.html: Added.
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r243551.

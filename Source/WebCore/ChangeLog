@@ -1,3 +1,17 @@
+2019-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Hover menus do not function on fidelity.com
+        https://bugs.webkit.org/show_bug.cgi?id=196507
+        <rdar://problem/49496520>
+
+        Reviewed by Simon Fraser.
+
+        fidelity.com has 400ms hover intent timer to bring up the main menus.
+
+        Test: fast/events/touch/ios/content-observation/400ms-hover-intent.html
+
+        * page/ios/ContentChangeObserver.cpp:
+
 2019-04-02  Timothy Hatcher  <timothy@apple.com>
 
         NSAttributedString crashes when encoding text attachment cell for missing image.

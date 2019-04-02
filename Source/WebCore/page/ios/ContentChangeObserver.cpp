@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-static const Seconds maximumDelayForTimers { 350_ms };
+static const Seconds maximumDelayForTimers { 400_ms };
 static const Seconds maximumDelayForTransitions { 300_ms };
 
 static bool isConsideredHidden(const Element& element)
