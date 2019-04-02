@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKWebsitePolicies.h"
-#import <wtf/RetainPtr.h>
+#import <WebKit/WKFoundation.h>
 
-@class WKWebpagePreferences;
-
-@interface _WKWebsitePolicies ()
-{
-@package
-    RetainPtr<WKWebpagePreferences> _webpagePreferences;
-}
-
-@property (nonatomic, readonly) WKWebpagePreferences *webpagePreferences;
+/*! A WKWebpagePreferences object is a collection of properties that
+ determine the preferences to use when loading and rendering a page.
+ @discussion Contains properties used to determine webpage preferences.
+ */
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKWebpagePreferences : NSObject
 
 @end

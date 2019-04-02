@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#import "APIWebsitePolicies.h"
+#import "WKObject.h"
+#import "WKWebpagePreferencesPrivate.h"
 #import "_WKWebsitePolicies.h"
-#import <wtf/RetainPtr.h>
 
-@class WKWebpagePreferences;
+namespace WebKit {
 
-@interface _WKWebsitePolicies ()
-{
-@package
-    RetainPtr<WKWebpagePreferences> _webpagePreferences;
+template<> struct WrapperTraits<API::WebsitePolicies> {
+    using WrapperClass = WKWebpagePreferences;
+};
+
 }
 
-@property (nonatomic, readonly) WKWebpagePreferences *webpagePreferences;
+@interface WKWebpagePreferences () <WKObject> {
+@package
+    API::ObjectStorage<API::WebsitePolicies> _websitePolicies;
+}
 
+@property (class, nonatomic, readonly) WKWebpagePreferences *defaultPreferences;
 @end

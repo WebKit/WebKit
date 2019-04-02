@@ -54,6 +54,7 @@
 #import "WKNavigationResponseInternal.h"
 #import "WKReloadFrameErrorRecoveryAttempter.h"
 #import "WKWebViewInternal.h"
+#import "WKWebpagePreferencesInternal.h"
 #import "WebCredential.h"
 #import "WebFrameProxy.h"
 #import "WebNavigationState.h"
@@ -556,7 +557,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             return;
         checker->didCallCompletionHandler();
 
-        RefPtr<API::WebsitePolicies> apiWebsitePolicies = websitePolicies ? websitePolicies->_websitePolicies.get() : nullptr;
+        RefPtr<API::WebsitePolicies> apiWebsitePolicies = [websitePolicies webpagePreferences] ? [websitePolicies webpagePreferences]->_websitePolicies.get() : nullptr;
         if (apiWebsitePolicies) {
             if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
                 auto sessionID = websiteDataStore->websiteDataStore().sessionID();

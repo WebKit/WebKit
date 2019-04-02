@@ -1,5 +1,99 @@
 2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [WebKit2] Introduce a public version of WKWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=195989
+        <rdar://problem/47228232>
+
+        Reviewed by Tim Horton.
+
+        Expose the existing _WKWebsitePolicies object as WKWebpagePreferences, in what will eventually become a public
+        header in the WebKit SDK (WKWebpagePreferences.h). Following a similar transitioning strategy as
+        _WKWebsiteDataStore and WKWebsiteDataStore, we move existing logic from _WKWebsitePolicies to WKWebpagePreferences
+        and make _WKWebsitePolicies a wrapper around WKWebpagePreferences.
+
+        No change in behavior.
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
+        Wrap API::WebsitePolicies with WKWebpagePreferences.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _updateWebsitePolicies:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h.
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebsitePolicies.mm.
+
+        Introduce WKWebpagePreferences.
+
+        (+[WKWebpagePreferences defaultPreferences]):
+        (-[WKWebpagePreferences dealloc]):
+        (-[WKWebpagePreferences init]):
+        (-[WKWebpagePreferences _setContentBlockersEnabled:]):
+        (-[WKWebpagePreferences _contentBlockersEnabled]):
+        (-[WKWebpagePreferences _setAllowedAutoplayQuirks:]):
+        (-[WKWebpagePreferences _allowedAutoplayQuirks]):
+        (-[WKWebpagePreferences _setAutoplayPolicy:]):
+        (-[WKWebpagePreferences _autoplayPolicy]):
+        (-[WKWebpagePreferences _setDeviceOrientationAndMotionAccessPolicy:]):
+        (-[WKWebpagePreferences _deviceOrientationAndMotionAccessPolicy]):
+        (-[WKWebpagePreferences _setPopUpPolicy:]):
+        (-[WKWebpagePreferences _popUpPolicy]):
+        (-[WKWebpagePreferences _customHeaderFields]):
+        (-[WKWebpagePreferences _setCustomHeaderFields:]):
+        (-[WKWebpagePreferences _websiteDataStore]):
+        (-[WKWebpagePreferences _setWebsiteDataStore:]):
+        (-[WKWebpagePreferences _setCustomUserAgent:]):
+        (-[WKWebpagePreferences _customUserAgent]):
+        (-[WKWebpagePreferences _setCustomJavaScriptUserAgentAsSiteSpecificQuirks:]):
+        (-[WKWebpagePreferences _customJavaScriptUserAgentAsSiteSpecificQuirks]):
+        (-[WKWebpagePreferences _setCustomNavigatorPlatform:]):
+        (-[WKWebpagePreferences _customNavigatorPlatform]):
+        (-[WKWebpagePreferences _apiObject]):
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h.
+        * UIProcess/API/Cocoa/WKWebpagePreferencesPrivate.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKWebsitePolicies.h.
+
+        Reintroduce all the interfaces currently available on _WKWebsitePolicies as underscore-prefixed SPI on
+        WKWebpagePreferences.
+
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+
+        Make _WKWebsitePolicies wrap WKWebpagePreferences, and plumb all existing SPI on WKWebsitePolicies through to
+        WKWebpagePreferences.
+
+        (-[_WKWebsitePolicies init]):
+        (-[_WKWebsitePolicies webpagePreferences]):
+        (-[_WKWebsitePolicies setContentBlockersEnabled:]):
+        (-[_WKWebsitePolicies contentBlockersEnabled]):
+        (-[_WKWebsitePolicies setAllowedAutoplayQuirks:]):
+        (-[_WKWebsitePolicies allowedAutoplayQuirks]):
+        (-[_WKWebsitePolicies setAutoplayPolicy:]):
+        (-[_WKWebsitePolicies autoplayPolicy]):
+        (-[_WKWebsitePolicies setDeviceOrientationAndMotionAccessPolicy:]):
+        (-[_WKWebsitePolicies deviceOrientationAndMotionAccessPolicy]):
+        (-[_WKWebsitePolicies setPopUpPolicy:]):
+        (-[_WKWebsitePolicies popUpPolicy]):
+        (-[_WKWebsitePolicies customHeaderFields]):
+        (-[_WKWebsitePolicies setCustomHeaderFields:]):
+        (-[_WKWebsitePolicies websiteDataStore]):
+        (-[_WKWebsitePolicies setWebsiteDataStore:]):
+        (-[_WKWebsitePolicies setCustomUserAgent:]):
+        (-[_WKWebsitePolicies customUserAgent]):
+        (-[_WKWebsitePolicies setCustomJavaScriptUserAgentAsSiteSpecificQuirks:]):
+        (-[_WKWebsitePolicies customJavaScriptUserAgentAsSiteSpecificQuirks]):
+        (-[_WKWebsitePolicies setCustomNavigatorPlatform:]):
+        (-[_WKWebsitePolicies customNavigatorPlatform]):
+        (-[_WKWebsitePolicies description]):
+        (-[_WKWebsitePolicies _apiObject]):
+        (-[_WKWebsitePolicies dealloc]): Deleted.
+        * UIProcess/API/Cocoa/_WKWebsitePoliciesInternal.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * WebKit.xcodeproj/project.pbxproj:
+
+2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unable to copy and paste a PDF from Notes into Mail compose body
         https://bugs.webkit.org/show_bug.cgi?id=196442
         <rdar://problem/48573098>

@@ -306,6 +306,7 @@ UIProcess/API/Cocoa/WKWebsiteDataRecord.mm
 UIProcess/API/Cocoa/WKWebsiteDataStore.mm
 UIProcess/API/Cocoa/WKWebView.mm
 UIProcess/API/Cocoa/WKWebViewConfiguration.mm
+UIProcess/API/Cocoa/WKWebpagePreferences.mm
 UIProcess/API/Cocoa/WKWindowFeatures.mm
 
 UIProcess/API/mac/WKView.mm

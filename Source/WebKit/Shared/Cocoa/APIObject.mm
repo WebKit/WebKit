@@ -63,6 +63,7 @@
 #import "WKWebProcessPlugInPageGroupInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataRecordInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WKWindowFeaturesInternal.h"
@@ -82,7 +83,6 @@
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
-#import "_WKWebsitePoliciesInternal.h"
 
 #if ENABLE(APPLICATION_MANIFEST)
 #import "_WKApplicationManifestInternal.h"
@@ -346,7 +346,7 @@ void* Object::newObject(size_t size, Type type)
         break;
 
     case Type::WebsitePolicies:
-        wrapper = [_WKWebsitePolicies alloc];
+        wrapper = [WKWebpagePreferences alloc];
         break;
 
     case Type::WindowFeatures:

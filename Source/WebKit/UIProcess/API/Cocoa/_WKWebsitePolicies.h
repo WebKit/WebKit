@@ -24,32 +24,7 @@
  */
 
 #import <WebKit/WKFoundation.h>
-
-typedef NS_ENUM(NSInteger, _WKWebsiteAutoplayPolicy) {
-    _WKWebsiteAutoplayPolicyDefault,
-    _WKWebsiteAutoplayPolicyAllow,
-    _WKWebsiteAutoplayPolicyAllowWithoutSound,
-    _WKWebsiteAutoplayPolicyDeny
-} WK_API_AVAILABLE(macos(10.13), ios(11.0));
-
-typedef NS_OPTIONS(NSUInteger, _WKWebsiteAutoplayQuirk) {
-    _WKWebsiteAutoplayQuirkSynthesizedPauseEvents = 1 << 0,
-    _WKWebsiteAutoplayQuirkInheritedUserGestures = 1 << 1,
-    _WKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
-    _WKWebsiteAutoplayQuirkPerDocumentAutoplayBehavior = 1 << 3,
-} WK_API_AVAILABLE(macos(10.13), ios(11.0));
-
-typedef NS_OPTIONS(NSUInteger, _WKWebsitePopUpPolicy) {
-    _WKWebsitePopUpPolicyDefault,
-    _WKWebsitePopUpPolicyAllow,
-    _WKWebsitePopUpPolicyBlock,
-} WK_API_AVAILABLE(macos(10.14), ios(12.0));
-
-typedef NS_OPTIONS(NSUInteger, _WKWebsiteDeviceOrientationAndMotionAccessPolicy) {
-    _WKWebsiteDeviceOrientationAndMotionAccessPolicyAsk,
-    _WKWebsiteDeviceOrientationAndMotionAccessPolicyGrant,
-    _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny,
-} WK_API_AVAILABLE(macos(10.14), ios(12.0));
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 
 @class WKWebsiteDataStore;
 
