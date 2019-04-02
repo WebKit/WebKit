@@ -1,3 +1,17 @@
+2019-04-01  Remy Demarest  <rdemarest@apple.com>
+
+        Add SPI to give injected bundles access to displayed PDFDocuments
+        https://bugs.webkit.org/show_bug.cgi?id=196471
+        <rdar://problem/48080768>
+
+        Reviewed by Tim Horton.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.h: Added.
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm: Added.
+        (WKBundlePageGetPDFDocumentInFrame):
+
 2019-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WebKit2] Introduce a public version of WKWebsitePolicies

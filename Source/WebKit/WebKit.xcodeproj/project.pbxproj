@@ -1550,6 +1550,8 @@
 		C5E1AFED16B21017006CC1F2 /* APIWebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9A16ACCE9900316DE2 /* APIWebArchive.h */; };
 		C5E1AFEF16B21029006CC1F2 /* APIWebArchiveResource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC329D9F16ACD47800316DE2 /* APIWebArchiveResource.h */; };
 		C5FA1ED318E1062200B3F402 /* WKAirPlayRoutePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */; };
+		C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */ = {isa = PBXBuildFile; fileRef = C6A4CA092252899800169289 /* WKBundlePageMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */; };
 		C98C48A61B6FD4C300145103 /* WebMediaSessionFocusManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */; };
 		C98C48AA1B6FD5B500145103 /* WKMediaSessionFocusManager.h in Headers */ = {isa = PBXBuildFile; fileRef = C98C48A81B6FD5B500145103 /* WKMediaSessionFocusManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C9C1833C1B74026D007036A7 /* WebMediaSessionFocusManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C9C183381B73FD6A007036A7 /* WebMediaSessionFocusManagerClient.h */; };
@@ -4392,6 +4394,8 @@
 		C5BCE5DB1C50761D00CDE3FA /* InteractionInformationAtPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InteractionInformationAtPosition.mm; path = ios/InteractionInformationAtPosition.mm; sourceTree = "<group>"; };
 		C5FA1ED118E1062200B3F402 /* WKAirPlayRoutePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKAirPlayRoutePicker.h; path = ios/forms/WKAirPlayRoutePicker.h; sourceTree = "<group>"; };
 		C5FA1ED218E1062200B3F402 /* WKAirPlayRoutePicker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAirPlayRoutePicker.mm; path = ios/forms/WKAirPlayRoutePicker.mm; sourceTree = "<group>"; };
+		C6A4CA092252899800169289 /* WKBundlePageMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKBundlePageMac.h; sourceTree = "<group>"; };
+		C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBundlePageMac.mm; sourceTree = "<group>"; };
 		C98C48A31B6FD4C300145103 /* WebMediaSessionFocusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaSessionFocusManager.cpp; sourceTree = "<group>"; };
 		C98C48A41B6FD4C300145103 /* WebMediaSessionFocusManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaSessionFocusManager.h; sourceTree = "<group>"; };
 		C98C48A71B6FD5B500145103 /* WKMediaSessionFocusManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMediaSessionFocusManager.cpp; sourceTree = "<group>"; };
@@ -7103,6 +7107,8 @@
 			children = (
 				1A8B66B21BC45B010082DF77 /* WKBundleMac.h */,
 				1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */,
+				C6A4CA092252899800169289 /* WKBundlePageMac.h */,
+				C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */,
 				7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */,
 				7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */,
 			);
@@ -9777,6 +9783,7 @@
 				1AB474DE184D44590051B622 /* WKBundlePageUIClient.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
+				C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
@@ -11041,6 +11048,7 @@
 				2D11B7A72126A283006F8878 /* UnifiedSource44-mm.mm in Sources */,
 				2D11B7A82126A283006F8878 /* UnifiedSource44.cpp in Sources */,
 				2D11B7A92126A283006F8878 /* UnifiedSource45-mm.mm in Sources */,
+				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D11B7AA2126A283006F8878 /* UnifiedSource45.cpp in Sources */,
 				2D11B7AB2126A283006F8878 /* UnifiedSource46-mm.mm in Sources */,
 				2D11B7AC2126A283006F8878 /* UnifiedSource46.cpp in Sources */,
