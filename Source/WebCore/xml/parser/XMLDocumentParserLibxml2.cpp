@@ -1387,6 +1387,9 @@ bool XMLDocumentParser::shouldAssociateConsoleMessagesWithTextPosition() const
 
 void XMLDocumentParser::stopParsing()
 {
+    if (m_sawError)
+        insertErrorMessageBlock();
+
     DocumentParser::stopParsing();
     if (context())
         xmlStopParser(context());

@@ -189,7 +189,7 @@ void XMLDocumentParser::end()
     if (m_parserPaused)
         return;
 
-    if (m_sawError) {
+    if (m_sawError && !isStopped()) {
         insertErrorMessageBlock();
         if (isDetached()) // Inserting an error message may have ran arbitrary scripts.
             return;

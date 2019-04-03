@@ -1,3 +1,28 @@
+2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+        [XML Parser] Insert the error message block when stopping parsing and an error occurred
+        https://bugs.webkit.org/show_bug.cgi?id=196546
+
+        Reviewed by Alexey Proskuryakov.
+
+        Insert the error message block when stopping parsing and an error occurred. This is based
+        on the following Blink commit:
+        - https://chromium.googlesource.com/chromium/src.git/+/565958bc22e2d49fed7af144482c2bf4d416fec5
+
+        No new tests, rebaselined existing test.
+
+        * xml/parser/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::end):
+        Avoid showing the error message block twice in some cases. No need to ever call
+        insertErrorMessageBlock() if we're already stopped since stopParsing() already
+        takes care of doing this.
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::stopParsing):
+        When XMLDocumentParser::stopParsing() is called to stop parsing, call
+        insertErrorMessageBlock() to insert the <parsererror> element if an error
+        occurred.
+
 2019-04-03  Youenn Fablet  <youenn@apple.com>
 
         Clear WorkerCacheStorageConnection callbacks on WorkerGlobalScope termination
