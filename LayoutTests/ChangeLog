@@ -1,3 +1,12 @@
+2019-04-03  Shawn Roberts  <sroberts@apple.com>
+
+        Layout Test http/wpt/resource-timing/rt-resources-per-worker.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=180260
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2019-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r238266): Exchange 2013 Outlook Web Access displays partially blank page when creating new e-mail
