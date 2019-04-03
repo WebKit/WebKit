@@ -2221,6 +2221,7 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer& layer, co
         || requiresCompositingForPlugin(renderer, queryData)
         || requiresCompositingForEditableImage(renderer)
         || requiresCompositingForOverflowScrolling(layer, queryData)
+        || needsContentsCompositingLayer(layer)
         || renderer.isTransparent()
         || renderer.hasMask()
         || renderer.hasReflection()

@@ -1,3 +1,24 @@
+2019-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r238266): Exchange 2013 Outlook Web Access displays partially blank page when creating new e-mail
+        https://bugs.webkit.org/show_bug.cgi?id=196522
+        rdar://problem/49472941
+
+        Reviewed by Zalan Bujtas.
+
+        In this content a layer is composited to clip descendants, and has negative z-order children,
+        so we compute that it "paints into ancestor", and has a foreground layer. This combination doesn't
+        make sense, and when the layer becomes scrollable, we end up with bad paint phases on layers, and
+        fail to paint the contents.
+
+        Fix by ensuring that a layer has its own backing store if it requires a foreground layer
+        by virtue of having negative z-order children.
+
+        Test: compositing/backing/foreground-layer-no-paints-into-ancestor.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const):
+
 2019-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Cursor count badge reverts to Zero during Drag & Drop of multiple items.
