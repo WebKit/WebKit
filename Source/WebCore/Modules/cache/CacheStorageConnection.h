@@ -57,6 +57,8 @@ public:
     virtual void engineRepresentation(WTF::Function<void(const String&)>&& callback) { callback(String { }); }
     virtual void updateQuotaBasedOnSpaceUsage(const ClientOrigin&) { }
 
+    void clearPendingRequests();
+
 protected:
     CacheStorageConnection() =  default;
 

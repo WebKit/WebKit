@@ -113,6 +113,9 @@ void WorkerGlobalScope::prepareForTermination()
 
     stopActiveDOMObjects();
 
+    if (m_cacheStorageConnection)
+        m_cacheStorageConnection->clearPendingRequests();
+
     m_inspectorController->workerTerminating();
 
     // Event listeners would keep DOMWrapperWorld objects alive for too long. Also, they have references to JS objects,

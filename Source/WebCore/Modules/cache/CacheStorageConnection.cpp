@@ -33,6 +33,25 @@
 namespace WebCore {
 using namespace WebCore::DOMCacheEngine;
 
+void CacheStorageConnection::clearPendingRequests()
+{
+    auto openAndRemoveCachePendingRequests = WTFMove(m_openAndRemoveCachePendingRequests);
+    for (auto& callback : openAndRemoveCachePendingRequests.values())
+        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
+
+    auto retrieveCachesPendingRequests = WTFMove(m_retrieveCachesPendingRequests);
+    for (auto& callback : retrieveCachesPendingRequests.values())
+        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
+
+    auto retrieveRecordsPendingRequests = WTFMove(m_retrieveRecordsPendingRequests);
+    for (auto& callback : retrieveRecordsPendingRequests.values())
+        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
+
+    auto batchDeleteAndPutPendingRequests = WTFMove(m_batchDeleteAndPutPendingRequests);
+    for (auto& callback : batchDeleteAndPutPendingRequests.values())
+        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
+}
+
 void CacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;

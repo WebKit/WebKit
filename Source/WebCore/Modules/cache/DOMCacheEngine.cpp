@@ -46,8 +46,11 @@ static inline Exception errorToException(Error error)
         return Exception { TypeError, "Failed writing data to the file system"_s };
     case Error::QuotaExceeded:
         return Exception { QuotaExceededError, "Quota exceeded"_s };
-    default:
+    case Error::Internal:
         return Exception { TypeError, "Internal error"_s };
+    default:
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError, "Connection stopped"_s };
     }
 }
 

@@ -1,5 +1,36 @@
 2019-04-03  Youenn Fablet  <youenn@apple.com>
 
+        Clear WorkerCacheStorageConnection callbacks on WorkerGlobalScope termination
+        https://bugs.webkit.org/show_bug.cgi?id=196521
+
+        Reviewed by Alex Christensen.
+
+        When the worker global scope is preparing for termination,
+        all ActiveDOMObjects are stopped.
+        At that time, the completion handlers related to
+        WorkerCacheStorageConnection should be cleared to be able to free
+        memory, and as they are now no-op anyway.
+
+        We clear the completion handlers once the active DOM objects are stopped
+        to limit the processing triggered by clearing them.
+
+        Introducing a new Stopped error code to handle this case.
+        Add an assertion so that this error does not surface to JS.
+
+        Covered by existing tests.
+
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::clearPendingRequests):
+        * Modules/cache/CacheStorageConnection.h:
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::errorToException):
+        * Modules/cache/DOMCacheEngine.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::prepareForTermination):
+        (WebCore::WorkerGlobalScope::stopIndexedDatabase):
+
+2019-04-03  Youenn Fablet  <youenn@apple.com>
+
         Adopt new VCP SPI
         https://bugs.webkit.org/show_bug.cgi?id=193357
         <rdar://problem/43656651>

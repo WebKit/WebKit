@@ -44,7 +44,8 @@ enum class Error {
     ReadDisk,
     WriteDisk,
     QuotaExceeded,
-    Internal
+    Internal,
+    Stopped
 };
 
 Exception convertToExceptionAndLog(ScriptExecutionContext*, Error);
