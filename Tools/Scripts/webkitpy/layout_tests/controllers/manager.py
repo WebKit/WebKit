@@ -252,6 +252,8 @@ class Manager(object):
 
             _log.info('Running {}{}'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
             _log.info('')
+            if not tests_to_run_by_device[device_type]:
+                continue
             if not self._set_up_run(tests_to_run_by_device[device_type], device_type=device_type):
                 return test_run_results.RunDetails(exit_code=-1)
 
