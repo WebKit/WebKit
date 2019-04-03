@@ -122,6 +122,7 @@
 #include "PromiseDeferredTimer.h"
 #include "PropertyMapHashTable.h"
 #include "ProxyRevoke.h"
+#include "RandomizingFuzzerAgent.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
 #include "RegisterAtOffsetList.h"
@@ -456,6 +457,8 @@ VM::VM(VMType vmType, HeapType heapType)
         m_samplingProfiler->start();
     }
 #endif // ENABLE(SAMPLING_PROFILER)
+    if (Options::useRandomizingFuzzerAgent())
+        setFuzzerAgent(std::make_unique<RandomizingFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();

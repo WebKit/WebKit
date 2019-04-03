@@ -26,6 +26,9 @@
 #include "config.h"
 #include "RegExpGlobalData.h"
 
+#include "JSCJSValueInlines.h"
+#include "JSString.h"
+
 namespace JSC {
 
 void RegExpGlobalData::visitAggregate(SlotVisitor& visitor)

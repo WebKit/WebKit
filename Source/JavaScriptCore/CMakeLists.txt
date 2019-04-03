@@ -806,6 +806,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/FunctionHasExecutedCache.h
     runtime/FunctionPrototype.h
     runtime/FunctionRareData.h
+    runtime/FuzzerAgent.h
     runtime/GenericOffset.h
     runtime/GenericTypedArrayView.h
     runtime/GenericTypedArrayViewInlines.h

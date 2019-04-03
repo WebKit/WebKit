@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "Heap.h"
+#include "JSObject.h"
 #include "RegExp.h"
 
 namespace JSC {

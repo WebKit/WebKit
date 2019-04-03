@@ -38,6 +38,7 @@
 #include "ExceptionEventLocation.h"
 #include "ExecutableAllocator.h"
 #include "FunctionHasExecutedCache.h"
+#include "FuzzerAgent.h"
 #include "Heap.h"
 #include "Intrinsic.h"
 #include "IsoCellSet.h"
@@ -293,6 +294,12 @@ public:
     SamplingProfiler* samplingProfiler() { return m_samplingProfiler.get(); }
     JS_EXPORT_PRIVATE SamplingProfiler& ensureSamplingProfiler(RefPtr<Stopwatch>&&);
 #endif
+
+    FuzzerAgent* fuzzerAgent() const { return m_fuzzerAgent.get(); }
+    void setFuzzerAgent(std::unique_ptr<FuzzerAgent>&& fuzzerAgent)
+    {
+        m_fuzzerAgent = WTFMove(fuzzerAgent);
+    }
 
     static unsigned numberOfIDs() { return s_numberOfIDs.load(); }
     unsigned id() const { return m_id; }
@@ -1024,6 +1031,7 @@ private:
 #if ENABLE(SAMPLING_PROFILER)
     RefPtr<SamplingProfiler> m_samplingProfiler;
 #endif
+    std::unique_ptr<FuzzerAgent> m_fuzzerAgent;
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
 

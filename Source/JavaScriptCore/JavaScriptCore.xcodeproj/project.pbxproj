@@ -1754,6 +1754,8 @@
 		E334CBB521FD96A9000EB178 /* RegExpGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33637A61B63220200EE0840 /* ReflectObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E33637A41B63220200EE0840 /* ReflectObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E337B967224324EA0093A820 /* WasmCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = E337B966224324E50093A820 /* WasmCapabilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E33A94962255323000D42B06 /* RandomizingFuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */; };
+		E33A94972255323300D42B06 /* FuzzerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = E33A94922255322900D42B06 /* FuzzerAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33B3E261B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */; };
 		E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E33E8D211B9013DE00346B52 /* NativeStdFunctionCell.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8D1F1B9013DE00346B52 /* NativeStdFunctionCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4699,6 +4701,10 @@
 		E33637A31B63220200EE0840 /* ReflectObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReflectObject.cpp; sourceTree = "<group>"; };
 		E33637A41B63220200EE0840 /* ReflectObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReflectObject.h; sourceTree = "<group>"; };
 		E337B966224324E50093A820 /* WasmCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCapabilities.h; sourceTree = "<group>"; };
+		E33A94922255322900D42B06 /* FuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FuzzerAgent.h; sourceTree = "<group>"; };
+		E33A94932255322900D42B06 /* RandomizingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RandomizingFuzzerAgent.cpp; sourceTree = "<group>"; };
+		E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RandomizingFuzzerAgent.h; sourceTree = "<group>"; };
+		E33A94952255322A00D42B06 /* FuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FuzzerAgent.cpp; sourceTree = "<group>"; };
 		E33B3E251B7ABD750048DB2E /* InspectorInstrumentationObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentationObject.lut.h; sourceTree = "<group>"; };
 		E33E8D1A1B9013C300346B52 /* JSNativeStdFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNativeStdFunction.cpp; sourceTree = "<group>"; };
 		E33E8D1B1B9013C300346B52 /* JSNativeStdFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNativeStdFunction.h; sourceTree = "<group>"; };
@@ -6797,6 +6803,8 @@
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
 				62D2D38D1ADF103F000206C1 /* FunctionRareData.cpp */,
 				62D2D38E1ADF103F000206C1 /* FunctionRareData.h */,
+				E33A94952255322A00D42B06 /* FuzzerAgent.cpp */,
+				E33A94922255322900D42B06 /* FuzzerAgent.h */,
 				70B791851C024432002481E2 /* GeneratorFunctionConstructor.cpp */,
 				70B791861C024432002481E2 /* GeneratorFunctionConstructor.h */,
 				70B791871C024432002481E2 /* GeneratorFunctionPrototype.cpp */,
@@ -7134,6 +7142,8 @@
 				0F5780A118FE1E98001E72D9 /* PureNaN.h */,
 				0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */,
 				147B84620E6DE6B1004775A4 /* PutPropertySlot.h */,
+				E33A94932255322900D42B06 /* RandomizingFuzzerAgent.cpp */,
+				E33A94942255322900D42B06 /* RandomizingFuzzerAgent.h */,
 				E33637A31B63220200EE0840 /* ReflectObject.cpp */,
 				E33637A41B63220200EE0840 /* ReflectObject.h */,
 				F692A87D0255597D01FF60F7 /* RegExp.cpp */,
@@ -8958,6 +8968,7 @@
 				0FBE0F7716C1DB120082C5E8 /* DFGUnificationPhase.h in Headers */,
 				0F34B14A16D42013001CDA5A /* DFGUseKind.h in Headers */,
 				0F3B3A2C15475002003ED0FF /* DFGValidate.h in Headers */,
+				52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */,
 				0F2BDC481522802900CD8910 /* DFGValueSource.h in Headers */,
 				0F0123331944EA1B00843A0C /* DFGValueStrength.h in Headers */,
 				0FE254F71ABDDD2200A7C6D2 /* DFGVarargsForwardingPhase.h in Headers */,
@@ -9082,6 +9093,7 @@
 				BC18C4050E16F5CD00B34460 /* FunctionPrototype.h in Headers */,
 				62D2D3901ADF103F000206C1 /* FunctionRareData.h in Headers */,
 				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
+				E33A94972255323300D42B06 /* FuzzerAgent.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
 				0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */,
@@ -9384,7 +9396,6 @@
 				D9722752DC54459B9125B539 /* JSModuleLoader.h in Headers */,
 				996B73201BDA08EF00331B84 /* JSModuleLoader.lut.h in Headers */,
 				E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */,
-				52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */,
 				E39DA4A71B7E8B7C0084F33A /* JSModuleRecord.h in Headers */,
 				E33E8D1D1B9013C300346B52 /* JSNativeStdFunction.h in Headers */,
 				E38D999C221B78BB00D50474 /* JSNonDestructibleProxy.h in Headers */,
@@ -9638,6 +9649,7 @@
 				0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */,
 				0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
+				E33A94962255323000D42B06 /* RandomizingFuzzerAgent.h in Headers */,
 				0F44A7B320BF68D10022B171 /* RecordedStatuses.h in Headers */,
 				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 				E33637A61B63220200EE0840 /* ReflectObject.h in Headers */,

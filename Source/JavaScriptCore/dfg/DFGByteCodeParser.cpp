@@ -832,12 +832,20 @@ private:
     
     SpeculatedType getPredictionWithoutOSRExit(unsigned bytecodeIndex)
     {
-        SpeculatedType prediction;
+        auto getValueProfilePredictionFromForCodeBlockAndBytecodeOffset = [&] (CodeBlock* codeBlock, int bytecodeIndex)
         {
-            ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
-            prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
-        }
+            SpeculatedType prediction;
+            {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                prediction = codeBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
+            }
+            auto* fuzzerAgent = m_vm->fuzzerAgent();
+            if (UNLIKELY(fuzzerAgent))
+                return fuzzerAgent->getPrediction(codeBlock, bytecodeIndex, prediction);
+            return prediction;
+        };
 
+        SpeculatedType prediction = getValueProfilePredictionFromForCodeBlockAndBytecodeOffset(m_inlineStackTop->m_profiledBlock, bytecodeIndex);
         if (prediction != SpecNone)
             return prediction;
 
@@ -871,10 +879,7 @@ private:
             while (stack->m_inlineCallFrame != codeOrigin->inlineCallFrame())
                 stack = stack->m_caller;
 
-            bytecodeIndex = codeOrigin->bytecodeIndex();
-            CodeBlock* profiledBlock = stack->m_profiledBlock;
-            ConcurrentJSLocker locker(profiledBlock->m_lock);
-            return profiledBlock->valueProfilePredictionForBytecodeOffset(locker, bytecodeIndex);
+            return getValueProfilePredictionFromForCodeBlockAndBytecodeOffset(stack->m_profiledBlock, codeOrigin->bytecodeIndex());
         }
 
         default:

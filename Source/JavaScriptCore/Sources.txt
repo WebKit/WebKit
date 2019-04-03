@@ -764,6 +764,7 @@ runtime/FunctionExecutableDump.cpp
 runtime/FunctionHasExecutedCache.cpp
 runtime/FunctionPrototype.cpp
 runtime/FunctionRareData.cpp
+runtime/FuzzerAgent.cpp
 runtime/GeneratorFunctionConstructor.cpp
 runtime/GeneratorFunctionPrototype.cpp
 runtime/GeneratorPrototype.cpp
@@ -900,6 +901,7 @@ runtime/PropertyTable.cpp
 runtime/ProxyConstructor.cpp
 runtime/ProxyObject.cpp
 runtime/ProxyRevoke.cpp
+runtime/RandomizingFuzzerAgent.cpp
 runtime/ReflectObject.cpp
 runtime/RegExp.cpp
 runtime/RegExpCache.cpp

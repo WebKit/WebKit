@@ -434,6 +434,9 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(unsigned, fireOSRExitFuzzAt, 0, Normal, nullptr) \
     v(unsigned, fireOSRExitFuzzAtOrAfter, 0, Normal, nullptr) \
     \
+    v(bool, useRandomizingFuzzerAgent, false, Normal, nullptr) \
+    v(unsigned, seedOfRandomizingFuzzerAgent, 1, Normal, nullptr) \
+    \
     v(bool, logPhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
     v(bool, airLinearScanVerbose, false, Normal, nullptr) \

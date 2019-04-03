@@ -1,3 +1,40 @@
+2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add FuzzerAgent, which has a hooks to get feedback & inject fuzz data into JSC
+        https://bugs.webkit.org/show_bug.cgi?id=196530
+
+        Reviewed by Saam Barati.
+
+        This patch adds FuzzerAgent interface and simple RandomizingFuzzerAgent to JSC.
+        This RandomizingFuzzerAgent returns random SpeculatedType for value profiling to find
+        the issues in JSC. The seed for randomization can be specified by seedOfRandomizingFuzzerAgent.
+
+        I ran this with seedOfRandomizingFuzzerAgent=1 last night and it finds 3 failures in the current JSC tests,
+        they should be fixed in subsequent patches.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        * runtime/FuzzerAgent.cpp: Added.
+        (JSC::FuzzerAgent::~FuzzerAgent):
+        (JSC::FuzzerAgent::getPrediction):
+        * runtime/FuzzerAgent.h: Added.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/Options.h:
+        * runtime/RandomizingFuzzerAgent.cpp: Added.
+        (JSC::RandomizingFuzzerAgent::RandomizingFuzzerAgent):
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+        * runtime/RandomizingFuzzerAgent.h: Added.
+        * runtime/RegExpCachedResult.h:
+        * runtime/RegExpGlobalData.cpp:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::fuzzerAgent const):
+        (JSC::VM::setFuzzerAgent):
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for -apple-trailing-word
