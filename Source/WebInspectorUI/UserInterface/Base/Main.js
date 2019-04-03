@@ -1651,15 +1651,23 @@ WI._windowResized = function(event)
 
 WI._updateModifierKeys = function(event)
 {
-    let metaKeyDidChange = this.modifierKeys.metaKey !== event.metaKey;
-    let didChange = this.modifierKeys.altKey !== event.altKey || metaKeyDidChange || this.modifierKeys.shiftKey !== event.shiftKey;
+    let keys = {
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey,
+    };
 
-    this.modifierKeys = {altKey: event.altKey, metaKey: event.metaKey, shiftKey: event.shiftKey};
+    let changed = !Object.shallowEqual(this.modifierKeys, keys);
 
-    if (metaKeyDidChange)
-        document.body.classList.toggle("meta-key-pressed", this.modifierKeys.metaKey);
+    this.modifierKeys = keys;
 
-    if (didChange)
+    document.body.classList.toggle("alt-key-pressed", this.modifierKeys.altKey);
+    document.body.classList.toggle("ctrl-key-pressed", this.modifierKeys.ctrlKey);
+    document.body.classList.toggle("meta-key-pressed", this.modifierKeys.metaKey);
+    document.body.classList.toggle("shift-key-pressed", this.modifierKeys.shiftKey);
+
+    if (changed)
         this.notifications.dispatchEventToListeners(WI.Notification.GlobalModifierKeysDidChange, event);
 };
 

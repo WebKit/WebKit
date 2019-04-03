@@ -82,12 +82,14 @@
 .cm-s-default .cm-link,
 .syntax-highlighted a {
     text-decoration: none;
-    cursor: pointer;
 }
 
-.cm-s-default .cm-link:hover,
+.read-only.cm-s-default .cm-link:hover,
+.mac-platform.meta-key-pressed :not(.read-only).cm-s-default .cm-link:hover,
+:not(.mac-platform).control-key-pressed :not(.read-only).cm-s-default .cm-link:hover,
 .syntax-highlighted a:hover {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .supports-find-banner.showing-find-banner.syntax-highlighted .search-result,

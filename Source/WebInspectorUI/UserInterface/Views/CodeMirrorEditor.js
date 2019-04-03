@@ -31,6 +31,7 @@ WI.CodeMirrorEditor = class CodeMirrorEditor
         // nor does it handle braces and brackets well, so default to using LTR.
         // Clients can override this if custom layout for RTL is available.
         element.setAttribute("dir", "ltr");
+        element.classList.toggle("read-only", options.readOnly);
 
         let codeMirror = new CodeMirror(element, options);
 

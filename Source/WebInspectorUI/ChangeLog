@@ -1,3 +1,28 @@
+2019-04-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Single click on links in non-read-only TextEditors should not follow links
+        https://bugs.webkit.org/show_bug.cgi?id=123364
+        <rdar://problem/15323913>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI._updateModifierKeys):
+        Add classes to the body whenever alt, shift, or ctrl are pressed.
+
+        * UserInterface/Views/CodeMirrorEditor.js:
+        (WI.CodeMirrorEditor.create):
+        Add a `read-only` class if the `CodeMirror` is readonly.
+
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .cm-link,):
+        (.read-only.cm-s-default .cm-link:hover,):
+        (.cm-s-default .cm-link:hover,): Deleted.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.set readOnly):
+        (WI.TextEditor.prototype._openClickedLinks):
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for -apple-trailing-word
