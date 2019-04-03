@@ -264,7 +264,7 @@ static void requestPointerLock(WKPageRef page, const void*)
 
 static void printFrame(WKPageRef page, WKFrameRef frame, const void*)
 {
-    WKPageBeginPrinting(page, frame, WKPrintInfo { 1.0, 21.0, 29.7 });
+    WKPageBeginPrinting(page, frame, WKPrintInfo { 1, 21, 29.7f });
     WKPageEndPrinting(page);
 }
 
