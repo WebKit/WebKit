@@ -78,16 +78,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
             this._delegate.computedStyleDetailsPanelShowProperty(property);
     }
 
-    focusFirstSection()
-    {
-        this._computedStyleSection.focus();
-    }
-
-    focusLastSection()
-    {
-        this._variablesTextEditor.focus();
-    }
-
     // Protected
 
     initialLayout()
