@@ -1,5 +1,19 @@
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [CoordinatedGraphics] Hidden pages are not suspended after a web view resize
+        https://bugs.webkit.org/show_bug.cgi?id=196487
+
+        Reviewed by Žan Doberšek.
+
+        When resizing the window, the hidden tabs are updated too, to avoid flickering or getting the old size when
+        switching tabs. For that we need to resume painting but we are not suspending it again after the update.
+
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::updateBackingStoreState): Suspend the painting again after a
+        synchronous update if needed.
+
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Web Inspector: [GTK] Copy copies to nowhere
         https://bugs.webkit.org/show_bug.cgi?id=181228
 

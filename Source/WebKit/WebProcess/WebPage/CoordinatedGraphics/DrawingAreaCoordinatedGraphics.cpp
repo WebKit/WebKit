@@ -411,10 +411,13 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
     if (respondImmediately) {
         // Make sure to resume painting if we're supposed to respond immediately, otherwise we'll just
         // send back an empty UpdateInfo struct.
+        bool wasSuspended = m_isPaintingSuspended;
         if (m_isPaintingSuspended)
             resumePainting();
 
         sendDidUpdateBackingStoreState();
+        if (wasSuspended)
+            suspendPainting();
     }
 
     m_inUpdateBackingStoreState = false;
