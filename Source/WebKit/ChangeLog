@@ -1,3 +1,15 @@
+2019-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Get rid of HTMLInputElement::setEditingValue
+        https://bugs.webkit.org/show_bug.cgi?id=196402
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/glib/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_html_input_element_set_editing_value):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_set_editing_value):
+
 2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a WebKit internal feature flag to always enable modern compatibility mode by default

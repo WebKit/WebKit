@@ -274,7 +274,6 @@ enum CompositingPolicy {
 
     [MayThrowException] boolean wasLastChangeUserEdit(Element textField);
     boolean elementShouldAutoComplete(HTMLInputElement inputElement);
-    void setEditingValue(HTMLInputElement inputElement, DOMString value);
     void setAutofilled(HTMLInputElement inputElement, boolean enabled);
     void setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
     AutoFillButtonType autoFillButtonType(HTMLInputElement inputElement);

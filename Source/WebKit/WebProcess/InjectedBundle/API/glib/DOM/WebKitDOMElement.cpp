@@ -148,7 +148,9 @@ void webkit_dom_element_html_input_element_set_auto_filled(WebKitDOMElement* ele
  * @element: a #WebKitDOMElement
  * @value: the text to set
  *
- * Set editing value of an HTML input element. If @element is not an HTML input element this function does nothing.
+ * Set the value of an HTML input element as if it had been edited by
+ * the user, triggering a change event. If @element is not an HTML input
+ * element this function does nothing.
  *
  * Since: 2.22
  */
@@ -160,5 +162,5 @@ void webkit_dom_element_html_input_element_set_editing_value(WebKitDOMElement* e
     if (!is<WebCore::HTMLInputElement>(node))
         return;
 
-    downcast<WebCore::HTMLInputElement>(*node).setEditingValue(String::fromUTF8(value));
+    downcast<WebCore::HTMLInputElement>(*node).setValueForUser(String::fromUTF8(value));
 }

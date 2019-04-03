@@ -1814,11 +1814,6 @@ bool Internals::elementShouldAutoComplete(HTMLInputElement& element)
     return element.shouldAutocomplete();
 }
 
-void Internals::setEditingValue(HTMLInputElement& element, const String& value)
-{
-    element.setEditingValue(value);
-}
-
 void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
 {
     element.setAutoFilled(enabled);

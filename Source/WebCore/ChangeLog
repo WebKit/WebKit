@@ -1,3 +1,27 @@
+2019-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Get rid of HTMLInputElement::setEditingValue
+        https://bugs.webkit.org/show_bug.cgi?id=196402
+
+        Reviewed by Darin Adler.
+
+        HTMLInputElement::setEditingValue is only used for Epiphany password autofill. We did it
+        this way because that's what Chrome uses for autofill, but Apple uses
+        HTMLInputElement::setValueForUser. Let's switch to that instead, then we can get rid of
+        setEditingValue.
+
+        This fixes logging into ting.com after username and password are autofilled by Epiphany.
+        Before this change, the login would fail unless you first manually edit either the username
+        or the password field.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setEditingValue): Deleted.
+        * html/HTMLInputElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setEditingValue): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-04-03  Pablo Saavedra  <psaavedra@igalia.com>
 
         Missing includes that were previously provided via UnifiedSources

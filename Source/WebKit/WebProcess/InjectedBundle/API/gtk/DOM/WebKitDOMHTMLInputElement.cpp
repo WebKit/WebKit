@@ -1007,6 +1007,6 @@ void webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* 
   g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
   g_return_if_fail(value);
 
-  WebKit::core(self)->setEditingValue(WTF::String::fromUTF8(value));
+  WebKit::core(self)->setValueForUser(WTF::String::fromUTF8(value));
 }
 G_GNUC_END_IGNORE_DEPRECATIONS;

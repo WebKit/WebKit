@@ -255,7 +255,6 @@ public:
 
     ExceptionOr<bool> wasLastChangeUserEdit(Element& textField);
     bool elementShouldAutoComplete(HTMLInputElement&);
-    void setEditingValue(HTMLInputElement&, const String&);
     void setAutofilled(HTMLInputElement&, bool enabled);
     enum class AutoFillButtonType { None, Contacts, Credentials, StrongPassword, CreditCard };
     void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);

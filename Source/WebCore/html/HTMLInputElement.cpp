@@ -1034,23 +1034,6 @@ void HTMLInputElement::setValueForUser(const String& value)
     setValue(value, DispatchChangeEvent);
 }
 
-void HTMLInputElement::setEditingValue(const String& value)
-{
-    if (!isTextField())
-        return;
-
-    setInnerTextValue(value);
-    subtreeHasChanged();
-
-    unsigned max = value.length();
-    if (focused())
-        setSelectionRange(max, max);
-    else
-        cacheSelectionInResponseToSetValue(max);
-
-    dispatchInputEvent();
-}
-
 ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
 {
     if (isFileUpload() && !value.isEmpty())
