@@ -1,3 +1,19 @@
+2019-04-02  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVG Animation (SMIL) on <text> or <tspan> doesn't work on second run
+        https://bugs.webkit.org/show_bug.cgi?id=150388
+
+        Reviewed by Simon Fraser.
+
+        The bug is fixed by removing the SVG tear off objects. See
+        https://bugs.webkit.org/show_bug.cgi?id=191237.
+
+        We need to add a layout test to ensure that no code change will break
+        this scenario in the future.
+
+        * svg/animations/smil-multiple-animate-list-expected.svg: Added.
+        * svg/animations/smil-multiple-animate-list.svg: Added.
+
 2019-04-02  Shawn Roberts  <sroberts@apple.com>
 
         imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html is a flaky crash
