@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include "HTMLInputElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "RenderPtr.h"
 #include "StepRange.h"
@@ -55,7 +56,6 @@ class Event;
 class FileList;
 class HTMLElement;
 class HTMLFormElement;
-class HTMLInputElement;
 class Icon;
 class KeyboardEvent;
 class MouseEvent;
