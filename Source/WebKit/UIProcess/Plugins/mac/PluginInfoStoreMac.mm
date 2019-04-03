@@ -83,29 +83,6 @@ static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
     return loadPolicy == PluginModuleBlockedForSecurity || loadPolicy == PluginModuleBlockedForCompatibility;
 }
 
-bool PluginInfoStore::shouldAllowPluginToRunUnsandboxed(const String& pluginBundleIdentifier)
-{
-    if (RuntimeEnabledFeatures::sharedFeatures().experimentalPlugInSandboxProfilesEnabled())
-        return false;
-
-    return pluginBundleIdentifier == "com.cisco.webex.plugin.gpc64"_s
-        || pluginBundleIdentifier == "com.google.googletalkbrowserplugin"_s
-        || pluginBundleIdentifier == "com.google.o1dbrowserplugin"_s
-        || pluginBundleIdentifier == "com.apple.NPSafeInput"_s
-        || pluginBundleIdentifier == "com.apple.BocomSubmitCtrl"_s
-        || pluginBundleIdentifier == "com.ftsafe.NPAPI-Core-Safe-SoftKeybaord.plugin.rfc1034identifier"_s
-        || pluginBundleIdentifier == "com.cfca.npSecEditCtl.MAC.BOC.plugin"_s
-        || pluginBundleIdentifier == "com.cfca.npSecEditCtl.MAC.BOCO"_s
-        || pluginBundleIdentifier == "cfca.com.npCryptoKit.MAC.BOC"_s
-        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.BOC"_s
-        || pluginBundleIdentifier == "cfca.com.npCryptoKit.UnionPay.MAC"_s
-        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.UnionPay"_s
-        || pluginBundleIdentifier == "Bocom.netsignplugin"_s
-        || pluginBundleIdentifier == "cfca.com.npP11CertEnroll.MAC.CGB"_s
-        || pluginBundleIdentifier == "cfca.com.npCryptoKit.CGB.MAC"_s
-        || pluginBundleIdentifier == "mw.icbc-safari-MW"_s;
-}
-
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
 {
     for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
@@ -127,7 +104,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
         return false;
     }
 
-    if (currentProcessIsSandboxed() && !plugin.hasSandboxProfile && !shouldAllowPluginToRunUnsandboxed(plugin.bundleIdentifier)) {
+    if (currentProcessIsSandboxed() && !plugin.hasSandboxProfile) {
         LOG(Plugins, "Ignoring unsandboxed plug-in %s", plugin.bundleIdentifier.utf8().data());
         return false;
     }

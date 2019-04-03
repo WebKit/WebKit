@@ -474,9 +474,6 @@ void PluginProcess::initializeSandbox(const AuxiliaryProcessInitializationParame
         exit(EX_OSERR);
     }
 
-    if (PluginInfoStore::shouldAllowPluginToRunUnsandboxed(m_pluginBundleIdentifier))
-        return;
-
     bool parentIsSandboxed = parameters.connectionIdentifier.xpcConnection && connectedProcessIsSandboxed(parameters.connectionIdentifier.xpcConnection.get());
 
     if (parameters.extraInitializationData.get("disable-sandbox") == "1") {

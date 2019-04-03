@@ -159,12 +159,6 @@ static inline String pathExtension(const URL& url)
 
 #if !PLATFORM(COCOA)
 
-bool PluginInfoStore::shouldAllowPluginToRunUnsandboxed(const String& pluginBundleIdentifier)
-{
-    UNUSED_PARAM(pluginBundleIdentifier);
-    return false;
-}
-
 PluginModuleLoadPolicy PluginInfoStore::defaultLoadPolicyForPlugin(const PluginModuleInfo&)
 {
     return PluginModuleLoadNormally;

@@ -1,3 +1,19 @@
+2019-04-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Eliminate plugin sandbox exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=196510
+
+        Reviewed by Chris Dumez.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::initializeSandbox):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed): Deleted.
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        (WebKit::PluginInfoStore::shouldAllowPluginToRunUnsandboxed): Deleted.
+
 2019-04-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix assertion in http/tests/adClickAttribution/store-ad-click-attribution.html
