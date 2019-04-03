@@ -1,5 +1,18 @@
 2019-04-03  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Status bubble should not display certain infrastructure status messages
+        https://bugs.webkit.org/show_bug.cgi?id=196550
+
+        Reviewed by Lucas Forschler.
+
+        Do not display the steps which are un-needed for end-user. This information is still avaiable
+        if the user click on the bubble and look at the Buildbot build.
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble._steps_messages):
+        (StatusBubble._should_display_step): Method to decide whether to display the step or not.
+
+2019-04-03  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Use https for sending data to ews-app
         https://bugs.webkit.org/show_bug.cgi?id=196492
 

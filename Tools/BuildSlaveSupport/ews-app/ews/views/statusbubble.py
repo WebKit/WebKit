@@ -41,6 +41,8 @@ class StatusBubble(View):
                     'mac-debug', 'mac-debug-wk1', 'mac-wk1', 'mac-wk2', 'style', 'webkitperl', 'webkitpy', 'win', 'wincairo', 'wpe']
     ENABLED_QUEUES = ['api-ios', 'api-mac', 'webkitperl']
 
+    STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:']
+
     def _build_bubble(self, patch, queue):
         bubble = {
             'name': queue,
@@ -120,7 +122,10 @@ class StatusBubble(View):
         return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'
 
     def _steps_messages(self, build):
-        return '\n'.join([step.state_string for step in build.step_set.all()])
+        return '\n'.join([step.state_string for step in build.step_set.all() if self._should_display_step(step)])
+
+    def _should_display_step(self, step):
+        return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
 
     def _most_recent_step_message(self, build):
         recent_step = build.step_set.last()
