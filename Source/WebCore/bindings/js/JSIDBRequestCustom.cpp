@@ -64,14 +64,19 @@ JSC::JSValue JSIDBRequest::result(JSC::ExecState& state) const
             auto& keys = getAllResult.keys();
             auto& values = getAllResult.values();
             auto& keyPath = getAllResult.keyPath();
-            Vector<JSC::JSValue> results;
+            auto scope = DECLARE_THROW_SCOPE(state.vm());
+            JSC::MarkedArgumentBuffer list;
             for (unsigned i = 0; i < values.size(); i ++) {
                 auto result = deserializeIDBValueWithKeyInjection(state, values[i], keys[i], keyPath);
                 if (!result)
                     return jsNull();
-                results.append(result.value());
+                list.append(result.value());
+                if (UNLIKELY(list.hasOverflowed())) {
+                    propagateException(state, scope, Exception(UnknownError));
+                    return jsNull();
+                }
             }
-            return JSValue(JSC::constructArray(&state, nullptr, state.lexicalGlobalObject(), results.data(), results.size()));
+            return JSValue(JSC::constructArray(&state, nullptr, state.lexicalGlobalObject(), list));
         }, [] (uint64_t number) {
             return toJS<IDLUnsignedLongLong>(number);
         }, [] (IDBRequest::NullResultType other) {
