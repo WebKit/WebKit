@@ -1,3 +1,15 @@
+2019-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect and fix layout test http/tests/adClickAttribution/store-ad-click-attribution.html
+        https://bugs.webkit.org/show_bug.cgi?id=196476
+
+        Reviewed by Chris Dumez.
+
+        Re-apply a change I reverted in r241754 now that it's safe to do so.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
 2019-04-03  Daniel Bates  <dabates@apple.com>
 
         [iOS] Should be able to dismiss picker or popover using the keyboard

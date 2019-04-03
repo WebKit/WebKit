@@ -4145,6 +4145,13 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID
 
     frame->didCommitLoad(mimeType, webCertificateInfo, containsPluginDocument);
 
+    if (navigation && frame->isMainFrame()) {
+        if (auto& adClickAttribution = navigation->adClickAttribution()) {
+            if (adClickAttribution->destination().matches(frame->url()))
+                m_process->processPool().sendToNetworkingProcess(Messages::NetworkProcess::StoreAdClickAttribution(m_websiteDataStore->sessionID(), *adClickAttribution));
+        }
+    }
+
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomContentProvider = frameHasCustomContentProvider;
 
