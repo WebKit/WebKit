@@ -1332,6 +1332,9 @@ webkit.org/b/195260 mathml/presentation/tokenElements-dynamic.html [ Crash Pass 
 
 webkit.org/b/195271 imported/w3c/web-platform-tests/mathml/presentation-markup/scripts/underover-1.html [ Failure Pass ]
 
+webkit.org/b/196542 printing/crash-while-formatting-subframe-for-printing.html [ Timeout Crash ]
+webkit.org/b/196542 printing/printing-events.html [ Timeout Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1944,9 +1947,9 @@ webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks.html [ Timeout Pass ]
 webkit.org/b/186598 http/tests/media/hls/hls-audio-tracks-has-audio.html [ Timeout Pass ]
 
 # Tests that fail on the EWS queue since we enabled tests there
-webkit.org/b/186638 printing/print-close-crash.html [ Timeout Pass ]
-webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout Pass ]
-webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass Failure ]
+webkit.org/b/186638 printing/print-close-crash.html [ Timeout Pass Crash ]
+webkit.org/b/186638 fast/media/print-restores-previous-mediatype.html [ Timeout Pass Crash ]
+webkit.org/b/186638 editing/execCommand/print.html [ Timeout Pass Failure Crash ]
 webkit.org/b/186638 animations/play-state-paused.html [ Failure Pass ]
 webkit.org/b/186638 imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.html [ Failure Pass ]
 webkit.org/b/186638 imported/mozilla/css-transitions/test_animation-finished.html [ Timeout Pass ]
@@ -2504,9 +2507,9 @@ webkit.org/b/196069 inspector/indexeddb/requestData.html [ Timeout ]
 
 webkit.org/b/196198 http/tests/media/video-play-stall-seek.html [ Timeout ]
 
-webkit.org/b/196250 inspector/console/heapSnapshot.html
+webkit.org/b/196250 inspector/console/heapSnapshot.html [ Timeout ]
 
-webkit.org/b/196251 http/wpt/service-workers/third-party-registration.html
+webkit.org/b/196251 http/wpt/service-workers/third-party-registration.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3815,6 +3818,8 @@ webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 
 webkit.org/b/116977 media/event-attributes.html [ Failure ]
 
+webkit.org/b/196541 editing/pasteboard/paste-content-with-overflow-auto-parent-across-origin.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3922,6 +3927,8 @@ http/tests/inspector/network/contentextensions [ Pass ]
 imported/w3c/web-platform-tests/css/css-scoping/stylesheet-title-001.html [ Pass ]
 
 imported/w3c/web-platform-tests/fetch/http-cache/basic-auth-cache-test.html [ Pass ]
+
+webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See top of file where to put new expectations.

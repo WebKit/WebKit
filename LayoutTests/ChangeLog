@@ -1,3 +1,9 @@
+2019-04-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed gardening, update test expectations
+
+        * platform/gtk/TestExpectations:
+
 2019-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Get rid of HTMLInputElement::setEditingValue
