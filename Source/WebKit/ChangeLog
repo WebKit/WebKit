@@ -1,3 +1,19 @@
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Inspector: [GTK] Copy copies to nowhere
+        https://bugs.webkit.org/show_bug.cgi?id=181228
+
+        Reviewed by Michael Catanzaro.
+
+        The thing is that those items are actually submenu items, with options, for example in the case of Copy to copy
+        HTML, Text, XPath, etc. We are not correctly handling submenus when populating the context menu received from
+        the web process.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::populateSubMenu): Helper to populate submenu items recursively.
+        (WebKit::WebContextMenuProxyGtk::populate): Handle submenu items.
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2019-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Add new API around WKWebpagePreferences in WKNavigationDelegate and WKWebViewConfiguration

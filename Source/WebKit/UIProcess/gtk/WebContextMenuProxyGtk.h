@@ -59,6 +59,7 @@ private:
     void append(GMenu*, const WebContextMenuItemGlib&);
     GRefPtr<GMenu> buildMenu(const Vector<WebContextMenuItemGlib>&);
     void populate(const Vector<Ref<WebContextMenuItem>>&);
+    Vector<WebContextMenuItemGlib> populateSubMenu(const WebContextMenuItemData&);
     static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);
 
     GtkWidget* m_webView;

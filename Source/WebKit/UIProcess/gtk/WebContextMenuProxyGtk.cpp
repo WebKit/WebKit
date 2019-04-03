@@ -117,6 +117,18 @@ GRefPtr<GMenu> WebContextMenuProxyGtk::buildMenu(const Vector<WebContextMenuItem
     return menu;
 }
 
+Vector<WebContextMenuItemGlib> WebContextMenuProxyGtk::populateSubMenu(const WebContextMenuItemData& subMenuItemData)
+{
+    Vector<WebContextMenuItemGlib> items;
+    for (const auto& itemData : subMenuItemData.submenu()) {
+        if (itemData.type() == SubmenuType)
+            items.append(WebContextMenuItemGlib(itemData, populateSubMenu(itemData)));
+        else
+            items.append(itemData);
+    }
+    return items;
+}
+
 void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemGlib>& items)
 {
     GRefPtr<GMenu> menu = buildMenu(items);
@@ -128,13 +140,24 @@ void WebContextMenuProxyGtk::populate(const Vector<Ref<WebContextMenuItem>>& ite
     GRefPtr<GMenu> menu = adoptGRef(g_menu_new());
     GMenu* sectionMenu = menu.get();
     for (const auto& item : items) {
-        if (item->data().type() == SeparatorType) {
+        switch (item->data().type()) {
+        case SeparatorType: {
             GRefPtr<GMenu> section = adoptGRef(g_menu_new());
             g_menu_append_section(menu.get(), nullptr, G_MENU_MODEL(section.get()));
             sectionMenu = section.get();
-        } else {
+            break;
+        }
+        case SubmenuType: {
+            WebContextMenuItemGlib menuitem(item->data(), populateSubMenu(item->data()));
+            append(sectionMenu, menuitem);
+            break;
+        }
+        case ActionType:
+        case CheckableActionType: {
             WebContextMenuItemGlib menuitem(item->data());
             append(sectionMenu, menuitem);
+            break;
+        }
         }
     }
     gtk_menu_shell_bind_model(GTK_MENU_SHELL(m_menu), G_MENU_MODEL(menu.get()), nullptr, TRUE);
