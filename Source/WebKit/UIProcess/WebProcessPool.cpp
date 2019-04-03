@@ -496,8 +496,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
 #if PLATFORM(COCOA)
         parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationBundleIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationBundleIdentifier();
         parameters.defaultDataStoreParameters.networkSessionParameters.sourceApplicationSecondaryIdentifier = m_websiteDataStore->websiteDataStore().sourceApplicationSecondaryIdentifier();
+        parameters.defaultDataStoreParameters.networkSessionParameters.allowsTLSFallback = m_websiteDataStore->websiteDataStore().allowsTLSFallback() ? AllowsTLSFallback::Yes : AllowsTLSFallback::No;
 #endif
-        m_websiteDataStore->websiteDataStore().finalizeApplicationIdentifiers();
+        m_websiteDataStore->websiteDataStore().networkingHasBegun();
     }
 
     parameters.cacheModel = cacheModel();

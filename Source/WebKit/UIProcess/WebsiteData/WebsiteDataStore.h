@@ -212,8 +212,11 @@ public:
 
     const String& sourceApplicationSecondaryIdentifier() const { return m_sourceApplicationSecondaryIdentifier; }
     bool setSourceApplicationSecondaryIdentifier(String&&);
-    
-    void finalizeApplicationIdentifiers() { m_allowedToSetApplicationIdentifiers = false; }
+
+    bool allowsTLSFallback() const { return m_allowsTLSFallback; }
+    bool setAllowsTLSFallback(bool);
+
+    void networkingHasBegun() { m_networkingHasBegun = true; }
     
     void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
     AllowsCellularAccess allowsCellularAccess() { return m_allowsCellularAccess; }
@@ -320,7 +323,8 @@ private:
     AllowsCellularAccess m_allowsCellularAccess { AllowsCellularAccess::Yes };
     String m_sourceApplicationBundleIdentifier;
     String m_sourceApplicationSecondaryIdentifier;
-    bool m_allowedToSetApplicationIdentifiers { true };
+    bool m_allowsTLSFallback { true };
+    bool m_networkingHasBegun { false };
 
 #if HAVE(SEC_KEY_PROXY)
     Vector<Ref<SecKeyProxyStore>> m_secKeyProxyStores;

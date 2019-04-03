@@ -116,6 +116,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         m_proxyConfiguration,
         m_sourceApplicationBundleIdentifier,
         m_sourceApplicationSecondaryIdentifier,
+        m_allowsTLSFallback ? AllowsTLSFallback::Yes : AllowsTLSFallback::No,
         shouldLogCookieInformation,
         Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. },
         WTFMove(httpProxy),
@@ -127,7 +128,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         enableResourceLoadStatisticsDebugMode,
         WTFMove(resourceLoadStatisticsManualPrevalentResource)
     };
-    finalizeApplicationIdentifiers();
+    networkingHasBegun();
 
     auto cookieFile = resolvedCookieStorageFile();
 

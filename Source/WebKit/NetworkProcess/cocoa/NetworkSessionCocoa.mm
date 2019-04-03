@@ -946,6 +946,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
 #endif
 
+    if (parameters.allowsTLSFallback == AllowsTLSFallback::No && [configuration respondsToSelector:@selector(_allowsTLSFallback)])
+        configuration._allowsTLSFallback = NO;
+
     auto* storageSession = networkProcess.storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
 

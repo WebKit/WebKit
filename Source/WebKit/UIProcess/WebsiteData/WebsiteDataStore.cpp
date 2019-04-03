@@ -2160,15 +2160,23 @@ void WebsiteDataStore::didCreateNetworkProcess()
 
 bool WebsiteDataStore::setSourceApplicationSecondaryIdentifier(String&& identifier)
 {
-    if (!m_allowedToSetApplicationIdentifiers)
+    if (m_networkingHasBegun)
         return false;
     m_sourceApplicationSecondaryIdentifier = WTFMove(identifier);
     return true;
 }
 
+bool WebsiteDataStore::setAllowsTLSFallback(bool allows)
+{
+    if (m_networkingHasBegun)
+        return false;
+    m_allowsTLSFallback = allows;
+    return true;
+}
+    
 bool WebsiteDataStore::setSourceApplicationBundleIdentifier(String&& identifier)
 {
-    if (!m_allowedToSetApplicationIdentifiers)
+    if (m_networkingHasBegun)
         return false;
     m_sourceApplicationBundleIdentifier = WTFMove(identifier);
     return true;

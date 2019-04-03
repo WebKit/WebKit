@@ -1,3 +1,35 @@
+2019-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to disable legacy TLS fallback
+        https://bugs.webkit.org/show_bug.cgi?id=196549
+        <rdar://44979744>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::privateSessionParameters):
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _setAllowsTLSFallback:]):
+        (-[WKWebsiteDataStore _allowsTLSFallback]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::setSourceApplicationSecondaryIdentifier):
+        (WebKit::WebsiteDataStore::setAllowsTLSFallback):
+        (WebKit::WebsiteDataStore::setSourceApplicationBundleIdentifier):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::allowsTLSFallback const):
+        (WebKit::WebsiteDataStore::networkingHasBegun):
+        (WebKit::WebsiteDataStore::finalizeApplicationIdentifiers): Deleted.
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for -apple-trailing-word

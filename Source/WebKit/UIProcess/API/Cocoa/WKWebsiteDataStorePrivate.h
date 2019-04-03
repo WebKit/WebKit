@@ -57,6 +57,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @property (nonatomic, setter=_setProxyConfiguration:) NSDictionary *_proxyConfiguration WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, copy, setter=_setSourceApplicationBundleIdentifier:) NSString *_sourceApplicationBundleIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 @property (nonatomic, copy, setter=_setSourceApplicationSecondaryIdentifier:) NSString *_sourceApplicationSecondaryIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAllowsTLSFallback:) BOOL _allowsTLSFallback WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) NSURL *_indexedDBDatabaseDirectory;
 

@@ -42,7 +42,7 @@ NetworkSessionCreationParameters NetworkSessionCreationParameters::privateSessio
 {
     return { sessionID, { }, AllowsCellularAccess::Yes
 #if PLATFORM(COCOA)
-        , { }, { }, { }, false, { }, { }, { }
+        , { }, { }, { }, AllowsTLSFallback::Yes, false, { }, { }, { }
 #endif
 #if USE(SOUP)
         , { }, SoupCookiePersistentStorageType::Text
@@ -63,6 +63,7 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, proxyConfiguration.get());
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
+    encoder << allowsTLSFallback;
     encoder << shouldLogCookieInformation;
     encoder << loadThrottleLatency;
     encoder << httpProxy;
@@ -114,7 +115,12 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
         return WTF::nullopt;
-    
+
+    Optional<AllowsTLSFallback> allowsTLSFallback;
+    decoder >> allowsTLSFallback;
+    if (!allowsTLSFallback)
+        return WTF::nullopt;
+
     Optional<bool> shouldLogCookieInformation;
     decoder >> shouldLogCookieInformation;
     if (!shouldLogCookieInformation)
@@ -198,6 +204,7 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
         , WTFMove(proxyConfiguration)
         , WTFMove(*sourceApplicationBundleIdentifier)
         , WTFMove(*sourceApplicationSecondaryIdentifier)
+        , WTFMove(*allowsTLSFallback)
         , WTFMove(*shouldLogCookieInformation)
         , WTFMove(*loadThrottleLatency)
         , WTFMove(*httpProxy)

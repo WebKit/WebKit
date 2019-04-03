@@ -383,6 +383,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         [NSException raise:NSGenericException format:@"_setSourceApplicationSecondaryIdentifier cannot be called after networking has begun"];
 }
 
+- (void)_setAllowsTLSFallback:(BOOL)allows
+{
+    if (!_websiteDataStore->websiteDataStore().setAllowsTLSFallback(allows))
+        [NSException raise:NSGenericException format:@"_setAllowsTLSFallback cannot be called after networking has begun"];
+}
+
+- (BOOL)_allowsTLSFallback
+{
+    return _websiteDataStore->websiteDataStore().allowsTLSFallback();
+}
+
 - (NSDictionary *)_proxyConfiguration
 {
     return (__bridge NSDictionary *)_websiteDataStore->websiteDataStore().proxyConfiguration();
