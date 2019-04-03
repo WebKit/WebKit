@@ -19,6 +19,7 @@
       (parent relative scrollable rect at (110,110) size 480x400)
       (children 1
         (Frame scrolling node
+          (scroll position 0 120)
           (scrollable area size 465 400)
           (contents size 465 1016)
           (requested scroll position 0 120)
