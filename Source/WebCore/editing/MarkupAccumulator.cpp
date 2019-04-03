@@ -292,19 +292,18 @@ void MarkupAccumulator::appendCustomAttributes(StringBuilder&, const Element&, N
 void MarkupAccumulator::appendQuotedURLAttributeValue(StringBuilder& result, const Element& element, const Attribute& attribute)
 {
     ASSERT(element.isURLAttribute(attribute));
-    const String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
+    String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
     UChar quoteChar = '"';
-    String strippedURLString = resolvedURLString.stripWhiteSpace();
-    if (WTF::protocolIsJavaScript(strippedURLString)) {
+    if (WTF::protocolIsJavaScript(resolvedURLString)) {
         // minimal escaping for javascript urls
-        if (strippedURLString.contains('"')) {
-            if (strippedURLString.contains('\''))
-                strippedURLString.replaceWithLiteral('"', "&quot;");
+        if (resolvedURLString.contains('"')) {
+            if (resolvedURLString.contains('\''))
+                resolvedURLString.replaceWithLiteral('"', "&quot;");
             else
                 quoteChar = '\'';
         }
         result.append(quoteChar);
-        result.append(strippedURLString);
+        result.append(resolvedURLString);
         result.append(quoteChar);
         return;
     }

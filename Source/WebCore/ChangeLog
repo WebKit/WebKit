@@ -1,3 +1,21 @@
+2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+        HTML fragment serialization should not strip whitespace from URL attribute values
+        https://bugs.webkit.org/show_bug.cgi?id=196551
+
+        Reviewed by Ryosuke Niwa.
+
+        HTML fragment serialization should not strip whitespace from URL attribute values as per:
+        - https://html.spec.whatwg.org/multipage/parsing.html#html-fragment-serialisation-algorithm
+
+        WebKit was stripping such whitespace, Gecko and Blink are not. Align WebKit with other
+        browser engines and the specification.
+
+        No new tests, rebaselined existing test.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendQuotedURLAttributeValue):
+
 2019-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in HTMLCanvasElement::createContext2d after the element got adopted to a new document
