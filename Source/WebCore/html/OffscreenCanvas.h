@@ -45,7 +45,7 @@ class WebGLRenderingContext;
 using OffscreenRenderingContext = RefPtr<WebGLRenderingContext>;
 #endif
 
-class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData {
+class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData, private ContextDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
@@ -94,7 +94,8 @@ private:
 
     bool isOffscreenCanvas() const final { return true; }
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return CanvasBase::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     EventTargetInterface eventTargetInterface() const final { return OffscreenCanvasEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }

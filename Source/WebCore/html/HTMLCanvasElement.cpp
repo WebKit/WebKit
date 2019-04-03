@@ -116,7 +116,6 @@ static size_t activePixelMemory = 0;
 
 HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
-    , CanvasBase(&document)
     , m_size(defaultWidth, defaultHeight)
 {
     ASSERT(hasTagName(canvasTag));

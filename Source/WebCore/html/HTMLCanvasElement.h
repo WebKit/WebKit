@@ -179,6 +179,8 @@ private:
     void refCanvasBase() final { HTMLElement::ref(); }
     void derefCanvasBase() final { HTMLElement::deref(); }
 
+    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
+
     FloatRect m_dirtyRect;
     mutable IntSize m_size;
 

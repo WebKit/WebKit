@@ -74,7 +74,7 @@ public:
     bool originClean() const { return m_originClean; }
 
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
-    ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
+    ScriptExecutionContext* scriptExecutionContext() const { return canvasBaseScriptExecutionContext();  }
 
     CanvasRenderingContext* renderingContext() const;
 
@@ -98,7 +98,9 @@ public:
     bool callTracingActive() const;
 
 protected:
-    CanvasBase(ScriptExecutionContext*);
+    CanvasBase();
+
+    virtual ScriptExecutionContext* canvasBaseScriptExecutionContext() const = 0;
 
     std::unique_ptr<CanvasRenderingContext> m_context;
 
@@ -107,7 +109,6 @@ private:
 #ifndef NDEBUG
     bool m_didNotifyObserversCanvasDestroyed { false };
 #endif
-    ScriptExecutionContext* m_scriptExecutionContext;
     HashSet<CanvasObserver*> m_observers;
 };
 

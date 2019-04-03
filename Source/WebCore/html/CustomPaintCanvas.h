@@ -44,7 +44,7 @@ namespace WebCore {
 class ImageBitmap;
 class PaintRenderingContext2D;
 
-class CustomPaintCanvas final : public RefCounted<CustomPaintCanvas>, public CanvasBase {
+class CustomPaintCanvas final : public RefCounted<CustomPaintCanvas>, public CanvasBase, private ContextDestructionObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
@@ -80,6 +80,7 @@ private:
 
     void refCanvasBase() final { ref(); }
     void derefCanvasBase() final { deref(); }
+    ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     mutable GraphicsContext* m_destinationGraphicsContext = nullptr;
     mutable IntSize m_size;
