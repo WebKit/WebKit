@@ -79,7 +79,7 @@ void SVGGradientElement::parseAttribute(const QualifiedName& name, const AtomicS
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
+    if (PropertyRegistry::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (RenderObject* object = renderer())
             object->setNeedsLayout();

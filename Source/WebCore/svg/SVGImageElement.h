@@ -51,9 +51,6 @@ public:
 private:
     SVGImageElement(const QualifiedName&, Document&);
     
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGImageElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGImageElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -71,7 +68,6 @@ private:
     bool selfHasRelativeLengths() const final { return true; }
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, LengthModeHeight) };

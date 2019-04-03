@@ -60,10 +60,10 @@ public:
         m_property->setValue(SVGPropertyTraits<PropertyType>::fromString(baseValue));
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) override
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
     {
         PropertyType& animated = m_property->value();
-        m_function.progress(targetElement, percentage, repeatCount, animated);
+        m_function.animate(targetElement, progress, repeatCount, animated);
     }
 
     void apply(SVGElement* targetElement) override

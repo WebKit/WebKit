@@ -56,9 +56,9 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount, RefPtr<SVGLengthList>& animated)
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount, RefPtr<SVGLengthList>& animated)
     {
-        if (!adjustAnimatedList(m_animationMode, percentage, animated))
+        if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
         const Vector<Ref<SVGLength>>& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
@@ -69,14 +69,14 @@ public:
 
         SVGLengthContext lengthContext(targetElement);
         for (unsigned i = 0; i < toItems.size(); ++i) {
-            SVGLengthType unitType = (i < fromItems.size() && percentage < 0.5 ? fromItems : toItems)[i]->value().unitType();
+            SVGLengthType unitType = (i < fromItems.size() && progress < 0.5 ? fromItems : toItems)[i]->value().unitType();
 
             float from = i < fromItems.size() ? fromItems[i]->value().value(lengthContext) : 0;
             float to = toItems[i]->value().value(lengthContext);
             float toAtEndOfDuration = i < toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[i]->value().value(lengthContext) : 0;
             float value = animatedItems[i]->value().value(lengthContext);
 
-            value = Base::progress(percentage, repeatCount, from, to, toAtEndOfDuration, value);
+            value = Base::animate(progress, repeatCount, from, to, toAtEndOfDuration, value);
             animatedItems[i]->value().setValue(lengthContext, value, lengthMode, unitType);
         }
     }
@@ -115,9 +115,9 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGNumberList>& animated)
     {
-        if (!adjustAnimatedList(m_animationMode, percentage, animated))
+        if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
         auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
@@ -131,7 +131,7 @@ public:
             float toAtEndOfDuration = i < toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[i]->value() : 0;
 
             float& value = animatedItems[i]->value();
-            value = Base::progress(percentage, repeatCount, from, to, toAtEndOfDuration, value);
+            value = Base::animate(progress, repeatCount, from, to, toAtEndOfDuration, value);
         }
     }
 
@@ -165,9 +165,9 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, RefPtr<SVGPointList>& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGPointList>& animated)
     {
-        if (!adjustAnimatedList(m_animationMode, percentage, animated))
+        if (!adjustAnimatedList(m_animationMode, progress, animated))
             return;
 
         auto& fromItems = m_animationMode == AnimationMode::To ? animated->items() : m_from->items();
@@ -181,8 +181,8 @@ public:
             FloatPoint toAtEndOfDuration = i < toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[i]->value() : FloatPoint();
             FloatPoint& animated = animatedItems[i]->value();
 
-            float animatedX = Base::progress(percentage, repeatCount, from.x(), to.x(), toAtEndOfDuration.x(), animated.x());
-            float animatedY = Base::progress(percentage, repeatCount, from.y(), to.y(), toAtEndOfDuration.y(), animated.y());
+            float animatedX = Base::animate(progress, repeatCount, from.x(), to.x(), toAtEndOfDuration.x(), animated.x());
+            float animatedY = Base::animate(progress, repeatCount, from.y(), to.y(), toAtEndOfDuration.y(), animated.y());
 
             animated = { animatedX, animatedY };
         }
@@ -218,10 +218,10 @@ public:
         m_toAtEndOfDuration->parse(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, RefPtr<SVGTransformList>& animated)
     {
         // Pass false to 'resizeAnimatedIfNeeded', as the special post-multiplication behavior of <animateTransform> needs to be respected below.
-        if (!adjustAnimatedList(m_animationMode, percentage, animated, false))
+        if (!adjustAnimatedList(m_animationMode, progress, animated, false))
             return;
 
         // Spec: To animations provide specific functionality to get a smooth change from the underlying
@@ -245,7 +245,7 @@ public:
         const SVGTransformValue zerosTransform = SVGTransformValue(to.type(), zerosAffineTransform);
 
         const SVGTransformValue& from = fromItemsSize ? fromItems[0]->value() : zerosTransform;
-        SVGTransformValue current = SVGTransformDistance(from, to).scaledDistance(percentage).addToSVGTransform(from);
+        SVGTransformValue current = SVGTransformDistance(from, to).scaledDistance(progress).addToSVGTransform(from);
 
         if (m_isAccumulated && repeatCount) {
             const SVGTransformValue& toAtEndOfDuration = toAtEndOfDurationItems.size() ? toAtEndOfDurationItems[0]->value() : zerosTransform;

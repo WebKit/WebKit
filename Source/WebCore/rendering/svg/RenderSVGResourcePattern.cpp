@@ -149,7 +149,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
     ASSERT(!resourceMode.isEmpty());
 
     if (m_shouldCollectPatternAttributes) {
-        patternElement().synchronizeAnimatedSVGAttribute(anyQName());
+        patternElement().synchronizeAllAttributes();
 
         m_attributes = PatternAttributes();
         collectPatternAttributes(m_attributes);

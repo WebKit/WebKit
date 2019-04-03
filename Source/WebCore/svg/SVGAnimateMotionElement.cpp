@@ -273,14 +273,14 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     }
 }
 
-float SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
+Optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
 {
     FloatPoint from;
     FloatPoint to;
     if (!parsePoint(fromString, from))
-        return -1;
+        return { };
     if (!parsePoint(toString, to))
-        return -1;
+        return { };
     FloatSize diff = to - from;
     return sqrtf(diff.width() * diff.width() + diff.height() * diff.height());
 }

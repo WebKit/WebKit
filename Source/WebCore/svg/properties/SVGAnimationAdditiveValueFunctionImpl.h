@@ -46,10 +46,10 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, SVGAngleValue& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, SVGAngleValue& animated)
     {
         float number = animated.value();
-        number = Base::progress(percentage, repeatCount, m_from.value(), m_to.value(), toAtEndOfDuration().value(), number);
+        number = Base::animate(progress, repeatCount, m_from.value(), m_to.value(), toAtEndOfDuration().value(), number);
         animated.setValue(number);
     }
 
@@ -78,26 +78,26 @@ public:
         m_toAtEndOfDuration = SVGPropertyTraits<Color>::fromString(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, Color& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, Color& animated)
     {
         Color from = m_animationMode == AnimationMode::To ? animated : m_from;
         
-        float red = Base::progress(percentage, repeatCount, from.red(), m_to.red(), toAtEndOfDuration().red(), animated.red());
-        float green = Base::progress(percentage, repeatCount, from.green(), m_to.green(), toAtEndOfDuration().green(), animated.green());
-        float blue = Base::progress(percentage, repeatCount, from.blue(), m_to.blue(), toAtEndOfDuration().blue(), animated.blue());
-        float alpha = Base::progress(percentage, repeatCount, from.alpha(), m_to.alpha(), toAtEndOfDuration().alpha(), animated.alpha());
+        float red = Base::animate(progress, repeatCount, from.red(), m_to.red(), toAtEndOfDuration().red(), animated.red());
+        float green = Base::animate(progress, repeatCount, from.green(), m_to.green(), toAtEndOfDuration().green(), animated.green());
+        float blue = Base::animate(progress, repeatCount, from.blue(), m_to.blue(), toAtEndOfDuration().blue(), animated.blue());
+        float alpha = Base::animate(progress, repeatCount, from.alpha(), m_to.alpha(), toAtEndOfDuration().alpha(), animated.alpha());
         
         animated = { roundAndClampColorChannel(red), roundAndClampColorChannel(green), roundAndClampColorChannel(blue), roundAndClampColorChannel(alpha) };
     }
 
-    float calculateDistance(SVGElement*, const String& from, const String& to) const override
+    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
         Color fromColor = CSSParser::parseColor(from.stripWhiteSpace());
         if (!fromColor.isValid())
-            return -1;
+            return { };
         Color toColor = CSSParser::parseColor(to.stripWhiteSpace());
         if (!toColor.isValid())
-            return -1;
+            return { };
         float red = fromColor.red() - toColor.red();
         float green = fromColor.green() - toColor.green();
         float blue = fromColor.blue() - toColor.blue();
@@ -136,12 +136,12 @@ public:
         m_toAtEndOfDuration = SVGPropertyTraits<int>::fromString(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, int& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, int& animated)
     {
-        animated = static_cast<int>(roundf(Base::progress(percentage, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
+        animated = static_cast<int>(roundf(Base::animate(progress, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
     }
 
-    float calculateDistance(SVGElement*, const String& from, const String& to) const override
+    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
         return std::abs(to.toIntStrict() - from.toIntStrict());
     }
@@ -174,21 +174,21 @@ public:
         m_toAtEndOfDuration = SVGLengthValue(m_lengthMode, toAtEndOfDuration);
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount, SVGLengthValue& animated)
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount, SVGLengthValue& animated)
     {
         SVGLengthContext lengthContext(targetElement);
-        SVGLengthType unitType = percentage < 0.5 ? m_from.unitType() : m_to.unitType();
+        SVGLengthType unitType = progress < 0.5 ? m_from.unitType() : m_to.unitType();
 
         float from = (m_animationMode == AnimationMode::To ? animated : m_from).value(lengthContext);
         float to = m_to.value(lengthContext);
         float toAtEndOfDuration = this->toAtEndOfDuration().value(lengthContext);
         float value = animated.value(lengthContext);
 
-        value = Base::progress(percentage, repeatCount, from, to, toAtEndOfDuration, value);
+        value = Base::animate(progress, repeatCount, from, to, toAtEndOfDuration, value);
         animated = { lengthContext, value, m_lengthMode, unitType };
     }
 
-    float calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
     {
         SVGLengthContext lengthContext(targetElement);
         auto fromLength = SVGLengthValue(m_lengthMode, from);
@@ -224,13 +224,13 @@ public:
         m_toAtEndOfDuration = SVGPropertyTraits<float>::fromString(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, float& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, float& animated)
     {
         float from = m_animationMode == AnimationMode::To ? animated : m_from;
-        animated = Base::progress(percentage, repeatCount, from, m_to, toAtEndOfDuration(), animated);
+        animated = Base::animate(progress, repeatCount, from, m_to, toAtEndOfDuration(), animated);
     }
 
-    float calculateDistance(SVGElement*, const String& from, const String& to) const override
+    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
         float fromNumber = 0;
         float toNumber = 0;
@@ -262,7 +262,7 @@ public:
         m_toAtEndOfDuration = SVGPathByteStream(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, SVGPathByteStream& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, SVGPathByteStream& animated)
     {
         SVGPathByteStream underlyingPath;
         if (m_animationMode == AnimationMode::To)
@@ -275,7 +275,7 @@ public:
         if (!from.size() || (m_isAdditive && m_animationMode != AnimationMode::To))
             lastAnimated = animated;
 
-        buildAnimatedSVGPathByteStream(from, m_to, animated, percentage);
+        buildAnimatedSVGPathByteStream(from, m_to, animated, progress);
 
         // Handle additive='sum'.
         if (!lastAnimated.isEmpty())
@@ -311,14 +311,14 @@ public:
         m_toAtEndOfDuration = SVGPropertyTraits<FloatRect>::fromString(toAtEndOfDuration);
     }
 
-    void progress(SVGElement*, float percentage, unsigned repeatCount, FloatRect& animated)
+    void animate(SVGElement*, float progress, unsigned repeatCount, FloatRect& animated)
     {
         FloatRect from = m_animationMode == AnimationMode::To ? animated : m_from;
         
-        float x = Base::progress(percentage, repeatCount, from.x(), m_to.x(), toAtEndOfDuration().x(), animated.x());
-        float y = Base::progress(percentage, repeatCount, from.y(), m_to.y(), toAtEndOfDuration().y(), animated.y());
-        float width = Base::progress(percentage, repeatCount, from.width(), m_to.width(), toAtEndOfDuration().width(), animated.width());
-        float height = Base::progress(percentage, repeatCount, from.height(), m_to.height(), toAtEndOfDuration().height(), animated.height());
+        float x = Base::animate(progress, repeatCount, from.x(), m_to.x(), toAtEndOfDuration().x(), animated.x());
+        float y = Base::animate(progress, repeatCount, from.y(), m_to.y(), toAtEndOfDuration().y(), animated.y());
+        float width = Base::animate(progress, repeatCount, from.width(), m_to.width(), toAtEndOfDuration().width(), animated.width());
+        float height = Base::animate(progress, repeatCount, from.height(), m_to.height(), toAtEndOfDuration().height(), animated.height());
         
         animated = { x, y, width, height };
     }

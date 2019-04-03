@@ -62,9 +62,6 @@ public:
 
     size_t approximateMemoryCost() const override { return sizeof(*this); }
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGraphicsElement, SVGElement, SVGTests>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGraphicsElement, SVGElement, SVGTests>;
 
     const SVGTransformList& transform() const { return m_transform->currentValue(); }
@@ -81,17 +78,12 @@ protected:
 private:
     bool isSVGGraphicsElement() const override { return true; }
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
     // Used by <animateMotion>
     std::unique_ptr<AffineTransform> m_supplementalTransform;
 
     // Used to isolate blend operations caused by masking.
     bool m_shouldIsolateBlending;
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedTransformList> m_transform { SVGAnimatedTransformList::create(this) };
 };
 

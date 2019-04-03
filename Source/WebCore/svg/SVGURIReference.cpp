@@ -24,7 +24,6 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "SVGAttributeOwnerProxy.h"
 #include "SVGElement.h"
 #include <wtf/URL.h>
 #include "XLinkNames.h"
@@ -32,19 +31,13 @@
 namespace WebCore {
 
 SVGURIReference::SVGURIReference(SVGElement* contextElement)
-    : m_attributeOwnerProxy(std::make_unique<AttributeOwnerProxy>(*this, *contextElement))
-    , m_href(SVGAnimatedString::create(contextElement))
+    : m_href(SVGAnimatedString::create(contextElement))
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::hrefAttr, &SVGURIReference::m_href>();
         PropertyRegistry::registerProperty<XLinkNames::hrefAttr, &SVGURIReference::m_href>();
     });
-}
-
-SVGURIReference::AttributeRegistry& SVGURIReference::attributeRegistry()
-{
-    return AttributeOwnerProxy::attributeRegistry();
 }
 
 bool SVGURIReference::isKnownAttribute(const QualifiedName& attributeName)

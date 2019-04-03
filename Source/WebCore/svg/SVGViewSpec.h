@@ -50,12 +50,10 @@ public:
 private:
     explicit SVGViewSpec(SVGElement&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewSpec, SVGFitToViewBox>;
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
 
     WeakPtr<SVGElement> m_contextElement;
     String m_viewTargetString;
-    AttributeOwnerProxy m_attributeOwnerProxy;
     Ref<SVGTransformList> m_transform;
 };
 

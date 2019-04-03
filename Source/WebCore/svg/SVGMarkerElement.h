@@ -71,9 +71,6 @@ public:
 private:
     SVGMarkerElement(const QualifiedName&, Document&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGMarkerElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGMarkerElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -89,8 +86,6 @@ private:
     bool selfHasRelativeLengths() const override;
 
     void setOrient(SVGMarkerOrientType, const SVGAngleValue&);
-
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
 
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_refX { SVGAnimatedLength::create(this, LengthModeWidth) };

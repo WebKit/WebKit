@@ -24,8 +24,6 @@
 #include "FloatRect.h"
 #include "QualifiedName.h"
 #include "SVGAnimatedPropertyImpl.h"
-#include "SVGAttributeOwnerProxyImpl.h"
-#include "SVGAttributeRegistry.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGPropertyOwnerRegistry.h"
@@ -39,9 +37,6 @@ class SVGFitToViewBox {
     WTF_MAKE_NONCOPYABLE(SVGFitToViewBox);
 public:
     static AffineTransform viewBoxToViewTransform(const FloatRect& viewBoxRect, const SVGPreserveAspectRatioValue&, float viewWidth, float viewHeight);
-
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFitToViewBox>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFitToViewBox>;
 

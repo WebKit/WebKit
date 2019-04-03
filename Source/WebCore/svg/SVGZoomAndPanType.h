@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "SVGAttributeAccessor.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -35,11 +34,6 @@ enum SVGZoomAndPanType {
     SVGZoomAndPanDisable,
     SVGZoomAndPanMagnify
 };
-
-using SVGZoomAndPanTypeAttribute = SVGPropertyAttribute<SVGZoomAndPanType>;
-
-template<typename OwnerType>
-using SVGZoomAndPanTypeAttributeAccessor = SVGPropertyAttributeAccessor<OwnerType, SVGZoomAndPanTypeAttribute>;
 
 template<>
 struct SVGPropertyTraits<SVGZoomAndPanType> {

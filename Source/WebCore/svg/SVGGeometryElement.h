@@ -34,14 +34,12 @@ class SVGPoint;
 class SVGGeometryElement : public SVGGraphicsElement {
     WTF_MAKE_ISO_ALLOCATED(SVGGeometryElement);
 public:
-    
     virtual float getTotalLength() const;
     virtual Ref<SVGPoint> getPointAtLength(float distance) const;
 
     bool isPointInFill(DOMPointInit&&);
     bool isPointInStroke(DOMPointInit&&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGGeometryElement, SVGGraphicsElement>;
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGeometryElement, SVGGraphicsElement>;
 
     float pathLength() const { return m_pathLength->currentValue(); }
@@ -56,11 +54,6 @@ protected:
 private:
     bool isSVGGeometryElement() const override { return true; }
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_pathLength { SVGAnimatedNumber::create(this) };
 };
 

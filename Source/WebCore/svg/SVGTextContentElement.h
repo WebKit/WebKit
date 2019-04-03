@@ -83,9 +83,6 @@ public:
 
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextContentElement, SVGGraphicsElement, SVGExternalResourcesRequired>;
 
     const SVGLengthValue& specifiedTextLength() const { return m_specifiedTextLength; }
@@ -110,11 +107,6 @@ protected:
 private:
     bool isTextContent() const final { return true; }
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
-    PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_textLength { SVGAnimatedLength::create(this, LengthModeOther) };
     Ref<SVGAnimatedEnumeration> m_lengthAdjust { SVGAnimatedEnumeration::create(this, SVGLengthAdjustSpacing) };
     SVGLengthValue m_specifiedTextLength { LengthModeOther };

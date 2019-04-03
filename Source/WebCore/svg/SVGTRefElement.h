@@ -39,9 +39,6 @@ private:
     SVGTRefElement(const QualifiedName&, Document&);
     virtual ~SVGTRefElement();
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTRefElement, SVGTextPositioningElement, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -61,7 +58,6 @@ private:
     void detachTarget();
     void buildPendingResource() override;
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGTRefTargetEventListener> m_targetListener;
 };

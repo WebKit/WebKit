@@ -29,12 +29,6 @@ namespace WebCore {
 
 class SVGElement;
 
-template<typename OwnerType, typename... BaseTypes>
-class SVGAttributeRegistry;
-
-template<typename OwnerType, typename... BaseTypes>
-class SVGAttributeOwnerProxyImpl;
-
 class SVGURIReference {
     WTF_MAKE_NONCOPYABLE(SVGURIReference);
 public:
@@ -62,10 +56,6 @@ public:
         return !equalIgnoringFragmentIdentifier(url, document.url());
     }
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGURIReference>;
-    using AttributeRegistry = SVGAttributeRegistry<SVGURIReference>;
-    static AttributeRegistry& attributeRegistry();
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGURIReference>;
 
     String href() const { return m_href->currentValue(); }
@@ -77,7 +67,6 @@ protected:
     static bool isKnownAttribute(const QualifiedName& attributeName);
 
 private:
-    std::unique_ptr<AttributeOwnerProxy> m_attributeOwnerProxy;
     Ref<SVGAnimatedString> m_href;
 };
 

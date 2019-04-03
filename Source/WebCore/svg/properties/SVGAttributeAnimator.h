@@ -67,11 +67,11 @@ public:
     virtual void setToAtEndOfDurationValue(const String&) { }
 
     virtual void start(SVGElement*) = 0;
-    virtual void progress(SVGElement*, float, unsigned) = 0;
+    virtual void animate(SVGElement*, float progress, unsigned repeatCount) = 0;
     virtual void apply(SVGElement*) = 0;
     virtual void stop(SVGElement* targetElement) = 0;
 
-    virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
+    virtual Optional<float> calculateDistance(SVGElement*, const String&, const String&) const { return { }; }
 
 protected:
     bool isAnimatedStylePropertyAniamtor(const SVGElement*) const;

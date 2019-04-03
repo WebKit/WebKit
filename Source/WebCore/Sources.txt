@@ -2230,8 +2230,6 @@ svg/SVGAnimateElementBase.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGAnimateTransformElement.cpp
 svg/SVGAnimationElement.cpp
-svg/SVGAttributeAnimationController.cpp
-svg/SVGAttributeAnimationControllerBase.cpp
 svg/SVGCircleElement.cpp
 svg/SVGClipPathElement.cpp
 svg/SVGComponentTransferFunctionElement.cpp
@@ -2361,8 +2359,6 @@ svg/graphics/filters/SVGFilterBuilder.cpp
 svg/properties/SVGAnimatedProperty.cpp
 svg/properties/SVGAnimationAdditiveValueFunctionImpl.cpp
 svg/properties/SVGAttributeAnimator.cpp
-svg/properties/SVGAttributeOwnerProxy.cpp
-svg/properties/SVGLegacyAnimatedProperty.cpp
 
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp

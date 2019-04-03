@@ -22,7 +22,6 @@
 #pragma once
 
 #include "QualifiedName.h"
-#include "SVGAttributeOwnerProxyImpl.h"
 #include "SVGPropertyOwnerRegistry.h"
 #include <wtf/HashSet.h>
 
@@ -45,9 +44,6 @@ public:
 
     static void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGExternalResourcesRequired>;
-    static auto& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGExternalResourcesRequired>;
 
     bool externalResourcesRequired() const { return m_externalResourcesRequired->currentValue(); }
@@ -68,8 +64,6 @@ protected:
     bool haveLoadedRequiredResources() const;
 
 private:
-    AttributeOwnerProxy attributeOwnerProxy() { return { *this, m_contextElement }; }
-    
     SVGElement& m_contextElement;
     Ref<SVGAnimatedBoolean> m_externalResourcesRequired;
 };

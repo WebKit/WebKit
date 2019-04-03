@@ -30,9 +30,6 @@ class SVGTextPositioningElement : public SVGTextContentElement {
 public:
     static SVGTextPositioningElement* elementFromRenderer(RenderBoxModelObject&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTextPositioningElement, SVGTextContentElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTextPositioningElement, SVGTextContentElement>;
 
     const SVGLengthList& x() const { return m_x->currentValue(); }
@@ -57,10 +54,8 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStyleProperties&) final;
 
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLengthList> m_x { SVGAnimatedLengthList::create(this, LengthModeWidth) };
     Ref<SVGAnimatedLengthList> m_y { SVGAnimatedLengthList::create(this, LengthModeHeight) };

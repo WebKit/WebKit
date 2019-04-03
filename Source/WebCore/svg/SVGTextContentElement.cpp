@@ -30,7 +30,6 @@
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
-#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGPoint.h"
 #include "SVGRect.h"

@@ -341,26 +341,6 @@ bool SVGAnimationElement::isTargetAttributeCSSProperty(SVGElement* targetElement
     return targetElement->isAnimatedStyleAttribute(attributeName);
 }
 
-SVGAnimationElement::ShouldApplyAnimation SVGAnimationElement::shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName)
-{
-    if (!hasValidAttributeType() || !targetElement || attributeName == anyQName())
-        return DontApplyAnimation;
-
-    // Always animate CSS properties, using the ApplyCSSAnimation code path, regardless of the attributeType value.
-    if (isTargetAttributeCSSProperty(targetElement, attributeName)) {
-        if (targetElement->isPresentationAttributeWithSVGDOM(attributeName))
-            return ApplyXMLandCSSAnimation;
-        return ApplyCSSAnimation;
-    }
-
-
-    // If attributeType="CSS" and attributeName doesn't point to a CSS property, ignore the animation.
-    if (attributeType() == AttributeType::CSS)
-        return DontApplyAnimation;
-
-    return ApplyXMLAnimation;
-}
-
 void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
 {
     ASSERT(calcMode() == CalcMode::Paced);
@@ -379,11 +359,11 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     keyTimesForPaced.append(0);
     for (unsigned n = 0; n < valuesCount - 1; ++n) {
         // Distance in any units
-        float distance = calculateDistance(m_values[n], m_values[n + 1]);
-        if (distance < 0)
+        auto distance = calculateDistance(m_values[n], m_values[n + 1]);
+        if (!distance)
             return;
-        totalDistance += distance;
-        keyTimesForPaced.append(distance);
+        totalDistance += *distance;
+        keyTimesForPaced.append(*distance);
     }
     if (!totalDistance)
         return;

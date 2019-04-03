@@ -42,9 +42,6 @@ public:
     // Returns true, if the new value is different from the old one.
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFilterPrimitiveStandardAttributes, SVGElement>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFilterPrimitiveStandardAttributes, SVGElement>;
 
     const SVGLengthValue& x() const { return m_x->currentValue(); }
@@ -70,17 +67,12 @@ protected:
     void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
-    const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
-
     bool isFilterEffect() const override { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
     bool rendererIsNeeded(const RenderStyle&) override;
     bool childShouldCreateRenderer(const Node&) const override { return false; }
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
-    PropertyRegistry m_propertyRegistry { *this };
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth, "0%") };

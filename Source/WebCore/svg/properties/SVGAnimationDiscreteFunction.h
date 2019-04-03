@@ -47,9 +47,9 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    void progress(SVGElement*, float percentage, unsigned, ValueType& animated)
+    void animate(SVGElement*, float progress, unsigned, ValueType& animated)
     {
-        if ((m_animationMode == AnimationMode::FromTo && percentage > 0.5) || m_animationMode == AnimationMode::To || percentage == 1)
+        if ((m_animationMode == AnimationMode::FromTo && progress > 0.5) || m_animationMode == AnimationMode::To || progress == 1)
             animated = m_to;
         else
             animated = m_from;

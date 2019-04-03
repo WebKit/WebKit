@@ -63,9 +63,6 @@ private:
     void removedFromAncestor(RemovalType, ContainerNode&) override;
     void buildPendingResource() override;
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGUseElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGUseElement, SVGGraphicsElement, SVGExternalResourcesRequired, SVGURIReference>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -98,7 +95,6 @@ private:
     void clearShadowTree();
     void invalidateDependentShadowTrees();
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_x { SVGAnimatedLength::create(this, LengthModeWidth) };
     Ref<SVGAnimatedLength> m_y { SVGAnimatedLength::create(this, LengthModeHeight) };

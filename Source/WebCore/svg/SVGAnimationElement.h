@@ -57,15 +57,6 @@ public:
     AnimationMode animationMode() const { return m_animationMode; }
     CalcMode calcMode() const { return m_calcMode; }
 
-    enum ShouldApplyAnimation {
-        DontApplyAnimation,
-        ApplyCSSAnimation,
-        ApplyXMLAnimation,
-        ApplyXMLandCSSAnimation // For presentation attributes with SVG DOM properties.
-    };
-
-    ShouldApplyAnimation shouldApplyAnimation(SVGElement* targetElement, const QualifiedName& attributeName);
-
     AnimatedPropertyValueType fromPropertyValueType() const { return m_fromPropertyValueType; }
     AnimatedPropertyValueType toPropertyValueType() const { return m_toPropertyValueType; }
 
@@ -94,10 +85,6 @@ public:
 
 protected:
     SVGAnimationElement(const QualifiedName&, Document&);
-
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGAnimationElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
-    static AttributeOwnerProxy::AttributeRegistry& attributeRegistry() { return AttributeOwnerProxy::attributeRegistry(); }
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const override { return m_attributeOwnerProxy; }
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGAnimationElement, SVGElement, SVGExternalResourcesRequired, SVGTests>;
     const SVGPropertyRegistry& propertyRegistry() const override { return m_propertyRegistry; }
@@ -135,7 +122,7 @@ private:
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
     virtual void calculateAnimatedValue(float percent, unsigned repeatCount, SVGSMILElement* resultElement) = 0;
-    virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
+    virtual Optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
 
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     void calculateKeyTimesForCalcModePaced();
@@ -158,7 +145,6 @@ private:
     String m_lastValuesAnimationTo;
     CalcMode m_calcMode { CalcMode::Linear };
     AnimationMode m_animationMode { AnimationMode::None };
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
 };
 

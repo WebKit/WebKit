@@ -94,7 +94,7 @@ public:
             removeAnimatedStyleProperty(targetElement);
     }
 
-    float calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
     {
         return m_function.calculateDistance(targetElement, from, to);
     }

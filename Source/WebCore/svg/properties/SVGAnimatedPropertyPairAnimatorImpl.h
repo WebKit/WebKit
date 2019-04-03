@@ -64,16 +64,16 @@ private:
         m_animatedPropertyAnimator1->m_function.addFromAndToValues(targetElement);
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) final
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) final
     {
         if (m_animatedPropertyAnimator2->m_function.m_from != m_animatedPropertyAnimator2->m_function.m_to) {
             // Discrete animation - no linear interpolation possible between values (e.g. auto to angle).
-            m_animatedPropertyAnimator2->progress(targetElement, percentage, repeatCount);
+            m_animatedPropertyAnimator2->animate(targetElement, progress, repeatCount);
 
             SVGAngleValue animatedAngle;
-            if (percentage < 0.5f && m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAngle)
+            if (progress < 0.5f && m_animatedPropertyAnimator2->m_function.m_from == SVGMarkerOrientAngle)
                 animatedAngle = m_animatedPropertyAnimator1->m_function.m_from;
-            else if (percentage >= 0.5f && m_animatedPropertyAnimator2->m_function.m_to == SVGMarkerOrientAngle)
+            else if (progress >= 0.5f && m_animatedPropertyAnimator2->m_function.m_to == SVGMarkerOrientAngle)
                 animatedAngle = m_animatedPropertyAnimator1->m_function.m_to;
 
             m_animatedPropertyAnimator1->m_animated->setAnimVal(animatedAngle);
@@ -84,7 +84,7 @@ private:
             // Regular from- toangle animation, with support for smooth interpolation, and additive and accumulated animation.
             m_animatedPropertyAnimator2->m_animated->setAnimVal(SVGMarkerOrientAngle);
 
-            m_animatedPropertyAnimator1->progress(targetElement, percentage, repeatCount);
+            m_animatedPropertyAnimator1->animate(targetElement, progress, repeatCount);
             return;
         }
 

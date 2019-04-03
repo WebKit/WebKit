@@ -104,7 +104,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
     // GradientData object! Leaving out the line below will cause svg/dynamic-updates/SVG*GradientElement-svgdom* to crash.
     if (m_shouldCollectGradientAttributes) {
-        gradientElement().synchronizeAnimatedSVGAttribute(anyQName());
+        gradientElement().synchronizeAllAttributes();
         if (!collectGradientAttributes())
             return false;
 

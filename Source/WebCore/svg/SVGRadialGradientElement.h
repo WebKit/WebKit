@@ -52,9 +52,6 @@ public:
 private:
     SVGRadialGradientElement(const QualifiedName&, Document&);
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGRadialGradientElement, SVGGradientElement>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-    
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGRadialGradientElement, SVGGradientElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -65,7 +62,6 @@ private:
 
     bool selfHasRelativeLengths() const override;
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedLength> m_cx { SVGAnimatedLength::create(this, LengthModeWidth, "50%") };
     Ref<SVGAnimatedLength> m_cy { SVGAnimatedLength::create(this, LengthModeHeight, "50%") };

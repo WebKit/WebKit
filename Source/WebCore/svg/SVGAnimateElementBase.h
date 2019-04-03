@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -28,46 +28,42 @@
 
 namespace WebCore {
 
-class SVGAttributeAnimationControllerBase;
+class SVGAttributeAnimator;
 
 class SVGAnimateElementBase : public SVGAnimationElement {
     WTF_MAKE_ISO_ALLOCATED(SVGAnimateElementBase);
 public:
-    virtual ~SVGAnimateElementBase();
-
-    SVGAttributeAnimationControllerBase& attributeAnimationController();
-    SVGAttributeAnimationControllerBase* attributeAnimationControllerIfExists() const { return m_attributeAnimationController.get(); }
-
-    AnimatedPropertyType determineAnimatedPropertyType(SVGElement&) const;
     bool isDiscreteAnimator() const;
 
 protected:
     SVGAnimateElementBase(const QualifiedName&, Document&);
 
+    SVGAttributeAnimator* animator() const;
+    SVGAttributeAnimator* animatorIfExists() const { return m_animator.get(); }
+
     bool hasValidAttributeType() const override;
-
-    void resetAnimatedType() override;
-    void clearAnimatedType(SVGElement* targetElement) override;
-
-    bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
-    bool calculateFromAndToValues(const String& fromString, const String& toString) override;
-    bool calculateFromAndByValues(const String& fromString, const String& byString) override;
-    void calculateAnimatedValue(float percentage, unsigned repeatCount, SVGSMILElement* resultElement) override;
-    void applyResultsToTarget() override;
-    float calculateDistance(const String& fromString, const String& toString) override;
-    bool isAdditive() const override;
 
     void setTargetElement(SVGElement*) override;
     void setAttributeName(const QualifiedName&) override;
     void resetAnimation() override;
+
+    bool calculateFromAndToValues(const String& fromString, const String& toString) override;
+    bool calculateFromAndByValues(const String& fromString, const String& byString) override;
+    bool calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString) override;
+
+    void resetAnimatedType() override;
+    void calculateAnimatedValue(float progress, unsigned repeatCount, SVGSMILElement* resultElement) override;
+    void applyResultsToTarget() override;
+    void clearAnimatedType(SVGElement* targetElement) override;
+    Optional<float> calculateDistance(const String& fromString, const String& toString) override;
 
     virtual String animateRangeString(const String& string) const { return string; }
 
 private:
     bool hasInvalidCSSAttributeType() const;
 
+    mutable std::unique_ptr<SVGAttributeAnimator> m_animator;
     mutable Optional<bool> m_hasInvalidCSSAttributeType;
-    std::unique_ptr<SVGAttributeAnimationControllerBase> m_attributeAnimationController;
 };
 
 } // namespace WebCore

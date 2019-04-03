@@ -30,12 +30,6 @@ class SVGElement;
 class SVGStringList;
 
 template<typename OwnerType, typename... BaseTypes>
-class SVGAttributeRegistry;
-
-template<typename OwnerType, typename... BaseTypes>
-class SVGAttributeOwnerProxyImpl;
-
-template<typename OwnerType, typename... BaseTypes>
 class SVGPropertyOwnerRegistry;
 
 class SVGTests {
@@ -44,12 +38,7 @@ public:
     static bool hasExtension(const String&);
     bool isValid() const;
 
-    using AttributeRegistry = SVGAttributeRegistry<SVGTests>;
-    static AttributeRegistry& attributeRegistry();
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGTests>;
-
-    static bool isKnownAttribute(const QualifiedName&);
 
     void parseAttribute(const QualifiedName&, const AtomicString&);
     void svgAttributeChanged(const QualifiedName&);
@@ -67,8 +56,6 @@ protected:
     SVGTests(SVGElement* contextElement);
 
 private:
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGTests>;
-
     SVGElement& m_contextElement;
     Ref<SVGStringList> m_requiredFeatures;
     Ref<SVGStringList> m_requiredExtensions;

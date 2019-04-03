@@ -24,7 +24,6 @@
 
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
-#include "SVGAttributeOwnerProxy.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
@@ -121,16 +120,6 @@ SVGTests::SVGTests(SVGElement* contextElement)
     });
 }
 
-SVGTests::AttributeRegistry& SVGTests::attributeRegistry()
-{
-    return AttributeOwnerProxy::attributeRegistry();
-}
-
-bool SVGTests::isKnownAttribute(const QualifiedName& attributeName)
-{
-    return PropertyRegistry::isKnownAttribute(attributeName);
-}
-
 bool SVGTests::hasExtension(const String& extension)
 {
     // We recognize XHTML and MathML, as implemented in Gecko and suggested in the SVG Tiny recommendation (http://www.w3.org/TR/SVG11/struct.html#RequiredExtensionsAttribute).
@@ -170,7 +159,7 @@ void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomicSt
 
 void SVGTests::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (!isKnownAttribute(attrName))
+    if (!PropertyRegistry::isKnownAttribute(attrName))
         return;
 
     if (!m_contextElement.isConnected())

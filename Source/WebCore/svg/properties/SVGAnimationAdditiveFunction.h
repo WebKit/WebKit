@@ -51,13 +51,13 @@ public:
     }
 
 protected:
-    float progress(float percentage, unsigned repeatCount, float from, float to, float toAtEndOfDuration, float animated)
+    float animate(float progress, unsigned repeatCount, float from, float to, float toAtEndOfDuration, float animated)
     {
         float number;
         if (m_calcMode == CalcMode::Discrete)
-            number = percentage < 0.5 ? from : to;
+            number = progress < 0.5 ? from : to;
         else
-            number = (to - from) * percentage + from;
+            number = (to - from) * progress + from;
 
         if (m_isAccumulated && repeatCount)
             number += toAtEndOfDuration * repeatCount;

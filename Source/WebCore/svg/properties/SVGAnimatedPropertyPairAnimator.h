@@ -57,10 +57,10 @@ protected:
         m_animatedPropertyAnimator2->start(targetElement);
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) override
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
     {
-        m_animatedPropertyAnimator1->progress(targetElement, percentage, repeatCount);
-        m_animatedPropertyAnimator2->progress(targetElement, percentage, repeatCount);
+        m_animatedPropertyAnimator1->animate(targetElement, progress, repeatCount);
+        m_animatedPropertyAnimator2->animate(targetElement, progress, repeatCount);
     }
 
     void apply(SVGElement* targetElement) override

@@ -63,9 +63,6 @@ protected:
     bool rendererIsNeeded(const RenderStyle&) override { return false; }
 
 private:
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFELightElement, SVGElement>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFELightElement, SVGElement>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
@@ -73,7 +70,6 @@ private:
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGAnimatedNumber> m_azimuth { SVGAnimatedNumber::create(this) };
     Ref<SVGAnimatedNumber> m_elevation { SVGAnimatedNumber::create(this) };

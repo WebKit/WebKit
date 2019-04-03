@@ -44,9 +44,9 @@ public:
     {
     }
 
-    void progress(SVGElement* targetElement, float percentage, unsigned repeatCount) override
+    void animate(SVGElement* targetElement, float progress, unsigned repeatCount) override
     {
-        m_function.progress(targetElement, percentage, repeatCount, m_list);
+        m_function.animate(targetElement, progress, repeatCount, m_list);
     }
 
     void apply(SVGElement* targetElement) override

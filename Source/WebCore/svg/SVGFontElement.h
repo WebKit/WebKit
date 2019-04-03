@@ -52,13 +52,9 @@ private:
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGFontElement, SVGElement, SVGExternalResourcesRequired>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFontElement, SVGElement, SVGExternalResourcesRequired>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
 };
 

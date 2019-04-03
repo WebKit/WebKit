@@ -41,7 +41,7 @@ public:
     virtual void setFromAndByValues(SVGElement* targetElement, const String&, const String&) = 0;
     virtual void setToAtEndOfDurationValue(const String&) = 0;
 
-    virtual float calculateDistance(SVGElement*, const String&, const String&) const { return -1; }
+    virtual Optional<float> calculateDistance(SVGElement*, const String&, const String&) const { return { }; }
 protected:
     SVGAnimationFunction(AnimationMode animationMode)
         : m_animationMode(animationMode)

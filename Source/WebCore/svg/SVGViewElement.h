@@ -42,18 +42,14 @@ public:
 private:
     SVGViewElement(const QualifiedName&, Document&);
 
-    // FIXME: svgAttributeChanged missing.
-    using AttributeOwnerProxy = SVGAttributeOwnerProxyImpl<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
-    const SVGAttributeOwnerProxy& attributeOwnerProxy() const final { return m_attributeOwnerProxy; }
-
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewElement, SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
+    // FIXME(webkit.org/b/196554): svgAttributeChanged missing.
     void parseAttribute(const QualifiedName&, const AtomicString&) final;
 
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
-    AttributeOwnerProxy m_attributeOwnerProxy { *this };
     PropertyRegistry m_propertyRegistry { *this };
     Ref<SVGStringList> m_viewTarget { SVGStringList::create(this) };
 };
