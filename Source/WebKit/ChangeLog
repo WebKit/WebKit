@@ -1,3 +1,13 @@
+2019-04-03  Alex Christensen  <achristensen@webkit.org>
+
+        Fix internal build after r243829
+        https://bugs.webkit.org/show_bug.cgi?id=196549
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        Some SDK's don't include this selector in the header.
+        Use NSSelectorFromString.
+
 2019-04-03  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WTF] Mirror XCode header directories

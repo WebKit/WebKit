@@ -49,6 +49,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/URL.h>
 #import <wtf/text/WTFString.h>
@@ -946,8 +947,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     configuration._companionProxyPreference = NSURLSessionCompanionProxyPreferencePreferDirectToCloud;
 #endif
 
-    if (parameters.allowsTLSFallback == AllowsTLSFallback::No && [configuration respondsToSelector:@selector(_allowsTLSFallback)])
-        configuration._allowsTLSFallback = NO;
+    static SEL allowsTLSFallbackSetter = NSSelectorFromString(@"set_allowsTLSFallback");
+    if (parameters.allowsTLSFallback == AllowsTLSFallback::No && [configuration respondsToSelector:allowsTLSFallbackSetter])
+        wtfObjCMsgSend<void>(configuration, allowsTLSFallbackSetter, NO);
 
     auto* storageSession = networkProcess.storageSession(parameters.sessionID);
     RELEASE_ASSERT(storageSession);
