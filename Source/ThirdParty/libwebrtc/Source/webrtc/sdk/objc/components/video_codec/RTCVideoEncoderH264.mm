@@ -40,7 +40,7 @@
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
-#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
+#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS) && !ENABLE_VCP_VTB_ENCODER
 static inline bool isStandardFrameSize(int32_t width, int32_t height)
 {
     // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
@@ -608,7 +608,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
     CFRelease(pixelFormat);
     pixelFormat = nullptr;
   }
-  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+  CFMutableDictionaryRef encoderSpecs = CFDictionaryCreateMutable(nullptr, 5, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 #if !defined(WEBRTC_IOS)
   auto useHardwareEncoder = webrtc::isH264HardwareEncoderAllowed() ? kCFBooleanTrue : kCFBooleanFalse;
   // Currently hw accl is supported above 360p on mac, below 360p
@@ -618,11 +618,14 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
 #endif
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue);
 
-#if ENABLE_VCP_ENCODER
+#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
   int usageValue = 1;
   auto usage = CFNumberCreate(nullptr, kCFNumberIntType, &usageValue);
   CFDictionarySetValue(encoderSpecs, kVTCompressionPropertyKey_Usage, usage);
   CFRelease(usage);
+#endif
+#if ENABLE_VCP_VTB_ENCODER
+    CFDictionarySetValue(encoderSpecs, kVTVideoEncoderList_EncoderID, CFSTR("com.apple.videotoolbox.videoencoder.h264.rtvc"));
 #endif
   OSStatus status =
       CompressionSessionCreate(nullptr,  // use default allocator
@@ -663,7 +666,7 @@ CFStringRef ExtractProfile(webrtc::SdpVideoFormat videoFormat) {
   } else {
     RTC_LOG(LS_INFO) << "Compression session created with hw accl disabled";
 
-#if !ENABLE_VCP_ENCODER && !defined(WEBRTC_IOS)
+#if !ENABLE_VCP_ENCODER && !ENABLE_VCP_VTB_ENCODER && !defined(WEBRTC_IOS)
     if (!isStandardFrameSize(_width, _height)) {
       _disableEncoding = true;
       RTC_LOG(LS_ERROR) << "Using H264 software encoder with non standard size is not supported";

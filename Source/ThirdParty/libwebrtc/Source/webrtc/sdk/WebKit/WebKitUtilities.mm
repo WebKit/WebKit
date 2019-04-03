@@ -105,7 +105,7 @@ void setApplicationStatus(bool isActive)
 
 std::unique_ptr<webrtc::VideoEncoderFactory> createWebKitEncoderFactory(WebKitCodecSupport codecSupport)
 {
-#if ENABLE_VCP_ENCODER
+#if ENABLE_VCP_ENCODER || ENABLE_VCP_VTB_ENCODER
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         webrtc::VPModuleInitialize();
