@@ -37,7 +37,7 @@ class WatchPort(DevicePort):
     port_name = 'watchos'
 
     CURRENT_VERSION = Version(5)
-    DEFAULT_DEVICE_TYPE = DeviceType(software_variant='watchOS')
+    DEVICE_TYPE = DeviceType(software_variant='watchOS')
 
     def __init__(self, *args, **kwargs):
         super(WatchPort, self).__init__(*args, **kwargs)

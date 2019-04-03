@@ -138,3 +138,6 @@ class DeviceType(object):
         if self.software_version is not None and other.software_version is not None and not other.software_version in self.software_version:
             return False
         return True
+
+    def __hash__(self):
+        return hash((self.hardware_family, self.hardware_type, self.software_variant, self.software_version))

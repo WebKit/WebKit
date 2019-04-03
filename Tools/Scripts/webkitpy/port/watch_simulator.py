@@ -40,7 +40,7 @@ class WatchSimulatorPort(WatchPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
-    DEFAULT_DEVICE_TYPE = DeviceType(hardware_family='Apple Watch', hardware_type='Series 3 - 42mm')
+    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='Apple Watch', hardware_type='Series 3 - 42mm')]
     SDK = apple_additions().get_sdk('watchsimulator') if apple_additions() else 'watchsimulator'
 
     def architecture(self):

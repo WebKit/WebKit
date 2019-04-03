@@ -923,7 +923,7 @@ class TestExpectations(object):
             suffixes.add('wav')
         return set(suffixes)
 
-    def __init__(self, port, tests=None, include_generic=True, include_overrides=True, expectations_to_lint=None, force_expectations_pass=False):
+    def __init__(self, port, tests=None, include_generic=True, include_overrides=True, expectations_to_lint=None, force_expectations_pass=False, device_type=None):
         self._full_test_list = tests
         self._test_config = port.test_configuration()
         self._is_lint_mode = expectations_to_lint is not None
@@ -933,6 +933,7 @@ class TestExpectations(object):
         self._skipped_tests_warnings = []
         self._expectations = []
         self._force_expectations_pass = force_expectations_pass
+        self._device_type = device_type
         self._include_generic = include_generic
         self._include_overrides = include_overrides
         self._expectations_to_lint = expectations_to_lint
@@ -969,7 +970,7 @@ class TestExpectations(object):
             self._expectations_dict_index += 1
 
     def parse_all_expectations(self):
-        self._expectations_dict = self._expectations_to_lint or self._port.expectations_dict()
+        self._expectations_dict = self._expectations_to_lint or self._port.expectations_dict(device_type=self._device_type)
         self._expectations_dict_index = 0
 
         self._has_warnings = False
@@ -979,7 +980,7 @@ class TestExpectations(object):
         self.parse_override_expectations()
 
         # FIXME: move ignore_tests into port.skipped_layout_tests()
-        self.add_skipped_tests(self._port.skipped_layout_tests(self._full_test_list).union(set(self._port.get_option('ignore_tests', []))))
+        self.add_skipped_tests(self._port.skipped_layout_tests(self._full_test_list, device_type=self._device_type).union(set(self._port.get_option('ignore_tests', []))))
 
         self._report_warnings()
         self._process_tests_without_expectations()

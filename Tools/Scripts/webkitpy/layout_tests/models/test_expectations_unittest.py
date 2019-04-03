@@ -79,7 +79,7 @@ Bug(test) failures/expected/leaky-reftest.html [ ImageOnlyFailure Leak ]
         expectations_dict['expectations'] = expectations
         if overrides:
             expectations_dict['overrides'] = overrides
-        self._port.expectations_dict = lambda: expectations_dict
+        self._port.expectations_dict = lambda **kwargs: expectations_dict
         expectations_to_lint = expectations_dict if is_lint_mode else None
         self._exp = TestExpectations(self._port, self.get_basic_tests(), expectations_to_lint=expectations_to_lint)
         self._exp.parse_all_expectations()
@@ -292,8 +292,8 @@ class SkippedTests(Base):
         expectations_dict['expectations'] = expectations
         if overrides:
             expectations_dict['overrides'] = overrides
-        port.expectations_dict = lambda: expectations_dict
-        port.skipped_layout_tests = lambda tests: set(skips)
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        port.skipped_layout_tests = lambda tests, **kwargs: set(skips)
         expectations_to_lint = expectations_dict if lint else None
         exp = TestExpectations(port, ['failures/expected/text.html'], expectations_to_lint=expectations_to_lint)
         exp.parse_all_expectations()
@@ -329,8 +329,8 @@ class SkippedTests(Base):
         port = MockHost().port_factory.get('mac')
         expectations_dict = OrderedDict()
         expectations_dict['expectations'] = ''
-        port.expectations_dict = lambda: expectations_dict
-        port.skipped_layout_tests = lambda tests: set(['foo/bar/baz.html'])
+        port.expectations_dict = lambda **kwargs: expectations_dict
+        port.skipped_layout_tests = lambda tests, **kwargs: set(['foo/bar/baz.html'])
         capture = OutputCapture()
         capture.capture_output()
         exp = TestExpectations(port)
@@ -517,7 +517,7 @@ class RemoveConfigurationsTest(Base):
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.expectations_dict = lambda: {"expectations": """Bug(x) [ Linux Win Release ] failures/expected/foo.html [ Failure ]
+        test_port.expectations_dict = lambda **kwargs: {"expectations": """Bug(x) [ Linux Win Release ] failures/expected/foo.html [ Failure ]
 Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
 """}
         expectations = TestExpectations(test_port, self.get_basic_tests())
@@ -536,7 +536,7 @@ Bug(y) [ Win Mac Debug ] failures/expected/foo.html [ Crash ]
         test_port.test_isfile = lambda test: True
 
         test_config = test_port.test_configuration()
-        test_port.expectations_dict = lambda: {'expectations': """Bug(x) [ Win Release ] failures/expected/foo.html [ Failure ]
+        test_port.expectations_dict = lambda **kwargs: {'expectations': """Bug(x) [ Win Release ] failures/expected/foo.html [ Failure ]
 Bug(y) [ Win Debug ] failures/expected/foo.html [ Crash ]
 """}
         expectations = TestExpectations(test_port)

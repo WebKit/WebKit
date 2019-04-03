@@ -54,6 +54,7 @@ from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATU
 from webkitpy.port import Port
 from webkitpy.port import test
 from webkitpy.test.skip import skip_if
+from webkitpy.xcode.device_type import DeviceType
 
 
 def parse_args(extra_args=None, tests_included=False, new_results=False, print_nothing=True):
@@ -835,6 +836,63 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
         self.assertTrue('text.html passed' in logging_stream.getvalue())
         self.assertTrue('image.html passed' in logging_stream.getvalue())
+
+    def test_device_type_test_division(self):
+        host = MockHost()
+        port = host.port_factory.get('ios-simulator')
+
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/test1.html', '')
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ios/test2.html', '')
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ipad/test3.html', '')
+        host.filesystem.write_text_file('/MOCK output of child process/ImageDiff', '')
+
+        oc = outputcapture.OutputCapture()
+        try:
+            oc.capture_output()
+            logging = StringIO.StringIO()
+            run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
+        finally:
+            output, err, _ = oc.restore_output()
+
+        for line in logging.getvalue():
+            if str(DeviceType.from_string('iPhone SE')) in line:
+                self.assertTrue('Skipping 2 tests' in line)
+            elif str(DeviceType.from_string('iPhone (5th generation)')) in line:
+                self.assertTrue('Skipping 1 test' in line)
+            elif str(DeviceType.from_string('iPhone 7')) in line:
+                self.assertTrue('Skipping 0 tests' in line)
+
+    def test_device_type_specific_listing(self):
+        host = MockHost()
+        port = host.port_factory.get('ios-simulator')
+
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/test1.html', '')
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ios/test2.html', '')
+        host.filesystem.write_text_file('/mock-checkout/LayoutTests/platform/ipad/test3.html', '')
+
+        oc = outputcapture.OutputCapture()
+        try:
+            oc.capture_output()
+            logging = StringIO.StringIO()
+            run_webkit_tests._print_expectations(port, run_webkit_tests.parse_args([])[0], [], logging_stream=logging)
+        finally:
+            output, _, _ = oc.restore_output()
+
+        current_type = None
+        by_type = {}
+        for line in output.splitlines():
+            if not line:
+                continue
+            if 'Tests to run' in line:
+                current_type = DeviceType.from_string(line.split('for ')[-1].split(' running')[0]) if 'for ' in line else None
+                by_type[current_type] = []
+                continue
+            by_type[current_type].append(line)
+
+        self.assertEqual(3, len(by_type.keys()))
+        self.assertEqual(2, len(by_type[DeviceType.from_string('iPhone SE')]))
+        self.assertEqual(1, len(by_type[DeviceType.from_string('iPad (5th generation)')]))
+        self.assertEqual(0, len(by_type[DeviceType.from_string('iPhone 7')]))
 
 
 class EndToEndTest(unittest.TestCase):

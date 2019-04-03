@@ -195,7 +195,7 @@ def _interpret_test_failures(failures):
 
 
 # These results must match ones in print_unexpected_results() in views/buildbot_results.py.
-def summarize_results(port_obj, expectations, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=False, include_time_and_modifiers=False):
+def summarize_results(port_obj, expectations_by_type, initial_results, retry_results, enabled_pixel_tests_in_retry, include_passes=False, include_time_and_modifiers=False):
     """Returns a dictionary containing a summary of the test runs, with the following fields:
         'version': a version indicator
         'fixable': The number of fixable tests (NOW - PASS)
@@ -234,8 +234,17 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
         # whether or not it crashed when we retried it (if we retried it),
         # and always consider the result not flaky.
         pixel_tests_enabled = enabled_pixel_tests_in_retry or port_obj._options.pixel_tests or bool(result.reftest_type)
-        test_expectation = expectations.filtered_expectations_for_test(test_name, pixel_tests_enabled, port_obj._options.world_leaks)
-        expected = expectations.model().expectations_to_string(test_expectation)
+
+        # We're basically trying to find the first non-skip expectation, and use that expectation object for the remainder of the loop.
+        # This works because tests are run on the first device type which won't skip them, regardless of other expectations, and never re-run.
+        expected = 'SKIP'
+        expectations = expectations_by_type.values()[0]
+        for element in expectations_by_type.itervalues():
+            test_expectation = element.filtered_expectations_for_test(test_name, pixel_tests_enabled, port_obj._options.world_leaks)
+            expected = element.model().expectations_to_string(test_expectation)
+            if expected != 'SKIP':
+                expectations = element
+                continue
 
         result_type = result.type
         actual = [keywords[result_type]]

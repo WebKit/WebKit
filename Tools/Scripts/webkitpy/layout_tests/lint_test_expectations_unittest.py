@@ -47,7 +47,7 @@ class FakePort(object):
         self.host.ports_parsed.append(self.name)
         return {self.path: ''}
 
-    def skipped_layout_tests(self, _):
+    def skipped_layout_tests(self, _, **kwargs):
         return set([])
 
     def all_test_configurations(self):

@@ -1,0 +1,40 @@
+Box
+Box
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 5018.00 2018.00)
+  (deep color 1)
+  (children 1
+    (GraphicsLayer
+      (bounds 5018.00 2018.00)
+      (contentsOpaque 1)
+      (tile cache coverage 0, 0 1024 x 1024)
+      (tile size 512 x 512)
+      (top left tile 0, 0 tiles grid 2 x 2)
+      (in window 1)
+      (deep color 1)
+      (children 2
+        (GraphicsLayer
+          (position 18.00 10.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (deep color 1)
+        )
+        (GraphicsLayer
+          (position 18.00 120.00)
+          (bounds 5000.00 100.00)
+          (usingTiledLayer 1)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (tile cache coverage 0, 0 1024 x 100)
+          (tile size 512 x 512)
+          (top left tile 0, 0 tiles grid 2 x 1)
+          (in window 1)
+          (deep color 1)
+        )
+      )
+    )
+  )
+)
+

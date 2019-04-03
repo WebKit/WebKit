@@ -84,7 +84,7 @@ class LayoutTestFinderTests(unittest.TestCase):
 
         expectations_dict = OrderedDict()
         expectations_dict['expectations'] = 'test1.html [ Skip ]\ntest3.html [ Skip ]\n'
-        port.expectations_dict = lambda: expectations_dict
+        port.expectations_dict = lambda **kwargs: expectations_dict
         port.test_exists = lambda test: True
 
         paths = ['LayoutTests/test0.html', 'LayoutTests/test1.html', 'LayoutTests/test2-expected.txt', 'LayoutTests/test3-expected.txt']

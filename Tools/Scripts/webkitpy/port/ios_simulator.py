@@ -42,8 +42,11 @@ class IOSSimulatorPort(IOSPort):
 
     DEVICE_MANAGER = SimulatedDeviceManager
 
-    DEFAULT_DEVICE_TYPE = DeviceType(hardware_family='iPhone', hardware_type='SE')
-    CUSTOM_DEVICE_TYPES = [DeviceType(hardware_family='iPad'), DeviceType(hardware_family='iPhone', hardware_type='7')]
+    DEFAULT_DEVICE_TYPES = [
+        DeviceType(hardware_family='iPhone', hardware_type='SE'),
+        DeviceType(hardware_family='iPad', hardware_type='(5th generation)'),
+        DeviceType(hardware_family='iPhone', hardware_type='7'),
+    ]
     SDK = apple_additions().get_sdk('iphonesimulator') if apple_additions() else 'iphonesimulator'
 
     @staticmethod
