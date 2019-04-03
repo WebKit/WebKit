@@ -1809,3 +1809,5 @@ webkit.org/b/196112 imported/w3c/web-platform-tests/mathml/relations/css-styling
 webkit.org/b/19650 [ HighSierra+ ] accessibility/mac/press-not-work-for-disabled-menu-list.html [ Pass Failure ]
 
 webkit.org/b/196512 [ Mojave+ ] fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
+
+webkit.org/b/196517 imported/w3c/web-platform-tests/mst-content-hint/MediaStreamTrack-contentHint.html [ Skip ]
