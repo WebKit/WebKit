@@ -1,3 +1,16 @@
+2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce and add plumbing for a website policy for meta viewport tag handling
+        https://bugs.webkit.org/show_bug.cgi?id=196285
+
+        Reviewed by Tim Horton.
+
+        Add MetaViewportPolicy to DocumentLoader. See WebKit ChangeLog for more detail.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::metaViewportPolicy const):
+        (WebCore::DocumentLoader::setMetaViewportPolicy):
+
 2019-04-03  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remote Inspector indicate callback should always happen on the main thread

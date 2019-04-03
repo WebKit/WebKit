@@ -1,5 +1,37 @@
 2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Introduce and add plumbing for a website policy for meta viewport tag handling
+        https://bugs.webkit.org/show_bug.cgi?id=196285
+
+        Reviewed by Tim Horton.
+
+        Add WebsiteMetaViewportPolicy, a bit that can be used to determine whether to respect or ignore the meta
+        viewport tag and use native web page parameters instead of the default parameters.
+
+        * Shared/WebsiteMetaViewportPolicy.h: Copied from Source/WebKit/Shared/WebsitePoliciesData.h.
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+
+        Convert WebKit::WebsiteMetaViewportPolicy into WebCore::MetaViewportPolicy.
+
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+
+        Add additional plumbing for the policy flag.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::resetViewportDefaultConfiguration):
+
+        Use native web page parameters if either "shouldIgnoreMetaViewport" is enabled, or the new policy is set.
+        Eventually, the policy should completely replace the former preference once no internal clients depend on it.
+
+2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add plumbing for a compatibility mode preference in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=196005
 

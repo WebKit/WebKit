@@ -63,6 +63,7 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
@@ -2965,10 +2966,16 @@ void WebPage::resetViewportDefaultConfiguration(WebFrame* frame, bool hasMobileD
     }
 
     auto parametersForStandardFrame = [&] {
-        if (m_page->settings().shouldIgnoreMetaViewport())
-            return m_viewportConfiguration.nativeWebpageParameters();
+        bool shouldIgnoreMetaViewport = false;
+        if (auto* mainDocument = m_page->mainFrame().document()) {
+            auto* loader = mainDocument->loader();
+            shouldIgnoreMetaViewport = loader && loader->metaViewportPolicy() == WebCore::MetaViewportPolicy::Ignore;
+        }
 
-        return ViewportConfiguration::webpageParameters();
+        if (m_page->settings().shouldIgnoreMetaViewport())
+            shouldIgnoreMetaViewport = true;
+
+        return shouldIgnoreMetaViewport ? m_viewportConfiguration.nativeWebpageParameters() : ViewportConfiguration::webpageParameters();
     };
 
     if (!frame) {

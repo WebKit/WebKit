@@ -112,6 +112,12 @@ enum class PopUpPolicy {
     Block,
 };
 
+enum class MetaViewportPolicy {
+    Default,
+    Respect,
+    Ignore,
+};
+
 class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
@@ -282,6 +288,9 @@ public:
 
     PopUpPolicy popUpPolicy() const { return m_popUpPolicy; }
     void setPopUpPolicy(PopUpPolicy popUpPolicy) { m_popUpPolicy = popUpPolicy; }
+
+    MetaViewportPolicy metaViewportPolicy() const { return m_metaViewportPolicy; }
+    void setMetaViewportPolicy(MetaViewportPolicy policy) { m_metaViewportPolicy = policy; }
 
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
@@ -556,6 +565,7 @@ private:
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
+    MetaViewportPolicy m_metaViewportPolicy { MetaViewportPolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;

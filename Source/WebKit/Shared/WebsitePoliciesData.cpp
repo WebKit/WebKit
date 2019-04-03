@@ -46,6 +46,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << customUserAgent;
     encoder << customJavaScriptUserAgentAsSiteSpecificQuirks;
     encoder << customNavigatorPlatform;
+    encoder << metaViewportPolicy;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -99,6 +100,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     decoder >> customNavigatorPlatform;
     if (!customNavigatorPlatform)
         return WTF::nullopt;
+
+    Optional<WebsiteMetaViewportPolicy> metaViewportPolicy;
+    decoder >> metaViewportPolicy;
+    if (!metaViewportPolicy)
+        return WTF::nullopt;
     
     return { {
         WTFMove(*contentBlockersEnabled),
@@ -111,6 +117,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*customUserAgent),
         WTFMove(*customJavaScriptUserAgentAsSiteSpecificQuirks),
         WTFMove(*customNavigatorPlatform),
+        WTFMove(*metaViewportPolicy),
     } };
 }
 
@@ -167,6 +174,18 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     case WebsitePopUpPolicy::Block:
         documentLoader.setPopUpPolicy(WebCore::PopUpPolicy::Block);
+        break;
+    }
+
+    switch (websitePolicies.metaViewportPolicy) {
+    case WebsiteMetaViewportPolicy::Default:
+        documentLoader.setMetaViewportPolicy(WebCore::MetaViewportPolicy::Default);
+        break;
+    case WebsiteMetaViewportPolicy::Respect:
+        documentLoader.setMetaViewportPolicy(WebCore::MetaViewportPolicy::Respect);
+        break;
+    case WebsiteMetaViewportPolicy::Ignore:
+        documentLoader.setMetaViewportPolicy(WebCore::MetaViewportPolicy::Ignore);
         break;
     }
 

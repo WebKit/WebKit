@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,27 @@
 
 #pragma once
 
-#include "WebsiteAutoplayPolicy.h"
-#include "WebsiteAutoplayQuirk.h"
-#include "WebsiteDataStoreParameters.h"
-#include "WebsiteMetaViewportPolicy.h"
-#include "WebsitePopUpPolicy.h"
-#include <WebCore/HTTPHeaderField.h>
-#include <wtf/OptionSet.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WebCore {
-class DocumentLoader;
-}
+#include <wtf/Forward.h>
 
 namespace WebKit {
 
-struct WebsitePoliciesData {
-    static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
-
-    bool contentBlockersEnabled { true };
-    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
-    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
-    Optional<bool> deviceOrientationAndMotionAccessState;
-    Vector<WebCore::HTTPHeaderField> customHeaderFields;
-    WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
-    Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
-    String customUserAgent;
-    String customJavaScriptUserAgentAsSiteSpecificQuirks;
-    String customNavigatorPlatform;
-    WebsiteMetaViewportPolicy metaViewportPolicy { WebsiteMetaViewportPolicy::Default };
-
-    void encode(IPC::Encoder&) const;
-    static Optional<WebsitePoliciesData> decode(IPC::Decoder&);
+enum class WebsiteMetaViewportPolicy {
+    Default,
+    Respect,
+    Ignore,
 };
 
-} // namespace WebKit
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsiteMetaViewportPolicy> {
+    using values = EnumValues<
+        WebKit::WebsiteMetaViewportPolicy,
+        WebKit::WebsiteMetaViewportPolicy::Default,
+        WebKit::WebsiteMetaViewportPolicy::Respect,
+        WebKit::WebsiteMetaViewportPolicy::Ignore
+    >;
+};
+
+} // namespace WTF

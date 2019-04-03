@@ -53,11 +53,19 @@ void WebsitePolicies::setWebsiteDataStore(RefPtr<WebsiteDataStore>&& websiteData
 
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
-    Optional<WebKit::WebsiteDataStoreParameters> parameters;
-    if (m_websiteDataStore)
-        parameters = m_websiteDataStore->websiteDataStore().parameters();
-    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), deviceOrientationAndMotionAccessState(),
-        customHeaderFields(), popUpPolicy(), WTFMove(parameters), m_customUserAgent, m_customJavaScriptUserAgentAsSiteSpecificQuirks, m_customNavigatorPlatform };
+    return {
+        contentBlockersEnabled(),
+        allowedAutoplayQuirks(),
+        autoplayPolicy(),
+        deviceOrientationAndMotionAccessState(),
+        customHeaderFields(),
+        popUpPolicy(),
+        m_websiteDataStore ? Optional<WebKit::WebsiteDataStoreParameters> { m_websiteDataStore->websiteDataStore().parameters() } : WTF::nullopt,
+        m_customUserAgent,
+        m_customJavaScriptUserAgentAsSiteSpecificQuirks,
+        m_customNavigatorPlatform,
+        m_metaViewportPolicy,
+    };
 }
 
 }
