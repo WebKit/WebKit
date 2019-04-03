@@ -1,3 +1,14 @@
+2019-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Cursor count badge reverts to Zero during Drag & Drop of multiple items.
+        https://bugs.webkit.org/show_bug.cgi?id=196511
+
+        Reviewed by Daniel Bates.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::tryDocumentDrag): Don't set m_numberOfItemsToBeAccepted to
+        zero when dragging to a non-file input element.
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         HTML Parser: Remove conditional parsing of <noembed> content
