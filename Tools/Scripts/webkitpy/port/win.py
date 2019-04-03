@@ -110,7 +110,7 @@ class WinPort(ApplePort):
         actual_text = delegate_regexp.sub("", actual_text)
         return expected_text != actual_text
 
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, **kwargs):
         version_name_map = VersionNameMap.map(self.host.platform)
         if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
             fallback_versions = [self._os_version]
@@ -480,7 +480,7 @@ class WinCairoPort(WinPort):
 
     DEFAULT_ARCHITECTURE = 'x86_64'
 
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, **kwargs):
         version_name_map = VersionNameMap.map(self.host.platform)
         if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
             fallback_versions = [self._os_version]

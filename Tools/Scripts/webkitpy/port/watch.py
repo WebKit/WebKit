@@ -59,7 +59,7 @@ class WatchPort(DevicePort):
         return 4
 
     @memoized
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []
         if self.device_version() == self.CURRENT_VERSION:
             versions_to_fallback = [self.CURRENT_VERSION]

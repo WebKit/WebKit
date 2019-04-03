@@ -70,7 +70,7 @@ class MacPort(DarwinPort):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 
     @memoized
-    def default_baseline_search_path(self):
+    def default_baseline_search_path(self, **kwargs):
         versions_to_fallback = []
         version_name_map = VersionNameMap.map(self.host.platform)
 
