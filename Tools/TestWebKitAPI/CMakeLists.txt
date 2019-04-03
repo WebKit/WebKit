@@ -1,23 +1,23 @@
 set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+
 set(test_wtf_LIBRARIES
-    WTF${DEBUG_SUFFIX}
+    WTFFramework
     gtest
 )
 
 set(test_webcore_LIBRARIES
-    WTF${DEBUG_SUFFIX}
+    WTFFramework
     WebCore${DEBUG_SUFFIX}
     gtest
 )
 
 set(TestWebKitAPI_LIBRARIES
-    WTF${DEBUG_SUFFIX}
+    WTFFramework
 )
 
 set(TestWebKitAPI_DEPENDENCIES
     JavaScriptCoreForwardingHeaders
     JavaScriptCorePrivateForwardingHeaders
-    WTFForwardingHeaders
 )
 
 if (ENABLE_WEBCORE)
@@ -28,7 +28,7 @@ if (ENABLE_WEBKIT)
     set(test_webkit_api_LIBRARIES
         JavaScriptCore
         TestWebKitAPIBase
-        WTF
+        WTFFramework
         WebKit
         gtest
     )
@@ -88,7 +88,7 @@ if (ENABLE_WEBKIT)
 
     set(TestWebKitAPIBase_LIBRARIES
         JavaScriptCore
-        WTF
+        WTFFramework
         WebKit
         gtest
     )
@@ -246,7 +246,7 @@ if (ENABLE_WEBKIT)
     )
 
     target_link_libraries(TestWebKitAPIInjectedBundle ${TestWebKitAPI_LIBRARIES})
-    add_dependencies(TestWebKitAPIInjectedBundle WTF ${TestWebKitAPI_DEPENDENCIES})
+    add_dependencies(TestWebKitAPIInjectedBundle ${TestWebKitAPI_DEPENDENCIES})
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIInjectedBundle -Wno-dangling-else
@@ -271,7 +271,7 @@ add_executable(TestWTF
 if (WIN32)
     add_dependencies(TestWTF TestWTFLib)
 else ()
-    add_dependencies(TestWTF WTF ${TestWebKitAPI_DEPENDENCIES})
+    add_dependencies(TestWTF ${TestWebKitAPI_DEPENDENCIES})
 endif ()
 
 target_link_libraries(TestWTF ${test_wtf_LIBRARIES})

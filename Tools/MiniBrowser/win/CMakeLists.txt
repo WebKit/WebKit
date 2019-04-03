@@ -24,7 +24,7 @@ set(MiniBrowser_SOURCES
 
 set(MiniBrowser_LIBRARIES
     DbgHelp
-    WTF
+    WTFFramework
     WebKitLegacy
     WebKitLegacyGUID
     comctl32

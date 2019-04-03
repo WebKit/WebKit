@@ -1,3 +1,16 @@
+2019-04-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][WTF] Mirror XCode header directories
+        https://bugs.webkit.org/show_bug.cgi?id=191662
+
+        Reviewed by Konstantin Tokarev.
+
+        Use WTFFramework as a dependency and include frameworks/WTF.cmake for AppleWin internal
+        builds.
+
+        * CMakeLists.txt:
+        * shell/CMakeLists.txt:
+
 2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add FuzzerAgent, which has a hooks to get feedback & inject fuzz data into JSC

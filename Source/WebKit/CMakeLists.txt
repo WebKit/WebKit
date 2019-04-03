@@ -1,4 +1,5 @@
 include(WebKitCommon)
+include(frameworks/WTF)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 

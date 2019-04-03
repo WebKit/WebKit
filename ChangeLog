@@ -1,3 +1,18 @@
+2019-04-03  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][WTF] Mirror XCode header directories
+        https://bugs.webkit.org/show_bug.cgi?id=191662
+
+        Reviewed by Konstantin Tokarev.
+
+        Add WTF_FRAMEWORK_HEADERS_DIR to place WTF headers into. Add frameworks/WTF.cmake
+        which creates an interface target which will populate dependencies for consumers.
+        This file is added here to support AppleWin internal builds which invoke CMake on
+        each directory.
+
+        * Source/cmake/WebKitFS.cmake:
+        * Source/cmake/frameworks/WTF.cmake: Added.
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove support for -apple-trailing-word

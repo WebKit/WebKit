@@ -5,7 +5,7 @@ set(JSC_SOURCES
 set(JSC_LIBRARIES
     ${CMAKE_DL_LIBS}
     JavaScriptCore${DEBUG_SUFFIX}
-    WTF${DEBUG_SUFFIX}
+    WTFFramework
 )
 
 if (WTF_OS_MAC_OS_X)

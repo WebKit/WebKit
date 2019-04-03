@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 include(WebKitCommon)
 include(WebCoreMacros.cmake)
+include(frameworks/WTF)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebCore")
 

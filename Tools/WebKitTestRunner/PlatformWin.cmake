@@ -36,7 +36,7 @@ set(WebKitTestRunnerLib_LIBRARIES
 )
 
 list(APPEND WebKitTestRunner_LIBRARIES
-    WTF
+    WTFFramework
     WebKit
 )
 
