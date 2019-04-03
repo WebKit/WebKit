@@ -83,6 +83,23 @@ static inline Ref<DOMCache> copyCache(const Ref<DOMCache>& cache)
     return cache.copyRef();
 }
 
+void DOMCacheStorage::doSequentialMatch(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+{
+    startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, pendingActivity = makePendingActivity(*this), promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
+        if (m_isStopped)
+            return;
+        if (result.hasException()) {
+            promise->reject(result.releaseException());
+            return;
+        }
+        if (!result.returnValue()) {
+            promise->resolve();
+            return;
+        }
+        promise->resolve<IDLInterface<FetchResponse>>(*result.returnValue());
+    });
+}
+
 void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
     retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
@@ -101,20 +118,7 @@ void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& op
             return;
         }
 
-        setPendingActivity(*this);
-        startSequentialMatch(WTF::map(m_caches, copyCache), WTFMove(info), WTFMove(options), [this, promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
-            if (!m_isStopped) {
-                if (result.hasException()) {
-                    promise->reject(result.releaseException());
-                    return;
-                }
-                if (!result.returnValue())
-                    promise->resolve();
-                else
-                    promise->resolve<IDLInterface<FetchResponse>>(*result.returnValue());
-            }
-            unsetPendingActivity(*this);
-        });
+        this->doSequentialMatch(WTFMove(info), WTFMove(options), WTFMove(promise));
     });
 }
 

@@ -431,23 +431,20 @@ void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, K
 
 void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(Optional<Exception>&&)>&& callback)
 {
-    setPendingActivity(*this);
-
     URL retrieveURL = url;
     retrieveURL.removeQueryAndFragmentIdentifier();
 
-    m_connection->retrieveRecords(m_identifier, retrieveURL, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
-        if (!m_isStopped) {
-            if (!result.has_value()) {
-                callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-                return;
-            }
+    m_connection->retrieveRecords(m_identifier, retrieveURL, [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](RecordsOrError&& result) {
+        if (m_isStopped)
+            return;
 
-            if (result.has_value())
-                updateRecords(WTFMove(result.value()));
-            callback(WTF::nullopt);
+        if (!result.has_value()) {
+            callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
+            return;
         }
-        unsetPendingActivity(*this);
+
+        updateRecords(WTFMove(result.value()));
+        callback(WTF::nullopt);
     });
 }
 
@@ -484,15 +481,15 @@ Vector<CacheStorageRecord> DOMCache::queryCacheWithTargetStorage(const FetchRequ
 
 void DOMCache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<bool>&&)>&& callback)
 {
-    setPendingActivity(*this);
-    m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
-        if (!m_isStopped) {
-            if (!result.has_value())
-                callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-            else
-                callback(!result.value().isEmpty());
+    m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
+        if (m_isStopped)
+            return;
+
+        if (!result.has_value()) {
+            callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
+            return;
         }
-        unsetPendingActivity(*this);
+        callback(!result.value().isEmpty());
     });
 }
 
@@ -527,15 +524,14 @@ void DOMCache::batchPutOperation(const FetchRequest& request, FetchResponse& res
 
 void DOMCache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
-    setPendingActivity(*this);
-    m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
-        if (!m_isStopped) {
-            if (!result.has_value())
-                callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-            else
-                callback({ });
+    m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, pendingActivity = makePendingActivity(*this), callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
+        if (m_isStopped)
+            return;
+        if (!result.has_value()) {
+            callback(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
+            return;
         }
-        unsetPendingActivity(*this);
+        callback({ });
     });
 }
 

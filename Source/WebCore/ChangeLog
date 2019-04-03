@@ -1,3 +1,19 @@
+2019-04-03  Youenn Fablet  <youenn@apple.com>
+
+        Use makePendingActivity in DOMCache
+        https://bugs.webkit.org/show_bug.cgi?id=196515
+
+        Reviewed by Geoffrey Garen.
+
+        No change of behavior, just modernizing the code.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::retrieveRecords):
+        (WebCore::DOMCache::batchDeleteOperation):
+        (WebCore::DOMCache::batchPutOperation):
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::match):
+
 2019-04-03  Chris Dumez  <cdumez@apple.com>
 
         [XML Parser] Insert the error message block when stopping parsing and an error occurred
