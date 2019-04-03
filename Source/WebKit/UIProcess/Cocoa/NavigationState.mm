@@ -522,6 +522,9 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 return;
             }
 
+            if (defaultWebsitePolicies)
+                webPage->adjustPoliciesForCompatibilityMode(navigationAction, *defaultWebsitePolicies);
+
             if (!navigationAction->targetFrame()) {
                 listener->use(defaultWebsitePolicies.get());
                 return;
@@ -591,6 +594,8 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customUserAgent must be nil for subframe navigations."];
             if (!apiWebsitePolicies->customNavigatorPlatform().isNull() && subframeNavigation)
                 [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customNavigatorPlatform must be nil for subframe navigations."];
+
+            webPageProxy->adjustPoliciesForCompatibilityMode(navigationAction, *apiWebsitePolicies);
         }
 
         switch (actionPolicy) {

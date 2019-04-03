@@ -1,3 +1,15 @@
+2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add plumbing for a compatibility mode preference in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=196005
+
+        Reviewed by Tim Horton.
+
+        Add new API tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/ios/PreferredCompatibilityMode.mm: Added.
+
 2019-04-03  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Update libsrtp dependency package for Debian

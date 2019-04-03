@@ -8902,6 +8902,14 @@ void WebPageProxy::speechSynthesisResume(CompletionHandler<void()>&& completionH
 }
 #endif // ENABLE(SPEECH_SYNTHESIS)
 
+#if !PLATFORM(IOS_FAMILY) || !USE(APPLE_INTERNAL_SDK)
+
+void WebPageProxy::adjustPoliciesForCompatibilityMode(const API::NavigationAction&, API::WebsitePolicies&)
+{
+}
+
+#endif // !PLATFORM(IOS_FAMILY) || !USE(APPLE_INTERNAL_SDK)
+
 void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.add(&observer, makeWeakPtr(observer));

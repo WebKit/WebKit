@@ -28,6 +28,7 @@
 
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
+#import "WebCompatibilityMode.h"
 #import "_WKWebsitePoliciesInternal.h"
 #import <wtf/RetainPtr.h>
 
@@ -251,5 +252,9 @@
 {
     return *_websitePolicies;
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebpagePreferencesAdditions.mm>
+#endif
 
 @end

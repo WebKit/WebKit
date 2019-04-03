@@ -1636,6 +1636,7 @@
 		ECA680D81E690E2500731D20 /* WebProcessCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D71E690DF800731D20 /* WebProcessCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F430E94422473DFF005FE053 /* WebCompatibilityMode.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E94322473DB8005FE053 /* WebCompatibilityMode.h */; };
 		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4571,6 +4572,7 @@
 		F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDragDestinationAction.h; sourceTree = "<group>"; };
 		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
+		F430E94322473DB8005FE053 /* WebCompatibilityMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCompatibilityMode.h; sourceTree = "<group>"; };
 		F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferences.h; sourceTree = "<group>"; };
 		F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebpagePreferences.mm; sourceTree = "<group>"; };
 		F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesInternal.h; sourceTree = "<group>"; };
@@ -5163,6 +5165,7 @@
 				518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */,
 				518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */,
 				BCF50726124329AA005955AE /* WebCertificateInfo.h */,
+				F430E94322473DB8005FE053 /* WebCompatibilityMode.h */,
 				7C4ABECE1AA8E9F00088AA37 /* WebCompiledContentRuleList.cpp */,
 				7C4ABECF1AA8E9F00088AA37 /* WebCompiledContentRuleList.h */,
 				7C4ABED21AA8FCB80088AA37 /* WebCompiledContentRuleListData.cpp */,
@@ -9527,6 +9530,7 @@
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
 				728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */,
+				F430E94422473DFF005FE053 /* WebCompatibilityMode.h in Headers */,
 				7C4ABED11AA8E9F00088AA37 /* WebCompiledContentRuleList.h in Headers */,
 				7C4ABED51AA8FCB80088AA37 /* WebCompiledContentRuleListData.h in Headers */,
 				BC4A6290147312BE006C681A /* WebConnection.h in Headers */,

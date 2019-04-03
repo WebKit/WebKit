@@ -1506,6 +1506,7 @@ public:
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
+    void adjustPoliciesForCompatibilityMode(const API::NavigationAction&, API::WebsitePolicies&);
 
     void addObserver(WebViewDidMoveToWindowObserver&);
     void removeObserver(WebViewDidMoveToWindowObserver&);

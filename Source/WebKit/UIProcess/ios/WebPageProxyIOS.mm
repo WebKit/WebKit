@@ -28,7 +28,9 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "APINavigationAction.h"
 #import "APIUIClient.h"
+#import "APIWebsitePolicies.h"
 #import "Connection.h"
 #import "DataReference.h"
 #import "DocumentEditingContext.h"
@@ -1239,6 +1241,10 @@ const String& WebPageProxy::paymentCoordinatorCTDataConnectionServiceType(const 
     return process().processPool().configuration().ctDataConnectionServiceType();
 }
 
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebPageProxyIOSAdditions.mm>
 #endif
 
 } // namespace WebKit
