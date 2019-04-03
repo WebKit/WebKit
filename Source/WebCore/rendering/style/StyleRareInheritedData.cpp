@@ -131,9 +131,6 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(RenderStyle::initialTouchCalloutEnabled())
 #endif
-#if ENABLE(CSS_TRAILING_WORD)
-    , trailingWord(static_cast<unsigned>(RenderStyle::initialTrailingWord()))
-#endif
     , hangingPunctuation(RenderStyle::initialHangingPunctuation().toRaw())
     , paintOrder(static_cast<unsigned>(RenderStyle::initialPaintOrder()))
     , capStyle(RenderStyle::initialCapStyle())
@@ -228,9 +225,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textZoom(o.textZoom)
 #if PLATFORM(IOS_FAMILY)
     , touchCalloutEnabled(o.touchCalloutEnabled)
-#endif
-#if ENABLE(CSS_TRAILING_WORD)
-    , trailingWord(o.trailingWord)
 #endif
     , hangingPunctuation(o.hangingPunctuation)
     , paintOrder(o.paintOrder)
@@ -354,9 +348,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textZoom == o.textZoom
         && lineSnap == o.lineSnap
         && lineAlign == o.lineAlign
-#if ENABLE(CSS_TRAILING_WORD)
-        && trailingWord == o.trailingWord
-#endif
         && hangingPunctuation == o.hangingPunctuation
         && paintOrder == o.paintOrder
         && capStyle == o.capStyle

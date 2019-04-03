@@ -767,10 +767,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueBreakAll || valueID == CSSValueKeepAll || valueID == CSSValueBreakWord;
     case CSSPropertyWebkitBorderFit:
         return valueID == CSSValueBorder || valueID == CSSValueLines;
-#if ENABLE(CSS_TRAILING_WORD)
-    case CSSPropertyAppleTrailingWord: // auto | -apple-partially-balanced
-        return valueID == CSSValueAuto || valueID == CSSValueWebkitPartiallyBalanced;
-#endif
 #if ENABLE(APPLE_PAY)
     case CSSPropertyApplePayButtonStyle: // white | white-outline | black
         return valueID == CSSValueWhite || valueID == CSSValueWhiteOutline || valueID == CSSValueBlack;
@@ -941,9 +937,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     // case CSSPropertyTextJustify:
     // case CSSPropertyTextOrientation:
     // case CSSPropertyUserSelect:
-#if ENABLE(CSS_TRAILING_WORD)
-    case CSSPropertyAppleTrailingWord:
-#endif
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyIsolation:
     case CSSPropertyMixBlendMode:

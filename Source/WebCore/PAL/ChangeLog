@@ -1,3 +1,14 @@
+2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove support for -apple-trailing-word
+        https://bugs.webkit.org/show_bug.cgi?id=196525
+
+        Reviewed by Zalan Bujtas.
+
+        This CSS property is nonstandard and not used.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-03-31  Sam Weinig  <weinig@apple.com>
 
         Remove more i386 specific configurations
