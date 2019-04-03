@@ -24,7 +24,7 @@ import logging
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
-from webkitpy.port.config import apple_additions
+from webkitpy.port.config import apple_additions, Config
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode.simulated_device import SimulatedDeviceManager
@@ -120,9 +120,17 @@ class IPhoneSimulatorPort(IOSSimulatorPort):
         DeviceType(hardware_family='iPhone', hardware_type='7'),
     ]
 
+    def __init__(self, *args, **kwargs):
+        super(IPhoneSimulatorPort, self).__init__(*args, **kwargs)
+        self._config = Config(self._executive, self._filesystem, IOSSimulatorPort.port_name)
+
 
 class IPadSimulatorPort(IOSSimulatorPort):
     port_name = 'ipad-simulator'
 
     DEVICE_TYPE = DeviceType(hardware_family='iPad')
     DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='iPad', hardware_type='(5th generation)')]
+
+    def __init__(self, *args, **kwargs):
+        super(IPadSimulatorPort, self).__init__(*args, **kwargs)
+        self._config = Config(self._executive, self._filesystem, IOSSimulatorPort.port_name)
