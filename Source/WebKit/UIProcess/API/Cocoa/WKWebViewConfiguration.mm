@@ -118,6 +118,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     LazyInitialized<RetainPtr<WKUserContentController>> _userContentController;
     LazyInitialized<RetainPtr<_WKVisitedLinkStore>> _visitedLinkStore;
     LazyInitialized<RetainPtr<WKWebsiteDataStore>> _websiteDataStore;
+    LazyInitialized<RetainPtr<WKWebpagePreferences>> _defaultWebpagePreferences;
     WeakObjCPtr<WKWebView> _relatedWebView;
     WeakObjCPtr<WKWebView> _alternateWebViewForNavigationGestures;
     RetainPtr<NSString> _groupIdentifier;
@@ -357,6 +358,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration.preferences = self.preferences;
     configuration.userContentController = self.userContentController;
     configuration.websiteDataStore = self.websiteDataStore;
+    configuration.defaultWebpagePreferences = self.defaultWebpagePreferences;
     configuration._visitedLinkStore = self._visitedLinkStore;
     configuration._relatedWebView = _relatedWebView.get().get();
     configuration._alternateWebViewForNavigationGestures = _alternateWebViewForNavigationGestures.get().get();
@@ -471,6 +473,18 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 - (void)setWebsiteDataStore:(WKWebsiteDataStore *)websiteDataStore
 {
     _websiteDataStore.set(websiteDataStore);
+}
+
+- (WKWebpagePreferences *)defaultWebpagePreferences
+{
+    return _defaultWebpagePreferences.get([] {
+        return WKWebpagePreferences.defaultPreferences;
+    });
+}
+
+- (void)setDefaultWebpagePreferences:(WKWebpagePreferences *)defaultWebpagePreferences
+{
+    _defaultWebpagePreferences.set(defaultWebpagePreferences ?: WKWebpagePreferences.defaultPreferences);
 }
 
 static NSString *defaultApplicationNameForUserAgent()

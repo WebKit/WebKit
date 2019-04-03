@@ -45,6 +45,7 @@ namespace API {
 
 class ApplicationManifest;
 class WebsiteDataStore;
+class WebsitePolicies;
 
 class PageConfiguration : public ObjectImpl<Object::Type::PageConfiguration> {
 public:
@@ -80,6 +81,9 @@ public:
 
     WebsiteDataStore* websiteDataStore();
     void setWebsiteDataStore(WebsiteDataStore*);
+
+    WebsitePolicies* defaultWebsitePolicies() const;
+    void setDefaultWebsitePolicies(WebsitePolicies*);
 
     // FIXME: Once PageConfigurations *always* have a data store, get rid of the separate sessionID.
     PAL::SessionID sessionID();
@@ -135,6 +139,7 @@ private:
     RefPtr<WebKit::VisitedLinkStore> m_visitedLinkStore;
 
     RefPtr<WebsiteDataStore> m_websiteDataStore;
+    RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
     // FIXME: We currently have to pass the session ID separately here to support the legacy private browsing session.
     // Once we get rid of it we should get rid of this configuration parameter as well.
     PAL::SessionID m_sessionID;

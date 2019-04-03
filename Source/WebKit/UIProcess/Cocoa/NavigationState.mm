@@ -30,6 +30,7 @@
 #import "APIFrameInfo.h"
 #import "APINavigationData.h"
 #import "APINavigationResponse.h"
+#import "APIPageConfiguration.h"
 #import "APIString.h"
 #import "APIURL.h"
 #import "APIWebsiteDataStore.h"
@@ -148,6 +149,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegate = delegate;
 
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:decisionHandler:)];
+    m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationAction:withPreferences:decisionHandler:)];
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies = [delegate respondsToSelector:@selector(_webView:decidePolicyForNavigationAction:decisionHandler:)];
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionUserInfoDecisionHandlerWebsitePolicies = [delegate respondsToSelector:@selector(_webView:decidePolicyForNavigationAction:userInfo:decisionHandler:)];
     m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler = [delegate respondsToSelector:@selector(webView:decidePolicyForNavigationResponse:decisionHandler:)];
@@ -508,18 +510,20 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
 {
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
+    auto defaultWebsitePolicies = makeRefPtr(webPageProxy.configuration().defaultWebsitePolicies());
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
+        && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler
         && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies
         && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionUserInfoDecisionHandlerWebsitePolicies) {
-        auto completionHandler = [webPage = makeRef(webPageProxy), listener = WTFMove(listener), navigationAction = navigationAction.copyRef()] (bool interceptedNavigation) {
+        auto completionHandler = [webPage = makeRef(webPageProxy), listener = WTFMove(listener), navigationAction = navigationAction.copyRef(), defaultWebsitePolicies] (bool interceptedNavigation) {
             if (interceptedNavigation) {
                 listener->ignore();
                 return;
             }
 
             if (!navigationAction->targetFrame()) {
-                listener->use();
+                listener->use(defaultWebsitePolicies.get());
                 return;
             }
 
@@ -528,7 +532,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 if (navigationAction->shouldPerformDownload())
                     listener->download();
                 else
-                    listener->use();
+                    listener->use(defaultWebsitePolicies.get());
                 return;
             }
 
@@ -548,11 +552,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     if (!navigationDelegate)
         return;
 
+    bool delegateHasWebpagePreferences = m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler;
     bool delegateHasWebsitePolicies = m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies || m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionUserInfoDecisionHandlerWebsitePolicies;
-    
-    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
-    
-    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), webPageProxy = makeRef(webPageProxy), subframeNavigation](WKNavigationActionPolicy actionPolicy, id policiesOrPreferences) mutable {
+
+    auto selectorForCompletionHandlerChecker = ([&] () -> SEL {
+        if (delegateHasWebpagePreferences)
+            return @selector(webView:decidePolicyForNavigationAction:withPreferences:decisionHandler:);
+        if (delegateHasWebsitePolicies)
+            return @selector(_webView:decidePolicyForNavigationAction:decisionHandler:);
+        return @selector(webView:decidePolicyForNavigationAction:decisionHandler:);
+    })();
+
+    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), selectorForCompletionHandlerChecker);
+    auto decisionHandlerWithPreferencesOrPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), webPageProxy = makeRef(webPageProxy), subframeNavigation, defaultWebsitePolicies] (WKNavigationActionPolicy actionPolicy, id policiesOrPreferences) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -564,19 +576,21 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             apiWebsitePolicies = [policiesOrPreferences webpagePreferences]->_websitePolicies.get();
         else if (policiesOrPreferences)
             [NSException raise:NSInvalidArgumentException format:@"Expected policies of class %@, but got %@", NSStringFromClass(_WKWebsitePolicies.self), [policiesOrPreferences class]];
+        else
+            apiWebsitePolicies = defaultWebsitePolicies;
 
         if (apiWebsitePolicies) {
             if (auto* websiteDataStore = apiWebsitePolicies->websiteDataStore()) {
                 auto sessionID = websiteDataStore->websiteDataStore().sessionID();
                 if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
-                    [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil, default, or non-persistent."];
+                    [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil, default, or non-persistent."];
                 if (subframeNavigation)
-                    [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil for subframe navigations."];
+                    [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._websiteDataStore must be nil for subframe navigations."];
             }
             if (!apiWebsitePolicies->customUserAgent().isNull() && subframeNavigation)
-                [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.customUserAgent must be nil for subframe navigations."];
+                [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customUserAgent must be nil for subframe navigations."];
             if (!apiWebsitePolicies->customNavigatorPlatform().isNull() && subframeNavigation)
-                [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.customNavigatorPlatform must be nil for subframe navigations."];
+                [NSException raise:NSInvalidArgumentException format:@"WKWebpagePreferences._customNavigatorPlatform must be nil for subframe navigations."];
         }
 
         switch (actionPolicy) {
@@ -612,9 +626,11 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             break;
         }
     };
-    
-    if (delegateHasWebsitePolicies) {
-        auto decisionHandler = makeBlockPtr(WTFMove(decisionHandlerWithPolicies));
+
+    if (delegateHasWebpagePreferences)
+        [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) withPreferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
+    else if (delegateHasWebsitePolicies) {
+        auto decisionHandler = makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies));
         if (m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionUserInfoDecisionHandlerWebsitePolicies)
             [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) userInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil decisionHandler:decisionHandler.get()];
         else {
@@ -623,10 +639,10 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             ALLOW_DEPRECATED_DECLARATIONS_END
         }
     } else {
-        auto decisionHandlerWithoutPolicies = [decisionHandlerWithPolicies = WTFMove(decisionHandlerWithPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
-            decisionHandlerWithPolicies(actionPolicy, nil);
+        auto decisionHandler = [decisionHandlerWithPreferencesOrPolicies = WTFMove(decisionHandlerWithPreferencesOrPolicies)] (WKNavigationActionPolicy actionPolicy) mutable {
+            decisionHandlerWithPreferencesOrPolicies(actionPolicy, nil);
         };
-        [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithoutPolicies)).get()];
+        [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationAction:wrapper(navigationAction) decisionHandler:makeBlockPtr(WTFMove(decisionHandler)).get()];
     }
 }
 

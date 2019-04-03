@@ -1,3 +1,49 @@
+2019-04-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Add new API around WKWebpagePreferences in WKNavigationDelegate and WKWebViewConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=196284
+        <rdar://problem/47228232>
+
+        Reviewed by Tim Horton.
+
+        Tests for both of these APIs will be added in a subsequent patch.
+
+        * Shared/API/Cocoa/WebKit.h:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::defaultWebsitePolicies const):
+        (API::PageConfiguration::setDefaultWebsitePolicies):
+        * UIProcess/API/APIPageConfiguration.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+
+        Add a new navigation delegate hook to allow clients to return a WKWebpagePreference targeting the given
+        navigation action.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+
+        Add new API on WKWebViewConfiguration to specify a default WKWebpagePreference to use when navigating.
+
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration defaultWebpagePreferences]):
+        (-[WKWebViewConfiguration setDefaultWebpagePreferences:]):
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+        Invoke the new WKWebpagePreferences-based navigation delegate method.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * mac/postprocess-framework-headers.sh:
+        * mac/replace-webkit-additions-in-framework-headers.sh: Added.
+
+        Move logic in the "Postprocess Framework Headers" step responsible for stripping away included files from
+        WebKitAdditions out into a separate build phase, called "Replace WebKitAdditions in Framework Headers". This
+        ensures headers attempting to include from WebKitAdditions have these additional statements removed.
+
 2019-04-02  Geoffrey Garen  <ggaren@apple.com>
 
         Eliminate plugin sandbox exceptions

@@ -574,6 +574,7 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->setUserContentController([_configuration userContentController]->_userContentControllerProxy.get());
     pageConfiguration->setVisitedLinkStore([_configuration _visitedLinkStore]->_visitedLinkStore.get());
     pageConfiguration->setWebsiteDataStore([_configuration websiteDataStore]->_websiteDataStore.get());
+    pageConfiguration->setDefaultWebsitePolicies([_configuration defaultWebpagePreferences]->_websitePolicies.get());
 
 #if PLATFORM(MAC)
     if (auto pageGroup = WebKit::toImpl([configuration _pageGroup])) {

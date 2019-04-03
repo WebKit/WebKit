@@ -25,11 +25,19 @@
 
 #import <WebKit/WKFoundation.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebpagePreferencesAdditionsBefore.h>
+#endif
+
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
  @discussion Contains properties used to determine webpage preferences.
  */
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface WKWebpagePreferences : NSObject
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebpagePreferencesAdditionsAfter.h>
+#endif
 
 @end

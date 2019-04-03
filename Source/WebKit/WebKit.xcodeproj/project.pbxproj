@@ -1636,7 +1636,7 @@
 		ECA680D81E690E2500731D20 /* WebProcessCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D71E690DF800731D20 /* WebProcessCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44291921FA591C9002CC93E /* _WKAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = F44291911FA59107002CC93E /* _WKAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7107,10 +7107,10 @@
 			children = (
 				1A8B66B21BC45B010082DF77 /* WKBundleMac.h */,
 				1A8B66B11BC45B010082DF77 /* WKBundleMac.mm */,
-				C6A4CA092252899800169289 /* WKBundlePageMac.h */,
-				C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */,
 				7CF47FFD17276AE3008ACB91 /* WKBundlePageBannerMac.h */,
 				7CF47FFC17276AE3008ACB91 /* WKBundlePageBannerMac.mm */,
+				C6A4CA092252899800169289 /* WKBundlePageMac.h */,
+				C6A4CA0A2252899800169289 /* WKBundlePageMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -9776,6 +9776,7 @@
 				1AB474E6184D44B40051B622 /* WKBundlePageFullScreenClient.h in Headers */,
 				BC7B633D12A45D1200D174A4 /* WKBundlePageGroup.h in Headers */,
 				1AB474D8184D43FD0051B622 /* WKBundlePageLoaderClient.h in Headers */,
+				C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */,
 				ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */,
 				1AB474EA184D45130051B622 /* WKBundlePagePolicyClient.h in Headers */,
 				BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */,
@@ -9783,7 +9784,6 @@
 				1AB474DE184D44590051B622 /* WKBundlePageUIClient.h in Headers */,
 				BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */,
 				BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */,
-				C6A4CA0B2252899800169289 /* WKBundlePageMac.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 				BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */,
 				BC4075F6124FF0270068F20A /* WKCertificateInfo.h in Headers */,
@@ -10176,6 +10176,7 @@
 				1A6280C81919956B006AD9F9 /* Migrate WebKitLegacy Headers */,
 				375A248817E5048E00C9A086 /* Postprocess WKBase.h */,
 				1AD98ECF191D867300CAA6DF /* Postprocess WKFoundation.h */,
+				F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */,
 				1A1D2115191D96380001619F /* Postprocess Framework Headers */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
@@ -10835,6 +10836,20 @@
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
+		F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Replace WebKitAdditions in Framework Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    for HEADERS_DIRECTORY in \"${PUBLIC_HEADERS_FOLDER_PATH}\" \"${PRIVATE_HEADERS_FOLDER_PATH}\"; do\n        for HEADER_PATH in \"${TARGET_BUILD_DIR}/${HEADERS_DIRECTORY}/\"*.h; do\n            if [[ ! -z `grep '#import <WebKitAdditions/.*\\.h>' \"${HEADER_PATH}\"` ]]; then\n                python \"${SRCROOT}/mac/replace-webkit-additions-includes.py\" \"${HEADER_PATH}\" \"${BUILT_PRODUCTS_DIR}\" \"${SDKROOT}\" || exit $?\n            fi\n        done\n    done\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -11048,7 +11063,6 @@
 				2D11B7A72126A283006F8878 /* UnifiedSource44-mm.mm in Sources */,
 				2D11B7A82126A283006F8878 /* UnifiedSource44.cpp in Sources */,
 				2D11B7A92126A283006F8878 /* UnifiedSource45-mm.mm in Sources */,
-				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D11B7AA2126A283006F8878 /* UnifiedSource45.cpp in Sources */,
 				2D11B7AB2126A283006F8878 /* UnifiedSource46-mm.mm in Sources */,
 				2D11B7AC2126A283006F8878 /* UnifiedSource46.cpp in Sources */,
@@ -11210,6 +11224,7 @@
 				1AAF08B719269E6D00B6390C /* WebUserContentControllerMessageReceiver.cpp in Sources */,
 				7C361D78192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp in Sources */,
 				2D92A78F212B6AB100F493FD /* WebWheelEvent.cpp in Sources */,
+				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,

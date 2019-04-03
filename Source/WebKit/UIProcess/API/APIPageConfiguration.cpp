@@ -27,6 +27,7 @@
 #include "APIPageConfiguration.h"
 
 #include "APIProcessPoolConfiguration.h"
+#include "APIWebsitePolicies.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -162,6 +163,16 @@ void PageConfiguration::setWebsiteDataStore(API::WebsiteDataStore* websiteDataSt
         m_sessionID = m_websiteDataStore->websiteDataStore().sessionID();
     else
         m_sessionID = PAL::SessionID();
+}
+
+WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const
+{
+    return m_defaultWebsitePolicies.get();
+}
+
+void PageConfiguration::setDefaultWebsitePolicies(WebsitePolicies* policies)
+{
+    m_defaultWebsitePolicies = policies;
 }
 
 PAL::SessionID PageConfiguration::sessionID()

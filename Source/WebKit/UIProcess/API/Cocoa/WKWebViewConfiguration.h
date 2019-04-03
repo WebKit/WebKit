@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKPreferences;
 @class WKProcessPool;
 @class WKUserContentController;
+@class WKWebpagePreferences;
 @class WKWebsiteDataStore;
 @protocol WKURLSchemeHandler;
 
@@ -128,6 +129,12 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) BOOL allowsAirPlayForMediaPlayback WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
 @property (nonatomic) WKAudiovisualMediaTypes mediaTypesRequiringUserActionForPlayback WK_API_AVAILABLE(macos(10.12), ios(10.0));
+
+/*! @abstract The set of default webpage preferences to use when loading and rendering content.
+ @discussion These default webpage preferences are additionally passed to the navigation delegate
+ in -webView:decidePolicyForNavigationAction:withPreferences:decisionHandler:.
+ */
+@property (null_resettable, nonatomic, copy) WKWebpagePreferences *defaultWebpagePreferences WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 /*! @abstract A Boolean value indicating whether HTML5 videos play inline

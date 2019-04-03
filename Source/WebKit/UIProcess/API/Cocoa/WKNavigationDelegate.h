@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKNavigationAction;
 @class WKNavigationResponse;
 @class WKWebView;
+@class WKWebpagePreferences;
 
 /*! @enum WKNavigationActionPolicy
  @abstract The policy to pass back to the decision handler from the
@@ -72,6 +73,20 @@ typedef NS_ENUM(NSInteger, WKNavigationResponsePolicy) {
  @discussion If you do not implement this method, the web view will load the request or, if appropriate, forward it to another application.
  */
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler;
+
+/*! @abstract Decides whether to allow or cancel a navigation.
+ @param webView The web view invoking the delegate method.
+ @param navigationAction Descriptive information about the action
+ triggering the navigation request.
+ @param preferences The default set of webpage preferences. This may be
+ changed by setting defaultWebpagePreferences on WKWebViewConfiguration.
+ @param decisionHandler The policy decision handler to call to allow or cancel
+ the navigation. The arguments are one of the constants of the enumerated type
+ WKNavigationActionPolicy, as well as an instance of WKWebpagePreferences.
+ @discussion If you implement this method,
+ -webView:decidePolicyForNavigationAction:decisionHandler: will not be called.
+ */
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction withPreferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! @abstract Decides whether to allow or cancel a navigation after its
  response is known.

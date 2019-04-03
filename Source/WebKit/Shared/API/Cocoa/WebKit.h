@@ -52,6 +52,7 @@
 #import <WebKit/WKUserScript.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebpagePreferences.h>
 #import <WebKit/WKWebsiteDataRecord.h>
 #import <WebKit/WKWebsiteDataStore.h>
 #import <WebKit/WKWindowFeatures.h>
