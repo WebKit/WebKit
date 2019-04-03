@@ -117,9 +117,16 @@ class  Testprinter(unittest.TestCase):
         self.assertIn('Command line:', err.getvalue())
         self.assertIn('Regular timeout: ', err.getvalue())
 
+    def test_print_baseline_search_path(self):
+        printer, err = self.get_printer()
+        printer.print_baseline_search_path()
+
+        self.assertIn('Verbose baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
+        self.assertIn('Baseline search path: platform/test-mac-leopard -> generic', err.getvalue())
+
         self.reset(err)
         printer._options.quiet = True
-        printer.print_config('/tmp')
+        printer.print_baseline_search_path()
         self.assertNotIn('Baseline search path: platform/test-mac-leopard -> platform/test-mac-snowleopard -> generic', err.getvalue())
 
     def test_print_one_line_summary(self):

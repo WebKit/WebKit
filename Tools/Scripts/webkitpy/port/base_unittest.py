@@ -161,7 +161,7 @@ class PortTest(unittest.TestCase):
 
     def test_additional_platform_directory(self):
         port = self.make_port(port_name='foo')
-        port.default_baseline_search_path = lambda: ['LayoutTests/platform/foo']
+        port.default_baseline_search_path = lambda **kwargs: ['LayoutTests/platform/foo']
         test_file = 'fast/test.html'
 
         # No additional platform directory
@@ -187,7 +187,7 @@ class PortTest(unittest.TestCase):
 
     def test_nonexistant_expectations(self):
         port = self.make_port(port_name='foo')
-        port.expectations_files = lambda: ['/mock-checkout/LayoutTests/platform/exists/TestExpectations', '/mock-checkout/LayoutTests/platform/nonexistant/TestExpectations']
+        port.expectations_files = lambda **kwargs: ['/mock-checkout/LayoutTests/platform/exists/TestExpectations', '/mock-checkout/LayoutTests/platform/nonexistant/TestExpectations']
         port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/exists/TestExpectations', '')
         self.assertEqual('\n'.join(port.expectations_dict().keys()), '/mock-checkout/LayoutTests/platform/exists/TestExpectations')
 
@@ -413,7 +413,7 @@ class PortTest(unittest.TestCase):
 
     def test_ref_tests_platform_directory(self):
         port = self.make_port(port_name='foo')
-        port.default_baseline_search_path = lambda: ['/mock-checkout/LayoutTests/platform/foo']
+        port.default_baseline_search_path = lambda **kwargs: ['/mock-checkout/LayoutTests/platform/foo']
         port._filesystem.write_text_file('/mock-checkout/LayoutTests/fast/ref-expected.html', 'foo')
 
         # No platform directory

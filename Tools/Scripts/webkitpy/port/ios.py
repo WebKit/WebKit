@@ -52,7 +52,6 @@ class IOSPort(DevicePort):
             return None
         return VersionNameMap.map(self.host.platform).to_name(self._os_version, platform=IOSPort.port_name)
 
-    @memoized
     def default_baseline_search_path(self, device_type=None):
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):

@@ -407,7 +407,7 @@ class TestPort(Port):
         # the mock_drt Driver. We return something, but make sure it's useless.
         return 'MOCK _path_to_driver'
 
-    def baseline_search_path(self):
+    def baseline_search_path(self, **kwargs):
         search_paths = {
             'test-mac-snowleopard': ['test-mac-snowleopard'],
             'test-mac-leopard': ['test-mac-leopard', 'test-mac-snowleopard'],

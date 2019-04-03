@@ -70,7 +70,7 @@ class TestWebKitPort(Port):
     def _symbols_string(self):
         return self.symbols_string
 
-    def _tests_for_other_platforms(self):
+    def _tests_for_other_platforms(self, **kwargs):
         return ["media", ]
 
     def _tests_for_disabled_features(self):

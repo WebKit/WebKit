@@ -69,15 +69,15 @@ class SingleTestRunner(object):
             # 'foo-expected.txt', we should warn users. One test file must be used exclusively
             # in either layout tests or reftests, but not in both.
             for suffix in ('.txt', '.png', '.wav'):
-                expected_filename = self._port.expected_filename(self._test_name, suffix)
+                expected_filename = self._port.expected_filename(self._test_name, suffix, device_type=self._driver.host.device_type)
                 if self._filesystem.exists(expected_filename):
                     _log.error('%s is a reftest, but has an unused expectation file. Please remove %s.', self._test_name, expected_filename)
 
     def _expected_driver_output(self):
-        return DriverOutput(self._port.expected_text(self._test_name),
-                                 self._port.expected_image(self._test_name),
-                                 self._port.expected_checksum(self._test_name),
-                                 self._port.expected_audio(self._test_name))
+        return DriverOutput(self._port.expected_text(self._test_name, device_type=self._driver.host.device_type),
+                                 self._port.expected_image(self._test_name, device_type=self._driver.host.device_type),
+                                 self._port.expected_checksum(self._test_name, device_type=self._driver.host.device_type),
+                                 self._port.expected_audio(self._test_name, device_type=self._driver.host.device_type))
 
     def _should_fetch_expected_checksum(self):
         return self._should_run_pixel_test and not (self._options.new_baseline or self._options.reset_results)
@@ -89,7 +89,7 @@ class SingleTestRunner(object):
         # previous run will be copied into the baseline."""
         image_hash = None
         if self._should_fetch_expected_checksum():
-            image_hash = self._port.expected_checksum(self._test_name)
+            image_hash = self._port.expected_checksum(self._test_name, device_type=self._driver.host.device_type)
         return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr)
 
     def run(self):

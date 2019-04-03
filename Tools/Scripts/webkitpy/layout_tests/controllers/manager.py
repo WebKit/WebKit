@@ -274,6 +274,8 @@ class Manager(object):
                 else:
                     index += 1
 
+            self._printer.print_baseline_search_path(device_type=device_type)
+
             _log.info('Running {}{}'.format(pluralize(len(tests), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
             _log.info('')
             if not self._set_up_run(tests, device_type):
