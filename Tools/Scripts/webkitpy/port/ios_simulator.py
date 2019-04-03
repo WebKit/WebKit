@@ -109,3 +109,20 @@ class IOSSimulatorPort(IOSPort):
 
     def stderr_patterns_to_strip(self):
         return []
+
+
+class IPhoneSimulatorPort(IOSSimulatorPort):
+    port_name = 'iphone-simulator'
+
+    DEVICE_TYPE = DeviceType(hardware_family='iPhone')
+    DEFAULT_DEVICE_TYPES = [
+        DeviceType(hardware_family='iPhone', hardware_type='SE'),
+        DeviceType(hardware_family='iPhone', hardware_type='7'),
+    ]
+
+
+class IPadSimulatorPort(IOSSimulatorPort):
+    port_name = 'ipad-simulator'
+
+    DEVICE_TYPE = DeviceType(hardware_family='iPad')
+    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='iPad', hardware_type='(5th generation)')]
