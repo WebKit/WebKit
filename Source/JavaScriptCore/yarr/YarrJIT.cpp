@@ -1849,7 +1849,13 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         JumpList failures;
         Label loop(this);
-        failures.append(atEndOfInput());
+#ifdef JIT_UNICODE_EXPRESSIONS
+        if (term->characterClass->hasOneCharacterSize() && !term->invert() && term->characterClass->hasNonBMPCharacters()) {
+            move(TrustedImm32(1), character);
+            failures.append(checkNotEnoughInput(character));
+        } else
+#endif
+            failures.append(atEndOfInput());
 
         if (term->invert()) {
             readCharacter(m_checkedOffset - term->inputPosition, character);
@@ -1956,11 +1962,13 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         m_backtrackingState.link(this);
 
+#ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
             if (!term->characterClass->hasOneCharacterSize() || term->invert())
                 loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), index);
             loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex(), countRegister);
         }
+#endif
 
         nonGreedyFailures.append(atEndOfInput());
         nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityMaxCount.unsafeGet())));

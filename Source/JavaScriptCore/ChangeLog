@@ -1,3 +1,25 @@
+2019-04-03  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r243642): com.apple.JavaScriptCore crash in JSC::RegExpObject::execInline
+        https://bugs.webkit.org/show_bug.cgi?id=196477
+
+        Reviewed by Keith Miller.
+
+        The problem here is that when we advance the index by 2 for a character class that only
+        has non-BMP characters, we might go past the end of the string.  This can happen for
+        greedy counted character classes that are part of a alternative where there is one
+        character to match after the greedy non-BMP character class.
+
+        The "do we have string left to match" check at the top of the JIT loop for the counted
+        character class checks to see if index is not equal to the string length.  For non-BMP
+        character classes, we need to check to see if there are at least 2 characters left.
+        Therefore we now temporarily add 1 to the current index before comparing.  This checks
+        to see if there are iat least 2 characters left to match, instead of 1.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+
 2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Exception verification crash on operationArrayIndexOfValueInt32OrContiguous

@@ -1,3 +1,17 @@
+2019-04-03  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r243642): com.apple.JavaScriptCore crash in JSC::RegExpObject::execInline
+        https://bugs.webkit.org/show_bug.cgi?id=196477
+
+        Reviewed by Keith Miller.
+
+        Updated the test with a couple more test cases to test a few variants of this bug.
+        Also added a couple of non-greedy counted non-BMP character class tests that don't have
+        the bug just to be sure.
+
+        * js/regexp-unicode-expected.txt:
+        * js/script-tests/regexp-unicode.js:
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Documents can be destroyed before their CSSFontFaceSet is destroyed
