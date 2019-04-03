@@ -1,3 +1,13 @@
+2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Documents can be destroyed before their CSSFontFaceSet is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=195830
+
+        Reviewed by Darin Adler.
+
+        * fast/text/font-face-set-destroy-document-expected.html: Added.
+        * fast/text/font-face-set-destroy-document.html: Added.
+
 2019-04-03  Shawn Roberts  <sroberts@apple.com>
 
         http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.html is a flaky timeout
