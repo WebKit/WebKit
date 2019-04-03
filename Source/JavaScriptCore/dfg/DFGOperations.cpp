@@ -2561,9 +2561,10 @@ int32_t JIT_OPERATION operationArrayIndexOfValueInt32OrContiguous(ExecState* exe
         JSValue value = data[index].get();
         if (!value)
             continue;
-        if (JSValue::strictEqual(exec, searchElement, value))
-            return index;
+        bool isEqual = JSValue::strictEqual(exec, searchElement, value);
         RETURN_IF_EXCEPTION(scope, { });
+        if (isEqual)
+            return index;
     }
     return -1;
 }

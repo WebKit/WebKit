@@ -1,3 +1,14 @@
+2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Exception verification crash on operationArrayIndexOfValueInt32OrContiguous
+        https://bugs.webkit.org/show_bug.cgi?id=196574
+
+        Reviewed by Saam Barati.
+
+        * stress/string-index-of-exception-check.js: Added.
+        (blurType):
+        (1.forEach):
+
 2019-03-29  Tadeu Zagallo  <tzagallo@apple.com>
 
         Assertion failed in JSC::createError
