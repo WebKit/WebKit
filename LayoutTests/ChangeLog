@@ -1,3 +1,16 @@
+2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Remove legacy webkitRequestAnimationFrame time quirk
+        https://bugs.webkit.org/show_bug.cgi?id=196458
+        <rdar://problem/49490207>
+
+        Reviewed by Simon Fraser.
+
+        Rebaseline webkitRequestAnimationFrame layout test now that we log a deprecation
+        warning.
+
+        * fast/animation/request-animation-frame-prefix-expected.txt:
+
 2019-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect and fix layout test http/tests/adClickAttribution/store-ad-click-attribution.html

@@ -44,7 +44,6 @@ public:
 
     int m_id;
     bool m_firedOrCancelled;
-    bool m_useLegacyTimeBase;
 };
 
 } // namespace WebCore

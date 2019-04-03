@@ -1,3 +1,20 @@
+2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Remove legacy webkitRequestAnimationFrame time quirk
+        https://bugs.webkit.org/show_bug.cgi?id=196458
+        <rdar://problem/49490207>
+
+        Reviewed by Simon Fraser.
+
+        Remove legacy webkitRequestAnimationFrame time quirk and log a deprecation
+        warning whenever webkitRequestAnimationFrame is called.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::serviceScriptedAnimations):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::requestAnimationFrame):
+        (WebCore::DOMWindow::webkitRequestAnimationFrame):
+
 2019-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
