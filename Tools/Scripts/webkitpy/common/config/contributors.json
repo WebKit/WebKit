@@ -3600,6 +3600,12 @@
       ],
       "status" : "contributor"
    },
+   "Kocsen Chung" : {
+      "emails" : [
+         "kocsen_chung@apple.com"
+      ],
+      "status" : "committer"
+   },
    "Koji Hara" : {
       "emails" : [
          "kojih@chromium.org"
