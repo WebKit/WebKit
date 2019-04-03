@@ -1630,6 +1630,14 @@ ApplePayRemoteUIEnabled:
   humanReadableName: "Apple Pay Remote UI"
   type: bool
 
+UseModernCompatibilityModeByDefault:
+  category: internal
+  defaultValue: false
+  humanReadableName: "Use Modern Compatibility Mode"
+  humanReadableDescription: "Use modern compatibility mode everywhere by default"
+  webcoreBinding: none
+  type: bool
+
 # Deprecated
 
 ICECandidateFilteringEnabled:
