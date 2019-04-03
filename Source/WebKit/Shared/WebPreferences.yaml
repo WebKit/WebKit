@@ -1060,6 +1060,14 @@ DisableScreenSizeOverride:
   category: debug
   condition: PLATFORM(IOS_FAMILY)
 
+UseModernCompatibilityModeByDefault:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Use Modern Compatibility Mode"
+  humanReadableDescription: "Use modern compatibility mode by default"
+  webcoreBinding: none
+  category: debug
+
 SimpleLineLayoutDebugBordersEnabled:
   type: bool
   defaultValue: false
@@ -1628,14 +1636,6 @@ ApplePayRemoteUIEnabled:
   defaultValue: true
   humanReadableDescription: "Enable Apple Pay Remote UI"
   humanReadableName: "Apple Pay Remote UI"
-  type: bool
-
-UseModernCompatibilityModeByDefault:
-  category: internal
-  defaultValue: false
-  humanReadableName: "Use Modern Compatibility Mode"
-  humanReadableDescription: "Use modern compatibility mode everywhere by default"
-  webcoreBinding: none
   type: bool
 
 # Deprecated

@@ -1,3 +1,16 @@
+2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a WebKit internal feature flag to always enable modern compatibility mode by default
+        https://bugs.webkit.org/show_bug.cgi?id=196526
+        <rdar://problem/49532923>
+
+        Reviewed by Tim Horton.
+
+        Change UseModernCompatibilityModeByDefault from an internal preference to a debug preference, so that it may be
+        enabled for all apps on the system.
+
+        * Shared/WebPreferences.yaml:
+
 2019-04-03  Alex Christensen  <achristensen@webkit.org>
 
         Fix internal build after r243829
