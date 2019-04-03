@@ -1,5 +1,17 @@
 2019-04-03  Shawn Roberts  <sroberts@apple.com>
 
+        The following layout tests are flaky failures
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute-width-1000px.html
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay.html
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/error-codes/error.html
+        https://bugs.webkit.org/show_bug.cgi?id=195466
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations: Updating test expectations for flaky failures
+
+2019-04-03  Shawn Roberts  <sroberts@apple.com>
+
         Layout Test http/wpt/resource-timing/rt-resources-per-worker.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=180260
 
