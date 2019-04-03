@@ -532,10 +532,21 @@ private:
     NetworkHTTPSUpgradeChecker m_networkHTTPSUpgradeChecker;
 #endif
 
-    struct StorageQuotaManagers {
-        uint64_t defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
-        uint64_t defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
-        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> managersPerOrigin;
+    class StorageQuotaManagers {
+    public:
+        uint64_t defaultQuota(const WebCore::ClientOrigin& origin) const { return origin.topOrigin == origin.clientOrigin ? m_defaultQuota : m_defaultThirdPartyQuota; }
+        void setDefaultQuotas(uint64_t defaultQuota, uint64_t defaultThirdPartyQuota)
+        {
+            m_defaultQuota = defaultQuota;
+            m_defaultThirdPartyQuota = defaultThirdPartyQuota;
+        }
+
+        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>>& managersPerOrigin() { return m_managersPerOrigin; }
+
+    private:
+        uint64_t m_defaultQuota { WebCore::StorageQuotaManager::defaultQuota() };
+        uint64_t m_defaultThirdPartyQuota { WebCore::StorageQuotaManager::defaultThirdPartyQuota() };
+        HashMap<WebCore::ClientOrigin, std::unique_ptr<WebCore::StorageQuotaManager>> m_managersPerOrigin;
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };

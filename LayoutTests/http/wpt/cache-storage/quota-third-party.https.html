@@ -24,6 +24,14 @@ promise_test(async () => {
     assert_equals(await load_iframe("https://127.0.0.1:9443/WebKit/cache-storage/resources/quota-third-party-iframe.html"), "FAIL");
 }, "cross origin iframe has reduced quota");
 
+promise_test(async () => {
+    // Clear DOMCaches to reset quotas.
+    if (window.testRunner)
+        testRunner.clearDOMCaches();
+
+    assert_equals(await load_iframe("https://127.0.0.1:9443/WebKit/cache-storage/resources/quota-third-party-iframe.html"), "FAIL");
+}, "cross origin iframe has reduced quota after resetting quota");
+
     </script>
 </body>
 </html>

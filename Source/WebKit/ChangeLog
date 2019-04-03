@@ -1,3 +1,26 @@
+2019-04-03  Youenn Fablet  <youenn@apple.com>
+
+        Resetting quota should take into account third party origins
+        https://bugs.webkit.org/show_bug.cgi?id=196462
+
+        Reviewed by Geoffrey Garen.
+
+        When clearing the storage quota, we were resetting it to the default value
+        without taking care of whether third party or not.
+        Updated the code to ensure that the default quota is computed based on the origin.
+
+        Updated existing test to cover this case.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::clearStorageQuota):
+        (WebKit::NetworkProcess::setCacheStorageParameters):
+        (WebKit::NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting):
+        (WebKit::NetworkProcess::storageQuotaManager):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::StorageQuotaManagers::defaultQuota const):
+        (WebKit::NetworkProcess::StorageQuotaManagers::setDefaultQuotas):
+        (WebKit::NetworkProcess::StorageQuotaManagers::managersPerOrigin):
+
 2019-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Get rid of HTMLInputElement::setEditingValue

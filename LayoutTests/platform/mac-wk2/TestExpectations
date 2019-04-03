@@ -931,8 +931,6 @@ webkit.org/b/195719 fast/events/wheelevent-in-text-node.html [ Pass Timeout ]
 
 webkit.org/b/196307 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Pass Failure ]
 
-webkit.org/b/196358 http/wpt/cache-storage/quota-third-party.https.html [ Pass Failure ]
-
 webkit.org/b/196376 storage/domstorage/localstorage/private-browsing-affects-storage.html [ Pass Failure ]
 
 webkit.org/b/194780 http/wpt/webauthn/public-key-credential-create-success-hid.https.html [ Pass Failure ]

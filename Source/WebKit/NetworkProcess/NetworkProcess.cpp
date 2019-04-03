@@ -1485,8 +1485,9 @@ void NetworkProcess::clearStorageQuota(PAL::SessionID sessionID)
     if (iterator == m_storageQuotaManagers.end())
         return;
 
-    for (auto& manager : iterator->value.managersPerOrigin.values())
-        manager->resetQuota(iterator->value.defaultQuota);
+    auto& managers = iterator->value;
+    for (auto& manager : managers.managersPerOrigin())
+        manager.value->resetQuota(managers.defaultQuota(manager.key));
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2033,9 +2034,7 @@ void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, uint64_
     auto& managers =  m_storageQuotaManagers.ensure(sessionID, [] {
         return StorageQuotaManagers { };
     }).iterator->value;
-    managers.defaultQuota = quota;
-    // FIXME: Pass default third party quota as a parameter.
-    managers.defaultThirdPartyQuota = quota / 10;
+    managers.setDefaultQuotas(quota, quota / 10);
 
     auto iterator = m_cacheStorageParametersCallbacks.find(sessionID);
     if (iterator == m_cacheStorageParametersCallbacks.end())
@@ -2232,7 +2231,7 @@ void NetworkProcess::setIDBPerOriginQuota(uint64_t quota)
 void NetworkProcess::updateQuotaBasedOnSpaceUsageForTesting(PAL::SessionID sessionID, const ClientOrigin& origin)
 {
     auto& manager = storageQuotaManager(sessionID, origin);
-    manager.resetQuota(m_storageQuotaManagers.find(sessionID)->value.defaultQuota);
+    manager.resetQuota(m_storageQuotaManagers.find(sessionID)->value.defaultQuota(origin));
     manager.updateQuotaBasedOnSpaceUsage();
 }
 
@@ -2443,9 +2442,8 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
     auto& storageQuotaManagers = m_storageQuotaManagers.ensure(sessionID, [] {
         return StorageQuotaManagers { };
     }).iterator->value;
-    return *storageQuotaManagers.managersPerOrigin.ensure(origin, [this, &storageQuotaManagers, sessionID, &origin] {
-        auto quota = origin.topOrigin == origin.clientOrigin ? storageQuotaManagers.defaultQuota : storageQuotaManagers.defaultThirdPartyQuota;
-        auto manager = std::make_unique<StorageQuotaManager>(quota, [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
+    return *storageQuotaManagers.managersPerOrigin().ensure(origin, [this, &storageQuotaManagers, sessionID, &origin] {
+        auto manager = std::make_unique<StorageQuotaManager>(storageQuotaManagers.defaultQuota(origin), [this, sessionID, origin](uint64_t quota, uint64_t currentSpace, uint64_t spaceIncrease, auto callback) {
             this->requestStorageSpace(sessionID, origin, quota, currentSpace, spaceIncrease, WTFMove(callback));
         });
         initializeQuotaUsers(*manager, sessionID, origin);

@@ -1,3 +1,14 @@
+2019-04-03  Youenn Fablet  <youenn@apple.com>
+
+        Resetting quota should take into account third party origins
+        https://bugs.webkit.org/show_bug.cgi?id=196462
+
+        Reviewed by Geoffrey Garen.
+
+        * http/wpt/cache-storage/quota-third-party.https-expected.txt:
+        * http/wpt/cache-storage/quota-third-party.https.html:
+        * platform/mac-wk2/TestExpectations:
+
 2019-04-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed gardening, update test expectations
