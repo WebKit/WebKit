@@ -1,3 +1,15 @@
+2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+        Re-sync web-platform-tests/domparsing from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=196544
+
+        Reviewed by Alex Christensen.
+
+        Re-sync web-platform-tests/domparsing from upstream 3bfdeb8976fc5.
+
+        * web-platform-tests/domparsing/*: Updated
+        * web-platform-tests/interfaces/DOM-Parsing.idl: Added.
+
 2019-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
