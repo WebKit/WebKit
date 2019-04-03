@@ -35,7 +35,6 @@ public:
     explicit HTMLParserOptions(Document&);
 
     bool scriptEnabled;
-    bool pluginsEnabled;
     bool usePreHTML5ParserQuirks;
     unsigned maximumDOMTreeDepth;
 };

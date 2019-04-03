@@ -8,5 +8,6 @@ PASS URL value
 PASS baseURI value 
 PASS Location value 
 PASS DOMParser parses HTML tag soup with no problems 
+PASS DOMParser should handle the content of <noembed> as raw text 
 PASS DOMParser throws on an invalid enum value 
 

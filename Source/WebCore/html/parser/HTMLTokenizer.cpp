@@ -1416,7 +1416,7 @@ void HTMLTokenizer::updateStateFor(const AtomicString& tagName)
     else if (tagName == styleTag
         || tagName == iframeTag
         || tagName == xmpTag
-        || (tagName == noembedTag && m_options.pluginsEnabled)
+        || (tagName == noembedTag)
         || tagName == noframesTag
         || (tagName == noscriptTag && m_options.scriptEnabled))
         m_state = RAWTEXTState;

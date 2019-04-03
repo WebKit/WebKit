@@ -787,7 +787,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken&& token)
         processGenericRawTextStartTag(WTFMove(token));
         return;
     }
-    if (token.name() == noembedTag && m_options.pluginsEnabled) {
+    if (token.name() == noembedTag) {
         processGenericRawTextStartTag(WTFMove(token));
         return;
     }

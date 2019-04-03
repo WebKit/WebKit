@@ -1,5 +1,19 @@
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
+        HTML Parser: Remove conditional parsing of <noembed> content
+        https://bugs.webkit.org/show_bug.cgi?id=196514
+
+        Reviewed by Geoffrey Garen.
+
+        Resync WPT after https://github.com/web-platform-tests/wpt/pull/15471 to gain
+        test coverage. Both Gecko and Blink are passing the new check, only WebKit was
+        failing.
+
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html-expected.txt:
+        * web-platform-tests/domparsing/DOMParser-parseFromString-html.html:
+
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
         XMLHttpRequestUpload's loadstart event not correct initialized
         https://bugs.webkit.org/show_bug.cgi?id=196174
         <rdar://problem/49191412>

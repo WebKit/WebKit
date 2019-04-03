@@ -1,5 +1,30 @@
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
+        HTML Parser: Remove conditional parsing of <noembed> content
+        https://bugs.webkit.org/show_bug.cgi?id=196514
+
+        Reviewed by Geoffrey Garen.
+
+        Our HTML Parser has raw text handling for <noembed> content only if plugins are runnable.
+        However, the HTML specification doesn't ask such behavior [1], and it doesn't match to
+        our HTML serializer. We should always handle it as raw text.
+
+        Blink already made this change in https://chromium-review.googlesource.com/c/1477556.
+
+        [1] https://html.spec.whatwg.org/multipage/parsing.html#parsing-html-fragments:noembed
+
+        No new tests, updated existing test.
+
+        * html/parser/HTMLParserOptions.cpp:
+        (WebCore::HTMLParserOptions::HTMLParserOptions):
+        * html/parser/HTMLParserOptions.h:
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::updateStateFor):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+
+2019-04-02  Chris Dumez  <cdumez@apple.com>
+
         XMLHttpRequestUpload's loadstart event not correct initialized
         https://bugs.webkit.org/show_bug.cgi?id=196174
         <rdar://problem/49191412>
