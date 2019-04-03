@@ -122,7 +122,7 @@ function installDependenciesWithApt {
         libproxy-dev \
         libpsl-dev \
         libpulse-dev \
-        libsrtp0-dev \
+        libsrtp2-dev \
         libtheora-dev \
         libtool-bin \
         libvorbis-dev \
