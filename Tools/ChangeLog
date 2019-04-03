@@ -1,3 +1,12 @@
+2019-04-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [ews] Clean out ~/Library/Logs/CoreSimulator/ on reboot
+        https://bugs.webkit.org/show_bug.cgi?id=196540
+
+        Reviewed by Aakash Jain.
+
+        * EWSTools/start-queue-mac.sh: Remove CoreSimulator logs.
+
 2019-04-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add plumbing for a compatibility mode preference in WebKit

@@ -66,6 +66,7 @@ fi
 /bin/rm -rf ~/Library/Developer/CoreSimulator/Devices/*
 /usr/bin/sudo /usr/bin/killall -9 com.apple.CoreSimulator.CoreSimulatorServer
 /usr/bin/xcrun simctl delete unavailable
+/bin/rm -rf ~/Library/Logs/CoreSimulator/*
 
 cd $WEBKIT_HOME
 
