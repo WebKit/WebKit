@@ -27,7 +27,11 @@
 
 #if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
+
+#import <AppKit/NSMenu_Private.h>
+
+#elif USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
 #import <AppKit/NSMenu_Private.h>
