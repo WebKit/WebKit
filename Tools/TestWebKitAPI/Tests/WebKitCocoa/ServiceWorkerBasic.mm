@@ -1272,6 +1272,81 @@ TEST(ServiceWorkers, HasServiceWorkerRegistrationBit)
     done = false;
 }
 
+static const char* readCacheBytes = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+window.caches.keys().then(keys => {
+    log(keys.length && keys[0] === "test" ? "PASS" : "FAIL");
+}, () => {
+    log("FAIL");
+});
+
+</script>
+)SWRESOURCE";
+
+static const char* writeCacheBytes = R"SWRESOURCE(
+<script>
+
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+window.caches.open("test").then(() => {
+    log("PASS");
+}, () => {
+    log("FAIL");
+});
+
+</script>
+)SWRESOURCE";
+
+@interface SWMessageHandlerForCacheStorage : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWMessageHandlerForCacheStorage
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_WK_STREQ(@"PASS", [message body]);
+    done = true;
+}
+@end
+
+TEST(ServiceWorkers, CacheStorageInPrivateBrowsingMode)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto messageHandler = adoptNS([[SWMessageHandlerForCacheStorage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/readCache.html", ResourceInfo { @"text/html", readCacheBytes });
+    handler->resources.set("sw://host/writeCache.html", ResourceInfo { @"text/html", writeCacheBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    [configuration.get().processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/writeCache.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/readCache.html"]];
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
 static const char* regularPageGrabbingCacheStorageDirectory = R"SWRESOURCE(
 <script>
 async function getResult()
