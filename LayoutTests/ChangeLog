@@ -1,5 +1,32 @@
 2019-04-02  Kocsen Chung  <kocsen_chung@apple.com>
 
+        Cherry-pick r240492. rdar://problem/49539128
+
+    webkitpy: Implement device type specific expected results (Gardening)
+    https://bugs.webkit.org/show_bug.cgi?id=192162
+    <rdar://problem/46345449>
+    
+    Unreviewed test gardening.
+    
+    * platform/ios/TestExpectations: Remove non-existant directories.
+    * platform/mac/TestExpectations: Ditto.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@240492 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-01-25  Jonathan Bedard  <jbedard@apple.com>
+
+            webkitpy: Implement device type specific expected results (Gardening)
+            https://bugs.webkit.org/show_bug.cgi?id=192162
+            <rdar://problem/46345449>
+
+            Unreviewed test gardening.
+
+            * platform/ios/TestExpectations: Remove non-existant directories.
+            * platform/mac/TestExpectations: Ditto.
+
+2019-04-02  Kocsen Chung  <kocsen_chung@apple.com>
+
         Cherry-pick r240157. rdar://problem/49539128
 
     webkitpy: Implement device type specific expected results (Follow-up fix)
