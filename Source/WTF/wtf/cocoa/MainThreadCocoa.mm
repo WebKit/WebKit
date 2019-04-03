@@ -140,6 +140,20 @@ void scheduleDispatchFunctionsOnMainThread()
     [staticMainThreadCaller performSelector:@selector(call) onThread:mainThreadNSThread withObject:nil waitUntilDone:NO];
 }
 
+void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())
+{
+#if USE(WEB_THREAD)
+    if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            WebCoreWebThreadLock();
+            block();
+        });
+        return;
+    }
+#endif
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
 void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())
 {
 #if USE(WEB_THREAD)

@@ -29,6 +29,7 @@
 extern "C" {
 #endif
 
+extern void (*WebCoreWebThreadLock)(void);
 extern bool (*WebCoreWebThreadIsLockedOrDisabled)(void);
 extern bool (*WebCoreWebThreadIsEnabled)(void);
 extern void (*WebCoreWebThreadRun)(void (^block)());

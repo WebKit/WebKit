@@ -46,6 +46,7 @@ WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&);
 WTF_EXPORT_PRIVATE void callOnMainThreadAndWait(Function<void()>&&);
 
 #if PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)());
 WTF_EXPORT_PRIVATE void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)());
 #endif
 
@@ -108,6 +109,7 @@ using WTF::isWebThread;
 using WTF::mayBeGCThread;
 using WTF::setMainThreadCallbacksPaused;
 #if PLATFORM(COCOA)
+using WTF::dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded;
 using WTF::callOnWebThreadOrDispatchAsyncOnMainThread;
 #endif
 #if USE(WEB_THREAD)

@@ -1,3 +1,17 @@
+2019-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remote Inspector indicate callback should always happen on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=196513
+        <rdar://problem/49498284>
+
+        Reviewed by Devin Rousso.
+
+        * wtf/MainThread.h:
+        * wtf/cocoa/MainThreadCocoa.mm:
+        (WTF::dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded):
+        * wtf/ios/WebCoreThread.cpp:
+        * wtf/ios/WebCoreThread.h:
+
 2019-04-02  Keith Rollin  <krollin@apple.com>
 
         Inhibit CFNetwork logging in private sessions

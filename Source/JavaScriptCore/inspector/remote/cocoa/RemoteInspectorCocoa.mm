@@ -592,7 +592,7 @@ void RemoteInspector::receivedIndicateMessage(NSDictionary *userInfo)
     if (!targetIdentifier)
         return;
 
-    callOnWebThreadOrDispatchAsyncOnMainThread(^{
+    dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(^{
         RemoteControllableTarget* target = nullptr;
         {
             LockHolder lock(m_mutex);

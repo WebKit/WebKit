@@ -44,6 +44,7 @@ void InitWebCoreThreadSystemInterface(void)
     if (didInit)
         return;
 
+    INIT(WebThreadLock);
     INIT(WebThreadIsLockedOrDisabled);
     INIT(WebThreadIsEnabled);
     INIT(WebThreadRun);

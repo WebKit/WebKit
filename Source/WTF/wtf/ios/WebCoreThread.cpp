@@ -27,6 +27,7 @@
 #include <wtf/ios/WebCoreThread.h>
 
 #if USE(WEB_THREAD)
+WTF_EXPORT_PRIVATE void (*WebCoreWebThreadLock)(void);
 WTF_EXPORT_PRIVATE bool (*WebCoreWebThreadIsLockedOrDisabled)(void);
 WTF_EXPORT_PRIVATE bool (*WebCoreWebThreadIsEnabled)(void);
 WTF_EXPORT_PRIVATE void (*WebCoreWebThreadRun)(void (^block)());

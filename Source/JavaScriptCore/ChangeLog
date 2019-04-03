@@ -1,3 +1,16 @@
+2019-04-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remote Inspector indicate callback should always happen on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=196513
+        <rdar://problem/49498284>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::receivedIndicateMessage):
+        When we have a WebThread, don't just run on the WebThread,
+        run on the MainThread with the WebThreadLock.
+
 2019-04-02  Michael Saboff  <msaboff@apple.com>
 
         Crash in Options::setOptions() using --configFile option and libgmalloc
