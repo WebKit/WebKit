@@ -1,3 +1,16 @@
+2019-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
+        https://bugs.webkit.org/show_bug.cgi?id=196128
+
+        Reviewed by Geoffrey Garen.
+
+        Updated test expectations to PASS.
+
+        * web-platform-tests/IndexedDB/nested-cloning-large-expected.txt:
+        * web-platform-tests/IndexedDB/nested-cloning-large-multiple-expected.txt:
+        * web-platform-tests/IndexedDB/nested-cloning-small-expected.txt:
+
 2019-04-02  Chris Dumez  <cdumez@apple.com>
 
         HTML Parser: Remove conditional parsing of <noembed> content

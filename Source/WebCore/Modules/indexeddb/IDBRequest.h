@@ -31,6 +31,8 @@
 #include "ExceptionOr.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBError.h"
+#include "IDBGetAllResult.h"
+#include "IDBGetResult.h"
 #include "IDBKeyData.h"
 #include "IDBResourceIdentifier.h"
 #include "IDBValue.h"
@@ -75,7 +77,7 @@ public:
 
     virtual ~IDBRequest();
 
-    using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, IDBKeyData, Vector<IDBKeyData>, IDBValue, Vector<IDBValue>, uint64_t, NullResultType>;
+    using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, IDBKeyData, Vector<IDBKeyData>, IDBGetResult, IDBGetAllResult, uint64_t, NullResultType>;
     ExceptionOr<Result> result() const;
     JSValueInWrappedObject& resultWrapper() { return m_resultWrapper; }
     JSValueInWrappedObject& cursorWrapper() { return m_cursorWrapper; }
@@ -106,9 +108,9 @@ public:
 
     void setResult(const IDBKeyData&);
     void setResult(const Vector<IDBKeyData>&);
-    void setResult(const Vector<IDBValue>&);
+    void setResultToStructuredClone(const IDBGetResult&);
+    void setResult(const IDBGetAllResult&);
     void setResult(uint64_t);
-    void setResultToStructuredClone(const IDBValue&);
     void setResultToUndefined();
 
     void willIterateCursor(IDBCursor&);

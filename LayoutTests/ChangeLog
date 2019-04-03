@@ -1,3 +1,19 @@
+2019-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
+        https://bugs.webkit.org/show_bug.cgi?id=196128
+
+        Reviewed by Geoffrey Garen.
+
+        * TestExpectations:
+        * storage/indexeddb/modern/objectstore-autoincrement-types-expected.txt: Added.
+        * storage/indexeddb/modern/objectstore-autoincrement-types.html: Added.
+        * storage/indexeddb/modern/resources/objectstore-autoincrement-types.js: Added.
+        (next):
+        (prepareDatabase.event.target.onsuccess):
+        (prepareDatabase):
+        (testSteps):
+
 2019-04-03  Youenn Fablet  <youenn@apple.com>
 
         Resetting quota should take into account third party origins

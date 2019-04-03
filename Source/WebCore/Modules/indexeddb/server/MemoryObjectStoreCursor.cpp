@@ -194,7 +194,7 @@ void MemoryObjectStoreCursor::currentData(IDBGetResult& data)
         data = { m_currentPositionKey, m_currentPositionKey };
     else {
         IDBValue value = { m_objectStore.valueForKeyRange(m_currentPositionKey), { }, { }, { } };
-        data = { m_currentPositionKey, m_currentPositionKey, WTFMove(value) };
+        data = { m_currentPositionKey, m_currentPositionKey, WTFMove(value), m_objectStore.info().keyPath() };
     }
 }
 

@@ -57,10 +57,21 @@ JSC::JSValue JSIDBRequest::result(JSC::ExecState& state) const
             return toJS<IDLIDBKeyData>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), keyData);
         }, [&state] (Vector<IDBKeyData> keyDatas) {
             return toJS<IDLSequence<IDLIDBKeyData>>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), keyDatas);
-        }, [&state] (IDBValue value) {
-            return toJS<IDLIDBValue>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), value);
-        }, [&state] (Vector<IDBValue> values) {
-            return toJS<IDLSequence<IDLIDBValue>>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), values);
+        }, [&state] (IDBGetResult getResult) {
+            auto result = deserializeIDBValueWithKeyInjection(state, getResult.value(), getResult.keyData(), getResult.keyPath());
+            return result ? result.value() : jsNull();
+        }, [&state] (IDBGetAllResult getAllResult) {
+            auto& keys = getAllResult.keys();
+            auto& values = getAllResult.values();
+            auto& keyPath = getAllResult.keyPath();
+            Vector<JSC::JSValue> results;
+            for (unsigned i = 0; i < values.size(); i ++) {
+                auto result = deserializeIDBValueWithKeyInjection(state, values[i], keys[i], keyPath);
+                if (!result)
+                    return jsNull();
+                results.append(result.value());
+            }
+            return JSValue(JSC::constructArray(&state, nullptr, state.lexicalGlobalObject(), results.data(), results.size()));
         }, [] (uint64_t number) {
             return toJS<IDLUnsignedLongLong>(number);
         }, [] (IDBRequest::NullResultType other) {

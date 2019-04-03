@@ -233,6 +233,12 @@ const IDBGetResult& IDBResultData::getResult() const
     return *m_getResult;
 }
 
+IDBGetResult& IDBResultData::getResultRef()
+{
+    RELEASE_ASSERT(m_getResult);
+    return *m_getResult;
+}
+
 const IDBGetAllResult& IDBResultData::getAllResult() const
 {
     RELEASE_ASSERT(m_getAllResult);

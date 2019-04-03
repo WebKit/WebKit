@@ -79,7 +79,7 @@ public:
 
     void objectStoreRecordsChanged();
 
-    void currentData(IDBGetResult&);
+    void currentData(IDBGetResult&, const Optional<IDBKeyPath>&);
 
 private:
     bool establishStatement();

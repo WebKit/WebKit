@@ -1,3 +1,112 @@
+2019-04-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
+        https://bugs.webkit.org/show_bug.cgi?id=196128
+
+        Reviewed by Geoffrey Garen.
+
+        If a key is auto-generated, it should become a property of the value object. Network process would perform the 
+        key injection by deserializing IDBValue into script value, setting the property, serializing the result and 
+        storing it in a database record. But network process does not have a JSDOMGlobalObject, so it would fail to 
+        deserialize types including Blob and File.
+
+        To solve this issue, we move the key injection to web process and let network process store the original value 
+        it gets. In this case, when web process asks for some value, network process should return key, value and key 
+        path so that web process can decide whether it should perform a key injection before returning the result. Note
+        that the auto-generated key would always be stored as the key in a ObjectStore record.
+
+        Test: storage/indexeddb/modern/objectstore-autoincrement-types.html
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setGetResult):
+        * Modules/indexeddb/IDBCursor.h:
+        (WebCore::IDBCursor::primaryKeyPath):
+        * Modules/indexeddb/IDBGetAllResult.cpp:
+        (WebCore::IDBGetAllResult::isolatedCopy):
+        (WebCore::IDBGetAllResult::addKey):
+        (WebCore::IDBGetAllResult::addValue):
+        (WebCore::IDBGetAllResult::keys const):
+        (WebCore::IDBGetAllResult::values const):
+        (WebCore::IDBGetAllResult::allBlobFilePaths const):
+        (WebCore::isolatedCopyOfVariant): Deleted.
+
+        * Modules/indexeddb/IDBGetAllResult.h: Introduce an IDBKeyPath parameter. Also replace Variant with two Vectors,
+        because we only needed to store either key or value before, and now the stored value could be incomplete.
+        (WebCore::IDBGetAllResult::IDBGetAllResult):
+        (WebCore::IDBGetAllResult::keyPath const):
+        (WebCore::IDBGetAllResult::encode const):
+        (WebCore::IDBGetAllResult::decode):
+
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::setValue):
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::IDBGetResult):
+        (WebCore::IDBGetResult::keyPath const):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResult):
+        (WebCore::IDBRequest::setResultToStructuredClone):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::didGetAllRecordsOnServer):
+        (WebCore::IDBTransaction::didGetRecordOnServer):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::getResultForKeyRange const):
+        (WebCore::IDBServer::MemoryIndex::getAllRecords const):
+        * Modules/indexeddb/server/MemoryIndexCursor.cpp:
+        (WebCore::IDBServer::MemoryIndexCursor::currentData):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        (WebCore::IDBServer::MemoryObjectStore::getAllRecords const):
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::currentData):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::cachedStatementForGetAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllIndexRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::currentData):
+        * Modules/indexeddb/server/SQLiteIDBCursor.h:
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd): Remove the key injection from network process. 
+        UniqueIDBDatabase stores any value it gets from IDBClient.
+
+        * Modules/indexeddb/shared/IDBResultData.cpp:
+        (WebCore::IDBResultData::getResultRef):
+        * Modules/indexeddb/shared/IDBResultData.h:
+
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::injectIDBKeyIntoScriptValue): If property is read-only, set would fail and injectKeyIntoResult would
+        return null, but we expect it to return result as long as the property value is the same as target. Therefore, 
+        we can add an early return here.
+        (WebCore::createKeyPathArray):
+
+        (WebCore::generateIndexKeyForValue): We used to generate IndexKey from value stored in database but now the
+        value gets stored does not include auto-generated key, as we remove the key injection from network process. In 
+        this case if the IDBIndex has the same key path as the auto-generated key, IndexKey would be failed to create
+        for it cannot extract auto-generated key from value. Since the auto-generated key would always be the key in 
+        database record, we could use value of that key when we find a match in key path.
+
+        (WebCore::deserializeIDBValueWithKeyInjection): If the key path in the result is single entry, the key is 
+        probably auto-generated, so we could inject the result key into the result value unconditionally.
+
+        * bindings/js/IDBBindingUtilities.h:
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        (WebCore::JSIDBCursorWithValue::value const):
+        * bindings/js/JSIDBRequestCustom.cpp:
+        (WebCore::JSIDBRequest::result const):
+
 2019-04-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Get rid of HTMLInputElement::setEditingValue

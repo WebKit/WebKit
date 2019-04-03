@@ -391,7 +391,7 @@ void IDBRequest::setResult(const Vector<IDBKeyData>& keyDatas)
     m_resultWrapper = { };
 }
 
-void IDBRequest::setResult(const Vector<IDBValue>& values)
+void IDBRequest::setResult(const IDBGetAllResult& result)
 {
     ASSERT(&originThread() == &Thread::current());
 
@@ -401,7 +401,7 @@ void IDBRequest::setResult(const Vector<IDBValue>& values)
 
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = values;
+    m_result = result;
     m_resultWrapper = { };
 }
 
@@ -419,7 +419,7 @@ void IDBRequest::setResult(uint64_t number)
     m_resultWrapper = { };
 }
 
-void IDBRequest::setResultToStructuredClone(const IDBValue& value)
+void IDBRequest::setResultToStructuredClone(const IDBGetResult& result)
 {
     ASSERT(&originThread() == &Thread::current());
 
@@ -431,7 +431,7 @@ void IDBRequest::setResultToStructuredClone(const IDBValue& value)
 
     VM& vm = context->vm();
     JSLockHolder lock(vm);
-    m_result = value;
+    m_result = result;
     m_resultWrapper = { };
 }
 
