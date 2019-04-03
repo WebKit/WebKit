@@ -25,11 +25,11 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WKFormPeripheral.h"
+#import "WKFormPeripheralBase.h"
 
 @class WKContentView;
 
-@interface WKFormInputControl : NSObject<WKFormPeripheral>
+@interface WKFormInputControl : WKFormPeripheralBase
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 

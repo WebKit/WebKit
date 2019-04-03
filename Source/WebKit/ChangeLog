@@ -1,3 +1,79 @@
+2019-04-03  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should be able to dismiss picker or popover using the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=196272
+        <rdar://problem/48943170>
+
+        Reviewed by Wenson Hsieh.
+
+        Intercept key events and route them to the current input peripheral (if we have one). Add a base key event handler
+        for all form peripherals that dismisses the accessory when either the Escape key is pressed or Command + . is pressed.
+        I will fix this issue for the file upload picker/popover in <https://bugs.webkit.org/show_bug.cgi?id=196287>.
+
+        * SourcesCocoa.txt: Add file WKFormPeripheralBase.mm.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView endEditingAndUpdateFocusAppearanceWithReason]): Added.
+        (-[WKContentView resignFirstResponderForWebView]): Write in terms of -endEditingAndUpdateFocusAppearance.
+        (-[WKContentView inputView]): Code style nit while I am here; add an empty line to demarcate the "crazy"
+        code that the FIXME is referring to and should ideally be removed from the code that is sane to always do.
+        (-[WKContentView accessoryDone]): When the accessory is dismissed via the Done button (iPhone) or by pressing
+        Escape or Command + . using a hardware keyboard (iPhone or iPad) then end the current editing session, but
+        do not resign first responder status as the page activation state should not be changed.
+        (-[WKContentView _handleKeyUIEvent:]): Bring back this code when building with USE(UIKIT_KEYBOARD_ADDITIONS)
+        as we need to route key events to the input peripheral (if we have one). If the input peripheral handles it
+        then we're done: no need to let UIKit or WebKit handle it when building with USE(UIKIT_KEYBOARD_ADDITIONS),
+        respectively. If the input peripheral does not handle it then do what we do now.
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        If the element is re-focused and we have an input peripheral then we want to ensure we are first responder,
+        reveal the focused element, update the accessory and tell the peripheral that editing has begun (again).
+        For all other element re-focusing where we don't have a peripheral do what we do now. Also, update _isEditable
+        to reflect whether the focused element contains selectable text. This is what UIKit wants to know when it queries
+        -isEditable. Now that we no longer blur the focused element on iPad when the popover is dismissed and keep the
+        peripheral until there is a focus change we need to ensure that we give the correct answer to UIKit on view
+        editability. Otherwise, UIKit thinks it needs to update the text selection state when a popup button is tapped
+        again (as part of its gesture recognizer logic) and this causes an assertion failure in UIKit after it calls back
+        into us to ask for selection details, which we correctly respond with the equivalent of "we have none" and is
+        not the answer UIKit expects since we told it we are editable. (Currently we manage to get away with telling UIKit
+        we are always editable because it is not possible to perform a selection operation when we have a popover open.
+        Closing the popover blurs the element, setting -isEditable to NO and deallocates the peripheral avoiding this issue).
+        * UIProcess/ios/forms/WKFormColorControl.h:
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPopover controlEndEditing]): Dismiss the popover.
+        (-[WKFormColorControl initWithView:]): Modified to call base class initializer.
+        (-[WKFormColorControl assistantView]): Deleted.
+        (-[WKFormColorControl beginEditing]): Deleted.
+        (-[WKFormColorControl endEditing]): Deleted.
+        * UIProcess/ios/forms/WKFormInputControl.h:
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKFormInputControl initWithView:]): Modified to call base class initializer.
+        (-[WKFormInputControl dateTimePickerCalendarType]): Write in terms of self.control.
+        (-[WKDateTimePopover controlEndEditing]): Dismiss the popover and tell the controller that editing ended.
+        (-[WKFormInputControl beginEditing]): Deleted.
+        (-[WKFormInputControl endEditing]): Deleted.
+        (-[WKFormInputControl assistantView]): Deleted.
+        * UIProcess/ios/forms/WKFormPeripheral.h:
+        * UIProcess/ios/forms/WKFormPeripheralBase.h: Added.
+        * UIProcess/ios/forms/WKFormPeripheralBase.mm: Added.
+        (-[WKFormPeripheralBase initWithView:control:]): Take ownership of the passed WKFormControl.
+        (-[WKFormPeripheralBase beginEditing]): Turn around and tell the control.
+        (-[WKFormPeripheralBase endEditing]): Ditto.
+        (-[WKFormPeripheralBase assistantView]): Ditto.
+        (-[WKFormPeripheralBase control]): Return the control.
+        (-[WKFormPeripheralBase handleKeyEvent:]): Dismiss the accessory (in the same way we dismiss when the Done
+        button is pressed on iPhone) on keydown of the Escape key or when we receive a UIKeyInputEscape event (for
+        Command + .).
+        * UIProcess/ios/forms/WKFormSelectControl.h:
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]): Modified to call base class initializer.
+        (-[WKFormSelectControl selectRow:inComponent:extendingSelection:]): Write in terms of self.control.
+        (-[WKFormSelectControl selectFormPopoverTitle]): Ditto.
+        (-[WKFormSelectControl assistantView]): Deleted.
+        (-[WKFormSelectControl beginEditing]): Deleted.
+        (-[WKFormSelectControl endEditing]): Deleted.
+        * UIProcess/ios/forms/WKFormSelectPopover.mm:
+        (-[WKSelectPopover controlEndEditing]): Dismiss the popover.
+        * WebKit.xcodeproj/project.pbxproj: Add files WKFormPeripheralBase.{h, mm}.
+
 2019-04-03  Youenn Fablet  <youenn@apple.com>
 
         Resetting quota should take into account third party origins

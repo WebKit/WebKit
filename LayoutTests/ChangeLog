@@ -1,3 +1,16 @@
+2019-04-03  Daniel Bates  <dabates@apple.com>
+
+        [iOS] Should be able to dismiss picker or popover using the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=196272
+        <rdar://problem/48943170>
+
+        Reviewed by Wenson Hsieh.
+
+        Add test to ensure that pressing Escape or Command + . dismisses a picker.
+
+        * fast/forms/ios/dismiss-picker-using-keyboard-expected.txt: Added.
+        * fast/forms/ios/dismiss-picker-using-keyboard.html: Added.
+
 2019-04-03  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options

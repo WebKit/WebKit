@@ -27,7 +27,7 @@
 
 #import "FocusedElementInformation.h"
 #import "UIKitSPI.h"
-#import "WKFormPeripheral.h"
+#import "WKFormPeripheralBase.h"
 #import "WKFormPopover.h"
 #import <UIKit/UIPickerView.h>
 
@@ -35,7 +35,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *, CGFloat initialFontSize, c
 
 @class WKContentView;
 
-@interface WKFormSelectControl : NSObject<WKFormPeripheral>
+@interface WKFormSelectControl : WKFormPeripheralBase
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 

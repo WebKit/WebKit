@@ -312,7 +312,6 @@ struct WKAutoCorrectionData {
 
     BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;
-    BOOL _dismissingAccessory;
     BOOL _needsDeferredEndScrollingSelectionUpdate;
     BOOL _isChangingFocus;
     BOOL _isBlurringFocusedElement;

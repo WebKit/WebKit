@@ -239,61 +239,36 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 @end
 
 // WKFormInputControl
-@implementation WKFormInputControl {
-    RetainPtr<NSObject <WKFormControl>> _control;
-}
+@implementation WKFormInputControl
 
 - (instancetype)initWithView:(WKContentView *)view
 {
-    if (!(self = [super init]))
-        return nil;
-
     UIDatePickerMode mode;
 
     switch (view.focusedElementInformation.elementType) {
     case InputType::Date:
         mode = UIDatePickerModeDate;
         break;
-
     case InputType::DateTimeLocal:
         mode = UIDatePickerModeDateAndTime;
         break;
-
     case InputType::Time:
         mode = UIDatePickerModeTime;
         break;
-
     case InputType::Month:
         mode = (UIDatePickerMode)UIDatePickerModeYearAndMonth;
         break;
-
     default:
         [self release];
         return nil;
     }
 
+    RetainPtr<NSObject <WKFormControl>> control;
     if (currentUserInterfaceIdiomIsPad())
-        _control = adoptNS([[WKDateTimePopover alloc] initWithView:view datePickerMode:mode]);
+        control = adoptNS([[WKDateTimePopover alloc] initWithView:view datePickerMode:mode]);
     else
-        _control = adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode]);
-
-    return self;
-
-}
-
-- (void)beginEditing
-{
-    [_control controlBeginEditing];
-}
-
-- (void)endEditing
-{
-    [_control controlEndEditing];
-}
-
-- (UIView *)assistantView
-{
-    return [_control controlView];
+        control = adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode]);
+    return [super initWithView:view control:WTFMove(control)];
 }
 
 @end
@@ -302,12 +277,10 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (NSString *)dateTimePickerCalendarType
 {
-    if ([_control isKindOfClass:WKDateTimePicker.class])
-        return [(WKDateTimePicker *)_control.get() calendarType];
-
-    if ([_control isKindOfClass:WKDateTimePopover.class])
-        return [(WKDateTimePopover *)_control.get() calendarType];
-
+    if ([self.control isKindOfClass:WKDateTimePicker.class])
+        return [(WKDateTimePicker *)self.control calendarType];
+    if ([self.control isKindOfClass:WKDateTimePopover.class])
+        return [(WKDateTimePopover *)self.control calendarType];
     return nil;
 }
 
@@ -388,6 +361,8 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (void)controlEndEditing
 {
+    [self dismissPopoverAnimated:NO];
+    [_viewController.get().innerControl controlEndEditing];
 }
 
 - (UIView *)controlView

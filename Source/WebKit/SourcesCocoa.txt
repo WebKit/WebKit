@@ -367,6 +367,7 @@ UIProcess/ios/forms/WKFocusedFormControlView.mm
 UIProcess/ios/forms/WKFormColorControl.mm
 UIProcess/ios/forms/WKFormColorPicker.mm
 UIProcess/ios/forms/WKFormInputControl.mm
+UIProcess/ios/forms/WKFormPeripheralBase.mm
 UIProcess/ios/forms/WKFormPopover.mm
 UIProcess/ios/forms/WKFormSelectControl.mm
 UIProcess/ios/forms/WKFormSelectPicker.mm

@@ -1169,6 +1169,26 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     return [_webView resignFirstResponder];
 }
 
+typedef NS_ENUM(NSInteger, EndEditingReason) {
+    EndEditingReasonAccessoryDone,
+    EndEditingReasonResigningFirstResponder,
+};
+
+- (void)endEditingAndUpdateFocusAppearanceWithReason:(EndEditingReason)reason
+{
+    if (!_webView._retainingActiveFocusedState) {
+        // We need to complete the editing operation before we blur the element.
+        [self _endEditing];
+        if ((reason == EndEditingReasonAccessoryDone && !currentUserInterfaceIdiomIsPad()) || _keyboardDidRequestDismissal)
+            _page->blurFocusedElement();
+    }
+
+    [self _cancelInteraction];
+    [_textSelectionAssistant deactivateSelection];
+
+    [self _resetInputViewDeferral];
+}
+
 - (BOOL)resignFirstResponderForWebView
 {
     // FIXME: Maybe we should call resignFirstResponder on the superclass
@@ -1176,17 +1196,7 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
 
     SetForScope<BOOL> resigningFirstResponderScope { _resigningFirstResponder, YES };
 
-    if (!_webView._retainingActiveFocusedState) {
-        // We need to complete the editing operation before we blur the element.
-        [self _endEditing];
-        if (_dismissingAccessory || _keyboardDidRequestDismissal)
-            _page->blurFocusedElement();
-    }
-
-    [self _cancelInteraction];
-    [_textSelectionAssistant deactivateSelection];
-    
-    [self _resetInputViewDeferral];
+    [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonResigningFirstResponder];
 
     // If the user explicitly dismissed the keyboard then we will lose first responder
     // status only to gain it back again. Just don't resign in that case.
@@ -3758,8 +3768,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)accessoryDone
 {
-    SetForScope<BOOL> dismissingAccessoryScope { _dismissingAccessory, YES };
-    [self resignFirstResponder];
+    [self endEditingAndUpdateFocusAppearanceWithReason:EndEditingReasonAccessoryDone];
+    _page->setIsShowingInputViewForFocusedElement(false);
 }
 
 - (void)accessoryTab:(BOOL)isNext
@@ -4362,21 +4372,28 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     return YES;
 }
 
-#if !USE(UIKIT_KEYBOARD_ADDITIONS)
 - (void)_handleKeyUIEvent:(::UIEvent *)event
 {
     bool isHardwareKeyboardEvent = !!event._hidEvent;
-
     // We only want to handle key event from the hardware keyboard when we are
     // first responder and we are not interacting with editable content.
-    if ([self isFirstResponder] && isHardwareKeyboardEvent && !_page->editorState().isContentEditable) {
+    if ([self isFirstResponder] && isHardwareKeyboardEvent && (_inputPeripheral || !_page->editorState().isContentEditable)) {
+        if ([_inputPeripheral respondsToSelector:@selector(handleKeyEvent:)]) {
+            if ([_inputPeripheral handleKeyEvent:event])
+                return;
+        }
+#if USE(UIKIT_KEYBOARD_ADDITIONS)
+        [super _handleKeyUIEvent:event];
+#else
         [self handleKeyEvent:event];
+#endif
         return;
     }
 
     [super _handleKeyUIEvent:event];
 }
 
+#if !USE(UIKIT_KEYBOARD_ADDITIONS)
 - (void)handleKeyEvent:(::UIEvent *)event
 {
     // WebCore has already seen the event, no need for custom processing.
@@ -4969,8 +4986,16 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     // FIXME: We should remove this check when we manage to send ElementDidFocus from the WebProcess
     // only when it is truly time to show the keyboard.
-    if (_focusedElementInformation.elementType == information.elementType && _focusedElementInformation.elementRect == information.elementRect)
+    if (_focusedElementInformation.elementType == information.elementType && _focusedElementInformation.elementRect == information.elementRect) {
+        if (_inputPeripheral) {
+            if (!self.isFirstResponder)
+                [self becomeFirstResponder];
+            [self _zoomToRevealFocusedElement];
+            [self _updateAccessory];
+            [_inputPeripheral beginEditing];
+        }
         return;
+    }
 
     [_webView _resetFocusPreservationCount];
 
@@ -4989,7 +5014,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (delegateImplementsWillStartInputSession)
         [inputDelegate _webView:_webView willStartInputSession:_formInputSession.get()];
 
-    BOOL editableChanged = [self setIsEditable:YES];
+    BOOL isSelectable = mayContainSelectableText(information.elementType);
+    BOOL editableChanged = [self setIsEditable:isSelectable];
     _focusedElementInformation = information;
     _traits = nil;
 
@@ -5006,7 +5032,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     [self reloadInputViews];
 #endif
 
-    if (mayContainSelectableText(_focusedElementInformation.elementType))
+    if (isSelectable)
         [self _showKeyboard];
 
     // The custom fixed position rect behavior is affected by -isFocusingElement, so if that changes we need to recompute rects.

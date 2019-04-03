@@ -25,11 +25,11 @@
 
 #if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
 
-#import "WKFormPeripheral.h"
+#import "WKFormPeripheralBase.h"
 
 @class WKContentView;
 
-@interface WKFormColorControl : NSObject<WKFormPeripheral>
+@interface WKFormColorControl : WKFormPeripheralBase
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 

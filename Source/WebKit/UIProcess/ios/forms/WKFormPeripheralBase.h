@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-@class UIEvent;
-@class UIView;
+#if PLATFORM(IOS_FAMILY)
 
-@protocol WKFormPeripheral
+#import "WKFormPeripheral.h"
+#import <wtf/Forward.h>
+
+@class WKContentView;
+
+@interface WKFormPeripheralBase : NSObject <WKFormPeripheral>
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithView:(WKContentView *)view control:(RetainPtr<NSObject <WKFormControl>>&&)control NS_DESIGNATED_INITIALIZER;
+
 - (void)beginEditing;
 - (void)endEditing;
 - (UIView *)assistantView;
-@optional
 - (BOOL)handleKeyEvent:(UIEvent *)event;
+
+@property (nonatomic, readonly) WKContentView *view;
+@property (nonatomic, readonly) NSObject <WKFormControl> *control;
+@property (nonatomic, readonly, getter=isEditing) BOOL editing;
+
 @end
 
-@protocol WKFormControl
-- (UIView *)controlView;
-- (void)controlBeginEditing;
-- (void)controlEndEditing;
-@optional
-- (BOOL)controlHandleKeyEvent:(UIEvent *)event;
-@end
+#endif
