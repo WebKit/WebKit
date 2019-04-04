@@ -6954,6 +6954,21 @@
             },
             "status": "non-standard"
         },
+        "-apple-trailing-word": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "-webkit-partially-balanced"
+            ],
+            "codegen-properties": {
+                "name-for-methods": "TrailingWord",
+                "enable-if": "ENABLE_CSS_TRAILING_WORD"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Needed for feature-detecting the Safari browser. Implementation has no effect."
+            }
+        },
         "-apple-pay-button-style": {
             "codegen-properties": {
                 "enable-if": "ENABLE_APPLE_PAY"

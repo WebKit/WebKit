@@ -1108,6 +1108,13 @@ enum class ScrollSnapAxisAlignType : uint8_t {
 };
 #endif
 
+#if ENABLE(CSS_TRAILING_WORD)
+enum class TrailingWord : uint8_t {
+    Auto,
+    PartiallyBalanced
+};
+#endif
+
 #if ENABLE(APPLE_PAY)
 enum class ApplePayButtonStyle : uint8_t {
     White,

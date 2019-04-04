@@ -1,3 +1,15 @@
+2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        -apple-trailing-word is needed for browser detection
+        https://bugs.webkit.org/show_bug.cgi?id=196575
+
+        Unreviewed.
+
+        * fast/text/trailing-word-detection-expected.txt: Added.
+        * fast/text/trailing-word-detection.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+
 2019-04-03  Shawn Roberts  <sroberts@apple.com>
 
         tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-mainframe.html is a flaky failure and timeout

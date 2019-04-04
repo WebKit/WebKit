@@ -1,3 +1,12 @@
+2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        -apple-trailing-word is needed for browser detection
+        https://bugs.webkit.org/show_bug.cgi?id=196575
+
+        Unreviewed.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2019-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Avoid the use of WTF_EXTERN_C_BEGIN in NSMenuSPI.h
