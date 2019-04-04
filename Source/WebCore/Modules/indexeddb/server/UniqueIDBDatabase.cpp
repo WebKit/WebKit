@@ -1733,6 +1733,13 @@ void UniqueIDBDatabase::connectionClosedFromClient(UniqueIDBDatabaseConnection& 
     ASSERT(isMainThread());
     LOG(IndexedDB, "(main) UniqueIDBDatabase::connectionClosedFromClient - %s (%" PRIu64 ")", connection.openRequestIdentifier().loggingString().utf8().data(), connection.identifier());
 
+    if (m_serverClosePendingDatabaseConnections.contains(&connection)) {
+        m_serverClosePendingDatabaseConnections.remove(&connection);
+        if (m_hardClosedForUserDelete)
+            maybeFinishHardClose();
+        return;
+    }
+
     Ref<UniqueIDBDatabaseConnection> protectedConnection(connection);
     m_openDatabaseConnections.remove(&connection);
 
@@ -1812,10 +1819,12 @@ void UniqueIDBDatabase::confirmDidCloseFromServer(UniqueIDBDatabaseConnection& c
     ASSERT(isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::confirmDidCloseFromServer - %s (%" PRIu64 ")", connection.openRequestIdentifier().loggingString().utf8().data(), connection.identifier());
 
+    if (!m_serverClosePendingDatabaseConnections.contains(&connection))
+        return;
+    m_serverClosePendingDatabaseConnections.remove(&connection);
+
     if (m_hardClosedForUserDelete)
         maybeFinishHardClose();
-    ASSERT(m_serverClosePendingDatabaseConnections.contains(&connection));
-    m_serverClosePendingDatabaseConnections.remove(&connection);
 }
 
 void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& transaction)

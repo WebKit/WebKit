@@ -1,3 +1,24 @@
+2019-04-04  Sihui Liu  <sihui_liu@apple.com>
+
+        Leak of UniqueIDBDatabase in network process running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=196565
+        <rdar://problem/49346139>
+
+        Reviewed by Geoffrey Garen.
+
+        UniqueIDBDatabase will null itself after it receives confirmation about connecton close from its clients, but it
+        is possible that the web process to network process connection closes before servers gets the 
+        confirmDidCloseFromServer. Therefore, we should let UniqueIDBDatabase forget connection when it receives a 
+        conenctionClosedFromClient.
+
+        No new test because this bug is caused by race between network receiving conenctionClosedFromClient and 
+        receiving confirmDidCloseFromServer. This is testable by running some existing layout tests in a row with leak 
+        option.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::connectionClosedFromClient):
+        (WebCore::IDBServer::UniqueIDBDatabase::confirmDidCloseFromServer):
+
 2019-04-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.
