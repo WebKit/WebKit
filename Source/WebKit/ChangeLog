@@ -1,3 +1,16 @@
+2019-04-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][iOS] Add filter to syscall sandbox rule
+        https://bugs.webkit.org/show_bug.cgi?id=196613
+        <rdar://problem/49531420>
+
+        Reviewed by Brent Fulgham.
+
+        This will restrict the existing sandbox rule for the syscall.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-04-04  Youenn Fablet  <youenn@apple.com>
 
         Service Worker Process does not have the right domain name
