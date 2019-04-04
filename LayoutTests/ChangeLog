@@ -1,3 +1,11 @@
+2019-04-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed gardening
+        
+        Remove tests that are expected to fail but pass.
+
+        * platform/wpe/TestExpectations:
+
 2019-04-04  Antoine Quint  <graouts@apple.com>
 
         REGRESSION (r236501?): Layout Test compositing/geometry/limit-layer-bounds-opacity-transition.html is flaky
