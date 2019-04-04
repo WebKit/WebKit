@@ -78,8 +78,9 @@ public:
 
     RenderObject* start() const { return m_selectionContext.start(); }
     RenderObject* end() const { return m_selectionContext.end(); }
-    unsigned startPosition() const { ASSERT(m_selectionContext.startPosition()); return m_selectionContext.startPosition().value(); }
-    unsigned endPosition() const { ASSERT(m_selectionContext.endPosition()); return m_selectionContext.endPosition().value(); }
+
+    unsigned startPosition() const { ASSERT(m_selectionContext.startPosition()); return m_selectionContext.startPosition().valueOr(0); }
+    unsigned endPosition() const { ASSERT(m_selectionContext.endPosition()); return m_selectionContext.endPosition().valueOr(0); }
 
     void clear();
     IntRect bounds() const { return collectBounds(ClipToVisibleContent::No); }

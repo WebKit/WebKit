@@ -1,3 +1,20 @@
+2019-04-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Nullptr crash in InlineTextBox::selectionState via TextIndicator::createWithRange
+        https://bugs.webkit.org/show_bug.cgi?id=196579
+
+        Reviewed by Simon Fraser.
+
+        Avoid crashing accessing the unengated optional's value in relese builds for now.
+
+        Unfortunately, fixing the underlying cause of the selection states of RenderView & RenderObject
+        getting out out of sync would require a significant re-architecturing of the whole selection
+        repainting / state managing mechanism.
+
+        * rendering/SelectionRangeData.h:
+        (WebCore::SelectionRangeData::startPosition const):
+        (WebCore::SelectionRangeData::endPosition const):
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         -apple-trailing-word is needed for browser detection
