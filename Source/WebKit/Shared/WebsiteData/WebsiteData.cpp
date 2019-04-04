@@ -129,6 +129,8 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
     case WebsiteDataType::DeviceIdHashSalt:
         return WebsiteDataProcessType::UI;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 OptionSet<WebsiteDataType> WebsiteData::filter(OptionSet<WebsiteDataType> unfilteredWebsiteDataTypes, WebsiteDataProcessType WebsiteDataProcessType)

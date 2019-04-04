@@ -1,3 +1,10 @@
+2019-04-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix -Wreturn-type warning
+
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::ownerProcess):
+
 2019-04-04  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Fix sandbox violations
