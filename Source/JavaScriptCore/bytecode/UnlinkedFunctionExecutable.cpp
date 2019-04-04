@@ -40,6 +40,7 @@
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "UnlinkedFunctionCodeBlock.h"
+#include <wtf/Optional.h>
 
 namespace JSC {
 
@@ -79,7 +80,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     return result;
 }
 
-UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, CompactVariableMap::Handle parentScopeTDZVariables, DerivedContextType derivedContextType, bool isBuiltinDefaultClassConstructor)
+UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, Optional<CompactVariableMap::Handle> parentScopeTDZVariables, DerivedContextType derivedContextType, bool isBuiltinDefaultClassConstructor)
     : Base(*vm, structure)
     , m_firstLineOffset(node->firstLine() - parentSource.firstLine().oneBasedInt())
     , m_lineCount(node->lastLine() - node->firstLine())
@@ -110,7 +111,6 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     , m_name(node->ident())
     , m_ecmaName(node->ecmaName())
     , m_inferredName(node->inferredName())
-    , m_parentScopeTDZVariables(WTFMove(parentScopeTDZVariables))
 {
     // Make sure these bitfields are adequately wide.
     ASSERT(m_constructAbility == static_cast<unsigned>(constructAbility));
@@ -122,6 +122,8 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM* vm, Structure* struct
     ASSERT(!(m_isBuiltinDefaultClassConstructor && constructorKind() == ConstructorKind::None));
     if (!node->classSource().isNull())
         setClassSource(node->classSource());
+    if (parentScopeTDZVariables)
+        ensureRareData().m_parentScopeTDZVariables = WTFMove(*parentScopeTDZVariables);
 }
 
 UnlinkedFunctionExecutable::~UnlinkedFunctionExecutable()

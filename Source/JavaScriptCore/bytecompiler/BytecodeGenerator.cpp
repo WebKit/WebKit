@@ -64,6 +64,7 @@
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/BitVector.h>
 #include <wtf/CommaPrinter.h>
+#include <wtf/Optional.h>
 #include <wtf/SmallPtrSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
@@ -2869,10 +2870,15 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
     m_cachedVariablesUnderTDZ = { };
 }
 
-CompactVariableMap::Handle BytecodeGenerator::getVariablesUnderTDZ()
+Optional<CompactVariableMap::Handle> BytecodeGenerator::getVariablesUnderTDZ()
 {
-    if (m_cachedVariablesUnderTDZ)
+    if (m_cachedVariablesUnderTDZ) {
+        if (!m_hasCachedVariablesUnderTDZ) {
+            ASSERT(m_cachedVariablesUnderTDZ.environment().toVariableEnvironment().isEmpty());
+            return WTF::nullopt;
+        }
         return m_cachedVariablesUnderTDZ;
+    }
 
     // We keep track of variablesThatDontNeedTDZ in this algorithm to prevent
     // reporting that "x" is under TDZ if this function is called at "...".
@@ -2898,6 +2904,10 @@ CompactVariableMap::Handle BytecodeGenerator::getVariablesUnderTDZ()
     }
 
     m_cachedVariablesUnderTDZ = m_vm->m_compactVariableMap->get(environment);
+    m_hasCachedVariablesUnderTDZ = !environment.isEmpty();
+    if (!m_hasCachedVariablesUnderTDZ)
+        return WTF::nullopt;
+
     return m_cachedVariablesUnderTDZ;
 }
 

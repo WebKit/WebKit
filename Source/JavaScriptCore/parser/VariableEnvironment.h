@@ -114,6 +114,7 @@ public:
     void markVariableAsExported(const RefPtr<UniquedStringImpl>& identifier);
 
     bool isEverythingCaptured() const { return m_isEverythingCaptured; }
+    bool isEmpty() const { return !m_map.size(); }
 
 private:
     friend class CachedVariableEnvironment;

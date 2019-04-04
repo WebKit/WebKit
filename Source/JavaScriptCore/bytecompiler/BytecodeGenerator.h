@@ -49,6 +49,7 @@
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/Optional.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>
@@ -1104,7 +1105,7 @@ namespace JSC {
                     newDerivedContextType = DerivedContextType::DerivedMethodContext;
             }
 
-            CompactVariableMap::Handle variablesUnderTDZ = getVariablesUnderTDZ();
+            Optional<CompactVariableMap::Handle> optionalVariablesUnderTDZ = getVariablesUnderTDZ();
 
             // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.
             // https://bugs.webkit.org/show_bug.cgi?id=151547
@@ -1113,10 +1114,10 @@ namespace JSC {
             if (parseMode == SourceParseMode::MethodMode && metadata->constructorKind() != ConstructorKind::None)
                 constructAbility = ConstructAbility::CanConstruct;
 
-            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(variablesUnderTDZ), newDerivedContextType);
+            return UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(optionalVariablesUnderTDZ), newDerivedContextType);
         }
 
-        CompactVariableMap::Handle getVariablesUnderTDZ();
+        Optional<CompactVariableMap::Handle> getVariablesUnderTDZ();
 
         RegisterID* emitConstructVarargs(RegisterID* dst, RegisterID* func, RegisterID* thisRegister, RegisterID* arguments, RegisterID* firstFreeRegister, int32_t firstVarArgOffset, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);
         template<typename CallOp>
@@ -1274,6 +1275,7 @@ namespace JSC {
         bool m_usesNonStrictEval { false };
         bool m_inTailPosition { false };
         bool m_needsToUpdateArrowFunctionContext;
+        bool m_hasCachedVariablesUnderTDZ { false };
         DerivedContextType m_derivedContextType { DerivedContextType::None };
 
         CompactVariableMap::Handle m_cachedVariablesUnderTDZ;

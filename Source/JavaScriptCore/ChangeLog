@@ -1,3 +1,100 @@
+2019-04-04  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] We should consider moving UnlinkedFunctionExecutable::m_parentScopeTDZVariables to RareData
+        https://bugs.webkit.org/show_bug.cgi?id=194944
+
+        Reviewed by Keith Miller.
+
+        Based on profile data collected on JetStream2, Speedometer 2 and
+        other benchmarks, it is very rare having non-empty
+        UnlinkedFunctionExecutable::m_parentScopeTDZVariables.
+
+        - Data collected from Speedometer2
+            Total number of UnlinkedFunctionExecutable: 39463
+            Total number of non-empty parentScopeTDZVars: 428 (~1%)
+
+        - Data collected from JetStream2
+            Total number of UnlinkedFunctionExecutable: 83715
+            Total number of non-empty parentScopeTDZVars: 5285 (~6%)
+
+        We also collected numbers on 6 of top 10 Alexia sites.
+
+        - Data collected from youtube.com
+            Total number of UnlinkedFunctionExecutable: 29599
+            Total number of non-empty parentScopeTDZVars: 97 (~0.3%)
+
+        - Data collected from twitter.com
+            Total number of UnlinkedFunctionExecutable: 23774
+            Total number of non-empty parentScopeTDZVars: 172 (~0.7%)
+
+        - Data collected from google.com
+            Total number of UnlinkedFunctionExecutable: 33209
+            Total number of non-empty parentScopeTDZVars: 174 (~0.5%)
+
+        - Data collected from amazon.com:
+            Total number of UnlinkedFunctionExecutable: 15182
+            Total number of non-empty parentScopeTDZVars: 166 (~1%)
+
+        - Data collected from facebook.com:
+            Total number of UnlinkedFunctionExecutable: 54443
+            Total number of non-empty parentScopeTDZVars: 269 (~0.4%)
+
+        - Data collected from netflix.com:
+            Total number of UnlinkedFunctionExecutable: 39266
+            Total number of non-empty parentScopeTDZVars: 97 (~0.2%)
+
+        Considering such numbers, this patch is moving `m_parentScopeTDZVariables`
+        to RareData. This decreases sizeof(UnlinkedFunctionExecutable) by
+        16 bytes. With this change, now UnlinkedFunctionExecutable constructors
+        receives an `Optional<VariableEnvironmentMap::Handle>` and only stores
+        it when `value != WTF::nullopt`. We also changed
+        UnlinkedFunctionExecutable::parentScopeTDZVariables() and it returns
+        `VariableEnvironment()` whenever the Executable doesn't have RareData,
+        or VariableEnvironmentMap::Handle is unitialized. This is required
+        because RareData is instantiated when any of its field is stored and
+        we can have an unitialized `Handle` even on cases when parentScopeTDZVariables
+        is `WTF::nullopt`.
+
+        Results on memory usage on JetStrem2 is neutral.
+
+            Mean of memory peak on ToT: 4258633728 bytes (confidence interval: 249720072.95)
+            Mean of memory peak on Changes: 4367325184 bytes (confidence interval: 321285583.61)
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::getVariablesUnderTDZ):
+
+        BytecodeGenerator::getVariablesUnderTDZ now also caches if m_cachedVariablesUnderTDZ
+        is empty, so we can properly return `WTF::nullopt` without the
+        reconstruction of a VariableEnvironment to check if it is empty.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::makeFunction):
+        * parser/VariableEnvironment.h:
+        (JSC::VariableEnvironment::isEmpty const):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedCompactVariableMapHandle::decode const):
+
+        It returns an unitialized Handle when there is no
+        CompactVariableEnvironment. This can happen when RareData is ensured
+        because of another field.
+
+        (JSC::CachedFunctionExecutableRareData::encode):
+        (JSC::CachedFunctionExecutableRareData::decode const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * runtime/CodeCache.cpp:
+
+        Instead of creating a dummyVariablesUnderTDZ, we simply pass
+        WTF::nullopt.
+
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+
 2019-04-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Cache bytecode for jsc.cpp helpers and fix CachedStringImpl
