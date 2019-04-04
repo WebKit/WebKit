@@ -91,6 +91,8 @@ TEST(WebKit, ReloadPageAfterCrash)
     Util::run(&loadAfterCrash);
 }
 
+#if !PLATFORM(WIN)
+
 static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
 {
 }
@@ -133,7 +135,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);
 
-    WKPageTerminate(webView.page());
+    kill(WKPageGetProcessIdentifier(webView.page()), 9);
 
     Util::run(&calledCrashHandler);
 }
@@ -163,10 +165,12 @@ TEST(WebKit, FrameSetLargestFrameAfterCrash)
     while (!WKPageGetFrameSetLargestFrame(webView.page()))
         Util::spinRunLoop(10);
 
-    WKPageTerminate(webView.page());
+    kill(WKPageGetProcessIdentifier(webView.page()), 9);
 
     Util::run(&calledCrashHandler);
 }
+
+#endif // !PLATFORM(WIN)
 
 } // namespace TestWebKitAPI
 

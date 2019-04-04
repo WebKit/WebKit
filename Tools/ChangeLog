@@ -1,3 +1,12 @@
+2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, roll out r243858 which made tests time out.
+
+        Disable new API tests on Windows instead.
+
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Cleanup WebPageAccessibilityObjectAtk
