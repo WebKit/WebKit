@@ -2056,9 +2056,9 @@ void WebPageProxy::setEditable(bool editable)
 void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
 {
     if (muted)
-        setMuted(m_mutedState | WebCore::MediaProducer::CaptureDevicesAreMuted);
+        setMuted(m_mutedState | WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     else
-        setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
+        setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
 }
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
@@ -2066,7 +2066,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
 #endif
-    setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
+    setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -5348,8 +5348,8 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    bool hasMutedCaptureStreams = m_mediaState & (WebCore::MediaProducer::HasMutedAudioCaptureDevice | WebCore::MediaProducer::HasMutedVideoCaptureDevice);
-    if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::CaptureDevicesAreMuted))
+    bool hasMutedCaptureStreams = m_mediaState & WebCore::MediaProducer::MutedCaptureMask;
+    if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::MediaStreamCaptureIsMuted))
         UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
 #endif
 

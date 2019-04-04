@@ -45,11 +45,11 @@
                 track.onunmute = () => reject("Got 'unmute' event unexpectedly!");
                 track.onmute = () => {
                     new Promise((innerResolve, innerReject) => {
-                        waitForPageStateChange(10, internals.pageMediaState(), innerResolve, innerReject)
+                        waitForPageStateChange(10, pageState, innerResolve, innerReject)
                     }).then((pageMediaState) => {
 
                         track.onunmute = (evt) => {
-                            waitForPageStateChange(10, internals.pageMediaState(), resolve, reject)
+                            waitForPageStateChange(10, pageState, resolve, reject)
                         }
 
                         if (window.internals) {
@@ -57,13 +57,16 @@
                             assert_false(pageMediaState.includes(isVideo ? 'HasMutedAudioCaptureDevice' : 'HasMutedVideoCaptureDevice'));
                             assert_true(pageMediaState.includes(isVideo ? 'HasActiveAudioCaptureDevice' : 'HasActiveVideoCaptureDevice'));
                             assert_false(pageMediaState.includes(isVideo ? 'HasActiveVideoCaptureDevice' : 'HasActiveAudioCaptureDevice'));
+                            pageState = internals.pageMediaState();
                             internals.setMediaStreamSourceInterrupted(track, false)
                         }
                     })
                 }
 
-                if (window.internals)
+                if (window.internals) {
+                    pageState = internals.pageMediaState();
                     internals.setMediaStreamSourceInterrupted(track, true);
+                }
                 setTimeout(() => reject("Muted state did not change in 1 second"), 1000);
             });
         }, title);

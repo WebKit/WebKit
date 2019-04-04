@@ -5776,16 +5776,6 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     return WebKit::toWKMediaCaptureState(_page->mediaStateFlags());
 }
 
-- (void)_setMediaCaptureMuted:(BOOL)muted
-{
-    _page->setMediaStreamCaptureMuted(muted);
-}
-
-- (void)_muteMediaCapture
-{
-    _page->setMediaStreamCaptureMuted(true);
-}
-
 - (void)_setMediaCaptureEnabled:(BOOL)enabled
 {
     _page->setMediaCaptureEnabled(enabled);
@@ -5803,7 +5793,9 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (mutedState & _WKMediaAudioMuted)
         coreState |= WebCore::MediaProducer::AudioIsMuted;
     if (mutedState & _WKMediaCaptureDevicesMuted)
-        coreState |= WebCore::MediaProducer::CaptureDevicesAreMuted;
+        coreState |= WebCore::MediaProducer::AudioAndVideoCaptureIsMuted;
+    if (mutedState & _WKMediaScreenCaptureMuted)
+        coreState |= WebCore::MediaProducer::ScreenCaptureIsMuted;
 
     _page->setMuted(coreState);
 }

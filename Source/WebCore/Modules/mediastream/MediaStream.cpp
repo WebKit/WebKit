@@ -119,8 +119,6 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
     m_private->setLogger(logger(), logIdentifier());
 #endif
     setIsActive(m_private->active());
-    if (document()->page() && document()->page()->isMediaCaptureMuted())
-        m_private->setCaptureTracksMuted(true);
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
 
@@ -326,9 +324,6 @@ void MediaStream::startProducingData()
 
     m_mediaSession->canProduceAudioChanged();
     m_private->startProducingData();
-
-    if (document->page()->isMediaCaptureMuted())
-        m_private->setCaptureTracksMuted(true);
 }
 
 void MediaStream::stopProducingData()

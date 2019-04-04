@@ -429,7 +429,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRe
 
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest(Ref<UserMediaPermissionRequestProxy>&& request, Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, String&& deviceIdentifierHashSalt)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, request->userMediaID(), ", video:, ", videoDevices.size(), " audio: ", audioDevices.size());
+    ALWAYS_LOG(LOGIDENTIFIER, request->userMediaID(), ", video: ", videoDevices.size(), " audio: ", audioDevices.size());
     if (videoDevices.isEmpty() && audioDevices.isEmpty()) {
         denyRequest(request->userMediaID(), UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
         return;

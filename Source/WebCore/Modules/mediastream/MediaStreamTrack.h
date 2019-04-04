@@ -82,6 +82,7 @@ public:
     void setEnabled(bool);
 
     bool muted() const;
+    void setMuted(MediaProducer::MutedStateFlags);
 
     enum class State { Live, Ended };
     State readyState() const;
@@ -199,6 +200,7 @@ private:
     MediaTrackConstraints m_constraints;
     Optional<DOMPromiseDeferred<void>> m_promise;
     GenericTaskQueue<ScriptExecutionContext> m_taskQueue;
+    GenericTaskQueue<Timer> m_eventTaskQueue;
 
     bool m_ended { false };
 };

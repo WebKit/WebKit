@@ -71,8 +71,11 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
 #endif
     m_private->addObserver(*this);
 
-    if (auto document = this->document())
+    if (auto document = this->document()) {
         document->addAudioProducer(*this);
+        if (isCaptureTrack() && document->page() && document->page()->mutedState())
+            setMuted(document->page()->mutedState());
+    }
 }
 
 MediaStreamTrack::~MediaStreamTrack()
@@ -169,6 +172,26 @@ void MediaStreamTrack::setEnabled(bool enabled)
 bool MediaStreamTrack::muted() const
 {
     return m_private->muted();
+}
+
+void MediaStreamTrack::setMuted(MediaProducer::MutedStateFlags state)
+{
+    bool trackMuted = false;
+    switch (source().deviceType()) {
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Camera:
+        trackMuted = state & AudioAndVideoCaptureIsMuted;
+        break;
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
+        trackMuted = state & ScreenCaptureIsMuted;
+        break;
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    m_private->setMuted(trackMuted);
 }
 
 auto MediaStreamTrack::readyState() const -> State
@@ -373,7 +396,7 @@ void MediaStreamTrack::pageMutedStateDidChange()
     if (!document || !document->page())
         return;
 
-    m_private->setMuted(document->page()->isMediaCaptureMuted());
+    setMuted(document->page()->mutedState());
 }
 
 MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
@@ -385,10 +408,8 @@ MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
     if (!document || !document->page())
         return IsNotPlaying;
 
-    bool pageCaptureMuted = document->page()->isMediaCaptureMuted();
-
     if (source().type() == RealtimeMediaSource::Type::Audio) {
-        if (source().interrupted() && !pageCaptureMuted)
+        if (source().interrupted() && !source().muted())
             return HasInterruptedAudioCaptureDevice;
         if (muted())
             return HasMutedAudioCaptureDevice;
@@ -397,7 +418,7 @@ MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
     } else {
         auto deviceType = source().deviceType();
         ASSERT(deviceType == CaptureDevice::DeviceType::Camera || deviceType == CaptureDevice::DeviceType::Screen || deviceType == CaptureDevice::DeviceType::Window);
-        if (source().interrupted() && !pageCaptureMuted)
+        if (source().interrupted() && !source().muted())
             return deviceType == CaptureDevice::DeviceType::Camera ? HasInterruptedVideoCaptureDevice : HasInterruptedDisplayCaptureDevice;
         if (muted())
             return deviceType == CaptureDevice::DeviceType::Camera ? HasMutedVideoCaptureDevice : HasMutedDisplayCaptureDevice;
@@ -442,8 +463,10 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
     if (scriptExecutionContext()->activeDOMObjectsAreSuspended() || scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
         return;
 
-    AtomicString eventType = muted() ? eventNames().muteEvent : eventNames().unmuteEvent;
-    dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
+    m_eventTaskQueue.enqueueTask([this, muted = this->muted()] {
+        AtomicString eventType = muted ? eventNames().muteEvent : eventNames().unmuteEvent;
+        dispatchEvent(Event::create(eventType, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 
     configureTrackRendering();
 }

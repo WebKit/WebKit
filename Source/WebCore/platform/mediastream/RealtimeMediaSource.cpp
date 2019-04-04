@@ -91,7 +91,7 @@ void RealtimeMediaSource::setInterrupted(bool interrupted, bool pageMuted)
 
 void RealtimeMediaSource::setMuted(bool muted)
 {
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
 
     if (muted)
         stop();
@@ -110,7 +110,7 @@ void RealtimeMediaSource::notifyMutedChange(bool muted)
     if (m_muted == muted)
         return;
 
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER);
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, muted);
     m_muted = muted;
 
     notifyMutedObservers();

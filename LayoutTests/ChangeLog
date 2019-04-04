@@ -1,3 +1,17 @@
+2019-04-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Host should be able to mute screen capture and camera/microphone independently
+        https://bugs.webkit.org/show_bug.cgi?id=196555
+        <rdar://problem/47303865>
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/media-stream-page-muted-expected.txt: Added.
+        * fast/mediastream/media-stream-page-muted.html: Added.
+        * fast/mediastream/media-stream-track-interrupted.html: Read page muted state before
+        interrupting capture track because the page state now changes immediately.
+        * fast/mediastream/media-stream-track-muted.html: Ditto, for muting.
+
 2019-04-04  Antti Koivisto  <antti@apple.com>
 
         Compute accurate regions for touch-action
