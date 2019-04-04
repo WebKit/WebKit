@@ -1,3 +1,12 @@
+2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        std::ptr_fun() is deprecated.
+
+        * platform/ios/LegacyTileGrid.mm:
+        (WebCore::LegacyTileGrid::dropDistantTiles):
+
 2019-04-04  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] JS wrapper may be deleted while animation is yet to dispatch its finish event

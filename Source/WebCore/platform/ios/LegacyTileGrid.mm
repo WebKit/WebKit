@@ -130,9 +130,12 @@ bool LegacyTileGrid::dropDistantTiles(unsigned tilesNeeded, double shortestDista
         if (distance <= shortestDistance)
             continue;
         toRemove.append(std::make_pair(distance, index));
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         std::push_heap(toRemove.begin(), toRemove.end(), std::ptr_fun(isFartherAway<TileIndex>));
         if (toRemove.size() > tilesToRemoveCount) {
             std::pop_heap(toRemove.begin(), toRemove.end(), std::ptr_fun(isFartherAway<TileIndex>));
+#pragma clang diagnostic pop
             toRemove.removeLast();
         }
     }
