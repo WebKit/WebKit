@@ -76,6 +76,7 @@
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
+#include "WebAssemblyFunction.h"
 #include <wtf/InlineASM.h>
 
 namespace JSC {
@@ -1036,9 +1037,11 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
 
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
-    if (executable->isHostFunction())
-        codePtr = executable->entrypointFor(kind, MustCheckArity);
-    else {
+    if (executable->isHostFunction()) {
+        codePtr = jsToWasmICCodePtr(*vm, kind, callee);
+        if (!codePtr)
+            codePtr = executable->entrypointFor(kind, MustCheckArity);
+    } else {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 
         auto handleThrowException = [&] () {
@@ -1064,6 +1067,7 @@ SlowPathReturnType JIT_OPERATION operationLinkCall(ExecState* execCallee, CallLi
             arity = ArityCheckNotRequired;
         codePtr = functionExecutable->entrypointFor(kind, arity);
     }
+
     if (!callLinkInfo->seenOnce())
         callLinkInfo->setSeen();
     else

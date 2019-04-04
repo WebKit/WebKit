@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class JSPromiseDeferred;
+
 class WebAssemblyPrototype final : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;

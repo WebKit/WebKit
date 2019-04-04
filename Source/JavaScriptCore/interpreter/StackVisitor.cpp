@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "WasmCallee.h"
 #include "WasmIndexOrName.h"
+#include "WebAssemblyFunction.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -252,10 +253,10 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
     return CodeType::Global;
 }
 
-const RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
+Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
 {
     if (isInlinedFrame())
-        return nullptr;
+        return WTF::nullopt;
 
 #if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
@@ -263,19 +264,24 @@ const RegisterAtOffsetList* StackVisitor::Frame::calleeSaveRegisters()
     if (isWasmFrame()) {
         if (callee().isCell()) {
             RELEASE_ASSERT(isWebAssemblyToJSCallee(callee().asCell()));
-            return nullptr;
+            return WTF::nullopt;
         }
         Wasm::Callee* wasmCallee = callee().asWasmCallee();
-        return wasmCallee->calleeSaveRegisters();
+        return *wasmCallee->calleeSaveRegisters();
+    }
+
+    if (callee().isCell()) {
+        if (auto* jsToWasmICCallee = jsDynamicCast<JSToWasmICCallee*>(*callee().asCell()->vm(), callee().asCell()))
+            return jsToWasmICCallee->function()->usedCalleeSaveRegisters();
     }
 #endif // ENABLE(WEBASSEMBLY)
 
     if (CodeBlock* codeBlock = this->codeBlock())
-        return codeBlock->calleeSaveRegisters();
+        return *codeBlock->calleeSaveRegisters();
 
 #endif // !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
-    return nullptr;
+    return WTF::nullopt;
 }
 
 String StackVisitor::Frame::functionName() const

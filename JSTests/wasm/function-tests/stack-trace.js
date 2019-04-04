@@ -43,11 +43,16 @@ for (let i = 0; i < 10000; ++i) {
     stacktrace = stacktrace.split("\n");
     assert.truthy(stacktrace[0].indexOf("imp") !== -1); // the arrow function import named "imp".
     assert.eq(stacktrace[1], "wasm-stub@[wasm code]"); // the wasm->js stub
-    assert.eq(stacktrace[2], "<?>.wasm-function[4]@[wasm code]");
-    assert.eq(stacktrace[3], "<?>.wasm-function[2]@[wasm code]");
-    assert.eq(stacktrace[4], "<?>.wasm-function[3]@[wasm code]");
-    assert.eq(stacktrace[5], "<?>.wasm-function[1]@[wasm code]");
-    assert.eq(stacktrace[6], "wasm-stub@[wasm code]"); // wasm entry
-
+    let found = false;
+    for (let i = 0; i < stacktrace.length; ++i) {
+        let str = stacktrace[i];
+        if (str !== "<?>.wasm-function[4]@[wasm code]")
+            continue;
+        found = true;
+        assert.eq(stacktrace[i + 1], "<?>.wasm-function[2]@[wasm code]");
+        assert.eq(stacktrace[i + 2], "<?>.wasm-function[3]@[wasm code]");
+        assert.eq(stacktrace[i + 3], "<?>.wasm-function[1]@[wasm code]");
+    }
+    assert.truthy(found);
     stacktrace = null;
 }

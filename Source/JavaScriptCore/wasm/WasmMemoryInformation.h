@@ -45,7 +45,7 @@ struct PinnedSizeRegisterInfo {
 
 class PinnedRegisterInfo {
 public:
-    PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg);
+    PinnedRegisterInfo(GPRReg, GPRReg, GPRReg);
 
     static const PinnedRegisterInfo& get();
 
@@ -55,14 +55,12 @@ public:
         result.set(baseMemoryPointer);
         if (wasmContextInstancePointer != InvalidGPRReg)
             result.set(wasmContextInstancePointer);
-        if (mode != MemoryMode::Signaling) {
-            for (const auto& info : sizeRegisters)
-                result.set(info.sizeRegister);
-        }
+        if (mode != MemoryMode::Signaling)
+            result.set(sizeRegister);
         return result;
     }
 
-    Vector<PinnedSizeRegisterInfo> sizeRegisters;
+    GPRReg sizeRegister;
     GPRReg baseMemoryPointer;
     GPRReg wasmContextInstancePointer;
 };

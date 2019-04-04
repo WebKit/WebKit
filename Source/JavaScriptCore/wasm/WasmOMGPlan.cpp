@@ -138,7 +138,7 @@ void OMGPlan::work(CompilationEffort)
     {
         LockHolder holder(m_codeBlock->m_lock);
 
-        auto repatchCalls = [&] (const Vector<UnlinkedWasmToWasmCall>&  callsites) {
+        auto repatchCalls = [&] (const Vector<UnlinkedWasmToWasmCall>& callsites) {
             for (auto& call : callsites) {
                 dataLogLnIf(WasmOMGPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
                 if (call.functionIndexSpace == functionIndexSpace) {

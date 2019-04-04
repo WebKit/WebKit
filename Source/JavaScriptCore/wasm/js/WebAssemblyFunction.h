@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSToWasmICCallee.h"
 #include "MacroAssemblerCodeRef.h"
 #include "WasmCallee.h"
 #include "WebAssemblyFunctionBase.h"
@@ -48,6 +49,9 @@ public:
     using Base = WebAssemblyFunctionBase;
 
     const static unsigned StructureFlags = Base::StructureFlags;
+
+    static const bool needsDestruction = true;
+    static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
     static IsoSubspace* subspaceFor(VM& vm)
@@ -74,14 +78,34 @@ public:
 
     static ptrdiff_t offsetOfEntrypointLoadLocation() { return OBJECT_OFFSETOF(WebAssemblyFunction, m_importableFunction) + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation(); }
 
+    MacroAssemblerCodePtr<JSEntryPtrTag> jsCallEntrypoint()
+    {
+        if (m_jsCallEntrypoint)
+            return m_jsCallEntrypoint.code();
+        return jsCallEntrypointSlow();
+    }
+
+    RegisterAtOffsetList usedCalleeSaveRegisters() const;
+    Wasm::Instance* previousInstance(CallFrame*);
+
 private:
+    static void visitChildren(JSCell*, SlotVisitor&);
     WebAssemblyFunction(VM&, JSGlobalObject*, Structure*, Wasm::Callee& jsEntrypoint, WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation, Wasm::SignatureIndex);
+
+    MacroAssemblerCodePtr<JSEntryPtrTag> jsCallEntrypointSlow();
+    ptrdiff_t previousInstanceOffset() const;
+    bool useTagRegisters() const;
+
+    RegisterSet calleeSaves() const;
 
     // It's safe to just hold the raw WasmToWasmImportableFunction/jsEntrypoint because we have a reference
     // to our Instance, which points to the Module that exported us, which
     // ensures that the actual Signature/code doesn't get deallocated.
     MacroAssemblerCodePtr<WasmEntryPtrTag> m_jsEntrypoint;
     WasmToWasmImportableFunction m_importableFunction;
+    WriteBarrier<JSToWasmICCallee> m_jsToWasmICCallee;
+    // Used for JS calling into Wasm.
+    MacroAssemblerCodeRef<JSEntryPtrTag> m_jsCallEntrypoint;
 };
 
 } // namespace JSC

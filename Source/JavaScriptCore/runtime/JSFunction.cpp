@@ -48,6 +48,7 @@
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "StackVisitor.h"
+#include "WebAssemblyFunction.h"
 
 namespace JSC {
 
@@ -627,9 +628,13 @@ ConstructType JSFunction::getConstructData(JSCell* cell, ConstructData& construc
 
 String getCalculatedDisplayName(VM& vm, JSObject* object)
 {
+#if ENABLE(WEBASSEMBLY)
+    if (jsDynamicCast<JSToWasmICCallee*>(vm, object))
+        return "wasm-stub"_s;
+#endif
+
     if (!jsDynamicCast<JSFunction*>(vm, object) && !jsDynamicCast<InternalFunction*>(vm, object))
         return emptyString();
-
 
     Structure* structure = object->structure(vm);
     unsigned attributes;

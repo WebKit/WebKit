@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,33 @@
 
 #pragma once
 
+#include "JSCallee.h"
+
+namespace JSC {
+
 #if ENABLE(WEBASSEMBLY)
 
-#include "Options.h"
-#include "WasmContext.h"
-#include "WasmInstance.h"
-#include <mutex>
-#include <wtf/FastTLS.h>
+class WebAssemblyFunction;
 
-namespace JSC { namespace Wasm {
+class JSToWasmICCallee : public JSCallee {
+    using Base = JSCallee;
+public:
+    DECLARE_INFO;
 
-inline bool Context::useFastTLS()
-{
-#if ENABLE(FAST_TLS_JIT)
-    return Options::useFastTLSForWasmContext();
-#else
-    return false;
-#endif
-}
+    static JSToWasmICCallee* create(VM&, JSGlobalObject*, WebAssemblyFunction*);
+    static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-inline Instance* Context::load() const
-{
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
-#endif
-    return instance;
-}
+    WebAssemblyFunction* function() { return m_function.get(); }
 
-inline void Context::store(Instance* inst, void* softStackLimit)
-{
-    if (inst)
-        inst->setCachedStackLimit(softStackLimit);
+private:
+    JSToWasmICCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
+        : Base(vm, globalObject, structure)
+    { }
+    static void visitChildren(JSCell*, SlotVisitor&);
 
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(inst));
-    else
-#endif
-        instance = inst;
-}
-
-} } // namespace JSC::Wasm
+    WriteBarrier<WebAssemblyFunction> m_function;
+};
 
 #endif // ENABLE(WEBASSEMBLY)
+
+} // namespace JSC

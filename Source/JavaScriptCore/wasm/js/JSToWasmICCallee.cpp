@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSToWasmICCallee.h"
 
 #if ENABLE(WEBASSEMBLY)
 
-#include "Options.h"
-#include "WasmContext.h"
-#include "WasmInstance.h"
-#include <mutex>
-#include <wtf/FastTLS.h>
+#include "WebAssemblyFunction.h"
 
-namespace JSC { namespace Wasm {
+namespace JSC {
 
-inline bool Context::useFastTLS()
+const ClassInfo JSToWasmICCallee::s_info = { "JSToWasmICCallee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSToWasmICCallee) };
+
+JSToWasmICCallee* JSToWasmICCallee::create(VM& vm, JSGlobalObject* globalObject, WebAssemblyFunction* function)
 {
-#if ENABLE(FAST_TLS_JIT)
-    return Options::useFastTLSForWasmContext();
-#else
-    return false;
-#endif
+    auto* structure = globalObject->jsToWasmICCalleeStructure();
+    JSToWasmICCallee* result = new (NotNull, allocateCell<JSToWasmICCallee>(vm.heap)) JSToWasmICCallee(vm, globalObject, structure);
+    result->finishCreation(vm);
+    result->m_function.set(vm, result, function);
+    return result;
 }
 
-inline Instance* Context::load() const
+Structure* JSToWasmICCallee::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        return bitwise_cast<Instance*>(_pthread_getspecific_direct(WTF_WASM_CONTEXT_KEY));
-#endif
-    return instance;
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSCalleeType, StructureFlags), info());
 }
 
-inline void Context::store(Instance* inst, void* softStackLimit)
+void JSToWasmICCallee::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
-    if (inst)
-        inst->setCachedStackLimit(softStackLimit);
+    JSToWasmICCallee* thisObject = jsCast<JSToWasmICCallee*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
-#if ENABLE(FAST_TLS_JIT)
-    if (useFastTLS())
-        _pthread_setspecific_direct(WTF_WASM_CONTEXT_KEY, bitwise_cast<void*>(inst));
-    else
-#endif
-        instance = inst;
+    Base::visitChildren(thisObject, visitor);
+    visitor.append(thisObject->m_function);
 }
 
-} } // namespace JSC::Wasm
+} // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

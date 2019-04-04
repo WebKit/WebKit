@@ -549,6 +549,13 @@ public:
             }
         }
 
+#if ENABLE(WEBASSEMBLY)
+        if (visitor->callee().isCell()) {
+            if (auto* jsToWasmICCallee = jsDynamicCast<JSToWasmICCallee*>(m_vm, visitor->callee().asCell()))
+                m_vm.wasmContext.store(jsToWasmICCallee->function()->previousInstance(m_callFrame), m_vm.softStackLimit());
+        }
+#endif
+
         notifyDebuggerOfUnwinding(m_vm, m_callFrame);
 
         copyCalleeSavesToEntryFrameCalleeSavesBuffer(visitor);
@@ -564,7 +571,7 @@ private:
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
 #if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-        const RegisterAtOffsetList* currentCalleeSaves = visitor->calleeSaveRegisters();
+        Optional<RegisterAtOffsetList> currentCalleeSaves = visitor->calleeSaveRegistersForUnwinding();
 
         if (!currentCalleeSaves)
             return;

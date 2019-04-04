@@ -32,12 +32,19 @@ namespace JSC { namespace Wasm {
 class Instance;
 
 struct Context {
-    Instance* instance { nullptr };
-
     Instance* load() const;
     void store(Instance*, void* softStackLimit);
 
     static bool useFastTLS();
+
+    Instance** pointerToInstance()
+    {
+        ASSERT(!useFastTLS());
+        return &instance;
+    }
+
+private:
+    Instance* instance { nullptr };
 };
 
 } } // namespace JSC::Wasm

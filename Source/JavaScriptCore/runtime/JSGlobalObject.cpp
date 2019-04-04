@@ -1053,6 +1053,10 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
             });
+        m_jsToWasmICCalleeStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                init.set(JSToWasmICCallee::createStructure(init.vm, init.owner, JSValue()));
+            });
         m_webAssemblyWrapperFunctionStructure.initLater(
             [] (const Initializer<Structure>& init) {
                 init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
@@ -1751,6 +1755,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 #if ENABLE(WEBASSEMBLY)
     thisObject->m_webAssemblyModuleRecordStructure.visit(visitor);
     thisObject->m_webAssemblyFunctionStructure.visit(visitor);
+    thisObject->m_jsToWasmICCalleeStructure.visit(visitor);
     thisObject->m_webAssemblyWrapperFunctionStructure.visit(visitor);
     thisObject->m_webAssemblyToJSCalleeStructure.visit(visitor);
     FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(VISIT_LAZY_TYPE)

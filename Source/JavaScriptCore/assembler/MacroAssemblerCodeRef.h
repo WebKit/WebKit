@@ -380,6 +380,14 @@ public:
         ASSERT(m_executableMemory->start());
         ASSERT(m_codePtr);
     }
+
+    template<PtrTag otherTag>
+    MacroAssemblerCodeRef& operator=(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)
+    {
+        m_codePtr = MacroAssemblerCodePtr<tag>::createFromExecutableAddress(otherCodeRef.code().template retaggedExecutableAddress<tag>());
+        m_executableMemory = otherCodeRef.m_executableMemory;
+        return *this;
+    }
     
     // Use this only when you know that the codePtr refers to code that is
     // already being kept alive through some other means. Typically this means
@@ -443,9 +451,9 @@ public:
 private:
     template<PtrTag otherTag>
     MacroAssemblerCodeRef(const MacroAssemblerCodeRef<otherTag>& otherCodeRef)
-        : m_codePtr(MacroAssemblerCodePtr<tag>::createFromExecutableAddress(otherCodeRef.code().template retaggedExecutableAddress<tag>()))
-        , m_executableMemory(otherCodeRef.m_executableMemory)
-    { }
+    {
+        *this = otherCodeRef;
+    }
 
     MacroAssemblerCodePtr<tag> m_codePtr;
     RefPtr<ExecutableMemoryHandle> m_executableMemory;

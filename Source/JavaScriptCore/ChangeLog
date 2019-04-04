@@ -1,3 +1,114 @@
+2019-04-04  Saam barati  <sbarati@apple.com>
+
+        Teach Call ICs how to call Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=196387
+
+        Reviewed by Filip Pizlo.
+
+        This patch teaches JS to call Wasm without going through the native thunk.
+        Currently, we emit a JIT "JS" callee stub which marshals arguments from
+        JS to Wasm. Like the native version of this, this thunk is responsible
+        for saving and restoring the VM's current Wasm context. Instead of emitting
+        an exception handler, we also teach the unwinder how to read the previous
+        wasm context to restore it as it unwindws past this frame.
+        
+        This patch is straight forward, and leaves some areas for perf improvement:
+        - We can teach the DFG/FTL to directly use the Wasm calling convention when
+          it knows it's calling a single Wasm function. This way we don't shuffle
+          registers to the stack and then back into registers.
+        - We bail out to the slow path for mismatched arity. I opened a bug to fix
+          optimize arity check failures: https://bugs.webkit.org/show_bug.cgi?id=196564
+        - We bail out to the slow path Double JSValues flowing into i32 arguments.
+          We should teach this thunk how to do that conversion directly.
+        
+        This patch also refactors the code to explicitly have a single pinned size register.
+        We used pretend in some places that we could have more than one pinned size register.
+        However, there was other code that just asserted the size was one. This patch just rips
+        out this code since we never moved to having more than one pinned size register. Doing
+        this refactoring cleans up the various places where we set up the size register.
+        
+        This patch is a 50-60% progression on JetStream 2's richards-wasm.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodeRef::operator=):
+        (JSC::MacroAssemblerCodeRef::MacroAssemblerCodeRef):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::operator() const):
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegistersForUnwinding):
+        (JSC::StackVisitor::Frame::calleeSaveRegisters): Deleted.
+        * interpreter/StackVisitor.h:
+        * jit/JITOperations.cpp:
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::runtimeTagRegisters):
+        (JSC::RegisterSet::specialRegisters):
+        (JSC::RegisterSet::runtimeRegisters): Deleted.
+        * jit/RegisterSet.h:
+        * jit/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * runtime/JSFunction.cpp:
+        (JSC::getCalculatedDisplayName):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::jsToWasmICCalleeStructure const):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmContext.h:
+        (JSC::Wasm::Context::pointerToInstance):
+        * wasm/WasmContextInlines.h:
+        (JSC::Wasm::Context::store):
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::getPinnedRegisters):
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSToWasmICCallee.cpp: Added.
+        (JSC::JSToWasmICCallee::create):
+        (JSC::JSToWasmICCallee::createStructure):
+        (JSC::JSToWasmICCallee::visitChildren):
+        * wasm/js/JSToWasmICCallee.h: Added.
+        (JSC::JSToWasmICCallee::function):
+        (JSC::JSToWasmICCallee::JSToWasmICCallee):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::useTagRegisters const):
+        (JSC::WebAssemblyFunction::calleeSaves const):
+        (JSC::WebAssemblyFunction::usedCalleeSaveRegisters const):
+        (JSC::WebAssemblyFunction::previousInstanceOffset const):
+        (JSC::WebAssemblyFunction::previousInstance):
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+        (JSC::WebAssemblyFunction::visitChildren):
+        (JSC::WebAssemblyFunction::destroy):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionHeapCellType.cpp: Added.
+        (JSC::WebAssemblyFunctionDestroyFunc::operator() const):
+        (JSC::WebAssemblyFunctionHeapCellType::WebAssemblyFunctionHeapCellType):
+        (JSC::WebAssemblyFunctionHeapCellType::~WebAssemblyFunctionHeapCellType):
+        (JSC::WebAssemblyFunctionHeapCellType::finishSweep):
+        (JSC::WebAssemblyFunctionHeapCellType::destroy):
+        * wasm/js/WebAssemblyFunctionHeapCellType.h: Added.
+        * wasm/js/WebAssemblyPrototype.h:
+
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Pass CodeOrigin to FuzzerAgent

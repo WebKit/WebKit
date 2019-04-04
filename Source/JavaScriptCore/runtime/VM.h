@@ -158,6 +158,7 @@ class VMEntryScope;
 class Watchdog;
 class Watchpoint;
 class WatchpointSet;
+class WebAssemblyFunctionHeapCellType;
 
 #if ENABLE(FTL_JIT)
 namespace FTL {
@@ -337,6 +338,7 @@ public:
     std::unique_ptr<JSDestructibleObjectHeapCellType> destructibleObjectHeapCellType;
 #if ENABLE(WEBASSEMBLY)
     std::unique_ptr<JSWebAssemblyCodeBlockHeapCellType> webAssemblyCodeBlockHeapCellType;
+    std::unique_ptr<WebAssemblyFunctionHeapCellType> webAssemblyFunctionHeapCellType;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.

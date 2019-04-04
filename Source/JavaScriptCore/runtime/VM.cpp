@@ -148,6 +148,7 @@
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
 #include "WebAssemblyFunction.h"
+#include "WebAssemblyFunctionHeapCellType.h"
 #include "WebAssemblyWrapperFunction.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ReadWriteLock.h>
@@ -280,6 +281,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , destructibleObjectHeapCellType(std::make_unique<JSDestructibleObjectHeapCellType>())
 #if ENABLE(WEBASSEMBLY)
     , webAssemblyCodeBlockHeapCellType(std::make_unique<JSWebAssemblyCodeBlockHeapCellType>())
+    , webAssemblyFunctionHeapCellType(std::make_unique<WebAssemblyFunctionHeapCellType>())
 #endif
     , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), primitiveGigacageAllocator.get())
     , jsValueGigacageAuxiliarySpace("JSValue Gigacage Auxiliary", heap, auxiliaryHeapCellType.get(), jsValueGigacageAllocator.get())
@@ -1264,7 +1266,7 @@ DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(objCCallbackFunctionSpace, destructibleO
 #endif
 #if ENABLE(WEBASSEMBLY)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyCodeBlockSpace, webAssemblyCodeBlockHeapCellType.get(), JSWebAssemblyCodeBlock)
-DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, cellHeapCellType.get(), WebAssemblyFunction)
+DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType.get(), WebAssemblyFunction)
 DYNAMIC_ISO_SUBSPACE_DEFINE_MEMBER_SLOW(webAssemblyWrapperFunctionSpace, cellHeapCellType.get(), WebAssemblyWrapperFunction)
 #endif
 
