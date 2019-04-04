@@ -375,6 +375,7 @@
     (iokit-property "cail_properties")
     (iokit-property "dpm")
 #endif
+    (iokit-property "IOGVAH264EncodeCapabilities") ;; <rdar://problem/49498040>
 )
 
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
@@ -641,7 +642,7 @@
        (subpath "/private/var/db/mds")
        (literal "/private/var/db/DetachedSignatures"))
 
-(allow ipc-posix-shm-read* ipc-posix-shm-write-data
+(allow ipc-posix-shm-read* ipc-posix-shm-write-data ipc-posix-shm-write-create
        (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 
 ;; CoreFoundation. We don't import com.apple.corefoundation.sb, because it allows unnecessary access to pasteboard.

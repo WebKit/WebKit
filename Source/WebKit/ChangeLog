@@ -1,3 +1,15 @@
+2019-04-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=196616
+        <rdar://problem/49498040>
+
+        Reviewed by Brent Fulgham.
+
+        Fix some observed sandbox violations in the WebContent process on macOS.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-04-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Host should be able to mute screen capture and camera/microphone independently
