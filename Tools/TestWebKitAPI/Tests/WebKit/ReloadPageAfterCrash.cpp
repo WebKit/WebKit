@@ -30,12 +30,15 @@
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
+#include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <signal.h>
 
 namespace TestWebKitAPI {
 
 static bool loadBeforeCrash = false;
 static bool loadAfterCrash = false;
+static bool calledCrashHandler = false;
 
 static void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
@@ -86,6 +89,83 @@ TEST(WebKit, ReloadPageAfterCrash)
     // Let's try load a page and see what happens.
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&loadAfterCrash);
+}
+
+static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
+{
+}
+
+static void didCrashCheckFrames(WKPageRef page, const void*)
+{
+    // Test if first load actually worked.
+    EXPECT_TRUE(loadBeforeCrash);
+
+    EXPECT_TRUE(!WKPageGetMainFrame(page));
+    EXPECT_TRUE(!WKPageGetFocusedFrame(page));
+    EXPECT_TRUE(!WKPageGetFrameSetLargestFrame(page));
+
+    calledCrashHandler = true;
+}
+
+TEST(WebKit, FocusedFrameAfterCrash)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
+
+    WKPageNavigationClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 0;
+    loaderClient.didFinishNavigation = didFinishLoad;
+    loaderClient.webProcessDidCrash = didCrashCheckFrames;
+
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("many-iframes", "html"));
+    WKPageLoadURL(webView.page(), url.get());
+    Util::run(&loadBeforeCrash);
+
+    EXPECT_FALSE(!WKPageGetMainFrame(webView.page()));
+
+    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("frames[2].focus()"));
+    WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), 0, nullJavaScriptCallback);
+
+    while (!WKPageGetFocusedFrame(webView.page()))
+        Util::spinRunLoop(10);
+
+    kill(WKPageGetProcessIdentifier(webView.page()), 9);
+
+    Util::run(&calledCrashHandler);
+}
+
+TEST(WebKit, FrameSetLargestFramAfterCrash)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    PlatformWebView webView(context.get());
+
+    WKPageNavigationClientV0 loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.base.version = 0;
+    loaderClient.didFinishNavigation = didFinishLoad;
+    loaderClient.webProcessDidCrash = didCrashCheckFrames;
+
+    WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
+
+    WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("about:blank"));
+    WKRetainPtr<WKStringRef> htmlString = Util::toWK("<frameset cols='25%,*,25%'><frame src='about:blank'><frame src='about:blank'><frame src='about:blank'></frameset>");
+
+    WKPageLoadHTMLString(webView.page(), htmlString.get(), baseURL.get());
+    Util::run(&loadBeforeCrash);
+
+    EXPECT_FALSE(!WKPageGetMainFrame(webView.page()));
+
+    while (!WKPageGetFrameSetLargestFrame(webView.page()))
+        Util::spinRunLoop(10);
+
+    kill(WKPageGetProcessIdentifier(webView.page()), 9);
+
+    Util::run(&calledCrashHandler);
 }
 
 } // namespace TestWebKitAPI
