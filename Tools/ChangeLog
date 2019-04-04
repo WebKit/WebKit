@@ -1,3 +1,16 @@
+2019-04-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
+        https://bugs.webkit.org/show_bug.cgi?id=196588
+        <rdar://problem/49365787>
+
+        Unreviewed build fix for Windows port.
+
+        error C3861: 'kill': identifier not found
+
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::TEST): Replaced kill with WKPageTerminate.
+
 2019-04-03  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Cancel build and similar operations should have authentication
