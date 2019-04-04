@@ -44,6 +44,10 @@
 #endif
 #include <wtf/text/CString.h>
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 namespace WebCore {
 
 Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient& client, Type layerType)
@@ -121,6 +125,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
     , m_coordinator(0)
     , m_compositedNativeImagePtr(0)
     , m_animationStartedTimer(*this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
+    , m_requestPendingTileCreationTimer(RunLoop::main(), this, &CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired)
 {
     static Nicosia::PlatformLayer::LayerID nextLayerID = 1;
     m_id = nextLayerID++;
@@ -130,6 +135,10 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(Type layerType, GraphicsLayer
 
     // Enforce a complete flush on the first occasion.
     m_nicosia.delta.value = UINT_MAX;
+
+#if USE(GLIB_EVENT_LOOP)
+    m_requestPendingTileCreationTimer.setPriority(RunLoopSourcePriority::LayerFlushTimer);
+#endif
 }
 
 CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
@@ -624,6 +633,9 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
 
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
+    // Whether it kicked or not, we don't need this timer running anymore.
+    m_requestPendingTileCreationTimer.stop();
+
     // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
     bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();
     if (hasActiveTransformAnimation)
@@ -937,10 +949,11 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
             didUpdateTileBuffers();
     }
 
-    // Request a second update immediately if some tiles are still pending creation.
+    // Request a new update immediately if some tiles are still pending creation. Do this on a timer
+    // as we're in a layer flush and flush requests at this point would be discarded.
     if (layerState.hasPendingTileCreation) {
         setNeedsVisibleRectAdjustment();
-        notifyFlushRequired();
+        m_requestPendingTileCreationTimer.startOneShot(0_s);
     }
 
     finishUpdate();
@@ -1181,6 +1194,11 @@ void CoordinatedGraphicsLayer::resumeAnimations()
 void CoordinatedGraphicsLayer::animationStartedTimerFired()
 {
     client().notifyAnimationStarted(this, "", m_lastAnimationStartTime);
+}
+
+void CoordinatedGraphicsLayer::requestPendingTileCreationTimerFired()
+{
+    notifyFlushRequired();
 }
 
 bool CoordinatedGraphicsLayer::usesContentsLayer() const
