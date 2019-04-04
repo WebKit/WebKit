@@ -67,7 +67,22 @@
 }
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(webrtc, VideoProcessing)
-SOFT_LINK_FUNCTION_FOR_SOURCE(webrtc, VideoProcessing, VPModuleInitialize, void, (), ())
+
+namespace webrtc {
+static void initVideoProcessingVPModuleInitialize();
+void (*softLinkVideoProcessingVPModuleInitialize) () = initVideoProcessingVPModuleInitialize;
+static void initVideoProcessingVPModuleInitialize()
+{
+    auto* library = VideoProcessingLibrary();
+    if (!library)
+        fprintf(stderr, "Cannot find VideoProcessingLibrary: %s\n", dlerror());
+    softLinkVideoProcessingVPModuleInitialize = (void (*)()) dlsym(library, "VPModuleInitialize");
+    if (!softLinkVideoProcessingVPModuleInitialize)
+        fprintf(stderr, "Cannot find function VPModuleInitialize: %s\n", dlerror());
+    softLinkVideoProcessingVPModuleInitialize();
+}
+
+}
 
 #endif
 
