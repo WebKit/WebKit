@@ -39,8 +39,11 @@ GameControllerGamepad::GameControllerGamepad(GCController *controller, unsigned 
     controller.playerIndex = (GCControllerPlayerIndex)(GCControllerPlayerIndex1 + index);
 
     m_extendedGamepad = controller.extendedGamepad;
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (!m_extendedGamepad)
         m_gamepad = controller.gamepad;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     ASSERT(m_extendedGamepad || m_gamepad);
 

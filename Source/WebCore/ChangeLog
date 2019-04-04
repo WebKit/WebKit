@@ -1,3 +1,10 @@
+2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * platform/gamepad/cocoa/GameControllerGamepad.mm:
+        (WebCore::GameControllerGamepad::GameControllerGamepad):
+
 2019-04-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Host should be able to mute screen capture and camera/microphone independently
