@@ -1,5 +1,19 @@
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] while waiting in queue status-bubble for testers queues should display build information from builder queue
+        https://bugs.webkit.org/show_bug.cgi?id=196618
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble): Added QUEUE_TRIGGERS.
+        (StatusBubble._build_bubble): Get the build from builder if tester has not started the build yet.
+        (StatusBubble._get_parent_queue): Get the name of the parent (builder) queue.
+        (StatusBubble.get_latest_build_for_queue): If the queue doesn't have any build yet, return build information from
+        its parent(builder).
+
+2019-04-04  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] Status-bubble steps are sometimes displayed in reverse order
         https://bugs.webkit.org/show_bug.cgi?id=196625
 
