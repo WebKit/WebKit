@@ -82,7 +82,7 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)
     gtk_widget_queue_draw_region(m_viewWidget, toCairoRegion(region).get());
 }
 
-void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&, bool)
+void PageClientImpl::requestScroll(const WebCore::FloatPoint&, const WebCore::IntPoint&)
 {
     notImplemented();
 }
