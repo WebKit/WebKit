@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBindingUtilities.h"
-#include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"
 #include "IDBGetRecordData.h"
@@ -1753,9 +1752,7 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(const IDBIndexInfo& i
         return IDBError { };
 
     IndexKey indexKey;
-    auto* objectStoreInfo = infoForObjectStore(info.objectStoreIdentifier());
-    ASSERT(objectStoreInfo);
-    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue, indexKey, objectStoreInfo->keyPath(), key);
+    generateIndexKeyForValue(*m_globalObject->globalExec(), info, jsValue, indexKey);
 
     if (indexKey.isNull())
         return IDBError { };
@@ -1775,7 +1772,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
     bool anyRecordsSucceeded = false;
     for (auto& index : info.indexMap().values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey, info.keyPath(), key);
+        generateIndexKeyForValue(*m_globalObject->globalExec(), index, jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;
@@ -2007,12 +2004,12 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     }
 
     int64_t recordID = 0;
-    ThreadSafeDataBuffer keyResultBuffer, valueResultBuffer;
+    ThreadSafeDataBuffer resultBuffer;
     {
-        static const char* const lowerOpenUpperOpen = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
-        static const char* const lowerOpenUpperClosed = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
-        static const char* const lowerClosedUpperOpen = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
-        static const char* const lowerClosedUpperClosed = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
+        static const char* const lowerOpenUpperOpen = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
+        static const char* const lowerOpenUpperClosed = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
+        static const char* const lowerClosedUpperOpen = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
+        static const char* const lowerClosedUpperClosed = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
 
         static const char* const lowerOpenUpperOpenKeyOnly = "SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
         static const char* const lowerOpenUpperClosedKeyOnly = "SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
@@ -2069,31 +2066,27 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
             return IDBError { UnknownError, "Error looking up record in object store by key range"_s };
         }
 
-        Vector<uint8_t> keyBuffer;
-        sql->getColumnBlobAsVector(0, keyBuffer);
-        keyResultBuffer = ThreadSafeDataBuffer::create(WTFMove(keyBuffer));
+        Vector<uint8_t> buffer;
+        sql->getColumnBlobAsVector(0, buffer);
+        resultBuffer = ThreadSafeDataBuffer::create(WTFMove(buffer));
 
-        if (type == IDBGetRecordDataType::KeyAndValue) {
-            Vector<uint8_t> valueBuffer;
-            sql->getColumnBlobAsVector(1, valueBuffer);
-            valueResultBuffer = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
-            recordID = sql->getColumnInt64(2);
-        }
-    }
-
-    auto* keyVector = keyResultBuffer.data();
-    if (!keyVector) {
-        LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore");
-        return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore get"_s };
-    }
-    
-    IDBKeyData keyData;
-    if (!deserializeIDBKeyData(keyVector->data(), keyVector->size(), keyData)) {
-        LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore");
-        return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore get"_s };
+        if (type == IDBGetRecordDataType::KeyAndValue)
+            recordID = sql->getColumnInt64(1);
     }
 
     if (type == IDBGetRecordDataType::KeyOnly) {
+        auto* vector = resultBuffer.data();
+        if (!vector) {
+            LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
+            return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore.getKey()"_s };
+        }
+
+        IDBKeyData keyData;
+        if (!deserializeIDBKeyData(vector->data(), vector->size(), keyData)) {
+            LOG_ERROR("Unable to deserialize key data from database for IDBObjectStore.getKey()");
+            return IDBError { UnknownError, "Error extracting key data from database executing IDBObjectStore.getKey()"_s };
+        }
+
         resultValue = { keyData };
         return IDBError { };
     }
@@ -2107,9 +2100,7 @@ IDBError SQLiteIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
     if (!error.isNull())
         return error;
 
-    auto* objectStoreInfo = infoForObjectStore(objectStoreID);
-    ASSERT(objectStoreInfo);
-    resultValue = { keyData, { valueResultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) }, objectStoreInfo->keyPath()};
+    resultValue = { { resultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) } };
     return IDBError { };
 }
 
@@ -2124,10 +2115,10 @@ SQLiteStatement* SQLiteIDBBackingStore::cachedStatementForGetAllObjectStoreRecor
     static const char* const lowerOpenUpperClosedKey = "SELECT key FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
     static const char* const lowerClosedUpperOpenKey = "SELECT key FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
     static const char* const lowerClosedUpperClosedKey = "SELECT key FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
-    static const char* const lowerOpenUpperOpenValue = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
-    static const char* const lowerOpenUpperClosedValue = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
-    static const char* const lowerClosedUpperOpenValue = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
-    static const char* const lowerClosedUpperClosedValue = "SELECT key, value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
+    static const char* const lowerOpenUpperOpenValue = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
+    static const char* const lowerOpenUpperClosedValue = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key > CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
+    static const char* const lowerClosedUpperOpenValue = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key < CAST(? AS TEXT) ORDER BY key;";
+    static const char* const lowerClosedUpperClosedValue = "SELECT value, ROWID FROM Records WHERE objectStoreID = ? AND key >= CAST(? AS TEXT) AND key <= CAST(? AS TEXT) ORDER BY key;";
 
     if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Keys) {
         if (getAllRecordsData.keyRangeData.lowerOpen) {
@@ -2192,9 +2183,7 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
         return IDBError { UnknownError, "Failed to look up record in object store by key range"_s };
     }
 
-    auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
-    result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
+    result = { getAllRecordsData.getAllType };
 
     uint32_t targetResults;
     if (getAllRecordsData.count && getAllRecordsData.count.value())
@@ -2206,21 +2195,12 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
     uint32_t returnedResults = 0;
 
     while (sqlResult == SQLITE_ROW && returnedResults < targetResults) {
-        Vector<uint8_t> keyBuffer;
-        IDBKeyData keyData;
-        sql->getColumnBlobAsVector(0, keyBuffer);
-        if (!deserializeIDBKeyData(keyBuffer.data(), keyBuffer.size(), keyData)) {
-            LOG_ERROR("Unable to deserialize key data from database while getting all records");
-            return IDBError { UnknownError, "Unable to deserialize key data while getting all records"_s };
-        }
-        result.addKey(WTFMove(keyData));
-
         if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values) {
-            Vector<uint8_t> valueBuffer;
-            sql->getColumnBlobAsVector(1, valueBuffer);
-            ThreadSafeDataBuffer valueResultBuffer = ThreadSafeDataBuffer::create(WTFMove(valueBuffer));
+            Vector<uint8_t> buffer;
+            sql->getColumnBlobAsVector(0, buffer);
+            ThreadSafeDataBuffer resultBuffer = ThreadSafeDataBuffer::create(WTFMove(buffer));
 
-            auto recordID = sql->getColumnInt64(2);
+            auto recordID = sql->getColumnInt64(1);
 
             ASSERT(recordID);
             Vector<String> blobURLs, blobFilePaths;
@@ -2231,7 +2211,18 @@ IDBError SQLiteIDBBackingStore::getAllObjectStoreRecords(const IDBResourceIdenti
             if (!error.isNull())
                 return error;
 
-            result.addValue({ valueResultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) });
+            result.addValue({ resultBuffer, WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) });
+        } else {
+            Vector<uint8_t> keyData;
+            IDBKeyData key;
+            sql->getColumnBlobAsVector(0, keyData);
+
+            if (!deserializeIDBKeyData(keyData.data(), keyData.size(), key)) {
+                LOG_ERROR("Unable to deserialize key data from database while getting all key records");
+                return IDBError { UnknownError, "Unable to deserialize key data while getting all key records"_s };
+            }
+
+            result.addKey(WTFMove(key));
         }
 
         ++returnedResults;
@@ -2272,18 +2263,16 @@ IDBError SQLiteIDBBackingStore::getAllIndexRecords(const IDBResourceIdentifier& 
         return IDBError { UnknownError, "Cursor failed while looking up index records in database"_s };
     }
 
-    auto* objectStoreInfo = infoForObjectStore(getAllRecordsData.objectStoreIdentifier);
-    ASSERT(objectStoreInfo);
-    result = { getAllRecordsData.getAllType, objectStoreInfo->keyPath() };
-
+    result = { getAllRecordsData.getAllType };
     uint32_t currentCount = 0;
     uint32_t targetCount = getAllRecordsData.count ? getAllRecordsData.count.value() : 0;
     if (!targetCount)
         targetCount = std::numeric_limits<uint32_t>::max();
     while (!cursor->didComplete() && !cursor->didError() && currentCount < targetCount) {
-        IDBKeyData keyCopy = cursor->currentPrimaryKey();
-        result.addKey(WTFMove(keyCopy));
-        if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Values)
+        if (getAllRecordsData.getAllType == IndexedDB::GetAllType::Keys) {
+            IDBKeyData keyCopy = cursor->currentPrimaryKey();
+            result.addKey(WTFMove(keyCopy));
+        } else
             result.addValue(cursor->currentValue() ? *cursor->currentValue() : IDBValue());
 
         ++currentCount;
@@ -2330,11 +2319,8 @@ IDBError SQLiteIDBBackingStore::getIndexRecord(const IDBResourceIdentifier& tran
     else {
         if (type == IndexedDB::IndexRecordType::Key)
             getResult = { cursor->currentPrimaryKey() };
-        else {
-            auto* objectStoreInfo = infoForObjectStore(objectStoreID);
-            ASSERT(objectStoreInfo);
-            getResult = { cursor->currentPrimaryKey(), cursor->currentPrimaryKey(), cursor->currentValue() ? *cursor->currentValue() : IDBValue(), objectStoreInfo->keyPath() };
-        }
+        else
+            getResult = { cursor->currentValue() ? *cursor->currentValue() : IDBValue(), cursor->currentPrimaryKey() };
     }
 
     return IDBError { };
@@ -2385,8 +2371,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
         return IDBError { };
     }
 
-    Vector<uint8_t> valueVector;
-    sql->getColumnBlobAsVector(1, valueVector);
+    sql->getColumnBlobAsVector(1, keyVector);
 
     int64_t recordID = sql->getColumnInt64(2);
     Vector<String> blobURLs, blobFilePaths;
@@ -2397,9 +2382,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey(int64_t indexID
     if (!error.isNull())
         return error;
 
-    auto* objectStoreInfo = infoForObjectStore(objectStoreID);
-    ASSERT(objectStoreInfo);
-    getResult = { objectStoreKey, objectStoreKey, { ThreadSafeDataBuffer::create(WTFMove(valueVector)), WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) }, objectStoreInfo->keyPath() };
+    getResult = { { ThreadSafeDataBuffer::create(WTFMove(keyVector)), WTFMove(blobURLs), sessionID, WTFMove(blobFilePaths) }, objectStoreKey };
     return IDBError { };
 }
 
@@ -2564,9 +2547,7 @@ IDBError SQLiteIDBBackingStore::openCursor(const IDBResourceIdentifier& transact
 
     m_cursors.set(cursor->identifier(), cursor);
 
-    auto* objectStoreInfo = infoForObjectStore(info.objectStoreIdentifier());
-    ASSERT(objectStoreInfo);
-    cursor->currentData(result, objectStoreInfo->keyPath());
+    cursor->currentData(result);
     return IDBError { };
 }
 
@@ -2609,9 +2590,7 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
         }
     }
 
-    auto* objectStoreInfo = infoForObjectStore(cursor->objectStoreID());
-    ASSERT(objectStoreInfo);
-    cursor->currentData(result, objectStoreInfo->keyPath());
+    cursor->currentData(result);
     return IDBError { };
 }
 

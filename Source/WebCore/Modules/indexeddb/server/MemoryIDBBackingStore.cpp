@@ -363,11 +363,9 @@ IDBError MemoryIDBBackingStore::getRecord(const IDBResourceIdentifier& transacti
         return IDBError { UnknownError, "No backing store object store found"_s };
 
     switch (type) {
-    case IDBGetRecordDataType::KeyAndValue: {
-        auto key = objectStore->lowestKeyWithRecordInRange(range);
-        outValue = { key, key.isNull() ? ThreadSafeDataBuffer() : objectStore->valueForKey(key), objectStore->info().keyPath() };
+    case IDBGetRecordDataType::KeyAndValue:
+        outValue = objectStore->valueForKeyRange(range);
         break;
-    }
     case IDBGetRecordDataType::KeyOnly:
         outValue = objectStore->lowestKeyWithRecordInRange(range);
         break;

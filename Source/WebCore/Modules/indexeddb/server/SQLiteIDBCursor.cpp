@@ -101,7 +101,7 @@ SQLiteIDBCursor::~SQLiteIDBCursor()
         m_transaction->closeCursor(*this);
 }
 
-void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPath>& keyPath)
+void SQLiteIDBCursor::currentData(IDBGetResult& result)
 {
     ASSERT(!m_fetchedRecords.isEmpty());
 
@@ -112,7 +112,7 @@ void SQLiteIDBCursor::currentData(IDBGetResult& result, const Optional<IDBKeyPat
         return;
     }
 
-    result = { currentRecord.record.key, currentRecord.record.primaryKey, currentRecord.record.value ? *currentRecord.record.value : IDBValue(), keyPath};
+    result = { currentRecord.record.key, currentRecord.record.primaryKey, currentRecord.record.value ? *currentRecord.record.value : IDBValue() };
 }
 
 static String buildIndexStatement(const IDBKeyRangeData& keyRange, IndexedDB::CursorDirection cursorDirection)

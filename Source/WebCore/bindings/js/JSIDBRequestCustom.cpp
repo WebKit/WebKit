@@ -57,26 +57,10 @@ JSC::JSValue JSIDBRequest::result(JSC::ExecState& state) const
             return toJS<IDLIDBKeyData>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), keyData);
         }, [&state] (Vector<IDBKeyData> keyDatas) {
             return toJS<IDLSequence<IDLIDBKeyData>>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), keyDatas);
-        }, [&state] (IDBGetResult getResult) {
-            auto result = deserializeIDBValueWithKeyInjection(state, getResult.value(), getResult.keyData(), getResult.keyPath());
-            return result ? result.value() : jsNull();
-        }, [&state] (IDBGetAllResult getAllResult) {
-            auto& keys = getAllResult.keys();
-            auto& values = getAllResult.values();
-            auto& keyPath = getAllResult.keyPath();
-            auto scope = DECLARE_THROW_SCOPE(state.vm());
-            JSC::MarkedArgumentBuffer list;
-            for (unsigned i = 0; i < values.size(); i ++) {
-                auto result = deserializeIDBValueWithKeyInjection(state, values[i], keys[i], keyPath);
-                if (!result)
-                    return jsNull();
-                list.append(result.value());
-                if (UNLIKELY(list.hasOverflowed())) {
-                    propagateException(state, scope, Exception(UnknownError));
-                    return jsNull();
-                }
-            }
-            return JSValue(JSC::constructArray(&state, nullptr, state.lexicalGlobalObject(), list));
+        }, [&state] (IDBValue value) {
+            return toJS<IDLIDBValue>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), value);
+        }, [&state] (Vector<IDBValue> values) {
+            return toJS<IDLSequence<IDLIDBValue>>(state, *jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject()), values);
         }, [] (uint64_t number) {
             return toJS<IDLUnsignedLongLong>(number);
         }, [] (IDBRequest::NullResultType other) {

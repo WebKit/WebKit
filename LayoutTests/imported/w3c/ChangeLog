@@ -1,3 +1,24 @@
+2019-04-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r243807 and r243824.
+        https://bugs.webkit.org/show_bug.cgi?id=196611
+
+        Test added is a flaky timeout on iOS Simulator, 3 tests
+        unskipped are flaky failures (Requested by ShawnRoberts on
+        #webkit).
+
+        Reverted changesets:
+
+        "Blob type cannot be stored correctly in IDB when
+        IDBObjectStore has autoIncrement and keyPath options"
+        https://bugs.webkit.org/show_bug.cgi?id=196128
+        https://trac.webkit.org/changeset/243807
+
+        "Follow up fix for r243807: Use MarkedArgumentBuffer instead
+        of Vector for JSValue"
+        https://bugs.webkit.org/show_bug.cgi?id=196547
+        https://trac.webkit.org/changeset/243824
+
 2019-04-03  Chris Dumez  <cdumez@apple.com>
 
         HTML fragment serialization should not strip whitespace from URL attribute values

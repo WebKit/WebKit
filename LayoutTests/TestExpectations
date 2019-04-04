@@ -358,6 +358,8 @@ webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/access-control-preflight
 webkit.org/b/179608 imported/w3c/web-platform-tests/xhr/send-conditional-cors.htm [ Failure ]
 webkit.org/b/179611 imported/w3c/web-platform-tests/xhr/send-entity-body-document.htm [ Pass Failure ]
 imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html [ Skip ]
+imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/interfaces.html [ Pass Timeout ]
 [ Debug ] imported/w3c/web-platform-tests/css/cssom-view/interfaces.html [ Skip ]
 webkit.org/b/182292 imported/w3c/web-platform-tests/css/cssom-view/scrollingElement-quirks-dynamic-001.html [ ImageOnlyFailure ]

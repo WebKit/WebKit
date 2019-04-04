@@ -126,7 +126,7 @@ IDBGetResult MemoryIndex::getResultForKeyRange(IndexedDB::IndexRecordType type, 
     if (!keyValue)
         return { };
 
-    return type == IndexedDB::IndexRecordType::Key ? IDBGetResult(*keyValue) : IDBGetResult(*keyValue, m_objectStore.valueForKeyRange(*keyValue), m_objectStore.info().keyPath());
+    return type == IndexedDB::IndexRecordType::Key ? IDBGetResult(*keyValue) : IDBGetResult(m_objectStore.valueForKeyRange(*keyValue));
 }
 
 uint64_t MemoryIndex::countForKeyRange(const IDBKeyRangeData& inRange)
@@ -156,7 +156,7 @@ void MemoryIndex::getAllRecords(const IDBKeyRangeData& keyRangeData, Optional<ui
 {
     LOG(IndexedDB, "MemoryIndex::getAllRecords");
 
-    result = { type, m_objectStore.info().keyPath() };
+    result = { type };
 
     if (!m_records)
         return;
@@ -179,8 +179,10 @@ void MemoryIndex::getAllRecords(const IDBKeyRangeData& keyRangeData, Optional<ui
 
         auto allValues = m_records->allValuesForKey(key, targetCount - currentCount);
         for (auto& keyValue : allValues) {
-            result.addKey(IDBKeyData(keyValue));
-            if (type == IndexedDB::GetAllType::Values)
+            if (type == IndexedDB::GetAllType::Keys) {
+                IDBKeyData keyCopy { keyValue };
+                result.addKey(WTFMove(keyCopy));
+            } else
                 result.addValue(m_objectStore.valueForKeyRange(keyValue));
         }
 

@@ -989,7 +989,7 @@ void IDBTransaction::didGetAllRecordsOnServer(IDBRequest& request, const IDBResu
         request.setResult(getAllResult.keys());
         break;
     case IndexedDB::GetAllType::Values:
-        request.setResult(getAllResult);
+        request.setResult(getAllResult.values());
         break;
     }
 
@@ -1093,7 +1093,7 @@ void IDBTransaction::didGetRecordOnServer(IDBRequest& request, const IDBResultDa
             request.setResultToUndefined();
     } else {
         if (resultData.getResult().value().data().data())
-            request.setResultToStructuredClone(resultData.getResult());
+            request.setResultToStructuredClone(resultData.getResult().value());
         else
             request.setResultToUndefined();
     }

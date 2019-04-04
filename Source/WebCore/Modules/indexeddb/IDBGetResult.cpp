@@ -57,11 +57,6 @@ void IDBGetResult::isolatedCopy(const IDBGetResult& source, IDBGetResult& destin
     destination.m_isDefined = source.m_isDefined;
 }
 
-void IDBGetResult::setValue(IDBValue&& value)
-{
-    m_value = WTFMove(value);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

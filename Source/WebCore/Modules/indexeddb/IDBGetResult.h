@@ -43,9 +43,38 @@ public:
     {
     }
 
+    IDBGetResult(const IDBValue& value, const IDBKeyData& currentPrimaryKey)
+        : m_value(value)
+        , m_primaryKeyData(currentPrimaryKey)
+    {
+    }
+
+    IDBGetResult(const ThreadSafeDataBuffer& buffer)
+        : m_value(buffer)
+    {
+    }
+
+    IDBGetResult(IDBValue&& buffer)
+        : m_value(WTFMove(buffer))
+    {
+    }
+
+    IDBGetResult(IDBKey& key)
+        : m_keyData(&key)
+    {
+    }
+
     IDBGetResult(const IDBKeyData& keyData)
         : m_keyData(keyData)
     {
+    }
+
+    IDBGetResult(SharedBuffer* buffer, IDBKey& key, const IDBKeyPath& path)
+        : m_keyData(&key)
+        , m_keyPath(path)
+    {
+        if (buffer)
+            dataFromBuffer(*buffer);
     }
 
     IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData)
@@ -54,25 +83,17 @@ public:
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const ThreadSafeDataBuffer& buffer, const Optional<IDBKeyPath>& keyPath)
-        : m_value(buffer)
-        , m_keyData(keyData)
-        , m_keyPath(keyPath)
-    {
-    }
-
-    IDBGetResult(const IDBKeyData& keyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath)
-        : m_value(WTFMove(value))
-        , m_keyData(keyData)
-        , m_keyPath(keyPath)
-    {
-    }
-
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value)
         : m_value(WTFMove(value))
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
-        , m_keyPath(keyPath)
+    {
+    }
+
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, const IDBValue& value)
+        : m_value(value)
+        , m_keyData(keyData)
+        , m_primaryKeyData(primaryKeyData)
     {
     }
 
@@ -81,12 +102,10 @@ public:
 
     IDBGetResult isolatedCopy() const;
 
-    void setValue(IDBValue&&);
-
     const IDBValue& value() const { return m_value; }
     const IDBKeyData& keyData() const { return m_keyData; }
     const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
-    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const IDBKeyPath& keyPath() const { return m_keyPath; }
     bool isDefined() const { return m_isDefined; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -100,7 +119,7 @@ private:
     IDBValue m_value;
     IDBKeyData m_keyData;
     IDBKeyData m_primaryKeyData;
-    Optional<IDBKeyPath> m_keyPath;
+    IDBKeyPath m_keyPath;
     bool m_isDefined { true };
 };
 

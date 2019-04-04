@@ -310,7 +310,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
 
     for (auto& index : m_indexesByName.values()) {
         IndexKey indexKey;
-        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index->info(), jsValue, indexKey, m_info.keyPath(), key);
+        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index->info(), jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;
@@ -344,7 +344,7 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
             return IDBError { };
 
         IndexKey indexKey;
-        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index.info(), jsValue, indexKey, m_info.keyPath(), iterator.key);
+        generateIndexKeyForValue(UniqueIDBDatabase::databaseThreadExecState(), index.info(), jsValue, indexKey);
 
         if (indexKey.isNull())
             continue;
@@ -407,7 +407,7 @@ ThreadSafeDataBuffer MemoryObjectStore::valueForKeyRange(const IDBKeyRangeData& 
 
 void MemoryObjectStore::getAllRecords(const IDBKeyRangeData& keyRangeData, Optional<uint32_t> count, IndexedDB::GetAllType type, IDBGetAllResult& result) const
 {
-    result = { type, m_info.keyPath() };
+    result = { type };
 
     uint32_t targetCount;
     if (count && count.value())
@@ -424,9 +424,11 @@ void MemoryObjectStore::getAllRecords(const IDBKeyRangeData& keyRangeData, Optio
 
         range.lowerKey = key;
         range.lowerOpen = true;
-        if (type == IndexedDB::GetAllType::Values)
+
+        if (type == IndexedDB::GetAllType::Keys)
+            result.addKey(WTFMove(key));
+        else
             result.addValue(valueForKey(key));
-        result.addKey(WTFMove(key));
 
         ++currentCount;
     }

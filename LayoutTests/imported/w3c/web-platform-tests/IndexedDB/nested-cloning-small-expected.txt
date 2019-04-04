@@ -2,9 +2,9 @@
 PASS small typed array 
 PASS blob 
 PASS blob with small typed array 
-PASS blob with small typed array with key generator 
+FAIL blob with small typed array with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
 PASS blob array 
-PASS blob array with key generator 
+FAIL blob array with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
 PASS array of blobs and small typed arrays 
-PASS array of blobs and small typed arrays with key generator 
+FAIL array of blobs and small typed arrays with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
 
