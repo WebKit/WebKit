@@ -51,7 +51,7 @@ public:
 
     void scrollingStateTreePropertiesChanged();
 
-    WEBCORE_EXPORT void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, const Optional<FloatPoint>& layoutViewportOrigin, bool programmaticScroll, ScrollingLayerPositionAction);
+    WEBCORE_EXPORT void scheduleUpdateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, const Optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction);
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT void setActiveScrollSnapIndices(ScrollingNodeID, unsigned horizontalIndex, unsigned verticalIndex);
@@ -77,7 +77,7 @@ protected:
 
     RefPtr<ScrollingTree> releaseScrollingTree() { return WTFMove(m_scrollingTree); }
 
-    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, bool programmaticScroll, ScrollingLayerPositionAction);
+    void updateScrollPositionAfterAsyncScroll(ScrollingNodeID, const FloatPoint&, Optional<FloatPoint> layoutViewportOrigin, ScrollType, ScrollingLayerPositionAction);
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT void willCommitTree() override;
@@ -118,7 +118,7 @@ private:
     WEBCORE_EXPORT void setPositionedNodeGeometry(ScrollingNodeID, const LayoutConstraints&) override;
     WEBCORE_EXPORT void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) override;
 
-    WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool programmaticScroll, ViewportRectStability, ScrollingLayerPositionAction) override;
+    WEBCORE_EXPORT void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) override;
     void reconcileScrollPosition(FrameView&, ScrollingLayerPositionAction);
 
     bool isRubberBandInProgress() const override;
@@ -147,25 +147,21 @@ private:
 
     struct ScheduledScrollUpdate {
         ScheduledScrollUpdate() = default;
-        ScheduledScrollUpdate(ScrollingNodeID scrollingNodeID, FloatPoint point, Optional<FloatPoint> viewportOrigin, bool isProgrammatic, ScrollingLayerPositionAction udpateAction)
+        ScheduledScrollUpdate(ScrollingNodeID scrollingNodeID, FloatPoint point, Optional<FloatPoint> viewportOrigin, ScrollingLayerPositionAction udpateAction)
             : nodeID(scrollingNodeID)
             , scrollPosition(point)
             , layoutViewportOrigin(viewportOrigin)
-            , isProgrammaticScroll(isProgrammatic)
             , updateLayerPositionAction(udpateAction)
         { }
 
         ScrollingNodeID nodeID { 0 };
         FloatPoint scrollPosition;
         Optional<FloatPoint> layoutViewportOrigin;
-        bool isProgrammaticScroll { false };
         ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
         
         bool matchesUpdateType(const ScheduledScrollUpdate& other) const
         {
-            return nodeID == other.nodeID
-                && isProgrammaticScroll == other.isProgrammaticScroll
-                && updateLayerPositionAction == other.updateLayerPositionAction;
+            return nodeID == other.nodeID && updateLayerPositionAction == other.updateLayerPositionAction;
         }
     };
 

@@ -103,12 +103,15 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
     if (node.isRootNode())
         setMainFrameScrollPosition(scrollPosition);
 
+    if (isHandlingProgrammaticScroll())
+        return;
+
     Optional<FloatPoint> layoutViewportOrigin;
     if (is<ScrollingTreeFrameScrollingNode>(node))
         layoutViewportOrigin = downcast<ScrollingTreeFrameScrollingNode>(node).layoutViewport().location();
 
-    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, localIsHandlingProgrammaticScroll = isHandlingProgrammaticScroll(), scrollingLayerPositionAction] {
-        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, localIsHandlingProgrammaticScroll, scrollingLayerPositionAction);
+    RunLoop::main().dispatch([scrollingCoordinator = m_scrollingCoordinator, nodeID = node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction] {
+        scrollingCoordinator->scheduleUpdateScrollPositionAfterAsyncScroll(nodeID, scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction);
     });
 }
 
