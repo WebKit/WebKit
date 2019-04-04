@@ -120,8 +120,8 @@ void CompositingRunLoop::scheduleUpdate(LockHolder& stateLocker)
     // An update was requested. Depending on the state:
     //  - if Idle, enter the Scheduled state and start the update timer,
     //  - if Scheduled, do nothing,
-    //  - if InProgress or PendingCompletion, mark an update as pending, meaning another
-    //    update will be scheduled as soon as the current one is completed.
+    //  - if InProgress mark an update as pending, meaning another update will be
+    //    scheduled as soon as the current one is completed.
 
     UNUSED_PARAM(stateLocker);
 
@@ -134,7 +134,6 @@ void CompositingRunLoop::scheduleUpdate(LockHolder& stateLocker)
     case UpdateState::Scheduled:
         return;
     case UpdateState::InProgress:
-    case UpdateState::PendingCompletion:
         m_state.pendingUpdate = true;
         return;
     }
@@ -146,48 +145,15 @@ void CompositingRunLoop::stopUpdates()
 
     LockHolder locker(m_state.lock);
     m_updateTimer.stop();
-    m_state.composition = CompositionState::Idle;
     m_state.update = UpdateState::Idle;
     m_state.pendingUpdate = false;
-}
-
-void CompositingRunLoop::compositionCompleted(LockHolder& stateLocker)
-{
-    // Composition has been signaled as completed, pushing the state into Idle.
-    // Depending on the state of the scene update:
-    //  - if Idle, Scheduled or InProgress, do nothing,
-    //  - if PendingCompletion, schedule a new update in case a pending update was marked,
-    //    or push the scene update state into Idle otherwise.
-
-    UNUSED_PARAM(stateLocker);
-
-    m_state.composition = CompositionState::Idle;
-
-    switch (m_state.update) {
-    case UpdateState::Idle:
-    case UpdateState::Scheduled:
-    case UpdateState::InProgress:
-        return;
-    case UpdateState::PendingCompletion:
-        if (m_state.pendingUpdate) {
-            m_state.pendingUpdate = false;
-            m_state.update = UpdateState::Scheduled;
-            if (!m_state.isSuspended)
-                m_updateTimer.startOneShot(0_s);
-            return;
-        }
-
-        m_state.update = UpdateState::Idle;
-        return;
-    }
 }
 
 void CompositingRunLoop::updateCompleted(LockHolder& stateLocker)
 {
     // Scene update has been signaled as completed. Depending on the state:
     //  - if Idle, Scheduled or InProgress, do nothing,
-    //  - if InProgress, push the state into PendingCompletion if the composition state is
-    //    InProgress, otherwise schedule a new update in case a pending update was marked,
+    //  - if InProgress, schedule a new update in case a pending update was marked,
     //    otherwise push the scene update state into Idle.
 
     UNUSED_PARAM(stateLocker);
@@ -197,11 +163,6 @@ void CompositingRunLoop::updateCompleted(LockHolder& stateLocker)
     case UpdateState::Scheduled:
         return;
     case UpdateState::InProgress:
-        if (m_state.composition == CompositionState::InProgress) {
-            m_state.update = UpdateState::PendingCompletion;
-            return;
-        }
-
         if (m_state.pendingUpdate) {
             m_state.pendingUpdate = false;
             m_state.update = UpdateState::Scheduled;
@@ -212,19 +173,16 @@ void CompositingRunLoop::updateCompleted(LockHolder& stateLocker)
 
         m_state.update = UpdateState::Idle;
         return;
-    case UpdateState::PendingCompletion:
-        return;
     }
 }
 
 void CompositingRunLoop::updateTimerFired()
 {
     {
-        // Both composition and scene update are now in progress.
+        // Scene update is now in progress.
         LockHolder locker(m_state.lock);
         if (m_state.isSuspended)
             return;
-        m_state.composition = CompositionState::InProgress;
         m_state.update = UpdateState::InProgress;
     }
     m_updateFunction();

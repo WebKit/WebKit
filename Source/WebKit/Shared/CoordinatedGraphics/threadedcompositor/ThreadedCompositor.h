@@ -79,7 +79,6 @@ public:
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     RefPtr<WebCore::DisplayRefreshMonitor> displayRefreshMonitor(WebCore::PlatformDisplayID);
-    void handleDisplayRefreshMonitorUpdate();
 #endif
 
     void frameComplete();
@@ -119,7 +118,6 @@ private:
         Vector<WebCore::CoordinatedGraphicsState> states;
 
         bool clientRendersNextFrame { false };
-        bool coordinateUpdateCompletionWithClient { false };
     } m_attributes;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

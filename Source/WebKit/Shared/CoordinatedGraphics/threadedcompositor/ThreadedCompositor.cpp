@@ -226,27 +226,6 @@ void ThreadedCompositor::renderLayerTree()
         if (!states.isEmpty()) {
             // Client has to be notified upon finishing this scene update.
             m_attributes.clientRendersNextFrame = true;
-
-            // Coordinate scene update completion with the client in case of changed or updated platform layers.
-            // But do not change coordinateUpdateCompletionWithClient while in force repaint because that
-            // demands immediate scene update completion regardless of platform layers.
-            // FIXME: Check whether we still need all this coordinateUpdateCompletionWithClient logic.
-            // https://bugs.webkit.org/show_bug.cgi?id=188839
-            // Relatedly, we should only ever operate with a single Nicosia::Scene object, not with a Vector
-            // of CoordinatedGraphicsState instances (which at this time will all contain RefPtr to the same
-            // Nicosia::State object anyway).
-            if (!m_inForceRepaint) {
-                bool coordinateUpdate = false;
-                for (auto& state : states) {
-                    state.nicosia.scene->accessState(
-                        [&coordinateUpdate](Nicosia::Scene::State& state)
-                        {
-                            coordinateUpdate |= state.platformLayerUpdated;
-                            state.platformLayerUpdated = false;
-                        });
-                }
-                m_attributes.coordinateUpdateCompletionWithClient = coordinateUpdate;
-            }
         }
 
         // Reset the needsResize attribute to false.
@@ -284,10 +263,6 @@ void ThreadedCompositor::sceneUpdateFinished()
     //  - a DisplayRefreshMonitor callback was requested from the Web engine
     bool shouldDispatchDisplayRefreshCallback { false };
 
-    // If coordinateUpdateCompletionWithClient is true, the scene update completion has to be
-    // delayed until the DisplayRefreshMonitor callback.
-    bool shouldCoordinateUpdateCompletionWithClient { false };
-
     {
         LockHolder locker(m_attributes.lock);
         shouldDispatchDisplayRefreshCallback = m_attributes.clientRendersNextFrame
@@ -296,7 +271,6 @@ void ThreadedCompositor::sceneUpdateFinished()
 #else
             ;
 #endif
-        shouldCoordinateUpdateCompletionWithClient = m_attributes.coordinateUpdateCompletionWithClient;
     }
 
     LockHolder stateLocker(m_compositingRunLoop->stateLock());
@@ -307,12 +281,8 @@ void ThreadedCompositor::sceneUpdateFinished()
         m_displayRefreshMonitor->dispatchDisplayRefreshCallback();
 #endif
 
-    // Mark the scene update as completed if no coordination is required and if not in a forced repaint.
-    if (!shouldCoordinateUpdateCompletionWithClient && !m_inForceRepaint)
-        m_compositingRunLoop->updateCompleted(stateLocker);
-
-    // Independent of the scene update, the composition itself is now completed.
-    m_compositingRunLoop->compositionCompleted(stateLocker);
+    // Mark the scene update as completed.
+    m_compositingRunLoop->updateCompleted(stateLocker);
 }
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
@@ -326,24 +296,6 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)
 {
     return m_displayRefreshMonitor.copyRef();
-}
-
-void ThreadedCompositor::handleDisplayRefreshMonitorUpdate()
-{
-    // Retrieve coordinateUpdateCompletionWithClient.
-    bool coordinateUpdateCompletionWithClient { false };
-    {
-        LockHolder locker(m_attributes.lock);
-        coordinateUpdateCompletionWithClient = std::exchange(m_attributes.coordinateUpdateCompletionWithClient, false);
-    }
-
-    LockHolder stateLocker(m_compositingRunLoop->stateLock());
-
-    // If required, mark the current scene update as completed. CompositingRunLoop will take care of
-    // scheduling a new update in case an update was marked as pending due to previous layer flushes
-    // or DisplayRefreshMonitor notifications.
-    if (coordinateUpdateCompletionWithClient)
-        m_compositingRunLoop->updateCompleted(stateLocker);
 }
 #endif
 

@@ -56,19 +56,13 @@ public:
     void scheduleUpdate(LockHolder&);
     void stopUpdates();
 
-    void compositionCompleted(LockHolder&);
     void updateCompleted(LockHolder&);
 
 private:
-    enum class CompositionState {
-        Idle,
-        InProgress,
-    };
     enum class UpdateState {
         Idle,
         Scheduled,
         InProgress,
-        PendingCompletion,
     };
 
     void updateTimerFired();
@@ -81,7 +75,6 @@ private:
 
     struct {
         Lock lock;
-        CompositionState composition { CompositionState::Idle };
         UpdateState update { UpdateState::Idle };
         bool pendingUpdate { false };
         bool isSuspended { false };

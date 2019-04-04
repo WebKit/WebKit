@@ -1,3 +1,29 @@
+2019-04-04  Miguel Gomez  <magomez@igalia.com>
+
+        [CoordGraphics] Revalidate need for 'coordinated update completion' in ThreadedCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=188839
+
+        Reviewed by Žan Doberšek.
+
+        Even if a platform layer has changed, don't wait for a main thread callback to finish the
+        CompositingRunLoop update. It can be finished as soon as we receive the frameComplete signal.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::CompositingRunLoop::scheduleUpdate):
+        (WebKit::CompositingRunLoop::stopUpdates):
+        (WebKit::CompositingRunLoop::updateCompleted):
+        (WebKit::CompositingRunLoop::updateTimerFired):
+        (WebKit::CompositingRunLoop::compositionCompleted): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        (WebKit::ThreadedCompositor::sceneUpdateFinished):
+        (WebKit::ThreadedCompositor::displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::handleDisplayRefreshMonitorUpdate): Deleted.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::handleDisplayRefreshMonitorUpdate):
+
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Cleanup WebPageAccessibilityObjectAtk
