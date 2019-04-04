@@ -1,3 +1,16 @@
+2019-04-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        UnlinkedCodeBlock constructor from cache should initialize m_didOptimize
+        https://bugs.webkit.org/show_bug.cgi?id=196396
+
+        Reviewed by Saam Barati.
+
+        The UnlinkedCodeBlock constructor in CachedTypes was missing the initialization
+        for m_didOptimize, which leads to crashes in CodeBlock::thresholdForJIT.
+
+        * runtime/CachedTypes.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+
 2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, rolling in r243843 with the build fix

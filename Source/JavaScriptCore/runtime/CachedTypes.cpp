@@ -1874,6 +1874,8 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_hasTailCalls(cachedCodeBlock.hasTailCalls())
     , m_codeType(cachedCodeBlock.codeType())
 
+    , m_didOptimize(static_cast<unsigned>(MixedTriState))
+
     , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
 
