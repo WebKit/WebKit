@@ -1,3 +1,39 @@
+2019-04-04  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r243842. rdar://problem/34841155
+
+    run-webkit-tests: Upload test results (new results database)
+    https://bugs.webkit.org/show_bug.cgi?id=196577
+    <rdar://problem/34841155>
+    
+    Reviewed by Lucas Forschler.
+    
+    * Scripts/webkitpy/layout_tests/controllers/manager.py:
+    (Manager.run): Upload results after each device shard, since the configuration will be
+    different for each device.
+    (Manager._results_to_upload_json_trie): Convert a TestRunResults object to a trie to be
+    uploaded to a results database.
+    * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+    (parse_args): Add new 'Upload Options' and prepare 'Results JSON Options' for deprecation.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243842 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-03  Jonathan Bedard  <jbedard@apple.com>
+
+            run-webkit-tests: Upload test results (new results database)
+            https://bugs.webkit.org/show_bug.cgi?id=196577
+            <rdar://problem/34841155>
+
+            Reviewed by Lucas Forschler.
+
+            * Scripts/webkitpy/layout_tests/controllers/manager.py:
+            (Manager.run): Upload results after each device shard, since the configuration will be
+            different for each device.
+            (Manager._results_to_upload_json_trie): Convert a TestRunResults object to a trie to be
+            uploaded to a results database.
+            * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+            (parse_args): Add new 'Upload Options' and prepare 'Results JSON Options' for deprecation.
+
 2019-04-02  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r240339. rdar://problem/49539128

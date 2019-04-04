@@ -41,6 +41,7 @@ from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATU
 from webkitpy.port import configuration_options, platform_options
 from webkitpy.layout_tests.views import buildbot_results
 from webkitpy.layout_tests.views import printing
+from webkitpy.results.options import upload_options
 
 
 _log = logging.getLogger(__name__)
@@ -317,17 +318,13 @@ def parse_args(args):
         optparse.make_option("--wptserver-doc-root", type="string", help=("Set web platform server document root, relative to LayoutTests directory")),
     ]))
 
-    # FIXME: Move these into json_results_generator.py
-    option_group_definitions.append(("Result JSON Options", [
+    # FIXME: Remove this group once the old results dashboards are deprecated.
+    option_group_definitions.append(("Legacy Result Options", [
         optparse.make_option("--master-name", help="The name of the buildbot master."),
-        optparse.make_option("--builder-name", default="",
-            help=("The name of the builder shown on the waterfall running this script. e.g. Apple MountainLion Release WK2 (Tests).")),
         optparse.make_option("--build-name", default="DUMMY_BUILD_NAME",
             help=("The name of the builder used in its path, e.g. webkit-rel.")),
         optparse.make_option("--build-slave", default="DUMMY_BUILD_SLAVE",
             help=("The name of the buildslave used. e.g. apple-macpro-6.")),
-        optparse.make_option("--build-number", default="DUMMY_BUILD_NUMBER",
-            help=("The build number of the builder running this script.")),
         optparse.make_option("--test-results-server", action="append", default=[],
             help=("If specified, upload results json files to this appengine server.")),
         optparse.make_option("--results-server-host", action="append", default=[],
@@ -339,6 +336,8 @@ def parse_args(args):
         optparse.make_option("--allowed-host", type="string", action="append", default=[],
             help=("If specified, tests are allowed to make requests to the specified hostname."))
     ]))
+
+    option_group_definitions.append(('Upload Options', upload_options()))
 
     option_parser = optparse.OptionParser(usage="%prog [options] [<path>...]")
 

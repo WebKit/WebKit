@@ -55,6 +55,7 @@ from webkitpy.layout_tests.models import test_run_results
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_run_results import INTERRUPTED_EXIT_STATUS
 from webkitpy.tool.grammar import pluralize
+from webkitpy.results.upload import Upload
 from webkitpy.xcode.device_type import DeviceType
 
 _log = logging.getLogger(__name__)
@@ -174,6 +175,7 @@ class Manager(object):
         return True
 
     def run(self, args):
+        num_failed_uploads = 0
         total_tests = set()
         aggregate_test_names = set()
         aggregate_tests = set()
@@ -252,12 +254,38 @@ class Manager(object):
 
             _log.info('Running {}{}'.format(pluralize(len(tests_to_run_by_device[device_type]), 'test'), ' for {}'.format(str(device_type)) if device_type else ''))
             _log.info('')
+            start_time_for_device = time.time()
             if not tests_to_run_by_device[device_type]:
                 continue
             if not self._set_up_run(tests_to_run_by_device[device_type], device_type=device_type):
                 return test_run_results.RunDetails(exit_code=-1)
 
+            configuration = self._port.configuration_for_upload(self._port.target_host(0))
+            configuration['flavor'] = 'wk2' if self._options.webkit_test_runner else 'wk1'
             temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(tests_to_run_by_device[device_type], tests_to_skip, device_type=device_type)
+
+            if self._options.report_urls:
+                self._printer.writeln('\n')
+                self._printer.write_update('Preparing upload data ...')
+
+                upload = Upload(
+                    suite='layout-tests',
+                    configuration=configuration,
+                    details=Upload.create_details(options=self._options),
+                    commits=self._port.commits_for_upload(),
+                    run_stats=Upload.create_run_stats(
+                        start_time=start_time_for_device,
+                        end_time=time.time(),
+                        tests_skipped=temp_initial_results.remaining + temp_initial_results.expected_skips,
+                    ),
+                    results=self._results_to_upload_json_trie(self._expectations[device_type], temp_initial_results),
+                )
+                for url in self._options.report_urls:
+                    self._printer.write_update('Uploading to {} ...'.format(url))
+                    if not upload.upload(url, log_line_func=self._printer.writeln):
+                        num_failed_uploads += 1
+                self._printer.writeln('Uploads completed!')
+
             initial_results = initial_results.merge(temp_initial_results) if initial_results else temp_initial_results
             retry_results = retry_results.merge(temp_retry_results) if retry_results else temp_retry_results
             enabled_pixel_tests_in_retry |= temp_enabled_pixel_tests_in_retry
@@ -268,7 +296,10 @@ class Manager(object):
         self._runner.stop_servers()
 
         end_time = time.time()
-        return self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
+        result = self._end_test_run(start_time, end_time, initial_results, retry_results, enabled_pixel_tests_in_retry)
+        if num_failed_uploads:
+            result.exit_code = -1
+        return result
 
     def _run_test_subset(self, tests_to_run, tests_to_skip, device_type=None):
         try:
@@ -408,6 +439,47 @@ class Manager(object):
                    ((result.type != test_expectations.PASS) and
                     (result.type != test_expectations.MISSING) and
                     (result.type != test_expectations.CRASH or include_crashes))]
+
+    def _output_perf_metrics(self, run_time, initial_results):
+        perf_metrics_json = json_results_generator.perf_metrics_for_test(run_time, initial_results.results_by_name.values())
+        perf_metrics_path = self._filesystem.join(self._results_directory, "layout_test_perf_metrics.json")
+        self._filesystem.write_text_file(perf_metrics_path, json.dumps(perf_metrics_json))
+
+    def _results_to_upload_json_trie(self, expectations, results):
+        FAILURE_TO_TEXT = {
+            test_expectations.PASS: Upload.Expectations.PASS,
+            test_expectations.CRASH: Upload.Expectations.CRASH,
+            test_expectations.TIMEOUT: Upload.Expectations.TIMEOUT,
+            test_expectations.IMAGE: Upload.Expectations.IMAGE,
+            test_expectations.TEXT: Upload.Expectations.TEXT,
+            test_expectations.AUDIO: Upload.Expectations.AUDIO,
+            test_expectations.MISSING: Upload.Expectations.WARNING,
+            test_expectations.IMAGE_PLUS_TEXT: ' '.join([Upload.Expectations.IMAGE, Upload.Expectations.TEXT]),
+        }
+
+        results_trie = {}
+        for result in results.results_by_name.itervalues():
+            if result.type == test_expectations.SKIP:
+                continue
+
+            expected = expectations.filtered_expectations_for_test(
+                result.test_name,
+                self._options.pixel_tests or bool(result.reftest_type),
+                self._options.world_leaks,
+            )
+            if expected == {test_expectations.PASS}:
+                expected = None
+            else:
+                expected = ' '.join([FAILURE_TO_TEXT.get(e, Upload.Expectations.FAIL) for e in expected])
+
+            json_results_generator.add_path_to_trie(
+                result.test_name,
+                Upload.create_test_result(
+                    expected=expected,
+                    actual=FAILURE_TO_TEXT.get(result.type, Upload.Expectations.FAIL) if result.type else None,
+                    time=int(result.test_run_time * 1000),
+                ), results_trie)
+        return results_trie
 
     def _upload_json_files(self, summarized_results, initial_results, results_including_passes=None, start_time=None, end_time=None):
         """Writes the results of the test run as JSON files into the results
