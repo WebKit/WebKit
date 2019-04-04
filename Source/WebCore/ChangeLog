@@ -1,3 +1,10 @@
+2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update r243884 to use macros in Compiler.h instead.
+
+        * platform/ios/LegacyTileGrid.mm:
+        (WebCore::LegacyTileGrid::dropDistantTiles):
+
 2019-04-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Crash under WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored()
