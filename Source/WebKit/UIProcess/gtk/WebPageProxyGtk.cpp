@@ -57,7 +57,8 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
-    m_accessibilityPlugID = plugID;
+    auto* accessible = gtk_widget_get_accessible(viewWidget());
+    atk_socket_embed(ATK_SOCKET(accessible), const_cast<char*>(plugID.utf8().data()));
 }
 
 void WebPageProxy::saveRecentSearches(const String&, const Vector<WebCore::RecentSearch>&)

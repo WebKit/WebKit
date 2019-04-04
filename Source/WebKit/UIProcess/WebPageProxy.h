@@ -1123,10 +1123,6 @@ public:
     void setSmartInsertDeleteEnabled(bool);
 #endif
 
-#if PLATFORM(GTK)
-    String accessibilityPlugID() const { return m_accessibilityPlugID; }
-#endif
-
     void setCanRunModal(bool);
     bool canRunModal();
 
@@ -2302,10 +2298,6 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
 
 #if PLATFORM(COCOA)
     bool m_isSmartInsertDeleteEnabled { false };
-#endif
-
-#if PLATFORM(GTK)
-    String m_accessibilityPlugID;
 #endif
 
     Optional<WebCore::Color> m_backgroundColor;

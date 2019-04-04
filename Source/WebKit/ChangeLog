@@ -1,5 +1,21 @@
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ATK] Embed the AtkSocket as soon as we receive the plug ID
+        https://bugs.webkit.org/show_bug.cgi?id=196534
+
+        Reviewed by Michael Catanzaro.
+
+        We are currently storing the ID and waiting for the next time get_accessible is called to embed the socket. We
+        can simply embed the socket when the plug ID is received.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseGetAccessible):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree):
+
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATK] Don't touch accessibility tree in WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld
         https://bugs.webkit.org/show_bug.cgi?id=193914
 
