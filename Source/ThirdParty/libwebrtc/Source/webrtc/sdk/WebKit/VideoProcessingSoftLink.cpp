@@ -73,7 +73,8 @@ static void initVideoProcessingVPModuleInitialize();
 void (*softLinkVideoProcessingVPModuleInitialize) () = initVideoProcessingVPModuleInitialize;
 static void initVideoProcessingVPModuleInitialize()
 {
-    auto* library = VideoProcessingLibrary();
+
+    auto* library = dlopen("/System/Library/PrivateFrameworks/VideoProcessing.framework/VideoProcessing", RTLD_NOW);
     if (!library)
         fprintf(stderr, "Cannot find VideoProcessingLibrary: %s\n", dlerror());
     softLinkVideoProcessingVPModuleInitialize = (void (*)()) dlsym(library, "VPModuleInitialize");

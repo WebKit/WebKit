@@ -1,3 +1,13 @@
+2019-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Log the error if VideoProcessing library cannot be dlopen
+        https://bugs.webkit.org/show_bug.cgi?id=196609
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/VideoProcessingSoftLink.cpp:
+        (webrtc::initVideoProcessingVPModuleInitialize):
+
 2019-04-03  Youenn Fablet  <youenn@apple.com>
 
         Add logging and ASSERTs to investigate issue with VPModuleInitialize
