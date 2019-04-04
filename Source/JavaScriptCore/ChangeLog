@@ -1,3 +1,14 @@
+2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in r243843 with the build fix
+        https://bugs.webkit.org/show_bug.cgi?id=196586
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/RandomizingFuzzerAgent.cpp:
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+
 2019-04-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243843.

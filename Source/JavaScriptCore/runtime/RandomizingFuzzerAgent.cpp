@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RandomizingFuzzerAgent.h"
 
+#include "CodeBlock.h"
+
 namespace JSC {
 
 RandomizingFuzzerAgent::RandomizingFuzzerAgent(VM&)
@@ -33,13 +35,15 @@ RandomizingFuzzerAgent::RandomizingFuzzerAgent(VM&)
 {
 }
 
-SpeculatedType RandomizingFuzzerAgent::getPrediction(CodeBlock*, int, SpeculatedType)
+SpeculatedType RandomizingFuzzerAgent::getPrediction(CodeBlock* codeBlock, int bytecodeIndex, SpeculatedType original)
 {
     auto locker = holdLock(m_lock);
     uint32_t high = m_random.getUint32();
     uint32_t low = m_random.getUint32();
-    uint64_t result = (static_cast<uint64_t>(high) << 32) | low;
-    return static_cast<SpeculatedType>(result) & SpecFullTop;
+    SpeculatedType generated = static_cast<SpeculatedType>((static_cast<uint64_t>(high) << 32) | low) & SpecFullTop;
+    if (Options::dumpRandomizingFuzzerAgentPredictions())
+        dataLogLn("getPrediction name:(", codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), "),bytecodeIndex:(", bytecodeIndex, "),original:(", SpeculationDump(original), "),generated:(", SpeculationDump(generated), ")");
+    return generated;
 }
 
 } // namespace JSC
