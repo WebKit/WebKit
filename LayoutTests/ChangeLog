@@ -1,3 +1,15 @@
+2019-04-03  Timothy Hatcher  <timothy@apple.com>
+
+        Update AutoFill field icons to be SVG instead of PNG images.
+        https://bugs.webkit.org/show_bug.cgi?id=196557
+        rdar://problem/48292514
+
+        Reviewed by Tim Horton.
+
+        * platform/ios/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt:
+        * platform/mac/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt:
+        * platform/win/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt:
+
 2019-04-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r220717): Assertion fires when animating an SVG rounded corner rect till it collapses
