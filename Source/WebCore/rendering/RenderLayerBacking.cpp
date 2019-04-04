@@ -765,10 +765,10 @@ bool RenderLayerBacking::updateConfiguration()
     if (!m_owningLayer.isRenderViewLayer()) {
         bool didUpdateContentsRect = false;
         updateDirectlyCompositedBoxDecorations(contentsInfo, didUpdateContentsRect);
-
-        updateEventRegion();
     } else
         updateRootLayerConfiguration();
+
+    updateEventRegion();
     
     // Requires layout.
     if (contentsInfo.isDirectlyCompositedImage())
@@ -1439,18 +1439,36 @@ void RenderLayerBacking::updateEventRegion()
     if (paintsIntoCompositedAncestor())
         return;
 
+    bool hasTouchActionElements = false;
+#if ENABLE(POINTER_EVENTS)
+    hasTouchActionElements = !!renderer().document().touchActionElements();
+#endif
+    if (m_owningLayer.isRenderViewLayer() && !hasTouchActionElements)
+        return;
+
     GraphicsContext nullContext(nullptr);
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
 
     Region eventRegion;
     paintingInfo.eventRegion = &eventRegion;
 
+#if ENABLE(POINTER_EVENTS)
+    TouchActionRegion touchActionRegion;
+    if (hasTouchActionElements)
+        paintingInfo.touchActionRegion = &touchActionRegion;
+#endif
+
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
     m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);
 
-    eventRegion.translate(roundedIntSize(contentOffsetInCompositingLayer()));
-
+    auto contentOffset = roundedIntSize(contentOffsetInCompositingLayer());
+    eventRegion.translate(contentOffset);
     m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
+
+#if ENABLE(POINTER_EVENTS)
+    touchActionRegion.translate(contentOffset);
+    m_graphicsLayer->setTouchActionRegion(WTFMove(touchActionRegion));
+#endif
 #endif
 }
 

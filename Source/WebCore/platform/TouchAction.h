@@ -27,6 +27,8 @@
 
 #if ENABLE(POINTER_EVENTS)
 
+#include <wtf/text/TextStream.h>
+
 namespace WebCore {
 
 enum class TouchAction : uint8_t {
@@ -37,6 +39,8 @@ enum class TouchAction : uint8_t {
     PanY         = 1 << 4,
     PinchZoom    = 1 << 5,
 };
+
+TextStream& operator<<(TextStream&, TouchAction);
 
 }
 

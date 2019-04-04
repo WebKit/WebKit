@@ -993,6 +993,17 @@ void GraphicsLayerCA::setEventRegion(Region&& eventRegion)
     noteLayerPropertyChanged(EventRegionChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
 }
 
+#if ENABLE(POINTER_EVENTS)
+void GraphicsLayerCA::setTouchActionRegion(TouchActionRegion&& touchActionRegion)
+{
+    if (touchActionRegion == m_touchActionRegion)
+        return;
+
+    GraphicsLayer::setTouchActionRegion(WTFMove(touchActionRegion));
+    // FIXME: Invalidate and pass to platform layer.
+}
+#endif
+
 bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 {
     return drawsContent() && !tiledBacking();

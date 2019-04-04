@@ -1,3 +1,18 @@
+2019-04-04  Antti Koivisto  <antti@apple.com>
+
+        Compute accurate regions for touch-action
+        https://bugs.webkit.org/show_bug.cgi?id=196536
+        <rdar://problem/49516022>
+
+        Reviewed by Simon Fraser.
+
+        * pointerevents/ios/touch-action-region-basic-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-basic.html: Added.
+        * pointerevents/ios/touch-action-region-layers-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-layers.html: Added.
+        * pointerevents/ios/touch-action-region-pan-x-y-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-pan-x-y.html: Added.
+
 2019-04-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Scroll reset position when updating inner html on content

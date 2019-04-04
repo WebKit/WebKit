@@ -4219,44 +4219,10 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 #if ENABLE(POINTER_EVENTS)
 OptionSet<TouchAction> Element::computedTouchActions() const
 {
-    OptionSet<TouchAction> computedTouchActions = TouchAction::Auto;
-    for (auto* element = this; element; element = parentCrossingFrameBoundaries(element)) {
-        auto* renderer = element->renderer();
-        if (!renderer)
-            continue;
+    if (auto* style = renderOrDisplayContentsStyle())
+        return style->effectiveTouchActions();
 
-        auto touchActions = renderer->style().touchActions();
-
-        // Once we've encountered touch-action: none, we know that this will be the computed value.
-        if (touchActions == TouchAction::None)
-            return touchActions;
-
-        // If the computed touch-action so far was "auto", we can just use the current element's touch-action.
-        if (computedTouchActions == TouchAction::Auto) {
-            computedTouchActions = touchActions;
-            continue;
-        }
-
-        // If the current element has touch-action: auto or the same touch-action as the computed touch-action,
-        // we need to keep going up the ancestry chain.
-        if (touchActions == TouchAction::Auto || touchActions == computedTouchActions)
-            continue;
-
-        // Now, the element's touch-action and the computed touch-action are different and are neither "auto" nor "none".
-        if (computedTouchActions == TouchAction::Manipulation) {
-            // If the computed touch-action is "manipulation", we can take the current element's touch-action as the newly
-            // computed touch-action.
-            computedTouchActions = touchActions;
-        } else if (touchActions == TouchAction::Manipulation) {
-            // Otherwise, we have a restricted computed touch-action so far. If the current element's touch-action is "manipulation"
-            // then we can just keep going and leave the computed touch-action untouched.
-            continue;
-        }
-
-        // In any other case, we have competing restrictive touch-action values that can only yield "none".
-        return TouchAction::None;
-    }
-    return computedTouchActions;
+    return TouchAction::Auto;
 }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)

@@ -4822,6 +4822,7 @@
 		E4A814D41C6DEC4000BF85AC /* ClassChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D31C6DEC4000BF85AC /* ClassChangeInvalidation.h */; };
 		E4A814DA1C70E10D00BF85AC /* AttributeChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */; };
 		E4A814E01C7338EB00BF85AC /* IdChangeInvalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */; };
+		E4A8D21022538FD200A8463C /* TouchActionRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = E4A8D20F22538FD100A8463C /* TouchActionRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1617D1BB950009FB31 /* ElementIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1517D1BB950009FB31 /* ElementIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AE7C1A17D232350009FB31 /* ElementAncestorIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -14883,6 +14884,8 @@
 		E4A814D91C70E10D00BF85AC /* AttributeChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeChangeInvalidation.h; sourceTree = "<group>"; };
 		E4A814DD1C7338D100BF85AC /* IdChangeInvalidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IdChangeInvalidation.cpp; sourceTree = "<group>"; };
 		E4A814DF1C7338EB00BF85AC /* IdChangeInvalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdChangeInvalidation.h; sourceTree = "<group>"; };
+		E4A8D20C22538FC700A8463C /* TouchActionRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TouchActionRegion.cpp; sourceTree = "<group>"; };
+		E4A8D20F22538FD100A8463C /* TouchActionRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchActionRegion.h; sourceTree = "<group>"; };
 		E4AE7C1517D1BB950009FB31 /* ElementIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementIterator.h; sourceTree = "<group>"; };
 		E4AE7C1917D232350009FB31 /* ElementAncestorIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementAncestorIterator.h; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
@@ -27054,6 +27057,8 @@
 				1C18DA57181AF6A500C4EF22 /* TextPainter.h */,
 				E4C91A0F1802343900A17F6D /* TextPaintStyle.cpp */,
 				E4C91A0D1802343100A17F6D /* TextPaintStyle.h */,
+				E4A8D20C22538FC700A8463C /* TouchActionRegion.cpp */,
+				E4A8D20F22538FD100A8463C /* TouchActionRegion.h */,
 				1100FC6E1FDB3C4D00DD961B /* TrailingFloatsRootInlineBox.cpp */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
@@ -29495,6 +29500,7 @@
 				FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */,
 				FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */,
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,
+				E4A8D21022538FD200A8463C /* TouchActionRegion.h in Headers */,
 				FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */,
 				FDA15EB612B03EE1003A583A /* JSAudioProcessingEvent.h in Headers */,
 				BE8EF043171C8FF9009B48C3 /* JSAudioTrack.h in Headers */,

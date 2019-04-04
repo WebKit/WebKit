@@ -4870,6 +4870,9 @@ void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFrag
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, { });
         paintInfo.eventRegion = localPaintingInfo.eventRegion;
+#if ENABLE(POINTER_EVENTS)
+        paintInfo.touchActionRegion = localPaintingInfo.touchActionRegion;
+#endif
         renderer().paint(paintInfo, toLayoutPoint(fragment.layerBounds.location() - renderBoxLocation() + localPaintingInfo.subpixelOffset));
     }
 }

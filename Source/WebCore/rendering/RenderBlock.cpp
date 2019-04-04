@@ -70,6 +70,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "ShapeOutsideInfo.h"
+#include "TouchActionRegion.h"
 #include "TransformState.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -1246,10 +1247,18 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         if (visibleToHitTesting()) {
             auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
             paintInfo.eventRegion->unite(borderRegion);
+#if ENABLE(POINTER_EVENTS)
+            if (paintInfo.touchActionRegion)
+                paintInfo.touchActionRegion->unite(borderRegion, style().effectiveTouchActions());
+#endif
         }
 
         // No need to check descendants if we don't have overflow and the area is already covered.
-        if (!hasVisualOverflow() && paintInfo.eventRegion->contains(enclosingIntRect(borderRect)))
+        bool needsTraverseDescendants = hasVisualOverflow() || !paintInfo.eventRegion->contains(enclosingIntRect(borderRect));
+#if ENABLE(POINTER_EVENTS)
+        needsTraverseDescendants = needsTraverseDescendants || paintInfo.touchActionRegion;
+#endif
+        if (!needsTraverseDescendants)
             return;
     }
 

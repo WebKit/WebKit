@@ -37,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "Region.h"
 #include "ScrollableArea.h"
+#include "TouchActionRegion.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/Function.h>
@@ -455,7 +456,10 @@ public:
 
     const Region& eventRegion() const { return m_eventRegion; }
     virtual void setEventRegion(Region&&);
-
+#if ENABLE(POINTER_EVENTS)
+    const TouchActionRegion& touchActionRegion() const { return m_touchActionRegion; }
+    virtual void setTouchActionRegion(TouchActionRegion&&);
+#endif
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
 
@@ -731,7 +735,9 @@ protected:
     Optional<FloatRect> m_animationExtent;
 
     Region m_eventRegion;
-
+#if ENABLE(POINTER_EVENTS)
+    TouchActionRegion m_touchActionRegion;
+#endif
 #if USE(CA)
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;

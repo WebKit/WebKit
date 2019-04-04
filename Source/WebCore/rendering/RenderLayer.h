@@ -80,6 +80,10 @@ class RenderView;
 class Scrollbar;
 class TransformationMatrix;
 
+#if ENABLE(POINTER_EVENTS)
+class TouchActionRegion;
+#endif
+
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
 
@@ -914,6 +918,9 @@ private:
         bool requireSecurityOriginAccessForWidgets;
         bool clipToDirtyRect { true };
         Region* eventRegion { nullptr };
+#if ENABLE(POINTER_EVENTS)
+        TouchActionRegion* touchActionRegion { nullptr };
+#endif
     };
 
     // Compute, cache and return clip rects computed with the given layer as the root.
