@@ -1,5 +1,14 @@
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-app] Status bubble should not display skipped buildbot steps
+        https://bugs.webkit.org/show_bug.cgi?id=196584
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+
+2019-04-04  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] configure localhost as BUILDBOT_SERVER_HOST in testing mode
         https://bugs.webkit.org/show_bug.cgi?id=196620
 

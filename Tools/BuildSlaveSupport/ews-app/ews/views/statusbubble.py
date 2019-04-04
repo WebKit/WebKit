@@ -41,7 +41,7 @@ class StatusBubble(View):
                     'mac-debug', 'mac-debug-wk1', 'mac-wk1', 'mac-wk2', 'style', 'webkitperl', 'webkitpy', 'win', 'wincairo', 'wpe']
     ENABLED_QUEUES = ['api-ios', 'api-mac', 'webkitperl']
 
-    STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:']
+    STEPS_TO_HIDE = ['Killed old processes', 'Configured build', '^OS:.*Xcode:', '(skipped)']
 
     def _build_bubble(self, patch, queue):
         bubble = {
