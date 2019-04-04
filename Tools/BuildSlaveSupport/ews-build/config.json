@@ -301,7 +301,7 @@
       "platform": "ios-simulator-12",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-12-sim-wk2-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews"],
       "workernames": ["ews152", "ews154"]
     },
     {
@@ -320,7 +320,7 @@
       "platform": "mac-highsierra",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-high-sierra-release-wk1-tests-ews", "macos-high-sierra-release-wk2-tests-ews"],
+      "triggers": ["api-tests-mac-ews"],
       "workernames": ["ews118", "ews119", "ews120"]
     },
     {
@@ -438,28 +438,8 @@
       "name": "disabled",
       "port": 5556,
       "builderNames": ["Bindings-Tests-EWS", "GTK-Webkit2-EWS", "iOS-12-Build-EWS", "JSC-Tests-EWS",
+                       "iOS-12-Simulator-WK2-Tests-EWS", "macOS-High-Sierra-Release-WK2-Tests-EWS",  "macOS-High-Sierra-Release-WK1-Tests-EWS",
                        "macOS-High-Sierra-Debug-Build-EWS", "Style-EWS", "WinCairo-EWS", "Windows-EWS", "WebKitPy-Tests-EWS", "WPE-EWS"]
-    },
-    {
-      "type": "Triggerable",
-      "name": "ios-12-sim-wk2-tests-ews",
-      "builderNames": [
-        "iOS-12-Simulator-WK2-Tests-EWS"
-      ]
-    },
-    {
-      "type": "Triggerable",
-      "name": "macos-high-sierra-release-wk1-tests-ews",
-      "builderNames": [
-        "macOS-High-Sierra-Release-WK1-Tests-EWS"
-      ]
-    },
-    {
-      "type": "Triggerable",
-      "name": "macos-high-sierra-release-wk2-tests-ews",
-      "builderNames": [
-        "macOS-High-Sierra-Release-WK2-Tests-EWS"
-      ]
     },
     {
       "type": "Triggerable",

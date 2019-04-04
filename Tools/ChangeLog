@@ -1,3 +1,12 @@
+2019-04-03  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Do not trigger queues which are not in production yet
+        https://bugs.webkit.org/show_bug.cgi?id=196581
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-build/config.json:
+
 2019-04-03  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix typo in the name of API test added in r243848.
