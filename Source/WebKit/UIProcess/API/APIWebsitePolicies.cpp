@@ -42,6 +42,28 @@ WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::
     , m_websiteDataStore(WTFMove(websiteDataStore))
 { }
 
+Ref<WebsitePolicies> WebsitePolicies::copy() const
+{
+    auto policies = WebsitePolicies::create();
+    policies->setContentBlockersEnabled(m_contentBlockersEnabled);
+    policies->setAllowedAutoplayQuirks(m_allowedAutoplayQuirks);
+    policies->setAutoplayPolicy(m_autoplayPolicy);
+    policies->setDeviceOrientationAndMotionAccessState(m_deviceOrientationAndMotionAccessState);
+    policies->setPopUpPolicy(m_popUpPolicy);
+    policies->setWebsiteDataStore(m_websiteDataStore.get());
+    policies->setCustomUserAgent(m_customUserAgent);
+    policies->setCustomJavaScriptUserAgentAsSiteSpecificQuirks(m_customJavaScriptUserAgentAsSiteSpecificQuirks);
+    policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
+    policies->setPreferredCompatibilityMode(m_preferredCompatibilityMode);
+    policies->setMetaViewportPolicy(m_metaViewportPolicy);
+    Vector<WebCore::HTTPHeaderField> customHeaderFields;
+    customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
+    for (auto& field : m_customHeaderFields)
+        customHeaderFields.append(WebCore::HTTPHeaderField(field));
+    policies->setCustomHeaderFields(WTFMove(customHeaderFields));
+    return policies;
+}
+
 WebsitePolicies::~WebsitePolicies()
 {
 }

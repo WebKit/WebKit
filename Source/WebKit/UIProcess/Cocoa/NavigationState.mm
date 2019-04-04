@@ -510,7 +510,10 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
 {
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
-    auto defaultWebsitePolicies = makeRefPtr(webPageProxy.configuration().defaultWebsitePolicies());
+
+    RefPtr<API::WebsitePolicies> defaultWebsitePolicies;
+    if (auto* policies = webPageProxy.configuration().defaultWebsitePolicies())
+        defaultWebsitePolicies = policies->copy();
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
         && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionWithPreferencesDecisionHandler

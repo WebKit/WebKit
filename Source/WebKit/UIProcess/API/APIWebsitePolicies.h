@@ -49,6 +49,8 @@ public:
     WebsitePolicies();
     ~WebsitePolicies();
 
+    Ref<WebsitePolicies> copy() const;
+
     bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
     void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
     
