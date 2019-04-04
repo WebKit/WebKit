@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "CodeOrigin.h"
 #include "SpeculatedType.h"
-#include <wtf/Locker.h>
 
 namespace JSC {
 
@@ -36,7 +36,7 @@ class FuzzerAgent {
 public:
     JS_EXPORT_PRIVATE virtual ~FuzzerAgent();
 
-    JS_EXPORT_PRIVATE virtual SpeculatedType getPrediction(CodeBlock*, int bytecodeOffset, SpeculatedType);
+    JS_EXPORT_PRIVATE virtual SpeculatedType getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType);
 };
 
 } // namespace JSC

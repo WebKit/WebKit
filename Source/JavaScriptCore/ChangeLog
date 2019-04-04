@@ -1,3 +1,23 @@
+2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Pass CodeOrigin to FuzzerAgent
+        https://bugs.webkit.org/show_bug.cgi?id=196590
+
+        Reviewed by Saam Barati.
+
+        Pass CodeOrigin instead of bytecodeIndex. CodeOrigin includes richer information (InlineCallFrame*).
+        We also mask prediction with SpecBytecodeTop in DFGByteCodeParser. The fuzzer can produce any SpeculatedTypes,
+        but DFGByteCodeParser should only see predictions that can be actually produced from the bytecode execution.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        * runtime/FuzzerAgent.cpp:
+        (JSC::FuzzerAgent::getPrediction):
+        * runtime/FuzzerAgent.h:
+        * runtime/RandomizingFuzzerAgent.cpp:
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+        * runtime/RandomizingFuzzerAgent.h:
+
 2019-04-04  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] We should consider moving UnlinkedFunctionExecutable::m_parentScopeTDZVariables to RareData

@@ -32,7 +32,7 @@ FuzzerAgent::~FuzzerAgent()
 {
 }
 
-SpeculatedType FuzzerAgent::getPrediction(CodeBlock*, int, SpeculatedType result)
+SpeculatedType FuzzerAgent::getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType result)
 {
     return result;
 }
