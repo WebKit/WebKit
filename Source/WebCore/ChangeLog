@@ -1,3 +1,16 @@
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Wrong index passed to AtkObject::children-changed::add signal in AXObjectCache::attachWrapper()
+        https://bugs.webkit.org/show_bug.cgi?id=196538
+
+        Reviewed by Michael Catanzaro.
+
+        In most of the cases the parent is not found, probably because the child is not a direct descendant of the
+        parent returned by parentObjectUnignored(). We need to handle the case of find() returning notFound.
+
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::attachWrapper): Use -1 as the index when find() returns notFound.
+
 2019-04-03  Timothy Hatcher  <timothy@apple.com>
 
         Update AutoFill field icons to be SVG instead of PNG images.
