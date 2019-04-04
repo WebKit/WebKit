@@ -55,6 +55,7 @@ void RenderSVGRect::updateShapeFromElement()
     m_innerStrokeRect = FloatRect();
     m_outerStrokeRect = FloatRect();
     clearPath();
+    m_usePathFallback = false;
 
     SVGLengthContext lengthContext(&rectElement());
     FloatSize boundingBoxSize(lengthContext.valueForLength(style().width(), LengthModeWidth), lengthContext.valueForLength(style().height(), LengthModeHeight));
@@ -71,7 +72,6 @@ void RenderSVGRect::updateShapeFromElement()
             m_usePathFallback = true;
             return;
         }
-        m_usePathFallback = false;
     }
 
     m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().svgStyle().x(), LengthModeWidth),

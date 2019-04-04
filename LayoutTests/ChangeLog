@@ -1,3 +1,13 @@
+2019-04-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r220717): Assertion fires when animating an SVG rounded corner rect till it collapses
+        https://bugs.webkit.org/show_bug.cgi?id=196518
+
+        Reviewed by Simon Fraser.
+
+        * svg/animations/animate-rounded-corner-rect-zero-height-expected.txt: Added.
+        * svg/animations/animate-rounded-corner-rect-zero-height.svg: Added.
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         -apple-trailing-word is needed for browser detection

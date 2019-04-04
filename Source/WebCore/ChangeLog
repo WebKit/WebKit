@@ -1,3 +1,27 @@
+2019-04-03  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r220717): Assertion fires when animating an SVG rounded corner rect till it collapses
+        https://bugs.webkit.org/show_bug.cgi?id=196518
+
+        Reviewed by Simon Fraser.
+
+        r220717 made RenderSVGRect clear its m_path in updateShapeFromElement().
+
+        RenderSVGRect tries to optimize its layout and drawing if the rectangle
+        is not rounded. So it uses the flag m_usePathFallback to know whether to
+        use m_path or m_innerStrokeRect and m_outerStrokeRect. If the rectangle
+        is rounded but its boundingSize is empty, m_path will be cleared,
+        m_innerStrokeRect and m_outerStrokeRect will be recalculated but
+        m_usePathFallback will not be reset to false. Therefore when calling 
+        RenderSVGRect::isEmpty(), it will call RenderSVGShape::isEmpty() which
+        will assert since m_path is null.
+
+        Test: svg/animations/animate-rounded-corner-rect-zero-height.svg
+
+        * rendering/svg/RenderSVGRect.cpp:
+        (WebCore::RenderSVGRect::updateShapeFromElement):
+        Reset m_usePathFallback to false once clearPath() is called.
+
 2019-04-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Nullptr crash in InlineTextBox::selectionState via TextIndicator::createWithRange
