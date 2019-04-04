@@ -1,3 +1,16 @@
+2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+        Temporarily disable delayed WebProcess launch on iOS to address PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=196604
+        <rdar://problem/49074131>
+
+        Reviewed by Geoffrey Garen.
+
+        Temporarily disable delayed WebProcess launch on iOS to address PLT regression. This
+        is while I figure out how to enable this on iOS without regressed PLT.
+
+        * UIProcess/WebProcessPool.h:
+
 2019-04-04  Miguel Gomez  <magomez@igalia.com>
 
         [CoordGraphics] Revalidate need for 'coordinated update completion' in ThreadedCompositor

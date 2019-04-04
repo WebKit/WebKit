@@ -789,7 +789,12 @@ private:
 
     HashMap<WebCore::ProcessIdentifier, std::unique_ptr<ProcessAssertion>> m_processesWithUploads;
     std::unique_ptr<ProcessAssertion> m_uiProcessUploadAssertion;
+#if PLATFORM(IOS)
+    // FIXME: Delayed process launch is currently disabled on iOS for performance reasons (rdar://problem/49074131).
+    bool m_isDelayedWebProcessLaunchDisabled { true };
+#else
     bool m_isDelayedWebProcessLaunchDisabled { false };
+#endif
 };
 
 template<typename T>
