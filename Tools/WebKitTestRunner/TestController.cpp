@@ -523,7 +523,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
         WKContextSetCacheModel(m_context.get(), kWKCacheModelDocumentBrowser);
 
         auto* websiteDataStore = WKContextGetWebsiteDataStore(m_context.get());
-        WKWebsiteDataStoreSetCacheStoragePerOriginQuota(websiteDataStore, 400 * 1024);
+        WKWebsiteDataStoreSetPerOriginStorageQuota(websiteDataStore, 400 * 1024);
 
         platformInitializeContext();
     }

@@ -1,3 +1,56 @@
+2019-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Pass storage quota parameters from UIProcess to NetworkProcess as part of WebsiteDataStore parameters
+        https://bugs.webkit.org/show_bug.cgi?id=196543
+
+        Reviewed by Alex Christensen.
+
+        Renamed methods used to set cache storage quota to be storage generic
+        since they will apply to all storage.
+
+        Pass quota parameters as part of WebsiteDataStoreParameters from UIProcess
+        to NetworkProcess (start-up time and new WebsiteDataStore time).
+
+        Compute on UIProcess the quota for third party origins using the default rule of dividing by 10.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::initializeStorageQuota):
+        (WebKit::NetworkProcess::setCacheStorageParameters):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::encode const):
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/WebsiteDataStoreParameters.h:
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreSetPerOriginStorageQuota):
+        (WKWebsiteDataStoreSetCacheStoragePerOriginQuota): Deleted.
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _perOriginStorageQuota]):
+        (-[WKWebsiteDataStore _setPerOriginStorageQuota:]):
+        (-[WKWebsiteDataStore _cacheStoragePerOriginQuota]): Deleted.
+        (-[WKWebsiteDataStore _setCacheStoragePerOriginQuota:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::retrieveCacheStorageParameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::perOriginStorageQuota const):
+        (WebKit::WebsiteDataStore::setPerOriginStorageQuota):
+        (WebKit::WebsiteDataStore::cacheStoragePerOriginQuota const): Deleted.
+        (WebKit::WebsiteDataStore::setCacheStoragePerOriginQuota): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::perOriginStorageQuota):
+        (WebKit::WebsiteDataStoreConfiguration::setPerOriginStorageQuota):
+        (WebKit::WebsiteDataStoreConfiguration::cacheStoragePerOriginQuota): Deleted.
+        (WebKit::WebsiteDataStoreConfiguration::setCacheStoragePerOriginQuota): Deleted.
+
 2019-04-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Changing default website policies shouldn't change default website policies in subsequent navigations

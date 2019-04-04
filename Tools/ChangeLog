@@ -1,3 +1,13 @@
+2019-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Pass storage quota parameters from UIProcess to NetworkProcess as part of WebsiteDataStore parameters
+        https://bugs.webkit.org/show_bug.cgi?id=196543
+
+        Reviewed by Alex Christensen.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generatePageConfiguration):
+
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Status bubble should not display skipped buildbot steps

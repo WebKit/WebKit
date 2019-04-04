@@ -380,7 +380,7 @@ private:
 
     void clearCachedCredentials();
 
-    void setCacheStorageParameters(PAL::SessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
+    void setCacheStorageParameters(PAL::SessionID, String&& cacheStorageDirectory, SandboxExtension::Handle&&);
     void initializeQuotaUsers(WebCore::StorageQuotaManager&, PAL::SessionID, const WebCore::ClientOrigin&);
 
     // FIXME: This should take a session ID so we can identify which disk cache to delete.
@@ -460,6 +460,7 @@ private:
     void ensurePathExists(const String& path);
 
     void clearStorageQuota(PAL::SessionID);
+    void initializeStorageQuota(const WebsiteDataStoreParameters&);
 
     // Connections to WebProcesses.
     Vector<Ref<NetworkConnectionToWebProcess>> m_webProcessConnections;

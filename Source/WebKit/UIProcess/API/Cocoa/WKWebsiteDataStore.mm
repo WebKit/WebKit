@@ -306,14 +306,14 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
-- (NSUInteger)_cacheStoragePerOriginQuota
+- (NSUInteger)_perOriginStorageQuota
 {
-    return _websiteDataStore->websiteDataStore().cacheStoragePerOriginQuota();
+    return _websiteDataStore->websiteDataStore().perOriginStorageQuota();
 }
 
-- (void)_setCacheStoragePerOriginQuota:(NSUInteger)size
+- (void)_setPerOriginStorageQuota:(NSUInteger)size
 {
-    _websiteDataStore->websiteDataStore().setCacheStoragePerOriginQuota(size);
+    _websiteDataStore->websiteDataStore().setPerOriginStorageQuota(size);
 }
 
 - (NSString *)_cacheStorageDirectory

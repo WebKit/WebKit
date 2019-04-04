@@ -322,6 +322,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
         m_shouldDisableServiceWorkerProcessTerminationDelay = parameters.shouldDisableServiceWorkerProcessTerminationDelay;
     }
 #endif
+    initializeStorageQuota(parameters.defaultDataStoreParameters);
 
     auto* defaultSession = networkSession(PAL::SessionID::defaultSessionID());
     for (const auto& cookie : parameters.defaultDataStoreParameters.pendingCookies)
@@ -455,7 +456,17 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
         addServiceWorkerSession(parameters.networkSessionParameters.sessionID, parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
 #endif
 
+    initializeStorageQuota(parameters);
+
     RemoteNetworkingContext::ensureWebsiteDataStoreSession(*this, WTFMove(parameters));
+}
+
+void NetworkProcess::initializeStorageQuota(const WebsiteDataStoreParameters& parameters)
+{
+    auto& managers =  m_storageQuotaManagers.ensure(parameters.networkSessionParameters.sessionID, [] {
+        return StorageQuotaManagers { };
+    }).iterator->value;
+    managers.setDefaultQuotas(parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota);
 }
 
 void NetworkProcess::switchToNewTestingSession()
@@ -2029,13 +2040,8 @@ void NetworkProcess::cacheStorageRootPath(PAL::SessionID sessionID, CacheStorage
     }).iterator->value.append(WTFMove(callback));
 }
 
-void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, uint64_t quota, String&& cacheStorageDirectory, SandboxExtension::Handle&& handle)
+void NetworkProcess::setCacheStorageParameters(PAL::SessionID sessionID, String&& cacheStorageDirectory, SandboxExtension::Handle&& handle)
 {
-    auto& managers =  m_storageQuotaManagers.ensure(sessionID, [] {
-        return StorageQuotaManagers { };
-    }).iterator->value;
-    managers.setDefaultQuotas(quota, quota / 10);
-
     auto iterator = m_cacheStorageParametersCallbacks.find(sessionID);
     if (iterator == m_cacheStorageParametersCallbacks.end())
         return;

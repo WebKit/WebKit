@@ -40,7 +40,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy()
     auto copy = WebsiteDataStoreConfiguration::create();
 
     copy->m_cacheStorageDirectory = this->m_cacheStorageDirectory;
-    copy->m_cacheStoragePerOriginQuota = this->m_cacheStoragePerOriginQuota;
+    copy->m_perOriginStorageQuota = this->m_perOriginStorageQuota;
     copy->m_networkCacheDirectory = this->m_networkCacheDirectory;
     copy->m_applicationCacheDirectory = this->m_applicationCacheDirectory;
     copy->m_applicationCacheFlatFileSubdirectoryName = this->m_applicationCacheFlatFileSubdirectoryName;

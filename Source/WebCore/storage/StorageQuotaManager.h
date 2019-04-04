@@ -46,8 +46,10 @@ public:
     }
     WEBCORE_EXPORT ~StorageQuotaManager();
 
+    static constexpr uint64_t defaultThirdPartyQuotaFromPerOriginQuota(uint64_t quota) { return quota / 10; }
+
     static constexpr uint64_t defaultQuota() { return 1000 * MB; }
-    static constexpr uint64_t defaultThirdPartyQuota() { return 100 * MB; }
+    static constexpr uint64_t defaultThirdPartyQuota() { return defaultThirdPartyQuotaFromPerOriginQuota(defaultQuota()); }
 
     WEBCORE_EXPORT void addUser(StorageQuotaUser&);
     WEBCORE_EXPORT void removeUser(StorageQuotaUser&);
