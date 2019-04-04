@@ -451,8 +451,7 @@ static void recomputeDependentOptions()
         || Options::logPhaseTimes()
         || Options::verboseCFA()
         || Options::verboseDFGFailure()
-        || Options::verboseFTLFailure()
-        || Options::dumpRandomizingFuzzerAgentPredictions())
+        || Options::verboseFTLFailure())
         Options::alwaysComputeHash() = true;
     
     if (!Options::useConcurrentGC())

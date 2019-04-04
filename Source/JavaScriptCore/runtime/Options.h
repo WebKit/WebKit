@@ -436,7 +436,6 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     \
     v(bool, useRandomizingFuzzerAgent, false, Normal, nullptr) \
     v(unsigned, seedOfRandomizingFuzzerAgent, 1, Normal, nullptr) \
-    v(bool, dumpRandomizingFuzzerAgentPredictions, false, Normal, nullptr) \
     \
     v(bool, logPhaseTimes, false, Normal, nullptr) \
     v(double, rareBlockPenalty, 0.001, Normal, nullptr) \
