@@ -1,3 +1,22 @@
+2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Add dump feature for RandomizingFuzzerAgent
+        https://bugs.webkit.org/show_bug.cgi?id=196586
+
+        Reviewed by Saam Barati.
+
+        Towards deterministic tests for the results from randomizing fuzzer agent, this patch adds Options::dumpRandomizingFuzzerAgentPredictions, which dumps the generated types.
+        The results is like this.
+
+            getPrediction name:(#C2q9xD),bytecodeIndex:(22),original:(Array),generated:(OtherObj|Array|Float64Array|BigInt|NonIntAsDouble)
+            getPrediction name:(makeUnwriteableUnconfigurableObject#AiEJv1),bytecodeIndex:(14),original:(OtherObj),generated:(Final|Uint8Array|Float64Array|SetObject|WeakSetObject|BigInt|NonIntAsDouble)
+
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/Options.h:
+        * runtime/RandomizingFuzzerAgent.cpp:
+        (JSC::RandomizingFuzzerAgent::getPrediction):
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         -apple-trailing-word is needed for browser detection
