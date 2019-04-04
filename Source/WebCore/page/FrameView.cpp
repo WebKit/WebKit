@@ -460,7 +460,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (newRect == oldRect)
         return;
     // Every scroll that happens as the result of frame size change is programmatic.
-    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    bool wasInProgrammaticScroll = inProgrammaticScroll();
+    setInProgrammaticScroll(true);
     ScrollView::setFrameRect(newRect);
 
     updateScrollableAreaSet();
@@ -474,6 +475,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
         frame().page()->pageOverlayController().didChangeViewSize();
 
     viewportContentsChanged();
+    setInProgrammaticScroll(wasInProgrammaticScroll);
 }
 
 bool FrameView::scheduleAnimation()
@@ -1090,13 +1092,16 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
     
     layoutContext().layout();
     // Every scroll that happens as the result of content inset change is programmatic.
-    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    bool wasInProgrammaticScroll = inProgrammaticScroll();
+    setInProgrammaticScroll(true);
     updateScrollbars(scrollPosition());
     if (renderView->usesCompositing())
         renderView->compositor().frameViewDidChangeSize();
 
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setTopContentInset(newTopContentInset);
+
+    setInProgrammaticScroll(wasInProgrammaticScroll);
 }
 
 void FrameView::topContentDirectionDidChange()
@@ -1670,7 +1675,7 @@ void FrameView::updateLayoutViewport()
     LOG_WITH_STREAM(Scrolling, stream << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
     
     if (m_layoutViewportOverrideRect) {
-        if (m_inProgrammaticScroll) {
+        if (inProgrammaticScroll()) {
             LOG_WITH_STREAM(Scrolling, stream << "computing new override layout viewport because of programmatic scrolling");
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
@@ -2274,7 +2279,9 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
 
-    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+    bool wasInProgrammaticScroll = inProgrammaticScroll();
+    setInProgrammaticScroll(true);
+
     m_maintainScrollPositionAnchor = nullptr;
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -2282,6 +2289,8 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
     if (page && page->expectsWheelEventTriggers())
         scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
     ScrollView::setScrollPosition(scrollPosition);
+
+    setInProgrammaticScroll(wasInProgrammaticScroll);
 }
 
 void FrameView::resetScrollAnchor()
@@ -4100,7 +4109,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
-    if (m_inProgrammaticScroll)
+    if (inProgrammaticScroll())
         return;
     m_maintainScrollPositionAnchor = nullptr;
     if (m_wasScrolledByUser == wasScrolledByUser)

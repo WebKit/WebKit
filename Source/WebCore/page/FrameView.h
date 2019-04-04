@@ -555,9 +555,6 @@ public:
     const Pagination& pagination() const;
     void setPagination(const Pagination&);
     
-    bool inProgrammaticScroll() const final { return m_inProgrammaticScroll; }
-    void setInProgrammaticScroll(bool programmaticScroll) { m_inProgrammaticScroll = programmaticScroll; }
-
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     IntSize initialViewportSize() const { return m_initialViewportSize; }
     void setInitialViewportSize(const IntSize& size) { m_initialViewportSize = size; }
@@ -923,7 +920,6 @@ private:
 
     bool m_isTrackingRepaints { false }; // Used for testing.
     bool m_wasScrolledByUser { false };
-    bool m_inProgrammaticScroll { false };
     bool m_shouldScrollToFocusedElement { false };
 
     bool m_isPainting { false };

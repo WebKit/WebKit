@@ -2749,7 +2749,7 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
         return false;
     
     if (scrollableArea)
-        scrollableArea->setScrolledProgrammatically(false);
+        scrollableArea->setScrollShouldClearLatchedState(false);
 
     platformNotifyIfEndGesture(event, scrollableArea);
 
@@ -2812,10 +2812,10 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
         if (!element->dispatchWheelEvent(adjustedEvent)) {
             m_isHandlingWheelEvent = false;
-            if (scrollableArea && scrollableArea->isScrolledProgrammatically()) {
+            if (scrollableArea && scrollableArea->scrollShouldClearLatchedState()) {
                 // Web developer is controlling scrolling, so don't attempt to latch.
                 clearLatchedState();
-                scrollableArea->setScrolledProgrammatically(false);
+                scrollableArea->setScrollShouldClearLatchedState(false);
             }
 
             platformNotifyIfEndGesture(adjustedEvent, scrollableArea);
@@ -2824,7 +2824,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
     }
 
     if (scrollableArea)
-        scrollableArea->setScrolledProgrammatically(false);
+        scrollableArea->setScrollShouldClearLatchedState(false);
 
     bool handledEvent = platformCompleteWheelEvent(adjustedEvent, scrollableContainer.get(), scrollableArea);
     platformNotifyIfEndGesture(adjustedEvent, scrollableArea);

@@ -1,3 +1,43 @@
+2019-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Move "inProgrammaticScroll" down to ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=196614
+
+        Reviewed by Zalan Bujtas.
+
+        A future patch will need to update "inProgrammaticScroll" on RenderLayers, so push
+        inProgrammaticScroll() down to ScrollableArea.
+
+        ScrollableArea already has "isScrolledProgrammatically", which I rename to "scrollShouldClearLatchedState"
+        to reduce confusion. It might be possible to remove this in future with some refactoring.
+
+        Sadly we can no longer use SetForScope<> in FrameView after this change so add some manual save/restore code.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::completeWidgetWheelEvent):
+        (WebCore::EventHandler::handleWheelEvent):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::topContentInsetDidChange):
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::setWasScrolledByUser):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::inProgrammaticScroll const): Deleted.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::inProgrammaticScroll const):
+        (WebCore::ScrollableArea::setInProgrammaticScroll):
+        (WebCore::ScrollableArea::scrollShouldClearLatchedState const):
+        (WebCore::ScrollableArea::setScrollShouldClearLatchedState):
+        (WebCore::ScrollableArea::isScrolledProgrammatically const): Deleted.
+        (WebCore::ScrollableArea::setScrolledProgrammatically): Deleted.
+
 2019-04-04  Sihui Liu  <sihui_liu@apple.com>
 
         Leak of UniqueIDBDatabase in network process running layout tests

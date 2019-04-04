@@ -1140,7 +1140,7 @@ void Element::setScrollLeft(int newLeft)
     if (auto* renderer = renderBox()) {
         renderer->setScrollLeft(static_cast<int>(newLeft * renderer->style().effectiveZoom()), ScrollType::Programmatic);
         if (auto* scrollableArea = renderer->layer())
-            scrollableArea->setScrolledProgrammatically(true);
+            scrollableArea->setScrollShouldClearLatchedState(true);
     }
 }
 
@@ -1157,7 +1157,7 @@ void Element::setScrollTop(int newTop)
     if (auto* renderer = renderBox()) {
         renderer->setScrollTop(static_cast<int>(newTop * renderer->style().effectiveZoom()), ScrollType::Programmatic);
         if (auto* scrollableArea = renderer->layer())
-            scrollableArea->setScrolledProgrammatically(true);
+            scrollableArea->setScrollShouldClearLatchedState(true);
     }
 }
 

@@ -196,8 +196,6 @@ public:
     LegacyTileCache* legacyTileCache();
 #endif
 
-    virtual bool inProgrammaticScroll() const { return false; }
-
     // Size available for view contents, including content inset areas. Not affected by zooming.
     IntSize sizeForVisibleContent(VisibleContentRectIncludesScrollbars = ExcludeScrollbars) const;
     // FIXME: remove this. It's only used for the incorrectly behaving ScrollView::unobscuredContentRectInternal().

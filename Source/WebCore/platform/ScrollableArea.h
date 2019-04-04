@@ -228,8 +228,11 @@ public:
     WEBCORE_EXPORT virtual bool scrolledToLeft() const;
     WEBCORE_EXPORT virtual bool scrolledToRight() const;
 
-    bool isScrolledProgrammatically() const { return m_scrolledProgrammatically; }
-    void setScrolledProgrammatically(bool state) { m_scrolledProgrammatically = state; }
+    bool inProgrammaticScroll() const { return m_inProgrammaticScroll; }
+    void setInProgrammaticScroll(bool inProgrammaticScroll) { m_inProgrammaticScroll = inProgrammaticScroll; }
+
+    bool scrollShouldClearLatchedState() const { return m_scrollShouldClearLatchedState; }
+    void setScrollShouldClearLatchedState(bool shouldClear) { m_scrollShouldClearLatchedState = shouldClear; }
 
     enum VisibleContentRectIncludesScrollbars { ExcludeScrollbars, IncludeScrollbars };
     enum VisibleContentRectBehavior {
@@ -391,7 +394,8 @@ private:
     unsigned m_scrollbarOverlayStyle : 2; // ScrollbarOverlayStyle
 
     unsigned m_scrollOriginChanged : 1;
-    unsigned m_scrolledProgrammatically : 1;
+    unsigned m_inProgrammaticScroll : 1;
+    unsigned m_scrollShouldClearLatchedState : 1;
 };
 
 } // namespace WebCore
