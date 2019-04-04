@@ -1,5 +1,14 @@
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
+        Disable Flaky API Test TestWebKitAPI.WebKit.FocusTextInputContext
+        https://bugs.webkit.org/show_bug.cgi?id=196629
+
+        Reviewed by Lucas Forschler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RequestTextInputContext.mm:
+
+2019-04-04  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] while waiting in queue status-bubble for testers queues should display build information from builder queue
         https://bugs.webkit.org/show_bug.cgi?id=196618
 

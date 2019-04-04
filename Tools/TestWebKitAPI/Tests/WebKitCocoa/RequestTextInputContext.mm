@@ -177,7 +177,7 @@ TEST(WebKit, RequestTextInputContext)
     EXPECT_RECT_EQ(0, 0, 100, 100, contexts[0].boundingRect);
 }
 
-TEST(WebKit, FocusTextInputContext)
+TEST(WebKit, DISABLED_FocusTextInputContext)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetThreadedScrollingEnabled((WKPreferencesRef)[configuration preferences], false);
