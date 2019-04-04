@@ -1,3 +1,19 @@
+2019-04-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash under WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored()
+        https://bugs.webkit.org/show_bug.cgi?id=196600
+        <rdar://problem/49572996>
+
+        Reviewed by Joanmarie Diggs.
+
+        Audit AX code to not dereference renderer before checking if it's null.
+        Not clear how to reproduce at this time.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::webAreaIsPresentational):
+        (WebCore::AccessibilityRenderObject::layoutCount const):
+        (WebCore::AccessibilityRenderObject::widget const):
+
 2019-04-04  Antti Koivisto  <antti@apple.com>
 
         Compute accurate regions for touch-action

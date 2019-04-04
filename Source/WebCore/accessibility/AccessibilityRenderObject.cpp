@@ -1156,7 +1156,7 @@ AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion()
     
 static bool webAreaIsPresentational(RenderObject* renderer)
 {
-    if (!is<RenderView>(*renderer))
+    if (!renderer || !is<RenderView>(*renderer))
         return false;
     
     if (auto ownerElement = renderer->document().ownerElement())
@@ -1445,7 +1445,7 @@ double AccessibilityRenderObject::estimatedLoadingProgress() const
     
 int AccessibilityRenderObject::layoutCount() const
 {
-    if (!is<RenderView>(*m_renderer))
+    if (!m_renderer || !is<RenderView>(*m_renderer))
         return 0;
     return downcast<RenderView>(*m_renderer).frameView().layoutContext().layoutCount();
 }
@@ -1816,7 +1816,7 @@ Document* AccessibilityRenderObject::document() const
 
 Widget* AccessibilityRenderObject::widget() const
 {
-    if (!is<RenderWidget>(*m_renderer))
+    if (!m_renderer || !is<RenderWidget>(*m_renderer))
         return nullptr;
     return downcast<RenderWidget>(*m_renderer).widget();
 }
