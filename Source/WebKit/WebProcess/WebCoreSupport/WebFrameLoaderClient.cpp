@@ -599,6 +599,11 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFinishDocumentLoadForFrame(m_frame->frameID(), navigationID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+
+#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
+    // Ensure the accessibility hierarchy is updated.
+    webPage->updateAccessibilityTree();
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
@@ -1708,15 +1713,9 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld& 
 
     webPage->injectedBundleLoaderClient().didClearWindowObjectForFrame(*webPage, *m_frame, world);
 
-
     WebAutomationSessionProxy* automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (automationSessionProxy && world.isNormal())
         automationSessionProxy->didClearWindowObjectForFrame(*m_frame);
-
-#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
-    // Ensure the accessibility hierarchy is updated.
-    webPage->updateAccessibilityTree();
-#endif
 }
 
 void WebFrameLoaderClient::dispatchGlobalObjectAvailable(DOMWrapperWorld& world)

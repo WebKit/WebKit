@@ -1,3 +1,17 @@
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Don't touch accessibility tree in WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld
+        https://bugs.webkit.org/show_bug.cgi?id=193914
+
+        Reviewed by Michael Catanzaro.
+
+        Move it to dispatchDidFinishDocumentLoad, since we know we have the document at that point and we can create the
+        root accessibility object wrapper.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld):
+
 2019-04-03  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify some "programmaticScroll" code paths
