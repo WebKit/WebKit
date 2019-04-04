@@ -1,3 +1,17 @@
+2019-04-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r243898.
+        https://bugs.webkit.org/show_bug.cgi?id=196624
+
+        `#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0`
+        does not work well (Requested by yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "Unreviewed, build fix for CLoop and Windows after r243886"
+        https://bugs.webkit.org/show_bug.cgi?id=196387
+        https://trac.webkit.org/changeset/243898
+
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix for CLoop and Windows after r243886
