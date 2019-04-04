@@ -1,3 +1,16 @@
+2019-04-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Scroll reset position when updating inner html on content
+        https://bugs.webkit.org/show_bug.cgi?id=191506
+
+        Unreviewed gardening.
+
+        The problem described in this bug was fixed in r243687 (webkit.org/b/191506).
+        This test was still marked as Failure but it has been passing since then.
+
+        * TestExpectations: Remove fast/css-grid-layout/grid-item-scroll-position.html
+        as it's passing now.
+
 2019-04-04  Shawn Roberts  <sroberts@apple.com>
 
         scrollingcoordinator/ios/ui-scroll-fixed.html is a flakky failure
