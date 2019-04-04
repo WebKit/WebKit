@@ -2987,11 +2987,11 @@ static Vector<ScrollingNodeID> collectRelatedCoordinatedScrollingNodes(const Ren
         auto* compositedAncestor = layer.ancestorCompositingLayer();
         for (const auto* currLayer = layer.parent(); currLayer != compositedAncestor; currLayer = currLayer->parent()) {
             if (currLayer->hasCompositedScrollableOverflow()) {
-                auto scrollingNodeID = currLayer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+                auto scrollingNodeID = currLayer->isComposited() ? currLayer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling) : 0;
                 if (scrollingNodeID)
                     overflowNodeData.append(scrollingNodeID);
                 else
-                    LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &layer);
+                    LOG(Scrolling, "Layer %p isn't composited or doesn't have scrolling node ID yet", &layer);
             }
         }
         break;
