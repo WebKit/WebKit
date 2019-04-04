@@ -122,7 +122,7 @@ class StatusBubble(View):
         return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'
 
     def _steps_messages(self, build):
-        return '\n'.join([step.state_string for step in build.step_set.all() if self._should_display_step(step)])
+        return '\n'.join([step.state_string for step in build.step_set.all().order_by('uid') if self._should_display_step(step)])
 
     def _should_display_step(self, step):
         return not filter(lambda step_to_hide: re.search(step_to_hide, step.state_string), StatusBubble.STEPS_TO_HIDE)
