@@ -118,16 +118,15 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process");
     if (!serviceWorkerProcess.isEmpty())
-        extraInitializationData.add("service-worker-process"_s, serviceWorkerProcess);
+        extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
+    String registrableDomain = xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain");
+    if (!registrableDomain.isEmpty())
+        extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 #endif
 
     String isPrewarmedProcess = xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed");
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
-
-    String securityOrigin = xpc_dictionary_get_string(extraDataInitializationDataObject, "security-origin");
-    if (!securityOrigin.isEmpty())
-        extraInitializationData.add("security-origin"_s, securityOrigin);
 
     if (!isClientSandboxed()) {
         String userDirectorySuffix = xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix");

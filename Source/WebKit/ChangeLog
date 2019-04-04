@@ -1,3 +1,14 @@
+2019-04-04  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker Process does not have the right domain name
+        https://bugs.webkit.org/show_bug.cgi?id=196585
+
+        Reviewed by Chris Dumez.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getExtraInitializationData):
+        Updated extraInitializationData to go from "security-origin" to "registrable-domain".
+
 2019-04-04  Chris Dumez  <cdumez@apple.com>
 
         Temporarily disable delayed WebProcess launch on iOS to address PLT regression
