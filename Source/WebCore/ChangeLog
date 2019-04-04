@@ -1,5 +1,14 @@
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, fix linking error because the build of RTCIceTransport.cpp is handled in Xcode project side accidentally
+        https://bugs.webkit.org/show_bug.cgi?id=196475
+
+        We did not have RTCIceTransport.cpp in Sources.txt.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [WebCore] Put most of derived classes of ScriptWrappable into IsoHeap
         https://bugs.webkit.org/show_bug.cgi?id=196475
 
