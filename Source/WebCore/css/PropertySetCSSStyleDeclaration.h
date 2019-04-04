@@ -43,6 +43,7 @@ class StyleSheetContents;
 class StyledElement;
 
 class PropertySetCSSStyleDeclaration : public CSSStyleDeclaration {
+    WTF_MAKE_ISO_ALLOCATED(PropertySetCSSStyleDeclaration);
 public:
     explicit PropertySetCSSStyleDeclaration(MutableStyleProperties& propertySet)
         : m_propertySet(&propertySet)
@@ -89,6 +90,7 @@ private:
 };
 
 class StyleRuleCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
+    WTF_MAKE_ISO_ALLOCATED(StyleRuleCSSStyleDeclaration);
 public:
     static Ref<StyleRuleCSSStyleDeclaration> create(MutableStyleProperties& propertySet, CSSRule& parentRule)
     {
@@ -119,6 +121,7 @@ private:
 };
 
 class InlineCSSStyleDeclaration final : public PropertySetCSSStyleDeclaration {
+    WTF_MAKE_ISO_ALLOCATED(InlineCSSStyleDeclaration);
 public:
     InlineCSSStyleDeclaration(MutableStyleProperties& propertySet, StyledElement& parentElement)
         : PropertySetCSSStyleDeclaration(propertySet)

@@ -35,7 +35,11 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCSessionDescription);
 
 inline RTCSessionDescription::RTCSessionDescription(RTCSdpType type, String&& sdp)
     : m_type(type)

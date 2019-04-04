@@ -36,11 +36,14 @@
 #include "OffscreenCanvas.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext);
 
 HashSet<CanvasRenderingContext*>& CanvasRenderingContext::instances(const LockHolder&)
 {

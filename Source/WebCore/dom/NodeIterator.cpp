@@ -27,8 +27,11 @@
 
 #include "Document.h"
 #include "NodeTraversal.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(NodeIterator);
 
 inline NodeIterator::NodePointer::NodePointer(Node& node, bool isPointerBeforeNode)
     : node(&node)

@@ -36,8 +36,11 @@
 #include "FloatConversion.h"
 #include "PannerNode.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBufferSourceNode);
 
 const double DefaultGrainDuration = 0.020; // 20ms
 

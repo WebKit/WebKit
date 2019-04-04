@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class WEBCORE_EXPORT StaticNodeList final : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(StaticNodeList);
 public:
     static Ref<StaticNodeList> create(Vector<Ref<Node>>&& nodes = { })
     {
@@ -53,6 +54,7 @@ private:
 };
 
 class StaticElementList final : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(StaticElementList);
 public:
     static Ref<StaticElementList> create(Vector<Ref<Element>>&& elements = { })
     {

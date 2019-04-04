@@ -38,10 +38,13 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
 
 class BlobURLRegistry final : public URLRegistry {
 public:

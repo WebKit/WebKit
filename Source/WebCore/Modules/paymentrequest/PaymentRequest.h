@@ -51,6 +51,7 @@ struct PaymentDetailsUpdate;
 struct PaymentMethodData;
 
 class PaymentRequest final : public ActiveDOMObject, public CanMakeWeakPtr<PaymentRequest>, public EventTargetWithInlineData, public RefCounted<PaymentRequest> {
+    WTF_MAKE_ISO_ALLOCATED(PaymentRequest);
 public:
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;

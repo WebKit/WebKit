@@ -24,9 +24,12 @@
 #include "Frame.h"
 #include "Page.h"
 #include "PluginData.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMPluginArray);
 
 DOMPluginArray::DOMPluginArray(DOMWindow* window)
     : DOMWindowProperty(window)

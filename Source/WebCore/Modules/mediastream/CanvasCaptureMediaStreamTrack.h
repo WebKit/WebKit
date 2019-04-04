@@ -38,6 +38,7 @@ class Image;
 class ScriptExecutionContext;
 
 class CanvasCaptureMediaStreamTrack final : public MediaStreamTrack {
+    WTF_MAKE_ISO_ALLOCATED(CanvasCaptureMediaStreamTrack);
 public:
     static Ref<CanvasCaptureMediaStreamTrack> create(ScriptExecutionContext&, Ref<HTMLCanvasElement>&&, Optional<double>&& frameRequestRate);
 

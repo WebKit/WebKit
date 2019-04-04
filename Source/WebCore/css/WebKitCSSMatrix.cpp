@@ -33,10 +33,13 @@
 #include "CSSValueKeywords.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebKitCSSMatrix);
 
 inline WebKitCSSMatrix::WebKitCSSMatrix(const TransformationMatrix& matrix)
     : m_matrix(matrix)

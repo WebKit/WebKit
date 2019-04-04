@@ -29,8 +29,11 @@
 #include "RemoteFrame.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RemoteDOMWindow);
 
 RemoteDOMWindow::RemoteDOMWindow(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier)
     : AbstractDOMWindow(WTFMove(identifier))

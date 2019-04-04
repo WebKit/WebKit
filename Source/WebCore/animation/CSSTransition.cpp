@@ -29,8 +29,11 @@
 #include "Animation.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSTransition);
 
 Ref<CSSTransition> CSSTransition::create(Element& owningElement, CSSPropertyID property, MonotonicTime generationTime, const Animation& backingAnimation, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double reversingShorteningFactor)
 {

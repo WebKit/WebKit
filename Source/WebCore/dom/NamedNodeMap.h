@@ -32,8 +32,8 @@ namespace WebCore {
 class Attr;
 class Element;
 
-class NamedNodeMap : public ScriptWrappable {
-    WTF_MAKE_FAST_ALLOCATED;
+class NamedNodeMap final : public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(NamedNodeMap);
 public:
     explicit NamedNodeMap(Element& element)
         : m_element(element)

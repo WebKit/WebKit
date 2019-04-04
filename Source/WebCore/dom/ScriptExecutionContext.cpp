@@ -46,6 +46,7 @@
 #include "SWClientConnection.h"
 #include "SWContextManager.h"
 #include "SchemeRegistry.h"
+#include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ScriptState.h"
 #include "ServiceWorker.h"

@@ -40,6 +40,7 @@ namespace WebCore {
 class JSDOMGlobalObject;
 
 class PaintWorkletGlobalScope : public WorkletGlobalScope {
+    WTF_MAKE_ISO_ALLOCATED(PaintWorkletGlobalScope);
 public:
     static Ref<PaintWorkletGlobalScope> create(Document&, ScriptSourceCode&&);
 

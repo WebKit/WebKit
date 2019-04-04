@@ -56,8 +56,11 @@
 #include <JavaScriptCore/VM.h>
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBuffer);
 
 static const double ExponentialMovingAverageCoefficient = 0.1;
 

@@ -35,6 +35,7 @@ namespace WebCore {
 class DataCue;
 
 class InbandDataTextTrack final : public InbandTextTrack {
+    WTF_MAKE_ISO_ALLOCATED(InbandDataTextTrack);
 public:
     static Ref<InbandDataTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandDataTextTrack();

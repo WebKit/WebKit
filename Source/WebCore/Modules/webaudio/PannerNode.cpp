@@ -34,9 +34,12 @@
 #include "AudioNodeOutput.h"
 #include "HRTFPanner.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PannerNode);
 
 static void fixNANs(double &x)
 {

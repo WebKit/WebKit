@@ -35,6 +35,7 @@
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
 #include <algorithm>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -42,6 +43,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioScheduledSourceNode);
 
 const double AudioScheduledSourceNode::UnknownTime = -1;
 

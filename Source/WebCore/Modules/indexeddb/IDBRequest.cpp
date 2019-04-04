@@ -48,12 +48,15 @@
 #include "ScriptExecutionContext.h"
 #include "ThreadSafeDataBuffer.h"
 #include <JavaScriptCore/StrongInlines.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
 #include <wtf/Variant.h>
 
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBRequest);
 
 Ref<IDBRequest> IDBRequest::create(ScriptExecutionContext& context, IDBObjectStore& objectStore, IDBTransaction& transaction)
 {

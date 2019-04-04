@@ -29,7 +29,12 @@
 #include "config.h"
 #include "StaticNodeList.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(StaticNodeList);
+WTF_MAKE_ISO_ALLOCATED_IMPL(StaticElementList);
 
 unsigned StaticNodeList::length() const
 {

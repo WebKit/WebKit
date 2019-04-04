@@ -38,6 +38,7 @@ class Element;
 class RenderStyle;
 
 class DeclarativeAnimation : public WebAnimation {
+    WTF_MAKE_ISO_ALLOCATED(DeclarativeAnimation);
 public:
     ~DeclarativeAnimation();
 

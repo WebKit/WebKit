@@ -32,7 +32,8 @@
 
 namespace WebCore {
 
-class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
+class TreeWalker final : public ScriptWrappable, public RefCounted<TreeWalker>, public NodeIteratorBase {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(TreeWalker, WEBCORE_EXPORT);
 public:
     static Ref<TreeWalker> create(Node& rootNode, unsigned long whatToShow, RefPtr<NodeFilter>&& filter)
     {

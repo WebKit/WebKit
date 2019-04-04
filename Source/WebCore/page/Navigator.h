@@ -25,6 +25,7 @@
 #include "ScriptWrappable.h"
 #include "ShareData.h"
 #include "Supplementable.h"
+#include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
@@ -32,6 +33,7 @@ class DOMMimeTypeArray;
 class DOMPluginArray;
 
 class Navigator final : public NavigatorBase, public ScriptWrappable, public DOMWindowProperty, public Supplementable<Navigator> {
+    WTF_MAKE_ISO_ALLOCATED(Navigator);
 public:
     static Ref<Navigator> create(ScriptExecutionContext* context, DOMWindow& window) { return adoptRef(*new Navigator(context, window)); }
     virtual ~Navigator();

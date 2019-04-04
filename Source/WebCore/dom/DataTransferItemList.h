@@ -44,8 +44,9 @@ namespace WebCore {
 class DataTransferItem;
 class File;
 
-class DataTransferItemList : public ScriptWrappable, public CanMakeWeakPtr<DataTransferItemList> {
-    WTF_MAKE_NONCOPYABLE(DataTransferItemList); WTF_MAKE_FAST_ALLOCATED;
+class DataTransferItemList final : public ScriptWrappable, public CanMakeWeakPtr<DataTransferItemList> {
+    WTF_MAKE_NONCOPYABLE(DataTransferItemList);
+    WTF_MAKE_ISO_ALLOCATED(DataTransferItemList);
 public:
     DataTransferItemList(DataTransfer&);
     ~DataTransferItemList();

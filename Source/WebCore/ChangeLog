@@ -1,3 +1,490 @@
+2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WebCore] Put most of derived classes of ScriptWrappable into IsoHeap
+        https://bugs.webkit.org/show_bug.cgi?id=196475
+
+        Reviewed by Saam Barati.
+
+        This patch puts most of derived classes of ScriptWrappable into IsoHeap. We do not include derived classes of Event simply
+        because Internal repository code also inherits it. After watching the result of this patch, we will try Event and its derived
+        classes into IsoHeap too.
+
+        This patch makes the following things IsoHeap-allocated. These classes are listed by using lldb python script.
+
+            1. DOM collections (HTMLCollection etc.)
+            2. WebAudio nodes
+            3. IDB classes
+            4. FileSystem API classes
+            5. Canvas contexts
+            6. WebRTC classses
+            7. XMLHttpRequest related classes
+            8. WebSocket related classes
+            9. Worker and Worklet related classes
+            10. Other misc classes
+
+        * Modules/applepay/ApplePaySession.cpp:
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.h:
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        * Modules/entriesapi/DOMFileSystem.h:
+        (WebCore::DOMFileSystem::createEntryForFile): Deleted.
+        (WebCore::DOMFileSystem::name const): Deleted.
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+        * Modules/entriesapi/FileSystemDirectoryReader.cpp:
+        * Modules/entriesapi/FileSystemDirectoryReader.h:
+        * Modules/entriesapi/FileSystemEntry.cpp:
+        * Modules/entriesapi/FileSystemEntry.h:
+        * Modules/entriesapi/FileSystemFileEntry.h:
+        * Modules/geolocation/Geolocation.cpp:
+        * Modules/geolocation/Geolocation.h:
+        (WebCore::Geolocation::document const): Deleted.
+        (WebCore::Geolocation::frame const): Deleted.
+        (WebCore::Geolocation::resetIsAllowed): Deleted.
+        (WebCore::Geolocation::isAllowed const): Deleted.
+        (WebCore::Geolocation::isDenied const): Deleted.
+        (WebCore::Geolocation::hasListeners const): Deleted.
+        * Modules/indexeddb/IDBCursor.cpp:
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBCursorWithValue.cpp:
+        * Modules/indexeddb/IDBCursorWithValue.h:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::info const): Deleted.
+        (WebCore::IDBDatabase::databaseConnectionIdentifier const): Deleted.
+        (WebCore::IDBDatabase::connectionProxy): Deleted.
+        (WebCore::IDBDatabase::isClosingOrClosed const): Deleted.
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        * Modules/indexeddb/IDBKeyRange.h:
+        (WebCore::IDBKeyRange::lower const): Deleted.
+        (WebCore::IDBKeyRange::upper const): Deleted.
+        (WebCore::IDBKeyRange::lowerOpen const): Deleted.
+        (WebCore::IDBKeyRange::upperOpen const): Deleted.
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        * Modules/indexeddb/IDBTransaction.h:
+        (WebCore::IDBTransaction::mode const): Deleted.
+        (WebCore::IDBTransaction::info const): Deleted.
+        (WebCore::IDBTransaction::database): Deleted.
+        (WebCore::IDBTransaction::database const): Deleted.
+        (WebCore::IDBTransaction::originalDatabaseInfo const): Deleted.
+        (WebCore::IDBTransaction::isVersionChange const): Deleted.
+        (WebCore::IDBTransaction::isReadOnly const): Deleted.
+        (WebCore::IDBTransaction::isFinished const): Deleted.
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        * Modules/mediarecorder/MediaRecorder.h:
+        * Modules/mediasession/MediaRemoteControls.cpp:
+        * Modules/mediasession/MediaRemoteControls.h:
+        (WebCore::MediaRemoteControls::create): Deleted.
+        (WebCore::MediaRemoteControls::previousTrackEnabled const): Deleted.
+        (WebCore::MediaRemoteControls::nextTrackEnabled const): Deleted.
+        * Modules/mediasource/MediaSource.cpp:
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/MediaDeviceInfo.cpp:
+        * Modules/mediastream/MediaDeviceInfo.h:
+        (WebCore::MediaDeviceInfo::label const): Deleted.
+        (WebCore::MediaDeviceInfo::deviceId const): Deleted.
+        (WebCore::MediaDeviceInfo::groupId const): Deleted.
+        (WebCore::MediaDeviceInfo::kind const): Deleted.
+        * Modules/mediastream/MediaDevices.cpp:
+        * Modules/mediastream/MediaDevices.h:
+        * Modules/mediastream/MediaStream.cpp:
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * Modules/mediastream/RTCDTMFSender.cpp:
+        * Modules/mediastream/RTCDTMFSender.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/mediastream/RTCIceCandidate.h:
+        (WebCore::RTCIceCandidate::candidate const): Deleted.
+        (WebCore::RTCIceCandidate::sdpMid const): Deleted.
+        (WebCore::RTCIceCandidate::sdpMLineIndex const): Deleted.
+        (WebCore::RTCIceCandidate::setCandidate): Deleted.
+        * Modules/mediastream/RTCIceTransport.cpp:
+        * Modules/mediastream/RTCIceTransport.h:
+        (WebCore::RTCIceTransport::create): Deleted.
+        (WebCore::RTCIceTransport::state const): Deleted.
+        (WebCore::RTCIceTransport::setState): Deleted.
+        (WebCore::RTCIceTransport::gatheringState const): Deleted.
+        (WebCore::RTCIceTransport::setGatheringState): Deleted.
+        (WebCore::RTCIceTransport::RTCIceTransport): Deleted.
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        * Modules/mediastream/RTCRtpReceiver.h:
+        (WebCore::RTCRtpReceiver::create): Deleted.
+        (WebCore::RTCRtpReceiver::setBackend): Deleted.
+        (WebCore::RTCRtpReceiver::getParameters): Deleted.
+        (WebCore::RTCRtpReceiver::getContributingSources const): Deleted.
+        (WebCore::RTCRtpReceiver::getSynchronizationSources const): Deleted.
+        (WebCore::RTCRtpReceiver::track): Deleted.
+        (WebCore::RTCRtpReceiver::backend): Deleted.
+        * Modules/mediastream/RTCRtpSender.cpp:
+        * Modules/mediastream/RTCRtpSender.h:
+        (WebCore::RTCRtpSender::track): Deleted.
+        (WebCore::RTCRtpSender::trackId const): Deleted.
+        (WebCore::RTCRtpSender::trackKind const): Deleted.
+        (WebCore::RTCRtpSender::mediaStreamIds const): Deleted.
+        (WebCore::RTCRtpSender::setMediaStreamIds): Deleted.
+        (WebCore::RTCRtpSender::isStopped const): Deleted.
+        (WebCore::RTCRtpSender::backend): Deleted.
+        * Modules/mediastream/RTCRtpTransceiver.cpp:
+        * Modules/mediastream/RTCRtpTransceiver.h:
+        (WebCore::RTCRtpTransceiver::create): Deleted.
+        (WebCore::RTCRtpTransceiver::sender): Deleted.
+        (WebCore::RTCRtpTransceiver::receiver): Deleted.
+        (WebCore::RTCRtpTransceiver::iceTransport): Deleted.
+        (WebCore::RTCRtpTransceiver::backend): Deleted.
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        * Modules/mediastream/RTCSessionDescription.h:
+        (WebCore::RTCSessionDescription::type const): Deleted.
+        (WebCore::RTCSessionDescription::sdp const): Deleted.
+        (WebCore::RTCSessionDescription::setSdp): Deleted.
+        * Modules/notifications/Notification.cpp:
+        * Modules/notifications/Notification.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentResponse.cpp:
+        * Modules/paymentrequest/PaymentResponse.h:
+        * Modules/speech/SpeechSynthesisUtterance.cpp:
+        * Modules/speech/SpeechSynthesisUtterance.h:
+        * Modules/webaudio/AnalyserNode.cpp:
+        * Modules/webaudio/AnalyserNode.h:
+        * Modules/webaudio/AudioBasicInspectorNode.cpp:
+        * Modules/webaudio/AudioBasicInspectorNode.h:
+        * Modules/webaudio/AudioBasicProcessorNode.cpp:
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioNode.cpp:
+        * Modules/webaudio/AudioNode.h:
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        * Modules/webaudio/BiquadFilterNode.h:
+        * Modules/webaudio/ChannelMergerNode.cpp:
+        * Modules/webaudio/ChannelMergerNode.h:
+        * Modules/webaudio/ChannelSplitterNode.cpp:
+        * Modules/webaudio/ChannelSplitterNode.h:
+        * Modules/webaudio/ConvolverNode.cpp:
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/DelayNode.cpp:
+        * Modules/webaudio/DelayNode.h:
+        * Modules/webaudio/DynamicsCompressorNode.cpp:
+        * Modules/webaudio/DynamicsCompressorNode.h:
+        * Modules/webaudio/GainNode.cpp:
+        * Modules/webaudio/GainNode.h:
+        * Modules/webaudio/MediaElementAudioSourceNode.cpp:
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.cpp:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        * Modules/webaudio/OfflineAudioContext.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/OscillatorNode.cpp:
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/PannerNode.cpp:
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        * Modules/webaudio/ScriptProcessorNode.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        * Modules/webaudio/WaveShaperNode.h:
+        * Modules/webgpu/GPUCanvasContext.cpp:
+        * Modules/webgpu/GPUCanvasContext.h:
+        * Modules/websockets/WebSocket.cpp:
+        * Modules/websockets/WebSocket.h:
+        * Modules/webvr/VRDisplay.cpp:
+        * Modules/webvr/VRDisplay.h:
+        (WebCore::VRDisplay::isPresenting const): Deleted.
+        (WebCore::VRDisplay::displayName const): Deleted.
+        (WebCore::VRDisplay::displayId const): Deleted.
+        (WebCore::VRDisplay::depthNear const): Deleted.
+        (WebCore::VRDisplay::setDepthNear): Deleted.
+        (WebCore::VRDisplay::depthFar const): Deleted.
+        (WebCore::VRDisplay::setDepthFar): Deleted.
+        (WebCore::VRDisplay::document): Deleted.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/CSSAnimation.cpp:
+        * animation/CSSAnimation.h:
+        * animation/CSSTransition.cpp:
+        * animation/CSSTransition.h:
+        * animation/DeclarativeAnimation.cpp:
+        * animation/DeclarativeAnimation.h:
+        * animation/WebAnimation.cpp:
+        * animation/WebAnimation.h:
+        * bindings/js/ScriptWrappable.h:
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSStyleDeclaration.cpp:
+        (): Deleted.
+        * css/CSSStyleDeclaration.h:
+        * css/DOMMatrix.h:
+        * css/DOMMatrixReadOnly.cpp:
+        * css/DOMMatrixReadOnly.h:
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/WebKitCSSMatrix.cpp:
+        * css/WebKitCSSMatrix.h:
+        * css/typedom/TypedOMCSSImageValue.cpp: Added.
+        * css/typedom/TypedOMCSSImageValue.h:
+        * css/typedom/TypedOMCSSNumericValue.cpp: Added.
+        * css/typedom/TypedOMCSSNumericValue.h:
+        * css/typedom/TypedOMCSSStyleValue.cpp: Added.
+        * css/typedom/TypedOMCSSStyleValue.h:
+        * css/typedom/TypedOMCSSUnitValue.cpp: Added.
+        * css/typedom/TypedOMCSSUnitValue.h:
+        * css/typedom/TypedOMCSSUnparsedValue.cpp: Added.
+        * css/typedom/TypedOMCSSUnparsedValue.h:
+        * dom/AbortController.cpp:
+        * dom/AbortController.h:
+        * dom/AbortSignal.cpp:
+        * dom/AbortSignal.h:
+        * dom/AllDescendantsCollection.cpp: Copied from Source/WebCore/xml/XMLHttpRequestEventTarget.h.
+        * dom/AllDescendantsCollection.h:
+        * dom/ChildNodeList.cpp:
+        * dom/ChildNodeList.h:
+        * dom/ClassCollection.cpp:
+        * dom/ClassCollection.h:
+        * dom/DOMImplementation.cpp:
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::ref): Deleted.
+        (WebCore::DOMImplementation::deref): Deleted.
+        (WebCore::DOMImplementation::document): Deleted.
+        (WebCore::DOMImplementation::hasFeature): Deleted.
+        * dom/DOMPoint.h:
+        * dom/DOMPointReadOnly.cpp:
+        * dom/DOMPointReadOnly.h:
+        * dom/DOMQuad.cpp:
+        * dom/DOMQuad.h:
+        * dom/DOMRect.h:
+        * dom/DOMRectReadOnly.cpp: Copied from Source/WebCore/dom/DOMPointReadOnly.cpp.
+        * dom/DOMRectReadOnly.h:
+        * dom/DataTransferItemList.cpp:
+        * dom/DataTransferItemList.h:
+        (WebCore::DataTransferItemList::ref): Deleted.
+        (WebCore::DataTransferItemList::deref): Deleted.
+        (WebCore::DataTransferItemList::dataTransfer): Deleted.
+        (WebCore::DataTransferItemList::hasItems const): Deleted.
+        (WebCore::DataTransferItemList::items const): Deleted.
+        * dom/DatasetDOMStringMap.cpp:
+        * dom/DatasetDOMStringMap.h:
+        * dom/DocumentParser.h:
+        * dom/EventTarget.cpp:
+        * dom/EventTarget.h:
+        * dom/LiveNodeList.cpp:
+        * dom/LiveNodeList.h:
+        * dom/MessageChannel.cpp:
+        * dom/MessagePort.cpp:
+        * dom/MessagePort.h:
+        * dom/NameNodeList.cpp:
+        * dom/NameNodeList.h:
+        * dom/NamedNodeMap.cpp:
+        * dom/NamedNodeMap.h:
+        (WebCore::NamedNodeMap::NamedNodeMap): Deleted.
+        (WebCore::NamedNodeMap::element): Deleted.
+        * dom/NodeIterator.cpp:
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::detach): Deleted.
+        (WebCore::NodeIterator::referenceNode const): Deleted.
+        (WebCore::NodeIterator::pointerBeforeReferenceNode const): Deleted.
+        * dom/NodeList.cpp: Copied from Source/WebCore/xml/XMLHttpRequestEventTarget.h.
+        * dom/NodeList.h:
+        * dom/NodeRareData.cpp:
+        * dom/ScriptExecutionContext.cpp:
+        * dom/SimulatedClick.cpp:
+        * dom/StaticNodeList.cpp:
+        * dom/StaticNodeList.h:
+        * dom/TagCollection.cpp:
+        * dom/TagCollection.h:
+        * dom/TreeWalker.cpp:
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::create): Deleted.
+        (WebCore::TreeWalker::currentNode): Deleted.
+        (WebCore::TreeWalker::currentNode const): Deleted.
+        * fileapi/Blob.cpp:
+        * fileapi/Blob.h:
+        * fileapi/File.cpp:
+        * fileapi/File.h:
+        * fileapi/FileList.cpp:
+        * fileapi/FileList.h:
+        (WebCore::FileList::create): Deleted.
+        (WebCore::FileList::length const): Deleted.
+        (WebCore::FileList::isEmpty const): Deleted.
+        (WebCore::FileList::files const): Deleted.
+        (WebCore::FileList::file const): Deleted.
+        (WebCore::FileList::FileList): Deleted.
+        (WebCore::FileList::append): Deleted.
+        (WebCore::FileList::clear): Deleted.
+        * fileapi/FileReader.cpp:
+        * fileapi/FileReader.h:
+        * html/CachedHTMLCollection.h:
+        * html/GenericCachedHTMLCollection.cpp:
+        * html/GenericCachedHTMLCollection.h:
+        * html/HTMLAllCollection.cpp:
+        * html/HTMLAllCollection.h:
+        * html/HTMLCollection.cpp:
+        * html/HTMLCollection.h:
+        * html/HTMLFormControlsCollection.cpp:
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLNameCollection.cpp:
+        * html/HTMLNameCollection.h:
+        * html/HTMLOptionsCollection.cpp:
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLTableRowsCollection.cpp:
+        * html/HTMLTableRowsCollection.h:
+        * html/ImageBitmap.cpp:
+        * html/ImageBitmap.h:
+        (WebCore::ImageBitmap::isDetached const): Deleted.
+        (WebCore::ImageBitmap::buffer): Deleted.
+        (WebCore::ImageBitmap::originClean const): Deleted.
+        * html/LabelsNodeList.cpp:
+        * html/LabelsNodeList.h:
+        * html/MediaController.cpp:
+        * html/MediaController.h:
+        * html/OffscreenCanvas.cpp:
+        * html/OffscreenCanvas.h:
+        * html/RadioNodeList.cpp:
+        * html/RadioNodeList.h:
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/GPUBasedCanvasRenderingContext.h:
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        * html/canvas/ImageBitmapRenderingContext.h:
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        * html/canvas/OffscreenCanvasRenderingContext2D.h:
+        * html/canvas/PaintRenderingContext2D.cpp:
+        * html/canvas/PaintRenderingContext2D.h:
+        * html/canvas/PlaceholderRenderingContext.cpp:
+        * html/canvas/PlaceholderRenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/track/AudioTrackList.h:
+        * html/track/DataCue.cpp:
+        * html/track/DataCue.h:
+        * html/track/InbandDataTextTrack.cpp:
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandTextTrack.cpp:
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.cpp:
+        * html/track/TextTrack.h:
+        * html/track/TextTrackCue.cpp:
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackCueGeneric.cpp:
+        * html/track/TextTrackCueGeneric.h:
+        * html/track/TextTrackList.cpp:
+        * html/track/TextTrackList.h:
+        * html/track/TrackListBase.cpp:
+        * html/track/TrackListBase.h:
+        * html/track/VTTCue.cpp:
+        * html/track/VTTCue.h:
+        * html/track/VideoTrackList.h:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * loader/appcache/DOMApplicationCache.h:
+        * page/AbstractDOMWindow.cpp:
+        * page/AbstractDOMWindow.h:
+        * page/BarProp.cpp:
+        * page/BarProp.h:
+        (WebCore::BarProp::create): Deleted.
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/EventSource.cpp:
+        * page/EventSource.h:
+        * page/History.cpp:
+        * page/History.h:
+        * page/Location.cpp:
+        * page/Location.h:
+        (WebCore::Location::create): Deleted.
+        (WebCore::Location::toString const): Deleted.
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        * page/Performance.cpp:
+        * page/Performance.h:
+        * page/RemoteDOMWindow.cpp:
+        * page/RemoteDOMWindow.h:
+        * page/Screen.cpp:
+        * page/Screen.h:
+        * page/VisualViewport.cpp:
+        * page/VisualViewport.h:
+        * plugins/DOMMimeTypeArray.cpp:
+        * plugins/DOMMimeTypeArray.h:
+        (WebCore::DOMMimeTypeArray::create): Deleted.
+        * plugins/DOMPlugin.cpp:
+        * plugins/DOMPlugin.h:
+        (WebCore::DOMPlugin::create): Deleted.
+        * plugins/DOMPluginArray.cpp:
+        * plugins/DOMPluginArray.h:
+        (WebCore::DOMPluginArray::create): Deleted.
+        * storage/Storage.cpp:
+        * storage/Storage.h:
+        (WebCore::Storage::area const): Deleted.
+        * workers/AbstractWorker.cpp:
+        * workers/AbstractWorker.h:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/Worker.cpp:
+        * workers/Worker.h:
+        * workers/WorkerGlobalScope.cpp:
+        * workers/WorkerGlobalScope.h:
+        * workers/service/ServiceWorker.cpp:
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        * workers/service/ServiceWorkerRegistration.h:
+        * worklets/PaintWorkletGlobalScope.cpp:
+        * worklets/PaintWorkletGlobalScope.h:
+        * worklets/Worklet.cpp:
+        * worklets/Worklet.h:
+        * worklets/WorkletGlobalScope.cpp:
+        * worklets/WorkletGlobalScope.h:
+        * xml/XMLHttpRequest.cpp:
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequestEventTarget.h:
+        * xml/XMLHttpRequestUpload.cpp:
+        * xml/XMLHttpRequestUpload.h:
+        * xml/XPathParser.cpp:
+
 2019-04-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.

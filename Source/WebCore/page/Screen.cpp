@@ -35,8 +35,11 @@
 #include "PlatformScreen.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Screen);
 
 Screen::Screen(DOMWindow& window)
     : DOMWindowProperty(&window)

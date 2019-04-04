@@ -30,7 +30,11 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContext);
 
 std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
 {

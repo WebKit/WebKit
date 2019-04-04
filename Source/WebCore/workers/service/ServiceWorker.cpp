@@ -39,12 +39,15 @@
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 #define WORKER_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
 #define WORKER_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorker);
 
 Ref<ServiceWorker> ServiceWorker::getOrCreate(ScriptExecutionContext& context, ServiceWorkerData&& data)
 {

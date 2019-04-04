@@ -32,9 +32,12 @@
 #include "AudioContext.h"
 #include "HRTFDatabaseLoader.h"
 #include <algorithm>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
  
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioDestinationNode);
     
 const size_t renderQuantumSize = 128;    
 

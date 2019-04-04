@@ -35,6 +35,7 @@ class ApplicationCacheHost;
 class Frame;
 
 class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty, public CanMakeWeakPtr<DOMApplicationCache> {
+    WTF_MAKE_ISO_ALLOCATED(DOMApplicationCache);
 public:
     static Ref<DOMApplicationCache> create(DOMWindow& window) { return adoptRef(*new DOMApplicationCache(window)); }
     virtual ~DOMApplicationCache() { ASSERT(!frame()); }

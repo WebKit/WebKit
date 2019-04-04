@@ -33,9 +33,12 @@
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
 #include "DenormalDisabler.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
     
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioDestinationNode);
+
 AudioDestinationNode::AudioDestinationNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)
     , m_currentSampleFrame(0)

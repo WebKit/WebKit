@@ -31,6 +31,8 @@ namespace WebCore {
 
 template <CollectionTraversalType traversalType>
 class GenericCachedHTMLCollection final : public CachedHTMLCollection<GenericCachedHTMLCollection<traversalType>, traversalType> {
+    WTF_MAKE_ISO_ALLOCATED(GenericCachedHTMLCollection);
+    static_assert(traversalType != CollectionTraversalType::CustomForwardOnly, "CustomForwardOnly should use non GenericCachedHTMLCollection.");
 public:
     static Ref<GenericCachedHTMLCollection> create(ContainerNode& base, CollectionType collectionType)
     {

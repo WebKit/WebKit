@@ -59,8 +59,11 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePaySession);
 
 // The amount follows the regular expression -?[0-9]+(\.[0-9][0-9])?.
 static bool validateAmount(const String& amountString)

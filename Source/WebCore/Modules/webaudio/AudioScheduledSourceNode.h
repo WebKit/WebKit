@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class AudioScheduledSourceNode : public AudioNode {
+    WTF_MAKE_ISO_ALLOCATED(AudioScheduledSourceNode);
 public:
     // These are the possible states an AudioScheduledSourceNode can be in:
     //

@@ -34,6 +34,7 @@ class PeriodicWave;
 // OscillatorNode is an audio generator of periodic waveforms.
 
 class OscillatorNode final : public AudioScheduledSourceNode {
+    WTF_MAKE_ISO_ALLOCATED(OscillatorNode);
 public:
     // The waveform type.
     enum class Type {

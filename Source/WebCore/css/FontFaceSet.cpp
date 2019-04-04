@@ -31,8 +31,11 @@
 #include "JSDOMBinding.h"
 #include "JSFontFace.h"
 #include "JSFontFaceSet.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FontFaceSet);
 
 Ref<FontFaceSet> FontFaceSet::create(Document& document, const Vector<RefPtr<FontFace>>& initialFaces)
 {

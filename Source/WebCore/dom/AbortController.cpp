@@ -27,8 +27,11 @@
 #include "AbortController.h"
 
 #include "AbortSignal.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AbortController);
 
 Ref<AbortController> AbortController::create(ScriptExecutionContext& context)
 {

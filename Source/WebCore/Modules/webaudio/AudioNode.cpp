@@ -34,6 +34,7 @@
 #include "AudioParam.h"
 #include "Logging.h"
 #include <wtf/Atomics.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
 #if DEBUG_AUDIONODE_REFERENCES
@@ -41,6 +42,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioNode);
 
 String convertEnumerationToString(AudioNode::NodeType enumerationValue)
 {

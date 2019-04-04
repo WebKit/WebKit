@@ -31,6 +31,8 @@
 #include "config.h"
 #include "NodeRareData.h"
 
+#include "Page.h"
+
 namespace WebCore {
 
 struct SameSizeAsNodeRareData {

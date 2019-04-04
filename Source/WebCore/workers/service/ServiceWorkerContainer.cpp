@@ -48,6 +48,7 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerProvider.h"
 #include "ServiceWorkerThread.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/URL.h>
@@ -56,6 +57,8 @@
 #define CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerContainer::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerContainer);
 
 ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, NavigatorBase& navigator)
     : ActiveDOMObject(context)

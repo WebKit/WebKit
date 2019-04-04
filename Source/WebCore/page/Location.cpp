@@ -34,10 +34,13 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "NavigationScheduler.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
 #include "SecurityOrigin.h"
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Location);
 
 Location::Location(DOMWindow& window)
     : DOMWindowProperty(&window)

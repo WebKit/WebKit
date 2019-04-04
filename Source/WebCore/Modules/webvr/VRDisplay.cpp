@@ -42,8 +42,11 @@
 #include "VRPlatformDisplay.h"
 #include "VRPose.h"
 #include "VRStageParameters.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(VRDisplay);
 
 Ref<VRDisplay> VRDisplay::create(ScriptExecutionContext& context, WeakPtr<VRPlatformDisplay>&& platformDisplay)
 {

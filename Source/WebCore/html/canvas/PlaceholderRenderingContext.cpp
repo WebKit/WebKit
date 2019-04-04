@@ -26,7 +26,11 @@
 #include "config.h"
 #include "PlaceholderRenderingContext.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PlaceholderRenderingContext);
 
 PlaceholderRenderingContext::PlaceholderRenderingContext(CanvasBase& canvas)
     : CanvasRenderingContext(canvas)

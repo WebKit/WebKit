@@ -45,11 +45,14 @@
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <wtf/HexNumber.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrackCue);
 
 const AtomicString& TextTrackCue::cueShadowPseudoId()
 {

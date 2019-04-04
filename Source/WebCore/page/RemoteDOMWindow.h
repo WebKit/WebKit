@@ -43,6 +43,7 @@ class Document;
 class Location;
 
 class RemoteDOMWindow final : public AbstractDOMWindow {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(RemoteDOMWindow, WEBCORE_EXPORT);
 public:
     static Ref<RemoteDOMWindow> create(Ref<RemoteFrame>&& frame, GlobalWindowIdentifier&& identifier)
     {

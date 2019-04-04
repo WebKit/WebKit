@@ -40,10 +40,13 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <wtf/HashSet.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Worker);
 
 static HashSet<Worker*>& allWorkers()
 {

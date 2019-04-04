@@ -31,9 +31,12 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include "Logging.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamAudioSourceNode);
 
 Ref<MediaStreamAudioSourceNode> MediaStreamAudioSourceNode::create(AudioContext& context, MediaStream& mediaStream, MediaStreamTrack& audioTrack)
 {

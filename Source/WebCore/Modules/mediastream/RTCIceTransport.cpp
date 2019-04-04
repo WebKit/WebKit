@@ -25,3 +25,15 @@
 
 #include "config.h"
 #include "RTCIceTransport.h"
+
+#if ENABLE(WEB_RTC)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceTransport);
+
+} // namespace WebCore
+
+#endif // ENABLE(WEB_RTC)

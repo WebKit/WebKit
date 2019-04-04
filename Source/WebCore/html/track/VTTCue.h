@@ -74,6 +74,7 @@ private:
 // ----------------------------
 
 class VTTCue : public TextTrackCue, public CanMakeWeakPtr<VTTCue> {
+    WTF_MAKE_ISO_ALLOCATED(VTTCue);
 public:
     static Ref<VTTCue> create(ScriptExecutionContext& context, double start, double end, const String& content)
     {

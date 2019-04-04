@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisUtterance);
 public:
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
 

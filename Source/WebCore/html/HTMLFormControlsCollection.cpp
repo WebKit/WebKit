@@ -27,6 +27,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "ScriptDisallowedScope.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
@@ -34,6 +35,8 @@ using namespace HTMLNames;
 
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLFormControlsCollection);
 
 HTMLFormControlsCollection::HTMLFormControlsCollection(ContainerNode& ownerNode)
     : CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType>(ownerNode, FormControls)

@@ -46,7 +46,7 @@ class TextResourceDecoder;
 class ThreadableLoader;
 
 class EventSource final : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(EventSource);
 public:
     struct Init {
         bool withCredentials;

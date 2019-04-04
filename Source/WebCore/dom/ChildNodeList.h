@@ -25,6 +25,7 @@
 
 #include "CollectionIndexCache.h"
 #include "NodeList.h"
+#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ namespace WebCore {
 class ContainerNode;
 
 class EmptyNodeList final : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(EmptyNodeList);
 public:
     static Ref<EmptyNodeList> create(Node& owner)
     {
@@ -54,6 +56,7 @@ private:
 };
 
 class ChildNodeList final : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(ChildNodeList);
 public:
     static Ref<ChildNodeList> create(ContainerNode& parent)
     {

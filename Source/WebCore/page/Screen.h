@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
+    WTF_MAKE_ISO_ALLOCATED(Screen);
 public:
     static Ref<Screen> create(DOMWindow& window) { return adoptRef(*new Screen(window)); }
 

@@ -60,6 +60,7 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCueBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(VTTCue);
 
 // This constant should correspond with the percentage returned by CaptionUserPreferences::captionFontSizeScaleAndImportance.
 const static double DEFAULTCAPTIONFONTSIZEPERCENTAGE = 5;

@@ -61,6 +61,7 @@ private:
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
 class HTMLCollection : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(HTMLCollection);
 public:
     virtual ~HTMLCollection();
 

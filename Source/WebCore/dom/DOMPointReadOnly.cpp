@@ -32,8 +32,11 @@
 
 #include "DOMMatrixReadOnly.h"
 #include "DOMPoint.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMPointReadOnly);
     
 ExceptionOr<Ref<DOMPoint>> DOMPointReadOnly::matrixTransform(DOMMatrixInit&& matrixInit) const
 {

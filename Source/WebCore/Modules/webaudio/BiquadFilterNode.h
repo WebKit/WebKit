@@ -32,6 +32,7 @@ namespace WebCore {
 class AudioParam;
 
 class BiquadFilterNode final : public AudioBasicProcessorNode {
+    WTF_MAKE_ISO_ALLOCATED(BiquadFilterNode);
 public:
     static Ref<BiquadFilterNode> create(AudioContext& context, float sampleRate)
     {

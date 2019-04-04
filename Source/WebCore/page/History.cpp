@@ -39,10 +39,13 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(History);
 
 History::History(DOMWindow& window)
     : DOMWindowProperty(&window)

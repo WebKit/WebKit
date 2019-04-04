@@ -29,8 +29,11 @@
 #include "DelayNode.h"
 
 #include "DelayProcessor.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DelayNode);
 
 const double maximumAllowedDelayTime = 180;
 

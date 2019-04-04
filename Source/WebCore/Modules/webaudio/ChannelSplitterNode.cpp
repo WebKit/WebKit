@@ -31,8 +31,11 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ChannelSplitterNode);
     
 RefPtr<ChannelSplitterNode> ChannelSplitterNode::create(AudioContext& context, float sampleRate, unsigned numberOfOutputs)
 {

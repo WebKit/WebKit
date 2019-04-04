@@ -89,6 +89,7 @@ class AudioContext
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static RefPtr<AudioContext> create(Document&);

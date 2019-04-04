@@ -61,6 +61,7 @@ class IDBConnectionToServer;
 }
 
 class IDBRequest : public EventTargetWithInlineData, public IDBActiveDOMObject, public RefCounted<IDBRequest>, public CanMakeWeakPtr<IDBRequest> {
+    WTF_MAKE_ISO_ALLOCATED(IDBRequest);
 public:
     enum class NullResultType {
         Empty,

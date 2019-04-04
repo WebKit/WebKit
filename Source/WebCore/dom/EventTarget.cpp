@@ -44,6 +44,7 @@
 #include "Settings.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
@@ -52,6 +53,9 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(EventTarget);
+WTF_MAKE_ISO_ALLOCATED_IMPL(EventTargetWithInlineData);
 
 bool EventTarget::isNode() const
 {

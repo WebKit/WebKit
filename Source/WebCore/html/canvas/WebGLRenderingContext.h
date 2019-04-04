@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class WebGLRenderingContext final : public WebGLRenderingContextBase {
+    WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContext);
 public:
     static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, GraphicsContext3DAttributes);
     static std::unique_ptr<WebGLRenderingContext> create(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);

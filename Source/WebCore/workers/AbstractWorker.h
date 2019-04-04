@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class AbstractWorker : public RefCounted<AbstractWorker>, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(AbstractWorker);
 public:
     using RefCounted::ref;
     using RefCounted::deref;

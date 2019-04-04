@@ -41,7 +41,7 @@ struct DOMMatrixInit;
 class DOMPoint;
 
 class DOMPointReadOnly : public ScriptWrappable, public RefCounted<DOMPointReadOnly> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(DOMPointReadOnly);
 public:
     static Ref<DOMPointReadOnly> create(double x, double y, double z, double w) { return adoptRef(*new DOMPointReadOnly(x, y, z, w)); }
     static Ref<DOMPointReadOnly> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }

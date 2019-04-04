@@ -25,13 +25,20 @@
 
 #pragma once
 
+// We do not delete "delete" operators to allow classes to have a virtual destructor. The following code raises a compile error like "error: attempt to use a deleted function".
+//
+//     class A {
+//     public:
+//         virtual ~A();
+//         void operator delete(void*) = delete;
+//         void operator delete[](void*) = delete;
+//     };
+//
 #define WTF_FORBID_HEAP_ALLOCATION \
 private: \
     void* operator new(size_t, void*) = delete; \
     void* operator new[](size_t, void*) = delete; \
     void* operator new(size_t) = delete; \
-    void operator delete(void*) = delete; \
     void* operator new[](size_t size) = delete; \
-    void operator delete[](void*) = delete; \
     void* operator new(size_t, NotNullTag, void* location) = delete; \
     typedef int __thisIsHereToForceASemicolonAfterThisForbidHeapAllocationMacro

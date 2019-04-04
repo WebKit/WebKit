@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class GPUBasedCanvasRenderingContext : public CanvasRenderingContext, public ActiveDOMObject {
+    WTF_MAKE_ISO_NONALLOCATABLE(GPUBasedCanvasRenderingContext);
 public:
 
     bool isGPUBased() const override { return true; }

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class DOMRectReadOnly : public ScriptWrappable, public RefCounted<DOMRectReadOnly> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(DOMRectReadOnly, WEBCORE_EXPORT);
 public:
     static Ref<DOMRectReadOnly> create(double x, double y, double width, double height) { return adoptRef(*new DOMRectReadOnly(x, y, width, height)); }
     static Ref<DOMRectReadOnly> fromRect(const DOMRectInit& init) { return create(init.x, init.y, init.width, init.height); }

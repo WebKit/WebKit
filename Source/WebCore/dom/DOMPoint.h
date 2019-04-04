@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class DOMPoint final : public DOMPointReadOnly {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<DOMPoint> create(double x, double y, double z = 0, double w = 1) { return adoptRef(*new DOMPoint(x, y, z, w)); }
     static Ref<DOMPoint> create(const DOMPointInit& init) { return create(init.x, init.y, init.z, init.w); }
@@ -52,5 +51,6 @@ private:
     {
     }
 };
+static_assert(sizeof(DOMPoint) == sizeof(DOMPointReadOnly), "");
 
 } // namespace WebCore

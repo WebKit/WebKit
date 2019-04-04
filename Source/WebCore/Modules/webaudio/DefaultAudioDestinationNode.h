@@ -31,6 +31,7 @@ namespace WebCore {
 class AudioDestination;
     
 class DefaultAudioDestinationNode final : public AudioDestinationNode {
+    WTF_MAKE_ISO_ALLOCATED(DefaultAudioDestinationNode);
 public:
     static Ref<DefaultAudioDestinationNode> create(AudioContext& context)
     {

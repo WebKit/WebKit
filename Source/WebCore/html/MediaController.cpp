@@ -32,11 +32,14 @@
 #include "HTMLMediaElement.h"
 #include "TimeRanges.h"
 #include <pal/system/Clock.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaController);
 
 Ref<MediaController> MediaController::create(ScriptExecutionContext& context)
 {

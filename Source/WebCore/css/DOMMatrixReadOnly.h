@@ -44,7 +44,7 @@ class ScriptExecutionContext;
 struct DOMPointInit;
 
 class DOMMatrixReadOnly : public ScriptWrappable, public RefCounted<DOMMatrixReadOnly> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(DOMMatrixReadOnly);
 public:
     static ExceptionOr<Ref<DOMMatrixReadOnly>> create(ScriptExecutionContext&, Optional<Variant<String, Vector<double>>>&&);
 

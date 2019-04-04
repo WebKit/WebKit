@@ -35,12 +35,15 @@
 #include "MediaRecorderErrorEvent.h"
 #include "MediaRecorderPrivate.h"
 #include "SharedBuffer.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if PLATFORM(COCOA)
 #include "MediaRecorderPrivateAVFImpl.h"
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRecorder);
 
 creatorFunction MediaRecorder::m_customCreator = nullptr;
 

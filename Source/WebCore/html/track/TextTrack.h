@@ -52,6 +52,7 @@ public:
 };
 
 class TextTrack : public TrackBase, public EventTargetWithInlineData, public ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(TextTrack);
 public:
     static Ref<TextTrack> create(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     {

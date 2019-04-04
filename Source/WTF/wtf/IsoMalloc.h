@@ -25,17 +25,25 @@
 
 #pragma once
 
+#include <wtf/ForbidHeapAllocation.h>
+
 #if (defined(USE_SYSTEM_MALLOC) && USE_SYSTEM_MALLOC)
 
 #include <wtf/FastMalloc.h>
 
 #define WTF_MAKE_ISO_ALLOCATED(name) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_ISO_ALLOCATED_EXPORT(name, exportMacro) WTF_MAKE_FAST_ALLOCATED
+#define WTF_MAKE_ISO_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
 
 #else
 
 #include <bmalloc/IsoHeap.h>
 
-#define WTF_MAKE_ISO_ALLOCATED(name) MAKE_BISO_MALLOCED(name)
+#define WTF_NOEXPORT
+
+#define WTF_MAKE_ISO_ALLOCATED(name) MAKE_BISO_MALLOCED(name, WTF_NOEXPORT)
+#define WTF_MAKE_ISO_ALLOCATED_EXPORT(name, exportMacro) MAKE_BISO_MALLOCED(name, exportMacro)
+#define WTF_MAKE_ISO_NONALLOCATABLE(name) WTF_FORBID_HEAP_ALLOCATION
 
 #endif
 

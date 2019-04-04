@@ -50,7 +50,7 @@ enum class WorkerType;
 
 class ServiceWorkerContainer final : public EventTargetWithInlineData, public ActiveDOMObject, public ServiceWorkerJobClient {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(ServiceWorkerContainer);
 public:
     ServiceWorkerContainer(ScriptExecutionContext*, NavigatorBase&);
     ~ServiceWorkerContainer();

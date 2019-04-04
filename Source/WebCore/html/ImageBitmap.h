@@ -45,7 +45,8 @@ class ScriptExecutionContext;
 class TypedOMCSSImageValue;
 struct ImageBitmapOptions;
 
-class ImageBitmap : public ScriptWrappable, public RefCounted<ImageBitmap> {
+class ImageBitmap final : public ScriptWrappable, public RefCounted<ImageBitmap> {
+    WTF_MAKE_ISO_ALLOCATED(ImageBitmap);
 public:
     using Source = Variant<
         RefPtr<HTMLImageElement>,

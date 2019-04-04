@@ -32,9 +32,12 @@
 #include "Logging.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InbandWebVTTTextTrack);
 
 inline InbandWebVTTTextTrack::InbandWebVTTTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, client, trackPrivate)

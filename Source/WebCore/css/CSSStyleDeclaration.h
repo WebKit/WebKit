@@ -36,7 +36,8 @@ class StyleProperties;
 class StyledElement;
 
 class CSSStyleDeclaration : public ScriptWrappable {
-    WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration);
+    WTF_MAKE_ISO_ALLOCATED(CSSStyleDeclaration);
 public:
     virtual ~CSSStyleDeclaration() = default;
 

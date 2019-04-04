@@ -25,6 +25,7 @@
 
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -32,6 +33,7 @@ namespace WebCore {
 class Node;
 
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
+    WTF_MAKE_ISO_ALLOCATED(NodeList);
 public:
     virtual ~NodeList() = default;
 

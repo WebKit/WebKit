@@ -100,6 +100,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
@@ -107,6 +108,8 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
 
 static const Seconds secondsBetweenRestoreAttempts { 1_s };
 const int maxGLErrorsAllowedToConsole = 256;

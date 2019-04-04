@@ -41,9 +41,12 @@
 #include "NetworkingContext.h"
 #include "Page.h"
 #include "RealtimeMediaSource.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStream);
 
 Ref<MediaStream> MediaStream::create(ScriptExecutionContext& context)
 {

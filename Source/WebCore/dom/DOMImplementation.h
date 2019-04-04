@@ -28,8 +28,8 @@
 
 namespace WebCore {
 
-class DOMImplementation : public ScriptWrappable {
-    WTF_MAKE_FAST_ALLOCATED;
+class DOMImplementation final : public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(DOMImplementation);
 public:
     explicit DOMImplementation(Document&);
 

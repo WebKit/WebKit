@@ -36,6 +36,7 @@ class GenericCueData;
 
 // A "generic" cue is a non-WebVTT cue, so it is not positioned/sized with the WebVTT logic.
 class TextTrackCueGeneric final : public VTTCue {
+    WTF_MAKE_ISO_ALLOCATED(TextTrackCueGeneric);
 public:
     static Ref<TextTrackCueGeneric> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
     {

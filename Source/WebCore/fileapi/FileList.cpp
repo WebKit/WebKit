@@ -26,7 +26,11 @@
 #include "config.h"
 #include "FileList.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FileList);
 
 File* FileList::item(unsigned index) const
 {

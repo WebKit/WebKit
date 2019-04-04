@@ -25,8 +25,13 @@
 #include "TagCollection.h"
 
 #include "NodeRareData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TagCollection);
+WTF_MAKE_ISO_ALLOCATED_IMPL(TagCollectionNS);
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTagCollection);
 
 TagCollectionNS::TagCollectionNS(ContainerNode& rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
     : CachedHTMLCollection<TagCollectionNS, CollectionTypeTraits<ByTag>::traversalType>(rootNode, ByTag)

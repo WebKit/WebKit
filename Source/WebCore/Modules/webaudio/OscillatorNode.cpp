@@ -32,10 +32,13 @@
 #include "AudioParam.h"
 #include "PeriodicWave.h"
 #include "VectorMath.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace VectorMath;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OscillatorNode);
 
 PeriodicWave* OscillatorNode::s_periodicWaveSine = nullptr;
 PeriodicWave* OscillatorNode::s_periodicWaveSquare = nullptr;

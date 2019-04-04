@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class AnalyserNode final : public AudioBasicInspectorNode {
+    WTF_MAKE_ISO_ALLOCATED(AnalyserNode);
 public:
     static Ref<AnalyserNode> create(AudioContext& context, float sampleRate)
     {

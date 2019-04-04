@@ -33,6 +33,7 @@ namespace WebCore {
 class DynamicsCompressor;
 
 class DynamicsCompressorNode final : public AudioNode {
+    WTF_MAKE_ISO_ALLOCATED(DynamicsCompressorNode);
 public:
     static Ref<DynamicsCompressorNode> create(AudioContext& context, float sampleRate)
     {

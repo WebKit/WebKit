@@ -32,10 +32,13 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RadioNodeList);
 
 RadioNodeList::RadioNodeList(ContainerNode& rootNode, const AtomicString& name)
     : CachedLiveNodeList(rootNode, InvalidateForFormControls)

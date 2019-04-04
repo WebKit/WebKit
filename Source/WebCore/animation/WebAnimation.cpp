@@ -36,10 +36,13 @@
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
 #include "WebAnimationUtilities.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WebAnimation);
 
 Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
 {

@@ -33,10 +33,14 @@
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
 #include "NodeTraversal.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(WindowNameCollection);
+WTF_MAKE_ISO_ALLOCATED_IMPL(DocumentNameCollection);
 
 bool WindowNameCollection::elementMatchesIfNameAttributeMatch(const Element& element)
 {

@@ -32,9 +32,12 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileMetadata.h>
 #include <wtf/FileSystem.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(File);
 
 Ref<File> File::createWithRelativePath(const String& path, const String& relativePath)
 {

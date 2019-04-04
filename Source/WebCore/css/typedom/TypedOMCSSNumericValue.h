@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class TypedOMCSSNumericValue : public TypedOMCSSStyleValue {
+    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSNumericValue);
 protected:
     TypedOMCSSNumericValue() = default;
 };

@@ -27,10 +27,13 @@
 
 #include "Attr.h"
 #include "HTMLElement.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(NamedNodeMap);
 
 void NamedNodeMap::ref()
 {

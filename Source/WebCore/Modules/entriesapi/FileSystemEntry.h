@@ -37,6 +37,7 @@ class ErrorCallback;
 class FileSystemEntryCallback;
 
 class FileSystemEntry : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemEntry> {
+    WTF_MAKE_ISO_ALLOCATED(FileSystemEntry);
 public:
     virtual ~FileSystemEntry();
 

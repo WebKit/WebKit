@@ -47,6 +47,7 @@ class MediaRecorder final
     , public CanMakeWeakPtr<MediaRecorder>
     , private MediaStream::Observer
     , private MediaStreamTrackPrivate::Observer {
+    WTF_MAKE_ISO_ALLOCATED(MediaRecorder);
 public:
     enum class RecordingState { Inactive, Recording, Paused };
     

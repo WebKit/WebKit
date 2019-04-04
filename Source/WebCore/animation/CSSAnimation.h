@@ -35,6 +35,7 @@ class Element;
 class RenderStyle;
 
 class CSSAnimation final : public DeclarativeAnimation {
+    WTF_MAKE_ISO_ALLOCATED(CSSAnimation);
 public:
     static Ref<CSSAnimation> create(Element&, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle);
     ~CSSAnimation() = default;

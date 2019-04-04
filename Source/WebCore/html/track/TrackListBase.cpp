@@ -33,8 +33,11 @@
 #include "HTMLMediaElement.h"
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 
 TrackListBase::TrackListBase(HTMLMediaElement* element, ScriptExecutionContext* context)
     : ActiveDOMObject(context)

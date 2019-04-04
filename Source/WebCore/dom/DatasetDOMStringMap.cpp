@@ -28,10 +28,13 @@
 
 #include "Element.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DatasetDOMStringMap);
 
 static bool isValidAttributeName(const String& name)
 {

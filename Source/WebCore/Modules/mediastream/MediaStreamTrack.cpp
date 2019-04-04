@@ -42,9 +42,12 @@
 #include "Page.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaStreamTrack);
 
 Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
 {

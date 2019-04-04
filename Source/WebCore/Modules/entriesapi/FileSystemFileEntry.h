@@ -47,6 +47,7 @@ private:
 
     FileSystemFileEntry(ScriptExecutionContext&, DOMFileSystem&, const String& virtualPath);
 };
+static_assert(sizeof(FileSystemFileEntry) == sizeof(FileSystemEntry), "");
 
 } // namespace WebCore
 

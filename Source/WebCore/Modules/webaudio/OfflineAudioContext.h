@@ -29,6 +29,7 @@
 namespace WebCore {
 
 class OfflineAudioContext final : public AudioContext {
+    WTF_MAKE_ISO_ALLOCATED(OfflineAudioContext);
 public:
     static ExceptionOr<Ref<OfflineAudioContext>> create(ScriptExecutionContext&, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
 

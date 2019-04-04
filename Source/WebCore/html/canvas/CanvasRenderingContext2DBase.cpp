@@ -63,6 +63,7 @@
 #include "TextRun.h"
 #include "TypedOMCSSImageValue.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
@@ -71,6 +72,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasRenderingContext2DBase);
 
 #if USE(CG)
 const ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQuality::Low;

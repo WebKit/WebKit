@@ -37,7 +37,8 @@ namespace WebCore {
 
 class DOMWindow;
 
-class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
+class Location final : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
+    WTF_MAKE_ISO_ALLOCATED(Location);
 public:
     static Ref<Location> create(DOMWindow& window) { return adoptRef(*new Location(window)); }
 

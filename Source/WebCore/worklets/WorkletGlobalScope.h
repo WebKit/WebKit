@@ -49,6 +49,7 @@ enum WorkletGlobalScopeIdentifierType { };
 using WorkletGlobalScopeIdentifier = ObjectIdentifier<WorkletGlobalScopeIdentifierType>;
 
 class WorkletGlobalScope : public RefCounted<WorkletGlobalScope>, public ScriptExecutionContext, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(WorkletGlobalScope);
 public:
     virtual ~WorkletGlobalScope();
 

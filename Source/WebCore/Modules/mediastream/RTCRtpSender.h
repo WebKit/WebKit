@@ -42,7 +42,8 @@ namespace WebCore {
 class PeerConnectionBackend;
 struct RTCRtpCapabilities;
 
-class RTCRtpSender : public RefCounted<RTCRtpSender>, public ScriptWrappable {
+class RTCRtpSender final : public RefCounted<RTCRtpSender>, public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(RTCRtpSender);
 public:
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, Ref<MediaStreamTrack>&&, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);
     static Ref<RTCRtpSender> create(PeerConnectionBackend&, String&& trackKind, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&&);

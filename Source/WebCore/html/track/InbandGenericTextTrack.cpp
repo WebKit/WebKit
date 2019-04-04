@@ -34,9 +34,12 @@
 #include "Logging.h"
 #include "VTTRegionList.h"
 #include <math.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InbandGenericTextTrack);
 
 void GenericTextTrackCueMap::add(GenericCueData& cueData, TextTrackCueGeneric& cue)
 {

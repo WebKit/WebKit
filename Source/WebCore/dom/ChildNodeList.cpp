@@ -25,8 +25,12 @@
 
 #include "ElementIterator.h"
 #include "NodeRareData.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(EmptyNodeList);
+WTF_MAKE_ISO_ALLOCATED_IMPL(ChildNodeList);
 
 EmptyNodeList::~EmptyNodeList()
 {

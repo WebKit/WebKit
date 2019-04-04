@@ -67,6 +67,7 @@ class SourceBuffer final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(SourceBuffer);
 public:
     static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
     virtual ~SourceBuffer();

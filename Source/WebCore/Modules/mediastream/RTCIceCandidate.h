@@ -37,7 +37,8 @@
 
 namespace WebCore {
 
-class RTCIceCandidate : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
+class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(RTCIceCandidate);
 public:
     struct Init {
         String candidate;

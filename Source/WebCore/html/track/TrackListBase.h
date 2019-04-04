@@ -40,6 +40,7 @@ class Element;
 class TrackBase;
 
 class TrackListBase : public RefCounted<TrackListBase>, public EventTargetWithInlineData, public ActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(TrackListBase);
 public:
     virtual ~TrackListBase();
 

@@ -49,6 +49,7 @@ class WorkerGlobalScopeProxy;
 class WorkerScriptLoader;
 
 class Worker final : public AbstractWorker, public ActiveDOMObject, private WorkerScriptLoaderClient {
+    WTF_MAKE_ISO_ALLOCATED(Worker);
 public:
     struct Options {
         String name;

@@ -42,9 +42,12 @@
 #include "TextTrackList.h"
 #include "VTTRegion.h"
 #include "VTTRegionList.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(TextTrack);
 
 const AtomicString& TextTrack::subtitlesKeyword()
 {

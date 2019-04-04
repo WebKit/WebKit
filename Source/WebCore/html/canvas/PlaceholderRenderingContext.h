@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class PlaceholderRenderingContext final : public CanvasRenderingContext {
+    WTF_MAKE_ISO_ALLOCATED(PlaceholderRenderingContext);
 public:
     PlaceholderRenderingContext(CanvasBase&);
 

@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaRemoteControls);
+
 MediaRemoteControls::MediaRemoteControls(ScriptExecutionContext& context, MediaSession* session)
     : m_scriptExecutionContext(context)
     , m_session(session)

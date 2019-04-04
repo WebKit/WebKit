@@ -52,7 +52,7 @@ class AudioNode
 #endif
 {
     WTF_MAKE_NONCOPYABLE(AudioNode);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(AudioNode);
 public:
     enum { ProcessingSizeInFrames = 128 };
 

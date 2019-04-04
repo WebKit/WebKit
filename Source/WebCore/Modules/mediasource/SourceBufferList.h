@@ -43,6 +43,7 @@ namespace WebCore {
 class SourceBuffer;
 
 class SourceBufferList final : public RefCounted<SourceBufferList>, public EventTargetWithInlineData, public ActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(SourceBufferList);
 public:
     static Ref<SourceBufferList> create(ScriptExecutionContext* context)
     {

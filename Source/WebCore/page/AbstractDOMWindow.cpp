@@ -27,9 +27,12 @@
 #include "AbstractDOMWindow.h"
 
 #include "HTTPParsers.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractDOMWindow);
 
 HashMap<GlobalWindowIdentifier, AbstractDOMWindow*>& AbstractDOMWindow::allWindows()
 {

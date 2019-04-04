@@ -29,7 +29,8 @@ namespace WebCore {
 
 class PluginData;
 
-class DOMMimeTypeArray : public ScriptWrappable, public RefCounted<DOMMimeTypeArray>, public DOMWindowProperty {
+class DOMMimeTypeArray final : public ScriptWrappable, public RefCounted<DOMMimeTypeArray>, public DOMWindowProperty {
+    WTF_MAKE_ISO_ALLOCATED(DOMMimeTypeArray);
 public:
     static Ref<DOMMimeTypeArray> create(DOMWindow* window) { return adoptRef(*new DOMMimeTypeArray(window)); }
     ~DOMMimeTypeArray();

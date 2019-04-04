@@ -77,6 +77,7 @@ class RTCPeerConnection final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(RTCPeerConnection);
 public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     virtual ~RTCPeerConnection();

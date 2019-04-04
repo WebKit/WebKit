@@ -36,6 +36,7 @@ class Element;
 class RenderStyle;
 
 class CSSTransition final : public DeclarativeAnimation {
+    WTF_MAKE_ISO_ALLOCATED(CSSTransition);
 public:
     static Ref<CSSTransition> create(Element&, CSSPropertyID, MonotonicTime generationTime, const Animation&, const RenderStyle* oldStyle, const RenderStyle& newStyle, Seconds delay, Seconds duration, const RenderStyle& reversingAdjustedStartStyle, double);
     ~CSSTransition() = default;

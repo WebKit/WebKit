@@ -38,6 +38,7 @@ class Element;
 static bool shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType, const QualifiedName&);
 
 class LiveNodeList : public NodeList {
+    WTF_MAKE_ISO_ALLOCATED(LiveNodeList);
 public:
     LiveNodeList(ContainerNode& ownerNode, NodeListInvalidationType);
     virtual ~LiveNodeList();
@@ -74,6 +75,7 @@ private:
 
 template <class NodeListType>
 class CachedLiveNodeList : public LiveNodeList {
+    WTF_MAKE_ISO_NONALLOCATABLE(CachedLiveNodeList);
 public:
     virtual ~CachedLiveNodeList();
 

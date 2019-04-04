@@ -28,10 +28,12 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioContext.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
+WTF_MAKE_ISO_ALLOCATED_IMPL(WaveShaperNode);
 
 WaveShaperNode::WaveShaperNode(AudioContext& context)
     : AudioBasicProcessorNode(context, context.sampleRate())

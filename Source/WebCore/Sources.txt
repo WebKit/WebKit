@@ -175,6 +175,7 @@ Modules/mediastream/RTCDTMFToneChangeEvent.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCDataChannelEvent.cpp
 Modules/mediastream/RTCIceCandidate.cpp
+Modules/mediastream/RTCIceTransport.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCPeerConnectionIceEvent.cpp
 Modules/mediastream/RTCRtpReceiver.cpp
@@ -781,6 +782,11 @@ css/parser/SizesAttributeParser.cpp
 css/parser/SizesCalcParser.cpp
 
 css/typedom/StylePropertyMapReadOnly.cpp
+css/typedom/TypedOMCSSImageValue.cpp
+css/typedom/TypedOMCSSNumericValue.cpp
+css/typedom/TypedOMCSSStyleValue.cpp
+css/typedom/TypedOMCSSUnitValue.cpp
+css/typedom/TypedOMCSSUnparsedValue.cpp
 
 cssjit/SelectorCompiler.cpp
 
@@ -789,6 +795,7 @@ dom/AbortSignal.cpp
 dom/ActiveDOMCallback.cpp
 dom/ActiveDOMCallbackMicrotask.cpp
 dom/ActiveDOMObject.cpp
+dom/AllDescendantsCollection.cpp
 dom/AnimationEvent.cpp
 dom/Attr.cpp
 dom/BeforeTextInsertedEvent.cpp
@@ -815,6 +822,7 @@ dom/DOMImplementation.cpp
 dom/DOMPointReadOnly.cpp
 dom/DOMQuad.cpp
 dom/DOMRectList.cpp
+dom/DOMRectReadOnly.cpp
 dom/DOMStringList.cpp
 dom/DataTransfer.cpp
 dom/DataTransferItem.cpp
@@ -879,6 +887,7 @@ dom/NativeNodeFilter.cpp
 dom/Node.cpp
 dom/NodeFilterCondition.cpp
 dom/NodeIterator.cpp
+dom/NodeList.cpp
 dom/NodeRareData.cpp
 dom/NodeTraversal.cpp
 dom/OverflowEvent.cpp

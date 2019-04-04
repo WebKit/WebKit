@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class HTMLOptionsCollection final : public CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType> {
+    WTF_MAKE_ISO_ALLOCATED(HTMLOptionsCollection);
 public:
     using Base = CachedHTMLCollection<HTMLOptionsCollection, CollectionTypeTraits<SelectOptions>::traversalType>;
 

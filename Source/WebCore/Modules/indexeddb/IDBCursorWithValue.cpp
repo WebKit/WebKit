@@ -29,8 +29,11 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include <JavaScriptCore/HeapInlines.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBCursorWithValue);
 
 Ref<IDBCursorWithValue> IDBCursorWithValue::create(IDBObjectStore& objectStore, const IDBCursorInfo& info)
 {

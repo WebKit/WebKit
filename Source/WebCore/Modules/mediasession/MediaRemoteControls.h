@@ -34,7 +34,8 @@ namespace WebCore {
 
 class MediaSession;
 
-class MediaRemoteControls : public RefCounted<MediaRemoteControls>, public EventTargetWithInlineData {
+class MediaRemoteControls final : public RefCounted<MediaRemoteControls>, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(MediaRemoteControls);
 public:
     static Ref<MediaRemoteControls> create(ScriptExecutionContext& context, MediaSession* session = nullptr)
     {

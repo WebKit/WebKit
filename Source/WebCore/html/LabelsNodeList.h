@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class LabelsNodeList final : public CachedLiveNodeList<LabelsNodeList> {
+    WTF_MAKE_ISO_ALLOCATED(LabelsNodeList);
 public:
     static Ref<LabelsNodeList> create(LabelableElement& forNode, const AtomicString&)
     {

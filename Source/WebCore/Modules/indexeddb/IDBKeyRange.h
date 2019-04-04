@@ -42,7 +42,8 @@ namespace WebCore {
 class IDBKey;
 class ScriptExecutionContext;
 
-class IDBKeyRange : public ScriptWrappable, public RefCounted<IDBKeyRange> {
+class IDBKeyRange final : public ScriptWrappable, public RefCounted<IDBKeyRange> {
+    WTF_MAKE_ISO_ALLOCATED(IDBKeyRange);
 public:
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen);
     static Ref<IDBKeyRange> create(RefPtr<IDBKey>&&);

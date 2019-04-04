@@ -58,6 +58,7 @@ class MediaSource final
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(MediaSource);
 public:
     static void setRegistry(URLRegistry*);
     static MediaSource* lookup(const String& url) { return s_registry ? static_cast<MediaSource*>(s_registry->lookup(url)) : nullptr; }

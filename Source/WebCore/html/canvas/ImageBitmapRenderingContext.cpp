@@ -29,8 +29,11 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBitmapRenderingContext);
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
 static RenderingMode bufferRenderingMode = Accelerated;

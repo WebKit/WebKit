@@ -32,8 +32,11 @@
 #include "DataCue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(InbandDataTextTrack);
 
 inline InbandDataTextTrack::InbandDataTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
     : InbandTextTrack(context, client, trackPrivate)

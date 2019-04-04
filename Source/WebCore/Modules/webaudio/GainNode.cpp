@@ -31,8 +31,11 @@
 #include "AudioBus.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(GainNode);
 
 GainNode::GainNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)

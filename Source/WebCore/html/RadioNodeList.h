@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RadioNodeList final : public CachedLiveNodeList<RadioNodeList> {
+    WTF_MAKE_ISO_ALLOCATED(RadioNodeList);
 public:
     static Ref<RadioNodeList> create(ContainerNode& rootNode, const AtomicString& name)
     {

@@ -35,6 +35,7 @@ class HTMLImageElement;
 // The famous <table><tr><form><td> problem.
 
 class HTMLFormControlsCollection final : public CachedHTMLCollection<HTMLFormControlsCollection, CollectionTypeTraits<FormControls>::traversalType> {
+    WTF_MAKE_ISO_ALLOCATED(HTMLFormControlsCollection);
 public:
     static Ref<HTMLFormControlsCollection> create(ContainerNode&, CollectionType);
     virtual ~HTMLFormControlsCollection();

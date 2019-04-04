@@ -35,7 +35,11 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCIceCandidate);
 
 inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex)
     : m_candidate(candidate)

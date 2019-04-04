@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class File final : public Blob {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(File, WEBCORE_EXPORT);
 public:
     struct PropertyBag : BlobPropertyBag {
         Optional<int64_t> lastModified;

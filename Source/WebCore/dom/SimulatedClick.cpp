@@ -31,11 +31,13 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 class SimulatedMouseEvent final : public MouseEvent {
+    WTF_MAKE_ISO_ALLOCATED_INLINE(SimulatedMouseEvent);
 public:
     static Ref<SimulatedMouseEvent> create(const AtomicString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
     {

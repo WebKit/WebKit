@@ -39,6 +39,7 @@ class WebGLTransformFeedback;
 class WebGLVertexArrayObject;
 
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
+    WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
     static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContext3DAttributes);
     static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);

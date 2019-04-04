@@ -35,6 +35,7 @@ namespace WebCore {
 class AudioContext;
     
 class ChannelMergerNode final : public AudioNode {
+    WTF_MAKE_ISO_ALLOCATED(ChannelMergerNode);
 public:
     static RefPtr<ChannelMergerNode> create(AudioContext&, float sampleRate, unsigned numberOfInputs);
 

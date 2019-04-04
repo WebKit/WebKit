@@ -104,6 +104,7 @@ private:
 };
 
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
     static Ref<CSSComputedStyleDeclaration> create(Element& element, bool allowVisitedStyle = false, const String& pseudoElementName = String())
     {

@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-class FileList : public ScriptWrappable, public RefCounted<FileList> {
+class FileList final : public ScriptWrappable, public RefCounted<FileList> {
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(FileList, WEBCORE_EXPORT);
 public:
     static Ref<FileList> create()
     {

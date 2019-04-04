@@ -32,8 +32,11 @@
 #include "Chrome.h"
 #include "Frame.h"
 #include "Page.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(BarProp);
 
 BarProp::BarProp(DOMWindow& window, Type type)
     : DOMWindowProperty(&window)

@@ -42,6 +42,7 @@ class WebKitMediaKeyError;
 class WebKitMediaKeys;
 
 class WebKitMediaKeySession final : public RefCounted<WebKitMediaKeySession>, public EventTargetWithInlineData, private ActiveDOMObject, private LegacyCDMSessionClient {
+    WTF_MAKE_ISO_ALLOCATED(WebKitMediaKeySession);
 public:
     static Ref<WebKitMediaKeySession> create(ScriptExecutionContext&, WebKitMediaKeys&, const String& keySystem);
     ~WebKitMediaKeySession();

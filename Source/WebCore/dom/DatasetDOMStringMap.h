@@ -33,7 +33,7 @@ namespace WebCore {
 class Element;
 
 class DatasetDOMStringMap final : public ScriptWrappable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(DatasetDOMStringMap);
 public:
     explicit DatasetDOMStringMap(Element& element)
         : m_element(element)

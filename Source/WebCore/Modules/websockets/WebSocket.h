@@ -51,6 +51,7 @@ class Blob;
 class ThreadableWebSocketChannel;
 
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
+    WTF_MAKE_ISO_ALLOCATED(WebSocket);
 public:
     static const char* subprotocolSeparator();
 

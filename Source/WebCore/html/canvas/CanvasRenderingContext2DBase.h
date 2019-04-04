@@ -78,6 +78,7 @@ using CanvasImageSource = Variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasEle
 #endif
 
 class CanvasRenderingContext2DBase : public CanvasRenderingContext, public CanvasPath {
+    WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2DBase);
 public:
     CanvasRenderingContext2DBase(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
     virtual ~CanvasRenderingContext2DBase();

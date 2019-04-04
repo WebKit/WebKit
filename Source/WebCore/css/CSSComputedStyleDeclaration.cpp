@@ -76,6 +76,7 @@
 #include "TouchAction.h"
 #include "WebKitFontFamilyNames.h"
 #include "WillChangeData.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -88,6 +89,8 @@
 #endif
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
 
 // List of all properties we know how to compute, omitting shorthands.
 static const CSSPropertyID computedProperties[] = {

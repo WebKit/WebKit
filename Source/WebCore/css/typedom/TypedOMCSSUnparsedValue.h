@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class TypedOMCSSUnparsedValue final : public TypedOMCSSStyleValue {
+    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSUnparsedValue);
 public:
     static Ref<TypedOMCSSUnparsedValue> create(const String& serializedValue)
     {

@@ -67,15 +67,15 @@ struct IsoHeap {
 };
 
 // Use this together with MAKE_BISO_MALLOCED_IMPL.
-#define MAKE_BISO_MALLOCED(isoType) \
+#define MAKE_BISO_MALLOCED(isoType, exportMacro) \
 public: \
-    static ::bmalloc::api::IsoHeap<isoType>& bisoHeap(); \
+    static exportMacro ::bmalloc::api::IsoHeap<isoType>& bisoHeap(); \
     \
     void* operator new(size_t, void* p) { return p; } \
     void* operator new[](size_t, void* p) { return p; } \
     \
-    void* operator new(size_t size);\
-    void operator delete(void* p);\
+    exportMacro void* operator new(size_t size);\
+    exportMacro void operator delete(void* p);\
     \
     void* operator new[](size_t size) = delete; \
     void operator delete[](void* p) = delete; \

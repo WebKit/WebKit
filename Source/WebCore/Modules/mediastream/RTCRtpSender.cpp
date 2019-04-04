@@ -35,8 +35,11 @@
 
 #include "RTCRtpCapabilities.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSender);
 
 Ref<RTCRtpSender> RTCRtpSender::create(PeerConnectionBackend& connection, Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, std::unique_ptr<RTCRtpSenderBackend>&& backend)
 {

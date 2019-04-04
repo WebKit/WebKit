@@ -38,6 +38,7 @@ namespace WebCore {
 class TextMetrics;
 
 class CanvasRenderingContext2D final : public CanvasRenderingContext2DBase {
+    WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext2D);
 public:
     static std::unique_ptr<CanvasRenderingContext2D> create(CanvasBase&, bool usesCSSCompatibilityParseMode, bool usesDashboardCompatibilityMode);
 

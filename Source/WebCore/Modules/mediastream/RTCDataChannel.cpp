@@ -36,9 +36,12 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCDataChannel);
 
 static const AtomicString& blobKeyword()
 {

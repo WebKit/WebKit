@@ -32,11 +32,14 @@
 #include "AudioDestination.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 
 const unsigned EnabledInputChannels = 2;
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
     
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context)
     : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())

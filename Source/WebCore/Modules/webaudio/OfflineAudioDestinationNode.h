@@ -35,6 +35,7 @@ class AudioBus;
 class AudioContext;
     
 class OfflineAudioDestinationNode final : public AudioDestinationNode {
+    WTF_MAKE_ISO_ALLOCATED(OfflineAudioDestinationNode);
 public:
     static Ref<OfflineAudioDestinationNode> create(AudioContext& context, AudioBuffer* renderTarget)
     {

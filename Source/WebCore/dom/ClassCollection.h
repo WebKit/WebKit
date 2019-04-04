@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class ClassCollection final : public CachedHTMLCollection<ClassCollection, CollectionTypeTraits<ByClass>::traversalType> {
+    WTF_MAKE_ISO_ALLOCATED(ClassCollection);
 public:
     static Ref<ClassCollection> create(ContainerNode&, CollectionType, const AtomicString& classNames);
 

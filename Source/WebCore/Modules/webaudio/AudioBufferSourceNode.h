@@ -37,6 +37,7 @@ class PannerNode;
 // It generally will be used for short sounds which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways).
 
 class AudioBufferSourceNode final : public AudioScheduledSourceNode {
+    WTF_MAKE_ISO_ALLOCATED(AudioBufferSourceNode);
 public:
     static Ref<AudioBufferSourceNode> create(AudioContext&, float sampleRate);
 

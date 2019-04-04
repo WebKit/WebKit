@@ -42,6 +42,7 @@ namespace WebCore {
 class HTMLMediaElement;
 
 class MediaController final : public RefCounted<MediaController>, public MediaControllerInterface, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(MediaController);
 public:
     static Ref<MediaController> create(ScriptExecutionContext&);
     virtual ~MediaController();

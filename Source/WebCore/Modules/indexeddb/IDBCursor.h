@@ -45,6 +45,7 @@ class IDBObjectStore;
 class IDBTransaction;
 
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
+    WTF_MAKE_ISO_ALLOCATED(IDBCursor);
 public:
     static Ref<IDBCursor> create(IDBObjectStore&, const IDBCursorInfo&);
     static Ref<IDBCursor> create(IDBIndex&, const IDBCursorInfo&);

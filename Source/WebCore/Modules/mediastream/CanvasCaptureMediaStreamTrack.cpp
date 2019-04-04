@@ -28,10 +28,13 @@
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "WebGLRenderingContextBase.h"
+#include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CanvasCaptureMediaStreamTrack);
 
 Ref<CanvasCaptureMediaStreamTrack> CanvasCaptureMediaStreamTrack::create(ScriptExecutionContext& context, Ref<HTMLCanvasElement>&& canvas, Optional<double>&& frameRequestRate)
 {

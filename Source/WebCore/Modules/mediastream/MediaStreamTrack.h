@@ -58,6 +58,7 @@ class MediaStreamTrack
     , private LoggerHelper
 #endif
 {
+    WTF_MAKE_ISO_ALLOCATED(MediaStreamTrack);
 public:
     class Observer {
     public:

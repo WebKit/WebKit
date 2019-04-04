@@ -65,7 +65,8 @@ class IDBConnectionProxy;
 class TransactionOperation;
 }
 
-class IDBTransaction : public ThreadSafeRefCounted<IDBTransaction>, public EventTargetWithInlineData, public IDBActiveDOMObject {
+class IDBTransaction final : public ThreadSafeRefCounted<IDBTransaction>, public EventTargetWithInlineData, public IDBActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(IDBTransaction);
 public:
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&);
     static Ref<IDBTransaction> create(IDBDatabase&, const IDBTransactionInfo&, IDBOpenDBRequest&);

@@ -60,6 +60,7 @@ class MediaStream final
     , private LoggerHelper
 #endif
     , public RefCounted<MediaStream> {
+    WTF_MAKE_ISO_ALLOCATED(MediaStream);
 public:
     class Observer {
     public:

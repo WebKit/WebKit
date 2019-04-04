@@ -46,8 +46,11 @@
 #include "SecurityOriginData.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaKeySession);
 
 Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstanceSession>&& instanceSession)
 {

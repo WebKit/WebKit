@@ -115,6 +115,7 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <algorithm>
 #include <memory>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
@@ -144,6 +145,8 @@
 
 namespace WebCore {
 using namespace Inspector;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMWindow);
 
 class PostMessageTimer : public TimerBase {
 public:

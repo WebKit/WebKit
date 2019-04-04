@@ -29,10 +29,13 @@
 #include "Element.h"
 #include "NodeRareData.h"
 #include <JavaScriptCore/Identifier.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAllNamedSubCollection);
 
 Ref<HTMLAllCollection> HTMLAllCollection::create(Document& document, CollectionType type)
 {

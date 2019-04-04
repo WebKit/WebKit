@@ -42,8 +42,11 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBDatabase);
 
 Ref<IDBDatabase> IDBDatabase::create(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, const IDBResultData& resultData)
 {

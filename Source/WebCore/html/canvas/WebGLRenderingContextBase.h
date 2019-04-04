@@ -95,6 +95,7 @@ class HTMLVideoElement;
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
 
 class WebGLRenderingContextBase : public GraphicsContext3D::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
+    WTF_MAKE_ISO_ALLOCATED(WebGLRenderingContextBase);
 public:
     static std::unique_ptr<WebGLRenderingContextBase> create(CanvasBase&, WebGLContextAttributes&, const String&);
     virtual ~WebGLRenderingContextBase();

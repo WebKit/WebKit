@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class WaveShaperNode final : public AudioBasicProcessorNode {
+    WTF_MAKE_ISO_ALLOCATED(WaveShaperNode);
 public:
     static Ref<WaveShaperNode> create(AudioContext& context)
     {

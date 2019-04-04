@@ -34,6 +34,7 @@ namespace WebCore {
 class TextTrack;
 
 class TextTrackList final : public TrackListBase {
+    WTF_MAKE_ISO_ALLOCATED(TextTrackList);
 public:
     static Ref<TextTrackList> create(HTMLMediaElement* element, ScriptExecutionContext* context)
     {

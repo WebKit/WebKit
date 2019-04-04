@@ -29,8 +29,11 @@
 #include "OfflineAudioContext.h"
 
 #include "Document.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OfflineAudioContext);
 
 inline OfflineAudioContext::OfflineAudioContext(Document& document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : AudioContext(document, numberOfChannels, numberOfFrames, sampleRate)

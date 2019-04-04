@@ -36,6 +36,7 @@ namespace WebCore {
 class DOMException;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, private CSSFontFaceSetClient, public EventTargetWithInlineData, private  ActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(FontFaceSet);
 public:
     static Ref<FontFaceSet> create(Document&, const Vector<RefPtr<FontFace>>& initialFaces);
     static Ref<FontFaceSet> create(Document&, CSSFontFaceSet& backing);

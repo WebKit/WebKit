@@ -42,6 +42,7 @@ class ServiceWorkerClients;
 class ServiceWorkerThread;
 
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
+    WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
     static Ref<ServiceWorkerGlobalScope> create(const ServiceWorkerContextData&, const URL&, Ref<SecurityOrigin>&&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
 

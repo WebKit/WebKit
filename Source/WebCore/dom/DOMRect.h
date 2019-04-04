@@ -34,7 +34,6 @@ namespace WebCore {
 class FloatQuad;
 
 class DOMRect : public DOMRectReadOnly {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<DOMRect> create() { return adoptRef(*new DOMRect()); }
     static Ref<DOMRect> create(double x, double y, double width, double height) { return adoptRef(*new DOMRect(x, y, width, height)); }
@@ -56,5 +55,6 @@ private:
 
     DOMRect() = default;
 };
+static_assert(sizeof(DOMRect) == sizeof(DOMRectReadOnly), "");
 
 }

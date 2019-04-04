@@ -46,7 +46,7 @@ using OffscreenRenderingContext = RefPtr<WebGLRenderingContext>;
 #endif
 
 class OffscreenCanvas final : public RefCounted<OffscreenCanvas>, public CanvasBase, public EventTargetWithInlineData, private ContextDestructionObserver {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(OffscreenCanvas);
 public:
 
     struct ImageEncodeOptions {

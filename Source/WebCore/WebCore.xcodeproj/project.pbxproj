@@ -14737,6 +14737,12 @@
 		E307DED31D81E4ED00141CAF /* LoadableModuleScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableModuleScript.h; sourceTree = "<group>"; };
 		E3150EA51DA7218D00194012 /* DOMJITHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITHelpers.h; sourceTree = "<group>"; };
 		E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertPromise.h; sourceTree = "<group>"; };
+		E329275E22543F5700308A9A /* TypedOMCSSStyleValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSStyleValue.cpp; sourceTree = "<group>"; };
+		E329276022543F5800308A9A /* TypedOMCSSImageValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSImageValue.cpp; sourceTree = "<group>"; };
+		E329276122543F5800308A9A /* TypedOMCSSUnparsedValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSUnparsedValue.cpp; sourceTree = "<group>"; };
+		E329276222543F5800308A9A /* TypedOMCSSNumericValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSNumericValue.cpp; sourceTree = "<group>"; };
+		E329276322543F5900308A9A /* TypedOMCSSUnitValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypedOMCSSUnitValue.cpp; sourceTree = "<group>"; };
+		E329276622543FDE00308A9A /* DOMRectReadOnly.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMRectReadOnly.cpp; sourceTree = "<group>"; };
 		E334825E1DC93AA0009C9544 /* DOMJITAbstractHeapRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMJITAbstractHeapRepository.h; path = DerivedSources/WebCore/DOMJITAbstractHeapRepository.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34EE49F1DC2D57500EAA9D3 /* JSEventCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventCustom.h; sourceTree = "<group>"; };
 		E35802B51DC8435800A9773C /* DOMJITIDLTypeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITIDLTypeFilter.h; sourceTree = "<group>"; };
@@ -14750,6 +14756,7 @@
 		E398FC231DC32A1B003C4684 /* DOMJITHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMJITHelpers.cpp; sourceTree = "<group>"; };
 		E3A776651DC85D2200B690D8 /* DOMJITIDLConvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITIDLConvert.h; sourceTree = "<group>"; };
 		E3A776661DC85D2200B690D8 /* DOMJITIDLType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITIDLType.h; sourceTree = "<group>"; };
+		E3AE6CD12252F27000C70B50 /* AllDescendantsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AllDescendantsCollection.cpp; sourceTree = "<group>"; };
 		E3AFA9641DA6E908002861BD /* JSNodeDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeDOMJIT.cpp; sourceTree = "<group>"; };
 		E3B2F0E31D7F35EC00B0C9D1 /* LoadableClassicScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableClassicScript.cpp; sourceTree = "<group>"; };
 		E3B2F0E41D7F35EC00B0C9D1 /* LoadableClassicScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableClassicScript.h; sourceTree = "<group>"; };
@@ -14757,6 +14764,7 @@
 		E3B2F0E81D7F35EC00B0C9D1 /* LoadableScriptClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableScriptClient.h; sourceTree = "<group>"; };
 		E3B2F0E91D7F3D3C00B0C9D1 /* LoadableScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableScript.cpp; sourceTree = "<group>"; };
 		E3B7C0621DC3415A001FB0B8 /* JSDocumentDOMJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentDOMJIT.cpp; sourceTree = "<group>"; };
+		E3BC827322530221005276DE /* NodeList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NodeList.cpp; sourceTree = "<group>"; };
 		E3C99A081DC3D41700794AD3 /* DOMJITCheckDOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMJITCheckDOM.h; sourceTree = "<group>"; };
 		E3C9AEC92113147400419B92 /* JSMicrotaskCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMicrotaskCallback.h; sourceTree = "<group>"; };
 		E3D049931DADC04500718F3C /* NodeConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeConstants.h; sourceTree = "<group>"; };
@@ -18306,14 +18314,19 @@
 				4BD781C521C1D67700D9703E /* StylePropertyMapReadOnly.cpp */,
 				4BAFD0CE2190F9B400C0AB64 /* StylePropertyMapReadOnly.h */,
 				4BAFD0D02190F9C200C0AB64 /* StylePropertyMapReadOnly.idl */,
+				E329276022543F5800308A9A /* TypedOMCSSImageValue.cpp */,
 				4B43864F219CD56100F8D3C5 /* TypedOMCSSImageValue.h */,
 				4B43864D219CD52D00F8D3C5 /* TypedOMCSSImageValue.idl */,
+				E329276222543F5800308A9A /* TypedOMCSSNumericValue.cpp */,
 				4BAFD0DF219220AB00C0AB64 /* TypedOMCSSNumericValue.h */,
 				4BAFD0DB2192202200C0AB64 /* TypedOMCSSNumericValue.idl */,
+				E329275E22543F5700308A9A /* TypedOMCSSStyleValue.cpp */,
 				4BAFD0D52192146B00C0AB64 /* TypedOMCSSStyleValue.h */,
 				4BAFD0D32192145600C0AB64 /* TypedOMCSSStyleValue.idl */,
+				E329276322543F5900308A9A /* TypedOMCSSUnitValue.cpp */,
 				4BAFD0DD2192209200C0AB64 /* TypedOMCSSUnitValue.h */,
 				4BAFD0DC2192204A00C0AB64 /* TypedOMCSSUnitValue.idl */,
+				E329276122543F5800308A9A /* TypedOMCSSUnparsedValue.cpp */,
 				4BAFD0D821921EA000C0AB64 /* TypedOMCSSUnparsedValue.h */,
 				4BAFD0D721921E7900C0AB64 /* TypedOMCSSUnparsedValue.idl */,
 			);
@@ -27069,6 +27082,7 @@
 				7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */,
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
+				E3AE6CD12252F27000C70B50 /* AllDescendantsCollection.cpp */,
 				83BB5C871D5D6F3A005A71F4 /* AllDescendantsCollection.h */,
 				319847FE1A1D816700A13318 /* AnimationEvent.cpp */,
 				319847FF1A1D816700A13318 /* AnimationEvent.h */,
@@ -27217,6 +27231,7 @@
 				468344DD1EDDFA5F00B7795B /* DOMRectList.cpp */,
 				468344DE1EDDFA5F00B7795B /* DOMRectList.h */,
 				468344DC1EDDFA5F00B7795B /* DOMRectList.idl */,
+				E329276622543FDE00308A9A /* DOMRectReadOnly.cpp */,
 				0F4710AD1DB56AFC002DCEC3 /* DOMRectReadOnly.h */,
 				0F4710AE1DB56AFC002DCEC3 /* DOMRectReadOnly.idl */,
 				C55610F011A704EB00B82D27 /* DOMStringList.cpp */,
@@ -27367,6 +27382,7 @@
 				854FE72A0A2297BE0058D7AD /* NodeIterator.cpp */,
 				854FE72B0A2297BE0058D7AD /* NodeIterator.h */,
 				1A750D870A90E394000FF215 /* NodeIterator.idl */,
+				E3BC827322530221005276DE /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				85ACA9FA0A9B631000671E90 /* NodeList.idl */,
 				4FAB48661643A67E00F70C07 /* NodeRareData.cpp */,

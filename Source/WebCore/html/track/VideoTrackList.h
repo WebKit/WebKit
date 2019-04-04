@@ -55,6 +55,7 @@ private:
     VideoTrackList(HTMLMediaElement*, ScriptExecutionContext*);
     const char* activeDOMObjectName() const final;
 };
+static_assert(sizeof(VideoTrackList) == sizeof(TrackListBase), "");
 
 } // namespace WebCore
 

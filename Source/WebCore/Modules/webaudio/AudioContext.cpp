@@ -95,6 +95,7 @@
 
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Atomics.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -103,6 +104,8 @@
 const unsigned MaxPeriodicWaveLength = 4096;
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(document()->page() && document()->page()->isAlwaysOnLoggingAllowed(), Media, "%p - AudioContext::" fmt, this, ##__VA_ARGS__)
     

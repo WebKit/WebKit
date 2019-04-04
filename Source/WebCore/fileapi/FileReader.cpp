@@ -37,9 +37,12 @@
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(FileReader);
 
 // Fire the progress event at least every 50ms.
 static const auto progressNotificationInterval = 50_ms;

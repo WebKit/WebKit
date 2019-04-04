@@ -52,7 +52,8 @@ class MediaStream;
 
 struct MediaTrackSupportedConstraints;
 
-class MediaDevices : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaDevices> {
+class MediaDevices final : public RefCounted<MediaDevices>, public ActiveDOMObject, public EventTargetWithInlineData, public CanMakeWeakPtr<MediaDevices> {
+    WTF_MAKE_ISO_ALLOCATED(MediaDevices);
 public:
     static Ref<MediaDevices> create(Document&);
 

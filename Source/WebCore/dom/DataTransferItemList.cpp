@@ -31,8 +31,11 @@
 #include "Pasteboard.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DataTransferItemList);
 
 DataTransferItemList::DataTransferItemList(DataTransfer& dataTransfer)
     : m_dataTransfer(dataTransfer)

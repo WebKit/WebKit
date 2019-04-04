@@ -33,7 +33,8 @@
 
 namespace WebCore {
 
-class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
+class MediaDeviceInfo final : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(MediaDeviceInfo);
 public:
     enum class Kind { Audioinput, Audiooutput, Videoinput };
 

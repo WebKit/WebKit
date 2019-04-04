@@ -33,9 +33,12 @@
 #include "IDBKeyData.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 using namespace JSC;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBKeyRange);
 
 Ref<IDBKeyRange> IDBKeyRange::create(RefPtr<IDBKey>&& lower, RefPtr<IDBKey>&& upper, bool isLowerOpen, bool isUpperOpen)
 {

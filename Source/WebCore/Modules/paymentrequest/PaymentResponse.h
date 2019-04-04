@@ -43,6 +43,7 @@ class PaymentRequest;
 struct PaymentValidationErrors;
 
 class PaymentResponse final : public ActiveDOMObject, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
+    WTF_MAKE_ISO_ALLOCATED(PaymentResponse);
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::ExecState&)>;
 

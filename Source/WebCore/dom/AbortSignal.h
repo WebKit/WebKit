@@ -37,6 +37,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class AbortSignal final : public RefCounted<AbortSignal>, public EventTargetWithInlineData, public CanMakeWeakPtr<AbortSignal>, private ContextDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(AbortSignal);
 public:
     static Ref<AbortSignal> create(ScriptExecutionContext&);
 

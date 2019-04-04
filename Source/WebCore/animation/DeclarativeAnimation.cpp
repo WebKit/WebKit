@@ -33,8 +33,11 @@
 #include "KeyframeEffect.h"
 #include "PseudoElement.h"
 #include "TransitionEvent.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DeclarativeAnimation);
 
 DeclarativeAnimation::DeclarativeAnimation(Element& owningElement, const Animation& backingAnimation)
     : WebAnimation(owningElement.document())

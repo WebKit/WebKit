@@ -36,6 +36,7 @@ class AudioContext;
 class MediaStreamAudioSource;
 
 class MediaStreamAudioDestinationNode final : public AudioBasicInspectorNode {
+    WTF_MAKE_ISO_ALLOCATED(MediaStreamAudioDestinationNode);
 public:
     static Ref<MediaStreamAudioDestinationNode> create(AudioContext&, size_t numberOfChannels);
 

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
+    WTF_MAKE_ISO_ALLOCATED(GPUCanvasContext);
 public:
     static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
 

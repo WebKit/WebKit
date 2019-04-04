@@ -132,5 +132,28 @@ void isoType::operator delete(void* p) \
 \
 struct MakeBisoMallocedImplMacroSemicolonifier##isoType { }
 
+#define MAKE_BISO_MALLOCED_IMPL_TEMPLATE(isoType) \
+template<> \
+::bmalloc::api::IsoHeap<isoType>& isoType::bisoHeap() \
+{ \
+    static ::bmalloc::api::IsoHeap<isoType> heap; \
+    return heap; \
+} \
+\
+template<> \
+void* isoType::operator new(size_t size) \
+{ \
+    RELEASE_BASSERT(size == sizeof(isoType)); \
+    return bisoHeap().allocate(); \
+} \
+\
+template<> \
+void isoType::operator delete(void* p) \
+{ \
+    bisoHeap().deallocate(p); \
+} \
+\
+struct MakeBisoMallocedImplMacroSemicolonifier##isoType { }
+
 } } // namespace bmalloc::api
 

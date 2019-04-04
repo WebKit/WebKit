@@ -50,7 +50,8 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 struct PositionOptions;
 
-class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject {
+class Geolocation final : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject {
+    WTF_MAKE_ISO_ALLOCATED(Geolocation);
     friend class GeoNotifier;
 public:
     static Ref<Geolocation> create(ScriptExecutionContext*);

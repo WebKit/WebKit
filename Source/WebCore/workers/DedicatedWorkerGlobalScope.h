@@ -47,6 +47,7 @@ class MessagePort;
 class SerializedScriptValue;
 
 class DedicatedWorkerGlobalScope final : public WorkerGlobalScope {
+    WTF_MAKE_ISO_ALLOCATED(DedicatedWorkerGlobalScope);
 public:
     static Ref<DedicatedWorkerGlobalScope> create(const URL&, Ref<SecurityOrigin>&&, const String& name, const String& identifier, const String& userAgent, bool isOnline, DedicatedWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
     virtual ~DedicatedWorkerGlobalScope();

@@ -42,11 +42,14 @@
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Language.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Navigator);
 
 Navigator::Navigator(ScriptExecutionContext* context, DOMWindow& window)
     : NavigatorBase(context)

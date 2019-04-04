@@ -32,6 +32,7 @@
 #pragma once
 
 #include <JavaScriptCore/Weak.h>
+#include <wtf/IsoMalloc.h>
 
 namespace JSC {
 class WeakHandleOwner;

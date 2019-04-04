@@ -21,9 +21,12 @@
 
 #include "PluginData.h"
 #include "Frame.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMPlugin);
 
 DOMPlugin::DOMPlugin(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo)
     : FrameDestructionObserver(frame)

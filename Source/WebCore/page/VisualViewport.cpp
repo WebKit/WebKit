@@ -35,8 +35,11 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(VisualViewport);
 
 VisualViewport::VisualViewport(DOMWindow& window)
     : DOMWindowProperty(&window)

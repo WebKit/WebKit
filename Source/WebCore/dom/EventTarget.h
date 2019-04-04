@@ -36,6 +36,7 @@
 #include "ScriptWrappable.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -51,6 +52,7 @@ public:
 };
 
 class EventTarget : public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(EventTarget);
 public:
     void ref() { refEventTarget(); }
     void deref() { derefEventTarget(); }
@@ -130,6 +132,7 @@ private:
 };
 
 class EventTargetWithInlineData : public EventTarget {
+    WTF_MAKE_ISO_ALLOCATED(EventTargetWithInlineData);
 protected:
     EventTargetData* eventTargetData() final { return &m_eventTargetData; }
     EventTargetData* eventTargetDataConcurrently() final { return &m_eventTargetData; }

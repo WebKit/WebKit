@@ -31,6 +31,7 @@ namespace WebCore {
 
 // NodeList which lists all Nodes in a Element with a given "name" attribute
 class NameNodeList final : public CachedLiveNodeList<NameNodeList> {
+    WTF_MAKE_ISO_ALLOCATED(NameNodeList);
 public:
     static Ref<NameNodeList> create(ContainerNode& rootNode, const AtomicString& name)
     {

@@ -31,8 +31,11 @@
 #include "Document.h"
 #include "PaintWorkletGlobalScope.h"
 #include "ScriptSourceCode.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(Worklet);
 
 Ref<Worklet> Worklet::create()
 {

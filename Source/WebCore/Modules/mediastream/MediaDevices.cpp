@@ -43,9 +43,12 @@
 #include "RuntimeEnabledFeatures.h"
 #include "UserMediaController.h"
 #include "UserMediaRequest.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RandomNumber.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaDevices);
 
 inline MediaDevices::MediaDevices(Document& document)
     : ActiveDOMObject(document)

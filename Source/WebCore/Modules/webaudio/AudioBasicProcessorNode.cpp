@@ -33,8 +33,11 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioProcessor.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(AudioBasicProcessorNode);
 
 AudioBasicProcessorNode::AudioBasicProcessorNode(AudioContext& context, float sampleRate)
     : AudioNode(context, sampleRate)

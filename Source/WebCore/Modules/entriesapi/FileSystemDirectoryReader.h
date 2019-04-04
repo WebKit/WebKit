@@ -39,6 +39,7 @@ class FileSystemEntriesCallback;
 class ScriptExecutionContext;
 
 class FileSystemDirectoryReader final : public ScriptWrappable, public ActiveDOMObject, public RefCounted<FileSystemDirectoryReader> {
+    WTF_MAKE_ISO_ALLOCATED(FileSystemDirectoryReader);
 public:
     static Ref<FileSystemDirectoryReader> create(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory)
     {

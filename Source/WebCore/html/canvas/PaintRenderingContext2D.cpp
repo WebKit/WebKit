@@ -26,9 +26,13 @@
 #include "config.h"
 #include "PaintRenderingContext2D.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 #if ENABLE(CSS_PAINTING_API)
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PaintRenderingContext2D);
 
 std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CanvasBase& canvas)
 {

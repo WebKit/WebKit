@@ -35,7 +35,8 @@
 
 namespace WebCore {
 
-class BarProp : public ScriptWrappable, public RefCounted<BarProp>, public DOMWindowProperty {
+class BarProp final : public ScriptWrappable, public RefCounted<BarProp>, public DOMWindowProperty {
+    WTF_MAKE_ISO_ALLOCATED(BarProp);
 public:
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 

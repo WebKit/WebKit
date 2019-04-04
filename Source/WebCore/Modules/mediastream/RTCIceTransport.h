@@ -41,7 +41,8 @@
 
 namespace WebCore {
 
-class RTCIceTransport : public RefCounted<RTCIceTransport>, public ScriptWrappable {
+class RTCIceTransport final : public RefCounted<RTCIceTransport>, public ScriptWrappable {
+    WTF_MAKE_ISO_ALLOCATED(RTCIceTransport);
 public:
     static Ref<RTCIceTransport> create()
     {

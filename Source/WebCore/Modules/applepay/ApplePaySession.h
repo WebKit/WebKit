@@ -58,6 +58,7 @@ struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
 
 class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTargetWithInlineData {
+    WTF_MAKE_ISO_ALLOCATED(ApplePaySession);
 public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
     virtual ~ApplePaySession();

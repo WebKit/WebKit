@@ -31,6 +31,7 @@ namespace WebCore {
 class AudioContext;
     
 class ChannelSplitterNode final : public AudioNode {
+    WTF_MAKE_ISO_ALLOCATED(ChannelSplitterNode);
 public:
     static RefPtr<ChannelSplitterNode> create(AudioContext&, float sampleRate, unsigned numberOfOutputs);
 

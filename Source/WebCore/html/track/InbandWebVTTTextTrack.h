@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class InbandWebVTTTextTrack final : public InbandTextTrack, private WebVTTParserClient {
+    WTF_MAKE_ISO_ALLOCATED(InbandWebVTTTextTrack);
 public:
     static Ref<InbandTextTrack> create(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);
     virtual ~InbandWebVTTTextTrack();

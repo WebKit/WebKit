@@ -38,6 +38,7 @@ namespace WebCore {
 class AudioContext;
     
 class MediaElementAudioSourceNode final : public AudioNode, public AudioSourceProviderClient {
+    WTF_MAKE_ISO_ALLOCATED(MediaElementAudioSourceNode);
 public:
     static Ref<MediaElementAudioSourceNode> create(AudioContext&, HTMLMediaElement&);
 

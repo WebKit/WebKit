@@ -55,11 +55,14 @@
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(DOMImplementation);
 
 DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)

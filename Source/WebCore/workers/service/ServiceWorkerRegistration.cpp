@@ -36,11 +36,14 @@
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerTypes.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/IsoMallocInlines.h>
 
 #define REGISTRATION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_container->isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
 #define REGISTRATION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_container->isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerRegistration);
 
 const Seconds softUpdateDelay { 1_s };
 

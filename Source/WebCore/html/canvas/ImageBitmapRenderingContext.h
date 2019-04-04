@@ -39,6 +39,7 @@ class ImageBitmap;
 class ImageBuffer;
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {
+    WTF_MAKE_ISO_ALLOCATED(ImageBitmapRenderingContext);
 public:
     static std::unique_ptr<ImageBitmapRenderingContext> create(CanvasBase&, ImageBitmapRenderingContextSettings&&);
 

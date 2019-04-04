@@ -30,7 +30,8 @@ namespace WebCore {
 class Plugin;
 class PluginData;
 
-class DOMPlugin : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
+class DOMPlugin final : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
+    WTF_MAKE_ISO_ALLOCATED(DOMPlugin);
 public:
     static Ref<DOMPlugin> create(PluginData* pluginData, Frame* frame, PluginInfo pluginInfo) { return adoptRef(*new DOMPlugin(pluginData, frame, WTFMove(pluginInfo))); }
     ~DOMPlugin();

@@ -44,8 +44,11 @@
 #include "SecurityOrigin.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(EventSource);
 
 const uint64_t EventSource::defaultReconnectDelay = 3000;
 

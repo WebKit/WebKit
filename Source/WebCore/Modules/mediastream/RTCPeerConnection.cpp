@@ -54,6 +54,7 @@
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
@@ -61,6 +62,8 @@
 namespace WebCore {
 
 using namespace PeerConnection;
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(RTCPeerConnection);
 
 Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context)
 {

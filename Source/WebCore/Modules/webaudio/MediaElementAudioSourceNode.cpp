@@ -32,6 +32,7 @@
 #include "AudioNodeOutput.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Locker.h>
 
 // These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.
@@ -39,6 +40,8 @@ const unsigned minSampleRate = 8000;
 const unsigned maxSampleRate = 192000;
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(MediaElementAudioSourceNode);
 
 Ref<MediaElementAudioSourceNode> MediaElementAudioSourceNode::create(AudioContext& context, HTMLMediaElement& mediaElement)
 {

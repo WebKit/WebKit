@@ -29,8 +29,11 @@
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "WebGLRenderingContext.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, unsigned width, unsigned height)
 {

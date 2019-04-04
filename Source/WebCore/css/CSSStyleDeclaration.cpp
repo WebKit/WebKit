@@ -31,10 +31,13 @@
 #include "DeprecatedGlobalSettings.h"
 #include "HashTools.h"
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
 
 namespace {
 

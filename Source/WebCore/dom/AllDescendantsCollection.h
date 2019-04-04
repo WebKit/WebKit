@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class AllDescendantsCollection : public CachedHTMLCollection<AllDescendantsCollection, CollectionTypeTraits<AllDescendants>::traversalType> {
+    WTF_MAKE_ISO_ALLOCATED(AllDescendantsCollection);
 public:
     static Ref<AllDescendantsCollection> create(ContainerNode& rootNode, CollectionType type)
     {

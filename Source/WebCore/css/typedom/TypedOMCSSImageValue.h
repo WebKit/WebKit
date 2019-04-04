@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class TypedOMCSSImageValue final : public TypedOMCSSStyleValue {
+    WTF_MAKE_ISO_ALLOCATED(TypedOMCSSImageValue);
 public:
     static Ref<TypedOMCSSImageValue> create(CSSImageValue& cssValue, Document& document)
     {

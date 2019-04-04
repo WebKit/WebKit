@@ -30,9 +30,12 @@
 
 #include "NotImplemented.h"
 #include "PaymentRequest.h"
+#include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentResponse);
 
 PaymentResponse::PaymentResponse(ScriptExecutionContext* context, PaymentRequest& request)
     : ActiveDOMObject { context }

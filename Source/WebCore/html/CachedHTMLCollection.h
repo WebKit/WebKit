@@ -33,6 +33,7 @@ namespace WebCore {
 
 template <typename HTMLCollectionClass, CollectionTraversalType traversalType>
 class CachedHTMLCollection : public HTMLCollection {
+    WTF_MAKE_ISO_NONALLOCATABLE(CachedHTMLCollection);
 public:
     CachedHTMLCollection(ContainerNode& base, CollectionType);
 
