@@ -1,3 +1,15 @@
+2019-04-04  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] DumpRenderTreeWatchDog.py is not checked into source
+        https://bugs.webkit.org/show_bug.cgi?id=196567
+        <rdar://problem/49525901>
+
+        Reviewed by Lucas Forschler.
+
+        This script is used on Win EWS bots to terminate hanging DRT processes.
+
+        * EWSTools/dumprendertreewatchdog.py: Added.
+
 2019-04-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, roll out r243858 which made tests time out.
