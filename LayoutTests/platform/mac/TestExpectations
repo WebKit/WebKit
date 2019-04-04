@@ -1820,3 +1820,5 @@ webkit.org/b/192956 [ Sierra ] webgpu/webgpu-basics.html [ Skip ]
 webkit.org/b/192956 [ Sierra ] webgpu/webgpu-enabled.html [ Skip ]
 webkit.org/b/192956 [ Sierra ] webgpu/simple-triangle-strip.html [ Skip ]
 webkit.org/b/192956 [ Sierra ] webgpu/vertex-buffer-triangle-strip.html [ Skip ]
+
+webkit.org/b/196512 [ Mojave+ ] fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
