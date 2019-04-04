@@ -33,6 +33,7 @@
 #include "B3BlockInsertionSet.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Dominators.h"
+#include "B3EliminateDeadCode.h"
 #include "B3InsertionSetInlines.h"
 #include "B3MemoryValueInlines.h"
 #include "B3PhaseScope.h"
@@ -440,7 +441,7 @@ public:
             // "hoist" @thing. On the other hand, if we run DCE before CSE, we will kill @dead and
             // keep @thing. That's better, since we usually want things to stay wherever the client
             // put them. We're not actually smart enough to move things around at random.
-            killDeadCode();
+            m_changed |= eliminateDeadCodeImpl(m_proc);
             
             simplifySSA();
             
@@ -2729,70 +2730,6 @@ private:
         for (BasicBlock* block : m_proc) {
             for (BasicBlock* successor : block->successorBlocks())
                 RELEASE_ASSERT(successor->containsPredecessor(block));
-        }
-    }
-
-    void killDeadCode()
-    {
-        GraphNodeWorklist<Value*, IndexSet<Value*>> worklist;
-        Vector<UpsilonValue*, 64> upsilons;
-        for (BasicBlock* block : m_proc) {
-            for (Value* value : *block) {
-                Effects effects;
-                // We don't care about effects of SSA operations, since we model them more
-                // accurately than the effects() method does.
-                if (value->opcode() != Phi && value->opcode() != Upsilon)
-                    effects = value->effects();
-                
-                if (effects.mustExecute())
-                    worklist.push(value);
-                
-                if (UpsilonValue* upsilon = value->as<UpsilonValue>())
-                    upsilons.append(upsilon);
-            }
-        }
-        for (;;) {
-            while (Value* value = worklist.pop()) {
-                for (Value* child : value->children())
-                    worklist.push(child);
-            }
-            
-            bool didPush = false;
-            for (size_t upsilonIndex = 0; upsilonIndex < upsilons.size(); ++upsilonIndex) {
-                UpsilonValue* upsilon = upsilons[upsilonIndex];
-                if (worklist.saw(upsilon->phi())) {
-                    worklist.push(upsilon);
-                    upsilons[upsilonIndex--] = upsilons.last();
-                    upsilons.takeLast();
-                    didPush = true;
-                }
-            }
-            if (!didPush)
-                break;
-        }
-
-        IndexSet<Variable*> liveVariables;
-        
-        for (BasicBlock* block : m_proc) {
-            size_t sourceIndex = 0;
-            size_t targetIndex = 0;
-            while (sourceIndex < block->size()) {
-                Value* value = block->at(sourceIndex++);
-                if (worklist.saw(value)) {
-                    if (VariableValue* variableValue = value->as<VariableValue>())
-                        liveVariables.add(variableValue->variable());
-                    block->at(targetIndex++) = value;
-                } else {
-                    m_proc.deleteValue(value);
-                    m_changed = true;
-                }
-            }
-            block->values().resize(targetIndex);
-        }
-
-        for (Variable* variable : m_proc.variables()) {
-            if (!liveVariables.contains(variable))
-                m_proc.deleteVariable(variable);
         }
     }
 

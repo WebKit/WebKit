@@ -851,6 +851,7 @@
 		2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AD8932917E3868F00668276 /* HeapIterationScope.h */; };
 		2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D342F36F7244096804ADB24 /* SourceOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 425BA1337E4344E1B269A671 /* SourceOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */; };
 		371D842D17C98B6E00ECF994 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 371D842C17C98B6E00ECF994 /* libz.dylib */; };
 		37C738D21EDB56E4003F2B0B /* ParseInt.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C738D11EDB5672003F2B0B /* ParseInt.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		412952771D2CF6BC00E78B89 /* builtins_generate_internals_wrapper_header.py in Headers */ = {isa = PBXBuildFile; fileRef = 412952731D2CF6AC00E78B89 /* builtins_generate_internals_wrapper_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3338,6 +3339,10 @@
 		2AF7382B18BBBF92008A5A37 /* StructureIDTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureIDTable.h; sourceTree = "<group>"; };
 		3032175DF1AD47D8998B34E1 /* JSSourceCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSourceCode.h; sourceTree = "<group>"; };
 		30A5F403F11C4F599CD596D5 /* WasmSignatureInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmSignatureInlines.h; sourceTree = "<group>"; };
+		33743649224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = B3OptimizeAssociativeExpressionTrees.cpp; path = b3/B3OptimizeAssociativeExpressionTrees.cpp; sourceTree = "<group>"; };
+		3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3OptimizeAssociativeExpressionTrees.h; path = b3/B3OptimizeAssociativeExpressionTrees.h; sourceTree = "<group>"; };
+		3395C70422555F6C00BDBFAD /* B3EliminateDeadCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EliminateDeadCode.cpp; path = b3/B3EliminateDeadCode.cpp; sourceTree = "<group>"; };
+		3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateDeadCode.h; path = b3/B3EliminateDeadCode.h; sourceTree = "<group>"; };
 		37119A7720CCB5DC002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		37C738D11EDB5672003F2B0B /* ParseInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseInt.h; sourceTree = "<group>"; };
@@ -5358,6 +5363,8 @@
 				0FEC85BE1BE167A00080FF74 /* B3Effects.h */,
 				0F725CA31C503DED00AD943A /* B3EliminateCommonSubexpressions.cpp */,
 				0F725CA41C503DED00AD943A /* B3EliminateCommonSubexpressions.h */,
+				3395C70422555F6C00BDBFAD /* B3EliminateDeadCode.cpp */,
+				3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */,
 				0F5BF16E1F23A5A10029D91D /* B3EnsureLoopPreHeaders.cpp */,
 				0F5BF16F1F23A5A10029D91D /* B3EnsureLoopPreHeaders.h */,
 				0F6971E81D92F42100BA02A5 /* B3FenceValue.cpp */,
@@ -5405,6 +5412,8 @@
 				0F338E071BF0276C0013C88F /* B3OpaqueByproducts.h */,
 				0FEC84D71BDACDAC0080FF74 /* B3Opcode.cpp */,
 				0FEC84D81BDACDAC0080FF74 /* B3Opcode.h */,
+				33743649224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.cpp */,
+				3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */,
 				0FEC84D91BDACDAC0080FF74 /* B3Origin.cpp */,
 				0FEC84DA1BDACDAC0080FF74 /* B3Origin.h */,
 				0F4DE1D01C4D764B004D6C11 /* B3OriginDump.cpp */,
@@ -9070,6 +9079,7 @@
 				0F48532A187DFDEC0083B687 /* FTLRecoveryOpcode.h in Headers */,
 				0FCEFAAC1804C13E00472CE4 /* FTLSaveRestore.h in Headers */,
 				0F25F1B2181635F300522F39 /* FTLSlowPathCall.h in Headers */,
+				3395C70722555F6D00BDBFAD /* B3EliminateDeadCode.h in Headers */,
 				0F25F1B4181635F300522F39 /* FTLSlowPathCallKey.h in Headers */,
 				E322E5A71DA644A8006E7709 /* FTLSnippetParams.h in Headers */,
 				0F235BD717178E1C00690C7F /* FTLStackmapArgumentList.h in Headers */,

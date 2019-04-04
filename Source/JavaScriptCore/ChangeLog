@@ -1,3 +1,67 @@
+2019-04-03  Robin Morisset  <rmorisset@apple.com>
+
+        B3 should use associativity to optimize expression trees
+        https://bugs.webkit.org/show_bug.cgi?id=194081
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds a new B3 pass, that tries to find and optimize expression trees made purely of any one associative and commutative operator (Add/Mul/BitOr/BitAnd/BitXor).
+        The pass only runs in O2, and runs once, after lowerMacros and just before a run of B3ReduceStrength (which helps clean up the dead code it tends to leave behind).
+        I had to separate killDeadCode out of B3ReduceStrength (as a new B3EliminateDeadCode pass) to run it before B3OptimizeAssociativeExpressionTrees, as otherwise it is stopped by high use counts
+        inherited from CSE.
+        This extra run of DCE is by itself a win, most notably on microbenchmarks/instanceof-always-hit-two (1.5x faster), and on microbenchmarks/licm-dragons(-out-of-bounds) (both get 1.16x speedup).
+        I suspect it is because it runs between CSE and tail-dedup, and as a result allows a lot more tail-dedup to occur.
+
+        The pass is currently extremely conservative, not trying anything if it would cause _any_ code duplication.
+        For this purpose, it starts by computing use counts for the potentially interesting nodes (those with the right opcodes), and segregate them into expression trees.
+        The root of an expression tree is a node that is either used in multiple places, or is used by a value with a different opcode.
+        The leaves of an expression tree are nodes that are either used in multiple places, or have a different opcode.
+        All constant leaves of a tree are combined, as well as all leaves that are identical. What remains is then laid out into a balanced binary tree, hopefully maximizing ILP.
+
+        This optimization was implemented as a stand-alone pass and not as part of B3ReduceStrength mostly because it needs use counts to avoid code duplication.
+        It also benefits from finding all tree roots first, and not trying to repeatedly optimize subtrees.
+
+        I added several tests to testB3 with varying patterns of trees. It is also tested in a less focused way by lots of older tests.
+
+        In the future this pass could be expanded to allow some bounded amount of code duplication, and merging more leaves (e.g. Mul(a, 3) and a in an Add tree, into Mul(a, 4))
+        The latter will need exposing the peephole optimizations out of B3ReduceStrength to avoid duplicating code.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3Common.cpp:
+        (JSC::B3::shouldDumpIR):
+        (JSC::B3::shouldDumpIRAtEachPhase):
+        * b3/B3Common.h:
+        * b3/B3EliminateDeadCode.cpp: Added.
+        (JSC::B3::EliminateDeadCode::run):
+        (JSC::B3::eliminateDeadCode):
+        * b3/B3EliminateDeadCode.h: Added.
+        (JSC::B3::EliminateDeadCode::EliminateDeadCode):
+        * b3/B3Generate.cpp:
+        (JSC::B3::generateToAir):
+        * b3/B3OptimizeAssociativeExpressionTrees.cpp: Added.
+        (JSC::B3::OptimizeAssociativeExpressionTrees::OptimizeAssociativeExpressionTrees):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::neutralElement):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::isAbsorbingElement):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::combineConstants):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::emitValue):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::optimizeRootedTree):
+        (JSC::B3::OptimizeAssociativeExpressionTrees::run):
+        (JSC::B3::optimizeAssociativeExpressionTrees):
+        * b3/B3OptimizeAssociativeExpressionTrees.h: Added.
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3Value.cpp:
+        (JSC::B3::Value::replaceWithIdentity):
+        * b3/testb3.cpp:
+        (JSC::B3::testBitXorTreeArgs):
+        (JSC::B3::testBitXorTreeArgsEven):
+        (JSC::B3::testBitXorTreeArgImm):
+        (JSC::B3::testAddTreeArg32):
+        (JSC::B3::testMulTreeArg32):
+        (JSC::B3::testBitAndTreeArg32):
+        (JSC::B3::testBitOrTreeArg32):
+        (JSC::B3::run):
+
 2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add dump feature for RandomizingFuzzerAgent

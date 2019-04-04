@@ -34,13 +34,13 @@
 
 namespace JSC { namespace B3 {
 
-enum B3ComplitationMode {
+enum B3CompilationMode {
     B3Mode,
     AirMode
 };
 
-JS_EXPORT_PRIVATE bool shouldDumpIR(B3ComplitationMode);
-bool shouldDumpIRAtEachPhase(B3ComplitationMode);
+JS_EXPORT_PRIVATE bool shouldDumpIR(B3CompilationMode);
+bool shouldDumpIRAtEachPhase(B3CompilationMode);
 bool shouldValidateIR();
 bool shouldValidateIRAtEachPhase();
 bool shouldSaveIRBeforePhase();

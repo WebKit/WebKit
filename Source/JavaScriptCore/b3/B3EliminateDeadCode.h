@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,59 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "B3Common.h"
+#pragma once
 
 #if ENABLE(B3_JIT)
 
-#include "DFGCommon.h"
-#include "FTLState.h"
-#include "Options.h"
-#include <wtf/Optional.h>
-
 namespace JSC { namespace B3 {
 
-bool shouldDumpIR(B3CompilationMode mode)
-{
-#if ENABLE(FTL_JIT)
-    return FTL::verboseCompilationEnabled() || FTL::shouldDumpDisassembly() || shouldDumpIRAtEachPhase(mode);
-#else
-    return shouldDumpIRAtEachPhase(mode);
-#endif
-}
+class Procedure;
 
-bool shouldDumpIRAtEachPhase(B3CompilationMode mode)
-{
-    if (mode == B3Mode)
-        return Options::dumpGraphAtEachPhase() || Options::dumpB3GraphAtEachPhase();
-    return Options::dumpGraphAtEachPhase() || Options::dumpAirGraphAtEachPhase();
-}
-
-bool shouldValidateIR()
-{
-    return DFG::validationEnabled() || shouldValidateIRAtEachPhase();
-}
-
-bool shouldValidateIRAtEachPhase()
-{
-    return Options::validateGraphAtEachPhase();
-}
-
-bool shouldSaveIRBeforePhase()
-{
-    return Options::verboseValidationFailure();
-}
-
-Optional<GPRReg> pinnedExtendedOffsetAddrRegister()
-{
-#if CPU(ARM64)
-    return static_cast<GPRReg>(+MacroAssembler::dataTempRegister);
-#elif CPU(X86_64)
-    return WTF::nullopt;
-#else
-#error Unhandled architecture.
-#endif
-}
+// The 'Impl' version of this function does not have a scope phase. It is public so that B3ReduceStrength can use it in its fixpoint.
+bool eliminateDeadCodeImpl(Procedure&);
+JS_EXPORT_PRIVATE bool eliminateDeadCode(Procedure&);
 
 } } // namespace JSC::B3
 

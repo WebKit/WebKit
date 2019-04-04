@@ -124,6 +124,7 @@ b3/B3DataSection.cpp
 b3/B3DuplicateTails.cpp
 b3/B3Effects.cpp
 b3/B3EliminateCommonSubexpressions.cpp
+b3/B3EliminateDeadCode.cpp
 b3/B3EnsureLoopPreHeaders.cpp
 b3/B3FenceValue.cpp
 b3/B3FixSSA.cpp
@@ -143,6 +144,7 @@ b3/B3MemoryValue.cpp
 b3/B3MoveConstants.cpp
 b3/B3OpaqueByproducts.cpp
 b3/B3Opcode.cpp
+b3/B3OptimizeAssociativeExpressionTrees.cpp
 b3/B3Origin.cpp
 b3/B3OriginDump.cpp
 b3/B3PatchpointSpecial.cpp

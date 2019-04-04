@@ -1,3 +1,20 @@
+2019-04-03  Robin Morisset  <rmorisset@apple.com>
+
+        B3 should use associativity to optimize expression trees
+        https://bugs.webkit.org/show_bug.cgi?id=194081
+
+        Reviewed by Filip Pizlo.
+
+        Added three microbenchmarks:
+        - add-tree should be the ideal case, but there is no speedup because we are currently unable to prove that the CheckAdd won't overflow
+        - bit-xor-tree most closely matches the situation where the optimization triggers on the JetStream2 subtests where it triggers:
+          an unbalanced expression tree of size 8 that can be balanced, with no other optimizations being unlocked. 16% speedup
+        - bit-or-tree is an ideal case, where the reassociation also enables a ton of further simplifications. 42% speedup
+
+        * microbenchmarks/add-tree.js: Added.
+        * microbenchmarks/bit-or-tree.js: Added.
+        * microbenchmarks/bit-xor-tree.js: Added.
+
 2019-04-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Exception verification crash on operationArrayIndexOfValueInt32OrContiguous

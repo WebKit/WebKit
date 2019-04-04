@@ -63,6 +63,7 @@ void Value::replaceWithIdentity(Value* value)
     // previous value in place, and then we construct the Identity Value in place.
 
     ASSERT(m_type == value->m_type);
+    ASSERT(value != this);
 
     if (m_type == Void) {
         replaceWithNopIgnoringType();

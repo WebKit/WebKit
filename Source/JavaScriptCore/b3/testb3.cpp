@@ -38,6 +38,7 @@
 #include "B3Compile.h"
 #include "B3ComputeDivisionMagic.h"
 #include "B3Const32Value.h"
+#include "B3Const64Value.h"
 #include "B3ConstPtrValue.h"
 #include "B3Effects.h"
 #include "B3FenceValue.h"
@@ -396,6 +397,132 @@ void testLoadOffsetScaledUnsignedOverImm12Max()
     testLoadWithOffsetImpl(32760, 32760);
     testLoadWithOffsetImpl(32761, 16381);
     testLoadWithOffsetImpl(32768, 16384);
+}
+
+void testBitXorTreeArgs(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* node = root->appendNew<Value>(proc, BitXor, Origin(), argA, argB);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), node, argB);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), node, argA);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), node, argB);
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), (((a ^ b) ^ b) ^ a) ^ b);
+}
+
+void testBitXorTreeArgsEven(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* argB = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR1);
+    Value* node = root->appendNew<Value>(proc, BitXor, Origin(), argA, argB);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), node, argB);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), node, argA);
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a, b), ((a ^ b) ^ b) ^ a);
+}
+
+void testBitXorTreeArgImm(int64_t a, int64_t b)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* immB = root->appendNew<Const64Value>(proc, Origin(), b);
+    Value* node = root->appendNew<Value>(proc, BitXor, Origin(), argA, immB);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), argA, node);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), argA, node);
+    node = root->appendNew<Value>(proc, BitXor, Origin(), immB, node);
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int64_t>(proc, a), b ^ (a ^ (a ^ (a ^ b))));
+}
+
+void testAddTreeArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    argA = root->appendNew<Value>(proc, Trunc, Origin(), argA);
+    Value* node = argA;
+    int32_t expectedResult = a;
+    for (unsigned i = 0; i < 20; ++i) {
+        Value* otherNode;
+        if (!(i % 3)) {
+            otherNode = root->appendNew<Const32Value>(proc, Origin(), i);
+            expectedResult += i;
+        } else {
+            otherNode = argA;
+            expectedResult += a;
+        }
+        node = root->appendNew<Value>(proc, Add, Origin(), node, otherNode);
+    }
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int32_t>(proc, a), expectedResult);
+}
+
+void testMulTreeArg32(int32_t a)
+{
+    // Fibonacci-like expression tree with multiplication instead of addition.
+    // Verifies that we don't explode on heavily factored graphs.
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    argA = root->appendNew<Value>(proc, Trunc, Origin(), argA);
+    Value* nodeA = argA;
+    Value* nodeB = argA;
+    int32_t expectedA = a, expectedResult = a;
+    for (unsigned i = 0; i < 20; ++i) {
+        Value* newNodeB = root->appendNew<Value>(proc, Mul, Origin(), nodeA, nodeB);
+        nodeA = nodeB;
+        nodeB = newNodeB;
+        int32_t newExpectedResult = expectedA * expectedResult;
+        expectedA = expectedResult;
+        expectedResult = newExpectedResult;
+    }
+    root->appendNew<Value>(proc, Return, Origin(), nodeB);
+
+    CHECK_EQ(compileAndRun<int32_t>(proc, a), expectedResult);
+}
+
+void testBitAndTreeArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    argA = root->appendNew<Value>(proc, Trunc, Origin(), argA);
+    Value* node = argA;
+    for (unsigned i = 0; i < 8; ++i) {
+        Value* constI = root->appendNew<Const32Value>(proc, Origin(), i | 42);
+        Value* newBitAnd = root->appendNew<Value>(proc, BitAnd, Origin(), argA, constI);
+        node = root->appendNew<Value>(proc, BitAnd, Origin(), node, newBitAnd);
+    }
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int32_t>(proc, a), a & 42);
+}
+
+void testBitOrTreeArg32(int32_t a)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argA = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    argA = root->appendNew<Value>(proc, Trunc, Origin(), argA);
+    Value* node = argA;
+    for (unsigned i = 0; i < 8; ++i) {
+        Value* constI = root->appendNew<Const32Value>(proc, Origin(), i);
+        Value* newBitAnd = root->appendNew<Value>(proc, BitOr, Origin(), argA, constI);
+        node = root->appendNew<Value>(proc, BitOr, Origin(), node, newBitAnd);
+    }
+    root->appendNew<Value>(proc, Return, Origin(), node);
+
+    CHECK_EQ(compileAndRun<int32_t>(proc, a), a | 7);
 }
 
 void testArg(int argument)
@@ -17047,6 +17174,14 @@ void run(const char* filter)
     RUN(testReturnConst64(5));
     RUN(testReturnConst64(-42));
     RUN(testReturnVoid());
+
+    RUN_BINARY(testBitXorTreeArgs, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorTreeArgsEven, int64Operands(), int64Operands());
+    RUN_BINARY(testBitXorTreeArgImm, int64Operands(), int64Operands());
+    RUN_UNARY(testAddTreeArg32, int32Operands());
+    RUN_UNARY(testMulTreeArg32, int32Operands());
+    RUN_UNARY(testBitAndTreeArg32, int32Operands());
+    RUN_UNARY(testBitOrTreeArg32, int32Operands());
 
     RUN(testAddArg(111));
     RUN(testAddArgs(1, 1));
