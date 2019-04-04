@@ -85,7 +85,7 @@
 #include <wtf/text/WTFString.h>
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
-#include "WebPageAccessibilityObject.h"
+typedef struct _AtkObject AtkObject;
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -1634,7 +1634,7 @@ private:
 #endif
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
-    GRefPtr<WebPageAccessibilityObject> m_accessibilityObject;
+    GRefPtr<AtkObject> m_accessibilityObject;
 #endif
 
 #if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)

@@ -1,5 +1,38 @@
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ATK] Cleanup WebPageAccessibilityObjectAtk
+        https://bugs.webkit.org/show_bug.cgi?id=196537
+
+        Reviewed by Michael Catanzaro.
+
+        Several changes and cleanups:
+
+         - Add WebKit prefix so that style checker doesn't complain about GObject conventions.
+         - Rename the header to remove the Atk prefix to match the cpp file and class name.
+         - Use pragma once.
+         - Use nullptr instead of 0.
+         - Use WEBKIT_DEFINE_TYPE instead of G_DEFINE_TYPE.
+         - Return generic AtkObject* from constructor.
+
+        * SourcesGTK.txt:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp: Renamed from Source/WebKit/WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp.
+        (accessibilityRootObjectWrapper):
+        (webkitWebPageAccessibilityObjectInitialize):
+        (webkitWebPageAccessibilityObjectGetIndexInParent):
+        (webkitWebPageAccessibilityObjectGetNChildren):
+        (webkitWebPageAccessibilityObjectRefChild):
+        (webkit_web_page_accessibility_object_class_init):
+        (webkitWebPageAccessibilityObjectNew):
+        (webkitWebPageAccessibilityObjectRefresh):
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.h: Added.
+        * WebProcess/WebPage/atk/WebPageAccessibilityObject.h: Removed.
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::updateAccessibilityTree):
+
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATK] Set ATK_STATE_TRANSIENT on the atk socket until it's embedded
         https://bugs.webkit.org/show_bug.cgi?id=196535
 

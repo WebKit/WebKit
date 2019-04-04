@@ -410,7 +410,7 @@ WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
-WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp
+WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp
 
 WebProcess/WebPage/gstreamer/WebPageGStreamer.cpp
 
