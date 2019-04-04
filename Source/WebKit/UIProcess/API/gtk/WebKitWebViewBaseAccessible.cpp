@@ -59,6 +59,8 @@ static AtkStateSet* webkitWebViewBaseAccessibleRefStateSet(AtkObject* atkObject)
     if (accessible->priv->widget) {
         // Use the implementation of AtkSocket if the widget is still alive.
         stateSet = ATK_OBJECT_CLASS(webkit_web_view_base_accessible_parent_class)->ref_state_set(atkObject);
+        if (!atk_socket_is_occupied(ATK_SOCKET(atkObject)))
+            atk_state_set_add_state(stateSet, ATK_STATE_TRANSIENT);
     } else {
         // If the widget is no longer alive, save some remote calls
         // (because of AtkSocket's implementation of ref_state_set())

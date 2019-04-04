@@ -1,5 +1,20 @@
 2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [ATK] Set ATK_STATE_TRANSIENT on the atk socket until it's embedded
+        https://bugs.webkit.org/show_bug.cgi?id=196535
+
+        Reviewed by Michael Catanzaro.
+
+        This way the properties are not cached. Right now, if number of children is queried before the socket is
+        embedded, 0 is returned and cached, so ATs don't see the child even after the socket has been embedded.
+
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp:
+        (webkitWebViewBaseAccessibleRefStateSet): Set ATK_STATE_TRANSIENT is the socket is not occupied.
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::bindAccessibilityTree): Unset ATK_STATE_TRANSIENT.
+
+2019-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATK] Embed the AtkSocket as soon as we receive the plug ID
         https://bugs.webkit.org/show_bug.cgi?id=196534
 
