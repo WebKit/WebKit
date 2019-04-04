@@ -1,3 +1,16 @@
+2019-04-04  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed, rolling out r243868.
+
+        Causing timeouts failures on several queues
+
+        Reverted changeset:
+
+        "[Web Animations] JS wrapper may be deleted while animation is
+        yet to dispatch its finish event"
+        https://bugs.webkit.org/show_bug.cgi?id=196118
+        https://trac.webkit.org/changeset/243868
+
 2019-04-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243807 and r243824.
