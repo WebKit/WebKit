@@ -1,3 +1,13 @@
+2019-04-04  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed, build fix for CLoop after r243886
+
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::copyCalleeSavesToEntryFrameCalleeSavesBuffer const):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::Frame::calleeSaveRegistersForUnwinding):
+        * interpreter/StackVisitor.h:
+
 2019-04-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243898.

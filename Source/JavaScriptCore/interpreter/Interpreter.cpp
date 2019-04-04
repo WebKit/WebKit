@@ -570,7 +570,7 @@ public:
 private:
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
-#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
+#if ENABLE(ASSEMBLER)
         Optional<RegisterAtOffsetList> currentCalleeSaves = visitor->calleeSaveRegistersForUnwinding();
 
         if (!currentCalleeSaves)
