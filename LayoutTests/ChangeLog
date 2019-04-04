@@ -1,5 +1,17 @@
 2019-04-04  Antoine Quint  <graouts@apple.com>
 
+        REGRESSION (r236501?): Layout Test compositing/geometry/limit-layer-bounds-opacity-transition.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=190210
+        <rdar://problem/45045989>
+
+        Unreviewed.
+
+        The flakiness dashboard shows that this test hasn't been flaky for a few weeks, reverting the flaky expectation.
+
+        * platform/mac/TestExpectations:
+
+2019-04-04  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] JS wrapper may be deleted while animation is yet to dispatch its finish event
         https://bugs.webkit.org/show_bug.cgi?id=196118
         <rdar://problem/46614137>
