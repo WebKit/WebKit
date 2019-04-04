@@ -1159,8 +1159,14 @@ bool WebAnimation::canSuspendForDocumentSuspension() const
 
 void WebAnimation::stop()
 {
+    ActiveDOMObject::stop();
     m_isStopped = true;
     removeAllEventListeners();
+}
+
+bool WebAnimation::hasPendingActivity() const
+{
+    return m_timeline || m_isRelevant || ActiveDOMObject::hasPendingActivity();
 }
 
 void WebAnimation::updateRelevance()
