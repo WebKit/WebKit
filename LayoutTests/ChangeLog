@@ -1,3 +1,34 @@
+2019-04-04  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r241307. rdar://problem/49610758
+
+    AX: Fix flaky accessibility/loading-iframe-sends-notification.html
+    https://bugs.webkit.org/show_bug.cgi?id=194546
+    
+    Reviewed by Zalan Bujtas.
+    
+    This test was relying on timing between load events being sent and accessibility events being sent.
+    We don't need to do that, we can more directly test this interplay.
+    
+    * accessibility/loading-iframe-sends-notification-expected.txt:
+    * accessibility/loading-iframe-sends-notification.html:
+    
+    
+    git-svn-id: http://svn.webkit.org/repository/webkit/trunk@241307 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Fix flaky accessibility/loading-iframe-sends-notification.html
+            https://bugs.webkit.org/show_bug.cgi?id=194546
+
+            Reviewed by Zalan Bujtas.
+
+            This test was relying on timing between load events being sent and accessibility events being sent.
+            We don't need to do that, we can more directly test this interplay.
+
+            * accessibility/loading-iframe-sends-notification-expected.txt:
+            * accessibility/loading-iframe-sends-notification.html:
+
 2019-04-02  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r240492. rdar://problem/49539128
