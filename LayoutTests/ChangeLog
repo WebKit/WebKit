@@ -1,3 +1,12 @@
+2019-04-04  Shawn Roberts  <sroberts@apple.com>
+
+        scrollingcoordinator/ios/ui-scroll-fixed.html is a flakky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196612
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Changing expectations for flaky image failure
+
 2019-04-04  Antoine Quint  <graouts@apple.com>
 
         [macOS WK1] Layout Test webanimations/accelerated-transition-interrupted-on-composited-element.html is a flaky image failure
