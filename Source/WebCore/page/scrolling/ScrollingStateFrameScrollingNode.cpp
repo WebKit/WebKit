@@ -47,7 +47,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(ScrollingStat
 ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const ScrollingStateFrameScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateScrollingNode(stateNode, adoptiveTree)
     , m_eventTrackingRegions(stateNode.eventTrackingRegions())
-    , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_layoutViewport(stateNode.layoutViewport())
     , m_minLayoutViewportOrigin(stateNode.minLayoutViewportOrigin())
     , m_maxLayoutViewportOrigin(stateNode.maxLayoutViewportOrigin())
@@ -57,7 +56,6 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_footerHeight(stateNode.footerHeight())
     , m_synchronousScrollingReasons(stateNode.synchronousScrollingReasons())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
-    , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_fixedElementsLayoutRelativeToFrame(stateNode.fixedElementsLayoutRelativeToFrame())
     , m_asyncFrameOrOverflowScrollingEnabled(stateNode.asyncFrameOrOverflowScrollingEnabled())
 {
@@ -330,11 +328,6 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
         ts.dumpProperty("Scrolling on main thread because:", ScrollingCoordinator::synchronousScrollingReasonsAsText(m_synchronousScrollingReasons));
     
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
-
-    if (m_requestedScrollPosition != FloatPoint())
-        ts.dumpProperty("requested scroll position", m_requestedScrollPosition);
-    if (m_requestedScrollPositionRepresentsProgrammaticScroll)
-        ts.dumpProperty("requested scroll position represents programmatic scroll", m_requestedScrollPositionRepresentsProgrammaticScroll);
 
     if (m_fixedElementsLayoutRelativeToFrame)
         ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);

@@ -145,7 +145,6 @@ private:
     LayerRepresentation m_footerLayer;
 
     EventTrackingRegions m_eventTrackingRegions;
-    FloatPoint m_requestedScrollPosition;
 
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;
@@ -157,7 +156,6 @@ private:
     int m_footerHeight { 0 };
     SynchronousScrollingReasons m_synchronousScrollingReasons { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { StickToDocumentBounds };
-    bool m_requestedScrollPositionRepresentsProgrammaticScroll { false };
     bool m_fixedElementsLayoutRelativeToFrame { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
