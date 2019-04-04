@@ -1,5 +1,58 @@
 2019-04-04  Tadeu Zagallo  <tzagallo@apple.com>
 
+        Cache bytecode for jsc.cpp helpers and fix CachedStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=196409
+
+        Reviewed by Saam Barati.
+
+        Some of the helpers in jsc.cpp, such as `functionRunString`, were stll using
+        using `makeSource` instead of `jscSource`, which does not use the ShellSourceProvider
+        and therefore does not write the bytecode cache to disk.
+
+        Changing that revealed a bug in bytecode cache. The Encoder keeps a mapping
+        of pointers to offsets of already cached objects, in order to avoid caching
+        the same object twice. Similarly, the Decoder keeps a mapping from offsets
+        to pointers, in order to avoid creating multiple objects in memory for the
+        same cached object. The following was happening:
+        1) A StringImpl* S was cached as CachedPtr<CachedStringImpl> at offset O. We add
+        an entry in the Encoder mapping that S has already been encoded at O.
+        2) We cache StringImpl* S again, but now as CachedPtr<CachedUniquedStringImpl>.
+        We find an entry in the Encoder mapping for S, and return the offset O. However,
+        the object cached at O is a CachedPtr<CachedStringImpl> (i.e. not Uniqued).
+
+        3) When decoding, there are 2 possibilities:
+        3.1) We find S for the first time through a CachedPtr<CachedStringImpl>. In
+        this case, everything works as expected since we add an entry in the decoder
+        mapping from the offset O to the decoded StringImpl* S. The next time we find
+        S through the uniqued version, we'll return the already decoded S.
+        3.2) We find S through a CachedPtr<CachedUniquedStringImpl>. Now we have a
+        problem, since the CachedPtr has the offset of a CachedStringImpl (not uniqued),
+        which has a different shape and we crash.
+
+        We fix this by making CachedStringImpl and CachedUniquedStringImpl share the
+        same implementation. Since it doesn't matter whether a string is uniqued for
+        encoding, and we always decode strings as uniqued either way, they can be used
+        interchangeably.
+
+        * jsc.cpp:
+        (functionRunString):
+        (functionLoadString):
+        (functionDollarAgentStart):
+        (functionCheckModuleSyntax):
+        (runInteractive):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedUniquedStringImplBase::decode const):
+        (JSC::CachedFunctionExecutable::rareData const):
+        (JSC::CachedCodeBlock::rareData const):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedUniquedStringImpl::encode): Deleted.
+        (JSC::CachedUniquedStringImpl::decode const): Deleted.
+        (JSC::CachedStringImpl::encode): Deleted.
+        (JSC::CachedStringImpl::decode const): Deleted.
+
+2019-04-04  Tadeu Zagallo  <tzagallo@apple.com>
+
         UnlinkedCodeBlock constructor from cache should initialize m_didOptimize
         https://bugs.webkit.org/show_bug.cgi?id=196396
 

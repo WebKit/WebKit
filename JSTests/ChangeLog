@@ -1,3 +1,15 @@
+2019-04-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Cache bytecode for jsc.cpp helpers and fix CachedStringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=196409
+
+        Reviewed by Saam Barati.
+
+        * stress/bytecode-cache-cached-string-impl.js: Added.
+        (f):
+        (g):
+        * stress/bytecode-cache-run-string.js: Added.
+
 2019-04-03  Robin Morisset  <rmorisset@apple.com>
 
         B3 should use associativity to optimize expression trees

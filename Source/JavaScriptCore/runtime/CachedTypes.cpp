@@ -575,7 +575,8 @@ private:
     CachedVector<CachedPair<Key, Value>> m_entries;
 };
 
-class CachedUniquedStringImpl : public VariableLengthObject<UniquedStringImpl> {
+template<typename T>
+class CachedUniquedStringImplBase : public VariableLengthObject<T> {
 public:
     void encode(Encoder& encoder, const StringImpl& string)
     {
@@ -631,8 +632,8 @@ public:
         }
 
         if (m_is8Bit)
-            return create(this->buffer<LChar>());
-        return create(this->buffer<UChar>());
+            return create(this->template buffer<LChar>());
+        return create(this->template buffer<UChar>());
     }
 
 private:
@@ -642,21 +643,8 @@ private:
     unsigned m_length;
 };
 
-class CachedStringImpl : public VariableLengthObject<StringImpl> {
-public:
-    void encode(Encoder& encoder, const StringImpl& impl)
-    {
-        m_uniquedStringImpl.encode(encoder, impl);
-    }
-
-    StringImpl* decode(Decoder& decoder) const
-    {
-        return m_uniquedStringImpl.decode(decoder);
-    }
-
-private:
-    CachedUniquedStringImpl m_uniquedStringImpl;
-};
+class CachedUniquedStringImpl : public CachedUniquedStringImplBase<UniquedStringImpl> { };
+class CachedStringImpl : public CachedUniquedStringImplBase<StringImpl> { };
 
 class CachedString : public VariableLengthObject<String> {
 public:
@@ -1572,7 +1560,7 @@ public:
     Identifier ecmaName(Decoder& decoder) const { return m_ecmaName.decode(decoder); }
     Identifier inferredName(Decoder& decoder) const { return m_inferredName.decode(decoder); }
 
-    UnlinkedFunctionExecutable::RareData* rareData(Decoder& decoder) const { return m_rareData.decodeAsPtr(decoder); }
+    UnlinkedFunctionExecutable::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
     const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& unlinkedCodeBlockForCall() const { return m_unlinkedCodeBlockForCall; }
     const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& unlinkedCodeBlockForConstruct() const { return m_unlinkedCodeBlockForConstruct; }
@@ -1602,7 +1590,7 @@ private:
     unsigned m_superBinding : 1;
     unsigned m_derivedContextType: 2;
 
-    CachedOptional<CachedFunctionExecutableRareData> m_rareData;
+    CachedPtr<CachedFunctionExecutableRareData> m_rareData;
 
     CachedIdentifier m_name;
     CachedIdentifier m_ecmaName;
@@ -1655,7 +1643,7 @@ public:
     SourceParseMode parseMode() const { return m_parseMode; }
     unsigned codeType() const { return m_codeType; }
 
-    UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decodeAsPtr(decoder); }
+    UnlinkedCodeBlock::RareData* rareData(Decoder& decoder) const { return m_rareData.decode(decoder); }
 
 private:
     VirtualRegister m_thisRegister;
@@ -1690,7 +1678,7 @@ private:
 
     CachedMetadataTable m_metadata;
 
-    CachedOptional<CachedCodeBlockRareData> m_rareData;
+    CachedPtr<CachedCodeBlockRareData> m_rareData;
 
     CachedString m_sourceURLDirective;
     CachedString m_sourceMappingURLDirective;
@@ -1955,7 +1943,7 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_superBinding = executable.m_superBinding;
     m_derivedContextType = executable.m_derivedContextType;
 
-    m_rareData.encode(encoder, executable.m_rareData);
+    m_rareData.encode(encoder, executable.m_rareData.get());
 
     m_name.encode(encoder, executable.name());
     m_ecmaName.encode(encoder, executable.ecmaName());
@@ -2060,7 +2048,7 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
         m_linkTimeConstants[i] = codeBlock.m_linkTimeConstants[i];
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
-    m_rareData.encode(encoder, codeBlock.m_rareData);
+    m_rareData.encode(encoder, codeBlock.m_rareData.get());
 
     m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());
     m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.impl());
