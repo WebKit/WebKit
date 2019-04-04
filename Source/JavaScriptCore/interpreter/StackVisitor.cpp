@@ -253,12 +253,11 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
     return CodeType::Global;
 }
 
+#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
 {
     if (isInlinedFrame())
         return WTF::nullopt;
-
-#if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
@@ -279,10 +278,9 @@ Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwind
     if (CodeBlock* codeBlock = this->codeBlock())
         return *codeBlock->calleeSaveRegisters();
 
-#endif // !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
-
     return WTF::nullopt;
 }
+#endif // !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 
 String StackVisitor::Frame::functionName() const
 {
