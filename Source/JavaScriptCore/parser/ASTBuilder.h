@@ -241,6 +241,7 @@ public:
 
     ExpressionNode* createString(const JSTokenLocation& location, const Identifier* string)
     {
+        ASSERT(string);
         incConstants();
         return new (m_parserArena) StringNode(location, *string);
     }

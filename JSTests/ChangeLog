@@ -1,3 +1,15 @@
+2019-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        SIGSEGV in JSC::BytecodeGenerator::addStringConstant
+        https://bugs.webkit.org/show_bug.cgi?id=196486
+
+        Reviewed by Saam Barati.
+
+        * stress/arrow-function-and-use-strict-directive.js: Added.
+        * stress/arrow-function-syntax.js: Added. Checking EOF token handling.
+        (checkSyntax):
+        (checkSyntaxError): Currently not using it. But it is useful for testing more things related to arrow function syntax.
+
 2019-04-05  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Filter DontEnum properties in ProxyObject::getOwnPropertyNames()
