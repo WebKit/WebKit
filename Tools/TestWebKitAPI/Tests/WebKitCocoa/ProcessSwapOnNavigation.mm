@@ -4705,7 +4705,7 @@ TEST(ProcessSwap, SwapOnLoadHTMLString)
     done = false;
 }
 
-TEST(ProcessSwap, EphemeralLocalStorage)
+TEST(ProcessSwap, EphemeralWebStorage)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -4726,6 +4726,12 @@ TEST(ProcessSwap, EphemeralLocalStorage)
 
     done = false;
     [webView evaluateJavaScript:@"window.localStorage.setItem('a','b')" completionHandler:^(id, NSError *) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"window.sessionStorage.setItem('b,'a')" completionHandler:^(id, NSError *) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
@@ -4752,6 +4758,13 @@ TEST(ProcessSwap, EphemeralLocalStorage)
     done = false;
     [webView evaluateJavaScript:@"window.localStorage.getItem('a')" completionHandler:^(id result, NSError *) {
         EXPECT_FALSE([@"b" isEqualToString:result]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"window.sessionStorage.getItem('b')" completionHandler:^(id result, NSError *) {
+        EXPECT_FALSE([@"a" isEqualToString:result]);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
