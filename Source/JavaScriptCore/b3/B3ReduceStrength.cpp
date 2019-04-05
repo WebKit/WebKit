@@ -2345,9 +2345,6 @@ private:
         Value* x2 = nullptr;
         Value* x3 = nullptr;
         if (m_value->child(0)->opcode() == Mul && m_value->child(1)->opcode() == Mul) {
-            Value* x1 = nullptr;
-            Value* x2 = nullptr;
-            Value* x3 = nullptr;
             if (m_value->child(0)->child(0) == m_value->child(1)->child(0)) {
                 // Op(Mul(x1, x2), Mul(x1, x3))
                 x1 = m_value->child(0)->child(0);

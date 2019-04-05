@@ -1,3 +1,16 @@
+2019-04-04  Robin Morisset  <rmorisset@apple.com>
+
+        B3ReduceStrength should know that Mul distributes over Add and Sub
+        https://bugs.webkit.org/show_bug.cgi?id=196325
+        <rdar://problem/49441650>
+
+        Reviewed by Saam Barati.
+
+        Fix some obviously wrong code that was due to an accidental copy-paste.
+        It made the entire optimization dead code that never ran.
+
+        * b3/B3ReduceStrength.cpp:
+
 2019-04-04  Saam Barati  <sbarati@apple.com>
 
         Unreviewed, build fix for CLoop after r243886
