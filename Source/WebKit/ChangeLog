@@ -1,3 +1,14 @@
+2019-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Use a smart pointer for AccessibilityObject wrapper and remove GTK specific code
+        https://bugs.webkit.org/show_bug.cgi?id=196593
+        <rdar://problem/49599153>
+
+        Reviewed by Michael Catanzaro.
+
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp:
+        (accessibilityRootObjectWrapper): Cast wrapper() as AtkObject.
+
 2019-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Simple iframe scrolling test fails to get a composited scrolling frame in WebKitTestRunnerApp

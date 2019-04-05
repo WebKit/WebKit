@@ -1,3 +1,54 @@
+2019-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Use a smart pointer for AccessibilityObject wrapper and remove GTK specific code
+        https://bugs.webkit.org/show_bug.cgi?id=196593
+        <rdar://problem/49599153>
+
+        Reviewed by Michael Catanzaro.
+
+        We have specific code for GTK to get/set the wrapper only because we don't use smart pointers. Also use
+        WebKitAccessible as AccessibilityObjectWrapper instead of generic AtkObject, to enforce wrappers to be
+        WebKitAccessible instances. This requires a few casts to AtkObject.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::setWrapper):
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::detachWrapper):
+        (WebCore::AXObjectCache::attachWrapper):
+        (WebCore::notifyChildrenSelectionChange):
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification):
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged):
+        * accessibility/atk/AccessibilityObjectAtk.cpp:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (webkitAccessibleComponentRefAccessibleAtPoint):
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        (webkitAccessibleHypertextGetLink):
+        (webkitAccessibleHypertextGetNLinks):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (webkitAccessibleSelectionRefSelection):
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (webkitAccessibleTableRefAt):
+        (webkitAccessibleTableGetColumnHeader):
+        (webkitAccessibleTableGetRowHeader):
+        (webkitAccessibleTableGetCaption):
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        (convertToGPtrArray):
+        (webkitAccessibleTableCellGetTable):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (accessibilityObjectLength):
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (setAtkRelationSetFromCoreObject):
+        (atkParentOfRootObject):
+        (webkitAccessibleGetParent):
+        (webkitAccessibleRefChild):
+        (isTextWithCaret):
+        * editing/atk/FrameSelectionAtk.cpp:
+        (WebCore::emitTextSelectionChange):
+        (WebCore::maybeEmitTextFocusChange):
+
 2019-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] REGRESSION (r242687): Programmatic scroll of overflow scroll results in bad rendering

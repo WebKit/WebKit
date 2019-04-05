@@ -158,9 +158,9 @@ static AtkObject* webkitAccessibleSelectionRefSelection(AtkSelection* selection,
 
     AccessibilityObject* option = optionFromSelection(selection, index);
     if (option) {
-        AtkObject* child = option->wrapper();
+        auto* child = option->wrapper();
         g_object_ref(child);
-        return child;
+        return ATK_OBJECT(child);
     }
 
     return nullptr;

@@ -37,8 +37,8 @@
 OBJC_CLASS WebAccessibilityObjectWrapper;
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #elif PLATFORM(GTK)
-typedef struct _AtkObject AtkObject;
-typedef struct _AtkObject AccessibilityObjectWrapper;
+typedef struct _WebKitAccessible WebKitAccessible;
+typedef struct _WebKitAccessible AccessibilityObjectWrapper;
 #elif PLATFORM(WPE)
 class AccessibilityObjectWrapper : public RefCounted<AccessibilityObjectWrapper> { };
 #else

@@ -181,87 +181,87 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
     removeAtkRelationByType(relationSet, ATK_RELATION_LABEL_FOR);
     if (coreObject->isControl()) {
         if (AccessibilityObject* label = coreObject->correspondingLabelForControlElement())
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, ATK_OBJECT(label->wrapper()));
     } else if (coreObject->isFieldset()) {
         if (AccessibilityObject* label = coreObject->titleUIElement())
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, ATK_OBJECT(label->wrapper()));
     } else if (coreObject->roleValue() == AccessibilityRole::Legend) {
         if (RenderBlock* renderFieldset = ancestorsOfType<RenderBlock>(*coreObject->renderer()).first()) {
             if (renderFieldset->isFieldset()) {
                 AccessibilityObject* fieldset = coreObject->axObjectCache()->getOrCreate(renderFieldset);
-                atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, fieldset->wrapper());
+                atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, ATK_OBJECT(fieldset->wrapper()));
             }
         }
     } else if (AccessibilityObject* control = coreObject->correspondingControlForLabelElement()) {
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, ATK_OBJECT(control->wrapper()));
     } else {
         AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
         coreObject->ariaLabelledByElements(ariaLabelledByElements);
         for (const auto& accessibilityObject : ariaLabelledByElements)
-            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, accessibilityObject->wrapper());
+            atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, ATK_OBJECT(accessibilityObject->wrapper()));
     }
 
     // Elements referenced by aria-labelledby should have the label-for relation as per the ARIA AAM spec.
     AccessibilityObject::AccessibilityChildrenVector labels;
     coreObject->ariaLabelledByReferencingElements(labels);
     for (const auto& accessibilityObject : labels)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements with aria-flowto should have the flows-to relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_FLOWS_TO);
     AccessibilityObject::AccessibilityChildrenVector ariaFlowToElements;
     coreObject->ariaFlowToElements(ariaFlowToElements);
     for (const auto& accessibilityObject : ariaFlowToElements)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_TO, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-flowto should have the flows-from relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_FLOWS_FROM);
     AccessibilityObject::AccessibilityChildrenVector flowFrom;
     coreObject->ariaFlowToReferencingElements(flowFrom);
     for (const auto& accessibilityObject : flowFrom)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_FROM, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_FLOWS_FROM, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements with aria-describedby should have the described-by relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_DESCRIBED_BY);
     AccessibilityObject::AccessibilityChildrenVector ariaDescribedByElements;
     coreObject->ariaDescribedByElements(ariaDescribedByElements);
     for (const auto& accessibilityObject : ariaDescribedByElements)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIBED_BY, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-describedby should have the description-for relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_DESCRIPTION_FOR);
     AccessibilityObject::AccessibilityChildrenVector describers;
     coreObject->ariaDescribedByReferencingElements(describers);
     for (const auto& accessibilityObject : describers)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIPTION_FOR, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DESCRIPTION_FOR, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements with aria-controls should have the controller-for relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_CONTROLLER_FOR);
     AccessibilityObject::AccessibilityChildrenVector ariaControls;
     coreObject->ariaControlsElements(ariaControls);
     for (const auto& accessibilityObject : ariaControls)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLER_FOR, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLER_FOR, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-controls should have the controlled-by relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_CONTROLLED_BY);
     AccessibilityObject::AccessibilityChildrenVector controllers;
     coreObject->ariaControlsReferencingElements(controllers);
     for (const auto& accessibilityObject : controllers)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLED_BY, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_CONTROLLED_BY, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements with aria-owns should have the node-parent-of relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_NODE_PARENT_OF);
     AccessibilityObject::AccessibilityChildrenVector ariaOwns;
     coreObject->ariaOwnsElements(ariaOwns);
     for (const auto& accessibilityObject : ariaOwns)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_NODE_PARENT_OF, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_NODE_PARENT_OF, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-owns should have the node-child-of relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_NODE_CHILD_OF);
     AccessibilityObject::AccessibilityChildrenVector owners;
     coreObject->ariaOwnsReferencingElements(owners);
     for (const auto& accessibilityObject : owners)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_NODE_CHILD_OF, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_NODE_CHILD_OF, ATK_OBJECT(accessibilityObject->wrapper()));
 
 #if ATK_CHECK_VERSION(2, 25, 2)
     // Elements with aria-details should have the details relation as per the ARIA AAM spec.
@@ -269,28 +269,28 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
     AccessibilityObject::AccessibilityChildrenVector ariaDetails;
     coreObject->ariaDetailsElements(ariaDetails);
     for (const auto& accessibilityObject : ariaDetails)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-details should have the details-for relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_DETAILS_FOR);
     AccessibilityObject::AccessibilityChildrenVector details;
     coreObject->ariaDetailsReferencingElements(details);
     for (const auto& accessibilityObject : details)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS_FOR, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS_FOR, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements with aria-errormessage should have the error-message relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_ERROR_MESSAGE);
     AccessibilityObject::AccessibilityChildrenVector ariaErrorMessage;
     coreObject->ariaErrorMessageElements(ariaErrorMessage);
     for (const auto& accessibilityObject : ariaErrorMessage)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_MESSAGE, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_MESSAGE, ATK_OBJECT(accessibilityObject->wrapper()));
 
     // Elements referenced by aria-errormessage should have the error-for relation as per the ARIA AAM spec.
     removeAtkRelationByType(relationSet, ATK_RELATION_ERROR_FOR);
     AccessibilityObject::AccessibilityChildrenVector errors;
     coreObject->ariaErrorMessageReferencingElements(errors);
     for (const auto& accessibilityObject : errors)
-        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_FOR, accessibilityObject->wrapper());
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_FOR, ATK_OBJECT(accessibilityObject->wrapper()));
 #endif
 }
 
@@ -324,10 +324,7 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
             return 0;
     }
 
-    if (!coreParent)
-        return 0;
-
-    return coreParent->wrapper();
+    return coreParent ? ATK_OBJECT(coreParent->wrapper()) : nullptr;
 }
 
 static AtkObject* webkitAccessibleGetParent(AtkObject* object)
@@ -350,10 +347,7 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
     if (!coreParent && isRootObject(coreObject))
         return atkParentOfRootObject(object);
 
-    if (!coreParent)
-        return 0;
-
-    return coreParent->wrapper();
+    return coreParent ? ATK_OBJECT(coreParent->wrapper()) : nullptr;
 }
 
 static gint webkitAccessibleGetNChildren(AtkObject* object)
@@ -385,7 +379,7 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
     if (!coreChild)
         return 0;
 
-    AtkObject* child = coreChild->wrapper();
+    auto* child = ATK_OBJECT(coreChild->wrapper());
     atk_object_set_parent(child, object);
     g_object_ref(child);
 
@@ -914,8 +908,8 @@ static bool isTextWithCaret(AccessibilityObject* coreObject)
         return false;
 
     // Check text objects and paragraphs only.
-    AtkObject* axObject = coreObject->wrapper();
-    AtkRole role = axObject ? atk_object_get_role(axObject) : ATK_ROLE_INVALID;
+    auto* axObject = coreObject->wrapper();
+    AtkRole role = axObject ? atk_object_get_role(ATK_OBJECT(axObject)) : ATK_ROLE_INVALID;
     if (role != ATK_ROLE_TEXT && role != ATK_ROLE_PARAGRAPH)
         return false;
 
