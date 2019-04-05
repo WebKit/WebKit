@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
 include(WebKitCommon)
-include(frameworks/WTF)
 set_property(DIRECTORY . PROPERTY FOLDER "JavaScriptCore")
 
 list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
@@ -120,7 +119,7 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
 )
 
 set(JavaScriptCore_LIBRARIES
-    WTFFramework
+    WTF${DEBUG_SUFFIX}
     ${ICU_I18N_LIBRARIES}
 )
 
@@ -300,9 +299,9 @@ add_executable(LLIntOffsetsExtractor
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
 )
 
-target_link_libraries(LLIntSettingsExtractor WTFFramework)
+target_link_libraries(LLIntSettingsExtractor WTF)
 add_dependencies(LLIntSettingsExtractor JavaScriptCoreForwardingHeaders)
-target_link_libraries(LLIntOffsetsExtractor WTFFramework)
+target_link_libraries(LLIntOffsetsExtractor WTF)
 add_dependencies(LLIntOffsetsExtractor JavaScriptCoreForwardingHeaders)
 
 # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than

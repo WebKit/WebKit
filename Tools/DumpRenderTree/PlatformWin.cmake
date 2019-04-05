@@ -70,7 +70,7 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
-    WTFFramework
+    WTF
     WebKitLegacy
     shlwapi
 )

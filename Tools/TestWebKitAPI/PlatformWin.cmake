@@ -147,7 +147,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
 endif ()
 
 set(test_webkitlegacy_LIBRARIES
-    WTFFramework
     WebCoreTestSupport
     WebKitLegacy${DEBUG_SUFFIX}
     gtest

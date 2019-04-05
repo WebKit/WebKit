@@ -29,7 +29,7 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${GTK3_LIBRARIES}
     ${GLIB_LIBRARIES}
-    WTFFramework
+    WTF
     WebCore
     WebCorePlatformGTK
 )

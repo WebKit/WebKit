@@ -365,8 +365,8 @@ set(WebCore_OUTPUT_NAME
     WebCore${DEBUG_SUFFIX}
 )
 
-list(APPEND WebCore_LIBRARIES WTFFramework)
+list(APPEND WebCore_LIBRARIES WTF${DEBUG_SUFFIX})
 if (TARGET libEGL)
     list(APPEND WebCore_LIBRARIES libEGL)
 endif ()
-list(APPEND WebCoreTestSupport_LIBRARIES WTFFramework)
+list(APPEND WebCoreTestSupport_LIBRARIES WTF${DEBUG_SUFFIX})

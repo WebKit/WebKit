@@ -34,7 +34,7 @@ else ()
     )
 endif ()
 
-list(APPEND WebKitLegacy_LIBRARIES PRIVATE WTFFramework)
+list(APPEND WebKitLegacy_LIBRARIES PRIVATE WTF${DEBUG_SUFFIX})
 
 add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitVersion.h

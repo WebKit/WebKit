@@ -59,7 +59,7 @@ add_library(WebKitQuartzCoreAdditions SHARED ${WebKitQuartzCoreAdditions_SOURCES
 set_target_properties(WebKitQuartzCoreAdditions PROPERTIES OUTPUT_NAME WebKitQuartzCoreAdditions${DEBUG_SUFFIX})
 target_link_libraries(WebKitQuartzCoreAdditions
     D3d9
-    WTFFramework
+    WTF${DEBUG_SUFFIX}
     CoreFoundation${DEBUG_SUFFIX}
     CoreGraphics${DEBUG_SUFFIX}
     QuartzCore${DEBUG_SUFFIX}

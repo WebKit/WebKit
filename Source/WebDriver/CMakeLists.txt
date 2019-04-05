@@ -17,7 +17,7 @@ set(WebDriver_SOURCES
 )
 
 set(WebDriver_LIBRARIES
-    WTFFramework
+    WTF
 )
 
 set(WebDriver_SCRIPTS
