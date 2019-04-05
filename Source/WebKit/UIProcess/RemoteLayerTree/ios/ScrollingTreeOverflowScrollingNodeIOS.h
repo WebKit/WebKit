@@ -46,6 +46,7 @@ private:
     
     void repositionScrollingLayers() override;
 
+    // The delegate is non-null for subframes.
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 };
 

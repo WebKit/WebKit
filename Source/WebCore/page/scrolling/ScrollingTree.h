@@ -118,7 +118,8 @@ public:
     // Can be called from any thread. Will update what edges allow rubber-banding.
     WEBCORE_EXPORT void setCanRubberBandState(bool canRubberBandAtLeft, bool canRubberBandAtRight, bool canRubberBandAtTop, bool canRubberBandAtBottom);
 
-    bool isHandlingProgrammaticScroll();
+    bool isHandlingProgrammaticScroll() const { return m_isHandlingProgrammaticScroll; }
+    void setIsHandlingProgrammaticScroll(bool isHandlingProgrammaticScroll) { m_isHandlingProgrammaticScroll = isHandlingProgrammaticScroll; }
     
     void setScrollPinningBehavior(ScrollPinningBehavior);
     WEBCORE_EXPORT ScrollPinningBehavior scrollPinningBehavior();
@@ -204,8 +205,8 @@ private:
     SwipeState m_swipeState;
 
     unsigned m_fixedOrStickyNodeCount { 0 };
-    bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_isHandlingProgrammaticScroll { false };
+    bool m_scrollingPerformanceLoggingEnabled { false };
     bool m_asyncFrameOrOverflowScrollingEnabled { false };
 };
     

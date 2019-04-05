@@ -204,25 +204,33 @@ void AsyncScrollingCoordinator::frameViewRootLayerDidChange(FrameView& frameView
     node->setHorizontalScrollbarLayer(frameView.layerForHorizontalScrollbar());
 }
 
-bool AsyncScrollingCoordinator::requestScrollPositionUpdate(FrameView& frameView, const IntPoint& scrollPosition)
+bool AsyncScrollingCoordinator::requestScrollPositionUpdate(ScrollableArea& scrollableArea, const IntPoint& scrollPosition)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (!coordinatesScrollingForFrameView(frameView))
+    auto scrollingNodeID = scrollableArea.scrollingNodeID();
+    if (!scrollingNodeID)
         return false;
 
-    bool inPageCache = frameView.frame().document()->pageCacheState() != Document::NotInPageCache;
-    bool inProgrammaticScroll = frameView.currentScrollType() == ScrollType::Programmatic;
+    auto* frameView = frameViewForScrollingNode(scrollingNodeID);
+    if (!frameView)
+        return false;
+
+    if (!coordinatesScrollingForFrameView(*frameView))
+        return false;
+
+    bool inPageCache = frameView->frame().document()->pageCacheState() != Document::NotInPageCache;
+    bool inProgrammaticScroll = scrollableArea.currentScrollType() == ScrollType::Programmatic;
     if (inProgrammaticScroll || inPageCache)
-        updateScrollPositionAfterAsyncScroll(frameView.scrollingNodeID(), scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set);
+        updateScrollPositionAfterAsyncScroll(scrollingNodeID, scrollPosition, { }, ScrollType::Programmatic, ScrollingLayerPositionAction::Set);
 
     // If this frame view's document is being put into the page cache, we don't want to update our
     // main frame scroll position. Just let the FrameView think that we did.
     if (inPageCache)
         return true;
 
-    auto* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID()));
+    auto* stateNode = downcast<ScrollingStateScrollingNode>(m_scrollingStateTree->stateNodeForID(scrollingNodeID));
     if (!stateNode)
         return false;
 

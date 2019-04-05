@@ -247,9 +247,9 @@ void RenderMarquee::timerFired()
     if (m_reset) {
         m_reset = false;
         if (isHorizontal())
-            m_layer->scrollToXOffset(m_start, ScrollClamping::Unclamped);
+            m_layer->scrollToXOffset(m_start);
         else
-            m_layer->scrollToYOffset(m_start, ScrollClamping::Unclamped);
+            m_layer->scrollToYOffset(m_start);
         return;
     }
     
@@ -289,9 +289,9 @@ void RenderMarquee::timerFired()
     }
     
     if (isHorizontal())
-        m_layer->scrollToXOffset(newPos, ScrollClamping::Unclamped);
+        m_layer->scrollToXOffset(newPos);
     else
-        m_layer->scrollToYOffset(newPos, ScrollClamping::Unclamped);
+        m_layer->scrollToYOffset(newPos);
 }
 
 } // namespace WebCore

@@ -57,7 +57,7 @@ public:
     FloatPoint lastCommittedScrollPosition() const { return m_lastCommittedScrollPosition; }
 
     // These are imperative; they adjust the scrolling layers.
-    void scrollTo(const FloatPoint&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
+    void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
     void scrollBy(const FloatSize&, ScrollPositionClamp = ScrollPositionClamp::ToContentEdges);
 
     void wasScrolledByDelegatedScrolling(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport = { });

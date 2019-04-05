@@ -1,3 +1,39 @@
+2019-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] REGRESSION (r242687): Programmatic scroll of overflow scroll results in bad rendering
+        https://bugs.webkit.org/show_bug.cgi?id=195584
+
+        Reviewed by Zalan Bujtas.
+
+        Push data to the scrolling tree about whether an overflow:scroll scroll was programmatic, by having
+        RenderLayer::scrollToOffset() call into AsyncScrollingCoordinator::requestScrollPositionUpdate(),
+        just as we do for frames.
+
+        AsyncScrollingCoordinator::requestScrollPositionUpdate() is generalized to take any ScrollableArea.
+
+        Fix an assumption in the ScrollingTree that we only care about programmatic scrolls on the root node.
+        ScrollingTree::commitTreeState() no longer sets isHandlingProgrammaticScroll; instead,
+        callers of ScrollingTreeScrollingNode::scrollTo() pass a ScrollType. Commit functions pass
+        ScrollType::Programmatic when handling RequestedScrollPosition changes as necessary.
+
+        Programmatic scrolls need to get to the scrolling tree in the UI process so that we update
+        the tree's notion of scroll position, and trigger actual UIScrollView scrolls (layers may have
+        already been put in the right locations, but the UI process needs to know that a scroll happened).
+        However, we need to prevent notifications from programmatic scrolls getting back to the
+        web process, because this causes jumpiness. This is done via an early return in
+        RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll().
+
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeFrameScrollingNodeRemoteIOS.mm:
+        (WebKit::ScrollingTreeFrameScrollingNodeRemoteIOS::commitStateAfterChildren): Subframe nodes have
+        a delegate, and that will take care of the requestedScrollPosition update.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+
 2019-04-04  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243888.

@@ -152,20 +152,24 @@ FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& 
 
 void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollPositionClamp clamp)
 {
-    scrollTo(currentScrollPosition() + delta, clamp);
+    scrollTo(currentScrollPosition() + delta, ScrollType::User, clamp);
 }
 
-void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollPositionClamp clamp)
+void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType scrollType, ScrollPositionClamp clamp)
 {
     if (position == m_currentScrollPosition)
         return;
 
+    scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
+    
     m_currentScrollPosition = adjustedScrollPosition(position, clamp);
     
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")");
 
     updateViewportForCurrentScrollPosition();
     currentScrollPositionChanged();
+
+    scrollingTree().setIsHandlingProgrammaticScroll(false);
 }
 
 void ScrollingTreeScrollingNode::currentScrollPositionChanged()

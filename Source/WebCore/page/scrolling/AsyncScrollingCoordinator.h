@@ -95,7 +95,7 @@ private:
     WEBCORE_EXPORT void frameViewRootLayerDidChange(FrameView&) override;
     WEBCORE_EXPORT void frameViewEventTrackingRegionsChanged(FrameView&) override;
 
-    WEBCORE_EXPORT bool requestScrollPositionUpdate(FrameView&, const IntPoint&) override;
+    WEBCORE_EXPORT bool requestScrollPositionUpdate(ScrollableArea&, const IntPoint&) override;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;
 

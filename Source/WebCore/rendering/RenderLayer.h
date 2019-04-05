@@ -420,8 +420,8 @@ public:
     void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped);
 
     // These are only used by marquee.
-    void scrollToXOffset(int x, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, clamping); }
-    void scrollToYOffset(int y, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollType::Programmatic, clamping); }
+    void scrollToXOffset(int x) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, ScrollClamping::Unclamped); }
+    void scrollToYOffset(int y) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollType::Programmatic, ScrollClamping::Unclamped); }
 
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
@@ -1050,6 +1050,7 @@ private:
     IntPoint convertFromContainingViewToScrollbar(const Scrollbar&, const IntPoint&) const override;
     int scrollSize(ScrollbarOrientation) const override;
     void setScrollOffset(const ScrollOffset&) override;
+    ScrollingNodeID scrollingNodeID() const override;
 
     IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const override;
     IntSize overhangAmount() const override;

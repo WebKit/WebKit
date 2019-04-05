@@ -166,9 +166,6 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
             m_asyncFrameOrOverflowScrollingEnabled = scrollingStateTree->rootStateNode()->asyncFrameOrOverflowScrollingEnabled();
     }
     
-    bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
-    SetForScope<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
-
     // unvisitedNodes starts with all nodes in the map; we remove nodes as we visit them. At the end, it's the unvisited nodes.
     // We can't use orphanNodes for this, because orphanNodes won't contain descendants of removed nodes.
     HashSet<ScrollingNodeID> unvisitedNodes;
@@ -402,11 +399,6 @@ void ScrollingTree::setCanRubberBandState(bool canRubberBandAtLeft, bool canRubb
     m_swipeState.rubberBandsAtRight = canRubberBandAtRight;
     m_swipeState.rubberBandsAtTop = canRubberBandAtTop;
     m_swipeState.rubberBandsAtBottom = canRubberBandAtBottom;
-}
-
-bool ScrollingTree::isHandlingProgrammaticScroll()
-{
-    return m_isHandlingProgrammaticScroll;
 }
 
 // Can be called from the main thread.

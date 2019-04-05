@@ -63,7 +63,9 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebC
 void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const ScrollingStateNode& stateNode)
 {
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
-    m_scrollingNodeDelegate->commitStateAfterChildren(downcast<ScrollingStateScrollingNode>(stateNode));
+
+    const auto& scrollingStateNode = downcast<ScrollingStateScrollingNode>(stateNode);
+    m_scrollingNodeDelegate->commitStateAfterChildren(scrollingStateNode);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::repositionScrollingLayers()

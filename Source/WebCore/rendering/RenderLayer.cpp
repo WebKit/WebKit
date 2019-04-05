@@ -2346,7 +2346,14 @@ void RenderLayer::scrollToOffset(const ScrollOffset& scrollOffset, ScrollType sc
     auto previousScrollType = currentScrollType();
     setCurrentScrollType(scrollType);
 
-    scrollToOffsetWithoutAnimation(newScrollOffset, clamping);
+    bool handled = false;
+#if ENABLE(ASYNC_SCROLLING)
+    if (ScrollingCoordinator* scrollingCoordinator = page().scrollingCoordinator())
+        handled = scrollingCoordinator->requestScrollPositionUpdate(*this, scrollPositionFromOffset(scrollOffset));
+#endif
+
+    if (!handled)
+        scrollToOffsetWithoutAnimation(newScrollOffset, clamping);
 
     setCurrentScrollType(previousScrollType);
 }
@@ -2802,6 +2809,14 @@ int RenderLayer::scrollOffset(ScrollbarOrientation orientation) const
         return scrollOffset().y();
 
     return 0;
+}
+
+ScrollingNodeID RenderLayer::scrollingNodeID() const
+{
+    if (!isComposited())
+        return 0;
+
+    return backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
 IntRect RenderLayer::visibleContentRectInternal(VisibleContentRectIncludesScrollbars scrollbarInclusion, VisibleContentRectBehavior) const
