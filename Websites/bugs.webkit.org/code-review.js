@@ -1,4 +1,5 @@
 // Copyright (C) 2010 Adam Barth. All rights reserved.
+// Copyright (C) 2019 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -572,6 +573,12 @@ var CODE_REVIEW_UNITTEST;
       // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
       statusBubble.onload = function () { handleStatusBubbleLoad(this); };
       $('.statusBubble').append(statusBubble);
+
+      var statusBubbleNewEWS = document.createElement('iframe');
+      statusBubbleNewEWS.src  = 'https://ews.webkit.org/status-bubble/' + attachment_id + '/';
+      // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
+      statusBubbleNewEWS.onload = function () { handleStatusBubbleLoadNewEWS(this); };
+      $('.statusBubble').append(statusBubbleNewEWS);
 
       $('#toolbar .bugLink').html('<a href="/show_bug.cgi?id=' + bug_id + '" target="_blank">Bug ' + bug_id + '</a>');
     });

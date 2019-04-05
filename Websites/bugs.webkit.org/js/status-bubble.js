@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +25,7 @@
  */
 
 function handleStatusBubbleMessage(event) {
-    if (event.origin !== 'https://webkit-queues.webkit.org' || !event.data.height)
+    if ((event.origin !== 'https://webkit-queues.webkit.org' && event.origin !== 'https://ews.webkit.org') || !event.data.height)
         return;
 
     for (const iframe of document.querySelectorAll('.statusBubble > iframe')) {
@@ -38,4 +39,8 @@ function handleStatusBubbleMessage(event) {
 
 function handleStatusBubbleLoad(iframe) {
     iframe.contentWindow.postMessage('containerMetrics', 'https://webkit-queues.webkit.org');
+}
+
+function handleStatusBubbleLoadNewEWS(iframe) {
+    iframe.contentWindow.postMessage('containerMetrics', 'https://ews.webkit.org');
 }
