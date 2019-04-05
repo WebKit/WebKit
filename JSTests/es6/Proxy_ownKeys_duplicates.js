@@ -1,29 +1,50 @@
+function handler(key) {
+    return {
+        getOwnPropertyDescriptor(t, n) {
+            // Required to prevent Object.keys() from discarding results
+            return {
+                enumerable: true,
+                configurable: true,
+            };
+        },
+        ownKeys(t) {
+            return [key, key];
+        }
+    };
+}
+
+function shouldThrow(op, errorConstructor, desc) {
+    try {
+        op();
+    } catch (e) {
+        if (!(e instanceof errorConstructor)) {
+            throw new Error(`threw ${e}, but should have thrown ${errorConstructor.name}`);
+        }
+        return;
+    }
+    throw new Error(`Expected ${desc || 'operation'} to throw ${errorConstructor.name}, but no exception thrown`);
+}
+
 function test() {
 
 var symbol = Symbol("test");
-var proxy = new Proxy({}, {
-    getOwnPropertyDescriptor(t, n) {
-        // Required to prevent Object.keys() from discarding results
-        return {
-            enumerable: true,
-            configurable: true
-        };
-    },
-    ownKeys: function (t) {
-        return ["A", "A", "0", "0", symbol, symbol];
-    }
-});
-var keys = Object.keys(proxy);
-var names = Object.getOwnPropertyNames(proxy);
-var symbols = Object.getOwnPropertySymbols(proxy);
+var proxyNamed = new Proxy({}, handler("A"));
+var proxyIndexed = new Proxy({}, handler(0));
+var proxySymbol = new Proxy({}, handler(symbol));
 
-if (keys.length === 4 && keys[0] === keys[1] && keys[2] === keys[3] &&
-    keys[0] === "A" && keys[2] === "0" &&
-    names.length === 4 && names[0] === names[1] && names[2] === names[3] &&
-    names[0] === "A" && names[2] === "0" &&
-    symbols.length === 2 && symbols[0] === symbols[1] && symbols[0] === symbol)
-    return true;
-return false;
+shouldThrow(() => Object.keys(proxyNamed), TypeError, "Object.keys with duplicate named properties");
+shouldThrow(() => Object.keys(proxyIndexed), TypeError, "Object.keys with duplicate indexed properties");
+shouldThrow(() => Object.keys(proxySymbol), TypeError, "Object.keys with duplicate symbol properties");
+
+shouldThrow(() => Object.getOwnPropertyNames(proxyNamed), TypeError, "Object.getOwnPropertyNames with duplicate named properties");
+shouldThrow(() => Object.getOwnPropertyNames(proxyIndexed), TypeError, "Object.getOwnPropertyNames with duplicate indexed properties");
+shouldThrow(() => Object.getOwnPropertyNames(proxySymbol), TypeError, "Object.getOwnPropertyNames with duplicate symbol properties");
+
+shouldThrow(() => Object.getOwnPropertySymbols(proxyNamed), TypeError, "Object.getOwnPropertySymbols with duplicate named properties");
+shouldThrow(() => Object.getOwnPropertySymbols(proxyIndexed), TypeError, "Object.getOwnPropertySymbols with duplicate indexed properties");
+shouldThrow(() => Object.getOwnPropertySymbols(proxySymbol), TypeError, "Object.getOwnPropertySymbols with duplicate symbol properties");
+
+return true;
 
 }
 

@@ -1,3 +1,25 @@
+2019-04-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] throw if 'ownKeys' Proxy trap result contains duplicate keys
+        https://bugs.webkit.org/show_bug.cgi?id=185211
+
+        Reviewed by Saam Barati.
+
+        This is for the normative spec change in https://github.com/tc39/ecma262/pull/833
+
+        This changes several assertions to expect a TypeError to be thrown (in some cases,
+        changing thee expected message).
+
+        * es6/Proxy_ownKeys_duplicates.js:
+        (handler):
+        (shouldThrow):
+        (test):
+        * stress/Object_static_methods_Object.getOwnPropertyDescriptors-proxy.js:
+        (shouldThrow):
+        * stress/proxy-own-keys.js:
+        (i.catch):
+        (assert):
+
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] makeBoundFunction should not assume incoming "length" value is Int32 because it performs some calculation in bytecode

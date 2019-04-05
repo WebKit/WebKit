@@ -1,3 +1,19 @@
+2019-04-05  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] throw if ownKeys Proxy trap result contains duplicate keys
+        https://bugs.webkit.org/show_bug.cgi?id=185211
+
+        Reviewed by Saam Barati.
+
+        Implements the normative spec change in https://github.com/tc39/ecma262/pull/833
+
+        This involves tracking duplicate keys returned from the ownKeys trap in yet
+        another HashTable, and may incur a minor performance penalty in some cases. This
+        is not expected to significantly affect web performance.
+
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] makeBoundFunction should not assume incoming "length" value is Int32 because it performs some calculation in bytecode

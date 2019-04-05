@@ -18,6 +18,17 @@ function shouldBeDataProperty(expected, value, name) {
     shouldBe(undefined, expected.set, name + '.set');
 }
 
+function shouldThrow(op, errorConstructor, desc) {
+    try {
+        op();
+        throw new Error(`Expected ${desc || 'operation'} to throw ${errorConstructor.name}, but no exception thrown`);
+    } catch (e) {
+        if (!(e instanceof errorConstructor)) {
+            throw new Error(`threw ${e}, but should have thrown ${errorConstructor.name}`);
+        }
+    }
+}
+
 (function testPropertyFilteringAndOrder() {
     var log = [];
     var sym = Symbol('test');
@@ -80,13 +91,8 @@ function shouldBeDataProperty(expected, value, name) {
     defineProperty() { throw new Error('[[DefineOwnProperty]] trap should be unreachable'); }
   });
 
-  var result = Object.getOwnPropertyDescriptors(P);
-  shouldBe(true, result.A.configurable, 'for result.A.configurable');
-  shouldBe(false, result.A.writable, 'for result.A.writable');
-  shouldBe('VALUE', result.A.value, 'for result.A.value');
-  shouldBe(false, result.A.enumerable, 'for result.A.enumerable');
-  shouldBe(true, Object.hasOwnProperty.call(result, 'A'));
-  shouldBe('ownKeys()|getOwnPropertyDescriptor(A)|getOwnPropertyDescriptor(A)', log.join('|'));
+  shouldThrow(() => Object.getOwnPropertyDescriptors(P), TypeError, 'ownKeys returning duplicates');
+  shouldBe('ownKeys()', log.join('|'));
 })();
 
 (function testUndefinedPropertyDescriptor() {

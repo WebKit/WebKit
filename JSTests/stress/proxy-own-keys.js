@@ -187,13 +187,12 @@ function assert(b) {
     });
 
     for (let i = 0; i < 500; i++) {
-        // FIXME: we may update the spec to make this test not throw.
-        // see: https://github.com/tc39/ecma262/pull/594
+        // Throws per https://github.com/tc39/ecma262/pull/833
         let threw = false;
         try {
             Reflect.ownKeys(p2);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's 'target' has the non-configurable property 'a' that was not in the result from the 'ownKeys' trap");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' trap result must not contain any duplicate names");
             threw = true;
         }
         assert(threw);
@@ -222,13 +221,12 @@ function assert(b) {
     });
 
     for (let i = 0; i < 500; i++) {
-        // FIXME: we may update the spec to make this test not throw.
-        // see: https://github.com/tc39/ecma262/pull/594
+        // Throws per https://github.com/tc39/ecma262/pull/833
         let threw = false;
         try {
             Reflect.ownKeys(p2);
         } catch(e) {
-            assert(e.toString() === "TypeError: Proxy object's non-extensible 'target' has configurable property 'a' that was not in the result from the 'ownKeys' trap");
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' trap result must not contain any duplicate names");
             threw = true;
         }
         assert(threw);
@@ -255,9 +253,16 @@ function assert(b) {
 
     let proxy = new Proxy(target, handler);
     for (let i = 0; i < 500; i++) {
-        Object.keys(proxy);
+        try {
+            Object.keys(proxy);
+        } catch(e) {
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' trap result must not contain any duplicate names");
+            threw = true;
+        }
         assert(called);
+        assert(threw);
         called = false;
+        threw = false;
     }
 }
 
