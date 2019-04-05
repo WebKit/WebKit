@@ -33,6 +33,8 @@ namespace WebCore {
 
 namespace WHLSL {
 
+class Intrinsics;
+
 namespace AST {
 
 class NativeFunctionDeclaration;
