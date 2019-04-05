@@ -39,10 +39,14 @@ function foo() {
 }
 
 for (let i = 0; i < 10000; i++) {
-    foo(i);
+    try {
+        foo(i);
+    } catch { }
 }
 
-let match = "foo".match(/(?<oolProperty1>foo)/);
-match.groups.oolProperty1 = objY;       // This property overlaps with oolProperty1 of structure S3.
-global = match;
-foo();
+try {
+    let match = "foo".match(/(?<oolProperty1>foo)/);
+    match.groups.oolProperty1 = objY;
+    global = match;
+    foo();
+} catch { }
