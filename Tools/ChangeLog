@@ -1,5 +1,23 @@
 2019-04-05  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(AppleWebKit/605.1.15): WebDownloadDelegate delegate methods called on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=190918
+        <rdar://problem/45603890>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/DownloadThread.mm: Added.
+        (-[DownloadThreadChecker webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+        (-[DownloadThreadChecker downloadDidBegin:]):
+        (-[DownloadThreadChecker download:shouldDecodeSourceDataOfMIMEType:]):
+        (-[DownloadThreadChecker download:decideDestinationWithSuggestedFilename:]):
+        (-[DownloadThreadChecker download:didCreateDestination:]):
+        (-[DownloadThreadChecker downloadDidFinish:]):
+        (TestWebKitAPI::TEST):
+
+2019-04-05  Alex Christensen  <achristensen@webkit.org>
+
         Flaky API Test TestWebKitAPI.WebKit.PerformedActionForURL
         https://bugs.webkit.org/show_bug.cgi?id=196151
 
