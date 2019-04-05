@@ -364,6 +364,8 @@
       "name": "Windows-EWS",
       "shortname": "win",
       "factory": "WindowsFactory",
+      "configuration": "release",
+      "architectures": ["x86_64"],
       "platform": "win",
       "workernames": ["ews200", "ews201", "ews202", "ews203", "ews204", "ews205", "ews206", "ews207", "ews208"]
     },
@@ -371,6 +373,8 @@
       "name": "WinCairo-EWS",
       "shortname": "wincairo",
       "factory": "WinCairoFactory",
+      "configuration": "release",
+      "architectures": ["x86_64"],
       "platform": "wincairo",
       "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
     },
