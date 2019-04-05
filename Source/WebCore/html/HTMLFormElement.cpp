@@ -566,15 +566,15 @@ void HTMLFormElement::registerInvalidAssociatedFormControl(const HTMLFormControl
     ASSERT_WITH_MESSAGE(!is<HTMLFieldSetElement>(formControlElement), "FieldSet are never candidates for constraint validation.");
     ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
 
-    if (m_invalidAssociatedFormControls.computesEmpty())
+    if (m_invalidAssociatedFormControls.isEmpty())
         invalidateStyleForSubtree();
-    m_invalidAssociatedFormControls.add(const_cast<HTMLFormControlElement&>(formControlElement));
+    m_invalidAssociatedFormControls.add(&formControlElement);
 }
 
 void HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded(const HTMLFormControlElement& formControlElement)
 {
-    if (m_invalidAssociatedFormControls.remove(formControlElement)) {
-        if (m_invalidAssociatedFormControls.computesEmpty())
+    if (m_invalidAssociatedFormControls.remove(&formControlElement)) {
+        if (m_invalidAssociatedFormControls.isEmpty())
             invalidateStyleForSubtree();
     }
 }
@@ -587,7 +587,7 @@ bool HTMLFormElement::isURLAttribute(const Attribute& attribute) const
 void HTMLFormElement::registerImgElement(HTMLImageElement* e)
 {
     ASSERT(m_imageElements.find(e) == notFound);
-    m_imageElements.append(makeWeakPtr(e));
+    m_imageElements.append(e);
 }
 
 void HTMLFormElement::removeImgElement(HTMLImageElement* e)
@@ -681,18 +681,18 @@ HTMLFormControlElement* HTMLFormElement::findSubmitButton(const Event* event) co
 
 HTMLFormControlElement* HTMLFormElement::defaultButton() const
 {
-    if (m_defaultButton)
-        return m_defaultButton.get();
-    for (auto& associatedElement : m_associatedElements) {
-        if (!is<HTMLFormControlElement>(*associatedElement))
-            continue;
-        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
-        if (control.isSuccessfulSubmitButton()) {
-            m_defaultButton = makeWeakPtr(control);
-            return &control;
+    if (!m_defaultButton) {
+        for (auto& associatedElement : m_associatedElements) {
+            if (!is<HTMLFormControlElement>(*associatedElement))
+                continue;
+            HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*associatedElement);
+            if (control.isSuccessfulSubmitButton()) {
+                m_defaultButton = &control;
+                break;
+            }
         }
     }
-    return nullptr;
+    return m_defaultButton;
 }
 
 void HTMLFormElement::resetDefaultButton()
@@ -706,7 +706,8 @@ void HTMLFormElement::resetDefaultButton()
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    auto oldDefault = WTFMove(m_defaultButton);
+    auto* oldDefault = m_defaultButton;
+    m_defaultButton = nullptr;
     defaultButton();
     if (m_defaultButton != oldDefault) {
         if (oldDefault)
@@ -809,12 +810,12 @@ void HTMLFormElement::removeFromPastNamesMap(FormNamedItem* item)
 
 bool HTMLFormElement::matchesValidPseudoClass() const
 {
-    return m_invalidAssociatedFormControls.computesEmpty();
+    return m_invalidAssociatedFormControls.isEmpty();
 }
 
 bool HTMLFormElement::matchesInvalidPseudoClass() const
 {
-    return !matchesValidPseudoClass();
+    return !m_invalidAssociatedFormControls.isEmpty();
 }
 
 // FIXME: Use Ref<HTMLElement> for the function result since there are no non-HTML elements returned here.

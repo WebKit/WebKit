@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLPictureElement final : public HTMLElement {
+class HTMLPictureElement final : public HTMLElement, public CanMakeWeakPtr<HTMLPictureElement> {
     WTF_MAKE_ISO_ALLOCATED(HTMLPictureElement);
 public:
     static Ref<HTMLPictureElement> create(const QualifiedName&, Document&);

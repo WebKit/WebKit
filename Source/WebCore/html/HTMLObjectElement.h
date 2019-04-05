@@ -91,7 +91,6 @@ private:
     void derefFormAssociatedElement() final { deref(); }
 
     FormNamedItem* asFormNamedItem() final { return this; }
-    FormAssociatedElement* asFormAssociatedElement() final { return this; }
     HTMLObjectElement& asHTMLElement() final { return *this; }
     const HTMLObjectElement& asHTMLElement() const final { return *this; }
 

@@ -173,8 +173,8 @@ private:
 #endif
 
     HTMLImageLoader m_imageLoader;
-    WeakPtr<HTMLFormElement> m_form;
-    WeakPtr<HTMLFormElement> m_formSetByParser;
+    HTMLFormElement* m_form;
+    HTMLFormElement* m_formSetByParser;
 
     CompositeOperator m_compositeOperator;
     AtomicString m_bestFitImageURL;

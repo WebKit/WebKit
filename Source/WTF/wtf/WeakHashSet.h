@@ -91,36 +91,23 @@ public:
         m_set.add(*makeWeakPtr(value).m_ref);
     }
 
-    template <typename U>
-    bool remove(const U& value)
+    void remove(const T& value)
     {
-        auto* weakReference = weak_reference_downcast<T>(value.weakPtrFactory().m_ref.get());
+        auto* weakReference = value.weakPtrFactory().m_ref.get();
         if (!weakReference)
-            return false;
-        return m_set.remove(weakReference);
+            return;
+        m_set.remove(weakReference);
     }
 
-    template <typename U>
-    bool contains(const U& value) const
+    bool contains(const T& value) const
     {
-        auto* weakReference = weak_reference_downcast<T>(value.weakPtrFactory().m_ref.get());
+        auto* weakReference = value.weakPtrFactory().m_ref.get();
         if (!weakReference)
             return false;
         return m_set.contains(weakReference);
     }
 
     unsigned capacity() const { return m_set.capacity(); }
-
-    bool computesEmpty() const
-    {
-        if (m_set.isEmpty())
-            return true;
-        for (auto& value : m_set) {
-            if (value->get())
-                return false;
-        }
-        return true;
-    }
 
     unsigned computeSize() const
     {

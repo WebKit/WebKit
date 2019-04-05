@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class DocumentFragment;
-class FormAssociatedElement;
 class FormNamedItem;
 class HTMLCollection;
 class HTMLFormElement;
@@ -89,8 +88,7 @@ public:
     bool willRespondToMouseClickEvents() override;
 
     virtual bool isLabelable() const { return false; }
-    virtual FormNamedItem* asFormNamedItem();
-    virtual FormAssociatedElement* asFormAssociatedElement();
+    virtual FormNamedItem* asFormNamedItem() { return 0; }
 
     bool hasTagName(const HTMLQualifiedName& name) const { return hasLocalName(name.localName()); }
 

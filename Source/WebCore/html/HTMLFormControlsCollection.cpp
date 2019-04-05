@@ -75,6 +75,11 @@ Vector<Ref<FormAssociatedElement>> HTMLFormControlsCollection::copyFormControlEl
     return ownerNode().copyAssociatedElementsVector();
 }
 
+const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
+{
+    return ownerNode().imageElements();
+}
+
 static unsigned findFormAssociatedElement(const Vector<FormAssociatedElement*>& elements, const Element& element)
 {
     for (unsigned i = 0; i < elements.size(); ++i) {
@@ -140,9 +145,7 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
         }
     }
 
-    for (auto& elementPtr : ownerNode().imageElements()) {
-        if (!elementPtr)
-            continue;
+    for (auto* elementPtr : formImageElements()) {
         HTMLImageElement& element = *elementPtr;
         const AtomicString& id = element.getIdAttribute();
         if (!id.isEmpty() && !foundInputElements.contains(id.impl()))
