@@ -8990,7 +8990,6 @@
 				5CAFDE452130846300B1F7E1 /* _WKInspector.h in Headers */,
 				5CAFDE472130846A00B1F7E1 /* _WKInspectorInternal.h in Headers */,
 				A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */,
-				A5C0F0AB2000658200536536 /* _WKInspectorWindow.h in Headers */,
 				31B362952141EBCD007BFA53 /* _WKInternalDebugFeature.h in Headers */,
 				31B362972141EBD9007BFA53 /* _WKInternalDebugFeatureInternal.h in Headers */,
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,

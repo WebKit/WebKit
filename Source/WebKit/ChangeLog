@@ -1,3 +1,18 @@
+2019-04-05  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION(r240685): Remove duplicate Headers entry for _WKInspectorWindow.h in Xcode project
+        <https://bugs.webkit.org/show_bug.cgi?id=193951>
+        <rdar://problem/47621366>
+
+        Fixes the following build warnings:
+            Warning: Multiple build commands for output file WebKit2_WebKit.roots/BuildRecords/WebKit2_installhdrs/Root/System/Library/Frameworks/WebKit.framework/PrivateHeaders/_WKInspectorWindow.h
+            Warning: Multiple build commands for output file WebKit2_WebKit.roots/BuildRecords/WebKit2_installapi/Root/System/Library/Frameworks/WebKit.framework/PrivateHeaders/_WKInspectorWindow.h
+            Warning: Multiple build commands for output file WebKit2_WebKit.roots/BuildRecords/WebKit2_install/Root/System/Library/Frameworks/WebKit.framework/PrivateHeaders/_WKInspectorWindow.h
+
+        * WebKit.xcodeproj/project.pbxproj: Remove duplicate entry for
+        _WKInspectorWindow.h.  In r240685, a second Headers entry was
+        added, but the first one was never removed.
+
 2019-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Use a smart pointer for AccessibilityObject wrapper and remove GTK specific code
