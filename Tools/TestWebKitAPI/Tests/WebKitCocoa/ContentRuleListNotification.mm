@@ -168,7 +168,9 @@ TEST(WebKit, PerformedActionForURL)
     [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<script>fetch('notify').then(function(){fetch('block').then().catch(function(){alert('test complete')})})</script>" baseURL:[NSURL URLWithString:@"apitest:///"]];
     TestWebKitAPI::Util::run(&receivedAlert);
-    
+    while (notificationList.size() < 2)
+        TestWebKitAPI::Util::spinRunLoop();
+
     Vector<Notification> expectedNotifications {
         { "firstList", "apitest:///notify", false, false, false, { "testnotification" } },
         { "secondList", "apitest:///block", true, false, false, { } }
