@@ -1,5 +1,16 @@
 2019-04-05  Eric Carlson  <eric.carlson@apple.com>
 
+        Remove AUDIO_TOOLBOX_AUDIO_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=196653
+        <rdar://problem/49652098>
+
+        Reviewed by Jer Noble.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setAudioSessionCategoryOverride:]):
+
+2019-04-05  Eric Carlson  <eric.carlson@apple.com>
+
         Stop including <AudioToolbox/AudioSession.h>
         https://bugs.webkit.org/show_bug.cgi?id=196648
         <rdar://problem/39665771>
