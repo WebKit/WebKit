@@ -1,3 +1,27 @@
+2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] makeBoundFunction should not assume incoming "length" value is Int32 because it performs some calculation in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=196631
+
+        Reviewed by Saam Barati.
+
+        makeBoundFunction assumes that "length" argument is always Int32. But this should not be done since this "length" value is calculated in builtin JS code.
+        DFG may store this value in Double format so that we should not rely on that this value is Int32. This patch fixes makeBoundFunction function to perform
+        toInt32 operation. We also insert a missing exception check for `JSString::value(ExecState*)` in makeBoundFunction.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * interpreter/CallFrameInlines.h:
+        * runtime/DoublePredictionFuzzerAgent.cpp: Copied from Source/JavaScriptCore/interpreter/CallFrameInlines.h.
+        (JSC::DoublePredictionFuzzerAgent::DoublePredictionFuzzerAgent):
+        (JSC::DoublePredictionFuzzerAgent::getPrediction):
+        * runtime/DoublePredictionFuzzerAgent.h: Copied from Source/JavaScriptCore/interpreter/CallFrameInlines.h.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::makeBoundFunction):
+        * runtime/Options.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+
 2019-04-04  Robin Morisset  <rmorisset@apple.com>
 
         B3ReduceStrength should know that Mul distributes over Add and Sub

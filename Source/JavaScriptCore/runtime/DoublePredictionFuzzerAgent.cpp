@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "CallFrame.h"
-#include "JSCallee.h"
-#include "JSGlobalObject.h"
+#include "config.h"
+#include "DoublePredictionFuzzerAgent.h"
 
 namespace JSC {
 
-inline bool CallFrame::isStackOverflowFrame() const
+DoublePredictionFuzzerAgent::DoublePredictionFuzzerAgent(VM&)
 {
-    if (callee().isWasm())
-        return false;
-    return jsCallee() == jsCallee()->globalObject()->stackOverflowFrameCallee();
 }
 
-inline bool CallFrame::isWasmFrame() const
+SpeculatedType DoublePredictionFuzzerAgent::getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType original)
 {
-    return callee().isWasm();
+    if (original && mergeSpeculations(original, SpecBytecodeNumber) == SpecBytecodeNumber)
+        return SpecBytecodeDouble;
+    return original;
 }
 
 } // namespace JSC

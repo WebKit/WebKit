@@ -1,3 +1,15 @@
+2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] makeBoundFunction should not assume incoming "length" value is Int32 because it performs some calculation in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=196631
+
+        Reviewed by Saam Barati.
+
+        * stress/make-bound-function-should-not-assume-int32-length.js: Added.
+        (assert):
+        (test):
+        (foo):
+
 2019-04-04  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Make the test from r243906 catch the thrown exceptions.

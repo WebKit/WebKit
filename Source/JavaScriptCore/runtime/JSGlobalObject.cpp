@@ -238,16 +238,26 @@ static JSValue createConsoleProperty(VM& vm, JSObject* object)
 static EncodedJSValue JSC_HOST_CALL makeBoundFunction(ExecState* exec)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
 
     JSObject* target = asObject(exec->uncheckedArgument(0));
     JSValue boundThis = exec->uncheckedArgument(1);
     JSValue boundArgs = exec->uncheckedArgument(2);
-    JSValue length = exec->uncheckedArgument(3);
-    JSString* name = asString(exec->uncheckedArgument(4));
+    JSValue lengthValue = exec->uncheckedArgument(3);
+    JSString* nameString = asString(exec->uncheckedArgument(4));
 
-    return JSValue::encode(JSBoundFunction::create(
-        vm, exec, globalObject, target, boundThis, boundArgs.isCell() ? jsCast<JSArray*>(boundArgs) : nullptr, length.asInt32(), name->value(exec)));
+    ASSERT(lengthValue.isAnyInt());
+    ASSERT(lengthValue.asAnyInt() <= INT32_MAX);
+    ASSERT(lengthValue.asAnyInt() >= INT32_MIN);
+    int32_t length = lengthValue.toInt32(exec);
+    scope.assertNoException();
+
+    String name = nameString->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(JSBoundFunction::create(vm, exec, globalObject, target, boundThis, boundArgs.isCell() ? jsCast<JSArray*>(boundArgs) : nullptr, length, WTFMove(name))));
 }
 
 static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(ExecState* exec)

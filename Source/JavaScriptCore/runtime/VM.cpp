@@ -41,6 +41,7 @@
 #include "DFGWorklist.h"
 #include "DirectEvalExecutable.h"
 #include "Disassembler.h"
+#include "DoublePredictionFuzzerAgent.h"
 #include "Error.h"
 #include "ErrorConstructor.h"
 #include "ErrorInstance.h"
@@ -459,8 +460,11 @@ VM::VM(VMType vmType, HeapType heapType)
         m_samplingProfiler->start();
     }
 #endif // ENABLE(SAMPLING_PROFILER)
+
     if (Options::useRandomizingFuzzerAgent())
         setFuzzerAgent(std::make_unique<RandomizingFuzzerAgent>(*this));
+    else if (Options::useDoublePredictionFuzzerAgent())
+        setFuzzerAgent(std::make_unique<DoublePredictionFuzzerAgent>(*this));
 
     if (Options::alwaysGeneratePCToCodeOriginMap())
         setShouldBuildPCToCodeOriginMapping();
