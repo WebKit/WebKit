@@ -1,3 +1,27 @@
+2019-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(AppleWebKit/605.1.15): WebDownloadDelegate delegate methods called on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=190918
+        <rdar://problem/45603890>
+
+        Reviewed by Darin Adler.
+
+        Since we not doing networking on the main thread but WebView is to be used on the main thread,
+        we need to hop delegate calls to the main thread similarly to how we do it in the non-download
+        delegate calls in WebCoreResourceHandleAsOperationQueueDelegate.
+
+        * Misc/WebDownload.mm:
+        (-[WebDownloadInternal downloadDidBegin:]):
+        (-[WebDownloadInternal download:willSendRequest:redirectResponse:]):
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        (-[WebDownloadInternal download:didReceiveResponse:]):
+        (-[WebDownloadInternal download:didReceiveDataOfLength:]):
+        (-[WebDownloadInternal download:shouldDecodeSourceDataOfMIMEType:]):
+        (-[WebDownloadInternal download:decideDestinationWithSuggestedFilename:]):
+        (-[WebDownloadInternal download:didCreateDestination:]):
+        (-[WebDownloadInternal downloadDidFinish:]):
+        (-[WebDownloadInternal download:didFailWithError:]):
+
 2019-04-05  Eric Carlson  <eric.carlson@apple.com>
 
         Remove AUDIO_TOOLBOX_AUDIO_SESSION
