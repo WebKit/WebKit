@@ -1,5 +1,22 @@
 2019-04-05  Caitlin Potter  <caitp@igalia.com>
 
+        [JSC] Filter DontEnum properties in ProxyObject::getOwnPropertyNames()
+        https://bugs.webkit.org/show_bug.cgi?id=176810
+
+        Reviewed by Saam Barati.
+
+        Add tests for the DontEnum filtering, and variations of other tests
+        take the DontEnum-filtering path.
+
+        * stress/proxy-own-keys.js:
+        (i.catch):
+        (set assert):
+        (set add):
+        (let.set new):
+        (get let):
+
+2019-04-05  Caitlin Potter  <caitp@igalia.com>
+
         [JSC] throw if 'ownKeys' Proxy trap result contains duplicate keys
         https://bugs.webkit.org/show_bug.cgi?id=185211
 
