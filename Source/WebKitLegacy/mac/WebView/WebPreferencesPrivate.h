@@ -62,6 +62,15 @@ typedef enum {
     WebKitFrameFlatteningFullyEnabled
 } WebKitFrameFlattening;
 
+typedef enum : unsigned {
+    WebKitAudioSessionCategoryAmbientSound = 'ambi',
+    WebKitAudioSessionCategorySoloAmbientSound = 'solo',
+    WebKitAudioSessionCategoryMediaPlayback = 'medi',
+    WebKitAudioSessionCategoryRecordAudio = 'reca',
+    WebKitAudioSessionCategoryPlayAndRecord = 'plar',
+    WebKitAudioSessionCategoryAudioProcessing = 'proc',
+} WebKitAudioSessionCategory;
+
 extern NSString *WebPreferencesChangedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 extern NSString *WebPreferencesRemovedNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
 extern NSString *WebPreferencesChangedInternalNotification WEBKIT_DEPRECATED_MAC(10_3, 10_14);
