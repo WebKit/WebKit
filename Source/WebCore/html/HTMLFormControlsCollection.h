@@ -56,7 +56,6 @@ private:
 
     const Vector<FormAssociatedElement*>& unsafeFormControlElements() const;
     Vector<Ref<FormAssociatedElement>> copyFormControlElementsVector() const;
-    const Vector<HTMLImageElement*>& formImageElements() const;
 
     mutable Element* m_cachedElement;
     mutable unsigned m_cachedElementOffsetInArray;

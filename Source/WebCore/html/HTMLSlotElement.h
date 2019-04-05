@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class HTMLSlotElement final : public HTMLElement, public CanMakeWeakPtr<HTMLSlotElement> {
+class HTMLSlotElement final : public HTMLElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLSlotElement);
 public:
     static Ref<HTMLSlotElement> create(const QualifiedName&, Document&);

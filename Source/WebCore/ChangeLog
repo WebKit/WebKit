@@ -1,3 +1,53 @@
+2019-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make WeakPtr<Element> possible and deploy it in form associated elements code
+        https://bugs.webkit.org/show_bug.cgi?id=196626
+
+        Reviewed by Antti Koivisto.
+
+        Make Element inherit from CanMakeWeakPtr and deploy WeakPtr<*Element> in FormAssociatedElement and HTMLFormElement.
+
+        No new tests sine there should be no behavioral change.
+
+        * dom/Element.h:
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::FormAssociatedElement):
+        (WebCore::FormAssociatedElement::insertedIntoAncestor):
+        (WebCore::FormAssociatedElement::setForm):
+        (WebCore::FormAssociatedElement::resetFormOwner):
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+        * html/FormAssociatedElement.h:
+        (WebCore::FormAssociatedElement::form const):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::asFormNamedItem):
+        (WebCore::HTMLElement::asFormAssociatedElement):
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::asFormNamedItem): Deleted.
+        * html/HTMLFormControlElement.h:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::formImageElements const): Inlined into updateNamedElementCache.
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache const):
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::registerInvalidAssociatedFormControl):
+        (WebCore::HTMLFormElement::removeInvalidAssociatedFormControlIfNeeded):
+        (WebCore::HTMLFormElement::registerImgElement):
+        (WebCore::HTMLFormElement::defaultButton const):
+        (WebCore::HTMLFormElement::resetDefaultButton):
+        (WebCore::HTMLFormElement::matchesValidPseudoClass const):
+        (WebCore::HTMLFormElement::matchesInvalidPseudoClass const):
+        * html/HTMLFormElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::insertedIntoAncestor):
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.h:
+        * html/HTMLObjectElement.h:
+        * html/HTMLPictureElement.h:
+        * html/HTMLSlotElement.h:
+        * svg/SVGElement.h:
+
 2019-04-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Use a smart pointer for AccessibilityObject wrapper and remove GTK specific code

@@ -52,7 +52,7 @@ private:
 
 FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
     : m_form(nullptr)
-    , m_formSetByParser(form)
+    , m_formSetByParser(makeWeakPtr(form))
 {
 }
 
@@ -74,7 +74,7 @@ void FormAssociatedElement::insertedIntoAncestor(Node::InsertionType insertionTy
     if (m_formSetByParser) {
         // The form could have been removed by a script during parsing.
         if (m_formSetByParser->isConnected())
-            setForm(m_formSetByParser);
+            setForm(m_formSetByParser.get());
         m_formSetByParser = nullptr;
     }
 
@@ -146,9 +146,9 @@ void FormAssociatedElement::setForm(HTMLFormElement* newForm)
     willChangeForm();
     if (m_form)
         m_form->removeFormElement(this);
-    m_form = newForm;
-    if (m_form)
-        m_form->registerFormElement(this);
+    m_form = makeWeakPtr(newForm);
+    if (newForm)
+        newForm->registerFormElement(this);
     didChangeForm();
 }
 
@@ -172,10 +172,11 @@ void FormAssociatedElement::formWillBeDestroyed()
 
 void FormAssociatedElement::resetFormOwner()
 {
-    RefPtr<HTMLFormElement> originalForm = m_form;
-    setForm(findAssociatedForm(&asHTMLElement(), m_form));
+    RefPtr<HTMLFormElement> originalForm = m_form.get();
+    setForm(findAssociatedForm(&asHTMLElement(), originalForm.get()));
     HTMLElement& element = asHTMLElement();
-    if (m_form && m_form != originalForm && m_form->isConnected())
+    auto* newForm = m_form.get();
+    if (newForm && newForm != originalForm && newForm->isConnected())
         element.document().didAssociateFormControl(element);
 }
 
@@ -184,9 +185,11 @@ void FormAssociatedElement::formAttributeChanged()
     HTMLElement& element = asHTMLElement();
     if (!element.hasAttributeWithoutSynchronization(formAttr)) {
         // The form attribute removed. We need to reset form owner here.
-        RefPtr<HTMLFormElement> originalForm = m_form;
+        RefPtr<HTMLFormElement> originalForm = m_form.get();
+        // FIXME: Why does this not pass originalForm to findClosestFormAncestor?
         setForm(HTMLFormElement::findClosestFormAncestor(element));
-        if (m_form && m_form != originalForm && m_form->isConnected())
+        auto* newForm = m_form.get();
+        if (newForm && newForm != originalForm && newForm->isConnected())
             element.document().didAssociateFormControl(element);
         m_formAttributeTargetObserver = nullptr;
     } else {

@@ -54,7 +54,7 @@ struct InputElementClickState {
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
-class HTMLInputElement : public HTMLTextFormControlElement, public CanMakeWeakPtr<HTMLInputElement> {
+class HTMLInputElement : public HTMLTextFormControlElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLInputElement);
 public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);

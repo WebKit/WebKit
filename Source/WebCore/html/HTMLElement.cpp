@@ -762,6 +762,16 @@ HTMLFormElement* HTMLElement::form() const
     return HTMLFormElement::findClosestFormAncestor(*this);
 }
 
+FormNamedItem* HTMLElement::asFormNamedItem()
+{
+    return nullptr;
+}
+
+FormAssociatedElement* HTMLElement::asFormAssociatedElement()
+{
+    return nullptr;
+}
+
 static inline bool elementAffectsDirectionality(const Node& node)
 {
     if (!is<HTMLElement>(node))
