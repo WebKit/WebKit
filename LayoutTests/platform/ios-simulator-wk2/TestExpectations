@@ -90,3 +90,5 @@ webkit.org/b/196495 fast/viewport/ios/viewport-shrink-to-fit-on-new-navigation.h
 webkit.org/b/195341 fast/viewport/ios/constant-width-viewport-after-changing-view-scale.html [ Pass Failure ]
 
 webkit.org/b/196612 scrollingcoordinator/ios/ui-scroll-fixed.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/196654 [ Debug ] editing/execCommand/print.html [ Skip ]
