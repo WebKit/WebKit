@@ -1,3 +1,14 @@
+2019-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Use a correct LC_RPATH when building with ASan
+        https://bugs.webkit.org/show_bug.cgi?id=196576
+
+        Reviewed by David Kilzer.
+
+        * asan/asan.xcconfig: As a temporary hack, just force LC_RPATH on all binaries,
+        so that ../Frameworks is checked. This is simpler and more reliable than updating
+        each SPC service xcconfig.
+
 2019-04-04  Aakash Jain  <aakash_jain@apple.com>
 
         Disable Flaky API Test TestWebKitAPI.WebKit.FocusTextInputContext
