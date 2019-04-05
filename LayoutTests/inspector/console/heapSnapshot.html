@@ -27,7 +27,8 @@ function test()
             });
 
             ProtocolTest.evaluateInPage("triggerHeapSnapshotNoTitle()");
-        }
+        },
+        timeout: -1,
     });
 
     suite.addTestCase({
@@ -42,7 +43,8 @@ function test()
             });
 
             ProtocolTest.evaluateInPage("triggerHeapSnapshotWithTitle()");
-        }
+        },
+        timeout: -1,
     });
 
     suite.runTestCasesAndFinish();

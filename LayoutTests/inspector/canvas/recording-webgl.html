@@ -526,6 +526,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1});
         },
+        timeout: -1,
     });
 
     suite.addTestCase({
@@ -534,6 +535,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject);
         },
+        timeout: -1,
     });
 
     suite.addTestCase({
@@ -542,6 +544,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {memoryLimit: 10});
         },
+        timeout: -1,
     });
 
     suite.addTestCase({

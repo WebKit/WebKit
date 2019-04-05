@@ -444,6 +444,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {frameCount: 1});
         },
+        timeout: -1,
     });
 
     suite.addTestCase({
@@ -452,6 +453,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject);
         },
+        timeout: -1,
     });
 
     suite.addTestCase({
@@ -460,6 +462,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.Canvas2D, resolve, reject, {memoryLimit: 10});
         },
+        timeout: -1,
     });
 
     suite.addTestCase({

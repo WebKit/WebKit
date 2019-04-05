@@ -65,8 +65,8 @@ PAUSE AT entryConsoleLog:12:2
 ACTION: resume
 RESUMED
 PASS: Should have used all steps.
--- Running test setup.
 
+-- Running test setup.
 -- Running test case: Debugger.setPauseForInternalScripts.Enabled
 EXPRESSION: setTimeout(entryConsoleLog)
 STEPS: over, in, in, in, resume

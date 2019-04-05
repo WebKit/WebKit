@@ -54,7 +54,7 @@ TestSuite = class TestSuite
 
     get passCount()
     {
-        return this.runCount - this.failCount;
+        return this.runCount - (this.failCount - this.skipCount);
     }
 
     get skipCount()
@@ -135,45 +135,73 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
 
         // Avoid adding newlines if nothing was logged.
         let priorLogCount = this._harness.logCount;
-        let result = this.testcases.reduce((chain, testcase, i) => {
-            if (testcase.setup) {
-                chain = chain.then(() => {
+
+        return Promise.resolve().then(() => Promise.chain(this.testcases.map((testcase, i) => () => new Promise(async (resolve, reject) => {
+            if (i > 0 && priorLogCount < this._harness.logCount)
+                this._harness.log("");
+            priorLogCount = this._harness.logCount;
+
+            let hasTimeout = testcase.timeout !== -1;
+            let timeoutId = undefined;
+            if (hasTimeout) {
+                let delay = testcase.timeout || 10000;
+                timeoutId = setTimeout(() => {
+                    if (!timeoutId)
+                        return;
+
+                    timeoutId = undefined;
+
+                    this.failCount++;
+                    this._harness.log(`!! TIMEOUT: took longer than ${delay}ms`);
+
+                    resolve();
+                }, delay);
+            }
+
+            try {
+                if (testcase.setup) {
                     this._harness.log("-- Running test setup.");
+                    priorLogCount++;
+
                     if (testcase.setup[Symbol.toStringTag] === "AsyncFunction")
-                        return testcase.setup();
-                    return new Promise(testcase.setup);
-                });
-            }
+                        await testcase.setup();
+                    else
+                        await new Promise(testcase.setup);
+                }
 
-            chain = chain.then(() => {
-                if (i > 0 && priorLogCount + 1 < this._harness.logCount)
-                    this._harness.log("");
-
-                priorLogCount = this._harness.logCount;
-                this._harness.log(`-- Running test case: ${testcase.name}`);
                 this.runCount++;
+
+                this._harness.log(`-- Running test case: ${testcase.name}`);
+                priorLogCount++;
+
                 if (testcase.test[Symbol.toStringTag] === "AsyncFunction")
-                    return testcase.test();
-                return new Promise(testcase.test);
-            });
+                    await testcase.test();
+                else
+                    await new Promise(testcase.test);
 
-            if (testcase.teardown) {
-                chain = chain.then(() => {
+                if (testcase.teardown) {
                     this._harness.log("-- Running test teardown.");
+                    priorLogCount++;
+
                     if (testcase.teardown[Symbol.toStringTag] === "AsyncFunction")
-                        return testcase.teardown();
-                    return new Promise(testcase.teardown);
-                });
+                        await testcase.teardown();
+                    else
+                        await new Promise(testcase.teardown);
+                }
+            } catch (e) {
+                this.failCount++;
+                this.logThrownObject(e);
             }
-            return chain;
-        }, Promise.resolve());
 
-        return result.catch((e) => {
-            this.failCount++;
-            this.logThrownObject(e);
+            if (!hasTimeout || timeoutId) {
+                clearTimeout(timeoutId);
+                timeoutId = undefined;
 
-            throw e; // Reject this promise by re-throwing the error.
-        });
+                resolve();
+            }
+        })))
+        // Clear result value.
+        .then(() => {}));
     }
 };
 
@@ -208,53 +236,51 @@ SyncTestSuite = class SyncTestSuite extends TestSuite
         let priorLogCount = this._harness.logCount;
         for (let i = 0; i < this.testcases.length; i++) {
             let testcase = this.testcases[i];
-            if (i > 0 && priorLogCount + 1 < this._harness.logCount)
-                this._harness.log("");
 
+            if (i > 0 && priorLogCount < this._harness.logCount)
+                this._harness.log("");
             priorLogCount = this._harness.logCount;
 
-            // Run the setup action, if one was provided.
-            if (testcase.setup) {
-                this._harness.log("-- Running test setup.");
-                try {
-                    let result = testcase.setup.call(null);
-                    if (result === false) {
-                        this._harness.log("!! SETUP FAILED");
-                        return false;
-                    }
-                } catch (e) {
-                    this.logThrownObject(e);
-                    return false;
-                }
-            }
-
-            this._harness.log("-- Running test case: " + testcase.name);
-            this.runCount++;
             try {
-                let result = testcase.test.call(null);
-                if (result === false) {
+                // Run the setup action, if one was provided.
+                if (testcase.setup) {
+                    this._harness.log("-- Running test setup.");
+                    priorLogCount++;
+
+                    let setupResult = testcase.setup();
+                    if (setupResult === false) {
+                        this._harness.log("!! SETUP FAILED");
+                        this.failCount++;
+                        continue;
+                    }
+                }
+
+                this.runCount++;
+
+                this._harness.log(`-- Running test case: ${testcase.name}`);
+                priorLogCount++;
+
+                let testResult = testcase.test();
+                if (testResult === false) {
                     this.failCount++;
-                    return false;
+                    continue;
+                }
+
+                // Run the teardown action, if one was provided.
+                if (testcase.teardown) {
+                    this._harness.log("-- Running test teardown.");
+                    priorLogCount++;
+
+                    let teardownResult = testcase.teardown();
+                    if (teardownResult === false) {
+                        this._harness.log("!! TEARDOWN FAILED");
+                        this.failCount++;
+                        continue;
+                    }
                 }
             } catch (e) {
                 this.failCount++;
                 this.logThrownObject(e);
-                return false;
-            }
-
-            // Run the teardown action, if one was provided.
-            if (testcase.teardown) {
-                this._harness.log("-- Running test teardown.");
-                try {
-                    let result = testcase.teardown.call(null);
-                    if (result === false) {
-                        this._harness.log("!! TEARDOWN FAILED");
-                        return false;
-                    }
-                } catch (e) {
-                    this.logThrownObject(e);
-                    return false;
-                }
             }
         }
 

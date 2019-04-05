@@ -1,3 +1,30 @@
+2019-04-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: TestSuite test cases should have their own timeout to ensure tests fail with output instead of timeout by test runner
+        https://bugs.webkit.org/show_bug.cgi?id=162814
+        <rdar://problem/28574102>
+
+        Reviewed by Brian Burg.
+
+        A 10s timer is started for every test case added to an async suite. The timer is cleared
+        when the test finishes, but if the timer fires, the test is forcibly ended with an error.
+
+        This timer can be configured by setting a `timeout` value when adding the test case. Values
+        are expected to be in milliseconds. The value `-1` will prevent a timer from being set.
+
+        This change also relaxes the expectation that any individual test case failure will stop the
+        rest of the suite from running. Since timers are set per test case, it is possible to
+        recover from a "bad" test case to still run the remaining test cases.
+
+        NOTE: there may be unexpected behaviour if a test times out, as the timer doesn't actually
+        stop the execution of the test, so it may still run and log information, which may appear
+        "out of nowhere" in the middle of other tests.
+
+        * UserInterface/Test/TestSuite.js:
+        (TestSuite.prototype.get passCount):
+        (AsyncTestSuite.prototype.runTestCases):
+        (SyncTestSuite.prototype.runTestCases):
+
 2019-04-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Single click on links in non-read-only TextEditors should not follow links

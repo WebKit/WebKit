@@ -6,8 +6,8 @@ Test for `Network.setResourceCachingDisabled` for disk cache loads.
 -- Running test case: PossibleNetworkLoad
 PASS: Resource should be created.
 PASS: Resource should receive a Response.
--- Running test setup.
 
+-- Running test setup.
 -- Running test case: SetResourceCachingDisabled.DiskCache
 PASS: Resource should be created.
 PASS: Resource should receive a Response.

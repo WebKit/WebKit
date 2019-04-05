@@ -1,3 +1,35 @@
+2019-04-05  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: TestSuite test cases should have their own timeout to ensure tests fail with output instead of timeout by test runner
+        https://bugs.webkit.org/show_bug.cgi?id=162814
+        <rdar://problem/28574102>
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/async-test-suite.html:
+        * inspector/unit-tests/async-test-suite-expected.txt:
+        * inspector/unit-tests/sync-test-suite.html:
+        * inspector/unit-tests/sync-test-suite-expected.txt:
+
+        * http/tests/inspector/network/set-resource-caching-disabled-disk-cache-expected.txt:
+        * inspector/canvas/recording-2d.html:
+        * inspector/canvas/recording-webgl-snapshots.html:
+        * inspector/canvas/recording-webgl.html:
+        * inspector/canvas/resources/shaderProgram-utilities.js:
+        (TestPage.registerInitializer.whenProgramAdded): Added.
+        (TestPage.registerInitializer.whenProgramRemoved): Added.
+        (TestPage.registerInitializer.window.initializeTestSuite):
+        (TestPage.registerInitializer.window.addSimpleTestCase):
+        (TestPage.registerInitializer.window.addParentCanvasRemovedTestCase):
+        (TestPage.registerInitializer.awaitProgramAdded): Added.
+        (TestPage.registerInitializer.awaitProgramRemoved): Added.
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/heap-snapshot.html:
+        * inspector/debugger/async-stack-trace-truncate-expected.txt:
+        * inspector/debugger/pause-for-internal-scripts-expected.txt:
+        * inspector/formatting/resources/utilities.js:
+        (TestPage.registerInitializer.window.addFormattingTests):
+
 2019-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         [Mac WK2 iOS Sim] Layout Test imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html is a flaky failure

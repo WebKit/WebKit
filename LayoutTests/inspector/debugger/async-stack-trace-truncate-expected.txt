@@ -10,9 +10,9 @@ CALL STACK:
 0: [F] handleAnimationFrame
 PASS: Async stack trace should be null.
 -- Running test teardown.
+
 -- Running test setup.
 Set maximum stack trace depth = 10.
-
 -- Running test case: AsyncStackTrace.CheckTruncated
 PAUSED
 CALL STACK:
@@ -31,9 +31,9 @@ ASYNC CALL STACK:
 (remaining call frames truncated)
 PASS: Async stack trace should be truncated.
 -- Running test teardown.
+
 -- Running test setup.
 Set maximum stack trace depth = 10.
-
 -- Running test case: AsyncStackTrace.CheckNotTruncated
 PAUSED
 CALL STACK:

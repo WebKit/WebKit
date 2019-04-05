@@ -43,7 +43,7 @@ TestPage.registerInitializer(function() {
 
     window.addFormattingTests = function(suite, mode, tests) {
         let testPageURL = WI.networkManager.mainFrame.mainResource.url;
-        let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));            
+        let testPageResourcesURL = testPageURL.substring(0, testPageURL.lastIndexOf("/"));
 
         for (let test of tests) {
             let testName = test.substring(test.lastIndexOf("/") + 1);
@@ -52,7 +52,8 @@ TestPage.registerInitializer(function() {
                 name: suite.name + "." + testName,
                 test(resolve, reject) {
                     runFormattingTest(mode, testName, testURL).then(resolve).catch(reject);
-                }
+                },
+                timeout: -1,
             });
         }
     };

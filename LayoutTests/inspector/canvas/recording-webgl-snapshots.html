@@ -102,6 +102,7 @@ function test() {
         test(resolve, reject) {
             startRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {frameCount: 1, checkForContentChange: true});
         },
+        timeout: -1,
     });
 
     suite.runTestCasesAndFinish();
