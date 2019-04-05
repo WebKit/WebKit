@@ -1,3 +1,15 @@
+2019-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Element::isFocusable() debug asserts too frequently
+        https://bugs.webkit.org/show_bug.cgi?id=196634
+
+        Reviewed by Geoffrey Garen.
+
+        Remove the debug assertion for now.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable const):
+
 2019-04-04  Simon Fraser  <simon.fraser@apple.com>
 
         Have ScrollableArea store a ScrollType for the current scroll

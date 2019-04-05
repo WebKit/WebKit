@@ -553,7 +553,8 @@ bool Element::isFocusable() const
     if (!renderer()) {
         // If the node is in a display:none tree it might say it needs style recalc but
         // the whole document is actually up to date.
-        ASSERT(!needsStyleRecalc() || !document().childNeedsStyleRecalc());
+        // FIXME: We should be able to assert !needsStyleRecalc() || !document().childNeedsStyleRecalc()
+        // but it hits too frequently on websites like Gmail and Microsoft Exchange.
 
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
