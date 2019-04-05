@@ -137,6 +137,10 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "WebSQLiteDatabaseTracker.h"
+#endif
+
 #if ENABLE(SEC_ITEM_SHIM)
 #include "SecItemShim.h"
 #endif
@@ -184,7 +188,7 @@ WebProcess::WebProcess()
 #endif
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 #if PLATFORM(IOS_FAMILY)
-    , m_webSQLiteDatabaseTracker(*this)
+    , m_webSQLiteDatabaseTracker(std::make_unique<WebSQLiteDatabaseTracker>(*this))
 #endif
 {
     // Initialize our platform strategies.
@@ -1461,6 +1465,9 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    m_webSQLiteDatabaseTracker = nullptr;
+    SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
+    DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     accessibilityProcessSuspendedNotification(true);
     updateFreezerStatus();
 #endif
@@ -1489,7 +1496,6 @@ void WebProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& co
     }
 
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processWillSuspendImminently()", this);
-    DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     completionHandler(true);
 }
@@ -1506,6 +1512,8 @@ void WebProcess::cancelPrepareToSuspend()
     unfreezeAllLayerTrees();
 
 #if PLATFORM(IOS_FAMILY)
+    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
+    SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
 #endif
 
@@ -1577,6 +1585,8 @@ void WebProcess::processDidResume()
     unfreezeAllLayerTrees();
     
 #if PLATFORM(IOS_FAMILY)
+    m_webSQLiteDatabaseTracker = std::make_unique<WebSQLiteDatabaseTracker>(*this);
+    SQLiteDatabase::setIsDatabaseOpeningForbidden(false);
     accessibilityProcessSuspendedNotification(false);
 #endif
 

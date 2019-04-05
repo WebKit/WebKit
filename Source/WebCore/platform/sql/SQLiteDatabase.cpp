@@ -71,6 +71,15 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
+static bool isDatabaseOpeningForbidden = false;
+static Lock isDatabaseOpeningForbiddenMutex;
+
+void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
+{
+    std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
+    isDatabaseOpeningForbidden = isForbidden;
+}
+
 SQLiteDatabase::SQLiteDatabase() = default;
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -84,27 +93,35 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
 
     close();
 
-    int flags = SQLITE_OPEN_AUTOPROXY;
-    switch (openMode) {
-    case OpenMode::ReadOnly:
-        flags |= SQLITE_OPEN_READONLY;
-        break;
-    case OpenMode::ReadWrite:
-        flags |= SQLITE_OPEN_READWRITE;
-        break;
-    case OpenMode::ReadWriteCreate:
-        flags |= SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-        break;
-    }
+    {
+        std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
+        if (isDatabaseOpeningForbidden) {
+            m_openErrorMessage = "opening database is forbidden";
+            return false;
+        }
 
-    m_openError = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
-    if (m_openError != SQLITE_OK) {
-        m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
-        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
-            m_openErrorMessage.data());
-        sqlite3_close(m_db);
-        m_db = 0;
-        return false;
+        int flags = SQLITE_OPEN_AUTOPROXY;
+        switch (openMode) {
+        case OpenMode::ReadOnly:
+            flags |= SQLITE_OPEN_READONLY;
+            break;
+        case OpenMode::ReadWrite:
+            flags |= SQLITE_OPEN_READWRITE;
+            break;
+        case OpenMode::ReadWriteCreate:
+            flags |= SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+            break;
+        }
+
+        m_openError = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
+        if (m_openError != SQLITE_OK) {
+            m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
+            LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
+                m_openErrorMessage.data());
+            sqlite3_close(m_db);
+            m_db = 0;
+            return false;
+        }
     }
 
     overrideUnauthorizedFunctions();

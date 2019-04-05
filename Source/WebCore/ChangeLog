@@ -1,3 +1,23 @@
+2019-04-05  Sihui Liu  <sihui_liu@apple.com>
+
+        [iOS] Web process gets suspended while holding locked database files
+        https://bugs.webkit.org/show_bug.cgi?id=196519
+        <rdar://problem/49531797>
+
+        Reviewed by Chris Dumez.
+
+        We should close all databases and make sure not open new databases when web process is ready to suspend.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setIsDatabaseOpeningForbidden):
+        (WebCore::SQLiteDatabase::open):
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteDatabaseTracker.cpp:
+        (WebCore::SQLiteDatabaseTracker::setClient):
+        (WebCore::SQLiteDatabaseTracker::incrementTransactionInProgressCount):
+        (WebCore::SQLiteDatabaseTracker::decrementTransactionInProgressCount):
+        (WebCore::SQLiteDatabaseTracker::hasTransactionInProgress):
+
 2019-04-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243833.
