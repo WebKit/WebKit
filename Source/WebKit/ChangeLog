@@ -1,3 +1,16 @@
+2019-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Undeprecate WKNavigationData
+        https://bugs.webkit.org/show_bug.cgi?id=196559
+        <rdar://44927425>
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/API/Cocoa/WKNavigationData.h:
+        It is used to communicate information from FrameLoaderClient::updateGlobalHistory() to the application.
+        This use in WKBrowsingContextHistoryDelegate is definitely still deprecated, but its use in
+        WKHistoryDelegatePrivate does not have an adequate replacement yet, so it must remain undeprecated SPI.
+
 2019-04-05  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] Web process gets suspended while holding locked database files
