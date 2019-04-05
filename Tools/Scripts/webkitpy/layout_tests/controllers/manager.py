@@ -290,6 +290,10 @@ class Manager(object):
             retry_results = retry_results.merge(temp_retry_results) if retry_results else temp_retry_results
             enabled_pixel_tests_in_retry |= temp_enabled_pixel_tests_in_retry
 
+            if (initial_results and (initial_results.interrupted or initial_results.keyboard_interrupted)) or \
+                    (retry_results and (retry_results.interrupted or retry_results.keyboard_interrupted)):
+                break
+
         # Used for final logging, max_child_processes_for_run is most relevant here.
         self._options.child_processes = max_child_processes_for_run
 
