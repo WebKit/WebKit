@@ -755,9 +755,13 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesSetExperimentalFeatureForKey(preferences, experimentalFeature.value, toWK(experimentalFeature.key).get());
 
     WKPreferencesResetAllInternalDebugFeatures(preferences);
+
     // Set internal features that have different default values for testing.
     static WKStringRef asyncOverflowScrollingFeature = WKStringCreateWithUTF8CString("AsyncOverflowScrollingEnabled");
     WKPreferencesSetInternalDebugFeatureForKey(preferences, false, asyncOverflowScrollingFeature);
+
+    static WKStringRef asyncFrameScrollingFeature = WKStringCreateWithUTF8CString("AsyncFrameScrollingEnabled");
+    WKPreferencesSetInternalDebugFeatureForKey(preferences, false, asyncFrameScrollingFeature);
 
     for (const auto& internalDebugFeature : options.internalDebugFeatures)
         WKPreferencesSetInternalDebugFeatureForKey(preferences, internalDebugFeature.value, toWK(internalDebugFeature.key).get());
