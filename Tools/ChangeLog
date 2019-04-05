@@ -1,3 +1,15 @@
+2019-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Flaky API Test TestWebKitAPI.WebKit.PerformedActionForURL
+        https://bugs.webkit.org/show_bug.cgi?id=196151
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (TEST):
+        We were assuming that messages were received in a certain order.
+        Actually wait for all messages to be received before checking results.
+
 2019-04-04  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r243842. rdar://problem/34841155
