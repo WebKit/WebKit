@@ -1324,3 +1324,5 @@ webkit.org/b/196269 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie
 
 # <rdar://problem/28233746>
 webkit.org/b/196274 imported/w3c/web-platform-tests/xhr/send-redirect-post-upload.htm [ Skip ]
+
+webkit.org/b/196633 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
