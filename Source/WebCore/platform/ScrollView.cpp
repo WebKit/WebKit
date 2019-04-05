@@ -501,7 +501,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition)
 
     ScrollPosition newScrollPosition = !delegatesScrolling() ? adjustScrollPositionWithinRange(scrollPosition) : scrollPosition;
 
-    if ((!delegatesScrolling() || !inProgrammaticScroll()) && newScrollPosition == this->scrollPosition())
+    if ((!delegatesScrolling() || currentScrollType() == ScrollType::User) && newScrollPosition == this->scrollPosition())
         return;
 
     if (requestScrollPositionUpdate(newScrollPosition))

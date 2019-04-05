@@ -705,9 +705,11 @@ void Frame::overflowScrollPositionChangedForNode(const IntPoint& position, Node*
 
     RenderLayer& layer = *downcast<RenderBoxModelObject>(*renderer).layer();
 
-    layer.setIsUserScroll(isUserScroll);
+    auto oldScrollType = layer.currentScrollType();
+    layer.setCurrentScrollType(isUserScroll ? ScrollType::User : ScrollType::Programmatic);
     layer.scrollToOffsetWithoutAnimation(position);
-    layer.setIsUserScroll(false);
+    layer.setCurrentScrollType(oldScrollType);
+
     layer.didEndScroll(); // FIXME: Should we always call this?
 }
 

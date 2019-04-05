@@ -414,12 +414,14 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea = nullptr);
 
-    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollClamping = ScrollClamping::Clamped);
-    void scrollToXOffset(int x, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), clamping); }
-    void scrollToYOffset(int y, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), clamping); }
+    WEBCORE_EXPORT void scrollToOffset(const ScrollOffset&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped);
 
     void scrollToXPosition(int x, ScrollType, ScrollClamping = ScrollClamping::Clamped);
     void scrollToYPosition(int y, ScrollType, ScrollClamping = ScrollClamping::Clamped);
+
+    // These are only used by marquee.
+    void scrollToXOffset(int x, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(x, scrollOffset().y()), ScrollType::Programmatic, clamping); }
+    void scrollToYOffset(int y, ScrollClamping clamping = ScrollClamping::Clamped) { scrollToOffset(ScrollOffset(scrollOffset().x(), y), ScrollType::Programmatic, clamping); }
 
     void setPostLayoutScrollPosition(Optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
@@ -458,9 +460,6 @@ public:
 #if ENABLE(CSS_SCROLL_SNAP)
     void updateSnapOffsets() override;
 #endif
-
-    void setIsUserScroll(bool isUserScroll) override { m_inUserScroll = isUserScroll; }
-    bool isInUserScroll() const { return m_inUserScroll; }
 
     bool requiresScrollPositionReconciliation() const { return m_requiresScrollPositionReconciliation; }
     void setRequiresScrollPositionReconciliation(bool requiresReconciliation = true) { m_requiresScrollPositionReconciliation = requiresReconciliation; }
@@ -1220,7 +1219,6 @@ private:
     bool m_adjustForIOSCaretWhenScrolling : 1;
 #endif
 
-    bool m_inUserScroll : 1;
     bool m_requiresScrollPositionReconciliation : 1;
     bool m_containsDirtyOverlayScrollbars : 1;
     bool m_updatingMarqueePosition : 1;

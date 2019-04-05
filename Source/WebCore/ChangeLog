@@ -1,3 +1,59 @@
+2019-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ScrollableArea store a ScrollType for the current scroll
+        https://bugs.webkit.org/show_bug.cgi?id=196627
+
+        Reviewed by Zalan Bujtas.
+
+        RenderLayer had isInUserScroll() which is the opposite of ScrollableArea::inProgrammaticScroll(),
+        so just have ScrollableArea store a ScrollType.
+
+        RenderLayer's scrolling bottleneck, scrollToOffset(), now takes a ScrollType, and pushes
+        it onto the base class.
+
+        AsyncScrollingCoordinator::requestScrollPositionUpdate() can use the incoming scrollType (currently
+        incorrect for iOS WK2 overflow) rather than deducing a user scroll from ScrollingLayerPositionAction.
+
+        No behavior change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::topContentInsetDidChange):
+        (WebCore::FrameView::updateLayoutViewport):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::shouldUpdateCompositingLayersAfterScrolling const):
+        (WebCore::FrameView::setWasScrolledByUser):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::LayoutScope::LayoutScope):
+        (WebCore::LayoutScope::~LayoutScope):
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::overflowScrollPositionChangedForNode):
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::requestScrollPositionUpdate):
+        (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollPosition):
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ScrollableArea):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::currentScrollType const):
+        (WebCore::ScrollableArea::setCurrentScrollType):
+        (WebCore::ScrollableArea::setIsUserScroll): Deleted.
+        (WebCore::ScrollableArea::inProgrammaticScroll const): Deleted.
+        (WebCore::ScrollableArea::setInProgrammaticScroll): Deleted.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::scrollToXPosition):
+        (WebCore::RenderLayer::scrollToYPosition):
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollTo):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateScrollOffset):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+
 2019-04-04  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed, rolling out r243868.

@@ -115,7 +115,7 @@ using namespace WebCore;
     RenderLayer* layer = downcast<RenderBox>(*renderer).layer();
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(true);
-    layer->scrollToOffset(ScrollOffset(x, y), ScrollClamping::Unclamped);
+    layer->scrollToOffset(ScrollOffset(x, y), ScrollType::Programmatic, ScrollClamping::Unclamped);
     if (adjustForIOSCaret)
         layer->setAdjustForIOSCaretWhenScrolling(false);
 }

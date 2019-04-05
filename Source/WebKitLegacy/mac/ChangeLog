@@ -1,3 +1,15 @@
+2019-04-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Have ScrollableArea store a ScrollType for the current scroll
+        https://bugs.webkit.org/show_bug.cgi?id=196627
+
+        Reviewed by Zalan Bujtas.
+
+        Send the programmatic scroll type.
+
+        * DOM/DOMHTML.mm:
+        (-[DOMHTMLElement setScrollXOffset:scrollYOffset:adjustForIOSCaret:]):
+
 2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         -apple-trailing-word is needed for browser detection

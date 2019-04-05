@@ -459,9 +459,11 @@ void FrameView::setFrameRect(const IntRect& newRect)
     IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
+
     // Every scroll that happens as the result of frame size change is programmatic.
-    bool wasInProgrammaticScroll = inProgrammaticScroll();
-    setInProgrammaticScroll(true);
+    auto oldScrollType = currentScrollType();
+    setCurrentScrollType(ScrollType::Programmatic);
+
     ScrollView::setFrameRect(newRect);
 
     updateScrollableAreaSet();
@@ -475,7 +477,7 @@ void FrameView::setFrameRect(const IntRect& newRect)
         frame().page()->pageOverlayController().didChangeViewSize();
 
     viewportContentsChanged();
-    setInProgrammaticScroll(wasInProgrammaticScroll);
+    setCurrentScrollType(oldScrollType);
 }
 
 bool FrameView::scheduleAnimation()
@@ -1092,8 +1094,9 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
     
     layoutContext().layout();
     // Every scroll that happens as the result of content inset change is programmatic.
-    bool wasInProgrammaticScroll = inProgrammaticScroll();
-    setInProgrammaticScroll(true);
+    auto oldScrollType = currentScrollType();
+    setCurrentScrollType(ScrollType::Programmatic);
+
     updateScrollbars(scrollPosition());
     if (renderView->usesCompositing())
         renderView->compositor().frameViewDidChangeSize();
@@ -1101,7 +1104,7 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
     if (TiledBacking* tiledBacking = this->tiledBacking())
         tiledBacking->setTopContentInset(newTopContentInset);
 
-    setInProgrammaticScroll(wasInProgrammaticScroll);
+    setCurrentScrollType(oldScrollType);
 }
 
 void FrameView::topContentDirectionDidChange()
@@ -1675,7 +1678,7 @@ void FrameView::updateLayoutViewport()
     LOG_WITH_STREAM(Scrolling, stream << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
     
     if (m_layoutViewportOverrideRect) {
-        if (inProgrammaticScroll()) {
+        if (currentScrollType() == ScrollType::Programmatic) {
             LOG_WITH_STREAM(Scrolling, stream << "computing new override layout viewport because of programmatic scrolling");
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
@@ -2279,8 +2282,8 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
 {
     LOG_WITH_STREAM(Scrolling, stream << "FrameView::setScrollPosition " << scrollPosition << " , clearing anchor");
 
-    bool wasInProgrammaticScroll = inProgrammaticScroll();
-    setInProgrammaticScroll(true);
+    auto oldScrollType = currentScrollType();
+    setCurrentScrollType(ScrollType::Programmatic);
 
     m_maintainScrollPositionAnchor = nullptr;
     m_shouldScrollToFocusedElement = false;
@@ -2290,7 +2293,7 @@ void FrameView::setScrollPosition(const ScrollPosition& scrollPosition)
         scrollAnimator().setWheelEventTestTrigger(page->testTrigger());
     ScrollView::setScrollPosition(scrollPosition);
 
-    setInProgrammaticScroll(wasInProgrammaticScroll);
+    setCurrentScrollType(oldScrollType);
 }
 
 void FrameView::resetScrollAnchor()
@@ -2564,7 +2567,7 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (scrollingCoordinator->shouldUpdateScrollLayerPositionSynchronously(*this))
         return true;
 
-    if (inProgrammaticScroll())
+    if (currentScrollType() == ScrollType::Programmatic)
         return true;
 
     return false;
@@ -4109,7 +4112,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
 
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
-    if (inProgrammaticScroll())
+    if (currentScrollType() == ScrollType::Programmatic)
         return;
     m_maintainScrollPositionAnchor = nullptr;
     if (m_wasScrolledByUser == wasScrolledByUser)

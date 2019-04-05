@@ -116,21 +116,21 @@ public:
         : m_view(layoutContext.view())
         , m_nestedState(layoutContext.m_layoutNestedState, layoutContext.m_layoutNestedState == FrameViewLayoutContext::LayoutNestedState::NotInLayout ? FrameViewLayoutContext::LayoutNestedState::NotNested : FrameViewLayoutContext::LayoutNestedState::Nested)
         , m_schedulingIsEnabled(layoutContext.m_layoutSchedulingIsEnabled, false)
-        , m_inProgrammaticScroll(layoutContext.view().inProgrammaticScroll())
+        , m_previousScrollType(layoutContext.view().currentScrollType())
     {
-        m_view.setInProgrammaticScroll(true);
+        m_view.setCurrentScrollType(ScrollType::Programmatic);
     }
         
     ~LayoutScope()
     {
-        m_view.setInProgrammaticScroll(m_inProgrammaticScroll);
+        m_view.setCurrentScrollType(m_previousScrollType);
     }
         
 private:
     FrameView& m_view;
     SetForScope<FrameViewLayoutContext::LayoutNestedState> m_nestedState;
     SetForScope<bool> m_schedulingIsEnabled;
-    bool m_inProgrammaticScroll { false };
+    ScrollType m_previousScrollType;
 };
 
 FrameViewLayoutContext::FrameViewLayoutContext(FrameView& frameView)
