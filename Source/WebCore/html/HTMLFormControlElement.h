@@ -175,7 +175,8 @@ private:
 
     HTMLElement& asHTMLElement() final { return *this; }
     const HTMLFormControlElement& asHTMLElement() const final { return *this; }
-    HTMLFormControlElement* asFormNamedItem() final { return this; }
+    FormNamedItem* asFormNamedItem() final { return this; }
+    FormAssociatedElement* asFormAssociatedElement() final { return this; }
 
     bool needsMouseFocusableQuirk() const;
 

@@ -77,7 +77,7 @@ enum SpellcheckAttributeState {
 enum class TouchAction : uint8_t;
 #endif
 
-class Element : public ContainerNode {
+class Element : public ContainerNode , public CanMakeWeakPtr<Element> {
     WTF_MAKE_ISO_ALLOCATED(Element);
 public:
     static Ref<Element> create(const QualifiedName&, Document&);

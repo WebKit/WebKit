@@ -25,6 +25,7 @@
 
 #include "FormNamedItem.h"
 #include "Node.h"
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,7 +48,7 @@ public:
     void deref() { derefFormAssociatedElement(); }
 
     static HTMLFormElement* findAssociatedForm(const HTMLElement*, HTMLFormElement*);
-    HTMLFormElement* form() const { return m_form; }
+    HTMLFormElement* form() const { return m_form.get(); }
     ValidityState* validity();
 
     virtual bool isFormControlElement() const = 0;
@@ -117,8 +118,8 @@ private:
     bool isFormAssociatedElement() const final { return true; }
 
     std::unique_ptr<FormAttributeTargetObserver> m_formAttributeTargetObserver;
-    HTMLFormElement* m_form;
-    HTMLFormElement* m_formSetByParser;
+    WeakPtr<HTMLFormElement> m_form;
+    WeakPtr<HTMLFormElement> m_formSetByParser;
     String m_customValidationMessage;
 };
 

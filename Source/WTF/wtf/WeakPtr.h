@@ -33,6 +33,7 @@
 
 namespace WTF {
 
+template<typename U> class WeakHashSet;
 template<typename T> class WeakPtr;
 template<typename T> class WeakPtrFactory;
 
