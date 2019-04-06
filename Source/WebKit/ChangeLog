@@ -1,5 +1,20 @@
 2019-04-05  Alex Christensen  <achristensen@webkit.org>
 
+        Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page
+        https://bugs.webkit.org/show_bug.cgi?id=196665
+        <rdar://45115669>
+
+        Reviewed by Geoff Garen.
+
+        It is insufficient to just not navigate the subframe.  We must leave the page that contained it.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _showSafeBrowsingWarning:completionHandler:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::showSafeBrowsingWarning):
+
+2019-04-05  Alex Christensen  <achristensen@webkit.org>
+
         Undeprecate WKNavigationData
         https://bugs.webkit.org/show_bug.cgi?id=196559
         <rdar://44927425>
