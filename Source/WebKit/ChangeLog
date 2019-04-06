@@ -1,3 +1,14 @@
+2019-04-05  Sihui Liu  <sihui_liu@apple.com>
+
+        [iOS] Web process gets suspended while holding locked database files
+        https://bugs.webkit.org/show_bug.cgi?id=196519
+        <rdar://problem/49531797>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+
 2019-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page

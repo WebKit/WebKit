@@ -1,3 +1,17 @@
+2019-04-05  Sihui Liu  <sihui_liu@apple.com>
+
+        [iOS] Web process gets suspended while holding locked database files
+        https://bugs.webkit.org/show_bug.cgi?id=196519
+        <rdar://problem/49531797>
+
+        Reviewed by Chris Dumez.
+
+        Don't use DatabaseTracker singleton before it is initialized.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::isInitialized):
+        * Modules/webdatabase/DatabaseTracker.h:
+
 2019-04-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make WeakPtr<Element> possible and deploy it in form associated elements code

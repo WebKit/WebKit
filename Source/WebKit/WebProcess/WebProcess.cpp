@@ -1467,7 +1467,8 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 #if PLATFORM(IOS_FAMILY)
     m_webSQLiteDatabaseTracker = nullptr;
     SQLiteDatabase::setIsDatabaseOpeningForbidden(true);
-    DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
+    if (DatabaseTracker::isInitialized())
+        DatabaseTracker::singleton().closeAllDatabases(CurrentQueryBehavior::Interrupt);
     accessibilityProcessSuspendedNotification(true);
     updateFreezerStatus();
 #endif
