@@ -1,3 +1,69 @@
+2019-04-06  Antti Koivisto  <antti@apple.com>
+
+        Combine event and touch action regions into a single class
+        https://bugs.webkit.org/show_bug.cgi?id=196644
+        <rdar://problem/49643614>
+
+        Reviewed by Darin Adler.
+
+        This patch replaces the existing TouchActionRegion class with the more general EventRegion class.
+        It collects both the overall event region and the touch action regions. This avoids duplication
+        and simplifies the code.
+
+        The patch also adds serialization support for EventRegion, so touch-action regions gets passed
+        to the UI process too.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setEventRegion):
+        (WebCore::GraphicsLayer::dumpProperties const):
+        (WebCore::GraphicsLayer::setTouchActionRegion): Deleted.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::eventRegion const):
+        (WebCore::GraphicsLayer::touchActionRegion const): Deleted.
+        * platform/graphics/Region.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setEventRegion):
+        (WebCore::GraphicsLayerCA::setTouchActionRegion): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * rendering/EventRegion.cpp: Copied from Source/WebCore/rendering/TouchActionRegion.cpp.
+        (WebCore::EventRegion::operator== const):
+        (WebCore::EventRegion::unite):
+        (WebCore::EventRegion::translate):
+        (WebCore::EventRegion::uniteTouchActions):
+        (WebCore::EventRegion::touchActionsForPoint const):
+        (WebCore::operator<<):
+        (WebCore::TouchActionRegion::unite): Deleted.
+        (WebCore::TouchActionRegion::actionsForPoint const): Deleted.
+        (WebCore::TouchActionRegion::translate): Deleted.
+        * rendering/EventRegion.h: Copied from Source/WebCore/rendering/TouchActionRegion.h.
+        (WebCore::EventRegion::isEmpty const):
+        (WebCore::EventRegion::contains const):
+        (WebCore::EventRegion::hasTouchActions const):
+        (WebCore::EventRegion::encode const):
+        (WebCore::EventRegion::decode):
+        (WebCore::TouchActionRegion::isEmpty const): Deleted.
+        (WebCore::TouchActionRegion::operator== const): Deleted.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/PaintInfo.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectEventRegionForFragments):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateEventRegion):
+        * rendering/RenderLayerModelObject.cpp:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/TouchActionRegion.cpp: Removed.
+        * rendering/TouchActionRegion.h: Removed.
+
 2019-04-05  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         We should pass minimumEffectiveDeviceWidth to web process on new page creation.

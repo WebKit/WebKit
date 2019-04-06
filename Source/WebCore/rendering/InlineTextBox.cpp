@@ -29,6 +29,7 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EllipsisBox.h"
+#include "EventRegion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -504,7 +505,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
         if (visibleToHitTesting())
-            paintInfo.eventRegion->unite(enclosingIntRect(boxRect));
+            paintInfo.eventRegion->unite(enclosingIntRect(boxRect), renderer().style());
         return;
     }
 

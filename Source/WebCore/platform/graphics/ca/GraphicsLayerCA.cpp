@@ -984,7 +984,7 @@ void GraphicsLayerCA::setShapeLayerWindRule(WindRule windRule)
     noteLayerPropertyChanged(WindRuleChanged);
 }
 
-void GraphicsLayerCA::setEventRegion(Region&& eventRegion)
+void GraphicsLayerCA::setEventRegion(EventRegion&& eventRegion)
 {
     if (eventRegion == m_eventRegion)
         return;
@@ -992,17 +992,6 @@ void GraphicsLayerCA::setEventRegion(Region&& eventRegion)
     GraphicsLayer::setEventRegion(WTFMove(eventRegion));
     noteLayerPropertyChanged(EventRegionChanged, m_isCommittingChanges ? DontScheduleFlush : ScheduleFlush);
 }
-
-#if ENABLE(POINTER_EVENTS)
-void GraphicsLayerCA::setTouchActionRegion(TouchActionRegion&& touchActionRegion)
-{
-    if (touchActionRegion == m_touchActionRegion)
-        return;
-
-    GraphicsLayer::setTouchActionRegion(WTFMove(touchActionRegion));
-    // FIXME: Invalidate and pass to platform layer.
-}
-#endif
 
 bool GraphicsLayerCA::shouldRepaintOnSizeChange() const
 {

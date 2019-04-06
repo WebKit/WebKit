@@ -157,7 +157,7 @@ public:
     GraphicsLayer::CustomAppearance customAppearance() const override { return m_customAppearance; }
     void updateCustomAppearance(GraphicsLayer::CustomAppearance customAppearance) override { m_customAppearance = customAppearance; }
 
-    void setEventRegion(const Region&) override { }
+    void setEventRegion(const EventRegion&) override { }
 
     GraphicsLayer::EmbeddedViewID embeddedViewID() const override;
 

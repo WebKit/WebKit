@@ -1950,6 +1950,7 @@ rendering/CSSFilter.cpp
 rendering/ClipRect.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp
+rendering/EventRegion.cpp
 rendering/FlexibleBoxAlgorithm.cpp
 rendering/FixedTableLayout.cpp
 rendering/FloatingObjects.cpp
@@ -2068,7 +2069,6 @@ rendering/SimpleLineLayoutTextFragmentIterator.cpp
 rendering/TextDecorationPainter.cpp
 rendering/TextPaintStyle.cpp
 rendering/TextPainter.cpp
-rendering/TouchActionRegion.cpp
 rendering/TrailingFloatsRootInlineBox.cpp
 
 rendering/line/LineBreaker.cpp

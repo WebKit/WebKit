@@ -32,6 +32,7 @@
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreePropertyApplier.h"
 #import <WebCore/AnimationUtilities.h>
+#import <WebCore/EventRegion.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/GraphicsLayerCA.h>
 #import <WebCore/LengthFunctions.h>
@@ -871,7 +872,7 @@ void PlatformCALayerRemote::updateCustomAppearance(GraphicsLayer::CustomAppearan
     m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::CustomAppearanceChanged);
 }
 
-void PlatformCALayerRemote::setEventRegion(const WebCore::Region& eventRegion)
+void PlatformCALayerRemote::setEventRegion(const WebCore::EventRegion& eventRegion)
 {
     if (m_properties.eventRegion == eventRegion)
         return;

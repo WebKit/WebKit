@@ -87,7 +87,7 @@ void RemoteLayerTreeNode::detachFromParent()
     [layer() removeFromSuperlayer];
 }
 
-void RemoteLayerTreeNode::setEventRegion(const WebCore::Region& eventRegion)
+void RemoteLayerTreeNode::setEventRegion(const WebCore::EventRegion& eventRegion)
 {
     m_eventRegion = eventRegion;
 }

@@ -170,7 +170,7 @@ public:
         bool opaque;
         bool contentsHidden;
         bool userInteractionEnabled;
-        WebCore::Region eventRegion;
+        WebCore::EventRegion eventRegion;
     };
 
     explicit RemoteLayerTreeTransaction();

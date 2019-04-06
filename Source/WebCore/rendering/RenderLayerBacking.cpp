@@ -34,6 +34,7 @@
 #include "CachedImage.h"
 #include "Chrome.h"
 #include "DocumentTimeline.h"
+#include "EventRegion.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -51,7 +52,6 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
-#include "Region.h"
 #include "RenderFragmentContainer.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
@@ -1449,14 +1449,8 @@ void RenderLayerBacking::updateEventRegion()
     GraphicsContext nullContext(nullptr);
     RenderLayer::LayerPaintingInfo paintingInfo(&m_owningLayer, compositedBounds(), { }, LayoutSize());
 
-    Region eventRegion;
+    EventRegion eventRegion;
     paintingInfo.eventRegion = &eventRegion;
-
-#if ENABLE(POINTER_EVENTS)
-    TouchActionRegion touchActionRegion;
-    if (hasTouchActionElements)
-        paintingInfo.touchActionRegion = &touchActionRegion;
-#endif
 
     auto paintFlags = RenderLayer::paintLayerPaintingCompositingAllPhasesFlags() | RenderLayer::PaintLayerCollectingEventRegion;
     m_owningLayer.paintLayerContents(nullContext, paintingInfo, paintFlags);
@@ -1465,10 +1459,6 @@ void RenderLayerBacking::updateEventRegion()
     eventRegion.translate(contentOffset);
     m_graphicsLayer->setEventRegion(WTFMove(eventRegion));
 
-#if ENABLE(POINTER_EVENTS)
-    touchActionRegion.translate(contentOffset);
-    m_graphicsLayer->setTouchActionRegion(WTFMove(touchActionRegion));
-#endif
 #endif
 }
 

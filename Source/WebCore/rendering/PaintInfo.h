@@ -37,17 +37,13 @@
 
 namespace WebCore {
 
+class EventRegion;
 class OverlapTestRequestClient;
-class Region;
 class RenderInline;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderObject;
 
-#if ENABLE(POINTER_EVENTS)
-class TouchActionRegion;
-#endif
-    
 typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
 
 /*
@@ -134,10 +130,7 @@ struct PaintInfo {
     const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
     bool requireSecurityOriginAccessForWidgets { false };
     const RenderLayer* m_enclosingSelfPaintingLayer { nullptr };
-    Region* eventRegion { nullptr }; // For PaintPhase::EventRegion.
-#if ENABLE(POINTER_EVENTS)
-    TouchActionRegion* touchActionRegion { nullptr };
-#endif
+    EventRegion* eventRegion { nullptr }; // For PaintPhase::EventRegion.
 private:
     GraphicsContext* m_context;
 };

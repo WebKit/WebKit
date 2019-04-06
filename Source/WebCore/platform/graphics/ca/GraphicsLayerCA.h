@@ -124,10 +124,8 @@ public:
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
 
-    WEBCORE_EXPORT void setEventRegion(Region&&) override;
-#if ENABLE(POINTER_EVENTS)
-    WEBCORE_EXPORT void setTouchActionRegion(TouchActionRegion&&) override;
-#endif
+    WEBCORE_EXPORT void setEventRegion(EventRegion&&) override;
+
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
 

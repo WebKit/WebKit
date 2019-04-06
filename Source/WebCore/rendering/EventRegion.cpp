@@ -24,11 +24,45 @@
  */
 
 #include "config.h"
-#include "TouchActionRegion.h"
+#include "EventRegion.h"
 
-#if ENABLE(POINTER_EVENTS)
+#include "RenderStyle.h"
 
 namespace WebCore {
+
+EventRegion::EventRegion() = default;
+
+bool EventRegion::operator==(const EventRegion& other) const
+{
+#if ENABLE(POINTER_EVENTS)
+    if (m_touchActionRegions != other.m_touchActionRegions)
+        return false;
+#endif
+    return m_region == other.m_region;
+}
+
+void EventRegion::unite(const Region& region, const RenderStyle& style)
+{
+    m_region.unite(region);
+
+#if ENABLE(POINTER_EVENTS)
+    uniteTouchActions(region, style.effectiveTouchActions());
+#else
+    UNUSED_PARAM(style);
+#endif
+}
+
+void EventRegion::translate(const IntSize& offset)
+{
+    m_region.translate(offset);
+
+#if ENABLE(POINTER_EVENTS)
+    for (auto& touchActionRegion : m_touchActionRegions)
+        touchActionRegion.translate(offset);
+#endif
+}
+
+#if ENABLE(POINTER_EVENTS)
 
 constexpr unsigned toIndex(TouchAction touchAction)
 {
@@ -70,33 +104,31 @@ constexpr TouchAction toTouchAction(unsigned index)
     return TouchAction::Auto;
 }
 
-TouchActionRegion::TouchActionRegion() = default;
-
-void TouchActionRegion::unite(const Region& touchRegion, OptionSet<TouchAction> touchActions)
+void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAction> touchActions)
 {
     for (auto touchAction : touchActions) {
         if (touchAction == TouchAction::Auto)
             break;
         auto index = toIndex(touchAction);
-        if (m_regions.size() < index + 1)
-            m_regions.grow(index + 1);
+        if (m_touchActionRegions.size() < index + 1)
+            m_touchActionRegions.grow(index + 1);
     }
 
-    for (unsigned i = 0; i < m_regions.size(); ++i) {
+    for (unsigned i = 0; i < m_touchActionRegions.size(); ++i) {
         auto regionTouchAction = toTouchAction(i);
         if (touchActions.contains(regionTouchAction))
-            m_regions[i].unite(touchRegion);
+            m_touchActionRegions[i].unite(touchRegion);
         else
-            m_regions[i].subtract(touchRegion);
+            m_touchActionRegions[i].subtract(touchRegion);
     }
 }
 
-OptionSet<TouchAction> TouchActionRegion::actionsForPoint(const IntPoint& point) const
+OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) const
 {
     OptionSet<TouchAction> actions;
 
-    for (unsigned i = 0; i < m_regions.size(); ++i) {
-        if (m_regions[i].contains(point)) {
+    for (unsigned i = 0; i < m_touchActionRegions.size(); ++i) {
+        if (m_touchActionRegions[i].contains(point)) {
             auto action = toTouchAction(i);
             actions.add(action);
             if (action == TouchAction::None || action == TouchAction::Manipulation)
@@ -105,12 +137,6 @@ OptionSet<TouchAction> TouchActionRegion::actionsForPoint(const IntPoint& point)
     }
 
     return actions;
-}
-
-void TouchActionRegion::translate(const IntSize& offset)
-{
-    for (auto& region : m_regions)
-        region.translate(offset);
 }
 
 TextStream& operator<<(TextStream& ts, TouchAction touchAction)
@@ -133,23 +159,29 @@ TextStream& operator<<(TextStream& ts, TouchAction touchAction)
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const TouchActionRegion& touchActionRegion)
+#endif
+
+TextStream& operator<<(TextStream& ts, const EventRegion& eventRegion)
 {
-    ts << "\n";
-    {
-        for (unsigned i = 0; i < touchActionRegion.m_regions.size(); ++i) {
-            if (touchActionRegion.m_regions[i].isEmpty())
+    ts << eventRegion.m_region;
+
+#if ENABLE(POINTER_EVENTS)
+    if (!eventRegion.m_touchActionRegions.isEmpty()) {
+        TextStream::IndentScope indentScope(ts);
+        ts << indent << "(touch-action\n";
+        for (unsigned i = 0; i < eventRegion.m_touchActionRegions.size(); ++i) {
+            if (eventRegion.m_touchActionRegions[i].isEmpty())
                 continue;
             TextStream::IndentScope indentScope(ts);
             ts << indent << "(" << toTouchAction(i);
-            ts << indent << touchActionRegion.m_regions[i] << ")\n";
+            ts << indent << eventRegion.m_touchActionRegions[i];
+            ts << indent << ")\n";
         }
+        ts << indent << ")\n";
     }
-    ts << indent;
+#endif
 
     return ts;
 }
 
 }
-
-#endif

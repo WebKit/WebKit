@@ -659,7 +659,6 @@ TextStream& operator<<(TextStream& ts, const Region& region)
         for (auto& rect : region.rects())
             ts << indent << "(rect " << rect << ")\n";
     }
-    ts << indent;
 
     return ts;
 }

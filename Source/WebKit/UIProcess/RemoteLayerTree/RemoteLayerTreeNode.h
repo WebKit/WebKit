@@ -56,8 +56,8 @@ public:
 
     WebCore::GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
-    const WebCore::Region& eventRegion() const { return m_eventRegion; }
-    void setEventRegion(const WebCore::Region&);
+    const WebCore::EventRegion& eventRegion() const { return m_eventRegion; }
+    void setEventRegion(const WebCore::EventRegion&);
 
     // If empty the layer is scrolled normally by an ancestor scroller.
     const auto& relatedScrollContainerIDs() const { return m_relatedScrollContainerIDs; }
@@ -81,7 +81,7 @@ private:
     RetainPtr<UIView> m_uiView;
 #endif
 
-    WebCore::Region m_eventRegion;
+    WebCore::EventRegion m_eventRegion;
 
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_relatedScrollContainerIDs;
     WebCore::ScrollPositioningBehavior m_relatedScrollContainerPositioningBehavior { WebCore::ScrollPositioningBehavior::None };

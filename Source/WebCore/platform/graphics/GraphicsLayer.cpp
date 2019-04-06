@@ -411,17 +411,10 @@ void GraphicsLayer::setShapeLayerWindRule(WindRule windRule)
 #endif
 }
 
-void GraphicsLayer::setEventRegion(Region&& eventRegion)
+void GraphicsLayer::setEventRegion(EventRegion&& eventRegion)
 {
     m_eventRegion = WTFMove(eventRegion);
 }
-
-#if ENABLE(POINTER_EVENTS)
-void GraphicsLayer::setTouchActionRegion(TouchActionRegion&& touchActionRegion)
-{
-    m_touchActionRegion = WTFMove(touchActionRegion);
-}
-#endif
 
 void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
 {
@@ -933,13 +926,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, LayerTreeAsTextBehavior behav
         ts << indent << ")\n";
     }
 
-    if (behavior & LayerTreeAsTextIncludeEventRegion) {
-        if (!m_eventRegion.isEmpty())
-            ts << indent << "(event region" << m_eventRegion << ")\n";
-#if ENABLE(POINTER_EVENTS)
-        if (!m_touchActionRegion.isEmpty())
-            ts << indent << "(touch-action region" << m_touchActionRegion << ")\n";
-#endif
+    if (behavior & LayerTreeAsTextIncludeEventRegion && !m_eventRegion.isEmpty()) {
+        ts << indent << "(event region" << m_eventRegion;
+        ts << indent << ")\n";
     }
 
     if (behavior & LayerTreeAsTextIncludePaintingPhases && paintingPhase()) {

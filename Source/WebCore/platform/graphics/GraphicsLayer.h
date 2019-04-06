@@ -27,6 +27,7 @@
 
 #include "Animation.h"
 #include "Color.h"
+#include "EventRegion.h"
 #include "FilterOperations.h"
 #include "FloatPoint.h"
 #include "FloatPoint3D.h"
@@ -37,7 +38,6 @@
 #include "PlatformLayer.h"
 #include "Region.h"
 #include "ScrollableArea.h"
-#include "TouchActionRegion.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
 #include <wtf/Function.h>
@@ -454,12 +454,9 @@ public:
     WindRule shapeLayerWindRule() const;
     virtual void setShapeLayerWindRule(WindRule);
 
-    const Region& eventRegion() const { return m_eventRegion; }
-    virtual void setEventRegion(Region&&);
-#if ENABLE(POINTER_EVENTS)
-    const TouchActionRegion& touchActionRegion() const { return m_touchActionRegion; }
-    virtual void setTouchActionRegion(TouchActionRegion&&);
-#endif
+    const EventRegion& eventRegion() const { return m_eventRegion; }
+    virtual void setEventRegion(EventRegion&&);
+
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
     static String animationNameForTransition(AnimatedPropertyID);
 
@@ -734,10 +731,7 @@ protected:
     FloatRoundedRect m_backdropFiltersRect;
     Optional<FloatRect> m_animationExtent;
 
-    Region m_eventRegion;
-#if ENABLE(POINTER_EVENTS)
-    TouchActionRegion m_touchActionRegion;
-#endif
+    EventRegion m_eventRegion;
 #if USE(CA)
     WindRule m_shapeLayerWindRule { WindRule::NonZero };
     Path m_shapeLayerPath;

@@ -63,6 +63,7 @@ namespace WebCore {
 class CSSFilter;
 class ClipRects;
 class ClipRectsCache;
+class EventRegion;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
@@ -79,10 +80,6 @@ class RenderStyle;
 class RenderView;
 class Scrollbar;
 class TransformationMatrix;
-
-#if ENABLE(POINTER_EVENTS)
-class TouchActionRegion;
-#endif
 
 enum BorderRadiusClippingRule { IncludeSelfForBorderRadius, DoNotIncludeSelfForBorderRadius };
 enum IncludeSelfOrNot { IncludeSelf, ExcludeSelf };
@@ -916,10 +913,7 @@ private:
         OptionSet<PaintBehavior> paintBehavior;
         bool requireSecurityOriginAccessForWidgets;
         bool clipToDirtyRect { true };
-        Region* eventRegion { nullptr };
-#if ENABLE(POINTER_EVENTS)
-        TouchActionRegion* touchActionRegion { nullptr };
-#endif
+        EventRegion* eventRegion { nullptr };
     };
 
     // Compute, cache and return clip rects computed with the given layer as the root.

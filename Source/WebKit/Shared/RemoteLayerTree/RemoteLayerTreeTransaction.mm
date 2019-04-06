@@ -31,8 +31,8 @@
 #import "PlatformCALayerRemote.h"
 #import "WebCoreArgumentCoders.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/EventRegion.h>
 #import <WebCore/LengthFunctions.h>
-#import <WebCore/Region.h>
 #import <WebCore/TimingFunction.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
@@ -508,7 +508,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & EventRegionChanged) {
-        Optional<WebCore::Region> eventRegion;
+        Optional<WebCore::EventRegion> eventRegion;
         decoder >> eventRegion;
         if (!eventRegion)
             return false;
