@@ -382,7 +382,6 @@ static Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayS
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
     _WKSelectionAttributes _selectionAttributes;
-    CGFloat _minimumEffectiveDeviceWidth;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -2844,7 +2843,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return;
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView " << _page->pageID() << " _dispatchSetViewLayoutSize:] " << viewLayoutSize << " contentZoomScale " << contentZoomScale(self));
-    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), _minimumEffectiveDeviceWidth);
+    _page->setViewportConfigurationViewLayoutSize(viewLayoutSize, _page->layoutSizeScaleFactor(), _page->minimumEffectiveDeviceWidth());
     _lastSentViewLayoutSize = viewLayoutSize;
 }
 
@@ -5688,24 +5687,27 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     if (_page->layoutSizeScaleFactor() == viewScale)
         return;
 
-    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], viewScale, _minimumEffectiveDeviceWidth);
+    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], viewScale, _page->minimumEffectiveDeviceWidth());
 #endif
 }
 
 - (void)_setMinimumEffectiveDeviceWidth:(CGFloat)minimumEffectiveDeviceWidth
 {
-    if (_minimumEffectiveDeviceWidth == minimumEffectiveDeviceWidth)
+#if PLATFORM(IOS_FAMILY)
+    if (_page->minimumEffectiveDeviceWidth() == minimumEffectiveDeviceWidth)
         return;
 
-    _minimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth;
-#if PLATFORM(IOS_FAMILY)
-    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], _page->layoutSizeScaleFactor(), _minimumEffectiveDeviceWidth);
+    _page->setViewportConfigurationViewLayoutSize([self activeViewLayoutSize:self.bounds], _page->layoutSizeScaleFactor(), minimumEffectiveDeviceWidth);
 #endif
 }
 
 - (CGFloat)_minimumEffectiveDeviceWidth
 {
-    return _minimumEffectiveDeviceWidth;
+#if PLATFORM(IOS_FAMILY)
+    return _page->minimumEffectiveDeviceWidth();
+#else
+    return 0;
+#endif
 }
 
 #pragma mark scrollperf methods

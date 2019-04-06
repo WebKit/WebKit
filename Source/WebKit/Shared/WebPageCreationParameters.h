@@ -148,6 +148,7 @@ struct WebPageCreationParameters {
     bool ignoresViewportScaleLimits;
     WebCore::FloatSize viewportConfigurationViewLayoutSize;
     double viewportConfigurationLayoutSizeScaleFactor;
+    double viewportConfigurationMinimumEffectiveDeviceWidth;
     WebCore::FloatSize viewportConfigurationViewSize;
     WebCore::FloatSize maximumUnobscuredSize;
     int32_t deviceOrientation { 0 };

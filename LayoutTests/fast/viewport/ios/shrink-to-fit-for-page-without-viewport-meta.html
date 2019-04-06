@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ shouldIgnoreMetaViewport=true ] -->
+
+<html>
+<head>
+     <script src="../../../resources/ui-helper.js"></script>
+     <script>
+     if (window.testRunner) {
+         testRunner.dumpAsText();
+         testRunner.waitUntilDone();
+     }
+
+     async function finishTest() {
+         const appendOutput = message => {
+             output.appendChild(document.createTextNode(message));
+             output.appendChild(document.createElement("br"));
+         };
+
+         appendOutput(`window size: [${innerWidth}, ${innerHeight}]`);
+         appendOutput(`zoom scale: ${(await UIHelper.zoomScale()).toFixed(2)}`);
+         appendOutput("");
+
+         await Promise.all([UIHelper.ensureVisibleContentRectUpdate(), UIHelper.ensurePresentationUpdate()]);
+
+         testRunner.notifyDone();
+     }
+
+    window.addEventListener("load", async () => {
+        await UIHelper.setMinimumEffectiveWidth(320);
+        setTimeout(finishTest, 0);
+    }, false);
+    </script>
+
+    <style>
+        #container {
+            position:relative;
+            top:20px;
+            width:100%;
+        }
+        #wide {
+            width:100%;
+            min-width: 1200px;
+            height: 2200px;
+            background-color: blue;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container">
+<div id="wide"></div>
+</div>
+<pre id="output"></pre>
+</body>
+</html>

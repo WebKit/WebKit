@@ -329,6 +329,7 @@ void WebPageProxy::setViewportConfigurationViewLayoutSize(const WebCore::FloatSi
 {
     m_viewportConfigurationViewLayoutSize = size;
     m_viewportConfigurationLayoutSizeScaleFactor = scaleFactor;
+    m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth;
 
     if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetViewportConfigurationViewLayoutSize(size, scaleFactor, minimumEffectiveDeviceWidth), m_pageID);

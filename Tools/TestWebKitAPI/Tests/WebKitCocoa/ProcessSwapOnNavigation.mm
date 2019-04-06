@@ -5886,4 +5886,57 @@ TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)
     didFinishQuickLookLoad = false;
 }
 
+static const char* minimumWidthPageBytes = R"PSONRESOURCE(
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div {
+    margin: 0;
+    width: 100%;
+    height: 10000px;
+}
+</style>
+</head>
+<body>
+<div>Test</a>
+</body>
+</html>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, PassMinimumDeviceWidthOnNewWebView)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:minimumWidthPageBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    auto preferences = [[webView configuration] preferences];
+    [preferences _setShouldIgnoreMetaViewport:YES];
+    [webView _setMinimumEffectiveDeviceWidth:1024];
+
+    auto* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    bool finishedRunningScript = false;
+    [webView evaluateJavaScript:@"window.innerWidth" completionHandler: [&] (id result, NSError *error) {
+        NSNumber *width = (NSNumber *)result;
+        EXPECT_EQ(1024, [width intValue]);
+        finishedRunningScript = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedRunningScript);
+}
+
 #endif

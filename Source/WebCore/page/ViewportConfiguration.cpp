@@ -177,6 +177,7 @@ bool ViewportConfiguration::setCanIgnoreScalingConstraints(bool canIgnoreScaling
     
     m_canIgnoreScalingConstraints = canIgnoreScalingConstraints;
     updateDefaultConfiguration();
+    updateMinimumLayoutSize();
     updateConfiguration();
     return true;
 }
@@ -353,6 +354,7 @@ ViewportConfiguration::Parameters ViewportConfiguration::nativeWebpageParameters
     Parameters parameters = ViewportConfiguration::nativeWebpageParametersWithoutShrinkToFit();
     parameters.allowsShrinkToFit = true;
     parameters.minimumScale = 0.25;
+    parameters.initialScaleIsSet = false;
     return parameters;
 }
 

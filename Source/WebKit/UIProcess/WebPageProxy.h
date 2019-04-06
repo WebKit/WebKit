@@ -700,6 +700,7 @@ public:
     void setForceAlwaysUserScalable(bool);
     bool forceAlwaysUserScalable() const { return m_forceAlwaysUserScalable; }
     double layoutSizeScaleFactor() const { return m_viewportConfigurationLayoutSizeScaleFactor; }
+    double minimumEffectiveDeviceWidth() const { return m_viewportConfigurationMinimumEffectiveDeviceWidth; }
     void setIsScrollingOrZooming(bool);
     void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
     void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, WTF::Function<void(const Vector<WebCore::SelectionRect>&, CallbackBase::Error)>&&);
@@ -2420,6 +2421,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     bool m_forceAlwaysUserScalable { false };
     WebCore::FloatSize m_viewportConfigurationViewLayoutSize;
     double m_viewportConfigurationLayoutSizeScaleFactor { 1 };
+    double m_viewportConfigurationMinimumEffectiveDeviceWidth { 0 };
     WebCore::FloatSize m_maximumUnobscuredSize;
 #endif
 

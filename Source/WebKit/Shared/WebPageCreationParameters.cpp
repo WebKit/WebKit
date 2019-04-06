@@ -90,6 +90,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << ignoresViewportScaleLimits;
     encoder << viewportConfigurationViewLayoutSize;
     encoder << viewportConfigurationLayoutSizeScaleFactor;
+    encoder << viewportConfigurationMinimumEffectiveDeviceWidth;
     encoder << viewportConfigurationViewSize;
     encoder << maximumUnobscuredSize;
     encoder << deviceOrientation;
@@ -267,6 +268,8 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.viewportConfigurationViewLayoutSize))
         return WTF::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationLayoutSizeScaleFactor))
+        return WTF::nullopt;
+    if (!decoder.decode(parameters.viewportConfigurationMinimumEffectiveDeviceWidth))
         return WTF::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
         return WTF::nullopt;

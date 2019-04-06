@@ -1,3 +1,17 @@
+2019-04-05  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        We should pass minimumEffectiveDeviceWidth to web process on new page creation.
+        https://bugs.webkit.org/show_bug.cgi?id=196077
+        <rdar://problem/49108202>
+
+        Reviewed by Chris Dumez.
+
+        Add a layout test to verify the page shrinks to fit the window width when ignoreMetaViewport
+        flag is turned on.
+
+        * fast/viewport/ios/shrink-to-fit-for-page-without-viewport-meta-expected.txt: Added.
+        * fast/viewport/ios/shrink-to-fit-for-page-without-viewport-meta.html: Added.
+
 2019-04-05  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Deactivate the audio session before the WebProcess suspends.
