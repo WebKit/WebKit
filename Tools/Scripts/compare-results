@@ -49,6 +49,8 @@ def readJSONFile(path):
 Speedometer2 = "Speedometer2"
 JetStream2 = "JetStream2"
 PLT5 = "PLT5"
+MotionMark = "MotionMark"
+MotionMark1_1 = "MotionMark-1.1"
 
 def detectJetStream2(payload):
     return "JetStream2.0" in payload
@@ -102,6 +104,32 @@ def PLT5Results(payload):
         results.append(obj["Geometric"])
     return results
 
+def detectMotionMark(payload):
+    return "MotionMark" in payload
+
+def detectMotionMark1_1(payload):
+    return "MotionMark-1.1" in payload
+
+def motionMarkResults(payload):
+    assert detectMotionMark(payload) or detectMotionMark1_1(payload)
+    if detectMotionMark(payload):
+        payload = payload["MotionMark"]
+    else:
+        payload = payload["MotionMark-1.1"]
+    testNames = payload["tests"].keys()
+    numTests = len(payload["tests"][testNames[0]]["metrics"]["Score"]["current"])
+    results = []
+    for i in range(numTests):
+        scores = []
+        for test in testNames:
+            scores.append(payload["tests"][test]["metrics"]["Score"]["current"][i])
+        results.append(stats.gmean(scores))
+
+    return results
+
+def motionMark1_1Results(payload):
+    return motionMarkResults(payload)
+
 def detectBenchmark(payload):
     if detectJetStream2(payload):
         return JetStream2
@@ -109,12 +137,20 @@ def detectBenchmark(payload):
         return Speedometer2
     if detectPLT5(payload):
         return PLT5
+    if detectMotionMark(payload):
+        return MotionMark
+    if detectMotionMark1_1(payload):
+        return MotionMark1_1
     return None
 
 def biggerIsBetter(benchmarkType):
     if benchmarkType == JetStream2:
         return True
     if benchmarkType == Speedometer2:
+        return True
+    if benchmarkType == MotionMark:
+        return True
+    if benchmarkType == MotionMark1_1:
         return True
     if benchmarkType == PLT5:
         return False
@@ -187,6 +223,10 @@ def main():
         ttest(typeA, JetStream2Results(a), JetStream2Results(b))
     elif typeA == Speedometer2:
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
+    elif typeA == MotionMark:
+        ttest(typeA, motionMarkResults(a), motionMarkResults(b))
+    elif typeA == MotionMark1_1:
+        ttest(typeA, motionMark1_1Results(a), motionMark1_1Results(b))
     elif typeA == PLT5:
         ttest(typeA, PLT5Results(a), PLT5Results(b))
     else:

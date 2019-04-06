@@ -1,3 +1,20 @@
+2019-04-05  Saam Barati  <sbarati@apple.com>
+
+        Make compare-results understand MotionMark
+        https://bugs.webkit.org/show_bug.cgi?id=196666
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/compare-results:
+        (PLT5Results):
+        (detectMotionMark):
+        (detectMotionMark1_1):
+        (motionMarkResults):
+        (motionMark1_1Results):
+        (detectBenchmark):
+        (biggerIsBetter):
+        (main):
+
 2019-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page
