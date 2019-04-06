@@ -75,9 +75,6 @@ DataFormat ExitValue::dataFormat() const
             
     case ExitValueInJSStackAsDouble:
         return DataFormatDouble;
-            
-    case ExitValueRecovery:
-        return recoveryFormat();
     }
         
     RELEASE_ASSERT_NOT_REACHED();
@@ -109,9 +106,6 @@ void ExitValue::dumpInContext(PrintStream& out, DumpContext* context) const
         return;
     case ExitValueInJSStackAsDouble:
         out.print("InJSStackAsDouble:", virtualRegister());
-        return;
-    case ExitValueRecovery:
-        out.print("Recovery(", recoveryOpcode(), ", arg", leftRecoveryArgument(), ", arg", rightRecoveryArgument(), ", ", recoveryFormat(), ")");
         return;
     case ExitValueMaterializeNewObject:
         out.print("Materialize(", WTF::RawPointer(objectMaterialization()), ")");

@@ -59,6 +59,7 @@ struct Node;
 // may need be performed should a speculation check fail.
 enum SpeculationRecoveryType : uint8_t {
     SpeculativeAdd,
+    SpeculativeAddSelf,
     SpeculativeAddImmediate,
     BooleanSpeculationCheck
 };
@@ -74,7 +75,7 @@ public:
         , m_dest(dest)
         , m_type(type)
     {
-        ASSERT(m_type == SpeculativeAdd || m_type == BooleanSpeculationCheck);
+        ASSERT(m_type == SpeculativeAdd || m_type == SpeculativeAddSelf || m_type == BooleanSpeculationCheck);
     }
 
     SpeculationRecovery(SpeculationRecoveryType type, GPRReg dest, int32_t immediate)

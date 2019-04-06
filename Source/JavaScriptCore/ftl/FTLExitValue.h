@@ -54,7 +54,6 @@ enum ExitValueKind {
     ExitValueInJSStackAsInt32,
     ExitValueInJSStackAsInt52,
     ExitValueInJSStackAsDouble,
-    ExitValueRecovery,
     ExitValueMaterializeNewObject
 };
 
@@ -124,17 +123,6 @@ public:
         return result;
     }
     
-    static ExitValue recovery(RecoveryOpcode opcode, unsigned leftArgument, unsigned rightArgument, DataFormat format)
-    {
-        ExitValue result;
-        result.m_kind = ExitValueRecovery;
-        result.u.recovery.opcode = opcode;
-        result.u.recovery.leftArgument = leftArgument;
-        result.u.recovery.rightArgument = rightArgument;
-        result.u.recovery.format = format;
-        return result;
-    }
-    
     static ExitValue materializeNewObject(ExitTimeObjectMaterialization*);
     
     ExitValueKind kind() const { return m_kind; }
@@ -154,9 +142,8 @@ public:
     }
     bool isConstant() const { return kind() == ExitValueConstant; }
     bool isArgument() const { return kind() == ExitValueArgument; }
-    bool isRecovery() const { return kind() == ExitValueRecovery; }
     bool isObjectMaterialization() const { return kind() == ExitValueMaterializeNewObject; }
-    bool hasIndexInStackmapLocations() const { return isArgument() || isRecovery(); }
+    bool hasIndexInStackmapLocations() const { return isArgument(); }
     
     ExitArgument exitArgument() const
     {
@@ -164,40 +151,11 @@ public:
         return ExitArgument(u.argument);
     }
     
-    unsigned leftRecoveryArgument() const
-    {
-        ASSERT(isRecovery());
-        return u.recovery.leftArgument;
-    }
-    
-    unsigned rightRecoveryArgument() const
-    {
-        ASSERT(isRecovery());
-        return u.recovery.rightArgument;
-    }
-
     void adjustStackmapLocationsIndexByOffset(unsigned offset)
     {
         ASSERT(hasIndexInStackmapLocations());
-        if (isArgument())
-            u.argument.argument += offset;
-        else {
-            ASSERT(isRecovery());
-            u.recovery.rightArgument += offset;
-            u.recovery.leftArgument += offset;
-        }
-    }
-    
-    DataFormat recoveryFormat() const
-    {
-        ASSERT(isRecovery());
-        return static_cast<DataFormat>(u.recovery.format);
-    }
-    
-    RecoveryOpcode recoveryOpcode() const
-    {
-        ASSERT(isRecovery());
-        return static_cast<RecoveryOpcode>(u.recovery.opcode);
+        ASSERT(isArgument());
+        u.argument.argument += offset;
     }
     
     JSValue constant() const
@@ -246,12 +204,6 @@ private:
         ExitArgumentRepresentation argument;
         EncodedJSValue constant;
         int virtualRegister;
-        struct {
-            uint16_t leftArgument;
-            uint16_t rightArgument;
-            uint16_t opcode;
-            uint16_t format;
-        } recovery;
         ExitTimeObjectMaterialization* newObjectMaterializationData;
     } u;
 };

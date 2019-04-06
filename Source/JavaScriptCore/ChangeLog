@@ -1,3 +1,49 @@
+2019-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] OSRExit recovery for SpeculativeAdd does not consier "A = A + A" pattern
+        https://bugs.webkit.org/show_bug.cgi?id=196582
+
+        Reviewed by Saam Barati.
+
+        In DFG, our ArithAdd with overflow is executed speculatively, and we recover the value when overflow flag is set.
+        The recovery is subtracting the operand from the destination to get the original two operands. Our recovery code
+        handles A + B = A, A + B = B cases. But it misses A + A = A case (here, A and B are GPRReg). Our recovery code
+        attempts to produce the original operand by performing A - A, and it always produces zero accidentally.
+
+        This patch adds the recovery code for A + A = A case. Because we know that this ArithAdd overflows, and operands were
+        same values, we can calculate the original operand from the destination value by `((int32_t)value >> 1) ^ 0x80000000`.
+
+        We also found that FTL recovery code is dead. We remove them in this patch.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::SpeculationRecovery::SpeculationRecovery):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        * ftl/FTLExitValue.cpp:
+        (JSC::FTL::ExitValue::dataFormat const):
+        (JSC::FTL::ExitValue::dumpInContext const):
+        * ftl/FTLExitValue.h:
+        (JSC::FTL::ExitValue::isArgument const):
+        (JSC::FTL::ExitValue::hasIndexInStackmapLocations const):
+        (JSC::FTL::ExitValue::adjustStackmapLocationsIndexByOffset):
+        (JSC::FTL::ExitValue::recovery): Deleted.
+        (JSC::FTL::ExitValue::isRecovery const): Deleted.
+        (JSC::FTL::ExitValue::leftRecoveryArgument const): Deleted.
+        (JSC::FTL::ExitValue::rightRecoveryArgument const): Deleted.
+        (JSC::FTL::ExitValue::recoveryFormat const): Deleted.
+        (JSC::FTL::ExitValue::recoveryOpcode const): Deleted.
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::preparePatchpointForExceptions):
+        (JSC::FTL::DFG::LowerDFGToB3::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToB3::exitValueForNode):
+        (JSC::FTL::DFG::LowerDFGToB3::addAvailableRecovery): Deleted.
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+
 2019-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243665.

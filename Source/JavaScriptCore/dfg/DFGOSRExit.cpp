@@ -475,6 +475,14 @@ void OSRExit::executeOSRExit(Context& context)
 #endif
                 break;
 
+            case SpeculativeAddSelf:
+                cpu.gpr(recovery->dest()) = static_cast<uint32_t>(cpu.gpr<int32_t>(recovery->dest()) >> 1) ^ 0x80000000U;
+#if USE(JSVALUE64)
+                ASSERT(!(cpu.gpr(recovery->dest()) >> 32));
+                cpu.gpr(recovery->dest()) |= TagTypeNumber;
+#endif
+                break;
+
             case SpeculativeAddImmediate:
                 cpu.gpr(recovery->dest()) = (cpu.gpr<uint32_t>(recovery->dest()) - recovery->immediate());
 #if USE(JSVALUE64)
@@ -1112,6 +1120,15 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         switch (recovery->type()) {
         case SpeculativeAdd:
             jit.sub32(recovery->src(), recovery->dest());
+#if USE(JSVALUE64)
+            jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
+#endif
+            break;
+
+        case SpeculativeAddSelf:
+            // If A + A = A (int32_t) overflows, A can be recovered by ((static_cast<int32_t>(A) >> 1) ^ 0x8000000).
+            jit.rshift32(AssemblyHelpers::TrustedImm32(1), recovery->dest());
+            jit.xor32(AssemblyHelpers::TrustedImm32(0x80000000), recovery->dest());
 #if USE(JSVALUE64)
             jit.or64(GPRInfo::tagTypeNumberRegister, recovery->dest());
 #endif

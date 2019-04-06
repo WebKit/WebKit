@@ -124,44 +124,6 @@ static void compileRecovery(
         jit.load64(AssemblyHelpers::addressFor(value.virtualRegister()), GPRInfo::regT0);
         break;
             
-    case ExitValueRecovery:
-        Location::forValueRep(valueReps[value.rightRecoveryArgument()]).restoreInto(
-            jit, registerScratch, GPRInfo::regT1);
-        Location::forValueRep(valueReps[value.leftRecoveryArgument()]).restoreInto(
-            jit, registerScratch, GPRInfo::regT0);
-        switch (value.recoveryOpcode()) {
-        case AddRecovery:
-            switch (value.recoveryFormat()) {
-            case DataFormatInt32:
-                jit.add32(GPRInfo::regT1, GPRInfo::regT0);
-                break;
-            case DataFormatInt52:
-                jit.add64(GPRInfo::regT1, GPRInfo::regT0);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            break;
-        case SubRecovery:
-            switch (value.recoveryFormat()) {
-            case DataFormatInt32:
-                jit.sub32(GPRInfo::regT1, GPRInfo::regT0);
-                break;
-            case DataFormatInt52:
-                jit.sub64(GPRInfo::regT1, GPRInfo::regT0);
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-        break;
-        
     case ExitValueMaterializeNewObject:
         jit.loadPtr(materializationToPointer.get(value.objectMaterialization()), GPRInfo::regT0);
         break;

@@ -1,3 +1,15 @@
+2019-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] OSRExit recovery for SpeculativeAdd does not consier "A = A + A" pattern
+        https://bugs.webkit.org/show_bug.cgi?id=196582
+
+        Reviewed by Saam Barati.
+
+        * stress/add-overflow-check-with-three-same-registers.js: Added.
+        (foo):
+        (Number.prototype.valueOf):
+        (runWithNumber):
+
 2019-04-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243665.

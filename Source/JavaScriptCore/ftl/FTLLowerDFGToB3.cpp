@@ -676,8 +676,6 @@ private:
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
         
-        m_availableRecoveries.shrink(0);
-        
         m_interpreter.startExecuting();
         m_interpreter.executeKnownEdgeTypes(m_node);
 
@@ -16744,11 +16742,7 @@ private:
         if (!willCatchException)
             return PatchpointExceptionHandle::defaultHandle(m_ftlState);
 
-        if (verboseCompilationEnabled()) {
-            dataLog("    Patchpoint exception OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap(), "\n");
-            if (!m_availableRecoveries.isEmpty())
-                dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
-        }
+        dataLogLnIf(verboseCompilationEnabled(), "    Patchpoint exception OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap());
 
         bool exitOK = true;
         NodeOrigin origin = m_origin.withForExitAndExitOK(opCatchOrigin, exitOK);
@@ -16802,11 +16796,7 @@ private:
         ExitKind kind, FormattedValue lowValue, const MethodOfGettingAValueProfile& profile, LValue failCondition, 
         NodeOrigin origin, bool isExceptionHandler = false)
     {
-        if (verboseCompilationEnabled()) {
-            dataLog("    OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap(), "\n");
-            if (!m_availableRecoveries.isEmpty())
-                dataLog("        Available recoveries: ", listDump(m_availableRecoveries), "\n");
-        }
+        dataLogLnIf(verboseCompilationEnabled(), "    OSR exit #", m_ftlState.jitCode->osrExitDescriptors.size(), " with availability: ", availabilityMap());
 
         DFG_ASSERT(m_graph, m_node, origin.exitOK);
 
@@ -17000,18 +16990,6 @@ private:
             }
         }
         
-        for (unsigned i = 0; i < m_availableRecoveries.size(); ++i) {
-            AvailableRecovery recovery = m_availableRecoveries[i];
-            if (recovery.node() != node)
-                continue;
-            ExitValue result = ExitValue::recovery(
-                recovery.opcode(), arguments.size(), arguments.size() + 1,
-                recovery.format());
-            arguments.append(recovery.left());
-            arguments.append(recovery.right());
-            return result;
-        }
-        
         LoweredNodeValue value = m_int32Values.get(node);
         if (isValid(value))
             return exitArgument(arguments, DataFormatInt32, value.value());
@@ -17078,18 +17056,6 @@ private:
         DFG_CRASH(m_graph, m_node, toCString("Cannot find value for node: ", node).data());
     }
 
-    void addAvailableRecovery(
-        Node* node, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
-    {
-        m_availableRecoveries.append(AvailableRecovery(node, opcode, left, right, format));
-    }
-    
-    void addAvailableRecovery(
-        Edge edge, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
-    {
-        addAvailableRecovery(edge.node(), opcode, left, right, format);
-    }
-    
     void setInt32(Node* node, LValue value)
     {
         m_int32Values.set(node, LoweredNodeValue(value, m_highBlock));
@@ -17349,8 +17315,6 @@ private:
     HashMap<Node*, LValue> m_phis;
     
     LocalOSRAvailabilityCalculator m_availabilityCalculator;
-    
-    Vector<AvailableRecovery, 3> m_availableRecoveries;
     
     InPlaceAbstractState m_state;
     AbstractInterpreter<InPlaceAbstractState> m_interpreter;
