@@ -129,6 +129,8 @@ public:
 
     static bool webAnimationsCSSIntegrationEnabled();
 
+    void setShouldDeactivateAudioSession(bool);
+
 private:
     explicit InternalSettings(Page*);
 
@@ -196,6 +198,7 @@ private:
 #if ENABLE(ACCESSIBILITY_EVENTS)
         bool m_accessibilityEventsEnabled;
 #endif
+        bool m_shouldDeactivateAudioSession;
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;

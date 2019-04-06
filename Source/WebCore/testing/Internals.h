@@ -803,6 +803,8 @@ public:
     Vector<CookieData> getCookies() const;
 
     void setAlwaysAllowLocalWebarchive(bool);
+    void processWillSuspend();
+    void processDidResume();
 
 private:
     explicit Internals(Document&);

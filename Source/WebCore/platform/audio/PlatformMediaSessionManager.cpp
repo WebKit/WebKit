@@ -204,18 +204,25 @@ PlatformMediaSessionManager::SessionRestrictions PlatformMediaSessionManager::re
 
 bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession& session)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
-    
     setCurrentSession(session);
 
     PlatformMediaSession::MediaType sessionType = session.mediaType();
     SessionRestrictions restrictions = m_restrictions[sessionType];
-    if (session.state() == PlatformMediaSession::Interrupted && restrictions & InterruptedPlaybackNotPermitted)
+    if (session.state() == PlatformMediaSession::Interrupted && restrictions & InterruptedPlaybackNotPermitted) {
+        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false because session.state() is Interrupted, and InterruptedPlaybackNotPermitted");
         return false;
+    }
+
+    if (m_processIsSuspended) {
+        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false because process is suspended");
+        return false;
+    }
 
 #if USE(AUDIO_SESSION)
-    if (activeAudioSessionRequired() && !AudioSession::sharedSession().tryToSetActive(true))
+    if (activeAudioSessionRequired() && !AudioSession::sharedSession().tryToSetActive(true)) {
+        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false failed to set active AudioSession");
         return false;
+    }
 
     m_becameActive = true;
 #endif
@@ -232,6 +239,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
             oneSession.pauseSession();
     });
 
+    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning true");
     return true;
 }
     
@@ -361,6 +369,36 @@ void PlatformMediaSessionManager::applicationWillEnterForeground(bool suspendedU
             session.endInterruption(PlatformMediaSession::MayResumePlaying);
     });
 }
+
+void PlatformMediaSessionManager::processWillSuspend()
+{
+    if (m_processIsSuspended)
+        return;
+    m_processIsSuspended = true;
+
+#if USE(AUDIO_SESSION)
+    if (m_becameActive && shouldDeactivateAudioSession()) {
+        AudioSession::sharedSession().tryToSetActive(false);
+        ALWAYS_LOG(LOGIDENTIFIER, "tried to set inactive AudioSession");
+        m_becameActive = false;
+    }
+#endif
+}
+
+void PlatformMediaSessionManager::processDidResume()
+{
+    if (!m_processIsSuspended)
+        return;
+    m_processIsSuspended = false;
+
+#if USE(AUDIO_SESSION)
+    if (!m_becameActive && activeAudioSessionRequired()) {
+        m_becameActive = AudioSession::sharedSession().tryToSetActive(true);
+        ALWAYS_LOG(LOGIDENTIFIER, "tried to set active AudioSession, ", m_becameActive ? "succeeded" : "failed");
+    }
+#endif
+}
+
 
 void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession& session)
 {

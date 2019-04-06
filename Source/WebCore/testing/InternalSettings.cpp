@@ -36,6 +36,7 @@
 #include "LocaleToScriptMapping.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformMediaSessionManager.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
@@ -97,6 +98,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(ACCESSIBILITY_EVENTS)
     , m_accessibilityEventsEnabled(settings.accessibilityEventsEnabled())
 #endif
+    , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
     , m_pdfImageCachingPolicy(settings.pdfImageCachingPolicy())
@@ -202,6 +204,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     settings.setFrameFlattening(m_frameFlattening);
     settings.setIncompleteImageBorderEnabled(m_incompleteImageBorderEnabled);
+    PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
 #if ENABLE(ACCESSIBILITY_EVENTS)
     settings.setAccessibilityEventsEnabled(m_accessibilityEventsEnabled);
 #endif
@@ -970,6 +973,11 @@ void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(InternalS
 bool InternalSettings::webAnimationsCSSIntegrationEnabled()
 {
     return RuntimeEnabledFeatures::sharedFeatures().webAnimationsCSSIntegrationEnabled();
+}
+
+void InternalSettings::setShouldDeactivateAudioSession(bool should)
+{
+    PlatformMediaSessionManager::setShouldDeactivateAudioSession(should);
 }
 
 // If you add to this class, make sure that you update the Backup class for test reproducability!

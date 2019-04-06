@@ -739,4 +739,7 @@ enum CompositingPolicy {
     sequence<CookieData> getCookies();
 
     void setAlwaysAllowLocalWebarchive(boolean alwaysAllowLocalWebarchive);
+
+    void processWillSuspend();
+    void processDidResume();
 };

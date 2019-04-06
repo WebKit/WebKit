@@ -4971,4 +4971,14 @@ void Internals::setAlwaysAllowLocalWebarchive(bool alwaysAllowLocalWebarchive)
     localFrame->loader().setAlwaysAllowLocalWebarchive(alwaysAllowLocalWebarchive);
 }
 
+void Internals::processWillSuspend()
+{
+    PlatformMediaSessionManager::sharedManager().processWillSuspend();
+}
+
+void Internals::processDidResume()
+{
+    PlatformMediaSessionManager::sharedManager().processDidResume();
+}
+
 } // namespace WebCore

@@ -1,3 +1,17 @@
+2019-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Deactivate the audio session before the WebProcess suspends.
+        https://bugs.webkit.org/show_bug.cgi?id=196658
+
+        Reviewed by Eric Carlson.
+
+        Notify the PlatformMediaSessionManager when the process suspends or resumes.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::processDidResume):
+
 2019-04-05  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] Web process gets suspended while holding locked database files

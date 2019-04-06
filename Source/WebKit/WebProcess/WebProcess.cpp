@@ -1453,6 +1453,7 @@ void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shou
 
 #if ENABLE(VIDEO)
     suspendAllMediaBuffering();
+    PlatformMediaSessionManager::sharedManager().processWillSuspend();
 #endif
 
     if (!m_suppressMemoryPressureHandler)
@@ -1519,6 +1520,7 @@ void WebProcess::cancelPrepareToSuspend()
 #endif
 
 #if ENABLE(VIDEO)
+    PlatformMediaSessionManager::sharedManager().processDidResume();
     resumeAllMediaBuffering();
 #endif
 
@@ -1592,6 +1594,7 @@ void WebProcess::processDidResume()
 #endif
 
 #if ENABLE(VIDEO)
+    PlatformMediaSessionManager::sharedManager().processDidResume();
     resumeAllMediaBuffering();
 #endif
 }

@@ -1,3 +1,34 @@
+2019-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Deactivate the audio session before the WebProcess suspends.
+        https://bugs.webkit.org/show_bug.cgi?id=196658
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/media/audio-session-deactivated-when-suspended.html
+
+        Deactivate the audio session when we are notified that the session will suspend.
+
+        Drive-by fix: don't try to begin playback when the process is suspended.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionWillBeginPlayback):
+        (WebCore::PlatformMediaSessionManager::processWillSuspend):
+        (WebCore::PlatformMediaSessionManager::processDidResume):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::processIsSuspended const):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setShouldDeactivateAudioSession):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        (WebCore::Internals::processWillSuspend):
+        (WebCore::Internals::processDidResume):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-04-05  Sihui Liu  <sihui_liu@apple.com>
 
         [iOS] Web process gets suspended while holding locked database files
