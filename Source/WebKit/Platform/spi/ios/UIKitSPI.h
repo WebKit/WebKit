@@ -1170,6 +1170,10 @@ static inline bool currentUserInterfaceIdiomIsPad()
 #endif
 }
 
+@interface UIWebFormAccessory (Staging_49666643)
+- (void)setNextPreviousItemsVisible:(BOOL)visible;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

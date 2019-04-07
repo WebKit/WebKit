@@ -4605,10 +4605,18 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 
 - (void)_setEditable:(BOOL)editable
 {
+    bool wasEditable = _page->isEditable();
     _page->setEditable(editable);
 #if PLATFORM(MAC)
     if (editable)
         _impl->didBecomeEditable();
+#endif
+
+    if (wasEditable == editable)
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    [_contentView _didChangeWebViewEditability];
 #endif
 }
 

@@ -3811,6 +3811,9 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     auto* accessoryView = self.formAccessoryView; // Creates one, if needed.
 
+    if ([accessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
+        [accessoryView setNextPreviousItemsVisible:!_webView._editable];
+
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
 
@@ -3848,6 +3851,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)endSelectionChange
 {
     [self.inputDelegate selectionDidChange:self];
+}
+
+- (void)_didChangeWebViewEditability
+{
+    if ([_formAccessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
+        [_formAccessoryView setNextPreviousItemsVisible:!_webView._editable];
 }
 
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion

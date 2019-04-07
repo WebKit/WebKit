@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIBarButtonItemGroup_Private.h>
 #import <UIKit/UICalloutBar.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
@@ -38,6 +39,7 @@
 #import <UIKit/UITextInput_Private.h>
 #import <UIKit/UIViewController_Private.h>
 #import <UIKit/UIWKTextInteractionAssistant.h>
+#import <UIKit/UIWebFormAccessory.h>
 
 #if PLATFORM(IOS)
 @protocol UIDragSession;
@@ -81,6 +83,13 @@ WTF_EXTERN_C_END
 - (void)handleKeyWebEvent:(WebEvent *)theEvent withCompletionHandler:(void (^)(WebEvent *, BOOL))completionHandler;
 - (BOOL)_shouldSuppressSelectionCommands;
 - (NSDictionary *)_autofillContext;
+@end
+
+@interface UIWebFormAccessory : UIInputView
+@end
+
+@interface UIBarButtonItemGroup ()
+@property (nonatomic, readwrite, assign, getter=_isHidden, setter=_setHidden:) BOOL hidden;
 @end
 
 @protocol UITextInputMultiDocument <NSObject>
@@ -168,6 +177,10 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 @protocol UIWKInteractionViewProtocol_Staging_49236384
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
+@end
+
+@interface UIWebFormAccessory (Staging_49666643)
+- (void)setNextPreviousItemsVisible:(BOOL)visible;
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

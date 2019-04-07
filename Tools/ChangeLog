@@ -1,3 +1,18 @@
+2019-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Hide next and previous form control buttons when WKWebView is editable
+        https://bugs.webkit.org/show_bug.cgi?id=196672
+        <rdar://problem/35625321>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (-[TestWKWebView lastTrailingBarButtonGroup]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2019-04-05  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         We should pass minimumEffectiveDeviceWidth to web process on new page creation.

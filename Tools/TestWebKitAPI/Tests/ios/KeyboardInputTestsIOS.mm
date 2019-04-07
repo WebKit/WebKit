@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "IPadUserInterfaceSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
@@ -140,6 +141,11 @@ static CGRect rounded(CGRect rect)
     }
 }
 
+- (UIBarButtonItemGroup *)lastTrailingBarButtonGroup
+{
+    return self.firstResponder.inputAssistantItem.trailingBarButtonGroups.lastObject;
+}
+
 @end
 
 static RetainPtr<TestWKWebView> webViewWithAutofocusedInput(const RetainPtr<TestInputDelegate>& inputDelegate)
@@ -166,6 +172,34 @@ static RetainPtr<TestWKWebView> webViewWithAutofocusedInput()
 }
 
 namespace TestWebKitAPI {
+
+TEST(KeyboardInputTests, FormNavigationAssistantBarButtonItems)
+{
+    IPadUserInterfaceSwizzler iPadUserInterface;
+
+    auto inputDelegate = adoptNS([TestInputDelegate new]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setInputDelegate:inputDelegate.get()];
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[&] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+    [webView synchronouslyLoadHTMLString:@"<body contenteditable>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
+
+    EXPECT_EQ(2U, [webView lastTrailingBarButtonGroup].barButtonItems.count);
+    EXPECT_FALSE([webView lastTrailingBarButtonGroup].hidden);
+
+    if (![UIWebFormAccessory instancesRespondToSelector:@selector(setNextPreviousItemsVisible:)]) {
+        // The rest of this test requires UIWebFormAccessory to be able to show or hide its next and previous items.
+        return;
+    }
+
+    [webView _setEditable:YES];
+    EXPECT_TRUE([webView lastTrailingBarButtonGroup].hidden);
+
+    [webView _setEditable:NO];
+    EXPECT_FALSE([webView lastTrailingBarButtonGroup].hidden);
+}
 
 TEST(KeyboardInputTests, ModifyInputAssistantItemBarButtonGroups)
 {

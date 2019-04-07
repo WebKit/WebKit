@@ -1,3 +1,24 @@
+2019-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Hide next and previous form control buttons when WKWebView is editable
+        https://bugs.webkit.org/show_bug.cgi?id=196672
+        <rdar://problem/35625321>
+
+        Reviewed by Tim Horton.
+
+        Adopt new UIKit SPI to hide or show next and previous controls in the form accessory view when changing
+        editability.
+
+        Test: KeyboardInputTests.FormNavigationAssistantBarButtonItems
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setEditable:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _updateAccessory]):
+        (-[WKContentView _didChangeWebViewEditability]):
+
 2019-04-06  Antti Koivisto  <antti@apple.com>
 
         Combine event and touch action regions into a single class
