@@ -1,3 +1,20 @@
+2019-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Remove stray byte added by r241131
+        https://bugs.webkit.org/show_bug.cgi?id=196682
+
+        Reviewed by Alexey Proskuryakov.
+
+        Sublime Text thinks WKWebView.mm is binary instead of text.
+
+        According to online documentation and bisecting, this is because r241131
+        introduced a stray byte (probably a null byte?) into the file.
+
+        I fixed this with Cmd-C Cmd-V.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
 2019-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Hide next and previous form control buttons when WKWebView is editable
