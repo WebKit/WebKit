@@ -1,3 +1,14 @@
+2019-04-07  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r243642): Crash in reddit.com page
+        https://bugs.webkit.org/show_bug.cgi?id=196684
+
+        Reviewed by Geoffrey Garen.
+
+        New regression test.
+
+        * stress/regexp-nongreedy-charclass-backtracks.js: Added.
+
 2019-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CallLinkInfo should clear Callee or CodeBlock even if it is unlinked by jettison

@@ -1943,11 +1943,15 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
 
         move(TrustedImm32(0), countRegister);
         op.m_reentry = label();
+
+#ifdef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
             if (!term->characterClass->hasOneCharacterSize() || term->invert())
                 storeToFrame(index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
-            storeToFrame(countRegister, term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex());
         }
+#endif
+
+        storeToFrame(countRegister, term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex());
     }
 
     void backtrackCharacterClassNonGreedy(size_t opIndex)
@@ -1966,9 +1970,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         if (m_decodeSurrogatePairs) {
             if (!term->characterClass->hasOneCharacterSize() || term->invert())
                 loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::beginIndex(), index);
-            loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex(), countRegister);
         }
 #endif
+
+        loadFromFrame(term->frameLocation + BackTrackInfoCharacterClass::matchAmountIndex(), countRegister);
 
         nonGreedyFailures.append(atEndOfInput());
         nonGreedyFailures.append(branch32(Equal, countRegister, Imm32(term->quantityMaxCount.unsafeGet())));

@@ -1,3 +1,18 @@
+2019-04-07  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r243642): Crash in reddit.com page
+        https://bugs.webkit.org/show_bug.cgi?id=196684
+
+        Reviewed by Geoffrey Garen.
+
+        In r243642, the code that saves and restores the count for non-greedy character classes
+        was inadvertently put inside an if statement.  This code should be generated for all
+        non-greedy character classes.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+
 2019-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] CallLinkInfo should clear Callee or CodeBlock even if it is unlinked by jettison
