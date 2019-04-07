@@ -45,20 +45,24 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
         return nodeToInspect.nodeType() === Node.ELEMENT_NODE;
     }
 
-    visibilityDidChange()
+    hidden()
     {
-        super.visibilityDidChange();
+        super.hidden();
+
+        if (this._panel)
+            this._panel.hidden();
+    }
+
+    shown()
+    {
+        super.shown();
 
         if (!this._panel)
             return;
 
-        if (!this.visible) {
-            this._panel.hidden();
-            return;
-        }
+        console.assert(this.visible, `Shown panel ${this._identifier} must be visible.`);
 
         this._updateNoForcedPseudoClassesScrollOffset();
-
         this._panel.shown();
         this._panel.markAsNeedsRefresh(this.domNode);
     }
