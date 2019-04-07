@@ -74,7 +74,7 @@ public:
         }
 
     private:
-        template <typename U> friend class WeakHashSet;
+        template <typename> friend class WeakHashSet;
 
         typename WeakReferenceSet::const_iterator m_position;
         typename WeakReferenceSet::const_iterator m_endPosition;
@@ -86,9 +86,10 @@ public:
     const_iterator begin() const { return WeakHashSetConstIterator(m_set, m_set.begin()); }
     const_iterator end() const { return WeakHashSetConstIterator(m_set, m_set.end()); }
 
-    void add(T& value)
+    template <typename U>
+    void add(const U& value)
     {
-        m_set.add(*makeWeakPtr(value).m_ref);
+        m_set.add(*makeWeakPtr<T>(const_cast<U&>(value)).m_ref);
     }
 
     template <typename U>

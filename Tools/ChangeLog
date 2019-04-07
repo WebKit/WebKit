@@ -1,3 +1,17 @@
+2019-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Added tests for WeakHashSet::computesEmpty and WeakHashSet::computeSize
+        https://bugs.webkit.org/show_bug.cgi?id=196669
+
+        Reviewed by Geoffrey Garen.
+
+        Added three new unit tests for WeakHashSet.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (WTF_WeakPtr.WeakHashSetConstObjects):
+        (WTF_WeakPtr.WeakHashSetComputesEmpty):
+        (WTF_WeakPtr.WeakHashSetComputeSize):
+
 2019-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Hide next and previous form control buttons when WKWebView is editable

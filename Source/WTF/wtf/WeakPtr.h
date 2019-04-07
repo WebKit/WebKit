@@ -33,9 +33,9 @@
 
 namespace WTF {
 
-template<typename U> class WeakHashSet;
-template<typename T> class WeakPtr;
-template<typename T> class WeakPtrFactory;
+template<typename> class WeakHashSet;
+template<typename> class WeakPtr;
+template<typename> class WeakPtrFactory;
 
 // Note: WeakReference is an implementation detail, and should not be used directly.
 template<typename T>
@@ -86,8 +86,8 @@ public:
     void clear() { m_ref = nullptr; }
 
 private:
-    template<typename U> friend class WeakHashSet;
-    template<typename U> friend class WeakPtr;
+    template<typename> friend class WeakHashSet;
+    template<typename> friend class WeakPtr;
     template<typename U> friend WeakPtr<U> makeWeakPtr(U&);
 
     RefPtr<WeakReference<T>> m_ref;
@@ -131,7 +131,7 @@ public:
     }
 
 private:
-    template<typename U> friend class WeakHashSet;
+    template<typename> friend class WeakHashSet;
 
     mutable RefPtr<WeakReference<T>> m_ref;
 };

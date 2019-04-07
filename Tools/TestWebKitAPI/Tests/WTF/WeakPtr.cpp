@@ -492,6 +492,72 @@ TEST(WTF_WeakPtr, WeakHashSetBasic)
     EXPECT_EQ(s_baseWeakReferences, 0u);
 }
 
+TEST(WTF_WeakPtr, WeakHashSetConstObjects)
+{
+    {
+        WeakHashSet<Base> weakHashSet;
+        const Base object;
+        EXPECT_FALSE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+        weakHashSet.add(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        weakHashSet.checkConsistency();
+        weakHashSet.add(object);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        weakHashSet.checkConsistency();
+        weakHashSet.remove(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        const Derived object;
+        EXPECT_FALSE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+        weakHashSet.add(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        weakHashSet.checkConsistency();
+        weakHashSet.add(object);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        weakHashSet.checkConsistency();
+        weakHashSet.remove(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+    }
+
+    {
+        WeakHashSet<Derived> weakHashSet;
+        const Derived object;
+        EXPECT_FALSE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+        weakHashSet.add(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        weakHashSet.checkConsistency();
+        weakHashSet.add(object);
+        EXPECT_TRUE(weakHashSet.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 1u);
+        weakHashSet.checkConsistency();
+        weakHashSet.remove(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+    }
+}
+
 TEST(WTF_WeakPtr, WeakHashSetExpansion)
 {
     unsigned initialCapacity;
@@ -566,6 +632,156 @@ TEST(WTF_WeakPtr, WeakHashSetExpansion)
         EXPECT_EQ(s_baseWeakReferences, objectCount);
         EXPECT_EQ(weakHashSet.capacity(), originalCapacity);
         EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), 0u);
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashSetComputesEmpty)
+{
+    {
+        WeakHashSet<Base> weakHashSet;
+        {
+            Base object;
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            weakHashSet.add(object);
+            EXPECT_FALSE(weakHashSet.computesEmpty());
+        }
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_TRUE(weakHashSet.computesEmpty());
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        Base object1;
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        weakHashSet.add(object1);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        {
+            Base object2;
+            weakHashSet.add(object2);
+            EXPECT_FALSE(weakHashSet.computesEmpty());
+        }
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_FALSE(weakHashSet.computesEmpty());
+        weakHashSet.remove(object1);
+        EXPECT_TRUE(weakHashSet.computesEmpty());
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        Vector<std::unique_ptr<Base>> objects;
+        auto firstObject = std::make_unique<Base>();
+        weakHashSet.add(*firstObject);
+        do {
+            auto object = std::make_unique<Base>();
+            weakHashSet.add(*object);
+            objects.append(WTFMove(object));
+        } while (weakHashSet.begin().get() == firstObject.get());
+
+        EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), objects.size() + 1);
+        EXPECT_FALSE(weakHashSet.computesEmpty());
+        firstObject = nullptr;
+        EXPECT_FALSE(weakHashSet.computesEmpty());
+        EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
+        EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), objects.size());
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashSetComputeSize)
+{
+    {
+        WeakHashSet<Base> weakHashSet;
+        {
+            Base object;
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            weakHashSet.add(object);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_EQ(weakHashSet.computeSize(), 1u);
+            weakHashSet.checkConsistency();
+        }
+        EXPECT_TRUE(weakHashSet.computesEmpty());
+        EXPECT_EQ(weakHashSet.computeSize(), 0u);
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_TRUE(weakHashSet.computesEmpty());
+        weakHashSet.checkConsistency();
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        {
+            Base object1;
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            weakHashSet.add(object1);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            {
+                Base object2;
+                weakHashSet.add(object2);
+                EXPECT_EQ(s_baseWeakReferences, 2u);
+                EXPECT_EQ(weakHashSet.computeSize(), 2u);
+                weakHashSet.checkConsistency();
+            }
+            EXPECT_EQ(s_baseWeakReferences, 2u);
+            EXPECT_EQ(weakHashSet.computeSize(), 1u);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            weakHashSet.checkConsistency();
+            weakHashSet.remove(object1);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_EQ(weakHashSet.computeSize(), 0u);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            weakHashSet.checkConsistency();
+        }
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        weakHashSet.checkConsistency();
+    }
+
+    while (1) {
+        WeakHashSet<Base> weakHashSet;
+        auto firstObject = std::make_unique<Base>();
+        auto lastObject = std::make_unique<Base>();
+        weakHashSet.add(*firstObject);
+        weakHashSet.add(*lastObject);
+        if (weakHashSet.begin().get() != firstObject.get())
+            continue;
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(weakHashSet.computeSize(), 2u);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        weakHashSet.checkConsistency();
+        firstObject = nullptr;
+        EXPECT_EQ(weakHashSet.computeSize(), 1u);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        weakHashSet.checkConsistency();
+        lastObject = nullptr;
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(weakHashSet.computeSize(), 0u);
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        weakHashSet.checkConsistency();
+        break;
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        Vector<std::unique_ptr<Base>> objects;
+        auto nonFirstObject = std::make_unique<Base>();
+        weakHashSet.add(*nonFirstObject);
+        do {
+            auto object = std::make_unique<Base>();
+            weakHashSet.add(*object);
+            objects.append(WTFMove(object));
+        } while (weakHashSet.begin().get() == nonFirstObject.get());
+
+        unsigned objectsCount = objects.size();
+        EXPECT_EQ(s_baseWeakReferences, objectsCount + 1);
+        EXPECT_EQ(weakHashSet.computeSize(), objectsCount + 1);
+        EXPECT_EQ(s_baseWeakReferences, objectsCount + 1);
+        weakHashSet.checkConsistency();
+        nonFirstObject = nullptr;
+        EXPECT_EQ(weakHashSet.computeSize(), objectsCount);
+        EXPECT_EQ(s_baseWeakReferences, objectsCount);
+        weakHashSet.checkConsistency();
+        objects.clear();
+        EXPECT_EQ(s_baseWeakReferences, objectsCount);
+        EXPECT_EQ(weakHashSet.computeSize(), 0u);
+        EXPECT_EQ(s_baseWeakReferences, 0u);
     }
 }
 
