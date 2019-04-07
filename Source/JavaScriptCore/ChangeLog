@@ -1,3 +1,25 @@
+2019-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] CallLinkInfo should clear Callee or CodeBlock even if it is unlinked by jettison
+        https://bugs.webkit.org/show_bug.cgi?id=196683
+
+        Reviewed by Saam Barati.
+
+        In r243626, we stop repatching CallLinkInfo when the CallLinkInfo is held by jettisoned CodeBlock.
+        But we still need to clear the Callee or CodeBlock since they are now dead. Otherwise, CodeBlock's
+        visitWeak eventually accesses this dead cells and crashes because the owner CodeBlock of CallLinkInfo
+        can be still live.
+
+        We also move all repatching operations from CallLinkInfo.cpp to Repatch.cpp for consistency because the
+        other repatching operations in CallLinkInfo are implemented in Repatch.cpp side.
+
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setCallee):
+        (JSC::CallLinkInfo::clearCallee):
+        * jit/Repatch.cpp:
+        (JSC::linkFor):
+        (JSC::revertCall):
+
 2019-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] OSRExit recovery for SpeculativeAdd does not consier "A = A + A" pattern

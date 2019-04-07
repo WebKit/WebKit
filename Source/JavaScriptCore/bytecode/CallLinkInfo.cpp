@@ -31,7 +31,6 @@
 #include "DFGThunks.h"
 #include "FunctionCodeBlock.h"
 #include "JSCInlines.h"
-#include "MacroAssembler.h"
 #include "Opcode.h"
 #include "Repatch.h"
 #include <wtf/ListDump.h>
@@ -125,14 +124,12 @@ CodeLocationLabel<JSInternalPtrTag> CallLinkInfo::slowPathStart()
 void CallLinkInfo::setCallee(VM& vm, JSCell* owner, JSObject* callee)
 {
     RELEASE_ASSERT(!isDirect());
-    MacroAssembler::repatchPointer(hotPathBegin(), callee);
     m_calleeOrCodeBlock.set(vm, owner, callee);
 }
 
 void CallLinkInfo::clearCallee()
 {
     RELEASE_ASSERT(!isDirect());
-    MacroAssembler::repatchPointer(hotPathBegin(), nullptr);
     m_calleeOrCodeBlock.clear();
 }
 
