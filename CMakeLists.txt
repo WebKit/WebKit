@@ -114,6 +114,16 @@ else ()
     set(WTF_CPU_UNKNOWN 1)
 endif ()
 
+#---------------------------
+# Make sure SSE2 is present.
+#---------------------------
+if (WTF_CPU_X86)
+    include(FindSSE2)
+    if (NOT SSE2_SUPPORT_FOUND)
+        message(FATAL_ERROR "SSE2 support is required to compile WebKit")
+    endif ()
+endif ()
+
 # -----------------------------------------------------------------------------
 # Determine the operating system
 # -----------------------------------------------------------------------------

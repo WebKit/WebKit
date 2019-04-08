@@ -4197,41 +4197,11 @@ private:
     }
 #endif
 
-#if CPU(X86)
-#if OS(MAC_OS_X)
-
-    // All X86 Macs are guaranteed to support at least SSE2,
-    static bool isSSE2Present()
-    {
-        return true;
-    }
-
-#else // OS(MAC_OS_X)
-    static bool isSSE2Present()
-    {
-        if (s_sse2CheckState == CPUIDCheckState::NotChecked)
-            collectCPUFeatures();
-        return s_sse2CheckState == CPUIDCheckState::Set;
-    }
-
-#endif // OS(MAC_OS_X)
-#elif !defined(NDEBUG) // CPU(X86)
-
-    // On x86-64 we should never be checking for SSE2 in a non-debug build,
-    // but non debug add this method to keep the asserts above happy.
-    static bool isSSE2Present()
-    {
-        return true;
-    }
-
-#endif
-
     using CPUID = std::array<unsigned, 4>;
     static CPUID getCPUID(unsigned level);
     static CPUID getCPUIDEx(unsigned level, unsigned count);
     JS_EXPORT_PRIVATE static void collectCPUFeatures();
 
-    JS_EXPORT_PRIVATE static CPUIDCheckState s_sse2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_1CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_sse4_2CheckState;
     JS_EXPORT_PRIVATE static CPUIDCheckState s_avxCheckState;

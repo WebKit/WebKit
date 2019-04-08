@@ -1,3 +1,13 @@
+2019-04-08  Xan Lopez  <xan@igalia.com>
+
+        [CMake] Detect SSE2 at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=196488
+
+        Reviewed by Carlos Garcia Campos.
+
+        * assembler/MacroAssemblerX86Common.cpp: Remove unnecessary (and
+        incorrect) static_assert.
+
 2019-04-07  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r243642): Crash in reddit.com page
