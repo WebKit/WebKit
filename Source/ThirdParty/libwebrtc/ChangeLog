@@ -1,3 +1,14 @@
+2019-04-08  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Fix Web GPU experimental feature on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=196632
+
+        Reviewed by Myles C. Maxfield.
+
+        Add conditionals for iOS 11.
+
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
 2019-04-04  Youenn Fablet  <youenn@apple.com>
 
         Log the error if VideoProcessing library cannot be dlopen
