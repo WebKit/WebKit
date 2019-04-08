@@ -256,7 +256,7 @@ class FlatpakObject:
 
     def flatpak(self, command, *args, **kwargs):
         show_output = kwargs.pop("show_output", False)
-        comment = kwargs.pop("commend", None)
+        comment = kwargs.pop("comment", None)
         if comment:
             Console.message(comment)
 
@@ -471,10 +471,12 @@ class FlatpakPackage(FlatpakObject):
             return False
 
         args = ["install", self.repo.name, self.name, "--reinstall", self.branch, "--assumeyes"]
-
-        self.flatpak(*args, show_output=True,
-                     comment="Installing from " + self.repo.name + " " +
-                             self.name + " " + self.arch + " " + self.branch)
+        comment = "Installing from " + self.repo.name + " " + self.name + " " + self.arch + " " + self.branch
+        self.flatpak(*args, show_output=True, comment=comment)
+        if self.hash:
+            args = ["update", "--commit", self.hash]
+            comment = "Updating to %s" % self.hash
+            self.flatpak(*args, show_output=True, comment=comment)
 
     def update(self):
         if not self.is_installed(self.branch):
