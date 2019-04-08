@@ -31,7 +31,7 @@
 
 #include "APIPageConfiguration.h"
 #include "AcceleratedBackingStore.h"
-#include "DrawingAreaProxyImpl.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "InputMethodFilter.h"
 #include "KeyBindingTranslator.h"
 #include "NativeWebKeyboardEvent.h"
@@ -378,7 +378,7 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
-        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea()))
+        if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
             drawingArea->setNativeSurfaceHandleForCompositing(GDK_WINDOW_XID(window));
     }
 #endif
@@ -393,7 +393,7 @@ static void webkitWebViewBaseUnrealize(GtkWidget* widget)
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
-        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(webView->priv->pageProxy->drawingArea()))
+        if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webView->priv->pageProxy->drawingArea()))
             drawingArea->destroyNativeSurfaceHandleForCompositing();
     }
 #endif
@@ -530,7 +530,7 @@ static void webkitWebViewBaseConstructed(GObject* object)
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(webViewBase->priv->pageProxy->drawingArea());
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(webViewBase->priv->pageProxy->drawingArea());
     if (!drawingArea)
         return FALSE;
 
@@ -616,7 +616,7 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
         gtk_widget_size_allocate(priv->dialog, &childAllocation);
     }
 
-    if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea()))
+    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea()))
         drawingArea->setSize(viewRect.size());
 }
 
@@ -1633,7 +1633,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
         return;
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
     ASSERT(drawingArea);
 
     if (!gtk_widget_get_realized(GTK_WIDGET(webkitWebViewBase)))
@@ -1658,7 +1658,7 @@ void webkitWebViewBasePageClosed(WebKitWebViewBase* webkitWebViewBase)
         return;
 
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(priv->pageProxy->drawingArea());
+    auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(priv->pageProxy->drawingArea());
     ASSERT(drawingArea);
     drawingArea->destroyNativeSurfaceHandleForCompositing();
 #endif

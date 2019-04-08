@@ -33,8 +33,8 @@ enum DrawingAreaType {
     DrawingAreaTypeTiledCoreAnimation,
 #endif
     DrawingAreaTypeRemoteLayerTree,
-#else
-    DrawingAreaTypeImpl
+#elif USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
+    DrawingAreaTypeCoordinatedGraphics
 #endif
 };
     

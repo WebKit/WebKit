@@ -27,7 +27,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
-#include "DrawingAreaProxyImpl.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "NotImplemented.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebPageProxy.h"
@@ -45,7 +45,7 @@ PageClientImpl::PageClientImpl(WebView& view)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
 {
-    return std::make_unique<DrawingAreaProxyImpl>(*m_view.page(), process);
+    return std::make_unique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page(), process);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region& region)

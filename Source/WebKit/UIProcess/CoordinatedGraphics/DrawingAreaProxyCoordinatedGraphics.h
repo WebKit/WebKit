@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2016-2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,48 +27,89 @@
 
 #pragma once
 
+#include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
+#include <wtf/RunLoop.h>
+
+namespace WebCore {
+class Region;
+}
 
 namespace WebKit {
 
-class AcceleratedDrawingAreaProxy : public DrawingAreaProxy {
+class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
-    AcceleratedDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
-    virtual ~AcceleratedDrawingAreaProxy();
+    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
+    virtual ~DrawingAreaProxyCoordinatedGraphics();
+
+#if !PLATFORM(WPE)
+    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
+#endif
 
     bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
-    void visibilityDidChange();
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t);
     void destroyNativeSurfaceHandleForCompositing();
 #endif
 
-    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
-
-protected:
+private:
     // DrawingAreaProxy
     void sizeDidChange() override;
     void deviceScaleFactorDidChange() override;
     void waitForBackingStoreUpdateOnNextPaint() override;
+    void setBackingStoreIsDiscardable(bool) override;
 
     // IPC message handlers
+    void update(uint64_t backingStoreStateID, const UpdateInfo&) override;
     void didUpdateBackingStoreState(uint64_t backingStoreStateID, const UpdateInfo&, const LayerTreeContext&) override;
     void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
     void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) override;
     void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) override;
+
+#if !PLATFORM(WPE)
+    void incorporateUpdate(const UpdateInfo&);
+#endif
+
+    bool alwaysUseCompositing() const;
+    void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    void exitAcceleratedCompositingMode();
+    void updateAcceleratedCompositingMode(const LayerTreeContext&);
 
     enum RespondImmediatelyOrNot { DoNotRespondImmediately, RespondImmediately };
     void backingStoreStateDidChange(RespondImmediatelyOrNot);
     void sendUpdateBackingStoreState(RespondImmediatelyOrNot);
     void waitForAndDispatchDidUpdateBackingStoreState();
 
-    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
-    void exitAcceleratedCompositingMode();
-    void updateAcceleratedCompositingMode(const LayerTreeContext&);
+#if !PLATFORM(WPE)
+    void discardBackingStoreSoon();
+    void discardBackingStore();
+#endif
 
-    bool alwaysUseCompositing() const;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
+
+    class DrawingMonitor {
+        WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        DrawingMonitor(WebPageProxy&);
+        ~DrawingMonitor();
+
+        void start(WTF::Function<void(CallbackBase::Error)>&&);
+
+    private:
+        static int webViewDrawCallback(DrawingMonitor*);
+
+        void stop();
+        void didDraw();
+
+        MonotonicTime m_startTime;
+        WTF::Function<void(CallbackBase::Error)> m_callback;
+        RunLoop::Timer<DrawingMonitor> m_timer;
+#if PLATFORM(GTK)
+        WebPageProxy& m_webPage;
+#endif
+    };
 
     // The state ID corresponding to our current backing store. Updated whenever we allocate
     // a new backing store. Any messages received that correspond to an earlier state are ignored,
@@ -92,7 +133,13 @@ protected:
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     uint64_t m_pendingNativeSurfaceHandleForCompositing { 0 };
 #endif
+
+#if !PLATFORM(WPE)
+    bool m_isBackingStoreDiscardable { true };
+    std::unique_ptr<BackingStore> m_backingStore;
+    RunLoop::Timer<DrawingAreaProxyCoordinatedGraphics> m_discardBackingStoreTimer;
+#endif
+    std::unique_ptr<DrawingMonitor> m_drawingMonitor;
 };
 
 } // namespace WebKit
-

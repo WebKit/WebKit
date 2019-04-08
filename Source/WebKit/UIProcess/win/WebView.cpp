@@ -28,7 +28,7 @@
 #include "WebView.h"
 
 #include "APIPageConfiguration.h"
-#include "DrawingAreaProxyImpl.h"
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -463,7 +463,7 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     if (dirtyRect.isEmpty())
         return;
     m_page->endPrinting();
-    if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(m_page->drawingArea())) {
+    if (auto* drawingArea = static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea())) {
         // FIXME: We should port WebKit1's rect coalescing logic here.
         Region unpaintedRegion;
         cairo_surface_t* surface = cairo_win32_surface_create(hdc);

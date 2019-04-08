@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2019 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,40 +28,49 @@
 #pragma once
 
 #include "DrawingArea.h"
+#include <WebCore/Region.h>
 #include <wtf/RunLoop.h>
+
+namespace WebCore {
+class GraphicsContext;
+}
 
 namespace WebKit {
 
-class LayerTreeHost;
+class ShareableBitmap;
+class UpdateInfo;
 
-class AcceleratedDrawingArea : public DrawingArea {
+class DrawingAreaCoordinatedGraphics final : public DrawingArea {
 public:
-    AcceleratedDrawingArea(WebPage&, const WebPageCreationParameters&);
-    virtual ~AcceleratedDrawingArea();
+    DrawingAreaCoordinatedGraphics(WebPage&, const WebPageCreationParameters&);
+    virtual ~DrawingAreaCoordinatedGraphics();
 
-protected:
+private:
     // DrawingArea
-    void setNeedsDisplay() override { };
-    void setNeedsDisplayInRect(const WebCore::IntRect&) override { };
+    void setNeedsDisplay() override;
+    void setNeedsDisplayInRect(const WebCore::IntRect&) override;
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
-    void setLayerTreeStateIsFrozen(bool) override;
-    bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
-    LayerTreeHost* layerTreeHost() const override { return m_layerTreeHost.get(); }
     void forceRepaint() override;
     bool forceRepaintAsync(CallbackID) override;
 
-    void setPaintingEnabled(bool) override;
+    void setLayerTreeStateIsFrozen(bool) override;
+    bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
+
+    void setPaintingEnabled(bool paintingEnabled) override { m_isPaintingEnabled = paintingEnabled; };
     void updatePreferences(const WebPreferencesStore&) override;
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
+    void deviceOrPageScaleFactorChanged() override;
+    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
-    void scheduleInitialDeferredPaint() override;
+    void scheduleInitialDeferredPaint() override { };
     void scheduleCompositingLayerFlush() override;
-    void scheduleCompositingLayerFlushImmediately() override;
+    void scheduleCompositingLayerFlushImmediately() override { scheduleCompositingLayerFlush(); };
+    void layerHostDidFlushLayers() override;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
+    RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
@@ -71,32 +81,26 @@ protected:
     void activityStateDidChange(OptionSet<WebCore::ActivityState::Flag>, ActivityStateChangeID, const Vector<CallbackID>& /* callbackIDs */) override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
-    void layerHostDidFlushLayers() override;
-
-#if USE(COORDINATED_GRAPHICS)
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
-#endif
-
-#if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    void deviceOrPageScaleFactorChanged() override;
-#endif
-
     // IPC message handlers.
     void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset) override;
+    void didUpdate() override;
+
+    void sendDidUpdateBackingStoreState();
 
     void exitAcceleratedCompositingModeSoon();
     bool exitAcceleratedCompositingModePending() const { return m_exitCompositingTimer.isActive(); }
-    void exitAcceleratedCompositingModeNow();
     void discardPreviousLayerTreeHost();
 
-    virtual void suspendPainting();
-    virtual void resumePainting();
+    void suspendPainting();
+    void resumePainting();
 
-    virtual void sendDidUpdateBackingStoreState();
-    virtual void didUpdateBackingStoreState() { }
+    void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
+    void exitAcceleratedCompositingMode();
 
-    virtual void enterAcceleratedCompositingMode(WebCore::GraphicsLayer*);
-    virtual void exitAcceleratedCompositingMode() { }
+    void scheduleDisplay();
+    void displayTimerFired();
+    void display();
+    void display(UpdateInfo&);
 
     uint64_t m_backingStoreStateID { 0 };
 
@@ -125,13 +129,26 @@ protected:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended { false };
 
-    RunLoop::Timer<AcceleratedDrawingArea> m_exitCompositingTimer;
+    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_exitCompositingTimer;
 
     // The layer tree host that handles accelerated compositing.
     std::unique_ptr<LayerTreeHost> m_layerTreeHost;
 
     std::unique_ptr<LayerTreeHost> m_previousLayerTreeHost;
-    RunLoop::Timer<AcceleratedDrawingArea> m_discardPreviousLayerTreeHostTimer;
+    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_discardPreviousLayerTreeHostTimer;
+
+    WebCore::Region m_dirtyRegion;
+    WebCore::IntRect m_scrollRect;
+    WebCore::IntSize m_scrollOffset;
+
+    // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
+    // web process won't paint more frequent than the UI process can handle.
+    bool m_isWaitingForDidUpdate { false };
+
+    bool m_alwaysUseCompositing {false };
+    bool m_forceRepaintAfterBackingStoreStateUpdate { false };
+
+    RunLoop::Timer<DrawingAreaCoordinatedGraphics> m_displayTimer;
 };
 
 } // namespace WebKit
