@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef CoordinatedGraphicsScene_h
-#define CoordinatedGraphicsScene_h
+#pragma once
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -33,6 +32,7 @@
 #include <WebCore/TextureMapperBackingStore.h>
 #include <WebCore/TextureMapperFPSCounter.h>
 #include <WebCore/TextureMapperLayer.h>
+#include <WebCore/TextureMapperPlatformLayerProxy.h>
 #include <WebCore/Timer.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -40,10 +40,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
-
-#if USE(COORDINATED_GRAPHICS_THREADED)
-#include <WebCore/TextureMapperPlatformLayerProxy.h>
-#endif
 
 namespace Nicosia {
 class Buffer;
@@ -62,11 +58,7 @@ public:
     virtual void updateViewport() = 0;
 };
 
-class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>
-#if USE(COORDINATED_GRAPHICS_THREADED)
-    , public WebCore::TextureMapperPlatformLayerProxy::Compositor
-#endif
-{
+class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public WebCore::TextureMapperPlatformLayerProxy::Compositor {
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
@@ -92,9 +84,7 @@ private:
 
     void ensureRootLayer();
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
     void onNewBufferAvailable() override;
-#endif
 
     struct {
         RefPtr<Nicosia::Scene> scene;
@@ -117,7 +107,5 @@ private:
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)
-
-#endif // CoordinatedGraphicsScene_h
 
 

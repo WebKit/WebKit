@@ -1436,7 +1436,7 @@ private:
 
     GC3Duint m_texture { 0 };
     GC3Duint m_fbo { 0 };
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     GC3Duint m_compositorTexture { 0 };
     GC3Duint m_intermediateTexture { 0 };
 #endif

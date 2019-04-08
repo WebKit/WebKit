@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextureMapperPlatformLayerProxy_h
-#define TextureMapperPlatformLayerProxy_h
+#pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "TextureMapperGLHeaders.h"
 #include <wtf/Condition.h>
@@ -105,6 +104,4 @@ private:
 
 } // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
-
-#endif // TextureMapperPlatformLayerProxy_h
+#endif // USE(COORDINATED_GRAPHICS)

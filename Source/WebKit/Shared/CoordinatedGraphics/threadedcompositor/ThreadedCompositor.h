@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "CompositingRunLoop.h"
 #include "CoordinatedGraphicsScene.h"
@@ -125,5 +125,5 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)
 

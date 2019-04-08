@@ -135,7 +135,7 @@ void AcceleratedDrawingArea::updatePreferences(const WebPreferencesStore& store)
 
 void AcceleratedDrawingArea::mainFrameContentSizeChanged(const IntSize& size)
 {
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     if (m_layerTreeHost)
         m_layerTreeHost->contentsSizeChanged(size);
     else if (m_previousLayerTreeHost)
@@ -332,7 +332,7 @@ void AcceleratedDrawingArea::enterAcceleratedCompositingMode(GraphicsLayer* grap
         if (!m_layerTreeStateIsFrozen)
             m_layerTreeHost->setLayerFlushSchedulingEnabled(true);
     } else {
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
         m_layerTreeHost = std::make_unique<LayerTreeHost>(m_webPage);
 #else
         m_layerTreeHost = nullptr;
@@ -410,7 +410,7 @@ void AcceleratedDrawingArea::destroyNativeSurfaceHandleForCompositing(bool& hand
 }
 #endif
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 void AcceleratedDrawingArea::didChangeViewportAttributes(ViewportAttributes&& attrs)
 {
     if (m_layerTreeHost)

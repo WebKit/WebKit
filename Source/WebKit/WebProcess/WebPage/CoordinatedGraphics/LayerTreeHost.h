@@ -53,7 +53,7 @@ namespace WebKit {
 class WebPage;
 
 class LayerTreeHost
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     final : public CompositingCoordinator::Client, public AcceleratedSurface::Client
 #endif
 {
@@ -98,7 +98,7 @@ public:
 #endif
 
 private:
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();
     void didChangeViewport();
     void renderNextFrame(bool);
@@ -171,11 +171,11 @@ private:
         UpdateViewport = 1 << 2,
         UpdateScale = 1 << 3
     };
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)
 
     WebPage& m_webPage;
     LayerTreeContext m_layerTreeContext;
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
     bool m_layerFlushSchedulingEnabled { true };
     bool m_notifyAfterScheduledLayerFlush { false };
     bool m_isSuspended { false };
@@ -197,10 +197,10 @@ private:
         bool needsFreshFlush { false };
     } m_forceRepaintAsync;
     RunLoop::Timer<LayerTreeHost> m_layerFlushTimer;
-#endif // USE(COORDINATED_GRAPHICS_THREADED)
+#endif // USE(COORDINATED_GRAPHICS)
 };
 
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(COORDINATED_GRAPHICS)
 inline LayerTreeHost::LayerTreeHost(WebPage& webPage) : m_webPage(webPage) { }
 inline LayerTreeHost::~LayerTreeHost() { }
 inline void LayerTreeHost::setLayerFlushSchedulingEnabled(bool) { }

@@ -395,7 +395,7 @@ bool GraphicsLayer::supportsContentsTiling()
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
     if (m_nicosia.contentLayer)
         m_shouldUpdatePlatformLayer = true;
 #endif
@@ -406,7 +406,7 @@ void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 
 void CoordinatedGraphicsLayer::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose)
 {
-#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
     auto* contentLayer = downcast<Nicosia::ContentLayer>(platformLayer);
     if (m_nicosia.contentLayer != contentLayer) {
         m_nicosia.contentLayer = contentLayer;
@@ -616,7 +616,7 @@ void CoordinatedGraphicsLayer::updatePlatformLayer()
         return;
 
     m_shouldUpdatePlatformLayer = false;
-#if USE(COORDINATED_GRAPHICS_THREADED) && USE(NICOSIA)
+#if USE(COORDINATED_GRAPHICS) && USE(NICOSIA)
     if (m_nicosia.contentLayer)
         downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosia.contentLayer->impl()).swapBuffersIfNeeded();
 #endif

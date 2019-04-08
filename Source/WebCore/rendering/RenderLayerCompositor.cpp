@@ -3062,7 +3062,7 @@ bool RenderLayerCompositor::shouldCompositeOverflowControls() const
     if (m_overflowControlsHostLayer && isMainFrameCompositor())
         return true;
 
-#if !USE(COORDINATED_GRAPHICS_THREADED)
+#if !USE(COORDINATED_GRAPHICS)
     if (!frameView.hasOverlayScrollbars())
         return false;
 #endif

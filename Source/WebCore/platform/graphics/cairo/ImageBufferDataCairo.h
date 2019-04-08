@@ -69,7 +69,7 @@ public:
 #if ENABLE(ACCELERATED_2D_CANVAS)
     void createCairoGLSurface();
 
-#if USE(COORDINATED_GRAPHICS_THREADED)
+#if USE(COORDINATED_GRAPHICS)
 #if USE(NICOSIA)
     void swapBuffersIfNeeded() override;
 #else
