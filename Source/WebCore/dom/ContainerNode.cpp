@@ -292,27 +292,34 @@ static inline bool isChildTypeAllowed(ContainerNode& newParent, Node& child)
     return true;
 }
 
-static inline bool isInTemplateContent(const Node* node)
+static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
-    Document& document = node->document();
-    return &document == document.templateDocument();
-}
+    const Node* currentNode = &node;
+    do {
+        if (currentNode == &possibleAncestor)
+            return true;
+        const ContainerNode* parent = currentNode->parentNode();
+        if (!parent) {
+            if (is<ShadowRoot>(currentNode))
+                parent = downcast<ShadowRoot>(currentNode)->host();
+            else if (is<DocumentFragment>(*currentNode) && downcast<DocumentFragment>(*currentNode).isTemplateContent())
+                parent = static_cast<const TemplateContentDocumentFragment*>(currentNode)->host();
+        }
+        currentNode = parent;
+    } while (currentNode);
 
-static inline bool containsConsideringHostElements(const Node& newChild, const Node& newParent)
-{
-    return (newParent.isInShadowTree() || isInTemplateContent(&newParent))
-        ? newChild.containsIncludingHostElements(&newParent)
-        : newChild.contains(&newParent);
+    return false;
 }
 
 static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node& newChild, const Node* refChild, Document::AcceptChildOperation operation)
 {
+    if (containsIncludingHostElements(newChild, newParent))
+        return Exception { HierarchyRequestError };
+
     // Use common case fast path if possible.
     if ((newChild.isElementNode() || newChild.isTextNode()) && newParent.isElementNode()) {
         ASSERT(!newParent.isDocumentTypeNode());
         ASSERT(isChildTypeAllowed(newParent, newChild));
-        if (containsConsideringHostElements(newChild, newParent))
-            return Exception { HierarchyRequestError };
         if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
             return Exception { NotFoundError };
         return { };
@@ -321,9 +328,6 @@ static inline ExceptionOr<void> checkAcceptChild(ContainerNode& newParent, Node&
     // This should never happen, but also protect release builds from tree corruption.
     ASSERT(!newChild.isPseudoElement());
     if (newChild.isPseudoElement())
-        return Exception { HierarchyRequestError };
-
-    if (containsConsideringHostElements(newChild, newParent))
         return Exception { HierarchyRequestError };
 
     if (operation == Document::AcceptChildOperation::InsertOrAdd && refChild && refChild->parentNode() != &newParent)
@@ -342,7 +346,7 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
 {
     ASSERT(!newParent.isDocumentTypeNode());
     ASSERT(isChildTypeAllowed(newParent, newChild));
-    if (containsConsideringHostElements(newChild, newParent))
+    if (containsIncludingHostElements(newChild, newParent))
         return Exception { HierarchyRequestError };
     return { };
 }
