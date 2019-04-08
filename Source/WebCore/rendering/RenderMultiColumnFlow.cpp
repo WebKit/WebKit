@@ -93,21 +93,16 @@ RenderBox* RenderMultiColumnFlow::firstColumnSetOrSpanner() const
 
 RenderBox* RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf(const RenderBox* child)
 {
-    if (!child)
-        return nullptr;
-    if (RenderObject* sibling = child->nextSibling())
-        return downcast<RenderBox>(sibling);
-    return nullptr;
+    return child ? child->nextSiblingBox() : nullptr;
 }
 
 RenderBox* RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf(const RenderBox* child)
 {
     if (!child)
         return nullptr;
-    if (RenderObject* sibling = child->previousSibling()) {
-        if (is<RenderFragmentedFlow>(*sibling))
-            return nullptr;
-        return downcast<RenderBox>(sibling);
+    if (auto* sibling = child->previousSiblingBox()) {
+        if (!is<RenderFragmentedFlow>(*sibling))
+            return sibling;
     }
     return nullptr;
 }

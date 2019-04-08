@@ -1,3 +1,14 @@
+2019-03-13  Zalan Bujtas  <zalan@apple.com>
+
+        Use RenderBox::previousSiblingBox/nextSiblingBox in RenderMultiColumnFlow
+        https://bugs.webkit.org/show_bug.cgi?id=195701
+        <rdar://problem/48448658>
+
+        Reviewed by Simon Fraser.
+
+        * fast/ruby/crash-when-paginated-ruby-expected.txt: Added.
+        * fast/ruby/crash-when-paginated-ruby.html: Added.
+
 2019-03-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix an edge case where HTMLFormElement::removeFormElement is invoked twice with the same element
