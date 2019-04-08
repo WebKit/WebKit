@@ -25,9 +25,9 @@
 
 #pragma once
 
-#if USE(COORDINATED_GRAPHICS_THREADED) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-
 #include <WebCore/DisplayRefreshMonitor.h>
+
+#if USE(COORDINATED_GRAPHICS_THREADED) && USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
