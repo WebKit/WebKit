@@ -89,6 +89,13 @@ Vector<String> ServiceWorkerInternals::fetchResponseHeaderList(FetchResponse& re
     return headerNames;
 }
 
+#if !PLATFORM(MAC)
+String ServiceWorkerInternals::processName() const
+{
+    return "none"_s;
+}
+#endif
+
 } // namespace WebCore
 
 #endif

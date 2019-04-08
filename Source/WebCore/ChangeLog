@@ -1,3 +1,20 @@
+2019-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a test to check for the service worker process name
+        https://bugs.webkit.org/show_bug.cgi?id=196621
+
+        Reviewed by Chris Dumez.
+
+        Add a service worker internal API to get process name.
+        Covered by updated test.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::processName const):
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+        * testing/ServiceWorkerInternals.mm: Added.
+
 2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, speculative fix for build failure in old macOS after r243887

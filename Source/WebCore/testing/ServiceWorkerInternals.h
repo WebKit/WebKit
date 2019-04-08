@@ -49,6 +49,8 @@ public:
 
     Vector<String> fetchResponseHeaderList(FetchResponse&);
 
+    String processName() const;
+
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);
 

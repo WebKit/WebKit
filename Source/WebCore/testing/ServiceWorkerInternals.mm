@@ -23,18 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=SERVICE_WORKER,
-    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
-    ImplementationLacksVTable,
-    NoInterfaceObject,
-] interface ServiceWorkerInternals {
-    void setOnline(boolean isOnline);
-    Promise<Response> waitForFetchEventToFinish(FetchEvent event);
-    [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
-    [CallWith=ScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();
+#include "config.h"
+#include "ServiceWorkerInternals.h"
 
-    sequence<ByteString> fetchResponseHeaderList(FetchResponse response);
+#if ENABLE(SERVICE_WORKER)
 
-    readonly attribute DOMString processName;
-};
+#if PLATFORM(MAC)
+
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
+
+namespace WebCore {
+
+String ServiceWorkerInternals::processName() const
+{
+    return adoptCF((CFStringRef)_LSCopyApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey)).get();
+}
+
+} // namespace WebCore
+
+#endif
+
+#endif

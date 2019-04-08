@@ -1,3 +1,13 @@
+2019-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a test to check for the service worker process name
+        https://bugs.webkit.org/show_bug.cgi?id=196621
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/online-worker.js:
+        (async.doTest):
+
 2019-04-08  Shawn Roberts  <sroberts@apple.com>
 
         fast/parser/xml-error-adopted.xml is a flaky timeout
