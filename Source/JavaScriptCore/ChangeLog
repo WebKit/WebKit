@@ -1,3 +1,14 @@
+2019-04-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        -f[no-]var-tracking-assignments is GCC-only
+        https://bugs.webkit.org/show_bug.cgi?id=196699
+
+        Reviewed by Don Olmstead.
+
+        * CMakeLists.txt:
+        Just remove the build flag altogether -- it supposedly doesn't solve the problem it was meant to
+        and said problem evidently no longer occurs as of GCC 9.
+
 2019-04-08  Saam Barati  <sbarati@apple.com>
 
         WebAssembly.RuntimeError missing exception check
