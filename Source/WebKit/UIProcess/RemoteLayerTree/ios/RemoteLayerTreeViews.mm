@@ -89,6 +89,27 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     return false;
 }
 
+#if ENABLE(POINTER_EVENTS)
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    Vector<UIView *, 16> viewsAtPoint;
+    collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
+
+    if (viewsAtPoint.isEmpty())
+        return { WebCore::TouchAction::Auto };
+
+    auto *hitView = viewsAtPoint.last();
+
+    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
+
+    auto* node = RemoteLayerTreeNode::forCALayer(hitView.layer);
+    if (!node)
+        return { WebCore::TouchAction::Auto };
+
+    return node->eventRegion().touchActionsForPoint(WebCore::IntPoint(hitViewPoint));
+}
+#endif
+
 }
 
 @interface UIView (WKHitTesting)
@@ -102,8 +123,7 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     Vector<UIView *, 16> viewsAtPoint;
     WebKit::collectDescendantViewsAtPoint(viewsAtPoint, self, point, event);
 
-    for (auto i = viewsAtPoint.size(); i--;) {
-        auto *view = viewsAtPoint[i];
+    for (auto *view : WTF::makeReversedRange(viewsAtPoint)) {
         if (!view.isUserInteractionEnabled)
             continue;
 

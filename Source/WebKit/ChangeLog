@@ -1,3 +1,26 @@
+2019-04-08  Antti Koivisto  <antti@apple.com>
+
+        Compute touch actions for touch point from remote layer tree regions
+        https://bugs.webkit.org/show_bug.cgi?id=196701
+
+        Reviewed by Simon Fraser.
+
+        Add a function for finding the right layer and getting the touch actions in UI process side.
+
+        The code is not used yet.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeViews.mm:
+        (WebKit::touchActionsForPoint):
+
+        Use the same code as overlap hit testing for collecting the candidate layers for the touch point,
+        taking event regions into account.
+        Return the touch actions from the deepest event sensitive layer hit.
+
+        (-[UIView _web_findDescendantViewAtPoint:withEvent:]):
+
+        Modernize.
+
 2019-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         Make HSTS list handling more robust against unexpected content 

@@ -72,4 +72,12 @@ class WebPageProxy;
 
 @end
 
+namespace WebKit {
+
+#if ENABLE(POINTER_EVENTS)
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
+#endif
+
+}
+
 #endif // PLATFORM(IOS_FAMILY)
