@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IsoAlignedMemoryAllocator.h"
+#include "MarkedBlock.h"
 
 namespace JSC {
 

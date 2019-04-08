@@ -27,6 +27,7 @@
 
 #include "Opcode.h"
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 

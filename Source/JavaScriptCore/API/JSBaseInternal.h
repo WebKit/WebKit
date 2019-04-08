@@ -31,6 +31,7 @@
 namespace JSC {
 class JSLockHolder;
 class ExecState;
+class SourceCode;
 }
 
 extern "C" JSValueRef JSEvaluateScriptInternal(const JSC::JSLockHolder&, JSC::ExecState*, JSContextRef, JSObjectRef thisObject, const JSC::SourceCode&, JSValueRef* exception);

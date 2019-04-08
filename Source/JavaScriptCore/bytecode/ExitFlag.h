@@ -27,6 +27,10 @@
 
 #include "ExitingInlineKind.h"
 
+namespace WTF {
+class PrintStream;
+} // namespace WTF
+
 namespace JSC {
 
 class ExitFlag {
@@ -87,7 +91,7 @@ public:
         return !!(*this & ExitFlag(true, inlineKind));
     }
     
-    void dump(PrintStream&) const;
+    void dump(WTF::PrintStream&) const;
     
 private:
     static constexpr uint8_t trueNotInlined = 1;

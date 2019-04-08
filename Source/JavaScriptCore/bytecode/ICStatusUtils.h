@@ -29,6 +29,9 @@
 
 namespace JSC {
 
+class CodeBlock;
+class StructureSet;
+
 template<typename VariantVectorType, typename VariantType>
 bool appendICStatusVariant(VariantVectorType& variants, const VariantType& variant)
 {

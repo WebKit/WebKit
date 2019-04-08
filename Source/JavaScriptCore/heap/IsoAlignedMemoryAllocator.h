@@ -26,6 +26,9 @@
 #pragma once
 
 #include "AlignedMemoryAllocator.h"
+#include <wtf/FastBitVector.h>
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 

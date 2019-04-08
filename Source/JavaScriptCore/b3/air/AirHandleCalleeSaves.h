@@ -27,7 +27,11 @@
 
 #if ENABLE(B3_JIT)
 
-namespace JSC { namespace B3 { namespace Air {
+namespace JSC {
+
+class RegisterSet;
+
+namespace B3 { namespace Air {
 
 class Code;
 
