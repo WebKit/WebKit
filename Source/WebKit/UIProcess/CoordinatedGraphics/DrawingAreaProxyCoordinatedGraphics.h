@@ -47,7 +47,7 @@ public:
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
-    bool isInAcceleratedCompositingMode() const { return alwaysUseCompositing() || !m_layerTreeContext.isEmpty(); }
+    bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)
     void setNativeSurfaceHandleForCompositing(uint64_t);

@@ -67,7 +67,7 @@ DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPage
 DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics()
 {
     // Make sure to exit accelerated compositing mode.
-    if (isInAcceleratedCompositingMode() && !alwaysUseCompositing())
+    if (isInAcceleratedCompositingMode())
         exitAcceleratedCompositingMode();
 }
 
@@ -269,7 +269,7 @@ bool DrawingAreaProxyCoordinatedGraphics::alwaysUseCompositing() const
 
 void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    ASSERT(alwaysUseCompositing() || !isInAcceleratedCompositingMode());
+    ASSERT(!isInAcceleratedCompositingMode());
 #if !PLATFORM(WPE)
     m_backingStore = nullptr;
 #endif
