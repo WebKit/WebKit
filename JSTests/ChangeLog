@@ -1,3 +1,13 @@
+2019-03-18  Mark Lam  <mark.lam@apple.com>
+
+        Structure::flattenDictionary() should clear unused property slots.
+        https://bugs.webkit.org/show_bug.cgi?id=195871
+        <rdar://problem/48959497>
+
+        Reviewed by Michael Saboff.
+
+        * stress/structure-flattenDictionary-should-clear-unused-property-slots.js: Added.
+
 2019-03-12  Mark Lam  <mark.lam@apple.com>
 
         The HasIndexedProperty node does GC.
