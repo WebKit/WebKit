@@ -1355,19 +1355,12 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
-        bool navigatesFrame = WTF::switchOn(result,
+        bool navigatesMainFrame = WTF::switchOn(result,
             [] (WebKit::ContinueUnsafeLoad continueUnsafeLoad) { return continueUnsafeLoad == WebKit::ContinueUnsafeLoad::Yes; },
             [] (const URL&) { return true; }
         );
-        bool forMainFrameNavigation = [strongSelf->_safeBrowsingWarning forMainFrameNavigation];
-        if (navigatesFrame && forMainFrameNavigation) {
-            // The safe browsing warning will be hidden once the next page is shown.
+        if (navigatesMainFrame && [strongSelf->_safeBrowsingWarning forMainFrameNavigation])
             return;
-        }
-        if (!navigatesFrame && strongSelf->_safeBrowsingWarning && !forMainFrameNavigation) {
-            [strongSelf goBack];
-            return;
-        }
         [std::exchange(strongSelf->_safeBrowsingWarning, nullptr) removeFromSuperview];
     }]);
     [self addSubview:_safeBrowsingWarning.get()];

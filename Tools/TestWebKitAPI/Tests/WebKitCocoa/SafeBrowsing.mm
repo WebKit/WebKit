@@ -220,15 +220,12 @@ static void checkTitleAndClick(UIButton *button, const char* expectedTitle)
 }
 #endif
 
-template<typename ViewType> void goBack(ViewType *view, bool mainFrame = true)
+template<typename ViewType> void goBack(ViewType *view)
 {
     WKWebView *webView = (WKWebView *)view.superview;
     auto box = view.subviews.firstObject;
     checkTitleAndClick(box.subviews[3], "Go Back");
-    if (mainFrame)
-        EXPECT_EQ([webView _safeBrowsingWarning], nil);
-    else
-        EXPECT_NE([webView _safeBrowsingWarning], nil);
+    EXPECT_EQ([webView _safeBrowsingWarning], nil);
 }
 
 TEST(SafeBrowsing, GoBack)
@@ -371,23 +368,21 @@ TEST(SafeBrowsing, URLObservation)
     }
 }
 
-static RetainPtr<NSString> phishingResourceName;
-
-@interface SimpleLookupContext : NSObject
+@interface Simple3LookupContext : NSObject
 @end
 
-@implementation SimpleLookupContext
+@implementation Simple3LookupContext
 
-+ (SimpleLookupContext *)sharedLookupContext
++ (Simple3LookupContext *)sharedLookupContext
 {
-    static SimpleLookupContext *context = [[SimpleLookupContext alloc] init];
+    static Simple3LookupContext *context = [[Simple3LookupContext alloc] init];
     return context;
 }
 
 - (void)lookUpURL:(NSURL *)URL completionHandler:(void (^)(TestLookupResult *, NSError *))completionHandler
 {
     BOOL phishing = NO;
-    if ([URL isEqual:resourceURL(phishingResourceName.get())])
+    if ([URL isEqual:resourceURL(@"simple3")])
         phishing = YES;
     completionHandler([TestLookupResult resultWithResults:@[[TestServiceLookupResult resultWithProvider:@"TestProvider" phishing:phishing malware:NO unwantedSoftware:NO]]], nil);
 }
@@ -410,8 +405,7 @@ static bool navigationFinished;
 
 TEST(SafeBrowsing, WKWebViewGoBack)
 {
-    phishingResourceName = @"simple3";
-    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [SimpleLookupContext methodForSelector:@selector(sharedLookupContext)]);
+    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [Simple3LookupContext methodForSelector:@selector(sharedLookupContext)]);
     
     auto delegate = adoptNS([WKWebViewGoBackNavigationDelegate new]);
     auto webView = adoptNS([WKWebView new]);
@@ -429,27 +423,6 @@ TEST(SafeBrowsing, WKWebViewGoBack)
     while (![webView _safeBrowsingWarning])
         TestWebKitAPI::Util::spinRunLoop();
     [webView goBack];
-    TestWebKitAPI::Util::run(&navigationFinished);
-    EXPECT_TRUE([[webView URL] isEqual:resourceURL(@"simple2")]);
-}
-
-TEST(SafeBrowsing, WKWebViewGoBackIFrame)
-{
-    phishingResourceName = @"simple";
-    ClassMethodSwizzler swizzler(objc_getClass("SSBLookupContext"), @selector(sharedLookupContext), [SimpleLookupContext methodForSelector:@selector(sharedLookupContext)]);
-    
-    auto delegate = adoptNS([WKWebViewGoBackNavigationDelegate new]);
-    auto webView = adoptNS([WKWebView new]);
-    [webView configuration].preferences._safeBrowsingEnabled = YES;
-    [webView setNavigationDelegate:delegate.get()];
-    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple2")]];
-    TestWebKitAPI::Util::run(&navigationFinished);
-    
-    [webView loadRequest:[NSURLRequest requestWithURL:resourceURL(@"simple-iframe")]];
-    while (![webView _safeBrowsingWarning])
-        TestWebKitAPI::Util::spinRunLoop();
-    navigationFinished = false;
-    goBack([webView _safeBrowsingWarning], false);
     TestWebKitAPI::Util::run(&navigationFinished);
     EXPECT_TRUE([[webView URL] isEqual:resourceURL(@"simple2")]);
 }
