@@ -1,0 +1,14 @@
+This tests re-parenting a child of the document fragment during an insertion so as to create a circular node tree.
+WebKit should detect this case and throw HierarchyRequestError.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL container.replaceChild(fragment, refChild) should throw a HierarchyRequestError. Did not throw.
+PASS container.parentNode is child.content
+FAIL child.parentNode should be null. Was [object HTMLDivElement].
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

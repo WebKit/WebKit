@@ -342,7 +342,7 @@ static inline ExceptionOr<void> checkAcceptChildGuaranteedNodeTypes(ContainerNod
 {
     ASSERT(!newParent.isDocumentTypeNode());
     ASSERT(isChildTypeAllowed(newParent, newChild));
-    if (newChild.contains(&newParent))
+    if (containsConsideringHostElements(newChild, newParent))
         return Exception { HierarchyRequestError };
     return { };
 }
@@ -388,9 +388,11 @@ ExceptionOr<void> ContainerNode::insertBefore(Node& newChild, Node* refChild)
         return { };
 
     // We need this extra check because collectChildrenAndRemoveFromOldParent() can fire mutation events.
-    auto checkAcceptResult = checkAcceptChildGuaranteedNodeTypes(*this, newChild);
-    if (checkAcceptResult.hasException())
-        return checkAcceptResult.releaseException();
+    for (auto& child : targets) {
+        auto checkAcceptResult = checkAcceptChildGuaranteedNodeTypes(*this, child);
+        if (checkAcceptResult.hasException())
+            return checkAcceptResult.releaseException();
+    }
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
 
@@ -504,9 +506,11 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
     }
 
     // Do this one more time because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
-    validityResult = checkPreReplacementValidity(*this, newChild, oldChild);
-    if (validityResult.hasException())
-        return validityResult.releaseException();
+    for (auto& child : targets) {
+        validityResult = checkPreReplacementValidity(*this, child, oldChild);
+        if (validityResult.hasException())
+            return validityResult.releaseException();
+    }
 
     // Remove the node we're replacing.
     Ref<Node> protectOldChild(oldChild);
@@ -520,9 +524,11 @@ ExceptionOr<void> ContainerNode::replaceChild(Node& newChild, Node& oldChild)
             return removeResult.releaseException();
 
         // Does this one more time because removeChild() fires a MutationEvent.
-        validityResult = checkPreReplacementValidity(*this, newChild, oldChild);
-        if (validityResult.hasException())
-            return validityResult.releaseException();
+        for (auto& child : targets) {
+            validityResult = checkPreReplacementValidity(*this, child, oldChild);
+            if (validityResult.hasException())
+                return validityResult.releaseException();
+        }
     }
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
@@ -699,9 +705,11 @@ ExceptionOr<void> ContainerNode::appendChildWithoutPreInsertionValidityCheck(Nod
         return { };
 
     // We need this extra check because collectChildrenAndRemoveFromOldParent() can fire mutation events.
-    auto nodeTypeResult = checkAcceptChildGuaranteedNodeTypes(*this, newChild);
-    if (nodeTypeResult.hasException())
-        return nodeTypeResult.releaseException();
+    for (auto& child : targets) {
+        auto nodeTypeResult = checkAcceptChildGuaranteedNodeTypes(*this, child);
+        if (nodeTypeResult.hasException())
+            return nodeTypeResult.releaseException();
+    }
 
     InspectorInstrumentation::willInsertDOMNode(document(), *this);
 
