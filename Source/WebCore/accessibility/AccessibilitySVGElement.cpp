@@ -245,8 +245,15 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
 
     // SVG shapes should not be included unless there's a concrete reason for inclusion.
     // https://rawgit.com/w3c/aria/master/svg-aam/svg-aam.html#exclude_elements
-    if (m_renderer->isSVGShape())
-        return !(hasAttributesRequiredForInclusion() || canSetFocusAttribute() || element()->hasEventListeners());
+    if (m_renderer->isSVGShape()) {
+        if (canSetFocusAttribute() || element()->hasEventListeners())
+            return false;
+        if (auto svgParent = AccessibilityObject::matchedParent(*this, true, [] (const AccessibilityObject& object) {
+            return object.hasAttributesRequiredForInclusion() || object.isAccessibilitySVGRoot();
+        }))
+            return !svgParent->hasAttributesRequiredForInclusion();
+        return true;
+    }
 
     return AccessibilityRenderObject::computeAccessibilityIsIgnored();
 }

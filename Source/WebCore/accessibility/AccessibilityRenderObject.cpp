@@ -3263,7 +3263,8 @@ void AccessibilityRenderObject::addHiddenChildren()
 void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 {
     // If a menu does not have valid menuitem children, it should not be exposed as a menu.
-    if (roleValue() == AccessibilityRole::Menu) {
+    auto role = roleValue();
+    if (role == AccessibilityRole::Menu) {
         // Elements marked as menus must have at least one menu item child.
         size_t menuItemCount = 0;
         for (const auto& child : children()) {
@@ -3276,6 +3277,8 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
         if (!menuItemCount)
             m_role = AccessibilityRole::Group;
     }
+    if (role == AccessibilityRole::SVGRoot && !hasChildren())
+        m_role = AccessibilityRole::Image;
 }
     
 void AccessibilityRenderObject::addChildren()

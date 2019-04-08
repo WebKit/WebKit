@@ -1,3 +1,22 @@
+2019-04-08  Eric Liang  <ericliang@apple.com>
+
+        AX: <svg> elements with labels and no accessible contents are exposed as empty AXGroups
+        https://bugs.webkit.org/show_bug.cgi?id=156774
+
+        Reviewed by Chris Fleizach.
+
+        Labelled SVGs without accessible descendants are exposed as AXImage rather than groups.
+
+        Unlabelled equivalents are not exposed. Otherwise, SVGs with accessible descendants are exposed as AXGroup. 
+        Also added back functionalities from last patch of determining whether a SVG element should be ignored.
+        
+        Test: accessibility/svg-shape-labelled.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+        * accessibility/AccessibilitySVGElement.cpp:
+        (WebCore::AccessibilitySVGElement::computeAccessibilityIsIgnored const):
+
 2019-04-08  Youenn Fablet  <youenn@apple.com>
 
         Make sure UniqueIDBDatabaseConnection unregisters itself even if its database is gone

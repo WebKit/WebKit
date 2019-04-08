@@ -1,3 +1,15 @@
+2019-04-08  Eric Liang  <ericliang@apple.com>
+
+        AX: <svg> elements with labels and no accessible contents are exposed as empty AXGroups
+        https://bugs.webkit.org/show_bug.cgi?id=156774
+
+        Reviewed by Chris Fleizach.
+
+        Added tests that verify svgs shapes that are labelled are exposed as images.
+        * accessibility/resources/apple-logo.svg: Added.
+        * accessibility/svg-shape-labelled-expected.txt: Added.
+        * accessibility/svg-shape-labelled.html: Added.
+
 2019-04-08  Shawn Roberts  <sroberts@apple.com>
 
         Layout tests imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html
