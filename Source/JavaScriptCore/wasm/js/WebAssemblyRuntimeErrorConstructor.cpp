@@ -49,9 +49,11 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyRuntimeError(ExecState
     auto& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue message = exec->argument(0);
+    String messageString = message.isUndefined() ? String() : message.toWTFString(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     auto* structure = InternalFunction::createSubclassStructure(exec, exec->newTarget(), jsCast<InternalFunction*>(exec->jsCallee())->globalObject(vm)->webAssemblyRuntimeErrorStructure());
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    return JSValue::encode(JSWebAssemblyRuntimeError::create(exec, vm, structure, message));
+    return JSValue::encode(JSWebAssemblyRuntimeError::create(exec, vm, structure, WTFMove(messageString)));
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyRuntimeError(ExecState* exec)
