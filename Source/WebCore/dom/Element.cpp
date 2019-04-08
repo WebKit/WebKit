@@ -3434,7 +3434,7 @@ bool Element::childShouldCreateRenderer(const Node& child) const
     return true;
 }
 
-#if ENABLE(FULLSCREEN_API) || ENABLE(POINTER_EVENTS)
+#if ENABLE(FULLSCREEN_API)
 static Element* parentCrossingFrameBoundaries(const Element* element)
 {
     ASSERT(element);
@@ -3442,9 +3442,7 @@ static Element* parentCrossingFrameBoundaries(const Element* element)
         return parent;
     return element->document().ownerElement();
 }
-#endif
 
-#if ENABLE(FULLSCREEN_API)
 void Element::webkitRequestFullscreen()
 {
     document().requestFullScreenForElement(this, Document::EnforceIFrameAllowFullScreenRequirement);

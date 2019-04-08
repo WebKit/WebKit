@@ -1,3 +1,12 @@
+2019-04-08  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed build fix for iOSMac after r243893.
+        https://bugs.webkit.org/show_bug.cgi?id=196707
+
+        * dom/Element.cpp:
+        (WebCore::parentCrossingFrameBoundaries): Remove ENABLE(POINTER_EVENTS) since computedTouchActions()
+        no longer uses parentCrossingFrameBoundaries().
+
 2019-04-08  Youenn Fablet  <youenn@apple.com>
 
         Lazily construct Navigator serviceWorker
