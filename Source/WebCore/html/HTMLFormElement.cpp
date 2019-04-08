@@ -704,7 +704,9 @@ void HTMLFormElement::resetDefaultButton()
         return;
     }
 
-    RefPtr<HTMLFormControlElement> oldDefault = m_defaultButton;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+
+    auto* oldDefault = m_defaultButton;
     m_defaultButton = nullptr;
     defaultButton();
     if (m_defaultButton != oldDefault) {
