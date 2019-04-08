@@ -1,3 +1,16 @@
+2019-04-08  Christopher Reid  <chris.reid@sony.com>
+
+        Undefined Behavior: m_experimentalImageMenuEnabled isn't initialized in HTMLImageElement when SERVICE_CONTROLS is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=196664
+
+        Reviewed by Ross Kirsling.
+
+        No observable change in behavior.
+
+        Initialize m_experimentalImageMenuEnabled regardless of ENABLE(SERVICE_CONTROLS)
+
+        * html/HTMLImageElement.cpp:
+
 2019-04-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243943.

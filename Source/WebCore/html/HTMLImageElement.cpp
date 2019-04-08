@@ -74,9 +74,7 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
     , m_formSetByParser(makeWeakPtr(form))
     , m_compositeOperator(CompositeSourceOver)
     , m_imageDevicePixelRatio(1.0f)
-#if ENABLE(SERVICE_CONTROLS)
     , m_experimentalImageMenuEnabled(false)
-#endif
 {
     ASSERT(hasTagName(imgTag));
     setHasCustomStyleResolveCallbacks();
