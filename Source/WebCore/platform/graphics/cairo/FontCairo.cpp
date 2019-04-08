@@ -65,6 +65,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         for (size_t i = 0; i < numGlyphs; ++i) {
             glyphs[i] = { glyphsData[i], xOffset, yOffset };
             xOffset += advances[i].width();
+            yOffset -= advances[i].height();
         }
     }
 
