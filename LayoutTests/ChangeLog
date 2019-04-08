@@ -1,3 +1,13 @@
+2019-04-08  Antti Koivisto  <antti@apple.com>
+
+        Update touch-action region on property changes
+        https://bugs.webkit.org/show_bug.cgi?id=196608
+
+        Reviewed by Simon Fraser.
+
+        * pointerevents/ios/touch-action-region-dynamic-expected.txt: Added.
+        * pointerevents/ios/touch-action-region-dynamic.html: Added.
+
 2019-04-08  Javier Fernandez  <jfernandez@igalia.com>
 
         Implement white-space:break-spaces value

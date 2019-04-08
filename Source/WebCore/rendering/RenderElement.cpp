@@ -730,7 +730,17 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             }
         }
 
-        if (m_style.pointerEvents() != newStyle.pointerEvents()) {
+        auto needsInvalidateEventRegion = [&] {
+            if (m_style.pointerEvents() != newStyle.pointerEvents())
+                return true;
+#if ENABLE(POINTER_EVENTS)
+            if (m_style.effectiveTouchActions() != newStyle.effectiveTouchActions())
+                return true;
+#endif
+            return false;
+        };
+
+        if (needsInvalidateEventRegion()) {
             // Usually the event region gets updated as a result of paint invalidation. Here we need to request an update explicitly.
             if (auto* layer = enclosingLayer())
                 layer->invalidateEventRegion();

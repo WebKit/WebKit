@@ -6685,8 +6685,28 @@ bool RenderLayer::isTransparentOrFullyClippedRespectingParentFrames() const
 
 void RenderLayer::invalidateEventRegion()
 {
-    if (auto* compositingLayer = enclosingCompositingLayerForRepaint())
-        compositingLayer->setNeedsCompositingConfigurationUpdate();
+#if PLATFORM(IOS_FAMILY)
+    auto* compositingLayer = enclosingCompositingLayerForRepaint();
+    if (!compositingLayer)
+        return;
+
+    auto maintainsEventRegion = [&] {
+        // UI side scroll overlap testing.
+        if (!compositingLayer->isRenderViewLayer())
+            return true;
+#if ENABLE(POINTER_EVENTS)
+        // UI side touch-action resolution.
+        if (renderer().document().touchActionElements())
+            return true;
+#endif
+        return false;
+    };
+
+    if (!maintainsEventRegion())
+        return;
+
+    compositingLayer->setNeedsCompositingConfigurationUpdate();
+#endif
 }
 
 TextStream& operator<<(TextStream& ts, const RenderLayer& layer)

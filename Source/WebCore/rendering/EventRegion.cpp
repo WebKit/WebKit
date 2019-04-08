@@ -136,6 +136,9 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
         }
     }
 
+    if (actions.isEmpty())
+        return { TouchAction::Auto };
+
     return actions;
 }
 
