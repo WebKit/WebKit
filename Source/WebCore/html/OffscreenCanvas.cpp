@@ -38,7 +38,7 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& context, un
 }
 
 OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
-    : CanvasBase(&context)
+    : ContextDestructionObserver(&context)
     , m_size(width, height)
 {
 }

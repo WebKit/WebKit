@@ -39,7 +39,7 @@ Ref<CustomPaintCanvas> CustomPaintCanvas::create(ScriptExecutionContext& context
 }
 
 CustomPaintCanvas::CustomPaintCanvas(ScriptExecutionContext& context, unsigned width, unsigned height)
-    : CanvasBase(&context)
+    : ContextDestructionObserver(&context)
     , m_size(width, height)
 {
 }

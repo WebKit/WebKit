@@ -34,8 +34,7 @@
 
 namespace WebCore {
 
-CanvasBase::CanvasBase(ScriptExecutionContext* scriptExecutionContext)
-    : m_scriptExecutionContext(scriptExecutionContext)
+CanvasBase::CanvasBase()
 {
 }
 
