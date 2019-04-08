@@ -47,10 +47,6 @@ public:
 
     void updateMarginsAndContent();
 
-#if !ASSERT_DISABLED
-    RenderListItem& listItem() const { return m_listItem; }
-#endif
-
 private:
     void willBeDestroyed() override;
 
@@ -90,7 +86,7 @@ private:
 
     String m_text;
     RefPtr<StyleImage> m_image;
-    RenderListItem& m_listItem;
+    WeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
 };
 
