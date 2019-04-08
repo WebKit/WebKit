@@ -345,7 +345,7 @@ bool Parser<LexerType>::isArrowFunctionParameters()
 template <typename LexerType>
 bool Parser<LexerType>::allowAutomaticSemicolon()
 {
-    return match(CLOSEBRACE) || match(EOFTOK) || m_lexer->hasLineTerminatorBeforeToken();
+    return match(CLOSEBRACE) || match(EOFTOK) || m_lexer->prevTerminator();
 }
 
 template <typename LexerType>
@@ -625,7 +625,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseSingleFu
     case IDENT:
         if (*m_token.m_data.ident == m_vm->propertyNames->async && !m_token.m_data.escaped) {
             next();
-            failIfFalse(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken(), "Cannot parse the async function");
+            failIfFalse(match(FUNCTION) && !m_lexer->prevTerminator(), "Cannot parse the async function");
             statement = parseAsyncFunctionDeclaration(context, ExportType::NotExported, DeclarationDefaultContext::Standard, functionConstructorParametersEndPosition);
             break;
         }
@@ -696,7 +696,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseStatementList
             // but could be mistakenly parsed as an AsyncFunctionExpression.
             SavePoint savePoint = createSavePoint();
             next();
-            if (UNLIKELY(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken())) {
+            if (UNLIKELY(match(FUNCTION) && !m_lexer->prevTerminator())) {
                 result = parseAsyncFunctionDeclaration(context);
                 break;
             }
@@ -2026,7 +2026,7 @@ template <class TreeBuilder> bool Parser<LexerType>::maybeParseAsyncFunctionDecl
     ASSERT(matchContextualKeyword(m_vm->propertyNames->async));
     SavePoint savePoint = createSavePoint();
     next();
-    if (match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken()) {
+    if (match(FUNCTION) && !m_lexer->prevTerminator()) {
         const bool isAsync = true;
         result = parseFunctionDeclarationStatement(context, isAsync, parentAllowsFunctionDeclarationAsStatement);
         return true;
@@ -2421,7 +2421,7 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
 
         matchOrFail(ARROWFUNCTION, "Expected a '=>' after arrow function parameter declaration");
 
-        if (m_lexer->hasLineTerminatorBeforeToken())
+        if (m_lexer->prevTerminator())
             failDueToUnexpectedToken();
 
         ASSERT(constructorKind == ConstructorKind::None);
@@ -2612,23 +2612,12 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
         functionScope->fillParametersForSourceProviderCache(parameters, nonLocalCapturesFromParameterExpressions);
         newInfo = SourceProviderCacheItem::create(parameters);
     }
-
-    bool functionScopeWasStrictMode = functionScope->strictMode();
     
     popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo);
     
     if (functionBodyType != ArrowFunctionBodyExpression) {
         matchOrFail(CLOSEBRACE, "Expected a closing '}' after a ", stringForFunctionMode(mode), " body");
         next();
-    } else {
-        // We need to lex the last token again because the last token is lexed under the different context because of the following possibilities.
-        // 1. which may have different strict mode.
-        // 2. which may not build strings for tokens.
-        // But (1) is not possible because we do not recognize the string literal in ArrowFunctionBodyExpression as directive and this is correct in terms of the spec (`value => "use strict"`).
-        // So we only check TreeBuilder's type here.
-        ASSERT_UNUSED(functionScopeWasStrictMode, functionScopeWasStrictMode == currentScope()->strictMode());
-        if (!std::is_same<TreeBuilder, SyntaxChecker>::value)
-            lexCurrentTokenAgainUnderCurrentContext();
     }
 
     if (newInfo)
@@ -2887,7 +2876,7 @@ parseMethod:
                 if (!isGeneratorMethodParseMode(parseMode) && !isAsyncMethodParseMode(parseMode)) {
                     ident = m_token.m_data.ident;
                     next();
-                    if (match(OPENPAREN) || match(COLON) || match(EQUAL) || m_lexer->hasLineTerminatorBeforeToken())
+                    if (match(OPENPAREN) || match(COLON) || match(EQUAL) || m_lexer->prevTerminator())
                         break;
                     if (UNLIKELY(consume(TIMES)))
                         parseMode = SourceParseMode::AsyncGeneratorWrapperMethodMode;
@@ -3407,7 +3396,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         } else if (matchContextualKeyword(m_vm->propertyNames->async)) {
             SavePoint savePoint = createSavePoint();
             next();
-            if (match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken()) {
+            if (match(FUNCTION) && !m_lexer->prevTerminator()) {
                 next();
                 if (match(IDENT))
                     localName = m_token.m_data.ident;
@@ -3552,7 +3541,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseExportDeclara
         case IDENT:
             if (*m_token.m_data.ident == m_vm->propertyNames->async && !m_token.m_data.escaped) {
                 next();
-                semanticFailIfFalse(match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken(), "Expected 'function' keyword following 'async' keyword with no preceding line terminator");
+                semanticFailIfFalse(match(FUNCTION) && !m_lexer->prevTerminator(), "Expected 'function' keyword following 'async' keyword with no preceding line terminator");
                 DepthManager statementDepth(&m_statementDepth);
                 m_statementDepth = 1;
                 result = parseAsyncFunctionDeclaration(context, ExportType::Exported);
@@ -3670,7 +3659,7 @@ template <typename TreeBuilder> TreeExpression Parser<LexerType>::parseAssignmen
             if (UNLIKELY(classifier.indicatesPossibleAsyncArrowFunction())) {
                 if (matchContextualKeyword(m_vm->propertyNames->async)) {
                     next();
-                    isAsyncArrow = !m_lexer->hasLineTerminatorBeforeToken();
+                    isAsyncArrow = !m_lexer->prevTerminator();
                 }
             }
             if (isArrowFunctionParameters()) {
@@ -3787,7 +3776,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseYieldExpress
     ASSERT(match(YIELD));
     SavePoint savePoint = createSavePoint();
     next();
-    if (m_lexer->hasLineTerminatorBeforeToken())
+    if (m_lexer->prevTerminator())
         return context.createYield(location);
 
     bool delegate = consume(TIMES);
@@ -3947,7 +3936,7 @@ parseProperty:
                     goto namedProperty;
                 }
 
-                failIfTrue(m_lexer->hasLineTerminatorBeforeToken(), "Expected a property name following keyword 'async'");
+                failIfTrue(m_lexer->prevTerminator(), "Expected a property name following keyword 'async'");
                 if (UNLIKELY(consume(TIMES)))
                     parseMode = SourceParseMode::AsyncGeneratorWrapperMethodMode;
                 else
@@ -4496,7 +4485,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parsePrimaryExpre
             const Identifier* ident = m_token.m_data.ident;
             JSTokenLocation location(tokenLocation());
             next();
-            if (match(FUNCTION) && !m_lexer->hasLineTerminatorBeforeToken())
+            if (match(FUNCTION) && !m_lexer->prevTerminator())
                 return parseAsyncFunctionExpression(context);
 
             // Avoid using variable if it is an arrow function parameter
@@ -4762,7 +4751,7 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
 
         base = parsePrimaryExpression(context);
         failIfFalse(base, "Cannot parse base expression");
-        if (UNLIKELY(isAsync && context.isResolve(base) && !m_lexer->hasLineTerminatorBeforeToken())) {
+        if (UNLIKELY(isAsync && context.isResolve(base) && !m_lexer->prevTerminator())) {
             if (matchSpecIdentifier()) {
                 // AsyncArrowFunction
                 forceClassifyExpressionError(ErrorIndicatesAsyncArrowFunction);
