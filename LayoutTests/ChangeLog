@@ -1,3 +1,13 @@
+2019-04-08  Shawn Roberts  <sroberts@apple.com>
+
+        Layout tests imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html
+        imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=195961
+
+        Unreviewed test gardening
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations for Debug flaky failure
+
 2019-04-06  Antti Koivisto  <antti@apple.com>
 
         Combine event and touch action regions into a single class
