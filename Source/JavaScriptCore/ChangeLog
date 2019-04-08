@@ -1,3 +1,18 @@
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] to_index_string should not assume incoming value is Uint32
+        https://bugs.webkit.org/show_bug.cgi?id=196713
+
+        Reviewed by Saam Barati.
+
+        The slow path of to_index_string assumes that incoming value is Uint32. But we should not have
+        this assumption since DFG may decide we should have it double format. This patch removes this
+        assumption, and instead, we should assume that incoming value is AnyInt and the range of this
+        is within Uint32.
+
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2019-04-08  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Fix Web GPU experimental feature on iOS

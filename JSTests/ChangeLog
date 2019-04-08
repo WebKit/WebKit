@@ -1,5 +1,15 @@
 2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] to_index_string should not assume incoming value is Uint32
+        https://bugs.webkit.org/show_bug.cgi?id=196713
+
+        Reviewed by Saam Barati.
+
+        * stress/to-index-string-should-not-assume-incoming-value-is-uint32.js: Added.
+        (foo):
+
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Add more tests for r243966
         https://bugs.webkit.org/show_bug.cgi?id=196711
 

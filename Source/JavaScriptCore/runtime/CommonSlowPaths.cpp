@@ -995,7 +995,12 @@ SLOW_PATH_DECL(slow_path_to_index_string)
 {
     BEGIN();
     auto bytecode = pc->as<OpToIndexString>();
-    RETURN(jsString(exec, Identifier::from(exec, GET(bytecode.m_index).jsValue().asUInt32()).string()));
+    JSValue indexValue = GET(bytecode.m_index).jsValue();
+    ASSERT(indexValue.isAnyInt());
+    ASSERT(indexValue.asAnyInt() <= UINT32_MAX);
+    ASSERT(indexValue.asAnyInt() >= 0);
+    uint32_t index = static_cast<uint32_t>(indexValue.asAnyInt());
+    RETURN(jsString(exec, Identifier::from(exec, index).string()));
 }
 
 SLOW_PATH_DECL(slow_path_profile_type_clear_log)
