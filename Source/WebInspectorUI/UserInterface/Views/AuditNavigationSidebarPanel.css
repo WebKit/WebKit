@@ -53,17 +53,9 @@
     bottom: var(--navigation-bar-height);
 }
 
-.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view {
+.sidebar > .panel.navigation.audit.has-results > .content > .message-text-view.no-enabled-audits {
     position: initial;
     border-bottom: 1px solid var(--border-color);
-}
-
-.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > .message {
-    display: none;
-}
-
-.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > button {
-    margin: 8px 0 7px;
 }
 
 .finish-editing-audits-placeholder.message-text-view .navigation-item-help .navigation-bar {

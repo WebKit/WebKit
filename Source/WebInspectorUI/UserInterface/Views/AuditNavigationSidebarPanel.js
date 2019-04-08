@@ -158,8 +158,6 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _addTest(test)
     {
-        this.element.classList.add("has-tests");
-
         let treeElement = new WI.AuditTreeElement(test);
 
         if (this._resultsFolderTreeElement) {
@@ -170,8 +168,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         this._updateStartStopButtonNavigationItemState();
         this._updateEditButtonNavigationItemState();
-
-        this.hideEmptyContentPlaceholder();
+        this._updateNoAuditsPlaceholder();
     }
 
     _addResult(result, index)
@@ -204,7 +201,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
     _updateStartStopButtonNavigationItemState()
     {
         this._startStopButtonNavigationItem.toggled = WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping;
-        this._startStopButtonNavigationItem.enabled = WI.auditManager.tests.length && (WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive || WI.auditManager.runningState === WI.AuditManager.RunningState.Active);
+        this._startStopButtonNavigationItem.enabled = WI.auditManager.tests.some((test) => !test.disabled) && (WI.auditManager.runningState === WI.AuditManager.RunningState.Inactive || WI.auditManager.runningState === WI.AuditManager.RunningState.Active);
     }
 
      _updateEditButtonNavigationItemState()
@@ -216,28 +213,20 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
     _updateNoAuditsPlaceholder()
     {
-        if (WI.auditManager.editing || WI.auditManager.tests.some((test) => !test.disabled))
+        if (WI.auditManager.editing || WI.auditManager.tests.some((test) => !test.disabled)) {
+            if (!this.hasActiveFilters)
+                this.hideEmptyContentPlaceholder();
             return;
-
-        let contentPlaceholder = WI.createMessageTextView(WI.UIString("No Audits"));
-
-        let defaultButtonElement = contentPlaceholder.appendChild(document.createElement("button"));
-        defaultButtonElement.textContent = WI.UIString("Add Default Audits");
-        defaultButtonElement.addEventListener("click", () => {
-            WI.auditManager.addDefaultTestsIfNeeded();
-        });
-
-        contentPlaceholder = this.showEmptyContentPlaceholder(contentPlaceholder);
-
-        if (WI.auditManager.results.length) {
-            console.assert(this.contentTreeOutline.children[0] === this._resultsFolderTreeElement);
-
-            // Move the placeholder to be the first element in the content area, where it will
-            // be styled such that only the button is visible.
-            this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
         }
 
-        this._updateEditButtonNavigationItemState();
+        let contentPlaceholder = this.showEmptyContentPlaceholder(WI.UIString("No Enabled Audits"));
+        contentPlaceholder.classList.add("no-enabled-audits");
+
+        if (WI.auditManager.results.length) {
+            // Move the placeholder to be the first element in the content area, where it will
+            // be styled so that it doesn't obstruct the results elements.
+            this.contentView.element.insertBefore(contentPlaceholder, this.contentView.element.firstChild);
+        }
     }
 
     _handleAuditManagerEditingChanged(event)
@@ -279,9 +268,8 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
         let treeElement = this.treeElementForRepresentedObject(test);
         this.contentTreeOutline.removeChild(treeElement);
 
-        this.element.classList.toggle("has-tests", !!WI.auditManager.tests.length);
-
         this._updateStartStopButtonNavigationItemState();
+        this._updateEditButtonNavigationItemState();
         this._updateNoAuditsPlaceholder();
     }
 

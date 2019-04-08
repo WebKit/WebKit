@@ -1,3 +1,34 @@
+2019-04-08  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: Audit: default audits aren't added when an existing audit is present
+        https://bugs.webkit.org/show_bug.cgi?id=196663
+        <rdar://problem/49660757>
+
+        Reviewed by Timothy Hatcher.
+
+        Rather than have a button that allows the user to re-add the default audits, prevent them
+        from being deletable in the first place. "Deleting" a default audit will instead mark it as
+        disabled (and beep if it is already disabled).
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.loadStoredTests):
+        (WI.AuditManager.prototype.removeTest):
+        (WI.AuditManager.prototype._addDefaultTests): Added.
+        (WI.AuditManager.prototype.addDefaultTestsIfNeeded): Deleted.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+        (WI.AuditNavigationSidebarPanel.prototype._updateStartStopButtonNavigationItemState):
+        (WI.AuditNavigationSidebarPanel.prototype._updateNoAuditsPlaceholder):
+        (WI.AuditNavigationSidebarPanel.prototype._handleAuditTestRemoved):
+        * UserInterface/Views/AuditNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.audit.has-results > .content > .message-text-view.no-enabled-audits): Added.
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view): Deleted.
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > .message): Deleted.
+        (.sidebar > .panel.navigation.audit.has-results:not(.has-tests) > .content > .message-text-view > button): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-04-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION(r237196): Web Inspector: Computed panel shouldn't update when it isn't visible

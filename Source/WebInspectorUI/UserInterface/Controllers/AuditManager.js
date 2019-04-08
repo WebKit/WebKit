@@ -244,6 +244,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         if (this._tests.length)
             return;
 
+        this._addDefaultTests();
+
         WI.objectStores.audits.getAll().then(async (tests) => {
             for (let payload of tests) {
                 let test = await WI.AuditTestGroup.fromPayload(payload) || await WI.AuditTestCase.fromPayload(payload);
@@ -255,19 +257,31 @@ WI.AuditManager = class AuditManager extends WI.Object
 
                 this._addTest(test);
             }
-
-            this.addDefaultTestsIfNeeded();
         });
     }
 
     removeTest(test)
     {
+        if (test.__default) {
+            if (test.disabled) {
+                InspectorFrontendHost.beep();
+                return;
+            }
+
+            test.disabled = true;
+
+            let disabledTests = this._disabledDefaultTestsSetting.value.slice();
+            disabledTests.push(test.name);
+            this._disabledDefaultTestsSetting.value = disabledTests;
+
+            return;
+        }
+
         this._tests.remove(test);
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestRemoved, {test});
 
-        if (!test.__default)
-            WI.objectStores.audits.deleteObject(test);
+        WI.objectStores.audits.deleteObject(test);
     }
 
     // Private
@@ -327,11 +341,8 @@ WI.AuditManager = class AuditManager extends WI.Object
         }
     }
 
-    addDefaultTestsIfNeeded()
+    _addDefaultTests()
     {
-        if (this._tests.length)
-            return;
-
         const testMenuRoleForRequiredChidren = function() {
             const relationships = {
                 menu: ["menuitem", "menuitemcheckbox", "menuitemradio"],
