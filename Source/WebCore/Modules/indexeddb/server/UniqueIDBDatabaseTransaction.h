@@ -50,6 +50,7 @@ struct IDBKeyRangeData;
 
 namespace IDBServer {
 
+class IDBServer;
 class UniqueIDBDatabaseConnection;
 
 class UniqueIDBDatabaseTransaction : public RefCounted<UniqueIDBDatabaseTransaction> {
@@ -93,6 +94,7 @@ private:
 
     Ref<UniqueIDBDatabaseConnection> m_databaseConnection;
     IDBTransactionInfo m_transactionInfo;
+    WeakPtr<IDBServer> m_server;
 
     std::unique_ptr<IDBDatabaseInfo> m_originalDatabaseInfo;
 

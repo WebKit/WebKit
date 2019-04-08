@@ -53,17 +53,18 @@ UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConn
     if (m_transactionInfo.mode() == IDBTransactionMode::Versionchange)
         m_originalDatabaseInfo = std::make_unique<IDBDatabaseInfo>(database->info());
 
-    database->server().registerTransaction(*this);
+    auto& server = database->server();
+    m_server = makeWeakPtr(server);
+    server.registerTransaction(*this);
 }
 
 UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction()
 {
-    auto database = m_databaseConnection->database();
-    if (!database)
-        return;
+    if (auto database = m_databaseConnection->database())
+        database->transactionDestroyed(*this);
 
-    database->transactionDestroyed(*this);
-    database->server().unregisterTransaction(*this);
+    if (m_server)
+        m_server->unregisterTransaction(*this);
 }
 
 IDBDatabaseInfo* UniqueIDBDatabaseTransaction::originalDatabaseInfo() const

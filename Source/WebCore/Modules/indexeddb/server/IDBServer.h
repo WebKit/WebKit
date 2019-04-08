@@ -41,6 +41,7 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -57,7 +58,7 @@ const uint64_t defaultPerOriginQuota = 500 * MB;
 
 class IDBBackingStoreTemporaryFileHandler;
 
-class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler {
+class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
 public:
     using QuotaManagerGetter = WTF::Function<StorageQuotaManager*(PAL::SessionID, const ClientOrigin&)>;
     static Ref<IDBServer> create(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&& isClosingDatabaseCallback = [](bool) { });

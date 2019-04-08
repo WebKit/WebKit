@@ -169,8 +169,7 @@ void UniqueIDBDatabaseConnection::didAbortTransaction(UniqueIDBDatabaseTransacti
     auto transactionIdentifier = transaction.info().identifier();
     auto takenTransaction = m_transactionMap.take(transactionIdentifier);
 
-    ASSERT(m_database);
-    ASSERT(takenTransaction || m_database->hardClosedForUserDelete());
+    ASSERT(takenTransaction || (!m_database && !error.isNull()) || (m_database && m_database->hardClosedForUserDelete()));
     if (takenTransaction)
         m_connectionToClient->didAbortTransaction(transactionIdentifier, error);
 }

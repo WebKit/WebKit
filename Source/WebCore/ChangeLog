@@ -1,3 +1,32 @@
+2019-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Make sure UniqueIDBDatabaseConnection unregisters itself even if its database is gone
+        https://bugs.webkit.org/show_bug.cgi?id=196651
+
+        Reviewed by Brady Eidson.
+
+        In UniqueIDBDatabase methods, many operations are refing the transaction
+        so that it stays alive until a quota check decision is made.
+        This extends the lifetime of the transaction which may be lasting
+        longer than its database that may be cleared without waiting for the quota check decisions.
+
+        We therefore need to make sure that the transaction is cleaning itself correctly at destruction time.
+
+        Make sure that the transaction is unregistering itself from its IDBServer.
+        To do so, the transaction keeps a weak ref to the IDBServer.
+
+        This is timing sensitive hence difficult to test.
+
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/indexeddb/server/UniqueIDBDatabaseConnection.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseConnection::didAbortTransaction):
+        Like done below for UniqueIDBDatabaseConnection::didCommitTransaction,
+        add a check to ensure that either the database is we are in an error case.
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::UniqueIDBDatabaseTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabaseTransaction::~UniqueIDBDatabaseTransaction):
+        * Modules/indexeddb/server/UniqueIDBDatabaseTransaction.h:
+
 2019-04-08  Christopher Reid  <chris.reid@sony.com>
 
         Undefined Behavior: m_experimentalImageMenuEnabled isn't initialized in HTMLImageElement when SERVICE_CONTROLS is disabled
