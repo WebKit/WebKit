@@ -847,6 +847,11 @@ static char* joinFunction(const char* const* strv, const char* sep)
     return g_strjoinv(sep, const_cast<char**>(strv));
 }
 
+static gboolean checkUserData(GFile* file)
+{
+    return G_IS_FILE(file);
+}
+
 static void testJSCFunction()
 {
     {
@@ -1091,6 +1096,30 @@ static void testJSCFunction()
         checker.watch(value.get());
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 0);
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        GFile* file = g_file_new_for_path(".");
+        checker.watch(file);
+        GRefPtr<JSCValue> function = adoptGRef(jsc_value_new_function(context.get(), "checkUserData", G_CALLBACK(checkUserData),
+            file, g_object_unref, G_TYPE_BOOLEAN, 0, G_TYPE_NONE));
+        checker.watch(function.get());
+        jsc_context_set_value(context.get(), "checkUserData", function.get());
+
+        GRefPtr<JSCValue> value = adoptGRef(jsc_context_evaluate(context.get(), "checkUserData()", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_boolean(value.get()));
+        g_assert_true(jsc_value_to_boolean(value.get()));
+
+        value = adoptGRef(jsc_value_function_call(function.get(), G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_boolean(value.get()));
+        g_assert_true(jsc_value_to_boolean(value.get()));
     }
 }
 
@@ -1395,6 +1424,12 @@ static Foo* fooCreateWithFooV(GPtrArray* values)
         foo->foo += jsc_value_to_int32(item);
     }, f);
     return f;
+}
+
+static Foo* fooCreateWithUserData(GFile* file)
+{
+    g_assert_true(G_IS_FILE(file));
+    return fooCreate();
 }
 
 static void fooFree(Foo* foo)
@@ -1798,6 +1833,19 @@ static void testJSCClass()
         checker.watch(value.get());
         g_assert_true(jsc_value_is_number(value.get()));
         g_assert_cmpint(jsc_value_to_int32(value.get()), ==, 0);
+
+        GFile* file = g_file_new_for_path(".");
+        checker.watch(file);
+        GRefPtr<JSCValue> constructorUserData = adoptGRef(jsc_class_add_constructor(jscClass, "CreateWithUserData", G_CALLBACK(fooCreateWithUserData),
+            file, g_object_unref, G_TYPE_POINTER, 0, G_TYPE_NONE));
+        checker.watch(constructorUserData.get());
+        g_assert_true(jsc_value_is_constructor(constructorUserData.get()));
+        jsc_value_object_set_property(constructor.get(), "CreateWithUserData", constructorUserData.get());
+
+        GRefPtr<JSCValue> foo5 = adoptGRef(jsc_context_evaluate(context.get(), "f5 = new Foo.CreateWithUserData();", -1));
+        checker.watch(foo5.get());
+        g_assert_true(jsc_value_is_object(foo5.get()));
+        g_assert_true(jsc_value_object_is_instance_of(foo5.get(), jsc_class_get_name(jscClass)));
 
         JSCClass* otherClass = jsc_context_register_class(context.get(), "Baz", nullptr, nullptr, g_free);
         checker.watch(otherClass);

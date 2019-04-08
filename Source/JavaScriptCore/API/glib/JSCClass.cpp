@@ -554,8 +554,14 @@ JSCClass* jsc_class_get_parent(JSCClass* jscClass)
 
 static GRefPtr<JSCValue> jscClassCreateConstructor(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Optional<Vector<GType>>&& parameters)
 {
+    // If the constructor doesn't have arguments, we need to swap the fake instance and user data to ensure
+    // user data is the first parameter and fake instance ignored.
+    GRefPtr<GClosure> closure;
+    if (parameters && parameters->isEmpty() && userData)
+        closure = adoptGRef(g_cclosure_new_swap(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
+    else
+        closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSCClassPrivate* priv = jscClass->priv;
-    GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(callback, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
     JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context));
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
