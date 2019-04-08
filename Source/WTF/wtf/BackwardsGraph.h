@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/SingleRootGraph.h>
+#include <wtf/SpanningTree.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -56,6 +57,23 @@ public:
                     worklist.pushAll(graph.predecessors(node));
             }
         };
+
+        {
+            // Loops are a form of terminality (you can loop forever). To have a loop, you need to
+            // have a back edge. An edge u->v is a back edge when u is a descendent of v in the
+            // DFS spanning tree of the Graph.
+            SpanningTree<Graph> spanningTree(graph);
+            for (unsigned i = 0; i < graph.numNodes(); ++i) {
+                if (typename Graph::Node node = graph.node(i)) {
+                    for (typename Graph::Node successor : graph.successors(node)) {
+                        if (spanningTree.isDescendent(node, successor)) {
+                            addRootSuccessor(node);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         for (unsigned i = 0; i < graph.numNodes(); ++i) {
             if (typename Graph::Node node = graph.node(i)) {

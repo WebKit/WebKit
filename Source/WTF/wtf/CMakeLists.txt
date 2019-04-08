@@ -206,6 +206,7 @@ set(WTF_PUBLIC_HEADERS
     SixCharacterHash.h
     SmallPtrSet.h
     SoftLinking.h
+    SpanningTree.h
     Spectrum.h
     StackBounds.h
     StackPointer.h
