@@ -291,6 +291,11 @@ void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
 }
 
+void PageClientImpl::didStartProvisionalLoadForMainFrame()
+{
+    m_view.willStartLoad();
+}
+
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 {
 }

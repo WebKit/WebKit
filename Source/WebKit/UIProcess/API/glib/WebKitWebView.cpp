@@ -424,6 +424,11 @@ private:
         }
     }
 
+    void willStartLoad(WKWPE::View&) override
+    {
+        webkitWebViewWillStartLoad(m_webView);
+    }
+
     WebKitWebView* m_webView;
 };
 #endif
@@ -2068,6 +2073,18 @@ void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>
 WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
 {
     return getPage(webView);
+}
+
+void webkitWebViewWillStartLoad(WebKitWebView* webView)
+{
+    // This is called before NavigationClient::didStartProvisionalNavigation(), the page load state hasn't been committed yet.
+    auto& pageLoadState = getPage(webView).pageLoadState();
+    if (pageLoadState.isFinished())
+        return;
+
+    GUniquePtr<GError> error(g_error_new_literal(WEBKIT_NETWORK_ERROR, WEBKIT_NETWORK_ERROR_CANCELLED, _("Load request cancelled")));
+    webkitWebViewLoadFailed(webView, pageLoadState.isProvisional() ? WEBKIT_LOAD_STARTED : WEBKIT_LOAD_COMMITTED,
+        webView->priv->activeURI.data(), error.get());
 }
 
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)

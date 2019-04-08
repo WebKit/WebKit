@@ -171,6 +171,11 @@ void View::handleDownloadRequest(DownloadProxy& download)
     m_client->handleDownloadRequest(*this, download);
 }
 
+void View::willStartLoad()
+{
+    m_client->willStartLoad(*this);
+}
+
 void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;

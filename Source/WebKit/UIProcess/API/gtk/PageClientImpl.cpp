@@ -461,6 +461,9 @@ void PageClientImpl::didRemoveNavigationGestureSnapshot()
 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
 {
+    if (WEBKIT_IS_WEB_VIEW(m_viewWidget))
+        webkitWebViewWillStartLoad(WEBKIT_WEB_VIEW(m_viewWidget));
+
     webkitWebViewBaseDidStartProvisionalLoadForMainFrame(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
 }
 
