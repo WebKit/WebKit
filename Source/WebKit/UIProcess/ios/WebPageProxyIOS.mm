@@ -1177,16 +1177,16 @@ void WebPageProxy::didHandleAdditionalDragItemsRequest(bool added)
     pageClient().didHandleAdditionalDragItemsRequest(added);
 }
 
-void WebPageProxy::requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition)
+void WebPageProxy::requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, WebCore::DragSourceAction allowedActions)
 {
     if (hasRunningProcess())
-        m_process->send(Messages::WebPage::RequestDragStart(clientPosition, globalPosition), m_pageID);
+        m_process->send(Messages::WebPage::RequestDragStart(clientPosition, globalPosition, allowedActions), m_pageID);
 }
 
-void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
+void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition, WebCore::DragSourceAction allowedActions)
 {
     if (hasRunningProcess())
-        m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition), m_pageID);
+        m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition, allowedActions), m_pageID);
 }
 
 void WebPageProxy::didConcludeEditDrag(Optional<TextIndicatorData> data)

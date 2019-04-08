@@ -430,6 +430,31 @@ TEST(DragAndDropTests, NonEditableTextSelectionToTextarea)
     EXPECT_WK_STREQ("Hello world", [webView stringByEvaluatingJavaScript:@"destination.value"]);
 }
 
+TEST(DragAndDropTests, DoNotPerformSelectionDragWhenNotFirstResponder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldBecomeFirstResponder:NO];
+
+    [webView synchronouslyLoadTestPageNamed:@"selected-text-and-textarea"];
+    [simulator runFrom:CGPointMake(160, 100) to:CGPointMake(160, 300)];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"destination.value"]);
+}
+
+TEST(DragAndDropTests, CanDragImageWhenNotFirstResponder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setShouldBecomeFirstResponder:NO];
+
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 250)];
+
+    NSURL *droppedImageURL = [NSURL URLWithString:[webView stringByEvaluatingJavaScript:@"editor.querySelector('img').src"]];
+    EXPECT_WK_STREQ("blob", droppedImageURL.scheme);
+}
+
 TEST(DragAndDropTests, ContentEditableMoveParagraphs)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

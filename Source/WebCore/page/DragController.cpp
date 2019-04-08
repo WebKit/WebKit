@@ -826,7 +826,10 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
     }
 
     // We either have nothing to drag or we have a selection and we're not over a draggable element.
-    return (state.type & DragSourceActionSelection) ? startElement : nullptr;
+    if (state.type & DragSourceActionSelection && m_dragSourceAction & DragSourceActionSelection)
+        return startElement;
+
+    return nullptr;
 }
 
 static CachedImage* getCachedImage(Element& element)

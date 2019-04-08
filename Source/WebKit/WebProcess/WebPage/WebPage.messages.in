@@ -301,8 +301,8 @@ messages -> WebPage LegacyReceiver {
 #endif
 
 #if ENABLE(DATA_INTERACTION)
-    RequestDragStart(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
-    RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition)
+    RequestDragStart(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
+    RequestAdditionalItemsForDragSession(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t allowedActions)
 #endif
 
     # Popup menu.

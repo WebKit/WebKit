@@ -1,3 +1,56 @@
+2019-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not allow starting selection drags when selection views are not visible
+        https://bugs.webkit.org/show_bug.cgi?id=196686
+        <rdar://problem/49399192>
+
+        Reviewed by Tim Horton.
+
+        Currently, on iOS, it's possible to start dragging selected text in a web view even if the selection itself is
+        not visible. This can happen if the user selects some text, focuses a native text field, and then long presses
+        the previously selected text. This is because the text is still selected in the document since we don't clear
+        the selection when resigning first responder on iOS, despite the fact that the native selection view is no
+        longer present.
+
+        To fix this, we add plumbing to specify the set of allowed drag source actions when requesting drag start; this
+        set of allowed drag source actions only includes DragSourceActionSelection if the selection view can be visible
+        (i.e. the content view is first responder, and isn't suppressing text interactions). We then update WebPage's
+        allowed drag source actions with this given set of actions, while sending "dragstart" to the page.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Only bail out of text selection in text that is already selected if the web view allows dragging text selections
+        (i.e. the web view is first responder, and is not suppressing text interactions).
+
+        (-[WKContentView _allowedDragSourceActions]):
+        (-[WKContentView _dragInteraction:itemsForAddingToSession:withTouchAtPoint:completion:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+
+        Pass the set of allowed drag source actions when requesting a drag start or adding items to an existing session.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestDragStart):
+        (WebKit::WebPageProxy::requestAdditionalItemsForDragSession):
+
+        Plumb the allowed drag source actions from the UI process (WKContentView) over to the web process (WebPage).
+
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::dragSourceActionMaskForPoint):
+
+        Instead of always returning Any, consult WebPage's allowed drag source actions.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::allowedDragSourceActions const):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDragStart):
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+
+        Set WebPage's allowed drag source actions to the given set of actions when sending a drag start to the page.
+
 2019-04-08  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Fix Web GPU experimental feature on iOS

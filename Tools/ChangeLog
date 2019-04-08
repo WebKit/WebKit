@@ -1,3 +1,24 @@
+2019-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Do not allow starting selection drags when selection views are not visible
+        https://bugs.webkit.org/show_bug.cgi?id=196686
+        <rdar://problem/49399192>
+
+        Reviewed by Tim Horton.
+
+        Adjust some existing API tests to make the web view become first responder before trying to begin dragging, and
+        also add some new API tests to cover scenarios where the web view is not first responder.
+
+        * TestWebKitAPI/Tests/ios/DragAndDropTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/DragAndDropSimulator.h:
+
+        Add a switch to optionally make the web view first responder when starting the simulated drag.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+        (-[DragAndDropSimulator initWithWebView:]):
+        (-[DragAndDropSimulator runFrom:to:additionalItemRequestLocations:]):
+
 2019-04-08  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Fix Web GPU experimental feature on iOS

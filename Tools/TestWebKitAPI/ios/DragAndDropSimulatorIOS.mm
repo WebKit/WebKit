@@ -343,6 +343,7 @@ static NSArray *dragAndDropEventNames()
     if (self = [super init]) {
         _webView = webView;
         _shouldEnsureUIApplication = NO;
+        _shouldBecomeFirstResponder = YES;
         _shouldAllowMoveOperation = YES;
         [_webView setUIDelegate:self];
         [_webView _setInputDelegate:self];
@@ -414,6 +415,9 @@ static NSArray *dragAndDropEventNames()
 
     if (_shouldEnsureUIApplication)
         UIApplicationInstantiateSingleton([DragAndDropSimulatorApplication class]);
+
+    if (_shouldBecomeFirstResponder)
+        [_webView becomeFirstResponder];
 
     [self _resetSimulatedState];
 

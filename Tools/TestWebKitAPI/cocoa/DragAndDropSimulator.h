@@ -95,6 +95,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, readonly) DragAndDropPhase phase;
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
+@property (nonatomic) BOOL shouldBecomeFirstResponder;
 @property (nonatomic) BOOL shouldAllowMoveOperation;
 @property (nonatomic, strong) NSArray *externalItemProviders;
 @property (nonatomic, readonly) UIDropProposal *lastKnownDropProposal;

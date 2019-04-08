@@ -57,6 +57,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisabledAdaptations.h>
+#include <WebCore/DragActions.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTMLMenuElement.h>
 #include <WebCore/HTMLMenuItemElement.h>
@@ -846,6 +847,7 @@ public:
     void willStartDrag() { ASSERT(!m_isStartingDrag); m_isStartingDrag = true; }
     void didStartDrag();
     void dragCancelled();
+    WebCore::DragSourceAction allowedDragSourceActions() const { return m_allowedDragSourceActions; }
 #endif
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
@@ -1229,8 +1231,8 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DATA_INTERACTION)
-    void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
-    void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+    void requestDragStart(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t allowedActions);
+    void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t allowedActions);
 #endif
 
 #if !PLATFORM(COCOA) && !PLATFORM(WPE)
@@ -1732,6 +1734,7 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     bool m_isStartingDrag { false };
+    WebCore::DragSourceAction m_allowedDragSourceActions { WebCore::DragSourceActionAny };
 #endif
 
     bool m_cachedMainFrameIsPinnedToLeftSide { true };
