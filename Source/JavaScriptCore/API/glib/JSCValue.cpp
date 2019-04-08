@@ -21,6 +21,7 @@
 #include "JSCValue.h"
 
 #include "APICast.h"
+#include "APIUtils.h"
 #include "JSCCallbackFunction.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
@@ -1036,19 +1037,34 @@ void jsc_value_object_define_property_data(JSCValue* value, const char* property
     g_return_if_fail(propertyName);
 
     JSCValuePrivate* priv = value->priv;
-    GRefPtr<JSCValue> descriptor = adoptGRef(jsc_value_new_object(priv->context.get(), nullptr, nullptr));
-    GRefPtr<JSCValue> trueValue = adoptGRef(jsc_value_new_boolean(priv->context.get(), TRUE));
-    if (flags & JSC_VALUE_PROPERTY_CONFIGURABLE)
-        jsc_value_object_set_property(descriptor.get(), "configurable", trueValue.get());
-    if (flags & JSC_VALUE_PROPERTY_ENUMERABLE)
-        jsc_value_object_set_property(descriptor.get(), "enumerable", trueValue.get());
-    if (propertyValue)
-        jsc_value_object_set_property(descriptor.get(), "value", propertyValue);
-    if (flags & JSC_VALUE_PROPERTY_WRITABLE)
-        jsc_value_object_set_property(descriptor.get(), "writable", trueValue.get());
-    GRefPtr<JSCValue> object = adoptGRef(jsc_context_get_value(priv->context.get(), "Object"));
-    GRefPtr<JSCValue> result = adoptGRef(jsc_value_object_invoke_method(object.get(), "defineProperty",
-        JSC_TYPE_VALUE, value, G_TYPE_STRING, propertyName, JSC_TYPE_VALUE, descriptor.get(), G_TYPE_NONE));
+    auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSC::ExecState* exec = toJS(jsContext);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSValue jsValue = toJS(exec, priv->jsValue);
+    JSC::JSObject* object = jsValue.toObject(exec);
+    JSValueRef exception = nullptr;
+    if (handleExceptionIfNeeded(scope, exec, &exception) == ExceptionStatus::DidThrow) {
+        jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
+        return;
+    }
+
+    auto name = OpaqueJSString::tryCreate(String::fromUTF8(propertyName));
+    if (!name)
+        return;
+
+    JSC::PropertyDescriptor descriptor;
+    descriptor.setValue(toJS(exec, propertyValue->priv->jsValue));
+    descriptor.setEnumerable(flags & JSC_VALUE_PROPERTY_ENUMERABLE);
+    descriptor.setConfigurable(flags & JSC_VALUE_PROPERTY_CONFIGURABLE);
+    descriptor.setWritable(flags & JSC_VALUE_PROPERTY_WRITABLE);
+    object->methodTable(vm)->defineOwnProperty(object, exec, name->identifier(&vm), descriptor, true);
+    if (handleExceptionIfNeeded(scope, exec, &exception) == ExceptionStatus::DidThrow) {
+        jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
+        return;
+    }
 }
 
 /**
@@ -1076,33 +1092,44 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
     g_return_if_fail(getter || setter);
 
     JSCValuePrivate* priv = value->priv;
-    GRefPtr<JSCValue> descriptor = adoptGRef(jsc_value_new_object(priv->context.get(), nullptr, nullptr));
-    GRefPtr<JSCValue> trueValue = adoptGRef(jsc_value_new_boolean(priv->context.get(), TRUE));
-    if (flags & JSC_VALUE_PROPERTY_CONFIGURABLE)
-        jsc_value_object_set_property(descriptor.get(), "configurable", trueValue.get());
-    if (flags & JSC_VALUE_PROPERTY_ENUMERABLE)
-        jsc_value_object_set_property(descriptor.get(), "enumerable", trueValue.get());
-
-    JSC::ExecState* exec = toJS(jscContextGetJSContext(priv->context.get()));
+    auto* jsContext = jscContextGetJSContext(priv->context.get());
+    JSC::ExecState* exec = toJS(jsContext);
     JSC::VM& vm = exec->vm();
     JSC::JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSValue jsValue = toJS(exec, priv->jsValue);
+    JSC::JSObject* object = jsValue.toObject(exec);
+    JSValueRef exception = nullptr;
+    if (handleExceptionIfNeeded(scope, exec, &exception) == ExceptionStatus::DidThrow) {
+        jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
+        return;
+    }
+
+    auto name = OpaqueJSString::tryCreate(String::fromUTF8(propertyName));
+    if (!name)
+        return;
+
+    JSC::PropertyDescriptor descriptor;
+    descriptor.setEnumerable(flags & JSC_VALUE_PROPERTY_ENUMERABLE);
+    descriptor.setConfigurable(flags & JSC_VALUE_PROPERTY_CONFIGURABLE);
     if (getter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(getter, userData, reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "get"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, Vector<GType> { }));
-        GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
-        jsc_value_object_set_property(descriptor.get(), "get", function.get());
+        auto function = JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "get"_s,
+            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), propertyType, Vector<GType> { });
+        descriptor.setGetter(function);
     }
     if (setter) {
         GRefPtr<GClosure> closure = adoptGRef(g_cclosure_new(setter, userData, getter ? nullptr : reinterpret_cast<GClosureNotify>(reinterpret_cast<GCallback>(destroyNotify))));
-        auto* functionObject = toRef(JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "set"_s,
-            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType }));
-        GRefPtr<JSCValue> function = jscContextGetOrCreateValue(priv->context.get(), functionObject);
-        jsc_value_object_set_property(descriptor.get(), "set", function.get());
+        auto function = JSC::JSCCallbackFunction::create(vm, exec->lexicalGlobalObject(), "set"_s,
+            JSC::JSCCallbackFunction::Type::Method, nullptr, WTFMove(closure), G_TYPE_NONE, Vector<GType> { propertyType });
+        descriptor.setSetter(function);
     }
-    GRefPtr<JSCValue> object = adoptGRef(jsc_context_get_value(priv->context.get(), "Object"));
-    GRefPtr<JSCValue> result = adoptGRef(jsc_value_object_invoke_method(object.get(), "defineProperty",
-        JSC_TYPE_VALUE, value, G_TYPE_STRING, propertyName, JSC_TYPE_VALUE, descriptor.get(), G_TYPE_NONE));
+    object->methodTable(vm)->defineOwnProperty(object, exec, name->identifier(&vm), descriptor, true);
+    if (handleExceptionIfNeeded(scope, exec, &exception) == ExceptionStatus::DidThrow) {
+        jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
+        return;
+    }
 }
 
 static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Optional<Vector<GType>>&& parameters)
