@@ -149,7 +149,18 @@ RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 
 static void filterPreloadHSTSEntry(const void* key, const void* value, void* context)
 {
-    HashSet<String>* hostnames = static_cast<HashSet<String>*>(context);
+    RELEASE_ASSERT(context);
+
+    ASSERT(key);
+    ASSERT(value);
+    if (!key || !value)
+        return;
+
+    ASSERT(key != kCFNull);
+    if (key == kCFNull)
+        return;
+    
+    auto* hostnames = static_cast<HashSet<String>*>(context);
     auto val = static_cast<CFDictionaryRef>(value);
     if (CFDictionaryGetValue(val, _kCFNetworkHSTSPreloaded) != kCFBooleanTrue)
         hostnames->add((CFStringRef)key);
@@ -157,8 +168,8 @@ static void filterPreloadHSTSEntry(const void* key, const void* value, void* con
 
 void NetworkProcess::getHostNamesWithHSTSCache(WebCore::NetworkStorageSession& session, HashSet<String>& hostNames)
 {
-    auto HSTSPolicies = adoptCF(_CFNetworkCopyHSTSPolicies(session.platformSession()));
-    CFDictionaryApplyFunction(HSTSPolicies.get(), filterPreloadHSTSEntry, &hostNames);
+    if (auto HSTSPolicies = adoptCF(_CFNetworkCopyHSTSPolicies(session.platformSession())))
+        CFDictionaryApplyFunction(HSTSPolicies.get(), filterPreloadHSTSEntry, &hostNames);
 }
 
 void NetworkProcess::deleteHSTSCacheForHostNames(WebCore::NetworkStorageSession& session, const Vector<String>& hostNames)

@@ -1,3 +1,22 @@
+2019-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        Make HSTS list handling more robust against unexpected content 
+        https://bugs.webkit.org/show_bug.cgi?id=196552
+        <rdar://problem/43403817>
+
+        Reviewed by Chris Dumez.
+
+        Crash logs indicate we sometimes encounter null key values during processing.
+        This patch adds some debug assertions to catch this in test environments, and
+        allows the code to skip the bad entries if encountered.
+
+        It also avoids calling CFDictionaryApplyFunction when the HSTS policies returned
+        by _CFNetworkCopyHSTSPolicies is nullptr, which is a possible return value.
+
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::filterPreloadHSTSEntry):
+        (WebKit::NetworkProcess::getHostNamesWithHSTSCache):
+
 2019-04-05  Brian Burg  <bburg@apple.com>
 
         Web Automation: clean up some WebAutomationSession methods to use modern async IPC
