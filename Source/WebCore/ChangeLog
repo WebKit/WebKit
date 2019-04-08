@@ -1,3 +1,19 @@
+2019-04-08  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCMediaEndpoint does not need to hop to the signaling thread to gather stats
+        https://bugs.webkit.org/show_bug.cgi?id=196697
+        <rdar://problem/47477113>
+
+        Reviewed by Eric Carlson.
+
+        It is not thread safe to use m_backend in another thread than the main thread.
+        It is not useful anymore to hop to the signaling thread to gather stats.
+        No change of behavior.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::getStats):
+        (WebCore::LibWebRTCMediaEndpoint::gatherStatsForLogging):
+
 2019-04-08  Antoine Quint  <graouts@apple.com>
 
         [ Mac WK2 iOS Debug ] REGRESSION(r233667) Layout Test imported/w3c/web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor.html is a flaky failure
