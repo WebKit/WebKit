@@ -20,6 +20,7 @@
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
+#include <gst/base/gstpushsrc.h>
 #include <gst/gst.h>
 
 namespace WebCore {
@@ -40,13 +41,13 @@ typedef struct _WebKitWebSrcClass   WebKitWebSrcClass;
 typedef struct _WebKitWebSrcPrivate WebKitWebSrcPrivate;
 
 struct _WebKitWebSrc {
-    GstBin parent;
+    GstPushSrc parent;
 
     WebKitWebSrcPrivate *priv;
 };
 
 struct _WebKitWebSrcClass {
-    GstBinClass parentClass;
+    GstPushSrcClass parentClass;
 };
 
 GType webkit_web_src_get_type(void);

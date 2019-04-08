@@ -63,6 +63,24 @@ public:
         });
     }
 
+    template<typename F>
+    void notifyAndWait(T notificationType, F&& callbackFunctor)
+    {
+        Lock mutex;
+        Condition condition;
+
+        notify(notificationType, [functor = WTFMove(callbackFunctor), &condition, &mutex] {
+            functor();
+            LockHolder holder(mutex);
+            condition.notifyOne();
+        });
+
+        if (!isMainThread()) {
+            LockHolder holder(mutex);
+            condition.wait(mutex);
+        }
+    }
+
     void cancelPendingNotifications(unsigned mask = 0)
     {
         ASSERT(m_isValid.load());
