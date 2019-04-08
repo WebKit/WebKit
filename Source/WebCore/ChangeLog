@@ -1,3 +1,54 @@
+2019-04-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        Implement white-space:break-spaces value
+        https://bugs.webkit.org/show_bug.cgi?id=177327
+
+        Reviewed by Myles Maxfield and Zalan Bujtas.
+
+        Finally the CSS WG decided [1] to move back the 'break-spaces' value to
+        the 'white-space' property. This makes the parsing logic easier than
+        the previous approach of using the 'overflow-wrap' property.
+
+        This new value prevents the white-space sequence to collapse and gives
+        breaking opportunities after every preserved white-space.
+
+        https://drafts.csswg.org/css-text-3/#valdef-white-space-break-spaces
+
+        Additionally, unlike 'pre-wrap', non-collapsible spaces or tabs at the
+        end of a line cannot be hung or visually collapsed, since we want them
+        to be preserved and broken.
+
+        [1] https://github.com/w3c/csswg-drafts/pull/2841
+
+        Tests: imported/w3c/web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-003.html
+               imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): New mapping for CSSVaueBreakSpaces.
+        (WebCore::CSSPrimitiveValue::operator WhiteSpace const): New value BreakSpaces for the Whitespace enum.
+        * css/CSSProperties.json: new 'break-spaces' value for the 'white-space' property.
+        * css/CSSValueKeywords.in: new break-spaces keyword
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * rendering/SimpleLineLayout.cpp:  The SimpleLineLayut codepath must handle properly the new behavior of preserved whitespaces.
+        (WebCore::SimpleLineLayout::LineState::hasTrailingWhitespace const): Require that m_trailingWhitespaceWidth being greater than zero.
+        (WebCore::SimpleLineLayout::LineState::hasWhitespaceFragments const): New function to detect former whitespae fragments that could be breaking opportunities.
+        (WebCore::SimpleLineLayout::removeTrailingWhitespace): The 'break-spaces' feature forbids to remove any trailing whitespace.
+        (WebCore::SimpleLineLayout::firstFragment): We have now leading whitespace sequences comming from the previous line.
+        (WebCore::SimpleLineLayout::createLineRuns): We should revert some breaking opportunities if others were formerly found in the line.
+        * rendering/SimpleLineLayoutTextFragmentIterator.cpp:
+        (WebCore::SimpleLineLayout::TextFragmentIterator::Style::Style): New style fields to determine whether the break-space feature is being used. Also split out the break-all and breal-all values.
+        * rendering/SimpleLineLayoutTextFragmentIterator.h:
+        * rendering/line/BreakingContext.h: Different codepath but similar changes to properly handle the new behavior of preserved whitespace.
+        (WebCore::BreakingContext::BreakingContext): New class field to determine whether there are some whitespace that may prevent the word ot be broken.
+        (WebCore::BreakingContext::handleText): New line-breaking logic to implement the break-spaces behavior.
+        (WebCore::BreakingContext::trailingSpacesHang): Cases where the preserved breakspaces should hand or overflow.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::collapseWhiteSpace): With break-spaces collapsing whitespaces is not allowed.
+        (WebCore::RenderStyle::breakOnlyAfterWhiteSpace const): Add the WhiteSpace::BreakSpaces to this group.
+        * rendering/style/RenderStyleConstants.h: A new constan added.
+
 2019-04-08  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCMediaEndpoint does not need to hop to the signaling thread to gather stats

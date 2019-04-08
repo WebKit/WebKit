@@ -4269,7 +4269,8 @@
                 "pre",
                 "pre-wrap",
                 "pre-line",
-                "nowrap"
+                "nowrap",
+                "break-spaces"
             ],
             "specification": {
                 "category": "css-22",

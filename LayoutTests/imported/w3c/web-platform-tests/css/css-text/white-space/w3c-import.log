@@ -28,6 +28,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-000-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-001-expected.html

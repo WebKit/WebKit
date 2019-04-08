@@ -3051,6 +3051,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WhiteSpace e)
     case WhiteSpace::KHTMLNoWrap:
         m_value.valueID = CSSValueWebkitNowrap;
         break;
+    case WhiteSpace::BreakSpaces:
+        m_value.valueID = CSSValueBreakSpaces;
+        break;
     }
 }
 
@@ -3071,6 +3074,8 @@ template<> inline CSSPrimitiveValue::operator WhiteSpace() const
         return WhiteSpace::PreLine;
     case CSSValueNormal:
         return WhiteSpace::Normal;
+    case CSSValueBreakSpaces:
+        return WhiteSpace::BreakSpaces;
     default:
         break;
     }

@@ -114,6 +114,7 @@ public:
         , m_ignoringSpaces(false)
         , m_currentCharacterIsSpace(false)
         , m_currentCharacterIsWS(false)
+        , m_hasFormerOpportunity(false)
         , m_appliedStartWidth(appliedStartWidth)
         , m_includeEndWidth(true)
         , m_autoWrap(false)
@@ -146,6 +147,7 @@ public:
     void handleEmptyInline();
     void handleReplaced();
     bool handleText(WordMeasurements&, bool& hyphenated, unsigned& consecutiveHyphenatedLines);
+    void trailingSpacesHang(InlineIterator&, RenderObject&, bool canBreakMidWord, bool previousCharacterIsSpace);
     bool canBreakAtThisPosition();
     void commitAndUpdateLineBreakIfNeeded();
     InlineIterator handleEndOfLine();
@@ -215,6 +217,7 @@ private:
     // a run.
     bool m_currentCharacterIsSpace;
     bool m_currentCharacterIsWS;
+    bool m_hasFormerOpportunity;
     bool m_appliedStartWidth;
     bool m_includeEndWidth;
     bool m_autoWrap;
@@ -734,6 +737,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     }
 
     HashSet<const Font*> fallbackFonts;
+    m_hasFormerOpportunity = false;
+    bool canBreakMidWord = breakWords || breakAll;
     UChar lastCharacterFromPreviousRenderText = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar lastCharacter = m_renderTextInfo.lineBreakIterator.lastCharacter();
     UChar secondToLastCharacter = m_renderTextInfo.lineBreakIterator.secondToLastCharacter();
@@ -749,8 +754,11 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
         // A single preserved leading white-space doesn't fulfill the 'betweenWords' condition, however it's indeed a
         // soft-breaking opportunty so we may want to avoid breaking in the middle of the word.
-        if (m_atStart && m_currentCharacterIsSpace && !previousCharacterIsSpace)
+        if (m_atStart && m_currentCharacterIsSpace && !previousCharacterIsSpace) {
+            m_hasFormerOpportunity = canBreakMidWord;
             breakWords = false;
+            canBreakMidWord = breakAll;
+        }
 
         if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(m_current.renderer(), true, false)) {
             m_width.addUncommittedWidth(-renderText.hangablePunctuationStartWidth(m_current.offset()));
@@ -774,7 +782,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
 
         m_currentCharacterIsWS = m_currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
 
-        if ((breakAll || breakWords) && !midWordBreak && (!m_currentCharacterIsSpace || m_atStart || style.whiteSpace() != WhiteSpace::PreWrap)) {
+        if (canBreakMidWord && !midWordBreak && (!m_currentCharacterIsSpace || m_atStart || style.whiteSpace() != WhiteSpace::PreWrap)) {
             wrapW += charWidth;
             bool midWordBreakIsBeforeSurrogatePair = U16_IS_LEAD(c) && U16_IS_TRAIL(renderText.characterAt(m_current.offset() + 1));
             charWidth = textWidth(renderText, m_current.offset(), midWordBreakIsBeforeSurrogatePair ? 2 : 1, font, m_width.committedWidth() + wrapW, isFixedPitch, m_collapseWhiteSpace, fallbackFonts, textLayout);
@@ -846,7 +854,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 // If we break only after white-space, consider the current character
                 // as candidate width for this line.
                 bool lineWasTooWide = false;
-                if (fitsOnLineOrHangsAtEnd() && m_currentCharacterIsWS && m_currentStyle->breakOnlyAfterWhiteSpace() && !midWordBreak) {
+                if (fitsOnLineOrHangsAtEnd() && m_currentCharacterIsWS && m_currentStyle->breakOnlyAfterWhiteSpace() && (!midWordBreak || m_currWS == WhiteSpace::BreakSpaces)) {
                     float charWidth = textWidth(renderText, m_current.offset(), 1, font, m_width.currentWidth(), isFixedPitch, m_collapseWhiteSpace, wordMeasurement.fallbackFonts, textLayout) + (applyWordSpacing ? wordSpacing : 0);
                     // Check if line is too big even without the extra space
                     // at the end of the line. If it is not, do nothing.
@@ -855,8 +863,12 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     // additional whitespace.
                     if (!m_width.fitsOnLineIncludingExtraWidth(charWidth)) {
                         lineWasTooWide = true;
-                        m_lineBreak.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
-                        m_lineBreaker.skipTrailingWhitespace(m_lineBreak, m_lineInfo);
+                        if (m_currWS == WhiteSpace::BreakSpaces)
+                            trailingSpacesHang(m_lineBreak, renderObject, canBreakMidWord, previousCharacterIsSpace);
+                        else {
+                            m_lineBreak.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
+                            m_lineBreaker.skipTrailingWhitespace(m_lineBreak, m_lineInfo);
+                        }
                     }
                 }
                 if ((lineWasTooWide || !m_width.fitsOnLine()) && !m_hangsAtEnd) {
@@ -941,14 +953,16 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 wrapW = wrapWidthOffset;
                 // Auto-wrapping text should not wrap in the middle of a word once it has had an
                 // opportunity to break after a word.
+                m_hasFormerOpportunity = canBreakMidWord;
                 breakWords = false;
+                canBreakMidWord = breakAll;
             }
 
             if (midWordBreak && !U16_IS_TRAIL(c) && !(U_GET_GC_MASK(c) & U_GC_M_MASK)) {
                 // Remember this as a breakable position in case
                 // adding the end width forces a break.
                 m_lineBreak.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
-                midWordBreak &= (breakWords || breakAll);
+                midWordBreak &= canBreakMidWord;
             }
 
             if (betweenWords) {
@@ -1070,6 +1084,22 @@ inline bool textBeginsWithBreakablePosition(RenderText& nextText)
 {
     UChar c = nextText.characterAt(0);
     return c == ' ' || c == '\t' || (c == '\n' && !nextText.preservesNewline());
+}
+
+inline void BreakingContext::trailingSpacesHang(InlineIterator& lineBreak, RenderObject& renderObject, bool canBreakMidWord, bool previousCharacterIsSpace)
+{
+    ASSERT(m_currWS == WhiteSpace::BreakSpaces);
+    // Avoid breaking before the first white-space after a word if there is a
+    // breaking opportunity before.
+    if (m_hasFormerOpportunity)
+        return;
+
+    lineBreak.moveTo(renderObject, m_current.offset(), m_current.nextBreakablePosition());
+
+    // Avoid breaking before the first white-space after a word, unless
+    // overflow-wrap or word-break allow to.
+    if (!previousCharacterIsSpace && !canBreakMidWord)
+        lineBreak.increment();
 }
 
 inline bool BreakingContext::canBreakAtThisPosition()

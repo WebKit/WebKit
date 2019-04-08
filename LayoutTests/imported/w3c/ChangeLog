@@ -1,3 +1,22 @@
+2019-04-08  Javier Fernandez  <jfernandez@igalia.com>
+
+        Implement white-space:break-spaces value
+        https://bugs.webkit.org/show_bug.cgi?id=177327
+
+        Reviewed by Myles Maxfield and Zalan Bujtas.
+
+        Imoprted a few aditional tests from the CSS Text WPT suite that are relevant for this change.
+
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008-expected.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/overflow-wrap-break-word-008.html: Added.
+        * web-platform-tests/css/css-text/overflow-wrap/w3c-import.log:
+        * web-platform-tests/css/css-text/parsing/white-space-valid-expected.txt:
+        * web-platform-tests/css/css-text/white-space/break-spaces-003-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-003.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-009-expected.html: Added.
+        * web-platform-tests/css/css-text/white-space/break-spaces-009.html: Added.
+        * web-platform-tests/css/css-text/white-space/w3c-import.log:
+
 2019-04-05  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] throw if 'ownKeys' Proxy trap result contains duplicate keys

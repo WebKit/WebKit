@@ -658,7 +658,8 @@ enum class WhiteSpace : uint8_t {
     PreWrap,
     PreLine,
     NoWrap,
-    KHTMLNoWrap
+    KHTMLNoWrap,
+    BreakSpaces
 };
 
 // The order of this enum must match the order of the text align values in CSSValueKeywords.in.

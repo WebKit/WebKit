@@ -111,7 +111,9 @@ public:
         bool collapseWhitespace;
         bool preserveNewline;
         bool wrapLines;
+        bool breakSpaces;
         bool breakAnyWordOnOverflow;
+        bool breakWordOnOverflow;
         bool breakFirstWordOnOverflow;
         bool breakNBSP;
         bool keepAllWordsForCJK;

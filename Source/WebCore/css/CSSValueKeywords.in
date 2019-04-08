@@ -769,6 +769,11 @@ keep-all
 break-word
 
 //
+// CSS_PROP_WHITE_SPACE
+//
+break-spaces
+
+//
 // CSS_PROP__KHTML_NBSP_MODE
 //
 space
