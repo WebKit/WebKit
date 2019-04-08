@@ -536,11 +536,11 @@ static void testWebResourceGetData(ResourcesTest* test, gconstpointer)
         test->checkResourceData(WEBKIT_WEB_RESOURCE(item->data));
 }
 
-static void webViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, GMainLoop* mainLoop)
+static void webViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, GMainLoop* mainLoop)
 {
     if (loadEvent != WEBKIT_LOAD_FINISHED)
         return;
-    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(webViewloadChanged), mainLoop);
+    g_signal_handlers_disconnect_by_func(webView, reinterpret_cast<void*>(webViewLoadChanged), mainLoop);
     g_main_loop_quit(mainLoop);
 }
 
@@ -549,7 +549,7 @@ static void testWebResourceGetDataError(Test* test, gconstpointer)
     GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
     GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
     webkit_web_view_load_html(webView.get(), "<html></html>", nullptr);
-    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(webViewloadChanged), mainLoop.get());
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(webViewLoadChanged), mainLoop.get());
     g_main_loop_run(mainLoop.get());
 
     auto* resource = webkit_web_view_get_main_resource(webView.get());
@@ -563,6 +563,29 @@ static void testWebResourceGetDataError(Test* test, gconstpointer)
         g_main_loop_quit(static_cast<GMainLoop*>(userData));
     }, mainLoop.get());
     webView = nullptr;
+    g_main_loop_run(mainLoop.get());
+}
+
+static void testWebResourceGetDataEmpty(Test* test, gconstpointer)
+{
+    GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, FALSE));
+    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(Test::createWebView(test->m_webContext.get()));
+    webkit_web_view_load_html(webView.get(), "", nullptr);
+    g_signal_connect(webView.get(), "load-changed", G_CALLBACK(webViewLoadChanged), mainLoop.get());
+    g_main_loop_run(mainLoop.get());
+
+    auto* resource = webkit_web_view_get_main_resource(webView.get());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(resource));
+    webkit_web_resource_get_data(resource, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
+        size_t dataSize;
+        GUniqueOutPtr<GError> error;
+        auto* data = webkit_web_resource_get_data_finish(WEBKIT_WEB_RESOURCE(source), result, &dataSize, &error.outPtr());
+        g_assert_nonnull(data);
+        g_assert_cmpuint(dataSize, ==, 1);
+        g_assert_cmpint(data[0], ==, '\0');
+        g_assert_no_error(error.get());
+        g_main_loop_quit(static_cast<GMainLoop*>(userData));
+    }, mainLoop.get());
     g_main_loop_run(mainLoop.get());
 }
 
@@ -897,6 +920,7 @@ void beforeAll()
     ResourceURITrackingTest::add("WebKitWebResource", "active-uri", testWebResourceActiveURI);
     ResourcesTest::add("WebKitWebResource", "get-data", testWebResourceGetData);
     Test::add("WebKitWebResource", "get-data-error", testWebResourceGetDataError);
+    Test::add("WebKitWebResource", "get-data-empty", testWebResourceGetDataEmpty);
     SingleResourceLoadTest::add("WebKitWebView", "history-cache", testWebViewResourcesHistoryCache);
     SendRequestTest::add("WebKitWebPage", "send-request", testWebResourceSendRequest);
 #if SOUP_CHECK_VERSION(2, 49, 91)

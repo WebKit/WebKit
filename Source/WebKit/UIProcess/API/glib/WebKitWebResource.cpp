@@ -351,6 +351,8 @@ static void resourceDataCallback(API::Data* wkData, CallbackBase::Error error, G
     }
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     data->webData = wkData;
+    if (!wkData->bytes())
+        data->webData = API::Data::create(reinterpret_cast<const unsigned char*>(""), 1);
     g_task_return_boolean(task, TRUE);
 }
 
