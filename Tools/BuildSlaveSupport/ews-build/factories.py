@@ -70,11 +70,7 @@ class BuildFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments)
         self.addStep(KillOldProcesses())
         self.addStep(CompileWebKit())
-        self.addStep(UnApplyPatchIfRequired())
-        self.addStep(CompileWebKitToT())
         if triggers:
-            self.addStep(ArchiveBuiltProduct())
-            self.addStep(UploadBuiltProduct())
             self.addStep(trigger.Trigger(schedulerNames=triggers, set_properties=self.propertiesToPassToTriggers() or {}))
 
     def propertiesToPassToTriggers(self):

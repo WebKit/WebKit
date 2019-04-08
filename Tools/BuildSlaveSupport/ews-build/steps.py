@@ -518,6 +518,10 @@ class CompileWebKit(shell.Compile):
     def evaluateCommand(self, cmd):
         if cmd.didFail():
             self.setProperty('patchFailedToBuild', True)
+            self.build.addStepsAfterCurrentStep([UnApplyPatchIfRequired(), CompileWebKitToT()])
+        else:
+            self.build.addStepsAfterCurrentStep([ArchiveBuiltProduct(), UploadBuiltProduct()])
+
 
         return super(CompileWebKit, self).evaluateCommand(cmd)
 
@@ -531,6 +535,9 @@ class CompileWebKitToT(CompileWebKit):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+    def evaluateCommand(self, cmd):
+        return shell.Compile.evaluateCommand(self, cmd)
 
 
 class CompileJSCOnly(CompileWebKit):

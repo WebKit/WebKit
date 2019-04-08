@@ -1,3 +1,17 @@
+2019-04-08  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Do not upload archive when Compile Fails
+        https://bugs.webkit.org/show_bug.cgi?id=196674
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (BuildFactory.__init__): Remove steps which require dynamic decision about whether to run or not.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (CompileWebKit.evaluateCommand): Dynamically decide which steps to run based on compile status.
+        (CompileWebKitToT.evaluateCommand): Explicitly override Compile.evaluateCommand so that it 
+        doesn't inherit CompileWebKit.evaluateCommand which dynamically adds more steps.
+
 2019-04-08  Guillaume Emont  <guijemont@igalia.com>
 
         Enable DFG on MIPS
