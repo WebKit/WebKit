@@ -266,12 +266,11 @@ Optional<Seconds> DocumentTimeline::currentTime()
     if (!m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
-    if (auto* mainDocumentTimeline = m_document->existingTimeline()) {
-        if (mainDocumentTimeline != this) {
-            if (auto mainDocumentTimelineCurrentTime = mainDocumentTimeline->currentTime())
-                return mainDocumentTimelineCurrentTime.value() - m_originTime;
-            return WTF::nullopt;
-        }
+    auto& mainDocumentTimeline = m_document->timeline();
+    if (&mainDocumentTimeline != this) {
+        if (auto mainDocumentTimelineCurrentTime = mainDocumentTimeline.currentTime())
+            return *mainDocumentTimelineCurrentTime - m_originTime;
+        return WTF::nullopt;
     }
 
     auto currentTime = liveCurrentTime();
