@@ -1,3 +1,16 @@
+2019-04-08  Guillaume Emont  <guijemont@igalia.com>
+
+        Enable DFG on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=196689
+
+        Reviewed by Žan Doberšek.
+
+        Since the bytecode change, we enabled the baseline JIT on mips in
+        r240432, but DFG is still missing. With this change, all tests are
+        passing on a ci20 board.
+
+        * wtf/Platform.h: Enable DFG on MIPS by default.
+
 2019-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Added tests for WeakHashSet::computesEmpty and WeakHashSet::computeSize

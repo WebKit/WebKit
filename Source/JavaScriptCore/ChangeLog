@@ -1,3 +1,18 @@
+2019-04-08  Guillaume Emont  <guijemont@igalia.com>
+
+        Enable DFG on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=196689
+
+        Reviewed by Žan Doberšek.
+
+        Since the bytecode change, we enabled the baseline JIT on mips in
+        r240432, but DFG is still missing. With this change, all tests are
+        passing on a ci20 board.
+
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::calleeSaveRegisters):
+        Added s0, which is used in llint.
+
 2019-04-08  Xan Lopez  <xan@igalia.com>
 
         [CMake] Detect SSE2 at compile time

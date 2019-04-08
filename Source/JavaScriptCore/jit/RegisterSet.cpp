@@ -154,6 +154,7 @@ RegisterSet RegisterSet::calleeSaveRegisters()
         reg = static_cast<ARM64Registers::FPRegisterID>(reg + 1))
         result.set(reg);
 #elif CPU(MIPS)
+    result.set(MIPSRegisters::s0);
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
