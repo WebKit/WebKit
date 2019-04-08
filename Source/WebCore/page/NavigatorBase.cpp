@@ -28,6 +28,7 @@
 #include "NavigatorBase.h"
 
 #include "Document.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ServiceWorkerContainer.h"
 #include <mutex>
 #include <wtf/Language.h>
@@ -77,13 +78,8 @@
 namespace WebCore {
 
 NavigatorBase::NavigatorBase(ScriptExecutionContext* context)
-#if ENABLE(SERVICE_WORKER)
-    : m_serviceWorkerContainer(makeUniqueRef<ServiceWorkerContainer>(context, *this))
-#endif
+    : ContextDestructionObserver(context)
 {
-#if !ENABLE(SERVICE_WORKER)
-    UNUSED_PARAM(context);
-#endif
 }
 
 NavigatorBase::~NavigatorBase() = default;
@@ -151,16 +147,24 @@ Vector<String> NavigatorBase::languages()
 }
 
 #if ENABLE(SERVICE_WORKER)
+ServiceWorkerContainer* NavigatorBase::serviceWorkerIfExists()
+{
+    return m_serviceWorkerContainer.get();
+}
+
 ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
-    return m_serviceWorkerContainer;
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled());
+    if (!m_serviceWorkerContainer)
+        m_serviceWorkerContainer = std::make_unique<ServiceWorkerContainer>(scriptExecutionContext(), *this);
+    return *m_serviceWorkerContainer;
 }
 
 ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutionContext& context)
 {
     if (is<Document>(context) && downcast<Document>(context).isSandboxed(SandboxOrigin))
         return Exception { SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag" };
-    return m_serviceWorkerContainer.get();
+    return serviceWorker();
 }
 #endif
 

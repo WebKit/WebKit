@@ -31,7 +31,7 @@ namespace WebCore {
 void JSWorkerNavigator::visitAdditionalChildren(JSC::SlotVisitor& visitor)
 {
 #if ENABLE(SERVICE_WORKER)
-    visitor.addOpaqueRoot(&wrapped().serviceWorker());
+    visitor.addOpaqueRoot(wrapped().serviceWorkerIfExists());
 #else
     UNUSED_PARAM(visitor);
 #endif
