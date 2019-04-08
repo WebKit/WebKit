@@ -204,6 +204,7 @@ JSObjectRef JSCCallbackFunction::construct(JSContextRef callerContext, size_t ar
 
     switch (g_type_fundamental(G_VALUE_TYPE(&returnValue))) {
     case G_TYPE_POINTER:
+    case G_TYPE_BOXED:
     case G_TYPE_OBJECT:
         if (auto* ptr = returnValue.data[0].v_pointer)
             return toRef(jscClassGetOrCreateJSWrapper(m_class.get(), ptr));

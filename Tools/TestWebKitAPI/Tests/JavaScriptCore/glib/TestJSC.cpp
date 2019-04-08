@@ -1597,6 +1597,60 @@ static GFile* createGFile(const char* path)
     return file;
 }
 
+static GFile* getGFile(GFile* file)
+{
+    return G_FILE(g_object_ref(file));
+}
+
+static JSCValue* getParent(GFile* file, JSCClass* jscClass)
+{
+    auto* checker = static_cast<LeakChecker*>(g_object_get_data(G_OBJECT(jsc_context_get_current()), "leak-checker"));
+    GFile* parent = g_file_get_parent(file);
+    checker->watch(parent);
+    auto* value = jsc_value_new_object(jsc_context_get_current(), parent, jscClass);
+    checker->watch(value);
+    return value;
+}
+
+static GString* createGString(const char* str)
+{
+    return g_string_new(str);
+}
+
+static GString* getGString(GString* str)
+{
+    return str;
+}
+
+static GString* getGStringCopyWillRaise(GString* str)
+{
+    return static_cast<GString*>(g_boxed_copy(G_TYPE_GSTRING, str));
+}
+
+static JSCValue* getGStringCopy(GString *str, JSCClass* jscClass)
+{
+    auto* checker = static_cast<LeakChecker*>(g_object_get_data(G_OBJECT(jsc_context_get_current()), "leak-checker"));
+    auto* copy = getGStringCopyWillRaise(str);
+    auto* value = jsc_value_new_object(jsc_context_get_current(), copy, jscClass);
+    checker->watch(value);
+    return value;
+}
+
+static char* getGStringStr(GString* str)
+{
+    return g_strdup(str->str);
+}
+
+static guint64 getGStringLen(GString* str)
+{
+    return str->len;
+}
+
+static void freeGString(GString* str)
+{
+    g_string_free(str, TRUE);
+}
+
 static void testJSCClass()
 {
     {
@@ -2296,6 +2350,135 @@ static void testJSCClass()
         g_assert_true(jsc_value_is_string(value2.get()));
         resultString.reset(jsc_value_to_string(value2.get()));
         g_assert_cmpstr(resultString.get(), ==, currentDirectory.get());
+
+        jsc_class_add_method(jscClass, "getGFile", G_CALLBACK(getGFile), nullptr, nullptr, G_TYPE_OBJECT, 0, G_TYPE_NONE);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f = new GFile('.'); f2 = f.getGFile(); f2.getPath()", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_string(result.get()));
+        resultString.reset(jsc_value_to_string(result.get()));
+        g_assert_cmpstr(resultString.get(), ==, currentDirectory.get());
+
+        value = adoptGRef(jsc_value_object_invoke_method(file.get(), "getGFile", G_TYPE_NONE));
+        checker.watch(value.get());
+        g_assert_true(value.get() == file.get());
+
+        jsc_class_add_method(jscClass, "getParent", G_CALLBACK(getParent), jscClass, nullptr, JSC_TYPE_VALUE, 0, G_TYPE_NONE);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f = new GFile('.'); p = f.getParent(); p.getPath()", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_string(result.get()));
+        resultString.reset(jsc_value_to_string(result.get()));
+        GUniquePtr<char> parentDirectory(g_path_get_dirname(currentDirectory.get()));
+        g_assert_cmpstr(resultString.get(), ==, parentDirectory.get());
+
+        jsc_class_add_method(jscClass, "equal", G_CALLBACK(g_file_equal), nullptr, nullptr, G_TYPE_BOOLEAN, 1, G_TYPE_OBJECT);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "f1 = new GFile('.'); f2 = new GFile('.'); f1.equal(f2);", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        GFile* fileObject = g_file_new_for_path(".");
+        checker.watch(fileObject);
+        GRefPtr<JSCValue> fileValue = adoptGRef(jsc_value_new_object(context.get(), fileObject, jscClass));
+        checker.watch(fileValue.get());
+
+        result = adoptGRef(jsc_value_object_invoke_method(file.get(), "equal", G_TYPE_OBJECT, fileObject, G_TYPE_NONE));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        result = adoptGRef(jsc_value_object_invoke_method(file.get(), "equal", JSC_TYPE_VALUE, fileValue.get(), G_TYPE_NONE));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+    }
+
+    {
+        LeakChecker checker;
+        GRefPtr<JSCContext> context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        g_object_set_data(G_OBJECT(context.get()), "leak-checker", &checker);
+        ExceptionHandler exceptionHandler(context.get());
+
+        JSCClass* jscClass = jsc_context_register_class(context.get(), "GString", nullptr, nullptr, reinterpret_cast<GDestroyNotify>(freeGString));
+        checker.watch(jscClass);
+
+        GRefPtr<JSCValue> constructor = adoptGRef(jsc_class_add_constructor(jscClass, nullptr, G_CALLBACK(createGString), nullptr, nullptr, G_TYPE_GSTRING, 1, G_TYPE_STRING));
+        checker.watch(constructor.get());
+        g_assert_true(jsc_value_is_constructor(constructor.get()));
+
+        jsc_class_add_property(jscClass, "str", G_TYPE_STRING, G_CALLBACK(getGStringStr), nullptr, nullptr, nullptr);
+        jsc_class_add_property(jscClass, "len", G_TYPE_UINT64, G_CALLBACK(getGStringLen), nullptr, nullptr, nullptr);
+
+        jsc_context_set_value(context.get(), jsc_class_get_name(jscClass), constructor.get());
+
+        GRefPtr<JSCValue> str = adoptGRef(jsc_context_evaluate(context.get(), "s = new GString('Foo');", -1));
+        checker.watch(str.get());
+        g_assert_true(jsc_value_is_object(str.get()));
+        g_assert_true(jsc_value_object_is_instance_of(str.get(), jsc_class_get_name(jscClass)));
+        GRefPtr<JSCValue> result = adoptGRef(jsc_context_evaluate(context.get(), "s instanceof GString;", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        g_assert_true(jsc_value_object_has_property(str.get(), "str"));
+        GRefPtr<JSCValue> value = adoptGRef(jsc_value_object_get_property(str.get(), "str"));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_string(value.get()));
+        GUniquePtr<char> resultString(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(resultString.get(), ==, "Foo");
+
+        GRefPtr<JSCValue> value2 = adoptGRef(jsc_context_evaluate(context.get(), "s.str", -1));
+        checker.watch(value2.get());
+        g_assert_true(jsc_value_is_string(value2.get()));
+        resultString.reset(jsc_value_to_string(value2.get()));
+        g_assert_cmpstr(resultString.get(), ==, "Foo");
+
+        GRefPtr<JSCValue> value3 = adoptGRef(jsc_context_evaluate(context.get(), "s.len", -1));
+        checker.watch(value3.get());
+        g_assert_true(jsc_value_is_number(value3.get()));
+        g_assert_cmpint(jsc_value_to_int32(value3.get()), ==, 3);
+
+        jsc_class_add_method(jscClass, "getGString", G_CALLBACK(getGString), nullptr, nullptr, G_TYPE_POINTER, 0, G_TYPE_NONE);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "s = new GString('Self'); s2 = s.getGString(); s2.str;", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_string(result.get()));
+        resultString.reset(jsc_value_to_string(result.get()));
+        g_assert_cmpstr(resultString.get(), ==, "Self");
+
+        jsc_class_add_method(jscClass, "getGStringCopy", G_CALLBACK(getGStringCopy), jscClass, nullptr, JSC_TYPE_VALUE, 0, G_TYPE_NONE);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "s = new GString('Copy'); s2 = s.getGStringCopy(); s2.str;", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_string(result.get()));
+        resultString.reset(jsc_value_to_string(result.get()));
+        g_assert_cmpstr(resultString.get(), ==, "Copy");
+
+        jsc_class_add_method(jscClass, "getGStringCopyWillRaise", G_CALLBACK(getGStringCopyWillRaise), nullptr, nullptr, G_TYPE_GSTRING, 0, G_TYPE_NONE);
+        bool didThrow = false;
+        g_assert_throw_begin(exceptionHandler, didThrow);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "s = new GString('Copy'); s2 = s.getGStringCopyWillRaise(); s2.str;", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_undefined(result.get()));
+        g_assert_did_throw(exceptionHandler, didThrow);
+
+        jsc_class_add_method(jscClass, "equal", G_CALLBACK(g_string_equal), nullptr, nullptr, G_TYPE_BOOLEAN, 1, G_TYPE_GSTRING);
+        result = adoptGRef(jsc_context_evaluate(context.get(), "s1 = new GString('Bar'); s2 = new GString('Bar'); s1.equal(s2);", -1));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        GString* strBoxed = g_string_new("Foo");
+        GRefPtr<JSCValue> strValue = adoptGRef(jsc_value_new_object(context.get(), strBoxed, jscClass));
+        checker.watch(strValue.get());
+
+        result = adoptGRef(jsc_value_object_invoke_method(str.get(), "equal", G_TYPE_GSTRING, strBoxed, G_TYPE_NONE));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
+
+        result = adoptGRef(jsc_value_object_invoke_method(str.get(), "equal", JSC_TYPE_VALUE, strValue.get(), G_TYPE_NONE));
+        checker.watch(result.get());
+        g_assert_true(jsc_value_is_boolean(result.get()));
+        g_assert_true(jsc_value_to_boolean(result.get()));
     }
 }
 
