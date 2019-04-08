@@ -25,8 +25,8 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -45,7 +45,7 @@ static AccessibilityObject* core(AtkTableCell* cell)
     if (!WEBKIT_IS_ACCESSIBLE(cell))
         return nullptr;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(cell));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(cell));
 }
 
 GPtrArray* webkitAccessibleTableCellGetColumnHeaderCells(AtkTableCell* cell)

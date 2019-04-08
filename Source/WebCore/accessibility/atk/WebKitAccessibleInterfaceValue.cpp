@@ -24,8 +24,8 @@
 
 #include "AccessibilityObject.h"
 #include "HTMLNames.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -35,7 +35,7 @@ static AccessibilityObject* core(AtkValue* value)
     if (!WEBKIT_IS_ACCESSIBLE(value))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(value));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(value));
 }
 
 static bool webkitAccessibleSetNewValue(AtkValue* coreValue, const gdouble newValue)

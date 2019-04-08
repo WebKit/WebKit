@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2019 Igalia S.L.
  * Copyright (C) 2013 Samsung Electronics
  *
  * Portions from Mozilla a11y, copyright as follows:
@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "WebKitAccessibleWrapperAtk.h"
+#include "WebKitAccessible.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -69,11 +69,14 @@
 #include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
 #include <glib/gprintf.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
 
 struct _WebKitAccessiblePrivate {
+    AccessibilityObject* object;
+
     // Cached data for AtkObject.
     CString accessibleName;
     CString accessibleDescription;
@@ -92,7 +95,7 @@ struct _WebKitAccessiblePrivate {
     CString imageDescription;
 };
 
-#define WEBKIT_ACCESSIBLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessiblePrivate))
+WEBKIT_DEFINE_TYPE(WebKitAccessible, webkit_accessible, ATK_TYPE_OBJECT)
 
 static AccessibilityObject* fallbackObject()
 {
@@ -100,21 +103,13 @@ static AccessibilityObject* fallbackObject()
     return object;
 }
 
-static AccessibilityObject* core(AtkObject* object)
-{
-    if (!WEBKIT_IS_ACCESSIBLE(object))
-        return 0;
-
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(object));
-}
-
 static const gchar* webkitAccessibleGetName(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     Vector<AccessibilityText> textOrder;
-    core(object)->accessibilityText(textOrder);
+    accessible->priv->object->accessibilityText(textOrder);
 
     for (const auto& text : textOrder) {
         // FIXME: This check is here because AccessibilityNodeObject::titleElementText()
@@ -127,19 +122,19 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject description.
         if (text.textSource != AccessibilityTextSource::Help && text.textSource != AccessibilityTextSource::Summary)
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, text.text);
+            return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedAccessibleName, text.text.utf8());
     }
 
-    return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, "");
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedAccessibleName, "");
 }
 
 static const gchar* webkitAccessibleGetDescription(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     Vector<AccessibilityText> textOrder;
-    core(object)->accessibilityText(textOrder);
+    accessible->priv->object->accessibilityText(textOrder);
 
     bool nameTextAvailable = false;
     for (const auto& text : textOrder) {
@@ -147,17 +142,17 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
         // in the order defined by that spec. So take the first thing that our platform
         // does not expose via the AtkObject name.
         if (text.textSource == AccessibilityTextSource::Help || text.textSource == AccessibilityTextSource::Summary)
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, text.text);
+            return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedAccessibleDescription, text.text.utf8());
 
         // If there is no other text alternative, the title tag contents will have been
         // used for the AtkObject name. We don't want to duplicate it here.
         if (text.textSource == AccessibilityTextSource::TitleTag && nameTextAvailable)
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, text.text);
+            return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedAccessibleDescription, text.text.utf8());
 
         nameTextAvailable = true;
     }
 
-    return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, "");
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedAccessibleDescription, "");
 }
 
 static void removeAtkRelationByType(AtkRelationSet* relationSet, AtkRelationType relationType)
@@ -192,9 +187,9 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
                 atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, ATK_OBJECT(fieldset->wrapper()));
             }
         }
-    } else if (AccessibilityObject* control = coreObject->correspondingControlForLabelElement()) {
+    } else if (AccessibilityObject* control = coreObject->correspondingControlForLabelElement())
         atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, ATK_OBJECT(control->wrapper()));
-    } else {
+    else {
         AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
         coreObject->ariaLabelledByElements(ariaLabelledByElements);
         for (const auto& accessibilityObject : ariaLabelledByElements)
@@ -294,8 +289,6 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
 #endif
 }
 
-static gpointer webkitAccessibleParentClass = nullptr;
-
 static bool isRootObject(AccessibilityObject* coreObject)
 {
     // The root accessible object in WebCore is always an object with
@@ -304,80 +297,56 @@ static bool isRootObject(AccessibilityObject* coreObject)
         return false;
 
     AccessibilityObject* firstChild = coreObject->firstChild();
-    if (!firstChild || !firstChild->isWebArea())
-        return false;
-
-    return true;
-}
-
-static AtkObject* atkParentOfRootObject(AtkObject* object)
-{
-    AccessibilityObject* coreObject = core(object);
-    AccessibilityObject* coreParent = coreObject->parentObjectUnignored();
-
-    // The top level object claims to not have a parent. This makes it
-    // impossible for assistive technologies to ascend the accessible
-    // hierarchy all the way to the application. (Bug 30489)
-    if (!coreParent && isRootObject(coreObject)) {
-        Document* document = coreObject->document();
-        if (!document)
-            return 0;
-    }
-
-    return coreParent ? ATK_OBJECT(coreParent->wrapper()) : nullptr;
+    return firstChild && firstChild->isWebArea();
 }
 
 static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     // Check first if the parent has been already set.
-    AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->get_parent(object);
+    AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->get_parent(object);
     if (accessibleParent)
         return accessibleParent;
 
     // Parent not set yet, so try to find it in the hierarchy.
-    AccessibilityObject* coreObject = core(object);
-    if (!coreObject)
-        return 0;
-
-    AccessibilityObject* coreParent = coreObject->parentObjectUnignored();
-
-    if (!coreParent && isRootObject(coreObject))
-        return atkParentOfRootObject(object);
+    auto* coreObject = accessible->priv->object;
+    auto* coreParent = coreObject->parentObjectUnignored();
+    if (!coreParent && isRootObject(coreObject)) {
+        // The top level object claims to not have a parent. This makes it
+        // impossible for assistive technologies to ascend the accessible
+        // hierarchy all the way to the application. (Bug 30489)
+        if (!coreObject->document())
+            return nullptr;
+    }
 
     return coreParent ? ATK_OBJECT(coreParent->wrapper()) : nullptr;
 }
 
 static gint webkitAccessibleGetNChildren(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, 0);
 
-    AccessibilityObject* coreObject = core(object);
-
-    return coreObject->children().size();
+    return accessible->priv->object->children().size();
 }
 
 static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     if (index < 0)
-        return 0;
+        return nullptr;
 
-    AccessibilityObject* coreObject = core(object);
-    AccessibilityObject* coreChild = nullptr;
-
-    const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
+    const auto& children = accessible->priv->object->children();
     if (static_cast<size_t>(index) >= children.size())
-        return 0;
-    coreChild = children.at(index).get();
+        return nullptr;
 
+    auto& coreChild = children[index];
     if (!coreChild)
-        return 0;
+        return nullptr;
 
     auto* child = ATK_OBJECT(coreChild->wrapper());
     atk_object_set_parent(child, object);
@@ -388,23 +357,23 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
 
 static gint webkitAccessibleGetIndexInParent(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), -1);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), -1);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, -1);
 
-    AccessibilityObject* coreObject = core(object);
-    AccessibilityObject* parent = coreObject->parentObjectUnignored();
-
+    auto* coreObject = accessible->priv->object;
+    auto* parent = coreObject->parentObjectUnignored();
     if (!parent && isRootObject(coreObject)) {
-        AtkObject* atkParent = atkParentOfRootObject(object);
+        if (!coreObject->document())
+            return -1;
+
+        auto* atkParent = parent ? ATK_OBJECT(parent->wrapper()) : nullptr;
         if (!atkParent)
             return -1;
 
         unsigned count = atk_object_get_n_accessible_children(atkParent);
         for (unsigned i = 0; i < count; ++i) {
-            AtkObject* child = atk_object_ref_accessible_child(atkParent, i);
-            bool childIsObject = child == object;
-            g_object_unref(child);
-            if (childIsObject)
+            GRefPtr<AtkObject> child = adoptGRef(atk_object_ref_accessible_child(atkParent, i));
+            if (child.get() == object)
                 return i;
         }
     }
@@ -418,17 +387,15 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
 
 static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     AtkAttributeSet* attributeSet = nullptr;
 #if PLATFORM(GTK)
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
 #endif
 
-    AccessibilityObject* coreObject = core(object);
-    if (!coreObject)
-        return attributeSet;
+    auto* coreObject = accessible->priv->object;
 
     // Hack needed for WebKit2 tests because obtaining an element by its ID
     // cannot be done from the UIProcess. Assistive technologies have no need
@@ -605,8 +572,7 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 
 static AtkRole atkRole(AccessibilityObject* coreObject)
 {
-    AccessibilityRole role = coreObject->roleValue();
-    switch (role) {
+    switch (coreObject->roleValue()) {
     case AccessibilityRole::ApplicationAlert:
         return ATK_ROLE_ALERT;
     case AccessibilityRole::ApplicationAlertDialog:
@@ -876,19 +842,14 @@ static AtkRole webkitAccessibleGetRole(AtkObject* object)
 {
     // ATK_ROLE_UNKNOWN should only be applied in cases where there is a valid
     // WebCore accessible object for which the platform role mapping is unknown.
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), ATK_ROLE_INVALID);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), ATK_ROLE_INVALID);
-
-    AccessibilityObject* coreObject = core(object);
-
-    if (!coreObject)
-        return ATK_ROLE_INVALID;
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, ATK_ROLE_INVALID);
 
     // Note: Why doesn't WebCore have a password field for this
-    if (coreObject->isPasswordField())
+    if (accessible->priv->object->isPasswordField())
         return ATK_ROLE_PASSWORD_TEXT;
 
-    return atkRole(coreObject);
+    return atkRole(accessible->priv->object);
 }
 
 static bool isTextWithCaret(AccessibilityObject* coreObject)
@@ -1053,16 +1014,14 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
 static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-
-    AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->ref_state_set(object);
-    AccessibilityObject* coreObject = core(object);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_state_set(object);
 
     // Make sure the layout is updated to really know whether the object
     // is defunct or not, so we can return the proper state.
-    coreObject->updateBackingStore();
+    accessible->priv->object->updateBackingStore();
 
-    if (coreObject == fallbackObject()) {
+    if (accessible->priv->object == fallbackObject()) {
         atk_state_set_add_state(stateSet, ATK_STATE_DEFUNCT);
         return stateSet;
     }
@@ -1072,56 +1031,48 @@ static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
     if (role == ATK_ROLE_TEXT || role == ATK_ROLE_PARAGRAPH)
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
 
-    setAtkStateSetFromCoreObject(coreObject, stateSet);
+    setAtkStateSetFromCoreObject(accessible->priv->object, stateSet);
     return stateSet;
 }
 
 static AtkRelationSet* webkitAccessibleRefRelationSet(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->ref_relation_set(object);
-    AccessibilityObject* coreObject = core(object);
-
-    setAtkRelationSetFromCoreObject(coreObject, relationSet);
-
+    AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_relation_set(object);
+    setAtkRelationSetFromCoreObject(accessible->priv->object, relationSet);
     return relationSet;
 }
 
 static void webkitAccessibleInit(AtkObject* object, gpointer data)
 {
-    if (ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize)
-        ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize(object, data);
+    if (ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize)
+        ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize(object, data);
 
     WebKitAccessible* accessible = WEBKIT_ACCESSIBLE(object);
-    accessible->m_object = reinterpret_cast<AccessibilityObject*>(data);
-    accessible->priv = WEBKIT_ACCESSIBLE_GET_PRIVATE(accessible);
+    accessible->priv->object = reinterpret_cast<AccessibilityObject*>(data);
 }
 
 static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
 {
-    g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE(object), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(object), 0);
-
-    AccessibilityObject* coreObject = core(object);
-    if (!coreObject)
-        return 0;
+    auto* accessible = WEBKIT_ACCESSIBLE(object);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
     if (ATK_IS_DOCUMENT(object)) {
         // TODO: Should we fall back on lang xml:lang when the following comes up empty?
-        String language = coreObject->language();
+        String language = accessible->priv->object->language();
         if (!language.isEmpty())
-            return cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, language);
+            return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedDocumentLocale, language.utf8());
 
     } else if (ATK_IS_TEXT(object)) {
         const gchar* locale = nullptr;
 
         AtkAttributeSet* textAttributes = atk_text_get_default_attributes(ATK_TEXT(object));
-        for (AtkAttributeSet* attributes = textAttributes; attributes; attributes = attributes->next) {
-            AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
+        for (auto* attributes = textAttributes; attributes; attributes = attributes->next) {
+            auto* atkAttribute = static_cast<AtkAttribute*>(attributes->data);
             if (!strcmp(atkAttribute->name, atk_text_attribute_get_name(ATK_TEXT_ATTR_LANGUAGE))) {
-                locale = cacheAndReturnAtkProperty(object, AtkCachedDocumentLocale, String::fromUTF8(atkAttribute->value));
+                locale = webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedDocumentLocale, atkAttribute->value);
                 break;
             }
         }
@@ -1130,79 +1081,41 @@ static const gchar* webkitAccessibleGetObjectLocale(AtkObject* object)
         return locale;
     }
 
-    return 0;
+    return nullptr;
 }
 
-static void webkitAccessibleFinalize(GObject* object)
+static void webkit_accessible_class_init(WebKitAccessibleClass* klass)
 {
-    G_OBJECT_CLASS(webkitAccessibleParentClass)->finalize(object);
+    auto* atkObjectClass = ATK_OBJECT_CLASS(klass);
+    atkObjectClass->initialize = webkitAccessibleInit;
+    atkObjectClass->get_name = webkitAccessibleGetName;
+    atkObjectClass->get_description = webkitAccessibleGetDescription;
+    atkObjectClass->get_parent = webkitAccessibleGetParent;
+    atkObjectClass->get_n_children = webkitAccessibleGetNChildren;
+    atkObjectClass->ref_child = webkitAccessibleRefChild;
+    atkObjectClass->get_role = webkitAccessibleGetRole;
+    atkObjectClass->ref_state_set = webkitAccessibleRefStateSet;
+    atkObjectClass->get_index_in_parent = webkitAccessibleGetIndexInParent;
+    atkObjectClass->get_attributes = webkitAccessibleGetAttributes;
+    atkObjectClass->ref_relation_set = webkitAccessibleRefRelationSet;
+    atkObjectClass->get_object_locale = webkitAccessibleGetObjectLocale;
 }
 
-static void webkitAccessibleClassInit(AtkObjectClass* klass)
-{
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
-
-    webkitAccessibleParentClass = g_type_class_peek_parent(klass);
-
-    gobjectClass->finalize = webkitAccessibleFinalize;
-
-    klass->initialize = webkitAccessibleInit;
-    klass->get_name = webkitAccessibleGetName;
-    klass->get_description = webkitAccessibleGetDescription;
-    klass->get_parent = webkitAccessibleGetParent;
-    klass->get_n_children = webkitAccessibleGetNChildren;
-    klass->ref_child = webkitAccessibleRefChild;
-    klass->get_role = webkitAccessibleGetRole;
-    klass->ref_state_set = webkitAccessibleRefStateSet;
-    klass->get_index_in_parent = webkitAccessibleGetIndexInParent;
-    klass->get_attributes = webkitAccessibleGetAttributes;
-    klass->ref_relation_set = webkitAccessibleRefRelationSet;
-    klass->get_object_locale = webkitAccessibleGetObjectLocale;
-
-    g_type_class_add_private(klass, sizeof(WebKitAccessiblePrivate));
-}
-
-GType
-webkitAccessibleGetType(void)
-{
-    static volatile gsize typeVolatile = 0;
-
-    if (g_once_init_enter(&typeVolatile)) {
-        static const GTypeInfo tinfo = {
-            sizeof(WebKitAccessibleClass),
-            (GBaseInitFunc) 0,
-            (GBaseFinalizeFunc) 0,
-            (GClassInitFunc)(GCallback) webkitAccessibleClassInit,
-            (GClassFinalizeFunc) 0,
-            0, /* class data */
-            sizeof(WebKitAccessible), /* instance size */
-            0, /* nb preallocs */
-            (GInstanceInitFunc) 0,
-            0 /* value table */
-        };
-
-        GType type = g_type_register_static(ATK_TYPE_OBJECT, "WebKitAccessible", &tinfo, GTypeFlags(0));
-        g_once_init_leave(&typeVolatile, type);
-    }
-
-    return typeVolatile;
-}
-
-static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleActionInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleSelectionInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleEditableTextInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTextInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleComponentInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleImageInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableInterfaceInit)), 0, 0},
+static const GInterfaceInfo atkInterfacesInitFunctions[] = {
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleActionInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleSelectionInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleEditableTextInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTextInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleComponentInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleImageInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableInterfaceInit)), nullptr, nullptr},
 #if ATK_CHECK_VERSION(2,11,90)
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableCellInterfaceInit)), 0, 0},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleTableCellInterfaceInit)), nullptr, nullptr},
 #endif
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHypertextInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHyperlinkImplInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleDocumentInterfaceInit)), 0, 0},
-    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleValueInterfaceInit)), 0, 0}
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHypertextInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleHyperlinkImplInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleDocumentInterfaceInit)), nullptr, nullptr},
+    {reinterpret_cast<GInterfaceInitFunc>(reinterpret_cast<GCallback>(webkitAccessibleValueInterfaceInit)), nullptr, nullptr}
 };
 
 enum WAIType {
@@ -1222,7 +1135,7 @@ enum WAIType {
     WAIValue,
 };
 
-static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
+static GType atkInterfaceTypeFromWAIType(WAIType type)
 {
     switch (type) {
     case WAIAction:
@@ -1271,7 +1184,7 @@ static bool roleIsTextType(AccessibilityRole role)
         || role == AccessibilityRole::ApplicationTextGroup;
 }
 
-static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
+static guint16 interfaceMaskFromObject(AccessibilityObject* coreObject)
 {
     guint16 interfaceMask = 0;
 
@@ -1318,11 +1231,9 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         // Add the TEXT interface for list items whose
         // first accessible child has a text renderer
         if (role == AccessibilityRole::ListItem) {
-            const AccessibilityObject::AccessibilityChildrenVector& children = coreObject->children();
-            if (children.size()) {
-                AccessibilityObject* axRenderChild = children.at(0).get();
-                interfaceMask |= getInterfaceMaskFromObject(axRenderChild);
-            }
+            const auto& children = coreObject->children();
+            if (!children.isEmpty())
+                interfaceMask |= interfaceMaskFromObject(children[0].get());
         }
     }
 
@@ -1356,9 +1267,9 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     return interfaceMask;
 }
 
-static const char* getUniqueAccessibilityTypeName(guint16 interfaceMask)
+static const char* uniqueAccessibilityTypeName(guint16 interfaceMask)
 {
-#define WAI_TYPE_NAME_LEN (30) /* Enough for prefix + 5 hex characters (max) */
+#define WAI_TYPE_NAME_LEN (30) // Enough for prefix + 5 hex characters (max).
     static char name[WAI_TYPE_NAME_LEN + 1];
 
     g_sprintf(name, "WAIType%x", interfaceMask);
@@ -1367,33 +1278,33 @@ static const char* getUniqueAccessibilityTypeName(guint16 interfaceMask)
     return name;
 }
 
-static GType getAccessibilityTypeFromObject(AccessibilityObject* coreObject)
+static GType accessibilityTypeFromObject(AccessibilityObject* coreObject)
 {
     static const GTypeInfo typeInfo = {
         sizeof(WebKitAccessibleClass),
-        (GBaseInitFunc) 0,
-        (GBaseFinalizeFunc) 0,
-        (GClassInitFunc) 0,
-        (GClassFinalizeFunc) 0,
-        0, /* class data */
-        sizeof(WebKitAccessible), /* instance size */
-        0, /* nb preallocs */
-        (GInstanceInitFunc) 0,
-        0 /* value table */
+        nullptr, // GBaseInitFunc
+        nullptr, // GBaseFinalizeFunc
+        nullptr, // GClassInitFunc
+        nullptr, // GClassFinalizeFunc
+        nullptr, // class data
+        sizeof(WebKitAccessible), // instance size
+        0, // nb preallocs
+        nullptr, // GInstanceInitFunc
+        nullptr // value table
     };
 
-    guint16 interfaceMask = getInterfaceMaskFromObject(coreObject);
-    const char* atkTypeName = getUniqueAccessibilityTypeName(interfaceMask);
-    GType type = g_type_from_name(atkTypeName);
-    if (type)
+    guint16 interfaceMask = interfaceMaskFromObject(coreObject);
+    const char* atkTypeName = uniqueAccessibilityTypeName(interfaceMask);
+    if (GType type = g_type_from_name(atkTypeName))
         return type;
 
-    type = g_type_register_static(WEBKIT_TYPE_ACCESSIBLE, atkTypeName, &typeInfo, GTypeFlags(0));
-    for (guint i = 0; i < G_N_ELEMENTS(AtkInterfacesInitFunctions); i++) {
-        if (interfaceMask & (1 << i))
+    GType type = g_type_register_static(WEBKIT_TYPE_ACCESSIBLE, atkTypeName, &typeInfo, static_cast<GTypeFlags>(0));
+    for (unsigned i = 0; i < G_N_ELEMENTS(atkInterfacesInitFunctions); ++i) {
+        if (interfaceMask & (1 << i)) {
             g_type_add_interface_static(type,
-                GetAtkInterfaceTypeFromWAIType(static_cast<WAIType>(i)),
-                &AtkInterfacesInitFunctions[i]);
+                atkInterfaceTypeFromWAIType(static_cast<WAIType>(i)),
+                &atkInterfacesInitFunctions[i]);
+        }
     }
 
     return type;
@@ -1401,168 +1312,80 @@ static GType getAccessibilityTypeFromObject(AccessibilityObject* coreObject)
 
 WebKitAccessible* webkitAccessibleNew(AccessibilityObject* coreObject)
 {
-    GType type = getAccessibilityTypeFromObject(coreObject);
-    AtkObject* object = static_cast<AtkObject*>(g_object_new(type, 0));
-
+    auto* object = ATK_OBJECT(g_object_new(accessibilityTypeFromObject(coreObject), nullptr));
     atk_object_initialize(object, coreObject);
-
     return WEBKIT_ACCESSIBLE(object);
 }
 
-AccessibilityObject* webkitAccessibleGetAccessibilityObject(WebKitAccessible* accessible)
+AccessibilityObject& webkitAccessibleGetAccessibilityObject(WebKitAccessible* accessible)
 {
-    return accessible->m_object;
+    ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
+    return *accessible->priv->object;
 }
 
 void webkitAccessibleDetach(WebKitAccessible* accessible)
 {
-    ASSERT(accessible->m_object);
+    ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
+    ASSERT(accessible->priv->object != fallbackObject());
 
-    if (accessible->m_object->roleValue() == AccessibilityRole::WebArea)
-        atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, true);
+    if (accessible->priv->object->roleValue() == AccessibilityRole::WebArea)
+        atk_object_notify_state_change(ATK_OBJECT(accessible), ATK_STATE_DEFUNCT, TRUE);
 
     // We replace the WebCore AccessibilityObject with a fallback object that
     // provides default implementations to avoid repetitive null-checking after
     // detachment.
-    accessible->m_object = fallbackObject();
+    accessible->priv->object = fallbackObject();
 }
 
 bool webkitAccessibleIsDetached(WebKitAccessible* accessible)
 {
-    ASSERT(accessible->m_object);
-    return accessible->m_object == fallbackObject();
+    ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
+    return accessible->priv->object == fallbackObject();
 }
 
-AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* referenceObject, int& offset)
+const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible* accessible, AtkCachedProperty property, CString&& value)
 {
-    // Indication that something bogus has transpired.
-    offset = -1;
+    ASSERT(WEBKIT_IS_ACCESSIBLE(accessible));
 
-    Document* document = referenceObject->document();
-    if (!document)
-        return 0;
-
-    Node* focusedNode = referenceObject->selection().end().containerNode();
-    if (!focusedNode)
-        return 0;
-
-    RenderObject* focusedRenderer = focusedNode->renderer();
-    if (!focusedRenderer)
-        return 0;
-
-    AccessibilityObject* focusedObject = document->axObjectCache()->getOrCreate(focusedRenderer);
-    if (!focusedObject)
-        return 0;
-
-    // Look for the actual (not ignoring accessibility) selected object.
-    AccessibilityObject* firstUnignoredParent = focusedObject;
-    if (firstUnignoredParent->accessibilityIsIgnored())
-        firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
-    if (!firstUnignoredParent)
-        return 0;
-
-    // Don't ignore links if the offset is being requested for a link
-    // or if the link is a block.
-    if (!referenceObject->isLink() && firstUnignoredParent->isLink()
-        && !(firstUnignoredParent->renderer() && !firstUnignoredParent->renderer()->isInline()))
-        firstUnignoredParent = firstUnignoredParent->parentObjectUnignored();
-    if (!firstUnignoredParent)
-        return 0;
-
-    // The reference object must either coincide with the focused
-    // object being considered, or be a descendant of it.
-    if (referenceObject->isDescendantOfObject(firstUnignoredParent))
-        referenceObject = firstUnignoredParent;
-
-    Node* startNode = nullptr;
-    if (firstUnignoredParent != referenceObject || firstUnignoredParent->isTextControl()) {
-        // We need to use the first child's node of the reference
-        // object as the start point to calculate the caret offset
-        // because we want it to be relative to the object of
-        // reference, not just to the focused object (which could have
-        // previous siblings which should be taken into account too).
-        AccessibilityObject* axFirstChild = referenceObject->firstChild();
-        if (axFirstChild)
-            startNode = axFirstChild->node();
-    }
-    // Getting the Position of a PseudoElement now triggers an assertion.
-    // This can occur when clicking on empty space in a render block.
-    if (!startNode || startNode->isPseudoElement())
-        startNode = firstUnignoredParent->node();
-
-    // Check if the node for the first parent object not ignoring
-    // accessibility is null again before using it. This might happen
-    // with certain kind of accessibility objects, such as the root
-    // one (the scroller containing the webArea object).
-    if (!startNode)
-        return 0;
-
-    VisiblePosition startPosition = VisiblePosition(positionBeforeNode(startNode), DOWNSTREAM);
-    VisiblePosition endPosition = firstUnignoredParent->selection().visibleEnd();
-
-    if (startPosition == endPosition)
-        offset = 0;
-    else if (!isStartOfLine(endPosition)) {
-        RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
-        offset = TextIterator::rangeLength(range.get(), true) + 1;
-    } else {
-        RefPtr<Range> range = makeRange(startPosition, endPosition);
-        offset = TextIterator::rangeLength(range.get(), true);
-    }
-
-    return firstUnignoredParent;
-}
-
-const char* cacheAndReturnAtkProperty(AtkObject* object, AtkCachedProperty property, String value)
-{
-    WebKitAccessiblePrivate* priv = WEBKIT_ACCESSIBLE(object)->priv;
+    WebKitAccessiblePrivate* priv = accessible->priv;
     CString* propertyPtr = nullptr;
 
     switch (property) {
     case AtkCachedAccessibleName:
         propertyPtr = &priv->accessibleName;
         break;
-
     case AtkCachedAccessibleDescription:
         propertyPtr = &priv->accessibleDescription;
         break;
-
     case AtkCachedActionName:
         propertyPtr = &priv->actionName;
         break;
-
     case AtkCachedActionKeyBinding:
         propertyPtr = &priv->actionKeyBinding;
         break;
-
     case AtkCachedDocumentLocale:
         propertyPtr = &priv->documentLocale;
         break;
-
     case AtkCachedDocumentType:
         propertyPtr = &priv->documentType;
         break;
-
     case AtkCachedDocumentEncoding:
         propertyPtr = &priv->documentEncoding;
         break;
-
     case AtkCachedDocumentURI:
         propertyPtr = &priv->documentURI;
         break;
-
     case AtkCachedImageDescription:
         propertyPtr = &priv->imageDescription;
         break;
-
     default:
         ASSERT_NOT_REACHED();
     }
 
     // Don't invalidate old memory if not stricly needed, since other
     // callers might be still holding on to it.
-    if (*propertyPtr != value.utf8())
-        *propertyPtr = value.utf8();
+    if (*propertyPtr != value)
+        *propertyPtr = WTFMove(value);
 
     return (*propertyPtr).data();
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
- * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2019 Igalia S.L.
  * Copyright (C) 2013 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
@@ -33,21 +33,20 @@ class AccessibilityObject;
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_ACCESSIBLE                  (webkitAccessibleGetType ())
-#define WEBKIT_ACCESSIBLE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessible))
-#define WEBKIT_ACCESSIBLE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessibleClass))
-#define WEBKIT_IS_ACCESSIBLE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_ACCESSIBLE))
-#define WEBKIT_IS_ACCESSIBLE_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_ACCESSIBLE))
-#define WEBKIT_ACCESSIBLE_GET_CLASS(obj)        (G_TYPE_INSTANCE_GET_CLASS ((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessibleClass))
+#define WEBKIT_TYPE_ACCESSIBLE            (webkit_accessible_get_type())
+#define WEBKIT_ACCESSIBLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessible))
+#define WEBKIT_ACCESSIBLE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessibleClass))
+#define WEBKIT_IS_ACCESSIBLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_ACCESSIBLE))
+#define WEBKIT_IS_ACCESSIBLE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass), WEBKIT_TYPE_ACCESSIBLE))
+#define WEBKIT_ACCESSIBLE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessibleClass))
 
-typedef struct _WebKitAccessible                WebKitAccessible;
-typedef struct _WebKitAccessibleClass           WebKitAccessibleClass;
-typedef struct _WebKitAccessiblePrivate         WebKitAccessiblePrivate;
+typedef struct _WebKitAccessible        WebKitAccessible;
+typedef struct _WebKitAccessibleClass   WebKitAccessibleClass;
+typedef struct _WebKitAccessiblePrivate WebKitAccessiblePrivate;
 
 
 struct _WebKitAccessible {
     AtkObject parent;
-    WebCore::AccessibilityObject* m_object;
 
     WebKitAccessiblePrivate *priv;
 };
@@ -68,19 +67,17 @@ enum AtkCachedProperty {
     AtkCachedImageDescription
 };
 
-GType webkitAccessibleGetType(void) G_GNUC_CONST;
+GType webkit_accessible_get_type(void);
 
 WebKitAccessible* webkitAccessibleNew(WebCore::AccessibilityObject*);
 
-WebCore::AccessibilityObject* webkitAccessibleGetAccessibilityObject(WebKitAccessible*);
+WebCore::AccessibilityObject& webkitAccessibleGetAccessibilityObject(WebKitAccessible*);
 
 void webkitAccessibleDetach(WebKitAccessible*);
 
 bool webkitAccessibleIsDetached(WebKitAccessible*);
 
-WebCore::AccessibilityObject* objectFocusedAndCaretOffsetUnignored(WebCore::AccessibilityObject*, int& offset);
-
-const char* cacheAndReturnAtkProperty(AtkObject*, AtkCachedProperty, String value);
+const char* webkitAccessibleCacheAndReturnAtkProperty(WebKitAccessible*, AtkCachedProperty, CString&&);
 
 G_END_DECLS
 

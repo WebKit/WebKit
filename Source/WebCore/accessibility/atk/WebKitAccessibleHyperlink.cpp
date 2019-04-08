@@ -32,8 +32,8 @@
 #include "RenderListMarker.h"
 #include "RenderObject.h"
 #include "TextIterator.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 #include <wtf/text/CString.h>
 
 #include <atk/atk.h>
@@ -64,7 +64,7 @@ static AccessibilityObject* core(WebKitAccessible* accessible)
     if (!accessible || !WEBKIT_IS_ACCESSIBLE(accessible))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(accessible);
+    return &webkitAccessibleGetAccessibilityObject(accessible);
 }
 
 static AccessibilityObject* core(WebKitAccessibleHyperlink* link)

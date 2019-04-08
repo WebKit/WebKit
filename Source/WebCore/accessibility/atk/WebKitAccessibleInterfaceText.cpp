@@ -49,8 +49,8 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
@@ -66,7 +66,7 @@ static AccessibilityObject* core(AtkText* text)
     if (!WEBKIT_IS_ACCESSIBLE(text))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
 static int baselinePositionForRenderObject(RenderObject* renderObject)

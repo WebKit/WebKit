@@ -23,6 +23,7 @@
 
 accessibility/atk/AXObjectCacheAtk.cpp
 accessibility/atk/AccessibilityObjectAtk.cpp
+accessibility/atk/WebKitAccessible.cpp
 accessibility/atk/WebKitAccessibleHyperlink.cpp
 accessibility/atk/WebKitAccessibleInterfaceAction.cpp @no-unify
 accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
@@ -37,7 +38,6 @@ accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp
 accessibility/atk/WebKitAccessibleInterfaceText.cpp
 accessibility/atk/WebKitAccessibleInterfaceValue.cpp
 accessibility/atk/WebKitAccessibleUtil.cpp
-accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
 editing/atk/FrameSelectionAtk.cpp
 

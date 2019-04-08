@@ -23,8 +23,8 @@
 #if HAVE(ACCESSIBILITY)
 
 #include "AccessibilityObject.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -33,7 +33,7 @@ static AccessibilityObject* core(AtkHypertext* hypertext)
     if (!WEBKIT_IS_ACCESSIBLE(hypertext))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(hypertext));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(hypertext));
 }
 
 static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)

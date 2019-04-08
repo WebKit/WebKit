@@ -1,3 +1,85 @@
+2019-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Cleanup accessible wrapper base class
+        https://bugs.webkit.org/show_bug.cgi?id=196601
+
+        Reviewed by Mario Sanchez Prada.
+
+        Cleanups:
+
+         - Rename WebKitAccessibleWrapperAtk cpp and header as WebKitAccessible for consistency with the class name.
+         - Use WEBKIT_DEFINE_TYPE instead of custom type registration. This ensures that all CStrings used in private
+           struct are no longer leaked.
+         - Move core object pointer to the private struct.
+         - Remove confusing core() function and simply get the core object from the private struct.
+         - Use nullptr instead of 0 and other coding style issues.
+         - Rename cacheAndReturnAtkProperty as webkitAccessibleCacheAndReturnAtkProperty and use WebKitAccessible as
+           instance parameter.
+         - Make webkitAccessibleGetAccessibilityObject() return a reference, since we use a fallback object on detach it
+           never returns nullptr.
+         - Move objectFocusedAndCaretOffsetUnignored() to WebKitAccessibleUtil.
+
+        * SourcesGTK.txt:
+        * accessibility/atk/AXObjectCacheAtk.cpp:
+        * accessibility/atk/WebKitAccessible.cpp: Renamed from Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.cpp.
+        (webkitAccessibleGetName):
+        (webkitAccessibleGetDescription):
+        (setAtkRelationSetFromCoreObject):
+        (isRootObject):
+        (webkitAccessibleGetParent):
+        (webkitAccessibleGetNChildren):
+        (webkitAccessibleRefChild):
+        (webkitAccessibleGetIndexInParent):
+        (webkitAccessibleGetAttributes):
+        (atkRole):
+        (webkitAccessibleGetRole):
+        (webkitAccessibleRefStateSet):
+        (webkitAccessibleRefRelationSet):
+        (webkitAccessibleInit):
+        (webkitAccessibleGetObjectLocale):
+        (webkit_accessible_class_init):
+        (interfaceMaskFromObject):
+        (uniqueAccessibilityTypeName):
+        (accessibilityTypeFromObject):
+        (webkitAccessibleNew):
+        (webkitAccessibleGetAccessibilityObject):
+        (webkitAccessibleDetach):
+        (webkitAccessibleIsDetached):
+        (webkitAccessibleCacheAndReturnAtkProperty):
+        * accessibility/atk/WebKitAccessible.h: Renamed from Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.h.
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp:
+        (core):
+        (webkitAccessibleActionGetKeybinding):
+        (webkitAccessibleActionGetName):
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp:
+        (core):
+        (documentAttributeValue):
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp:
+        (core):
+        (webkitAccessibleImageGetImageDescription):
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp:
+        (core):
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (objectFocusedAndCaretOffsetUnignored):
+        * accessibility/atk/WebKitAccessibleUtil.h:
+        * editing/atk/FrameSelectionAtk.cpp:
+
 2019-04-06  Antti Koivisto  <antti@apple.com>
 
         Combine event and touch action regions into a single class

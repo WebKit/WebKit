@@ -36,8 +36,8 @@
 
 #include "AccessibilityObject.h"
 #include "IntRect.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -46,7 +46,7 @@ static AccessibilityObject* core(AtkImage* image)
     if (!WEBKIT_IS_ACCESSIBLE(image))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(image));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(image));
 }
 
 static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint* y, AtkCoordType coordType)
@@ -60,10 +60,10 @@ static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint
 
 static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 {
-    g_return_val_if_fail(ATK_IMAGE(image), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(image), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(image);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    return cacheAndReturnAtkProperty(ATK_OBJECT(image), AtkCachedImageDescription, accessibilityDescription(core(image)));
+    return webkitAccessibleCacheAndReturnAtkProperty(accessible, AtkCachedImageDescription, accessibilityDescription(core(image)).utf8());
 }
 
 static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)

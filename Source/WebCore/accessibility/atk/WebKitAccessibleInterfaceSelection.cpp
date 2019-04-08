@@ -37,8 +37,8 @@
 #include "AccessibilityObject.h"
 #include "HTMLSelectElement.h"
 #include "RenderObject.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -47,7 +47,7 @@ static AccessibilityObject* core(AtkSelection* selection)
     if (!WEBKIT_IS_ACCESSIBLE(selection))
         return nullptr;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(selection));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(selection));
 }
 
 static AccessibilityObject* listObjectForSelection(AtkSelection* selection)

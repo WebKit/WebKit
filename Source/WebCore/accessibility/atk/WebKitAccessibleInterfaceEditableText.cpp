@@ -38,8 +38,8 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "NotImplemented.h"
+#include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
-#include "WebKitAccessibleWrapperAtk.h"
 
 using namespace WebCore;
 
@@ -48,7 +48,7 @@ static AccessibilityObject* core(AtkEditableText* text)
     if (!WEBKIT_IS_ACCESSIBLE(text))
         return 0;
 
-    return webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
+    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(text));
 }
 
 static gboolean webkitAccessibleEditableTextSetRunAttributes(AtkEditableText* text, AtkAttributeSet*, gint, gint)
