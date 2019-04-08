@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<script id="vshader" type="x-shader/x-vertex">
+attribute vec4 a1;
+void main () {
+gl_Position = a1;
+}
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+#ifdef GL_ES
+precision highp float;
+#endif
+void main() {
+gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+}
+</script>
+
+<body>
+<div id="results"></div>
+<canvas id="canvas"></canvas>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const canvas = document.getElementById("canvas");
+const gl = canvas.getContext("webgl");
+
+const vShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vShader, document.getElementById("vshader").text);
+gl.compileShader(vShader);
+
+const fShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fShader, document.getElementById("fshader").text);
+gl.compileShader(fShader);
+
+const program = gl.createProgram();
+gl.attachShader(program, vShader);
+gl.attachShader(program, fShader);
+gl.linkProgram(program);
+gl.useProgram(program);
+
+const attribute = gl.getAttribLocation(program, "a1");
+gl.enableVertexAttribArray(attribute);
+
+const b1 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, b1);
+
+gl.vertexAttribPointer(attribute, 1, gl.BYTE, true, 1, 0x00ffff00000000);
+document.getElementById("results").textContent = `${gl.getError() == gl.NO_ERROR ? "FAIL" : "PASS"}: vertexAttribPointer should have an error.`;
+
+const b2 = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, b2);
+gl.bufferData(gl.ARRAY_BUFFER, new Uint16Array(100), gl.DYNAMIC_DRAW);
+
+gl.drawArrays(gl.LINES, 100, 100);
+</script>
+</body>
+</html>
