@@ -33,7 +33,7 @@ namespace WebCore {
 class Node;
 
 class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
-    WTF_MAKE_ISO_ALLOCATED(NodeList);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(NodeList, WEBCORE_EXPORT);
 public:
     virtual ~NodeList() = default;
 
