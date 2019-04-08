@@ -86,7 +86,7 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
         JSC::PropertyNameArray keys(&vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
-        object->methodTable(vm)->getOwnPropertyNames(object, &state, keys, JSC::EnumerationMode(JSC::DontEnumPropertiesMode::Include));
+        object->methodTable(vm)->getOwnPropertyNames(object, &state, keys, JSC::EnumerationMode());
 
         RETURN_IF_EXCEPTION(scope, { });
 
@@ -99,8 +99,9 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
 
             // 2. If desc is not undefined and desc.[[Enumerable]] is true:
 
-            // It's necessary to filter enumerable here rather than using the default EnumerationMode,
-            // to prevent an observable extra [[GetOwnProperty]] operation in the case of ProxyObject records.
+            // FIXME: Do we need to check for enumerable / undefined, or is this handled by the default
+            // enumeration mode?
+
             if (didGetDescriptor && descriptor.enumerable()) {
                 // 1. Let typedKey be key converted to an IDL value of type K.
                 auto typedKey = Detail::IdentifierConverter<K>::convert(state, key);

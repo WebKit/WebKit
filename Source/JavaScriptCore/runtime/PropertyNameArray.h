@@ -55,12 +55,6 @@ public:
     {
     }
 
-    void reset()
-    {
-        m_set.clear();
-        m_data = PropertyNameArrayData::create();
-    }
-
     VM* vm() { return m_vm; }
 
     void add(uint32_t index)
