@@ -246,6 +246,7 @@ struct _WebKitWebViewPrivate {
     CString title;
     CString customTextEncoding;
     CString activeURI;
+    bool isActiveURIChangeBlocked;
     bool isLoading;
     bool isEphemeral;
     bool isControlledByAutomation;
@@ -355,10 +356,14 @@ private:
 
     void willChangeActiveURL() override
     {
+        if (m_webView->priv->isActiveURIChangeBlocked)
+            return;
         g_object_freeze_notify(G_OBJECT(m_webView));
     }
     void didChangeActiveURL() override
     {
+        if (m_webView->priv->isActiveURIChangeBlocked)
+            return;
         m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
         g_object_notify(G_OBJECT(m_webView), "uri");
         g_object_thaw_notify(G_OBJECT(m_webView));
@@ -2077,6 +2082,15 @@ WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
 
 void webkitWebViewWillStartLoad(WebKitWebView* webView)
 {
+    // Ignore the active URI changes happening before WEBKIT_LOAD_STARTED. If they are not user-initiated,
+    // they could be a malicious attempt to trick users by loading an invalid URI on a trusted host, with the load
+    // intended to stall, or perhaps be repeated. If we trust the URI here and display it to the user, then the user's
+    // only indication that something is wrong would be a page loading indicator. If the load request is not
+    // user-initiated, we must not trust it until WEBKIT_LOAD_COMMITTED. If the load is triggered by API
+    // request, then the active URI is already the pending API request URL, so the blocking is harmless and the
+    // client application will still see the URI update immediately. Otherwise, the URI update will be delayed a bit.
+    webView->priv->isActiveURIChangeBlocked = true;
+
     // This is called before NavigationClient::didStartProvisionalNavigation(), the page load state hasn't been committed yet.
     auto& pageLoadState = getPage(webView).pageLoadState();
     if (pageLoadState.isFinished())
@@ -2099,15 +2113,24 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         webkitWebViewCancelAuthenticationRequest(webView);
         priv->loadingResourcesMap.clear();
         priv->mainResource = nullptr;
+        webView->priv->isActiveURIChangeBlocked = false;
         break;
-#if PLATFORM(GTK)
     case WEBKIT_LOAD_COMMITTED: {
+        auto activeURL = getPage(webView).pageLoadState().activeURL().utf8();
+        // Active URL is trusted now. If it's different to our active URI, due to the
+        // update block before WEBKIT_LOAD_STARTED, we update it here to be in sync
+        // again with the page load state.
+        if (activeURL != priv->activeURI) {
+            priv->activeURI = activeURL;
+            g_object_notify(G_OBJECT(webView), "uri");
+        }
+#if PLATFORM(GTK)
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
         GUniquePtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
         webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
+#endif
         break;
     }
-#endif
     case WEBKIT_LOAD_FINISHED:
         webkitWebViewCancelAuthenticationRequest(webView);
         break;

@@ -1,3 +1,13 @@
+2019-03-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Add GLib API test cases after r243434.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        (testWebViewActiveURI):
+        (serverCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (sendRequestCallback):
+
 2019-03-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Load events may occur in unexpected order when JS redirects page before subresource load finishes
