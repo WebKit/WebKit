@@ -1,3 +1,13 @@
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in r243948 with test fix
+        https://bugs.webkit.org/show_bug.cgi?id=196486
+
+        * stress/arrow-function-and-use-strict-directive.js: Added.
+        * stress/arrow-function-syntax.js: Added.
+        (checkSyntax):
+        (checkSyntaxError):
+
 2019-04-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243948.

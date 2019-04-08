@@ -65,6 +65,7 @@ public:
     bool isReparsingFunction() const { return m_isReparsingFunction; }
 
     JSTokenType lex(JSToken*, unsigned, bool strictMode);
+    JSTokenType lexWithoutClearingLineTerminator(JSToken*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
     ALWAYS_INLINE int currentOffset() const { return offsetFromSourcePtr(m_code); }
@@ -77,7 +78,7 @@ public:
     JSTokenLocation lastTokenLocation() const { return m_lastTokenLocation; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
-    bool prevTerminator() const { return m_terminator; }
+    bool hasLineTerminatorBeforeToken() const { return m_hasLineTerminatorBeforeToken; }
     JSTokenType scanRegExp(JSToken*, UChar patternPrefix = 0);
     enum class RawStringsBuildMode { BuildRawStrings, DontBuildRawStrings };
     JSTokenType scanTemplateString(JSToken*, RawStringsBuildMode);
@@ -110,9 +111,9 @@ public:
     {
         m_lineNumber = line;
     }
-    void setTerminator(bool terminator)
+    void setHasLineTerminatorBeforeToken(bool terminator)
     {
-        m_terminator = terminator;
+        m_hasLineTerminatorBeforeToken = terminator;
     }
 
     JSTokenType lexExpectIdentifier(JSToken*, unsigned, bool strictMode);
@@ -202,7 +203,7 @@ private:
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
     Vector<UChar> m_bufferForRawTemplateString16;
-    bool m_terminator;
+    bool m_hasLineTerminatorBeforeToken;
     int m_lastToken;
 
     const SourceCode* m_source;
@@ -401,6 +402,13 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, un
     
 slowCase:
     return lex(tokenRecord, lexerFlags, strictMode);
+}
+
+template <typename T>
+ALWAYS_INLINE JSTokenType Lexer<T>::lex(JSToken* tokenRecord, unsigned lexerFlags, bool strictMode)
+{
+    m_hasLineTerminatorBeforeToken = false;
+    return lexWithoutClearingLineTerminator(tokenRecord, lexerFlags, strictMode);
 }
 
 } // namespace JSC

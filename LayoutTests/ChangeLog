@@ -1,3 +1,13 @@
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in r243948 with test fix
+        https://bugs.webkit.org/show_bug.cgi?id=196486
+
+        The test relied on the wrong EOF token's offset. This patch also fixes the test.
+
+        * inspector/runtime/parse-expected.txt:
+        * inspector/runtime/parse.html:
+
 2019-04-08  Antti Koivisto  <antti@apple.com>
 
         Update touch-action region on property changes

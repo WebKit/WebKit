@@ -1,3 +1,39 @@
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, rolling in r243948 with test fix
+        https://bugs.webkit.org/show_bug.cgi?id=196486
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createString):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseMultilineComment):
+        (JSC::Lexer<T>::lexWithoutClearingLineTerminator):
+        (JSC::Lexer<T>::lex): Deleted.
+        * parser/Lexer.h:
+        (JSC::Lexer::hasLineTerminatorBeforeToken const):
+        (JSC::Lexer::setHasLineTerminatorBeforeToken):
+        (JSC::Lexer<T>::lex):
+        (JSC::Lexer::prevTerminator const): Deleted.
+        (JSC::Lexer::setTerminator): Deleted.
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::allowAutomaticSemicolon):
+        (JSC::Parser<LexerType>::parseSingleFunction):
+        (JSC::Parser<LexerType>::parseStatementListItem):
+        (JSC::Parser<LexerType>::maybeParseAsyncFunctionDeclarationStatement):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseExportDeclaration):
+        (JSC::Parser<LexerType>::parseAssignmentExpression):
+        (JSC::Parser<LexerType>::parseYieldExpression):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        (JSC::Parser<LexerType>::parseMemberExpression):
+        * parser/Parser.h:
+        (JSC::Parser::nextWithoutClearingLineTerminator):
+        (JSC::Parser::lexCurrentTokenAgainUnderCurrentContext):
+        (JSC::Parser::internalSaveLexerState):
+        (JSC::Parser::restoreLexerState):
+
 2019-04-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r243948.
