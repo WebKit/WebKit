@@ -1,4 +1,4 @@
-# Copyright (C) 2016 Apple Inc. All rights reserved.
+# Copyright (C) 2016-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,16 +22,5 @@
 
 messages -> WebAutomationSession {
     DidEvaluateJavaScriptFunction(uint64_t callbackID, String result, String errorType)
-
-    DidResolveChildFrame(uint64_t callbackID, uint64_t frameID, String errorType)
-    DidResolveParentFrame(uint64_t callbackID, uint64_t frameID, String errorType)
-
-    DidComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, String errorType)
-
-    DidSelectOptionElement(uint64_t callbackID, String errorType)
-
     DidTakeScreenshot(uint64_t callbackID, WebKit::ShareableBitmap::Handle imageDataHandle, String errorType)
-
-    DidGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie> cookies, String errorType)
-    DidDeleteCookie(uint64_t callbackID, String errorType)
 }

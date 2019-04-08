@@ -970,37 +970,31 @@ void WebAutomationSession::resolveChildFrameHandle(const String& browsingContext
     if (!frameID)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    uint64_t callbackID = m_nextResolveFrameCallbackID++;
-    m_resolveChildFrameHandleCallbacks.set(callbackID, WTFMove(callback));
+    WTF::CompletionHandler<void(Optional<String>, uint64_t)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, uint64_t frameID) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        callback->sendSuccess(handleForWebFrameID(frameID));
+    };
 
     if (optionalNodeHandle) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->pageID(), frameID.value(), *optionalNodeHandle, callbackID), 0);
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithNodeHandle(page->pageID(), frameID.value(), *optionalNodeHandle), WTFMove(completionHandler));
         return;
     }
 
     if (optionalName) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->pageID(), frameID.value(), *optionalName, callbackID), 0);
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithName(page->pageID(), frameID.value(), *optionalName), WTFMove(completionHandler));
         return;
     }
 
     if (optionalOrdinal) {
-        page->process().send(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->pageID(), frameID.value(), *optionalOrdinal, callbackID), 0);
+        page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveChildFrameWithOrdinal(page->pageID(), frameID.value(), *optionalOrdinal), WTFMove(completionHandler));
         return;
     }
 
     ASSERT_NOT_REACHED();
-}
-
-void WebAutomationSession::didResolveChildFrame(uint64_t callbackID, uint64_t frameID, const String& errorType)
-{
-    auto callback = m_resolveChildFrameHandleCallbacks.take(callbackID);
-    if (!callback)
-        return;
-
-    if (!errorType.isEmpty())
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-    else
-        callback->sendSuccess(handleForWebFrameID(frameID));
 }
 
 void WebAutomationSession::resolveParentFrameHandle(const String& browsingContextHandle, const String& frameHandle, Ref<ResolveParentFrameHandleCallback>&& callback)
@@ -1013,22 +1007,16 @@ void WebAutomationSession::resolveParentFrameHandle(const String& browsingContex
     if (!frameID)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    uint64_t callbackID = m_nextResolveParentFrameCallbackID++;
-    m_resolveParentFrameHandleCallbacks.set(callbackID, WTFMove(callback));
+    WTF::CompletionHandler<void(Optional<String>, uint64_t)> completionHandler = [this, protectedThis = makeRef(*this), callback = callback.copyRef()](Optional<String> errorType, uint64_t frameID) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
 
-    page->process().send(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->pageID(), frameID.value(), callbackID), 0);
-}
-
-void WebAutomationSession::didResolveParentFrame(uint64_t callbackID, uint64_t frameID, const String& errorType)
-{
-    auto callback = m_resolveParentFrameHandleCallbacks.take(callbackID);
-    if (!callback)
-        return;
-
-    if (!errorType.isEmpty())
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-    else
         callback->sendSuccess(handleForWebFrameID(frameID));
+    };
+
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ResolveParentFrame(page->pageID(), frameID.value()), WTFMove(completionHandler));
 }
 
 static Optional<CoordinateSystem> protocolStringToCoordinateSystem(const String& coordinateSystemString)
@@ -1054,62 +1042,42 @@ void WebAutomationSession::computeElementLayout(const String& browsingContextHan
     if (!coordinateSystem)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'coordinateSystem' is invalid.");
 
-    // Start at 2 and use only even numbers to not conflict with m_nextViewportInViewCenterPointOfElementCallbackID.
-    uint64_t callbackID = m_nextComputeElementLayoutCallbackID += 2;
-    m_computeElementLayoutCallbacks.set(callbackID, WTFMove(callback));
+    WTF::CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)> completionHandler = [callback = callback.copyRef()](Optional<String> errorType, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        auto originObject = Inspector::Protocol::Automation::Point::create()
+            .setX(rect.x())
+            .setY(rect.y())
+            .release();
+
+        auto sizeObject = Inspector::Protocol::Automation::Size::create()
+            .setWidth(rect.width())
+            .setHeight(rect.height())
+            .release();
+
+        auto rectObject = Inspector::Protocol::Automation::Rect::create()
+            .setOrigin(WTFMove(originObject))
+            .setSize(WTFMove(sizeObject))
+            .release();
+
+        if (!inViewCenterPoint) {
+            callback->sendSuccess(WTFMove(rectObject), nullptr, isObscured);
+            return;
+        }
+
+        auto inViewCenterPointObject = Inspector::Protocol::Automation::Point::create()
+            .setX(inViewCenterPoint.value().x())
+            .setY(inViewCenterPoint.value().y())
+            .release();
+
+        callback->sendSuccess(WTFMove(rectObject), WTFMove(inViewCenterPointObject), isObscured);
+    };
 
     bool scrollIntoViewIfNeeded = optionalScrollIntoViewIfNeeded ? *optionalScrollIntoViewIfNeeded : false;
-    page->process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value(), callbackID), 0);
-}
-
-void WebAutomationSession::didComputeElementLayout(uint64_t callbackID, WebCore::IntRect rect, Optional<WebCore::IntPoint> inViewCenterPoint, bool isObscured, const String& errorType)
-{
-    if (callbackID % 2 == 1) {
-        ASSERT(inViewCenterPoint);
-        if (auto callback = m_viewportInViewCenterPointOfElementCallbacks.take(callbackID)) {
-            Optional<AutomationCommandError> error;
-            if (!errorType.isEmpty())
-                error = AUTOMATION_COMMAND_ERROR_WITH_MESSAGE(errorType);
-            callback(inViewCenterPoint, error);
-        }
-        return;
-    }
-
-    auto callback = m_computeElementLayoutCallbacks.take(callbackID);
-    if (!callback)
-        return;
-
-    if (!errorType.isEmpty()) {
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-        return;
-    }
-
-    auto originObject = Inspector::Protocol::Automation::Point::create()
-        .setX(rect.x())
-        .setY(rect.y())
-        .release();
-
-    auto sizeObject = Inspector::Protocol::Automation::Size::create()
-        .setWidth(rect.width())
-        .setHeight(rect.height())
-        .release();
-
-    auto rectObject = Inspector::Protocol::Automation::Rect::create()
-        .setOrigin(WTFMove(originObject))
-        .setSize(WTFMove(sizeObject))
-        .release();
-
-    if (!inViewCenterPoint) {
-        callback->sendSuccess(WTFMove(rectObject), nullptr, isObscured);
-        return;
-    }
-
-    auto inViewCenterPointObject = Inspector::Protocol::Automation::Point::create()
-        .setX(inViewCenterPoint.value().x())
-        .setY(inViewCenterPoint.value().y())
-        .release();
-
-    callback->sendSuccess(WTFMove(rectObject), WTFMove(inViewCenterPointObject), isObscured);
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page->pageID(), frameID.value(), nodeHandle, scrollIntoViewIfNeeded, coordinateSystem.value()), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::selectOptionElement(const String& browsingContextHandle, const String& frameHandle, const String& nodeHandle, Ref<SelectOptionElementCallback>&& callback)
@@ -1122,26 +1090,17 @@ void WebAutomationSession::selectOptionElement(const String& browsingContextHand
     if (!frameID)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
 
-    uint64_t callbackID = m_nextSelectOptionElementCallbackID++;
-    m_selectOptionElementCallbacks.set(callbackID, WTFMove(callback));
+    WTF::CompletionHandler<void(Optional<String>)> completionHandler = [callback = callback.copyRef()](Optional<String> errorType) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+        
+        callback->sendSuccess();
+    };
 
-    page->process().send(Messages::WebAutomationSessionProxy::SelectOptionElement(page->pageID(), frameID.value(), nodeHandle, callbackID), 0);
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::SelectOptionElement(page->pageID(), frameID.value(), nodeHandle), WTFMove(completionHandler));
 }
-
-void WebAutomationSession::didSelectOptionElement(uint64_t callbackID, const String& errorType)
-{
-    auto callback = m_selectOptionElementCallbacks.take(callbackID);
-    if (!callback)
-        return;
-
-    if (!errorType.isEmpty()) {
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-        return;
-    }
-
-    callback->sendSuccess();
-}
-
 
 void WebAutomationSession::isShowingJavaScriptDialog(Inspector::ErrorString& errorString, const String& browsingContextHandle, bool* result)
 {
@@ -1270,21 +1229,6 @@ void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorStrin
     m_filesToSelectForFileUpload.swap(newFileList);
 }
 
-void WebAutomationSession::getAllCookies(const String& browsingContextHandle, Ref<GetAllCookiesCallback>&& callback)
-{
-    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
-    if (!page)
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
-
-    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
-    const uint64_t mainFrameID = 0;
-
-    uint64_t callbackID = m_nextGetCookiesCallbackID++;
-    m_getCookieCallbacks.set(callbackID, WTFMove(callback));
-
-    page->process().send(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->pageID(), mainFrameID, callbackID), 0);
-}
-
 static Ref<Inspector::Protocol::Automation::Cookie> buildObjectForCookie(const WebCore::Cookie& cookie)
 {
     return Inspector::Protocol::Automation::Cookie::create()
@@ -1310,18 +1254,24 @@ static Ref<JSON::ArrayOf<Inspector::Protocol::Automation::Cookie>> buildArrayFor
     return cookies;
 }
 
-void WebAutomationSession::didGetCookiesForFrame(uint64_t callbackID, Vector<WebCore::Cookie> cookies, const String& errorType)
+void WebAutomationSession::getAllCookies(const String& browsingContextHandle, Ref<GetAllCookiesCallback>&& callback)
 {
-    auto callback = m_getCookieCallbacks.take(callbackID);
-    if (!callback)
-        return;
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (!errorType.isEmpty()) {
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-        return;
-    }
+    WTF::CompletionHandler<void(Optional<String>, Vector<WebCore::Cookie>)> completionHandler = [callback = callback.copyRef()](Optional<String> errorType, Vector<WebCore::Cookie> cookies) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
 
-    callback->sendSuccess(buildArrayForCookies(cookies));
+        callback->sendSuccess(buildArrayForCookies(cookies));
+    };
+
+    // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
+    const uint64_t mainFrameID = 0;
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::GetCookiesForFrame(page->pageID(), mainFrameID), WTFMove(completionHandler));
 }
 
 void WebAutomationSession::deleteSingleCookie(const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&& callback)
@@ -1330,27 +1280,18 @@ void WebAutomationSession::deleteSingleCookie(const String& browsingContextHandl
     if (!page)
         ASYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
+    WTF::CompletionHandler<void(Optional<String>)> completionHandler = [callback = callback.copyRef()](Optional<String> errorType) mutable {
+        if (errorType) {
+            callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(*errorType));
+            return;
+        }
+
+        callback->sendSuccess();
+    };
+
     // Always send the main frame ID as 0 so it is resolved on the WebProcess side. This avoids a race when page->mainFrame() is null still.
     const uint64_t mainFrameID = 0;
-
-    uint64_t callbackID = m_nextDeleteCookieCallbackID++;
-    m_deleteCookieCallbacks.set(callbackID, WTFMove(callback));
-
-    page->process().send(Messages::WebAutomationSessionProxy::DeleteCookie(page->pageID(), mainFrameID, cookieName, callbackID), 0);
-}
-
-void WebAutomationSession::didDeleteCookie(uint64_t callbackID, const String& errorType)
-{
-    auto callback = m_deleteCookieCallbacks.take(callbackID);
-    if (!callback)
-        return;
-
-    if (!errorType.isEmpty()) {
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_MESSAGE(errorType));
-        return;
-    }
-
-    callback->sendSuccess();
+    page->process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::DeleteCookie(page->pageID(), mainFrameID, cookieName), WTFMove(completionHandler));
 }
 
 static String domainByAddingDotPrefixIfNeeded(String domain)
@@ -1518,11 +1459,17 @@ SimulatedInputSource* WebAutomationSession::inputSourceForType(SimulatedInputSou
 // MARK: SimulatedInputDispatcher::Client API
 void WebAutomationSession::viewportInViewCenterPointOfElement(WebPageProxy& page, uint64_t frameID, const String& nodeHandle, Function<void (Optional<WebCore::IntPoint>, Optional<AutomationCommandError>)>&& completionHandler)
 {
-    // Start at 3 and use only odd numbers to not conflict with m_nextComputeElementLayoutCallbackID.
-    uint64_t callbackID = m_nextViewportInViewCenterPointOfElementCallbackID += 2;
-    m_viewportInViewCenterPointOfElementCallbacks.set(callbackID, WTFMove(completionHandler));
+    WTF::CompletionHandler<void(Optional<String>, WebCore::IntRect, Optional<WebCore::IntPoint>, bool)> didComputeElementLayoutHandler = [completionHandler = WTFMove(completionHandler)](Optional<String> errorType, WebCore::IntRect, Optional<WebCore::IntPoint> inViewCenterPoint, bool) mutable {
+        if (errorType) {
+            completionHandler(WTF::nullopt, AUTOMATION_COMMAND_ERROR_WITH_MESSAGE(*errorType));
+            return;
+        }
 
-    page.process().send(Messages::WebAutomationSessionProxy::ComputeElementLayout(page.pageID(), frameID, nodeHandle, false, CoordinateSystem::LayoutViewport, callbackID), 0);
+        ASSERT(inViewCenterPoint);
+        completionHandler(inViewCenterPoint, WTF::nullopt);
+    };
+
+    page.process().sendWithAsyncReply(Messages::WebAutomationSessionProxy::ComputeElementLayout(page.pageID(), frameID, nodeHandle, false, CoordinateSystem::LayoutViewport), WTFMove(didComputeElementLayoutHandler));
 }
 
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)

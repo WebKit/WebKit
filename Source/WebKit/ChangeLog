@@ -1,3 +1,50 @@
+2019-04-05  Brian Burg  <bburg@apple.com>
+
+        Web Automation: clean up some WebAutomationSession methods to use modern async IPC
+        https://bugs.webkit.org/show_bug.cgi?id=196168
+
+        Reviewed by Devin Rousso.
+
+        Modern WebKit IPC is capable of providing completion handlers and can track callback IDs.
+        So, most messages between WebAutomationSession and its proxy can use this facility and stop
+        keeping track of callback IDs manually. This makes most code easier to read on both the
+        sender and receiver side.
+
+        There are two cases that could not be converted:
+        - For evaluateJavaScript, we cannot use async IPC because WebAutomationSession expects to
+        be able to cancel all pending replies when a page navigates away, the web process crashes,
+        or when handling an alert.
+        - For takeScreenshot, there is not currently support in the modern async IPC code paths for
+        sending the result back. ShareableBitmap and friends lack a modern decoder implementation.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::resolveChildFrameHandle):
+        (WebKit::WebAutomationSession::resolveParentFrameHandle):
+        (WebKit::WebAutomationSession::computeElementLayout):
+        (WebKit::WebAutomationSession::selectOptionElement):
+        (WebKit::WebAutomationSession::getAllCookies):
+        (WebKit::WebAutomationSession::deleteSingleCookie):
+        (WebKit::WebAutomationSession::viewportInViewCenterPointOfElement):
+        (WebKit::WebAutomationSession::didResolveChildFrame): Deleted.
+        (WebKit::WebAutomationSession::didResolveParentFrame): Deleted.
+        (WebKit::WebAutomationSession::didComputeElementLayout): Deleted.
+        (WebKit::WebAutomationSession::didSelectOptionElement): Deleted.
+        (WebKit::WebAutomationSession::didGetCookiesForFrame): Deleted.
+        (WebKit::WebAutomationSession::didDeleteCookie): Deleted.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.messages.in:
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithOrdinal):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithNodeHandle):
+        (WebKit::WebAutomationSessionProxy::resolveChildFrameWithName):
+        (WebKit::WebAutomationSessionProxy::resolveParentFrame):
+        (WebKit::WebAutomationSessionProxy::computeElementLayout):
+        (WebKit::WebAutomationSessionProxy::selectOptionElement):
+        (WebKit::WebAutomationSessionProxy::getCookiesForFrame):
+        (WebKit::WebAutomationSessionProxy::deleteCookie):
+        * WebProcess/Automation/WebAutomationSessionProxy.h:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+
 2019-04-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(236463) DownloadManager can call a null CompletionHandler
