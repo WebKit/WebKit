@@ -120,7 +120,7 @@ private:
     size_t m_facesPartitionIndex { 0 }; // All entries in m_faces before this index are CSS-connected.
     Status m_status { Status::Loaded };
     HashSet<CSSFontFaceSetClient*> m_clients;
-    CSSFontSelector* m_owningFontSelector;
+    WeakPtr<CSSFontSelector> m_owningFontSelector;
     unsigned m_activeCount { 0 };
 };
 
