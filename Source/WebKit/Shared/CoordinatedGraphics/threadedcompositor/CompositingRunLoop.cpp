@@ -30,8 +30,8 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/WorkQueue.h>
+#include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>
@@ -39,74 +39,23 @@
 
 namespace WebKit {
 
-class WorkQueuePool {
-    WTF_MAKE_NONCOPYABLE(WorkQueuePool);
-    friend NeverDestroyed<WorkQueuePool>;
-public:
-    static WorkQueuePool& singleton()
-    {
-        ASSERT(RunLoop::isMain());
-        static NeverDestroyed<WorkQueuePool> workQueuePool;
-        return workQueuePool;
-    }
+static RunLoop* createRunLoop()
+{
+    RunLoop* runLoop = nullptr;
+    BinarySemaphore semaphore;
+    Thread::create("org.webkit.ThreadedCompositor", [&] {
+        runLoop = &RunLoop::current();
+        semaphore.signal();
+        runLoop->run();
+    })->detach();
+    semaphore.wait();
 
-    void dispatch(void* context, Function<void ()>&& function)
-    {
-        ASSERT(RunLoop::isMain());
-        getOrCreateWorkQueueForContext(context).dispatch(WTFMove(function));
-    }
-
-    RunLoop& runLoop(void* context)
-    {
-        return getOrCreateWorkQueueForContext(context).runLoop();
-    }
-
-    void invalidate(void* context)
-    {
-        auto workQueue = m_workQueueMap.take(context);
-        ASSERT(workQueue);
-        if (m_workQueueMap.isEmpty()) {
-            m_sharedWorkQueue = nullptr;
-            m_threadCount = 0;
-        } else if (workQueue->hasOneRef())
-            m_threadCount--;
-    }
-
-private:
-    WorkQueuePool()
-    {
-        // FIXME: This is a sane default limit, but it should be configurable somehow.
-        m_threadCountLimit = 1;
-    }
-
-    WorkQueue& getOrCreateWorkQueueForContext(void* context)
-    {
-        auto addResult = m_workQueueMap.add(context, nullptr);
-        if (addResult.isNewEntry) {
-            // FIXME: This is OK for now, and it works for a single-thread limit. But for configurations where more (but not unlimited)
-            // threads could be used, one option would be to use a HashSet here and disperse the contexts across the available threads.
-            if (m_threadCount >= m_threadCountLimit) {
-                ASSERT(m_sharedWorkQueue);
-                addResult.iterator->value = m_sharedWorkQueue;
-            } else {
-                addResult.iterator->value = WorkQueue::create("org.webkit.ThreadedCompositorWorkQueue");
-                if (!m_threadCount)
-                    m_sharedWorkQueue = addResult.iterator->value;
-                m_threadCount++;
-            }
-        }
-
-        return *addResult.iterator->value;
-    }
-
-    HashMap<void*, RefPtr<WorkQueue>> m_workQueueMap;
-    RefPtr<WorkQueue> m_sharedWorkQueue;
-    unsigned m_threadCount { 0 };
-    unsigned m_threadCountLimit;
-};
+    return runLoop;
+}
 
 CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
-    : m_updateTimer(WorkQueuePool::singleton().runLoop(this), this, &CompositingRunLoop::updateTimerFired)
+    : m_runLoop(createRunLoop())
+    , m_updateTimer(*m_runLoop, this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -118,23 +67,26 @@ CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
 CompositingRunLoop::~CompositingRunLoop()
 {
     ASSERT(RunLoop::isMain());
-    // Make sure the WorkQueue is deleted after the CompositingRunLoop, because m_updateTimer has a reference
-    // of the WorkQueue run loop. Passing this is not a problem because the pointer will only be used as a
-    // HashMap key by WorkQueuePool.
-    RunLoop::main().dispatch([context = this] { WorkQueuePool::singleton().invalidate(context); });
+    // Make sure the RunLoop is stopped after the CompositingRunLoop, because m_updateTimer has a reference.
+    RunLoop::main().dispatch([runLoop = makeRef(*m_runLoop)] {
+        runLoop->stop();
+        runLoop->dispatch([] {
+            RunLoop::current().stop();
+        });
+    });
 }
 
 void CompositingRunLoop::performTask(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
-    WorkQueuePool::singleton().dispatch(this, WTFMove(function));
+    m_runLoop->dispatch(WTFMove(function));
 }
 
 void CompositingRunLoop::performTaskSync(Function<void ()>&& function)
 {
     ASSERT(RunLoop::isMain());
     LockHolder locker(m_dispatchSyncConditionMutex);
-    WorkQueuePool::singleton().dispatch(this, [this, function = WTFMove(function)] {
+    m_runLoop->dispatch([this, function = WTFMove(function)] {
         function();
         LockHolder locker(m_dispatchSyncConditionMutex);
         m_dispatchSyncCondition.notifyOne();
