@@ -53,11 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_restart;
 - (void)_cancel;
 - (void)_finish;
-- (void)_setDefersLoading:(BOOL)defers;
 @property (assign) WebCoreNSURLSession * _Nullable session;
 
 - (void)resource:(PlatformMediaResource&)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
-- (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response;
+- (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response completionHandler:(CompletionHandler<void(ShouldContinue)>&&)completionHandler;
 - (BOOL)resource:(PlatformMediaResource&)resource shouldCacheResponse:(const ResourceResponse&)response;
 - (void)resource:(PlatformMediaResource&)resource receivedData:(const char*)data length:(int)length;
 - (void)resource:(PlatformMediaResource&)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&&)request completionHandler:(CompletionHandler<void(ResourceRequest&&)>&&)completionHandler;
@@ -382,7 +381,7 @@ public:
 
     void clearTask();
 
-    void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
+    void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinue)>&&) override;
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
@@ -411,13 +410,13 @@ void WebCoreNSURLSessionDataTaskClient::dataSent(PlatformMediaResource& resource
     [m_task resource:resource sentBytes:bytesSent totalBytesToBeSent:totalBytesToBeSent];
 }
 
-void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response)
+void WebCoreNSURLSessionDataTaskClient::responseReceived(PlatformMediaResource& resource, const ResourceResponse& response, CompletionHandler<void(ShouldContinue)>&& completionHandler)
 {
     LockHolder locker(m_taskLock);
     if (!m_task)
-        return;
+        return completionHandler(ShouldContinue::No);
 
-    [m_task resource:resource receivedResponse:response];
+    [m_task resource:resource receivedResponse:response completionHandler:WTFMove(completionHandler)];
 }
 
 bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResource& resource, const ResourceResponse& response)
@@ -544,13 +543,6 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         [self resourceFinished:*_resource];
 }
 
-- (void)_setDefersLoading:(BOOL)defers
-{
-    ASSERT(isMainThread());
-    if (_resource)
-        _resource->setDefersLoading(defers);
-}
-
 #pragma mark - NSURLSession API
 @synthesize session=_session;
 @synthesize taskIdentifier=_taskIdentifier;
@@ -635,7 +627,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     // No-op.
 }
 
-- (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response
+- (void)resource:(PlatformMediaResource&)resource receivedResponse:(const ResourceResponse&)response completionHandler:(CompletionHandler<void(ShouldContinue)>&&)completionHandler
 {
     ASSERT(response.source() == ResourceResponse::Source::Network || response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation || response.source() == ResourceResponse::Source::ServiceWorker);
     ASSERT_UNUSED(resource, &resource == _resource);
@@ -643,31 +635,31 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     [self.session task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
     [self.session task:self didReceiveCORSAccessCheckResult:resource.didPassAccessControlCheck()];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
-    [self _setDefersLoading:YES];
     RetainPtr<NSURLResponse> strongResponse { response.nsURLResponse() };
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    [self.session addDelegateOperation:[strongSelf, strongResponse] {
+    if (!self.session)
+        return completionHandler(ShouldContinue::No);
+    [self.session addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler)] () mutable {
         strongSelf->_response = strongResponse.get();
 
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if (![dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveResponse:completionHandler:)]) {
-            callOnMainThread([strongSelf] {
-                [strongSelf _setDefersLoading:NO];
+            callOnMainThread([strongSelf, completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(ShouldContinue::Yes);
             });
             return;
         }
 
-        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongResponse.get() completionHandler:[strongSelf] (NSURLSessionResponseDisposition disposition) {
-            if (disposition == NSURLSessionResponseCancel)
-                [strongSelf cancel];
-            else if (disposition == NSURLSessionResponseAllow)
-                [strongSelf resume];
-            else
-                ASSERT_NOT_REACHED();
-            callOnMainThread([strongSelf] {
-                [strongSelf _setDefersLoading:NO];
+        [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session dataTask:(NSURLSessionDataTask *)strongSelf.get() didReceiveResponse:strongResponse.get() completionHandler:makeBlockPtr([strongSelf, completionHandler = WTFMove(completionHandler)] (NSURLSessionResponseDisposition disposition) mutable {
+            callOnMainThread([strongSelf, disposition, completionHandler = WTFMove(completionHandler)] () mutable {
+                if (disposition == NSURLSessionResponseCancel)
+                    completionHandler(ShouldContinue::No);
+                else {
+                    ASSERT(disposition == NSURLSessionResponseAllow);
+                    completionHandler(ShouldContinue::Yes);
+                }
             });
-        }];
+        }).get()];
     }];
 }
 
