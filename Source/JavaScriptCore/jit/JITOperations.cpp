@@ -2372,7 +2372,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, const Instruction* pc)
     }
 
     bool hasProperty = scope->hasProperty(exec, ident);
-    EXCEPTION_ASSERT(!throwScope.exception() || !hasProperty);
+    RETURN_IF_EXCEPTION(throwScope, void());
     if (hasProperty
         && scope->isGlobalLexicalEnvironment()
         && !isInitialization(getPutInfo.initializationMode())) {

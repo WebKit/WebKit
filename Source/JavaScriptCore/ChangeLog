@@ -1,3 +1,16 @@
+2019-04-09  Tadeu Zagallo  <tzagallo@apple.com>
+
+        ASSERTION FAILED: !scope.exception() || !hasProperty in JSObject::get
+        https://bugs.webkit.org/show_bug.cgi?id=196708
+        <rdar://problem/49556803>
+
+        Reviewed by Yusuke Suzuki.
+
+        `operationPutToScope` needs to return early if an exception is thrown while
+        checking if `hasProperty`.
+
+        * jit/JITOperations.cpp:
+
 2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG should respect node's strict flag
