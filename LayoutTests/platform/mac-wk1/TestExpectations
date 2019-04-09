@@ -62,6 +62,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ Wont
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
+[ Sierra ] accessibility/mac/apple-pay-labels.html [ Skip ]
+[ HighSierra ] accessibility/mac/apple-pay-session-v4.html [ Skip ]
+
 # <a download> is not supported in WK1 yet.
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
 webkit.org/b/156069 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]

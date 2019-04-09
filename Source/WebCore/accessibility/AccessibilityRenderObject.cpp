@@ -1075,6 +1075,42 @@ bool AccessibilityRenderObject::exposesTitleUIElement() const
     
     return true;
 }
+
+#if ENABLE(APPLE_PAY)
+String AccessibilityRenderObject::applePayButtonDescription() const
+{
+    switch (applePayButtonType()) {
+    case ApplePayButtonType::Plain:
+        return AXApplePayPlainLabel();
+    case ApplePayButtonType::Buy:
+        return AXApplePayBuyLabel();
+    case ApplePayButtonType::SetUp:
+        return AXApplePaySetupLabel();
+    case ApplePayButtonType::Donate:
+        return AXApplePayDonateLabel();
+#if ENABLE(APPLE_PAY_SESSION_V4)
+    case ApplePayButtonType::CheckOut:
+        return AXApplePayCheckOutLabel();
+    case ApplePayButtonType::Book:
+        return AXApplePayBookLabel();
+    case ApplePayButtonType::Subscribe:
+        return AXApplePaySubscribeLabel();
+#endif
+    }
+}
+#endif
+
+void AccessibilityRenderObject::titleElementText(Vector<AccessibilityText>& textOrder) const
+{
+#if ENABLE(APPLE_PAY)
+    if (isApplePayButton()) {
+        textOrder.append(AccessibilityText(applePayButtonDescription(), AccessibilityTextSource::Alternative));
+        return;
+    }
+#endif
+
+    AccessibilityNodeObject::titleElementText(textOrder);
+}
     
 AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
 {
@@ -2672,6 +2708,11 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
+#if ENABLE(APPLE_PAY)
+    if (isApplePayButton())
+        return AccessibilityRole::Button;
+#endif
+
     // Sometimes we need to ignore the attribute role. Like if a tree is malformed,
     // we want to ignore the treeitem's attribute role.
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
@@ -3628,6 +3669,22 @@ bool AccessibilityRenderObject::hasSameFont(RenderObject* renderer) const
     
     return m_renderer->style().fontDescription().families() == renderer->style().fontDescription().families();
 }
+
+#if ENABLE(APPLE_PAY)
+bool AccessibilityRenderObject::isApplePayButton() const
+{
+    if (!m_renderer)
+        return false;
+    return m_renderer->style().appearance() == ApplePayButtonPart;
+}
+
+ApplePayButtonType AccessibilityRenderObject::applePayButtonType() const
+{
+    if (!m_renderer)
+        return ApplePayButtonType::Plain;
+    return m_renderer->style().applePayButtonType();
+}
+#endif
 
 bool AccessibilityRenderObject::hasSameFontColor(RenderObject* renderer) const
 {

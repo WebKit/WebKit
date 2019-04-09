@@ -103,17 +103,17 @@
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
 
-/* Allow Storage Access API */
-"Allow" = "Allow";
-
-/* Title for Allow button label in the Storage Access API request dialog */
+/* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";
 
-/* Storage Access API request validation (iOS phrasing) */
+/* Message for requesting cross-site cookie and website data access. */
 "Allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Allow \"%@\" to use cookies and website data while browsing \"%@\"?";
 
 /* WKErrorUnknown description */
 "An unknown error occurred" = "An unknown error occurred";
+
+/* Label for the plain Apple Pay button. */
+"Apple Pay" = "Apple Pay";
 
 /* Malware confirmation dialog title */
 "Are you sure you wish to go to this site?" = "Are you sure you wish to go to this site?";
@@ -139,8 +139,14 @@
 /* Undo action name */
 "Bold (Undo action name)" = "Bold";
 
+/* Label for the book with Apple Pay button. */
+"Book with Apple Pay" = "Book with Apple Pay";
+
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
+
+/* Label for the buy with Apple Pay button. */
+"Buy with Apple Pay" = "Buy with Apple Pay";
 
 /* Cancel */
 "Cancel" = "Cancel";
@@ -165,6 +171,9 @@
 
 /* Check spelling while typing context menu item */
 "Check Spelling While Typing" = "Check Spelling While Typing";
+
+/* Label for the check out with Apple Pay button. */
+"Check out with Apple Pay" = "Check out with Apple Pay";
 
 /* title for a single file chooser button used in HTML forms */
 "Choose File" = "Choose File";
@@ -256,14 +265,14 @@
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
 
-/* Storage Access API request validation (macOS phrasing) */
+/* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Do you want to allow \"%@\" to use cookies and website data while browsing \"%@\"?";
 
-/* Storage Access API deny access */
-"Don't Allow" = "Don't Allow";
-
-/* Title for Don't Allow button label in the Storage Access API request dialog */
+/* Button title in Storage Access API prompt */
 "Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
+
+/* Label for the donate with Apple Pay button. */
+"Donate with Apple Pay" = "Donate with Apple Pay";
 
 /* Title of the Done button for zoomed form controls. */
 "Done" = "Done";
@@ -664,6 +673,9 @@
 /* Undo action name */
 "Set Writing Direction (Undo action name)" = "Set Writing Direction";
 
+/* Label for the set up with Apple Pay button. */
+"Set up with Apple Pay" = "Set up with Apple Pay";
+
 /* Title for Share action button */
 "Share…" = "Share…";
 
@@ -745,6 +757,9 @@
 /* alt text for <input> elements with no alt, title, or value */
 "Submit (input element)" = "Submit";
 
+/* Label for the subcribe with Apple Pay button. */
+"Subscribe with Apple Pay" = "Subscribe with Apple Pay";
+
 /* Undo action name */
 "Subscript (Undo action name)" = "Subscript";
 
@@ -820,7 +835,7 @@
 /* Unwanted software warning */
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
-/* Storage Access API tracking warning */
+/* Informative text for requesting cross-site cookie and website data access. */
 "This will allow \"%@\" to track your activity." = "This will allow \"%@\" to track your activity.";
 
 /* Undo action name */

@@ -1,3 +1,15 @@
+2019-04-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Automatically compute accessibility labels for Apple Pay buttons
+        https://bugs.webkit.org/show_bug.cgi?id=196661
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/apple-pay-labels-expected.txt: Added.
+        * accessibility/mac/apple-pay-labels.html: Added.
+        * accessibility/mac/apple-pay-session-v4-expected.txt: Added.
+        * accessibility/mac/apple-pay-session-v4.html: Added.
+
 2019-04-08  Youenn Fablet  <youenn@apple.com>
 
         Add a test to check for the service worker process name

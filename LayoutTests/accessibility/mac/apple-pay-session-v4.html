@@ -1,0 +1,26 @@
+<html>
+<html>
+<head>
+<script src='../../resources/js-test-pre.js'></script>
+</head>
+<body id='body'>
+
+    <div id="book" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: book;"></div>
+    <div id="checkout" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: check-out;"></div>
+    <div id="subscribe" style="-webkit-appearance: -apple-pay-button; -apple-pay-button-type: subscribe;"></div>
+
+
+    <script>
+        if (window.accessibilityController) {
+            var book = accessibilityController.accessibleElementById("book");
+            var checkout = accessibilityController.accessibleElementById("checkout");
+            var subscribe = accessibilityController.accessibleElementById("subscribe");
+
+            shouldBe("book.description", "'AXDescription: Book with Apple Pay'");
+            shouldBe("checkout.description", "'AXDescription: Check out with Apple Pay'");
+            shouldBe("subscribe.description", "'AXDescription: Subscribe with Apple Pay'");
+        }
+    </script>
+<script src='../../resources/js-test-post.js'></script>
+</body>
+</html>

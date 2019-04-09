@@ -1,5 +1,38 @@
 2019-04-08  Chris Fleizach  <cfleizach@apple.com>
 
+        AX: Automatically compute accessibility labels for Apple Pay buttons
+        https://bugs.webkit.org/show_bug.cgi?id=196661
+
+        Reviewed by Joanmarie Diggs.
+
+        Detect Apple Pay buttons and return a standard role and label for them based on their type.
+
+        Test: accessibility/mac/apple-pay-labels.html
+              accessibility/mac/apple-pay-session-v4.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isControl const):
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::applePayButtonDescription const):
+        (WebCore::AccessibilityRenderObject::titleElementText const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::isApplePayButton const):
+        (WebCore::AccessibilityRenderObject::applePayButtonType const):
+        * accessibility/AccessibilityRenderObject.h:
+        * en.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXApplePayPlainLabel):
+        (WebCore::AXApplePayBuyLabel):
+        (WebCore::AXApplePaySetupLabel):
+        (WebCore::AXApplePayDonateLabel):
+        (WebCore::AXApplePayCheckOutLabel):
+        (WebCore::AXApplePayBookLabel):
+        (WebCore::AXApplePaySubscribeLabel):
+        * platform/LocalizedStrings.h:
+
+2019-04-08  Chris Fleizach  <cfleizach@apple.com>
+
         AX: Support API: accessibilityReplaceRange:withText
         https://bugs.webkit.org/show_bug.cgi?id=196636
 

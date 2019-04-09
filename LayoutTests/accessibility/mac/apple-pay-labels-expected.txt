@@ -1,0 +1,9 @@
+PASS plain.role is 'AXRole: AXButton'
+PASS plain.description is 'AXDescription: Apple Pay'
+PASS buy.description is 'AXDescription: Buy with Apple Pay'
+PASS donate.description is 'AXDescription: Donate with Apple Pay'
+PASS setup.description is 'AXDescription: Set up with Apple Pay'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -628,6 +628,43 @@ String AXListItemActionVerb()
     return "select";
 }
 
+#if ENABLE(APPLE_PAY)
+String AXApplePayPlainLabel()
+{
+    return WEB_UI_STRING("Apple Pay", "Label for the plain Apple Pay button.");
+}
+
+String AXApplePayBuyLabel()
+{
+    return WEB_UI_STRING("Buy with Apple Pay", "Label for the buy with Apple Pay button.");
+}
+
+String AXApplePaySetupLabel()
+{
+    return WEB_UI_STRING("Set up with Apple Pay", "Label for the set up with Apple Pay button.");
+}
+
+String AXApplePayDonateLabel()
+{
+    return WEB_UI_STRING("Donate with Apple Pay", "Label for the donate with Apple Pay button.");
+}
+
+String AXApplePayCheckOutLabel()
+{
+    return WEB_UI_STRING("Check out with Apple Pay", "Label for the check out with Apple Pay button.");
+}
+
+String AXApplePayBookLabel()
+{
+    return WEB_UI_STRING("Book with Apple Pay", "Label for the book with Apple Pay button.");
+}
+
+String AXApplePaySubscribeLabel()
+{
+    return WEB_UI_STRING("Subscribe with Apple Pay", "Label for the subcribe with Apple Pay button.");
+}
+#endif
+
 String AXAutoFillCredentialsLabel()
 {
     return WEB_UI_STRING("password AutoFill", "Label for the AutoFill credentials button inside a text field.");
