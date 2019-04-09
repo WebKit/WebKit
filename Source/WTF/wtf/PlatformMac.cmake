@@ -79,25 +79,21 @@ list(APPEND WTF_SOURCES
     text/cocoa/TextBreakIteratorInternalICUCocoa.cpp
 )
 
-list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES
-    ${DERIVED_SOURCES_WTF_DIR}
-)
-
-file(COPY mac/MachExceptions.defs DESTINATION ${DERIVED_SOURCES_WTF_DIR})
+file(COPY mac/MachExceptions.defs DESTINATION ${WTF_DERIVED_SOURCES_DIR})
 
 add_custom_command(
     OUTPUT
-        ${DERIVED_SOURCES_WTF_DIR}/MachExceptionsServer.h
-        ${DERIVED_SOURCES_WTF_DIR}/mach_exc.h
-        ${DERIVED_SOURCES_WTF_DIR}/mach_excServer.c
-        ${DERIVED_SOURCES_WTF_DIR}/mach_excUser.c
+        ${WTF_DERIVED_SOURCES_DIR}/MachExceptionsServer.h
+        ${WTF_DERIVED_SOURCES_DIR}/mach_exc.h
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
+        ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     MAIN_DEPENDENCY mac/MachExceptions.defs
-    WORKING_DIRECTORY ${DERIVED_SOURCES_WTF_DIR}
+    WORKING_DIRECTORY ${WTF_DERIVED_SOURCES_DIR}
     COMMAND mig -sheader MachExceptionsServer.h MachExceptions.defs
     VERBATIM)
 list(APPEND WTF_SOURCES
-    ${DERIVED_SOURCES_WTF_DIR}/mach_excServer.c
-    ${DERIVED_SOURCES_WTF_DIR}/mach_excUser.c
+    ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
+    ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})

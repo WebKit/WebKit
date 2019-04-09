@@ -47,3 +47,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR ${CMAKE_BINARY_DIR}/WebCore/PrivateHea
 set(WebKitLegacy_FRAMEWORK_HEADERS_DIR ${CMAKE_BINARY_DIR}/WebKitLegacy/Headers)
 set(WebKit_FRAMEWORK_HEADERS_DIR ${CMAKE_BINARY_DIR}/WebKit/Headers)
 set(WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR ${CMAKE_BINARY_DIR}/WebKit/PrivateHeaders)
+
+# Override derived sources directories
+set(WTF_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WTF/DerivedSources)
