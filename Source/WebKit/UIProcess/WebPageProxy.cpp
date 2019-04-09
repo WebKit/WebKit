@@ -741,11 +741,6 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     if (!mainFrameID)
         return false;
 
-    if (!m_preferences->usesPageCache()) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because page cache is disabled", m_process->processIdentifier());
-        return false;
-    }
-
     // If the client forced a swap then it may not be Web-compatible to suspend the previous page because other windows may have an opener link to the page.
     if (processSwapRequestedByClient == ProcessSwapRequestedByClient::Yes) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because the swap was requested by the client", m_process->processIdentifier());
@@ -763,28 +758,27 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     }
 
     auto* fromItem = navigation.fromItem();
-    if (!fromItem) {
-        RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because the navigation does not have a fromItem", m_process->processIdentifier());
-        return false;
-    }
 
     // If the source and the destination back / forward list items are the same, then this is a client-side redirect. In this case,
     // there is no need to suspend the previous page as there will be no way to get back to it.
-    if (fromItem == m_backForwardList->currentItem()) {
+    if (fromItem && fromItem == m_backForwardList->currentItem()) {
         RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because this is a client-side redirect", m_process->processIdentifier());
         return false;
     }
 
-    if (fromItem->url() != pageLoadState().url()) {
+    if (fromItem && fromItem->url() != pageLoadState().url()) {
         RELEASE_LOG_ERROR_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because fromItem's URL does not match the page URL.", m_process->processIdentifier());
         ASSERT_NOT_REACHED();
         return false;
     }
 
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processIdentifier());
-    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *fromItem, *mainFrameID);
+    auto suspendedPage = std::make_unique<SuspendedPageProxy>(*this, m_process.copyRef(), *mainFrameID);
 
-    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem->itemID().logString());
+    LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, pageID(), suspendedPage->loggingString(), m_process->processIdentifier(), fromItem ? fromItem->itemID().logString() : 0);
+
+    if (fromItem && m_preferences->usesPageCache())
+        fromItem->setSuspendedPage(suspendedPage.get());
 
     m_process->processPool().addSuspendedPage(WTFMove(suspendedPage));
     return true;

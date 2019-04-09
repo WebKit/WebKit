@@ -41,13 +41,12 @@ class WebProcessProxy;
 class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeWeakPtr<SuspendedPageProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, WebBackForwardListItem&, uint64_t mainFrameID);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, uint64_t mainFrameID);
     ~SuspendedPageProxy();
 
     WebPageProxy& page() const { return m_page; }
     WebProcessProxy& process() { return m_process.get(); }
     uint64_t mainFrameID() const { return m_mainFrameID; }
-    const WebCore::RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
     bool failedToSuspend() const { return m_suspensionState == SuspensionState::FailedToSuspend; }
 

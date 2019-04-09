@@ -1,3 +1,32 @@
+2019-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Loads using loadHTMLString() cause flashing when process-swapping
+        https://bugs.webkit.org/show_bug.cgi?id=196714
+        <rdar://problem/49637354>
+
+        Reviewed by Antti Koivisto.
+
+        Our logic to decide if we should construct a SuspendedPageProxy on process-swap was assuming
+        a SuspendedPageProxy is only useful for PageCache and would therefore not create one if PageCache
+        is disabled or if there is no associated WebBackForwardListItem. However, constructing a
+        SuspendedPageProxy is also useful to prevent flashing when process-swapping as we need to keep
+        displaying the layer of the previous process until there is something meaningful to show in the
+        new process.
+
+        This patch makes it so that we now construct a SuspendedPageProxy on process-swap, even if
+        PageCache is disabled or if there is no associated WebBackForwardListItem. The process in
+        question will not be useful for PageCache but it will avoid flashing. The SuspendedPageProxy's
+        process may also get used for future navigations to the same site (as demonstrated by the
+        API test) which is beneficial for performance.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::suspendCurrentPageIfPossible):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::findReusableSuspendedPageProcess):
+
 2019-04-08  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WinCairo] Separate copied headers into different directories

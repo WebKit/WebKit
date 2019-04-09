@@ -2356,7 +2356,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
 RefPtr<WebProcessProxy> WebProcessPool::findReusableSuspendedPageProcess(const WebCore::RegistrableDomain& registrableDomain, WebPageProxy& page, WebsiteDataStore& dataStore)
 {
     auto it = m_suspendedPages.findIf([&](auto& suspendedPage) {
-        return suspendedPage->registrableDomain() == registrableDomain && &suspendedPage->process().websiteDataStore() == &dataStore;
+        return suspendedPage->process().registrableDomain() == registrableDomain && &suspendedPage->process().websiteDataStore() == &dataStore;
     });
     if (it == m_suspendedPages.end())
         return nullptr;

@@ -78,17 +78,15 @@ static const HashSet<IPC::StringReference>& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, WebBackForwardListItem& item, uint64_t mainFrameID)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, uint64_t mainFrameID)
     : m_page(page)
     , m_process(WTFMove(process))
     , m_mainFrameID(mainFrameID)
-    , m_registrableDomain(URL(URL(), item.url()))
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if PLATFORM(IOS_FAMILY)
     , m_suspensionToken(m_process->throttler().backgroundActivityToken())
 #endif
 {
-    item.setSuspendedPage(this);
     m_process->incrementSuspendedPageCount();
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_page.pageID(), *this);
 
