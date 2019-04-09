@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/AdClickAttribution.h>
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -35,17 +36,20 @@ namespace WebKit {
 class NetworkAdClickAttribution {
 public:
 
+    using RegistrableDomain = WebCore::RegistrableDomain;
     using AdClickAttribution = WebCore::AdClickAttribution;
     using Source = WebCore::AdClickAttribution::Source;
     using Destination = WebCore::AdClickAttribution::Destination;
     using DestinationMap = HashMap<Destination, AdClickAttribution>;
+    using Conversion = WebCore::AdClickAttribution::Conversion;
 
     void store(AdClickAttribution&&);
+    void convert(const Source&, const Destination&, Conversion&&);
     void clear(CompletionHandler<void()>&&);
     void toString(CompletionHandler<void(String)>&&) const;
 
 private:
-    DestinationMap& ensureDestinationMapForSource(const AdClickAttribution::Source&);
+    DestinationMap& ensureDestinationMapForSource(const Source&);
 
     HashMap<Source, DestinationMap> m_adClickAttributionMap;
 };

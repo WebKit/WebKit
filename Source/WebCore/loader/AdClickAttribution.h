@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RegistrableDomain.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
@@ -40,7 +41,7 @@ public:
     using ConversionData = uint32_t;
     using PriorityValue = uint32_t;
 
-    static constexpr uint32_t MaxEntropy = 64;
+    static constexpr uint32_t MaxEntropy = 63;
 
     struct Campaign {
         Campaign() = default;
@@ -51,7 +52,7 @@ public:
         
         bool isValid() const
         {
-            return id < MaxEntropy;
+            return id <= MaxEntropy;
         }
         
         CampaignId id { 0 };
@@ -210,7 +211,7 @@ public:
 
         bool isValid() const
         {
-            return data < MaxEntropy && priority < MaxEntropy;
+            return data <= MaxEntropy && priority <= MaxEntropy;
         }
         
         ConversionData data;
@@ -229,6 +230,7 @@ public:
     {
     }
 
+    WEBCORE_EXPORT static Optional<Conversion> parseConversionRequest(const URL& redirectURL);
     WEBCORE_EXPORT void setConversion(Conversion&&);
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL referrer() const;

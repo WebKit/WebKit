@@ -431,8 +431,8 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
         return WTF::nullopt;
     }
     
-    if (adCampaignID.value() >= AdClickAttribution::MaxEntropy) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("adcampaignid must have a non-negative value less than ", AdClickAttribution::MaxEntropy, " for Ad Click Attribution."));
+    if (adCampaignID.value() > AdClickAttribution::MaxEntropy) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, makeString("adcampaignid must have a non-negative value less than or equal to ", AdClickAttribution::MaxEntropy, " for Ad Click Attribution."));
         return WTF::nullopt;
     }
 

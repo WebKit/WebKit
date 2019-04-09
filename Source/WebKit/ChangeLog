@@ -1,3 +1,39 @@
+2019-04-09  John Wilander  <wilander@apple.com>
+
+        Pick up Ad Click Attribution conversions in NetworkResourceLoader::willSendRedirectedRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=196558
+        <rdar://problem/47650245>
+
+        Reviewed by Youenn Fablet.
+
+        So called pixel requests have traditionally been used to send ad click
+        attribution data to click sources. The privacy implications of such
+        pixel requests are severe which is in part why browsers have started to
+        block cookies from being sent in such third-party requests.
+
+        To allow for a smooth transition to more privacy-friendly ad click
+        attribution, we should allow servers to make a redirect to
+        https://click-source.example/.well-known/ad-click-attribution/ to
+        trigger a so called conversion.
+
+        This patch checks for the well-known location in the path component of
+        the redirect URL. If the request indeed goes to the well-known location,
+        we parse the conversion data and send it to the storage in the network
+        session.
+
+        * NetworkProcess/NetworkAdClickAttribution.cpp:
+        (WebKit::NetworkAdClickAttribution::convert):
+            Reporting function.
+        * NetworkProcess/NetworkAdClickAttribution.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+            Now checks for the well-known location through a call to
+            WebCore::AdClickAttribution::parseConversionRequest().
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::convertAdClickAttribution):
+            Piping to WebKit::NetworkAdClickAttribution::convert().
+        * NetworkProcess/NetworkSession.h:
+
 2019-04-09  Chris Dumez  <cdumez@apple.com>
 
         [iOS] WebContent processes should be marked as "Foreground Running" when their view is visible

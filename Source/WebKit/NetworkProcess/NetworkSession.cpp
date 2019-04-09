@@ -32,7 +32,6 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"
-#include <WebCore/AdClickAttribution.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/NetworkStorageSession.h>
 
@@ -139,6 +138,11 @@ void NetworkSession::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType
 void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)
 {
     m_adClickAttribution->store(WTFMove(adClickAttribution));
+}
+
+void NetworkSession::convertAdClickAttribution(const WebCore::AdClickAttribution::Source& source, const WebCore::AdClickAttribution::Destination& destination, WebCore::AdClickAttribution::Conversion&& conversion)
+{
+    m_adClickAttribution->convert(source, destination, WTFMove(conversion));
 }
 
 void NetworkSession::dumpAdClickAttribution(CompletionHandler<void(String)>&& completionHandler)

@@ -1,3 +1,15 @@
+2019-04-09  John Wilander  <wilander@apple.com>
+
+        Pick up Ad Click Attribution conversions in NetworkResourceLoader::willSendRedirectedRequest()
+        https://bugs.webkit.org/show_bug.cgi?id=196558
+        <rdar://problem/47650245>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/Tests/WebCore/AdClickAttribution.cpp:
+        (TestWebKitAPI::TEST):
+            Added tests of WebCore::AdClickAttribution::parseConversionRequest().
+
 2019-04-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Apple builds should use ICU_INCLUDE_DIRS

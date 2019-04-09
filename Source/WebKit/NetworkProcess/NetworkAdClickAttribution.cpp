@@ -31,10 +31,12 @@
 
 namespace WebKit {
 
+using RegistrableDomain = WebCore::RegistrableDomain;
 using AdClickAttribution = WebCore::AdClickAttribution;
 using Source = WebCore::AdClickAttribution::Source;
 using Destination = WebCore::AdClickAttribution::Destination;
 using DestinationMap = HashMap<Destination, AdClickAttribution>;
+using Conversion = WebCore::AdClickAttribution::Conversion;
 
 DestinationMap& NetworkAdClickAttribution::ensureDestinationMapForSource(const Source& source)
 {
@@ -47,6 +49,19 @@ void NetworkAdClickAttribution::store(AdClickAttribution&& adClickAttribution)
 {
     auto& destinationMapForSource = ensureDestinationMapForSource(adClickAttribution.source());
     destinationMapForSource.add(adClickAttribution.destination(), WTFMove(adClickAttribution));
+}
+
+void NetworkAdClickAttribution::convert(const Source& source, const Destination& destination, Conversion&& conversion)
+{
+    auto sourceIter = m_adClickAttributionMap.find(source);
+    if (sourceIter == m_adClickAttributionMap.end())
+        return;
+
+    auto destinationIter = sourceIter->value.find(destination);
+    if (destinationIter == sourceIter->value.end())
+        return;
+
+    destinationIter->value.setConversion(WTFMove(conversion));
 }
 
 void NetworkAdClickAttribution::clear(CompletionHandler<void()>&& completionHandler)

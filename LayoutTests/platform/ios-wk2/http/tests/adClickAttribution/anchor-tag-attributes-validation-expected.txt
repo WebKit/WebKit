@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: adcampaignid must have a non-negative value less than 64 for Ad Click Attribution.
-CONSOLE MESSAGE: adcampaignid must have a non-negative value less than 64 for Ad Click Attribution.
+CONSOLE MESSAGE: adcampaignid must have a non-negative value less than or equal to 63 for Ad Click Attribution.
+CONSOLE MESSAGE: adcampaignid must have a non-negative value less than or equal to 63 for Ad Click Attribution.
 CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.
 CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.
 CONSOLE MESSAGE: adcampaignid can not be converted to a non-negative integer which is required for Ad Click Attribution.

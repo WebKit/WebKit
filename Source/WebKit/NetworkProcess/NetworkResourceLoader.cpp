@@ -41,6 +41,7 @@
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebsiteDataStoreParameters.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/ContentSecurityPolicy.h>
@@ -582,6 +583,16 @@ Optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidatio
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ++m_redirectCount;
+
+    auto& redirectURL = redirectRequest.url();
+    if (auto adClickConversion = AdClickAttribution::parseConversionRequest(redirectURL)) {
+        RegistrableDomain redirectDomain { redirectURL };
+        auto& firstPartyURL = redirectRequest.firstPartyForCookies();
+        NetworkSession* networkSession;
+        // The redirect has to be done by the same registrable domain and it has to be a third-party request.
+        if (redirectDomain.matches(request.url()) && !redirectDomain.matches(firstPartyURL) && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
+            networkSession->convertAdClickAttribution(AdClickAttribution::Source { WTFMove(redirectDomain) }, AdClickAttribution::Destination { firstPartyURL }, WTFMove(*adClickConversion));
+    }
 
     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
     if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))

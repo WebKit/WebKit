@@ -29,8 +29,13 @@
 #include <wtf/RandomNumber.h>
 #include <wtf/URL.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringView.h>
 
 namespace WebCore {
+
+static const char adClickAttributionPathPrefix[] = "/.well-known/ad-click-attribution/";
+const size_t adClickConversionDataPathSegmentSize = 2;
+const size_t adClickPriorityPathSegmentSize = 2;
 
 bool AdClickAttribution::isValid() const
 {
@@ -40,6 +45,39 @@ bool AdClickAttribution::isValid() const
         && !m_source.registrableDomain.isEmpty()
         && !m_destination.registrableDomain.isEmpty()
         && m_earliestTimeToSend;
+}
+
+Optional<AdClickAttribution::Conversion> AdClickAttribution::parseConversionRequest(const URL& redirectURL)
+{
+    if (!redirectURL.protocolIs("https"_s) || redirectURL.hasUsername() || redirectURL.hasPassword() || redirectURL.hasQuery() || redirectURL.hasFragment())
+        return { };
+
+    auto path = StringView(redirectURL.string()).substring(redirectURL.pathStart(), redirectURL.pathEnd() - redirectURL.pathStart());
+    if (path.isEmpty() || !path.startsWith(adClickAttributionPathPrefix))
+        return { };
+
+    auto prefixLength = sizeof(adClickAttributionPathPrefix) - 1;
+    if (path.length() == prefixLength + adClickConversionDataPathSegmentSize) {
+        auto conversionDataUInt64 = path.substring(prefixLength, adClickConversionDataPathSegmentSize).toUInt64Strict();
+        if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy)
+            return { };
+
+        return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { 0 } };
+    }
+    
+    if (path.length() == prefixLength + adClickConversionDataPathSegmentSize + 1 + adClickPriorityPathSegmentSize) {
+        auto conversionDataUInt64 = path.substring(prefixLength, adClickConversionDataPathSegmentSize).toUInt64Strict();
+        if (!conversionDataUInt64 || *conversionDataUInt64 > MaxEntropy)
+            return { };
+
+        auto conversionPriorityUInt64 = path.substring(prefixLength + adClickConversionDataPathSegmentSize + 1, adClickPriorityPathSegmentSize).toUInt64Strict();
+        if (!conversionPriorityUInt64 || *conversionPriorityUInt64 > MaxEntropy)
+            return { };
+
+        return Conversion { static_cast<uint32_t>(*conversionDataUInt64), Priority { static_cast<uint32_t>(*conversionPriorityUInt64) } };
+    }
+
+    return { };
 }
 
 void AdClickAttribution::setConversion(Conversion&& conversion)
@@ -102,6 +140,8 @@ String AdClickAttribution::toString() const
     if (m_conversion) {
         builder.appendLiteral("\nConversion data: ");
         builder.appendNumber(m_conversion.value().data);
+        builder.appendLiteral("\nConversion priority: ");
+        builder.appendNumber(m_conversion.value().priority);
     } else
         builder.appendLiteral("\nNo conversion data.");
     builder.append('\n');

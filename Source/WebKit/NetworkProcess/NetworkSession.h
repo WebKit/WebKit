@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebResourceLoadStatisticsStore.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/RegistrableDomain.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
@@ -37,7 +38,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class AdClickAttribution;
 class NetworkStorageSession;
 enum class IncludeHttpOnlyCookies : bool;
 enum class ShouldSample : bool;
@@ -80,6 +80,7 @@ public:
     void notifyPageStatisticsTelemetryFinished(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
 #endif
     void storeAdClickAttribution(WebCore::AdClickAttribution&&);
+    void convertAdClickAttribution(const WebCore::AdClickAttribution::Source&, const WebCore::AdClickAttribution::Destination&, WebCore::AdClickAttribution::Conversion&&);
     void dumpAdClickAttribution(CompletionHandler<void(String)>&&);
     void clearAdClickAttribution(CompletionHandler<void()>&&);
 
