@@ -1,3 +1,19 @@
+2019-04-09  Alex Christensen  <achristensen@webkit.org>
+
+        Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page
+        https://bugs.webkit.org/show_bug.cgi?id=196665
+        <rdar://45115669>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SafeBrowsing.mm:
+        (goBack):
+        (+[SimpleLookupContext sharedLookupContext]):
+        (-[SimpleLookupContext lookUpURL:completionHandler:]):
+        (TEST):
+        (+[Simple3LookupContext sharedLookupContext]): Deleted.
+        (-[Simple3LookupContext lookUpURL:completionHandler:]): Deleted.
+
 2019-04-09  John Wilander  <wilander@apple.com>
 
         Pick up Ad Click Attribution conversions in NetworkResourceLoader::willSendRedirectedRequest()
