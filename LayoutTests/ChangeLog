@@ -1,3 +1,16 @@
+2019-04-09  Zalan Bujtas  <zalan@apple.com>
+
+        [AutoSizing] Avoid making text paragraphs scroll horizontally when there is a wide table
+        https://bugs.webkit.org/show_bug.cgi?id=196743
+        <rdar://problem/43897551>
+
+        Reviewed by Tim Horton.
+
+        * css3/viewport-percentage-lengths/vh-auto-size-expected.html:
+        * css3/viewport-percentage-lengths/vh-auto-size.html:
+        * fast/dynamic/crash-subtree-layout-when-auto-size-enabled.html:
+        * fast/dynamic/mail-autosize-viewport-unit.html:
+
 2019-04-09  Daniel Bates  <dabates@apple.com>
 
         [iPad] Should open popover when the spacebar is pressed

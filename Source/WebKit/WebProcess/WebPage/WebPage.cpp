@@ -5482,16 +5482,13 @@ void WebPage::setViewLayoutSize(const IntSize& viewLayoutSize)
 
     m_viewLayoutSize = viewLayoutSize;
     if (viewLayoutSize.width() <= 0) {
-        corePage()->mainFrame().view()->enableAutoSizeMode(false, IntSize(), IntSize());
+        corePage()->mainFrame().view()->enableAutoSizeMode(false, { });
         return;
     }
 
     int viewLayoutWidth = viewLayoutSize.width();
     int viewLayoutHeight = std::max(viewLayoutSize.height(), 1);
-
-    int maximumSize = std::numeric_limits<int>::max();
-
-    corePage()->mainFrame().view()->enableAutoSizeMode(true, IntSize(viewLayoutWidth, viewLayoutHeight), IntSize(maximumSize, maximumSize));
+    corePage()->mainFrame().view()->enableAutoSizeMode(true, { viewLayoutWidth, viewLayoutHeight });
 }
 
 void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)

@@ -399,7 +399,7 @@ public:
     void updateIsVisuallyNonEmpty();
     void updateSignificantRenderedTextMilestoneIfNeeded();
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
-    WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize, const IntSize& maxSize);
+    WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
     IntSize autoSizingIntrinsicContentSize() const { return m_autoSizeContentSize; }
 
@@ -873,10 +873,8 @@ private:
 
     Optional<OverrideViewportSize> m_overrideViewportSize;
 
-    // The lower bound on the size when autosizing.
-    IntSize m_minAutoSize;
-    // The upper bound on the size when autosizing.
-    IntSize m_maxAutoSize;
+    // The view size when autosizing.
+    IntSize m_autoSizeConstraint;
     // The fixed height to resize the view to after autosizing is complete.
     int m_autoSizeFixedMinimumHeight { 0 };
     // The intrinsic content size decided by autosizing.
