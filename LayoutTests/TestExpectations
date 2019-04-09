@@ -194,12 +194,8 @@ imported/w3c/web-platform-tests/secure-contexts/shared-worker-secure-first.https
 imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-redirect.https.html [ Skip ]
 
 # Newly imported service worker tests that are timing out.
-imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-abort.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/dedicated-worker-service-worker-interception.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/embed-and-object-are-not-intercepted.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-cache.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video-with-range-request.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Skip ]
@@ -209,7 +205,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/multipart-image.h
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-to-client-message-queue.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-using-registration.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/skip-waiting-without-using-registration.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-not-allowed.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/worker-in-sandboxed-iframe-by-csp-fetch-event.https.html [ Skip ]
 

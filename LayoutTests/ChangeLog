@@ -1,3 +1,12 @@
+2019-04-09  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT service worker expectations
+        https://bugs.webkit.org/show_bug.cgi?id=196732
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
 2019-04-09  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPURenderPassEncoder updates: setBlendColor, setViewport, setScissorRect

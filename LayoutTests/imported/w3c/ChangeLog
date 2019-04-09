@@ -1,3 +1,24 @@
+2019-04-09  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT service worker expectations
+        https://bugs.webkit.org/show_bug.cgi?id=196732
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/window/cache-abort.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-abort.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-navigate.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/multipart-image.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https-expected.txt:
+
 2019-04-08  Javier Fernandez  <jfernandez@igalia.com>
 
         Implement white-space:break-spaces value
