@@ -2430,6 +2430,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int offset)
     return stringAtOffset(m_element, ATK_TEXT_BOUNDARY_SENTENCE_START, offset);
 }
 
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace WTR
 
 #endif // HAVE(ACCESSIBILITY)

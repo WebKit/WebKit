@@ -1,3 +1,13 @@
+2019-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix ATK accessibility tests after r244059.
+
+        We are failing to load the injected bundle due to undefined symbol
+        AccessibilityUIElement::replaceTextInRange().
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::replaceTextInRange):
+
 2019-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         AX: Support API: accessibilityReplaceRange:withText
