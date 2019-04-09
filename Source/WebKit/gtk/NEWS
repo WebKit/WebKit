@@ -1,4 +1,24 @@
 =================
+WebKitGTK  2.24.1
+=================
+
+What's new in WebKitGTK 2.24.1?
+
+  - Do not allow changes in active URI before provisional load starts for non-API requests.
+  - Stop the threaded compositor when the page is not visible or layer tree state is frozen.
+  - Use WebKit HTTP source element again for adaptive streaming fragments downloading.
+  - Properly handle empty resources in webkit_web_resource_get_data().
+  - Add quirk to ensure outlook.live.com uses the modern UI.
+  - Fix methods returing GObject or boxed types in JavaScriptCore GLib API.
+  - Ensure callback data is passed to functions and constructors with no parameters in JavaScriptCore GLib API.
+  - Fix rendering of complex text when the font uses x,y origins.
+  - Fix sound loop with Google Hangouts and WhatsApp notifications.
+  - Fix the build with GStreamer 1.12.5 and GST GL enabled.
+  - Detect SSE2 at compile time.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2019-6251.
+
+=================
 WebKitGTK  2.24.0
 =================
 
