@@ -1,3 +1,17 @@
+2019-04-09  Antoine Quint  <graouts@apple.com>
+
+        [ Mac ] REGRESSION (r237587) Layout Test compositing/visible-rect/animated-from-none.html is flaky text diff failure
+        https://bugs.webkit.org/show_bug.cgi?id=194798
+        <rdar://problem/48181898>
+
+        Reviewed by Dean Jackson.
+
+        When using the Web Animations engine, the best way to run code as an animation start is to use the "ready" promise, whereas
+        DOM events are dispatched asynchronously and, in the case of this test, might have an animation progress that is greater
+        than 0 and yield an animated transform that isn't quite the identity matrix.
+
+        * compositing/visible-rect/animated-from-none.html:
+
 2019-04-09  Jer Noble  <jer.noble@apple.com>
 
         Add test for fix of #196095
