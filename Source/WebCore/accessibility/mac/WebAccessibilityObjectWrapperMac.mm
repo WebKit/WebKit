@@ -3642,6 +3642,14 @@ IGNORE_WARNINGS_END
         [self accessibilityScrollToVisible];
 }
 
+- (BOOL)accessibilityReplaceRange:(NSRange)range withText:(NSString *)string
+{
+    if (![self updateObjectBackingStore])
+        return NO;
+    
+    return m_object->replaceTextInRange(string, PlainTextRange(range));
+}
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName
 IGNORE_WARNINGS_END

@@ -2274,7 +2274,35 @@ bool AccessibilityObject::dispatchAccessibilityEventWithType(AccessibilityEventT
     auto event = Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     return dispatchAccessibilityEvent(event);
 }
+    
+bool AccessibilityObject::replaceTextInRange(const String& replacementString, const PlainTextRange& range)
+{
+    if (!renderer() || !is<Element>(node()))
+        return false;
 
+    auto& element = downcast<Element>(*renderer()->node());
+
+    // We should use the editor's insertText to mimic typing into the field.
+    // Also only do this when the field is in editing mode.
+    auto& frame = renderer()->frame();
+    if (element.shouldUseInputMethod()) {
+        frame.selection().setSelectedRange(rangeForPlainTextRange(range).get(), DOWNSTREAM, FrameSelection::ShouldCloseTyping::Yes);
+        frame.editor().replaceSelectionWithText(replacementString, Editor::SelectReplacement::No, Editor::SmartReplace::No);
+        return true;
+    }
+    
+    if (is<HTMLInputElement>(element)) {
+        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.start, range.length, "");
+        return true;
+    }
+    if (is<HTMLTextAreaElement>(element)) {
+        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.start, range.length, "");
+        return true;
+    }
+
+    return false;
+}
+    
 bool AccessibilityObject::dispatchAccessibleSetValueEvent(const String& value) const
 {
     if (!canSetValueAttribute())

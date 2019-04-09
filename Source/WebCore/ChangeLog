@@ -1,3 +1,22 @@
+2019-04-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support API: accessibilityReplaceRange:withText
+        https://bugs.webkit.org/show_bug.cgi?id=196636
+
+        Reviewed by Daniel Bates.
+
+        Support this platform API on mac to provide a way to replace a range of editable text.
+
+        Test: accessibility/mac/replace-text-with-range.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::replaceTextInRange):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectBase.mm:
+        (WebCore::PlainTextRange::PlainTextRange):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityReplaceRange:withText:]):
+
 2019-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Do not allow starting selection drags when selection views are not visible

@@ -297,6 +297,10 @@ struct PlainTextRange {
         , length(l)
     { }
     
+#if PLATFORM(COCOA)
+    PlainTextRange(NSRange);
+#endif
+    
     bool isNull() const { return !start && !length; }
 };
 
@@ -701,6 +705,8 @@ public:
     virtual void setSelectedText(const String&) { }
     virtual void setSelectedTextRange(const PlainTextRange&) { }
     virtual void setValue(const String&) { }
+    bool replaceTextInRange(const String&, const PlainTextRange&);
+
     virtual void setValue(float) { }
     virtual void setSelected(bool) { }
     virtual void setSelectedRows(AccessibilityChildrenVector&) { }

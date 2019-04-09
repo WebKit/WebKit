@@ -477,6 +477,11 @@ AccessibilityTextMarkerRange AccessibilityUIElement::selectedTextMarkerRange()
     return nullptr;
 }
 
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+{
+    return false;
+}
+
 void AccessibilityUIElement::resetSelectedTextMarkerRange()
 {
 }

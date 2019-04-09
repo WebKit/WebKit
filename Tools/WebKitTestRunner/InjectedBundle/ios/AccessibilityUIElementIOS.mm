@@ -1144,6 +1144,11 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::startTextMarkerForBounds
 {
     return nullptr;
 }
+    
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+{
+    return false;
+}
 
 RefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForPoint(int x, int y)
 {

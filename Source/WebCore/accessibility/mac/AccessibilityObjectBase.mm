@@ -32,6 +32,12 @@
 
 namespace WebCore {
 
+PlainTextRange::PlainTextRange(NSRange r)
+    : start(r.location)
+    , length(r.length)
+{
+}
+    
 String AccessibilityObject::speechHintAttributeValue() const
 {
     auto speak = speakAsProperty();
