@@ -177,6 +177,12 @@ the public iOS SDK. See <https://webkit.org/b/179167>. */
 #endif
 #endif
 
+#if !defined(HAVE_VISIBILITY_PROPAGATION_VIEW)
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
+#define HAVE_VISIBILITY_PROPAGATION_VIEW 1
+#endif
+#endif
+
 #if !defined(HAVE_AVSTREAMSESSION)
 #define HAVE_AVSTREAMSESSION 0
 #endif

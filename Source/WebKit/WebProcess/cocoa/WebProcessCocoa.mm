@@ -171,6 +171,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     m_compositingRenderServerPort = WTFMove(parameters.acceleratedCompositingPort);
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess();
+    RELEASE_LOG(Process, "Created context with ID %d for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
+    parentProcessConnection()->send(Messages::WebProcessProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()), 0);
+#endif
+
     WebCore::registerMemoryReleaseNotifyCallbacks();
     MemoryPressureHandler::ReliefLogger::setLoggingEnabled(parameters.shouldEnableMemoryPressureReliefLogging);
 

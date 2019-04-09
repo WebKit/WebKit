@@ -68,6 +68,9 @@ private:
     void processDidExit() override;
     void processWillSwap() override;
     void didRelaunchProcess() override;
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextForVisibilityPropagation(LayerHostingContextID) override;
+#endif
     void pageClosed() override;
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;

@@ -297,6 +297,10 @@ public:
     void unblockAccessibilityServerIfNeeded();
 #endif
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    LayerHostingContextID contextIDForVisibilityPropagation() { return m_contextIDForVisibilityPropagation; }
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -336,6 +340,10 @@ private:
     void checkRemotePortForActivity(const WebCore::MessagePortIdentifier, uint64_t callbackIdentifier);
     void didDeliverMessagePortMessages(uint64_t messageBatchIdentifier);
     void didCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable);
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+#endif
 
     bool hasProvisionalPageWithID(uint64_t pageID) const;
     bool isAllowedToUpdateBackForwardItem(WebBackForwardListItem&) const;
@@ -440,6 +448,10 @@ private:
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

@@ -1,3 +1,41 @@
+2019-04-09  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] WebContent processes should be marked as "Foreground Running" when their view is visible
+        https://bugs.webkit.org/show_bug.cgi?id=196695
+        <rdar://problem/48073787>
+
+        Reviewed by Tim Horton.
+
+        In order for WebContent processes to get marked as "Foreground Running" when their view
+        is visible on iOS, we now construct a _UILayerHostView in the UIProcess and add it as
+        a subview of the WKContentView. The _UILayerHostView's visibility target is the
+        WebContent process currently associated with the view.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didCreateContextForVisibilityPropagation):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::contextIDForVisibilityPropagation):
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didCreateContextForVisibilityPropagation):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView _setupVisibilityPropagationView]):
+        (-[WKContentView _processDidExit]):
+        (-[WKContentView _didRelaunchProcess]):
+        (-[WKContentView _processDidCreateContextForVisibilityPropagation]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didCreateContextForVisibilityPropagation):
+        * UIProcess/ios/WebProcessProxyIOS.mm:
+        (WebKit::WebProcessProxy::didCreateContextForVisibilityPropagation):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2019-04-09  Sihui Liu  <sihui_liu@apple.com>
 
         Remove unnecessary network process assertion for IDB close

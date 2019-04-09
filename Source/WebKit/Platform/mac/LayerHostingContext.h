@@ -39,6 +39,8 @@ class MachSendRight;
 
 namespace WebKit {
 
+using LayerHostingContextID = uint32_t;
+
 class LayerHostingContext {
     WTF_MAKE_NONCOPYABLE(LayerHostingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -56,7 +58,7 @@ public:
     void setRootLayer(CALayer *);
     CALayer *rootLayer() const;
 
-    uint32_t contextID() const;
+    LayerHostingContextID contextID() const;
     void invalidate();
 
     LayerHostingMode layerHostingMode() { return m_layerHostingMode; }

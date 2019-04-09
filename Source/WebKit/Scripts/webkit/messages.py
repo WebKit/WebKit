@@ -188,6 +188,10 @@ def forward_declarations_and_headers(receiver):
         '<wtf/Forward.h>',
     ])
 
+    header_conditions = {
+        '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
+    }
+
     non_template_wtf_types = frozenset([
         'MachSendRight',
         'String',
@@ -210,6 +214,7 @@ def forward_declarations_and_headers(receiver):
         'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebKit::ActivityStateChangeID',
+        'WebKit::LayerHostingContextID',
         'WebKit::UserContentControllerIdentifier',
     ])
 
@@ -238,9 +243,18 @@ def forward_declarations_and_headers(receiver):
             headers.update(headers_for_type(type))
 
     forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.items())])
-    headers = ['#include %s\n' % header for header in sorted(headers)]
 
-    return (forward_declarations, headers)
+    header_includes = set()
+    for header in sorted(headers):
+        if header in header_conditions and not None in header_conditions[header]:
+            header_include = '#if %s\n' % ' || '.join(set(header_conditions[header]))
+            header_include += '#include %s\n' % header
+            header_include += '#endif\n'
+            header_includes.add(header_include)
+        else:
+            header_includes.add('#include %s\n' % header)
+
+    return (forward_declarations, header_includes)
 
 
 def generate_messages_header(file):
@@ -451,6 +465,7 @@ def headers_for_type(type):
         'WebCore::SelectionRect': ['"EditorState.h"'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
+        'WebKit::LayerHostingContextID': ['"LayerHostingContext.h"'],
         'WebKit::LayerHostingMode': ['"LayerTreeContext.h"'],
         'WebKit::PageState': ['"SessionState.h"'],
         'WebKit::WebGestureEvent': ['"WebEvent.h"'],

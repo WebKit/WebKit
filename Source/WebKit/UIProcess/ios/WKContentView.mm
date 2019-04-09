@@ -183,6 +183,10 @@ private:
     RetainPtr<WKInspectorIndicationView> _inspectorIndicationView;
     RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    RetainPtr<_UILayerHostView> _visibilityPropagationView;
+#endif
+
     WebKit::HistoricalVelocityData _historicalKinematicData;
 
     RetainPtr<NSUndoManager> _undoManager;
@@ -226,11 +230,37 @@ private:
 
     self.layer.hitTestsAsOpaque = YES;
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    [self _setupVisibilityPropagationView];
+#endif
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
 
     return self;
 }
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+- (void)_setupVisibilityPropagationView
+{
+    auto processIdentifier = _page->process().processIdentifier();
+    auto contextID = _page->process().contextIDForVisibilityPropagation();
+    if (!processIdentifier || !contextID)
+        return;
+
+    ASSERT(!_visibilityPropagationView);
+    // Propagate the view's visibility state to the WebContent process so that it is marked as "Foreground Running" when necessary.
+    _visibilityPropagationView = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    RELEASE_LOG(Process, "Created visibility propagation view %p for WebContent process with PID %d", _visibilityPropagationView.get(), processIdentifier);
+    [self addSubview:_visibilityPropagationView.get()];
+}
+
+- (void)_removeVisibilityPropagationView
+{
+    [_visibilityPropagationView removeFromSuperview];
+    _visibilityPropagationView = nullptr;
+}
+#endif
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(WebKit::WebProcessPool&)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
@@ -538,6 +568,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
     [self setShowingInspectorIndication:NO];
     [self _hideInspectorHighlight];
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    [self _removeVisibilityPropagationView];
+#endif
 }
 
 - (void)_processWillSwap
@@ -550,7 +584,17 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 {
     [self _accessibilityRegisterUIProcessTokens];
     [self setupInteraction];
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    [self _setupVisibilityPropagationView];
+#endif
 }
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+- (void)_processDidCreateContextForVisibilityPropagation
+{
+    [self _setupVisibilityPropagationView];
+}
+#endif
 
 - (void)_didCommitLoadForMainFrame
 {

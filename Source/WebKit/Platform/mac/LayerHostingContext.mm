@@ -103,7 +103,7 @@ CALayer *LayerHostingContext::rootLayer() const
     return [m_context layer];
 }
 
-uint32_t LayerHostingContext::contextID() const
+LayerHostingContextID LayerHostingContext::contextID() const
 {
     return [m_context contextId];
 }

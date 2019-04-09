@@ -175,6 +175,13 @@ void PageClientImpl::didRelaunchProcess()
     [m_webView _didRelaunchProcess];
 }
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void PageClientImpl::didCreateContextForVisibilityPropagation(LayerHostingContextID)
+{
+    [m_contentView _processDidCreateContextForVisibilityPropagation];
+}
+#endif
+
 void PageClientImpl::pageClosed()
 {
     notImplemented();

@@ -302,6 +302,10 @@ typedef GenericCallback<const String&> StringCallback;
 typedef GenericCallback<API::SerializedScriptValue*, bool, const WebCore::ExceptionDetails&> ScriptValueCallback;
 typedef GenericCallback<const WebCore::FontAttributes&> FontAttributesCallback;
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+using LayerHostingContextID = uint32_t;
+#endif
+
 #if PLATFORM(GTK)
 typedef GenericCallback<API::Error*> PrintFinishedCallback;
 #endif
@@ -1052,6 +1056,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void processWillBecomeSuspended();
     void processWillBecomeForeground();
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);

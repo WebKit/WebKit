@@ -112,6 +112,10 @@ class WebSQLiteDatabaseTracker;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
+#if PLATFORM(IOS_FAMILY)
+class LayerHostingContext;
+#endif
+
 class WebProcess : public AuxiliaryProcess {
 public:
     static WebProcess& singleton();
@@ -497,6 +501,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+#endif
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
 #endif
 
     enum PageMarkingLayersAsVolatileCounterType { };

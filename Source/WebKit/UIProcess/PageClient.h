@@ -157,6 +157,10 @@ class InstallMissingMediaPluginsPermissionRequest;
 struct ColorSpaceData;
 #endif
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+using LayerHostingContextID = uint32_t;
+#endif
+
 class PageClient : public CanMakeWeakPtr<PageClient> {
 public:
     virtual ~PageClient() { }
@@ -280,6 +284,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) = 0;
     virtual void didCompleteSyntheticClick() = 0;
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    virtual void didCreateContextForVisibilityPropagation(LayerHostingContextID) { }
 #endif
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;

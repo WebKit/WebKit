@@ -93,6 +93,9 @@ class WebProcessPool;
 - (void)_processDidExit;
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+- (void)_processDidCreateContextForVisibilityPropagation;
+#endif
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 
 - (void)_showInspectorHighlight:(const WebCore::Highlight&)highlight;

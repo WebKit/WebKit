@@ -79,4 +79,8 @@ messages -> WebProcessProxy LegacyReceiver {
     StartDisplayLink(unsigned observerID, uint32_t displayID)
     StopDisplayLink(unsigned observerID, uint32_t displayID)
 #endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
+#endif
 }
