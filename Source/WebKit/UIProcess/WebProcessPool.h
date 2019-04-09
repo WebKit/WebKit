@@ -295,6 +295,8 @@ public:
 
     void clearCachedCredentials();
     void terminateNetworkProcess();
+    void sendNetworkProcessWillSuspendImminently();
+    void sendNetworkProcessDidResume();
     void terminateServiceWorkerProcesses();
     void disableServiceWorkerProcessTerminationDelay();
 

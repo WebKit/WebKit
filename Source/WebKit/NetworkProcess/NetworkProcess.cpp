@@ -1983,6 +1983,9 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
 
     for (auto& connection : m_webProcessConnections)
         connection->cleanupForSuspension([delayedTaskCounter] { });
+
+    for (auto& server : m_swServers.values())
+        server->startSuspension([delayedTaskCounter] { });
 }
 
 void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
@@ -2004,9 +2007,7 @@ void NetworkProcess::cancelPrepareToSuspend()
     // message. And NetworkProcessProxy expects to receive either a NetworkProcessProxy::ProcessReadyToSuspend-
     // or NetworkProcessProxy::DidCancelProcessSuspension- message, but not both.
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::cancelPrepareToSuspend()", this);
-    platformProcessDidResume();
-    for (auto& connection : m_webProcessConnections)
-        connection->endSuspension();
+    resume();
 }
 
 void NetworkProcess::applicationDidEnterBackground()
@@ -2022,9 +2023,17 @@ void NetworkProcess::applicationWillEnterForeground()
 void NetworkProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
+    resume();
+}
+
+void NetworkProcess::resume()
+{
     platformProcessDidResume();
     for (auto& connection : m_webProcessConnections)
         connection->endSuspension();
+
+    for (auto& server : m_swServers.values())
+        server->endSuspension();
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)

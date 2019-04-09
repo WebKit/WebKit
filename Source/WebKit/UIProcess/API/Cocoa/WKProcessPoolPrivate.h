@@ -83,7 +83,9 @@
 - (_WKDownload *)_resumeDownloadFromData:(NSData *)resumeData path:(NSString *)path originatingWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only. Should be called only while no web content processes are running.
-- (void)_terminateNetworkProcess;
+- (void)_terminateNetworkProcess WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_sendNetworkProcessWillSuspendImminently WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_sendNetworkProcessDidResume WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_terminateServiceWorkerProcesses WK_API_AVAILABLE(macos(10.14), ios(12.0));
 - (void)_disableServiceWorkerProcessTerminationDelay WK_API_AVAILABLE(macos(10.14), ios(12.0));
 

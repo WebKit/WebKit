@@ -1749,6 +1749,18 @@ void WebProcessPool::terminateNetworkProcess()
     m_didNetworkProcessCrash = true;
 }
 
+void WebProcessPool::sendNetworkProcessWillSuspendImminently()
+{
+    if (m_networkProcess)
+        m_networkProcess->sendProcessWillSuspendImminently();
+}
+
+void WebProcessPool::sendNetworkProcessDidResume()
+{
+    if (m_networkProcess)
+        m_networkProcess->sendProcessDidResume();
+}
+
 void WebProcessPool::terminateServiceWorkerProcesses()
 {
 #if ENABLE(SERVICE_WORKER)

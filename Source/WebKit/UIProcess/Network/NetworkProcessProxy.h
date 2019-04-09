@@ -183,6 +183,10 @@ public:
     void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 #endif
 
+    // ProcessThrottlerClient
+    void sendProcessWillSuspendImminently() final;
+    void sendProcessDidResume() final;
+
 private:
     // AuxiliaryProcessProxy
     void getLaunchOptions(ProcessLauncher::LaunchOptions&) override;
@@ -193,11 +197,9 @@ private:
     void clearCallbackStates();
 
     // ProcessThrottlerClient
-    void sendProcessWillSuspendImminently() override;
-    void sendPrepareToSuspend() override;
-    void sendCancelPrepareToSuspend() override;
-    void sendProcessDidResume() override;
-    void didSetAssertionState(AssertionState) override;
+    void sendPrepareToSuspend() final;
+    void sendCancelPrepareToSuspend() final;
+    void didSetAssertionState(AssertionState) final;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

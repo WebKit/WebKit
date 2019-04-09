@@ -52,6 +52,11 @@ void RegistrationStore::scheduleDatabasePushIfNecessary()
 
 void RegistrationStore::pushChangesToDatabase(WTF::CompletionHandler<void()>&& completionHandler)
 {
+    if (m_isSuspended) {
+        m_needsPushingChanges = true;
+        return;
+    }
+
     Vector<ServiceWorkerContextData> changesToPush;
     changesToPush.reserveInitialCapacity(m_updatedRegistrations.size());
     for (auto& value : m_updatedRegistrations.values())
@@ -63,6 +68,7 @@ void RegistrationStore::pushChangesToDatabase(WTF::CompletionHandler<void()>&& c
 
 void RegistrationStore::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
 {
+    m_needsPushingChanges = false;
     m_updatedRegistrations.clear();
     m_databasePushTimer.stop();
     m_database->clearAll(WTFMove(completionHandler));
@@ -76,6 +82,19 @@ void RegistrationStore::flushChanges(WTF::CompletionHandler<void()>&& completion
         return;
     }
     completionHandler();
+}
+
+void RegistrationStore::startSuspension(WTF::CompletionHandler<void()>&& completionHandler)
+{
+    m_isSuspended = true;
+    m_database->close(WTFMove(completionHandler));
+}
+
+void RegistrationStore::endSuspension()
+{
+    m_isSuspended = false;
+    if (m_needsPushingChanges)
+        scheduleDatabasePushIfNecessary();
 }
 
 void RegistrationStore::updateRegistration(const ServiceWorkerContextData& data)

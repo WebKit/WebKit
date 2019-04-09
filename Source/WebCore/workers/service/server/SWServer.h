@@ -122,6 +122,9 @@ public:
     WEBCORE_EXPORT void clearAll(WTF::CompletionHandler<void()>&&);
     WEBCORE_EXPORT void clear(const SecurityOriginData&, WTF::CompletionHandler<void()>&&);
 
+    WEBCORE_EXPORT void startSuspension(CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void endSuspension();
+
     SWServerRegistration* getRegistration(const ServiceWorkerRegistrationKey&);
     void addRegistration(std::unique_ptr<SWServerRegistration>&&);
     void removeRegistration(const ServiceWorkerRegistrationKey&);

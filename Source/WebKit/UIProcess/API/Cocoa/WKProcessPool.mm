@@ -425,6 +425,16 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateNetworkProcess();
 }
 
+- (void)_sendNetworkProcessWillSuspendImminently
+{
+    _processPool->sendNetworkProcessWillSuspendImminently();
+}
+
+- (void)_sendNetworkProcessDidResume
+{
+    _processPool->sendNetworkProcessDidResume();
+}
+
 - (void)_terminateServiceWorkerProcesses
 {
     _processPool->terminateServiceWorkerProcesses();

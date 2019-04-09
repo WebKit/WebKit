@@ -118,6 +118,8 @@ RegistrationDatabase::~RegistrationDatabase()
 
 void RegistrationDatabase::postTaskToWorkQueue(Function<void()>&& task)
 {
+    ASSERT(isMainThread());
+
     m_workQueue->dispatch([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
         task();
     });
@@ -279,6 +281,14 @@ void RegistrationDatabase::pushChanges(Vector<ServiceWorkerContextData>&& datas,
         if (!completionHandler)
             return;
 
+        callOnMainThread(WTFMove(completionHandler));
+    });
+}
+
+void RegistrationDatabase::close(CompletionHandler<void()>&& completionHandler)
+{
+    postTaskToWorkQueue([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        m_database = nullptr;
         callOnMainThread(WTFMove(completionHandler));
     });
 }

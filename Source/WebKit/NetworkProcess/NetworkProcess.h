@@ -181,6 +181,7 @@ public:
     void prepareToSuspend();
     void cancelPrepareToSuspend();
     void processDidResume();
+    void resume();
 
     // Diagnostic messages logging.
     void logDiagnosticMessage(uint64_t webPageID, const String& message, const String& description, WebCore::ShouldSample);

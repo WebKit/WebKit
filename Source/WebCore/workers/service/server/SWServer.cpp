@@ -210,6 +210,18 @@ void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
         m_registrationStore->clearAll(WTFMove(completionHandler));
 }
 
+void SWServer::startSuspension(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_registrationStore)
+        m_registrationStore->startSuspension(WTFMove(completionHandler));
+}
+
+void SWServer::endSuspension()
+{
+    if (m_registrationStore)
+        m_registrationStore->endSuspension();
+}
+
 void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_importCompleted) {

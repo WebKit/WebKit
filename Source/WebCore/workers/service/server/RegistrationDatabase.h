@@ -52,10 +52,10 @@ public:
 
     ~RegistrationDatabase();
 
-    bool isClosed() const { return !m_database; }
 
     void pushChanges(Vector<ServiceWorkerContextData>&&, CompletionHandler<void()>&&);
     void clearAll(CompletionHandler<void()>&&);
+    void close(CompletionHandler<void()>&&);
 
 private:
     RegistrationDatabase(RegistrationStore&, String&& databaseDirectory);

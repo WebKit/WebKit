@@ -51,6 +51,9 @@ public:
     void clearAll(WTF::CompletionHandler<void()>&&);
     void flushChanges(WTF::CompletionHandler<void()>&&);
 
+    void startSuspension(WTF::CompletionHandler<void()>&&);
+    void endSuspension();
+
     // Callbacks from the SWServer
     void updateRegistration(const ServiceWorkerContextData&);
     void removeRegistration(SWServerRegistration&);
@@ -72,6 +75,9 @@ private:
 
     HashMap<ServiceWorkerRegistrationKey, ServiceWorkerContextData> m_updatedRegistrations;
     Timer m_databasePushTimer;
+
+    bool m_isSuspended { false };
+    bool m_needsPushingChanges { false };
 };
 
 } // namespace WebCore
