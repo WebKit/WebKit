@@ -213,6 +213,7 @@
 #if ENABLE(VIDEO_TRACK)
 #include "CaptionUserPreferences.h"
 #include "PageGroup.h"
+#include "TextTrackCueGeneric.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -3573,6 +3574,21 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     UNUSED_PARAM(mode);
 #endif
     return { };
+}
+
+RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, String text)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return nullptr;
+#if ENABLE(VIDEO_TRACK)
+    return TextTrackCueGeneric::create(*document, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), text);
+#else
+    UNUSED_PARAM(startTime);
+    UNUSED_PARAM(endTime);
+    UNUSED_PARAM(text);
+    return nullptr;
+#endif
 }
 
 #if ENABLE(VIDEO)

@@ -1,0 +1,21 @@
+
+RUN(video.src = findMediaFile("video", "../content/test"))
+EVENT(canplaythrough)
+RUN(captionTrack = video.addTextTrack("captions"))
+RUN(captionTrack.mode = "showing")
+RUN(metadataTrack = video.addTextTrack("metadata"))
+RUN(metadataTrack.mode = "hidden")
+RUN(cue = internals.createGenericCue(2, 4, "I am earlier"))
+RUN(cue.line = 40)
+RUN(captionTrack.addCue(cue))
+RUN(cue = internals.createGenericCue(2.5, 4.5, "I am later"))
+RUN(cue.line = 80)
+RUN(captionTrack.addCue(cue))
+RUN(metadataTrack.addCue(new DataCue(2.25, video.duration, "first data cue")))
+RUN(metadataTrack.addCue(new DataCue(2.25, video.duration, "second data cue")))
+RUN(video.currentTime = 3)
+EVENT(seeked)
+EXPECTED (textTrackDisplayElement(video, "display", 0).textContent == 'I am later') OK
+EXPECTED (textTrackDisplayElement(video, "display", 1).textContent == 'I am earlier') OK
+END OF TEST
+

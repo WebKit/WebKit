@@ -1,3 +1,13 @@
+2019-04-09  Jer Noble  <jer.noble@apple.com>
+
+        Add test for fix of #196095
+        https://bugs.webkit.org/show_bug.cgi?id=196097
+
+        Reviewed by Eric Carlson.
+
+        * media/track/track-in-band-metadata-display-order-expected.txt: Added.
+        * media/track/track-in-band-metadata-display-order.html: Added.
+
 2019-04-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Automatically compute accessibility labels for Apple Pay buttons

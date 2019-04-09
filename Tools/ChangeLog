@@ -1,3 +1,17 @@
+2019-04-09  Jer Noble  <jer.noble@apple.com>
+
+        Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.
+        https://bugs.webkit.org/show_bug.cgi?id=196097
+
+        Reviewed by Eric Carlson.
+
+        Drive-by bug fix: allow tests to play audio without a user gesture by default.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2019-04-09  Pablo Saavedra  <psaavedra@igalia.com>
 
         [JSCOnly] Add an i386 JSCOnly EWS that runs tests

@@ -36,7 +36,7 @@ class GenericCueData;
 
 // A "generic" cue is a non-WebVTT cue, so it is not positioned/sized with the WebVTT logic.
 class TextTrackCueGeneric final : public VTTCue {
-    WTF_MAKE_ISO_ALLOCATED(TextTrackCueGeneric);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(TextTrackCueGeneric, WEBCORE_EXPORT);
 public:
     static Ref<TextTrackCueGeneric> create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
     {
@@ -71,7 +71,7 @@ public:
     String toJSONString() const;
 
 private:
-    TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
+    WEBCORE_EXPORT TextTrackCueGeneric(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String&);
     
     bool isOrderedBefore(const TextTrackCue*) const final;
     bool isPositionedAbove(const TextTrackCue*) const final;
@@ -109,4 +109,9 @@ struct LogArgument<WebCore::TextTrackCueGeneric> {
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextTrackCueGeneric)
+static bool isType(const WebCore::TextTrackCue& cue) { return cue.cueType() == WebCore::TextTrackCue::Generic; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif

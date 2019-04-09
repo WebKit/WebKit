@@ -35,6 +35,7 @@
 
 #include "HTMLElement.h"
 #include "TextTrackCue.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -260,5 +261,9 @@ struct LogArgument<WebCore::VTTCue> {
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VTTCue)
+    static bool isType(const WebCore::TextTrackCue& cue) { return cue.isRenderable(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

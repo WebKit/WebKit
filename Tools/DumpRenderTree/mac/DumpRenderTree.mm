@@ -937,6 +937,7 @@ static void resetWebPreferencesToConsistentValues()
         [preferences setUserStyleSheetEnabled:NO];
 
     [preferences setMediaPlaybackAllowsInline:YES];
+    [preferences setMediaPlaybackRequiresUserGesture:NO];
     [preferences setVideoPlaybackRequiresUserGesture:NO];
     [preferences setAudioPlaybackRequiresUserGesture:NO];
     [preferences setMediaDataLoadsAutomatically:YES];

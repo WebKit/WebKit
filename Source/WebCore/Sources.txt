@@ -3435,6 +3435,7 @@ JSAudioTrackList.cpp
 JSDataCue.cpp
 JSTextTrack.cpp
 JSTextTrackCue.cpp
+JSTextTrackCueGeneric.cpp
 JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTrackEvent.cpp
