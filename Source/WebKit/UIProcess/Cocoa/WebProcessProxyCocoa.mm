@@ -41,6 +41,8 @@
 
 namespace WebKit {
 
+static const Seconds unexpectedActivityDuration = 10_s;
+
 const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
     static NeverDestroyed<HashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
@@ -184,6 +186,27 @@ void WebProcessProxy::releaseHighPerformanceGPU()
 {
     LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
     HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+}
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+void WebProcessProxy::processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&& completion)
+{
+    if (m_throttler.shouldBeRunnable()) {
+        // The process becoming unsuspended was not unexpected; it likely was notified of its running state
+        // before receiving a procsessDidResume() message from the UIProcess.
+        completion();
+        return;
+    }
+
+    // The WebProcess was awakened by something other than the UIProcess. Take out an assertion for a
+    // limited duration to allow whatever task needs to be accomplished time to complete.
+    RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended()", this);
+    auto backgroundActivityTimeoutHandler = [activityToken = m_throttler.backgroundActivityToken(), weakThis = makeWeakPtr(this)] {
+        RELEASE_LOG(ProcessSuspension, "%p - WebProcessProxy::processWasUnexpectedlyUnsuspended() - lambda, background activity timed out", weakThis.get());
+    };
+    m_unexpectedActivityTimer = std::make_unique<WebCore::DeferrableOneShotTimer>(WTFMove(backgroundActivityTimeoutHandler), unexpectedActivityDuration);
+    completion();
 }
 #endif
 

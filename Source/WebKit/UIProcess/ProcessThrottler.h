@@ -60,6 +60,7 @@ public:
     void didConnectToProcess(ProcessID);
     void processReadyToSuspend();
     void didCancelProcessSuspension();
+    bool shouldBeRunnable() const { return m_foregroundCounter.value() || m_backgroundCounter.value(); }
 
 private:
     AssertionState assertionState();

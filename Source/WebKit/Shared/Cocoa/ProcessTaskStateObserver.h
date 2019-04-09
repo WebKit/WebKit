@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProcessAssertion.h"
+#pragma once
 
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS WKProcessTaskStateObserverDelegate;
+OBJC_CLASS BKSProcess;
 
 namespace WebKit {
 
-ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState)
-    : m_assertionState(assertionState)
-{
+class ProcessTaskStateObserver {
+public:
+    class Client;
+
+    ProcessTaskStateObserver();
+    explicit ProcessTaskStateObserver(Client&);
+    ~ProcessTaskStateObserver();
+    
+    enum TaskState {
+        None,
+        Running,
+        Suspended,
+    };
+
+    class Client {
+    public:
+        virtual ~Client() = default;
+        virtual void processTaskStateDidChange(TaskState) = 0;
+    };
+
+    void setClient(Client& client) { m_client = &client; }
+    Client* client() { return m_client; }
+
+    TaskState taskState() const { return m_taskState; }
+
+private:
+    void setTaskState(TaskState);
+
+    Client* m_client { nullptr };
+    TaskState m_taskState { None };
+    RetainPtr<BKSProcess> m_process;
+    RetainPtr<WKProcessTaskStateObserverDelegate> m_delegate;
+};
+
 }
 
-ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState assertionState, AssertionReason)
-    : m_assertionState(assertionState)
-{
-}
-
-ProcessAssertion::~ProcessAssertion() = default;
-
-void ProcessAssertion::setState(AssertionState assertionState)
-{
-    m_assertionState = assertionState;
-}
-
-} // namespace WebKit
-
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

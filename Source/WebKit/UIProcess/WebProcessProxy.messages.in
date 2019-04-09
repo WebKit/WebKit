@@ -83,4 +83,8 @@ messages -> WebProcessProxy LegacyReceiver {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+    ProcessWasUnexpectedlyUnsuspended() -> () Async
+#endif
 }

@@ -45,7 +45,13 @@ enum class AssertionState {
     Suspended,
     Background,
     UnboundedNetworking,
-    Foreground
+    Foreground,
+};
+
+enum class AssertionReason {
+    Extension,
+    FinishTask,
+    FinishTaskUnbounded,
 };
 
 class ProcessAssertion : public CanMakeWeakPtr<ProcessAssertion> {
@@ -58,6 +64,7 @@ public:
     };
 
     ProcessAssertion(ProcessID, const String& reason, AssertionState);
+    ProcessAssertion(ProcessID, const String& reason, AssertionState, AssertionReason);
     virtual ~ProcessAssertion();
 
     void setClient(Client& client) { m_client = &client; }

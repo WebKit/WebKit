@@ -1,3 +1,45 @@
+2019-04-09  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Awaken UIProcess if WebContent process is awakened from suspensions unexpectedly.
+        https://bugs.webkit.org/show_bug.cgi?id=196659
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::sendWithAsyncReply):
+        * Platform/spi/ios/AssertionServicesSPI.h:
+        * Shared/Cocoa/ProcessTaskStateObserver.h: Added.
+        (WebKit::ProcessTaskStateObserver::setClient):
+        (WebKit::ProcessTaskStateObserver::client):
+        (WebKit::ProcessTaskStateObserver::taskState const):
+        * Shared/Cocoa/ProcessTaskStateObserver.mm: Added.
+        (-[WKProcessTaskStateObserverDelegate process:taskStateDidChange:]):
+        (WebKit::toProcessTaskStateObserverTaskState):
+        (WebKit::ProcessTaskStateObserver::ProcessTaskStateObserver):
+        (WebKit::ProcessTaskStateObserver::~ProcessTaskStateObserver):
+        (WebKit::ProcessTaskStateObserver::setTaskState):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::processWasUnexpectedlyUnsuspended):
+        * UIProcess/ProcessAssertion.h:
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertion):
+        * UIProcess/ProcessThrottler.h:
+        (WebKit::ProcessThrottler::shouldBeRunnable const):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (WebKit::reasonForState):
+        (WebKit::toBKSProcessAssertionReason):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::actualPrepareToSuspend):
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+        (WebKit::WebProcess::processDidResume):
+        * WebProcess/WebProcess.h:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::processTaskStateDidChange):
+
 2019-04-09  Alex Christensen  <achristensen@webkit.org>
 
         Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page

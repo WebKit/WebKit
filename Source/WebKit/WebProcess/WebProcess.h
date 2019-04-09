@@ -57,6 +57,10 @@
 #include <wtf/MachSendRight.h>
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "ProcessTaskStateObserver.h"
+#endif
+
 namespace API {
 class Object;
 }
@@ -116,7 +120,12 @@ struct WebsiteDataStoreParameters;
 class LayerHostingContext;
 #endif
 
-class WebProcess : public AuxiliaryProcess {
+class WebProcess
+    : public AuxiliaryProcess
+#if PLATFORM(IOS_FAMILY)
+    , ProcessTaskStateObserver::Client
+#endif
+{
 public:
     static WebProcess& singleton();
     static constexpr ProcessType processType = ProcessType::WebContent;
@@ -429,6 +438,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    void processTaskStateDidChange(ProcessTaskStateObserver::TaskState) final;
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
 #endif
@@ -494,6 +504,8 @@ private:
     bool m_hasRichContentServices { false };
 #endif
 
+    bool m_processIsSuspended { false };
+
     HashSet<uint64_t> m_pagesInWindows;
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
@@ -501,6 +513,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
+    ProcessTaskStateObserver m_taskStateObserver { *this };
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;

@@ -177,7 +177,7 @@ public:
 
     void postConnectionDidCloseOnConnectionWorkQueue();
 
-    template<typename T, typename... Args> void sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& args, uint64_t destinationID = 0);
+    template<typename T, typename C> void sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0);
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { });
     template<typename T> void sendWithReply(T&& message, uint64_t destinationID, FunctionDispatcher& replyDispatcher, Function<void(Optional<typename CodingType<typename T::Reply>::Type>)>&& replyHandler);
     template<typename T> bool sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Seconds timeout = Seconds::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { });
@@ -416,8 +416,8 @@ uint64_t nextAsyncReplyHandlerID();
 void addAsyncReplyHandler(Connection&, uint64_t, CompletionHandler<void(Decoder*)>&&);
 CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection&, uint64_t);
 
-template<typename T, typename... Args>
-void Connection::sendWithAsyncReply(T&& message, CompletionHandler<void(Args...)>&& completionHandler, uint64_t destinationID)
+template<typename T, typename C>
+void Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID)
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 

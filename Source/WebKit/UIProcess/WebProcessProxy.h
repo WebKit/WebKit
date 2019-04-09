@@ -57,6 +57,7 @@ class PageConfiguration;
 }
 
 namespace WebCore {
+class DeferrableOneShotTimer;
 class ResourceRequest;
 struct PluginInfo;
 struct SecurityOriginData;
@@ -301,6 +302,10 @@ public:
     LayerHostingContextID contextIDForVisibilityPropagation() { return m_contextIDForVisibilityPropagation; }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void processWasUnexpectedlyUnsuspended(CompletionHandler<void()>&&);
+#endif
+
 protected:
     static uint64_t generatePageID();
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed);
@@ -448,6 +453,7 @@ private:
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
+    std::unique_ptr<WebCore::DeferrableOneShotTimer> m_unexpectedActivityTimer;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

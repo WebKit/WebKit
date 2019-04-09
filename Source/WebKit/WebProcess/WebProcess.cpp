@@ -1450,6 +1450,7 @@ void WebProcess::resetAllGeolocationPermissions()
 void WebProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
     SetForScope<bool> suspensionScope(m_isSuspending, true);
+    m_processIsSuspended = true;
 
 #if ENABLE(VIDEO)
     suspendAllMediaBuffering();
@@ -1511,6 +1512,9 @@ void WebProcess::prepareToSuspend()
 void WebProcess::cancelPrepareToSuspend()
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend()", this);
+
+    m_processIsSuspended = false;
+
     unfreezeAllLayerTrees();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1583,6 +1587,8 @@ void WebProcess::unfreezeAllLayerTrees()
 void WebProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::processDidResume()", this);
+
+    m_processIsSuspended = false;
 
     cancelMarkAllLayersVolatile();
     unfreezeAllLayerTrees();

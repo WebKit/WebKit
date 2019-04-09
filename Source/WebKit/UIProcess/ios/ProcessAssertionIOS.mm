@@ -146,19 +146,36 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
     }
 }
 
-static BKSProcessAssertionReason reasonForState(AssertionState assertionState)
+static AssertionReason reasonForState(AssertionState assertionState)
 {
     switch (assertionState) {
     case AssertionState::UnboundedNetworking:
-        return BKSProcessAssertionReasonFinishTaskUnbounded;
+        return AssertionReason::FinishTaskUnbounded;
     case AssertionState::Suspended:
     case AssertionState::Background:
     case AssertionState::Foreground:
+        return AssertionReason::Extension;
+    }
+}
+
+static BKSProcessAssertionReason toBKSProcessAssertionReason(AssertionReason reason)
+{
+    switch (reason) {
+    case AssertionReason::Extension:
         return BKSProcessAssertionReasonExtension;
+    case AssertionReason::FinishTask:
+        return BKSProcessAssertionReasonFinishTask;
+    case AssertionReason::FinishTaskUnbounded:
+        return BKSProcessAssertionReasonFinishTaskUnbounded;
     }
 }
 
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState assertionState)
+    : ProcessAssertion(pid, name, assertionState, reasonForState(assertionState))
+{
+}
+
+ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState assertionState, AssertionReason assertionReason)
     : m_assertionState(assertionState)
 {
     auto weakThis = makeWeakPtr(*this);
@@ -173,7 +190,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& name, AssertionState
     };
     RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() PID %d acquiring assertion for process with PID %d, name '%s'", this, getpid(), pid, name.utf8().data());
     
-    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:reasonForState(assertionState) name:(NSString *)name withHandler:handler]);
+    m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:toBKSProcessAssertionReason(assertionReason) name:(NSString *)name withHandler:handler]);
     m_assertion.get().invalidationHandler = ^() {
         dispatch_async(dispatch_get_main_queue(), ^{
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Process assertion for process with PID %d was invalidated", this, pid);

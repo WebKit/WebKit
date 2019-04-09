@@ -28,6 +28,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AssertionServices/BKSApplicationStateMonitor.h>
+#import <AssertionServices/BKSProcess.h>
 #import <AssertionServices/BKSProcessAssertion.h>
 
 #else
@@ -68,6 +69,7 @@ enum {
 typedef uint32_t BKSProcessAssertionFlags;
 
 enum {
+    BKSProcessAssertionReasonFinishTask = 4,
     BKSProcessAssertionReasonExtension = 13,
     BKSProcessAssertionReasonFinishTaskUnbounded = 10004,
 };
@@ -85,6 +87,29 @@ typedef void (^BKSProcessAssertionAcquisitionHandler)(BOOL acquired);
 
 @property (nonatomic, copy) BKSProcessAssertionInvalidationHandler invalidationHandler;
 - (void)invalidate;
+@end
+
+enum {
+    BKSProcessTaskStateNone,
+    BKSProcessTaskStateRunning,
+    BKSProcessTaskStateSuspended,
+};
+typedef uint32_t BKSProcessTaskState;
+
+@class BKSProcess;
+
+@protocol BKSProcessDelegate <NSObject>
+@optional
+- (void)process:(BKSProcess *)process taskStateDidChange:(BKSProcessTaskState)newState;
+@end
+
+@interface BKSProcess : NSObject
+@end
+
+@interface BKSProcess ()
++ (BKSProcess *)currentProcess;
+@property (nonatomic, readwrite, weak) id <BKSProcessDelegate> delegate;
+@property (nonatomic, readonly, assign) BKSProcessTaskState taskState;
 @end
 
 #endif

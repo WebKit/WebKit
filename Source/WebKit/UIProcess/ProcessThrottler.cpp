@@ -68,7 +68,7 @@ void ProcessThrottler::updateAssertionNow()
     
 void ProcessThrottler::updateAssertion()
 {
-    bool shouldBeRunnable = m_foregroundCounter.value() || m_backgroundCounter.value();
+    bool shouldBeRunnable = this->shouldBeRunnable();
 
     // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
     // and clean up - move it to the background and send it a message to notify. Schedule a timeout so it can't stay running
