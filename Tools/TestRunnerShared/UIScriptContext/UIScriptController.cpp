@@ -227,6 +227,28 @@ JSValueRef UIScriptController::didHideMenuCallback() const
     return m_context->callbackWithID(CallbackTypeDidHideMenu);
 }
 
+void UIScriptController::setWillPresentPopoverCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeWillPresentPopover);
+    platformSetWillPresentPopoverCallback();
+}
+
+JSValueRef UIScriptController::willPresentPopoverCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeWillPresentPopover);
+}
+
+void UIScriptController::setDidDismissPopoverCallback(JSValueRef callback)
+{
+    m_context->registerCallback(callback, CallbackTypeDidDismissPopover);
+    platformSetDidDismissPopoverCallback();
+}
+
+JSValueRef UIScriptController::didDismissPopoverCallback() const
+{
+    return m_context->callbackWithID(CallbackTypeDidDismissPopover);
+}
+
 #if !PLATFORM(COCOA)
 
 void UIScriptController::zoomToScale(double, JSValueRef)
@@ -550,6 +572,19 @@ void UIScriptController::platformSetDidShowMenuCallback()
 }
 
 void UIScriptController::platformSetDidHideMenuCallback()
+{
+}
+
+bool UIScriptController::isShowingPopover() const
+{
+    return false;
+}
+
+void UIScriptController::platformSetWillPresentPopoverCallback()
+{
+}
+
+void UIScriptController::platformSetDidDismissPopoverCallback()
 {
 }
 

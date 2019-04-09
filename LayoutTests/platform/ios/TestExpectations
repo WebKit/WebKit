@@ -25,6 +25,7 @@ http/tests/gzip-content-encoding [ Pass ]
 
 # iPad-specific tests skipped here and re-enabled in platform/ipad
 fast/events/ios/ipad [ Skip ]
+fast/forms/ios/ipad [ Skip ]
 
 ###
 # Unsupported and disabled features

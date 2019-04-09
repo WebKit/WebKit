@@ -3807,6 +3807,15 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     return _formAccessoryView.get();
 }
 
+- (void)accessoryOpen
+{
+    if (!_inputPeripheral)
+        return;
+    [self _zoomToRevealFocusedElement];
+    [self _updateAccessory];
+    [_inputPeripheral beginEditing];
+}
+
 - (void)_updateAccessory
 {
     auto* accessoryView = self.formAccessoryView; // Creates one, if needed.
@@ -4999,9 +5008,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         if (_inputPeripheral) {
             if (!self.isFirstResponder)
                 [self becomeFirstResponder];
-            [self _zoomToRevealFocusedElement];
-            [self _updateAccessory];
-            [_inputPeripheral beginEditing];
+            [self accessoryOpen];
         }
         return;
     }

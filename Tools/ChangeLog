@@ -1,3 +1,39 @@
+2019-04-09  Daniel Bates  <dabates@apple.com>
+
+        [iPad] Should open popover when the spacebar is pressed
+        https://bugs.webkit.org/show_bug.cgi?id=196360
+        <rdar://problem/49389129>
+
+        Reviewed by Brent Fulgham.
+
+        Add testing infrastructure to support waiting for a popover to be presented or dismissed.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingPopover const): Added.
+        (WTR::UIScriptController::platformSetWillPresentPopoverCallback): Added.
+        (WTR::UIScriptController::platformSetDidDismissPopoverCallback): Added.
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptContext.h:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setWillPresentPopoverCallback): Added.
+        (WTR::UIScriptController::willPresentPopoverCallback const): Added.
+        (WTR::UIScriptController::setDidDismissPopoverCallback): Added.
+        (WTR::UIScriptController::didDismissPopoverCallback const): Added.
+        (WTR::UIScriptController::isShowingPopover const): Added.
+        (WTR::UIScriptController::platformSetWillPresentPopoverCallback): Added.
+        (WTR::UIScriptController::platformSetDidDismissPopoverCallback): Added.
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]): Update some state.
+        (-[TestRunnerWKWebView resetInteractionCallbacks]): Ditto.
+        (-[TestRunnerWKWebView _willPresentPopover]): Added.
+        (-[TestRunnerWKWebView _didDismissPopover]): Added.
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isShowingPopover const): Added.
+        (WTR::UIScriptController::platformSetWillPresentPopoverCallback): Added.
+        (WTR::UIScriptController::platformSetDidDismissPopoverCallback): Added.
+
 2019-04-09  Alex Christensen  <achristensen@webkit.org>
 
         Clicking "Go Back" from a safe browsing warning from an iframe should navigate the WKWebView back to the previous page

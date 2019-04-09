@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=800">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body style="height: 4096px">
+<!-- Place the test container above the console output to avoid the need to compensate for page scroll. -->
+<div id="test-container">
+    <p><select id="test">
+        <option>First</option>
+        <option>Second</option>
+    </select></p>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+window.jsTestIsAsync = true;
+
+let expectedValue;
+
+const modifierDisplayNameMap = {
+    "altKey": "Option",
+    "ctrlKey": "Control",
+    "metaKey": "Command",
+    "shiftKey": "Shift",
+    "capsLockKey": "Caps Lock",
+}
+
+class KeyCommand {
+    constructor(key, modifiers = [])
+    {
+        this.key = key;
+        this.modifiers = modifiers;
+    }
+
+    toString()
+    {
+        let readableCommand = this.modifiers.map((modifier) => modifierDisplayNameMap[modifier]);
+        readableCommand.push(this.key);
+        return readableCommand.join(" + ");
+    }
+}
+
+function done()
+{
+    let testContainer = document.getElementById("test-container");
+    document.body.removeChild(testContainer);
+    finishJSTest()
+}
+
+async function runTest()
+{
+    if (!window.testRunner) {
+        testFailed("Must be run in WebKitTestRunner.");
+        done();
+        return;
+    }
+
+    async function testScrollIntoView() {
+        shouldBeNonZero("window.scrollY");
+        async function handleScroll() {
+            if (window.scrollY)
+                return;
+            shouldBeZero("window.scrollY");
+            await UIHelper.waitForPopoverToPresent();
+            UIHelper.keyDown("escape");
+            await UIHelper.waitForPopoverToDismiss();
+            done();
+        }
+        // The scroll initiated by pressing the spacebar is animated. Multiple scroll events are
+        // dispatched. We want to wait until the page scrolls to the top before continuing to ensure
+        // consistent test results.
+        window.addEventListener("scroll", handleScroll);
+        UIHelper.keyDown(" ");
+    }
+
+    async function handleFocus() {
+        debug("<br>After tab focused:");
+        shouldBeEqualToString('document.getElementById("test").value', expectedValue);
+        debug("<br>After dismissing popover by pressing Escape:");
+        UIHelper.keyDown("escape");
+        await UIHelper.waitForPopoverToDismiss();
+        shouldBeEqualToString('document.getElementById("test").value', expectedValue);
+        debug("<br>After opening popover by pressing spacebar:");
+        UIHelper.keyDown(" ");
+        await UIHelper.waitForPopoverToPresent();
+        shouldBeEqualToString('document.getElementById("test").value', expectedValue);
+        UIHelper.keyDown("escape");
+        await UIHelper.waitForPopoverToDismiss();
+        debug("<br>After scrolling the page and pressing spacebar:");
+        window.addEventListener("scroll", testScrollIntoView, { once: true });
+        window.scrollTo(0, document.body.scrollHeight); // Scroll to the bottom of the page.
+    }
+    let elementToTest = document.getElementById("test");
+    expectedValue = elementToTest.value;
+    elementToTest.addEventListener("focus", handleFocus, { once: true });
+    UIHelper.keyDown("\t", ["altKey"]);
+}
+
+description("Tests that pressing the spacebar and Escape to open and close the popover work, do not cause a value change, and that we scroll the form control into view when the popover is opened.");
+
+runTest();
+</script>
+</body>
+</html>

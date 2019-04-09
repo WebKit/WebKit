@@ -166,9 +166,14 @@ public:
 
     void setDidHideMenuCallback(JSValueRef);
     JSValueRef didHideMenuCallback() const;
-
     void setDidShowMenuCallback(JSValueRef);
     JSValueRef didShowMenuCallback() const;
+
+    bool isShowingPopover() const;
+    void setDidDismissPopoverCallback(JSValueRef);
+    JSValueRef didDismissPopoverCallback() const;
+    void setWillPresentPopoverCallback(JSValueRef);
+    JSValueRef willPresentPopoverCallback() const;
 
     bool isShowingMenu() const;
     JSObjectRef rectForMenuAction(JSStringRef action) const;
@@ -250,6 +255,8 @@ private:
     void platformSetDidHideKeyboardCallback();
     void platformSetDidShowMenuCallback();
     void platformSetDidHideMenuCallback();
+    void platformSetWillPresentPopoverCallback();
+    void platformSetDidDismissPopoverCallback();
     void platformSetDidEndScrollingCallback();
     void platformClearAllCallbacks();
     void platformPlayBackEventStream(JSStringRef, JSValueRef);

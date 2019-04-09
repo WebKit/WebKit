@@ -353,6 +353,19 @@ void UIScriptController::platformSetDidHideMenuCallback()
 {
 }
 
+bool UIScriptController::isShowingPopover() const
+{
+    return false;
+}
+
+void UIScriptController::platformSetWillPresentPopoverCallback()
+{
+}
+
+void UIScriptController::platformSetDidDismissPopoverCallback()
+{
+}
+
 JSObjectRef UIScriptController::rectForMenuAction(JSStringRef) const
 {
     return nullptr;

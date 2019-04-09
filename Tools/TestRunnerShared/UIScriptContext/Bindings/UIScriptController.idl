@@ -231,6 +231,10 @@ interface UIScriptController {
     readonly attribute object menuRect;
     object rectForMenuAction(DOMString action);
 
+    readonly attribute boolean isShowingPopover;
+    attribute object willPresentPopoverCallback;
+    attribute object didDismissPopoverCallback;
+
     attribute object willBeginZoomingCallback;
     attribute object didEndZoomingCallback;
 

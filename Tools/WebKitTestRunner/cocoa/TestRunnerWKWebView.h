@@ -43,6 +43,8 @@
 @property (nonatomic, copy) void (^didHideKeyboardCallback)(void);
 @property (nonatomic, copy) void (^didShowMenuCallback)(void);
 @property (nonatomic, copy) void (^didHideMenuCallback)(void);
+@property (nonatomic, copy) void (^willPresentPopoverCallback)(void);
+@property (nonatomic, copy) void (^didDismissPopoverCallback)(void);
 @property (nonatomic, copy) void (^didEndScrollingCallback)(void);
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
@@ -56,6 +58,7 @@
 
 @property (nonatomic, readonly, getter=isShowingKeyboard) BOOL showingKeyboard;
 @property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
+@property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
 @property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;
 

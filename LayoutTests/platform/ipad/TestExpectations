@@ -1,3 +1,5 @@
+fast/forms/ios/ipad [ Pass ]
+
 # iPads don't zoom when form elements are focused
 fast/forms/ios/accessory-bar-navigation.html [ Skip ]
 fast/forms/ios/choose-select-option.html [ Skip ]

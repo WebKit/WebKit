@@ -907,6 +907,29 @@ void UIScriptController::platformSetDidHideMenuCallback()
     };
 }
 
+bool UIScriptController::isShowingPopover() const
+{
+    return TestController::singleton().mainWebView()->platformView().showingPopover;
+}
+
+void UIScriptController::platformSetWillPresentPopoverCallback()
+{
+    TestController::singleton().mainWebView()->platformView().willPresentPopoverCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeWillPresentPopover);
+    };
+}
+
+void UIScriptController::platformSetDidDismissPopoverCallback()
+{
+    TestController::singleton().mainWebView()->platformView().didDismissPopoverCallback = ^{
+        if (!m_context)
+            return;
+        m_context->fireCallback(CallbackTypeDidDismissPopover);
+    };
+}
+
 JSObjectRef UIScriptController::rectForMenuAction(JSStringRef jsAction) const
 {
     auto action = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsAction));
@@ -974,6 +997,8 @@ void UIScriptController::platformClearAllCallbacks()
     webView.willBeginZoomingCallback = nil;
     webView.didHideKeyboardCallback = nil;
     webView.didShowKeyboardCallback = nil;
+    webView.willPresentPopoverCallback = nil;
+    webView.didDismissPopoverCallback = nil;
     webView.didEndScrollingCallback = nil;
     webView.rotationDidEndCallback = nil;
 }

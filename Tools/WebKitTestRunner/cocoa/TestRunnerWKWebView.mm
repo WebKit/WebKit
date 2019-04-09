@@ -55,6 +55,7 @@
 @property (nonatomic, copy) void (^retrieveSpeakSelectionContentCompletionHandler)(void);
 @property (nonatomic, getter=isShowingKeyboard, setter=setIsShowingKeyboard:) BOOL showingKeyboard;
 @property (nonatomic, getter=isShowingMenu, setter=setIsShowingMenu:) BOOL showingMenu;
+@property (nonatomic, getter=isShowingPopover, setter=setIsShowingPopover:) BOOL showingPopover;
 
 @end
 
@@ -79,6 +80,8 @@ IGNORE_WARNINGS_END
         [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
         [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
         [center addObserver:self selector:@selector(_didHideMenu) name:UIMenuControllerDidHideMenuNotification object:nil];
+        [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
+        [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
         self.UIDelegate = self;
     }
     return self;
@@ -141,6 +144,8 @@ IGNORE_WARNINGS_END
     self.didHideKeyboardCallback = nil;
     self.didShowMenuCallback = nil;
     self.didHideMenuCallback = nil;
+    self.willPresentPopoverCallback = nil;
+    self.didDismissPopoverCallback = nil;
     self.didEndScrollingCallback = nil;
     self.rotationDidEndCallback = nil;
 }
@@ -198,6 +203,26 @@ IGNORE_WARNINGS_END
     self.showingMenu = NO;
     if (self.didHideMenuCallback)
         self.didHideMenuCallback();
+}
+
+- (void)_willPresentPopover
+{
+    if (self.showingPopover)
+        return;
+
+    self.showingPopover = YES;
+    if (self.willPresentPopoverCallback)
+        self.willPresentPopoverCallback();
+}
+
+- (void)_didDismissPopover
+{
+    if (!self.showingPopover)
+        return;
+
+    self.showingPopover = NO;
+    if (self.didDismissPopoverCallback)
+        self.didDismissPopoverCallback();
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view

@@ -382,6 +382,38 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static waitForPopoverToPresent()
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (uiController.isShowingPopover)
+                        uiController.uiScriptComplete();
+                    else
+                        uiController.willPresentPopoverCallback = () => uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
+    static waitForPopoverToDismiss()
+    {
+        if (!this.isWebKit2() || !this.isIOS())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                (function() {
+                    if (uiController.isShowingPopover)
+                        uiController.didDismissPopoverCallback = () => uiController.uiScriptComplete();
+                    else
+                        uiController.uiScriptComplete();
+                })()`, resolve);
+        });
+    }
+
     static waitForKeyboardToHide()
     {
         if (!this.isWebKit2() || !this.isIOS())

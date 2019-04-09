@@ -84,6 +84,10 @@
         [_view accessoryDone];
         return YES;
     }
+    if (!_editing && keyEvent._keyCode == kHIDUsage_KeyboardSpacebar) {
+        [_view accessoryOpen];
+        return YES;
+    }
     return NO;
 }
 

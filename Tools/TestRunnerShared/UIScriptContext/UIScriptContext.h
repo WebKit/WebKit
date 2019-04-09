@@ -56,6 +56,8 @@ typedef enum  {
     CallbackTypeDidHideKeyboard,
     CallbackTypeDidShowMenu,
     CallbackTypeDidHideMenu,
+    CallbackTypeWillPresentPopover,
+    CallbackTypeDidDismissPopover,
     CallbackTypeDidEndScrolling,
     CallbackTypeDidStartFormControlInteraction,
     CallbackTypeDidEndFormControlInteraction,
