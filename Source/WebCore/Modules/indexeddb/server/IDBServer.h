@@ -61,8 +61,8 @@ class IDBBackingStoreTemporaryFileHandler;
 class IDBServer : public RefCounted<IDBServer>, public CrossThreadTaskHandler, public CanMakeWeakPtr<IDBServer> {
 public:
     using QuotaManagerGetter = WTF::Function<StorageQuotaManager*(PAL::SessionID, const ClientOrigin&)>;
-    static Ref<IDBServer> create(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&& isClosingDatabaseCallback = [](bool) { });
-    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&& isClosingDatabaseCallback = [](bool) { });
+    static Ref<IDBServer> create(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&);
+    WEBCORE_EXPORT static Ref<IDBServer> create(PAL::SessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&);
 
     WEBCORE_EXPORT void registerConnection(IDBConnectionToClient&);
     WEBCORE_EXPORT void unregisterConnection(IDBConnectionToClient&);
@@ -116,10 +116,6 @@ public:
     uint64_t perOriginQuota() const { return m_perOriginQuota; }
     WEBCORE_EXPORT void setPerOriginQuota(uint64_t);
 
-    void closeDatabase(UniqueIDBDatabase*);
-    void didCloseDatabase(UniqueIDBDatabase*);
-    void hysteresisUpdated(PAL::HysteresisState);
-
     void requestSpace(const ClientOrigin&, uint64_t taskSize, CompletionHandler<void(StorageQuotaManager::Decision)>&&);
     void increasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
     void decreasePotentialSpaceUsed(const ClientOrigin&, uint64_t taskSize);
@@ -129,8 +125,8 @@ public:
     void initializeQuotaUser(const ClientOrigin& origin) { ensureQuotaUser(origin); }
 
 private:
-    IDBServer(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&&);
-    IDBServer(PAL::SessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&, WTF::Function<void(bool)>&&);
+    IDBServer(PAL::SessionID, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&);
+    IDBServer(PAL::SessionID, const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler&, QuotaManagerGetter&&);
 
     UniqueIDBDatabase& getOrCreateUniqueIDBDatabase(const IDBDatabaseIdentifier&);
 
@@ -186,7 +182,6 @@ private:
     PAL::SessionID m_sessionID;
     HashMap<uint64_t, RefPtr<IDBConnectionToClient>> m_connectionMap;
     HashMap<IDBDatabaseIdentifier, std::unique_ptr<UniqueIDBDatabase>> m_uniqueIDBDatabaseMap;
-    HashSet<UniqueIDBDatabase*> m_uniqueIDBDatabasesInClose;
 
     HashMap<uint64_t, UniqueIDBDatabaseConnection*> m_databaseConnections;
     HashMap<IDBResourceIdentifier, UniqueIDBDatabaseTransaction*> m_transactions;
@@ -197,9 +192,6 @@ private:
     IDBBackingStoreTemporaryFileHandler& m_backingStoreTemporaryFileHandler;
 
     uint64_t m_perOriginQuota { defaultPerOriginQuota };
-
-    WTF::Function<void(bool)> m_isClosingDatabaseCallback;
-    PAL::HysteresisActivity m_isClosingDatabaseHysteresis;
 
     HashMap<ClientOrigin, std::unique_ptr<QuotaUser>> m_quotaUsers;
     QuotaManagerGetter m_quotaManagerGetter;

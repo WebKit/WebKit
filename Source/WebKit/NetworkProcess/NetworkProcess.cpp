@@ -2122,10 +2122,6 @@ Ref<IDBServer::IDBServer> NetworkProcess::createIDBServer(PAL::SessionID session
         if (!weakThis)
             return nullptr;
         return &this->storageQuotaManager(sessionID, origin);
-    }, [this, weakThis = makeWeakPtr(this)](bool isHoldingLockedFiles) {
-        if (!weakThis)
-            return;
-        this->notifyHoldingLockedFiles(isHoldingLockedFiles);
     });
     server->setPerOriginQuota(m_idbPerOriginQuota);
     return server;
@@ -2501,11 +2497,6 @@ void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, Completio
         return session->clearAdClickAttribution(WTFMove(completionHandler));
     
     completionHandler();
-}
-
-void NetworkProcess::notifyHoldingLockedFiles(bool isIDBDatabaseHoldingLockedFiles)
-{
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsIDBDatabaseHoldingLockedFiles(isIDBDatabaseHoldingLockedFiles), 0);
 }
 
 } // namespace WebKit

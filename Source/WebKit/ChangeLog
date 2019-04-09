@@ -1,3 +1,20 @@
+2019-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove unnecessary network process assertion for IDB close
+        https://bugs.webkit.org/show_bug.cgi?id=196693
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createIDBServer):
+        (WebKit::NetworkProcess::notifyHoldingLockedFiles): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::setIsIDBDatabaseHoldingLockedFiles): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+
 2019-04-09  Chris Dumez  <cdumez@apple.com>
 
         Loads using loadHTMLString() cause flashing when process-swapping

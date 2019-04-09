@@ -128,8 +128,6 @@ public:
     void setQuota(uint64_t);
 
 private:
-    enum class CloseState { Start, Done };
-
     void handleDatabaseOperations();
     void handleCurrentOperation();
     void performCurrentOpenOperation();
@@ -250,8 +248,6 @@ private:
 
     void maybeFinishHardClose();
     bool isDoneWithHardClose();
-
-    void notifyServerAboutClose(CloseState);
 
     void requestSpace(uint64_t taskSize, const char* errorMessage, CompletionHandler<void(Optional<IDBError>&&)>&&);
     void waitForRequestSpaceCompletion(CompletionHandler<void(Optional<IDBError>&&)>&&);
