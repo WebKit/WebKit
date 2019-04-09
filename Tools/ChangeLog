@@ -1,3 +1,19 @@
+2019-04-08  Jonathan Bedard  <jbedard@apple.com>
+
+        Log stack-trace for run-webkit-tests when interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=176393
+        <rdar://problem/34262310>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/common/interrupt_debugging.py: Added.
+        (log_stack_trace): Given a Python frame object, log a stack trace to the provided file.
+        (StackTraceFileContext): Context which allows stack-traces to be printed to stderr or to a file. 
+        (log_stack_trace_on_term): Attach a listener to SIGTERM so that a stack-trace can be logged when a program is terminated.
+        (log_stack_trace_on_ctrl_c): Attach a listener to SIGINT so that a stack-trace can be logged when a program is CTRL+Ced. 
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Set handlers to log stack trace on interruption.
+
 2019-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         AX: Support API: accessibilityReplaceRange:withText
