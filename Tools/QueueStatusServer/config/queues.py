@@ -40,6 +40,7 @@ all_queue_names = [
     "jsc-ews",
     "jsc-mips-ews",
     "jsc-armv7-ews",
+    "jsc-i386-ews",
     "mac-ews",
     "mac-wk2-ews",
     "mac-debug-ews",
