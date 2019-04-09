@@ -2875,10 +2875,8 @@ EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState* exec, JSObject* s
     })));
 }
 
-void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
+ALWAYS_INLINE static void putDynamicVar(ExecState* exec, VM& vm, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits, bool isStrictMode)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     const Identifier& ident = Identifier::fromUid(exec, impl);
@@ -2902,16 +2900,25 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
         return;
     }
 
-    CodeOrigin origin = exec->codeOrigin();
-    auto* inlineCallFrame = origin.inlineCallFrame();
-    bool strictMode;
-    if (inlineCallFrame)
-        strictMode = inlineCallFrame->baselineCodeBlock->isStrictMode();
-    else
-        strictMode = exec->codeBlock()->isStrictMode();
-    PutPropertySlot slot(scope, strictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
+    PutPropertySlot slot(scope, isStrictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     throwScope.release();
     scope->methodTable(vm)->put(scope, exec, ident, JSValue::decode(value), slot);
+}
+
+void JIT_OPERATION operationPutDynamicVarStrict(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    constexpr bool isStrictMode = true;
+    return putDynamicVar(exec, vm, scope, value, impl, getPutInfoBits, isStrictMode);
+}
+
+void JIT_OPERATION operationPutDynamicVarNonStrict(ExecState* exec, JSObject* scope, EncodedJSValue value, UniquedStringImpl* impl, unsigned getPutInfoBits)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    constexpr bool isStrictMode = false;
+    return putDynamicVar(exec, vm, scope, value, impl, getPutInfoBits, isStrictMode);
 }
 
 int32_t JIT_OPERATION operationMapHash(ExecState* exec, EncodedJSValue input)

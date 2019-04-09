@@ -268,7 +268,8 @@ JSCell* JIT_OPERATION operationCreateFixedArray(ExecState*, unsigned length);
 JSCell* JIT_OPERATION operationResolveScope(ExecState*, JSScope*, UniquedStringImpl*);
 EncodedJSValue JIT_OPERATION operationResolveScopeForHoistingFuncDeclInEval(ExecState*, JSScope*, UniquedStringImpl*);
 EncodedJSValue JIT_OPERATION operationGetDynamicVar(ExecState*, JSObject* scope, UniquedStringImpl*, unsigned);
-void JIT_OPERATION operationPutDynamicVar(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
+void JIT_OPERATION operationPutDynamicVarStrict(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
+void JIT_OPERATION operationPutDynamicVarNonStrict(ExecState*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned);
 
 int64_t JIT_OPERATION operationConvertBoxedDoubleToInt52(EncodedJSValue);
 int64_t JIT_OPERATION operationConvertDoubleToInt52(double);

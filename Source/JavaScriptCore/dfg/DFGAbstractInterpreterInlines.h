@@ -2531,7 +2531,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case ToThis: {
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
-        bool strictMode = m_graph.executableFor(node->origin.semantic)->isStrictMode();
+        bool strictMode = m_graph.isStrictModeFor(node->origin.semantic);
 
         ToThisResult result = isToThisAnIdentity(m_vm, strictMode, source);
         switch (result) {

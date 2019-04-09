@@ -1,3 +1,40 @@
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG should respect node's strict flag
+        https://bugs.webkit.org/show_bug.cgi?id=196617
+
+        Reviewed by Saam Barati.
+
+        We accidentally use codeBlock->isStrictMode() directly in DFG and FTL. But this is wrong since this CodeBlock is the top level DFG/FTL CodeBlock,
+        and this code does not respect the isStrictMode flag for the inlined CodeBlocks. In this patch, we start using isStrictModeFor(CodeOrigin) consistently
+        in DFG and FTL to get the right isStrictMode flag for the DFG node.
+        And we also split compilePutDynamicVar into compilePutDynamicVarStrict and compilePutDynamicVarNonStrict since (1) it is cleaner than accessing inlined
+        callframe in the operation function, and (2) it is aligned to the other functions like operationPutByValDirectNonStrict etc.
+        This bug is discovered by RandomizingFuzzerAgent by expanding the DFG coverage.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupToThis):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutDynamicVar):
+        (JSC::DFG::SpeculativeJIT::compileToThis):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutDynamicVar):
+
 2019-04-08  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WinCairo] Separate copied headers into different directories

@@ -2655,9 +2655,9 @@ private:
 
     void fixupToThis(Node* node)
     {
-        ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
+        bool isStrictMode = m_graph.isStrictModeFor(node->origin.semantic);
 
-        if (ecmaMode == StrictMode) {
+        if (isStrictMode) {
             if (node->child1()->shouldSpeculateBoolean()) {
                 fixEdge<BooleanUse>(node->child1());
                 node->convertToIdentity();
@@ -2710,7 +2710,7 @@ private:
         }
 
         if (node->child1()->shouldSpeculateOther()) {
-            if (ecmaMode == StrictMode) {
+            if (isStrictMode) {
                 fixEdge<OtherUse>(node->child1());
                 node->convertToIdentity();
                 return;

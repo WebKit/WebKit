@@ -447,8 +447,8 @@ private:
             
         case ToThis: {
             // ToThis in methods for primitive types should speculate primitive types in strict mode.
-            ECMAMode ecmaMode = m_graph.executableFor(node->origin.semantic)->isStrictMode() ? StrictMode : NotStrictMode;
-            if (ecmaMode == StrictMode) {
+            bool isStrictMode = m_graph.isStrictModeFor(node->origin.semantic);
+            if (isStrictMode) {
                 if (node->child1()->shouldSpeculateBoolean()) {
                     changed |= mergePrediction(SpecBoolean);
                     break;
@@ -496,7 +496,7 @@ private:
             }
 
             SpeculatedType prediction = node->child1()->prediction();
-            if (ecmaMode == StrictMode)
+            if (isStrictMode)
                 changed |= mergePrediction(node->getHeapPrediction());
             else if (prediction) {
                 if (prediction & ~SpecObject) {
