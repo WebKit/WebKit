@@ -1547,16 +1547,15 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     }
 
     GPRTemporary temp(this);
-    GPRReg tempGPR = temp.gpr();
-
-    m_jit.loadPtr(CCallHelpers::Address(stringGPR, JSString::offsetOfValue()), tempGPR);
-    auto isRope = m_jit.branchIfRopeStringImpl(tempGPR);
-
     GPRTemporary temp2(this);
     GPRTemporary startIndex(this);
 
+    GPRReg tempGPR = temp.gpr();
     GPRReg temp2GPR = temp2.gpr();
     GPRReg startIndexGPR = startIndex.gpr();
+
+    m_jit.loadPtr(CCallHelpers::Address(stringGPR, JSString::offsetOfValue()), tempGPR);
+    auto isRope = m_jit.branchIfRopeStringImpl(tempGPR);
     {
         m_jit.load32(MacroAssembler::Address(tempGPR, StringImpl::lengthMemoryOffset()), temp2GPR);
 

@@ -1,5 +1,30 @@
 2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] isRope jump in StringSlice should not jump over register allocations
+        https://bugs.webkit.org/show_bug.cgi?id=196716
+
+        Reviewed by Saam Barati.
+
+        Jumping over the register allocation code in DFG (like the following) is wrong.
+
+            auto jump = m_jit.branchXXX();
+            {
+                GPRTemporary reg(this);
+                GPRReg regGPR = reg.gpr();
+                ...
+            }
+            jump.link(&m_jit);
+
+        When GPRTemporary::gpr allocates a new register, it can flush the previous register value into the stack and make the register usable.
+        Jumping over this register allocation code skips the flushing code, and makes the DFG's stack and register content tracking inconsistent:
+        DFG thinks that the content is flushed and stored in particular stack slot even while this flushing code is skipped.
+        In this patch, we perform register allocations before jumping to the slow path based on `isRope` condition in StringSlice.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStringSlice):
+
+2019-04-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] to_index_string should not assume incoming value is Uint32
         https://bugs.webkit.org/show_bug.cgi?id=196713
 
