@@ -29,6 +29,7 @@
 #include "AllocatorInlines.h"
 #include "BlockDirectoryInlines.h"
 #include "IsoAlignedMemoryAllocator.h"
+#include "IsoSubspaceInlines.h"
 #include "LocalAllocatorInlines.h"
 
 namespace JSC {

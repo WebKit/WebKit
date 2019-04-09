@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "Instruction.h"
 #include <wtf/Forward.h>

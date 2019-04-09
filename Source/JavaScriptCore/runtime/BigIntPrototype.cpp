@@ -27,6 +27,7 @@
 #include "config.h"
 #include "BigIntPrototype.h"
 
+#include "BigIntObject.h"
 #include "Error.h"
 #include "JSBigInt.h"
 #include "JSCBuiltins.h"

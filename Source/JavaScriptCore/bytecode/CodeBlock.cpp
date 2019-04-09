@@ -108,9 +108,6 @@
 #endif
 
 namespace JSC {
-namespace CodeBlockInternal {
-static constexpr bool verbose = false;
-} // namespace CodeBlockInternal
 
 const ClassInfo CodeBlock::s_info = {
     "CodeBlock", nullptr, nullptr, nullptr,

@@ -29,7 +29,6 @@
 #include "Heap.h"
 #include "HeapCellInlines.h"
 #include "IndexingHeader.h"
-#include "JSCallee.h"
 #include "JSCast.h"
 #include "Structure.h"
 #include <type_traits>

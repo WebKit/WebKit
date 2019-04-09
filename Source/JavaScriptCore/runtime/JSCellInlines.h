@@ -33,6 +33,7 @@
 #include "DeferGC.h"
 #include "FreeListInlines.h"
 #include "Handle.h"
+#include "HeapInlines.h"
 #include "IsoSubspaceInlines.h"
 #include "JSBigInt.h"
 #include "JSCast.h"
@@ -41,6 +42,7 @@
 #include "JSString.h"
 #include "LocalAllocatorInlines.h"
 #include "MarkedBlock.h"
+#include "SlotVisitorInlines.h"
 #include "Structure.h"
 #include "Symbol.h"
 #include <wtf/CompilationThread.h>

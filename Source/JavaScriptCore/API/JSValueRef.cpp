@@ -36,6 +36,7 @@
 #include "JSCallbackObject.h"
 #include "JSGlobalObject.h"
 #include "JSONObject.h"
+#include "JSObjectRefPrivate.h"
 #include "JSString.h"
 #include "LiteralParser.h"
 #include "Protect.h"

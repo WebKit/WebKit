@@ -24,9 +24,9 @@
 
 #include "Error.h"
 #include "GetterSetter.h"
+#include "JSCInlines.h"
 #include "RegExpGlobalDataInlines.h"
 #include "RegExpPrototype.h"
-#include "StructureInlines.h"
 #include "YarrFlags.h"
 
 namespace JSC {

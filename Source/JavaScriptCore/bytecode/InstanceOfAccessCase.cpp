@@ -28,6 +28,8 @@
 
 #if ENABLE(JIT)
 
+#include "JSCInlines.h"
+
 namespace JSC {
 
 std::unique_ptr<AccessCase> InstanceOfAccessCase::create(

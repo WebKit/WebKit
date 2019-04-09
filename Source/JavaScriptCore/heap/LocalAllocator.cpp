@@ -27,8 +27,12 @@
 #include "LocalAllocator.h"
 
 #include "AllocatingScope.h"
+#include "FreeListInlines.h"
+#include "GCDeferralContext.h"
+#include "JSCInlines.h"
 #include "LocalAllocatorInlines.h"
 #include "Options.h"
+#include "SuperSampler.h"
 
 namespace JSC {
 

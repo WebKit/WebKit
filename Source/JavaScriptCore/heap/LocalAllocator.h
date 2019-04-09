@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AllocationFailureMode.h"
 #include "FreeList.h"
 #include "MarkedBlock.h"
 #include <wtf/Noncopyable.h>

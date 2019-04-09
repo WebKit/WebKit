@@ -1,3 +1,71 @@
+2019-04-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        JSC should build successfully even with -DENABLE_UNIFIED_BUILDS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=193073
+
+        Reviewed by Keith Miller.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitEqualityOpImpl):
+        (JSC::BytecodeGenerator::emitEqualityOp): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitEqualityOp):
+        Factor out the logic that uses the template parameter and keep it in the header.
+
+        * jit/JITPropertyAccess.cpp:
+        List off the template specializations needed by JITOperations.cpp.
+        This is unfortunate but at least there are only two (x2) by definition?
+        Trying to do away with this incurs a severe domino effect...
+
+        * API/JSValueRef.cpp:
+        * b3/B3OptimizeAssociativeExpressionTrees.cpp:
+        * b3/air/AirHandleCalleeSaves.cpp:
+        * builtins/BuiltinNames.cpp:
+        * bytecode/AccessCase.cpp:
+        * bytecode/BytecodeIntrinsicRegistry.cpp:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeRewriter.cpp:
+        * bytecode/BytecodeUseDef.h:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/InstanceOfAccessCase.cpp:
+        * bytecode/MetadataTable.cpp:
+        * bytecode/PolyProtoAccessChain.cpp:
+        * bytecode/StructureSet.cpp:
+        * bytecompiler/NodesCodegen.cpp:
+        * dfg/DFGCFAPhase.cpp:
+        * dfg/DFGPureValue.cpp:
+        * heap/GCSegmentedArray.h:
+        * heap/HeapInlines.h:
+        * heap/IsoSubspace.cpp:
+        * heap/LocalAllocator.cpp:
+        * heap/LocalAllocator.h:
+        * heap/LocalAllocatorInlines.h:
+        * heap/MarkingConstraintSolver.cpp:
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::isEqual const):
+        * inspector/ScriptCallStackFactory.cpp:
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        * interpreter/StackVisitor.cpp:
+        * llint/LLIntEntrypoint.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/BigIntPrototype.cpp:
+        * runtime/CachedTypes.cpp:
+        * runtime/ErrorType.cpp:
+        * runtime/IndexingType.cpp:
+        * runtime/JSCellInlines.h:
+        * runtime/JSImmutableButterfly.h:
+        * runtime/Operations.h:
+        * runtime/RegExpCachedResult.cpp:
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpGlobalData.cpp:
+        * runtime/StackFrame.h:
+        * wasm/WasmSignature.cpp:
+        * wasm/js/JSToWasm.cpp:
+        * wasm/js/JSToWasmICCallee.cpp:
+        * wasm/js/WebAssemblyFunction.h:
+        Fix includes / forward declarations (and a couple of nearby clang warnings).
+
 2019-04-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Apple builds should use ICU_INCLUDE_DIRS

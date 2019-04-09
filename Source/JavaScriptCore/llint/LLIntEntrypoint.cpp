@@ -30,6 +30,7 @@
 #include "JITCode.h"
 #include "JSCellInlines.h"
 #include "JSObject.h"
+#include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "LowLevelInterpreter.h"
 #include "MaxFrameExtentForSlowPathCall.h"

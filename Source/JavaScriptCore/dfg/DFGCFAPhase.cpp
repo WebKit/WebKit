@@ -31,6 +31,7 @@
 #include "DFGAbstractInterpreterInlines.h"
 #include "DFGBlockSet.h"
 #include "DFGClobberSet.h"
+#include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGInPlaceAbstractState.h"
 #include "DFGPhase.h"

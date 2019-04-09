@@ -27,6 +27,7 @@
 
 #include "Butterfly.h"
 #include "IndexingHeader.h"
+#include "JSCJSValueInlines.h"
 #include "JSCell.h"
 #include "Structure.h"
 #include "VirtualRegister.h"

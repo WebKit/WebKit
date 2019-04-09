@@ -41,6 +41,7 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "StackAlignment.h"
+#include "UnlinkedMetadataTableInlines.h"
 #include "YarrFlags.h"
 #include <wtf/Assertions.h>
 #include <wtf/Threading.h>

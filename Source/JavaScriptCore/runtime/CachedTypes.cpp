@@ -28,6 +28,7 @@
 
 #include "BytecodeCacheVersion.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
 #include "ScopedArgumentsTable.h"

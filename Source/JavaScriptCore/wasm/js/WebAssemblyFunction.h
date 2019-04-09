@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "ArityCheckMode.h"
 #include "JSToWasmICCallee.h"
 #include "MacroAssemblerCodeRef.h"
 #include "WasmCallee.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StructureSet.h"
 
+#include "JSCInlines.h"
 #include "TrackedReferences.h"
 #include <wtf/CommaPrinter.h>
 

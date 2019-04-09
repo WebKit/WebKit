@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "CCallHelpers.h"
+#include "JSCInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "MaxFrameExtentForSlowPathCall.h"

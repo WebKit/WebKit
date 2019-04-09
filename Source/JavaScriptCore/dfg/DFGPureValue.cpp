@@ -28,8 +28,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGGraph.h"
-
 namespace JSC { namespace DFG {
 
 void PureValue::dump(PrintStream& out) const

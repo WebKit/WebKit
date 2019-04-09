@@ -27,7 +27,7 @@
 #include "config.h"
 #include "BytecodeRewriter.h"
 
-#include "HeapInlines.h"
+#include "JSCInlines.h"
 #include "PreciseJumpTargetsInlines.h"
 #include <wtf/BubbleSort.h>
 

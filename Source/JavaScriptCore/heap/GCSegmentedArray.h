@@ -27,6 +27,7 @@
 
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
 

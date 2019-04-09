@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BuiltinNames.h"
 
+#include "IdentifierInlines.h"
+
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable:4307)

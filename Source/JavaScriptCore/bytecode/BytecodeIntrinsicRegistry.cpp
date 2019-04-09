@@ -32,7 +32,7 @@
 #include "BytecodeGenerator.h"
 #include "IterationKind.h"
 #include "JSAsyncGeneratorFunction.h"
-#include "JSCJSValueInlines.h"
+#include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"
 #include "JSModuleLoader.h"

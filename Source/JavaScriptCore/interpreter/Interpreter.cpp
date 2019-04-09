@@ -81,7 +81,6 @@
 #include "VMInlines.h"
 #include "VMInspector.h"
 #include "VirtualRegister.h"
-
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/NeverDestroyed.h>
@@ -93,6 +92,11 @@
 
 #if ENABLE(JIT)
 #include "JIT.h"
+#endif
+
+#if ENABLE(WEBASSEMBLY)
+#include "WasmContextInlines.h"
+#include "WebAssemblyFunction.h"
 #endif
 
 namespace JSC {

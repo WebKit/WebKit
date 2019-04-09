@@ -27,6 +27,7 @@
 #include "ArrayIteratorPrototype.h"
 
 #include "IteratorOperations.h"
+#include "JSCBuiltins.h"
 #include "JSCInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSCellInlines.h"

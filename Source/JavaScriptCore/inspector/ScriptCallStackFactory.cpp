@@ -42,6 +42,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "StackVisitor.h"
+#include "StrongInlines.h"
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;

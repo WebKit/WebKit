@@ -31,7 +31,7 @@
 #include "B3BasicBlock.h"
 #include "B3Const32Value.h"
 #include "B3Const64Value.h"
-#include "B3InsertionSet.h"
+#include "B3InsertionSetInlines.h"
 #include "B3Opcode.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"

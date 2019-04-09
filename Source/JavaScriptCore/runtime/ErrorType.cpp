@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ErrorType.h"
 
+#include <wtf/PrintStream.h>
+
 namespace JSC {
 
 ASCIILiteral errorTypeName(ErrorType errorType)

@@ -27,6 +27,7 @@
 #include "MetadataTable.h"
 
 #include "CodeBlock.h"
+#include "JSCInlines.h"
 #include "OpcodeInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include <wtf/FastMalloc.h>

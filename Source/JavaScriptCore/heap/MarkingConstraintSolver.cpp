@@ -27,6 +27,7 @@
 #include "MarkingConstraintSolver.h"
 
 #include "JSCInlines.h"
+#include "MarkingConstraintSet.h"
 
 namespace JSC { 
 
