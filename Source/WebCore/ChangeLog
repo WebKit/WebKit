@@ -1,3 +1,12 @@
+2019-04-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Apple builds should use ICU_INCLUDE_DIRS
+        https://bugs.webkit.org/show_bug.cgi?id=196720
+
+        Reviewed by Konstantin Tokarev.
+
+        * PlatformMac.cmake:
+
 2019-04-09  Jer Noble  <jer.noble@apple.com>
 
         Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.

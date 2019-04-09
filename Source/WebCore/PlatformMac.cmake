@@ -72,7 +72,6 @@ endif ()
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
-    "${DERIVED_SOURCES_WTF_DIR}"
     "${THIRDPARTY_DIR}/ANGLE"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/accessibility/mac"

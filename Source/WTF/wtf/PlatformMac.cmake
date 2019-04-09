@@ -84,7 +84,6 @@ list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES
 )
 
 file(COPY mac/MachExceptions.defs DESTINATION ${DERIVED_SOURCES_WTF_DIR})
-file(COPY "${WTF_DIR}/icu/unicode" DESTINATION ${DERIVED_SOURCES_WTF_DIR})
 
 add_custom_command(
     OUTPUT

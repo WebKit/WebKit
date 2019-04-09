@@ -1,3 +1,17 @@
+2019-04-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Apple builds should use ICU_INCLUDE_DIRS
+        https://bugs.webkit.org/show_bug.cgi?id=196720
+
+        Reviewed by Konstantin Tokarev.
+
+        The Apple platform is using ${DERIVED_SOURCES_WTF_DIR} for hosting the ICU headers.
+        Instead it should stage the headers into ${ICU_INCLUDE_DIRS} so no special handling
+        is needed.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+
 2019-04-08  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WinCairo] Separate copied headers into different directories

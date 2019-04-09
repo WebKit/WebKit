@@ -60,4 +60,5 @@ set(WebCore_LIBRARY_TYPE SHARED)
 set(WebCoreTestSupport_LIBRARY_TYPE SHARED)
 
 add_definitions(-DU_DISABLE_RENAMING=1 -DU_SHOW_CPLUSPLUS_API=0)
+set(ICU_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/ICU/Headers)
 set(ICU_LIBRARIES libicucore.dylib)
