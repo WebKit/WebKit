@@ -1,3 +1,12 @@
+2019-04-09  Shawn Roberts  <sroberts@apple.com>
+
+        inspector/console/console-time.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=158006
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating expecations for flaky failure
+
 2019-04-09  Antoine Quint  <graouts@apple.com>
 
         [ Mac ] REGRESSION (r237587) Layout Test compositing/visible-rect/animated-from-none.html is flaky text diff failure
