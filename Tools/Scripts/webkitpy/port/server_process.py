@@ -203,6 +203,14 @@ class ServerProcess(object):
     def read_stdout_line(self, deadline):
         return self._read(deadline, self._pop_stdout_line_if_ready)
 
+    def has_available_stdout(self):
+        if not self.has_crashed() and self._use_win32_apis:
+            self._wait_for_data_and_update_buffers_using_win32_apis(0)
+        elif not self.has_crashed():
+            self._wait_for_data_and_update_buffers_using_select(0)
+
+        return bool(self._output)
+
     def read_stderr_line(self, deadline):
         return self._read(deadline, self._pop_stderr_line_if_ready)
 
@@ -256,7 +264,7 @@ class ServerProcess(object):
         return output
 
     def _wait_for_data_and_update_buffers_using_select(self, deadline, stopping=False):
-        if self._proc.stdout.closed or self._proc.stderr.closed:
+        if not self._proc or self._proc.stdout.closed or self._proc.stderr.closed:
             # If the process crashed and is using FIFOs, like Chromium Android, the
             # stdout and stderr pipes will be closed.
             return
@@ -300,12 +308,16 @@ class ServerProcess(object):
             pass
 
     def _wait_for_data_and_update_buffers_using_win32_apis(self, deadline):
+        if not self._proc:
+            return
+
         # See http://code.activestate.com/recipes/440554-module-to-allow-asynchronous-subprocess-use-on-win/
         # and http://docs.activestate.com/activepython/2.6/pywin32/modules.html
         # for documentation on all of these win32-specific modules.
         out_fh = msvcrt.get_osfhandle(self._proc.stdout.fileno())
         err_fh = msvcrt.get_osfhandle(self._proc.stderr.fileno())
-        while time.time() < deadline:
+        checking = True
+        while checking:
             output = self._non_blocking_read_win32(out_fh)
             error = self._non_blocking_read_win32(err_fh)
             if output or error:
@@ -317,6 +329,7 @@ class ServerProcess(object):
             if self._proc.poll() is not None:
                 return
             time.sleep(0.01)
+            checking = time.time() < deadline
 
     def _non_blocking_read_win32(self, handle):
         try:

@@ -47,7 +47,7 @@ class ImageDiffer(object):
         self._process = None
 
     def diff_image(self, expected_contents, actual_contents, tolerance):
-        if tolerance != self._tolerance:
+        if tolerance != self._tolerance or (self._process and self._process.has_available_stdout()):
             self.stop()
         try:
             assert(expected_contents)

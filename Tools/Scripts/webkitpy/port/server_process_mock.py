@@ -54,6 +54,11 @@ class MockServerProcess(object):
             return None
         return self.lines.pop(0) + "\n"
 
+    def has_available_stdout(self):
+        if self.has_crashed():
+            return False
+        return bool(self.lines)
+
     def read_stdout(self, deadline, size):
         if self.has_crashed():
             return None

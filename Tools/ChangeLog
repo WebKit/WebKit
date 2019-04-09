@@ -1,3 +1,22 @@
+2019-04-09  Jonathan Bedard  <jbedard@apple.com>
+
+        iOS 12 Simulator Release WK2 frequently timing out while running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=196694
+        <rdar://problem/48388734>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/webkitpy/port/image_diff.py:
+        (ImageDiffer.diff_image): If the ImageDiff process has data, kill it before running again.
+        * Scripts/webkitpy/port/server_process.py:
+        (ServerProcess.has_available_stdout): Check if stdout has data in it.
+        (ServerProcess._wait_for_data_and_update_buffers_using_select):
+        (ServerProcess._wait_for_data_and_update_buffers_using_win32_apis):
+        * Scripts/webkitpy/port/server_process_mock.py:
+        (MockServerProcess.has_available_stdout):
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (TestServerProcess.serial_test_basic):
+
 2019-04-09  Jer Noble  <jer.noble@apple.com>
 
         Test for: 196095 Inband Text Track cues interspersed with Data cues can display out of order.

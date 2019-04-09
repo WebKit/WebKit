@@ -101,7 +101,7 @@ class FakeServerProcess(server_process.ServerProcess):
 class TestServerProcess(unittest.TestCase):
     def serial_test_basic(self):
         # Give -u switch to force stdout and stderr to be unbuffered for Windows
-        cmd = [sys.executable, '-uc', 'import sys; print "stdout"; print >>sys.stderr, "stderr"; sys.stdin.readline();']
+        cmd = [sys.executable, '-uc', 'import sys; print "stdout"; print "again"; print >>sys.stderr, "stderr"; sys.stdin.readline();']
         host = SystemHost()
         factory = PortFactory(host)
         port = factory.get()
@@ -120,8 +120,14 @@ class TestServerProcess(unittest.TestCase):
         line = proc.read_stdout_line(now + 1.0)
         self.assertEqual(line.strip(), "stdout")
 
+        self.assertTrue(proc.has_available_stdout())
+
         line = proc.read_stderr_line(now + 1.0)
         self.assertEqual(line.strip(), "stderr")
+
+        line = proc.read_stdout_line(now + 1.0)
+        self.assertEqual(line.strip(), "again")
+        self.assertFalse(proc.has_available_stdout())
 
         proc.write('End\n')
         time.sleep(0.1)  # Give process a moment to close.
