@@ -1,3 +1,52 @@
+2019-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Cleanup WebKitAccessibleHyperlink
+        https://bugs.webkit.org/show_bug.cgi?id=196602
+
+        Reviewed by Michael Catanzaro.
+
+        Cleanups:
+
+         - Rename webkitAccessibleHyperlinkNew() as webkitAccessibleHyperlinkGetOrCreate() and move the code to get/set
+           the object data here.
+         - Use WEBKIT_DEFINE_TYPE instead of custom type registration. This ensures that all CStrings used in private
+           struct are no longer leaked.
+         - Remove all confusing core() functions and simply use webkitAccessibleGetAccessibilityObject().
+         - Use nullptr instead of 0 and other coding style issues.
+
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (webkitAccessibleHyperlinkActionDoAction):
+        (webkitAccessibleHyperlinkActionGetNActions):
+        (webkitAccessibleHyperlinkActionGetDescription):
+        (webkitAccessibleHyperlinkActionGetKeybinding):
+        (webkitAccessibleHyperlinkActionGetName):
+        (atk_action_interface_init):
+        (webkitAccessibleHyperlinkGetURI):
+        (webkitAccessibleHyperlinkGetObject):
+        (rangeLengthForObject):
+        (webkitAccessibleHyperlinkGetStartIndex):
+        (webkitAccessibleHyperlinkGetEndIndex):
+        (webkitAccessibleHyperlinkIsValid):
+        (webkitAccessibleHyperlinkGetNAnchors):
+        (webkitAccessibleHyperlinkIsSelectedLink):
+        (webkitAccessibleHyperlinkGetProperty):
+        (webkitAccessibleHyperlinkSetProperty):
+        (webkit_accessible_hyperlink_class_init):
+        (webkitAccessibleHyperlinkGetOrCreate):
+        (core): Deleted.
+        (atkActionInterfaceInit): Deleted.
+        (getRangeLengthForObject): Deleted.
+        (webkitAccessibleHyperlinkFinalize): Deleted.
+        (webkitAccessibleHyperlinkClassInit): Deleted.
+        (webkitAccessibleHyperlinkInit): Deleted.
+        (webkitAccessibleHyperlinkGetType): Deleted.
+        (webkitAccessibleHyperlinkNew): Deleted.
+        (webkitAccessibleHyperlinkGetAccessibilityObject): Deleted.
+        * accessibility/atk/WebKitAccessibleHyperlink.h:
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp:
+        (webkitAccessibleHyperlinkImplGetHyperlink):
+        (webkitAccessibleHyperlinkImplInterfaceInit):
+
 2019-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Remove some iOS #ifdefs around sticky-related code
