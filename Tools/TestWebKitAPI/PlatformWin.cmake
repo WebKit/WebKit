@@ -16,6 +16,14 @@ include_directories(
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore
     ${TESTWEBKITAPI_DIR}/win
     ${DERIVED_SOURCES_DIR}/WebKit/Interfaces
+    ${WTF_FRAMEWORK_HEADERS_DIR}
+    ${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+    ${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    ${PAL_FRAMEWORK_HEADERS_DIR}
+    ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}
+    ${WebKitLegacy_FRAMEWORK_HEADERS_DIR}
+    ${WebKit_FRAMEWORK_HEADERS_DIR}
+    ${WebKit_PRIVATE_FRAMEWORK_HEADERS_DIR}
 )
 
 add_definitions(-DWEBCORE_EXPORT= -DWEBCORE_TESTSUPPORT_EXPORT=)
@@ -99,9 +107,9 @@ if (USE_CF)
     )
 endif ()
 
-list(APPEND TestWebKitAPI_DEPENDENCIES WebCoreForwardingHeaders)
+list(APPEND TestWebKitAPI_DEPENDENCIES WebCorePrivateFrameworkHeaders)
 if (ENABLE_WEBKIT)
-    list(APPEND TestWebKitAPI_DEPENDENCIES WebKitForwardingHeaders)
+    list(APPEND TestWebKitAPI_DEPENDENCIES WebKitFrameworkHeaders)
 endif ()
 
 add_library(TestWTFLib SHARED

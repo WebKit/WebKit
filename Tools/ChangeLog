@@ -1,3 +1,15 @@
+2019-04-08  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][WinCairo] Separate copied headers into different directories
+        https://bugs.webkit.org/show_bug.cgi?id=196655
+
+        Reviewed by Michael Catanzaro.
+
+        * DumpRenderTree/CMakeLists.txt:
+        * MiniBrowser/win/CMakeLists.txt:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWin.cmake:
+
 2019-04-08  Jonathan Bedard  <jbedard@apple.com>
 
         Log stack-trace for run-webkit-tests when interrupted

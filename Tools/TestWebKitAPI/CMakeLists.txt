@@ -15,13 +15,13 @@ set(TestWebKitAPI_LIBRARIES
 )
 
 set(TestWebKitAPI_DEPENDENCIES
-    JavaScriptCoreForwardingHeaders
-    JavaScriptCorePrivateForwardingHeaders
-    WTFForwardingHeaders
+    JavaScriptCoreFrameworkHeaders
+    JavaScriptCorePrivateFrameworkHeaders
+    WTFFrameworkHeaders
 )
 
 if (ENABLE_WEBCORE)
-    list(APPEND TestWebKitAPI_DEPENDENCIES PALForwardingHeaders)
+    list(APPEND TestWebKitAPI_DEPENDENCIES PALFrameworkHeaders)
 endif ()
 
 if (ENABLE_WEBKIT)

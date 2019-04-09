@@ -3,6 +3,8 @@ include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
 set(WebKit_INCLUDE_DIRECTORIES
+    "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
+    "${WebKit_FRAMEWORK_HEADERS_DIR}"
     "${WEBKIT_DIR}"
     "${WEBKIT_DIR}/NetworkProcess"
     "${WEBKIT_DIR}/NetworkProcess/Classifier"
