@@ -1,3 +1,14 @@
+2019-04-09  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add release logging to PaymentCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=196738
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::isAlwaysOnLoggingAllowed const):
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+
 2019-04-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Awaken UIProcess if WebContent process is awakened from suspensions unexpectedly.

@@ -142,6 +142,11 @@ void WebPaymentCoordinator::paymentCoordinatorDestroyed()
     delete this;
 }
 
+bool WebPaymentCoordinator::isAlwaysOnLoggingAllowed() const
+{
+    return m_webPage.isAlwaysOnLoggingAllowed();
+}
+
 bool WebPaymentCoordinator::supportsUnrestrictedApplePay() const
 {
 #if ENABLE(APPLE_PAY_REMOTE_UI)

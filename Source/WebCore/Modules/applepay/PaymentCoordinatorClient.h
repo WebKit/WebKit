@@ -66,6 +66,7 @@ public:
     virtual bool isMockPaymentCoordinator() const { return false; }
     virtual bool isWebPaymentCoordinator() const { return false; }
 
+    virtual bool isAlwaysOnLoggingAllowed() const { return false; }
     virtual bool supportsUnrestrictedApplePay() const { return true; }
 
 protected:

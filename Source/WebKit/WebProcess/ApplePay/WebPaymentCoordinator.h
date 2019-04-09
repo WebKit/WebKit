@@ -78,6 +78,7 @@ private:
 
     bool isWebPaymentCoordinator() const override { return true; }
 
+    bool isAlwaysOnLoggingAllowed() const override;
     bool supportsUnrestrictedApplePay() const override;
 
     // IPC::MessageReceiver.

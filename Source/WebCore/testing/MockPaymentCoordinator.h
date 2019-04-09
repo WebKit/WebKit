@@ -83,6 +83,8 @@ private:
 
     bool isMockPaymentCoordinator() const final { return true; }
 
+    bool isAlwaysOnLoggingAllowed() const final { return true; }
+
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     Page& m_page;

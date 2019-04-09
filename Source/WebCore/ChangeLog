@@ -1,3 +1,44 @@
+2019-04-09  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Add release logging to PaymentCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=196738
+
+        Reviewed by Alex Christensen.
+
+        When allowed, log interactions with PaymentCoordinator to os_log to help diagnose Apple Pay bugs.
+
+        The following information might be logged: names of functions called, merchant API versions,
+        boolean results of canMakePayments(), boolean results of beginPaymentSession(), whether
+        completePaymentSession() was called with a final state result, boolean results of
+        shouldAllowApplePay(), whether a document has evaluated user agent scripts or is running
+        user scripts, and whether a client supports unrestricted Apple Pay.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::supportsVersion const):
+        (WebCore::PaymentCoordinator::canMakePayments):
+        (WebCore::PaymentCoordinator::canMakePaymentsWithActiveCard):
+        (WebCore::PaymentCoordinator::openPaymentSetup):
+        (WebCore::PaymentCoordinator::beginPaymentSession):
+        (WebCore::PaymentCoordinator::completeMerchantValidation):
+        (WebCore::PaymentCoordinator::completeShippingMethodSelection):
+        (WebCore::PaymentCoordinator::completeShippingContactSelection):
+        (WebCore::PaymentCoordinator::completePaymentMethodSelection):
+        (WebCore::PaymentCoordinator::completePaymentSession):
+        (WebCore::PaymentCoordinator::abortPaymentSession):
+        (WebCore::PaymentCoordinator::cancelPaymentSession):
+        (WebCore::PaymentCoordinator::validateMerchant):
+        (WebCore::PaymentCoordinator::didAuthorizePayment):
+        (WebCore::PaymentCoordinator::didSelectPaymentMethod):
+        (WebCore::PaymentCoordinator::didSelectShippingMethod):
+        (WebCore::PaymentCoordinator::didSelectShippingContact):
+        (WebCore::PaymentCoordinator::didCancelPaymentSession):
+        (WebCore::PaymentCoordinator::shouldAllowApplePay const):
+        (WebCore::PaymentCoordinator::shouldAllowUserAgentScripts const):
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        (WebCore::PaymentCoordinatorClient::isAlwaysOnLoggingAllowed const):
+        * platform/Logging.h:
+        * testing/MockPaymentCoordinator.h:
+
 2019-04-09  John Wilander  <wilander@apple.com>
 
         Pick up Ad Click Attribution conversions in NetworkResourceLoader::willSendRedirectedRequest()

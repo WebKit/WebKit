@@ -30,11 +30,17 @@
 
 #include "Document.h"
 #include "LinkIconCollector.h"
+#include "Logging.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentCoordinatorClient.h"
 #include "PaymentSession.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/URL.h>
+
+#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef RELEASE_LOG_IF_ALLOWED
+#define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_client.isAlwaysOnLoggingAllowed(), ApplePay, "%p - PaymentCoordinator::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_client.isAlwaysOnLoggingAllowed(), ApplePay, "%p - PaymentCoordinator::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -52,20 +58,28 @@ bool PaymentCoordinator::supportsVersion(Document& document, unsigned version) c
 {
     if (!shouldAllowApplePay(document))
         return false;
-    return m_client.supportsVersion(version);
+
+    auto supportsVersion = m_client.supportsVersion(version);
+    RELEASE_LOG_IF_ALLOWED("supportsVersion(%d) -> %d", version, supportsVersion);
+    return supportsVersion;
 }
 
 bool PaymentCoordinator::canMakePayments(Document& document)
 {
     if (!shouldAllowApplePay(document))
         return false;
-    return m_client.canMakePayments();
+
+    auto canMakePayments = m_client.canMakePayments();
+    RELEASE_LOG_IF_ALLOWED("canMakePayments() -> %d", canMakePayments);
+    return canMakePayments;
 }
 
 void PaymentCoordinator::canMakePaymentsWithActiveCard(Document& document, const String& merchantIdentifier, WTF::Function<void(bool)>&& completionHandler)
 {
     if (!shouldAllowApplePay(document))
         return completionHandler(false);
+
+    RELEASE_LOG_IF_ALLOWED("canMakePaymentsWithActiveCard()");
     m_client.canMakePaymentsWithActiveCard(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
@@ -73,6 +87,8 @@ void PaymentCoordinator::openPaymentSetup(Document& document, const String& merc
 {
     if (!shouldAllowApplePay(document))
         return completionHandler(false);
+
+    RELEASE_LOG_IF_ALLOWED("openPaymentSetup()");
     m_client.openPaymentSetup(merchantIdentifier, document.domain(), WTFMove(completionHandler));
 }
 
@@ -87,7 +103,9 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
     for (auto& icon : LinkIconCollector { document }.iconsOfTypes({ LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon }))
         linkIconURLs.append(icon.url);
 
-    if (!m_client.showPaymentUI(document.url(), linkIconURLs, paymentRequest))
+    auto showPaymentUI = m_client.showPaymentUI(document.url(), linkIconURLs, paymentRequest);
+    RELEASE_LOG_IF_ALLOWED("beginPaymentSession() -> %d", showPaymentUI);
+    if (!showPaymentUI)
         return false;
 
     m_activeSession = &paymentSession;
@@ -98,28 +116,28 @@ bool PaymentCoordinator::beginPaymentSession(Document& document, PaymentSession&
 void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession& paymentMerchantSession)
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("completeMerchantValidation()");
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
 void PaymentCoordinator::completeShippingMethodSelection(Optional<ShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("completeShippingMethodSelection()");
     m_client.completeShippingMethodSelection(WTFMove(update));
 }
 
 void PaymentCoordinator::completeShippingContactSelection(Optional<ShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("completeShippingContactSelection()");
     m_client.completeShippingContactSelection(WTFMove(update));
 }
 
 void PaymentCoordinator::completePaymentMethodSelection(Optional<PaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("completePaymentMethodSelection()");
     m_client.completePaymentMethodSelection(WTFMove(update));
 }
 
@@ -128,7 +146,7 @@ void PaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationRes
     ASSERT(m_activeSession);
 
     bool isFinalState = isFinalStateResult(result);
-
+    RELEASE_LOG_IF_ALLOWED("completePaymentSession() (isFinalState: %d)", isFinalState);
     m_client.completePaymentSession(WTFMove(result));
 
     if (!isFinalState)
@@ -140,7 +158,7 @@ void PaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationRes
 void PaymentCoordinator::abortPaymentSession()
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("abortPaymentSession()");
     m_client.abortPaymentSession();
     m_activeSession = nullptr;
 }
@@ -148,7 +166,7 @@ void PaymentCoordinator::abortPaymentSession()
 void PaymentCoordinator::cancelPaymentSession()
 {
     ASSERT(m_activeSession);
-
+    RELEASE_LOG_IF_ALLOWED("cancelPaymentSession()");
     m_client.cancelPaymentSession();
 }
 
@@ -159,6 +177,7 @@ void PaymentCoordinator::validateMerchant(URL&& validationURL)
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("validateMerchant()");
     m_activeSession->validateMerchant(WTFMove(validationURL));
 }
 
@@ -169,6 +188,7 @@ void PaymentCoordinator::didAuthorizePayment(const Payment& payment)
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("validateMerchant()");
     m_activeSession->didAuthorizePayment(payment);
 }
 
@@ -179,6 +199,7 @@ void PaymentCoordinator::didSelectPaymentMethod(const PaymentMethod& paymentMeth
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("didSelectPaymentMethod()");
     m_activeSession->didSelectPaymentMethod(paymentMethod);
 }
 
@@ -189,6 +210,7 @@ void PaymentCoordinator::didSelectShippingMethod(const ApplePaySessionPaymentReq
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("didSelectShippingMethod()");
     m_activeSession->didSelectShippingMethod(shippingMethod);
 }
 
@@ -199,6 +221,7 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("didSelectShippingContact()");
     m_activeSession->didSelectShippingContact(shippingContact);
 }
 
@@ -209,6 +232,7 @@ void PaymentCoordinator::didCancelPaymentSession()
         return;
     }
 
+    RELEASE_LOG_IF_ALLOWED("didCancelPaymentSession()");
     m_activeSession->didCancelPaymentSession();
     m_activeSession = nullptr;
 }
@@ -229,14 +253,20 @@ Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document& document,
 
 bool PaymentCoordinator::shouldAllowApplePay(Document& document) const
 {
-    if (m_client.supportsUnrestrictedApplePay())
+    if (m_client.supportsUnrestrictedApplePay()) {
+        RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> true (unrestricted client)");
         return true;
+    }
 
-    if (document.hasEvaluatedUserAgentScripts() || document.isRunningUserScripts()) {
+    auto hasEvaluatedUserAgentScripts = document.hasEvaluatedUserAgentScripts();
+    auto isRunningUserScripts = document.isRunningUserScripts();
+    if (hasEvaluatedUserAgentScripts || isRunningUserScripts) {
         ASSERT(shouldAllowUserAgentScripts(document));
+        RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> false (hasEvaluatedUserAgentScripts: %d, isRunningUserScripts: %d)", hasEvaluatedUserAgentScripts, isRunningUserScripts);
         return false;
     }
 
+    RELEASE_LOG_IF_ALLOWED("shouldAllowApplePay() -> true");
     return true;
 }
 
@@ -247,6 +277,7 @@ bool PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
 
     if (document.hasStartedApplePaySession()) {
         ASSERT(shouldAllowApplePay(document));
+        RELEASE_LOG_ERROR_IF_ALLOWED("shouldAllowUserAgentScripts() -> false (active session)");
         return false;
     }
 
@@ -254,5 +285,8 @@ bool PaymentCoordinator::shouldAllowUserAgentScripts(Document& document) const
 }
 
 } // namespace WebCore
+
+#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef RELEASE_LOG_IF_ALLOWED
 
 #endif // ENABLE(APPLE_PAY)
