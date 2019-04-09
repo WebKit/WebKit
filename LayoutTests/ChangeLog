@@ -1,3 +1,16 @@
+2019-04-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Turn on editing test that should pass now
+        https://bugs.webkit.org/show_bug.cgi?id=196747
+        <rdar://problem/38779179>
+
+        Reviewed by Tim Horton.
+
+        Just turning on a test that needed to be turns off for a while due to compatibility changes
+        with the system.
+
+        * platform/ios-wk2/TestExpectations:
+
 2019-04-09  Zalan Bujtas  <zalan@apple.com>
 
         [AutoSizing] Avoid making text paragraphs scroll horizontally when there is a wide table

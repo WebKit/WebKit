@@ -20,8 +20,6 @@ editing/input/ios [ Pass ]
 editing/pasteboard/ios [ Pass ]
 editing/undo-manager [ Pass ]
 
-editing/selection/character-granularity-rect.html [ Failure ]
-
 accessibility/smart-invert.html [ Pass ]
 accessibility/smart-invert-reference.html [ Pass ]
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
