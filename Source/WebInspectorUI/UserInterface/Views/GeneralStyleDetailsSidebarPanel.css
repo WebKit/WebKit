@@ -99,6 +99,7 @@
 }
 
 .sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle {
+    position: relative;
     margin: 0 0 1px;
     -webkit-margin-end: 5px;
     padding: 2px 4px 3px;
@@ -110,14 +111,32 @@
     -webkit-appearance: none;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected {
-    color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color);
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    opacity: var(--glyph-opacity);
+    z-index: -1;
 }
 
-.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover {
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:matches(.selected, :hover) {
     color: var(--selected-foreground-color);
-    background-color: var(--selected-background-color-hover);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:matches(.selected, :hover)::before {
+    background-color: var(--glyph-color-active);
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle:not(.selected):hover::before {
+    opacity: 0.5;
+}
+
+.sidebar > .panel.details.css-style > .content ~ .options-container > .toggle-class-toggle.selected:active::before {
+    filter: brightness(0.8);
 }
 
 .sidebar > .panel.details.css-style > .content:not(.supports-new-rule) ~ .options-container > .new-rule,
