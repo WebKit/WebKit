@@ -38,11 +38,16 @@ class GPURenderPassEncoder;
 class WebGPUBuffer;
 class WebGPURenderPipeline;
 
+struct GPUColor;
+
 class WebGPURenderPassEncoder final : public WebGPUProgrammablePassEncoder {
 public:
     static Ref<WebGPURenderPassEncoder> create(RefPtr<GPURenderPassEncoder>&&);
 
     void setPipeline(const WebGPURenderPipeline&);
+    void setBlendColor(const GPUColor&);
+    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
+    void setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height);
     void setVertexBuffers(unsigned, Vector<RefPtr<WebGPUBuffer>>&&, Vector<uint64_t>&&);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
 

@@ -87,7 +87,7 @@ function beginBasicRenderPass(swapChain, commandEncoder) {
         loadOp: "clear",
         storeOp: "store",
         clearColor: { r: 1.0, g: 0, b: 0, a: 1.0 }
-    }
+    };
 
     // FIXME: Flesh out the rest of WebGPURenderPassDescriptor. 
     return commandEncoder.beginRenderPass({ colorAttachments : [basicAttachment] });

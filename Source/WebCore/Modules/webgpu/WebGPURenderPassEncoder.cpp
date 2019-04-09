@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUColor.h"
 #include "GPULimits.h"
 #include "GPUProgrammablePassEncoder.h"
 #include "GPURenderPassEncoder.h"
@@ -58,6 +59,37 @@ void WebGPURenderPassEncoder::setPipeline(const WebGPURenderPipeline& pipeline)
         return;
     }
     m_passEncoder->setPipeline(makeRef(*pipeline.renderPipeline()));
+}
+
+void WebGPURenderPassEncoder::setBlendColor(const GPUColor& color)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setBlendColor(): Invalid operation!");
+        return;
+    }
+    m_passEncoder->setBlendColor(color);
+}
+
+void WebGPURenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setViewport(): Invalid operation!");
+        return;
+    }
+    m_passEncoder->setViewport(x, y, width, height, minDepth, maxDepth);
+}
+
+void WebGPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setScissorRect(): Invalid operation!");
+        return;
+    }
+    if (!width || !height) {
+        LOG(WebGPU, "GPURenderPassEncoder::setScissorRect(): Width or height must be greater than 0!");
+        return;
+    }
+    m_passEncoder->setScissorRect(x, y, width, height);
 }
 
 void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)

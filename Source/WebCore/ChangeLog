@@ -1,3 +1,26 @@
+2019-04-09  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPURenderPassEncoder updates: setBlendColor, setViewport, setScissorRect
+        https://bugs.webkit.org/show_bug.cgi?id=196719
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement setBlendColor, setViewport, and setScissorRect for GPURenderPassEncoder.
+
+        Tests: webgpu/viewport-scissor-rect-triangle-strip.html, webgpu/blend-color-triangle-strip.html
+
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setBlendColor):
+        (WebCore::WebGPURenderPassEncoder::setViewport):
+        (WebCore::WebGPURenderPassEncoder::setScissorRect):
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * platform/graphics/gpu/GPURenderPassEncoder.h:
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setBlendColor):
+        (WebCore::GPURenderPassEncoder::setViewport):
+        (WebCore::GPURenderPassEncoder::setScissorRect):
+
 2019-04-09  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Add release logging to PaymentCoordinator

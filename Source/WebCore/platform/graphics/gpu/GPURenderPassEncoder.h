@@ -42,6 +42,7 @@ namespace WebCore {
 class GPUBuffer;
 class GPUCommandBuffer;
 
+struct GPUColor;
 struct GPURenderPassDescriptor;
 
 using PlatformRenderPassEncoder = MTLRenderCommandEncoder;
@@ -52,6 +53,9 @@ public:
     static RefPtr<GPURenderPassEncoder> tryCreate(Ref<GPUCommandBuffer>&&, GPURenderPassDescriptor&&);
 
     void setPipeline(Ref<const GPURenderPipeline>&&);
+    void setBlendColor(const GPUColor&);
+    void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
+    void setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height);
     void setVertexBuffers(unsigned, Vector<Ref<GPUBuffer>>&&, Vector<uint64_t>&&);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
 

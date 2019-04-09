@@ -29,6 +29,7 @@
 #if ENABLE(WEBGPU)
 
 #import "GPUBuffer.h"
+#import "GPUColor.h"
 #import "GPUCommandBuffer.h"
 #import "GPURenderPassDescriptor.h"
 #import "GPURenderPipeline.h"
@@ -202,6 +203,42 @@ void GPURenderPassEncoder::setPipeline(Ref<const GPURenderPipeline>&& pipeline)
     END_BLOCK_OBJC_EXCEPTIONS;
 
     m_pipeline = WTFMove(pipeline);
+}
+
+void GPURenderPassEncoder::setBlendColor(const GPUColor& color)
+{
+    if (!m_platformRenderPassEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setBlendColor(): Invalid operation: Encoding is ended!");
+        return;
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_platformRenderPassEncoder setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void GPURenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
+{
+    if (!m_platformRenderPassEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setViewport(): Invalid operation: Encoding is ended!");
+        return;
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_platformRenderPassEncoder setViewport: { x, y, width, height, minDepth, maxDepth }];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+void GPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height)
+{
+    if (!m_platformRenderPassEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setScissorRect(): Invalid operation: Encoding is ended!");
+        return;
+    }
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_platformRenderPassEncoder setScissorRect: { x, y, width, height }];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)
