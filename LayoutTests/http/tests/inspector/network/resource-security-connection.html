@@ -20,7 +20,7 @@ function test()
         name: "Resource.Security.Connection.Basic",
         description: "Check if a resource has security connection information.",
         test(resolve, reject) {
-            WI.Resource.awaitEvent(WI.Resource.Event.ResponseReceived)
+            WI.Resource.awaitEvent(WI.Resource.Event.MetricsDidChange)
             .then((event) => {
                 let resource = event.target;
                 InspectorTest.expectThat(resource.loadedSecurely, "Resource should have been loaded securely.");
