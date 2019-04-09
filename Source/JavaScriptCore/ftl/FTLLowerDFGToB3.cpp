@@ -2326,8 +2326,8 @@ private:
         }
             
         case Int52RepUse: {
-            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52Only)
-                && !abstractValue(m_node->child2()).couldBeType(SpecInt52Only)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecNonInt32AsInt52)
+                && !abstractValue(m_node->child2()).couldBeType(SpecNonInt32AsInt52)) {
                 Int52Kind kind;
                 LValue left = lowWhicheverInt52(m_node->child1(), kind);
                 LValue right = lowInt52(m_node->child2(), kind);
@@ -3023,7 +3023,7 @@ private:
         }
             
         case Int52RepUse: {
-            if (!abstractValue(m_node->child1()).couldBeType(SpecInt52Only)) {
+            if (!abstractValue(m_node->child1()).couldBeType(SpecNonInt32AsInt52)) {
                 Int52Kind kind;
                 LValue value = lowWhicheverInt52(m_node->child1(), kind);
                 LValue result = m_out.neg(value);
@@ -14637,7 +14637,7 @@ private:
             return;
         }
         
-        if (m_node->shouldSpeculateAnyInt()) {
+        if (m_node->shouldSpeculateInt52()) {
             setStrictInt52(m_out.zeroExt(result, Int64));
             return;
         }

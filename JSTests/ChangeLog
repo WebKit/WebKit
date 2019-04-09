@@ -1,3 +1,13 @@
+2019-04-09  Saam barati  <sbarati@apple.com>
+
+        Clean up Int52 code and some bugs in it
+        https://bugs.webkit.org/show_bug.cgi?id=196639
+        <rdar://problem/49515757>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/spec-any-int-as-double-produces-any-int52-from-int52-rep.js: Added.
+
 2019-04-09  Tadeu Zagallo  <tzagallo@apple.com>
 
         ASSERTION FAILED: !scope.exception() || !hasProperty in JSObject::get

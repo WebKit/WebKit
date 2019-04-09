@@ -249,8 +249,11 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
             isTop = false;
     }
     
-    if (value & SpecInt52Only)
-        strOut.print("Int52");
+    if (value & SpecInt32AsInt52)
+        strOut.print("Int32AsInt52");
+
+    if (value & SpecNonInt32AsInt52)
+        strOut.print("NonInt32AsInt52");
         
     if ((value & SpecBytecodeDouble) == SpecBytecodeDouble)
         strOut.print("BytecodeDouble");
@@ -343,10 +346,12 @@ static const char* speculationToAbbreviatedString(SpeculatedType prediction)
         return "<Int32>";
     if (isAnyIntAsDoubleSpeculation(prediction))
         return "<AnyIntAsDouble>";
-    if (isInt52Speculation(prediction))
-        return "<Int52>";
-    if (isAnyIntSpeculation(prediction))
-        return "<AnyInt>";
+    if (prediction == SpecNonInt32AsInt52)
+        return "<NonInt32AsInt52>";
+    if (prediction == SpecInt32AsInt52)
+        return "<Int32AsInt52>";
+    if (isAnyInt52Speculation(prediction))
+        return "<Int52Any>";
     if (isDoubleSpeculation(prediction))
         return "<Double>";
     if (isFullNumberSpeculation(prediction))
@@ -510,6 +515,18 @@ SpeculatedType speculationFromValue(JSValue value)
     return SpecOther;
 }
 
+SpeculatedType int52AwareSpeculationFromValue(JSValue value)
+{
+    if (!value.isAnyInt())
+        return speculationFromValue(value);
+
+    int64_t intValue = value.asAnyInt();
+    bool isI32 = static_cast<int64_t>(static_cast<int32_t>(intValue)) == intValue;
+    if (isI32)
+        return SpecInt32AsInt52;
+    return SpecNonInt32AsInt52;
+}
+
 TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
 {
     if (isInt8ArraySpeculation(type))
@@ -578,8 +595,8 @@ SpeculatedType speculationFromJSType(JSType type)
 SpeculatedType leastUpperBoundOfStrictlyEquivalentSpeculations(SpeculatedType type)
 {
     // SpecNonIntAsDouble includes negative zero (-0.0), which can be equal to 0 and 0.0 in the context of == and ===.
-    if (type & (SpecAnyInt | SpecAnyIntAsDouble | SpecNonIntAsDouble))
-        type |= (SpecAnyInt | SpecAnyIntAsDouble | SpecNonIntAsDouble);
+    if (type & (SpecIntAnyFormat | SpecNonIntAsDouble))
+        type |= (SpecIntAnyFormat | SpecNonIntAsDouble);
 
     if (type & SpecString)
         type |= SpecString;
@@ -803,10 +820,14 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecNonBoolInt32;
     if (!strncmp(speculation, "SpecInt32Only", strlen("SpecInt32Only")))
         return SpecInt32Only;
-    if (!strncmp(speculation, "SpecInt52Only", strlen("SpecInt52Only")))
-        return SpecInt52Only;
-    if (!strncmp(speculation, "SpecAnyInt", strlen("SpecAnyInt")))
-        return SpecAnyInt;
+    if (!strncmp(speculation, "SpecInt32AsInt52", strlen("SpecInt32AsInt52")))
+        return SpecInt32AsInt52;
+    if (!strncmp(speculation, "SpecNonInt32AsInt52", strlen("SpecNonInt32AsInt52")))
+        return SpecNonInt32AsInt52;
+    if (!strncmp(speculation, "SpecInt52Any", strlen("SpecInt52Any")))
+        return SpecInt52Any;
+    if (!strncmp(speculation, "SpecIntAnyFormat", strlen("SpecIntAnyFormat")))
+        return SpecIntAnyFormat;
     if (!strncmp(speculation, "SpecAnyIntAsDouble", strlen("SpecAnyIntAsDouble")))
         return SpecAnyIntAsDouble;
     if (!strncmp(speculation, "SpecNonIntAsDouble", strlen("SpecNonIntAsDouble")))

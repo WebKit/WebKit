@@ -102,7 +102,7 @@ inline SpeculatedType typeFilterFor(UseKind useKind)
     case KnownInt32Use:
         return SpecInt32Only;
     case Int52RepUse:
-        return SpecAnyInt;
+        return SpecInt52Any;
     case AnyIntUse:
         return SpecInt32Only | SpecAnyIntAsDouble;
     case NumberUse:

@@ -156,7 +156,7 @@ bool VariableAccessData::makePredictionForDoubleFormat()
     SpeculatedType type = m_prediction;
     if (type & ~SpecBytecodeNumber)
         type |= SpecDoublePureNaN;
-    if (type & SpecAnyInt)
+    if (type & (SpecInt32Only | SpecInt52Any))
         type |= SpecAnyIntAsDouble;
     return checkAndSet(m_prediction, type);
 }
@@ -180,8 +180,8 @@ bool VariableAccessData::couldRepresentInt52Impl()
         return false;
     
     // The argument-aware prediction -- which merges all of an (inlined or machine)
-    // argument's variable access datas' predictions -- must possibly be AnyInt.
-    return !(argumentAwarePrediction() & ~SpecAnyInt);
+    // argument's variable access datas' predictions -- must possibly be Int52Any.
+    return isAnyInt52Speculation(argumentAwarePrediction());
 }
 
 FlushFormat VariableAccessData::flushFormat()

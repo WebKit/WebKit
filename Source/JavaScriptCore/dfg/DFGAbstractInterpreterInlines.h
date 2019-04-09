@@ -481,7 +481,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     setConstant(node, jsNumber(static_cast<uint32_t>(machineInt)));
                     break;
                 }
-                setNonCellTypeForNode(node, SpecAnyInt);
+                setNonCellTypeForNode(node, SpecInt52Any);
                 break;
             }
             if (child && child.isInt32()) {
@@ -607,8 +607,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             setConstant(node, child);
             break;
         }
-        
-        setNonCellTypeForNode(node, SpecAnyInt);
+
+        setTypeForNode(node, forNode(node->child1()).m_type);
+        forNode(node).fixTypeForRepresentation(m_graph, node);
         break;
     }
         
@@ -667,7 +668,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            setNonCellTypeForNode(node, SpecAnyInt);
+            setNonCellTypeForNode(node, SpecInt52Any);
             break;
         case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
@@ -767,7 +768,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            setNonCellTypeForNode(node, SpecAnyInt);
+            setNonCellTypeForNode(node, SpecInt52Any);
             break;
         case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
@@ -830,7 +831,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            setNonCellTypeForNode(node, SpecAnyInt);
+            setNonCellTypeForNode(node, SpecInt52Any);
             break;
         case DoubleRepUse:
             if (child && child.isNumber()) {
@@ -890,7 +891,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            setNonCellTypeForNode(node, SpecAnyInt);
+            setNonCellTypeForNode(node, SpecInt52Any);
             break;
         case DoubleRepUse:
             if (left && right && left.isNumber() && right.isNumber()) {
@@ -2130,8 +2131,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::Uint32Array:
             if (node->shouldSpeculateInt32())
                 setNonCellTypeForNode(node, SpecInt32Only);
-            else if (enableInt52() && node->shouldSpeculateAnyInt())
-                setNonCellTypeForNode(node, SpecAnyInt);
+            else if (node->shouldSpeculateInt52())
+                setNonCellTypeForNode(node, SpecInt52Any);
             else
                 setNonCellTypeForNode(node, SpecAnyIntAsDouble);
             break;
@@ -3875,7 +3876,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (data.isSigned)
                 setNonCellTypeForNode(node, SpecInt32Only);
             else
-                setNonCellTypeForNode(node, SpecAnyInt);
+                setNonCellTypeForNode(node, SpecInt52Any);
         }
         break;
     }

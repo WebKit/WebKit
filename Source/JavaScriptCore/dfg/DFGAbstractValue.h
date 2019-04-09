@@ -201,6 +201,11 @@ struct AbstractValue {
     {
         return !m_value && m_type;
     }
+
+    bool isInt52Any() const
+    {
+        return !(m_type & ~SpecInt52Any);
+    }
     
     JSValue value() const
     {
@@ -506,23 +511,19 @@ private:
     
     bool validateTypeAcceptingBoxedInt52(JSValue value) const
     {
-        if (isHeapTop())
+        if (isBytecodeTop())
             return true;
         
-        // Constant folding always represents Int52's in a double (i.e. AnyIntAsDouble).
-        // So speculationFromValue(value) for an Int52 value will return AnyIntAsDouble,
-        // and that's fine - the type validates just fine.
-        SpeculatedType type = m_type;
-        if (type & SpecInt52Only)
-            type |= SpecAnyIntAsDouble;
-        
-        if (mergeSpeculations(type, speculationFromValue(value)) != type)
-            return false;
-        
-        if (value.isEmpty()) {
-            ASSERT(m_type & SpecEmpty);
+        if (m_type & SpecInt52Any) {
+            ASSERT(!(m_type & ~SpecInt52Any));
+
+            if (mergeSpeculations(m_type, int52AwareSpeculationFromValue(value)) != m_type)
+                return false;
             return true;
         }
+
+        if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
+            return false;
         
         return true;
     }

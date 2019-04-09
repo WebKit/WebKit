@@ -1,3 +1,121 @@
+2019-04-09  Saam barati  <sbarati@apple.com>
+
+        Clean up Int52 code and some bugs in it
+        https://bugs.webkit.org/show_bug.cgi?id=196639
+        <rdar://problem/49515757>
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes bugs in our Int52 code. The primary change in this patch is
+        adopting a segregated type lattice for Int52. Previously, for Int52 values,
+        we represented them with SpecInt32Only and SpecInt52Only. For an Int52,
+        SpecInt32Only meant that the value is in int32 range. And SpecInt52Only meant
+        that the is outside of the int32 range.
+        
+        However, this got confusing because we reused SpecInt32Only both for JSValue
+        representations and Int52 representations. This actually lead to some bugs.
+        
+        1. It's possible that roundtripping through Int52 representation would say
+        it produces the wrong type. For example, consider this program and how we
+        used to annotate types in AI:
+        a: JSConstant(10.0) => m_type is SpecAnyIntAsDouble
+        b: Int52Rep(@a) => m_type is SpecInt52Only
+        c: ValueRep(@b) => m_type is SpecAnyIntAsDouble
+        
+        In AI, for the above program, we'd say that @c produces SpecAnyIntAsDouble.
+        However, the execution semantics are such that it'd actually produce a boxed
+        Int32. This patch fixes the bug where we'd say that Int52Rep over SpecAnyIntAsDouble
+        would produce SpecInt52Only. This is clearly wrong, as SpecAnyIntAsDouble can
+        mean an int value in either int32 or int52 range.
+        
+        2. AsbstractValue::validateTypeAcceptingBoxedInt52 was wrong in how it
+        accepted Int52 values. It was wrong in two different ways:
+        a: If the AbstractValue's type was SpecInt52Only, and the incoming value
+        was a boxed double, but represented a value in int32 range, the incoming
+        value would incorrectly validate as being acceptable. However, we should
+        have rejected this value.
+        b: If the AbstractValue's type was SpecInt32Only, and the incoming value
+        was an Int32 boxed in a double, this would not validate, even though
+        it should have validated.
+        
+        Solving 2 was easiest if we segregated out the Int52 type into its own
+        lattice. This patch makes a new Int52 lattice, which is composed of
+        SpecInt32AsInt52 and SpecNonInt32AsInt52.
+        
+        The conversion rules are now really simple.
+        
+        Int52 rep => JSValue rep
+        SpecInt32AsInt52 => SpecInt32Only
+        SpecNonInt32AsInt52 => SpecAnyIntAsDouble
+        
+        JSValue rep => Int52 rep
+        SpecInt32Only => SpecInt32AsInt52
+        SpecAnyIntAsDouble => SpecInt52Any
+        
+        With these rules, the program in (1) will now correctly report that @c
+        returns SpecInt32Only | SpecAnyIntAsDouble.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::int52AwareSpeculationFromValue):
+        (JSC::leastUpperBoundOfStrictlyEquivalentSpeculations):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationForArithmetic):
+        (JSC::isAnyInt52Speculation):
+        (JSC::isIntAnyFormat):
+        (JSC::isInt52Speculation): Deleted.
+        (JSC::isAnyIntSpeculation): Deleted.
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::fixTypeForRepresentation):
+        (JSC::DFG::AbstractValue::checkConsistency const):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::isInt52Any const):
+        (JSC::DFG::AbstractValue::validateTypeAcceptingBoxedInt52 const):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupArithMul):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupGetPrototypeOf):
+        (JSC::DFG::FixupPhase::fixupToThis):
+        (JSC::DFG::FixupPhase::fixupToStringOrCallStringConstructor):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::fixIntConvertingEdge):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        (JSC::DFG::FixupPhase::fixupChecksInBlock):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateInt52):
+        (JSC::DFG::Graph::binaryArithShouldSpeculateInt52):
+        (JSC::DFG::Graph::unaryArithShouldSpeculateInt52):
+        (JSC::DFG::Graph::addShouldSpeculateAnyInt): Deleted.
+        (JSC::DFG::Graph::binaryArithShouldSpeculateAnyInt): Deleted.
+        (JSC::DFG::Graph::unaryArithShouldSpeculateAnyInt): Deleted.
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt52):
+        (JSC::DFG::Node::shouldSpeculateAnyInt): Deleted.
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::setIntTypedArrayLoadResult):
+        (JSC::DFG::SpeculativeJIT::compileArithAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt32Internal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt52):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * dfg/DFGVariableAccessData.cpp:
+        (JSC::DFG::VariableAccessData::makePredictionForDoubleFormat):
+        (JSC::DFG::VariableAccessData::couldRepresentInt52Impl):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithAddOrSub):
+        (JSC::FTL::DFG::LowerDFGToB3::compileArithNegate):
+        (JSC::FTL::DFG::LowerDFGToB3::setIntTypedArrayLoadResult):
+
 2019-04-09  Tadeu Zagallo  <tzagallo@apple.com>
 
         ASSERTION FAILED: !scope.exception() || !hasProperty in JSObject::get

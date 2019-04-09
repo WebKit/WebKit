@@ -134,22 +134,38 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, NodeFlags representat
             if (m_value.isInt32())
                 m_value = jsDoubleNumber(m_value.asNumber());
         }
-        if (m_type & SpecAnyInt) {
-            m_type &= ~SpecAnyInt;
+        if (m_type & SpecIntAnyFormat) {
+            m_type &= ~SpecIntAnyFormat;
             m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecFullDouble)
             DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for double node has type outside SpecFullDouble.\n").data());
     } else if (representation == NodeResultInt52) {
         if (m_type & SpecAnyIntAsDouble) {
+            // AnyIntAsDouble can produce i32 or i52. SpecAnyIntAsDouble doesn't bound the magnitude of the value.
             m_type &= ~SpecAnyIntAsDouble;
-            m_type |= SpecInt52Only;
+            m_type |= SpecInt52Any;
         }
-        if (m_type & ~SpecAnyInt)
-            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for int52 node has type outside SpecAnyInt.\n").data());
+
+        if (m_type & SpecInt32Only) {
+            m_type &= ~SpecInt32Only;
+            m_type |= SpecInt32AsInt52;
+        }
+
+        if (m_type & ~SpecInt52Any)
+            DFG_CRASH(graph, node, toCString("Abstract value ", *this, " for int52 node has type outside SpecInt52Any.\n").data());
+
+        if (m_value) {
+            DFG_ASSERT(graph, node, m_value.isAnyInt());
+            m_type = int52AwareSpeculationFromValue(m_value);
+        }
     } else {
-        if (m_type & SpecInt52Only) {
-            m_type &= ~SpecInt52Only;
+        if (m_type & SpecInt32AsInt52) {
+            m_type &= ~SpecInt32AsInt52;
+            m_type |= SpecInt32Only;
+        }
+        if (m_type & SpecNonInt32AsInt52) {
+            m_type &= ~SpecNonInt32AsInt52;
             m_type |= SpecAnyIntAsDouble;
         }
         if (m_type & ~SpecBytecodeTop)
@@ -415,22 +431,21 @@ FiltrationResult AbstractValue::normalizeClarity(Graph& graph)
 void AbstractValue::checkConsistency() const
 {
     if (!(m_type & SpecCell)) {
-        ASSERT(m_structure.isClear());
-        ASSERT(!m_arrayModes);
+        RELEASE_ASSERT(m_structure.isClear());
+        RELEASE_ASSERT(!m_arrayModes);
     }
     
     if (isClear())
-        ASSERT(!m_value);
+        RELEASE_ASSERT(!m_value);
     
-    if (!!m_value) {
-        SpeculatedType type = m_type;
-        // This relaxes the assertion below a bit, since we don't know the representation of the
-        // node.
-        if (type & SpecInt52Only)
-            type |= SpecAnyIntAsDouble;
-        ASSERT(mergeSpeculations(type, speculationFromValue(m_value)) == type);
+    if (m_type & SpecInt52Any) {
+        if (m_type != SpecFullTop)
+            RELEASE_ASSERT(isAnyInt52Speculation(m_type));
     }
-    
+
+    if (!!m_value)
+        RELEASE_ASSERT(validateTypeAcceptingBoxedInt52(m_value));
+
     // Note that it's possible for a prediction like (Final, []). This really means that
     // the value is bottom and that any code that uses the value is unreachable. But
     // we don't want to get pedantic about this as it would only increase the computational
@@ -441,7 +456,7 @@ void AbstractValue::assertIsRegistered(Graph& graph) const
 {
     m_structure.assertIsRegistered(graph);
 }
-#endif
+#endif // !ASSERT_DISABLED
 
 ResultType AbstractValue::resultType() const
 {

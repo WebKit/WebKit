@@ -284,7 +284,7 @@ public:
         return addSpeculationMode(add, pass) != DontSpeculateInt32;
     }
     
-    bool addShouldSpeculateAnyInt(Node* add)
+    bool addShouldSpeculateInt52(Node* add)
     {
         if (!enableInt52())
             return false;
@@ -295,27 +295,23 @@ public:
         if (hasExitSite(add, Int52Overflow))
             return false;
 
-        if (Node::shouldSpeculateAnyInt(left, right))
+        if (Node::shouldSpeculateInt52(left, right))
             return true;
 
-        auto shouldSpeculateAnyIntForAdd = [](Node* node) {
-            auto isAnyIntSpeculationForAdd = [](SpeculatedType value) {
-                return !!value && (value & (SpecAnyInt | SpecAnyIntAsDouble)) == value;
-            };
-
+        auto shouldSpeculateInt52ForAdd = [] (Node* node) {
             // When DoubleConstant node appears, it means that users explicitly write a constant in their code with double form instead of integer form (1.0 instead of 1).
             // In that case, we should honor this decision: using it as integer is not appropriate.
             if (node->op() == DoubleConstant)
                 return false;
-            return isAnyIntSpeculationForAdd(node->prediction());
+            return isIntAnyFormat(node->prediction());
         };
 
-        // Allow AnyInt ArithAdd only when the one side of the binary operation should be speculated AnyInt. It is a bit conservative
+        // Allow Int52 ArithAdd only when the one side of the binary operation should be speculated Int52. It is a bit conservative
         // decision. This is because Double to Int52 conversion is not so cheap. Frequent back-and-forth conversions between Double and Int52
         // rather hurt the performance. If the one side of the operation is already Int52, the cost for constructing ArithAdd becomes
         // cheap since only one Double to Int52 conversion could be required.
         // This recovers some regression in assorted tests while keeping kraken crypto improvements.
-        if (!left->shouldSpeculateAnyInt() && !right->shouldSpeculateAnyInt())
+        if (!left->shouldSpeculateInt52() && !right->shouldSpeculateInt52())
             return false;
 
         auto usesAsNumbers = [](Node* node) {
@@ -329,7 +325,7 @@ public:
         if (!usesAsNumbers(add))
             return false;
 
-        return shouldSpeculateAnyIntForAdd(left) && shouldSpeculateAnyIntForAdd(right);
+        return shouldSpeculateInt52ForAdd(left) && shouldSpeculateInt52ForAdd(right);
     }
     
     bool binaryArithShouldSpeculateInt32(Node* node, PredictionPass pass)
@@ -341,7 +337,7 @@ public:
             && node->canSpeculateInt32(node->sourceFor(pass));
     }
     
-    bool binaryArithShouldSpeculateAnyInt(Node* node, PredictionPass pass)
+    bool binaryArithShouldSpeculateInt52(Node* node, PredictionPass pass)
     {
         if (!enableInt52())
             return false;
@@ -349,7 +345,7 @@ public:
         Node* left = node->child1().node();
         Node* right = node->child2().node();
 
-        return Node::shouldSpeculateAnyInt(left, right)
+        return Node::shouldSpeculateInt52(left, right)
             && node->canSpeculateInt52(pass)
             && !hasExitSite(node, Int52Overflow);
     }
@@ -360,11 +356,11 @@ public:
             && node->canSpeculateInt32(pass);
     }
     
-    bool unaryArithShouldSpeculateAnyInt(Node* node, PredictionPass pass)
+    bool unaryArithShouldSpeculateInt52(Node* node, PredictionPass pass)
     {
         if (!enableInt52())
             return false;
-        return node->child1()->shouldSpeculateAnyInt()
+        return node->child1()->shouldSpeculateInt52()
             && node->canSpeculateInt52(pass)
             && !hasExitSite(node, Int52Overflow);
     }

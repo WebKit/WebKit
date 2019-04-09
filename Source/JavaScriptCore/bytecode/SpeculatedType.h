@@ -73,26 +73,31 @@ static const SpeculatedType SpecCellOther                         = 1ull << 27; 
 static const SpeculatedType SpecBoolInt32                         = 1ull << 28; // It's definitely an Int32 with value 0 or 1.
 static const SpeculatedType SpecNonBoolInt32                      = 1ull << 29; // It's definitely an Int32 with value other than 0 or 1.
 static const SpeculatedType SpecInt32Only                         = SpecBoolInt32 | SpecNonBoolInt32; // It's definitely an Int32.
-static const SpeculatedType SpecInt52Only                         = 1ull << 30; // It's definitely an Int52 and we intend it to unbox it. It's also definitely not an Int32.
-static const SpeculatedType SpecAnyInt                            = SpecInt32Only | SpecInt52Only; // It's something that we can do machine int arithmetic on.
-static const SpeculatedType SpecAnyIntAsDouble                    = 1ull << 31; // It's definitely an Int52 and it's inside a double.
-static const SpeculatedType SpecNonIntAsDouble                    = 1ull << 32; // It's definitely not an Int52 but it's a real number and it's a double.
+
+static const SpeculatedType SpecInt32AsInt52                      = 1ull << 30; // It's an Int52 and it can fit in an int32.
+static const SpeculatedType SpecNonInt32AsInt52                   = 1ull << 31; // It's an Int52 and it can't fit in an int32.
+static const SpeculatedType SpecInt52Any                          = SpecInt32AsInt52 | SpecNonInt32AsInt52; // It's any kind of Int52.
+
+static const SpeculatedType SpecAnyIntAsDouble                    = 1ull << 32; // It's definitely an Int52 and it's inside a double.
+static const SpeculatedType SpecNonIntAsDouble                    = 1ull << 33; // It's definitely not an Int52 but it's a real number and it's a double.
 static const SpeculatedType SpecDoubleReal                        = SpecNonIntAsDouble | SpecAnyIntAsDouble; // It's definitely a non-NaN double.
-static const SpeculatedType SpecDoublePureNaN                     = 1ull << 33; // It's definitely a NaN that is safe to tag (i.e. pure).
-static const SpeculatedType SpecDoubleImpureNaN                   = 1ull << 34; // It's definitely a NaN that is unsafe to tag (i.e. impure).
+static const SpeculatedType SpecDoublePureNaN                     = 1ull << 34; // It's definitely a NaN that is safe to tag (i.e. pure).
+static const SpeculatedType SpecDoubleImpureNaN                   = 1ull << 35; // It's definitely a NaN that is unsafe to tag (i.e. impure).
 static const SpeculatedType SpecDoubleNaN                         = SpecDoublePureNaN | SpecDoubleImpureNaN; // It's definitely some kind of NaN.
 static const SpeculatedType SpecBytecodeDouble                    = SpecDoubleReal | SpecDoublePureNaN; // It's either a non-NaN or a NaN double, but it's definitely not impure NaN.
 static const SpeculatedType SpecFullDouble                        = SpecDoubleReal | SpecDoubleNaN; // It's either a non-NaN or a NaN double.
 static const SpeculatedType SpecBytecodeRealNumber                = SpecInt32Only | SpecDoubleReal; // It's either an Int32 or a DoubleReal.
-static const SpeculatedType SpecFullRealNumber                    = SpecAnyInt | SpecDoubleReal; // It's either an Int32 or a DoubleReal, or a Int52.
+static const SpeculatedType SpecFullRealNumber                    = SpecInt32Only | SpecInt52Any | SpecDoubleReal; // It's either an Int32 or a DoubleReal, or an Int52.
 static const SpeculatedType SpecBytecodeNumber                    = SpecInt32Only | SpecBytecodeDouble; // It's either an Int32 or a Double, and the Double cannot be an impure NaN.
-static const SpeculatedType SpecFullNumber                        = SpecAnyInt | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
-static const SpeculatedType SpecBoolean                           = 1ull << 35; // It's definitely a Boolean.
-static const SpeculatedType SpecOther                             = 1ull << 36; // It's definitely either Null or Undefined.
+static const SpeculatedType SpecIntAnyFormat                      = SpecInt52Any | SpecInt32Only | SpecAnyIntAsDouble;
+
+static const SpeculatedType SpecFullNumber                        = SpecIntAnyFormat | SpecFullDouble; // It's either an Int32, Int52, or a Double, and the Double can be impure NaN.
+static const SpeculatedType SpecBoolean                           = 1ull << 36; // It's definitely a Boolean.
+static const SpeculatedType SpecOther                             = 1ull << 37; // It's definitely either Null or Undefined.
 static const SpeculatedType SpecMisc                              = SpecBoolean | SpecOther; // It's definitely either a boolean, Null, or Undefined.
-static const SpeculatedType SpecEmpty                             = 1ull << 37; // It's definitely an empty value marker.
-static const SpeculatedType SpecBigInt                            = 1ull << 38; // It's definitely a BigInt.
-static const SpeculatedType SpecDataViewObject                    = 1ull << 39; // It's definitely a JSDataView.
+static const SpeculatedType SpecEmpty                             = 1ull << 38; // It's definitely an empty value marker.
+static const SpeculatedType SpecBigInt                            = 1ull << 39; // It's definitely a BigInt.
+static const SpeculatedType SpecDataViewObject                    = 1ull << 40; // It's definitely a JSDataView.
 static const SpeculatedType SpecPrimitive                         = SpecString | SpecSymbol | SpecBytecodeNumber | SpecMisc | SpecBigInt; // It's any non-Object JSValue.
 static const SpeculatedType SpecObject                            = SpecFinalObject | SpecArray | SpecFunction | SpecTypedArrayView | SpecDirectArguments | SpecScopedArguments | SpecStringObject | SpecRegExpObject | SpecMapObject | SpecSetObject | SpecWeakMapObject | SpecWeakSetObject | SpecProxyObject | SpecDerivedArray | SpecObjectOther | SpecDataViewObject; // Bitmask used for testing for any kind of object prediction.
 static const SpeculatedType SpecCell                              = SpecObject | SpecString | SpecSymbol | SpecCellOther | SpecBigInt; // It's definitely a JSCell.
@@ -337,12 +342,12 @@ inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
 
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52Only));
+    return !(value & (SpecFullDouble | SpecInt52Any));
 }
 
 inline bool isInt32OrBooleanSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52Only));
+    return !(value & (SpecFullDouble | SpecInt52Any));
 }
 
 inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
@@ -350,14 +355,14 @@ inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
     return isInt32OrBooleanSpeculation(value & ~SpecOther);
 }
 
-inline bool isInt52Speculation(SpeculatedType value)
+inline bool isAnyInt52Speculation(SpeculatedType value)
 {
-    return value == SpecInt52Only;
+    return !!value && (value & SpecInt52Any) == value;
 }
 
-inline bool isAnyIntSpeculation(SpeculatedType value)
+inline bool isIntAnyFormat(SpeculatedType value)
 {
-    return !!value && (value & SpecAnyInt) == value;
+    return !!value && (value & SpecIntAnyFormat) == value;
 }
 
 inline bool isAnyIntAsDoubleSpeculation(SpeculatedType value)
@@ -483,6 +488,9 @@ SpeculatedType speculationFromClassInfo(const ClassInfo*);
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);
 JS_EXPORT_PRIVATE SpeculatedType speculationFromValue(JSValue);
+// If it's an anyInt(), it'll return speculated types from the Int52 lattice.
+// Otherwise, it'll return types from the JSValue lattice.
+JS_EXPORT_PRIVATE SpeculatedType int52AwareSpeculationFromValue(JSValue);
 SpeculatedType speculationFromJSType(JSType);
 
 SpeculatedType speculationFromTypedArrayType(TypedArrayType); // only valid for typed views.

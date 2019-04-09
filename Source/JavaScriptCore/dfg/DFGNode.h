@@ -2346,9 +2346,9 @@ public:
         return isInt32OrBooleanSpeculationExpectingDefined(prediction());
     }
     
-    bool shouldSpeculateAnyInt()
+    bool shouldSpeculateInt52()
     {
-        return isAnyIntSpeculation(prediction());
+        return enableInt52() && isAnyInt52Speculation(prediction());
     }
     
     bool shouldSpeculateDouble()
@@ -2609,9 +2609,9 @@ public:
             && op2->shouldSpeculateInt32OrBooleanExpectingDefined();
     }
     
-    static bool shouldSpeculateAnyInt(Node* op1, Node* op2)
+    static bool shouldSpeculateInt52(Node* op1, Node* op2)
     {
-        return op1->shouldSpeculateAnyInt() && op2->shouldSpeculateAnyInt();
+        return enableInt52() && op1->shouldSpeculateInt52() && op2->shouldSpeculateInt52();
     }
     
     static bool shouldSpeculateNumber(Node* op1, Node* op2)
