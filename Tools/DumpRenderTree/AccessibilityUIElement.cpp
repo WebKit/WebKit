@@ -1621,7 +1621,7 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
 {
 }
 
-void AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
 {
     return false;
 }
