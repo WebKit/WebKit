@@ -6838,6 +6838,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
                 if (!first)
                     stream << ", ";
                 stream << "vc " << viewportConstrainedNodeID;
+                first = false;
             }
 
             if (positionedNodeID) {

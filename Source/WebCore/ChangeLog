@@ -1,3 +1,22 @@
+2019-04-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some iOS #ifdefs around sticky-related code
+        https://bugs.webkit.org/show_bug.cgi?id=196726
+
+        Reviewed by Zalan Bujtas.
+
+        Now that async overflow scrolling can be enabled on macOS, RenderLayerCompositor::isAsyncScrollableStickyLayer()
+        should not have iOS-only code.
+
+        The answer to the FIXME in RenderLayerCompositor::computeStickyViewportConstraints is obvious: composited
+        overflow:scroll can be the container for sticky. The assertion can be removed.
+
+        * rendering/RenderLayer.cpp: Fix spacing in some logging.
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::isAsyncScrollableStickyLayer const):
+        (WebCore::RenderLayerCompositor::computeStickyViewportConstraints const):
+
 2019-04-08  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][WinCairo] Separate copied headers into different directories
