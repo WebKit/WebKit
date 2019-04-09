@@ -244,15 +244,15 @@ def forward_declarations_and_headers(receiver):
 
     forward_declarations = '\n'.join([forward_declarations_for_namespace(namespace, types) for (namespace, types) in sorted(types_by_namespace.items())])
 
-    header_includes = set()
+    header_includes = []
     for header in sorted(headers):
         if header in header_conditions and not None in header_conditions[header]:
             header_include = '#if %s\n' % ' || '.join(set(header_conditions[header]))
             header_include += '#include %s\n' % header
             header_include += '#endif\n'
-            header_includes.add(header_include)
+            header_includes.append(header_include)
         else:
-            header_includes.add('#include %s\n' % header)
+            header_includes.append('#include %s\n' % header)
 
     return (forward_declarations, header_includes)
 
