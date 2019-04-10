@@ -1,3 +1,22 @@
+2019-04-10  Brady Eidson  <beidson@apple.com>
+
+        Background tabs are not fully reactivated after a link is opened from an external application.
+        <rdar://problem/49533278> and https://bugs.webkit.org/show_bug.cgi?id=196705
+
+        Reviewed by Chris Dumez.
+
+        If an app unparents a WKWebView right after activation but before the "applicationWillEnterForeground" notification
+        is dispatched, then that WKWebView is in a broken state with a frozen layer tree.
+
+        The WKApplicationStateTrackingView logic needs to be a little more resilient.
+
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView willMoveToWindow:]): When clearing the window, remember the current background state.
+        (-[WKApplicationStateTrackingView didMoveToWindow]): If our last observed background state doesn't match the current
+          background state then fake the relevant notification.
+        (-[WKApplicationStateTrackingView _applicationDidEnterBackground]): Remember that we've observed a backgrounding.
+        (-[WKApplicationStateTrackingView _applicationWillEnterForeground]): Remember that we've observed a foregrounding.
+
 2019-04-10  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, build fix for r244097

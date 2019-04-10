@@ -37,6 +37,7 @@
 @implementation WKApplicationStateTrackingView {
     WeakObjCPtr<WKWebView> _webViewToTrack;
     std::unique_ptr<WebKit::ApplicationStateTracker> _applicationStateTracker;
+    BOOL _lastObservedStateWasBackground;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame webView:(WKWebView *)webView
@@ -53,6 +54,8 @@
     if (!self._contentView.window || newWindow)
         return;
 
+    _lastObservedStateWasBackground = [self isBackground];
+
     ASSERT(_applicationStateTracker);
     _applicationStateTracker = nullptr;
 }
@@ -64,6 +67,11 @@
 
     ASSERT(!_applicationStateTracker);
     _applicationStateTracker = std::make_unique<WebKit::ApplicationStateTracker>(self, @selector(_applicationDidEnterBackground), @selector(_applicationDidFinishSnapshottingAfterEnteringBackground), @selector(_applicationWillEnterForeground));
+    
+    if (_lastObservedStateWasBackground && ![self isBackground])
+        [self _applicationWillEnterForeground];
+    else if (!_lastObservedStateWasBackground && [self isBackground])
+        [self _applicationDidEnterBackground];
 }
 
 - (void)_applicationDidEnterBackground
@@ -72,6 +80,7 @@
     if (!page)
         return;
 
+    _lastObservedStateWasBackground = YES;
     page->applicationDidEnterBackground();
     page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow);
 }
@@ -88,6 +97,7 @@
     if (!page)
         return;
 
+    _lastObservedStateWasBackground = NO;
     page->applicationWillEnterForeground();
     page->activityStateDidChange(WebCore::ActivityState::allFlags() - WebCore::ActivityState::IsInWindow, true, WebKit::WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
 }
