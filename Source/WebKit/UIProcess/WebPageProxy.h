@@ -91,6 +91,7 @@
 #include <WebCore/TextChecking.h>
 #include <WebCore/TextGranularity.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebCore/ViewportArguments.h>
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
@@ -2127,6 +2128,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    Optional<WebCore::ViewportArguments> m_overrideViewportArguments;
     VisibleContentRectUpdateInfo m_lastVisibleContentRectUpdate;
     uint64_t m_firstLayerTreeTransactionIdAfterDidCommitLoad { 0 };
     int32_t m_deviceOrientation { 0 };

@@ -537,6 +537,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     m_page->setUserInterfaceLayoutDirection(m_userInterfaceLayoutDirection);
 #if PLATFORM(IOS_FAMILY)
     m_page->setTextAutosizingWidth(parameters.textAutosizingWidth);
+    setOverrideViewportArguments(parameters.overrideViewportArguments);
 #endif
 
     platformInitialize();

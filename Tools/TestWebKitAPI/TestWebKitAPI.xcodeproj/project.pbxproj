@@ -100,6 +100,7 @@
 		2D70059921EDA4D0003463CB /* OffscreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D70059721EDA4D0003463CB /* OffscreenWindow.mm */; };
 		2D7FD19322419087007887F1 /* DocumentEditingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D7FD19222419087007887F1 /* DocumentEditingContext.mm */; };
 		2D838B1F1EEF3A5C009B980E /* WKContentViewEditingActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */; };
+		2DA2586F225C67DC00B45C1C /* OverrideViewportArguments.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DA2586E225C67DC00B45C1C /* OverrideViewportArguments.mm */; };
 		2DADF26321CB8F32003D3E3A /* GetResourceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DADF26221CB8F32003D3E3A /* GetResourceData.mm */; };
 		2DB0232F1E4E871800707123 /* InteractionDeadlockAfterCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */; };
 		2DB647881F4163D60051A89E /* WKWebViewDoesNotLogDuringInitialization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */; };
@@ -1458,6 +1459,7 @@
 		2D8104CB1BEC13E70020DA46 /* FindInPage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindInPage.mm; sourceTree = "<group>"; };
 		2D838B1E1EEF3A5B009B980E /* WKContentViewEditingActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentViewEditingActions.mm; sourceTree = "<group>"; };
 		2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShrinkToFit.mm; sourceTree = "<group>"; };
+		2DA2586E225C67DC00B45C1C /* OverrideViewportArguments.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OverrideViewportArguments.mm; sourceTree = "<group>"; };
 		2DADF26221CB8F32003D3E3A /* GetResourceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetResourceData.mm; sourceTree = "<group>"; };
 		2DB0232E1E4E871800707123 /* InteractionDeadlockAfterCrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InteractionDeadlockAfterCrash.mm; sourceTree = "<group>"; };
 		2DB647871F4161F70051A89E /* WKWebViewDoesNotLogDuringInitialization.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewDoesNotLogDuringInitialization.mm; sourceTree = "<group>"; };
@@ -2608,6 +2610,7 @@
 				37A22AA51DCAA27200AFBFC4 /* ObservedRenderingProgressEventsAfterCrash.mm */,
 				CEA6CF2219CCF5BD0064F5A7 /* OpenAndCloseWindow.mm */,
 				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
+				2DA2586E225C67DC00B45C1C /* OverrideViewportArguments.mm */,
 				2D3CA3A4221DF2390088E803 /* PageOverlayPlugin.mm */,
 				F44C79FB20F9E50C0014478C /* ParserYieldTokenPlugIn.mm */,
 				F44C79FD20F9E8710014478C /* ParserYieldTokenTests.h */,
@@ -4230,6 +4233,7 @@
 				2D70059921EDA4D0003463CB /* OffscreenWindow.mm in Sources */,
 				7CCE7F251A411AF600447C4C /* OpenAndCloseWindow.mm in Sources */,
 				CEBCA12F1E3A660100C73293 /* OverrideContentSecurityPolicy.mm in Sources */,
+				2DA2586F225C67DC00B45C1C /* OverrideViewportArguments.mm in Sources */,
 				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,
 				7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */,
 				7CCE7F081A411AE600447C4C /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,

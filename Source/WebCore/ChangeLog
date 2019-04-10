@@ -1,3 +1,35 @@
+2019-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add modern API for overriding the page's specified viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=167734
+        <rdar://problem/30331795>
+
+        Reviewed by Simon Fraser.
+
+        New API test: WebKit.OverrideViewportArguments
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateViewportArguments):
+        * dom/Document.h:
+        (WebCore::Document::viewportArguments const):
+        Make the viewportArguments() getter respect the overridden arguments.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::numericPrefix):
+        (WebCore::findSizeValue):
+        (WebCore::findScaleValue):
+        (WebCore::findBooleanValue):
+        (WebCore::parseViewportFitValue):
+        (WebCore::viewportErrorMessage):
+        (WebCore::reportViewportWarning):
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        Make it possible to parse ViewportArguments without a Document, so
+        that it can be used in the UI process. We only used the Document for
+        two things: error reporting, and getting the state of one setting.
+        Refactor error handling to use a passed-arund function, and add a
+        variant of setViewportFeature() that doesn't take a Document.
+
 2019-04-10  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Indexed drawing and GPUCommandEncoder crash prevention

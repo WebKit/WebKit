@@ -95,6 +95,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << maximumUnobscuredSize;
     encoder << deviceOrientation;
     encoder << keyboardIsAttached;
+    encoder << overrideViewportArguments;
 #endif
 #if PLATFORM(COCOA)
     encoder << smartInsertDeleteEnabled;
@@ -279,6 +280,12 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return WTF::nullopt;
     if (!decoder.decode(parameters.keyboardIsAttached))
         return WTF::nullopt;
+
+    Optional<Optional<WebCore::ViewportArguments>> overrideViewportArguments;
+    decoder >> overrideViewportArguments;
+    if (!overrideViewportArguments)
+        return WTF::nullopt;
+    parameters.overrideViewportArguments = WTFMove(*overrideViewportArguments);
 #endif
 
 #if PLATFORM(COCOA)

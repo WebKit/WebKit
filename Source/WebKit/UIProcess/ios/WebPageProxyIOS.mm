@@ -371,6 +371,11 @@ void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
 
 void WebPageProxy::setOverrideViewportArguments(const Optional<ViewportArguments>& viewportArguments)
 {
+    if (viewportArguments == m_overrideViewportArguments)
+        return;
+
+    m_overrideViewportArguments = viewportArguments;
+
     if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetOverrideViewportArguments(viewportArguments), m_pageID);
 }

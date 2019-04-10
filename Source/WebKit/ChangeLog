@@ -1,3 +1,34 @@
+2019-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add modern API for overriding the page's specified viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=167734
+        <rdar://problem/30331795>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Plumb overrideViewportArguments in WebPageCreationParameters, so that
+        if the process crashes (or swaps) they are maintained.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (viewportArgumentsFromDictionary):
+        (-[WKWebView _overrideViewportWithArguments:]):
+        Add SPI to set override viewport arguments. Parse them into a ViewportArguments
+        object and use the existing (now improved) overrideViewportArguments mechanism
+        to take over the page's viewport arguments.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setOverrideViewportArguments):
+        * WebProcess/WebPage/WebPage.cpp:
+        Plumb overrideViewportArguments around more.
+
 2019-04-10  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add runJavaScriptInFrame for WebPageProxy/WebPage

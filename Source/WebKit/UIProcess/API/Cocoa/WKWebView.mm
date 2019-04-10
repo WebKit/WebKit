@@ -6253,6 +6253,34 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     _maximumUnobscuredSizeOverride = CGSizeZero;
 }
 
+static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool viewportFitEnabled)
+{
+    if (!viewportArgumentPairs)
+        return WTF::nullopt;
+
+    WebCore::ViewportArguments viewportArguments(WebCore::ViewportArguments::ViewportMeta);
+
+    [viewportArgumentPairs enumerateKeysAndObjectsUsingBlock:makeBlockPtr([&] (NSString *key, NSString *value, BOOL* stop) {
+        if (![key isKindOfClass:[NSString class]] || ![value isKindOfClass:[NSString class]])
+            [NSException raise:NSInvalidArgumentException format:@"-[WKWebView _overrideViewportWithArguments:]: Keys and values must all be NSStrings."];
+        String keyString = key;
+        String valueString = value;
+        WebCore::setViewportFeature(viewportArguments, keyString, valueString, viewportFitEnabled, [] (WebCore::ViewportErrorCode, const String& errorMessage) {
+            NSLog(@"-[WKWebView _overrideViewportWithArguments:]: Error parsing viewport argument: %s", errorMessage.utf8().data());
+        });
+    }).get()];
+
+    return viewportArguments;
+}
+
+- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments
+{
+    if (!_page)
+        return;
+
+    _page->setOverrideViewportArguments(viewportArgumentsFromDictionary(arguments, _page->preferences().viewportFitEnabled()));
+}
+
 - (UIView *)_viewForFindUI
 {
     return [self viewForZoomingInScrollView:[self scrollView]];

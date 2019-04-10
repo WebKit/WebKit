@@ -7023,6 +7023,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
     parameters.deviceOrientation = m_deviceOrientation;
     parameters.keyboardIsAttached = isInHardwareKeyboardMode();
+    parameters.overrideViewportArguments = m_overrideViewportArguments;
 #endif
 
 #if PLATFORM(MAC)

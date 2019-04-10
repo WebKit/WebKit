@@ -1,3 +1,14 @@
+2019-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add modern API for overriding the page's specified viewport configuration
+        https://bugs.webkit.org/show_bug.cgi?id=167734
+        <rdar://problem/30331795>
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/OverrideViewportArguments.mm: Added.
+
 2019-04-10  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add support for incremental bytecode cache updates

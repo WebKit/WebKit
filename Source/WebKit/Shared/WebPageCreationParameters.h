@@ -42,6 +42,7 @@
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
+#include <WebCore/ViewportArguments.h>
 #include <pal/SessionID.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -153,6 +154,7 @@ struct WebPageCreationParameters {
     WebCore::FloatSize maximumUnobscuredSize;
     int32_t deviceOrientation { 0 };
     bool keyboardIsAttached { false };
+    Optional<WebCore::ViewportArguments> overrideViewportArguments;
 #endif
 #if PLATFORM(COCOA)
     bool smartInsertDeleteEnabled;

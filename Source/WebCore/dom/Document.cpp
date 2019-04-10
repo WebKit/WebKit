@@ -3621,7 +3621,7 @@ void Document::updateViewportArguments()
 #ifndef NDEBUG
         m_didDispatchViewportPropertiesChanged = true;
 #endif
-        page()->chrome().dispatchViewportPropertiesDidChange(m_overrideViewportArguments ? m_overrideViewportArguments.value() : m_viewportArguments);
+        page()->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
         page()->chrome().didReceiveDocType(*frame());
     }
 }

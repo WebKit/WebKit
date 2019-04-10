@@ -281,6 +281,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 - (void)_snapshotRect:(CGRect)rectInViewCoordinates intoImageOfWidth:(CGFloat)imageWidth completionHandler:(void(^)(CGImageRef))completionHandler;
 
 - (void)_overrideLayoutParametersWithMinimumLayoutSize:(CGSize)minimumLayoutSize maximumUnobscuredSizeOverride:(CGSize)maximumUnobscuredSizeOverride WK_API_AVAILABLE(ios(9_0));
+- (void)_overrideViewportWithArguments:(NSDictionary<NSString *, NSString *> *)arguments WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 - (void)_clearOverrideLayoutParameters WK_API_AVAILABLE(ios(11.0));
 - (void)_clearInterfaceOrientationOverride WK_API_AVAILABLE(ios(11.0));

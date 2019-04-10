@@ -411,7 +411,7 @@ public:
     void clearSelectorQueryCache();
 
     void setViewportArguments(const ViewportArguments& viewportArguments) { m_viewportArguments = viewportArguments; }
-    ViewportArguments viewportArguments() const { return m_viewportArguments; }
+    ViewportArguments viewportArguments() const { return m_overrideViewportArguments.valueOr(m_viewportArguments); }
 
     WEBCORE_EXPORT void setOverrideViewportArguments(const Optional<ViewportArguments>&);
 
