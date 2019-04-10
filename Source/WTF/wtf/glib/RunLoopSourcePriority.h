@@ -102,9 +102,9 @@ enum RunLoopSourcePriority {
 
     ReleaseUnusedResourcesTimer = -70,
 
-    AsyncIONetwork = -70,
-    DiskCacheRead = -70,
-    DiskCacheWrite = -60
+    AsyncIONetwork = -60,
+    DiskCacheRead = -60,
+    DiskCacheWrite = -50
 };
 
 #endif

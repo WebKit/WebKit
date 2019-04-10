@@ -1,3 +1,21 @@
+2019-04-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [WPE] Avoid async IO starving timers
+        https://bugs.webkit.org/show_bug.cgi?id=196733
+
+        Reviewed by Carlos Garcia Campos.
+
+        If AsyncIONetwork and DiskCacheRead priorities are higher than
+        MainThreadSharedTimer the timers get starved. This causes the NetworkProcess
+        to accumulate MB of data instead of handing it down to the WebProcess (done
+        using a Timer). This eventually causes an Out Of Memory kill on the
+        NetworkProcess on some embedded platforms with low memory limits.
+
+        This patch levels the three priorities to the same value, while still leaving
+        DiskCacheWrite with less priority than DiskCacheRead.
+
+        * wtf/glib/RunLoopSourcePriority.h: Changed RunLoopSourcePriority values for WPE.
+
 2019-04-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] WTF derived sources should only be referenced inside WTF
