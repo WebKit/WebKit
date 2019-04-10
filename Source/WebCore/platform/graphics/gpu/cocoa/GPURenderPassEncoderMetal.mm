@@ -38,6 +38,7 @@
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CheckedArithmetic.h>
 
 namespace WebCore {
 
@@ -241,7 +242,23 @@ void GPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned width
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)
+void GPURenderPassEncoder::setIndexBuffer(GPUBuffer& buffer, uint64_t offset)
+{
+    if (!m_platformRenderPassEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setIndexBuffer(): Invalid operation: Encoding is ended!");
+        return;
+    }
+    if (offset >= buffer.byteLength() || offset % 4) {
+        LOG(WebGPU, "GPURenderPassEncoder::setIndexBuffer(): Invalid offset!");
+        return;
+    }
+    ASSERT(buffer.platformBuffer());
+    // Buffer must be cached to provide it to Metal via drawIndexedPrimitives.
+    m_indexBuffer = makeRefPtr(buffer);
+    m_indexBufferOffset = offset;
+}
+
+void GPURenderPassEncoder::setVertexBuffers(unsigned index, const Vector<Ref<GPUBuffer>>& buffers, const Vector<uint64_t>& offsets)
 {
     if (!m_platformRenderPassEncoder) {
         LOG(WebGPU, "GPURenderPassEncoder::setVertexBuffers(): Invalid operation: Encoding is ended!");
@@ -254,6 +271,7 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer
 
     auto mtlBuffers = buffers.map([this] (auto& buffer) {
         commandBuffer().useBuffer(buffer.copyRef());
+        ASSERT(buffer->platformBuffer());
         return buffer->platformBuffer();
     });
 
@@ -264,7 +282,7 @@ void GPURenderPassEncoder::setVertexBuffers(unsigned index, Vector<Ref<GPUBuffer
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-static MTLPrimitiveType primitiveTypeForGPUPrimitiveTopology(GPUPrimitiveTopology type)
+static MTLPrimitiveType mtlPrimitiveTypeForGPUPrimitiveTopology(GPUPrimitiveTopology type)
 {
     switch (type) {
     case GPUPrimitiveTopology::PointList:
@@ -288,7 +306,6 @@ void GPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount, un
         LOG(WebGPU, "GPURenderPassEncoder::draw(): Invalid operation: Encoding is ended!");
         return;
     }
-
     if (!m_pipeline) {
         LOG(WebGPU, "GPURenderPassEncoder::draw(): No valid GPURenderPipeline found!");
         return;
@@ -296,10 +313,67 @@ void GPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount, un
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_platformRenderPassEncoder 
-        drawPrimitives:primitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
+        drawPrimitives:mtlPrimitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
         vertexStart:firstVertex
         vertexCount:vertexCount
         instanceCount:instanceCount
+        baseInstance:firstInstance];
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
+static MTLIndexType mtlIndexTypeForGPUIndexFormat(GPUIndexFormat format)
+{
+    switch (format) {
+    case GPUIndexFormat::Uint16:
+        return MTLIndexTypeUInt16;
+    case GPUIndexFormat::Uint32:
+        return MTLIndexTypeUInt32;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void GPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCount, unsigned firstIndex, int baseVertex, unsigned firstInstance)
+{
+#if !LOG_DISABLED
+    const char* const functionName = "GPURenderPassEncoder::drawIndexed()";
+#endif
+    if (!m_platformRenderPassEncoder) {
+        LOG(WebGPU, "%s: Invalid operation: Encoding is ended!", functionName);
+        return;
+    }
+    if (!m_pipeline) {
+        LOG(WebGPU, "%s: No valid GPURenderPipeline found!", functionName);
+        return;
+    }
+    if (!m_pipeline->indexFormat()) {
+        LOG(WebGPU, "%s: No GPUIndexFormat specified!", functionName);
+        return;
+    }
+    if (!m_indexBuffer || !m_indexBuffer->platformBuffer()) {
+        LOG(WebGPU, "%s: No valid index buffer set!", functionName);
+        return;
+    }
+
+    auto indexByteSize = (m_pipeline->indexFormat() == GPUIndexFormat::Uint16) ? sizeof(uint16_t) : sizeof(uint32_t);
+    uint64_t firstIndexOffset = firstIndex * indexByteSize;
+    auto totalOffset = checkedSum<uint64_t>(firstIndexOffset, m_indexBufferOffset);
+    if (totalOffset.hasOverflowed() || totalOffset >= m_indexBuffer->byteLength()) {
+        LOG(WebGPU, "%s: Invalid firstIndex!", functionName);
+        return;
+    }
+
+    commandBuffer().useBuffer(makeRef(*m_indexBuffer));
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [m_platformRenderPassEncoder
+        drawIndexedPrimitives:mtlPrimitiveTypeForGPUPrimitiveTopology(m_pipeline->primitiveTopology())
+        indexCount:indexCount
+        indexType:mtlIndexTypeForGPUIndexFormat(*m_pipeline->indexFormat())
+        indexBuffer:m_indexBuffer->platformBuffer()
+        indexBufferOffset:totalOffset.unsafeGet()
+        instanceCount:instanceCount
+        baseVertex:baseVertex
         baseInstance:firstInstance];
     END_BLOCK_OBJC_EXCEPTIONS;
 }

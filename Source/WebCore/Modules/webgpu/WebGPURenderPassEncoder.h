@@ -48,8 +48,10 @@ public:
     void setBlendColor(const GPUColor&);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
     void setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height);
-    void setVertexBuffers(unsigned, Vector<RefPtr<WebGPUBuffer>>&&, Vector<uint64_t>&&);
+    void setIndexBuffer(WebGPUBuffer&, uint64_t offset);
+    void setVertexBuffers(unsigned startSlot, const Vector<RefPtr<WebGPUBuffer>>&, const Vector<uint64_t>& offsets);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
+    void drawIndexed(unsigned indexCount, unsigned instanceCount, unsigned firstIndex, int baseVertex, unsigned firstInstance);
 
 private:
     WebGPURenderPassEncoder(RefPtr<GPURenderPassEncoder>&&);

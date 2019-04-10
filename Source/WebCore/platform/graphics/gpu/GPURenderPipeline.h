@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPURenderPipelineDescriptor.h"
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -53,15 +54,17 @@ public:
 #endif
     PlatformRenderPipeline* platformRenderPipeline() const { return m_platformRenderPipeline.get(); }
     GPUPrimitiveTopology primitiveTopology() const { return m_primitiveTopology; }
+    Optional<GPUIndexFormat> indexFormat() const { return m_indexFormat; }
 
 private:
 #if USE(METAL)
-    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology);
+    GPURenderPipeline(RetainPtr<MTLDepthStencilState>&&, PlatformRenderPipelineSmartPtr&&, GPUPrimitiveTopology, Optional<GPUIndexFormat>);
 
     RetainPtr<MTLDepthStencilState> m_depthStencilState;
 #endif // USE(METAL)
     PlatformRenderPipelineSmartPtr m_platformRenderPipeline;
     GPUPrimitiveTopology m_primitiveTopology;
+    Optional<GPUIndexFormat> m_indexFormat;
 };
 
 } // namespace WebCore

@@ -167,7 +167,7 @@ void WebGPUCommandEncoder::copyTextureToTexture(const WebGPUTextureCopyView& src
     
 Ref<WebGPUCommandBuffer> WebGPUCommandEncoder::finish()
 {
-    if (!m_commandBuffer) {
+    if (!m_commandBuffer || m_commandBuffer->isEncodingPass()) {
         LOG(WebGPU, "WebGPUCommandEncoder::finish(): Invalid operation!");
         return WebGPUCommandBuffer::create(nullptr);
     }

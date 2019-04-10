@@ -39,7 +39,7 @@ enum class GPUIndexFormat {
 };
 
 struct GPUInputStateDescriptor {
-    GPUIndexFormat indexFormat;
+    Optional<GPUIndexFormat> indexFormat;
 
     Vector<GPUVertexAttributeDescriptor> attributes;
     Vector<GPUVertexInputDescriptor> inputs;

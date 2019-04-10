@@ -1,3 +1,49 @@
+2019-04-10  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Indexed drawing and GPUCommandEncoder crash prevention
+        https://bugs.webkit.org/show_bug.cgi?id=196758
+
+        Reviewed by Dean Jackson.
+
+        Test: webgpu/draw-indexed-triangles.html
+
+        Implement GPURenderPassEncoder::setIndexBuffer and GPURenderPassEncoder::drawIndexed to enable indexed drawing.
+        Disable GPUCommandEncoders with active pass encoders from being submitted or encoding blits. 
+
+        Prevent active GPUCommandEncoders from being submitted or encoding blit commands:
+        * Modules/webgpu/WebGPUCommandEncoder.cpp:
+        (WebCore::WebGPUCommandEncoder::finish):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        (WebCore::GPUCommandBuffer::copyTextureToTexture):
+
+        Implement GPURenderPassEncoder::setIndexBuffer and GPURenderPassEncoder::drawIndexed:
+        * Modules/webgpu/WebGPURenderPassEncoder.cpp:
+        (WebCore::WebGPURenderPassEncoder::setIndexBuffer):
+        (WebCore::WebGPURenderPassEncoder::setVertexBuffers): Remove unnecessary move operations.
+        (WebCore::WebGPURenderPassEncoder::drawIndexed): Added.
+        * Modules/webgpu/WebGPURenderPassEncoder.h:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::isIndex const):
+        * platform/graphics/gpu/GPUInputStateDescriptor.h:
+        * platform/graphics/gpu/GPURenderPassEncoder.h: Cache the index buffer, as Metal does not set the index buffer separate from the draw call.
+        * platform/graphics/gpu/GPURenderPipeline.h:
+        (WebCore::GPURenderPipeline::indexFormat const):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::setIndexBuffer):
+        (WebCore::GPURenderPassEncoder::setVertexBuffers):
+        (WebCore::mtlPrimitiveTypeForGPUPrimitiveTopology):
+        (WebCore::GPURenderPassEncoder::draw):
+        (WebCore::mtlIndexTypeForGPUIndexFormat): Added.
+        (WebCore::GPURenderPassEncoder::drawIndexed): Added.
+        (WebCore::primitiveTypeForGPUPrimitiveTopology): Deleted.
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::GPURenderPipeline::tryCreate):
+        (WebCore::GPURenderPipeline::GPURenderPipeline):
+
 2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         OfflineAudioDestinationNode::startRendering leaks OfflineAudioDestinationNode if offlineRender exists early

@@ -92,7 +92,21 @@ void WebGPURenderPassEncoder::setScissorRect(unsigned x, unsigned y, unsigned wi
     m_passEncoder->setScissorRect(x, y, width, height);
 }
 
-void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr<WebGPUBuffer>>&& buffers, Vector<uint64_t>&& offsets)
+void WebGPURenderPassEncoder::setIndexBuffer(WebGPUBuffer& buffer, uint64_t offset)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::setIndexBuffer(): Invalid operation!");
+        return;
+    }
+    if (!buffer.buffer() || !buffer.buffer()->isIndex()) {
+        LOG(WebGPU, "GPURenderPassEncoder::setIndexBuffer(): Invalid GPUBuffer!");
+        return;
+    }
+
+    m_passEncoder->setIndexBuffer(*buffer.buffer(), offset);
+}
+
+void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, const Vector<RefPtr<WebGPUBuffer>>& buffers, const Vector<uint64_t>& offsets)
 {
 #if !LOG_DISABLED
     const char* const functionName = "GPURenderPassEncoder::setVertexBuffers()";
@@ -113,7 +127,7 @@ void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr
     Vector<Ref<GPUBuffer>> gpuBuffers;
     gpuBuffers.reserveCapacity(buffers.size());
 
-    for (const auto& buffer : buffers) {
+    for (auto& buffer : buffers) {
         if (!buffer || !buffer->buffer()) {
             LOG(WebGPU, "%s: Invalid or destroyed buffer in list!", functionName);
             return;
@@ -127,7 +141,7 @@ void WebGPURenderPassEncoder::setVertexBuffers(unsigned startSlot, Vector<RefPtr
         gpuBuffers.uncheckedAppend(makeRef(*buffer->buffer()));
     }
 
-    m_passEncoder->setVertexBuffers(startSlot, WTFMove(gpuBuffers), WTFMove(offsets));
+    m_passEncoder->setVertexBuffers(startSlot, gpuBuffers, offsets);
 }
 
 void WebGPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance)
@@ -138,6 +152,16 @@ void WebGPURenderPassEncoder::draw(unsigned vertexCount, unsigned instanceCount,
     }
     // FIXME: What kind of validation do we need to handle here?
     m_passEncoder->draw(vertexCount, instanceCount, firstVertex, firstInstance);
+}
+
+void WebGPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCount, unsigned firstIndex, int baseVertex, unsigned firstInstance)
+{
+    if (!m_passEncoder) {
+        LOG(WebGPU, "GPURenderPassEncoder::draw(): Invalid operation!");
+        return;
+    }
+    // FIXME: Add Web GPU validation.
+    m_passEncoder->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 GPUProgrammablePassEncoder* WebGPURenderPassEncoder::passEncoder()

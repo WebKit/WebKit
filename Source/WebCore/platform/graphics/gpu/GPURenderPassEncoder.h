@@ -56,8 +56,10 @@ public:
     void setBlendColor(const GPUColor&);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
     void setScissorRect(unsigned x, unsigned y, unsigned width, unsigned height);
-    void setVertexBuffers(unsigned, Vector<Ref<GPUBuffer>>&&, Vector<uint64_t>&&);
+    void setIndexBuffer(GPUBuffer&, uint64_t offset);
+    void setVertexBuffers(unsigned index, const Vector<Ref<GPUBuffer>>&, const Vector<uint64_t>& offsets);
     void draw(unsigned vertexCount, unsigned instanceCount, unsigned firstVertex, unsigned firstInstance);
+    void drawIndexed(unsigned indexCount, unsigned instanceCount, unsigned firstIndex, int baseVertex, unsigned firstInstance);
 
 private:
     GPURenderPassEncoder(Ref<GPUCommandBuffer>&&, PlatformRenderPassEncoderSmartPtr&&);
@@ -70,6 +72,9 @@ private:
     void useResource(const MTLResource *, unsigned usage) final;
     void setVertexBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
     void setFragmentBuffer(const MTLBuffer *, unsigned offset, unsigned index) final;
+
+    RefPtr<GPUBuffer> m_indexBuffer;
+    uint64_t m_indexBufferOffset;
 #endif // USE(METAL)
 
     PlatformRenderPassEncoderSmartPtr m_platformRenderPassEncoder;

@@ -74,6 +74,7 @@ public:
     uint64_t byteLength() const { return m_byteLength; }
     bool isTransferSource() const { return m_usage.contains(GPUBufferUsage::Flags::TransferSource); }
     bool isTransferDestination() const { return m_usage.contains(GPUBufferUsage::Flags::TransferDestination); }
+    bool isIndex() const { return m_usage.contains(GPUBufferUsage::Flags::Index); }
     bool isVertex() const { return m_usage.contains(GPUBufferUsage::Flags::Vertex); }
     bool isUniform() const { return m_usage.contains(GPUBufferUsage::Flags::Uniform); }
     bool isStorage() const { return m_usage.contains(GPUBufferUsage::Flags::Storage); }

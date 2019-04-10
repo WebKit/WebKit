@@ -1,3 +1,15 @@
+2019-04-10  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Indexed drawing and GPUCommandEncoder crash prevention
+        https://bugs.webkit.org/show_bug.cgi?id=196758
+
+        Reviewed by Dean Jackson.
+
+        Add draw-indexed-triangles to test drawing a green square using GPURenderPassEncoder::setIndexBuffer and drawIndexed.
+
+        * webgpu/draw-indexed-triangles-expected.html: Added.
+        * webgpu/draw-indexed-triangles.html: Added.
+
 2019-04-10  Megan Gardner  <megan_gardner@apple.com>
 
         Fix text autoscrolling when typing in modern webkit

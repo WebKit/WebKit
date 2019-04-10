@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>WebGPU Hello Triangles</title>
+<meta name="assert" content="WebGPU correctly renders a green canvas.">
+<link rel="match" href="draw-indexed-triangles-expected.html">
+<p>Pass if square canvas below is completely green.</p>
+<canvas width="400" height="400"></canvas>
+<script src="js/webgpu-functions.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+const shaderCode = `
+#include <metal_stdlib>
+    
+using namespace metal;
+
+struct VertexIn
+{
+    float4 position [[attribute(0)]];
+    float green [[attribute(1)]];
+};
+
+struct VertexOut
+{
+    float4 position [[position]];
+    float4 color;
+};
+
+vertex VertexOut vertex_main(VertexIn vertexIn [[stage_in]])
+{
+    VertexOut vOut;
+    vOut.position = vertexIn.position;
+    vOut.color = float4(0, vertexIn.green, 0, 1);
+    return vOut;
+}
+
+fragment float4 fragment_main(VertexOut v [[stage_in]])
+{
+    return v.color;
+}
+`
+
+function createVertexBuffer(device) {
+    const vertexArray = new Float32Array([
+        // float4 xyzw, float g
+        -1, 1, 0, 1, 0,
+        -1, 1, 0, 1, 1,
+        -1, -1, 0, 1, 0,
+        -1, -1, 0, 1, 1,
+        1, 1, 0, 1, 0,
+        1, 1, 0, 1, 1,
+        1, -1, 0, 1, 0,
+        1, -1, 0, 1, 1
+    ]);
+    const buffer = device.createBuffer({ size: vertexArray.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.TRANSFER_DST });
+    buffer.setSubData(0, vertexArray.buffer);
+
+    return buffer;
+}
+
+const indexBufferOffset = 2048; // Test a buffer offset for index array.
+const indexOffset = -9001; // Test a base index to add to index array values.
+
+function createIndexBuffer(device) {
+    const offsetArray = [1, 3, 5, 3, 5, 7].map(v => { return v - indexOffset; });
+    const indexArray = new Uint32Array([1, 3, 5, 3, 5, 7].map(v => { return v - indexOffset; }));
+    const buffer = device.createBuffer({ size: indexArray.byteLength + indexBufferOffset, usage: GPUBufferUsage.INDEX | GPUBufferUsage.TRANSFER_DST });
+    buffer.setSubData(indexBufferOffset, indexArray.buffer);
+
+    return buffer;
+}
+
+function createInputStateDescriptor() {
+    return {
+        indexFormat: "uint32",
+        attributes: [{
+            shaderLocation: 0,
+            inputSlot: 0,
+            offset: 0,
+            format: "float4"
+        }, {
+            shaderLocation: 1,
+            inputSlot: 0,
+            offset: 4 * 4,
+            format: "float"
+        }],
+        inputs: [{
+            inputSlot: 0,
+            stride: 4 * 5,
+            stepMode: "vertex"
+        }]
+    };
+}
+
+async function test() {
+    const device = await getBasicDevice();
+    const canvas = document.querySelector("canvas");
+    const swapChain = createBasicSwapChain(canvas, device);
+    // FIXME: Replace with non-MSL shaders.
+    const shaderModule = device.createShaderModule({ code: shaderCode });
+    const vertexBuffer = createVertexBuffer(device);
+    const indexBuffer = createIndexBuffer(device);
+    const pipeline = createBasicPipeline(shaderModule, device, null, null, createInputStateDescriptor(), null, "triangle-list");
+    const commandEncoder = device.createCommandEncoder();
+    const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
+
+    passEncoder.setIndexBuffer(indexBuffer, indexBufferOffset);
+    passEncoder.setVertexBuffers(0, [vertexBuffer], [0]);
+    passEncoder.setPipeline(pipeline);
+    passEncoder.drawIndexed(6, 1, 0, indexOffset, 0);
+    passEncoder.endPass();
+
+    device.getQueue().submit([commandEncoder.finish()]);
+    vertexBuffer.destroy();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+test();
+</script>
