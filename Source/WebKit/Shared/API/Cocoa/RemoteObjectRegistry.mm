@@ -33,6 +33,7 @@
 #import "UserData.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
+#import "WebProcess.h"
 #import "WebProcessProxy.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 
@@ -42,7 +43,11 @@ RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObject
     : m_remoteObjectRegistry(remoteObjectRegistry)
     , m_messageSender(page)
     , m_takeBackgroundActivityToken([] { return ProcessThrottler::BackgroundActivityToken(); })
+    , m_isRegisteredAsMessageReceiver(true)
+    , m_messageReceiverID(page.pageID())
 {
+    WebProcess::singleton().addMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_messageReceiverID, *this);
+    page.setRemoteObjectRegistry(*this);
 }
 
 RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObjectRegistry, WebPageProxy& page)
@@ -53,9 +58,17 @@ RemoteObjectRegistry::RemoteObjectRegistry(_WKRemoteObjectRegistry *remoteObject
 {
 }
 
-
 RemoteObjectRegistry::~RemoteObjectRegistry()
 {
+    close();
+}
+
+void RemoteObjectRegistry::close()
+{
+    if (m_isRegisteredAsMessageReceiver) {
+        WebProcess::singleton().removeMessageReceiver(Messages::RemoteObjectRegistry::messageReceiverName(), m_messageReceiverID);
+        m_isRegisteredAsMessageReceiver = false;
+    }
 }
 
 void RemoteObjectRegistry::sendInvocation(const RemoteObjectInvocation& invocation)

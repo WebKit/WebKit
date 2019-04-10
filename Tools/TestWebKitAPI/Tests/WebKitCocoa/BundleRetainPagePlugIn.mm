@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import <WebKit/WKWebProcessPlugIn.h>
+#import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <wtf/RetainPtr.h>
 
 @interface BundleRetainPagePlugIn : NSObject <WKWebProcessPlugIn>
@@ -36,6 +37,7 @@
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), [retainedPage = retainPtr(browserContextController)] { });
+    [browserContextController _remoteObjectRegistry];
 }
 
 @end

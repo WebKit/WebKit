@@ -207,6 +207,7 @@ class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
+class RemoteObjectRegistry;
 class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
 class UserMediaPermissionRequestManager;
@@ -1181,6 +1182,8 @@ public:
     TextCheckingControllerProxy& textCheckingController() { return m_textCheckingControllerProxy.get(); }
 #endif
 
+    void setRemoteObjectRegistry(RemoteObjectRegistry&);
+
 private:
     WebPage(uint64_t pageID, WebPageCreationParameters&&);
 
@@ -1888,6 +1891,9 @@ private:
     OptionSet<LayerTreeFreezeReason> m_LayerTreeFreezeReasons;
     bool m_isSuspended { false };
     bool m_needsFontAttributes { false };
+#if PLATFORM(COCOA)
+    WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
+#endif
 };
 
 } // namespace WebKit

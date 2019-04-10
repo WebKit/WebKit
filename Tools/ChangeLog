@@ -1,3 +1,14 @@
+2019-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        RemoteObjectRegistry message receiver should be removed when WebPage::close is called instead of waiting until dealloc
+        https://bugs.webkit.org/show_bug.cgi?id=196744
+        <rdar://49415309>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleRetainPagePlugIn.mm:
+        (-[BundleRetainPagePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+
 2019-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a way to opt into modern compatibility mode in layout tests

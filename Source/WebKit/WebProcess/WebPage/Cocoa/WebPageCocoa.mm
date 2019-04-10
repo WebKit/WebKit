@@ -26,10 +26,10 @@
 #import "config.h"
 #import "WebPage.h"
 
-
 #import "AttributedString.h"
 #import "LoadParameters.h"
 #import "PluginView.h"
+#import "RemoteObjectRegistry.h"
 #import "WebPageProxyMessages.h"
 #import "WebPaymentCoordinator.h"
 #import <WebCore/DictionaryLookup.h>
@@ -222,6 +222,11 @@ void WebPage::getContentsAsAttributedString(CompletionHandler<void(const Attribu
     completionHandler({ result });
 }
 
+void WebPage::setRemoteObjectRegistry(RemoteObjectRegistry& registry)
+{
+    m_remoteObjectRegistry = makeWeakPtr(registry);
+}
+    
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

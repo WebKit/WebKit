@@ -1,3 +1,30 @@
+2019-04-10  Alex Christensen  <achristensen@webkit.org>
+
+        RemoteObjectRegistry message receiver should be removed when WebPage::close is called instead of waiting until dealloc
+        https://bugs.webkit.org/show_bug.cgi?id=196744
+        <rdar://49415309>
+
+        Reviewed by Chris Dumez.
+
+        This is a similar problem to the one I fixed in r241306 so I piggy-backed on the same test.
+        When you do a cross site navigation but the previous page is in a suspended process then you navigate back,
+        you can get two WebPage objects in the same process with the same IDs.  WebPage::close has been called
+        on the old one which is supposed to make it so all the message receivers associated with it have been removed
+        so we don't have any loss of communication, but we missed the RemoteObjectRegistry messages, which are owned
+        by the ObjC bundle object wrapping the WebPage (which can keep it alive if a strong reference to it is held).
+        To fix the assertion that happens in this case and the resulting communication breakage, teach the WebPage about
+        these messages so it can tear down the message receiver with the others it removes at close time.
+
+        * Shared/API/Cocoa/RemoteObjectRegistry.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController dealloc]):
+        (-[WKWebProcessPlugInBrowserContextController _remoteObjectRegistry]):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::addRemoteObjectRegistry):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, drop SuspendedPageProxy data member that is unused after r244075.

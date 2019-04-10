@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteObjectRegistry_h
-#define RemoteObjectRegistry_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "ProcessThrottler.h"
 #include <wtf/Function.h>
+#include <wtf/WeakObjCPtr.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS _WKRemoteObjectRegistry;
 
@@ -43,7 +44,7 @@ class UserData;
 class WebPage;
 class WebPageProxy;
 
-class RemoteObjectRegistry final : public IPC::MessageReceiver {
+class RemoteObjectRegistry final : public CanMakeWeakPtr<RemoteObjectRegistry>, public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteObjectRegistry(_WKRemoteObjectRegistry *, WebPage&);
@@ -55,6 +56,8 @@ public:
     void sendReplyBlock(uint64_t replyID, const UserData& blockInvocation);
     void sendUnusedReply(uint64_t replyID);
 
+    void close();
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -64,13 +67,13 @@ private:
     void callReplyBlock(uint64_t replyID, const UserData& blockInvocation);
     void releaseUnusedReplyBlock(uint64_t replyID);
 
-    _WKRemoteObjectRegistry *m_remoteObjectRegistry;
+    WeakObjCPtr<_WKRemoteObjectRegistry> m_remoteObjectRegistry;
     IPC::MessageSender& m_messageSender;
-    WTF::Function<ProcessThrottler::BackgroundActivityToken()> m_takeBackgroundActivityToken;
-    WTF::Function<void()> m_launchInitialProcessIfNecessary;
+    Function<ProcessThrottler::BackgroundActivityToken()> m_takeBackgroundActivityToken;
+    Function<void()> m_launchInitialProcessIfNecessary;
     HashMap<uint64_t, ProcessThrottler::BackgroundActivityToken> m_pendingReplies;
+    bool m_isRegisteredAsMessageReceiver { false };
+    uint64_t m_messageReceiverID { 0 };
 };
 
 } // namespace WebKit
-
-#endif // RemoteObjectRegistry_h
