@@ -1,3 +1,84 @@
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243639. rdar://problem/49725710
+
+    BackwardsGraph needs to consider back edges as the backward's root successor
+    https://bugs.webkit.org/show_bug.cgi?id=195991
+    
+    Reviewed by Filip Pizlo.
+    
+    JSTests:
+    
+    * stress/map-b3-licm-infinite-loop.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    * b3/testb3.cpp:
+    (JSC::B3::testInfiniteLoopDoesntCauseBadHoisting):
+    (JSC::B3::run):
+    
+    Source/WTF:
+    
+    Previously, our backwards graph analysis was slightly wrong. The idea of
+    backwards graph is that the root of the graph has edges to terminals in
+    the original graph. And then the original directed edges in the graph are flipped.
+            
+    However, we weren't considering loops as a form of terminality. For example,
+    we wouldn't consider an infinite loop as a terminal. So there were no edges
+    from the root to a node in the infinite loop. This lead us to make mistakes
+    when we used backwards dominators to compute control flow equivalence.
+            
+    This is better understood in an example:
+            
+    ```
+    preheader:
+    while (1) {
+        if (!isCell(v))
+            continue;
+        load structure ID
+        if (cond)
+           continue;
+        return
+    }
+    ```
+            
+    In the previous version of this algorithm, the only edge from the backwards
+    root would be to the block containing the return. This would lead us to
+    believe that the loading of the structureID backwards dominates the preheader,
+    leading us to believe it's control flow equivalent to preheader. This is
+    obviously wrong, since we can loop forever if "v" isn't a cell.
+            
+    The solution here is to treat any backedge in the graph as a "terminal" node.
+    Since a backedge implies the existence of a loop.
+            
+    In the above example, the backwards root now has an edge to both blocks with
+    "continue". This prevents us from falsely claiming that the return is control
+    flow equivalent with the preheader.
+            
+    This patch uses DFS spanning trees to compute back edges. An edge
+    u->v is a back edge when u is a descendent of v in the DFS spanning
+    tree of the Graph.
+    
+    * WTF.xcodeproj/project.pbxproj:
+    * wtf/BackwardsGraph.h:
+    (WTF::BackwardsGraph::BackwardsGraph):
+    * wtf/SpanningTree.h: Added.
+    (SpanningTree::SpanningTree):
+    (SpanningTree::isDescendent):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243639 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-28  Saam Barati  <sbarati@apple.com>
+
+            BackwardsGraph needs to consider back edges as the backward's root successor
+            https://bugs.webkit.org/show_bug.cgi?id=195991
+
+            Reviewed by Filip Pizlo.
+
+            * stress/map-b3-licm-infinite-loop.js: Added.
+
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r243280. rdar://problem/49308036
