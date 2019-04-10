@@ -29,7 +29,6 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessages.h"
-#include <WebCore/RegistrableDomain.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
@@ -70,7 +69,6 @@ private:
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
-    WebCore::RegistrableDomain m_registrableDomain;
     bool m_isClosed { false };
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };
