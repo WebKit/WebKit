@@ -157,9 +157,7 @@ void InspectorController::createLazyAgents()
 
     auto pageContext = pageAgentContext();
 
-    auto pageAgentPtr = std::make_unique<InspectorPageAgent>(pageContext, m_inspectorClient, m_overlay.get());
-    m_pageAgent = pageAgentPtr.get();
-    m_agents.append(WTFMove(pageAgentPtr));
+    ensurePageAgent();
 
     m_agents.append(std::make_unique<PageRuntimeAgent>(pageContext));
 
@@ -169,7 +167,7 @@ void InspectorController::createLazyAgents()
 
     m_agents.append(std::make_unique<PageNetworkAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorCSSAgent>(pageContext));
-    m_agents.append(std::make_unique<InspectorDOMAgent>(pageContext, m_overlay.get()));
+    ensureDOMAgent();
     m_agents.append(std::make_unique<InspectorDOMDebuggerAgent>(pageContext, debuggerAgentPtr));
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
@@ -382,8 +380,7 @@ void InspectorController::inspect(Node* node)
     if (!hasRemoteFrontend())
         show();
 
-    if (auto* domAgent = m_instrumentingAgents->inspectorDOMAgent())
-        domAgent->inspect(node);
+    ensureDOMAgent().inspect(node);
 }
 
 bool InspectorController::enabled() const
@@ -403,10 +400,7 @@ void InspectorController::dispatchMessageFromFrontend(const String& message)
 
 void InspectorController::hideHighlight()
 {
-    if (auto* domAgent = m_instrumentingAgents->inspectorDOMAgent()) {
-        ErrorString unused;
-        domAgent->hideHighlight(unused);
-    }
+    m_overlay->hideHighlight();
 }
 
 Node* InspectorController::highlightedNode() const
@@ -424,6 +418,28 @@ void InspectorController::setIndicating(bool indicating)
     else
         m_inspectorClient->hideInspectorIndication();
 #endif
+}
+
+InspectorDOMAgent& InspectorController::ensureDOMAgent()
+{
+    if (!m_inspectorDOMAgent) {
+        auto pageContext = pageAgentContext();
+        auto domAgent = std::make_unique<InspectorDOMAgent>(pageContext, m_overlay.get());
+        m_inspectorDOMAgent = domAgent.get();
+        m_agents.append(WTFMove(domAgent));
+    }
+    return *m_inspectorDOMAgent;
+}
+
+InspectorPageAgent& InspectorController::ensurePageAgent()
+{
+    if (!m_inspectorPageAgent) {
+        auto pageContext = pageAgentContext();
+        auto pageAgent = std::make_unique<InspectorPageAgent>(pageContext, m_inspectorClient, m_overlay.get());
+        m_inspectorPageAgent = pageAgent.get();
+        m_agents.append(WTFMove(pageAgent));
+    }
+    return *m_inspectorPageAgent;
 }
 
 bool InspectorController::developerExtrasEnabled() const

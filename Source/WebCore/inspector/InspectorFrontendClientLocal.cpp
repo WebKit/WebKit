@@ -338,7 +338,7 @@ void InspectorFrontendClientLocal::showResources()
 
 void InspectorFrontendClientLocal::showMainResourceForFrame(Frame* frame)
 {
-    String frameId = m_inspectedPageController->pageAgent()->frameId(frame);
+    String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
     evaluateOnLoad(makeString("[\"showMainResourceForFrame\", \"", frameId, "\"]"));
 }
 

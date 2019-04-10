@@ -232,7 +232,7 @@ void WebInspector::showMainResourceForFrame(uint64_t frameIdentifier)
 
     m_page->corePage()->inspectorController().show();
 
-    String inspectorFrameIdentifier = m_page->corePage()->inspectorController().pageAgent()->frameId(frame->coreFrame());
+    String inspectorFrameIdentifier = m_page->corePage()->inspectorController().ensurePageAgent().frameId(frame->coreFrame());
 
     whenFrontendConnectionEstablished([=] {
         m_frontendConnection->send(Messages::WebInspectorUI::ShowMainResourceForFrame(inspectorFrameIdentifier), 0);
