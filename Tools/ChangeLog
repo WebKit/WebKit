@@ -1,3 +1,13 @@
+2019-04-10  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] PrintConfiguration should display Xcode version instead of SDKVersion
+        https://bugs.webkit.org/show_bug.cgi?id=196780
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI WKNavigationResponse._downloadAttribute

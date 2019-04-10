@@ -1291,7 +1291,7 @@ Xcode 9.4.1
 Build version 9F2000''')
             + 0,
         )
-        self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.4), Xcode: 10.13')
+        self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.4), Xcode: 9.4.1')
         return self.runStep()
 
     def test_failure(self):

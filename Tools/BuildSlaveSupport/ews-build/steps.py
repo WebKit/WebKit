@@ -954,11 +954,8 @@ class PrintConfiguration(steps.ShellSequence):
             os_name = self.convert_build_to_os_name(os_version)
             configuration = u'OS: {} ({})'.format(os_name, os_version)
 
-        sdk_re = 'MacOSX[\s\S]*?SDKVersion:[ \t]*(.+?)\n'
-        is_ios_builder = 'iOS' in self.getProperty('buildername', '')
-        if is_ios_builder:
-            sdk_re = 'iPhoneSimulator[\s\S]*?SDKVersion:[ \t]*(.+?)\n'
-        match = re.search(sdk_re, logText)
+        xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
+        match = re.search(xcode_re, logText)
         if match:
             xcode_version = match.group(1).strip()
             configuration += u', Xcode: {}'.format(xcode_version)
