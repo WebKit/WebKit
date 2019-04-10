@@ -11,41 +11,46 @@
     <script src="/common/get-host-info.sub.js"></script>
     <script>
 
-function testResponseOpacity(response, test, testName)
+function testResponseOpacity(response, testName)
 {
-    assert_equals(response.type, "opaque", testName + " type");
-    assert_equals(response.status, 0, testName + " status");
-    assert_equals(response.statusText, "", testName + " statusText");
-    assert_equals(response.url, "", testName + " url");
-    assert_false(response.redirected, testName + " redirected");
-    assert_true(response.headers.values().next().done, testName + " headers");
-    assert_equals(response.body, null, testName + " opaque response body should be null");
+    test(() => {
+        assert_equals(response.type, "opaque", testName + " type");
+        assert_equals(response.status, 0, testName + " status");
+        assert_equals(response.statusText, "", testName + " statusText");
+        assert_equals(response.url, "", testName + " url");
+        assert_false(response.redirected, testName + " redirected");
+        assert_true(response.headers.values().next().done, testName + " headers");
+        assert_equals(response.body, null, testName + " opaque response body should be null");
+    }, testName);
 }
-promise_test(async function(test) {
+
+promise_test(async function() {
     var request = new Request(get_host_info().HTTP_REMOTE_ORIGIN, { mode: "no-cors" });
     var response = await fetch(request);
 
-    testResponseOpacity(response, test, "fetched response");
+    testResponseOpacity(response, "fetched response");
 
     var clone = response.clone();
 
-    testResponseOpacity(clone, test, "cloned response");
+    testResponseOpacity(clone, "cloned response");
     var buffer = await clone.arrayBuffer();
     assert_equals(buffer.byteLength, 0, "cloned opaque response buffer should be null");
 
     // WK1 does not support Cache API yet.
-    if (!self.caches)
+    if (!self.caches) {
+        test(() => {
+        }, "cached response");
         return;
+    }
 
     var cache = await self.caches.open("test");
     await cache.put(request, response);
     var cached = await cache.match(request.url);
 
-    testResponseOpacity(cached, test,  "cached response")
+    testResponseOpacity(cached, "cached response")
     buffer = await cached.arrayBuffer();
     assert_equals(buffer.byteLength, 0, "cached opaque response buffer should be null");
 
-    await self.caches.delete("test");
 }, "Check opaque response can be cloned and cached correctly");
     </script>
   </body>

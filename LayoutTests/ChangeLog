@@ -1,3 +1,21 @@
+2019-04-10  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test http/wpt/fetch/response-opaque-clone.html is sometimes timing out on iOS simulator
+        https://bugs.webkit.org/show_bug.cgi?id=194525
+        <rdar://problem/48012229>
+
+        Reviewed by Alex Christensen.
+
+        Test is no longer flaky on MacOS.
+        As per flakiness dashboard, it sometimes times out on iOS simulator.
+        It sometimes passes after running for 20 seconds.
+        Mark it as Slow and improve the test to output more sub-tests.
+        Removed unnecessary removal of cache since test runner will clear them at the end of the test.
+
+        * http/wpt/fetch/response-opaque-clone-expected.txt:
+        * http/wpt/fetch/response-opaque-clone.html:
+        * platform/ios-simulator-wk2/TestExpectations:
+
 2019-04-10  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Indexed drawing and GPUCommandEncoder crash prevention
