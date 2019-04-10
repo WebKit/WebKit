@@ -133,7 +133,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);
 
-    kill(WKPageGetProcessIdentifier(webView.page()), 9);
+    WKPageTerminate(webView.page());
 
     Util::run(&calledCrashHandler);
 }
@@ -163,7 +163,7 @@ TEST(WebKit, FrameSetLargestFrameAfterCrash)
     while (!WKPageGetFrameSetLargestFrame(webView.page()))
         Util::spinRunLoop(10);
 
-    kill(WKPageGetProcessIdentifier(webView.page()), 9);
+    WKPageTerminate(webView.page());
 
     Util::run(&calledCrashHandler);
 }

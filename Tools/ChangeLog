@@ -1,5 +1,35 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243858. rdar://problem/49725697
+
+    The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
+    https://bugs.webkit.org/show_bug.cgi?id=196588
+    <rdar://problem/49365787>
+    
+    Unreviewed build fix for Windows port.
+    
+    error C3861: 'kill': identifier not found
+    
+    * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+    (TestWebKitAPI::TEST): Replaced kill with WKPageTerminate.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243858 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+            The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
+            https://bugs.webkit.org/show_bug.cgi?id=196588
+            <rdar://problem/49365787>
+
+            Unreviewed build fix for Windows port.
+
+            error C3861: 'kill': identifier not found
+
+            * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+            (TestWebKitAPI::TEST): Replaced kill with WKPageTerminate.
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243849. rdar://problem/49725697
 
     Unreviewed, fix typo in the name of API test added in r243848.
