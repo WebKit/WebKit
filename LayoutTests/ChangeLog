@@ -1,3 +1,21 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements tab: multiple selection lost after navigating to another tab
+        https://bugs.webkit.org/show_bug.cgi?id=192681
+        <rdar://problem/46709392>
+
+        Reviewed by Timothy Hatcher.
+
+        Orginal patch by Matt Baker <mattbaker@apple.com>.
+
+        * inspector/tree-outline/tree-outline-selection.html: Added.
+        * inspector/tree-outline/tree-outline-selection-expected.txt: Added.
+        Add `TreeOutline` tests for single and multiple selection.
+
+        * inspector/unit-tests/set-utilities.html:
+        * inspector/unit-tests/set-utilities-expected.txt:
+        Add tests for `Set.prototype.lastValue`.
+
 2019-04-10  Youenn Fablet  <youenn@apple.com>
 
         Layout Test http/wpt/fetch/response-opaque-clone.html is sometimes timing out on iOS simulator

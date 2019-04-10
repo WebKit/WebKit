@@ -1,3 +1,43 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements tab: multiple selection lost after navigating to another tab
+        https://bugs.webkit.org/show_bug.cgi?id=192681
+        <rdar://problem/46709392>
+
+        Reviewed by Timothy Hatcher.
+
+        Orginal patch by Matt Baker <mattbaker@apple.com>.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.prototype.selectItem):
+        Simplify internal logic by removing an early return.
+
+        (WI.SelectionController.prototype.selectItems): Added.
+        (WI.SelectionController.prototype.selectAll):
+        Provide a means to select multiple items in a single operation.
+        If `_lastSelectedItem` is not in the items to select, the last
+        item being selected will become the last selected item.
+
+        (WI.SelectionController.prototype._deselectAllAndSelect):
+        Drive-by fix: correct a logic error. If no items are selected, the item
+        passed as an argument should still become selected.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selectTreeElements): Added.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement):
+        (WI.DOMTreeElement.prototype.get closeTagTreeElement): Added.
+        (WI.DOMTreeElement.prototype._updateChildren):
+        Make the close tag `TreeElement` available from the open tag `TreeElement`.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.update):
+        Restore selected `TreeElement`s after updating.
+
+        * UserInterface/Base/Utilities.js:
+        * UserInterface/Test.html:
+
 2019-04-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Elements tab: Classes toggle should use accent color on hover

@@ -49,6 +49,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
         this._highlightedAttributes = new Set;
         this._recentlyModifiedAttributes = new Map;
+        this._closeTagTreeElement = null;
 
         node.addEventListener(WI.DOMNode.Event.EnabledPseudoClassesChanged, this._nodePseudoClassesDidChange, this);
 
@@ -105,6 +106,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             parentElement = parentElement.parent;
         }
     }
+
+    get closeTagTreeElement() { return this._closeTagTreeElement; }
 
     revealAndHighlight()
     {
@@ -459,6 +462,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         if (this._updateChildrenInProgress || !this.treeOutline._visible)
             return;
 
+        this._closeTagTreeElement = null;
         this._updateChildrenInProgress = true;
 
         var node = this.representedObject;
@@ -534,7 +538,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         // Insert closing tag tree element.
         var lastChild = this.children.lastValue;
         if (node.nodeType() === Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
-            this.insertChildElement(this.representedObject, this.children.length, true);
+            this._closeTagTreeElement = this.insertChildElement(this.representedObject, this.children.length, true);
 
         // We want to restore the original selection and tree scroll position after a full refresh, if possible.
         if (fullRefresh && elementToSelect) {

@@ -1,0 +1,53 @@
+Tests for WI.TreeOutline selection.
+
+
+== Running test suite: TreeOutline.Selection
+-- Running test case: TreeOutline.constructor
+PASS: selectedTreeElement should be null.
+PASS: selectedTreeElements should be empty.
+PASS: allowsMultipleSelection should be false.
+
+-- Running test case: TreeOutline.FindTreeElement
+PASS: Should find TreeElement for represented object.
+PASS: TreeElement should have correct represented object.
+
+PASS: Should not find TreeElement for represented object.
+
+-- Running test case: TreeOutline.SelectedTreeElement
+Selecting TreeElement "Item 1"...
+PASS: TreeOutline should have the correct selection.
+PASS: TreeOutline should have last selected TreeElement "Item 1".
+PASS: TreeElement "Item 1" should be selected.
+PASS: Other TreeElements should not be selected.
+
+Selecting TreeElement "Item 2"...
+PASS: TreeOutline should have the correct selection.
+PASS: TreeOutline should have last selected TreeElement "Item 2".
+PASS: TreeElement "Item 2" should be selected.
+PASS: Other TreeElements should not be selected.
+
+-- Running test case: TreeOutline.AllowsMultipleSelection
+PASS: allowsMultipleSelection enabled.
+PASS: allowsMultipleSelection disabled.
+
+-- Running test case: TreeOutline.MultipleSelectionToggled
+PASS: All TreeElements should be selected.
+PASS: Should have one selected TreeElement.
+PASS: Selected TreeElement should be the last child.
+
+-- Running test case: TreeOutline.SelectTreeElements.MultipleSelectionEnabled
+Selecting TreeElements ["Item 1","Item 2"]...
+PASS: TreeOutline should have the correct selection.
+PASS: TreeOutline should have last selected TreeElement "Item 2".
+PASS: TreeElements ["Item 1","Item 2"] should be selected.
+PASS: All other TreeElements should not be selected.
+
+Selecting TreeElements ["Item 3","Item 4"]...
+PASS: TreeOutline should have the correct selection.
+PASS: TreeOutline should have last selected TreeElement "Item 4".
+PASS: TreeElements ["Item 3","Item 4"] should be selected.
+PASS: All other TreeElements should not be selected.
+
+-- Running test case: TreeOutline.SelectTreeElements.MultipleSelectionDisabled
+PASS: Should have no selected TreeElements.
+

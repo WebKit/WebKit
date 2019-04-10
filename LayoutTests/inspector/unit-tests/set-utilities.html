@@ -122,11 +122,25 @@ function test()
         name: "Set.prototype.firstValue",
         test() {
             function testFirstValue(values) {
-                InspectorTest.expectEqual(new Set(values).firstValue, values[0], `Set with values [${values}] should have firstValue equal to ${values[0]}.`);
+                let expected = values[0];
+                InspectorTest.expectEqual(new Set(values).firstValue, expected, `Set with values [${values}] should have firstValue equal to ${expected}.`);
             }
 
             testFirstValue([]);
             testFirstValue([1, 2, 3]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "Set.prototype.lastValue",
+        test() {
+            function testLastValue(values) {
+                let expected = values.lastValue;
+                InspectorTest.expectEqual(new Set(values).lastValue, expected, `Set with values [${values}] should have lastValue equal to ${expected}.`);
+            }
+
+            testLastValue([]);
+            testLastValue([1, 2, 3]);
         }
     });
 

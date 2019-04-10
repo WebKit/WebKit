@@ -41,3 +41,7 @@ PASS: Set difference should be [1].
 PASS: Set with values [] should have firstValue equal to undefined.
 PASS: Set with values [1,2,3] should have firstValue equal to 1.
 
+-- Running test case: Set.prototype.lastValue
+PASS: Set with values [] should have lastValue equal to undefined.
+PASS: Set with values [1,2,3] should have lastValue equal to 3.
+

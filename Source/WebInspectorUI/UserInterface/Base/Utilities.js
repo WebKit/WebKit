@@ -166,6 +166,14 @@ Object.defineProperty(Set.prototype, "firstValue",
     }
 });
 
+Object.defineProperty(Set.prototype, "lastValue",
+{
+    get()
+    {
+        return Array.from(this.values()).lastValue;
+    }
+});
+
 Object.defineProperty(Set.prototype, "intersects",
 {
     value(other)

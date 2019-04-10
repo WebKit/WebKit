@@ -158,7 +158,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (!this.rootDOMNode)
             return;
 
-        let selectedNode = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
+        let selectedTreeElements = this.selectedTreeElements;
 
         this.removeChildren();
 
@@ -181,8 +181,24 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             }
         }
 
-        if (selectedNode)
-            this._revealAndSelectNode(selectedNode, true);
+        if (!selectedTreeElements.length)
+            return;
+
+        // The selection cannot be restored from represented objects alone,
+        // since a closing tag DOMTreeElement has the same represented object
+        // as its parent.
+        selectedTreeElements = selectedTreeElements.map((oldTreeElement) => {
+            let treeElement = this.findTreeElement(oldTreeElement.representedObject);
+            if (treeElement && oldTreeElement.isCloseTag()) {
+                console.assert(treeElement.closeTagTreeElement, "Missing close tag TreeElement.", treeElement);
+                if (treeElement.closeTagTreeElement)
+                    treeElement = treeElement.closeTagTreeElement;
+            }
+            return treeElement;
+        });
+
+        this.selectTreeElements(selectedTreeElements);
+        this.selectedTreeElement.reveal();
     }
 
     updateSelectionArea()

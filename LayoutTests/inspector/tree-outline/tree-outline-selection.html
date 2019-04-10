@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    InspectorTest.redirectRequestAnimationFrame();
+
+    let suite = InspectorTest.createSyncSuite("TreeOutline.Selection");
+
+    function createTreeOutline(objects = []) {
+        function appendObject(parent, object) {
+            let options = {};
+            if (object.children)
+                options.hasChildren = true;
+            let treeElement = new WI.TreeElement(object.title, object, options);
+            parent.appendChild(treeElement);
+
+            if (!object.children)
+                return;
+
+            for (let child of object.children)
+                appendObject(treeElement, child);
+        }
+
+        let treeOutline = new WI.TreeOutline;
+        for (let object of objects)
+            appendObject(treeOutline, object);
+
+        return treeOutline;
+    }
+
+    function expectSelectedTreeElements(treeOutline, selectedTreeElements) {
+        InspectorTest.expectShallowEqual(treeOutline.selectedTreeElements, selectedTreeElements, `TreeOutline should have the correct selection.`);
+        InspectorTest.expectEqual(treeOutline.selectedTreeElement, selectedTreeElements.lastValue, `TreeOutline should have last selected TreeElement "${selectedTreeElements.lastValue.title}".`);
+    }
+
+    function triggerSelectTreeElement(treeOutline, treeElement) {
+        InspectorTest.log(`Selecting TreeElement "${treeElement.title}"...`);
+        treeOutline.selectedTreeElement = treeElement;
+
+        expectSelectedTreeElements(treeOutline, [treeElement]);
+        InspectorTest.expectThat(treeElement.selected, `TreeElement "${treeElement.title}" should be selected.`);
+        InspectorTest.expectThat(treeOutline.children.every((x) => x === treeElement || !x.selected), "Other TreeElements should not be selected.");
+    }
+
+    function triggerSelectTreeElements(treeOutline, treeElements) {
+        let displayText = JSON.stringify(treeElements.map((x) => x.title));
+
+        InspectorTest.log(`Selecting TreeElements ${displayText}...`);
+        treeOutline.selectTreeElements(treeElements);
+
+        expectSelectedTreeElements(treeOutline, treeElements);
+        InspectorTest.expectThat(treeElements.every((x) => x.selected), `TreeElements ${displayText} should be selected.`);
+        InspectorTest.expectThat(treeOutline.children.every((x) => !x.selected || treeElements.includes(x)), "All other TreeElements should not be selected.");
+    }
+
+    suite.addTestCase({
+        name: "TreeOutline.constructor",
+        test() {
+            let treeOutline = createTreeOutline();
+
+            InspectorTest.expectNull(treeOutline.selectedTreeElement, "selectedTreeElement should be null.");
+            InspectorTest.expectEqual(treeOutline.selectedTreeElements.length, 0, "selectedTreeElements should be empty.");
+            InspectorTest.expectFalse(treeOutline.allowsMultipleSelection, "allowsMultipleSelection should be false.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.FindTreeElement",
+        description: "Find a TreeElement based on its associated represented object.",
+        test() {
+            const representedObjects = [
+                {title: "Item 1"},
+                {title: "Item 2"},
+                {title: "Item 3"},
+            ];
+
+            let treeOutline = createTreeOutline(representedObjects);
+
+            let existingTreeElement = treeOutline.findTreeElement(representedObjects[0]);
+            InspectorTest.expectNotNull(existingTreeElement, "Should find TreeElement for represented object.");
+            InspectorTest.expectEqual(existingTreeElement.representedObject, representedObjects[0], "TreeElement should have correct represented object.");
+
+            InspectorTest.log("");
+
+            let missingTreeElement = treeOutline.findTreeElement({title: "Brand New Item"});
+            InspectorTest.expectNull(missingTreeElement, "Should not find TreeElement for represented object.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.SelectedTreeElement",
+        description: "Select a tree element, then select a different tree element.",
+        test() {
+            const representedObjects = [
+                {title: "Item 1"},
+                {title: "Item 2"},
+            ];
+
+            let treeOutline = createTreeOutline(representedObjects);
+
+            triggerSelectTreeElement(treeOutline, treeOutline.children[0]);
+
+            InspectorTest.log("");
+
+            triggerSelectTreeElement(treeOutline, treeOutline.children[1]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.AllowsMultipleSelection",
+        description: "Should be able to enable multiple selection.",
+        test() {
+            let treeOutline = createTreeOutline();
+
+            treeOutline.allowsMultipleSelection = true;
+            InspectorTest.expectThat(treeOutline.allowsMultipleSelection, "allowsMultipleSelection enabled.");
+            treeOutline.allowsMultipleSelection = false;
+            InspectorTest.expectFalse(treeOutline.allowsMultipleSelection, "allowsMultipleSelection disabled.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.MultipleSelectionToggled",
+        description: "Select multiple tree elements and then disable multiple selection.",
+        test() {
+            const representedObjects = [
+                {title: "Item 1"},
+                {title: "Item 2"},
+            ];
+
+            let treeOutline = createTreeOutline(representedObjects);
+            treeOutline.allowsMultipleSelection = true;
+
+            let children = treeOutline.children;
+            treeOutline.selectTreeElements(children);
+
+            InspectorTest.expectShallowEqual(treeOutline.selectedTreeElements, children, "All TreeElements should be selected.");
+
+            treeOutline.allowsMultipleSelection = false;
+
+            InspectorTest.expectEqual(treeOutline.selectedTreeElements.length, 1, "Should have one selected TreeElement.");
+            InspectorTest.expectShallowEqual(treeOutline.selectedTreeElements, [children[1]], "Selected TreeElement should be the last child.");
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.SelectTreeElements.MultipleSelectionEnabled",
+        description: "Select two tree elements, then select two different tree elements.",
+        test() {
+            const representedObjects = [
+                {title: "Item 1"},
+                {title: "Item 2"},
+                {title: "Item 3"},
+                {title: "Item 4"},
+            ];
+
+            let treeOutline = createTreeOutline(representedObjects);
+            treeOutline.allowsMultipleSelection = true;
+
+            let children = treeOutline.children;
+
+            triggerSelectTreeElements(treeOutline, [children[0], children[1]]);
+
+            InspectorTest.log("");
+
+            triggerSelectTreeElements(treeOutline, [children[2], children[3]]);
+        }
+    });
+
+    suite.addTestCase({
+        name: "TreeOutline.SelectTreeElements.MultipleSelectionDisabled",
+        description: "Select multiple tree elements with multiple selection disabled.",
+        test() {
+            const representedObjects = [
+                {title: "Item 1"},
+                {title: "Item 2"},
+            ];
+
+            let treeOutline = createTreeOutline(representedObjects);
+            treeOutline.allowsMultipleSelection = false;
+
+            treeOutline.selectTreeElements(treeOutline.children);
+            InspectorTest.expectEqual(treeOutline.selectedTreeElements.length, 0, "Should have no selected TreeElements.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onLoad="runTest()">
+    <p>Tests for WI.TreeOutline selection.</p>
+</body>
+</html>

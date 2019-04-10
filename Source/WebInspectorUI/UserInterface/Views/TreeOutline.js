@@ -711,6 +711,24 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         // this is the root, do nothing
     }
 
+    selectTreeElements(treeElements)
+    {
+        if (!treeElements.length)
+            return;
+
+        if (treeElements.length === 1) {
+            this.selectedTreeElement = treeElements[0];
+            return;
+        }
+
+        console.assert(this.allowsMultipleSelection, "Cannot select TreeElements with multiple selection disabled.");
+        if (!this.allowsMultipleSelection)
+            return;
+
+        let selectableObjects = treeElements.map((treeElement) => this.objectForSelection(treeElement));
+        this._selectionController.selectItems(new Set(selectableObjects));
+    }
+
     get selectedTreeElementIndex()
     {
         if (!this.hasChildren || !this.selectedTreeElement)
