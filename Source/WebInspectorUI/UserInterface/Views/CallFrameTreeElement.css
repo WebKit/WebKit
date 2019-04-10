@@ -32,6 +32,10 @@
     float: none;
     -webkit-margin-start: 1px;
 
+    --call-frame-status-start: 1px;
+}
+
+.tree-outline.single-thread .item.call-frame .status {
     --call-frame-status-start: 11px;
 }
 
