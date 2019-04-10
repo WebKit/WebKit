@@ -178,20 +178,20 @@ WI.SelectionController = class SelectionController extends WI.Object
 
         let orderedSelection = Array.from(this._selectedItems).sort(this._comparator);
 
-        // Try selecting the item following the selection.
-        let lastSelectedItem = orderedSelection.lastValue;
-        let itemToSelect = this._nextSelectableItem(lastSelectedItem);
+        // Try selecting the item preceding the selection.
+        let firstSelectedItem = orderedSelection[0];
+        let itemToSelect = this._previousSelectableItem(firstSelectedItem);
         if (!itemToSelect) {
-            // If no item exists after the last item in the selection, try selecting
+            // If no item exists before the first item in the selection, try selecting
             // a deselected item (hole) within the selection.
-            itemToSelect = orderedSelection[0];
+            itemToSelect = firstSelectedItem;
             while (itemToSelect && this.hasSelectedItem(itemToSelect))
                 itemToSelect = this._nextSelectableItem(itemToSelect);
 
             if (!itemToSelect || this.hasSelectedItem(itemToSelect)) {
                 // If the selection contains no holes, try selecting the item
-                // preceding the selection.
-                itemToSelect = this._previousSelectableItem(orderedSelection[0]);
+                // following the selection.
+                itemToSelect = this._nextSelectableItem(orderedSelection.lastValue);
             }
         }
 

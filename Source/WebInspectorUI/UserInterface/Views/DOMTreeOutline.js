@@ -335,7 +335,31 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         this._treeElementsToRemove = null;
 
+        if (this.selectedTreeElement && !this.selectedTreeElement.isCloseTag()) {
+            console.assert(this.selectedTreeElements.length === 1);
+            this.selectedTreeElement.reveal();
+        }
+
         return true;
+    }
+
+    // SelectionController delegate overrides
+
+    selectionControllerPreviousSelectableItem(controller, item)
+    {
+        let treeElement = this.getCachedTreeElement(item);
+        console.assert(treeElement, "Missing TreeElement for representedObject.", item);
+        if (!treeElement)
+            return null;
+
+        if (this._treeElementsToRemove) {
+            // When deleting, force the SelectionController to check siblings in
+            // the opposite direction before searching up the parent chain.
+            if (!treeElement.previousSelectableSibling && treeElement.nextSelectableSibling)
+                return null;
+        }
+
+        return super.selectionControllerPreviousSelectableItem(controller, item);
     }
 
     // Protected

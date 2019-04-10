@@ -184,6 +184,22 @@ WI.TreeElement = class TreeElement extends WI.Object
             this.expand();
     }
 
+    get previousSelectableSibling()
+    {
+        let treeElement = this.previousSibling;
+        while (treeElement && !treeElement.selectable)
+            treeElement = treeElement.previousSibling;
+        return treeElement;
+    }
+
+    get nextSelectableSibling()
+    {
+        let treeElement = this.nextSibling;
+        while (treeElement && !treeElement.selectable)
+            treeElement = treeElement.nextSibling;
+        return treeElement;
+    }
+
     canSelectOnMouseDown(event)
     {
         // Overridden by subclasses if needed.

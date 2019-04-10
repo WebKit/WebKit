@@ -172,32 +172,50 @@ function test()
 
     addTestCase({
         name: "Table.RemoveSelectedRows.Single.SelectFollowing",
-        description: "Remove the selected row, causing the following row to be selected.",
+        description: "Remove a selected row not preceded by a selectable row.",
         rowIndexes: [0],
     });
 
     addTestCase({
         name: "Table.RemoveSelectedRows.Single.SelectPreceding",
-        description: "Remove the selected row, causing the preceding row to be selected.",
+        description: "Remove a selected row not followed by a selectable row.",
         rowIndexes: [lastRowIndex],
     });
 
     addTestCase({
-        name: "Table.RemoveSelectedRows.Multiple.SelectFollowing",
-        description: "Remove selected rows, causing the row following the selection to be selected.",
-        rowIndexes: [0, lastRowIndex - 1],
+        name: "Table.RemoveSelectedRows.Single.SelectPrecedingOverFollowing",
+        description: "Remove a selected row between two selectable rows.",
+        rowIndexes: [lastRowIndex - 1],
     });
 
     addTestCase({
-        name: "Table.RemoveSelectedRows.Multiple.SelectHole",
-        description: "Remove selected rows, causing the first deselected row inside the selection to be selected.",
-        rowIndexes: [0, lastRowIndex],
+        name: "Table.RemoveSelectedRows.Multiple.SelectFollowing",
+        description: "Remove a contiguous selection not preceded by a selectable row.",
+        rowIndexes: [0, 1],
     });
 
     addTestCase({
         name: "Table.RemoveSelectedRows.Multiple.SelectPreceding",
-        description: "Remove selected rows, causing the row preceding the selection to be selected.",
+        description: "Remove a contiguous selection not followed by a selectable row.",
         rowIndexes: [lastRowIndex - 1, lastRowIndex],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectPrecedingOverFollowing",
+        description: "Remove a contiguous selection between two selectable rows.",
+        rowIndexes: [1, 2],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectPrecedingOverGap",
+        description: "Remove a non-contiguous selection preceded by a selectable row.",
+        rowIndexes: [1, 3],
+    });
+
+    addTestCase({
+        name: "Table.RemoveSelectedRows.Multiple.SelectGapOverFollowing",
+        description: "Remove a non-contiguous selection followed by a selectable row.",
+        rowIndexes: [0, 2],
     });
 
     suite.addTestCase({

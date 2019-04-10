@@ -1,5 +1,46 @@
 2019-04-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION (r238602): Elements: deleting the last child of a collapsed parent selects the parent's next sibling
+        https://bugs.webkit.org/show_bug.cgi?id=192711
+        <rdar://problem/46738990>
+
+        Reviewed by Timothy Hatcher.
+
+        Original patch by Matt Baker <mattbaker@apple.com>.
+
+        * UserInterface/Controllers/SelectionController.js:
+        (WI.SelectionController.prototype.removeSelectedItems):
+        When looking for a new item to select, start with the item preceding the
+        selection, instead of the item following the selection. This matches
+        pre-multiple selection behavior, as well as Mail and Xcode.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.onexpand):
+        Drive-by fix: when a hidden node is selected, its selection area is drawn
+        with a height of 0px. Update the selection area once the hidden node's
+        parent is expanded. AFAIK, this has always been broken.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.ondelete):
+        After a delete the `SelectionController` may have chosen a child of a
+        collapsed parent as the new selected item. If the item isn't the closing tag (e.g. after
+        deleting the last child), reveal it.
+
+        (WI.DOMTreeOutline.prototype.selectionControllerPreviousSelectableItem):
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype.get previousSelectableSibling): Added.
+        (WI.TreeElement.prototype.get nextSelectableSibling): Added.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selectionControllerPreviousSelectableItem):
+        (WI.TreeOutline.prototype.selectionControllerNextSelectableItem):
+        Set `skipUnrevealed` to false, so that children of collapsed parent nodes
+        are considered when looking for an item to selected after a delete. Hidden `TreeElement`s
+        are still ignored as they aren't `selectable`.
+
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements tab: multiple selection lost after navigating to another tab
         https://bugs.webkit.org/show_bug.cgi?id=192681
         <rdar://problem/46709392>

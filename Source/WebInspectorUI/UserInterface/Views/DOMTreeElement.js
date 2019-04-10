@@ -606,6 +606,9 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             return;
 
         this.updateTitle();
+
+        for (let treeElement of this.children)
+            treeElement.updateSelectionArea();
     }
 
     oncollapse()
