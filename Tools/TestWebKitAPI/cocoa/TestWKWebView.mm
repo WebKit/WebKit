@@ -455,7 +455,7 @@ static UICalloutBar *suppressUICalloutBar()
         if (hasEmittedWarning || startTime + secondsToWaitUntilWarning >= [NSDate timeIntervalSinceReferenceDate])
             continue;
 
-        NSLog(@"Warning: expecting input session change count to differ from %tu", initialChangeCount);
+        NSLog(@"Warning: expecting input session change count to differ from %lu", static_cast<unsigned long>(initialChangeCount));
         hasEmittedWarning = YES;
     }
 }

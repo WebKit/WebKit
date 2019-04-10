@@ -1,3 +1,10 @@
+2019-04-10  Andy Estes  <aestes@apple.com>
+
+        Try to fix the 32-bit watchOS build.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView evaluateJavaScriptAndWaitForInputSessionToChange:]):
+
 2019-04-10  Antoine Quint  <graouts@apple.com>
 
         Enable Pointer Events on watchOS
