@@ -53,6 +53,8 @@ public:
     void unsuspend();
     void close();
 
+    void pageEnteredAcceleratedCompositingMode();
+
 #if !LOG_DISABLED
     const char* loggingString() const;
 #endif
@@ -70,6 +72,7 @@ private:
     Ref<WebProcessProxy> m_process;
     uint64_t m_mainFrameID;
     bool m_isClosed { false };
+    bool m_shouldDelayClosingOnFailure { false };
 
     SuspensionState m_suspensionState { SuspensionState::Suspending };
     CompletionHandler<void(SuspendedPageProxy*)> m_readyToUnsuspendHandler;

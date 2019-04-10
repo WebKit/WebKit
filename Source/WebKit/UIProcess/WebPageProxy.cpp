@@ -738,6 +738,8 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
 
 bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Optional<uint64_t> mainFrameID, ProcessSwapRequestedByClient processSwapRequestedByClient)
 {
+    m_lastSuspendedPage = nullptr;
+
     if (!mainFrameID)
         return false;
 
@@ -780,6 +782,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Opt
     if (fromItem && m_preferences->usesPageCache())
         fromItem->setSuspendedPage(suspendedPage.get());
 
+    m_lastSuspendedPage = makeWeakPtr(*suspendedPage);
     m_process->processPool().addSuspendedPage(WTFMove(suspendedPage));
     return true;
 }
@@ -6771,6 +6774,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_mainFrame = nullptr;
     m_focusedFrame = nullptr;
     m_frameSetLargestFrame = nullptr;
+    m_lastSuspendedPage = nullptr;
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
@@ -7087,8 +7091,9 @@ void WebPageProxy::enterAcceleratedCompositingMode(const LayerTreeContext& layer
     ASSERT(m_drawingArea->type() == DrawingAreaTypeTiledCoreAnimation);
 #endif
     pageClient().enterAcceleratedCompositingMode(layerTreeContext);
-    // We needed the failed suspended page to stay alive to avoid flashing. Now we can get rid of it.
-    m_process->processPool().closeFailedSuspendedPagesForPage(*this);
+
+    if (m_lastSuspendedPage)
+        m_lastSuspendedPage->pageEnteredAcceleratedCompositingMode();
 }
 
 void WebPageProxy::exitAcceleratedCompositingMode()

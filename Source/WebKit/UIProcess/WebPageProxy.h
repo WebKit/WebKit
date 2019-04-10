@@ -2468,6 +2468,7 @@ WEBPAGEPROXY_LOADOPTIMIZER_ADDITIONS_2
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
 
     std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
+    WeakPtr<SuspendedPageProxy> m_lastSuspendedPage;
 
 #if HAVE(PENCILKIT)
     std::unique_ptr<EditableImageController> m_editableImageController;

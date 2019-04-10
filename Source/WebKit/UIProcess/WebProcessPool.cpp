@@ -2402,14 +2402,6 @@ void WebProcessPool::removeAllSuspendedPagesForPage(WebPageProxy& page, WebProce
     });
 }
 
-void WebProcessPool::closeFailedSuspendedPagesForPage(WebPageProxy& page)
-{
-    for (auto& suspendedPage : m_suspendedPages) {
-        if (&suspendedPage->page() == &page && suspendedPage->failedToSuspend())
-            suspendedPage->close();
-    }
-}
-
 std::unique_ptr<SuspendedPageProxy> WebProcessPool::takeSuspendedPage(SuspendedPageProxy& suspendedPage)
 {
     return m_suspendedPages.takeFirst([&suspendedPage](auto& item) {
