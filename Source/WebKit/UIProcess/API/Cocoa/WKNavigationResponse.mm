@@ -78,4 +78,9 @@
     return _navigationResponse->request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
 
+- (NSString *)_downloadAttribute
+{
+    return _navigationResponse->downloadAttribute();
+}
+
 @end

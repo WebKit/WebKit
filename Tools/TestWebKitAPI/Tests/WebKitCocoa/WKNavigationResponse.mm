@@ -25,7 +25,10 @@
 
 #import "config.h"
 
+#import "TCPServer.h"
+#import "Test.h"
 #import "Utilities.h"
+#import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
@@ -141,4 +144,104 @@ TEST(WebKit, WKNavigationResponsePDFType)
     NSURL *testURL = [NSURL URLWithString:@"test:///pdf-response"];
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
     TestWebKitAPI::Util::run(&isDone);
+}
+
+@interface NavigationResponseTestDelegate : NSObject <WKNavigationDelegate>
+
+@property (nonatomic, readonly) WKNavigationResponse *navigationResponse;
+@property (nonatomic) WKNavigationResponsePolicy navigationPolicy;
+
+@end
+
+@implementation NavigationResponseTestDelegate {
+    RetainPtr<WKNavigationResponse> _navigationResponse;
+    bool _hasReceivedResponseCallback;
+    bool _hasReceivedNavigationFinishedCallback;
+}
+
+- (WKNavigationResponse *)navigationResponse
+{
+    return _navigationResponse.get();
+}
+
+- (void)waitForNavigationResponseCallback
+{
+    _hasReceivedResponseCallback = false;
+    TestWebKitAPI::Util::run(&_hasReceivedResponseCallback);
+}
+
+- (void)waitForNavigationFinishedCallback
+{
+    _hasReceivedNavigationFinishedCallback = false;
+    TestWebKitAPI::Util::run(&_hasReceivedNavigationFinishedCallback);
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    _hasReceivedNavigationFinishedCallback = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
+{
+    decisionHandler(WKNavigationResponsePolicyAllow);
+    _navigationResponse = navigationResponse;
+    _hasReceivedResponseCallback = true;
+}
+
+@end
+
+static void readRequest(int socket)
+{
+    char readBuffer[1000];
+    auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+    EXPECT_GT(bytesRead, 0);
+    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+}
+
+static void writeResponse(int socket, NSString *response)
+{
+    const char* bytes = response.UTF8String;
+    auto bytesWritten = ::write(socket, bytes, strlen(bytes));
+    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(bytes));
+}
+
+TEST(WebKit, WKNavigationResponseDownloadAttribute)
+{
+    TestWebKitAPI::TCPServer server([](int socket) {
+        readRequest(socket);
+        NSString *body = @"<a id='link' href='/fromHref.txt' download='fromDownloadAttribute.txt'>Click Me!</a>";
+        unsigned bodyLength = body.length;
+        writeResponse(socket, [NSString stringWithFormat:
+            @"HTTP/1.1 200 OK\r\n"
+            "Content-Length: %d\r\n\r\n"
+            "%@",
+            bodyLength,
+            body
+        ]);
+        readRequest(socket);
+        writeResponse(socket,
+            @"HTTP/1.1 200 OK\r\n"
+            "Content-Length: 6\r\n"
+            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+            "Hello!"
+        );
+    });
+    auto delegate = adoptNS([NavigationResponseTestDelegate new]);
+    auto webView = adoptNS([WKWebView new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    [delegate waitForNavigationFinishedCallback];
+
+    [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
+    [delegate waitForNavigationResponseCallback];
+    
+    WKNavigationResponse *response = [delegate navigationResponse];
+    EXPECT_STREQ(response.response.suggestedFilename.UTF8String, "fromHeader.txt");
+    EXPECT_STREQ(response._downloadAttribute.UTF8String, "fromDownloadAttribute.txt");
 }

@@ -356,6 +356,9 @@ public:
     void setAllowsWebArchiveForMainFrame(bool allowsWebArchiveForMainFrame) { m_allowsWebArchiveForMainFrame = allowsWebArchiveForMainFrame; }
     bool allowsWebArchiveForMainFrame() const { return m_allowsWebArchiveForMainFrame; }
 
+    void setDownloadAttribute(const String& attribute) { m_downloadAttribute = attribute; }
+    const String& downloadAttribute() const { return m_downloadAttribute; }
+
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -581,6 +584,7 @@ private:
 #endif
 
     bool m_allowsWebArchiveForMainFrame { false };
+    String m_downloadAttribute;
 };
 
 inline void DocumentLoader::recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest& request)

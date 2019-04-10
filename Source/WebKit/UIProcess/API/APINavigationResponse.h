@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APINavigationResponse_h
-#define APINavigationResponse_h
+#pragma once
 
 #include "APIFrameInfo.h"
 #include "APIObject.h"
@@ -37,17 +36,9 @@ class FrameInfo;
 
 class NavigationResponse final : public ObjectImpl<Object::Type::NavigationResponse> {
 public:
-    static Ref<NavigationResponse> create(API::FrameInfo& frame, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, bool canShowMIMEType)
+    template<typename... Args> static Ref<NavigationResponse> create(Args&&... args)
     {
-        return adoptRef(*new NavigationResponse(frame, request, response, canShowMIMEType));
-    }
-
-    NavigationResponse(API::FrameInfo& frame, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, bool canShowMIMEType)
-        : m_frame(frame)
-        , m_request(request)
-        , m_response(response)
-        , m_canShowMIMEType(canShowMIMEType)
-    {
+        return adoptRef(*new NavigationResponse(std::forward<Args>(args)...));
     }
 
     FrameInfo& frame() { return m_frame.get(); }
@@ -56,15 +47,22 @@ public:
     const WebCore::ResourceResponse& response() const { return m_response; }
 
     bool canShowMIMEType() const { return m_canShowMIMEType; }
+    const WTF::String& downloadAttribute() const { return m_downloadAttribute; }
 
 private:
+    NavigationResponse(API::FrameInfo& frame, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, bool canShowMIMEType, const WTF::String& downloadAttribute)
+        : m_frame(frame)
+        , m_request(request)
+        , m_response(response)
+        , m_canShowMIMEType(canShowMIMEType)
+        , m_downloadAttribute(downloadAttribute) { }
+
     Ref<FrameInfo> m_frame;
 
     WebCore::ResourceRequest m_request;
     WebCore::ResourceResponse m_response;
     bool m_canShowMIMEType;
+    WTF::String m_downloadAttribute;
 };
 
 } // namespace API
-
-#endif // APINavigationResponse_h
