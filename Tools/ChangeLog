@@ -1,3 +1,13 @@
+2019-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed. Fix WPE accessibility tests after r244059.
+
+        We are failing to load the injected bundle due to undefined symbol
+        AccessibilityUIElement::replaceTextInRange().
+
+        * WebKitTestRunner/InjectedBundle/wpe/AccessibilityUIElementWPE.cpp:
+        (WTR::AccessibilityUIElement::replaceTextInRange):
+
 2019-04-10  Takashi Komori  <Takashi.Komori@sony.com>
 
         [WinCairo][MiniBrowser] Pull down menu "Disable JavaScript" doesn't work.

@@ -972,6 +972,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int)
     return nullptr;
 }
 
+bool AccessibilityUIElement::replaceTextInRange(JSStringRef, int, int)
+{
+    notImplemented();
+    return false;
+}
+
 } // namespace  WTF
 
 #endif // HAVE(ACCESSIBILITY)
