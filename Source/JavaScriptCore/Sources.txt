@@ -717,6 +717,9 @@ runtime/BooleanConstructor.cpp
 runtime/BooleanObject.cpp
 runtime/BooleanPrototype.cpp
 runtime/CallData.cpp
+runtime/CachePayload.cpp
+runtime/CacheUpdate.cpp
+runtime/CachedBytecode.cpp
 runtime/CachedTypes.cpp
 runtime/CatchScope.cpp
 runtime/ClassInfo.cpp
@@ -872,6 +875,7 @@ runtime/JSWeakSet.cpp
 runtime/JSWithScope.cpp
 runtime/JSWrapperObject.cpp
 runtime/LazyClassStructure.cpp
+runtime/LeafExecutable.cpp
 runtime/LiteralParser.cpp
 runtime/Lookup.cpp
 runtime/MapConstructor.cpp

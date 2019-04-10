@@ -91,7 +91,7 @@ bool checkModuleSyntax(ExecState* exec, const SourceCode& source, ParserError& e
     return true;
 }
 
-CachedBytecode generateProgramBytecode(VM& vm, const SourceCode& source, ParserError& error)
+Ref<CachedBytecode> generateProgramBytecode(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
@@ -104,11 +104,11 @@ CachedBytecode generateProgramBytecode(VM& vm, const SourceCode& source, ParserE
 
     UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
     if (!unlinkedCodeBlock)
-        return { };
+        return CachedBytecode::create();
     return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ProgramType, strictMode, scriptMode, debuggerMode);
 }
 
-CachedBytecode generateModuleBytecode(VM& vm, const SourceCode& source, ParserError& error)
+Ref<CachedBytecode> generateModuleBytecode(VM& vm, const SourceCode& source, ParserError& error)
 {
     JSLockHolder lock(vm);
     RELEASE_ASSERT(vm.atomicStringTable() == Thread::current().atomicStringTable());
@@ -121,7 +121,7 @@ CachedBytecode generateModuleBytecode(VM& vm, const SourceCode& source, ParserEr
 
     UnlinkedCodeBlock* unlinkedCodeBlock = recursivelyGenerateUnlinkedCodeBlock<UnlinkedModuleProgramCodeBlock>(vm, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
     if (!unlinkedCodeBlock)
-        return { };
+        return CachedBytecode::create();
     return serializeBytecode(vm, unlinkedCodeBlock, source, SourceCodeType::ModuleType, strictMode, scriptMode, debuggerMode);
 }
 

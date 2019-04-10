@@ -139,7 +139,12 @@ public:
         return { it->value };
     }
 
-    std::pair<MallocPtr<uint8_t>, size_t> release()
+    void addLeafExecutable(const UnlinkedFunctionExecutable* executable, ptrdiff_t offset)
+    {
+        m_leafExecutables.add(executable, offset);
+    }
+
+    Ref<CachedBytecode> release()
     {
         size_t size = m_baseOffset + m_currentPage->size();
         MallocPtr<uint8_t> buffer = MallocPtr<uint8_t>::malloc(size);
@@ -149,7 +154,7 @@ public:
             offset += page.size();
         }
         RELEASE_ASSERT(offset == size);
-        return { WTFMove(buffer), size };
+        return CachedBytecode::create(WTFMove(buffer), size, WTFMove(m_leafExecutables));
     }
 
 private:
@@ -212,16 +217,13 @@ private:
     Page* m_currentPage;
     Vector<Page> m_pages;
     HashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
+    LeafExecutableMap m_leafExecutables;
 };
 
-Decoder::Decoder(VM& vm, const void* baseAddress, size_t size)
+Decoder::Decoder(VM& vm, Ref<CachedBytecode> cachedBytecode)
     : m_vm(vm)
-    , m_baseAddress(reinterpret_cast<const uint8_t*>(baseAddress))
-#ifndef NDEBUG
-    , m_size(size)
-#endif
+    , m_cachedBytecode(WTFMove(cachedBytecode))
 {
-    UNUSED_PARAM(size);
 }
 
 Decoder::~Decoder()
@@ -230,16 +232,21 @@ Decoder::~Decoder()
         finalizer();
 }
 
-Ref<Decoder> Decoder::create(VM& vm, const void* baseAddress, size_t size)
+Ref<Decoder> Decoder::create(VM& vm, Ref<CachedBytecode> cachedBytecode)
 {
-    return adoptRef(*new Decoder(vm, baseAddress, size));
+    return adoptRef(*new Decoder(vm, WTFMove(cachedBytecode)));
+}
+
+size_t Decoder::size() const
+{
+    return m_cachedBytecode->size();
 }
 
 ptrdiff_t Decoder::offsetOf(const void* ptr)
 {
     const uint8_t* addr = static_cast<const uint8_t*>(ptr);
-    ASSERT(addr >= m_baseAddress && addr < m_baseAddress + m_size);
-    return addr - m_baseAddress;
+    ASSERT(addr >= m_cachedBytecode->data() && addr < m_cachedBytecode->data() + m_cachedBytecode->size());
+    return addr - m_cachedBytecode->data();
 }
 
 void Decoder::cacheOffset(ptrdiff_t offset, void* ptr)
@@ -258,9 +265,9 @@ WTF::Optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
 const void* Decoder::ptrForOffsetFromBase(ptrdiff_t offset)
 {
 #ifndef NDEBUG
-    ASSERT(offset > 0 && static_cast<size_t>(offset) < m_size);
+    ASSERT(offset > 0 && static_cast<size_t>(offset) < m_cachedBytecode->size());
 #endif
-    return m_baseAddress + offset;
+    return m_cachedBytecode->data() + offset;
 }
 
 CompactVariableMap::Handle Decoder::handleForEnvironment(CompactVariableEnvironment* environment) const
@@ -274,6 +281,11 @@ void Decoder::setHandleForEnvironment(CompactVariableEnvironment* environment, c
 {
     auto addResult = m_environmentToHandleMap.add(environment, handle);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
+}
+
+void Decoder::addLeafExecutable(const UnlinkedFunctionExecutable* executable, ptrdiff_t offset)
+{
+    m_cachedBytecode->leafExecutables().add(executable, offset);
 }
 
 template<typename Functor>
@@ -339,11 +351,17 @@ public:
 };
 
 template<typename Source>
-class VariableLengthObject : public CachedObject<Source> {
+class VariableLengthObject : public CachedObject<Source>, VariableLengthObjectBase {
     template<typename, typename>
-    friend struct CachedPtr;
+    friend class CachedPtr;
+    friend struct CachedPtrOffsets;
 
 public:
+    VariableLengthObject()
+        : VariableLengthObjectBase(s_invalidOffset)
+    {
+    }
+
     bool isEmpty() const
     {
         return m_offset == s_invalidOffset;
@@ -352,7 +370,7 @@ public:
 protected:
     const uint8_t* buffer() const
     {
-        ASSERT(m_offset != s_invalidOffset);
+        ASSERT(!isEmpty());
         return bitwise_cast<const uint8_t*>(this) + m_offset;
     }
 
@@ -379,15 +397,14 @@ protected:
 
 private:
     constexpr static ptrdiff_t s_invalidOffset = std::numeric_limits<ptrdiff_t>::max();
-
-    ptrdiff_t m_offset { s_invalidOffset };
-
 };
 
 template<typename T, typename Source = SourceType<T>>
 class CachedPtr : public VariableLengthObject<Source*> {
     template<typename, typename>
-    friend struct CachedRefPtr;
+    friend class CachedRefPtr;
+
+    friend struct CachedPtrOffsets;
 
 public:
     void encode(Encoder& encoder, const Source* src)
@@ -443,6 +460,11 @@ private:
     }
 };
 
+ptrdiff_t CachedPtrOffsets::offsetOffset()
+{
+    return OBJECT_OFFSETOF(CachedPtr<void>, m_offset);
+}
+
 template<typename T, typename Source = SourceType<T>>
 class CachedRefPtr : public CachedObject<RefPtr<Source>> {
 public:
@@ -482,6 +504,8 @@ private:
 
 template<typename T, typename Source = SourceType<T>>
 class CachedWriteBarrier : public CachedObject<WriteBarrier<Source>> {
+    friend struct CachedWriteBarrierOffsets;
+
 public:
     bool isEmpty() const { return m_ptr.isEmpty(); }
 
@@ -500,6 +524,11 @@ public:
 private:
     CachedPtr<T, Source> m_ptr;
 };
+
+ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
+{
+    return OBJECT_OFFSETOF(CachedWriteBarrier<void>, m_ptr);
+}
 
 template<typename T, size_t InlineCapacity = 0, typename OverflowHandler = CrashOnOverflow>
 class CachedVector : public VariableLengthObject<Vector<SourceType<T>, InlineCapacity, OverflowHandler>> {
@@ -1536,6 +1565,8 @@ private:
 };
 
 class CachedFunctionExecutable : public CachedObject<UnlinkedFunctionExecutable> {
+    friend struct CachedFunctionExecutableOffsets;
+
 public:
     void encode(Encoder&, const UnlinkedFunctionExecutable&);
     UnlinkedFunctionExecutable* decode(Decoder&) const;
@@ -1552,11 +1583,11 @@ public:
     unsigned typeProfilingEndOffset() const { return m_typeProfilingEndOffset; }
     unsigned parameterCount() const { return m_parameterCount; }
 
-    CodeFeatures features() const { return m_features; }
+    CodeFeatures features() const { return m_mutableMetadata.m_features; }
     SourceParseMode sourceParseMode() const { return m_sourceParseMode; }
 
     unsigned isInStrictContext() const { return m_isInStrictContext; }
-    unsigned hasCapturedVariables() const { return m_hasCapturedVariables; }
+    unsigned hasCapturedVariables() const { return m_mutableMetadata.m_hasCapturedVariables; }
     unsigned isBuiltinFunction() const { return m_isBuiltinFunction; }
     unsigned isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
     unsigned constructAbility() const { return m_constructAbility; }
@@ -1576,6 +1607,8 @@ public:
     const CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock>& unlinkedCodeBlockForConstruct() const { return m_unlinkedCodeBlockForConstruct; }
 
 private:
+    CachedFunctionExecutableMetadata m_mutableMetadata;
+
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
     unsigned m_unlinkedFunctionNameStart;
@@ -1587,10 +1620,8 @@ private:
     unsigned m_typeProfilingStartOffset;
     unsigned m_typeProfilingEndOffset;
     unsigned m_parameterCount;
-    CodeFeatures m_features;
     SourceParseMode m_sourceParseMode;
     unsigned m_isInStrictContext : 1;
-    unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_isBuiltinDefaultClassConstructor : 1;
     unsigned m_constructAbility: 1;
@@ -1609,6 +1640,21 @@ private:
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForCall;
     CachedWriteBarrier<CachedFunctionCodeBlock, UnlinkedFunctionCodeBlock> m_unlinkedCodeBlockForConstruct;
 };
+
+ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForCallOffset()
+{
+    return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForCall);
+}
+
+ptrdiff_t CachedFunctionExecutableOffsets::codeBlockForConstructOffset()
+{
+    return OBJECT_OFFSETOF(CachedFunctionExecutable, m_unlinkedCodeBlockForConstruct);
+}
+
+ptrdiff_t CachedFunctionExecutableOffsets::metadataOffset()
+{
+    return OBJECT_OFFSETOF(CachedFunctionExecutable, m_mutableMetadata);
+}
 
 template<typename CodeBlockType>
 class CachedCodeBlock : public CachedObject<CodeBlockType> {
@@ -1925,6 +1971,9 @@ ALWAYS_INLINE UnlinkedEvalCodeBlock::UnlinkedEvalCodeBlock(Decoder& decoder, con
 
 ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const UnlinkedFunctionExecutable& executable)
 {
+    m_mutableMetadata.m_features = executable.m_features;
+    m_mutableMetadata.m_hasCapturedVariables = executable.m_hasCapturedVariables;
+
     m_firstLineOffset = executable.m_firstLineOffset;
     m_lineCount = executable.m_lineCount;
     m_unlinkedFunctionNameStart = executable.m_unlinkedFunctionNameStart;
@@ -1937,11 +1986,9 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
     m_typeProfilingEndOffset = executable.m_typeProfilingEndOffset;
     m_parameterCount = executable.m_parameterCount;
 
-    m_features = executable.m_features;
     m_sourceParseMode = executable.m_sourceParseMode;
 
     m_isInStrictContext = executable.m_isInStrictContext;
-    m_hasCapturedVariables = executable.m_hasCapturedVariables;
     m_isBuiltinFunction = executable.m_isBuiltinFunction;
     m_isBuiltinDefaultClassConstructor = executable.m_isBuiltinDefaultClassConstructor;
     m_constructAbility = executable.m_constructAbility;
@@ -1959,13 +2006,15 @@ ALWAYS_INLINE void CachedFunctionExecutable::encode(Encoder& encoder, const Unli
 
     m_unlinkedCodeBlockForCall.encode(encoder, executable.m_unlinkedCodeBlockForCall);
     m_unlinkedCodeBlockForConstruct.encode(encoder, executable.m_unlinkedCodeBlockForConstruct);
+
+    if (!executable.m_unlinkedCodeBlockForCall || !executable.m_unlinkedCodeBlockForConstruct)
+        encoder.addLeafExecutable(&executable, encoder.offsetOf(this));
 }
 
 ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decoder& decoder) const
 {
     UnlinkedFunctionExecutable* executable = new (NotNull, allocateCell<UnlinkedFunctionExecutable>(decoder.vm().heap)) UnlinkedFunctionExecutable(decoder, *this);
     executable->finishCreation(decoder.vm());
-
     return executable;
 }
 
@@ -2005,18 +2054,27 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_rareData(cachedExecutable.rareData(decoder))
 {
 
+    uint32_t leafExecutables = 2;
+    auto checkBounds = [&](int32_t& codeBlockOffset, auto& cachedPtr) {
+        if (!cachedPtr.isEmpty()) {
+            ptrdiff_t offset = decoder.offsetOf(&cachedPtr);
+            if (static_cast<size_t>(offset) < decoder.size()) {
+                codeBlockOffset = offset;
+                m_isCached = true;
+                leafExecutables--;
+            }
+        }
+    };
+
     if (!cachedExecutable.unlinkedCodeBlockForCall().isEmpty() || !cachedExecutable.unlinkedCodeBlockForConstruct().isEmpty()) {
-        m_isCached = true;
-        m_decoder = &decoder;
-        if (!cachedExecutable.unlinkedCodeBlockForCall().isEmpty())
-            m_cachedCodeBlockForCallOffset = decoder.offsetOf(&cachedExecutable.unlinkedCodeBlockForCall());
-        else
-            m_cachedCodeBlockForCallOffset = 0;
-        if (!cachedExecutable.unlinkedCodeBlockForConstruct().isEmpty())
-            m_cachedCodeBlockForConstructOffset = decoder.offsetOf(&cachedExecutable.unlinkedCodeBlockForConstruct());
-        else
-            m_cachedCodeBlockForConstructOffset = 0;
+        checkBounds(m_cachedCodeBlockForCallOffset, cachedExecutable.unlinkedCodeBlockForCall());
+        checkBounds(m_cachedCodeBlockForConstructOffset, cachedExecutable.unlinkedCodeBlockForConstruct());
+        if (m_isCached)
+            m_decoder = &decoder;
     }
+
+    if (leafExecutables)
+        decoder.addLeafExecutable(this, decoder.offsetOf(&cachedExecutable));
 }
 
 template<typename CodeBlockType>
@@ -2209,7 +2267,7 @@ void encodeCodeBlock(Encoder& encoder, const SourceCodeKey& key, const UnlinkedC
     entry->encode(encoder, { key, jsCast<const UnlinkedCodeBlockType*>(codeBlock) });
 }
 
-std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
+Ref<CachedBytecode> encodeCodeBlock(VM& vm, const SourceCodeKey& key, const UnlinkedCodeBlock* codeBlock)
 {
     const ClassInfo* classInfo = codeBlock->classInfo(vm);
 
@@ -2224,10 +2282,17 @@ std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM& vm, const SourceCodeKe
     return encoder.release();
 }
 
-UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, const void* buffer, size_t size)
+Ref<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCodeBlock* codeBlock)
 {
-    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(buffer);
-    Ref<Decoder> decoder = Decoder::create(vm, buffer, size);
+    Encoder encoder(vm);
+    encoder.malloc<CachedFunctionCodeBlock>()->encode(encoder, *codeBlock);
+    return encoder.release();
+}
+
+UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
+{
+    const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->data());
+    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
         DeferGC deferGC(vm.heap);
@@ -2240,14 +2305,14 @@ UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, const v
     return entry.second;
 }
 
-bool isCachedBytecodeStillValid(VM& vm, const CachedBytecode& cachedBytecode, const SourceCodeKey& key, SourceCodeType type)
+bool isCachedBytecodeStillValid(VM& vm, Ref<CachedBytecode> cachedBytecode, const SourceCodeKey& key, SourceCodeType type)
 {
-    const void* buffer = cachedBytecode.data();
-    size_t size = cachedBytecode.size();
+    const void* buffer = cachedBytecode->data();
+    size_t size = cachedBytecode->size();
     if (!size)
         return false;
     const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(buffer);
-    Ref<Decoder> decoder = Decoder::create(vm, buffer, size);
+    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
     return cachedEntry->isStillValid(decoder.get(), key, tagFromSourceCodeType(type));
 }
 

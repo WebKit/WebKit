@@ -77,6 +77,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     if (error.isValid())
         return nullptr;
+    vm.codeCache()->updateCache(executable, source, kind, result);
     return result;
 }
 

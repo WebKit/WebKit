@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCast.h"
+#include "ParserModes.h"
 #include "VariableEnvironment.h"
 #include <wtf/HashMap.h>
 #include <wtf/MallocPtr.h>
@@ -37,15 +38,51 @@ class SourceCodeKey;
 class UnlinkedCodeBlock;
 class UnlinkedFunctionCodeBlock;
 
+enum class SourceCodeType;
+
+// This struct has to be updated when incrementally writing to the bytecode
+// cache, since this will only be filled in when we parse the function
+struct CachedFunctionExecutableMetadata {
+    CodeFeatures m_features;
+    bool m_hasCapturedVariables;
+};
+
+struct CachedFunctionExecutableOffsets {
+    static ptrdiff_t codeBlockForCallOffset();
+    static ptrdiff_t codeBlockForConstructOffset();
+    static ptrdiff_t metadataOffset();
+};
+
+struct CachedWriteBarrierOffsets {
+    static ptrdiff_t ptrOffset();
+};
+
+struct CachedPtrOffsets {
+    static ptrdiff_t offsetOffset();
+};
+
+class VariableLengthObjectBase {
+    friend class CachedBytecode;
+
+protected:
+    VariableLengthObjectBase(ptrdiff_t offset)
+        : m_offset(offset)
+    {
+    }
+
+    ptrdiff_t m_offset;
+};
+
 class Decoder : public RefCounted<Decoder> {
     WTF_MAKE_NONCOPYABLE(Decoder);
 
 public:
-    static Ref<Decoder> create(VM&, const void*, size_t);
+    static Ref<Decoder> create(VM&, Ref<CachedBytecode>);
 
     ~Decoder();
 
     VM& vm() { return m_vm; }
+    size_t size() const;
 
     ptrdiff_t offsetOf(const void*);
     void cacheOffset(ptrdiff_t, void*);
@@ -53,37 +90,35 @@ public:
     const void* ptrForOffsetFromBase(ptrdiff_t);
     CompactVariableMap::Handle handleForEnvironment(CompactVariableEnvironment*) const;
     void setHandleForEnvironment(CompactVariableEnvironment*, const CompactVariableMap::Handle&);
+    void addLeafExecutable(const UnlinkedFunctionExecutable*, ptrdiff_t);
 
     template<typename Functor>
     void addFinalizer(const Functor&);
 
 private:
-    Decoder(VM&, const void*, size_t);
+    Decoder(VM&, Ref<CachedBytecode>);
 
     VM& m_vm;
-    const uint8_t* m_baseAddress;
-#ifndef NDEBUG
-    size_t m_size;
-#endif
+    Ref<CachedBytecode> m_cachedBytecode;
     HashMap<ptrdiff_t, void*> m_offsetToPtrMap;
     Vector<std::function<void()>> m_finalizers;
     HashMap<CompactVariableEnvironment*, CompactVariableMap::Handle> m_environmentToHandleMap;
 };
 
-enum class SourceCodeType;
+JS_EXPORT_PRIVATE Ref<CachedBytecode> encodeCodeBlock(VM&, const SourceCodeKey&, const UnlinkedCodeBlock*);
 
-std::pair<MallocPtr<uint8_t>, size_t> encodeCodeBlock(VM&, const SourceCodeKey&, const UnlinkedCodeBlock*);
-
-UnlinkedCodeBlock* decodeCodeBlockImpl(VM&, const SourceCodeKey&, const void*, size_t);
-
-void decodeFunctionCodeBlock(Decoder&, int32_t cachedFunctionCodeBlockOffset, WriteBarrier<UnlinkedFunctionCodeBlock>&, const JSCell*);
+UnlinkedCodeBlock* decodeCodeBlockImpl(VM&, const SourceCodeKey&, Ref<CachedBytecode>);
 
 template<typename UnlinkedCodeBlockType>
-UnlinkedCodeBlockType* decodeCodeBlock(VM& vm, const SourceCodeKey& key, const void* buffer, size_t size)
+UnlinkedCodeBlockType* decodeCodeBlock(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
-    return jsCast<UnlinkedCodeBlockType*>(decodeCodeBlockImpl(vm, key, buffer, size));
+    return jsCast<UnlinkedCodeBlockType*>(decodeCodeBlockImpl(vm, key, WTFMove(cachedBytecode)));
 }
 
-bool isCachedBytecodeStillValid(VM&, const CachedBytecode&, const SourceCodeKey&, SourceCodeType);
+JS_EXPORT_PRIVATE Ref<CachedBytecode> encodeFunctionCodeBlock(VM&, const UnlinkedFunctionCodeBlock*);
+
+JS_EXPORT_PRIVATE void decodeFunctionCodeBlock(Decoder&, int32_t cachedFunctionCodeBlockOffset, WriteBarrier<UnlinkedFunctionCodeBlock>&, const JSCell*);
+
+bool isCachedBytecodeStillValid(VM&, Ref<CachedBytecode>, const SourceCodeKey&, SourceCodeType);
 
 } // namespace JSC

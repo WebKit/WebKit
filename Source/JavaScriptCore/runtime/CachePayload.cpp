@@ -23,32 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#include "config.h"
+#include "CachePayload.h"
 
-#import "SourceProvider.h"
+#if !OS(WINDOWS)
+#include <sys/mman.h>
+#endif
 
-@class JSScript;
+namespace JSC {
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
-public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
-    {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
-    }
+#if !OS(WINDOWS)
+CachePayload CachePayload::makeMappedPayload(void* data, size_t size)
+{
+    return CachePayload(true, data, size);
+}
+#endif
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+CachePayload CachePayload::makeMallocPayload(MallocPtr<uint8_t>&& data, size_t size)
+{
+    return CachePayload(false, data.leakPtr(), size);
+}
 
-private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
+CachePayload CachePayload::makeEmptyPayload()
+{
+    return CachePayload(true, nullptr, 0);
+}
 
-    RetainPtr<JSScript> m_script;
-};
+CachePayload::CachePayload(CachePayload&& other)
+{
+    m_mapped = other.m_mapped;
+    m_size = other.m_size;
+    m_data = other.m_data;
+    other.m_mapped = false;
+    other.m_data = nullptr;
+    other.m_size = 0;
+}
 
-#endif // JSC_OBJC_API_ENABLED
+CachePayload::~CachePayload()
+{
+    freeData();
+}
+
+CachePayload& CachePayload::operator=(CachePayload&& other)
+{
+    ASSERT(&other != this);
+    freeData();
+    return *new (this) CachePayload(WTFMove(other));
+}
+
+void CachePayload::freeData()
+{
+    if (!m_data)
+        return;
+    if (m_mapped) {
+#if !OS(WINDOWS)
+        munmap(m_data, m_size);
+#else
+        RELEASE_ASSERT_NOT_REACHED();
+#endif
+    } else
+        fastFree(m_data);
+}
+
+} // namespace JSC

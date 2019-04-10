@@ -967,48 +967,87 @@ public:
 
     ~ShellSourceProvider()
     {
-#if OS(DARWIN)
-        if (m_cachedBytecode.size())
-            munmap(const_cast<void*>(m_cachedBytecode.data()), m_cachedBytecode.size());
-#endif
+        commitCachedBytecode();
     }
 
-    const CachedBytecode* cachedBytecode() const override
+    RefPtr<CachedBytecode> cachedBytecode() const override
     {
-        return &m_cachedBytecode;
+        if (!m_cachedBytecode->size())
+            loadBytecode();
+        return m_cachedBytecode.copyRef();
+    }
+
+    void updateCache(const UnlinkedFunctionExecutable* executable, const SourceCode&, CodeSpecializationKind kind, const UnlinkedFunctionCodeBlock* codeBlock) const override
+    {
+        if (!cacheEnabled())
+            return;
+        Ref<CachedBytecode> cachedBytecode = encodeFunctionCodeBlock(*executable->vm(), codeBlock);
+        m_cachedBytecode->addFunctionUpdate(executable, kind, WTFMove(cachedBytecode));
     }
 
     void cacheBytecode(const BytecodeCacheGenerator& generator) const override
     {
-#if OS(DARWIN)
-        String filename = cachePath();
-        if (filename.isNull())
+        if (!cacheEnabled())
             return;
+        m_cachedBytecode->addGlobalUpdate(generator());
+    }
+
+    void commitCachedBytecode() const override
+    {
+#if OS(DARWIN)
+        if (!cacheEnabled() || !m_cachedBytecode->hasUpdates())
+            return;
+
+        auto clearBytecode = makeScopeExit([&] {
+            m_cachedBytecode = CachedBytecode::create();
+        });
+
+        String filename = cachePath();
         int fd = open(filename.utf8().data(), O_CREAT | O_WRONLY | O_TRUNC | O_EXLOCK | O_NONBLOCK, 0666);
         if (fd == -1)
             return;
-        CachedBytecode cachedBytecode = generator();
-        write(fd, cachedBytecode.data(), cachedBytecode.size());
-        close(fd);
-#else
-        UNUSED_PARAM(generator);
+
+        auto closeFD = makeScopeExit([&] {
+            close(fd);
+        });
+
+        struct stat sb;
+        int res = fstat(fd, &sb);
+        size_t size = static_cast<size_t>(sb.st_size);
+        if (res || size != m_cachedBytecode->size()) {
+            // The bytecode cache has already been updated
+            return;
+        }
+
+        if (ftruncate(fd, m_cachedBytecode->sizeForUpdate()))
+            return;
+
+        m_cachedBytecode->commitUpdates([&] (off_t offset, const void* data, size_t size) {
+            int result = lseek(fd, offset, SEEK_SET);
+            ASSERT_UNUSED(result, result != -1);
+            size_t bytesWritten = static_cast<size_t>(write(fd, data, size));
+            ASSERT_UNUSED(bytesWritten, bytesWritten == size);
+        });
 #endif
     }
 
 private:
     String cachePath() const
     {
-        const char* cachePath = Options::diskCachePath();
-        if (!cachePath)
+        if (!cacheEnabled())
             return static_cast<const char*>(nullptr);
+        const char* cachePath = Options::diskCachePath();
         String filename = sourceOrigin().string();
         filename.replace('/', '_');
         return makeString(cachePath, '/', source().toString().hash(), '-', filename, ".bytecode-cache");
     }
 
-    void loadBytecode()
+    void loadBytecode() const
     {
 #if OS(DARWIN)
+        if (!cacheEnabled())
+            return;
+
         String filename = cachePath();
         if (filename.isNull())
             return;
@@ -1030,17 +1069,24 @@ private:
         void* buffer = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
         if (buffer == MAP_FAILED)
             return;
-        m_cachedBytecode = CachedBytecode { buffer, size };
+        m_cachedBytecode = CachedBytecode::create(buffer, size);
 #endif
     }
 
     ShellSourceProvider(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
         : StringSourceProvider(source, sourceOrigin, WTFMove(url), startPosition, sourceType)
+        , m_cachedBytecode(CachedBytecode::create())
     {
         loadBytecode();
     }
 
-    CachedBytecode m_cachedBytecode;
+    static bool cacheEnabled()
+    {
+        static bool enabled = !!Options::diskCachePath();
+        return enabled;
+    }
+
+    mutable Ref<CachedBytecode> m_cachedBytecode;
 };
 
 static inline SourceCode jscSource(const String& source, const SourceOrigin& sourceOrigin, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)

@@ -23,32 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#pragma once
 
-#import "SourceProvider.h"
+#include "CachePayload.h"
+#include "CachedTypes.h"
+#include "CodeSpecializationKind.h"
+#include <wtf/Variant.h>
 
-@class JSScript;
+namespace JSC {
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
+class CacheUpdate {
 public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
-    {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
-    }
+    struct GlobalUpdate {
+        CachePayload m_payload;
+    };
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+    struct FunctionUpdate {
+        ptrdiff_t m_base;
+        CodeSpecializationKind m_kind;
+        CachedFunctionExecutableMetadata m_metadata;
+        CachePayload m_payload;
+    };
+
+
+    CacheUpdate(GlobalUpdate&&);
+    CacheUpdate(FunctionUpdate&&);
+
+    CacheUpdate(CacheUpdate&&);
+    CacheUpdate& operator=(CacheUpdate&&);
+
+    bool isGlobal() const;
+    const GlobalUpdate& asGlobal() const;
+    const FunctionUpdate& asFunction() const;
 
 private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
-
-    RetainPtr<JSScript> m_script;
+    Variant<GlobalUpdate, FunctionUpdate> m_update;
 };
 
-#endif // JSC_OBJC_API_ENABLED
+} // namespace JSC

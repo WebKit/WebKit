@@ -23,32 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#pragma once
 
-#import "SourceProvider.h"
+#include <wtf/MallocPtr.h>
 
-@class JSScript;
+namespace JSC {
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
+class CachePayload {
 public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
-    {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
-    }
+#if !OS(WINDOWS)
+    JS_EXPORT_PRIVATE static CachePayload makeMappedPayload(void*, size_t);
+#endif
+    JS_EXPORT_PRIVATE static CachePayload makeMallocPayload(MallocPtr<uint8_t>&&, size_t);
+    JS_EXPORT_PRIVATE static CachePayload makeEmptyPayload();
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+    JS_EXPORT_PRIVATE CachePayload(CachePayload&&);
+    JS_EXPORT_PRIVATE ~CachePayload();
+    JS_EXPORT_PRIVATE CachePayload& operator=(CachePayload&& other);
+
+    const uint8_t* data() const { return m_data; }
+    size_t size() const { return m_size; }
 
 private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
+    CachePayload(bool mapped, void* data, size_t size)
+        : m_mapped(mapped)
+        , m_size(size)
+        , m_data(static_cast<uint8_t*>(data))
+    {
+    }
 
-    RetainPtr<JSScript> m_script;
+    void freeData();
+
+    bool m_mapped;
+    size_t m_size;
+    uint8_t* m_data;
 };
 
-#endif // JSC_OBJC_API_ENABLED
+} // namespace JSC

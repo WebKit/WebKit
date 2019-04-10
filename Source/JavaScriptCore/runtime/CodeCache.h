@@ -62,26 +62,19 @@ namespace CodeCacheInternal {
 static const bool verbose = false;
 } // namespace CodeCacheInternal
 
-#define VERBOSE_LOG(...) do { \
-    if (CodeCacheInternal::verbose) \
-        dataLogLn("(JSC::CodeCache) ", __VA_ARGS__); \
-} while (false)
-
 struct SourceCodeValue {
     SourceCodeValue()
     {
     }
 
-    SourceCodeValue(VM& vm, JSCell* cell, int64_t age, bool written = false)
+    SourceCodeValue(VM& vm, JSCell* cell, int64_t age)
         : cell(vm, cell)
         , age(age)
-        , written(written)
     {
     }
 
     Strong<JSCell> cell;
     int64_t age;
-    bool written;
 };
 
 class CodeCacheMap {
@@ -108,7 +101,6 @@ public:
     {
         prune();
 
-        VERBOSE_LOG("Trying to find cached CodeBlock for ", key.source().provider().url().string());
         iterator findResult = m_map.find(key);
         if (findResult == m_map.end())
             return fetchFromDisk<UnlinkedCodeBlockType>(vm, key);
@@ -131,7 +123,6 @@ public:
         findResult->value.age = m_age;
         m_age += key.length();
 
-        VERBOSE_LOG("Found cached CodeBlock in memory");
         return jsCast<UnlinkedCodeBlockType*>(findResult->value.cell.get());
     }
 
@@ -166,14 +157,10 @@ private:
     template<typename UnlinkedCodeBlockType>
     UnlinkedCodeBlockType* fetchFromDiskImpl(VM& vm, const SourceCodeKey& key)
     {
-        const CachedBytecode* cachedBytecode = key.source().provider().cachedBytecode();
-        if (cachedBytecode && cachedBytecode->size()) {
-            VERBOSE_LOG("Found cached CodeBlock in the SourceProvider");
-            UnlinkedCodeBlockType* unlinkedCodeBlock = decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, cachedBytecode->data(), cachedBytecode->size());
-            if (unlinkedCodeBlock)
-                return unlinkedCodeBlock;
-        }
-        return nullptr;
+        RefPtr<CachedBytecode> cachedBytecode = key.source().provider().cachedBytecode();
+        if (!cachedBytecode || !cachedBytecode->size())
+            return nullptr;
+        return decodeCodeBlock<UnlinkedCodeBlockType>(vm, key, *cachedBytecode);
     }
 
     template<typename UnlinkedCodeBlockType>
@@ -239,6 +226,8 @@ public:
     UnlinkedEvalCodeBlock* getUnlinkedEvalCodeBlock(VM&, IndirectEvalExecutable*, const SourceCode&, JSParserStrictMode, DebuggerMode, ParserError&, EvalContextType);
     UnlinkedModuleProgramCodeBlock* getUnlinkedModuleProgramCodeBlock(VM&, ModuleProgramExecutable*, const SourceCode&, DebuggerMode, ParserError&);
     UnlinkedFunctionExecutable* getUnlinkedGlobalFunctionExecutable(VM&, const Identifier&, const SourceCode&, DebuggerMode, Optional<int> functionConstructorParametersEndPosition, ParserError&);
+
+    void updateCache(const UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, const UnlinkedFunctionCodeBlock*);
 
     void clear() { m_sourceCode.clear(); }
     JS_EXPORT_PRIVATE void write(VM&);
@@ -329,7 +318,7 @@ recursivelyGenerateUnlinkedCodeBlock(VM& vm, const SourceCode& source, JSParserS
 }
 
 void writeCodeBlock(VM&, const SourceCodeKey&, const SourceCodeValue&);
-CachedBytecode serializeBytecode(VM&, UnlinkedCodeBlock*, const SourceCode&, SourceCodeType, JSParserStrictMode, JSParserScriptMode, DebuggerMode);
+Ref<CachedBytecode> serializeBytecode(VM&, UnlinkedCodeBlock*, const SourceCode&, SourceCodeType, JSParserStrictMode, JSParserScriptMode, DebuggerMode);
 SourceCodeKey sourceCodeKeyForSerializedProgram(VM&, const SourceCode&);
 SourceCodeKey sourceCodeKeyForSerializedModule(VM&, const SourceCode&);
 

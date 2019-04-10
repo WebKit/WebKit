@@ -29,7 +29,7 @@ mysys() {
     exitCode=$?
     if [ $exitCode != 0 ]; then
         echo "Command '$*' failed"
-        return $exitCode
+        exit $exitCode
     fi
 }
 

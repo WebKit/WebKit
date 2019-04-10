@@ -83,6 +83,10 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
     if (unlinkedCodeBlock && Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_sourceCode.age()));
 
+    key.source().provider().cacheBytecode([&] {
+        return encodeCodeBlock(vm, key, unlinkedCodeBlock);
+    });
+
     return unlinkedCodeBlock;
 }
 
@@ -162,14 +166,15 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     return functionExecutable;
 }
 
+void CodeCache::updateCache(const UnlinkedFunctionExecutable* executable, const SourceCode& parentSource, CodeSpecializationKind kind, const UnlinkedFunctionCodeBlock* codeBlock)
+{
+    parentSource.provider()->updateCache(executable, parentSource, kind, codeBlock);
+}
+
 void CodeCache::write(VM& vm)
 {
-    for (auto& it : m_sourceCode) {
-        if (it.value.written)
-            continue;
-        it.value.written = true;
+    for (auto& it : m_sourceCode)
         writeCodeBlock(vm, it.key, it.value);
-    }
 }
 
 void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, DebuggerMode debuggerMode, ParserError& error)
@@ -198,10 +203,7 @@ void writeCodeBlock(VM& vm, const SourceCodeKey& key, const SourceCodeValue& val
     if (!codeBlock)
         return;
 
-    key.source().provider().cacheBytecode([&] {
-        std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm, key, codeBlock);
-        return CachedBytecode { WTFMove(result.first), result.second };
-    });
+    key.source().provider().commitCachedBytecode();
 }
 
 static SourceCodeKey sourceCodeKeyForSerializedBytecode(VM& vm, const SourceCode& sourceCode, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
@@ -230,11 +232,10 @@ SourceCodeKey sourceCodeKeyForSerializedModule(VM& vm, const SourceCode& sourceC
     return sourceCodeKeyForSerializedBytecode(vm, sourceCode, SourceCodeType::ModuleType, strictMode, scriptMode, debuggerMode);
 }
 
-CachedBytecode serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
+Ref<CachedBytecode> serializeBytecode(VM& vm, UnlinkedCodeBlock* codeBlock, const SourceCode& source, SourceCodeType codeType, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, DebuggerMode debuggerMode)
 {
-    std::pair<MallocPtr<uint8_t>, size_t> result = encodeCodeBlock(vm,
+    return encodeCodeBlock(vm,
         sourceCodeKeyForSerializedBytecode(vm, source, codeType, strictMode, scriptMode, debuggerMode), codeBlock);
-    return CachedBytecode { WTFMove(result.first), result.second };
 }
 
 }

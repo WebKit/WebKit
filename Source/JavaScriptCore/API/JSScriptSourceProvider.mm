@@ -40,7 +40,7 @@ StringView JSScriptSourceProvider::source() const
     return [m_script.get() source];
 }
 
-const JSC::CachedBytecode* JSScriptSourceProvider::cachedBytecode() const
+RefPtr<JSC::CachedBytecode> JSScriptSourceProvider::cachedBytecode() const
 {
     return [m_script.get() cachedBytecode];
 }

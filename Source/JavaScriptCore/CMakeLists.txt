@@ -761,6 +761,10 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/BooleanPrototype.h
     runtime/Butterfly.h
     runtime/ButterflyInlines.h
+    runtime/CachePayload.h
+    runtime/CacheUpdate.h
+    runtime/CachedBytecode.h
+    runtime/CachedTypes.h
     runtime/CagedBarrierPtr.h
     runtime/CallData.h
     runtime/CatchScope.h
@@ -896,6 +900,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSWrapperObject.h
     runtime/LazyClassStructure.h
     runtime/LazyProperty.h
+    runtime/LeafExecutable.h
     runtime/Lookup.h
     runtime/MatchResult.h
     runtime/MathCommon.h

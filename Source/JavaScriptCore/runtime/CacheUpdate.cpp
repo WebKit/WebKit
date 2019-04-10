@@ -23,32 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#include "config.h"
+#include "CacheUpdate.h"
 
-#import "SourceProvider.h"
+namespace JSC {
 
-@class JSScript;
+CacheUpdate::CacheUpdate(GlobalUpdate&& update)
+    : m_update(WTFMove(update))
+{
+}
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
-public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
-    {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
-    }
+CacheUpdate::CacheUpdate(FunctionUpdate&& update)
+    : m_update(WTFMove(update))
+{
+}
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+CacheUpdate::CacheUpdate(CacheUpdate&& other)
+{
+    if (WTF::holds_alternative<GlobalUpdate>(other.m_update))
+        new (this) CacheUpdate(WTFMove(WTF::get<GlobalUpdate>(other.m_update)));
+    else
+        new (this) CacheUpdate(WTFMove(WTF::get<FunctionUpdate>(other.m_update)));
+}
 
-private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
+CacheUpdate& CacheUpdate::operator=(CacheUpdate&& other)
+{
+    this->~CacheUpdate();
+    return *new (this) CacheUpdate(WTFMove(other));
+}
 
-    RetainPtr<JSScript> m_script;
-};
+bool CacheUpdate::isGlobal() const
+{
+    return WTF::holds_alternative<GlobalUpdate>(m_update);
+}
 
-#endif // JSC_OBJC_API_ENABLED
+const CacheUpdate::GlobalUpdate& CacheUpdate::asGlobal() const
+{
+    ASSERT(isGlobal());
+    return WTF::get<GlobalUpdate>(m_update);
+}
+
+const CacheUpdate::FunctionUpdate& CacheUpdate::asFunction() const
+{
+    ASSERT(!isGlobal());
+    return WTF::get<FunctionUpdate>(m_update);
+}
+
+} // namespace JSC

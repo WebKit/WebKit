@@ -1,3 +1,14 @@
+2019-04-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add support for incremental bytecode cache updates
+        https://bugs.webkit.org/show_bug.cgi?id=195000
+
+        Reviewed by Filip Pizlo.
+
+        Exit when the initial run to generate bytecode fails.
+
+        * Scripts/jsc-stress-test-helpers/bytecode-cache-test-helper.sh:
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         RemoteObjectRegistry message receiver should be removed when WebPage::close is called instead of waiting until dealloc

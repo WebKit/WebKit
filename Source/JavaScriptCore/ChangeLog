@@ -1,3 +1,125 @@
+2019-04-10  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add support for incremental bytecode cache updates
+        https://bugs.webkit.org/show_bug.cgi?id=195000
+
+        Reviewed by Filip Pizlo.
+
+        Add support for incremental updates to the bytecode cache. The cache
+        is constructed as follows:
+        - When the cache is empty, the initial payload can be added to the BytecodeCache
+        by calling BytecodeCache::addGlobalUpdate. This represents the encoded
+        top-level UnlinkedCodeBlock.
+        - Afterwards, updates can be added by calling BytecodeCache::addFunctionUpdate.
+        The update is applied by appending the encoded UnlinkedFunctionCodeBlock
+        to the existing cache and updating the CachedFunctionExecutableMetadata
+        and the offset of the new CachedFunctionCodeBlock in the owner CachedFunctionExecutable.
+
+        * API/JSScript.mm:
+        (-[JSScript readCache]):
+        (-[JSScript isUsingBytecodeCache]):
+        (-[JSScript init]):
+        (-[JSScript cachedBytecode]):
+        (-[JSScript writeCache:]):
+        * API/JSScriptInternal.h:
+        * API/JSScriptSourceProvider.h:
+        * API/JSScriptSourceProvider.mm:
+        (JSScriptSourceProvider::cachedBytecode const):
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * jsc.cpp:
+        (ShellSourceProvider::~ShellSourceProvider):
+        (ShellSourceProvider::cachePath const):
+        (ShellSourceProvider::loadBytecode const):
+        (ShellSourceProvider::ShellSourceProvider):
+        (ShellSourceProvider::cacheEnabled):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::cachedBytecode const):
+        (JSC::SourceProvider::updateCache const):
+        (JSC::SourceProvider::commitCachedBytecode const):
+        * runtime/CachePayload.cpp: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        (JSC::CachePayload::makeMappedPayload):
+        (JSC::CachePayload::makeMallocPayload):
+        (JSC::CachePayload::makeEmptyPayload):
+        (JSC::CachePayload::CachePayload):
+        (JSC::CachePayload::~CachePayload):
+        (JSC::CachePayload::operator=):
+        (JSC::CachePayload::freeData):
+        * runtime/CachePayload.h: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        (JSC::CachePayload::data const):
+        (JSC::CachePayload::size const):
+        (JSC::CachePayload::CachePayload):
+        * runtime/CacheUpdate.cpp: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        (JSC::CacheUpdate::CacheUpdate):
+        (JSC::CacheUpdate::operator=):
+        (JSC::CacheUpdate::isGlobal const):
+        (JSC::CacheUpdate::asGlobal const):
+        (JSC::CacheUpdate::asFunction const):
+        * runtime/CacheUpdate.h: Copied from Source/JavaScriptCore/API/JSScriptInternal.h.
+        * runtime/CachedBytecode.cpp: Added.
+        (JSC::CachedBytecode::addGlobalUpdate):
+        (JSC::CachedBytecode::addFunctionUpdate):
+        (JSC::CachedBytecode::copyLeafExecutables):
+        (JSC::CachedBytecode::commitUpdates const):
+        * runtime/CachedBytecode.h: Added.
+        (JSC::CachedBytecode::create):
+        (JSC::CachedBytecode::leafExecutables):
+        (JSC::CachedBytecode::data const):
+        (JSC::CachedBytecode::size const):
+        (JSC::CachedBytecode::hasUpdates const):
+        (JSC::CachedBytecode::sizeForUpdate const):
+        (JSC::CachedBytecode::CachedBytecode):
+        * runtime/CachedTypes.cpp:
+        (JSC::Encoder::addLeafExecutable):
+        (JSC::Encoder::release):
+        (JSC::Decoder::Decoder):
+        (JSC::Decoder::create):
+        (JSC::Decoder::size const):
+        (JSC::Decoder::offsetOf):
+        (JSC::Decoder::ptrForOffsetFromBase):
+        (JSC::Decoder::addLeafExecutable):
+        (JSC::VariableLengthObject::VariableLengthObject):
+        (JSC::VariableLengthObject::buffer const):
+        (JSC::CachedPtrOffsets::offsetOffset):
+        (JSC::CachedWriteBarrierOffsets::ptrOffset):
+        (JSC::CachedFunctionExecutable::features const):
+        (JSC::CachedFunctionExecutable::hasCapturedVariables const):
+        (JSC::CachedFunctionExecutableOffsets::codeBlockForCallOffset):
+        (JSC::CachedFunctionExecutableOffsets::codeBlockForConstructOffset):
+        (JSC::CachedFunctionExecutableOffsets::metadataOffset):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::CachedFunctionExecutable::decode const):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::encodeCodeBlock):
+        (JSC::encodeFunctionCodeBlock):
+        (JSC::decodeCodeBlockImpl):
+        (JSC::isCachedBytecodeStillValid):
+        * runtime/CachedTypes.h:
+        (JSC::VariableLengthObjectBase::VariableLengthObjectBase):
+        (JSC::decodeCodeBlock):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        (JSC::CodeCache::updateCache):
+        (JSC::CodeCache::write):
+        (JSC::writeCodeBlock):
+        (JSC::serializeBytecode):
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeValue::SourceCodeValue):
+        (JSC::CodeCacheMap::findCacheAndUpdateAge):
+        (JSC::CodeCacheMap::fetchFromDiskImpl):
+        * runtime/Completion.cpp:
+        (JSC::generateProgramBytecode):
+        (JSC::generateModuleBytecode):
+        * runtime/Completion.h:
+        * runtime/LeafExecutable.cpp: Copied from Source/JavaScriptCore/API/JSScriptSourceProvider.mm.
+        (JSC::LeafExecutable::operator+ const):
+        * runtime/LeafExecutable.h: Copied from Source/JavaScriptCore/API/JSScriptSourceProvider.mm.
+        (JSC::LeafExecutable::LeafExecutable):
+        (JSC::LeafExecutable::base const):
+
 2019-04-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r243989.

@@ -23,32 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#include "config.h"
+#include "LeafExecutable.h"
 
-#import "SourceProvider.h"
+namespace JSC {
 
-@class JSScript;
+LeafExecutable LeafExecutable::operator+(size_t offset) const
+{
+    return LeafExecutable { static_cast<ptrdiff_t>(m_base + offset) };
+}
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
-public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
-    {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
-    }
-
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
-
-private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
-
-    RetainPtr<JSScript> m_script;
-};
-
-#endif // JSC_OBJC_API_ENABLED
+} // namespace JSC

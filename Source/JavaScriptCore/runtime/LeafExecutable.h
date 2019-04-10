@@ -23,32 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if JSC_OBJC_API_ENABLED
+#pragma once
 
-#import "SourceProvider.h"
+#include <wtf/HashMap.h>
 
-@class JSScript;
+namespace JSC {
 
-class JSScriptSourceProvider : public JSC::SourceProvider {
+class LeafExecutable;
+class UnlinkedFunctionExecutable;
+
+using LeafExecutableMap = HashMap<const UnlinkedFunctionExecutable*, LeafExecutable>;
+
+class LeafExecutable {
 public:
-    template<typename... Args>
-    static Ref<JSScriptSourceProvider> create(JSScript *script, Args&&... args)
+    LeafExecutable() = default;
+
+    LeafExecutable(ptrdiff_t offset)
+        : m_base(offset)
     {
-        return adoptRef(*new JSScriptSourceProvider(script, std::forward<Args>(args)...));
     }
 
-    unsigned hash() const override;
-    StringView source() const override;
-    RefPtr<JSC::CachedBytecode> cachedBytecode() const override;
+    ptrdiff_t base() const { return m_base; }
+    LeafExecutable operator+(size_t) const;
 
 private:
-    template<typename... Args>
-    JSScriptSourceProvider(JSScript *script, Args&&... args)
-        : SourceProvider(std::forward<Args>(args)...)
-        , m_script(script)
-    { }
-
-    RetainPtr<JSScript> m_script;
+    ptrdiff_t m_base;
 };
 
-#endif // JSC_OBJC_API_ENABLED
+} // namespace JSC

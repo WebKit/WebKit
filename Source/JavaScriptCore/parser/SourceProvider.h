@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include "CachedBytecode.h"
+#include "CodeSpecializationKind.h"
 #include "SourceOrigin.h"
 #include <wtf/RefCounted.h>
 #include <wtf/URL.h>
@@ -36,75 +38,17 @@
 
 namespace JSC {
 
+class SourceCode;
+class UnlinkedFunctionExecutable;
+class UnlinkedFunctionCodeBlock;
+
     enum class SourceProviderSourceType : uint8_t {
         Program,
         Module,
         WebAssembly,
     };
 
-    class CachedBytecode {
-        WTF_MAKE_NONCOPYABLE(CachedBytecode);
-
-    public:
-        CachedBytecode()
-            : CachedBytecode(nullptr, 0)
-        {
-        }
-
-        CachedBytecode(const void* data, size_t size)
-            : m_owned(false)
-            , m_size(size)
-            , m_data(data)
-        {
-        }
-
-        CachedBytecode(MallocPtr<uint8_t>&& data, size_t size)
-            : m_owned(true)
-            , m_size(size)
-            , m_data(data.leakPtr())
-        {
-        }
-
-        CachedBytecode(CachedBytecode&& other)
-        {
-            m_owned = other.m_owned;
-            m_size = other.m_size;
-            m_data = other.m_data;
-            other.m_owned = false;
-        }
-
-        CachedBytecode& operator=(CachedBytecode&& other)
-        {
-            freeDataIfOwned();
-            m_owned = other.m_owned;
-            m_size = other.m_size;
-            m_data = other.m_data;
-            other.m_owned = false;
-            return *this;
-        }
-
-        const void* data() const { return m_data; }
-        size_t size() const { return m_size; }
-        bool owned() const { return m_owned; }
-
-        ~CachedBytecode()
-        {
-            freeDataIfOwned();
-        }
-
-    private:
-        void freeDataIfOwned()
-        {
-            if (m_data && m_owned)
-                fastFree(const_cast<void*>(m_data));
-        }
-
-        bool m_owned;
-        size_t m_size;
-        const void* m_data;
-    };
-
-    using BytecodeCacheGenerator = Function<CachedBytecode()>;
+    using BytecodeCacheGenerator = Function<Ref<CachedBytecode>()>;
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
@@ -116,8 +60,10 @@ namespace JSC {
 
         virtual unsigned hash() const = 0;
         virtual StringView source() const = 0;
-        virtual const CachedBytecode* cachedBytecode() const { return nullptr; }
+        virtual RefPtr<CachedBytecode> cachedBytecode() const { return nullptr; }
         virtual void cacheBytecode(const BytecodeCacheGenerator&) const { }
+        virtual void updateCache(const UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, const UnlinkedFunctionCodeBlock*) const { }
+        virtual void commitCachedBytecode() const { }
 
         StringView getRange(int start, int end) const
         {
