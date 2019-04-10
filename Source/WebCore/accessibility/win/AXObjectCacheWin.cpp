@@ -183,4 +183,8 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newFocuse
     postPlatformNotification(focusedObject, AXFocusedUIElementChanged);
 }
 
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+}
+
 } // namespace WebCore

@@ -135,7 +135,11 @@ void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newNode)
 void AXObjectCache::handleScrolledToAnchor(const Node*)
 {
 }
-    
+
+void AXObjectCache::platformPerformDeferredCacheUpdate()
+{
+}
+
 }
 
 #endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS_FAMILY)

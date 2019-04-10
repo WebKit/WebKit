@@ -40,6 +40,10 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
 namespace WebCore {
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -355,6 +359,8 @@ protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
     void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
 
+    void platformPerformDeferredCacheUpdate();
+
 #if PLATFORM(COCOA)
     void postTextStateChangePlatformNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
     void postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&);
@@ -476,6 +482,11 @@ private:
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
     bool m_isSynchronizingSelection { false };
     bool m_performingDeferredCacheUpdate { false };
+
+#if PLATFORM(GTK)
+    ListHashSet<RefPtr<AccessibilityObject>> m_deferredAttachedWrapperObjectList;
+    ListHashSet<GRefPtr<AccessibilityObjectWrapper>> m_deferredDetachedWrapperList;
+#endif
 };
 
 class AXAttributeCacheEnabler
