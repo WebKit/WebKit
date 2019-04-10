@@ -88,6 +88,7 @@ void WebFrameProxy::loadURL(const URL& url)
 
 void WebFrameProxy::loadData(const IPC::DataReference& data, const String& MIMEType, const String& encodingName, const URL& baseURL)
 {
+    ASSERT(!isMainFrame());
     if (!m_page)
         return;
 

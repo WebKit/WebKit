@@ -1438,6 +1438,7 @@ void WebPage::loadDataInFrame(IPC::DataReference&& data, String&& MIMEType, Stri
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
+    ASSERT(mainWebFrame() != frame);
 
     auto sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(data.data()), data.size());
     ResourceResponse response(baseURL, MIMEType, sharedBuffer->size(), encodingName);
@@ -3286,7 +3287,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScript(const String& script, bool forceUserGesture, Optional<String> worldName, CallbackID callbackID)
+void WebPage::runJavaScript(WebFrame* frame, const String& script, bool forceUserGesture, const Optional<String>& worldName, CallbackID callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -3296,11 +3297,11 @@ void WebPage::runJavaScript(const String& script, bool forceUserGesture, Optiona
     bool hadException = true;
     ExceptionDetails details;
     auto* world = worldName ? InjectedBundleScriptWorld::find(worldName.value()) : &InjectedBundleScriptWorld::normalWorld();
-    if (world) {
-        if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeUserAgentScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
+    if (frame && frame->coreFrame() && world) {
+        if (JSValue resultValue = frame->coreFrame()->script().executeUserAgentScriptInWorld(world->coreWorld(), script, forceUserGesture, &details)) {
             hadException = false;
-            serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContextForWorld(world),
-                toRef(m_mainFrame->coreFrame()->script().globalObject(world->coreWorld())->globalExec(), resultValue), nullptr);
+            serializedResultValue = SerializedScriptValue::create(frame->jsContextForWorld(world),
+                toRef(frame->coreFrame()->script().globalObject(world->coreWorld())->globalExec(), resultValue), nullptr);
         }
     }
 
@@ -3310,14 +3311,16 @@ void WebPage::runJavaScript(const String& script, bool forceUserGesture, Optiona
     send(Messages::WebPageProxy::ScriptValueCallback(dataReference, hadException, details, callbackID));
 }
 
-void WebPage::runJavaScriptInMainFrame(const String& script, bool forceUserGesture, CallbackID callbackID)
+void WebPage::runJavaScriptInMainFrameScriptWorld(const String& script, bool forceUserGesture, const Optional<String>& worldName, CallbackID callbackID)
 {
-    runJavaScript(script, forceUserGesture, WTF::nullopt, callbackID);
+    runJavaScript(mainWebFrame(), script, forceUserGesture, worldName, callbackID);
 }
 
-void WebPage::runJavaScriptInMainFrameScriptWorld(const String& script, bool forceUserGesture, const String& worldName, CallbackID callbackID)
+void WebPage::runJavaScriptInFrame(uint64_t frameID, const String& script, bool forceUserGesture, CallbackID callbackID)
 {
-    runJavaScript(script, forceUserGesture, worldName, callbackID);
+    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
+    ASSERT(mainWebFrame() != frame);
+    runJavaScript(frame, script, forceUserGesture, WTF::nullopt, callbackID);
 }
 
 void WebPage::getContentsAsString(CallbackID callbackID)

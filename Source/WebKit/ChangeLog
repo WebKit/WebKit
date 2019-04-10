@@ -1,3 +1,33 @@
+2019-04-10  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add runJavaScriptInFrame for WebPageProxy/WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=196750
+        <rdar://problem/49755738>
+
+        Reviewed by Youenn Fablet.
+
+        Tests of the new method will be covered by the internal counterpart.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::loadData):
+        * UIProcess/WebFrameProxy.h:
+        Add a comment.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrameScriptWorld):
+        Merge the above two runJavaScriptInMainFrame*.
+        (WebKit::WebPageProxy::runJavaScriptInFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataInFrame):
+        Add an assertion.
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::runJavaScriptInMainFrameScriptWorld):
+        (WebKit::WebPage::runJavaScriptInFrame):
+        (WebKit::WebPage::runJavaScriptInMainFrame): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unable to run system Safari with trunk WebKit
