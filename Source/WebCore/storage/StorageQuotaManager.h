@@ -28,6 +28,7 @@
 #include "ClientOrigin.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
 
@@ -66,6 +67,9 @@ private:
     bool shouldAskForMoreSpace(uint64_t spaceIncrease) const;
     void askForMoreSpace(uint64_t spaceIncrease);
 
+    void initializeUsersIfNeeded();
+    void askUserToInitialize(StorageQuotaUser&);
+
     enum class ShouldDequeueFirstPendingRequest { No, Yes };
     void processPendingRequests(Optional<uint64_t>, ShouldDequeueFirstPendingRequest);
 
@@ -73,7 +77,9 @@ private:
 
     bool m_isWaitingForSpaceIncreaseResponse { false };
     SpaceIncreaseRequester m_spaceIncreaseRequester;
-    HashSet<const StorageQuotaUser*> m_pendingInitializationUsers;
+
+    enum class WhenInitializedCalled { No, Yes };
+    HashMap<StorageQuotaUser*, WhenInitializedCalled> m_pendingInitializationUsers;
     HashSet<const StorageQuotaUser*> m_users;
 
     struct PendingRequest {

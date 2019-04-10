@@ -53,11 +53,26 @@ void StorageQuotaManager::updateQuotaBasedOnSpaceUsage()
     m_quota = std::max(m_quota, defaultQuotaStep * ((spaceUsage() / defaultQuotaStep) + 1));
 }
 
-void StorageQuotaManager::addUser(StorageQuotaUser& user)
+void StorageQuotaManager::initializeUsersIfNeeded()
 {
-    ASSERT(!m_pendingInitializationUsers.contains(&user));
-    ASSERT(!m_users.contains(&user));
-    m_pendingInitializationUsers.add(&user);
+    if (m_pendingInitializationUsers.isEmpty())
+        return;
+
+    Vector<StorageQuotaUser*> usersToInitialize;
+    for (auto& keyValue : m_pendingInitializationUsers) {
+        if (keyValue.value == WhenInitializedCalled::No) {
+            keyValue.value = WhenInitializedCalled::Yes;
+            usersToInitialize.append(keyValue.key);
+        }
+    }
+    for (auto* user : usersToInitialize) {
+        if (m_pendingInitializationUsers.contains(user))
+            askUserToInitialize(*user);
+    }
+}
+
+void StorageQuotaManager::askUserToInitialize(StorageQuotaUser& user)
+{
     user.whenInitialized([this, &user, weakThis = makeWeakPtr(this)]() {
         if (!weakThis)
             return;
@@ -73,6 +88,16 @@ void StorageQuotaManager::addUser(StorageQuotaUser& user)
     });
 }
 
+void StorageQuotaManager::addUser(StorageQuotaUser& user)
+{
+    ASSERT(!m_pendingInitializationUsers.contains(&user));
+    ASSERT(!m_users.contains(&user));
+    m_pendingInitializationUsers.add(&user, WhenInitializedCalled::No);
+
+    if (!m_pendingRequests.isEmpty())
+        askUserToInitialize(user);
+}
+
 bool StorageQuotaManager::shouldAskForMoreSpace(uint64_t spaceIncrease) const
 {
     if (!spaceIncrease)
@@ -85,13 +110,34 @@ void StorageQuotaManager::removeUser(StorageQuotaUser& user)
 {
     ASSERT(m_users.contains(&user) || m_pendingInitializationUsers.contains(&user));
     m_users.remove(&user);
-    if (m_pendingInitializationUsers.remove(&user) && m_pendingInitializationUsers.isEmpty())
-        processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
+    if (m_pendingInitializationUsers.remove(&user) && m_pendingInitializationUsers.isEmpty()) {
+        // When being cleared, quota users may remove themselves and add themselves to trigger reinitialization.
+        // Let's wait for addUser to be called before processing pending requests.
+        callOnMainThread([this, weakThis = makeWeakPtr(this)] {
+            if (!weakThis)
+                return;
+
+            if (m_pendingInitializationUsers.isEmpty())
+                this->processPendingRequests({ }, ShouldDequeueFirstPendingRequest::No);
+        });
+    }
 }
 
 void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&& callback)
 {
-    if (!m_pendingRequests.isEmpty() || !m_pendingInitializationUsers.isEmpty()) {
+    if (!m_pendingRequests.isEmpty()) {
+        m_pendingRequests.append({ spaceIncrease, WTFMove(callback) });
+        return;
+    }
+
+    if (!spaceIncrease) {
+        callback(Decision::Grant);
+        return;
+    }
+
+    initializeUsersIfNeeded();
+
+    if (!m_pendingInitializationUsers.isEmpty()) {
         m_pendingRequests.append({ spaceIncrease, WTFMove(callback) });
         return;
     }
@@ -101,6 +147,7 @@ void StorageQuotaManager::requestSpace(uint64_t spaceIncrease, RequestCallback&&
         askForMoreSpace(spaceIncrease);
         return;
     }
+
     callback(Decision::Grant);
 }
 
