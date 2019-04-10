@@ -1993,9 +1993,9 @@ void FrameView::viewportContentsChanged()
 #endif
 }
 
-IntRect FrameView::unobscuredContentRectExpandedByContentInsets() const
+IntRect FrameView::visualViewportRectExpandedByContentInsets() const
 {
-    FloatRect unobscuredContentRect = this->unobscuredContentRect();
+    FloatRect unobscuredContentRect = this->visualViewportRect();
     if (auto* page = frame().page())
         unobscuredContentRect.expand(page->contentInsets());
     return IntRect(unobscuredContentRect);

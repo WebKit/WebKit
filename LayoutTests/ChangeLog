@@ -1,3 +1,15 @@
+2019-04-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix text autoscrolling when typing in modern webkit
+        https://bugs.webkit.org/show_bug.cgi?id=196718
+
+        Reviewed by Tim Horton.
+
+        * fast/events/autoscroll-when-input-is-offscreen-expected.txt: Added.
+        * fast/events/autoscroll-when-input-is-offscreen.html: Added.
+        * fast/events/autoscroll-with-software-keyboard-expected.txt: Added.
+        * fast/events/autoscroll-with-software-keyboard.html: Added.
+
 2019-04-10  Youenn Fablet  <youenn@apple.com>
 
         Delay initialization of quota users until the first quota request

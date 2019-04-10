@@ -1,0 +1,4 @@
+This test presses return until the cursor would be behind the keyboard, forcing the content to be scrolled to stay in view with a software keyboard on screen.
+FAIL: page has failed to scroll when caret is behind software keyboard.
+FAIL: page has failed to scroll when caret is beyond the edge of the screen.
+

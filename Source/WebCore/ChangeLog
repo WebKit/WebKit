@@ -1,3 +1,30 @@
+2019-04-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix text autoscrolling when typing in modern webkit
+        https://bugs.webkit.org/show_bug.cgi?id=196718
+        <rdar://problem/49225507>
+
+        Reviewed by Tim Horton.
+
+        Tests: fast/events/autoscroll-when-input-is-offscreen.html
+               fast/events/autoscroll-with-software-keyboard.html
+
+        We have been relying on UIKit to scroll editable text, but
+        since we cannot give them enough information for them to always
+        do the right thing, we should just do all the work in WebKit.
+        This has the added benifit of fixing some tricky autoscrolling
+        bugs that have cropped up recently.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::revealSelectionAfterEditingOperation):
+        We should be scrolling the main frame in WebKit. We have been relying on UIKit,
+        but we cannot give them enough information to guarantee a correct scroll, so just
+        do all the work in WebKit.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::unobscuredContentRectExpandedByContentInsets const):
+        Update to use the rect that is actually visible, accounting for the software keyboard.
+
 2019-04-10  Ross Kirsling  <ross.kirsling@sony.com>
 
         WebCore should build successfully even with -DENABLE_UNIFIED_BUILDS=OFF

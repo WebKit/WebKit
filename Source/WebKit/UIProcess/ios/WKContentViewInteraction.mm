@@ -154,6 +154,16 @@ SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSStr
 
 #endif
 
+// For staging with UIKit, will be removed ASAP.
+@interface WKUIWKTextInteractionAssistant : UIWKTextInteractionAssistant
+@end
+
+@implementation WKUIWKTextInteractionAssistant
+- (void)scrollSelectionToVisible
+{
+}
+@end
+
 namespace WebKit {
 using namespace WebCore;
 using namespace WebKit;
@@ -2371,7 +2381,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)setUpTextSelectionAssistant
 {
     if (!_textSelectionAssistant)
-        _textSelectionAssistant = adoptNS([[UIWKTextInteractionAssistant alloc] initWithView:self]);
+        _textSelectionAssistant = adoptNS([[WKUIWKTextInteractionAssistant alloc] initWithView:self]);
     else {
         // Reset the gesture recognizers in case editability has changed.
         [_textSelectionAssistant setGestureRecognizers];

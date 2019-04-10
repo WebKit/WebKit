@@ -1,3 +1,20 @@
+2019-04-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix text autoscrolling when typing in modern webkit
+        https://bugs.webkit.org/show_bug.cgi?id=196718
+        <rdar://problem/49225507>
+
+        Reviewed by Tim Horton.
+
+        For staging only. We need to turn off UIKit's scrolling behavior to land
+        the changes we are making. To keep from the build ever breaking,
+        I am temporarily circumventing the changes in UIKit. This will be removed
+        once the next UIKit submission happens.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKUIWKTextInteractionAssistant scrollSelectionToVisible]):
+        (-[WKContentView setUpTextSelectionAssistant]):
+
 2019-04-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOSMac] Opt into modern compatibility mode by default
