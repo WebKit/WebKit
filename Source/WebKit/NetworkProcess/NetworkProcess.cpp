@@ -1984,8 +1984,10 @@ void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend 
     for (auto& connection : m_webProcessConnections)
         connection->cleanupForSuspension([delayedTaskCounter] { });
 
+#if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values())
         server->startSuspension([delayedTaskCounter] { });
+#endif
 }
 
 void NetworkProcess::processWillSuspendImminently(CompletionHandler<void(bool)>&& completionHandler)
@@ -2032,8 +2034,10 @@ void NetworkProcess::resume()
     for (auto& connection : m_webProcessConnections)
         connection->endSuspension();
 
+#if ENABLE(SERVICE_WORKER)
     for (auto& server : m_swServers.values())
         server->endSuspension();
+#endif
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)
