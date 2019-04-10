@@ -1,3 +1,23 @@
+2019-04-10  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Do not generate empty unified sources when unified builds are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=196767
+
+        Reviewed by Konstantin Tokarev.
+
+        If unified builds are disabled, the ruby script to generate them
+        is still used to list the sources that need to be
+        compiled. Currently, the script always generates bundled unified
+        sources, even if it's being used just to list all the sources. So
+        when the unified builds are disabled and no files are going to be
+        bundled, the script generates one empty file per bundle manager
+        (that is, one C++ and one ObjectiveC), that gets added to the
+        sources to be compiled.
+
+        * Scripts/generate-unified-source-bundles.rb: Only go through the
+        bundle managers file generation when not running in
+        PrintAllSources mode, to avoid generating empty bundle files.
+
 2019-04-10  Enrique Ocaña González  <eocanha@igalia.com>
 
         [WPE] Avoid async IO starving timers

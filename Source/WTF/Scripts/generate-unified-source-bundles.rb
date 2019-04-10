@@ -343,22 +343,24 @@ sourceFiles.sort.each {
     end
 }
 
-$bundleManagers.each_value {
-    | manager |
-    manager.flush
+if $mode != :PrintAllSources
+    $bundleManagers.each_value {
+        | manager |
+        manager.flush
 
-    maxCount = manager.maxCount
-    next if !maxCount
+        maxCount = manager.maxCount
+        next if !maxCount
 
-    manager.flushToMax
+        manager.flushToMax
 
-    unless manager.extraFiles.empty?
-        extension = manager.extension
-        bundleCount = manager.bundleCount
-        filesToAdd = manager.extraFiles.join(", ")
-        raise "number of bundles for #{extension} sources, #{bundleCount}, exceeded limit, #{maxCount}. Please add #{filesToAdd} to Xcode then update UnifiedSource#{extension.capitalize}FileCount"
-    end
-}
+        unless manager.extraFiles.empty?
+            extension = manager.extension
+            bundleCount = manager.bundleCount
+            filesToAdd = manager.extraFiles.join(", ")
+            raise "number of bundles for #{extension} sources, #{bundleCount}, exceeded limit, #{maxCount}. Please add #{filesToAdd} to Xcode then update UnifiedSource#{extension.capitalize}FileCount"
+        end
+    }
+end
 
 if $mode == :GenerateXCFilelists
     IO::write($inputXCFilelistPath, $inputSources.sort.join("\n") + "\n") if $inputXCFilelistPath
