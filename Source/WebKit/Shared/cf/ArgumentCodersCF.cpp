@@ -705,10 +705,6 @@ void encode(Encoder& encoder, SecIdentityRef identity)
 
 bool decode(Decoder& decoder, RetainPtr<SecIdentityRef>& result)
 {
-#if PLATFORM(COCOA)
-    RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
-#endif
-
     RetainPtr<SecCertificateRef> certificate;
     if (!decode(decoder, certificate))
         return false;
@@ -723,6 +719,11 @@ bool decode(Decoder& decoder, RetainPtr<SecIdentityRef>& result)
     RetainPtr<CFDataRef> keyData;
     if (!decode(decoder, keyData))
         return false;
+
+#if PLATFORM(COCOA)
+    if (!hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials))
+        return true;
+#endif
 
     SecKeyRef key = nullptr;
 #if PLATFORM(IOS_FAMILY)

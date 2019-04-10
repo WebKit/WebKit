@@ -1,3 +1,46 @@
+2019-04-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243487. rdar://problem/49788895
+
+    Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef
+    https://bugs.webkit.org/show_bug.cgi?id=196213
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2019-03-25
+    Reviewed by Geoff Garen.
+    
+    Source/WebKit:
+    
+    A release assertion added in r230225 was reachable.  I reached it in a unit test that responds to a challenge
+    with a SecIdentityRef wrapped in an NSCredential.
+    
+    * Shared/cf/ArgumentCodersCF.cpp:
+    (IPC::decode):
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm: Added.
+    (credentialWithIdentityAndKeychainPath):
+    (-[ChallengeDelegate webView:didFinishNavigation:]):
+    (-[ChallengeDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243487 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-25  Alex Christensen  <achristensen@webkit.org>
+
+            Do not terminate the NetworkProcess if a third party application sends a NSCredential with a SecIdentityRef
+            https://bugs.webkit.org/show_bug.cgi?id=196213
+
+            Reviewed by Geoff Garen.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm: Added.
+            (credentialWithIdentityAndKeychainPath):
+            (-[ChallengeDelegate webView:didFinishNavigation:]):
+            (-[ChallengeDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+            (TestWebKitAPI::TEST):
+
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r243870. rdar://problem/49725697
