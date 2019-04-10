@@ -1248,5 +1248,88 @@ class TestExtractTestResults(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('buildername', 'macOS-Sierra-Release-WK2-Tests-EWS')
+        self.setProperty('platform', 'mac')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='ews150.apple.com'),
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''Filesystem     Size   Used  Avail Capacity iused  ifree %iused  Mounted on
+/dev/disk1s1  119Gi   95Gi   23Gi    81%  937959 9223372036853837848    0%   /
+/dev/disk1s4  119Gi   20Ki   23Gi     1%       0 9223372036854775807    0%   /private/var/vm
+/dev/disk0s3  119Gi   22Gi   97Gi    19%  337595          4294629684    0%   /Volumes/Data'''),
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Tue Apr  9 15:30:52 PDT 2019'),
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='''ProductName:	Mac OS X
+ProductVersion:	10.13.4
+BuildVersion:	17E199'''),
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
+            + ExpectShell.log('stdio', stdout='''MacOSX10.13.sdk - macOS 10.13 (macosx10.13)
+SDKVersion: 10.13
+Path: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk
+PlatformVersion: 1.1
+PlatformPath: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform
+ProductBuildVersion: 17E189
+ProductCopyright: 1983-2018 Apple Inc.
+ProductName: Mac OS X
+ProductUserVisibleVersion: 10.13.4
+ProductVersion: 10.13.4
+
+Xcode 9.4.1
+Build version 9F2000''')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='OS: High Sierra (10.13.4), Xcode: 10.13')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(PrintConfiguration())
+        self.setProperty('platform', 'mac')
+        self.expectRemoteCommands(
+            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['date'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
+            ExpectShell(command=['sw_vers'], workdir='wkdir', timeout=60, logEnviron=False) + 1
+            + ExpectShell.log('stdio', stdout='''Upon execvpe sw_vers ['sw_vers'] in environment id 7696545650400
+:Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/twisted/internet/process.py", line 445, in _fork
+    environment)
+  File "/usr/lib/python2.7/site-packages/twisted/internet/process.py", line 523, in _execChild
+    os.execvpe(executable, args, environment)
+  File "/usr/lib/python2.7/os.py", line 355, in execvpe
+    _execvpe(file, args, env)
+  File "/usr/lib/python2.7/os.py", line 382, in _execvpe
+    func(fullname, *argrest)
+OSError: [Errno 2] No such file or directory'''),
+            ExpectShell(command=['xcodebuild', '-sdk', '-version'], workdir='wkdir', timeout=60, logEnviron=False)
+            + ExpectShell.log('stdio', stdout='''Upon execvpe xcodebuild ['xcodebuild', '-sdk', '-version'] in environment id 7696545612416
+:Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/twisted/internet/process.py", line 445, in _fork
+    environment)
+  File "/usr/lib/python2.7/site-packages/twisted/internet/process.py", line 523, in _execChild
+    os.execvpe(executable, args, environment)
+  File "/usr/lib/python2.7/os.py", line 355, in execvpe
+    _execvpe(file, args, env)
+  File "/usr/lib/python2.7/os.py", line 382, in _execvpe
+    func(fullname, *argrest)
+OSError: [Errno 2] No such file or directory''')
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
+        return self.runStep()
+
+
 if __name__ == '__main__':
     unittest.main()

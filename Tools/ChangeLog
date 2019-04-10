@@ -1,3 +1,12 @@
+2019-04-09  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Add unit tests for PrintConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=196752
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py: Added unit-tests.
+
 2019-04-09  Keith Rollin  <krollin@apple.com>
 
         Unreviewed build maintenance -- update .xcfilelists.
