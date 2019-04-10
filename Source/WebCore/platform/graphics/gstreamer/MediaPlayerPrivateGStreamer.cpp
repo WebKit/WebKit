@@ -225,6 +225,14 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     }
 }
 
+static void convertToInternalProtocol(URL& url)
+{
+    if (webkitGstCheckVersion(1, 12, 0))
+        return;
+    if (url.protocolIsInHTTPFamily() || url.protocolIsBlob())
+        url.setProtocol("webkit+" + url.protocol());
+}
+
 void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 {
     // Clean out everything after file:// url path.
@@ -233,6 +241,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
         cleanURLString = cleanURLString.substring(0, url.pathEnd());
 
     m_url = URL(URL(), cleanURLString);
+    convertToInternalProtocol(m_url);
     GST_INFO_OBJECT(pipeline(), "Load %s", m_url.string().utf8().data());
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
 }
@@ -302,6 +311,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const gchar*
     m_readyState = MediaPlayer::HaveNothing;
     m_player->readyStateChanged();
     m_volumeAndMuteInitialized = false;
+    m_hasTaintedOrigin = WTF::nullopt;
 
     if (!m_delayingLoad)
         commitLoad();
@@ -1349,7 +1359,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             const char* uri = redirectionUri ? redirectionUri : gst_structure_get_string(structure, "uri");
             if (uri) {
                 URL url(URL(), uri);
-
+                convertToInternalProtocol(url);
                 m_origins.add(SecurityOrigin::create(url));
 
                 if (url != m_url) {
@@ -1361,7 +1371,16 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
                 const char* contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data();
                 uint64_t contentLength = 0;
-                gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName, &contentLength);
+                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName, &contentLength)) {
+                    // souphttpsrc sets a string for Content-Length, so
+                    // handle it here, until we remove the webkit+ protocol
+                    // prefix from webkitwebsrc.
+                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName)) {
+                        contentLength = g_ascii_strtoull(contentLengthAsString, nullptr, 10);
+                        if (contentLength == G_MAXUINT64)
+                            contentLength = 0;
+                    }
+                }
                 GST_INFO_OBJECT(pipeline(), "%s stream detected", !contentLength ? "Live" : "Non-live");
                 if (!contentLength) {
                     m_isStreaming = true;
@@ -1371,6 +1390,11 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         } else if (gst_structure_has_name(structure, "webkit-network-statistics")) {
             if (gst_structure_get(structure, "read-position", G_TYPE_UINT64, &m_networkReadPosition, "size", G_TYPE_UINT64, &m_httpResponseTotalSize, nullptr))
                 GST_DEBUG_OBJECT(pipeline(), "Updated network read position %" G_GUINT64_FORMAT ", size: %" G_GUINT64_FORMAT, m_networkReadPosition, m_httpResponseTotalSize);
+        } else if (gst_structure_has_name(structure, "adaptive-streaming-statistics")) {
+            if (WEBKIT_IS_WEB_SRC(m_source.get()) && !webkitGstCheckVersion(1, 12, 0)) {
+                if (const char* uri = gst_structure_get_string(structure, "uri"))
+                    m_hasTaintedOrigin = webKitSrcWouldTaintOrigin(WEBKIT_WEB_SRC(m_source.get()), SecurityOrigin::create(URL(URL(), uri)));
+            }
         } else
             GST_DEBUG_OBJECT(pipeline(), "Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
@@ -2489,15 +2513,23 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
 
 Optional<bool> MediaPlayerPrivateGStreamer::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
-    GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
-    for (auto& responseOrigin : m_origins) {
-        if (!origin.canAccess(*responseOrigin)) {
-            GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
-            return true;
+    if (webkitGstCheckVersion(1, 12, 0)) {
+        GST_TRACE_OBJECT(pipeline(), "Checking %u origins", m_origins.size());
+        for (auto& responseOrigin : m_origins) {
+            if (!origin.canAccess(*responseOrigin)) {
+                GST_DEBUG_OBJECT(pipeline(), "Found reachable response origin");
+                return true;
+            }
         }
+        GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
+        return false;
     }
-    GST_DEBUG_OBJECT(pipeline(), "No valid response origin found");
-    return false;
+
+    // GStreamer < 1.12 has an incomplete uridownloader implementation so we
+    // can't use WebKitWebSrc for adaptive fragments downloading if this
+    // version is detected.
+    UNUSED_PARAM(origin);
+    return m_hasTaintedOrigin;
 }
 
 }

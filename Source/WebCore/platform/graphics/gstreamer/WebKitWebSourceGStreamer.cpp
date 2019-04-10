@@ -44,6 +44,8 @@ public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);
     virtual ~CachedResourceStreamingClient();
 
+    const HashSet<RefPtr<WebCore::SecurityOrigin>>& securityOrigins() const { return m_origins; }
+
 private:
     void checkUpdateBlocksize(uint64_t bytesRead);
 
@@ -65,6 +67,7 @@ private:
 
     GRefPtr<GstElement> m_src;
     ResourceRequest m_request;
+    HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
 };
 
 enum MainThreadSourceNotification {
@@ -486,7 +489,7 @@ static gboolean webKitWebSrcStart(GstBaseSrc* baseSrc)
     WebKitWebSrc* src = WEBKIT_WEB_SRC(baseSrc);
     WebKitWebSrcPrivate* priv = src->priv;
 
-    if (!priv->player) {
+    if (webkitGstCheckVersion(1, 12, 0) && !priv->player) {
         GRefPtr<GstQuery> query = adoptGRef(gst_query_new_context(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME));
         if (gst_pad_peer_query(GST_BASE_SRC_PAD(baseSrc), query.get())) {
             GstContext* context;
@@ -765,8 +768,28 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"http", "https", "blob", nullptr };
+    static const char* protocols[4];
+    if (webkitGstCheckVersion(1, 12, 0)) {
+        protocols[0] = "http";
+        protocols[1] = "https";
+        protocols[2] = "blob";
+    } else {
+        protocols[0] = "webkit+http";
+        protocols[1] = "webkit+https";
+        protocols[2] = "webkit+blob";
+    }
+    protocols[3] = nullptr;
     return protocols;
+}
+
+static URL convertPlaybinURI(const char* uriString)
+{
+    URL url(URL(), uriString);
+    if (!webkitGstCheckVersion(1, 12, 0)) {
+        ASSERT(url.protocol().substring(0, 7) == "webkit+");
+        url.setProtocol(url.protocol().substring(7).toString());
+    }
+    return url;
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
@@ -796,7 +819,8 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
         return FALSE;
     }
 
-    URL url(URL(), uri);
+    URL url = convertPlaybinURI(uri);
+
     if (!urlHasSupportedProtocol(url)) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;
@@ -878,6 +902,8 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     priv->didPassAccessControlCheck = priv->resource->didPassAccessControlCheck();
 
     GST_DEBUG_OBJECT(src, "Received response: %d", response.httpStatusCode());
+
+    m_origins.add(SecurityOrigin::create(response.url()));
 
     auto responseURI = response.url().string().utf8();
     if (priv->originalURI != responseURI)
@@ -1060,6 +1086,18 @@ void CachedResourceStreamingClient::loadFinished(PlatformMediaResource&)
 
     if (priv->isSeeking && !priv->isFlushing)
         priv->isSeeking = false;
+}
+
+bool webKitSrcWouldTaintOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
+{
+    WebKitWebSrcPrivate* priv = src->priv;
+
+    auto* cachedResourceStreamingClient = reinterpret_cast<CachedResourceStreamingClient*>(priv->resource->client());
+    for (auto& responseOrigin : cachedResourceStreamingClient->securityOrigins()) {
+        if (!origin.canAccess(*responseOrigin))
+            return true;
+    }
+    return false;
 }
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

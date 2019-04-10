@@ -292,6 +292,7 @@ private:
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
+    Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
 };
 
 }

@@ -1,3 +1,36 @@
+2019-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Adaptive streaming playback broken with GStreamer < 1.12
+        https://bugs.webkit.org/show_bug.cgi?id=196765
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Without the following patch in gst-plugins-bad, the uridownloader
+        doesn't relay need-context messages to its parent, so in our case
+        the player can't share its context with secondary webkitwebsrc
+        elements and a RELEASE_ASSERT is hit in the WebProcess.
+
+        So the workaround is to use again webkit+ protocol prefixes for
+        GStreamer versions older than 1.12.
+
+        https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/commit/8cf858fb27919e1d631223375f81b98055623733
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::convertToInternalProtocol):
+        (WebCore::MediaPlayerPrivateGStreamer::setPlaybinURL):
+        (WebCore::MediaPlayerPrivateGStreamer::loadFull):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::wouldTaintOrigin const):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        (webKitWebSrcGetProtocols):
+        (convertPlaybinURI):
+        (webKitWebSrcSetUri):
+        (CachedResourceStreamingClient::responseReceived):
+        (webKitSrcWouldTaintOrigin):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h:
+
 2019-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Defer the emision of AtkObject::children-changed signal after layout is done
