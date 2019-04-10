@@ -1287,8 +1287,6 @@ webkit.org/b/131546 media/track/track-in-band.html [ Crash Timeout Failure ]
 
 webkit.org/b/163782 media/video-played-ranges-1.html [ Crash Pass Failure ]
 
-webkit.org/b/172281 accessibility/insert-children-assert.html [ Crash ]
-
 webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
 webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]

@@ -27,7 +27,11 @@ body {
 
     if ("webkitRequestFullScreen" in Element.prototype) {
         var content = accessibilityController.accessibleElementById("content");
-        var value = "AXValue: d";
+        var value;
+        if (accessibilityController.platformName == "atk")
+            value = "AXValue: ab<\\n>c<\\n>de<\\n>";
+        else
+            value = "AXValue: d";
         document.body.offsetTop;
         var span = document.getElementsByTagName('span')[0];
 
