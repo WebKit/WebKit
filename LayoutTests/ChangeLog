@@ -1,5 +1,53 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243828. rdar://problem/49725673
+
+    Documents can be destroyed before their CSSFontFaceSet is destroyed
+    https://bugs.webkit.org/show_bug.cgi?id=195830
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    CSSFontFaceSet has a raw pointer to its owning document. JS can keep the CSSFontFaceSet alive (by using FontFaceSet)
+    and can destroy the document at any time. When the document is destroyed, the link between the two objects needs to
+    be severed.
+    
+    Test: fast/text/font-face-set-destroy-document.html
+    
+    * css/CSSFontFace.cpp:
+    (WebCore::CSSFontFace::CSSFontFace):
+    * css/CSSFontFace.h:
+    * css/CSSFontFaceSet.cpp:
+    (WebCore::CSSFontFaceSet::CSSFontFaceSet):
+    (WebCore::CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered):
+    * css/CSSFontFaceSet.h:
+    * css/CSSFontSelector.cpp:
+    (WebCore::CSSFontSelector::CSSFontSelector):
+    (WebCore::CSSFontSelector::addFontFaceRule):
+    * css/CSSFontSelector.h:
+    * css/FontFace.cpp:
+    (WebCore::FontFace::FontFace):
+    
+    LayoutTests:
+    
+    * fast/text/font-face-set-destroy-document-expected.html: Added.
+    * fast/text/font-face-set-destroy-document.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243828 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Documents can be destroyed before their CSSFontFaceSet is destroyed
+            https://bugs.webkit.org/show_bug.cgi?id=195830
+
+            Reviewed by Darin Adler.
+
+            * fast/text/font-face-set-destroy-document-expected.html: Added.
+            * fast/text/font-face-set-destroy-document.html: Added.
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243786. rdar://problem/49725702
 
     REGRESSION (r238266): Exchange 2013 Outlook Web Access displays partially blank page when creating new e-mail

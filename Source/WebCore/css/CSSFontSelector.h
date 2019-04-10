@@ -47,7 +47,7 @@ class CachedFont;
 class Document;
 class StyleRuleFontFace;
 
-class CSSFontSelector final : public FontSelector, public CSSFontFaceSetClient {
+class CSSFontSelector final : public FontSelector, public CSSFontFaceSetClient, public CanMakeWeakPtr<CSSFontSelector> {
 public:
     static Ref<CSSFontSelector> create(Document& document)
     {
