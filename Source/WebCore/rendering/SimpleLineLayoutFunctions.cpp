@@ -273,6 +273,10 @@ void simpleLineLayoutWillBeDeleted(const Layout& layout)
 
 bool canUseForLineBoxTree(RenderBlockFlow& flow, const Layout& layout)
 {
+    // Line breaking requires some context that SLL can't provide at the moment (see RootInlineBox::setLineBreakInfo).
+    if (layout.lineCount() > 1)
+        return false;
+
     if (layout.isPaginated())
         return false;
     
