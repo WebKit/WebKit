@@ -52,10 +52,6 @@
 #include <wtf/MachSendRight.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include "WebSQLiteDatabaseTracker.h"
-#endif
-
 namespace API {
 class Object;
 }
@@ -106,6 +102,7 @@ enum class WebsiteDataType;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
+class WebSQLiteDatabaseTracker
 struct WebProcessCreationParameters;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
@@ -467,7 +464,7 @@ private:
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 
 #if PLATFORM(IOS_FAMILY)
-    WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
+    std::unique_ptr<WebSQLiteDatabaseTracker> m_webSQLiteDatabaseTracker;
 #endif
 
     enum PageMarkingLayersAsVolatileCounterType { };

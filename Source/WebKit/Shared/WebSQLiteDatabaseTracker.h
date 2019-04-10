@@ -42,6 +42,8 @@ public:
     explicit WebSQLiteDatabaseTracker(NetworkProcess&);
     explicit WebSQLiteDatabaseTracker(WebProcess&);
 
+    ~WebSQLiteDatabaseTracker();
+
     // WebCore::SQLiteDatabaseTrackerClient
     void willBeginFirstTransaction() override;
     void didFinishLastTransaction() override;
