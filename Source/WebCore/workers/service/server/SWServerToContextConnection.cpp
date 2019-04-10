@@ -30,6 +30,7 @@
 
 #include "SWServer.h"
 #include "SWServerWorker.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

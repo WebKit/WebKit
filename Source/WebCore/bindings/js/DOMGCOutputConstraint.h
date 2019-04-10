@@ -26,8 +26,10 @@
 #pragma once
 
 #include <JavaScriptCore/MarkingConstraint.h>
-#include <wtf/SharedTask.h>
-#include <wtf/Vector.h>
+
+namespace JSC {
+class VM;
+}
 
 namespace WebCore {
 

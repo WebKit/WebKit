@@ -31,6 +31,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "SWClientConnection.h"
 
 namespace WebCore {
 

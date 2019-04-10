@@ -28,6 +28,7 @@
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include <JavaScriptCore/ArrayBufferView.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

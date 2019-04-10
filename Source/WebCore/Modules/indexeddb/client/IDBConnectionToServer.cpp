@@ -36,6 +36,7 @@
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
+#include "SecurityOrigin.h"
 #include "TransactionOperation.h"
 #include <wtf/MainThread.h>
 

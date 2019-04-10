@@ -28,6 +28,7 @@
 #include "WorkerScriptLoader.h"
 
 #include "ContentSecurityPolicy.h"
+#include "Exception.h"
 #include "FetchIdioms.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceResponse.h"

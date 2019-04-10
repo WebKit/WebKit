@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class Exception;
 class ResourceResponse;
 class ScriptExecutionContext;
 class TextResourceDecoder;

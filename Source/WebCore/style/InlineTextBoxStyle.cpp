@@ -29,6 +29,7 @@
 #include "FontCascade.h"
 #include "InlineTextBox.h"
 #include "RootInlineBox.h"
+#include "TextUnderlineOffset.h"
 
 namespace WebCore {
     

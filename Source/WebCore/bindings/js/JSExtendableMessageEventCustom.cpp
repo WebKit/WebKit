@@ -29,6 +29,7 @@
 #include "JSExtendableMessageEvent.h"
 
 #include "JSDOMConstructor.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMConvertStrings.h"
 
 namespace WebCore {

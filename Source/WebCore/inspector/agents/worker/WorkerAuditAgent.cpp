@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WorkerAuditAgent.h"
 
+#include "ScriptState.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>

@@ -34,6 +34,7 @@
 #include "JSInspectorAuditResourcesObject.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
+#include "ScriptState.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>

@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "IDBCursorDirection.h"
 #include "IDBCursorInfo.h"
+#include "IDBRequest.h"
 #include "IDBValue.h"
 #include "JSValueInWrappedObject.h"
 #include <JavaScriptCore/Strong.h>

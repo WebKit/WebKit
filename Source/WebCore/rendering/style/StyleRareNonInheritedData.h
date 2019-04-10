@@ -29,6 +29,7 @@
 #include "CounterDirectives.h"
 #include "DataRef.h"
 #include "FillLayer.h"
+#include "GapLength.h"
 #include "LengthPoint.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
@@ -44,6 +45,7 @@ namespace WebCore {
 class AnimationList;
 class ContentData;
 class ShadowData;
+class StyleCustomPropertyData;
 class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 class StyleFlexibleBoxData;

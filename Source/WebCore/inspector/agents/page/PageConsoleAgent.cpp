@@ -35,8 +35,11 @@
 #include "CommandLineAPIHost.h"
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
+#include "Logging.h"
 #include "Node.h"
+#include "Page.h"
 #include "WebInjectedScriptManager.h"
+#include <JavaScriptCore/ConsoleMessage.h>
 
 namespace WebCore {
 

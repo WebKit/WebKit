@@ -38,6 +38,7 @@
 #include "ResourceRequest.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClientIdentifier.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WorkerGlobalScope.h"
 
 namespace WebCore {

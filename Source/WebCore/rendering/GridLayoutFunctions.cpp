@@ -27,6 +27,7 @@
 #include "GridLayoutFunctions.h"
 
 #include "LengthFunctions.h"
+#include "RenderGrid.h"
 
 namespace WebCore {
 

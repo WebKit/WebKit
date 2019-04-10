@@ -25,6 +25,7 @@
 #include "WebSocketFrame.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
 

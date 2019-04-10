@@ -25,8 +25,9 @@
 
 #pragma once
 
+#include <unicode/uchar.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

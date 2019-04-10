@@ -29,6 +29,7 @@
 #include "OrderIterator.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

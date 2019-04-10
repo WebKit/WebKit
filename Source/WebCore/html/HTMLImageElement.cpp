@@ -46,6 +46,7 @@
 #include "MIMETypeRegistry.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "MouseEvent.h"
 #include "NodeTraversal.h"
 #include "PlatformMouseEvent.h"
 #include "RenderImage.h"

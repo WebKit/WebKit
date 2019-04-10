@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmapRenderingContext.h"
+#include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "JSCanvasRenderingContext2D.h"
 #include "JSExecState.h"

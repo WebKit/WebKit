@@ -45,6 +45,7 @@
 #include "ScheduledAction.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
+#include <JavaScriptCore/BuiltinNames.h>
 #include <JavaScriptCore/HeapSnapshotBuilder.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSMicrotask.h>

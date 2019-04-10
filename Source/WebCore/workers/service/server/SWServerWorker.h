@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "ClientOrigin.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "RegistrableDomain.h"
 #include "ServiceWorkerClientData.h"
@@ -39,7 +40,6 @@
 
 namespace WebCore {
 
-struct ClientOrigin;
 class SWServer;
 class SWServerRegistration;
 class SWServerToContextConnection;

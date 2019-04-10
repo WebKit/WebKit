@@ -28,6 +28,9 @@
 
 #include "Animation.h"
 #include "AnimationEvent.h"
+#include "CSSAnimation.h"
+#include "CSSTransition.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "EventNames.h"
 #include "KeyframeEffect.h"

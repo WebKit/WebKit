@@ -26,6 +26,7 @@
 #include "RenderCounter.h"
 #include "RenderStyle.h"
 #include "ShadowData.h"
+#include "StyleCustomPropertyData.h"
 #include "StyleFilterData.h"
 #include "StyleTransformData.h"
 #include "StyleImage.h"

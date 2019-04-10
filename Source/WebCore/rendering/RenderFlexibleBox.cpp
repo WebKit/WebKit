@@ -35,6 +35,7 @@
 #include "LayoutRepainter.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
+#include "RenderLayoutState.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
 #include <limits>

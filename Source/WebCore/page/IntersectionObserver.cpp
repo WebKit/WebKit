@@ -31,6 +31,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
+#include "DOMWindow.h"
 #include "Element.h"
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserverCallback.h"

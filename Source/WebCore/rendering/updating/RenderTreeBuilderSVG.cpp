@@ -30,6 +30,8 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
+#include "RenderTreeBuilderBlock.h"
+#include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderInline.h"
 #include "SVGResourcesCache.h"
 

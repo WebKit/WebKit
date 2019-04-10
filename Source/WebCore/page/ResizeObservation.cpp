@@ -28,6 +28,8 @@
 #if ENABLE(RESIZE_OBSERVER)
 #include "ResizeObservation.h"
 
+#include "HTMLFrameOwnerElement.h"
+#include "RenderBox.h"
 #include "SVGElement.h"
 
 namespace WebCore {

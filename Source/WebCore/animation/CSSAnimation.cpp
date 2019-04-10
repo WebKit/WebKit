@@ -28,6 +28,7 @@
 
 #include "Animation.h"
 #include "Element.h"
+#include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

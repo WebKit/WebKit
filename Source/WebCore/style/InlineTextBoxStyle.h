@@ -32,6 +32,7 @@ namespace WebCore {
     
 class InlineTextBox;
 class RenderStyle;
+class TextUnderlineOffset;
 
 inline float wavyOffsetFromDecoration()
 {

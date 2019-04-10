@@ -27,7 +27,7 @@
 #include "Grid.h"
 #include "GridBaselineAlignment.h"
 #include "GridTrackSize.h"
-#include "LayoutUnit.h"
+#include "LayoutSize.h"
 
 namespace WebCore {
 

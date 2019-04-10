@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
+#include "FontCascadeDescription.h"
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "ResourceLoadObserver.h"

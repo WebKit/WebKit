@@ -26,6 +26,10 @@
 #pragma once
 
 #include "GridLayoutFunctions.h"
+#include "RenderStyleConstants.h"
+#include "WritingMode.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 

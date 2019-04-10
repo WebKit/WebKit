@@ -31,8 +31,10 @@
 #include "config.h"
 #include "RenderLayerFilters.h"
 
+#include "CSSFilter.h"
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
+#include "Logging.h"
 #include "RenderSVGResourceFilter.h"
 #include <wtf/NeverDestroyed.h>
 

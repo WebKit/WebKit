@@ -28,7 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "Document.h"
+#include "SWClientConnection.h"
 #include "SchemeRegistry.h"
+#include <pal/SessionID.h>
 
 namespace WebCore {
 

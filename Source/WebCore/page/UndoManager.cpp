@@ -27,6 +27,8 @@
 #include "UndoManager.h"
 
 #include "CustomUndoStep.h"
+#include "Document.h"
+#include "Editor.h"
 #include "Frame.h"
 #include "UndoItem.h"
 #include <wtf/IsoMallocInlines.h>

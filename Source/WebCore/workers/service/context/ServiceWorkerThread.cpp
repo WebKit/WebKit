@@ -35,6 +35,7 @@
 #include "JSDOMPromise.h"
 #include "LoaderStrategy.h"
 #include "PlatformStrategies.h"
+#include "SWContextManager.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetch.h"
 #include "ServiceWorkerGlobalScope.h"

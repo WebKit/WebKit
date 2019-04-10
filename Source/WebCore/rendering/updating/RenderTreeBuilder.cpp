@@ -44,6 +44,7 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGText.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"

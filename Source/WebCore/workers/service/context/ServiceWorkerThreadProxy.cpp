@@ -29,11 +29,15 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "CacheStorageProvider.h"
+#include "EventNames.h"
+#include "FetchLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "LoaderStrategy.h"
 #include "PlatformStrategies.h"
+#include "ServiceWorkerClientIdentifier.h"
 #include "Settings.h"
+#include "WorkerGlobalScope.h"
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>

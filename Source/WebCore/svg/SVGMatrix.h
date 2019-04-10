@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "ExceptionOr.h"
 #include "SVGValueProperty.h"
 
 namespace WebCore {

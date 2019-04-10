@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "RenderStyle.h"
 #include "SVGURIReference.h"
+#include "Settings.h"
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
 #include "TransformFunctions.h"

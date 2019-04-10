@@ -24,6 +24,7 @@
 #pragma once
 
 #include "PaintInfo.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
@@ -35,7 +36,6 @@ class RenderBoxModelObject;
 class RenderElement;
 class RenderGeometryMap;
 class RenderLayerModelObject;
-class RenderObject;
 class RenderStyle;
 class RenderSVGRoot;
 class TransformState;

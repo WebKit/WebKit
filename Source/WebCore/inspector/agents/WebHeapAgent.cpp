@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WebHeapAgent.h"
 
+#include "InstrumentingAgents.h"
+#include "WebConsoleAgent.h"
 #include <wtf/RunLoop.h>
-
 
 namespace WebCore {
 

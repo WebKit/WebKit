@@ -27,6 +27,7 @@
 #pragma once
 
 #include "HTTPHeaderNames.h"
+#include "ReferrerPolicy.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

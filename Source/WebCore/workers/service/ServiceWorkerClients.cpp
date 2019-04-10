@@ -30,7 +30,10 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerWindowClient.h"
+#include "SWContextManager.h"
+#include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "ServiceWorkerThread.h"
 
 namespace WebCore {
 

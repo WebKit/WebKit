@@ -23,6 +23,7 @@
 #include "config.h"
 #include "TextDecorationPainter.h"
 
+#include "FilterOperations.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HTMLAnchorElement.h"

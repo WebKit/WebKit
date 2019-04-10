@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class FilterOperations;
 class FontCascade;
 class RenderCombineText;
 class ShadowData;

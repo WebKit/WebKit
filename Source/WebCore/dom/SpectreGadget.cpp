@@ -27,6 +27,7 @@
 #include "SpectreGadget.h"
 
 #include "RuntimeEnabledFeatures.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 // All of these methods should be called on the Main Thread.
 // Used to send messages to the WorkerInspector on the WorkerThread.

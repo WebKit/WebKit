@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "MouseEventInit.h"
 #include "MouseRelatedEvent.h"
 

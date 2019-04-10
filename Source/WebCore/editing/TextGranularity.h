@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 namespace WebCore {
 
 // FIXME: This really should be broken up into more than one concept.

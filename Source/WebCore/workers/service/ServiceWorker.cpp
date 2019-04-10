@@ -36,8 +36,10 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "ServiceWorkerClientData.h"
+#include "ServiceWorkerContainer.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerProvider.h"
+#include "ServiceWorkerThread.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

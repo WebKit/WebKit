@@ -31,7 +31,6 @@
 
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
-#include "RenderObject.h"
 
 namespace WebCore {
     
@@ -126,7 +125,7 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
         // Unless the row is a native tr element.
         if (is<AccessibilityTable>(*parent)) {
             AccessibilityTable& tableParent = downcast<AccessibilityTable>(*parent);
-            if (tableParent.isExposableThroughAccessibility() && (tableParent.isAriaTable() || node()->hasTagName(trTag)))
+            if (tableParent.isExposableThroughAccessibility() && (tableParent.isAriaTable() || node()->hasTagName(HTMLNames::trTag)))
                 return &tableParent;
         }
     }

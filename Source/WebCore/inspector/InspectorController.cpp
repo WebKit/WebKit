@@ -47,6 +47,7 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
+#include "InspectorDatabaseResource.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorIndexedDBAgent.h"
 #include "InspectorInstrumentation.h"

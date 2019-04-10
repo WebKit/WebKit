@@ -33,6 +33,7 @@
 #include "MIMETypeRegistry.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContext.h"
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 

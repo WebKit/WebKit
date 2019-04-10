@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Logging.h"
 #include "Page.h"

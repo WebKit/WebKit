@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SWServer.h"
+#include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
 #include <wtf/NeverDestroyed.h>
 

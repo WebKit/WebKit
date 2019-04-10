@@ -37,6 +37,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editing.h"
+#include "EditingBehavior.h"
 #include "ElementIterator.h"
 #include "EventNames.h"
 #include "Frame.h"

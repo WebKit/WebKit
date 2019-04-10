@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class FilterOperations;
 class FontCascade;
 class FloatRect;
 class GraphicsContext;

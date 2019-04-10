@@ -32,6 +32,7 @@
 #include "SWContextManager.h"
 #include "ServiceWorkerClient.h"
 #include "ServiceWorkerClients.h"
+#include "ServiceWorkerContainer.h"
 #include "ServiceWorkerThread.h"
 #include "ServiceWorkerWindowClient.h"
 #include "WorkerNavigator.h"

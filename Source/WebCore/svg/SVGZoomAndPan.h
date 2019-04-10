@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "QualifiedName.h"
 #include "SVGNames.h"
 #include "SVGZoomAndPanType.h"

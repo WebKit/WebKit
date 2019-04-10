@@ -30,6 +30,7 @@
 
 #include "ExceptionData.h"
 #include "SWServer.h"
+#include "SWServerRegistration.h"
 #include "SWServerWorker.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"

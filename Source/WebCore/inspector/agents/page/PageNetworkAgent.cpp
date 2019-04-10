@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "InstrumentingAgents.h"
 #include "Page.h"
 #include "ScriptState.h"
 #include "WebSocket.h"

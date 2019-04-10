@@ -28,6 +28,7 @@
 #include "FontCascade.h"
 #include "LayoutRepainter.h"
 #include "RenderLayer.h"
+#include "RenderLayoutState.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>

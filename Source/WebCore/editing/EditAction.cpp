@@ -27,6 +27,7 @@
 #include "EditAction.h"
 
 #include "LocalizedStrings.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

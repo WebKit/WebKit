@@ -42,6 +42,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
 #include "Pair.h"
+#include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 

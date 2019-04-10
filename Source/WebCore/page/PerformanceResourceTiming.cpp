@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "LoadTiming.h"
+#include "PerformanceServerTiming.h"
 #include "ResourceResponse.h"
 #include "ResourceTiming.h"
 #include <wtf/URL.h>

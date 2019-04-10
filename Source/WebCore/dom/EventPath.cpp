@@ -26,6 +26,7 @@
 #include "EventContext.h"
 #include "EventNames.h"
 #include "HTMLSlotElement.h"
+#include "MouseEvent.h"
 #include "Node.h"
 #include "PseudoElement.h"
 #include "ShadowRoot.h"

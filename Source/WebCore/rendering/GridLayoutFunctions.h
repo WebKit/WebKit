@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include "GridPositionsResolver.h"
 #include "LayoutUnit.h"
-#include "RenderGrid.h"
 
 namespace WebCore {
+
+class RenderBox;
+class RenderGrid;
 
 enum GridAxis { GridRowAxis, GridColumnAxis };
 

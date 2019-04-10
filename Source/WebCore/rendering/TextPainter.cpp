@@ -24,6 +24,7 @@
 #include "TextPainter.h"
 
 #include "DisplayListReplayer.h"
+#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "RenderCombineText.h"

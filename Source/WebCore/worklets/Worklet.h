@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ScriptWrappable.h"
+#include <wtf/RefCounted.h>
 
 #if ENABLE(CSS_PAINTING_API)
 

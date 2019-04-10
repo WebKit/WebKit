@@ -23,6 +23,7 @@
 #include "config.h"
 #include "HTMLFormControlsCollection.h"
 
+#include "FormAssociatedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"

@@ -29,6 +29,7 @@
 #include "ApplicationCacheStorage.h"
 #include "BackForwardClient.h"
 #include "CacheStorageProvider.h"
+#include "CookieJar.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
 #include "EditorClient.h"
