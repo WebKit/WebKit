@@ -278,22 +278,26 @@
     (iokit-property "IOSurfaceAcceleratorCapabilitiesDict")
     (iokit-property-regex #"^MetalPlugin(Name|ClassName)")
     (iokit-property "Protocol Characteristics")
+    (iokit-property "artwork-device-idiom") ;; <rdar://problem/49497720>
     (iokit-property "artwork-device-subtype")
+    (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
+    (iokit-property "artwork-dynamic-displaymode") ;; <rdar://problem/49497720>
+    (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
     (iokit-property-regex #"(canvas-height|canvas-width)")
     (iokit-property "class-code")
     (iokit-property "color-accuracy-index")
+    (iokit-property "compatible-device-fallback") ;; <rdar://problem/49497720>
     (iokit-property "device-id")
     (iokit-property "device-perf-memory-class")
     (iokit-property "emu")
+    (iokit-property "graphics-featureset-class") ;; <rdar://problem/49497720>
     (iokit-property "hdcp-hoover-protocol")
     (iokit-property "iommu-present")
+    (iokit-property "product-description") ;; <rdar://problem/49497788>
     (iokit-property "product-id")
     (iokit-property "software-behavior")
     (iokit-property "vendor-id")
     (iokit-property "ui-pip") ;; <rdar://problem/48867037>
-    (iokit-property "product-description") ;; <rdar://problem/49497788>
-    (iokit-property "artwork-display-gamut") ;; <rdar://problem/49497788>
-    (iokit-property "artwork-scale-factor") ;; <rdar://problem/49497788>
 )
 
 ;; Read-only preferences and data
