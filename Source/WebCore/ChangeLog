@@ -1,5 +1,56 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243104. rdar://problem/49725692
+
+    REGRESSION(r236862): early frame decoupling leaves JSC ArrayBuffer objects lingering
+    https://bugs.webkit.org/show_bug.cgi?id=195322
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Since r236862, DOMWindow objects get disconnected from their Frame object as soon as
+    their iframe element gets removed from the document. Previously, DOMWindow was a
+    FrameDestructionObserver and would stay connected to its frame until the frame died.
+    
+    This means that some of the work that we were doing in DOMWindow::frameDestroyed() and
+    Document::willDetachPage() no longer happens for subframe windows because they get
+    disconnected from their frame because they get a chance to get such notifications.
+    To address this issue, we now also do this work in DOMWindow::willDetachDocumentFromFrame()
+    which gets called when the iframe gets removed from the document and the document / window
+    get disconnected from the Frame element.
+    
+    No new tests, verified locally that the leak is gone on JetStream.
+    
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::willDetachDocumentFromFrame):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243104 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-18  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION(r236862): early frame decoupling leaves JSC ArrayBuffer objects lingering
+            https://bugs.webkit.org/show_bug.cgi?id=195322
+
+            Reviewed by Ryosuke Niwa.
+
+            Since r236862, DOMWindow objects get disconnected from their Frame object as soon as
+            their iframe element gets removed from the document. Previously, DOMWindow was a
+            FrameDestructionObserver and would stay connected to its frame until the frame died.
+
+            This means that some of the work that we were doing in DOMWindow::frameDestroyed() and
+            Document::willDetachPage() no longer happens for subframe windows because they get
+            disconnected from their frame because they get a chance to get such notifications.
+            To address this issue, we now also do this work in DOMWindow::willDetachDocumentFromFrame()
+            which gets called when the iframe gets removed from the document and the document / window
+            get disconnected from the Frame element.
+
+            No new tests, verified locally that the leak is gone on JetStream.
+
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::willDetachDocumentFromFrame):
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r241918. rdar://problem/49725665
 
     Same Site Lax cookies are not sent with cross-site redirect from client-initiated load
