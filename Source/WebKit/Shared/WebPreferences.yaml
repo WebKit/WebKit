@@ -1062,7 +1062,7 @@ DisableScreenSizeOverride:
 
 UseModernCompatibilityModeByDefault:
   type: bool
-  defaultValue: false
+  defaultValue: USE_MODERN_COMPATIBILITY_MODE_BY_DEFAULT
   humanReadableName: "Use Modern Compatibility Mode"
   humanReadableDescription: "Use modern compatibility mode by default"
   webcoreBinding: none
