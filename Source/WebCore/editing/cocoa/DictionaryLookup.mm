@@ -60,12 +60,9 @@
 #endif
 
 #if PLATFORM(IOSMAC)
-extern "C" {
 #import <UIKitMacHelper/UINSRevealController.h>
-}
 SOFT_LINK_PRIVATE_FRAMEWORK(UIKitMacHelper)
 SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, (void), ())
-
 #endif // PLATFORM(IOSMAC)
 
 #if ENABLE(REVEAL)
