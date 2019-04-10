@@ -85,16 +85,9 @@
             "name": "trackingComplete",
             "description": "Tracking stopped. Includes any buffered data during tracking, such as profiling information.",
             "parameters": [
+                { "name": "timestamp", "type": "number" },
                 { "name": "samples", "$ref": "Samples", "optional": true, "description": "Stack traces." }
             ]
-        },
-        {
-            "name": "programmaticCaptureStarted",
-            "description": "Fired when programmatic capture starts (console.profile). JSContext inspection only."
-        },
-        {
-            "name": "programmaticCaptureStopped",
-            "description": "Fired when programmatic capture stops (console.profileEnd). JSContext inspection only."
         }
     ]
 }

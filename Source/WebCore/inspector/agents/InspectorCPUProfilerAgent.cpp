@@ -77,7 +77,7 @@ void InspectorCPUProfilerAgent::stopTracking(ErrorString&)
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete();
+    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch()->elapsedTime().seconds());
 }
 
 static Ref<Protocol::CPUProfiler::ThreadInfo> buildThreadInfo(const ThreadCPUInfo& thread)

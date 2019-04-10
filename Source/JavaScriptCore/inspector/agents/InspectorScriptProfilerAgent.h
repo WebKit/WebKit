@@ -53,9 +53,6 @@ public:
     void startTracking(ErrorString&, const bool* includeSamples) override;
     void stopTracking(ErrorString&) override;
 
-    void programmaticCaptureStarted();
-    void programmaticCaptureStopped();
-
     // Debugger::ProfilingClient
     bool isAlreadyProfiling() const override;
     Seconds willEvaluateScript() override;

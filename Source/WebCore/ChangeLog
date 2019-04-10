@@ -1,3 +1,24 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: can't reliably stop/start a recording
+        https://bugs.webkit.org/show_bug.cgi?id=196778
+        <rdar://problem/47606798>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::startProgrammaticCapture):
+        (WebCore::InspectorTimelineAgent::stopProgrammaticCapture):
+        It is possible to determine when programmatic capturing starts/stops in the frontend based
+        on the state when the backend causes the state to change, such as if the state is "inactive"
+        when the frontend is told that the backend has started capturing.
+
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        (WebCore::InspectorCPUProfilerAgent::stopTracking):
+        * inspector/agents/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::stopTracking):
+        Send an end timestamp to match other instruments.
+
 2019-04-10  Tim Horton  <timothy_horton@apple.com>
 
         Add modern API for overriding the page's specified viewport configuration

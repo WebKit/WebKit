@@ -477,8 +477,6 @@ void InspectorTimelineAgent::startProgrammaticCapture()
     } else
         m_programmaticCaptureRestoreBreakpointActiveValue = false;
 
-    m_frontendDispatcher->programmaticCaptureStarted();
-
     toggleScriptProfilerInstrument(InstrumentState::Start); // Ensure JavaScript samping data.
     toggleTimelineInstrument(InstrumentState::Start); // Ensure Console Profile event records.
     toggleInstruments(InstrumentState::Start); // Any other instruments the frontend wants us to record.
@@ -500,8 +498,6 @@ void InspectorTimelineAgent::stopProgrammaticCapture()
             debuggerAgent->setBreakpointsActive(unused, true);
         }
     }
-
-    m_frontendDispatcher->programmaticCaptureStopped();
 }
 
 void InspectorTimelineAgent::toggleInstruments(InstrumentState state)

@@ -1,3 +1,31 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: can't reliably stop/start a recording
+        https://bugs.webkit.org/show_bug.cgi?id=196778
+        <rdar://problem/47606798>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/protocol/ScriptProfiler.json:
+        * inspector/protocol/Timeline.json:
+        It is possible to determine when programmatic capturing starts/stops in the frontend based
+        on the state when the backend causes the state to change, such as if the state is "inactive"
+        when the frontend is told that the backend has started capturing.
+
+        * inspector/protocol/CPUProfiler.json:
+        * inspector/protocol/Memory.json:
+        Send an end timestamp to match other instruments.
+
+        * inspector/JSGlobalObjectConsoleClient.cpp:
+        (Inspector::JSGlobalObjectConsoleClient::startConsoleProfile):
+        (Inspector::JSGlobalObjectConsoleClient::stopConsoleProfile):
+
+        * inspector/agents/InspectorScriptProfilerAgent.h:
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::InspectorScriptProfilerAgent::programmaticCaptureStarted): Deleted.
+        (Inspector::InspectorScriptProfilerAgent::programmaticCaptureStopped): Deleted.
+
 2019-04-10  Tadeu Zagallo  <tzagallo@apple.com>
 
         Unreviewed, fix watch build after r244143
