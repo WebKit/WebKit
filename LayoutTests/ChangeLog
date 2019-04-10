@@ -1,3 +1,13 @@
+2019-04-09  John Wilander  <wilander@apple.com>
+
+        Add Resource Load Statistics test case for Ping
+        https://bugs.webkit.org/show_bug.cgi?id=196748
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html: Added.
+
 2019-04-09  Megan Gardner  <megan_gardner@apple.com>
 
         Turn on editing test that should pass now
