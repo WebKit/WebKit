@@ -1,3 +1,24 @@
+2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        OfflineAudioDestinationNode::startRendering leaks OfflineAudioDestinationNode if offlineRender exists early
+        https://bugs.webkit.org/show_bug.cgi?id=196759
+
+        Reviewed by Eric Carlson.
+
+        OfflineAudioDestinationNode::startRendering unconditionally ref's itself before invoking offlineRender() in a new thread.
+        But offlineRender can early exit without ever calling deref() in the main thread, leading to the leak of
+        OfflineAudioDestinationNode. Fixed the leak by always calling deref in the main thread after calling offlineRender().
+
+        Also removed the debug assertion in offlineRender which always hits when we run the relevant test.
+
+        Test: imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/current-time-block-size.html
+
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        (WebCore::OfflineAudioDestinationNode::notifyComplete): Merged into startRendering.
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+
 2019-04-10  Megan Gardner  <megan_gardner@apple.com>
 
         Fix text autoscrolling when typing in modern webkit

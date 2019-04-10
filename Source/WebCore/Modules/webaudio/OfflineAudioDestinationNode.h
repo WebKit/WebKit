@@ -66,10 +66,7 @@ private:
     // Rendering thread.
     RefPtr<Thread> m_renderThread;
     bool m_startedRendering;
-    void offlineRender();
-    
-    // For completion callback on main thread.
-    void notifyComplete();
+    bool offlineRender();
 };
 
 } // namespace WebCore

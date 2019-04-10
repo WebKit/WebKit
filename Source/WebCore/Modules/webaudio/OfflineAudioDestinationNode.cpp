@@ -84,37 +84,46 @@ void OfflineAudioDestinationNode::startRendering()
     if (!m_renderTarget.get())
         return;
     
-    if (!m_startedRendering) {
-        m_startedRendering = true;
-        ref(); // See corresponding deref() call in notifyCompleteDispatch().
-        m_renderThread = Thread::create("offline renderer", [this] {
-            offlineRender();
+    if (m_startedRendering)
+        return;
+
+    m_startedRendering = true;
+    ref();
+    // FIXME: Should we call lazyInitialize here?
+    // FIXME: We should probably limit the number of threads we create for offline audio.
+    m_renderThread = Thread::create("offline renderer", [this] {
+        bool didRender = offlineRender();
+        callOnMainThread([this, didRender] {
+            if (didRender)
+                context().fireCompletionEvent();
+            deref();
         });
-    }
+    });
 }
 
-void OfflineAudioDestinationNode::offlineRender()
+bool OfflineAudioDestinationNode::offlineRender()
 {
     ASSERT(!isMainThread());
     ASSERT(m_renderBus.get());
     if (!m_renderBus.get())
-        return;
+        return false;
 
     bool isAudioContextInitialized = context().isInitialized();
-    ASSERT(isAudioContextInitialized);
+    // FIXME: We used to assert that isAudioContextInitialized is true here.
+    // But it's trivially false in imported/w3c/web-platform-tests/webaudio/the-audio-api/the-offlineaudiocontext-interface/current-time-block-size.html 
     if (!isAudioContextInitialized)
-        return;
+        return false;
 
     bool channelsMatch = m_renderBus->numberOfChannels() == m_renderTarget->numberOfChannels();
     ASSERT(channelsMatch);
     if (!channelsMatch)
-        return;
-        
+        return false;
+
     bool isRenderBusAllocated = m_renderBus->length() >= renderQuantumSize;
     ASSERT(isRenderBusAllocated);
     if (!isRenderBusAllocated)
-        return;
-        
+        return false;
+
     // Break up the render target into smaller "render quantize" sized pieces.
     // Render until we're finished.
     size_t framesToProcess = m_renderTarget->length();
@@ -136,17 +145,8 @@ void OfflineAudioDestinationNode::offlineRender()
         n += framesAvailableToCopy;
         framesToProcess -= framesAvailableToCopy;
     }
-    
-    // Our work is done. Let the AudioContext know.
-    callOnMainThread([this] {
-        notifyComplete();
-        deref();
-    });
-}
 
-void OfflineAudioDestinationNode::notifyComplete()
-{
-    context().fireCompletionEvent();
+    return true;
 }
 
 } // namespace WebCore
