@@ -606,16 +606,18 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
     size_t numProperties = propertyNames.size();
     Vector<PropertyDescriptor> descriptors;
     MarkedArgumentBuffer markBuffer;
+#define RETURN_IF_EXCEPTION_CLEARING_OVERFLOW(value) do { \
+    if (scope.exception()) { \
+        markBuffer.overflowCheckNotNeeded(); \
+        return value; \
+    } \
+} while (false)
     for (size_t i = 0; i < numProperties; i++) {
         JSValue prop = properties->get(exec, propertyNames[i]);
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
         PropertyDescriptor descriptor;
-        bool success = toPropertyDescriptor(exec, prop, descriptor);
-        EXCEPTION_ASSERT(!scope.exception() || !success);
-        if (UNLIKELY(!success)) {
-            markBuffer.overflowCheckNotNeeded();
-            return jsNull();
-        }
+        toPropertyDescriptor(exec, prop, descriptor);
+        RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
         descriptors.append(descriptor);
         // Ensure we mark all the values that we're accumulating
         if (descriptor.isDataDescriptor() && descriptor.value())
@@ -628,6 +630,7 @@ static JSValue defineProperties(ExecState* exec, JSObject* object, JSObject* pro
         }
     }
     RELEASE_ASSERT(!markBuffer.hasOverflowed());
+#undef RETURN_IF_EXCEPTION_CLEARING_OVERFLOW
     for (size_t i = 0; i < numProperties; i++) {
         auto& propertyName = propertyNames[i];
         ASSERT(!propertyName.isPrivateName());

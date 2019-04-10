@@ -1,3 +1,15 @@
+2019-04-10  Robin Morisset  <rmorisset@apple.com>
+
+        We should clear m_needsOverflowCheck when hitting an exception in defineProperties in ObjectConstructor.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=196746
+
+        Reviewed by Yusuke Suzuki..
+
+        It should be safe as in that case we are not completing the operation, and so not going to have any buffer overflow.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::defineProperties):
+
 2019-04-10  Antoine Quint  <graouts@apple.com>
 
         Enable Pointer Events on watchOS
