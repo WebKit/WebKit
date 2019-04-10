@@ -389,6 +389,11 @@ protected:
     }
 
     template<typename T>
+#if CPU(ARM64) && CPU(ADDRESS32)
+    // FIXME: Remove this once it's no longer needed and LLVM doesn't miscompile us:
+    // <rdar://problem/49792205>
+    __attribute__((optnone))
+#endif
     T* allocate(Encoder& encoder, unsigned size = 1)
     {
         uint8_t* result = allocate(encoder, sizeof(T) * size);
