@@ -1,5 +1,27 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243870. rdar://problem/49725697
+
+    Unreviewed, roll out r243858 which made tests time out.
+    
+    Disable new API tests on Windows instead.
+    
+    * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243870 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-04  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, roll out r243858 which made tests time out.
+
+            Disable new API tests on Windows instead.
+
+            * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+            (TestWebKitAPI::TEST):
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243858. rdar://problem/49725697
 
     The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
