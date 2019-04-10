@@ -1,3 +1,17 @@
+2019-04-10  Timothy Hatcher  <timothy@apple.com>
+
+        WKScrollView background color does not match WKWebView before content is loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=196745
+        rdar://problem/49750810
+
+        Reviewed by Megan Gardner.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (scrollViewBackgroundColor): Default to _contentView.backgroundColor on invalid base color.
+        (-[WKWebView _processDidExit]): Reset to _contentView.backgroundColor.
+        (-[WKWebView setBackgroundColor:]): Call _updateScrollViewBackground since it can use
+        _contentView.backgroundColor and it has changed.
+
 2019-04-10  Megan Gardner  <megan_gardner@apple.com>
 
         Fix text autoscrolling when typing in modern webkit

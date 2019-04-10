@@ -1697,7 +1697,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     WebCore::Color color = baseScrollViewBackgroundColor(webView);
 
     if (!color.isValid())
-        color = WebCore::Color::white;
+        color = [webView->_contentView backgroundColor].CGColor;
 
     CGFloat zoomScale = contentZoomScale(webView);
     CGFloat minimumZoomScale = [webView->_scrollView minimumZoomScale];
@@ -1862,7 +1862,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     [self _processWillSwapOrDidExit];
 
     [_contentView setFrame:self.bounds];
-    [_scrollView setBackgroundColor:[UIColor whiteColor]];
+    [_scrollView setBackgroundColor:[_contentView backgroundColor]];
     [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
     [_scrollView setZoomScale:1];
     _gestureController = nullptr;
@@ -2541,6 +2541,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 {
     [super setBackgroundColor:backgroundColor];
     [_contentView setBackgroundColor:backgroundColor];
+    [self _updateScrollViewBackground];
 }
 
 - (BOOL)_allowsDoubleTapGestures
