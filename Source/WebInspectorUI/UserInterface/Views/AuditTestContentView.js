@@ -31,6 +31,9 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
         super(representedObject);
 
+        // This class should not be instantiated directly. Create a concrete subclass instead.
+        console.assert(this.constructor !== WI.AuditTestContentView && this instanceof WI.AuditTestContentView);
+
         this.element.classList.add("audit-test");
 
         this._exportButtonNavigationItem = new WI.ButtonNavigationItem("audit-export", WI.UIString("Export"), "Images/Export.svg", 15, 15);

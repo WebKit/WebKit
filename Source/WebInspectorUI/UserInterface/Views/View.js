@@ -276,7 +276,10 @@ WI.View = class View extends WI.Object
         this._dirtyDescendantsCount = 0;
         let isInitialLayout = !this._didInitialLayout;
 
-        if (!this._didInitialLayout) {
+        if (isInitialLayout) {
+            // The initial layout should always be treated as dirty.
+            this._setLayoutReason();
+
             this.initialLayout();
             this._didInitialLayout = true;
         }
@@ -301,9 +304,6 @@ WI.View = class View extends WI.Object
 
     _setLayoutReason(layoutReason)
     {
-        if (this._layoutReason === WI.View.LayoutReason.Resize)
-            return;
-
         this._layoutReason = layoutReason || WI.View.LayoutReason.Dirty;
     }
 

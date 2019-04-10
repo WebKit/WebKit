@@ -1,5 +1,28 @@
 2019-04-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION: Audit: result UI shown on first open if an audit was previously selected
+        https://bugs.webkit.org/show_bug.cgi?id=196723
+        <rdar://problem/49722252>
+
+        Reviewed by Timothy Hatcher.
+
+        When opening Web Inspector for the first time, we will trigger resize `layout`s on the main
+        content area as Web Inspector is resized to it's old window size.
+
+        Rather than treating this layout as a `View.LayoutReason.Resize`, we should treat the
+        first `layout` (e.g. `initialLayout`) as a `View.LayoutReason.Dirty` instead, as there was
+        previously no content.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+        (WI.View.prototype._setLayoutReason):
+
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView):
+        Drive-by: ensure that this class is not instantiated directly.
+
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: current call frame indicator is indented when there is more than one thread
         https://bugs.webkit.org/show_bug.cgi?id=196580
         <rdar://problem/49582138>
