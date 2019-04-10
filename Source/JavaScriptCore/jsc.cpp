@@ -1023,7 +1023,7 @@ public:
             return;
 
         m_cachedBytecode->commitUpdates([&] (off_t offset, const void* data, size_t size) {
-            int result = lseek(fd, offset, SEEK_SET);
+            off_t result = lseek(fd, offset, SEEK_SET);
             ASSERT_UNUSED(result, result != -1);
             size_t bytesWritten = static_cast<size_t>(write(fd, data, size));
             ASSERT_UNUSED(bytesWritten, bytesWritten == size);
