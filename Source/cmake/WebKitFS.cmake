@@ -38,7 +38,15 @@ set(DERIVED_SOURCES_WEBKITLEGACY_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKitL
 set(DERIVED_SOURCES_WEBKIT_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
 set(DERIVED_SOURCES_WEBINSPECTORUI_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebInspectorUI")
 
+# These values will replace the above after refactoring is complete
 set(WTF_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WTF")
+set(JavaScriptCore_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/JavaScriptCore")
+set(PAL_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/PAL")
+set(WebCore_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebCore")
+set(WebDriver_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebDriver")
+set(WebKitLegacy_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKitLegacy")
+set(WebKit_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
+set(WebInspectorUI_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebInspectorUI")
 
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
 

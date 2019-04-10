@@ -1,5 +1,23 @@
 2019-04-09  Don Olmstead  <don.olmstead@sony.com>
 
+        [CMake] WEBKIT_COMPUTE_SOURCES should use the target's derived sources directory
+        https://bugs.webkit.org/show_bug.cgi?id=196741
+
+        Reviewed by Michael Catanzaro.
+
+        WEBKIT_COMPUTE_SOURCES is using ${DERIVED_SOURCES_DIR} directly. Instead it should
+        rely on the directory specified by the target.
+
+        * Source/cmake/WebKitFS.cmake:
+        Add variables that can be expanded within CMake to the derived sources directory for
+        a target.
+
+        * Source/cmake/WebKitMacros.cmake:
+        Use variable expansion rather than ${DERIVED_SOURCES_DIR} to determine the target's
+        derived sources directory.
+
+2019-04-09  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] WTF derived sources should only be referenced inside WTF
         https://bugs.webkit.org/show_bug.cgi?id=196706
 
