@@ -76,7 +76,7 @@ public:
     const ServiceWorkerRegistrationData& data() const { return m_registrationData; }
 
     void updateStateFromServer(ServiceWorkerRegistrationState, RefPtr<ServiceWorker>&&);
-    void scheduleTaskToFireUpdateFoundEvent();
+    void fireUpdateFoundEvent();
 
 private:
     ServiceWorkerRegistration(ScriptExecutionContext&, Ref<ServiceWorkerContainer>&&, ServiceWorkerRegistrationData&&);

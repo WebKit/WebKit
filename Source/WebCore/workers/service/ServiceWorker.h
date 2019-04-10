@@ -55,7 +55,7 @@ public:
 
     State state() const { return m_data.state; }
     
-    void scheduleTaskToUpdateState(State);
+    void updateState(State);
 
     ExceptionOr<void> postMessage(ScriptExecutionContext&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 

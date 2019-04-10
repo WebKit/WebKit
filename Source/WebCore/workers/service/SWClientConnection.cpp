@@ -116,7 +116,7 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
 }
 
 
-void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, String&& sourceOrigin)
 {
     ASSERT(isMainThread());
 
@@ -125,14 +125,10 @@ void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier des
     if (!destinationDocument)
         return;
 
-    auto* container = destinationDocument->serviceWorkerContainer();
-    if (!container)
-        return;
-
-    MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(*destinationDocument, WTFMove(sourceData)) };
-
-    auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(*destinationDocument, WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source));
-    container->dispatchEvent(messageEvent);
+    destinationDocument->postTask([message = WTFMove(message), sourceData = WTFMove(sourceData), sourceOrigin = WTFMove(sourceOrigin)](auto& context) mutable {
+        if (auto* container = context.serviceWorkerContainer())
+            container->postMessage(WTFMove(message), WTFMove(sourceData), WTFMove(sourceOrigin));
+    });
 }
 
 void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const Optional<ServiceWorkerData>& serviceWorkerData)
@@ -142,13 +138,15 @@ void SWClientConnection::updateRegistrationState(ServiceWorkerRegistrationIdenti
     SWContextManager::singleton().forEachServiceWorkerThread([identifier, state, &serviceWorkerData] (auto& workerThread) {
         workerThread.thread().runLoop().postTask([identifier, state, serviceWorkerData = crossThreadCopy(serviceWorkerData)](ScriptExecutionContext& context) mutable {
             if (auto* container = context.serviceWorkerContainer())
-                container->scheduleTaskToUpdateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
+                container->updateRegistrationState(identifier, state, WTFMove(serviceWorkerData));
         });
     });
 
     for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->scheduleTaskToUpdateRegistrationState(identifier, state, serviceWorkerData);
+        document->postTask([identifier, state, serviceWorkerData, document](auto&) {
+            if (auto* container = document->serviceWorkerContainer())
+                container->updateRegistrationState(identifier, state, serviceWorkerData);
+        });
     }
 }
 
@@ -159,13 +157,15 @@ void SWClientConnection::updateWorkerState(ServiceWorkerIdentifier identifier, S
     SWContextManager::singleton().forEachServiceWorkerThread([identifier, state] (auto& workerThread) {
         workerThread.thread().runLoop().postTask([identifier, state](ScriptExecutionContext& context) {
             if (auto* serviceWorker = context.serviceWorker(identifier))
-                serviceWorker->scheduleTaskToUpdateState(state);
+                serviceWorker->updateState(state);
         });
     });
 
     for (auto* document : Document::allDocuments()) {
-        if (auto* serviceWorker = document->serviceWorker(identifier))
-            serviceWorker->scheduleTaskToUpdateState(state);
+        document->postTask([identifier, document, state](auto&) {
+            if (auto* serviceWorker = document->serviceWorker(identifier))
+                serviceWorker->updateState(state);
+        });
     }
 }
 
@@ -176,13 +176,15 @@ void SWClientConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifie
     SWContextManager::singleton().forEachServiceWorkerThread([identifier] (auto& workerThread) {
         workerThread.thread().runLoop().postTask([identifier](ScriptExecutionContext& context) {
             if (auto* container = context.serviceWorkerContainer())
-                container->scheduleTaskToFireUpdateFoundEvent(identifier);
+                container->fireUpdateFoundEvent(identifier);
         });
     });
 
     for (auto* document : Document::allDocuments()) {
-        if (auto* container = document->serviceWorkerContainer())
-            container->scheduleTaskToFireUpdateFoundEvent(identifier);
+        document->postTask([document, identifier](auto&) {
+            if (auto* container = document->serviceWorkerContainer())
+                container->fireUpdateFoundEvent(identifier);
+        });
     }
 }
 
@@ -239,10 +241,12 @@ void SWClientConnection::notifyClientsOfControllerChange(const HashSet<DocumentI
         if (!client)
             continue;
 
-        ASSERT(!client->activeServiceWorker() || client->activeServiceWorker()->identifier() != newController.identifier);
-        client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, ServiceWorkerData { newController }));
-        if (auto* container = client->serviceWorkerContainer())
-            container->scheduleTaskToFireControllerChangeEvent();
+        client->postTask([client, contextIdentifiers, newController = WTFMove(newController)](auto&) {
+            ASSERT(!client->activeServiceWorker() || client->activeServiceWorker()->identifier() != newController.identifier);
+            client->setActiveServiceWorker(ServiceWorker::getOrCreate(*client, ServiceWorkerData { newController }));
+            if (auto* container = client->serviceWorkerContainer())
+                container->fireControllerChangeEvent();
+        });
     }
 }
 

@@ -66,9 +66,11 @@ public:
     void updateRegistration(const URL& scopeURL, const URL& scriptURL, WorkerType, RefPtr<DeferredPromise>&&);
 
     void getRegistration(const String& clientURL, Ref<DeferredPromise>&&);
-    void scheduleTaskToUpdateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const Optional<ServiceWorkerData>&);
-    void scheduleTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
-    void scheduleTaskToFireControllerChangeEvent();
+    void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const Optional<ServiceWorkerData>&);
+    void fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier);
+    void fireControllerChangeEvent();
+
+    void postMessage(MessageWithMessagePorts&&, ServiceWorkerData&& sourceData, String&& sourceOrigin);
 
     void getRegistrations(Ref<DeferredPromise>&&);
 

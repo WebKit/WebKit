@@ -65,8 +65,6 @@ public:
     void cancelFetch(WebCore::FetchIdentifier, WebCore::ServiceWorkerRegistrationIdentifier);
     void continueDidReceiveFetchResponse(WebCore::FetchIdentifier, WebCore::ServiceWorkerRegistrationIdentifier);
 
-    void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
-
     void connectionToServerLost();
 
     void syncTerminateWorker(WebCore::ServiceWorkerIdentifier) final;

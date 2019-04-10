@@ -78,24 +78,16 @@ ServiceWorker::~ServiceWorker()
         context->unregisterServiceWorker(*this);
 }
 
-void ServiceWorker::scheduleTaskToUpdateState(State state)
+void ServiceWorker::updateState(State state)
 {
-    auto* context = scriptExecutionContext();
-    if (!context)
-        return;
+    WORKER_RELEASE_LOG_IF_ALLOWED("updateState: Updating service worker %llu state from %hhu to %hhu. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
+    m_data.state = state;
+    if (state != State::Installing && !m_isStopped) {
+        ASSERT(m_pendingActivityForEventDispatch);
+        dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    }
 
-    context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
-        ASSERT(this->state() != state);
-
-        WORKER_RELEASE_LOG_IF_ALLOWED("scheduleTaskToUpdateState: Updating service worker %llu state from %hhu to %hhu. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
-        m_data.state = state;
-        if (state != State::Installing && !m_isStopped) {
-            ASSERT(m_pendingActivityForEventDispatch);
-            dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        }
-
-        updatePendingActivityForEventDispatch();
-    });
+    updatePendingActivityForEventDispatch();
 }
 
 ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JSC::JSValue messageValue, Vector<JSC::Strong<JSC::JSObject>>&& transfer)

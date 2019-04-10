@@ -164,7 +164,7 @@ void ServiceWorkerJob::notifyFinished()
     auto& error = scriptLoader->error();
     ASSERT(!error.isNull());
 
-    m_client.jobFailedLoadingScript(*this, error, Exception { error.isAccessControl() ? SecurityError : TypeError, "Script load failed"_s });
+    m_client.jobFailedLoadingScript(*this, error, Exception { error.isAccessControl() ? SecurityError : TypeError, makeString("Script ", scriptLoader->url().string(), " load failed") });
 }
 
 bool ServiceWorkerJob::cancelPendingLoad()

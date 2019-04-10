@@ -213,11 +213,6 @@ void WebSWClientConnection::continueDidReceiveFetchResponse(FetchIdentifier fetc
     send(Messages::WebSWServerConnection::ContinueDidReceiveFetchResponse { serviceWorkerRegistrationIdentifier, fetchIdentifier });
 }
 
-void WebSWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& source, const String& sourceOrigin)
-{
-    SWClientConnection::postMessageToServiceWorkerClient(destinationContextIdentifier, WTFMove(message), WTFMove(source), sourceOrigin);
-}
-
 void WebSWClientConnection::connectionToServerLost()
 {
     auto registrationTasks = WTFMove(m_ongoingMatchRegistrationTasks);
