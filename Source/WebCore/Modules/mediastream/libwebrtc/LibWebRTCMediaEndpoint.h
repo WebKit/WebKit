@@ -153,7 +153,7 @@ private:
     void startLoggingStats();
     void stopLoggingStats();
 
-    void getStats(Ref<DeferredPromise>&&, WTF::Function<void(rtc::scoped_refptr<LibWebRTCStatsCollector>&&)>&&);
+    rtc::scoped_refptr<LibWebRTCStatsCollector> createStatsCollector(Ref<DeferredPromise>&&);
 
     MediaStream& mediaStreamFromRTCStream(webrtc::MediaStreamInterface&);
 

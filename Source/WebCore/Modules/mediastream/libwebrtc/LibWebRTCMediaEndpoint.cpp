@@ -284,9 +284,9 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
     m_backend->CreateAnswer(&m_createSessionDescriptionObserver, { });
 }
 
-void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise, WTF::Function<void(rtc::scoped_refptr<LibWebRTCStatsCollector>&&)>&& getStatsFunction)
+rtc::scoped_refptr<LibWebRTCStatsCollector> LibWebRTCMediaEndpoint::createStatsCollector(Ref<DeferredPromise>&& promise)
 {
-    auto collector = LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)]() mutable -> RefPtr<RTCStatsReport> {
+    return LibWebRTCStatsCollector::create([promise = WTFMove(promise), protectedThis = makeRef(*this)]() mutable -> RefPtr<RTCStatsReport> {
         ASSERT(isMainThread());
         if (protectedThis->isStopped())
             return nullptr;
@@ -300,33 +300,24 @@ void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise, WTF::Funct
             return nullptr;
         return WTFMove(report);
     });
-    LibWebRTCProvider::callOnWebRTCSignalingThread([getStatsFunction = WTFMove(getStatsFunction), collector = WTFMove(collector)]() mutable {
-        getStatsFunction(WTFMove(collector));
-    });
 }
 
 void LibWebRTCMediaEndpoint::getStats(Ref<DeferredPromise>&& promise)
 {
-    getStats(WTFMove(promise), [this](auto&& collector) {
-        if (m_backend)
-            m_backend->GetStats(WTFMove(collector));
-    });
+    if (m_backend)
+        m_backend->GetStats(createStatsCollector(WTFMove(promise)));
 }
 
 void LibWebRTCMediaEndpoint::getStats(webrtc::RtpReceiverInterface& receiver, Ref<DeferredPromise>&& promise)
 {
-    getStats(WTFMove(promise), [this, receiver = rtc::scoped_refptr<webrtc::RtpReceiverInterface>(&receiver)](auto&& collector) mutable {
-        if (m_backend)
-            m_backend->GetStats(WTFMove(receiver), WTFMove(collector));
-    });
+    if (m_backend)
+        m_backend->GetStats(rtc::scoped_refptr<webrtc::RtpReceiverInterface>(&receiver), createStatsCollector(WTFMove(promise)));
 }
 
 void LibWebRTCMediaEndpoint::getStats(webrtc::RtpSenderInterface& sender, Ref<DeferredPromise>&& promise)
 {
-    getStats(WTFMove(promise), [this, sender = rtc::scoped_refptr<webrtc::RtpSenderInterface>(&sender)](auto&& collector)  mutable {
-        if (m_backend)
-            m_backend->GetStats(WTFMove(sender), WTFMove(collector));
-    });
+    if (m_backend)
+        m_backend->GetStats(rtc::scoped_refptr<webrtc::RtpSenderInterface>(&sender), createStatsCollector(WTFMove(promise)));
 }
 
 static RTCSignalingState signalingState(webrtc::PeerConnectionInterface::SignalingState state)
@@ -832,10 +823,7 @@ void LibWebRTCMediaEndpoint::setRemoteSessionDescriptionFailed(ExceptionCode err
 
 void LibWebRTCMediaEndpoint::gatherStatsForLogging()
 {
-    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
-        if (protectedThis->m_backend)
-            protectedThis->m_backend->GetStats(protectedThis.ptr());
-    });
+    m_backend->GetStats(this);
 }
 
 class RTCStatsLogger {
