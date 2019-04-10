@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            position: absolute;
+            z-index: 0;
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+            overflow: hidden;
+        }
+        .scroller.scrollable {
+            overflow-y: scroll;
+        }
+        .contents {
+            height: 2000px;
+        }
+        .negative {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            padding: 20px;
+            background-color: gray;
+        }
+        .box {
+            width: 200px;
+            height: 200px;
+        }
+        .composited {
+            width: 20px;
+            height: 20px;
+            transform: translateZ(0);
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+    <div id="target" class="scrollable scroller">
+        <div class="negative"></div>
+        <div class="contents">
+            <div class="composited box"></div>
+            <div class="box" style="background-color: green"></div>
+        </div>
+    </div>
+</body>
+</html>
