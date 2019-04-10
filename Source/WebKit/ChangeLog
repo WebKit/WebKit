@@ -1,3 +1,47 @@
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r243848. rdar://problem/49725697
+
+    The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
+    https://bugs.webkit.org/show_bug.cgi?id=196588
+    <rdar://problem/49365787>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebKit:
+    
+    The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash.
+    This can lead to returning stale frames to the client if it asks for those.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::resetState):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+    (TestWebKitAPI::nullJavaScriptCallback):
+    (TestWebKitAPI::didCrashCheckFrames):
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243848 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+            The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
+            https://bugs.webkit.org/show_bug.cgi?id=196588
+            <rdar://problem/49365787>
+
+            Reviewed by Ryosuke Niwa.
+
+            The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash.
+            This can lead to returning stale frames to the client if it asks for those.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetState):
+
 2019-03-27  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r243291. rdar://problem/49307996

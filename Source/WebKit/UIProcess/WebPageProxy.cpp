@@ -6617,6 +6617,8 @@ void WebPageProxy::processWillBecomeForeground()
 void WebPageProxy::resetState(ResetStateReason resetStateReason)
 {
     m_mainFrame = nullptr;
+    m_focusedFrame = nullptr;
+    m_frameSetLargestFrame = nullptr;
 
 #if PLATFORM(COCOA)
     m_scrollingPerformanceData = nullptr;
