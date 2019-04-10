@@ -1,0 +1,18 @@
+This test is representative of a user that loads a site, via the address bar or Command + clicking a hyperlink, that redirects to a cross-site page that expects its SameSite Lax cookies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookies sent with HTTP request:
+PASS Do not have cookie "strict".
+PASS Has cookie "lax" with value 27.
+PASS Has cookie "normal" with value 27.
+
+Cookies visible in DOM:
+PASS Do not have DOM cookie "strict".
+PASS Has DOM cookie "lax" with value 27.
+PASS Has DOM cookie "normal" with value 27.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
