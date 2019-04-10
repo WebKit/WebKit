@@ -523,15 +523,15 @@ void Engine::clearAllCaches(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!this->shouldPersist())
+            return;
+        
+        this->clearAllCachesFromDisk(WTFMove(completionHandler));
+    });
 
     for (auto& caches : m_caches.values())
         caches->clear([callbackAggregator = callbackAggregator.copyRef()] { });
-
-    if (!shouldPersist())
-        return;
-
-    clearAllCachesFromDisk([callbackAggregator = WTFMove(callbackAggregator)] { });
 }
 
 void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandler)
@@ -551,17 +551,19 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), origin, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!this->shouldPersist())
+            return;
+
+        this->clearCachesForOriginFromDisk(origin, [completionHandler = WTFMove(completionHandler)]() mutable {
+            completionHandler();
+        });
+    });
 
     for (auto& keyValue : m_caches) {
         if (keyValue.key.topOrigin == origin || keyValue.key.clientOrigin == origin)
             keyValue.value->clear([callbackAggregator = callbackAggregator.copyRef()] { });
     }
-
-    if (!shouldPersist())
-        return;
-
-    clearCachesForOriginFromDisk(origin, [callbackAggregator = WTFMove(callbackAggregator)] { });
 }
 
 void Engine::clearCachesForOriginFromDisk(const WebCore::SecurityOriginData& origin, CompletionHandler<void()>&& completionHandler)

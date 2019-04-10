@@ -1,3 +1,18 @@
+2019-04-10  Youenn Fablet  <youenn@apple.com>
+
+        Clear Cache Storage structures before removing all related files
+        https://bugs.webkit.org/show_bug.cgi?id=196650
+
+        Reviewed by Alex Christensen.
+
+        Previously, we were clearing files in parallel to clearing the internal CacheStorage structures.
+        To make things more deterministic, clear files/folders directly
+        after CachesStorage structures have finished being cleared.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI WKNavigationResponse._downloadAttribute
