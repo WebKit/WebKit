@@ -1,5 +1,46 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243605. rdar://problem/49725707
+
+    [SimpleLineLayout] Disable SLL when text-underline-position is not auto.
+    https://bugs.webkit.org/show_bug.cgi?id=196338
+    <rdar://problem/47975167>
+    
+    Reviewed by Daniel Bates.
+    
+    Source/WebCore:
+    
+    Disable simple line layout unconditionally on non-auto text-underline-position content. We don't support it yet.
+    
+    Test: fast/text/simple-line-layout-with-text-underline-position.html
+    
+    * rendering/SimpleLineLayout.cpp:
+    (WebCore::SimpleLineLayout::canUseForStyle):
+    
+    LayoutTests:
+    
+    * fast/text/simple-line-layout-with-text-underline-position-expected.html: Added.
+    * fast/text/simple-line-layout-with-text-underline-position.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243605 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-03-28  Zalan Bujtas  <zalan@apple.com>
+
+            [SimpleLineLayout] Disable SLL when text-underline-position is not auto.
+            https://bugs.webkit.org/show_bug.cgi?id=196338
+            <rdar://problem/47975167>
+
+            Reviewed by Daniel Bates.
+
+            Disable simple line layout unconditionally on non-auto text-underline-position content. We don't support it yet.
+
+            Test: fast/text/simple-line-layout-with-text-underline-position.html
+
+            * rendering/SimpleLineLayout.cpp:
+            (WebCore::SimpleLineLayout::canUseForStyle):
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243104. rdar://problem/49725692
 
     REGRESSION(r236862): early frame decoupling leaves JSC ArrayBuffer objects lingering
