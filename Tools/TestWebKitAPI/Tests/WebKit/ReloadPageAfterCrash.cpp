@@ -138,7 +138,7 @@ TEST(WebKit, FocusedFrameAfterCrash)
     Util::run(&calledCrashHandler);
 }
 
-TEST(WebKit, FrameSetLargestFramAfterCrash)
+TEST(WebKit, FrameSetLargestFrameAfterCrash)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());

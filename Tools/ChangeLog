@@ -1,5 +1,23 @@
 2019-04-09  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r243849. rdar://problem/49725697
+
+    Unreviewed, fix typo in the name of API test added in r243848.
+    
+    * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@243849 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-03  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, fix typo in the name of API test added in r243848.
+
+            * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+            (TestWebKitAPI::TEST):
+
+2019-04-09  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r243848. rdar://problem/49725697
 
     The page's focusedFrame / frameSetLargestFrame do not get cleared on process swap or crash
