@@ -1,3 +1,17 @@
+2019-04-10  Philippe Normand  <pnormand@igalia.com>
+
+        there is no vp8 support in youtube.com/html5 page with libwebkit2gtk 2.24 (MSE enabled)
+        https://bugs.webkit.org/show_bug.cgi?id=196615
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update WPE baselines and add/unskip the
+        imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType.html test in GTK.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt: Copied from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt.
+        * platform/wpe/imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/mime-types/canPlayType-expected.txt:
+
 2019-04-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Defer the emision of AtkObject::children-changed signal after layout is done
