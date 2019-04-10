@@ -159,6 +159,9 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
     if (options.enableUndoManagerAPI)
         [copiedConfiguration _setUndoManagerAPIEnabled:YES];
 
+    if (options.shouldUseModernCompatibilityMode)
+        enableModernCompatibilityMode(copiedConfiguration.get());
+
     if (options.applicationManifest.length()) {
         auto manifestPath = [NSString stringWithUTF8String:options.applicationManifest.c_str()];
         NSString *text = [NSString stringWithContentsOfFile:manifestPath usedEncoding:nullptr error:nullptr];
@@ -401,5 +404,15 @@ bool TestController::isDoingMediaCapture() const
 {
     return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateNone;
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/TestControllerCocoaAdditions.mm>
+#else
+
+void TestController::enableModernCompatibilityMode(WKWebViewConfiguration *)
+{
+}
+
+#endif
 
 } // namespace WTR

@@ -91,6 +91,7 @@ struct TestOptions {
     bool enableUndoManagerAPI { false };
     bool shouldHandleRunOpenPanel { true };
     bool shouldPresentPopovers { true };
+    bool shouldUseModernCompatibilityMode { false };
 
     double contentInsetTop { 0 };
 
@@ -140,7 +141,8 @@ struct TestOptions {
             || enableUndoManagerAPI != options.enableUndoManagerAPI
             || shouldHandleRunOpenPanel != options.shouldHandleRunOpenPanel
             || shouldPresentPopovers != options.shouldPresentPopovers
-            || contentInsetTop != options.contentInsetTop)
+            || contentInsetTop != options.contentInsetTop
+            || shouldUseModernCompatibilityMode != options.shouldUseModernCompatibilityMode)
             return false;
 
         if (!contextOptions.hasSameInitializationOptions(options.contextOptions))
