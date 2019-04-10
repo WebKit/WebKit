@@ -183,8 +183,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCResolverMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCResolverMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCSocketMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebRTCSocketMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoadStatisticsStoreMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoadStatisticsStoreMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoaderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebResourceLoaderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebSWClientConnectionMessageReceiver.cpp

@@ -118,7 +118,6 @@ $(PROJECT_DIR)/inspector/scripts/codegen/models.py
 $(PROJECT_DIR)/inspector/scripts/generate-inspector-protocol-bindings.py
 $(PROJECT_DIR)/parser/Keywords.table
 $(PROJECT_DIR)/runtime/ArrayConstructor.cpp
-$(PROJECT_DIR)/runtime/ArrayIteratorPrototype.cpp
 $(PROJECT_DIR)/runtime/AsyncFromSyncIteratorPrototype.cpp
 $(PROJECT_DIR)/runtime/AsyncGeneratorPrototype.cpp
 $(PROJECT_DIR)/runtime/BigIntConstructor.cpp
@@ -153,7 +152,6 @@ $(PROJECT_DIR)/runtime/ReflectObject.cpp
 $(PROJECT_DIR)/runtime/RegExpConstructor.cpp
 $(PROJECT_DIR)/runtime/SetPrototype.cpp
 $(PROJECT_DIR)/runtime/StringConstructor.cpp
-$(PROJECT_DIR)/runtime/StringIteratorPrototype.cpp
 $(PROJECT_DIR)/runtime/StringPrototype.cpp
 $(PROJECT_DIR)/runtime/SymbolConstructor.cpp
 $(PROJECT_DIR)/runtime/SymbolPrototype.cpp

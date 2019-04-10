@@ -1,3 +1,10 @@
+2019-04-09  Keith Rollin  <krollin@apple.com>
+
+        Unreviewed build maintenance -- update .xcfilelists.
+
+        * DumpRenderTree/DerivedSources-input.xcfilelist:
+        * DumpRenderTree/DerivedSources-output.xcfilelist:
+
 2019-04-09  Zalan Bujtas  <zalan@apple.com>
 
         [AutoSizing] Avoid making text paragraphs scroll horizontally when there is a wide table
