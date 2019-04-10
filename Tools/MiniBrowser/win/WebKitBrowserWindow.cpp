@@ -106,16 +106,21 @@ WKRetainPtr<WKURLRef> createWKURL(const std::wstring& str)
 
 Ref<BrowserWindow> WebKitBrowserWindow::create(HWND mainWnd, HWND urlBarWnd, bool, bool)
 {
-    auto conf = WKPageConfigurationCreate();
+    auto conf = adoptWK(WKPageConfigurationCreate());
 
-    auto prefs = WKPreferencesCreate();
-    WKPreferencesSetDeveloperExtrasEnabled(prefs, true);
-    WKPageConfigurationSetPreferences(conf, prefs);
+    auto prefs = adoptWK(WKPreferencesCreate());
 
-    auto context = WKContextCreateWithConfiguration(nullptr);
-    WKPageConfigurationSetContext(conf, context);
+    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(createWKString("WinMiniBrowser").get()));
+    WKPageConfigurationSetPageGroup(conf.get(), pageGroup.get());
+    WKPageGroupSetPreferences(pageGroup.get(), prefs.get());
 
-    return adoptRef(*new WebKitBrowserWindow(conf, mainWnd, urlBarWnd));
+    WKPreferencesSetDeveloperExtrasEnabled(prefs.get(), true);
+    WKPageConfigurationSetPreferences(conf.get(), prefs.get());
+
+    auto context =adoptWK(WKContextCreateWithConfiguration(nullptr));
+    WKPageConfigurationSetContext(conf.get(), context.get());
+
+    return adoptRef(*new WebKitBrowserWindow(conf.get(), mainWnd, urlBarWnd));
 }
 
 WebKitBrowserWindow::WebKitBrowserWindow(WKPageConfigurationRef conf, HWND mainWnd, HWND urlBarWnd)

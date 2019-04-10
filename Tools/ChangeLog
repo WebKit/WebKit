@@ -1,3 +1,13 @@
+2019-04-10  Takashi Komori  <Takashi.Komori@sony.com>
+
+        [WinCairo][MiniBrowser] Pull down menu "Disable JavaScript" doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=196727
+
+        Reviewed by Fujii Hironori.
+
+        * MiniBrowser/win/WebKitBrowserWindow.cpp:
+        (WebKitBrowserWindow::create):
+
 2019-04-09  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Add unit tests for PrintConfiguration
