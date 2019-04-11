@@ -1,3 +1,11 @@
+2019-04-10  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=196800
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt:
+
 2019-04-10  Youenn Fablet  <youenn@apple.com>
 
         [ Mojave WK2 iOS Sim ] Layout Test http/wpt/cache-storage/quota-third-party.https.html is a flaky failure
