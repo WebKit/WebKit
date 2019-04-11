@@ -262,9 +262,6 @@ my @features = (
     { option => "css-selectors-level4", desc => "Toggle CSS Selectors Level 4 support",
       define => "ENABLE_CSS_SELECTORS_LEVEL4", value => \$cssSelectorsLevel4Support },
 
-    { option => "css-trailing-word", desc => "Toggle CSS trailing word support",
-      define => "ENABLE_CSS_TRAILING_WORD", value => \$cssTrailingWordSupport },
-
     { option => "cursor-visibility", desc => "Toggle cursor visibility support",
       define => "ENABLE_CURSOR_VISIBILITY", value => \$cursorVisibilitySupport },
 
