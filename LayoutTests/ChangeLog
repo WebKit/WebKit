@@ -1,3 +1,24 @@
+2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Moving backwards by word granularity does not work if the previous line was inside another block element
+        https://bugs.webkit.org/show_bug.cgi?id=196670
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test for moving and extending backwards from the beginning of a line with word & sentence granularities,
+        and a basic set of tests forSimplifiedBackwardsTextIterator.
+
+        * editing/selection/extend-selection-backward-at-beginning-of-line-by-sentence-granularity-expected.txt: Added.
+        * editing/selection/extend-selection-backward-at-beginning-of-line-by-sentence-granularity.html: Added.
+        * editing/selection/extend-selection-backward-at-beginning-of-line-by-word-granularity-expected.txt: Added.
+        * editing/selection/extend-selection-backward-at-beginning-of-line-by-word-granularity.html: Added.
+        * editing/selection/move-selection-backward-at-beginning-of-line-by-sentence-granularity-expected.txt: Added.
+        * editing/selection/move-selection-backward-at-beginning-of-line-by-sentence-granularity.html: Added.
+        * editing/selection/move-selection-backward-at-beginning-of-line-by-word-granularity-expected.txt: Added.
+        * editing/selection/move-selection-backward-at-beginning-of-line-by-word-granularity.html: Added.
+        * editing/text-iterator/backwards-text-iterator-basic-expected.txt: Added.
+        * editing/text-iterator/backwards-text-iterator-basic.html: Added.
+
 2019-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow the MediaSource API to be enabled via website policy

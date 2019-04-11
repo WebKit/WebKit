@@ -1,0 +1,11 @@
+This tests moving the selection backwards at the beginning of a line by sentence granularity. The caret should move to the first line.
+| "
+<#selection-caret>This is"
+| <br>
+| "
+"
+| <div>
+|   id="target"
+|   "one sentence."
+| "
+"

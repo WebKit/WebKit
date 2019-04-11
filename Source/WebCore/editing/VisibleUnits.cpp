@@ -578,7 +578,9 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar
     return next;
 }
 
-static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction)
+enum class NeedsContextAtParagraphStart { Yes, No };
+static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction,
+    NeedsContextAtParagraphStart needsContextAtParagraphStart = NeedsContextAtParagraphStart::No)
 {
     Position pos = c.deepEquivalent();
     Node* boundary = pos.parentEditingBoundary();
@@ -597,7 +599,19 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
     Vector<UChar, 1024> string;
     unsigned suffixLength = 0;
 
-    if (requiresContextForWordBoundary(c.characterBefore())) {
+    if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && isStartOfParagraph(c)) {
+        auto forwardsScanRange = boundaryDocument.createRange();
+        auto endOfCurrentParagraph = endOfParagraph(c);
+        auto result = forwardsScanRange->setEnd(endOfCurrentParagraph.deepEquivalent());
+        if (result.hasException())
+            return { };
+        result = forwardsScanRange->setStart(start);
+        if (result.hasException())
+            return { };
+        for (TextIterator forwardsIterator(forwardsScanRange.ptr()); !forwardsIterator.atEnd(); forwardsIterator.advance())
+            append(string, forwardsIterator.text());
+        suffixLength = string.size();
+    } else if (requiresContextForWordBoundary(c.characterBefore())) {
         auto forwardsScanRange = boundaryDocument.createRange();
         auto result = forwardsScanRange->setEndAfter(*boundary);
         if (result.hasException())
@@ -622,14 +636,15 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         return VisiblePosition(it.atEnd() ? searchRange->startPosition() : pos, DOWNSTREAM);
 
     Node& node = it.atEnd() ? searchRange->startContainer() : it.range()->startContainer();
-    if ((node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
+    if ((!suffixLength && node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
         return VisiblePosition(createLegacyEditingPosition(&node, next), DOWNSTREAM);
     }
 
     // Use the character iterator to translate the next value into a DOM position.
     BackwardsCharacterIterator charIt(searchRange);
-    charIt.advance(string.size() - suffixLength - next);
+    if (next < string.size() - suffixLength)
+        charIt.advance(string.size() - suffixLength - next);
     // FIXME: charIt can get out of shadow host.
     return VisiblePosition(charIt.range()->endPosition(), DOWNSTREAM);
 }
@@ -1132,7 +1147,7 @@ unsigned startSentenceBoundary(StringView text, unsigned, BoundarySearchContextA
 
 VisiblePosition startOfSentence(const VisiblePosition& position)
 {
-    return previousBoundary(position, startSentenceBoundary);
+    return previousBoundary(position, startSentenceBoundary, NeedsContextAtParagraphStart::Yes);
 }
 
 unsigned endSentenceBoundary(StringView text, unsigned, BoundarySearchContextAvailability, bool&)

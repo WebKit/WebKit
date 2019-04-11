@@ -1925,6 +1925,11 @@ String Internals::rangeAsText(const Range& range)
     return range.text();
 }
 
+String Internals::rangeAsTextUsingBackwardsTextIterator(const Range& range)
+{
+    return plainTextUsingBackwardsTextIteratorForTesting(range);
+}
+
 Ref<Range> Internals::subrange(Range& range, int rangeLocation, int rangeLength)
 {
     return TextIterator::subrange(range, rangeLocation, rangeLength);

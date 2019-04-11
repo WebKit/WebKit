@@ -1,3 +1,61 @@
+2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] Moving backwards by word granularity does not work if the previous line was inside another block element
+        https://bugs.webkit.org/show_bug.cgi?id=196670
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was ultimately caused by two reasons:
+         1. On iOS, previousWordPositionBoundary would identify a blank line as a word boundary.
+         2. SimplifiedBackwardsTextIterator generates a new line character (\n) between two block elements.
+
+        When moving backwards by word granularity, therefore, previousBoundary would encounter a new line created by (2)
+        and then previousWordPositionBoundary would identify it as a word boundary.
+
+        Fixed the bug (2) by adding the same check as TextIterator::exitNode has to avoid generating an extra new line
+        character following an exiting new line character. Also added internals.rangeAsTextUsingBackwardsTextIterator
+        to make SimplifiedBackwardsTextIterator directly testable in layout tests.
+
+        This fix unveiled an unrelated bug when moving backwards with sentence granularity at the beginning of a line.
+        In this case, WebKit was previously feeding ICU with the previous line's content followed by two new lines,
+        which constituted a new sentence. However after the fix, ICU no longer detects a new sentence after the end
+        of the prevous line. This patch, therefore, introduces a new optional argument to previousBoundary which forces
+        the succeeding paragraph's content (i.e. the content of the line from which we're moving backwards with sentence
+        granularity) to be fed to ICU. This fixes the bug that we were previously not being able to move backwards
+        with sentence granularity at the beginning of a line as indicated by the new tests.
+
+        Tests: editing/selection/extend-selection-backward-at-beginning-of-line-by-sentence-granularity.html
+               editing/selection/extend-selection-backward-at-beginning-of-line-by-word-granularity.html
+               editing/selection/move-selection-backward-at-beginning-of-line-by-sentence-granularity.html
+               editing/selection/move-selection-backward-at-beginning-of-line-by-word-granularity.html
+               editing/text-iterator/backwards-text-iterator-basic.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::previousBoundary): Fixed the bug that moving backwards with sentence granularity at
+        the beginning of a line does not work like we did in VisibleUnits. See the description below. It's tested by
+        an existing layout test accessibility/mac/text-marker-sentence-nav.html, which would fail without this fix.
+        (WebCore::AXObjectCache::startCharacterOffsetOfSentence):
+        * accessibility/AXObjectCache.h:
+        (WebCore::CharacterOffset::isEqual const):
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode): Fixed the bug that we were generating two line
+        lines between block elements. This fixes the bug that moving backwards with word granularity at the beginning
+        of a line fails on iOS.
+        (WebCore::plainTextUsingBackwardsTextIteratorForTesting): Added.
+        * editing/TextIterator.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousBoundary): Added the code to extract the succeeding paragraph's content as context for ICU.
+        This fixes the bug that moving backwards with sentence granularity at the beginning of a line fails.
+        Limit the length of backwards iteration at the current position to avoid traversing backwards beyond
+        the current position, and fixed a bug that an early return for the text node was not taking the suffix length
+        into account when deciding whether next position resides in the starting container node or not.
+        (WebCore::startSentenceBoundary):
+        (WebCore::startOfSentence):
+        * testing/Internals.cpp:
+        (WebCore::Internals::rangeAsTextUsingBackwardsTextIterator): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2019-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow the MediaSource API to be enabled via website policy

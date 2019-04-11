@@ -1479,10 +1479,13 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
     // We can use a linefeed in place of a tab because this simple iterator is only used to
     // find boundaries, not actual content. A linefeed breaks words, sentences, and paragraphs.
     if (shouldEmitNewlineForNode(m_node, m_behavior & TextIteratorEmitsOriginalText) || shouldEmitNewlineAfterNode(*m_node) || shouldEmitTabBeforeNode(*m_node)) {
-        unsigned index = m_node->computeNodeIndex();
-        // The start of this emitted range is wrong. Ensuring correctness would require
-        // VisiblePositions and so would be slow. previousBoundary expects this.
-        emitCharacter('\n', *m_node->parentNode(), index + 1, index + 1);
+        if (m_lastCharacter != '\n') {
+            // Corresponds to the same check in TextIterator::exitNode.
+            unsigned index = m_node->computeNodeIndex();
+            // The start of this emitted range is wrong. Ensuring correctness would require
+            // VisiblePositions and so would be slow. previousBoundary expects this.
+            emitCharacter('\n', *m_node->parentNode(), index + 1, index + 1);
+        }
     }
     return true;
 }
@@ -2698,6 +2701,14 @@ String plainText(const Range* range, TextIteratorBehavior defaultBehavior, bool 
     if (!range)
         return emptyString();
     return plainText(range->startPosition(), range->endPosition(), defaultBehavior, isDisplayString);
+}
+
+String plainTextUsingBackwardsTextIteratorForTesting(const Range& range)
+{
+    String result;
+    for (SimplifiedBackwardsTextIterator backwardsIterator(range); !backwardsIterator.atEnd(); backwardsIterator.advance())
+        result.insert(backwardsIterator.text().toString(), 0);
+    return result;
 }
 
 String plainTextReplacingNoBreakSpace(const Range* range, TextIteratorBehavior defaultBehavior, bool isDisplayString)

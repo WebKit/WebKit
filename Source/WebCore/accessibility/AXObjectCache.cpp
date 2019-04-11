@@ -2473,7 +2473,8 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
     return characterOffset;
 }
 
-CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& characterOffset, BoundarySearchFunction searchFunction)
+// FIXME: Share code with the one in VisibleUnits.cpp.
+CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& characterOffset, BoundarySearchFunction searchFunction, NeedsContextAtParagraphStart needsContextAtParagraphStart)
 {
     if (characterOffset.isNull())
         return CharacterOffset();
@@ -2485,8 +2486,18 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     RefPtr<Range> searchRange = rangeForNodeContents(boundary);
     Vector<UChar, 1024> string;
     unsigned suffixLength = 0;
-    
-    if (requiresContextForWordBoundary(characterBefore(characterOffset))) {
+
+    if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && startCharacterOffsetOfParagraph(characterOffset).isEqual(characterOffset)) {
+        auto forwardsScanRange = boundary->document().createRange();
+        auto endOfCurrentParagraph = endCharacterOffsetOfParagraph(characterOffset);
+        if (!setRangeStartOrEndWithCharacterOffset(forwardsScanRange, characterOffset, true))
+            return { };
+        if (!setRangeStartOrEndWithCharacterOffset(forwardsScanRange, endOfCurrentParagraph, false))
+            return { };
+        for (TextIterator forwardsIterator(forwardsScanRange.ptr()); !forwardsIterator.atEnd(); forwardsIterator.advance())
+            append(string, forwardsIterator.text());
+        suffixLength = string.size();
+    } else if (requiresContextForWordBoundary(characterBefore(characterOffset))) {
         auto forwardsScanRange = boundary->document().createRange();
         if (forwardsScanRange->setEndAfter(*boundary).hasException())
             return { };
@@ -2513,15 +2524,17 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
     Node* nextSibling = node.nextSibling();
     if (&node != characterOffset.node && AccessibilityObject::replacedNodeNeedsCharacter(nextSibling))
         return startOrEndCharacterOffsetForRange(rangeForNodeContents(nextSibling), false);
-    
-    if ((node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
+
+    if ((!suffixLength && node.isTextNode() && static_cast<int>(next) <= node.maxCharacterOffset()) || (node.renderer() && node.renderer()->isBR() && !next)) {
         // The next variable contains a usable index into a text node
         if (node.isTextNode())
             return traverseToOffsetInRange(rangeForNodeContents(&node), next, TraverseOptionValidateOffset);
         return characterOffsetForNodeAndOffset(node, next, TraverseOptionIncludeStart);
     }
     
-    int characterCount = characterOffset.offset - (string.size() - suffixLength - next);
+    int characterCount = characterOffset.offset;
+    if (next < string.size() - suffixLength)
+        characterCount -= string.size() - suffixLength - next;
     // We don't want to go to the previous node if the node is at the start of a new line.
     if (characterCount < 0 && (characterOffsetNodeIsBR(characterOffset) || string[string.size() - suffixLength - 1] == '\n'))
         characterCount = 0;
@@ -2611,7 +2624,7 @@ CharacterOffset AXObjectCache::previousParagraphStartCharacterOffset(const Chara
 
 CharacterOffset AXObjectCache::startCharacterOffsetOfSentence(const CharacterOffset& characterOffset)
 {
-    return previousBoundary(characterOffset, startSentenceBoundary);
+    return previousBoundary(characterOffset, startSentenceBoundary, NeedsContextAtParagraphStart::Yes);
 }
 
 CharacterOffset AXObjectCache::endCharacterOffsetOfSentence(const CharacterOffset& characterOffset)

@@ -48,6 +48,8 @@ WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(Position start, Position en
 
 WEBCORE_EXPORT String plainText(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 WEBCORE_EXPORT String plainTextReplacingNoBreakSpace(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
+WEBCORE_EXPORT String plainTextUsingBackwardsTextIteratorForTesting(const Range&);
+
 Ref<Range> findPlainText(const Range&, const String&, FindOptions);
 WEBCORE_EXPORT Ref<Range> findClosestPlainText(const Range&, const String&, FindOptions, unsigned);
 WEBCORE_EXPORT bool hasAnyPlainText(const Range&, TextIteratorBehavior = TextIteratorDefaultBehavior);

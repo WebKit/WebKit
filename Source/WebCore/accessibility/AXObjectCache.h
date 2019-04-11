@@ -86,7 +86,7 @@ struct CharacterOffset {
     
     int remaining() const { return remainingOffset; }
     bool isNull() const { return !node; }
-    bool isEqual(CharacterOffset& other) const
+    bool isEqual(const CharacterOffset& other) const
     {
         if (isNull() || other.isNull())
             return false;
@@ -391,7 +391,9 @@ protected:
     UChar32 characterAfter(const CharacterOffset&);
     UChar32 characterBefore(const CharacterOffset&);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);
-    CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction);
+
+    enum class NeedsContextAtParagraphStart { Yes, No };
+    CharacterOffset previousBoundary(const CharacterOffset&, BoundarySearchFunction, NeedsContextAtParagraphStart = NeedsContextAtParagraphStart::No);
     CharacterOffset nextBoundary(const CharacterOffset&, BoundarySearchFunction);
     CharacterOffset startCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);
     CharacterOffset endCharacterOffsetOfWord(const CharacterOffset&, EWordSide = RightWordIfOnBoundary);

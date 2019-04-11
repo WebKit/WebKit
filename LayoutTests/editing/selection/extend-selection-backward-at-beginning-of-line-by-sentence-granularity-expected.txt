@@ -1,0 +1,13 @@
+This tests extending the selection backwards at the beginning of a line by sentence granularity. The first sentence should be selected.
+| "
+"
+| <div>
+|   "<#selection-focus>This is the first sentence"
+| "
+"
+| <div>
+|   id="target"
+|   <#selection-anchor>
+|   "Here is another one."
+| "
+"
