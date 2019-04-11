@@ -102,8 +102,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         this._recording.addEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
         this._recording.addEventListener(WI.TimelineRecording.Event.Unloaded, this._recordingUnloaded, this);
 
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
 
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, this._debuggerPaused, this);
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, this._debuggerResumed, this);
@@ -510,38 +509,41 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         }
     }
 
-    _capturingStarted(event)
+    _handleTimelineCapturingStateChanged(event)
     {
+        let {startTime, endTime} = event.data;
+
         this._updateProgressView();
 
-        let startTime = event.data.startTime;
-        if (!this._updating)
-            this._startUpdatingCurrentTime(startTime);
-        this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
-        this._exportButtonNavigationItem.enabled = false;
+        switch (WI.timelineManager.capturingState) {
+        case WI.TimelineManager.CapturingState.Active:
+            if (!this._updating)
+                this._startUpdatingCurrentTime(startTime);
 
-        // A discontinuity occurs when the recording is stopped and resumed at
-        // a future time. Capturing started signals the end of the current
-        // discontinuity, if one exists.
-        if (!isNaN(this._discontinuityStartTime)) {
-            this._recording.addDiscontinuity(this._discontinuityStartTime, startTime);
-            this._discontinuityStartTime = NaN;
+            this._clearTimelineNavigationItem.enabled = !this._recording.readonly;
+            this._exportButtonNavigationItem.enabled = false;
+
+            // A discontinuity occurs when the recording is stopped and resumed at
+            // a future time. Capturing started signals the end of the current
+            // discontinuity, if one exists.
+            if (!isNaN(this._discontinuityStartTime)) {
+                this._recording.addDiscontinuity(this._discontinuityStartTime, startTime);
+                this._discontinuityStartTime = NaN;
+            }
+            break;
+
+        case WI.TimelineManager.CapturingState.Inactive:
+            if (this._updating)
+                this._stopUpdatingCurrentTime();
+
+            if (this.currentTimelineView)
+                this._updateTimelineViewTimes(this.currentTimelineView);
+
+            this._discontinuityStartTime = endTime || this._currentTime;
+
+            this._exportButtonNavigationItem.enabled = this._recording.canExport();
+            break;
         }
-    }
-
-    _capturingStopped(event)
-    {
-        this._updateProgressView();
-
-        if (this._updating)
-            this._stopUpdatingCurrentTime();
-
-        if (this.currentTimelineView)
-            this._updateTimelineViewTimes(this.currentTimelineView);
-
-        this._discontinuityStartTime = event.data.endTime || this._currentTime;
-
-        this._exportButtonNavigationItem.enabled = this._recording.canExport();
     }
 
     _debuggerPaused(event)
@@ -731,8 +733,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
     {
         console.assert(!this._updating);
 
-        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
-        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
+        WI.timelineManager.removeEventListener(null, null, this);
     }
 
     _timeRangeSelectionChanged(event)

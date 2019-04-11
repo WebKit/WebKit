@@ -37,18 +37,18 @@ WI.ScriptProfilerObserver = class ScriptProfilerObserver
         WI.timelineManager.scriptProfilerTrackingUpdated(event);
     }
 
-    trackingComplete(samples)
+    trackingComplete(timestamp, samples)
     {
-        WI.timelineManager.scriptProfilerTrackingCompleted(samples);
+        WI.timelineManager.scriptProfilerTrackingCompleted(timestamp, samples);
     }
 
     programmaticCaptureStarted()
     {
-        WI.timelineManager.scriptProfilerProgrammaticCaptureStarted();
+        // COMPATIBILITY (iOS 12.2): ScriptProfiler.programmaticCaptureStarted was removed after iOS 12.2.
     }
 
     programmaticCaptureStopped()
     {
-        WI.timelineManager.scriptProfilerProgrammaticCaptureStopped();
+        // COMPATIBILITY (iOS 12.2): ScriptProfiler.programmaticCaptureStopped was removed after iOS 12.2.
     }
 };

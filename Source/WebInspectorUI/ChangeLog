@@ -1,3 +1,124 @@
+2019-04-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: can't reliably stop/start a recording
+        https://bugs.webkit.org/show_bug.cgi?id=196778
+        <rdar://problem/47606798>
+
+        Reviewed by Timothy Hatcher.
+
+        Rather than have a binary state of capturing/not-capturing, we should use a four state:
+         1. inactive (when the backend has stopped capturing)
+         2. starting (when the frontend requests capturing to start)
+         3. active (when the backend has started capturing)
+         4. stopping (when the frontend requests capturing to stop)
+
+        Capturing is considered "on" when not in an "inactive" state. Prevent the frontend from
+        starting/stopping capturing unless we're in a "stable" ("inactive" or "active") state, not a
+        "transition" ("starting" or "stopping") state.
+
+        One "side effect" of this change is that since the capturing is considered active until the
+        backend has stopped capturing, we will continue to process records in the frontend even if
+        the frontend has requested to stop capturing. <https://webkit.org/b/152904>
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager):
+        (WI.TimelineManager.prototype.get capturingState): Added.
+        (WI.TimelineManager.prototype.reset):
+        (WI.TimelineManager.prototype.get activeRecording):
+        (WI.TimelineManager.prototype.set autoCaptureOnPageLoad):
+        (WI.TimelineManager.prototype.isCapturing):
+        (WI.TimelineManager.prototype.startCapturing):
+        (WI.TimelineManager.prototype.stopCapturing):
+        (WI.TimelineManager.prototype.processJSON):
+        (WI.TimelineManager.prototype.capturingStarted):
+        (WI.TimelineManager.prototype.capturingStopped):
+        (WI.TimelineManager.prototype.autoCaptureStarted):
+        (WI.TimelineManager.prototype.eventRecorded):
+        (WI.TimelineManager.prototype.pageDOMContentLoadedEventFired):
+        (WI.TimelineManager.prototype.pageLoadEventFired):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingUpdated):
+        (WI.TimelineManager.prototype.cpuProfilerTrackingCompleted):
+        (WI.TimelineManager.prototype.memoryTrackingUpdated):
+        (WI.TimelineManager.prototype.memoryTrackingCompleted):
+        (WI.TimelineManager.prototype.heapTrackingStarted):
+        (WI.TimelineManager.prototype.heapTrackingCompleted):
+        (WI.TimelineManager.prototype.heapSnapshotAdded):
+        (WI.TimelineManager.prototype._updateCapturingState): Added.
+        (WI.TimelineManager.prototype._processRecord):
+        (WI.TimelineManager.prototype._processEvent):
+        (WI.TimelineManager.prototype._loadNewRecording):
+        (WI.TimelineManager.prototype._addRecord):
+        (WI.TimelineManager.prototype._attemptAutoCapturingForFrame):
+        (WI.TimelineManager.prototype._legacyAttemptStartAutoCapturingForFrame):
+        (WI.TimelineManager.prototype._stopAutoRecordingSoon):
+        (WI.TimelineManager.prototype._resetAutoRecordingDeadTimeTimeout):
+        (WI.TimelineManager.prototype._resourceWasAdded):
+        (WI.TimelineManager.prototype._garbageCollected):
+        (WI.TimelineManager.prototype._memoryPressure):
+        (WI.TimelineManager.prototype._handleTimelinesAutoStopSettingChanged):
+        (WI.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        (WI.TimelineManager.prototype._handleDOMNodeDidFireEvent):
+        (WI.TimelineManager.prototype._handleDOMNodeLowPowerChanged):
+        (WI.TimelineManager.prototype.unloadRecording): Deleted.
+        (WI.TimelineManager.prototype.programmaticCaptureStarted): Deleted.
+        (WI.TimelineManager.prototype.programmaticCaptureStopped): Deleted.
+        (WI.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStarted): Deleted.
+        (WI.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStopped): Deleted.
+
+        * UserInterface/Protocol/ScriptProfilerObserver.js:
+        (WI.ScriptProfilerObserver.prototype.trackingComplete):
+        (WI.ScriptProfilerObserver.prototype.programmaticCaptureStarted):
+        (WI.ScriptProfilerObserver.prototype.programmaticCaptureStopped):
+        * UserInterface/Protocol/TimelineObserver.js:
+        (WI.TimelineObserver.prototype.programmaticCaptureStarted):
+        (WI.TimelineObserver.prototype.programmaticCaptureStopped):
+        It is possible to determine when programmatic capturing starts/stops in the frontend based
+        on the state when the backend causes the state to change, such as if the state is "inactive"
+        when the frontend is told that the backend has started capturing.
+
+        * UserInterface/Protocol/CPUProfilerObserver.js:
+        (WI.CPUProfilerObserver.prototype.trackingComplete):
+        * UserInterface/Protocol/MemoryObserver.js:
+        (WI.MemoryObserver.prototype.trackingComplete):
+        Send an end timestamp to match other instruments.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager):
+        (WI.DebuggerManager.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.DebuggerManager.prototype._timelineCapturingWillStart): Deleted.
+        (WI.DebuggerManager.prototype._timelineCapturingStopped): Deleted.
+        * UserInterface/Models/DefaultDashboard.js:
+        (WI.DefaultDashboard):
+        (WI.DefaultDashboard.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.DefaultDashboard.prototype._capturingStopped): Deleted.
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel):
+        (WI.DebuggerSidebarPanel.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.DebuggerSidebarPanel.prototype._timelineCapturingWillStart): Deleted.
+        (WI.DebuggerSidebarPanel.prototype._timelineCapturingStopped): Deleted.
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel):
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTimelineCapturingWillStart): Deleted.
+        (WI.SourcesNavigationSidebarPanel.prototype._handleTimelineCapturingStopped): Deleted.
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineOverview):
+        (WI.TimelineOverview.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.TimelineOverview.prototype._capturingStarted): Deleted.
+        (WI.TimelineOverview.prototype._capturingStopped): Deleted.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WI.TimelineRecordingContentView):
+        (WI.TimelineRecordingContentView.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.TimelineRecordingContentView.prototype._recordingUnloaded):
+        (WI.TimelineRecordingContentView.prototype._capturingStarted): Deleted.
+        (WI.TimelineRecordingContentView.prototype._capturingStopped): Deleted.
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+        (WI.TimelineTabContentView.prototype._handleTimelineCapturingStateChanged): Added.
+        (WI.TimelineTabContentView.prototype._capturingStartedOrStopped): Deleted.
+        Use the new single event for all Timelines capture state changes.
+        Prevent the record button from being clicked when capturing is in a transition state.
+
 2019-04-11  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r244158.

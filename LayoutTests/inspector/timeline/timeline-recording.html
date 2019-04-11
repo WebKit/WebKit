@@ -13,6 +13,18 @@ function test()
         name: "TimelineRecording.Basic",
         description: "Make a basic Timeline recording.",
         async test() {
+            async function awaitCapturingState(capturingState) {
+                return new Promise((resolve, reject) => {
+                    let listener = WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+                        if (WI.timelineManager.capturingState !== capturingState)
+                            return;
+
+                        WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, listener);
+                        resolve();
+                    });
+                });
+            }
+
             let recording = WI.timelineManager.activeRecording;
 
             InspectorTest.log("Loaded");
@@ -25,7 +37,9 @@ function test()
 
             InspectorTest.log("Start");
             WI.timelineManager.startCapturing();
-            await WI.timelineManager.awaitEvent(WI.TimelineManager.Event.CapturingStarted);
+
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Active);
+
             InspectorTest.expectTrue(WI.timelineManager.isCapturing(), "TimelineManager should be capturing.");
             InspectorTest.expectEqual(WI.timelineManager.activeRecording, recording, "TimelineManager active recording should not have changed.");
             InspectorTest.expectTrue(recording.capturing, "TimelineRecording should be capturing.");
@@ -39,6 +53,9 @@ function test()
 
             InspectorTest.log("Stop");
             WI.timelineManager.stopCapturing();
+
+            await awaitCapturingState(WI.TimelineManager.CapturingState.Inactive);
+
             InspectorTest.expectFalse(WI.timelineManager.isCapturing(), "TimelineManager should not be capturing.");
             InspectorTest.expectFalse(recording.capturing, "TimelineRecording should not be capturing.");
             InspectorTest.expectFalse(recording.readonly, "TimelineRecording should not be readonly.");

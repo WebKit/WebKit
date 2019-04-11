@@ -7,20 +7,20 @@ Tests programmatic capture (console.profile/profileEnd) automatically starts ins
 == Running test suite: Timeline.setInstruments.programmatic-capture
 -- Running test case: NoInstrumentsProgrammaticCapture
 PASS: Should not be an error setting valid instruments.
-PASS: Timeline.programmaticCaptureStarted
 PASS: ScriptProfiler.startTracking
-PASS: Timeline.programmaticCaptureStopped
+PASS: Timeline.recordingStarted
+PASS: Timeline.recordingStopped
 
 -- Running test case: MultipleInstrumentsProgrammaticCapture
 PASS: Should not be an error setting valid instruments.
-PASS: Timeline.programmaticCaptureStarted
 PASS: ScriptProfiler.startTracking
+PASS: Timeline.recordingStarted
 PASS: Heap.trackingStart
-PASS: Timeline.programmaticCaptureStopped
+PASS: Timeline.recordingStopped
 
 -- Running test case: NoInstrumentsProgrammaticCaptureAgain
 PASS: Should not be an error setting valid instruments.
-PASS: Timeline.programmaticCaptureStarted
 PASS: ScriptProfiler.startTracking
-PASS: Timeline.programmaticCaptureStopped
+PASS: Timeline.recordingStarted
+PASS: Timeline.recordingStopped
 

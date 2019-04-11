@@ -14,16 +14,16 @@ function test()
     let suite = ProtocolTest.createAsyncSuite("Timeline.setInstruments.programmatic-capture");
 
     let heapExpected = false;
-    let programmaticCaptureStopped = null;
+    let captureStopped = null;
 
     InspectorProtocol.sendCommand("Heap.enable");
 
-    InspectorProtocol.eventHandler["Timeline.programmaticCaptureStarted"] = () => {
-        ProtocolTest.pass("Timeline.programmaticCaptureStarted");
+    InspectorProtocol.eventHandler["Timeline.recordingStarted"] = () => {
+        ProtocolTest.pass("Timeline.recordingStarted");
     };
-    InspectorProtocol.eventHandler["Timeline.programmaticCaptureStopped"] = () => {
-        ProtocolTest.pass("Timeline.programmaticCaptureStopped");
-        programmaticCaptureStopped();
+    InspectorProtocol.eventHandler["Timeline.recordingStopped"] = () => {
+        ProtocolTest.pass("Timeline.recordingStopped");
+        captureStopped();
     };
 
     InspectorProtocol.eventHandler["ScriptProfiler.trackingStart"] = () => {
@@ -41,7 +41,7 @@ function test()
         name: "NoInstrumentsProgrammaticCapture",
         test(resolve, reject) {
             heapExpected = false;
-            programmaticCaptureStopped = resolve;
+            captureStopped = resolve;
 
             InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: []}, (messageObject) => {
                 ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
@@ -54,7 +54,7 @@ function test()
         name: "MultipleInstrumentsProgrammaticCapture",
         test(resolve, reject) {
             heapExpected = true;
-            programmaticCaptureStopped = resolve;
+            captureStopped = resolve;
 
             InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: ["ScriptProfiler", "Heap"]}, (messageObject) => {
                 ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");
@@ -67,7 +67,7 @@ function test()
         name: "NoInstrumentsProgrammaticCaptureAgain",
         test(resolve, reject) {
             heapExpected = true;
-            programmaticCaptureStopped = resolve;
+            captureStopped = resolve;
 
             InspectorProtocol.sendCommand("Timeline.setInstruments", {instruments: []}, (messageObject) => {
                 ProtocolTest.expectThat(!messageObject.error, "Should not be an error setting valid instruments.");

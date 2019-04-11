@@ -77,11 +77,11 @@ function test() {
                     ProtocolTest.log(JSON.stringify(event.params.record, replacer, 2));
                 });
 
-                handleEvent("Timeline.programmaticCaptureStarted", () => {
+                handleEvent("Timeline.recordingStarted", () => {
                     ProtocolTest.pass("Capturing started.");
                 });
 
-                handleEvent("Timeline.programmaticCaptureStopped", () => {
+                handleEvent("Timeline.recordingStopped", () => {
                     ProtocolTest.pass("Capturing stopped.");
 
                     for (let eventName of eventNames)

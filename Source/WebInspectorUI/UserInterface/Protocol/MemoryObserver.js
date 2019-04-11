@@ -42,8 +42,8 @@ WI.MemoryObserver = class MemoryObserver
         WI.timelineManager.memoryTrackingUpdated(event);
     }
 
-    trackingComplete()
+    trackingComplete(timestamp)
     {
-        WI.timelineManager.memoryTrackingCompleted();
+        WI.timelineManager.memoryTrackingCompleted(timestamp);
     }
 };

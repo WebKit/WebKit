@@ -60,7 +60,10 @@ function test()
     }
 
     // When timeline capturing stops, inspect the resulting timeline records for a profile.
-    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, function(event) {
+    WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, (event) => {
+        if (WI.timelineManager.capturingState !== WI.TimelineManager.CapturingState.Inactive)
+            return;
+
         var recording = WI.timelineManager.activeRecording;
         var scriptTimeline = recording.timelines.get(WI.TimelineRecord.Type.Script);
         console.assert(scriptTimeline);

@@ -1,3 +1,20 @@
+2019-04-11  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Timelines: can't reliably stop/start a recording
+        https://bugs.webkit.org/show_bug.cgi?id=196778
+        <rdar://problem/47606798>
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/timeline/debugger-paused-while-recording.html:
+        * inspector/timeline/exception-in-injected-script-while-recording.html:
+        * inspector/timeline/line-column.html:
+        * inspector/timeline/recording-start-stop-timestamps.html:
+        * inspector/timeline/resources/timeline-event-utilities.js:
+        * inspector/timeline/setInstruments-programmatic-capture.html:
+        * inspector/timeline/setInstruments-programmatic-capture-expected.txt:
+        * inspector/timeline/timeline-recording.html:
+
 2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Layout test accessibility/aria-hidden-false-works-in-subtrees.html fails after r184890

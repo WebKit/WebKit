@@ -92,7 +92,7 @@ void InspectorMemoryAgent::stopTracking(ErrorString&)
 
     m_tracking = false;
 
-    m_frontendDispatcher->trackingComplete();
+    m_frontendDispatcher->trackingComplete(m_environment.executionStopwatch()->elapsedTime().seconds());
 }
 
 void InspectorMemoryAgent::didHandleMemoryPressure(Critical critical)
