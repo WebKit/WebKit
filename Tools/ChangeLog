@@ -1,3 +1,7 @@
+2019-04-11  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Revert r244165. rdar://problem/49788895
+
 2019-04-10  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r243841. rdar://problem/49725678
