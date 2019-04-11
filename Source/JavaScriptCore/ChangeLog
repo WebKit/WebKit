@@ -1,3 +1,17 @@
+2019-04-10  Saam Barati  <sbarati@apple.com>
+
+        ArithSub over Int52 has shouldCheckOverflow as always true
+        https://bugs.webkit.org/show_bug.cgi?id=196796
+
+        Reviewed by Yusuke Suzuki.
+
+        AI was checking for ArithSub over Int52 if !shouldCheckOverflow. However,
+        shouldCheckOverflow is always true, so !shouldCheckOverflow is always
+        false. We shouldn't check something we assert against.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2019-04-10  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Specify byte order clearly on Remote Inspector Protocol

@@ -763,7 +763,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Int52RepUse:
             if (left && right && left.isAnyInt() && right.isAnyInt()) {
                 JSValue result = jsNumber(left.asAnyInt() - right.asAnyInt());
-                if (result.isAnyInt() || !shouldCheckOverflow(node->arithMode())) {
+                if (result.isAnyInt()) {
                     setConstant(node, result);
                     break;
                 }
