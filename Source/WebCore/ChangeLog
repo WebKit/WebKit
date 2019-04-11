@@ -1,3 +1,22 @@
+2019-04-11  Dean Jackson  <dino@apple.com>
+
+        Extract UTI mapping and allow for additions
+        https://bugs.webkit.org/show_bug.cgi?id=196822
+        <rdar://problem/49822339>
+
+        Reviewed by Tim Horton.
+
+        Add an ADDITIONAL_SYSTEM_PREVIEW_TYPES macro to the list
+        of accepted MIME types. And add a new helper to map
+        MIME types to UTI types when the system was unable to
+        find an existing type.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::systemPreviewMIMETypes):
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::UTIFromUnknownMIMEType):
+        (WebCore::UTIFromMIMETypeCachePolicy::createValueForKey):
+
 2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Moving backwards by word granularity does not work if the previous line was inside another block element

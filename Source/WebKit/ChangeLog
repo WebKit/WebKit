@@ -1,3 +1,19 @@
+2019-04-11  Dean Jackson  <dino@apple.com>
+
+        Extract UTI mapping and allow for additions
+        https://bugs.webkit.org/show_bug.cgi?id=196822
+        <rdar://problem/49822339>
+
+        Reviewed by Tim Horton.
+
+        Use the new helper to map MIME type to UTI.
+
+        * UIProcess/Cocoa/SystemPreviewControllerCocoa.mm:
+        (-[_WKPreviewControllerDataSource previewController:previewItemAtIndex:]):
+        * UIProcess/ios/WKSystemPreviewView.mm:
+        (getUTIForSystemPreviewMIMEType):
+
+
 2019-04-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION (r244182): RemoteLayerTreeDrawingArea::flushLayers() should not be reentrant

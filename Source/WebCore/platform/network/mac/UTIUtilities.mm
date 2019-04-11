@@ -33,6 +33,12 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/AdditionalUTIMappings.h>
+#else
+#define ADDITIONAL_UTI_MAPPINGS
+#endif
+
 namespace WebCore {
 
 String MIMETypeFromUTI(const String& uti)
@@ -78,11 +84,42 @@ String MIMETypeFromUTITree(const String& uti)
     return String();
 }
 
+static String UTIFromUnknownMIMEType(const String& mimeType)
+{
+    static const auto map = makeNeverDestroyed([] {
+        struct TypeExtensionPair {
+            ASCIILiteral type;
+            ASCIILiteral uti;
+        };
+
+        static const TypeExtensionPair pairs[] = {
+            { "model/vnd.usdz+zip"_s, "com.pixar.universal-scene-description-mobile"_s },
+            { "model/usd"_s, "com.pixar.universal-scene-description-mobile"_s },
+            { "model/vnd.pixar.usd"_s, "com.pixar.universal-scene-description-mobile"_s },
+            ADDITIONAL_UTI_MAPPINGS
+        };
+
+        HashMap<String, String, ASCIICaseInsensitiveHash> map;
+        for (auto& pair : pairs)
+            map.add(pair.type, pair.uti);
+        return map;
+    }());
+
+    auto mapEntry = map.get().find(mimeType);
+    if (mapEntry == map.get().end())
+        return emptyString();
+
+    return mapEntry->value;
+}
+
 struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, String> {
 public:
     static String createValueForKey(const String& key)
     {
-        return String(adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, key.createCFString().get(), 0)).get());
+        auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, key.createCFString().get(), 0));
+        if (type)
+            return String(type.get());
+        return UTIFromUnknownMIMEType(key);
     }
 };
 

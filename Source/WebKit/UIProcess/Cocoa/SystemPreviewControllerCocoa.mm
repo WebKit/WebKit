@@ -34,6 +34,7 @@
 #import <QuickLook/QuickLook.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/UTIUtilities.h>
 #import <pal/ios/QuickLookSoftLink.h>
 #import <pal/spi/ios/QuickLookSPI.h>
 #import <wtf/WeakObjCPtr.h>
@@ -81,9 +82,7 @@
     _itemProvider = adoptNS([[NSItemProvider alloc] init]);
     // FIXME: We are launching the preview controller before getting a response from the resource, which
     // means we don't actually know the real MIME type yet.
-    // FIXME: At the moment we only have one supported UTI, but if we start supporting more types,
-    // then we'll need a table.
-    static NSString *contentType = (__bridge NSString *) UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, CFSTR("usdz"), nil);
+    NSString *contentType = WebCore::UTIFromMIMEType("model/vnd.usdz+zip"_s);
 
     _item = adoptNS([PAL::allocQLItemInstance() initWithPreviewItemProvider:_itemProvider.get() contentType:contentType previewTitle:@"Preview" fileSize:@(0)]);
     [_item setUseLoadingTimeout:NO];
