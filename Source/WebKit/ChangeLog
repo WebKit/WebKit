@@ -1,3 +1,18 @@
+2019-04-11  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION: changing iPad orientation on blogger.com crashes under RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations()
+        https://bugs.webkit.org/show_bug.cgi?id=196813
+        <rdar://problem/49393264>
+
+        Reviewed by Simon Fraser.
+
+        No test, can't repro.
+
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations):
+
+        Null check the nodes.
+
 2019-04-10  Chris Dumez  <cdumez@apple.com>
 
         Regression(r244144) ProcessSwap.ReuseSuspendedProcessLoadHTMLString API test is flaky

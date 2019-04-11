@@ -131,15 +131,26 @@ void RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations(const
     // To do overlap hit testing correctly we tell layers about such relations.
     for (auto positionedNodeID : m_scrollingTree->positionedNodesWithRelatedOverflow()) {
         auto* positionedNode = downcast<ScrollingTreePositionedNode>(m_scrollingTree->nodeForID(positionedNodeID));
-        auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
-
+        if (!positionedNode) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
         Vector<GraphicsLayer::PlatformLayerID> scrollContainerLayerIDs;
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
             auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(m_scrollingTree->nodeForID(overflowNodeID));
+            if (!overflowNode) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
             scrollContainerLayerIDs.append(RemoteLayerTreeNode::layerID(overflowNode->scrollContainerLayer()));
         }
 
+        auto* positionedLayerNode = RemoteLayerTreeNode::forCALayer(positionedNode->layer());
+        if (!positionedLayerNode) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
         positionedLayerNode->setRelatedScrollContainerBehaviorAndIDs(positionedNode->scrollPositioningBehavior(), WTFMove(scrollContainerLayerIDs));
 
         m_layersWithScrollingRelations.add(positionedLayerNode->layerID());
