@@ -1,3 +1,24 @@
+2019-04-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Use a bundled vswhere.exe instead of downloading by update-vswhere.py
+        https://bugs.webkit.org/show_bug.cgi?id=196760
+
+        Reviewed by Don Olmstead.
+
+        vswhere.exe has been bundled since Visual Studio 2017 version
+        15.2. We shouldn't download vswhere.exe.
+
+        * Scripts/build-jsc: Do not call update-vswhere.py.
+        * Scripts/build-webkit: Ditto.
+        * Scripts/update-vswhere.py: Removed.
+        * Scripts/webkitdirs.pm:
+        (requireModulesForVSWhere): Deleted.
+        (pickCurrentVisualStudioInstallation): Deleted.
+        (visualStudioInstallDirVSWhere): Return the latest installed VS
+        installation path by using the bundled vswhere.exe.
+        (setupCygwinEnv): Removed a unused variable $visualStudioPath.
+        (visualStudioInstallDirFallback): Removed.
+
 2019-04-10  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] PrintConfiguration should display Xcode version instead of SDKVersion
