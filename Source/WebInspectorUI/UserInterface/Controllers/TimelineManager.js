@@ -582,10 +582,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
     {
         // Called from WI.HeapAllocationsInstrument.
 
-        console.assert(this.isCapturing());
-        if (!this.isCapturing())
-            return;
-
         this._addRecord(new WI.HeapAllocationsTimelineRecord(timestamp, snapshot));
     }
 
@@ -860,8 +856,6 @@ WI.TimelineManager = class TimelineManager extends WI.Object
 
     _addRecord(record)
     {
-        console.assert(this.isCapturing());
-
         this._activeRecording.addRecord(record);
 
         // Only worry about dead time after the load event.

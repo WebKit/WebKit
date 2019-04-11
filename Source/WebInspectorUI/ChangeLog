@@ -1,5 +1,19 @@
 2019-04-11  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(r244195): Timelines: unable to take heap snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=196832
+        <rdar://problem/49828862>
+
+        Reviewed by Simon Fraser.
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.heapSnapshotAdded):
+        (WI.TimelineManager.prototype._addRecord):
+        Heap snapshots can be taken outside of a timeline recording, so remove the early return (and
+        assertion) that checks for an active recording before adding the heap snapshot record.
+
+2019-04-11  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Timelines: can't reliably stop/start a recording
         https://bugs.webkit.org/show_bug.cgi?id=196778
         <rdar://problem/47606798>
