@@ -34,6 +34,7 @@
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DOMWrapperWorld.h>
+#include <WebCore/FloatRect.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -245,6 +246,11 @@ void WebInspectorUI::changeAttachedWindowHeight(unsigned height)
 void WebInspectorUI::changeAttachedWindowWidth(unsigned width)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_inspectedPageIdentifier);
+}
+
+void WebInspectorUI::changeSheetRect(const FloatRect& rect)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorProxy::SetSheetRect(rect), m_inspectedPageIdentifier);
 }
 
 void WebInspectorUI::openInNewTab(const String& url)

@@ -582,6 +582,9 @@ WI.contentLoaded = function()
         InspectorFrontendAPI.loadCompleted();
     });
 
+    let mainElementRect = document.getElementById("main").getBoundingClientRect();
+    InspectorFrontendHost.setSheetRect(mainElementRect.x, mainElementRect.y, mainElementRect.width, mainElementRect.height);
+
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
     InspectorFrontendHost.loaded();

@@ -444,6 +444,11 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     webkitWebViewBaseSetInspectorViewSize(WEBKIT_WEB_VIEW_BASE(inspectedPage()->viewWidget()), width);
 }
 
+void WebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformStartWindowDrag()
 {
     notImplemented();

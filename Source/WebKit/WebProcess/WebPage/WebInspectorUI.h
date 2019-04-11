@@ -33,6 +33,7 @@
 namespace WebCore {
 class InspectorController;
 class CertificateInfo;
+class FloatRect;
 }
 
 namespace WebKit {
@@ -100,6 +101,8 @@ public:
     void requestSetDockSide(DockSide) override;
     void changeAttachedWindowHeight(unsigned) override;
     void changeAttachedWindowWidth(unsigned) override;
+
+    void changeSheetRect(const WebCore::FloatRect&) override;
 
     void openInNewTab(const String& url) override;
 

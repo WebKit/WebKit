@@ -103,6 +103,10 @@ void RemoteWebInspectorProxy::platformAppend(const String&, const String&)
 {
 }
 
+void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect&)
+{
+}
+
 void RemoteWebInspectorProxy::platformStartWindowDrag()
 {
 }

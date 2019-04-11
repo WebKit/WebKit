@@ -37,6 +37,8 @@
 
 namespace WebCore {
 
+class FloatRect;
+
 class InspectorFrontendClient {
 public:
     enum class DockSide {
@@ -69,6 +71,8 @@ public:
     WEBCORE_EXPORT virtual void requestSetDockSide(DockSide) = 0;
     WEBCORE_EXPORT virtual void changeAttachedWindowHeight(unsigned) = 0;
     WEBCORE_EXPORT virtual void changeAttachedWindowWidth(unsigned) = 0;
+
+    WEBCORE_EXPORT virtual void changeSheetRect(const FloatRect&) = 0;
 
     WEBCORE_EXPORT virtual void openInNewTab(const String& url) = 0;
 

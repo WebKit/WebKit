@@ -1,5 +1,30 @@
 2019-04-10  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: save sheet should be anchored underneath the tab bar when detached
+        https://bugs.webkit.org/show_bug.cgi?id=196722
+        <rdar://problem/49613280>
+
+        Reviewed by Timothy Hatcher.
+
+        No web observable change.
+
+        * inspector/InspectorFrontendClient.h:
+        (WebCore::InspectorFrontendClient::changeSheetRect): Added.
+
+        * inspector/InspectorFrontendClientLocal.h:
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::changeSheetRect): Added.
+
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setSheetRect): Added.
+
+        * testing/Internals.cpp:
+        (WebCore::InspectorStubFrontend::setSheetRect): Added.
+
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Inspector: lazily create the agent
         https://bugs.webkit.org/show_bug.cgi?id=195971
         <rdar://problem/49039645>

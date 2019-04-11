@@ -48,5 +48,7 @@ messages -> WebInspectorProxy {
     SetAttachedWindowHeight(unsigned height)
     SetAttachedWindowWidth(unsigned width)
 
+    SetSheetRect(WebCore::FloatRect rect)
+
     StartWindowDrag()
 }

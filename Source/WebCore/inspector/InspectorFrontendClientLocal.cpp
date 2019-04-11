@@ -223,6 +223,11 @@ void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
     setAttachedWindowWidth(attachedWidth);
 }
 
+void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
+{
+    setSheetRect(rect);
+}
+
 void InspectorFrontendClientLocal::openInNewTab(const String& url)
 {
     UserGestureIndicator indicator { ProcessingUserGesture };

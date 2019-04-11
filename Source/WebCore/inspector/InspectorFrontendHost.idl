@@ -53,6 +53,8 @@
     void setAttachedWindowHeight(unsigned long height);
     void setAttachedWindowWidth(unsigned long width);
 
+    void setSheetRect(unrestricted float x, unrestricted float y, unsigned long width, unsigned long height);
+
     void startWindowDrag();
     void moveWindowBy(unrestricted float x, unrestricted float y);
 

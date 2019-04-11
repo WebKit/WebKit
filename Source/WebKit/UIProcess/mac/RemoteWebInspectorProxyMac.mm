@@ -43,13 +43,20 @@
 #import <WebCore/CertificateInfo.h>
 #import <wtf/text/Base64.h>
 
-@interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <WKInspectorViewControllerDelegate> {
+@interface WKRemoteWebInspectorProxyObjCAdapter : NSObject <NSWindowDelegate, WKInspectorViewControllerDelegate> {
     WebKit::RemoteWebInspectorProxy* _inspectorProxy;
 }
 - (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy;
 @end
 
 @implementation WKRemoteWebInspectorProxyObjCAdapter
+
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    if (_inspectorProxy)
+        return NSMakeRect(0, _inspectorProxy->sheetRect().height(), _inspectorProxy->sheetRect().width(), 0);
+    return rect;
+}
 
 - (instancetype)initWithRemoteWebInspectorProxy:(WebKit::RemoteWebInspectorProxy*)inspectorProxy
 {
@@ -89,6 +96,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
     [m_inspectorView.get() setDelegate:m_objCAdapter.get()];
 
     m_window = WebInspectorProxy::createFrontendWindow(NSZeroRect, WebInspectorProxy::InspectionTargetType::Remote);
+    [m_window setDelegate:m_objCAdapter.get()];
     [m_window setFrameAutosaveName:@"WKRemoteWebInspectorWindowFrame"];
 
     NSView *contentView = m_window.get().contentView;
@@ -205,6 +213,11 @@ void RemoteWebInspectorProxy::platformAppend(const String& suggestedURL, const S
 
     WebPageProxy* inspectorPage = webView()->_page.get();
     inspectorPage->process().send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]), inspectorPage->pageID());
+}
+
+void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
+{
+    m_sheetRect = rect;
 }
 
 void RemoteWebInspectorProxy::platformStartWindowDrag()

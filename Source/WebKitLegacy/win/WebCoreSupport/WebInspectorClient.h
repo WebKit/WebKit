@@ -108,6 +108,8 @@ public:
     void setAttachedWindowHeight(unsigned) override;
     void setAttachedWindowWidth(unsigned) override;
 
+    void setSheetRect(const WebCore::FloatRect&) override;
+
     void inspectedURLChanged(const WTF::String& newURL) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
 

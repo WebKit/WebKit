@@ -52,7 +52,7 @@ static const Seconds webViewCloseTimeout { 1_min };
 
 static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserverContext;
 
-@interface WKWebInspectorProxyObjCAdapter () <WKInspectorViewControllerDelegate>
+@interface WKWebInspectorProxyObjCAdapter () <NSWindowDelegate, WKInspectorViewControllerDelegate>
 
 - (instancetype)initWithWebInspectorProxy:(WebKit::WebInspectorProxy*)inspectorProxy;
 - (void)invalidate;
@@ -91,6 +91,13 @@ static void* kWindowContentLayoutObserverContext = &kWindowContentLayoutObserver
 - (void)invalidate
 {
     _inspectorProxy = nullptr;
+}
+
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    if (_inspectorProxy)
+        return NSMakeRect(0, _inspectorProxy->sheetRect().height(), _inspectorProxy->sheetRect().width(), 0);
+    return rect;
 }
 
 - (void)windowDidMove:(NSNotification *)notification
@@ -712,6 +719,11 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
         return;
 
     inspectedViewFrameDidChange(width);
+}
+
+void WebInspectorProxy::platformSetSheetRect(const FloatRect& rect)
+{
+    m_sheetRect = rect;
 }
 
 void WebInspectorProxy::platformStartWindowDrag()

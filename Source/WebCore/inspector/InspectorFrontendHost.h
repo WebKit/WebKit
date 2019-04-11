@@ -72,6 +72,8 @@ public:
     void setAttachedWindowHeight(unsigned);
     void setAttachedWindowWidth(unsigned);
 
+    void setSheetRect(float x, float y, unsigned width, unsigned height);
+
     void startWindowDrag();
     void moveWindowBy(float x, float y) const;
 

@@ -134,6 +134,11 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
+void WebInspectorProxy::platformSetSheetRect(const FloatRect&)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformStartWindowDrag()
 {
     notImplemented();

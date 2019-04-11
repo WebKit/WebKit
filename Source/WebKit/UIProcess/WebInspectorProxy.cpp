@@ -325,6 +325,11 @@ void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
     platformSetAttachedWindowWidth(width);
 }
 
+void WebInspectorProxy::setSheetRect(const FloatRect& rect)
+{
+    platformSetSheetRect(rect);
+}
+
 void WebInspectorProxy::startWindowDrag()
 {
     platformStartWindowDrag();
@@ -685,6 +690,11 @@ void WebInspectorProxy::platformDetach()
 }
 
 void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::platformSetSheetRect(const FloatRect&)
 {
     notImplemented();
 }

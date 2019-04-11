@@ -358,6 +358,11 @@ void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned width)
     ::SetWindowPos(m_inspectedViewWindow, 0, windowInfo.left, windowInfo.top, windowInfo.parentWidth - windowInfo.left, windowInfo.parentHeight - windowInfo.top, SWP_NOZORDER);
 }
 
+void WebInspectorProxy::platformSetSheetRect(const WebCore::FloatRect&)
+{
+    notImplemented();
+}
+
 bool WebInspectorProxy::platformIsFront()
 {
     notImplemented();

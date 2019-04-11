@@ -117,6 +117,11 @@ void RemoteWebInspectorProxy::append(const String& suggestedURL, const String& c
     platformAppend(suggestedURL, content);
 }
 
+void RemoteWebInspectorProxy::setSheetRect(const FloatRect& rect)
+{
+    platformSetSheetRect(rect);
+}
+
 void RemoteWebInspectorProxy::startWindowDrag()
 {
     platformStartWindowDrag();
@@ -175,6 +180,7 @@ WebPageProxy* RemoteWebInspectorProxy::platformCreateFrontendPageAndWindow()
 void RemoteWebInspectorProxy::platformBringToFront() { }
 void RemoteWebInspectorProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorProxy::platformAppend(const String&, const String&) { }
+void RemoteWebInspectorProxy::platformSetSheetRect(const FloatRect&) { }
 void RemoteWebInspectorProxy::platformStartWindowDrag() { }
 void RemoteWebInspectorProxy::platformOpenInNewTab(const String&) { }
 void RemoteWebInspectorProxy::platformShowCertificate(const CertificateInfo&) { }

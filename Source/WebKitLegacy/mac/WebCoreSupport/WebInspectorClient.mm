@@ -279,6 +279,11 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
     // Dock to right is not implemented in WebKit 1.
 }
 
+void WebInspectorFrontendClient::setSheetRect(const FloatRect& rect)
+{
+    m_sheetRect = rect;
+}
+
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;
@@ -515,8 +520,10 @@ void WebInspectorFrontendClient::append(const String& suggestedURL, const String
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
+    if (_frontendClient)
+        return NSMakeRect(0, _frontendClient->sheetRect().height(), _frontendClient->sheetRect().width(), 0);
+
     // AppKit doesn't know about our HTML toolbar, and places the sheet just a little bit too high.
-    // FIXME: It would be better to get the height of the toolbar and use it in this calculation.
     rect.origin.y -= 1;
     return rect;
 }

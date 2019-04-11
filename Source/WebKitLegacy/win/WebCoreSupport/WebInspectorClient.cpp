@@ -340,6 +340,11 @@ void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
     notImplemented();
 }
 
+void WebInspectorFrontendClient::setSheetRect(const FloatRect&)
+{
+    notImplemented();
+}
+
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
 {
     m_inspectedURL = newURL;

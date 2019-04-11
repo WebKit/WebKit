@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class FloatRect;
 class Frame;
 class InspectorController;
 class InspectorBackendDispatchTask;
@@ -70,6 +71,7 @@ public:
     WEBCORE_EXPORT void requestSetDockSide(DockSide) final;
     WEBCORE_EXPORT void changeAttachedWindowHeight(unsigned) final;
     WEBCORE_EXPORT void changeAttachedWindowWidth(unsigned) final;
+    WEBCORE_EXPORT void changeSheetRect(const FloatRect&) final;
     WEBCORE_EXPORT void openInNewTab(const String& url) final;
     bool canSave()  override { return false; }
     void save(const String&, const String&, bool, bool) override { }
@@ -115,6 +117,8 @@ protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
     virtual void setAttachedWindowWidth(unsigned) = 0;
     WEBCORE_EXPORT void restoreAttachedWindowHeight();
+
+    virtual void setSheetRect(const WebCore::FloatRect&) = 0;
 
 private:
     bool evaluateAsBoolean(const String& expression);

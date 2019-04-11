@@ -1,3 +1,17 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: save sheet should be anchored underneath the tab bar when detached
+        https://bugs.webkit.org/show_bug.cgi?id=196722
+        <rdar://problem/49613280>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorFrontendClient::sheetRect const): Added.
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window:willPositionSheet:usingRect:]):
+        (WebInspectorFrontendClient::setSheetRect): Added.
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI WKNavigationResponse._downloadAttribute

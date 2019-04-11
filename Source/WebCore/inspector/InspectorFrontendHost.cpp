@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Event.h"
+#include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HitTestResult.h"
@@ -240,6 +241,12 @@ void InspectorFrontendHost::setAttachedWindowWidth(unsigned width)
 {
     if (m_client)
         m_client->changeAttachedWindowWidth(width);
+}
+
+void InspectorFrontendHost::setSheetRect(float x, float y, unsigned width, unsigned height)
+{
+    if (m_client)
+        m_client->changeSheetRect(FloatRect(x, y, width, height));
 }
 
 void InspectorFrontendHost::startWindowDrag()
