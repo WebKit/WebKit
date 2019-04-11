@@ -4569,6 +4569,14 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     auto listener = makeRef(frame.setUpPolicyListenerProxy([this, protectedThis = makeRef(*this), frame = makeRef(frame), sender = WTFMove(sender), navigation] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning) mutable {
 
         auto completionHandler = [this, protectedThis = protectedThis.copyRef(), frame = frame.copyRef(), sender = WTFMove(sender), navigation = WTFMove(navigation), processSwapRequestedByClient, policies = makeRefPtr(policies)] (PolicyAction policyAction) mutable {
+            if (frame->isMainFrame()) {
+                if (!policies) {
+                    if (auto* defaultPolicies = m_configuration->defaultWebsitePolicies())
+                        policies = defaultPolicies->copy();
+                }
+                if (policies)
+                    adjustPoliciesForCompatibilityMode(*policies);
+            }
             receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, policies.get(), WTFMove(sender));
         };
 
@@ -8912,7 +8920,7 @@ void WebPageProxy::speechSynthesisResume(CompletionHandler<void()>&& completionH
 
 #if !PLATFORM(IOS_FAMILY) || !USE(APPLE_INTERNAL_SDK)
 
-void WebPageProxy::adjustPoliciesForCompatibilityMode(const API::NavigationAction&, API::WebsitePolicies&)
+void WebPageProxy::adjustPoliciesForCompatibilityMode(API::WebsitePolicies&)
 {
 }
 

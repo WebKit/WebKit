@@ -92,30 +92,36 @@ enum class ShouldContinue;
 
 using ResourceLoaderMap = HashMap<unsigned long, RefPtr<ResourceLoader>>;
 
-enum class AutoplayPolicy {
+enum class AutoplayPolicy : uint8_t {
     Default, // Uses policies specified in document settings.
     Allow,
     AllowWithoutSound,
     Deny,
 };
 
-enum class AutoplayQuirk {
+enum class AutoplayQuirk : uint8_t {
     SynthesizedPauseEvents = 1 << 0,
     InheritedUserGestures = 1 << 1,
     ArbitraryUserGestures = 1 << 2,
     PerDocumentAutoplayBehavior = 1 << 3,
 };
 
-enum class PopUpPolicy {
+enum class PopUpPolicy : uint8_t {
     Default, // Uses policies specified in frame settings.
     Allow,
     Block,
 };
 
-enum class MetaViewportPolicy {
+enum class MetaViewportPolicy : uint8_t {
     Default,
     Respect,
     Ignore,
+};
+
+enum class MediaSourcePolicy : uint8_t {
+    Default,
+    Disable,
+    Enable
 };
 
 class DocumentLoader
@@ -292,6 +298,9 @@ public:
     MetaViewportPolicy metaViewportPolicy() const { return m_metaViewportPolicy; }
     void setMetaViewportPolicy(MetaViewportPolicy policy) { m_metaViewportPolicy = policy; }
 
+    MediaSourcePolicy mediaSourcePolicy() const { return m_mediaSourcePolicy; }
+    void setMediaSourcePolicy(MediaSourcePolicy policy) { m_mediaSourcePolicy = policy; }
+
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
     void addPlugInStreamLoader(ResourceLoader&);
@@ -358,6 +367,8 @@ public:
 
     void setDownloadAttribute(const String& attribute) { m_downloadAttribute = attribute; }
     const String& downloadAttribute() const { return m_downloadAttribute; }
+
+    WEBCORE_EXPORT void applyPoliciesToSettings();
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -569,6 +580,7 @@ private:
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
     MetaViewportPolicy m_metaViewportPolicy { MetaViewportPolicy::Default };
+    MediaSourcePolicy m_mediaSourcePolicy { MediaSourcePolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;

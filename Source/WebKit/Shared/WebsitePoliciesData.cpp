@@ -47,6 +47,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << customJavaScriptUserAgentAsSiteSpecificQuirks;
     encoder << customNavigatorPlatform;
     encoder << metaViewportPolicy;
+    encoder << mediaSourcePolicy;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -105,6 +106,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     decoder >> metaViewportPolicy;
     if (!metaViewportPolicy)
         return WTF::nullopt;
+
+    Optional<WebsiteMediaSourcePolicy> mediaSourcePolicy;
+    decoder >> mediaSourcePolicy;
+    if (!mediaSourcePolicy)
+        return WTF::nullopt;
     
     return { {
         WTFMove(*contentBlockersEnabled),
@@ -118,6 +124,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*customJavaScriptUserAgentAsSiteSpecificQuirks),
         WTFMove(*customNavigatorPlatform),
         WTFMove(*metaViewportPolicy),
+        WTFMove(*mediaSourcePolicy),
     } };
 }
 
@@ -189,12 +196,30 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         break;
     }
 
-    if (websitePolicies.websiteDataStoreParameters) {
-        if (auto* frame = documentLoader.frame()) {
-            if (auto* page = frame->page())
-                page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
-        }
+    switch (websitePolicies.mediaSourcePolicy) {
+    case WebsiteMediaSourcePolicy::Default:
+        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Default);
+        break;
+    case WebsiteMediaSourcePolicy::Disable:
+        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Disable);
+        break;
+    case WebsiteMediaSourcePolicy::Enable:
+        documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Enable);
+        break;
     }
+
+    auto* frame = documentLoader.frame();
+    if (!frame)
+        return;
+
+    documentLoader.applyPoliciesToSettings();
+
+    auto* page = frame->page();
+    if (!page)
+        return;
+
+    if (websitePolicies.websiteDataStoreParameters)
+        page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
 }
 
 }

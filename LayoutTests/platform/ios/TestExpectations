@@ -13,6 +13,8 @@ media/ios [ Pass ]
 quicklook [ Pass ]
 swipe [ Pass ]
 
+fast/media/ios [ Pass ]
+
 fast/forms/textarea/ios [ Pass ]
 fast/text-autosizing/ios [ Pass ]
 fast/zooming/ios [ Pass ]

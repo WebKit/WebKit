@@ -590,6 +590,7 @@ MediaSourceEnabled:
   type: bool
   defaultValue: WebCore::Settings::platformDefaultMediaSourceEnabled()
   condition: ENABLE(MEDIA_SOURCE)
+  webcoreBinding: none
 
 ViewGestureDebuggingEnabled:
   type: bool

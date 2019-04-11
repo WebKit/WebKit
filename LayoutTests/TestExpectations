@@ -57,6 +57,7 @@ editing/images [ Skip ]
 pointerevents/ios [ Skip ]
 editing/pasteboard/ios [ Skip ]
 editing/pasteboard/mac [ Skip ]
+fast/media/ios [ Skip ]
 
 # WebKit2 only.
 printing/printing-events.html [ Skip ]

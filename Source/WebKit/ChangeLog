@@ -1,3 +1,62 @@
+2019-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow the MediaSource API to be enabled via website policy
+        https://bugs.webkit.org/show_bug.cgi?id=196429
+        <rdar://problem/48774333>
+
+        Reviewed by Tim Horton.
+
+        Adds support for using WebsitePolicies to determine whether to enable the MediaSource API.
+
+        * Shared/WebPreferences.yaml:
+
+        Disengage the mediaSourceEnabled internal preference from the corresponding WebCore setting; to ensure that
+        setting the preference to `true` still results in enabling the MediaSource API, we instead make it such that
+        turning on mediaSourceEnabled causes WebsitePolicies to set its WebsiteMediaSourcePolicy to Enable.
+
+        In the future, we should deprecate and remove this preference, in favor of simply setting preferred
+        compatibility mode on WKWebpagePreferences.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebsiteMediaSourcePolicy.h: Copied from Source/WebKit/Shared/WebsitePoliciesData.h.
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+
+        Add plumbing for m_mediaSourcePolicy in the set of website policies.
+
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+
+        Update the document loader with the given media source policy. There are two possibilities when applying the set
+        of policies to the document loader; either the document loader is already attached to a Frame, or the document
+        loader is yet to be attached to a Frame.
+
+        In the first case, we update Frame's settings on the spot, by calling the new applyPoliciesToSettings helper
+        method. In the second scenario, we stash the policy state on DocumentLoader; when the DocumentLoader is attached
+        to a Frame, we'll then update the Frame's settings using DocumentLoader's policy.
+
+        * Shared/WebsitePoliciesData.h:
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+        Move code that adjusts website policies after deciding policies for the navigation action from NavigationClient
+        ::decidePolicyForNavigationAction to the completion handler of the policy listener. This allows us to respect
+        default website policies on the web view configuration, even when using the C API to set the navigation client,
+        and also allows us to have a single call site for adjustPoliciesForCompatibilityMode. This also enables our
+        layout tests to opt into modern compatibility mode by default, when specifying modern compatibility mode on
+        webpage preferences.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::adjustPoliciesForCompatibilityMode):
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-11  Antti Koivisto  <antti@apple.com>
 
         REGRESSION: changing iPad orientation on blogger.com crashes under RemoteScrollingCoordinatorProxy::establishLayerTreeScrollingRelations()

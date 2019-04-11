@@ -1514,7 +1514,6 @@ public:
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
-    void adjustPoliciesForCompatibilityMode(const API::NavigationAction&, API::WebsitePolicies&);
 
     void addObserver(WebViewDidMoveToWindowObserver&);
     void removeObserver(WebViewDidMoveToWindowObserver&);
@@ -1621,6 +1620,8 @@ private:
         const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID, const UserData&);
     void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, const UserData&);
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
+
+    void adjustPoliciesForCompatibilityMode(API::WebsitePolicies&);
 
     void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
 

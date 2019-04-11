@@ -29,6 +29,7 @@
 #include "WebCompatibilityMode.h"
 #include "WebsiteAutoplayPolicy.h"
 #include "WebsiteAutoplayQuirk.h"
+#include "WebsiteMediaSourcePolicy.h"
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
 #include <WebCore/HTTPHeaderField.h>
@@ -90,6 +91,9 @@ public:
     WebKit::WebsiteMetaViewportPolicy metaViewportPolicy() const { return m_metaViewportPolicy; }
     void setMetaViewportPolicy(WebKit::WebsiteMetaViewportPolicy policy) { m_metaViewportPolicy = policy; }
 
+    WebKit::WebsiteMediaSourcePolicy mediaSourcePolicy() const { return m_mediaSourcePolicy; }
+    void setMediaSourcePolicy(WebKit::WebsiteMediaSourcePolicy policy) { m_mediaSourcePolicy = policy; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -105,6 +109,7 @@ private:
     WTF::String m_customNavigatorPlatform;
     WebKit::WebCompatibilityMode m_preferredCompatibilityMode { WebKit::WebCompatibilityMode::Default };
     WebKit::WebsiteMetaViewportPolicy m_metaViewportPolicy { WebKit::WebsiteMetaViewportPolicy::Default };
+    WebKit::WebsiteMediaSourcePolicy m_mediaSourcePolicy { WebKit::WebsiteMediaSourcePolicy::Default };
 };
 
 } // namespace API

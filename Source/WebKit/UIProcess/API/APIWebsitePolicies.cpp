@@ -87,6 +87,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_customJavaScriptUserAgentAsSiteSpecificQuirks,
         m_customNavigatorPlatform,
         m_metaViewportPolicy,
+        m_mediaSourcePolicy
     };
 }
 

@@ -13,6 +13,9 @@ fast/forms/search-vertical-alignment.html [ Skip ]
 fast/forms/searchfield-heights.html [ Skip ]
 fast/forms/visual-hebrew-text-field.html [ Skip ]
 
+# The MediaSource API is unsupported on iOS simulator.
+fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html [ Skip ]
+
 # -webkit-flex off-by-one px
 webkit.org/b/126898 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailure ]
 

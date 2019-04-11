@@ -1,3 +1,26 @@
+2019-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow the MediaSource API to be enabled via website policy
+        https://bugs.webkit.org/show_bug.cgi?id=196429
+        <rdar://problem/48774333>
+
+        Reviewed by Tim Horton.
+
+        Add support in DocumentLoader for adjusting page settings using its per-site policies. See WebKit ChangeLog for
+        more detail (in particular, the implementation of applyToDocumentLoader).
+
+        Test: fast/media/ios/ipad/enable-MediaSource-API-in-modern-compatibility-mode.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::applyPoliciesToSettings const):
+        (WebCore::DocumentLoader::attachToFrame):
+        * loader/DocumentLoader.h:
+
+        Add an enum class for MediaSource policies; while we're at it, make all of these enum values 8 bits wide.
+
+        (WebCore::DocumentLoader::mediaSourcePolicy const):
+        (WebCore::DocumentLoader::setMediaSourcePolicy):
+
 2019-04-11  Youenn Fablet  <youenn@apple.com>
 
         Support RTCDataChannel blob binaryType
