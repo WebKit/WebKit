@@ -50,7 +50,6 @@ public:
 
     bool hasObservations() const { return m_observations.size(); }
     bool hasActiveObservations() const { return m_activeObservations.size(); }
-    void scheduleObservations();
 
     void observe(Element&);
     void unobserve(Element&);

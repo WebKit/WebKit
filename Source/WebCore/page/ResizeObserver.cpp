@@ -53,29 +53,27 @@ ResizeObserver::~ResizeObserver()
         m_document->removeResizeObserver(*this);
 }
 
-void ResizeObserver::scheduleObservations()
-{
-    if (m_document)
-        m_document->scheduleResizeObservations();
-}
-
 void ResizeObserver::observe(Element& target)
 {
     if (!m_callback)
         return;
 
-    for (auto& observation : m_observations) {
-        if (observation->target() == &target)
-            return;
-    }
+    auto position = m_observations.findMatching([&](auto& observation) {
+        return observation->target() == &target;
+    });
+
+    if (position != notFound)
+        return;
 
     auto& observerData = target.ensureResizeObserverData();
     observerData.observers.append(makeWeakPtr(this));
-    if (m_document && !hasObservations())
-        m_document->addResizeObserver(*this);
+
     m_observations.append(ResizeObservation::create(&target));
 
-    scheduleObservations();
+    if (m_document) {
+        m_document->addResizeObserver(*this);
+        m_document->scheduleRenderingUpdate();
+    }
 }
 
 void ResizeObserver::unobserve(Element& target)

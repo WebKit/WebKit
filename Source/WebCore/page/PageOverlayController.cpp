@@ -318,7 +318,7 @@ void PageOverlayController::didChangeDeviceScaleFactor()
 
 void PageOverlayController::didChangeViewExposedRect()
 {
-    m_page.chrome().client().scheduleCompositingLayerFlush();
+    m_page.renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void PageOverlayController::didScrollFrame(Frame& frame)
@@ -412,7 +412,7 @@ float PageOverlayController::deviceScaleFactor() const
 
 void PageOverlayController::notifyFlushRequired(const WebCore::GraphicsLayer*)
 {
-    m_page.chrome().client().scheduleCompositingLayerFlush();
+    m_page.renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void PageOverlayController::didChangeOverlayFrame(PageOverlay& overlay)

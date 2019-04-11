@@ -450,7 +450,7 @@ void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer* layer)
 void RenderLayerCompositor::scheduleLayerFlushNow()
 {
     m_hasPendingLayerFlush = false;
-    page().chrome().client().scheduleCompositingLayerFlush();
+    page().renderingUpdateScheduler().scheduleRenderingUpdate();
 }
 
 void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
@@ -1923,6 +1923,7 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         return String();
 
     flushPendingLayerChanges(true);
+    page().renderingUpdateScheduler().scheduleCompositingLayerFlush();
 
     LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
     if (flags & LayerTreeFlagsIncludeDebugInfo)

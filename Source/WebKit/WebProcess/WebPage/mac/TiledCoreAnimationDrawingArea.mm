@@ -459,9 +459,8 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
     @autoreleasepool {
         scaleViewToFitDocumentIfNeeded();
 
-        m_webPage.layoutIfNeeded();
+        m_webPage.updateRendering();
         m_webPage.flushPendingEditorStateUpdate();
-        m_webPage.willDisplayPage();
 
         updateIntrinsicContentSizeIfNeeded();
 

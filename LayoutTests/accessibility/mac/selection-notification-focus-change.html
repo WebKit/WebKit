@@ -15,56 +15,66 @@
                     </div>
         </fieldset>
         <script>
-            description("This tests that selection changes as a result of advancing focus include AXTextSelectionChangedFocus flag.");
+            description("This tests that selection changes as a result of advancing focus.");
             jsTestIsAsync = true;
 
             var webArea = 0;
-            var axTextFocusChangeOne = 0;
-            var axTextFocusChangeTwo = 0;
-            var axTextFocusChangeThree = 0;
-            var axTextFocusChangeFour = 0;
             var tabCharacter = "\t";
 
             function notificationCallback(notification, userInfo) {
-                if (notification == "AXSelectedTextChanged") {
-                    debug("Received AXSelectedTextChanged");
-                    window.userInfo = userInfo;
-                    shouldBeTrue("userInfo[\"AXTextSelectionChangedFocus\"]");
-                } else if (notification == "AXFocusChanged")
-                    debug("Received AXFocusChanged");
+                if (notification == "AXSelectedTextChanged" || notification == "AXFocusChanged")
+                    window.promise.resolve();
             }
 
             function runTest() {
-                if (window.accessibilityController) {
-                    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-
-                    accessibilityController.enableEnhancedAccessibility(true);
-                    webArea = accessibilityController.rootElement.childAtIndex(0);
-                    webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
-
-                    shouldBeTrue("webArea.addNotificationListener(notificationCallback)");
-                    evalAndLog("eventSender.keyDown(tabCharacter);");
-                    setTimeout(runTakeFocusTest, 0);
-                } else {
+                if (!window.accessibilityController) {
                     debug("window.accessibilityController is not present");
                     finishJSTest();
+                    return;
                 }
+
+                runFirstTabMoveTest();
+            }
+
+            function runFirstTabMoveTest() {
+                testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+
+                accessibilityController.enableEnhancedAccessibility(true);
+                webArea = accessibilityController.rootElement.childAtIndex(0);
+                webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
+
+                shouldBeTrue("webArea.addNotificationListener(notificationCallback)");
+                evalAndLog("eventSender.keyDown(tabCharacter);");
+
+                window.promise = new Promise(function(resolve, reject) {
+                    setTimeout(() => {
+                        runTakeFocusTest();
+                    }, 0);
+                });
             }
 
             function runTakeFocusTest() {
                 debug('');
                 shouldBeTrue("accessibilityController.accessibleElementById(\"1\").isFocusable");
                 evalAndLog("accessibilityController.accessibleElementById(\"1\").takeFocus()");
-                setTimeout(runSecondTabMoveTest, 0);
+
+                window.promise = new Promise(function(resolve, reject) {
+                    setTimeout(() => {
+                        runSecondTabMoveTest();
+                    }, 0);
+                });
             }
 
             function runSecondTabMoveTest() {
                 debug('');
                 evalAndLog("eventSender.keyDown(tabCharacter)");
-                setTimeout(() => {
-                    webArea.removeNotificationListener();
-                    finishJSTest();
-                }, 0);
+
+                window.promise = new Promise(function(resolve, reject) {
+                    setTimeout(() => {
+                        webArea.removeNotificationListener();
+                        finishJSTest();
+                    }, 0);
+                });
             }
 
             </script>

@@ -57,7 +57,6 @@
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
-#include "DocumentAnimationScheduler.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -1941,11 +1940,8 @@ void Document::resolveStyle(ResolveStyleType type)
             frameView.layoutContext().scheduleLayout();
 
         // Usually this is handled by post-layout.
-        if (!frameView.needsLayout()) {
+        if (!frameView.needsLayout())
             frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
-            if (m_needsForcedIntersectionObservationUpdate)
-                page()->scheduleForcedIntersectionObservationUpdate(*this);
-        }
 
         // As a result of the style recalculation, the currently hovered element might have been
         // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
@@ -2540,13 +2536,6 @@ void Document::prepareForDestruction()
         m_timeline->detachFromDocument();
         m_timeline = nullptr;
     }
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (m_animationScheduler) {
-        m_animationScheduler->detachFromDocument();
-        m_animationScheduler = nullptr;
-    }
-#endif
 
 #if ENABLE(CSS_PAINTING_API)
     for (auto& scope : m_paintWorkletGlobalScopes.values())
@@ -6265,13 +6254,20 @@ void Document::resumeScriptedAnimationControllerCallbacks()
         m_scriptedAnimationController->resume();
 }
 
+void Document::updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp)
+{
+    if (m_timeline)
+        m_timeline->updateAnimationsAndSendEvents(timestamp);
+}
+
+void Document::serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp)
+{
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->serviceRequestAnimationFrameCallbacks(timestamp);
+}
+
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    if (m_animationScheduler)
-        m_animationScheduler->windowScreenDidChange(displayID);
-#endif
-
     if (RenderView* view = renderView()) {
         if (view->usesCompositing())
             view->compositor().windowScreenDidChange(displayID);
@@ -7810,6 +7806,12 @@ void Document::removeAppearanceDependentPicture(HTMLPictureElement& picture)
     m_appearanceDependentPictures.remove(&picture);
 }
 
+void Document::scheduleRenderingUpdate()
+{
+    if (auto page = this->page())
+        page->renderingUpdateScheduler().scheduleRenderingUpdate();
+}
+
 #if ENABLE(INTERSECTION_OBSERVER)
 void Document::addIntersectionObserver(IntersectionObserver& observer)
 {
@@ -7941,8 +7943,6 @@ void Document::updateIntersectionObservations()
     if (needsLayout || hasPendingStyleRecalc())
         return;
 
-    m_needsForcedIntersectionObservationUpdate = false;
-
     for (const auto& observer : m_intersectionObservers) {
         bool needNotify = false;
         DOMHighResTimeStamp timestamp;
@@ -8019,17 +8019,6 @@ void Document::updateIntersectionObservations()
         m_intersectionObserversNotifyTimer.startOneShot(0_s);
 }
 
-void Document::scheduleForcedIntersectionObservationUpdate()
-{
-    ASSERT(!m_intersectionObservers.isEmpty());
-    if (m_needsForcedIntersectionObservationUpdate)
-        return;
-
-    m_needsForcedIntersectionObservationUpdate = true;
-    if (auto* page = this->page())
-        page->scheduleForcedIntersectionObservationUpdate(*this);
-}
-
 void Document::notifyIntersectionObserversTimerFired()
 {
     for (const auto& observer : m_intersectionObserversWithPendingNotifications) {
@@ -8043,8 +8032,8 @@ void Document::notifyIntersectionObserversTimerFired()
 #if ENABLE(RESIZE_OBSERVER)
 void Document::addResizeObserver(ResizeObserver& observer)
 {
-    ASSERT(m_resizeObservers.find(&observer) == notFound);
-    m_resizeObservers.append(makeWeakPtr(&observer));
+    if (!m_resizeObservers.contains(&observer))
+        m_resizeObservers.append(makeWeakPtr(&observer));
 }
 
 void Document::removeResizeObserver(ResizeObserver& observer)
@@ -8093,11 +8082,31 @@ void Document::setHasSkippedResizeObservations(bool skipped)
         observer->setHasSkippedObservations(skipped);
 }
 
-void Document::scheduleResizeObservations()
+void Document::updateResizeObservations(Page& page)
 {
-    if (!page())
+    if (!hasResizeObservers())
         return;
-    page()->scheduleResizeObservations();
+
+    // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
+    // and it could change other frame in deliverResizeObservations().
+    page.layoutIfNeeded();
+
+    // Start check resize obervers;
+    for (size_t depth = gatherResizeObservations(0); depth != ResizeObserver::maxElementDepth(); depth = gatherResizeObservations(depth)) {
+        deliverResizeObservations();
+        page.layoutIfNeeded();
+    }
+
+    if (hasSkippedResizeObservations()) {
+        setHasSkippedResizeObservations(false);
+        String url;
+        unsigned line = 0;
+        unsigned column = 0;
+        getParserLocation(url, line, column);
+        reportException("ResizeObserver loop completed with undelivered notifications.", line, column, url, nullptr, nullptr);
+        // Starting a new schedule the next round of notify.
+        scheduleRenderingUpdate();
+    }
 }
 #endif
 
@@ -8523,16 +8532,6 @@ void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 {
     m_consoleMessageListener = listener;
 }
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-DocumentAnimationScheduler& Document::animationScheduler()
-{
-    if (!m_animationScheduler)
-        m_animationScheduler = DocumentAnimationScheduler::create(*this, page() ? page()->chrome().displayID() : 0);
-
-    return *m_animationScheduler;
-}
-#endif
 
 DocumentTimeline& Document::timeline()
 {

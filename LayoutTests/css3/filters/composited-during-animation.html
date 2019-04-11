@@ -149,10 +149,10 @@
         document.getElementById("preresult").innerHTML = preResult;
 
         // Completed the pre-animation tests. Now start the animation.
-        setTimeout(function () {
+        requestAnimationFrame(function () {
             document.body.className = "animating";
             runAnimationTest(expectedValues);
-        }, 0);
+        });
     }
 
     if (window.testRunner) {

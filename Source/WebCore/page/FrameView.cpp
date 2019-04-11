@@ -1267,11 +1267,6 @@ void FrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
 
 void FrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
 {
-#if ENABLE(RESIZE_OBSERVER)
-    auto page = frame().page();
-    if (page && page->hasResizeObservers())
-        page->setNeedsCheckResizeObservations(true);
-#endif
     renderView()->releaseProtectedRenderWidgets();
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(renderView()->layer(), updateLayerPositionFlags(layoutRootEnclosingLayer, !is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint()));
@@ -1976,21 +1971,6 @@ void FrameView::viewportContentsChanged()
         if (auto* renderView = frameView.frame().contentRenderer())
             renderView->updateVisibleViewportRect(visibleRect);
     });
-
-#if ENABLE(INTERSECTION_OBSERVER)
-    if (auto* document = frame().document()) {
-        if (auto* page = frame().page()) {
-            if (document->numberOfIntersectionObservers())
-                page->addDocumentNeedingIntersectionObservationUpdate(*document);
-            if (!frame().isMainFrame()) {
-                if (auto* mainDocument = frame().mainFrame().document()) {
-                    if (mainDocument->numberOfIntersectionObservers())
-                        page->addDocumentNeedingIntersectionObservationUpdate(*mainDocument);
-                }
-            }
-        }
-    }
-#endif
 }
 
 IntRect FrameView::visualViewportRectExpandedByContentInsets() const

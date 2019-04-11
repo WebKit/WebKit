@@ -32,17 +32,25 @@ if (window.accessibilityController) {
               
         // Mute button should be a checkbox with on/off state.
         muteButton = videoElement.childAtIndex(0).childAtIndex(9);
+        muteButtonStringValue = muteButton.stringValue;
         debug("muteButton.description: " + muteButton.description);
         debug("muteButton.role: " + muteButton.role);
-        debug("muteButton.stringValue: " + muteButton.stringValue);
+        debug("muteButton.stringValue: " + muteButtonStringValue);
         debug("press muteButton");
         muteButton.press();
-        setTimeout(function() {
+
+        function checkMuteButton() {
+            if (muteButtonStringValue == muteButton.stringValue) {
+                requestAnimationFrame(checkMuteButton);
+                return;
+            }
+
             debug("muteButton.stringValue: " + muteButton.stringValue + "\n");
-              
             // Left/Right arrow key should have 0.5 second step on timeline. 
             checkTimeLineValue(rightArrow);
-        }, 10);
+        }
+
+        requestAnimationFrame(checkMuteButton);
     }); 
     
     waitForEvent("seeked", function () {

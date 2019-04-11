@@ -1620,9 +1620,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (void)_viewWillDrawInternal
 {
-    Frame* frame = [self _mainCoreFrame];
-    if (frame && frame->view())
-        frame->view()->updateLayoutAndStyleIfNeededRecursive();
+    if (_private->page)
+        _private->page->updateRendering();
 }
 
 + (NSArray *)_supportedMIMETypes
@@ -9388,11 +9387,6 @@ bool LayerFlushController::flushLayers()
 
 - (BOOL)_flushCompositingChanges
 {
-#if ENABLE(RESIZE_OBSERVER)
-    if (_private->page)
-        _private->page->checkResizeObservations();
-#endif
-
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
         return frame->view()->flushCompositingStateIncludingSubframes();

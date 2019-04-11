@@ -1,3 +1,60 @@
+2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        There is a slight difference between the actual DRT and the expected DRT
+        due to animation timing change. But these two tests are not animating
+        correctly if they are opened in Safari with web animation turned on. 
+
+        * accessibility/mac/selection-notification-focus-change-expected.txt:
+        * accessibility/mac/selection-notification-focus-change.html:
+        Remove the debug statements form notificationCallback() since the number
+        of times this function is called back and the order of notifications are
+        not defined. This test has been flaky and some trials were made to make 
+        it more reliable. With this change it became flaky again.
+
+        * animations/animation-multiple-callbacks-timestamp.html:
+        Fix variable names used by an error message.
+
+        * animations/no-style-recalc-during-accelerated-animation-expected.txt:
+        * animations/no-style-recalc-during-accelerated-animation.html:
+        One extra styleReclc was incurred due to the document styleRecalcTimer.
+        I think this timer is not needed anymore. I will look at removing it in
+        a separate patch.
+
+        * animations/resources/animation-test-helpers.js:
+        (waitForAnimationToStart):
+        The expectation that animation will start at the beginning of the next 
+        event loop is not true anymore. The animation will start at the time the
+        requestAnimationFrame fires.
+
+        * compositing/video/video-clip-change-src.html:
+        This test loads a video data and pushes it to the encoder. Originally it
+        used to wait 150 ms after receiving the second canplaythrough. I had to 
+        change this timing to 250 ms.
+
+        * css3/filters/composited-during-animation.html:
+        Ditto. setTimeout({...}, 0) versus requestAnimationFrame.
+
+        * media/media-controls-accessibility.html:
+        Updating the accessibility button happens asynchronously, see 
+        [WebAccessibilityObjectWrapper accessibilityPerformPressAction]. Due to
+        changing the page update timing, this test became flaky. Originally it used
+        to setTimeout({...}, 10) to ensure the stringValue of the mutate button
+        was changed after it was pressed. The fix is to loop using rAF till the
+        stringValue changes.
+
+        * platform/mac-wk2/accessibility/mac/selection-notification-focus-change-expected.txt: Removed.
+        The number of time notificationCallback() is called and the order of
+        notifications are not defined. And this is why we have two expected files:
+        one for WK1 and the other for WK2. Since the test is now simplified, we
+        can get rid of this duplication. We will test the minimum reliable thing
+        we can test.
+
 2019-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Nullptr crash in CompositeEditCommand::moveParagraphs when root editable element goes away

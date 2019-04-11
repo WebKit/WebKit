@@ -426,7 +426,6 @@ animation/AnimationTimeline.cpp
 animation/CSSAnimation.cpp
 animation/CSSTransition.cpp
 animation/DeclarativeAnimation.cpp
-animation/DocumentAnimationScheduler.cpp
 animation/DocumentTimeline.cpp
 animation/KeyframeEffect.cpp
 animation/WebAnimation.cpp
@@ -1532,6 +1531,7 @@ page/ProcessWarming.cpp
 page/Quirks.cpp
 page/RemoteDOMWindow.cpp
 page/RemoteFrame.cpp
+page/RenderingUpdateScheduler.cpp
 page/ResizeObservation.cpp
 page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp

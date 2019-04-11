@@ -52,7 +52,7 @@ function ResizeTestHelper(name, steps)
     this._nextStepBind = this._nextStep.bind(this);
 }
 
-ResizeTestHelper.TIMEOUT = 100;
+ResizeTestHelper.TIMEOUT = 1000;
 
 ResizeTestHelper.prototype = {
   get _currentStep() {

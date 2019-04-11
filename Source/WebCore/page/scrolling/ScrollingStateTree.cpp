@@ -34,6 +34,7 @@
 #include "ScrollingStateFrameHostingNode.h"
 #include "ScrollingStateFrameScrollingNode.h"
 #include "ScrollingStateOverflowScrollingNode.h"
+#include "ScrollingStatePositionedNode.h"
 #include "ScrollingStateStickyNode.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>

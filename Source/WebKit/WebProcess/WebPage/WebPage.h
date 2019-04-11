@@ -306,7 +306,8 @@ public:
     void didFlushLayerTreeAtTime(MonotonicTime);
 #endif
 
-    void willDisplayPage();
+    void layoutIfNeeded();
+    void updateRendering();
 
     enum class LazyCreationPolicy { UseExistingOnly, CreateIfNeeded };
 
@@ -339,7 +340,6 @@ public:
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect&);
-    void layoutIfNeeded();
 
     // -- Called from WebCore clients.
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);

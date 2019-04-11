@@ -28,16 +28,18 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "CSSPropertyNames.h"
+#include "Document.h"
 #include "PlatformEvent.h"
+#include "RenderStyleConstants.h"
 #include "Timer.h"
 #include "WKContentObservation.h"
 #include <wtf/HashSet.h>
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
 class Animation;
 class DOMTimer;
-class Document;
 class Element;
 
 class ContentChangeObserver {

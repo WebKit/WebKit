@@ -595,6 +595,6 @@ function runAnimationTest(expected, startCallback, event, disablePauseAnimationA
 function waitForAnimationToStart(element, callback)
 {
     element.addEventListener('webkitAnimationStart', function() {
-        window.setTimeout(callback, 0); // delay to give hardware animations a chance to start
+        requestAnimationFrame(callback); // delay to give hardware animations a chance to start
     }, false);
 }

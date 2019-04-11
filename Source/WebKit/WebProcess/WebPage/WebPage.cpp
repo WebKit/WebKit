@@ -1611,12 +1611,6 @@ void WebPage::tryRestoreScrollPosition()
     m_page->mainFrame().loader().history().restoreScrollPositionAndViewState();
 }
 
-void WebPage::layoutIfNeeded()
-{
-    if (m_mainFrame->coreFrame()->view())
-        m_mainFrame->coreFrame()->view()->updateLayoutAndStyleIfNeededRecursive();
-}
-
 WebPage* WebPage::fromCorePage(Page* page)
 {
     return &static_cast<WebChromeClient&>(page->chrome().client()).page();
@@ -3652,9 +3646,14 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
 }
 #endif
 
-void WebPage::willDisplayPage()
+void WebPage::layoutIfNeeded()
 {
-    m_page->willDisplayPage();
+    m_page->layoutIfNeeded();
+}
+    
+void WebPage::updateRendering()
+{
+    m_page->updateRendering();
 }
 
 WebInspector* WebPage::inspector(LazyCreationPolicy behavior)

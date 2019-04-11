@@ -108,7 +108,6 @@ class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
 class DeferredPromise;
-class DocumentAnimationScheduler;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
@@ -1056,7 +1055,10 @@ public:
     ScriptedAnimationController* scriptedAnimationController() { return m_scriptedAnimationController.get(); }
     void suspendScriptedAnimationControllerCallbacks();
     void resumeScriptedAnimationControllerCallbacks();
-    
+
+    void updateAnimationsAndSendEvents(DOMHighResTimeStamp timestamp);
+    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
+
     void windowScreenDidChange(PlatformDisplayID);
 
     void finishedParsing();
@@ -1411,11 +1413,12 @@ public:
     void addAppearanceDependentPicture(HTMLPictureElement&);
     void removeAppearanceDependentPicture(HTMLPictureElement&);
 
+    void scheduleRenderingUpdate();
+
 #if ENABLE(INTERSECTION_OBSERVER)
     void addIntersectionObserver(IntersectionObserver&);
     void removeIntersectionObserver(IntersectionObserver&);
     unsigned numberOfIntersectionObservers() const { return m_intersectionObservers.size(); }
-    void scheduleForcedIntersectionObservationUpdate();
     void updateIntersectionObservations();
 #endif
 
@@ -1428,7 +1431,7 @@ public:
     void deliverResizeObservations();
     bool hasSkippedResizeObservations() const;
     void setHasSkippedResizeObservations(bool);
-    void scheduleResizeObservations();
+    void updateResizeObservations(Page&);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1499,10 +1502,6 @@ public:
     void setUserGrantsStorageAccessOverride(bool value) { m_grantStorageAccessOverride = value; }
 
     WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
-
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    DocumentAnimationScheduler& animationScheduler();
-#endif
 
     WEBCORE_EXPORT DocumentTimeline& timeline();
     DocumentTimeline* existingTimeline() const { return m_timeline.get(); }
@@ -2071,10 +2070,6 @@ private:
     bool m_isTelephoneNumberParsingAllowed { true };
 #endif
 
-#if ENABLE(INTERSECTION_OBSERVER)
-    bool m_needsForcedIntersectionObservationUpdate { false };
-#endif
-
 #if ENABLE(MEDIA_STREAM)
     HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
@@ -2094,9 +2089,6 @@ private:
 
     bool m_grantStorageAccessOverride { false };
 
-#if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    RefPtr<DocumentAnimationScheduler> m_animationScheduler;
-#endif
     RefPtr<DocumentTimeline> m_timeline;
     DocumentIdentifier m_identifier;
 

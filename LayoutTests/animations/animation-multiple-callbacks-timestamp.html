@@ -35,7 +35,7 @@
         {
             const WarmupFrames = 5;
             if (++currentFrame > WarmupFrames && timestamp != timestamp1) {
-                testFailed("timestamp1 = " + timestamp1 + ", timestamp2 = " + timestamp2  + ", window.performance.now() = " + window.performance.now());
+                testFailed("timestamp = " + timestamp + ", timestamp1 = " + timestamp1  + ", window.performance.now() = " + window.performance.now());
                 failed = true;
             }
         }

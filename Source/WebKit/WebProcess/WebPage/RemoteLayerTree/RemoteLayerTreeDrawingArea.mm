@@ -344,13 +344,7 @@ void RemoteLayerTreeDrawingArea::flushLayers()
             scheduleCompositingLayerFlush();
     }
 
-    RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
-
-    RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
-    backingStoreCollection.willFlushLayers();
-
-    m_webPage.layoutIfNeeded();
-    m_webPage.willDisplayPage();
+    m_webPage.updateRendering();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
     if (m_scrolledViewExposedRect)
@@ -372,6 +366,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     // Because our view-relative overlay root layer is not attached to the FrameView's GraphicsLayer tree, we need to flush it manually.
     if (m_viewOverlayRootLayer)
         m_viewOverlayRootLayer->flushCompositingState(visibleRect);
+
+    RELEASE_ASSERT(!m_pendingBackingStoreFlusher || m_pendingBackingStoreFlusher->hasFlushed());
+
+    RemoteLayerBackingStoreCollection& backingStoreCollection = m_remoteLayerTreeContext->backingStoreCollection();
+    backingStoreCollection.willFlushLayers();
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 

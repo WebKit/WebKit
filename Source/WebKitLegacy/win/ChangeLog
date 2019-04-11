@@ -1,3 +1,17 @@
+2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        requestAnimationFrame should execute before the next frame
+        https://bugs.webkit.org/show_bug.cgi?id=177484
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::updateBackingStore):
+        (WebView::flushPendingGraphicsLayerChangesSoon):
+        (WebView::flushPendingGraphicsLayerChanges):
+        Call Page::updateRendering() which implements "Update the rendering"
+        step of the HTML Event Loop specification.
+
 2019-04-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: save sheet should be anchored underneath the tab bar when detached
