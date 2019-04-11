@@ -552,7 +552,7 @@ static void validate(WKWebViewConfiguration *configuration)
         WKProcessPool *relatedWebViewProcessPool = [relatedWebView->_configuration processPool];
         if (processPool && processPool != relatedWebViewProcessPool)
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has process pool %@ but configuration specifies a different process pool %@", relatedWebView, relatedWebViewProcessPool, configuration.processPool];
-        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore])
+        if ([relatedWebView->_configuration websiteDataStore] != [_configuration websiteDataStore] && linkedOnOrAfter(WebKit::SDKVersion::FirstWithExceptionsForRelatedWebViewsUsingDifferentDataStores, WebKit::AssumeSafariIsAlwaysLinkedOnAfter::No))
             [NSException raise:NSInvalidArgumentException format:@"Related web view %@ has data store %@ but configuration specifies a different data store %@", relatedWebView, [relatedWebView->_configuration websiteDataStore], [_configuration websiteDataStore]];
 
         [_configuration setProcessPool:relatedWebViewProcessPool];
@@ -628,6 +628,9 @@ static void validate(WKWebViewConfiguration *configuration)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemLayoutDirectionKey(), WebKit::WebPreferencesStore::Value(static_cast<uint32_t>(WebCore::TextDirection::LTR)));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::allowSettingAnyXHRHeaderFromFileURLsKey(), WebKit::WebPreferencesStore::Value(shouldAllowSettingAnyXHRHeaderFromFileURLs()));
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::shouldDecidePolicyBeforeLoadingQuickLookPreviewKey(), WebKit::WebPreferencesStore::Value(!![_configuration _shouldDecidePolicyBeforeLoadingQuickLookPreview]));
+#if ENABLE(DEVICE_ORIENTATION)
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::deviceOrientationPermissionAPIEnabledKey(), WebKit::WebPreferencesStore::Value(linkedOnOrAfter(WebKit::SDKVersion::FirstWithDeviceOrientationAndMotionPermissionAPI)));
+#endif
 #if USE(SYSTEM_PREVIEW)
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::systemPreviewEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _systemPreviewEnabled]));
 #endif

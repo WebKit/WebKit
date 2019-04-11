@@ -231,7 +231,6 @@
 #endif
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
-bool defaultDeviceOrientationPermissionAPIEnabled();
 bool defaultCustomPasteboardDataEnabled();
 
 #if PLATFORM(MAC)

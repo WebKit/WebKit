@@ -1,3 +1,27 @@
+2019-04-11  Chris Dumez  <cdumez@apple.com>
+
+        Unable to run system Safari with trunk WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=196777
+        <rdar://problem/49784574>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        Add a linkedOnAfter check so that throwing exceptions when related web views use a different
+        data store only happens for apps rebuilt using recent SDK.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/Cocoa/VersionChecks.mm:
+        (WebKit::linkedOnOrAfter):
+        - By default, linkedOnOrAfter assumed Safari / MobileSafari is always linked-on-after. To satisfy my
+          use cases, I introduced a new AssumeSafariIsAlwaysLinkedOnAfter parameter so that this behavior can
+          be controlled by the caller.
+        - In the header, DYLD_IOS_VERSION_* / DYLD_MACOS_VERSION_* constants are 0 when building with the
+          non-internal SDK. As a result, the check instead linkedOnOrAfter() would cause us to always return
+          true, which was wrong. I therefore updated the check inside linkedOnOrAfter() to special-case the
+          0 value for sdkVersion.
+
 2019-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Add @page margin support
