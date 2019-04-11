@@ -1,3 +1,20 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Inspector: lazily create the agent
+        https://bugs.webkit.org/show_bug.cgi?id=195971
+        <rdar://problem/49039645>
+
+        Reviewed by Joseph Pecoraro.
+
+        No change in functionality.
+
+        * inspector/InspectorController.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::createLazyAgents):
+        (WebCore::InspectorController::evaluateForTestInFrontend):
+        (WebCore::InspectorController::ensureInspectorAgent):
+
 2019-04-10  Megan Gardner  <megan_gardner@apple.com>
 
         Remove unneeded extern C

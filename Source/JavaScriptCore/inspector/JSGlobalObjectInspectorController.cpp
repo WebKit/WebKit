@@ -71,15 +71,11 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
 {
     auto context = jsAgentContext();
 
-    auto inspectorAgent = std::make_unique<InspectorAgent>(context);
     auto consoleAgent = std::make_unique<InspectorConsoleAgent>(context);
-
-    m_inspectorAgent = inspectorAgent.get();
     m_consoleAgent = consoleAgent.get();
-    m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
-
-    m_agents.append(WTFMove(inspectorAgent));
     m_agents.append(WTFMove(consoleAgent));
+
+    m_consoleClient = std::make_unique<JSGlobalObjectConsoleClient>(m_consoleAgent);
 
     m_executionStopwatch->start();
 }
@@ -122,6 +118,7 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
     m_agents.didCreateFrontendAndBackend(nullptr, nullptr);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
+    ASSERT(m_inspectorAgent);
     m_inspectorAgent->activateExtraDomains(m_agents.extraDomains());
 
     if (m_augmentingClient)
@@ -277,6 +274,7 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 
     m_agents.appendExtraAgent(WTFMove(agent));
 
+    ASSERT(m_inspectorAgent);
     m_inspectorAgent->activateExtraDomain(domainName);
 }
 #endif
@@ -306,6 +304,10 @@ void JSGlobalObjectInspectorController::createLazyAgents()
     m_didCreateLazyAgents = true;
 
     auto context = jsAgentContext();
+
+    auto inspectorAgent = std::make_unique<InspectorAgent>(context);
+    m_inspectorAgent = inspectorAgent.get();
+    m_agents.append(WTFMove(inspectorAgent));
 
     m_agents.append(std::make_unique<JSGlobalObjectRuntimeAgent>(context));
 

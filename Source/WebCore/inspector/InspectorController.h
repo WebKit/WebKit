@@ -106,6 +106,7 @@ public:
     InspectorClient* inspectorClient() const { return m_inspectorClient; }
     InspectorFrontendClient* inspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
+    Inspector::InspectorAgent& ensureInspectorAgent();
     InspectorDOMAgent& ensureDOMAgent();
     WEBCORE_EXPORT InspectorPageAgent& ensurePageAgent();
 
@@ -138,9 +139,8 @@ private:
     InspectorClient* m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
 
-    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
-
     // Lazy, but also on-demand agents.
+    Inspector::InspectorAgent* m_inspectorAgent { nullptr };
     InspectorDOMAgent* m_inspectorDOMAgent { nullptr };
     InspectorPageAgent* m_inspectorPageAgent { nullptr };
 

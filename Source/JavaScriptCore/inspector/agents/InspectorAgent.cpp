@@ -45,10 +45,6 @@ InspectorAgent::InspectorAgent(AgentContext& context)
 {
 }
 
-InspectorAgent::~InspectorAgent()
-{
-}
-
 void InspectorAgent::didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*)
 {
 }

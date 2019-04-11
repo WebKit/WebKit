@@ -47,7 +47,7 @@ class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorAgent(AgentContext&);
-    virtual ~InspectorAgent();
+    virtual ~InspectorAgent() = default;
 
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) override;
     void willDestroyFrontendAndBackend(DisconnectReason) override;

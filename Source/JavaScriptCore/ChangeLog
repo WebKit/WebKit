@@ -1,3 +1,20 @@
+2019-04-10  Devin Rousso  <drousso@apple.com>
+
+       Web Inspector: Inspector: lazily create the agent
+       https://bugs.webkit.org/show_bug.cgi?id=195971
+       <rdar://problem/49039645>
+
+       Reviewed by Joseph Pecoraro.
+
+       * inspector/JSGlobalObjectInspectorController.cpp:
+       (Inspector::JSGlobalObjectInspectorController::JSGlobalObjectInspectorController):
+       (Inspector::JSGlobalObjectInspectorController::connectFrontend):
+       (Inspector::JSGlobalObjectInspectorController::appendExtraAgent):
+       (Inspector::JSGlobalObjectInspectorController::createLazyAgents):
+
+       * inspector/agents/InspectorAgent.h:
+       * inspector/agents/InspectorAgent.cpp:
+
 2019-04-10  Saam Barati  <sbarati@apple.com>
 
         Work around an arm64_32 LLVM miscompile bug
