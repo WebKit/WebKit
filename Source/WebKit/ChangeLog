@@ -1,3 +1,14 @@
+2019-04-10  Andy Estes  <aestes@apple.com>
+
+        [iOS] Let PDFHostViewController specify the background color to use for WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=196785
+        <rdar://problem/48240051>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView web_initWithFrame:webView:mimeType:]):
+
 2019-04-10  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r244146.
