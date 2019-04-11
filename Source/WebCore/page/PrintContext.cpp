@@ -25,7 +25,9 @@
 #include "GraphicsContext.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LengthBox.h"
 #include "RenderView.h"
+#include "RuntimeEnabledFeatures.h"
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -76,6 +78,33 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     }
 
     computePageRectsWithPageSizeInternal(FloatSize(pageWidth / userScaleFactor, pageHeight / userScaleFactor), allowHorizontalTiling);
+}
+
+FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
+{
+    if (!frame() || !frame()->document())
+        return printMargin;
+    if (!RuntimeEnabledFeatures::sharedFeatures().pageAtRuleSupportEnabled())
+        return printMargin;
+    // FIXME Currently no pseudo class is supported.
+    auto style = frame()->document()->styleScope().resolver().styleForPage(0);
+
+    auto pixelToPointScaleFactor = 1 / CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSPrimitiveValue::CSS_PT);
+    return { style->marginTop().isAuto() ? printMargin.top() : style->marginTop().value() * pixelToPointScaleFactor,
+        style->marginRight().isAuto() ? printMargin.right() : style->marginRight().value() * pixelToPointScaleFactor,
+        style->marginBottom().isAuto() ? printMargin.bottom() : style->marginBottom().value() * pixelToPointScaleFactor,
+        style->marginLeft().isAuto() ? printMargin.left() : style->marginLeft().value() * pixelToPointScaleFactor };
+}
+
+FloatSize PrintContext::computedPageSize(FloatSize pageSize, FloatBoxExtent printMargin)
+{
+    auto computedMargin = computedPageMargin(printMargin);
+    if (computedMargin == printMargin)
+        return pageSize;
+
+    auto horizontalMarginDelta = (printMargin.left() - computedMargin.left()) + (printMargin.right() - computedMargin.right()); 
+    auto verticalMarginDelta = (printMargin.top() - computedMargin.top()) + (printMargin.bottom() - computedMargin.bottom());
+    return { pageSize.width() + horizontalMarginDelta, pageSize.height() + verticalMarginDelta };
 }
 
 void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling)

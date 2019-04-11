@@ -1,3 +1,27 @@
+2019-04-11  Zalan Bujtas  <zalan@apple.com>
+
+        Add @page margin support
+        https://bugs.webkit.org/show_bug.cgi?id=196680
+        <rdar://problem/45217707>
+
+        Reviewed by Tim Horton.
+
+        This patch adds support for @page margin. This feature is currently behind a runtime flag and is off by default.
+        We resolve the @page margin values in the WebProcess (currently no pseudo class is supported) and transfer them to the UIProcess through computedPagesCallback.
+        UIProcess is responsible for applying these new values on the printer. We also re-compute the available width/height for the current printing context
+        in the WebProcess if needed (see PrintInfo for current printer margins).
+
+        Tests: printing/page-with-10mm-left-margin.html
+               printing/page-with-zero-margin.html
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computedPageMargin):
+        (WebCore::PrintContext::computedPageSize):
+        * page/PrintContext.h:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::pageAtRuleSupportEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setPageAtRuleSupportEnabled):
+
 2019-04-11  Dean Jackson  <dino@apple.com>
 
         Extract UTI mapping and allow for additions

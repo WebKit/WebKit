@@ -3281,7 +3281,8 @@ void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintI
 
     Vector<WebCore::IntRect> pageRects;
     double totalScaleFactor;
-    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor);
+    auto margin = printInfo.margin;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
 
     ASSERT(pageRects.size() >= 1);
     std::size_t pageCount = pageRects.size();

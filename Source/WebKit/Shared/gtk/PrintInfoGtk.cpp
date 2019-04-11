@@ -34,6 +34,7 @@ PrintInfo::PrintInfo(GtkPrintSettings* settings, GtkPageSetup* pageSetup, PrintM
     : pageSetupScaleFactor(gtk_print_settings_get_scale(settings) / 100.0)
     , availablePaperWidth(gtk_page_setup_get_paper_width(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_left_margin(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_right_margin(pageSetup, GTK_UNIT_POINTS))
     , availablePaperHeight(gtk_page_setup_get_paper_height(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_top_margin(pageSetup, GTK_UNIT_POINTS) - gtk_page_setup_get_bottom_margin(pageSetup, GTK_UNIT_POINTS))
+    , margin(gtk_page_setup_get_top_margin(pageSetup, GTK_UNIT_POINTS), gtk_page_setup_get_right_margin(pageSetup, GTK_UNIT_POINTS), gtk_page_setup_get_bottom_margin(pageSetup, GTK_UNIT_POINTS), gtk_page_setup_get_left_margin(pageSetup, GTK_UNIT_POINTS))
     , printSettings(settings)
     , pageSetup(pageSetup)
     , printMode(printMode)

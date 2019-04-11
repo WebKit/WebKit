@@ -1,0 +1,24 @@
+<!DOCTYPE html><!-- webkit-test-runner [ experimental:PageAtRuleSupportEnabled=true ] -->
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>This tests that the content has a 1cm left margin.</title>
+  <style type="text/css">
+    @page {
+        margin-left: 10mm;
+    }
+    
+    html, body {
+        padding: 0px;
+        margin: 0px;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.setPrinting();
+  </script>
+</head>
+<body>
+Text should start at 10mm from the right edge of the page.
+</body>
+</html>

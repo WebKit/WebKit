@@ -35,6 +35,7 @@ typedef struct _GtkPageSetup GtkPageSetup;
 // FIXME: This should use the windows equivalent.
 class NSPrintInfo;
 #endif
+#include <WebCore/LengthBox.h>
 
 namespace IPC {
 class Decoder;
@@ -56,9 +57,11 @@ struct PrintInfo {
     explicit PrintInfo(NSPrintInfo *);
 #endif
 
+    // These values are in 'point' unit (and not CSS pixel).
     float pageSetupScaleFactor { 0 };
     float availablePaperWidth { 0 };
     float availablePaperHeight { 0 };
+    WebCore::FloatBoxExtent margin;
 #if PLATFORM(IOS_FAMILY)
     bool snapshotFirstPage { false };
 #endif

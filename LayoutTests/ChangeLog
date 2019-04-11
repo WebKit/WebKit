@@ -1,3 +1,16 @@
+2019-04-11  Zalan Bujtas  <zalan@apple.com>
+
+        Add @page margin support
+        https://bugs.webkit.org/show_bug.cgi?id=196680
+        <rdar://problem/45217707>
+
+        Reviewed by Tim Horton.
+
+        * printing/page-with-10mm-left-margin-expected.pdf: Added.
+        * printing/page-with-10mm-left-margin.html: Added.
+        * printing/page-with-zero-margin-expected.pdf: Added.
+        * printing/page-with-zero-margin.html: Added.
+
 2019-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] Moving backwards by word granularity does not work if the previous line was inside another block element

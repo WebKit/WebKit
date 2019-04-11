@@ -350,6 +350,9 @@ public:
     bool referrerPolicyAttributeEnabled() const { return m_referrerPolicyAttributeEnabled; }
     void setReferrerPolicyAttributeEnabled(bool isEnabled) { m_referrerPolicyAttributeEnabled = isEnabled; }
 
+    bool pageAtRuleSupportEnabled() const { return m_pageAtRuleSupportEnabled; }
+    void setPageAtRuleSupportEnabled(bool isEnabled) { m_pageAtRuleSupportEnabled = isEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -399,6 +402,7 @@ private:
     bool m_CSSCustomPropertiesAndValuesEnabled { false };
     bool m_pointerEventsEnabled { true };
     bool m_webSQLEnabled { true };
+    bool m_pageAtRuleSupportEnabled { false };
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool m_layoutFormattingContextEnabled { false };

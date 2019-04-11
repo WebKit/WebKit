@@ -293,7 +293,7 @@ static void pageDidDrawToImage(const WebKit::ShareableBitmap::Handle& imageHandl
     _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
 }
 
-static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, IPCCallbackContext* context)
+static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, IPCCallbackContext* context)
 {
     ASSERT(RunLoop::isMain());
 
@@ -323,6 +323,12 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
             ceil(lastPrintingPageRect.maxY() * view->_totalScaleFactorForPrinting));
         LOG(Printing, "WKPrintingView setting frame size to x:%g y:%g width:%g height:%g", newFrameSize.origin.x, newFrameSize.origin.y, newFrameSize.size.width, newFrameSize.size.height);
         [view setFrame:newFrameSize];
+        // Set @page margin.
+        auto *printInfo = [view->_printOperation printInfo];
+        [printInfo setTopMargin:computedPageMargin.top()];
+        [printInfo setBottomMargin:computedPageMargin.bottom()];
+        [printInfo setLeftMargin:computedPageMargin.left()];
+        [printInfo setRightMargin:computedPageMargin.right()];
 
         if ([view _isPrintingPreview]) {
             // Show page count, and ask for an actual image to replace placeholder.
@@ -344,9 +350,9 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
     ASSERT(!_expectedComputedPagesCallback);
 
     IPCCallbackContext* context = new IPCCallbackContext;
-    auto callback = WebKit::ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, WebKit::CallbackBase::Error) {
+    auto callback = WebKit::ComputedPagesCallback::create([context](const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, const WebCore::FloatBoxExtent& computedPageMargin, WebKit::CallbackBase::Error) {
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
-        pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, context);
+        pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, computedPageMargin, context);
     });
     _expectedComputedPagesCallback = callback->callbackID().toInteger();
     context->view = self;

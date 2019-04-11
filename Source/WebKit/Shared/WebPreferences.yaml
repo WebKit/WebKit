@@ -1631,6 +1631,14 @@ ReferrerPolicyAttributeEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+PageAtRuleSupportEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "@page CSS at-rule support"
+  humanReadableDescription: "Enable @page support"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+
 ApplePayRemoteUIEnabled:
   category: internal
   condition: ENABLE(APPLE_PAY_REMOTE_UI)
