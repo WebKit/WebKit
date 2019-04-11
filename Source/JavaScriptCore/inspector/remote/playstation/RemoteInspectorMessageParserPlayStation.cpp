@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RemoteInspectorMessageParser.h"
 
+#include <netinet/in.h>
+
 #if ENABLE(REMOTE_INSPECTOR)
 
 namespace Inspector {
@@ -34,7 +36,7 @@ namespace Inspector {
 | <--- one message for send / didReceiveData ---> |
 +--------------+----------------------------------+--------------
 |    size      |               data               | (next message)
-|    4byte     |          variable length         |
+|  4byte (NBO) |          variable length         |
 +--------------+----------------------------------+--------------
                | <------------ size ------------> |
 */
@@ -52,7 +54,8 @@ Vector<uint8_t> MessageParser::createMessage(const uint8_t* data, size_t size)
 
     auto messageBuffer = Vector<uint8_t>(size + sizeof(uint32_t));
     uint32_t uintSize = static_cast<uint32_t>(size);
-    memcpy(&messageBuffer[0], &uintSize, sizeof(uint32_t));
+    uint32_t nboSize = htonl(uintSize);
+    memcpy(&messageBuffer[0], &nboSize, sizeof(uint32_t));
     memcpy(&messageBuffer[sizeof(uint32_t)], data, uintSize);
     return messageBuffer;
 }
@@ -84,6 +87,7 @@ bool MessageParser::parse()
 
         uint32_t dataSize = 0;
         memcpy(&dataSize, &m_buffer[0], sizeof(uint32_t));
+        dataSize = ntohl(dataSize);
         if (!dataSize) {
             LOG_ERROR("Message Parser received an invalid message size");
             return false;

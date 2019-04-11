@@ -1,3 +1,19 @@
+2019-04-10  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Specify byte order clearly on Remote Inspector Protocol
+        https://bugs.webkit.org/show_bug.cgi?id=196790
+
+        Reviewed by Ross Kirsling.
+
+        Original implementation lacks byte order specification. Network byte order is the
+        good candidate if there's no strong reason to choose other.
+        Currently no client exists for PlayStation remote inspector protocol, so we can
+        change the byte order without care.
+
+        * inspector/remote/playstation/RemoteInspectorMessageParserPlayStation.cpp:
+        (Inspector::MessageParser::createMessage):
+        (Inspector::MessageParser::parse):
+
 2019-04-10  Devin Rousso  <drousso@apple.com>
 
        Web Inspector: Inspector: lazily create the agent
