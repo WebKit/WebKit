@@ -3577,20 +3577,15 @@ ExceptionOr<void> Internals::setCaptionDisplayMode(const String& mode)
     return { };
 }
 
+#if ENABLE(VIDEO_TRACK)
 RefPtr<TextTrackCueGeneric> Internals::createGenericCue(double startTime, double endTime, String text)
 {
     Document* document = contextDocument();
     if (!document || !document->page())
         return nullptr;
-#if ENABLE(VIDEO_TRACK)
     return TextTrackCueGeneric::create(*document, MediaTime::createWithDouble(startTime), MediaTime::createWithDouble(endTime), text);
-#else
-    UNUSED_PARAM(startTime);
-    UNUSED_PARAM(endTime);
-    UNUSED_PARAM(text);
-    return nullptr;
-#endif
 }
+#endif
 
 #if ENABLE(VIDEO)
 

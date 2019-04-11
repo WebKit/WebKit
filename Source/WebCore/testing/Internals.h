@@ -91,12 +91,15 @@ class SerializedScriptValue;
 class SourceBuffer;
 class StringCallback;
 class StyleSheet;
-class TextTrackCueGeneric;
 class TimeRanges;
 class TypeConversions;
 class VoidCallback;
 class WebGLRenderingContext;
 class XMLHttpRequest;
+
+#if ENABLE(VIDEO_TRACK)
+class TextTrackCueGeneric;
+#endif
 
 #if ENABLE(SERVICE_WORKER)
 class ServiceWorker;
@@ -544,7 +547,9 @@ public:
     ExceptionOr<void> setCaptionsStyleSheetOverride(const String&);
     ExceptionOr<void> setPrimaryAudioTrackLanguageOverride(const String&);
     ExceptionOr<void> setCaptionDisplayMode(const String&);
+#if ENABLE(VIDEO_TRACK)
     RefPtr<TextTrackCueGeneric> createGenericCue(double startTime, double endTime, String text);
+#endif
 
 #if ENABLE(VIDEO)
     Ref<TimeRanges> createTimeRanges(Float32Array& startTimes, Float32Array& endTimes);

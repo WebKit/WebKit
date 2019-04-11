@@ -1,3 +1,16 @@
+2019-04-11  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [WPE] Build error with ENABLE_VIDEO=OFF after r244078
+        https://bugs.webkit.org/show_bug.cgi?id=196811
+
+        createGenericCue() is only defined when VIDEO_TRACK is enabled.
+
+        Reviewed by Eric Carlson.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::createGenericCue):
+        * testing/Internals.h:
+
 2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Layout test accessibility/aria-hidden-false-works-in-subtrees.html fails after r184890
