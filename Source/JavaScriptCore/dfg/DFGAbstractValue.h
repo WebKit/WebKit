@@ -388,13 +388,23 @@ struct AbstractValue {
         if (isBytecodeTop())
             return true;
         
-        if (!!m_value && m_value != value)
-            return false;
-        
         if (format == FlushedInt52) {
+            if (!isInt52Any())
+                return false;
+
             if (!validateTypeAcceptingBoxedInt52(value))
                 return false;
+
+            if (!!m_value) {
+                ASSERT(m_value.isAnyInt());
+                ASSERT(value.isAnyInt());
+                if (jsDoubleNumber(m_value.asAnyInt()) != jsDoubleNumber(value.asAnyInt()))
+                    return false;
+            }
         } else {
+            if (!!m_value && m_value != value)
+                return false;
+        
             if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
                 return false;
             

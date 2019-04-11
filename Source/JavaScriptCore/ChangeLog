@@ -1,5 +1,20 @@
 2019-04-10  Saam Barati  <sbarati@apple.com>
 
+        AbstractValue::validateOSREntryValue is wrong for Int52 constants
+        https://bugs.webkit.org/show_bug.cgi?id=196801
+        <rdar://problem/49771122>
+
+        Reviewed by Yusuke Suzuki.
+
+        validateOSREntryValue should not care about the format of the incoming
+        value for Int52s. This patch normalizes the format of m_value and
+        the incoming value when comparing them.
+
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::validateOSREntryValue const):
+
+2019-04-10  Saam Barati  <sbarati@apple.com>
+
         ArithSub over Int52 has shouldCheckOverflow as always true
         https://bugs.webkit.org/show_bug.cgi?id=196796
 
