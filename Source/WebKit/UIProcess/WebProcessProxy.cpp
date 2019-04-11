@@ -764,8 +764,8 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch()
         callback(false);
 
     if (m_isInProcessCache) {
-        auto removedProcess = processPool().webProcessCache().takeProcess(registrableDomain(), websiteDataStore());
-        ASSERT_UNUSED(removedProcess, removedProcess.get() == this);
+        processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
+        ASSERT(!m_isInProcessCache);
     }
 
     shutDown();

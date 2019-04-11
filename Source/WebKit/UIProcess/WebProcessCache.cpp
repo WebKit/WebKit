@@ -37,11 +37,35 @@ namespace WebKit {
 Seconds WebProcessCache::cachedProcessLifetime { 30_min };
 Seconds WebProcessCache::clearingDelayAfterApplicationResignsActive { 5_min };
 
+static uint64_t generateAddRequestIdentifier()
+{
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
 WebProcessCache::WebProcessCache(WebProcessPool& processPool)
     : m_evictionTimer(RunLoop::main(), this, &WebProcessCache::clear)
 {
     updateCapacity(processPool);
     platformInitialize();
+}
+
+bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
+{
+    if (!capacity() || m_isDisabled)
+        return false;
+
+    if (process.registrableDomain().isEmpty()) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because it does not have an associated registrable domain", this, process.processIdentifier());
+        return false;
+    }
+
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::canCacheProcess(): Not caching process %i because we are under memory pressure", this, process.processIdentifier());
+        return false;
+    }
+
+    return true;
 }
 
 bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<WebProcessProxy>&& process)
@@ -51,63 +75,51 @@ bool WebProcessCache::addProcessIfPossible(const String& registrableDomain, Ref<
     ASSERT(!process->provisionalPageCount());
     ASSERT(!process->processPool().hasSuspendedPageFor(process));
 
-    if (!capacity() || m_isDisabled)
+    if (!canCacheProcess(process))
         return false;
 
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we are under memory pressure", this, process->processIdentifier());
-        return false;
-    }
-
-    if (m_processesPerRegistrableDomain.contains(registrableDomain)) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
-        return false;
-    }
+    uint64_t requestIdentifier = generateAddRequestIdentifier();
+    m_pendingAddRequests.add(requestIdentifier, std::make_unique<CachedProcess>(process.copyRef()));
 
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Checking if process %i is responsive before caching it...", this, process->processIdentifier());
-    process->setIsInProcessCache(true);
-    process->isResponsive([process = process.copyRef(), processPool = makeRef(process->processPool()), registrableDomain](bool isResponsive) {
-        process->setIsInProcessCache(false);
+    process->isResponsive([this, processPool = makeRef(process->processPool()), requestIdentifier](bool isResponsive) {
+        auto cachedProcess = m_pendingAddRequests.take(requestIdentifier);
+        if (!cachedProcess)
+            return;
+
         if (!isResponsive) {
-            RELEASE_LOG_ERROR(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because it is not responsive", &process->processPool().webProcessCache(), process->processIdentifier());
-            process->shutDown();
+            RELEASE_LOG_ERROR(ProcessSwapping, "%p - WebProcessCache::addProcessIfPossible(): Not caching process %i because it is not responsive", &processPool->webProcessCache(), cachedProcess->process().processIdentifier());
             return;
         }
-        if (!processPool->webProcessCache().addProcess(registrableDomain, process.copyRef()))
-            process->shutDown();
+        processPool->webProcessCache().addProcess(WTFMove(cachedProcess));
     });
     return true;
 }
 
-bool WebProcessCache::addProcess(const String& registrableDomain, Ref<WebProcessProxy>&& process)
+bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
 {
-    ASSERT(!process->pageCount());
-    ASSERT(!process->provisionalPageCount());
-    ASSERT(!process->processPool().hasSuspendedPageFor(process));
+    ASSERT(!cachedProcess->process().pageCount());
+    ASSERT(!cachedProcess->process().provisionalPageCount());
+    ASSERT(!cachedProcess->process().processPool().hasSuspendedPageFor(cachedProcess->process()));
 
-    if (!capacity() || m_isDisabled)
+    if (!canCacheProcess(cachedProcess->process()))
         return false;
 
-    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Not caching process %i because we are under memory pressure", this, process->processIdentifier());
-        return false;
-    }
+    auto registrableDomain = cachedProcess->process().registrableDomain();
+    RELEASE_ASSERT(!registrableDomain.isEmpty());
+
+    if (auto previousProcess = m_processesPerRegistrableDomain.take(registrableDomain))
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Evicting process %i from WebProcess cache because a new process was added for the same domain", this, previousProcess->process().processIdentifier());
 
     while (m_processesPerRegistrableDomain.size() >= capacity()) {
         auto it = m_processesPerRegistrableDomain.random();
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Evicting process %i from WebProcess cache", this, it->value->process().processIdentifier());
+        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Evicting process %i from WebProcess cache because capacity was reached", this, it->value->process().processIdentifier());
         m_processesPerRegistrableDomain.remove(it);
     }
 
-    auto addResult = m_processesPerRegistrableDomain.ensure(registrableDomain, [process = process.copyRef()]() mutable {
-        return std::make_unique<CachedProcess>(WTFMove(process));
-    });
-    if (!addResult.isNewEntry) {
-        RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess(): Not caching process %i because we already have a cached process for this domain", this, process->processIdentifier());
-        return false;
-    }
+    RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess: Added process %i to WebProcess cache, cache size: [%u / %u]", this, cachedProcess->process().processIdentifier(), size() + 1, capacity());
+    m_processesPerRegistrableDomain.add(registrableDomain, WTFMove(cachedProcess));
 
-    RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::addProcess: Adding process %i to WebProcess cache, cache size: [%u / %u]", this, process->processIdentifier(), size(), capacity());
     return true;
 }
 
@@ -157,10 +169,11 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 
 void WebProcessCache::clear()
 {
-    if (m_processesPerRegistrableDomain.isEmpty())
+    if (m_pendingAddRequests.isEmpty() && m_processesPerRegistrableDomain.isEmpty())
         return;
 
-    RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::clear() evicting %u processes", this, m_processesPerRegistrableDomain.size());
+    RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::clear() evicting %u processes", this, m_pendingAddRequests.size() + m_processesPerRegistrableDomain.size());
+    m_pendingAddRequests.clear();
     m_processesPerRegistrableDomain.clear();
 }
 
@@ -173,15 +186,31 @@ void WebProcessCache::setApplicationIsActive(bool isActive)
         m_evictionTimer.startOneShot(clearingDelayAfterApplicationResignsActive);
 }
 
-void WebProcessCache::evictProcess(WebProcessProxy& process)
+void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProcess shouldShutDownProcess)
 {
-    auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());
-    ASSERT(it != m_processesPerRegistrableDomain.end());
-    ASSERT(&it->value->process() == &process);
-
     RELEASE_LOG(ProcessSwapping, "%p - WebProcessCache::evictProcess(): Evicting process %i from WebProcess cache because it expired", this, process.processIdentifier());
 
-    m_processesPerRegistrableDomain.remove(it);
+    std::unique_ptr<CachedProcess> cachedProcess;
+    auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());
+    if (it != m_processesPerRegistrableDomain.end() && &it->value->process() == &process) {
+        cachedProcess = WTFMove(it->value);
+        m_processesPerRegistrableDomain.remove(it);
+    } else {
+        for (auto& pair : m_pendingAddRequests) {
+            if (&pair.value->process() == &process) {
+                cachedProcess = WTFMove(pair.value);
+                m_pendingAddRequests.remove(pair.key);
+                break;
+            }
+        }
+    }
+    ASSERT(cachedProcess);
+    if (!cachedProcess)
+        return;
+
+    ASSERT(&cachedProcess->process() == &process);
+    if (shouldShutDownProcess == ShouldShutDownProcess::No)
+        cachedProcess->takeProcess();
 }
 
 WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)
@@ -216,7 +245,7 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
 void WebProcessCache::CachedProcess::evictionTimerFired()
 {
     ASSERT(m_process);
-    m_process->processPool().webProcessCache().evictProcess(*m_process);
+    m_process->processPool().webProcessCache().removeProcess(*m_process, ShouldShutDownProcess::Yes);
 }
 
 #if !PLATFORM(COCOA)
