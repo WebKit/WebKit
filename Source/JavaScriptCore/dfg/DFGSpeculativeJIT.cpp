@@ -1912,7 +1912,7 @@ void SpeculativeJIT::checkArgumentTypes()
             continue;
         }
         
-        ASSERT(node->op() == SetArgument);
+        ASSERT(node->op() == SetArgumentDefinitely);
         ASSERT(node->shouldGenerate());
 
         VariableAccessData* variableAccessData = node->variableAccessData();

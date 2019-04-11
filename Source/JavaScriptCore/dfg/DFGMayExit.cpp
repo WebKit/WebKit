@@ -47,7 +47,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     // This is a carefully curated list of nodes that definitely do not exit. We try to be very
     // conservative when maintaining this list, because adding new node types to it doesn't
     // generally make things a lot better but it might introduce subtle bugs.
-    case SetArgument:
+    case SetArgumentDefinitely:
     case JSConstant:
     case DoubleConstant:
     case LazyJSConstant:

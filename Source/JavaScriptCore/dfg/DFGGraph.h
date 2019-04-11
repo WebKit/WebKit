@@ -985,7 +985,7 @@ public:
     
     Bag<StorageAccessData> m_storageAccessData;
     
-    // In CPS, this is all of the SetArgument nodes for the arguments in the machine code block
+    // In CPS, this is all of the SetArgumentDefinitely nodes for the arguments in the machine code block
     // that survived DCE. All of them except maybe "this" will survive DCE, because of the Flush
     // nodes. In SSA, this has no meaning. It's empty.
     HashMap<BasicBlock*, ArgumentsVector> m_rootToArguments;

@@ -134,7 +134,7 @@ public:
             m_ssaVariableForVariable.add(&variable, ssaVariable);
         }
         
-        // Find all SetLocals and create Defs for them. We handle SetArgument by creating a
+        // Find all SetLocals and create Defs for them. We handle SetArgumentDefinitely by creating a
         // GetLocal, and recording the flush format.
         for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -145,7 +145,7 @@ public:
             // assignment for every local.
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (node->op() != SetLocal && node->op() != SetArgument)
+                if (node->op() != SetLocal && node->op() != SetArgumentDefinitely)
                     continue;
                 
                 VariableAccessData* variable = node->variableAccessData();
@@ -154,7 +154,7 @@ public:
                 if (node->op() == SetLocal)
                     childNode = node->child1().node();
                 else {
-                    ASSERT(node->op() == SetArgument);
+                    ASSERT(node->op() == SetArgumentDefinitely);
                     childNode = m_insertionSet.insertNode(
                         nodeIndex, node->variableAccessData()->prediction(),
                         GetStack, node->origin,
@@ -255,12 +255,12 @@ public:
         //
         //   - SetLocal turns into PutStack if it's flushed, or turns into a Check otherwise.
         //
-        //   - Flush loses its children and turns into a Phantom.
+        //   - Flush is removed.
         //
         //   - PhantomLocal becomes Phantom, and its child is whatever is specified by
         //     valueForOperand.
         //
-        //   - SetArgument is removed. Note that GetStack nodes have already been inserted.
+        //   - SetArgumentDefinitely is removed. Note that GetStack nodes have already been inserted.
         Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             valueForOperand.clear();
@@ -388,11 +388,11 @@ public:
                     break;
                 }
                     
-                case SetArgument: {
+                case SetArgumentDefinitely: {
                     node->remove(m_graph);
                     break;
                 }
-                    
+
                 default:
                     break;
                 }

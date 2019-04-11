@@ -2324,7 +2324,7 @@ private:
 
 #if !ASSERT_DISABLED
         // Have these no-op cases here to ensure that nobody forgets to add handlers for new opcodes.
-        case SetArgument:
+        case SetArgumentDefinitely:
         case JSConstant:
         case LazyJSConstant:
         case DoubleConstant:

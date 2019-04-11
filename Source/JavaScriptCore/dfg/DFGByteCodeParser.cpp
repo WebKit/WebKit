@@ -1829,8 +1829,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         ensureLocals(VirtualRegister(remappedRegisterOffset).toLocal());
         
         int argumentStart = registerOffset + CallFrame::headerSizeInRegisters;
-        int remappedArgumentStart =
-        m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
+        int remappedArgumentStart = m_inlineStackTop->remapOperand(VirtualRegister(argumentStart)).offset();
         
         LoadVarargsData* data = m_graph.m_loadVarargsData.add();
         data->start = VirtualRegister(remappedArgumentStart + 1);
@@ -1850,17 +1849,17 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         addToGraph(Phantom, callTargetNode);
         
         // In DFG IR before SSA, we cannot insert control flow between after the
-        // LoadVarargs and the last SetArgument. This isn't a problem once we get to DFG
+        // LoadVarargs and the last SetArgumentDefinitely. This isn't a problem once we get to DFG
         // SSA. Fortunately, we also have other reasons for not inserting control flow
         // before SSA.
         
         VariableAccessData* countVariable = newVariableAccessData(VirtualRegister(remappedRegisterOffset + CallFrameSlot::argumentCount));
         // This is pretty lame, but it will force the count to be flushed as an int. This doesn't
-        // matter very much, since our use of a SetArgument and Flushes for this local slot is
+        // matter very much, since our use of a SetArgumentDefinitely and Flushes for this local slot is
         // mostly just a formality.
         countVariable->predict(SpecInt32Only);
         countVariable->mergeIsProfitableToUnbox(true);
-        Node* setArgumentCount = addToGraph(SetArgument, OpInfo(countVariable));
+        Node* setArgumentCount = addToGraph(SetArgumentDefinitely, OpInfo(countVariable));
         m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
         
         set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
@@ -1883,7 +1882,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
                 variable->predict(profile.computeUpdatedPrediction(locker));
             }
             
-            Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
+            Node* setArgument = addToGraph(SetArgumentDefinitely, OpInfo(variable));
             m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
         }
     };
@@ -4670,7 +4669,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         ArgumentsVector& entrypointArguments = addResult.iterator->value;
         entrypointArguments.resize(m_numArguments);
 
-        // We will emit SetArgument nodes. They don't exit, but we're at the top of an op_enter so
+        // We will emit SetArgumentDefinitely nodes. They don't exit, but we're at the top of an op_enter so
         // exitOK = true.
         m_exitOK = true;
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
@@ -4681,7 +4680,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             variable->mergeCheckArrayHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIndexingType));
             
-            Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
+            Node* setArgument = addToGraph(SetArgumentDefinitely, OpInfo(variable));
             entrypointArguments[argument] = setArgument;
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
@@ -6007,7 +6006,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             //
             // The nodes that follow here all exit to the following bytecode instruction, not
             // the op_catch. Exiting to op_catch is reserved for when an exception is thrown.
-            // The SetArgument nodes that follow below may exit because we may hoist type checks
+            // The SetArgumentDefinitely nodes that follow below may exit because we may hoist type checks
             // to them. The SetLocal nodes that follow below may exit because we may choose
             // a flush format that speculates on the type of the local.
             m_exitOK = true; 
@@ -6030,7 +6029,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     variable->mergeCheckArrayHoistingFailed(
                         m_inlineStackTop->m_exitProfile.hasExitSite(exitBytecodeIndex, BadIndexingType));
 
-                    Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
+                    Node* setArgument = addToGraph(SetArgumentDefinitely, OpInfo(variable));
                     setArgument->origin.forExit = CodeOrigin(exitBytecodeIndex, setArgument->origin.forExit.inlineCallFrame());
                     m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
                     entrypointArguments[argument] = setArgument;

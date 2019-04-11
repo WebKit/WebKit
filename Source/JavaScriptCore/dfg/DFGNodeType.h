@@ -104,7 +104,7 @@ namespace JSC { namespace DFG {
     macro(CheckTierUpAtReturn, NodeMustGenerate) \
     \
     /* Marker for an argument being set at the prologue of a function. */\
-    macro(SetArgument, 0) \
+    macro(SetArgumentDefinitely, 0) \
     \
     /* Marker of location in the IR where we may possibly perform jump replacement to */\
     /* invalidate this code block. */\

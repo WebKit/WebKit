@@ -133,7 +133,7 @@ void InPlaceAbstractState::initialize()
                 if (!node)
                     format = FlushedJSValue;
                 else {
-                    ASSERT(node->op() == SetArgument);
+                    ASSERT(node->op() == SetArgumentDefinitely);
                     format = node->variableAccessData()->flushFormat();
                 }
 
@@ -234,7 +234,7 @@ bool InPlaceAbstractState::endBasicBlock()
             
             switch (node->op()) {
             case Phi:
-            case SetArgument:
+            case SetArgumentDefinitely:
             case PhantomLocal:
             case Flush: {
                 // The block transfers the value from head to tail.

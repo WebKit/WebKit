@@ -117,11 +117,11 @@ public:
         for (int argument = 0; argument < baseline->numParameters(); ++argument) {
             Node* oldNode = target->variablesAtHead.argument(argument);
             if (!oldNode) {
-                // Just for sanity, always have a SetArgument even if it's not needed.
+                // Just for sanity, always have a SetArgumentDefinitely even if it's not needed.
                 oldNode = newArguments[argument];
             }
             Node* node = newRoot->appendNode(
-                m_graph, SpecNone, SetArgument, origin,
+                m_graph, SpecNone, SetArgumentDefinitely, origin,
                 OpInfo(oldNode->variableAccessData()));
             newArguments[argument] = node;
         }

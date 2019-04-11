@@ -1612,7 +1612,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
                 if (m_form != SSA && node->local().isArgument()) {
                     int argument = node->local().toArgument();
                     Node* argumentNode = m_rootToArguments.find(block(0))->value[argument];
-                    // FIXME: We should match SetArgument nodes at other entrypoints as well:
+                    // FIXME: We should match SetArgumentDefinitely nodes at other entrypoints as well:
                     // https://bugs.webkit.org/show_bug.cgi?id=175841
                     if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData())
                         return &profiledBlock->valueProfileForArgument(argument);

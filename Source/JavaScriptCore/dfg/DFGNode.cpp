@@ -73,7 +73,7 @@ bool Node::hasVariableAccessData(Graph& graph)
         return graph.m_form != SSA;
     case GetLocal:
     case SetLocal:
-    case SetArgument:
+    case SetArgumentDefinitely:
     case Flush:
     case PhantomLocal:
         return true;

@@ -173,7 +173,7 @@ enum GraphForm {
     // most likely) then it implies that the local is still live but that it need
     // not be stored to the stack necessarily. This implies that Phantom can
     // reference nodes that have no result, as long as those nodes are valid
-    // GetLocal children (i.e. Phi, SetLocal, SetArgument).
+    // GetLocal children (i.e. Phi, SetLocal, SetArgumentDefinitely).
     //
     // LoadStore form also implies that Phis need not have children. By default,
     // they end up having no children if you enter LoadStore using the canonical

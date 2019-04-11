@@ -493,7 +493,7 @@ private:
                     VALIDATE(
                         (node, edge),
                         edge->op() == SetLocal
-                        || edge->op() == SetArgument
+                        || edge->op() == SetArgumentDefinitely
                         || edge->op() == Flush
                         || edge->op() == Phi);
                     
@@ -504,7 +504,7 @@ private:
                         VALIDATE(
                             (node, edge),
                             edge->op() == SetLocal
-                            || edge->op() == SetArgument
+                            || edge->op() == SetArgumentDefinitely
                             || edge->op() == Flush);
                         
                         continue;
@@ -536,7 +536,7 @@ private:
                         VALIDATE(
                             (local, block->predecessors[k], prevNode),
                             prevNode->op() == SetLocal
-                            || prevNode->op() == SetArgument
+                            || prevNode->op() == SetArgumentDefinitely
                             || prevNode->op() == Phi);
                         if (prevNode == edge.node()) {
                             found = true;
@@ -676,9 +676,9 @@ private:
                         break;
                     setLocalPositions.operand(node->local()) = i;
                     break;
-                case SetArgument:
+                case SetArgumentDefinitely:
                     // This acts like a reset. It's ok to have a second GetLocal for a local in the same
-                    // block if we had a SetArgument for that local.
+                    // block if we had a SetArgumentDefinitely for that local.
                     getLocalPositions.operand(node->local()) = notSet;
                     setLocalPositions.operand(node->local()) = notSet;
                     break;
@@ -739,7 +739,7 @@ private:
                     
                 case GetLocal:
                 case SetLocal:
-                case SetArgument:
+                case SetArgumentDefinitely:
                 case Phantom:
                     VALIDATE((node), !"bad node type for SSA");
                     break;
