@@ -1,3 +1,19 @@
+2019-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r244144) ProcessSwap.ReuseSuspendedProcessLoadHTMLString API test is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=196784
+
+        Reviewed by Antti Koivisto.
+
+        When we enter accelerated compositing mode in the new process, we supposed to *close* the last
+        SuspendedPageProxy, not destroy it. This was causing flakiness in the test because it was testing
+        that we were using the SuspendedPageProxy's process for a cross-site link navigation, which is
+        an optimization. This optimization was partly broken by r244144 as the SuspendedPageProxy would
+        not sometimes be gone by the time we need it.
+
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::pageEnteredAcceleratedCompositingMode):
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         WKNavigationResponse._downloadAttribute should be nil when no download attribute is present

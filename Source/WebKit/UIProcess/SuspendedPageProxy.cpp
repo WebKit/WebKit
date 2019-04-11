@@ -169,7 +169,7 @@ void SuspendedPageProxy::pageEnteredAcceleratedCompositingMode()
 
     if (m_suspensionState == SuspensionState::FailedToSuspend) {
         // We needed the failed suspended page to stay alive to avoid flashing. Now we can get rid of it.
-        m_process->processPool().removeSuspendedPage(*this); // Will destroy |this|.
+        close();
     }
 }
 
