@@ -161,6 +161,7 @@ private:
     bool m_waitingForBackingStoreSwap { false };
     bool m_hadFlushDeferredWhileWaitingForBackingStoreSwap { false };
     bool m_nextFlushIsForImmediatePaint { false };
+    bool m_inFlushLayers { false };
 
     dispatch_queue_t m_commitQueue;
     RefPtr<BackingStoreFlusher> m_pendingBackingStoreFlusher;

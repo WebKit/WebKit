@@ -1,3 +1,17 @@
+2019-04-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION (r244182): RemoteLayerTreeDrawingArea::flushLayers() should not be reentrant
+        https://bugs.webkit.org/show_bug.cgi?id=196825
+
+        Reviewed by Simon Fraser.
+
+        Ensure the layer transactions IDs are sequential. So bail out of
+        RemoteLayerTreeDrawingArea::flushLayers() if reentrancy is detected.
+
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+
 2019-04-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Allow the MediaSource API to be enabled via website policy

@@ -50,6 +50,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 
 namespace WebKit {
@@ -344,6 +345,11 @@ void RemoteLayerTreeDrawingArea::flushLayers()
             scheduleCompositingLayerFlush();
     }
 
+    // This function is not reentrant, e.g. a rAF callback may force repaint.
+    if (m_inFlushLayers)
+        return;
+
+    SetForScope<bool> change(m_inFlushLayers, true);
     m_webPage.updateRendering();
 
     FloatRect visibleRect(FloatPoint(), m_viewSize);
