@@ -219,6 +219,33 @@ static WebCore::PhysicalBoxSide boxSide(WebKit::ScrollingDirection direction)
     BOOL altPressed = event.modifierFlags & WebEventFlagMaskOptionKey;
     BOOL cmdPressed = event.modifierFlags & WebEventFlagMaskCommandKey;
 
+    // No shortcuts include more than one modifier; we should not eat key events
+    // that contain more than one modifier because they might be used for other shortcuts.
+    if (shiftPressed + altPressed + cmdPressed > 1)
+        return WTF::nullopt;
+
+    auto allowedModifiers = ^ WebEventFlags {
+        switch (key) {
+        case Key::LeftArrow:
+        case Key::RightArrow:
+            return WebEventFlagMaskOptionKey;
+        case Key::UpArrow:
+        case Key::DownArrow:
+            return WebEventFlagMaskOptionKey | WebEventFlagMaskCommandKey;
+        case Key::PageUp:
+        case Key::PageDown:
+            return 0;
+        case Key::Space:
+            return WebEventFlagMaskShiftKey;
+        case Key::Other:
+            ASSERT_NOT_REACHED();
+            return 0;
+        };
+    }();
+
+    if (event.modifierFlags & ~allowedModifiers)
+        return WTF::nullopt;
+
     auto increment = ^{
         switch (key) {
         case Key::LeftArrow:

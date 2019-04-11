@@ -1,3 +1,17 @@
+2019-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r241734): ⌥⌘↑ and ⌥⌘↓ no longer navigate to previous/next Reading List article
+        https://bugs.webkit.org/show_bug.cgi?id=196797
+        <rdar://problem/48484715>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKKeyboardScrollingAnimator.mm:
+        (-[WKKeyboardScrollingAnimator keyboardScrollForEvent:]):
+        Validate the set of modifier keys pressed when handling a key event for scrolling:
+        Ignore key events with multiple modifier keys pressed.
+        Ignore key events with an invalid modifier key pressed for a given primary key.
+
 2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame
