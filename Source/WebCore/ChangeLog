@@ -1,3 +1,22 @@
+2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Layout test accessibility/aria-hidden-false-works-in-subtrees.html fails after r184890
+        https://bugs.webkit.org/show_bug.cgi?id=146718
+        <rdar://problem/21722487>
+
+        Reviewed by Joanmarie Diggs.
+
+        Allow to get the text under element for nodes hidden in DOM but explicitly exposed to accessibility with
+        aria-hidden="false".
+
+        Fixes: accessibility/aria-hidden-false-works-in-subtrees.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::textUnderElement const):
+        * accessibility/atk/WebKitAccessible.cpp:
+        (roleIsTextType): Also consider ApplicationGroup role as text elements, so that <div>text</div> is equivalent to
+        <div role="roup">test</div>.
+
 2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

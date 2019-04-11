@@ -1,3 +1,17 @@
+2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Layout test accessibility/aria-hidden-false-works-in-subtrees.html fails after r184890
+        https://bugs.webkit.org/show_bug.cgi?id=146718
+        <rdar://problem/21722487>
+
+        Reviewed by Joanmarie Diggs.
+
+        Update test to ATK behavior, rebaseline it and remove the expectations.
+
+        * accessibility/aria-hidden-false-works-in-subtrees.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/aria-hidden-false-works-in-subtrees-expected.txt:
+
 2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

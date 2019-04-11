@@ -1181,7 +1181,8 @@ static bool roleIsTextType(AccessibilityRole role)
         || role == AccessibilityRole::Pre
         || role == AccessibilityRole::GridCell
         || role == AccessibilityRole::TextGroup
-        || role == AccessibilityRole::ApplicationTextGroup;
+        || role == AccessibilityRole::ApplicationTextGroup
+        || role == AccessibilityRole::ApplicationGroup;
 }
 
 static guint16 interfaceMaskFromObject(AccessibilityObject* coreObject)
