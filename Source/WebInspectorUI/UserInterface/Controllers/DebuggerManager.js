@@ -38,7 +38,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.AutoContinueDidChange, this._breakpointEditablePropertyDidChange, this);
         WI.Breakpoint.addEventListener(WI.Breakpoint.Event.ActionsDidChange, this._handleBreakpointActionsDidChange, this);
 
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
@@ -1136,19 +1137,17 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
         this.breakpointsEnabled = restoreState;
     }
 
-    _handleTimelineCapturingStateChanged(event)
+    _timelineCapturingWillStart(event)
     {
-        switch (WI.timelineManager.capturingState) {
-        case WI.TimelineManager.CapturingState.Starting:
-            this._startDisablingBreakpointsTemporarily();
-            if (this.paused)
-                this.resume();
-            break;
+        this._startDisablingBreakpointsTemporarily();
 
-        case WI.TimelineManager.CapturingState.Inactive:
-            this._stopDisablingBreakpointsTemporarily();
-            break;
-        }
+        if (this.paused)
+            this.resume();
+    }
+
+    _timelineCapturingStopped(event)
+    {
+        this._stopDisablingBreakpointsTemporarily();
     }
 
     _handleAuditManagerTestScheduled(event)

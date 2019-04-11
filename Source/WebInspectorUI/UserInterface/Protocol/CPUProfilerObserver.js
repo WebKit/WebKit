@@ -37,8 +37,8 @@ WI.CPUProfilerObserver = class CPUProfilerObserver
         WI.timelineManager.cpuProfilerTrackingUpdated(event);
     }
 
-    trackingComplete(timestamp)
+    trackingComplete(samples)
     {
-        WI.timelineManager.cpuProfilerTrackingCompleted(timestamp);
+        WI.timelineManager.cpuProfilerTrackingCompleted(samples);
     }
 };

@@ -116,8 +116,9 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this._viewModeDidChange();
 
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.RecordingImported, this._recordingImported, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStarted, this._capturingStarted, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
     }
 
     // Import / Export
@@ -1031,20 +1032,6 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
         this._editingInstrumentsDidChange();
     }
 
-    _handleTimelineCapturingStateChanged(event)
-    {
-        switch (WI.timelineManager.capturingState) {
-        case WI.TimelineManager.CapturingState.Active:
-            this._editInstrumentsButton.enabled = false;
-            this._stopEditingInstruments();
-            break;
-
-        case WI.TimelineManager.CapturingState.Inactive:
-            this._editInstrumentsButton.enabled = true;
-            break;
-        }
-    }
-
     _recordingImported(event)
     {
         let {overviewData} = event.data;
@@ -1066,6 +1053,17 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
             if (timeline)
                 this.selectedTimeline = timeline;
         }
+    }
+
+    _capturingStarted(event)
+    {
+        this._editInstrumentsButton.enabled = false;
+        this._stopEditingInstruments();
+    }
+
+    _capturingStopped(event)
+    {
+        this._editInstrumentsButton.enabled = true;
     }
 
     _compareTimelineTreeElements(a, b)

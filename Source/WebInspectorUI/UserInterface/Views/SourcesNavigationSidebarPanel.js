@@ -282,7 +282,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleConsoleIssueAdded, this);
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._handleConsoleCleared, this);
 
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._handleTimelineCapturingWillStart, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._handleTimelineCapturingStopped, this);
 
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
@@ -336,7 +337,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._handleDebuggerPaused();
 
         if (WI.debuggerManager.breakpointsDisabledTemporarily) {
-            this._handleTimelineCapturingStateChanged();
+            if (WI.timelineManager.isCapturing())
+                this._handleTimelineCapturingWillStart();
 
             if (WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping)
                 this._handleAuditManagerTestScheduled();
@@ -1818,33 +1820,34 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         issueTreeElements.forEach((treeElement) => treeElement.parent.removeChild(treeElement));
     }
 
-    _handleTimelineCapturingStateChanged(event)
+    _handleTimelineCapturingWillStart(event)
     {
         this._updateTemporarilyDisabledBreakpointsButtons();
 
-        switch (WI.timelineManager.capturingState) {
-        case WI.TimelineManager.CapturingState.Starting:
-            if (!this._timelineRecordingWarningElement) {
-                let stopRecordingButton = document.createElement("button");
-                stopRecordingButton.textContent = WI.UIString("Stop recording");
-                stopRecordingButton.addEventListener("click", () => {
-                    WI.timelineManager.stopCapturing();
-                });
+        if (!this._timelineRecordingWarningElement) {
+            let stopRecordingButton = document.createElement("button");
+            stopRecordingButton.textContent = WI.UIString("Stop recording");
+            stopRecordingButton.addEventListener("click", () => {
+                WI.timelineManager.stopCapturing();
+            });
 
-                this._timelineRecordingWarningElement = document.createElement("div");
-                this._timelineRecordingWarningElement.classList.add("warning-banner");
-                this._timelineRecordingWarningElement.append(WI.UIString("Debugger disabled during Timeline recording"), document.createElement("br"), stopRecordingButton);
-            }
+            this._timelineRecordingWarningElement = document.createElement("div");
+            this._timelineRecordingWarningElement.classList.add("warning-banner");
+            this._timelineRecordingWarningElement.append(WI.UIString("Debugger disabled during Timeline recording"), document.createElement("br"), stopRecordingButton);
+        }
 
-            this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
-            break;
+        this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
 
-        case WI.TimelineManager.CapturingState.Inactive:
-            if (this._timelineRecordingWarningElement) {
-                this._timelineRecordingWarningElement.remove();
-                this._timelineRecordingWarningElement = null;
-            }
-            break;
+        this._updateBreakpointsDisabledBanner();
+    }
+
+    _handleTimelineCapturingStopped(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
+
+        if (this._timelineRecordingWarningElement) {
+            this._timelineRecordingWarningElement.remove();
+            this._timelineRecordingWarningElement = null;
         }
 
         this._updateBreakpointsDisabledBanner();

@@ -55,7 +55,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
 
         WI.DOMBreakpoint.addEventListener(WI.DOMBreakpoint.Event.DOMNodeChanged, this._handleDOMBreakpointDOMNodeChanged, this);
 
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingWillStart, this._timelineCapturingWillStart, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._timelineCapturingStopped, this);
 
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestScheduled, this._handleAuditManagerTestScheduled, this);
         WI.auditManager.addEventListener(WI.AuditManager.Event.TestCompleted, this._handleAuditManagerTestCompleted, this);
@@ -250,7 +251,8 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             this._debuggerDidPause(null);
 
         if (WI.debuggerManager.breakpointsDisabledTemporarily) {
-            this._handleTimelineCapturingStateChanged();
+            if (WI.timelineManager.isCapturing())
+                this._timelineCapturingWillStart();
 
             if (WI.auditManager.runningState === WI.AuditManager.RunningState.Active || WI.auditManager.runningState === WI.AuditManager.RunningState.Stopping)
                 this._handleAuditManagerTestScheduled();
@@ -646,20 +648,19 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
         }
     }
 
-    _handleTimelineCapturingStateChanged(event)
+    _timelineCapturingWillStart(event)
     {
         this._updateTemporarilyDisabledBreakpointsButtons();
 
-        switch (WI.timelineManager.capturingState) {
-        case WI.TimelineManager.CapturingState.Starting:
-            this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
-            break;
+        this.contentView.element.insertBefore(this._timelineRecordingWarningElement, this.contentView.element.firstChild);
+        this._updateBreakpointsDisabledBanner();
+    }
 
-        case WI.TimelineManager.CapturingState.Inactive:
-            this._timelineRecordingWarningElement.remove();
-            break;
-        }
+    _timelineCapturingStopped(event)
+    {
+        this._updateTemporarilyDisabledBreakpointsButtons();
 
+        this._timelineRecordingWarningElement.remove();
         this._updateBreakpointsDisabledBanner();
     }
 

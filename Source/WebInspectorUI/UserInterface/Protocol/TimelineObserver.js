@@ -49,11 +49,11 @@ WI.TimelineObserver = class TimelineObserver
 
     programmaticCaptureStarted()
     {
-        // COMPATIBILITY (iOS 12.2): Timeline.programmaticCaptureStarted was removed after iOS 12.2.
+        WI.timelineManager.programmaticCaptureStarted();
     }
 
     programmaticCaptureStopped()
     {
-        // COMPATIBILITY (iOS 12.2): Timeline.programmaticCaptureStopped was removed after iOS 12.2.
+        WI.timelineManager.programmaticCaptureStopped();
     }
 };

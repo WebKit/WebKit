@@ -121,6 +121,10 @@ void JSGlobalObjectConsoleClient::startConsoleProfile()
 {
     ErrorString unused;
 
+    // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
+    if (m_scriptProfilerAgent)
+        m_scriptProfilerAgent->programmaticCaptureStarted();
+
     if (m_debuggerAgent) {
         m_profileRestoreBreakpointActiveValue = m_debuggerAgent->breakpointsActive();
         m_debuggerAgent->setBreakpointsActive(unused, false);
@@ -141,6 +145,10 @@ void JSGlobalObjectConsoleClient::stopConsoleProfile()
 
     if (m_debuggerAgent)
         m_debuggerAgent->setBreakpointsActive(unused, m_profileRestoreBreakpointActiveValue);
+
+    // FIXME: <https://webkit.org/b/158753> Generalize the concept of Instruments on the backend to work equally for JSContext and Web inspection
+    if (m_scriptProfilerAgent)
+        m_scriptProfilerAgent->programmaticCaptureStopped();
 }
 
 void JSGlobalObjectConsoleClient::takeHeapSnapshot(JSC::ExecState*, const String& title)

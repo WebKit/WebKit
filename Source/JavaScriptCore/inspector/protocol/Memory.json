@@ -64,10 +64,7 @@
         },
         {
             "name": "trackingComplete",
-            "description": "Tracking stopped.",
-            "parameters": [
-                { "name": "timestamp", "type": "number" }
-            ]
+            "description": "Tracking stopped."
         }
     ]
 }

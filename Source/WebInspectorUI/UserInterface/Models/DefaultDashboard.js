@@ -33,7 +33,7 @@ WI.DefaultDashboard = class DefaultDashboard extends WI.Object
 
         // Necessary event required to track page load time and resource sizes.
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
-        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
+        WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStopped, this._capturingStopped, this);
 
         // Necessary events required to track load of resources.
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._resourceWasAdded, this);
@@ -163,11 +163,8 @@ WI.DefaultDashboard = class DefaultDashboard extends WI.Object
             this._transitioningPageTarget = false;
     }
 
-    _handleTimelineCapturingStateChanged(event)
+    _capturingStopped(event)
     {
-        if (WI.timelineManager.isCapturing())
-            return;
-
         // If recording stops, we should stop the timer if it hasn't stopped already.
         this._stopUpdatingTime();
     }
