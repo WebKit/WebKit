@@ -80,7 +80,8 @@
 
 - (NSString *)_downloadAttribute
 {
-    return _navigationResponse->downloadAttribute();
+    const String& attribute = _navigationResponse->downloadAttribute();
+    return attribute.isNull() ? nil : (NSString *)attribute;
 }
 
 @end

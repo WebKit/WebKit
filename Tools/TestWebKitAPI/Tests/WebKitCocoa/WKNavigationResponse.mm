@@ -212,36 +212,43 @@ static void writeResponse(int socket, NSString *response)
 
 TEST(WebKit, WKNavigationResponseDownloadAttribute)
 {
-    TestWebKitAPI::TCPServer server([](int socket) {
-        readRequest(socket);
-        NSString *body = @"<a id='link' href='/fromHref.txt' download='fromDownloadAttribute.txt'>Click Me!</a>";
-        unsigned bodyLength = body.length;
-        writeResponse(socket, [NSString stringWithFormat:
-            @"HTTP/1.1 200 OK\r\n"
-            "Content-Length: %d\r\n\r\n"
-            "%@",
-            bodyLength,
-            body
-        ]);
-        readRequest(socket);
-        writeResponse(socket,
-            @"HTTP/1.1 200 OK\r\n"
-            "Content-Length: 6\r\n"
-            "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
-            "Hello!"
-        );
-    });
-    auto delegate = adoptNS([NavigationResponseTestDelegate new]);
-    auto webView = adoptNS([WKWebView new]);
-    [webView setNavigationDelegate:delegate.get()];
+    auto getDownloadResponse = [] (RetainPtr<NSString> body) -> RetainPtr<WKNavigationResponse> {
+        TestWebKitAPI::TCPServer server([body](int socket) {
+            readRequest(socket);
+            unsigned bodyLength = [body length];
+            writeResponse(socket, [NSString stringWithFormat:
+                @"HTTP/1.1 200 OK\r\n"
+                "Content-Length: %d\r\n\r\n"
+                "%@",
+                bodyLength,
+                body.get()
+            ]);
+            readRequest(socket);
+            writeResponse(socket,
+                @"HTTP/1.1 200 OK\r\n"
+                "Content-Length: 6\r\n"
+                "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
+                "Hello!"
+            );
+        });
+        auto delegate = adoptNS([NavigationResponseTestDelegate new]);
+        auto webView = adoptNS([WKWebView new]);
+        [webView setNavigationDelegate:delegate.get()];
 
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
-    [delegate waitForNavigationFinishedCallback];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+        [delegate waitForNavigationFinishedCallback];
 
-    [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
-    [delegate waitForNavigationResponseCallback];
+        [webView evaluateJavaScript:@"document.getElementById('link').click();" completionHandler:nil];
+        [delegate waitForNavigationResponseCallback];
+        EXPECT_STREQ([delegate navigationResponse].response.suggestedFilename.UTF8String, "fromHeader.txt");
+        return [delegate navigationResponse];
+    };
+    auto shouldBeFromDownloadAttribute = getDownloadResponse(@"<a id='link' href='/fromHref.txt' download='fromDownloadAttribute.txt'>Click Me!</a>");
+    auto shouldBeNull = getDownloadResponse(@"<a id='link' href='/fromHref.txt'>Click Me!</a>");
+    auto shouldBeEmpty = getDownloadResponse(@"<a id='link' href='/fromHref.txt' download=''>Click Me!</a>");
     
-    WKNavigationResponse *response = [delegate navigationResponse];
-    EXPECT_STREQ(response.response.suggestedFilename.UTF8String, "fromHeader.txt");
-    EXPECT_STREQ(response._downloadAttribute.UTF8String, "fromDownloadAttribute.txt");
+    EXPECT_STREQ([shouldBeFromDownloadAttribute _downloadAttribute].UTF8String, "fromDownloadAttribute.txt");
+    EXPECT_STREQ([shouldBeEmpty _downloadAttribute].UTF8String, "");
+    EXPECT_NOT_NULL([shouldBeEmpty _downloadAttribute]);
+    EXPECT_NULL([shouldBeNull _downloadAttribute]);
 }
