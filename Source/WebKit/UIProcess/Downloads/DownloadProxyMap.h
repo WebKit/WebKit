@@ -59,7 +59,7 @@ public:
 
     bool isEmpty() const { return m_downloads.isEmpty(); }
 
-    void processDidClose();
+    void invalidate();
 
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();

@@ -97,6 +97,9 @@ NetworkProcessProxy::~NetworkProcessProxy()
         proxy->removeNetworkProcess(*this);
 #endif
 
+    if (m_downloadProxyMap)
+        m_downloadProxyMap->invalidate();
+
     for (auto& reply : m_pendingConnectionReplies)
         reply.second({ });
 }
@@ -273,7 +276,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     auto protectedProcessPool = makeRef(m_processPool);
 
     if (m_downloadProxyMap)
-        m_downloadProxyMap->processDidClose();
+        m_downloadProxyMap->invalidate();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     m_customProtocolManagerProxy.invalidate();
 #endif

@@ -1,3 +1,24 @@
+2019-04-12  Chris Dumez  <cdumez@apple.com>
+
+        [iOS Sim Debug] ASSERTION FAILED: m_downloads.isEmpty() Layout Test http/tests/websocket/tests/hybi/network-process-crash-error.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=196781
+        <rdar://problem/49789381>
+
+        Reviewed by Darin Adler.
+
+        When the network process gets terminated by the client, the NetworkProcessProxy object (and thus its DownloadProxyMap member) get
+        destroyed right away, before we get a call to didClose(IPC::Connection&). As a result, if there are ongoing downloads at the time
+        of the termination, we will hit the assertion above. To address the issue, update the NetworkProcessProxy destructor to invalidate
+        its DownloadProxyMap member, similator to what it does in didClose(IPC::Connection&).
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::invalidate):
+        (WebKit::DownloadProxyMap::processDidClose): Deleted.
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::didClose):
+
 2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r243860): Many tests failing
