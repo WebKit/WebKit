@@ -1,3 +1,32 @@
+2019-04-12  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Prevent narrowing conversions during Metal function calls on 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=196793
+
+        Reviewed by Darin Adler.
+
+        On 32-bit platforms, NSUInteger is 32-bit, which limits certain Web GPU parameters. 
+        Ensure that valid parameters are properly converted to NSUInteger for Metal calls, regardless of platform.
+
+        * platform/graphics/gpu/GPUBuffer.h:
+        (WebCore::GPUBuffer::byteLength const):
+        * platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm:
+        (WebCore::tryGetResourceAsBufferBinding):
+        (WebCore::setBufferOnEncoder):
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::validateBufferUsage):
+        (WebCore::GPUBuffer::tryCreate):
+        (WebCore::GPUBuffer::GPUBuffer):
+        (WebCore::GPUBuffer::setSubData):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::drawIndexed):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetInputStateForPipelineDescriptor):
+
 2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for non-unified build.

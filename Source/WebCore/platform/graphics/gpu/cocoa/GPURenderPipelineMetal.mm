@@ -36,6 +36,7 @@
 #import "WHLSLVertexBufferIndexCalculator.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/OptionSet.h>
 #import <wtf/Optional.h>
 
@@ -339,10 +340,17 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
             LOG(WebGPU, "%s: Invalid inputSlot %u for vertex attribute %u!", functionName, attributes[i].inputSlot, location);
             return false;
         }
+        // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
+        // FIXME: Ensure offset < buffer's stride + format's data size.
+        NSUInteger attributeOffset = 0;
+        if (!WTF::convertSafely<NSUInteger, uint64_t>(attributes[i].offset, attributeOffset)) {
+            LOG(WebGPU, "%s: Buffer offset for vertex attribute %u is too large!", functionName, location);
+            return false;
+        }
 
         auto mtlAttributeDesc = retainPtr([attributeArray objectAtIndexedSubscript:location]);
         [mtlAttributeDesc setFormat:mtlVertexFormatForGPUVertexFormat(attributes[i].format)];
-        [mtlAttributeDesc setOffset:attributes[i].offset]; // FIXME: After adding more vertex formats, ensure offset < buffer's stride + format's data size.
+        [mtlAttributeDesc setOffset:attributeOffset];
         [mtlAttributeDesc setBufferIndex:WHLSL::Metal::calculateVertexBufferIndex(attributes[i].inputSlot)];
     }
 
@@ -356,11 +364,16 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
             LOG(WebGPU, "%s: Invalid inputSlot %d for vertex buffer!", functionName, slot);
             return false;
         }
+        NSUInteger inputStride = 0;
+        if (!WTF::convertSafely<NSUInteger, uint64_t>(inputs[j].stride, inputStride)) {
+            LOG(WebGPU, "%s: Stride for vertex buffer slot %d is too large!", functionName, slot);
+            return false;
+        }
 
         auto convertedSlot = WHLSL::Metal::calculateVertexBufferIndex(slot);
         auto mtlLayoutDesc = retainPtr([layoutArray objectAtIndexedSubscript:convertedSlot]);
         [mtlLayoutDesc setStepFunction:mtlStepFunctionForGPUInputStepMode(inputs[j].stepMode)];
-        [mtlLayoutDesc setStride:inputs[j].stride];
+        [mtlLayoutDesc setStride:inputStride];
     }
 
     [mtlDescriptor setVertexDescriptor:mtlVertexDescriptor.get()];

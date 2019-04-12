@@ -356,8 +356,12 @@ void GPURenderPassEncoder::drawIndexed(unsigned indexCount, unsigned instanceCou
     }
 
     auto indexByteSize = (m_pipeline->indexFormat() == GPUIndexFormat::Uint16) ? sizeof(uint16_t) : sizeof(uint32_t);
+
+    // This calculation cannot overflow as firstIndex is bounded to 32 bits, and indexByteSize to sizeof(uint32_t).
     uint64_t firstIndexOffset = firstIndex * indexByteSize;
-    auto totalOffset = checkedSum<uint64_t>(firstIndexOffset, m_indexBufferOffset);
+
+    // This call ensures that neither argument nor their sum will overflow NSUInteger.
+    auto totalOffset = checkedSum<NSUInteger>(firstIndexOffset, m_indexBufferOffset);
     if (totalOffset.hasOverflowed() || totalOffset >= m_indexBuffer->byteLength()) {
         LOG(WebGPU, "%s: Invalid firstIndex!", functionName);
         return;

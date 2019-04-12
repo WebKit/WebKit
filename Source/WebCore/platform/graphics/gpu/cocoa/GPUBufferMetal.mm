@@ -45,17 +45,17 @@ static constexpr auto readOnlyFlags = OptionSet<GPUBufferUsage::Flags> { GPUBuff
 bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBufferUsage::Flags> usage)
 {
     if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUBuffer::create(): Invalid GPUDevice!");
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Invalid GPUDevice!");
         return false;
     }
 
     if (usage.containsAll({ GPUBufferUsage::Flags::MapWrite, GPUBufferUsage::Flags::MapRead })) {
-        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer cannot have both MAP_READ and MAP_WRITE usage!");
         return false;
     }
 
     if (usage.containsAny(readOnlyFlags) && (usage & GPUBufferUsage::Flags::Storage)) {
-        LOG(WebGPU, "GPUBuffer::create(): Buffer cannot have both STORAGE and a read-only usage!");
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer cannot have both STORAGE and a read-only usage!");
         return false;
     }
 
@@ -64,6 +64,13 @@ bool GPUBuffer::validateBufferUsage(const GPUDevice& device, OptionSet<GPUBuffer
 
 RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferDescriptor& descriptor)
 {
+    // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
+    NSUInteger size = 0;
+    if (!WTF::convertSafely<NSUInteger, uint64_t>(descriptor.size, size)) {
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer size is too large!");
+        return nullptr;
+    }
+
     auto usage = OptionSet<GPUBufferUsage::Flags>::fromRaw(descriptor.usage);
     if (!validateBufferUsage(device.get(), usage))
         return nullptr;
@@ -79,19 +86,19 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    mtlBuffer = adoptNS([device->platformDevice() newBufferWithLength:descriptor.size options:resourceOptions]);
+    mtlBuffer = adoptNS([device->platformDevice() newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:resourceOptions]);
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
     if (!mtlBuffer) {
-        LOG(WebGPU, "GPUBuffer::create(): Unable to create MTLBuffer!");
+        LOG(WebGPU, "GPUBuffer::tryCreate(): Unable to create MTLBuffer!");
         return nullptr;
     }
 
-    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), descriptor.size, usage, WTFMove(device)));
+    return adoptRef(*new GPUBuffer(WTFMove(mtlBuffer), size, usage, WTFMove(device)));
 }
 
-GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, uint64_t size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
+GPUBuffer::GPUBuffer(RetainPtr<MTLBuffer>&& buffer, size_t size, OptionSet<GPUBufferUsage::Flags> usage, Ref<GPUDevice>&& device)
     : m_platformBuffer(WTFMove(buffer))
     , m_device(WTFMove(device))
     , m_byteLength(size)
@@ -136,8 +143,8 @@ void GPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
         return;
     }
 #endif
-
-    auto subDataLength = checkedSum<uint64_t>(data.byteLength(), offset);
+    // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
+    auto subDataLength = checkedSum<NSUInteger>(data.byteLength(), offset);
     if (subDataLength.hasOverflowed() || subDataLength.unsafeGet() > m_byteLength) {
         LOG(WebGPU, "GPUBuffer::setSubData(): Invalid offset or data size!");
         return;
@@ -145,7 +152,7 @@ void GPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
 
     if (m_subDataBuffers.isEmpty()) {
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        m_subDataBuffers.append(adoptNS([m_platformBuffer.get().device newBufferWithLength:m_byteLength options:MTLResourceCPUCacheModeDefaultCache]));
+        m_subDataBuffers.append(adoptNS([m_platformBuffer.get().device newBufferWithLength:static_cast<NSUInteger>(m_byteLength) options:MTLResourceCPUCacheModeDefaultCache]));
         END_BLOCK_OBJC_EXCEPTIONS;
     }
 
@@ -163,7 +170,7 @@ void GPUBuffer::setSubData(uint64_t offset, const JSC::ArrayBuffer& data)
     auto commandBuffer = retainPtr([queue commandBuffer]);
     auto blitEncoder = retainPtr([commandBuffer blitCommandEncoder]);
 
-    [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:offset size:stagingMtlBuffer.get().length];
+    [blitEncoder copyFromBuffer:stagingMtlBuffer.get() sourceOffset:0 toBuffer:m_platformBuffer.get() destinationOffset:static_cast<NSUInteger>(offset) size:stagingMtlBuffer.get().length];
     [blitEncoder endEncoding];
 
     if (isMappable())

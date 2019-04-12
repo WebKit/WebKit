@@ -35,6 +35,7 @@
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/CheckedArithmetic.h>
 #import <wtf/Optional.h>
 
 namespace WebCore {
@@ -63,6 +64,11 @@ static Optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBinding
         LOG(WebGPU, "%s: Invalid MTLBuffer in GPUBufferBinding!", functionName);
         return WTF::nullopt;
     }
+    // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
+    if (!WTF::isInBounds<NSUInteger>(bufferBinding.offset)) {
+        LOG(WebGPU, "%s: Buffer offset is too large!", functionName);
+        return WTF::nullopt;
+    }
     return GPUBufferBinding { bufferBinding.buffer.copyRef(), bufferBinding.offset, bufferBinding.size };
 }
 
@@ -71,7 +77,8 @@ static void setBufferOnEncoder(MTLArgumentEncoder *argumentEncoder, const GPUBuf
     ASSERT(argumentEncoder && bufferBinding.buffer->platformBuffer());
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [argumentEncoder setBuffer:bufferBinding.buffer->platformBuffer() offset:bufferBinding.offset atIndex:index];
+    // Bounds check when converting GPUBufferBinding ensures that NSUInteger cast of uint64_t offset is safe.
+    [argumentEncoder setBuffer:bufferBinding.buffer->platformBuffer() offset:static_cast<NSUInteger>(bufferBinding.offset) atIndex:index];
     END_BLOCK_OBJC_EXCEPTIONS;
 }
     
