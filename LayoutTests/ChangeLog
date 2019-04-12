@@ -1,3 +1,27 @@
+2019-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Wrong scrolling behavior for nested absolute position elements inside overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=196146
+
+        Reviewed by Antti Koivisto.
+        
+        Dump the scrolling tree for various configurations of positioned, overflow and stacking context
+        elements.
+
+        * fast/scrolling/ios/overflow-scroll-overlap-6-expected.txt: Progressed results.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt: Added.
+        * platform/ios-wk2/scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow.html: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow.html: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow.html: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html: Added.
+
 2019-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-flex][css-grid] Fix synthesized baseline

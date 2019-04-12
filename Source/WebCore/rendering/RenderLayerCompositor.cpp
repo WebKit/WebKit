@@ -2904,41 +2904,96 @@ bool RenderLayerCompositor::useCoordinatedScrollingForLayer(const RenderLayer& l
     return false;
 }
 
-// Is this layer's containingBlock an ancestor of scrollable overflow, and is the layer's compositing ancestor inside that overflow?
+static RenderLayer* enclosingCompositedScrollingLayer(const RenderLayer& layer, const RenderLayer& intermediateLayer, bool& sawIntermediateLayer)
+{
+    const auto* currLayer = &layer;
+    while (currLayer) {
+        if (currLayer == &intermediateLayer)
+            sawIntermediateLayer = true;
+
+        if (currLayer->hasCompositedScrollableOverflow())
+            return const_cast<RenderLayer*>(currLayer);
+
+        currLayer = currLayer->parent();
+    }
+
+    return nullptr;
+}
+
+// Return true if overflowScrollLayer is in layer's containing block chain.
+static bool isScrolledByOverflowScrollLayer(const RenderLayer& layer, const RenderLayer& overflowScrollLayer)
+{
+    bool containingBlockCanSkipLayers = layer.renderer().isAbsolutelyPositioned();
+
+    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
+        bool inContainingBlockChain = true;
+        if (containingBlockCanSkipLayers) {
+            inContainingBlockChain = currLayer->renderer().canContainAbsolutelyPositionedObjects();
+            if (inContainingBlockChain)
+                containingBlockCanSkipLayers = currLayer->renderer().isAbsolutelyPositioned();
+        }
+
+        if (currLayer == &overflowScrollLayer)
+            return inContainingBlockChain;
+    }
+
+    return false;
+}
+
+static bool isNonScrolledLayerInsideScrolledCompositedAncestor(const RenderLayer& layer, const RenderLayer& compositedAncestor, const RenderLayer& scrollingAncestor)
+{
+    bool ancestorMovedByScroller = &compositedAncestor == &scrollingAncestor || isScrolledByOverflowScrollLayer(compositedAncestor, scrollingAncestor);
+    bool layerMovedByScroller = isScrolledByOverflowScrollLayer(layer, scrollingAncestor);
+
+    return ancestorMovedByScroller && !layerMovedByScroller;
+}
+
 bool RenderLayerCompositor::layerContainingBlockCrossesCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor)
 {
-    ASSERT(layer.renderer().isAbsolutelyPositioned());
-
-    bool sawCompositingAncestor = false;
-    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
-        if (currLayer->renderer().canContainAbsolutelyPositionedObjects())
-            return false;
-
-        if (currLayer == &compositedAncestor)
-            sawCompositingAncestor = true;
-
-        if (currLayer->hasCompositedScrollableOverflow())
-            return sawCompositingAncestor;
+    bool compositedAncestorIsInsideScroller = false;
+    auto* scrollingAncestor = enclosingCompositedScrollingLayer(layer, compositedAncestor, compositedAncestorIsInsideScroller);
+    if (!scrollingAncestor) {
+        ASSERT_NOT_REACHED(); // layer.hasCompositedScrollingAncestor() should guarantee we have one.
+        return false;
     }
+    
+    if (!compositedAncestorIsInsideScroller)
+        return false;
 
-    return false;
+    return isNonScrolledLayerInsideScrolledCompositedAncestor(layer, compositedAncestor, *scrollingAncestor);
 }
 
-// Is there scrollable overflow between this layer and its composited ancestor, and the containing block is the scroller or inside the scroller.
-static bool layerParentedAcrossCoordinatedScrollingBoundary(const RenderLayer& layer, const RenderLayer& compositedAncestor, bool checkContainingBlock, bool& containingBlockIsInsideOverflow)
+static void collectStationaryLayerRelatedOverflowNodes(const RenderLayer& layer, const RenderLayer& /*compositedAncestor*/, Vector<ScrollingNodeID>& scrollingNodes)
 {
     ASSERT(layer.isComposited());
+    
+    auto appendOverflowLayerNodeID = [&scrollingNodes] (const RenderLayer& overflowLayer) {
+        ASSERT(overflowLayer.isComposited());
+        auto scrollingNodeID = overflowLayer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
+        if (scrollingNodeID)
+            scrollingNodes.append(scrollingNodeID);
+        else
+            LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &overflowLayer);
+    };
 
-    for (const auto* currLayer = layer.parent(); currLayer != &compositedAncestor; currLayer = currLayer->parent()) {
-        if (checkContainingBlock && currLayer->renderer().canContainAbsolutelyPositionedObjects())
-            containingBlockIsInsideOverflow = true;
+    ASSERT(layer.renderer().isAbsolutelyPositioned());
+    bool containingBlockCanSkipLayers = true;
 
-        if (currLayer->hasCompositedScrollableOverflow())
-            return true;
+    for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
+        bool inContainingBlockChain = true;
+        if (containingBlockCanSkipLayers) {
+            inContainingBlockChain = currLayer->renderer().canContainAbsolutelyPositionedObjects();
+            if (inContainingBlockChain)
+                containingBlockCanSkipLayers = currLayer->renderer().isAbsolutelyPositioned();
+        }
+
+        if (currLayer->hasCompositedScrollableOverflow()) {
+            appendOverflowLayerNodeID(*currLayer);
+            break;
+        }
     }
-
-    return false;
 }
+
 
 ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningForLayer(const RenderLayer& layer) const
 {
@@ -2955,24 +3010,32 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
     if (!scrollingCoordinator)
         return ScrollPositioningBehavior::None;
 
+    auto* compositedAncestor = layer.ancestorCompositingLayer();
+    if (!compositedAncestor) {
+        ASSERT_NOT_REACHED();
+        return ScrollPositioningBehavior::None;
+    }
+
+    bool compositedAncestorIsInsideScroller = false;
+    auto* scrollingAncestor = enclosingCompositedScrollingLayer(layer, *compositedAncestor, compositedAncestorIsInsideScroller);
+    if (!scrollingAncestor) {
+        ASSERT_NOT_REACHED(); // layer.hasCompositedScrollingAncestor() should guarantee we have one.
+        return ScrollPositioningBehavior::None;
+    }
+
     // There are two cases we have to deal with here:
     // 1. There's a composited overflow:scroll in the parent chain between the renderer and its containing block, and the layer's
     //    composited (z-order) ancestor is inside the scroller or is the scroller. In this case, we have to compensate for scroll position
     //    changes to make the positioned layer stay in the same place. This only applies to position:absolute (since we handle fixed elsewhere).
-    auto* compositedAncestor = layer.ancestorCompositingLayer();
-
-    auto& renderer = layer.renderer();
-    bool containingBlockCanSkipOverflow = renderer.isOutOfFlowPositioned() && renderer.style().position() == PositionType::Absolute;
-    if (containingBlockCanSkipOverflow) {
-        if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositedAncestor))
+    if (layer.renderer().isAbsolutelyPositioned()) {
+        if (compositedAncestorIsInsideScroller && isNonScrolledLayerInsideScrolledCompositedAncestor(layer, *compositedAncestor, *scrollingAncestor))
             return ScrollPositioningBehavior::Stationary;
     }
 
     // 2. The layer's containing block is the overflow or inside the overflow:scroll, but its z-order ancestor is
     //    outside the overflow:scroll. In that case, we have to move the layer via the scrolling tree to make
     //    it move along with the overflow scrolling.
-    bool containingBlockIsInsideOverflow = !containingBlockCanSkipOverflow;
-    if (layerParentedAcrossCoordinatedScrollingBoundary(layer, *compositedAncestor, containingBlockCanSkipOverflow, containingBlockIsInsideOverflow) && containingBlockIsInsideOverflow)
+    if (!compositedAncestorIsInsideScroller && isScrolledByOverflowScrollLayer(layer, *scrollingAncestor))
         return ScrollPositioningBehavior::Moves;
 
     return ScrollPositioningBehavior::None;
@@ -2998,21 +3061,12 @@ static Vector<ScrollingNodeID> collectRelatedCoordinatedScrollingNodes(const Ren
         break;
     }
     case ScrollPositioningBehavior::Stationary: {
-        // Collect all the composited scrollers between this layer and its containing block.
-        ASSERT(layer.renderer().style().position() == PositionType::Absolute);
-        for (const auto* currLayer = layer.parent(); currLayer; currLayer = currLayer->parent()) {
-            if (currLayer->renderer().canContainAbsolutelyPositionedObjects())
-                break;
-
-            if (currLayer->hasCompositedScrollableOverflow()) {
-                auto scrollingNodeID = currLayer->backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
-                if (scrollingNodeID)
-                    overflowNodeData.append(scrollingNodeID);
-                else
-                    LOG(Scrolling, "Layer %p doesn't have scrolling node ID yet", &layer);
-            }
-        }
-        // Don't need to do anything because the layer is a descendant of the overflow in stacking.
+        ASSERT(layer.renderer().isAbsolutelyPositioned());
+        // Collect all the composited scrollers between this layer and its composited ancestor.
+        auto* compositedAncestor = layer.ancestorCompositingLayer();
+        if (!compositedAncestor)
+            return overflowNodeData;
+        collectStationaryLayerRelatedOverflowNodes(layer, *compositedAncestor, overflowNodeData);
         break;
     }
     case ScrollPositioningBehavior::None:

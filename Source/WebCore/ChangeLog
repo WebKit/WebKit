@@ -1,3 +1,35 @@
+2019-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Wrong scrolling behavior for nested absolute position elements inside overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=196146
+
+        Reviewed by Antti Koivisto.
+        
+        computeCoordinatedPositioningForLayer() failed to handle nested positions elements
+        inside overflow scroll, because it only walked up to the first containing block of
+        a nested position:absolute. We need to walk all the way up the ancestor layer chain,
+        looking at containing block, scroller and composited ancestor relationships.
+
+        Make this code easier to understand by writing it in terms of "is foo scrolled by bar", rather than
+        trying to collapse all the logic into a single ancestor walk, which was really hard. This is a few
+        more ancestor traversals, but we now only run this code if there's composited scrolling
+        in the ancestor chain.
+
+        Tests: scrollingcoordinator/scrolling-tree/nested-absolute-in-absolute-overflow.html
+               scrollingcoordinator/scrolling-tree/nested-absolute-in-overflow.html
+               scrollingcoordinator/scrolling-tree/nested-absolute-in-relative-in-overflow.html
+               scrollingcoordinator/scrolling-tree/nested-absolute-in-sc-overflow.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::enclosingCompositedScrollingLayer):
+        (WebCore::isScrolledByOverflowScrollLayer):
+        (WebCore::isNonScrolledLayerInsideScrolledCompositedAncestor):
+        (WebCore::RenderLayerCompositor::layerContainingBlockCrossesCoordinatedScrollingBoundary):
+        (WebCore::collectStationaryLayerRelatedOverflowNodes):
+        (WebCore::RenderLayerCompositor::computeCoordinatedPositioningForLayer const):
+        (WebCore::collectRelatedCoordinatedScrollingNodes):
+        (WebCore::layerParentedAcrossCoordinatedScrollingBoundary): Deleted.
+
 2019-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-flex][css-grid] Fix synthesized baseline
