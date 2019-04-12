@@ -1,3 +1,14 @@
+2019-04-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix flaky LayoutTests/fast/events/autoscroll-when-input-is-offscreen.html
+        https://bugs.webkit.org/show_bug.cgi?id=196840
+
+        Reviewed by Tim Horton.
+
+        Use more stable test infrastructure to conduct input tests.
+
+        * fast/events/autoscroll-when-input-is-offscreen.html:
+
 2019-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Add @page margin support

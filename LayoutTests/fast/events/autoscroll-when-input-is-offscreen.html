@@ -15,13 +15,8 @@
             return;
     
         var output = '';
-        var firstTargetRect = document.getElementById('editable').getBoundingClientRect();
 
-        var pressPointX = firstTargetRect.x;
-        var pressPointY = firstTargetRect.y;
-
-    
-        await tapAtPoint(pressPointX,pressPointY);
+        await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
         
         var programaticScroll = 500;
         document.scrollingElement.scrollTop = programaticScroll;
