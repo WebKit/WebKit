@@ -1,3 +1,24 @@
+2019-04-11  Michael Saboff  <msaboff@apple.com>
+
+        Improve the Inline Cache Stats code
+        https://bugs.webkit.org/show_bug.cgi?id=196836
+
+        Reviewed by Saam Barati.
+
+        Added a new script to consolidate and arrange the output of --useICStats option.
+
+        This script merges the output from every group into one large table and sorts it from most common to
+        least common.  It also counts the slow path GetById and PutById variants and then calculates the
+        percentage of gets or puts for each unique base,property pair compared to all the gets and puts.
+        Put together, this is useful to see what property accesses are not getting cached.
+
+        * Scripts/ic-stats.py: Added.
+        (ICStats):
+        (ICStats.__init__):
+        (ICStats.parse):
+        (ICStats.dumpStats):
+        (usage):
+
 2019-04-10  Alex Christensen  <achristensen@webkit.org>
 
         WKNavigationResponse._downloadAttribute should be nil when no download attribute is present

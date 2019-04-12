@@ -252,9 +252,11 @@ EncodedJSValue JIT_OPERATION operationGetById(ExecState* exec, StructureStubInfo
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
     Identifier ident = Identifier::fromUid(vm, uid);
-    
-    LOG_IC((ICEvent::OperationGetById, baseValue.classInfoOrNull(*vm), ident));
-    return JSValue::encode(baseValue.get(exec, ident, slot));
+    JSValue result = baseValue.get(exec, ident, slot);
+
+    LOG_IC((ICEvent::OperationGetById, baseValue.classInfoOrNull(*vm), ident, baseValue == slot.slotBase()));
+
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSValue base, UniquedStringImpl* uid)
@@ -267,8 +269,11 @@ EncodedJSValue JIT_OPERATION operationGetByIdGeneric(ExecState* exec, EncodedJSV
     JSValue baseValue = JSValue::decode(base);
     PropertySlot slot(baseValue, PropertySlot::InternalMethodType::Get);
     Identifier ident = Identifier::fromUid(vm, uid);
-    LOG_IC((ICEvent::OperationGetByIdGeneric, baseValue.classInfoOrNull(*vm), ident));
-    return JSValue::encode(baseValue.get(exec, ident, slot));
+    JSValue result = baseValue.get(exec, ident, slot);
+    
+    LOG_IC((ICEvent::OperationGetByIdGeneric, baseValue.classInfoOrNull(*vm), ident, baseValue == slot.slotBase()));
+    
+    return JSValue::encode(result);
 }
 
 EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue base, UniquedStringImpl* uid)
@@ -280,9 +285,11 @@ EncodedJSValue JIT_OPERATION operationGetByIdOptimize(ExecState* exec, Structure
     Identifier ident = Identifier::fromUid(vm, uid);
 
     JSValue baseValue = JSValue::decode(base);
-    LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(*vm), ident));
 
     return JSValue::encode(baseValue.getPropertySlot(exec, ident, [&] (bool found, PropertySlot& slot) -> JSValue {
+        
+        LOG_IC((ICEvent::OperationGetByIdOptimize, baseValue.classInfoOrNull(*vm), ident, baseValue == slot.slotBase()));
+        
         if (stubInfo->considerCaching(exec->codeBlock(), baseValue.structureOrNull()))
             repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::Normal);
         return found ? slot.getValue(exec, ident) : jsUndefined();
@@ -331,10 +338,11 @@ EncodedJSValue JIT_OPERATION operationGetByIdWithThisOptimize(ExecState* exec, S
 
     JSValue baseValue = JSValue::decode(base);
     JSValue thisValue = JSValue::decode(thisEncoded);
-    LOG_IC((ICEvent::OperationGetByIdWithThisOptimize, baseValue.classInfoOrNull(*vm), ident));
 
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
     return JSValue::encode(baseValue.getPropertySlot(exec, ident, slot, [&] (bool found, PropertySlot& slot) -> JSValue {
+        LOG_IC((ICEvent::OperationGetByIdWithThisOptimize, baseValue.classInfoOrNull(*vm), ident, baseValue == slot.slotBase()));
+        
         if (stubInfo->considerCaching(exec->codeBlock(), baseValue.structureOrNull()))
             repatchGetByID(exec, baseValue, ident, slot, *stubInfo, GetByIDKind::WithThis);
         return found ? slot.getValue(exec, ident) : jsUndefined();
@@ -439,10 +447,10 @@ void JIT_OPERATION operationPutByIdStrict(ExecState* exec, StructureStubInfo* st
     
     JSValue baseValue = JSValue::decode(encodedBase);
     Identifier ident = Identifier::fromUid(vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdStrict, baseValue.classInfoOrNull(*vm), ident));
-
     PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
     baseValue.putInline(exec, ident, JSValue::decode(encodedValue), slot);
+    
+    LOG_IC((ICEvent::OperationPutByIdStrict, baseValue.classInfoOrNull(*vm), ident, slot.base() == baseValue));
 }
 
 void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -456,9 +464,10 @@ void JIT_OPERATION operationPutByIdNonStrict(ExecState* exec, StructureStubInfo*
     
     JSValue baseValue = JSValue::decode(encodedBase);
     Identifier ident = Identifier::fromUid(vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdNonStrict, baseValue.classInfoOrNull(*vm), ident));
     PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
     baseValue.putInline(exec, ident, JSValue::decode(encodedValue), slot);
+
+    LOG_IC((ICEvent::OperationPutByIdNonStrict, baseValue.classInfoOrNull(*vm), ident, slot.base() == baseValue));
 }
 
 void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -472,9 +481,10 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
     
     JSValue baseValue = JSValue::decode(encodedBase);
     Identifier ident = Identifier::fromUid(&vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(vm), ident));
     PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
+
+    LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
 void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -488,9 +498,10 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStu
     
     JSValue baseValue = JSValue::decode(encodedBase);
     Identifier ident = Identifier::fromUid(&vm, uid);
-    LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(vm), ident));
     PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
     CommonSlowPaths::putDirectWithReify(vm, exec, asObject(baseValue), ident, JSValue::decode(encodedValue), slot);
+
+    LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(vm), ident, slot.base() == baseValue));
 }
 
 void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -506,12 +517,14 @@ void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStub
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    LOG_IC((ICEvent::OperationPutByIdStrictOptimize, baseValue.classInfoOrNull(*vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseValue, true, codeBlock->putByIdContext());
 
     Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;
     baseValue.putInline(exec, ident, value, slot);
+
+    LOG_IC((ICEvent::OperationPutByIdStrictOptimize, baseValue.classInfoOrNull(*vm), ident, slot.base() == baseValue));
+
     RETURN_IF_EXCEPTION(scope, void());
 
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
@@ -534,12 +547,14 @@ void JIT_OPERATION operationPutByIdNonStrictOptimize(ExecState* exec, StructureS
 
     JSValue value = JSValue::decode(encodedValue);
     JSValue baseValue = JSValue::decode(encodedBase);
-    LOG_IC((ICEvent::OperationPutByIdNonStrictOptimize, baseValue.classInfoOrNull(*vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseValue, false, codeBlock->putByIdContext());
 
     Structure* structure = baseValue.isCell() ? baseValue.asCell()->structure(*vm) : nullptr;    
     baseValue.putInline(exec, ident, value, slot);
+
+    LOG_IC((ICEvent::OperationPutByIdNonStrictOptimize, baseValue.classInfoOrNull(*vm), ident, slot.base() == baseValue));
+
     RETURN_IF_EXCEPTION(scope, void());
 
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
@@ -562,11 +577,13 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    LOG_IC((ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseObject, true, codeBlock->putByIdContext());
     Structure* structure = nullptr;
     CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, ident, value, slot, &structure);
+
+    LOG_IC((ICEvent::OperationPutByIdDirectStrictOptimize, baseObject->classInfo(vm), ident, slot.base() == baseObject));
+
     RETURN_IF_EXCEPTION(scope, void());
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
@@ -589,11 +606,13 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
 
     JSValue value = JSValue::decode(encodedValue);
     JSObject* baseObject = asObject(JSValue::decode(encodedBase));
-    LOG_IC((ICEvent::OperationPutByIdDirectNonStrictOptimize, baseObject->classInfo(vm), ident));
     CodeBlock* codeBlock = exec->codeBlock();
     PutPropertySlot slot(baseObject, false, codeBlock->putByIdContext());
     Structure* structure = nullptr;
     CommonSlowPaths::putDirectWithReify(vm, exec, baseObject, ident, value, slot, &structure);
+
+    LOG_IC((ICEvent::OperationPutByIdDirectNonStrictOptimize, baseObject->classInfo(vm), ident, slot.base() == baseObject));
+
     RETURN_IF_EXCEPTION(scope, void());
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))

@@ -267,7 +267,7 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
 
                 bool generatedCodeInline = InlineAccess::generateSelfPropertyAccess(stubInfo, structure, slot.cachedOffset());
                 if (generatedCodeInline) {
-                    LOG_IC((ICEvent::GetByIdSelfPatch, structure->classInfo(), propertyName));
+                    LOG_IC((ICEvent::GetByIdSelfPatch, structure->classInfo(), propertyName, slot.slotBase() == baseValue));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
                     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingGetByIdFunction(kind));
                     stubInfo.initGetByIdSelf(codeBlock, structure, slot.cachedOffset());
@@ -376,12 +376,12 @@ static InlineCacheAction tryCacheGetByID(ExecState* exec, JSValue baseValue, con
             }
         }
 
-        LOG_IC((ICEvent::GetByIdAddAccessCase, baseValue.classInfoOrNull(vm), propertyName));
+        LOG_IC((ICEvent::GetByIdAddAccessCase, baseValue.classInfoOrNull(vm), propertyName, slot.slotBase() == baseValue));
 
         result = stubInfo.addAccessCase(locker, codeBlock, propertyName, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
-            LOG_IC((ICEvent::GetByIdReplaceWithJump, baseValue.classInfoOrNull(vm), propertyName));
+            LOG_IC((ICEvent::GetByIdReplaceWithJump, baseValue.classInfoOrNull(vm), propertyName, slot.slotBase() == baseValue));
             
             RELEASE_ASSERT(result.code());
             InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
@@ -475,7 +475,7 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
                     
                     bool generatedCodeInline = InlineAccess::generateSelfPropertyReplace(stubInfo, structure, slot.cachedOffset());
                     if (generatedCodeInline) {
-                        LOG_IC((ICEvent::PutByIdSelfPatch, structure->classInfo(), ident));
+                        LOG_IC((ICEvent::PutByIdSelfPatch, structure->classInfo(), ident, slot.base() == baseValue));
                         ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), appropriateOptimizingPutByIdFunction(slot, putKind));
                         stubInfo.initPutByIdReplace(codeBlock, structure, slot.cachedOffset());
                         return RetryCacheLater;
@@ -588,12 +588,12 @@ static InlineCacheAction tryCachePutByID(ExecState* exec, JSValue baseValue, Str
             }
         }
 
-        LOG_IC((ICEvent::PutByIdAddAccessCase, structure->classInfo(), ident));
+        LOG_IC((ICEvent::PutByIdAddAccessCase, structure->classInfo(), ident, slot.base() == baseValue));
         
         result = stubInfo.addAccessCase(locker, codeBlock, ident, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
-            LOG_IC((ICEvent::PutByIdReplaceWithJump, structure->classInfo(), ident));
+            LOG_IC((ICEvent::PutByIdReplaceWithJump, structure->classInfo(), ident, slot.base() == baseValue));
             
             RELEASE_ASSERT(result.code());
 
@@ -654,7 +654,7 @@ static InlineCacheAction tryCacheInByID(
                 && !structure->needImpurePropertyWatchpoint()) {
                 bool generatedCodeInline = InlineAccess::generateSelfInAccess(stubInfo, structure);
                 if (generatedCodeInline) {
-                    LOG_IC((ICEvent::InByIdSelfPatch, structure->classInfo(), ident));
+                    LOG_IC((ICEvent::InByIdSelfPatch, structure->classInfo(), ident, slot.slotBase() == base));
                     structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());
                     ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation(), operationInByIdOptimize);
                     stubInfo.initInByIdSelf(codeBlock, structure, slot.cachedOffset());
@@ -692,7 +692,7 @@ static InlineCacheAction tryCacheInByID(
         if (!conditionSet.isValid())
             return GiveUpOnCache;
 
-        LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident));
+        LOG_IC((ICEvent::InAddAccessCase, structure->classInfo(), ident, slot.slotBase() == base));
 
         std::unique_ptr<AccessCase> newCase = AccessCase::create(
             vm, codeBlock, wasFound ? AccessCase::InHit : AccessCase::InMiss, wasFound ? slot.cachedOffset() : invalidOffset, structure, conditionSet, WTFMove(prototypeAccessChain));
@@ -700,7 +700,7 @@ static InlineCacheAction tryCacheInByID(
         result = stubInfo.addAccessCase(locker, codeBlock, ident, WTFMove(newCase));
 
         if (result.generatedSomeCode()) {
-            LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident));
+            LOG_IC((ICEvent::InReplaceWithJump, structure->classInfo(), ident, slot.slotBase() == base));
             
             RELEASE_ASSERT(result.code());
             InlineAccess::rewireStubAsJump(stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));

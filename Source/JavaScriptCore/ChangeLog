@@ -1,3 +1,28 @@
+2019-04-11  Michael Saboff  <msaboff@apple.com>
+
+        Improve the Inline Cache Stats code
+        https://bugs.webkit.org/show_bug.cgi?id=196836
+
+        Reviewed by Saam Barati.
+
+        Needed to handle the case where the Identifier could be null, for example with InstanceOfAddAccessCase
+        and InstanceOfReplaceWithJump.
+
+        Added the ability to log the location of a GetBy and PutBy property as either on self or up the
+        protocol chain.
+
+        * jit/ICStats.cpp:
+        (JSC::ICEvent::operator< const):
+        (JSC::ICEvent::dump const):
+        * jit/ICStats.h:
+        (JSC::ICEvent::ICEvent):
+        (JSC::ICEvent::hash const):
+        * jit/JITOperations.cpp:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+
 2019-04-11  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Timelines: can't reliably stop/start a recording

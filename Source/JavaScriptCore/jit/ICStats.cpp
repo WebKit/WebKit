@@ -40,13 +40,18 @@ bool ICEvent::operator<(const ICEvent& other) const
     
     if (m_propertyName != other.m_propertyName)
         return codePointCompare(m_propertyName.string(), other.m_propertyName.string()) < 0;
-    
-    return m_kind < other.m_kind;
+
+    if (m_kind != other.m_kind)
+        return m_kind < other.m_kind;
+
+    return m_propertyLocation < other.m_propertyLocation;
 }
 
 void ICEvent::dump(PrintStream& out) const
 {
     out.print(m_kind, "(", m_classInfo ? m_classInfo->className : "<null>", ", ", m_propertyName, ")");
+    if (m_propertyLocation != Unknown)
+        out.print(m_propertyLocation == BaseObject ? " self" : " proto lookup");
 }
 
 void ICEvent::log() const
