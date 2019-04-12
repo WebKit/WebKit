@@ -1,3 +1,28 @@
+2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] REGRESSION(r243860): Many tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=196791
+
+        Reviewed by Joanmarie Diggs.
+
+        Rework the accessibility unit test to use DBus for the communication with the server. This way we can load
+        multiple documents and check that accessibility hierarchy is updated after a navigation.
+
+        * TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp:
+        (loadChangedCallback):
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (AccessibilityTest::AccessibilityTest):
+        (AccessibilityTest::~AccessibilityTest):
+        (AccessibilityTest::loadHTMLAndWaitUntilFinished):
+        (AccessibilityTest::findTestServerApplication):
+        (AccessibilityTest::findDocumentWeb):
+        (AccessibilityTest::findRootObject):
+        (AccessibilityTest::waitUntilChildrenRemoved):
+        (AccessibilityTest::ensureProxy):
+        (testAtspiBasicHierarchy):
+        (beforeAll):
+        (afterAll):
+
 2019-04-11  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-build] Handle bug titles with unicode characters

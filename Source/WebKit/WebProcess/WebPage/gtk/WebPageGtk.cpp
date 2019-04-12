@@ -111,16 +111,6 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
     }
 }
 
-#if HAVE(ACCESSIBILITY)
-void WebPage::updateAccessibilityTree()
-{
-    if (!m_accessibilityObject)
-        return;
-
-    webkitWebPageAccessibilityObjectRefresh(WEBKIT_WEB_PAGE_ACCESSIBILITY_OBJECT(m_accessibilityObject.get()));
-}
-#endif
-
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != WebEvent::KeyDown && keyboardEvent.type() != WebEvent::RawKeyDown)

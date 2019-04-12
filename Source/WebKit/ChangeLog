@@ -1,3 +1,27 @@
+2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] REGRESSION(r243860): Many tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=196791
+
+        Reviewed by Joanmarie Diggs.
+
+        Calling updateAccessibilityTree() on document loaded was causing a re-layout because of the backing store update
+        that confused all those tests. We shouldn't need to update the accessibility tree on document load, it should
+        happen automatically when root object is attached/detached. This patch emits children-changed::add when the root
+        object wrapper is attached and children-changed::remove when the root object is detached. That way ATs are
+        notified of the changes in the accessibility tree.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad): Remove call to WebPage::updateAccessibilityTree().
+        * WebProcess/WebPage/WebPage.h: Remove updateAccessibilityTree().
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp:
+        (coreRootObjectWrapperDetachedCallback): Emit children-changed::remove.
+        (rootWebAreaWrapper): Helper to get the root WebArea wrapper.
+        (accessibilityRootObjectWrapper): Set the parent here when root object is created and emit children-changed::add.
+        (webkitWebPageAccessibilityObjectRefChild): Dot no set the parent here, it's now set when the root object is created.
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.h: Remove webkitWebPageAccessibilityObjectRefresh().
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp:
+
 2019-04-11  Megan Gardner  <megan_gardner@apple.com>
 
         Update 'Save Image' to more clear instructions

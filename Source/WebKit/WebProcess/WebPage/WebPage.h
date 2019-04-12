@@ -805,10 +805,6 @@ public:
     void replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference&);
 #endif
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
-    void updateAccessibilityTree();
-#endif
-
     void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline);
     bool hasCompositionForTesting();
     void confirmCompositionForTesting(const String& compositionString);
