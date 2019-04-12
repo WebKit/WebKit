@@ -516,6 +516,7 @@ public:
         UpdatePagination                    = 1 << 3,
         SeenTransformedLayer                = 1 << 4,
         Seen3DTransformedLayer              = 1 << 5,
+        SeenCompositedScrollingLayer        = 1 << 6,
     };
     static constexpr OptionSet<UpdateLayerPositionsFlag> updateLayerPositionsDefaultFlags() { return { CheckForRepaint }; }
 
@@ -813,6 +814,9 @@ public:
 
     bool usesCompositedScrolling() const override;
     bool usesAsyncScrolling() const override;
+
+    bool hasCompositedScrollingAncestor() const { return m_hasCompositedScrollingAncestor; }
+    void setHasCompositedScrollingAncestor(bool hasCompositedScrollingAncestor) { m_hasCompositedScrollingAncestor = hasCompositedScrollingAncestor; }
 
     bool paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
     {
@@ -1200,6 +1204,8 @@ private:
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
     bool m_hasCompositingDescendant : 1; // In the z-order tree.
+
+    bool m_hasCompositedScrollingAncestor : 1; // In the layer-order tree.
 
     bool m_hasTransformedAncestor : 1;
     bool m_has3DTransformedAncestor : 1;

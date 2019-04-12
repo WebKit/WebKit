@@ -2715,7 +2715,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 #endif
 
     auto position = renderer.style().position();
-    bool isFixed = renderer.isOutOfFlowPositioned() && position == PositionType::Fixed;
+    bool isFixed = renderer.isFixedPositioned();
     if (isFixed && !layer.isStackingContext())
         return false;
     
@@ -2800,7 +2800,7 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
         }
     }
 
-    if (renderer.isAbsolutelyPositioned() && compositingAncestor) {
+    if (renderer.isAbsolutelyPositioned() && compositingAncestor && layer.hasCompositedScrollingAncestor()) {
         if (layerContainingBlockCrossesCoordinatedScrollingBoundary(layer, *compositingAncestor)) {
             reason = RenderLayer::IndirectCompositingReason::OverflowScrollPositioning;
             return true;
@@ -2862,7 +2862,7 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
     if (layer.renderer().isStickilyPositioned())
         return isAsyncScrollableStickyLayer(layer);
 
-    if (layer.renderer().style().position() != PositionType::Fixed)
+    if (!layer.renderer().isFixedPositioned())
         return false;
 
     // FIXME: Handle fixed inside of a transform, which should not behave as fixed.
@@ -2876,7 +2876,7 @@ bool RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer(const Render
 
 bool RenderLayerCompositor::fixedLayerIntersectsViewport(const RenderLayer& layer) const
 {
-    ASSERT(layer.renderer().style().position() == PositionType::Fixed);
+    ASSERT(layer.renderer().isFixedPositioned());
 
     // Fixed position elements that are invisible in the current view don't get their own layer.
     // FIXME: We shouldn't have to check useFixedLayout() here; one of the viewport rects needs to give the correct answer.
@@ -2946,6 +2946,9 @@ ScrollPositioningBehavior RenderLayerCompositor::computeCoordinatedPositioningFo
         return ScrollPositioningBehavior::None;
 
     if (layer.renderer().isFixedPositioned())
+        return ScrollPositioningBehavior::None;
+    
+    if (!layer.hasCompositedScrollingAncestor())
         return ScrollPositioningBehavior::None;
 
     auto* scrollingCoordinator = this->scrollingCoordinator();

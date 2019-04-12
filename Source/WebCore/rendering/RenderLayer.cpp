@@ -291,6 +291,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_3DTransformedDescendantStatusDirty(true)
     , m_has3DTransformedDescendant(false)
     , m_hasCompositingDescendant(false)
+    , m_hasCompositedScrollingAncestor(false)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
@@ -911,6 +912,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
     m_repaintStatus = NeedsNormalRepaint;
     m_hasTransformedAncestor = flags.contains(SeenTransformedLayer);
     m_has3DTransformedAncestor = flags.contains(Seen3DTransformedLayer);
+    setHasCompositedScrollingAncestor(flags.contains(SeenCompositedScrollingLayer));
 
     // Update the reflection's position and size.
     if (m_reflection)
@@ -926,6 +928,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
         if (!transform()->isAffine())
             flags.add(Seen3DTransformedLayer);
     }
+    
+    if (hasCompositedScrollableOverflow())
+        flags.add(SeenCompositedScrollingLayer);
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(geometryMap, flags);
@@ -939,7 +944,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, OptionSet
         m_updatingMarqueePosition = oldUpdatingMarqueePosition;
     }
 
-    if (renderer().isOutOfFlowPositioned() && renderer().style().position() == PositionType::Fixed && renderer().settings().acceleratedCompositingForFixedPositionEnabled()) {
+    if (renderer().isFixedPositioned() && renderer().settings().acceleratedCompositingForFixedPositionEnabled()) {
         bool intersectsViewport = compositor().fixedLayerIntersectsViewport(*this);
         if (intersectsViewport != m_isFixedIntersectingViewport) {
             m_isFixedIntersectingViewport = intersectsViewport;
@@ -6750,7 +6755,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant\n"
+    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant, (s)scrolling ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -6777,6 +6782,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << (layer.renderer().isFixedPositioned() ? "X" : "-");
     stream << (layer.isComposited() ? "C" : "-");
     stream << (layer.hasCompositingDescendant() ? "c" : "-");
+    stream << (layer.hasCompositedScrollingAncestor() ? "s" : "-");
 
     stream << " ";
 

@@ -1,3 +1,27 @@
+2019-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid doing positioned scrolling tree node work for layers not inside overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=196848
+
+        Reviewed by Zalan Bujtas.
+
+        Maintain a bit on RenderLayer which says if a layer has a composited scrolling ancestor
+        in the layer tree. We only need to do work related to making positioned scrolling tree nodes
+        for layers which are layer tree descendants of overflow:scroll.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason const):
+        (WebCore::RenderLayerCompositor::isViewportConstrainedFixedOrStickyLayer const):
+        (WebCore::RenderLayerCompositor::fixedLayerIntersectsViewport const):
+        (WebCore::RenderLayerCompositor::computeCoordinatedPositioningForLayer const):
+
 2019-04-11  Zalan Bujtas  <zalan@apple.com>
 
         Try to fix Windows build.
