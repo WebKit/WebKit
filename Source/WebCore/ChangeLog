@@ -1,3 +1,48 @@
+2019-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-flex][css-grid] Fix synthesized baseline
+        https://bugs.webkit.org/show_bug.cgi?id=196312
+
+        Reviewed by Javier Fernandez.
+
+        When a flex or grid container has no baseline,
+        its baseline should be synthesized from the border edges.
+        The same happens for flex and grid items.
+        
+        Right now we were using the content box in some cases
+        and even using the margin box in a particular scenario.
+        The patch fixes this.
+        
+        At the same time this is also fixing the baseline for
+        inline flex/grid containers to make it interoperable with Firefox.
+        Inline blocks have a special behavior per legacy reasons,
+        which applies to inline flex/grid containers when they have no items;
+        otherwise the items should be used to compute its baseline.
+        See more at: https://github.com/w3c/csswg-drafts/issues/3416
+
+        Note that we need to keep current behavior for buttons,
+        as the flexbox spec doesn't apply to them.
+
+        Tests: css3/flexbox/flexbox-baseline-margins.html
+               fast/css-grid-layout/grid-baseline-margins-1.html
+               fast/css-grid-layout/grid-baseline-margins-2.html
+               imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html
+               imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-grid-001.html
+               imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-inline-block-001.html
+
+        * rendering/RenderButton.cpp:
+        (WebCore::synthesizedBaselineFromContentBox):
+        (WebCore::RenderButton::baselinePosition const):
+        * rendering/RenderButton.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox):
+        (WebCore::RenderFlexibleBox::baselinePosition const):
+        (WebCore::RenderFlexibleBox::firstLineBaseline const):
+        (WebCore::RenderFlexibleBox::inlineBlockBaseline const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::baselinePosition const):
+        (WebCore::RenderGrid::inlineBlockBaseline const):
+
 2019-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid doing positioned scrolling tree node work for layers not inside overflow:scroll

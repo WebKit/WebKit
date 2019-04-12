@@ -166,17 +166,18 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-static int synthesizedBaselineFromContentBox(const RenderBox& box, LineDirectionMode direction)
+static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
-    return direction == HorizontalLine ? box.borderTop() + box.paddingTop() + box.contentHeight() : box.borderRight() + box.paddingRight() + box.contentWidth();
+    return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
 }
 
 int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
-    int baseline = firstLineBaseline().valueOr(synthesizedBaselineFromContentBox(*this, direction));
+    auto baseline = firstLineBaseline();
+    if (!baseline)
+        return synthesizedBaselineFromBorderBox(*this, direction) + marginLogicalHeight();
 
-    int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
-    return baseline + marginAscent;
+    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
 }
 
 Optional<int> RenderFlexibleBox::firstLineBaseline() const
@@ -213,19 +214,15 @@ Optional<int> RenderFlexibleBox::firstLineBaseline() const
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-        return Optional<int>(synthesizedBaselineFromContentBox(*baselineChild, direction) + baselineChild->logicalTop());
+        return Optional<int>(synthesizedBaselineFromBorderBox(*baselineChild, direction) + baselineChild->logicalTop());
     }
 
     return Optional<int>(baseline.value() + baselineChild->logicalTop());
 }
 
-Optional<int> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
+Optional<int> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
 {
-    if (Optional<int> baseline = firstLineBaseline())
-        return baseline;
-
-    int marginAscent = direction == HorizontalLine ? marginTop() : marginRight();
-    return synthesizedBaselineFromContentBox(*this, direction) + marginAscent;
+    return firstLineBaseline();
 }
 
 static const StyleContentAlignmentData& contentAlignmentNormalBehavior()

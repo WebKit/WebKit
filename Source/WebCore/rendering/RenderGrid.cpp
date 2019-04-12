@@ -1202,11 +1202,6 @@ static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionM
     return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
 }
 
-static int synthesizedBaselineFromMarginBox(const RenderBox& box, LineDirectionMode direction)
-{
-    return (direction == HorizontalLine ? box.size().height() + box.verticalMarginExtent() : box.size().width() + box.horizontalMarginExtent()).toInt();
-}
-
 bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child) const
 {
     return isBaselineAlignmentForChild(child, GridRowAxis) || isBaselineAlignmentForChild(child, GridColumnAxis);
@@ -1229,7 +1224,11 @@ int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction
 #else
     UNUSED_PARAM(mode);
 #endif
-    return firstLineBaseline().valueOr(synthesizedBaselineFromMarginBox(*this, direction));
+    auto baseline = firstLineBaseline();
+    if (!baseline)
+        return synthesizedBaselineFromBorderBox(*this, direction) + marginLogicalHeight();
+
+    return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
 }
 
 Optional<int> RenderGrid::firstLineBaseline() const
@@ -1268,13 +1267,9 @@ Optional<int> RenderGrid::firstLineBaseline() const
     return baseline.value() + baselineChild->logicalTop().toInt();
 }
 
-Optional<int> RenderGrid::inlineBlockBaseline(LineDirectionMode direction) const
+Optional<int> RenderGrid::inlineBlockBaseline(LineDirectionMode) const
 {
-    if (Optional<int> baseline = firstLineBaseline())
-        return baseline;
-
-    int marginAscent = direction == HorizontalLine ? marginBottom() : marginRight();
-    return synthesizedBaselineFromBorderBox(*this, direction) + marginAscent;
+    return firstLineBaseline();
 }
 
 LayoutUnit RenderGrid::columnAxisBaselineOffsetForChild(const RenderBox& child) const

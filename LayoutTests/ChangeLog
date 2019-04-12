@@ -1,3 +1,30 @@
+2019-04-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-flex][css-grid] Fix synthesized baseline
+        https://bugs.webkit.org/show_bug.cgi?id=196312
+
+        Reviewed by Javier Fernandez.
+
+        Some of the tests were not checking the right behavior changed them to test the expected one.
+        We need new rebaselines for some tests.
+
+        * TestExpectations:
+        * css3/flexbox/flexbox-baseline-margins.html:
+        * fast/css-grid-layout/grid-baseline-expected.html:
+        * fast/css-grid-layout/grid-baseline-margins-1-expected.html: Renamed from LayoutTests/fast/css-grid-layout/grid-baseline-margins-expected.html.
+        * fast/css-grid-layout/grid-baseline-margins-1.html: Renamed from LayoutTests/fast/css-grid-layout/grid-baseline-margins.html.
+        * fast/css-grid-layout/grid-baseline-margins-2-expected.html: Added.
+        * fast/css-grid-layout/grid-baseline-margins-2.html: Added.
+        * fast/css-grid-layout/grid-baseline.html: This test is modified and split in two parts as it doesn't fit in the viewport.
+        * platform/gtk/css3/flexbox/flexbox-baseline-margins-expected.png:
+        * platform/gtk/css3/flexbox/flexbox-baseline-margins-expected.txt:
+        * platform/ios/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/ios/css3/flexbox/flexbox-baseline-margins-expected.txt:
+        * platform/mac/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/mac/css3/flexbox/flexbox-baseline-margins-expected.txt:
+        * platform/win/css3/flexbox/flexbox-baseline-margins-expected.png: Added.
+        * platform/win/css3/flexbox/flexbox-baseline-margins-expected.txt:
+
 2019-04-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] REGRESSION(r243860): Many tests failing
