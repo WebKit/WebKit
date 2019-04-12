@@ -1,3 +1,14 @@
+2019-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Update AudioSession route sharing policy
+        https://bugs.webkit.org/show_bug.cgi?id=196776
+        <rdar://problem/46501611>
+
+        Reviewed by Jer Noble.
+
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker showFromView:routeSharingPolicy:routingContextUID:hasVideo:]):
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WebsitePolicies doesn't copy its media source policy in WebsitePolicies::copy

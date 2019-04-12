@@ -178,8 +178,9 @@ SOFT_LINK_CLASS(MediaPlayer, MPMediaControlsViewController)
 
 enum {
     WKAirPlayRoutePickerRouteSharingPolicyDefault = 0,
-    WKAirPlayRoutePickerRouteSharingPolicyLongForm = 1,
+    WKAirPlayRoutePickerRouteSharingPolicyLongFormAudio = 1,
     WKAirPlayRoutePickerRouteSharingPolicyIndependent = 2,
+    WKAirPlayRoutePickerRouteSharingPolicyLongFormVideo = 3,
 };
 typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
 
@@ -201,9 +202,9 @@ typedef NSInteger WKAirPlayRoutePickerRouteSharingPolicy;
 - (void)showFromView:(UIView *)view routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID hasVideo:(BOOL)hasVideo
 {
     static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::Default) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not WKAirPlayRoutePickerRouteSharingPolicyDefault as expected");
-    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::LongForm) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not WKAirPlayRoutePickerRouteSharingPolicyLongForm as expected");
+    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::LongFormAudio) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyLongFormAudio), "RouteSharingPolicy::LongFormAudio is not WKAirPlayRoutePickerRouteSharingPolicyLongFormAudio as expected");
     static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::Independent) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyIndependent), "RouteSharingPolicy::Independent is not WKAirPlayRoutePickerRouteSharingPolicyIndependent as expected");
-
+    static_assert(static_cast<size_t>(WebCore::RouteSharingPolicy::LongFormVideo) == static_cast<size_t>(WKAirPlayRoutePickerRouteSharingPolicyLongFormVideo), "RouteSharingPolicy::LongFormVideo is not WKAirPlayRoutePickerRouteSharingPolicyLongFormVideo as expected");
     if (_actionSheet)
         return;
 

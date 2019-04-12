@@ -71,6 +71,24 @@ static void waitUntilAudioSessionCategoryIsEqualTo(NSString *expectedValue)
     } while (++tries <= 100);
 }
 
+static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormVideo()
+{
+#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    return AVAudioSessionRouteSharingPolicyLongFormVideo;
+#else
+    return AVAudioSessionRouteSharingPolicyLongForm;
+#endif
+}
+
+static AVAudioSessionRouteSharingPolicy routeSharingPolicyLongFormAudio()
+{
+#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    return AVAudioSessionRouteSharingPolicyLongFormAudio;
+#else
+    return AVAudioSessionRouteSharingPolicyLongForm;
+#endif
+}
+
 TEST(WebKitLegacy, AudioSessionCategoryIOS)
 {
     WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
@@ -84,12 +102,15 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
     RetainPtr<AudioSessionCategoryUIWebViewDelegate> uiDelegate = adoptNS([[AudioSessionCategoryUIWebViewDelegate alloc] init]);
     uiWebView.get().delegate = uiDelegate.get();
 
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyDefault);
+
     [uiWebView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"video-with-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
 
     Util::run(&didBeginPlaying);
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormVideo());
 
     didBeginPlaying = false;
 
@@ -99,6 +120,7 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryAmbient());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyDefault);
 
     didBeginPlaying = false;
 
@@ -108,6 +130,7 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryAmbient());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyDefault);
 
     didBeginPlaying = false;
 
@@ -117,6 +140,7 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryAmbient());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryAmbient(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], AVAudioSessionRouteSharingPolicyDefault);
 
     didBeginPlaying = false;
 
@@ -126,6 +150,17 @@ TEST(WebKitLegacy, AudioSessionCategoryIOS)
 
     waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
     EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormVideo());
+
+    didBeginPlaying = false;
+
+    [uiWebView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"audio-only" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
+
+    Util::run(&didBeginPlaying);
+
+    waitUntilAudioSessionCategoryIsEqualTo(getAVAudioSessionCategoryPlayback());
+    EXPECT_WK_STREQ(getAVAudioSessionCategoryPlayback(), [[getAVAudioSessionClass() sharedInstance] category]);
+    EXPECT_EQ([[getAVAudioSessionClass() sharedInstance] routeSharingPolicy], routeSharingPolicyLongFormAudio());
 }
 
 }

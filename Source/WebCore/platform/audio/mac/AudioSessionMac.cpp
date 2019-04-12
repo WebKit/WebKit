@@ -73,7 +73,7 @@ AudioSession::CategoryType AudioSession::category() const
     return m_private->category;
 }
 
-void AudioSession::setCategory(CategoryType category)
+void AudioSession::setCategory(CategoryType category, RouteSharingPolicy)
 {
     m_private->category = category;
 }

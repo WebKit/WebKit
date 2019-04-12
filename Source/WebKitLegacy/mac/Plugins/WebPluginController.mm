@@ -114,7 +114,7 @@ static void initializeAudioSession()
     if (!WebCore::IOSApplication::isMobileSafari())
         return;
 
-    AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
+    AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback, RouteSharingPolicy::Default);
 }
 #endif
 

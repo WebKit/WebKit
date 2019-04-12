@@ -100,8 +100,13 @@ AudioSession::~AudioSession()
 {
 }
 
-void AudioSession::setCategory(CategoryType newCategory)
+void AudioSession::setCategory(CategoryType newCategory, RouteSharingPolicy policy)
 {
+#if !HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    if (policy == RouteSharingPolicy::LongFormVideo)
+        policy = RouteSharingPolicy::LongFormAudio;
+#endif
+
     LOG(Media, "AudioSession::setCategory() - category = %s", categoryName(newCategory));
 
     if (categoryOverride() && categoryOverride() != newCategory) {
@@ -112,7 +117,6 @@ void AudioSession::setCategory(CategoryType newCategory)
     NSString *categoryString;
     NSString *categoryMode = AVAudioSessionModeDefault;
     AVAudioSessionCategoryOptions options = 0;
-    AVAudioSessionRouteSharingPolicy policy = AVAudioSessionRouteSharingPolicyDefault;
 
     switch (newCategory) {
     case AmbientSound:
@@ -123,10 +127,7 @@ void AudioSession::setCategory(CategoryType newCategory)
         break;
     case MediaPlayback:
         categoryString = AVAudioSessionCategoryPlayback;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        policy = AVAudioSessionRouteSharingPolicyLongForm;
         break;
-ALLOW_DEPRECATED_DECLARATIONS_END
     case RecordAudio:
         categoryString = AVAudioSessionCategoryRecord;
         break;
@@ -144,7 +145,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     NSError *error = nil;
-    [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:policy options:options error:&error];
+    [[AVAudioSession sharedInstance] setCategory:categoryString mode:categoryMode routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
     ASSERT(!error);
 #endif
@@ -171,13 +172,16 @@ AudioSession::CategoryType AudioSession::category() const
 RouteSharingPolicy AudioSession::routeSharingPolicy() const
 {
     static_assert(static_cast<size_t>(RouteSharingPolicy::Default) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyDefault), "RouteSharingPolicy::Default is not AVAudioSessionRouteSharingPolicyDefault as expected");
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    static_assert(static_cast<size_t>(RouteSharingPolicy::LongForm) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongForm), "RouteSharingPolicy::LongForm is not AVAudioSessionRouteSharingPolicyLongForm as expected");
-ALLOW_DEPRECATED_DECLARATIONS_END
+#if HAVE(ROUTE_SHARING_POLICY_LONG_FORM_VIDEO)
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormAudio) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongFormAudio), "RouteSharingPolicy::LongFormAudio is not AVAudioSessionRouteSharingPolicyLongFormAudio as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormVideo) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongFormVideo), "RouteSharingPolicy::LongFormVideo is not AVAudioSessionRouteSharingPolicyLongFormVideo as expected");
+#else
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormAudio) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyLongForm), "RouteSharingPolicy::LongFormAudio is not AVAudioSessionRouteSharingPolicyLongForm as expected");
+#endif
     static_assert(static_cast<size_t>(RouteSharingPolicy::Independent) == static_cast<size_t>(AVAudioSessionRouteSharingPolicyIndependent), "RouteSharingPolicy::Independent is not AVAudioSessionRouteSharingPolicyIndependent as expected");
 
     AVAudioSessionRouteSharingPolicy policy = [[AVAudioSession sharedInstance] routeSharingPolicy];
-    ASSERT(static_cast<RouteSharingPolicy>(policy) <= RouteSharingPolicy::Independent);
+    ASSERT(static_cast<RouteSharingPolicy>(policy) <= RouteSharingPolicy::LongFormVideo);
     return static_cast<RouteSharingPolicy>(policy);
 }
 
@@ -196,7 +200,7 @@ void AudioSession::setCategoryOverride(CategoryType category)
         return;
 
     m_private->m_categoryOverride = category;
-    setCategory(category);
+    setCategory(category, RouteSharingPolicy::Default);
 }
 
 AudioSession::CategoryType AudioSession::categoryOverride() const

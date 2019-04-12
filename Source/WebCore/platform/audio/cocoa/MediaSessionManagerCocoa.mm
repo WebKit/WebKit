@@ -62,19 +62,25 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
 
 void MediaSessionManagerCocoa::updateSessionState()
 {
+    int videoCount = count(PlatformMediaSession::Video);
+    int videoAudioCount = count(PlatformMediaSession::VideoAudio);
+    int audioCount = count(PlatformMediaSession::Audio);
+    int webAudioCount = count(PlatformMediaSession::WebAudio);
+    int captureCount = count(PlatformMediaSession::MediaStreamCapturingAudio);
     ALWAYS_LOG(LOGIDENTIFIER, "types: "
-        "Video(", count(PlatformMediaSession::Video), "), "
-        "Audio(", count(PlatformMediaSession::Audio), "), "
-        "VideoAudio(", count(PlatformMediaSession::VideoAudio), "), "
-        "WebAudio(", count(PlatformMediaSession::WebAudio), ")");
+        "AudioCapture(", captureCount, "), "
+        "Video(", videoCount, "), "
+        "Audio(", audioCount, "), "
+        "VideoAudio(", videoAudioCount, "), "
+        "WebAudio(", webAudioCount, ")");
 
-    if (has(PlatformMediaSession::WebAudio))
+    if (webAudioCount)
         AudioSession::sharedSession().setPreferredBufferSize(kWebAudioBufferSize);
     // In case of audio capture, we want to grab 20 ms chunks to limit the latency so that it is not noticeable by users
     // while having a large enough buffer so that the audio rendering remains stable, hence a computation based on sample rate.
-    else if (has(PlatformMediaSession::MediaStreamCapturingAudio))
+    else if (captureCount)
         AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
-    else if ((has(PlatformMediaSession::VideoAudio) || has(PlatformMediaSession::Audio)) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
+    else if ((videoAudioCount || audioCount) && DeprecatedGlobalSettings::lowPowerVideoAudioBufferSizeEnabled()) {
         // FIXME: <http://webkit.org/b/116725> Figure out why enabling the code below
         // causes media LayoutTests to fail on 10.8.
 
@@ -90,27 +96,30 @@ void MediaSessionManagerCocoa::updateSessionState()
     if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
         return;
 
-    bool hasWebAudioType = false;
     bool hasAudibleAudioOrVideoMediaType = false;
-    bool hasAudioCapture = anyOfSessions([&hasWebAudioType, &hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
+    forEachSession([&hasAudibleAudioOrVideoMediaType] (PlatformMediaSession& session, size_t) mutable {
         auto type = session.mediaType();
-        if (type == PlatformMediaSession::WebAudio)
-            hasWebAudioType = true;
         if ((type == PlatformMediaSession::VideoAudio || type == PlatformMediaSession::Audio) && session.canProduceAudio() && session.hasPlayedSinceLastInterruption())
             hasAudibleAudioOrVideoMediaType = true;
         if (session.isPlayingToWirelessPlaybackTarget())
             hasAudibleAudioOrVideoMediaType = true;
-        return (type == PlatformMediaSession::MediaStreamCapturingAudio);
     });
 
-    if (hasAudioCapture)
-        AudioSession::sharedSession().setCategory(AudioSession::PlayAndRecord);
-    else if (hasAudibleAudioOrVideoMediaType)
-        AudioSession::sharedSession().setCategory(AudioSession::MediaPlayback);
-    else if (hasWebAudioType)
-        AudioSession::sharedSession().setCategory(AudioSession::AmbientSound);
-    else
-        AudioSession::sharedSession().setCategory(AudioSession::None);
+    RouteSharingPolicy policy = RouteSharingPolicy::Default;
+    AudioSession::CategoryType category = AudioSession::None;
+    if (captureCount)
+        category = AudioSession::PlayAndRecord;
+    else if (hasAudibleAudioOrVideoMediaType) {
+        category = AudioSession::MediaPlayback;
+        if (videoCount || videoAudioCount)
+            policy = RouteSharingPolicy::LongFormVideo;
+        else
+            policy = RouteSharingPolicy::LongFormAudio;
+    } else if (webAudioCount)
+        category = AudioSession::AmbientSound;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "setting category = ", category, ", policy = ", policy);
+    AudioSession::sharedSession().setCategory(category, policy);
 }
 
 void MediaSessionManagerCocoa::beginInterruption(PlatformMediaSession::InterruptionType type)

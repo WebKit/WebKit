@@ -1,3 +1,26 @@
+2019-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Update AudioSession route sharing policy
+        https://bugs.webkit.org/show_bug.cgi?id=196776
+        <rdar://problem/46501611>
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated an API test.
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::convertEnumerationToString):
+        * platform/audio/AudioSession.h:
+        (WTF::LogArgument<WebCore::RouteSharingPolicy>::toString):
+        (WTF::LogArgument<WebCore::AudioSession::CategoryType>::toString):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (MediaSessionManagerCocoa::updateSessionState):
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::setCategory):
+        (WebCore::AudioSession::routeSharingPolicy const):
+        * platform/audio/mac/AudioSessionMac.cpp:
+        (WebCore::AudioSession::setCategory):
+
 2019-04-12  Antoine Quint  <graouts@apple.com>
 
         Opt some websites into the simulated mouse events dispatch quirk when in modern compatibility mode

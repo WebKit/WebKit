@@ -60,7 +60,7 @@ AudioSession::AudioSession()
 
 AudioSession::~AudioSession() = default;
 
-void AudioSession::setCategory(CategoryType)
+void AudioSession::setCategory(CategoryType, RouteSharingPolicy)
 {
     notImplemented();
 }
@@ -129,6 +129,43 @@ String AudioSession::routingContextUID() const
 
 #endif // !PLATFORM(COCOA)
 
+String convertEnumerationToString(RouteSharingPolicy enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("Default"),
+        MAKE_STATIC_STRING_IMPL("LongFormAudio"),
+        MAKE_STATIC_STRING_IMPL("Independent"),
+        MAKE_STATIC_STRING_IMPL("LongFormVideo"),
+    };
+    static_assert(!static_cast<size_t>(RouteSharingPolicy::Default), "RouteSharingPolicy::Default is not 0 as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormAudio) == 1, "RouteSharingPolicy::LongFormAudio is not 1 as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::Independent) == 2, "RouteSharingPolicy::Independent is not 2 as expected");
+    static_assert(static_cast<size_t>(RouteSharingPolicy::LongFormVideo) == 3, "RouteSharingPolicy::LongFormVideo is not 3 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
+String convertEnumerationToString(AudioSession::CategoryType enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("None"),
+        MAKE_STATIC_STRING_IMPL("AmbientSound"),
+        MAKE_STATIC_STRING_IMPL("SoloAmbientSound"),
+        MAKE_STATIC_STRING_IMPL("MediaPlayback"),
+        MAKE_STATIC_STRING_IMPL("RecordAudio"),
+        MAKE_STATIC_STRING_IMPL("PlayAndRecord"),
+        MAKE_STATIC_STRING_IMPL("AudioProcessing"),
+    };
+    static_assert(!static_cast<size_t>(AudioSession::CategoryType::None), "AudioSession::CategoryType::None is not 0 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::AmbientSound) == 1, "AudioSession::CategoryType::AmbientSound is not 1 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::SoloAmbientSound) == 2, "AudioSession::CategoryType::SoloAmbientSound is not 2 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::MediaPlayback) == 3, "AudioSession::CategoryType::MediaPlayback is not 3 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::RecordAudio) == 4, "AudioSession::CategoryType::RecordAudio is not 4 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::PlayAndRecord) == 5, "AudioSession::CategoryType::PlayAndRecord is not 5 as expected");
+    static_assert(static_cast<size_t>(AudioSession::CategoryType::AudioProcessing) == 6, "AudioSession::CategoryType::AudioProcessing is not 6 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
 }
 
 #endif // USE(AUDIO_SESSION)
