@@ -370,7 +370,7 @@ function installDependenciesWithPacman {
         perl-xml-libxml\
         python2 \
         python2-lxml \
-        python3-setuptools \
+        python-setuptools \
         ragel \
         bigreqsproto \
         compositeproto \
