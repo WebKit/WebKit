@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkResourceLoadMap.h"
 
+#include "NetworkConnectionToWebProcess.h"
+
 namespace WebKit {
 
 NetworkResourceLoadMap::MapType::AddResult NetworkResourceLoadMap::add(ResourceLoadIdentifier identifier, Ref<NetworkResourceLoader>&& loader)

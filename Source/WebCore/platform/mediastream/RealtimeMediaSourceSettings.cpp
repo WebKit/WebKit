@@ -34,6 +34,7 @@
 #include "RealtimeMediaSourceSettings.h"
 
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

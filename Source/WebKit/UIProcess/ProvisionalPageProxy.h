@@ -32,6 +32,10 @@
 #include "WebsitePoliciesData.h"
 #include <wtf/WeakPtr.h>
 
+namespace API {
+class Navigation;
+}
+
 namespace IPC {
 class FormDataReference;
 }

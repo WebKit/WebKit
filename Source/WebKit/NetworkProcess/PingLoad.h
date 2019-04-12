@@ -35,6 +35,7 @@
 
 namespace WebKit {
 
+class NetworkConnectionToWebProcess;
 class NetworkLoadChecker;
 class NetworkProcess;
 

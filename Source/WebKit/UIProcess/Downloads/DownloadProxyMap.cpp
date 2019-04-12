@@ -30,7 +30,10 @@
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "MessageReceiverMap.h"
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #include "ProcessAssertion.h"
+#include "WebProcessPool.h"
 #include <wtf/StdLibExtras.h>
 
 #if PLATFORM(COCOA)

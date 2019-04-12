@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "ScriptExecutionContext.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

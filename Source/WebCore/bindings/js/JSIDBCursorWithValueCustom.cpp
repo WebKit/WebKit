@@ -30,7 +30,7 @@
 
 #include "IDBBindingUtilities.h"
 #include "IDBCursorWithValue.h"
-#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;

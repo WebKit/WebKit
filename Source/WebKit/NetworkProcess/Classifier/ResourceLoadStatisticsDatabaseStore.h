@@ -32,9 +32,8 @@
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/UniqueRef.h>
+#include <wtf/StdSet.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {

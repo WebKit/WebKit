@@ -40,6 +40,8 @@
 
 namespace WebKit {
 
+using namespace WebCore;
+
 static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
 {
     return keyval >= GDK_KP_Space && keyval <= GDK_KP_9;

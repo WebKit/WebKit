@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ServiceWorkerClientType.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 

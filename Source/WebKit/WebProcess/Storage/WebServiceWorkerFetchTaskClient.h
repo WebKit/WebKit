@@ -31,7 +31,6 @@
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/FetchLoader.h>
 #include <WebCore/FetchLoaderClient.h>
-#include <WebCore/ResourceError.h>
 #include <WebCore/ServiceWorkerFetch.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <wtf/UniqueRef.h>
@@ -83,7 +82,7 @@ private:
     Optional<BlobLoader> m_blobLoader;
     bool m_needsContinueDidReceiveResponseMessage { false };
     bool m_waitingForContinueDidReceiveResponseMessage { false };
-    Variant<std::nullptr_t, Ref<WebCore::SharedBuffer>, Ref<FormData>, UniqueRef<ResourceError>> m_responseData;
+    Variant<std::nullptr_t, Ref<WebCore::SharedBuffer>, Ref<WebCore::FormData>, UniqueRef<WebCore::ResourceError>> m_responseData;
     bool m_didFinish { false };
 };
 

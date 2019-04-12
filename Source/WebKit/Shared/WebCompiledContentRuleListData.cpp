@@ -29,6 +29,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ArgumentCoders.h"
+#include "DataReference.h"
 #include "SharedBufferDataReference.h"
 
 namespace WebKit {

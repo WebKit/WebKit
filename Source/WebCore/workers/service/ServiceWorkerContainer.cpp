@@ -36,6 +36,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSServiceWorkerRegistration.h"
 #include "Logging.h"
+#include "MessageEvent.h"
 #include "NavigatorBase.h"
 #include "ResourceError.h"
 #include "SchemeRegistry.h"

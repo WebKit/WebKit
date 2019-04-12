@@ -35,6 +35,7 @@
 #include "DNSResolveQueueCFNet.h"
 #endif
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

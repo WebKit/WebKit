@@ -27,6 +27,7 @@
 #include "JSPerformanceObserver.h"
 
 #include "PerformanceObserverCallback.h"
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

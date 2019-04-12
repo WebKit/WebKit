@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-
 #include "config.h"
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #include "AXIsolatedTree.h"
 
 #include "AXIsolatedTreeNode.h"

@@ -1,6 +1,7 @@
 %{
 #include "HashTools.h"
 #include <string.h>
+#include <wtf/Compiler.h>
 
 IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 

@@ -29,6 +29,7 @@
 #include <WebCore/GeolocationPosition.h>
 #include <gio/gio.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/GUniquePtr.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/RunLoopSourcePriority.h>

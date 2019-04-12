@@ -25,6 +25,8 @@
 #include "config.h"
 #include "VRPose.h"
 
+#include <JavaScriptCore/TypedArrayInlines.h>
+
 namespace WebCore {
 
 static RefPtr<Float32Array> optionalFloat3ToJSCArray(const Optional<VRPlatformTrackingInfo::Float3>& data)

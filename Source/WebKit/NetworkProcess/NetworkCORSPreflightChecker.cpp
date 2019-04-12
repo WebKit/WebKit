@@ -32,6 +32,7 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include <WebCore/CrossOriginAccessControl.h>
+#include <WebCore/SecurityOrigin.h>
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_parameters.sessionID.isAlwaysOnLoggingAllowed(), Network, "%p - NetworkCORSPreflightChecker::" fmt, this, ##__VA_ARGS__)
 

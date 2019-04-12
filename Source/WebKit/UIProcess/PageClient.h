@@ -32,6 +32,7 @@
 #include "WebDataListSuggestionsDropdown.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/AlternativeTextClient.h>
+#include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/InputMode.h>
@@ -81,6 +82,10 @@ class FloatQuad;
 class Region;
 class TextIndicator;
 class WebMediaSessionManager;
+
+#if PLATFORM(GTK)
+class SelectionData;
+#endif
 
 enum class RouteSharingPolicy : uint8_t;
 enum class ScrollbarStyle : uint8_t;

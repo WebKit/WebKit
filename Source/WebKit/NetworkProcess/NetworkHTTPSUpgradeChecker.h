@@ -25,11 +25,10 @@
 
 #pragma once
 
+#include <atomic>
+#include <wtf/Forward.h>
 #include <wtf/UniqueRef.h>
-
-namespace WTF {
-class WorkQueue;
-}
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class SQLiteDatabase;
@@ -54,9 +53,9 @@ public:
     void query(String&&, PAL::SessionID, CompletionHandler<void(bool)>&&);
 
 private:
-    Ref<WTF::WorkQueue> m_workQueue;
-    WTF::UniqueRef<WebCore::SQLiteDatabase> m_database;
-    WTF::UniqueRef<WebCore::SQLiteStatement> m_statement;
+    Ref<WorkQueue> m_workQueue;
+    UniqueRef<WebCore::SQLiteDatabase> m_database;
+    UniqueRef<WebCore::SQLiteStatement> m_statement;
     std::atomic<bool> m_didSetupCompleteSuccessfully { false };
 };
 

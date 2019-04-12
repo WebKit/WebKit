@@ -28,6 +28,7 @@
 #include "VREyeParameters.h"
 #include "VRPlatformDisplay.h"
 #include "VRPose.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 
 namespace WebCore {
 

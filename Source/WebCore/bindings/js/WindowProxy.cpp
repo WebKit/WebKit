@@ -32,6 +32,7 @@
 #include "ScriptController.h"
 #include "runtime_root.h"
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
 #include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {

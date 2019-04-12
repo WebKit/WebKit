@@ -28,6 +28,8 @@
 
 #if !PLATFORM(IOS_FAMILY)
 
+#include "WKBase.h"
+
 namespace WebKit {
 
 ProcessAssertion::ProcessAssertion(ProcessID, const String&, AssertionState assertionState)

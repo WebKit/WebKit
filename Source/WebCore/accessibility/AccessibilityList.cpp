@@ -32,6 +32,7 @@
 #include "AXObjectCache.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "PseudoElement.h"
 #include "RenderListItem.h"
 #include "RenderObject.h"

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/InspectorTargetAgent.h>
 
 namespace WebKit {

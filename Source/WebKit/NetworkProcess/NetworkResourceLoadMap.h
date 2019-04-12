@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "NetworkConnectionToWebProcess.h"
 #include "NetworkResourceLoader.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -35,6 +34,8 @@
 #endif
 
 namespace WebKit {
+
+class NetworkConnectionToWebProcess;
 
 typedef uint64_t ResourceLoadIdentifier;
 

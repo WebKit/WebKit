@@ -58,7 +58,7 @@
 #include "JSWebGLTexture.h"
 #include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
-
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;

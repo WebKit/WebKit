@@ -1,3 +1,40 @@
+2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        WebKit should build successfully even with -DENABLE_UNIFIED_BUILDS=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=196845
+
+        Reviewed by Ryosuke Niwa.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::FontProxy::initialize):
+        (WebCore::CanvasRenderingContext2DBase::FontProxy::fontMetrics const):
+        (WebCore::CanvasRenderingContext2DBase::FontProxy::fontDescription const):
+        (WebCore::CanvasRenderingContext2DBase::FontProxy::width const):
+        (WebCore::CanvasRenderingContext2DBase::FontProxy::drawBidiText const):
+        (WebCore::CanvasRenderingContext2DBase::beginCompositeLayer):
+        (WebCore::CanvasRenderingContext2DBase::endCompositeLayer):
+        Remove inline specifier to address linking errors (regardless of CMake platform).
+        Doing this in a .cpp file interferes with symbol creation.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/webvr/VREyeParameters.cpp:
+        * Modules/webvr/VRFrameData.cpp:
+        * Modules/webvr/VRPose.cpp:
+        * accessibility/AccessibilityList.cpp:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        * accessibility/isolatedtree/AXIsolatedTreeNode.cpp:
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSIDBCursorWithValueCustom.cpp:
+        * bindings/js/JSPerformanceObserverCustom.cpp:
+        * bindings/js/WindowProxy.cpp:
+        * platform/ColorData.gperf:
+        * platform/mediastream/RealtimeMediaSourceSettings.cpp:
+        * platform/network/DNSResolveQueue.cpp:
+        * workers/service/ServiceWorkerClientQueryOptions.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        Add missing includes to address compiler errors on GTK.
+
 2019-04-12  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r244098): [ Mac WK1 ] Layout Test fast/dynamic/paused-event-dispatch.html is Timing out

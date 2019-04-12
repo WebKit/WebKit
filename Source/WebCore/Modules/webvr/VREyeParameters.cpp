@@ -26,6 +26,7 @@
 #include "VREyeParameters.h"
 
 #include "VRFieldOfView.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
 
 namespace WebCore {
 
