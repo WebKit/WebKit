@@ -48,7 +48,7 @@ public:
     void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*, Thread*);
 
     // Only needs to be called by clients that can use the same heap from multiple threads.
-    void addCurrentThread() { m_threadGroup->addCurrentThread(); }
+    bool addCurrentThread() { return m_threadGroup->addCurrentThread() == ThreadGroupAddResult::NewlyAdded; }
 
     WordLock& getLock() { return m_threadGroup->getLock(); }
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }

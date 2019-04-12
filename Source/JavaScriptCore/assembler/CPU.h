@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Options.h"
+#include <wtf/NumberOfCores.h>
 
 namespace JSC {
 
@@ -130,6 +131,16 @@ inline bool hasSensibleDoubleToInt()
 {
     return optimizeForX86();
 }
+
+#if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
+bool isKernTCSMAvailable();
+bool enableKernTCSM();
+int kernTCSMAwareNumberOfProcessorCores();
+#else
+ALWAYS_INLINE bool isKernTCSMAvailable() { return false; }
+ALWAYS_INLINE bool enableKernTCSM() { return false; }
+ALWAYS_INLINE int kernTCSMAwareNumberOfProcessorCores() { return WTF::numberOfProcessorCores(); }
+#endif
 
 } // namespace JSC
 

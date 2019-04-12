@@ -172,6 +172,8 @@
         "kern.version"
         "machdep.cpu.brand_string"
         "security.mac.sandbox.sentinel"
+        "kern.tcsm_enable"
+        "kern.tcsm_available"
         "vm.footprint_suspend")
     (sysctl-name-regex #"^hw.(active|avail)cpu")
     (sysctl-name-regex #"^hw.(busfrequency|cachelinesize|cpufrequency(|_max)|pagesize|tbfrequency)(|_compat)")
@@ -181,6 +183,10 @@
     (sysctl-name-regex #"^kern.os(release|type|variant_status|version)")
     (sysctl-name-regex #"^net.routetable")
 )
+
+(allow sysctl-write
+    (sysctl-name
+        "kern.tcsm_enable"))
 
 (deny iokit-get-properties)
 (allow iokit-get-properties

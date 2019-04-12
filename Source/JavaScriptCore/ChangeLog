@@ -1,3 +1,31 @@
+2019-04-12  Saam barati  <sbarati@apple.com>
+
+        Sometimes we need to user fewer CPUs in our threading calculations
+        https://bugs.webkit.org/show_bug.cgi?id=196794
+        <rdar://problem/49389497>
+
+        Reviewed by Yusuke Suzuki.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/CPU.cpp: Added.
+        (JSC::isKernTCSMAvailable):
+        (JSC::enableKernTCSM):
+        (JSC::kernTCSMAwareNumberOfProcessorCores):
+        * assembler/CPU.h:
+        (JSC::isKernTCSMAvailable):
+        (JSC::enableKernTCSM):
+        (JSC::kernTCSMAwareNumberOfProcessorCores):
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::addCurrentThread):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.cpp:
+        (JSC::computeNumberOfWorkerThreads):
+        (JSC::computePriorityDeltaOfWorkerThreads):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::Worklist):
+
 2019-04-12  Robin Morisset  <rmorisset@apple.com>
 
         Use padding at end of ArrayBuffer
