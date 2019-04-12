@@ -903,8 +903,8 @@ SLOW_PATH_DECL(slow_path_has_indexed_property)
     CHECK_EXCEPTION();
     JSValue property = GET(bytecode.m_property).jsValue();
     metadata.m_arrayProfile.observeStructure(base->structure(vm));
-    ASSERT(property.isUInt32());
-    RETURN(jsBoolean(base->hasPropertyGeneric(exec, property.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty)));
+    ASSERT(property.isUInt32AsAnyInt());
+    RETURN(jsBoolean(base->hasPropertyGeneric(exec, property.asUInt32AsAnyInt(), PropertySlot::InternalMethodType::GetOwnProperty)));
 }
 
 SLOW_PATH_DECL(slow_path_has_structure_property)
@@ -996,11 +996,8 @@ SLOW_PATH_DECL(slow_path_to_index_string)
     BEGIN();
     auto bytecode = pc->as<OpToIndexString>();
     JSValue indexValue = GET(bytecode.m_index).jsValue();
-    ASSERT(indexValue.isAnyInt());
-    ASSERT(indexValue.asAnyInt() <= UINT32_MAX);
-    ASSERT(indexValue.asAnyInt() >= 0);
-    uint32_t index = static_cast<uint32_t>(indexValue.asAnyInt());
-    RETURN(jsString(exec, Identifier::from(exec, index).string()));
+    ASSERT(indexValue.isUInt32AsAnyInt());
+    RETURN(jsString(exec, Identifier::from(exec, indexValue.asUInt32AsAnyInt()).string()));
 }
 
 SLOW_PATH_DECL(slow_path_profile_type_clear_log)

@@ -1530,8 +1530,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState* exec)
     JSArray* resultArray = jsCast<JSArray*>(exec->uncheckedArgument(0));
     JSArray* otherArray = jsCast<JSArray*>(exec->uncheckedArgument(1));
     JSValue startValue = exec->uncheckedArgument(2);
-    ASSERT(startValue.isAnyInt() && startValue.asAnyInt() >= 0 && startValue.asAnyInt() <= std::numeric_limits<unsigned>::max());
-    unsigned startIndex = static_cast<unsigned>(startValue.asAnyInt());
+    ASSERT(startValue.isUInt32AsAnyInt());
+    unsigned startIndex = startValue.asUInt32AsAnyInt();
     bool success = resultArray->appendMemcpy(exec, vm, startIndex, otherArray);
     EXCEPTION_ASSERT(!scope.exception() || !success);
     if (success)

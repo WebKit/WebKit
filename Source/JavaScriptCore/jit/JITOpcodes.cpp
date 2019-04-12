@@ -1249,6 +1249,8 @@ void JIT::emit_op_has_indexed_property(const Instruction* currentInstruction)
     
     emitGetVirtualRegisters(base, regT0, property, regT1);
 
+    emitJumpSlowCaseIfNotInt(regT1);
+
     // This is technically incorrect - we're zero-extending an int32. On the hot path this doesn't matter.
     // We check the value as if it was a uint32 against the m_vectorLength - which will always fail if
     // number was signed since m_vectorLength is always less than intmax (since the total allocation

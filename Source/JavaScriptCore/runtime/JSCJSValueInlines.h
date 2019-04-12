@@ -571,6 +571,38 @@ inline int64_t JSValue::asAnyInt() const
     return static_cast<int64_t>(asDouble());
 }
 
+inline bool JSValue::isInt32AsAnyInt() const
+{
+    if (!isAnyInt())
+        return false;
+    int64_t value = asAnyInt();
+    return value >= INT32_MIN && value <= INT32_MAX;
+}
+
+inline int32_t JSValue::asInt32AsAnyInt() const
+{
+    ASSERT(isInt32AsAnyInt());
+    if (isInt32())
+        return asInt32();
+    return static_cast<int32_t>(asDouble());
+}
+
+inline bool JSValue::isUInt32AsAnyInt() const
+{
+    if (!isAnyInt())
+        return false;
+    int64_t value = asAnyInt();
+    return value >= 0 && value <= UINT32_MAX;
+}
+
+inline uint32_t JSValue::asUInt32AsAnyInt() const
+{
+    ASSERT(isUInt32AsAnyInt());
+    if (isUInt32())
+        return asUInt32();
+    return static_cast<uint32_t>(asDouble());
+}
+
 inline bool JSValue::isString() const
 {
     return isCell() && asCell()->isString();

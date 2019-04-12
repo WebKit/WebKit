@@ -1,3 +1,13 @@
+2019-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] op_has_indexed_property should not assume subscript part is Uint32
+        https://bugs.webkit.org/show_bug.cgi?id=196850
+
+        Reviewed by Saam Barati.
+
+        * stress/has-indexed-property-should-accept-non-int32.js: Added.
+        (foo):
+
 2019-04-11  Saam barati  <sbarati@apple.com>
 
         Remove invalid assertion in operationInstanceOfCustom

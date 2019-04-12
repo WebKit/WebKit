@@ -248,11 +248,8 @@ static EncodedJSValue JSC_HOST_CALL makeBoundFunction(ExecState* exec)
     JSValue lengthValue = exec->uncheckedArgument(3);
     JSString* nameString = asString(exec->uncheckedArgument(4));
 
-    ASSERT(lengthValue.isAnyInt());
-    ASSERT(lengthValue.asAnyInt() <= INT32_MAX);
-    ASSERT(lengthValue.asAnyInt() >= INT32_MIN);
-    int32_t length = lengthValue.toInt32(exec);
-    scope.assertNoException();
+    ASSERT(lengthValue.isInt32AsAnyInt());
+    int32_t length = lengthValue.asInt32AsAnyInt();
 
     String name = nameString->value(exec);
     RETURN_IF_EXCEPTION(scope, { });

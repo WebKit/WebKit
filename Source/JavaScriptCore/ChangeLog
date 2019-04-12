@@ -1,3 +1,22 @@
+2019-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] op_has_indexed_property should not assume subscript part is Uint32
+        https://bugs.webkit.org/show_bug.cgi?id=196850
+
+        Reviewed by Saam Barati.
+
+        op_has_indexed_property assumed that subscript part is always Uint32. However, this is just a load from non-constant RegisterID,
+        DFG can store it in double format and can perform OSR exit. op_has_indexed_property should not assume that.
+        In this patch, instead, we check it with isAnyInt and get uint32_t from AnyInt.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_has_indexed_property):
+        * jit/JITOperations.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2019-04-11  Saam barati  <sbarati@apple.com>
 
         Remove invalid assertion in operationInstanceOfCustom

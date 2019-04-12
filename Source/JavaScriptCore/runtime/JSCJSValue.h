@@ -211,6 +211,8 @@ public:
     int32_t asInt32() const;
     uint32_t asUInt32() const;
     int64_t asAnyInt() const;
+    uint32_t asUInt32AsAnyInt() const;
+    int32_t asInt32AsAnyInt() const;
     double asDouble() const;
     bool asBoolean() const;
     double asNumber() const;
@@ -228,6 +230,8 @@ public:
     bool isUndefinedOrNull() const;
     bool isBoolean() const;
     bool isAnyInt() const;
+    bool isUInt32AsAnyInt() const;
+    bool isInt32AsAnyInt() const;
     bool isNumber() const;
     bool isString() const;
     bool isBigInt() const;

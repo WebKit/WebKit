@@ -2013,7 +2013,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
     JSValue subscript = JSValue::decode(encodedSubscript);
     
     ASSERT(baseValue.isObject());
-    ASSERT(subscript.isUInt32());
+    ASSERT(subscript.isUInt32AsAnyInt());
 
     JSObject* object = asObject(baseValue);
     bool didOptimize = false;
@@ -2043,7 +2043,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyDefault(ExecState* exec,
         }
     }
 
-    uint32_t index = subscript.asUInt32();
+    uint32_t index = subscript.asUInt32AsAnyInt();
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
@@ -2064,10 +2064,10 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState* exec,
     JSValue subscript = JSValue::decode(encodedSubscript);
     
     ASSERT(baseValue.isObject());
-    ASSERT(subscript.isUInt32());
+    ASSERT(subscript.isUInt32AsAnyInt());
 
     JSObject* object = asObject(baseValue);
-    uint32_t index = subscript.asUInt32();
+    uint32_t index = subscript.asUInt32AsAnyInt();
     if (object->canGetIndexQuickly(index))
         return JSValue::encode(JSValue(JSValue::JSTrue));
 
@@ -2077,7 +2077,7 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyGeneric(ExecState* exec,
         // https://bugs.webkit.org/show_bug.cgi?id=149886
         byValInfo->arrayProfile->setOutOfBounds();
     }
-    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, subscript.asUInt32(), PropertySlot::InternalMethodType::GetOwnProperty)));
+    return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, index, PropertySlot::InternalMethodType::GetOwnProperty)));
 }
     
 EncodedJSValue JIT_OPERATION operationGetByValString(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedSubscript, ByValInfo* byValInfo)
