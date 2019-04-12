@@ -328,7 +328,7 @@ class ValidatePatch(buildstep.BuildStep):
             return -1
 
         bug_title = bug_json.get('summary')
-        self.addURL('Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
+        self.addURL(u'Bug {} {}'.format(bug_id, bug_title), '{}show_bug.cgi?id={}'.format(BUG_SERVER_URL, bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
             return 1
         return 0

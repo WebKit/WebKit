@@ -1,3 +1,13 @@
+2019-04-11  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Handle bug titles with unicode characters
+        https://bugs.webkit.org/show_bug.cgi?id=196802
+
+        Reviewed by Dewei Zhu.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ValidatePatch._is_bug_closed):
+
 2019-04-11  Michael Saboff  <msaboff@apple.com>
 
         Improve the Inline Cache Stats code
