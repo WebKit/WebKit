@@ -4323,3 +4323,10 @@ webkit.org/b/195461 http/tests/referrer-policy-iframe/unsafe-url/cross-origin-ht
 [ Win10 ] svg/text/svg-zoom-large-value.xhtml [ Crash ]
 [ Win10 ] svg/text/text-style-recalc-crash.html [ Crash ]
 [ Win10 ] fast/dom/crash-with-bad-url.html [ Timeout ]
+
+webkit.org/b/196680 printing/page-with-10mm-left-margin.html [ Failure ]
+webkit.org/b/196680 printing/page-with-zero-margin.html [ Failure ]
+
+webkit.org/b/196869 animations/animation-multiple-callbacks-timestamp.html [ Failure ]
+webkit.org/b/196869 legacy-animation-engine/animations/animation-multiple-callbacks-timestamp.html [ Failure ]
+webkit.org/b/196869 imported/mozilla/css-animations/test_animation-currenttime.html [ Failure ]
