@@ -1453,7 +1453,7 @@ AsyncOverflowScrollingEnabled:
 
 LegacyOverflowScrollingTouchEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   humanReadableName: "Legacy -webkit-overflow-scrolling property"
   humanReadableDescription: "Support the legacy -webkit-overflow-scrolling CSS property"
   condition: ENABLE(OVERFLOW_SCROLLING_TOUCH)

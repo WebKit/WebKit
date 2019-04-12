@@ -59,6 +59,18 @@
         * UIProcess/API/APIWebsitePolicies.cpp:
         (API::WebsitePolicies::copy const):
 
+2019-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make -webkit-overflow-scrolling be a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=196803
+        rdar://problem/49078202
+
+        Reviewed by Antti Koivisto.
+
+        Flip LegacyOverflowScrollingTouchEnabled to false.
+
+        * Shared/WebPreferences.yaml:
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Software keyboard is shown too frequently on some websites

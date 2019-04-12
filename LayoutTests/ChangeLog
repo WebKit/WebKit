@@ -4,6 +4,39 @@
 
         * platform/win/TestExpectations:
 
+2019-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] Make -webkit-overflow-scrolling be a no-op
+        https://bugs.webkit.org/show_bug.cgi?id=196803
+        rdar://problem/49078202
+
+        Reviewed by Antti Koivisto.
+
+        Rebase some tests, if I thought that non-stacking context overflow was interesting.
+        For others, make overflow be stacking context by adding z-index.
+        Add <!-- webkit-test-runner [ internal:AsyncOverflowScrollingEnabled=true ] --> to those that
+        need it.
+
+        * compositing/overflow/scrolling-content-clip-to-viewport.html:
+        * compositing/rtl/rtl-scrolling-with-transformed-descendants.html:
+        * fast/scrolling/ios/change-scrollability-on-content-resize-nested.html:
+        * fast/scrolling/ios/overflow-scroll-inherited-expected.txt:
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html:
+        * fast/scrolling/ios/overflow-scrolling-ancestor-clip.html:
+        * fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt:
+        * fast/scrolling/ios/reconcile-layer-position-recursive.html:
+        * fast/scrolling/ios/scrolling-content-clip-to-viewport.html:
+        * fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor.html:
+        * fast/scrolling/ios/touch-scroll-pointer-events-none.html:
+        * fast/scrolling/ios/touch-scroll-visibility-hidden.html:
+        * platform/ios/compositing/overflow/scrolling-content-clip-to-viewport-expected.txt:
+        * platform/ios/fast/scrolling/ios/scrolling-content-clip-to-viewport-expected.txt:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor.html:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed.html:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor.html:
+        * scrollingcoordinator/scrolling-tree/coordinated-frame.html:
+        * scrollingcoordinator/scrolling-tree/resources/doc-with-sticky.html:
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Software keyboard is shown too frequently on some websites
