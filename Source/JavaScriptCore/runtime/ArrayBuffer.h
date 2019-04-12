@@ -29,6 +29,7 @@
 #include "GCIncomingRefCounted.h"
 #include "Weak.h"
 #include <wtf/CagedPtr.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Function.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -161,11 +162,11 @@ private:
     void notifyIncommingReferencesOfTransfer(VM&);
 
     ArrayBufferContents m_contents;
-    unsigned m_pinCount : 30;
-    bool m_isWasmMemory : 1;
+    Checked<unsigned> m_pinCount;
+    bool m_isWasmMemory;
     // m_locked == true means that some API user fetched m_contents directly from a TypedArray object,
     // the buffer is backed by a WebAssembly.Memory, or is a SharedArrayBuffer.
-    bool m_locked : 1;
+    bool m_locked;
 
 public:
     Weak<JSArrayBuffer> m_wrapper;
