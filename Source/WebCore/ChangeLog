@@ -1,3 +1,14 @@
+2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CSS Shadow Parts as a feature under consideration
+        https://bugs.webkit.org/show_bug.cgi?id=196835
+
+        Reviewed by Antti Koivisto.
+
+        This feature is under consideration.
+
+        * features.json:
+
 2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         WebKit should build successfully even with -DENABLE_UNIFIED_BUILDS=OFF
