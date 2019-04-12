@@ -1,3 +1,16 @@
+2019-04-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Update 'Save Image' to more clear instructions
+        https://bugs.webkit.org/show_bug.cgi?id=196833
+        <rdar://problem/47446845>
+
+        Reviewed by Wenson Hsieh.
+
+        Just updating to a new string.
+
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+
 2019-04-11  Chris Dumez  <cdumez@apple.com>
 
         Unable to run system Safari with trunk WebKit

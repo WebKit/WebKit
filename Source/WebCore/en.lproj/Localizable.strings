@@ -94,6 +94,9 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* Title for Add to Photos action button */
+"Add to Photos" = "Add to Photos";
+
 /* Title for Add to Reading List action button */
 "Add to Reading List" = "Add to Reading List";
 
@@ -624,9 +627,6 @@
 
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
-
-/* Title for Save Image action button */
-"Save Image" = "Save Image";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
