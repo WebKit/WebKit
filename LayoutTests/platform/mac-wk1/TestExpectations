@@ -432,7 +432,7 @@ webkit.org/b/158585 webgl/webgl-backing-store-size-update.html [ Pass Timeout ]
 [ Sierra+ ] svg/hixie/text/003.html [ Failure ]
 
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.htm [ Pass Failure ]
-webkit.org/b/188816 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.htm [ Pass Crash ]
+webkit.org/b/196864 [ Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.htm [ Skip ]
 
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
