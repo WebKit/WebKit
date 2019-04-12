@@ -1,5 +1,18 @@
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        WebsitePolicies doesn't copy its media source policy in WebsitePolicies::copy
+        https://bugs.webkit.org/show_bug.cgi?id=196862
+
+        Reviewed by Darin Adler.
+
+        Add a missing bit of code to copy m_mediaSourcePolicy over when making a copy of WebsitePolicies. This doesn't
+        have any observable effect, since m_mediaSourcePolicy isn't currently exposed as SPI on WKWebpagePreferences.
+
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS] Software keyboard is shown too frequently on some websites
         https://bugs.webkit.org/show_bug.cgi?id=195856
         <rdar://problem/49191395>

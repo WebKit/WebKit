@@ -56,6 +56,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
     policies->setPreferredCompatibilityMode(m_preferredCompatibilityMode);
     policies->setMetaViewportPolicy(m_metaViewportPolicy);
+    policies->setMediaSourcePolicy(m_mediaSourcePolicy);
     policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
