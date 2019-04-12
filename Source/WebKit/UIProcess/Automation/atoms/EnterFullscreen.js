@@ -56,7 +56,7 @@ function enterFullscreen() {
 
         document.removeEventListener("webkitfullscreenchange", fullscreenChangeListener);
         document.documentElement.removeEventListener("webkitfullscreenerror", fullscreenErrorListener);
-        callback(document.webkitIsFullscreen);
+        callback(!!document.webkitIsFullScreen);
     };
 
     // The document fires change events, but the fullscreen element fires error events.

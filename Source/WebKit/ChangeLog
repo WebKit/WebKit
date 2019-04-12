@@ -1,3 +1,14 @@
+2019-04-12  Brian Burg  <bburg@apple.com>
+
+        WebDriver: fix typo in EnterFullscreen.js in error-handling code
+        https://bugs.webkit.org/show_bug.cgi?id=196882
+        <rdar://problem/49867122>
+
+        Reviewed by Devin Rousso.
+
+        * UIProcess/Automation/atoms/EnterFullscreen.js:
+        (enterFullscreen):
+
 2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed fix for non-unified build.
