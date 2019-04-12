@@ -1,3 +1,10 @@
+2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [WinCairo][WKL] Unreviewed test gardening.
+
+        * platform/wincairo-wk1/TestExpectations:
+        r244182 causes all animations tests to time out.
+
 2019-04-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed test gardening for Windows.
