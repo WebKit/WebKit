@@ -1,3 +1,16 @@
+2019-04-12  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r244098): [ Mac WK1 ] Layout Test fast/dynamic/paused-event-dispatch.html is Timing out
+        https://bugs.webkit.org/show_bug.cgi?id=196789
+        <rdar://problem/49855255>
+
+        Reviewed by Tim Horton.
+
+        Disable auto-sizing mode at the start of each test.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+
 2019-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         Update AudioSession route sharing policy
