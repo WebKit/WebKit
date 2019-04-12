@@ -1,3 +1,23 @@
+2019-04-11  Saam barati  <sbarati@apple.com>
+
+        Remove invalid assertion in operationInstanceOfCustom
+        https://bugs.webkit.org/show_bug.cgi?id=196842
+        <rdar://problem/49725493>
+
+        Reviewed by Michael Saboff.
+
+        In the generated JIT code, we go to the slow path when the incoming function
+        isn't the Node's CodeOrigin's functionProtoHasInstanceSymbolFunction. However,
+        in the JIT operation, we were asserting against exec->lexicalGlobalObject()'s
+        functionProtoHasInstanceSymbolFunction. That assertion might be wrong when
+        inlining across global objects as exec->lexicalGlobalObject() uses the machine
+        frame for procuring the global object. There is no harm when this assertion fails
+        as we just execute the slow path. This patch removes the assertion. (However, this
+        does shed light on the deficiency in our exec->lexicalGlobalObject() function with
+        respect to inlining. However, this isn't new -- we've known about this for a while.)
+
+        * jit/JITOperations.cpp:
+
 2019-04-11  Michael Saboff  <msaboff@apple.com>
 
         Improve the Inline Cache Stats code

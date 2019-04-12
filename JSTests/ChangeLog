@@ -1,3 +1,13 @@
+2019-04-11  Saam barati  <sbarati@apple.com>
+
+        Remove invalid assertion in operationInstanceOfCustom
+        https://bugs.webkit.org/show_bug.cgi?id=196842
+        <rdar://problem/49725493>
+
+        Reviewed by Michael Saboff.
+
+        * stress/operationInstanceOfCustom-bad-assertion.js: Added.
+
 2019-04-10  Saam Barati  <sbarati@apple.com>
 
         AbstractValue::validateOSREntryValue is wrong for Int52 constants
