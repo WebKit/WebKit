@@ -652,10 +652,9 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
         }
 
         if (!m_evaluateJavaScriptFunctionCallbacks.isEmpty()) {
-            Inspector::ErrorString unexpectedAlertOpenError = STRING_FOR_PREDEFINED_ERROR_NAME(UnexpectedAlertOpen);
             for (auto key : copyToVector(m_evaluateJavaScriptFunctionCallbacks.keys())) {
                 auto callback = m_evaluateJavaScriptFunctionCallbacks.take(key);
-                callback->sendFailure(unexpectedAlertOpenError);
+                callback->sendSuccess(emptyString());
             }
         }
 
