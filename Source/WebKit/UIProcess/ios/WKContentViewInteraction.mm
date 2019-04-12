@@ -100,6 +100,7 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
@@ -118,7 +119,6 @@
 #import "NativeWebMouseEvent.h"
 #import <UIKit/UIHoverGestureRecognizer.h>
 #import <UIKit/_UILookupGestureRecognizer.h>
-#import <pal/spi/ios/GraphicsServicesSPI.h>
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -1595,7 +1595,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)shouldShowAutomaticKeyboardUI
 {
-    // FIXME: Make this function knowledgeable about the HTML attribute inputmode.
+    // FIXME: We should support inputmode="none" when the hardware keyboard is attached.
+    // We currently refrain from doing so because that would prevent UIKit from showing
+    // the language picker when pressing the globe key to change the input language.
+    if (_focusedElementInformation.inputMode == WebCore::InputMode::None && !GSEventIsHardwareKeyboardAttached())
+        return NO;
+
     switch (_focusedElementInformation.elementType) {
     case WebKit::InputType::None:
     case WebKit::InputType::Drawing:
@@ -5131,6 +5136,12 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
+}
+
+- (void)_hardwareKeyboardAvailabilityChanged
+{
+    if (hasFocusedElement(_focusedElementInformation) && _focusedElementInformation.inputMode == WebCore::InputMode::None)
+        [self reloadInputViews];
 }
 
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode

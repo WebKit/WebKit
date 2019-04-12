@@ -638,6 +638,10 @@ void UIScriptController::setKeyboardInputModeIdentifier(JSStringRef)
 {
 }
 
+void UIScriptController::setHardwareKeyboardAttached(bool)
+{
+}
+
 #endif
 
 #if !PLATFORM(COCOA)

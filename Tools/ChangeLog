@@ -1,3 +1,27 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Software keyboard is shown too frequently on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=195856
+        <rdar://problem/49191395>
+
+        Reviewed by Darin Adler.
+
+        Add support for attaching or detaching the hardware keyboard on iOS in layout tests.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::setHardwareKeyboardAttached):
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::setHardwareKeyboardAttached):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerApp.xcconfig:
+
+        Additionally link against GraphicsServices in WebKitTestRunner.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::UIScriptController::setHardwareKeyboardAttached):
+
 2019-04-12  Ludovico de Nittis  <ludovico.denittis@collabora.com>
 
         [GTK][WPE] Fix pacman install-dependencies packages

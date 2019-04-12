@@ -16,6 +16,7 @@ exports:
     symbols:
       - _GSCurrentEventTimestamp
       - _GSEventIsHardwareKeyboardAttached
+      - _GSEventSetHardwareKeyboardAttached
       - _GSFontInitialize
       - _GSFontPurgeFontCache
       - _GSInitialize

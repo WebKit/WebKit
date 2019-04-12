@@ -1,3 +1,23 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Software keyboard is shown too frequently on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=195856
+        <rdar://problem/49191395>
+
+        Reviewed by Darin Adler.
+
+        Fix a failing layout test, which (among other reasons) is currently failing because support for inputmode="none"
+        is disabled.
+
+        * fast/forms/ios/inputmode-none-expected.txt:
+        * fast/forms/ios/inputmode-none.html:
+        * resources/ui-helper.js:
+
+        Add a UIHelper method for attaching or detaching the hardware keyboard.
+
+        (window.UIHelper.setHardwareKeyboardAttached):
+        (window.UIHelper):
+
 2019-04-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS WK1] ASSERTION FAILED: formData in WebCore::ResourceRequest::doUpdateResourceHTTPBody()

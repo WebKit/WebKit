@@ -1,3 +1,37 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Software keyboard is shown too frequently on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=195856
+        <rdar://problem/49191395>
+
+        Reviewed by Darin Adler.
+
+        On some websites, hidden editable elements are very frequently focused upon user interaction. Currently, this
+        causes the software keyboard to pop in and out unexpectedly; luckily, these same sites also apply
+        inputmode="none" to the hidden editable element, which ought to ensure that the software keyboard doesn't appear
+        when the element is focused.
+
+        However, since we disabled support for inputmode="none" in r240497, the software keyboard is no longer
+        suppressed, and becomes a big nuissance. r240497 removed support for this feature because, when using a hardware
+        keyboard, pressing the globe key no longer showed UI for switching languages. However, support for inputmode
+        none makes a much larger impact when a software keyboard is used (since the entire software keyboard animates in
+        and out), whereas a hardware keyboard only displays an input accessory view. For this reason, we can mitigate
+        this bug without reintroducing <rdar://problem/47406553> by re-enabling inputmode="none", but only when a
+        hardware keyboard is not attached.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (hardwareKeyboardAvailabilityChangedCallback):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView shouldShowAutomaticKeyboardUI]):
+
+        Don't show the keyboard if inputmode is none and a hardware keyboard is not attached.
+
+        (-[WKContentView _hardwareKeyboardAvailabilityChanged]):
+
+        Reload input views if the inputmode is none to ensure that if a hardware keyboard is attached while editing an
+        element with inputmode="none", we'll show the input accessory view once again.
+
 2019-04-12  Antoine Quint  <graouts@apple.com>
 
         Opt some websites into the simulated mouse events dispatch quirk when in modern compatibility mode

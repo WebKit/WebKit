@@ -311,6 +311,8 @@ interface UIScriptController {
     void makeWindowContentViewFirstResponder();
     readonly attribute boolean isWindowContentViewFirstResponder;
 
+    void setHardwareKeyboardAttached(boolean attached);
+
     object attachmentInfo(DOMString attachmentIdentifier);
 
     // Editing

@@ -535,6 +535,10 @@ NSUndoManager *UIScriptController::platformUndoManager() const
     return nil;
 }
 
+void UIScriptController::setHardwareKeyboardAttached(bool)
+{
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,3 +1,15 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Software keyboard is shown too frequently on some websites
+        https://bugs.webkit.org/show_bug.cgi?id=195856
+        <rdar://problem/49191395>
+
+        Reviewed by Darin Adler.
+
+        Add a symbol for GSEventSetHardwareKeyboardAttached.
+
+        * WebKitPrivateFrameworkStubs/iOS/12/GraphicsServices.framework/GraphicsServices.tbd:
+
 2019-01-01  Jeff Miller  <jeffm@apple.com>
 
         Update user-visible copyright strings to include 2019

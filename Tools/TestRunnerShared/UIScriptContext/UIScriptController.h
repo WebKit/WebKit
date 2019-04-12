@@ -240,6 +240,8 @@ public:
 
     JSObjectRef attachmentInfo(JSStringRef attachmentIdentifier);
 
+    void setHardwareKeyboardAttached(bool);
+
 private:
     UIScriptController(UIScriptContext&);
     

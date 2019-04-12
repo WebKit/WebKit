@@ -43,6 +43,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <objc/runtime.h>
+#import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/MainThread.h>
 
 static BOOL overrideIsInHardwareKeyboardMode()
@@ -141,6 +142,7 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
 
     [[UIApplication sharedApplication] _cancelAllTouches];
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
+    GSEventSetHardwareKeyboardAttached(true, 0);
 
     m_inputModeSwizzlers.clear();
     m_overriddenKeyboardInputMode = nil;

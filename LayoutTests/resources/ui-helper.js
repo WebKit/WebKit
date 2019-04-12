@@ -833,4 +833,9 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript("JSON.stringify(uiController.menuRect)", result => resolve(JSON.parse(result)));
         });
     }
+
+    static setHardwareKeyboardAttached(attached)
+    {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));
+    }
 }

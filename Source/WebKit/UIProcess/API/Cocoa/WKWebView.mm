@@ -3335,6 +3335,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 {
     ASSERT(observer);
     WKWebView *webView = (__bridge WKWebView *)observer;
+    [webView->_contentView _hardwareKeyboardAvailabilityChanged];
     webView._page->hardwareKeyboardAvailabilityChanged(GSEventIsHardwareKeyboardAttached());
 }
 
