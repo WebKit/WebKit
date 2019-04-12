@@ -1,3 +1,22 @@
+2019-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebThread should run at a higher priority than user initiated
+        https://bugs.webkit.org/show_bug.cgi?id=196849
+        <rdar://problem/46851062>
+
+        Reviewed by Geoffrey Garen.
+
+        Use QOS_CLASS_USER_INTERACTIVE on WebThread with -10 relative priority so that WebThread
+        won't wait for other threads with priority 30-37 but does not content with the main thread.
+
+        Also removed the call to pthread_attr_setschedparam which disables QoS.
+
+        This improves the blocked time in StartWebThread from 2~3ms to 250μs while cold launching
+        iBooks to an opened book.
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (StartWebThread): Replaced 200 * 4096 by 800 * KB for a better readability.
+
 2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add CSS Shadow Parts as a feature under consideration

@@ -667,12 +667,9 @@ static void StartWebThread()
     // The web thread is a secondary thread, and secondary threads are usually given
     // a 512 kb stack, but we need more space in order to have room for the JavaScriptCore
     // reentrancy limit. This limit works on both the simulator and the device.
-    pthread_attr_setstacksize(&tattr, 200 * 4096);
+    pthread_attr_setstacksize(&tattr, 800 * KB);
 
-    struct sched_param param;
-    pthread_attr_getschedparam(&tattr, &param);
-    param.sched_priority--;
-    pthread_attr_setschedparam(&tattr, &param);
+    pthread_attr_set_qos_class_np(&tattr, QOS_CLASS_USER_INTERACTIVE, -10);
 
     // Wait for the web thread to startup completely before we continue.
     {
