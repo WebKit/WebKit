@@ -89,7 +89,7 @@ FloatBoxExtent PrintContext::computedPageMargin(FloatBoxExtent printMargin)
     // FIXME Currently no pseudo class is supported.
     auto style = frame()->document()->styleScope().resolver().styleForPage(0);
 
-    auto pixelToPointScaleFactor = 1 / CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSPrimitiveValue::CSS_PT);
+    float pixelToPointScaleFactor = 1 / CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSPrimitiveValue::CSS_PT);
     return { style->marginTop().isAuto() ? printMargin.top() : style->marginTop().value() * pixelToPointScaleFactor,
         style->marginRight().isAuto() ? printMargin.right() : style->marginRight().value() * pixelToPointScaleFactor,
         style->marginBottom().isAuto() ? printMargin.bottom() : style->marginBottom().value() * pixelToPointScaleFactor,

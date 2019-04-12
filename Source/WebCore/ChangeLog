@@ -1,3 +1,10 @@
+2019-04-11  Zalan Bujtas  <zalan@apple.com>
+
+        Try to fix Windows build.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computedPageMargin):
+
 2019-04-11  Megan Gardner  <megan_gardner@apple.com>
 
         Update 'Save Image' to more clear instructions
