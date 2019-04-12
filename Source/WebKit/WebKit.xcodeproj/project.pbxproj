@@ -1111,6 +1111,7 @@
 		6BE969CB1E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969C91E54D4CF008B7483 /* ResourceLoadStatisticsClassifierCocoa.h */; };
 		6BE969CD1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h */; };
 		6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		75A8D2C8187CCFAB00C39C9E /* WKWebsiteDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2C4187CCF9F00C39C9E /* WKWebsiteDataStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75A8D2D6187D1C0E00C39C9E /* WKWebsiteDataStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A8D2D4187D1C0100C39C9E /* WKWebsiteDataStoreInternal.h */; };
@@ -3573,6 +3574,7 @@
 		6BE969CC1E54E054008B7483 /* ResourceLoadStatisticsClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsClassifier.h; sourceTree = "<group>"; };
 		6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebProcess.sb.in; path = WebProcess/com.apple.WebProcess.sb.in; sourceTree = "<group>"; };
 		6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKInspectorPrivateMac.h; path = mac/WKInspectorPrivateMac.h; sourceTree = "<group>"; };
+		71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteSimulatedMouseEventsDispatchPolicy.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
 		728E86F01795188C0087879E /* WebColorPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebColorPickerMac.mm; sourceTree = "<group>"; };
 		75A8D2C4187CCF9F00C39C9E /* WKWebsiteDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsiteDataStore.h; sourceTree = "<group>"; };
@@ -5242,6 +5244,7 @@
 				5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */,
 				5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */,
 				0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */,
+				71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */,
 				8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */,
 				8360349E1ACB34D600626549 /* WebSQLiteDatabaseTracker.h */,
 				C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */,
@@ -9715,6 +9718,7 @@
 				F4CB09E5225D5A0900891487 /* WebsiteMediaSourcePolicy.h in Headers */,
 				F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */,
 				0EDE85032004E75D00030560 /* WebsitePopUpPolicy.h in Headers */,
+				71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */,
 				C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,

@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "Document.h"
+#include "Quirks.h"
 #include "ThreadGlobalData.h"
 #include <array>
 #include <functional>
@@ -364,7 +366,7 @@ public:
     // We should choose one term and stick to it.
     bool isWheelEventType(const AtomicString& eventType) const;
     bool isGestureEventType(const AtomicString& eventType) const;
-    bool isTouchRelatedEventType(const AtomicString& eventType) const;
+    bool isTouchRelatedEventType(const Document&, const AtomicString& eventType) const;
     bool isTouchScrollBlockingEventType(const AtomicString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomicString& eventType) const;
@@ -399,14 +401,15 @@ inline bool EventNames::isTouchScrollBlockingEventType(const AtomicString& event
         || eventType == touchmoveEvent;
 }
 
-inline bool EventNames::isTouchRelatedEventType(const AtomicString& eventType) const
+inline bool EventNames::isTouchRelatedEventType(const Document& document, const AtomicString& eventType) const
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled()) {
+    if (document.quirks().shouldDispatchSimulatedMouseEvents() || RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled()) {
         if (eventType == mousedownEvent || eventType == mousemoveEvent || eventType == mouseupEvent)
             return true;
     }
 #endif
+    UNUSED_PARAM(document);
     return eventType == touchstartEvent
         || eventType == touchmoveEvent
         || eventType == touchendEvent

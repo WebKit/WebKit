@@ -1,3 +1,25 @@
+2019-04-12  Antoine Quint  <graouts@apple.com>
+
+        Opt some websites into the simulated mouse events dispatch quirk when in modern compatibility mode
+        https://bugs.webkit.org/show_bug.cgi?id=196830
+        <rdar://problem/49124313>
+
+        Reviewed by Wenson Hsieh.
+
+        We add a new policy to determine whether simulated mouse events dispatch are allowed.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * Shared/WebsitePoliciesData.h:
+        * Shared/WebsiteSimulatedMouseEventsDispatchPolicy.h: Added.
+        * UIProcess/API/APIWebsitePolicies.cpp:
+        (API::WebsitePolicies::copy const):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-12  Chris Dumez  <cdumez@apple.com>
 
         [iOS Sim Debug] ASSERTION FAILED: m_downloads.isEmpty() Layout Test http/tests/websocket/tests/hybi/network-process-crash-error.html is a flaky crash

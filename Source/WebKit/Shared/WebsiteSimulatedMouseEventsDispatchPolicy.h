@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,38 +25,27 @@
 
 #pragma once
 
-#include <wtf/WeakPtr.h>
+#include <wtf/Forward.h>
 
-namespace WebCore {
-
-class Document;
-
-class Quirks {
-    WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
-public:
-    Quirks(Document&);
-    ~Quirks();
-
-    bool shouldIgnoreInvalidSignal() const;
-    bool needsFormControlToBeMouseFocusable() const;
-    bool needsAutoplayPlayPauseEvents() const;
-    bool needsSeekingSupportDisabled() const;
-    bool needsPerDocumentAutoplayBehavior() const;
-    bool shouldAutoplayForArbitraryUserGesture() const;
-    bool hasBrokenEncryptedMediaAPISupportQuirk() const;
-    bool hasWebSQLSupportQuirk() const;
-    bool shouldDispatchSimulatedMouseEvents() const;
-
-    WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
-    WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
-
-private:
-    bool needsQuirks() const;
-
-    WeakPtr<Document> m_document;
-
-    mutable Optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
-    mutable Optional<bool> m_hasWebSQLSupportQuirk;
+namespace WebKit {
+    
+enum class WebsiteSimulatedMouseEventsDispatchPolicy : uint8_t {
+    Default,
+    Allow,
+    Deny,
 };
 
 }
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsiteSimulatedMouseEventsDispatchPolicy> {
+    using values = EnumValues<
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy,
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default,
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Allow,
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Deny
+    >;
+};
+
+} // namespace WTF

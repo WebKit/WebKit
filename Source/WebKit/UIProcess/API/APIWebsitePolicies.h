@@ -32,6 +32,7 @@
 #include "WebsiteMediaSourcePolicy.h"
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
+#include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -94,6 +95,9 @@ public:
     WebKit::WebsiteMediaSourcePolicy mediaSourcePolicy() const { return m_mediaSourcePolicy; }
     void setMediaSourcePolicy(WebKit::WebsiteMediaSourcePolicy policy) { m_mediaSourcePolicy = policy; }
 
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy simulatedMouseEventsDispatchPolicy() const { return m_simulatedMouseEventsDispatchPolicy; }
+    void setSimulatedMouseEventsDispatchPolicy(WebKit::WebsiteSimulatedMouseEventsDispatchPolicy policy) { m_simulatedMouseEventsDispatchPolicy = policy; }
+
 private:
     WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk>, WebKit::WebsiteAutoplayPolicy, Vector<WebCore::HTTPHeaderField>&&, WebKit::WebsitePopUpPolicy, RefPtr<WebsiteDataStore>&&);
 
@@ -110,6 +114,7 @@ private:
     WebKit::WebCompatibilityMode m_preferredCompatibilityMode { WebKit::WebCompatibilityMode::Default };
     WebKit::WebsiteMetaViewportPolicy m_metaViewportPolicy { WebKit::WebsiteMetaViewportPolicy::Default };
     WebKit::WebsiteMediaSourcePolicy m_mediaSourcePolicy { WebKit::WebsiteMediaSourcePolicy::Default };
+    WebKit::WebsiteSimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default };
 };
 
 } // namespace API

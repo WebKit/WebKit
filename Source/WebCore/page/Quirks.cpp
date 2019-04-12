@@ -195,8 +195,36 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     return false;
 }
 
-bool Quirks::shouldDispatchSimulateMouseEvents() const
+bool Quirks::shouldDispatchSimulatedMouseEvents() const
 {
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto* loader = m_document->loader();
+    if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    auto host = url.host();
+
+    if (equalLettersIgnoringASCIICase(host, "amazon.com") || host.endsWithIgnoringASCIICase(".amazon.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "wix.com") || host.endsWithIgnoringASCIICase(".wix.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "desmos.com") || host.endsWithIgnoringASCIICase(".desmos.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "figma.com") || host.endsWithIgnoringASCIICase(".figma.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "trello.com") || host.endsWithIgnoringASCIICase(".trello.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "airtable.com") || host.endsWithIgnoringASCIICase(".airtable.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "maps.google.com"))
+        return true;
+    if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
+        return true;
+#endif
     return false;
 }
 

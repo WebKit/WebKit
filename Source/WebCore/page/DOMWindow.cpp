@@ -1782,11 +1782,12 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
     if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
         return false;
 
-    if (Document* document = this->document()) {
+    auto* document = this->document();
+    if (document) {
         document->addListenerTypeIfNeeded(eventType);
         if (eventNames().isWheelEventType(eventType))
             document->didAddWheelEventHandler(*document);
-        else if (eventNames().isTouchRelatedEventType(eventType))
+        else if (eventNames().isTouchRelatedEventType(*document, eventType))
             document->didAddTouchEventHandler(*document);
         else if (eventType == eventNames().storageEvent)
             didAddStorageEventListener(*this);
@@ -1801,7 +1802,7 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, Ref<EventListene
         incrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (eventNames().isTouchRelatedEventType(eventType))
+    else if (document && eventNames().isTouchRelatedEventType(*document, eventType))
         ++m_touchAndGestureEventListenerCount;
 #endif
 #if ENABLE(IOS_GESTURE_EVENTS)
@@ -2000,10 +2001,11 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
     if (!EventTarget::removeEventListener(eventType, listener, options.capture))
         return false;
 
-    if (Document* document = this->document()) {
+    auto* document = this->document();
+    if (document) {
         if (eventNames().isWheelEventType(eventType))
             document->didRemoveWheelEventHandler(*document);
-        else if (eventNames().isTouchRelatedEventType(eventType))
+        else if (eventNames().isTouchRelatedEventType(*document, eventType))
             document->didRemoveTouchEventHandler(*document);
     }
 
@@ -2016,7 +2018,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
         decrementScrollEventListenersCount();
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    else if (eventNames().isTouchRelatedEventType(eventType)) {
+    else if (document && eventNames().isTouchRelatedEventType(*document, eventType)) {
         ASSERT(m_touchAndGestureEventListenerCount > 0);
         --m_touchAndGestureEventListenerCount;
     }

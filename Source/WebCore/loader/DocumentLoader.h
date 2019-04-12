@@ -124,6 +124,12 @@ enum class MediaSourcePolicy : uint8_t {
     Enable
 };
 
+enum class SimulatedMouseEventsDispatchPolicy : uint8_t {
+    Default,
+    Allow,
+    Deny,
+};
+
 class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
@@ -300,6 +306,9 @@ public:
 
     MediaSourcePolicy mediaSourcePolicy() const { return m_mediaSourcePolicy; }
     void setMediaSourcePolicy(MediaSourcePolicy policy) { m_mediaSourcePolicy = policy; }
+
+    SimulatedMouseEventsDispatchPolicy simulatedMouseEventsDispatchPolicy() const { return m_simulatedMouseEventsDispatchPolicy; }
+    void setSimulatedMouseEventsDispatchPolicy(SimulatedMouseEventsDispatchPolicy policy) { m_simulatedMouseEventsDispatchPolicy = policy; }
 
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(LoadCompletionType, ResourceLoader*);
@@ -581,6 +590,7 @@ private:
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
     MetaViewportPolicy m_metaViewportPolicy { MetaViewportPolicy::Default };
     MediaSourcePolicy m_mediaSourcePolicy { MediaSourcePolicy::Default };
+    SimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { SimulatedMouseEventsDispatchPolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;

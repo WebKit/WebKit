@@ -48,6 +48,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << customNavigatorPlatform;
     encoder << metaViewportPolicy;
     encoder << mediaSourcePolicy;
+    encoder << simulatedMouseEventsDispatchPolicy;
 }
 
 Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
@@ -112,6 +113,11 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
     if (!mediaSourcePolicy)
         return WTF::nullopt;
     
+    Optional<WebsiteSimulatedMouseEventsDispatchPolicy> simulatedMouseEventsDispatchPolicy;
+    decoder >> simulatedMouseEventsDispatchPolicy;
+    if (!simulatedMouseEventsDispatchPolicy)
+        return WTF::nullopt;
+
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
@@ -125,6 +131,7 @@ Optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
         WTFMove(*customNavigatorPlatform),
         WTFMove(*metaViewportPolicy),
         WTFMove(*mediaSourcePolicy),
+        WTFMove(*simulatedMouseEventsDispatchPolicy),
     } };
 }
 
@@ -206,6 +213,25 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     case WebsiteMediaSourcePolicy::Enable:
         documentLoader.setMediaSourcePolicy(WebCore::MediaSourcePolicy::Enable);
         break;
+    }
+
+    switch (websitePolicies.simulatedMouseEventsDispatchPolicy) {
+    case WebsiteSimulatedMouseEventsDispatchPolicy::Default:
+        documentLoader.setSimulatedMouseEventsDispatchPolicy(WebCore::SimulatedMouseEventsDispatchPolicy::Default);
+        break;
+    case WebsiteSimulatedMouseEventsDispatchPolicy::Allow:
+        documentLoader.setSimulatedMouseEventsDispatchPolicy(WebCore::SimulatedMouseEventsDispatchPolicy::Allow);
+        break;
+    case WebsiteSimulatedMouseEventsDispatchPolicy::Deny:
+        documentLoader.setSimulatedMouseEventsDispatchPolicy(WebCore::SimulatedMouseEventsDispatchPolicy::Deny);
+        break;
+    }
+
+    if (websitePolicies.websiteDataStoreParameters) {
+        if (auto* frame = documentLoader.frame()) {
+            if (auto* page = frame->page())
+                page->setSessionID(websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID);
+        }
     }
 
     auto* frame = documentLoader.frame();

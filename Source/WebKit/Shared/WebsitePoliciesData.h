@@ -31,6 +31,7 @@
 #include "WebsiteMediaSourcePolicy.h"
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
+#include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
 
@@ -60,6 +61,7 @@ struct WebsitePoliciesData {
     String customNavigatorPlatform;
     WebsiteMetaViewportPolicy metaViewportPolicy { WebsiteMetaViewportPolicy::Default };
     WebsiteMediaSourcePolicy mediaSourcePolicy { WebsiteMediaSourcePolicy::Default };
+    WebsiteSimulatedMouseEventsDispatchPolicy simulatedMouseEventsDispatchPolicy { WebsiteSimulatedMouseEventsDispatchPolicy::Default };
 
     void encode(IPC::Encoder&) const;
     static Optional<WebsitePoliciesData> decode(IPC::Decoder&);

@@ -56,6 +56,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setCustomNavigatorPlatform(m_customNavigatorPlatform);
     policies->setPreferredCompatibilityMode(m_preferredCompatibilityMode);
     policies->setMetaViewportPolicy(m_metaViewportPolicy);
+    policies->setSimulatedMouseEventsDispatchPolicy(m_simulatedMouseEventsDispatchPolicy);
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     customHeaderFields.reserveInitialCapacity(m_customHeaderFields.size());
     for (auto& field : m_customHeaderFields)
@@ -87,7 +88,8 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_customJavaScriptUserAgentAsSiteSpecificQuirks,
         m_customNavigatorPlatform,
         m_metaViewportPolicy,
-        m_mediaSourcePolicy
+        m_mediaSourcePolicy,
+        m_simulatedMouseEventsDispatchPolicy,
     };
 }
 
