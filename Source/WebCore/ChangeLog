@@ -1,3 +1,10 @@
+2019-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Unreviewed fix for non-unified build.
+
+        * dom/ScriptedAnimationController.h:
+        Add missing include from r244182.
+
 2019-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebThread should run at a higher priority than user initiated

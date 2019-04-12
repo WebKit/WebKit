@@ -26,8 +26,7 @@
 #include "config.h"
 #include "PrintInfo.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
+#include "WebCoreArgumentCoders.h"
 
 #if PLATFORM(GTK)
 #include "ArgumentCodersGtk.h"
