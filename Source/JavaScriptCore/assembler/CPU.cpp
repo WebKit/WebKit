@@ -27,6 +27,7 @@
 #include "CPU.h"
 
 #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
+#include <mutex>
 #include <sys/sysctl.h>
 #endif
 
