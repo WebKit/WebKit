@@ -1,3 +1,12 @@
+2019-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, try to fix the internal build after r244239
+
+        Force the bots to regenerate WKWebpagePreferences.h by touching the file. Adds a `Foundation/Foundation.h`
+        import that was missing anyways.
+
+        * UIProcess/API/Cocoa/WKWebpagePreferences.h:
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable modern compatibility mode by default in WKWebView on some devices

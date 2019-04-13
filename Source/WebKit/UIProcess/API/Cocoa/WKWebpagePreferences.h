@@ -25,6 +25,8 @@
 
 #import <WebKit/WKFoundation.h>
 
+#import <Foundation/Foundation.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKWebpagePreferencesAdditionsBefore.h>
 #endif
