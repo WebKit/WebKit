@@ -266,9 +266,3 @@ bool defaultCustomPasteboardDataEnabled();
 #else
 #define DEFAULT_APPLE_PAY_ENABLED false
 #endif
-
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOSMAC)
-#define USE_MODERN_COMPATIBILITY_MODE_BY_DEFAULT false
-#else
-#define USE_MODERN_COMPATIBILITY_MODE_BY_DEFAULT true
-#endif

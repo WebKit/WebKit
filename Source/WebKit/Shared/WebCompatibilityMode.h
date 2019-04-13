@@ -30,7 +30,7 @@
 namespace WebKit {
 
 enum class WebCompatibilityMode {
-    Default,
+    Recommended,
     Legacy,
     Modern,
 };

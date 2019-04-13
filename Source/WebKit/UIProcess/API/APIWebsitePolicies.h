@@ -111,7 +111,7 @@ private:
     WTF::String m_customUserAgent;
     WTF::String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
     WTF::String m_customNavigatorPlatform;
-    WebKit::WebCompatibilityMode m_preferredCompatibilityMode { WebKit::WebCompatibilityMode::Default };
+    WebKit::WebCompatibilityMode m_preferredCompatibilityMode { WebKit::WebCompatibilityMode::Recommended };
     WebKit::WebsiteMetaViewportPolicy m_metaViewportPolicy { WebKit::WebsiteMetaViewportPolicy::Default };
     WebKit::WebsiteMediaSourcePolicy m_mediaSourcePolicy { WebKit::WebsiteMediaSourcePolicy::Default };
     WebKit::WebsiteSimulatedMouseEventsDispatchPolicy m_simulatedMouseEventsDispatchPolicy { WebKit::WebsiteSimulatedMouseEventsDispatchPolicy::Default };

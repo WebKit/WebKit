@@ -1,3 +1,35 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable modern compatibility mode by default in WKWebView on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=196883
+        <rdar://problem/49864527>
+
+        Reviewed by Tim Horton.
+
+        Make some minor adjustments to new API.
+
+        * Shared/WebCompatibilityMode.h:
+
+        Rename WebCompatibilityMode::Default to WebCompatibilityMode::Recommended.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
+        Now that the role of the UseModernCompatibilityModeByDefault debug preference is limited to bypassing linked-on-
+        or-after and app bundle compatibility hacks, we no longer make this default to true in iOSMac.
+
+        * UIProcess/API/APIWebsitePolicies.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegate.h:
+
+        Rename the withPreferences: label to just preferences:.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+
 2019-04-12  Brian Burg  <bburg@apple.com>
 
         WebDriver: fix typo in EnterFullscreen.js in error-handling code

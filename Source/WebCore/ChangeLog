@@ -1,3 +1,21 @@
+2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable modern compatibility mode by default in WKWebView on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=196883
+        <rdar://problem/49864527>
+
+        Reviewed by Tim Horton.
+
+        Add a new helper function to determine whether an app is pre-installed on iOS, for the purposes of ensuring
+        compatibility with existing Apple apps that are not affected by linked-on-or-after. This involves all apps with
+        a bundle ID that begins with "com.apple.".
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::setApplicationBundleIdentifier):
+        (WebCore::applicationBundleStartsWith):
+        (WebCore::IOSApplication::isAppleApplication):
+
 2019-04-12  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Prevent narrowing conversions during Metal function calls on 32-bit platforms

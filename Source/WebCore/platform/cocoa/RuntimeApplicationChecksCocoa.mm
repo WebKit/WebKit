@@ -62,7 +62,7 @@ String applicationBundleIdentifier()
 void setApplicationBundleIdentifier(const String& bundleIdentifier)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() should not be called before setApplicationBundleIdentifier()");
+    ASSERT_WITH_MESSAGE(!applicationBundleIdentifierOverrideWasQueried, "applicationBundleIsEqualTo() and applicationBundleStartsWith() should not be called before setApplicationBundleIdentifier()");
     applicationBundleIdentifierOverride() = bundleIdentifier;
 }
 
@@ -191,6 +191,11 @@ bool MacApplication::isSolidStateNetworksDownloader()
 
 #if PLATFORM(IOS_FAMILY)
 
+static bool applicationBundleStartsWith(const String& bundleIdentifierPrefix)
+{
+    return applicationBundleIdentifier().startsWith(bundleIdentifierPrefix);
+}
+
 bool IOSApplication::isMobileMail()
 {
     static bool isMobileMail = applicationBundleIsEqualTo("com.apple.mobilemail"_s);
@@ -281,6 +286,12 @@ bool IOSApplication::isFirefox()
 {
     static bool isFirefox = applicationBundleIsEqualTo("org.mozilla.ios.Firefox"_s);
     return isFirefox;
+}
+
+bool IOSApplication::isAppleApplication()
+{
+    static bool isAppleApplication = applicationBundleStartsWith("com.apple."_s);
+    return isAppleApplication;
 }
 
 #endif

@@ -132,7 +132,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract The set of default webpage preferences to use when loading and rendering content.
  @discussion These default webpage preferences are additionally passed to the navigation delegate
- in -webView:decidePolicyForNavigationAction:withPreferences:decisionHandler:.
+ in -webView:decidePolicyForNavigationAction:preferences:decisionHandler:.
  */
 @property (null_resettable, nonatomic, copy) WKWebpagePreferences *defaultWebpagePreferences WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
