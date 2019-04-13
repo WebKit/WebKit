@@ -80,12 +80,13 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
     VariableEnvironment variablesUnderTDZ;
     unlinkedCodeBlock = generateUnlinkedCodeBlock<UnlinkedCodeBlockType, ExecutableType>(vm, executable, source, strictMode, scriptMode, debuggerMode, error, evalContextType, &variablesUnderTDZ);
 
-    if (unlinkedCodeBlock && Options::useCodeCache())
+    if (unlinkedCodeBlock && Options::useCodeCache()) {
         m_sourceCode.addCache(key, SourceCodeValue(vm, unlinkedCodeBlock, m_sourceCode.age()));
 
-    key.source().provider().cacheBytecode([&] {
-        return encodeCodeBlock(vm, key, unlinkedCodeBlock);
-    });
+        key.source().provider().cacheBytecode([&] {
+            return encodeCodeBlock(vm, key, unlinkedCodeBlock);
+        });
+    }
 
     return unlinkedCodeBlock;
 }

@@ -1,3 +1,19 @@
+2019-04-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        CodeCache should check that the UnlinkedCodeBlock was successfully created before caching it
+        https://bugs.webkit.org/show_bug.cgi?id=196880
+
+        Reviewed by Yusuke Suzuki.
+
+        Add a new function for bytecode cache tests that does not forceDiskCache
+        for the second run: runBytecodeCacheNoAssetion. This is necessary for the
+        test added in this patch, since the code is invalid and therefore won't be
+        cached. It should also be useful for tests that evaluate dynamically
+        generated code.
+
+        * Scripts/jsc-stress-test-helpers/bytecode-cache-test-helper.sh:
+        * Scripts/run-jsc-stress-tests:
+
 2019-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         Update AudioSession route sharing policy

@@ -656,13 +656,21 @@ def runDefault(*optionalTestSpecificOptions)
     run("default", *(FTL_OPTIONS + optionalTestSpecificOptions))
 end
 
-def runBytecodeCache(*optionalTestSpecificOptions)
+def runBytecodeCacheImpl(optionalTestSpecificOptions, *additionalEnv)
     unless $hostOS == "darwin"
         skip
         return
     end
     options = BASE_OPTIONS + $testSpecificRequiredOptions + FTL_OPTIONS + optionalTestSpecificOptions
-    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler)
+    addRunCommand("bytecode-cache", ["sh", (pathToHelpers + "bytecode-cache-test-helper.sh").to_s, pathToVM.to_s, $benchmark.to_s] + options, silentOutputHandler, simpleErrorHandler, *additionalEnv)
+end
+
+def runBytecodeCache(*optionalTestSpecificOptions)
+    runBytecodeCacheImpl(optionalTestSpecificOptions)
+end
+
+def runBytecodeCacheNoAssertion(*optionalTestSpecificOptions)
+    runBytecodeCacheImpl(optionalTestSpecificOptions, "JSC_forceDiskCache=false")
 end
 
 def runBigIntEnabled(*optionalTestSpecificOptions)

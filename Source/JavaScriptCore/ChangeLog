@@ -1,3 +1,16 @@
+2019-04-13  Tadeu Zagallo  <tzagallo@apple.com>
+
+        CodeCache should check that the UnlinkedCodeBlock was successfully created before caching it
+        https://bugs.webkit.org/show_bug.cgi?id=196880
+
+        Reviewed by Yusuke Suzuki.
+
+        CodeCache should not tell the SourceProvider to cache the bytecode if it failed
+        to create the UnlinkedCodeBlock.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+
 2019-04-12  Saam barati  <sbarati@apple.com>
 
         r244079 logically broke shouldSpeculateInt52
