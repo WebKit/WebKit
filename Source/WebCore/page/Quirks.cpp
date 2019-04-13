@@ -228,4 +228,18 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     return false;
 }
 
+bool Quirks::shouldDisablePointerEventsQuirk() const
+{
+#if PLATFORM(IOS_FAMILY)
+    if (!needsQuirks())
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    auto host = url.host();
+    if (equalLettersIgnoringASCIICase(host, "mailchimp.com") || host.endsWithIgnoringASCIICase(".mailchimp.com"))
+        return true;
+#endif
+    return false;
+}
+
 }

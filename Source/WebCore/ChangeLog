@@ -1,3 +1,22 @@
+2019-04-12  Antoine Quint  <graouts@apple.com>
+
+        Provide a quirk to disable Pointer Events
+        https://bugs.webkit.org/show_bug.cgi?id=196877
+        <rdar://problem/49863470>
+
+        Reviewed by Dean Jackson.
+
+        Add a quirk to disable Pointer Events. We also opt a website that has compatibility issues with Pointer Events into this new quirk.
+
+        * dom/PointerEvent.idl:
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDisablePointerEventsQuirk const):
+        * page/Quirks.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::absoluteEventTrackingRegionsForFrame const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable modern compatibility mode by default in WKWebView on some devices

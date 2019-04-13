@@ -42,6 +42,7 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
@@ -238,7 +239,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     auto afterUpdate = resolvePseudoStyle(element, update, PseudoId::After);
 
 #if ENABLE(POINTER_EVENTS) && PLATFORM(IOS_FAMILY)
-    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+    if (!m_document.quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
         m_document.updateTouchActionElements(element, *update.style.get());
 #endif
 

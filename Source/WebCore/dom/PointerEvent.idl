@@ -39,6 +39,7 @@ dictionary PointerEventInit : MouseEventInit {
 [
     Conditional=POINTER_EVENTS,
     EnabledAtRuntime=PointerEvents,
+    DisabledByQuirk=shouldDisablePointerEvents,
     Constructor(DOMString type, optional PointerEventInit eventInitDict),
     Exposed=Window
 ] interface PointerEvent : MouseEvent {

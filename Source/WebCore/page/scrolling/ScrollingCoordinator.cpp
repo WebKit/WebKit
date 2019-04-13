@@ -111,7 +111,7 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     auto eventTrackingRegions = document->eventTrackingRegions();
 
 #if ENABLE(POINTER_EVENTS)
-    if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
+    if (!document->quirks().shouldDisablePointerEventsQuirk() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
         if (auto* touchActionElements = frame.document()->touchActionElements()) {
             auto& touchActionData = eventTrackingRegions.touchActionData;
             for (const auto& element : *touchActionElements) {
