@@ -342,12 +342,12 @@ inline bool isInt32OrBooleanSpeculation(SpeculatedType value)
 
 inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52Any));
+    return !(value & (SpecFullDouble | SpecNonInt32AsInt52));
 }
 
 inline bool isInt32OrBooleanSpeculationForArithmetic(SpeculatedType value)
 {
-    return !(value & (SpecFullDouble | SpecInt52Any));
+    return !(value & (SpecFullDouble | SpecNonInt32AsInt52));
 }
 
 inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
@@ -358,6 +358,11 @@ inline bool isInt32OrBooleanSpeculationExpectingDefined(SpeculatedType value)
 inline bool isAnyInt52Speculation(SpeculatedType value)
 {
     return !!value && (value & SpecInt52Any) == value;
+}
+
+inline bool isInt32OrInt52Speculation(SpeculatedType value)
+{
+    return !!value && (value & (SpecInt32Only | SpecInt52Any)) == value;
 }
 
 inline bool isIntAnyFormat(SpeculatedType value)

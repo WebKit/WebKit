@@ -3224,7 +3224,7 @@ private:
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case Int52RepUse:
-            if (isAnyInt52Speculation(variable->prediction()))
+            if (!isInt32Speculation(variable->prediction()) && isInt32OrInt52Speculation(variable->prediction()))
                 m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
             break;
         case CellUse:

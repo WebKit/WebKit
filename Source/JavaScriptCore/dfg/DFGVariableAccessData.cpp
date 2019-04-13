@@ -181,7 +181,7 @@ bool VariableAccessData::couldRepresentInt52Impl()
     
     // The argument-aware prediction -- which merges all of an (inlined or machine)
     // argument's variable access datas' predictions -- must possibly be Int52Any.
-    return isAnyInt52Speculation(argumentAwarePrediction());
+    return isInt32OrInt52Speculation(argumentAwarePrediction());
 }
 
 FlushFormat VariableAccessData::flushFormat()

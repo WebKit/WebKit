@@ -2348,7 +2348,24 @@ public:
     
     bool shouldSpeculateInt52()
     {
-        return enableInt52() && isAnyInt52Speculation(prediction());
+        // We have to include SpecInt32Only here for two reasons:
+        // 1. We diligently write code that first checks if we should speculate Int32.
+        // For example:
+        // if (shouldSpeculateInt32()) ... 
+        // else if (shouldSpeculateInt52()) ...
+        // This means we it's totally valid to speculate Int52 when we're dealing
+        // with a type that's the union of Int32 and Int52.
+        //
+        // It would be a performance mistake to not include Int32 here because we obviously
+        // have variables that are the union of Int32 and Int52 values, and it's better
+        // to speculate Int52 than double in that situation.
+        //
+        // 2. We also write code where we ask if the inputs can be Int52, like if
+        // we know via profiling that an Add overflows, we may not emit an Int32 add.
+        // However, we only emit such an add if both inputs can be Int52, and Int32
+        // can trivially become Int52.
+        //
+        return enableInt52() && isInt32OrInt52Speculation(prediction());
     }
     
     bool shouldSpeculateDouble()

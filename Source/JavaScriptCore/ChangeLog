@@ -1,5 +1,48 @@
 2019-04-12  Saam barati  <sbarati@apple.com>
 
+        r244079 logically broke shouldSpeculateInt52
+        https://bugs.webkit.org/show_bug.cgi?id=196884
+
+        Reviewed by Yusuke Suzuki.
+
+        In r244079, I changed shouldSpeculateInt52 to only return true
+        when the prediction is isAnyInt52Speculation(). However, it was
+        wrong to not to include SpecInt32 in this for two reasons:
+
+        1. We diligently write code that first checks if we should speculate Int32.
+        For example:
+        if (shouldSpeculateInt32()) ... 
+        else if (shouldSpeculateInt52()) ...
+
+        It would be wrong not to fall back to Int52 if we're dealing with the union of
+        Int32 and Int52.
+
+        It would be a performance mistake to not include Int32 here because
+        data flow can easily tell us that we have variables that are the union
+        of Int32 and Int52 values. It's better to speculate Int52 than Double
+        in that situation.
+
+        2. We also write code where we ask if the inputs can be Int52, e.g, if
+        we know via profiling that an Add overflows, we may not emit an Int32 add.
+        However, we only emit such an add if both inputs can be Int52, and Int32
+        can trivially become Int52.
+
+       This patch recovers the 0.5-1% regression r244079 caused on JetStream 2.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC::isInt32OrBooleanSpeculationForArithmetic):
+        (JSC::isInt32OrInt52Speculation):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateInt52):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGVariableAccessData.cpp:
+        (JSC::DFG::VariableAccessData::couldRepresentInt52Impl):
+
+2019-04-12  Saam barati  <sbarati@apple.com>
+
         Unreviewed. Build fix after r244233.
 
         * assembler/CPU.cpp:

@@ -1,3 +1,13 @@
+2019-04-12  Saam barati  <sbarati@apple.com>
+
+        r244079 logically broke shouldSpeculateInt52
+        https://bugs.webkit.org/show_bug.cgi?id=196884
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/int52-rand-function.js: Added.
+        (Math.random):
+
 2019-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] op_has_indexed_property should not assume subscript part is Uint32
