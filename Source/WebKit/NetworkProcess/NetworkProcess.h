@@ -31,6 +31,7 @@
 #include "NetworkBlobRegistry.h"
 #include "NetworkContentRuleListManager.h"
 #include "NetworkHTTPSUpgradeChecker.h"
+#include "PrefetchCache.h"
 #include "SandboxExtension.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
@@ -330,6 +331,8 @@ public:
 
     WebCore::StorageQuotaManager& storageQuotaManager(PAL::SessionID, const WebCore::ClientOrigin&);
 
+    PrefetchCache& prefetchCache() { return m_prefetchCache; }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
     std::unique_ptr<WebCore::NetworkStorageSession> platformCreateDefaultStorageSession() const;
@@ -551,6 +554,8 @@ private:
     };
     HashMap<PAL::SessionID, StorageQuotaManagers> m_storageQuotaManagers;
     uint32_t m_downloadMonitorSpeedMultiplier { 1 };
+
+    PrefetchCache m_prefetchCache;
 };
 
 } // namespace WebKit

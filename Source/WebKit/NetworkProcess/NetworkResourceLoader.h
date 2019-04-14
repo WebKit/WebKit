@@ -103,6 +103,7 @@ public:
 
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequest::Requester::Main; }
     bool isMainFrameLoad() const { return isMainResource() && m_parameters.frameAncestorOrigins.isEmpty(); }
+    bool isCrossOriginPrefetch(const WebCore::ResourceRequest&) const;
 
     bool isAlwaysOnLoggingAllowed() const;
 

@@ -270,6 +270,8 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
         return;
 
     WTF::releaseFastMallocFreeMemory();
+
+    m_prefetchCache.clear();
 }
 
 void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)

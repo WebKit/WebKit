@@ -4330,3 +4330,6 @@ webkit.org/b/196680 printing/page-with-zero-margin.html [ Failure ]
 webkit.org/b/196869 animations/animation-multiple-callbacks-timestamp.html [ Failure ]
 webkit.org/b/196869 legacy-animation-engine/animations/animation-multiple-callbacks-timestamp.html [ Failure ]
 webkit.org/b/196869 imported/mozilla/css-animations/test_animation-currenttime.html [ Failure ]
+
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]

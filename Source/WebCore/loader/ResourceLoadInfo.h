@@ -42,8 +42,9 @@ enum class ResourceType : uint16_t {
     Media = 0x0080,
     PlugInStream = 0x0100,
     Popup = 0x0200,
+    Prefetch = 0x0400,
 };
-const uint16_t ResourceTypeMask = 0x03FF;
+const uint16_t ResourceTypeMask = 0x07FF;
 
 enum class LoadType : uint16_t {
     Invalid = 0x0000,

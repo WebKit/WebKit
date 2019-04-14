@@ -342,7 +342,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     ASSERT(!m_reachedTerminalState);
 #if ENABLE(CONTENT_EXTENSIONS)
-    ASSERT(m_resourceType != ResourceType::Invalid);
+    ASSERT(m_resourceType != ResourceType::Invalid || m_resourceType == ResourceType::Prefetch);
 #endif
 
     // We need a resource identifier for all requests, even if FrameLoader is never going to see it (such as with CORS preflight requests).
@@ -353,7 +353,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (!redirectResponse.isNull() && frameLoader()) {
+    if (!redirectResponse.isNull() && frameLoader() && m_resourceType != ResourceType::Prefetch) {
         Page* page = frameLoader()->frame().page();
         if (page && m_documentLoader) {
             auto results = page->userContentProvider().processContentRuleListsForLoad(request.url(), m_resourceType, *m_documentLoader);

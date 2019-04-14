@@ -68,8 +68,7 @@ ResourceType toResourceType(CachedResource::Type type)
         return ResourceType::Media;
 #endif
     case CachedResource::Type::LinkPrefetch:
-        ASSERT_NOT_REACHED();
-        break;
+        return ResourceType::Prefetch;
 #if ENABLE(APPLICATION_MANIFEST)
     case CachedResource::Type::ApplicationManifest:
         return ResourceType::Raw;

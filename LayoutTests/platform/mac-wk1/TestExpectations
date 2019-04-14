@@ -707,3 +707,6 @@ webkit.org/b/159724 [ Debug ] imported/w3c/web-platform-tests/xhr/send-redirect-
 webkit.org/b/196448 [ Debug ] inspector/audit/basic.html [ Pass Timeout ]
 
 webkit.org/b/196502 media/video-background-tab-playback.html [ Pass Failure ]
+
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
+webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]

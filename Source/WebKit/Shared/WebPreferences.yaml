@@ -1644,6 +1644,14 @@ ApplePayRemoteUIEnabled:
   humanReadableName: "Apple Pay Remote UI"
   type: bool
 
+LinkPrefetchEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "LinkPrefetch"
+  humanReadableDescription: "Enable LinkedPrefetch"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+
 # Deprecated
 
 ICECandidateFilteringEnabled:
