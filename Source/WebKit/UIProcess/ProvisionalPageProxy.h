@@ -118,6 +118,7 @@ private:
 #endif
 
     void initializeWebPage();
+    bool validateInput(uint64_t frameID, const Optional<uint64_t>& navigationID = WTF::nullopt);
 
     WebPageProxy& m_page;
     Ref<WebProcessProxy> m_process;

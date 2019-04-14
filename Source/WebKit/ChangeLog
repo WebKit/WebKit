@@ -1,3 +1,31 @@
+2019-04-13  Chris Dumez  <cdumez@apple.com>
+
+        [ Mac Debug ] TestWebKitAPI.ProcessSwap.ReuseSuspendedProcessForRegularNavigationRetainBundlePage is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=196548
+        <rdar://problem/49567254>
+
+        Reviewed by Darin Adler.
+
+        Update ProvisionalPageProxy methods to more consistently ignore unexpected IPC from the process. Previously,
+        some of the methods were doing this, but some other like didFailProvisionalLoadForFrame() weren't and this
+        was leading to this flaky crash. The issue is that if we do the load in an existing process that was recently
+        doing, there may be leftover IPC for the same pageID and this IPC gets received by the ProvisionalPageProxy
+        even though it is from a previous navigation. For this reason, the ProvisionalPageProxy should ignore all
+        incoming IPC that is not for its associated navigation.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::didPerformClientRedirect):
+        (WebKit::ProvisionalPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didCommitLoadForFrame):
+        (WebKit::ProvisionalPageProxy::didNavigateWithNavigationData):
+        (WebKit::ProvisionalPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        (WebKit::ProvisionalPageProxy::decidePolicyForResponse):
+        (WebKit::ProvisionalPageProxy::didPerformServerRedirect):
+        (WebKit::ProvisionalPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionSync):
+
 2019-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the internal build after r244239
