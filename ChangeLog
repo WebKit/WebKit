@@ -1,3 +1,23 @@
+2019-04-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] JavaScriptCore derived sources should only be referenced inside JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=196742
+
+        Reviewed by Konstantin Tokarev.
+
+        Migrate to using JavaScriptCore_DERIVED_SOURCES_DIR instead of DERIVED_SOURCES_JAVASCRIPTCORE_DIR
+        to support moving the JavaScriptCore derived sources outside of a shared directory.
+        This is in support of the target oriented design refactoring.
+
+        WinCairo is explicitly overriding the value as a canary for this setup.
+
+        Also move JavaScriptCore_SCRIPTS_DIR to WebKitFS to remove logic setting it in other projects.
+
+        * Source/PlatformWin.cmake:
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+        * Source/cmake/WebKitFS.cmake:
+
 2019-04-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, rolling out r243989.

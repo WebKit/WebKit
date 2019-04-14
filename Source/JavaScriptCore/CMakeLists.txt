@@ -44,10 +44,10 @@ set(JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/wasm"
     "${JAVASCRIPTCORE_DIR}/wasm/js"
     "${JAVASCRIPTCORE_DIR}/yarr"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/runtime"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr"
+    "${JavaScriptCore_DERIVED_SOURCES_DIR}"
+    "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector"
+    "${JavaScriptCore_DERIVED_SOURCES_DIR}/runtime"
+    "${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr"
 )
 
 if (USE_CAPSTONE)
@@ -144,11 +144,6 @@ set(JavaScriptCore_SCRIPTS_SOURCES_PATHS
     ${JavaScriptCore_SCRIPTS_SOURCES_DIR}/wkbuiltins/wkbuiltins.py
 )
 
-# Force JavaScriptCore to run scripts from the same staging path as WebCore.
-set(JavaScriptCore_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/JavaScriptCore/Scripts")
-
-file(MAKE_DIRECTORY ${JavaScriptCore_SCRIPTS_DIR})
-
 # The directory flattening performed below mirrors what the Mac port does with private headers.
 
 file(GLOB JavaScriptCore_SCRIPTS_SOURCES ${JavaScriptCore_SCRIPTS_SOURCES_PATHS})
@@ -158,7 +153,7 @@ foreach (_file ${JavaScriptCore_SCRIPTS_SOURCES})
     add_custom_command(
         OUTPUT ${JavaScriptCore_SCRIPTS_DIR}/${_script}
         MAIN_DEPENDENCY ${_file}
-        WORKING_DIRECTORY ${DERIVED_SOURCES_DIR}
+        WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_file} ${JavaScriptCore_SCRIPTS_DIR}/${_script}
         VERBATIM)
     list(APPEND JavaScriptCore_SCRIPTS ${JavaScriptCore_SCRIPTS_DIR}/${_script})
@@ -171,14 +166,14 @@ set(UDIS_GEN_DEP
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.c ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.c ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.h
     DEPENDS ${UDIS_GEN_DEP}
-    WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/ud_itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+    WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/disassembler/udis86/ud_itab.py ${JAVASCRIPTCORE_DIR}/disassembler/udis86/optable.xml ${JavaScriptCore_DERIVED_SOURCES_DIR}
     VERBATIM)
 
 list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/udis86_itab.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/udis86_itab.h
 )
 
 set(LLINT_ASM
@@ -224,10 +219,10 @@ set(GENERATOR
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeIndices.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generator/main.rb
     DEPENDS ${GENERATOR} bytecode/BytecodeList.rb
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h --init_bytecodes_asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm --bytecode_structs_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h --bytecode_indices_h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generator/main.rb --bytecodes_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h --init_bytecodes_asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm --bytecode_structs_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h --bytecode_indices_h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeIndices.h ${JAVASCRIPTCORE_DIR}/bytecode/BytecodeList.rb
     VERBATIM)
 
 
@@ -237,12 +232,12 @@ else ()
     set(BUILD_TIME 0)
 endif ()
 
-file(WRITE ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeCacheVersion.h "#define JSC_BYTECODE_CACHE_VERSION ${BUILD_TIME}\n")
+file(WRITE ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeCacheVersion.h "#define JSC_BYTECODE_CACHE_VERSION ${BUILD_TIME}\n")
 
 list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeCacheVersion.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeCacheVersion.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
 )
 
 if (WIN32)
@@ -268,17 +263,17 @@ else ()
 endif ()
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb
-    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
+    DEPENDS ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_settings_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
-    DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND}
+    DEPENDS LLIntSettingsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntSettingsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${OFFLINE_ASM_BACKEND}
     VERBATIM)
 
 # We add the header files directly to the ADD_EXECUTABLE call instead of setting the
@@ -292,12 +287,12 @@ add_custom_command(
 # actually be run multiple times!
 add_executable(LLIntSettingsExtractor
     ${JAVASCRIPTCORE_DIR}/llint/LLIntSettingsExtractor.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredSettings.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredSettings.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
 add_executable(LLIntOffsetsExtractor
     ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/BytecodeStructs.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntDesiredOffsets.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/BytecodeStructs.h
 )
 
 target_link_libraries(LLIntSettingsExtractor WTF)
@@ -319,12 +314,12 @@ else ()
 endif ()
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${LLIntOutput}
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
-    DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InitBytecodes.asm
-    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${LLIntOutput} ${OFFLINE_ASM_ARGS}
-    COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${LLIntOutput}
-    WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+    DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM} ${JavaScriptCore_DERIVED_SOURCES_DIR}/InitBytecodes.asm
+    COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb -I${JavaScriptCore_DERIVED_SOURCES_DIR}/ ${JAVASCRIPTCORE_DIR}/llint/LowLevelInterpreter.asm $<TARGET_FILE:LLIntOffsetsExtractor> ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput} ${OFFLINE_ASM_ARGS}
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${JavaScriptCore_DERIVED_SOURCES_DIR}/${LLIntOutput}
+    WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
     VERBATIM)
 
 # The explanation for not making LLIntAssembly.h part of the OBJECT_DEPENDS property of some of
@@ -342,14 +337,14 @@ if (MSVC AND NOT ENABLE_C_LOOP)
         set(LLINT_MASM_FLAGS /c /Fo)
     endif ()
     add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj
-        DEPENDS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
-        COMMAND ${MASM_EXECUTABLE} ${LLINT_MASM_FLAGS} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.asm
+        OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj
+        DEPENDS ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
+        COMMAND ${MASM_EXECUTABLE} ${LLINT_MASM_FLAGS} ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.asm
         VERBATIM)
-    list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LowLevelInterpreterWin.obj)
+    list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/LowLevelInterpreterWin.obj)
 else ()
     list(APPEND JavaScriptCore_HEADERS
-        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
+        ${JavaScriptCore_DERIVED_SOURCES_DIR}/LLIntAssembly.h
     )
 endif ()
 
@@ -365,9 +360,9 @@ macro(GENERATE_PYTHON _generator _additional_deps _input _output)
     list(APPEND JavaScriptCore_HEADERS ${_output})
     WEBKIT_ADD_SOURCE_DEPENDENCIES(${_input} ${_output})
 endmacro()
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmOps.h)
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmValidateInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmValidateInlines.h)
-GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/WasmB3IRGeneratorInlines.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmOpsHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmValidateInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmValidateInlines.h)
+GENERATE_PYTHON(${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasmB3IRGeneratorInlinesHeader.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/generateWasm.py ${CMAKE_CURRENT_SOURCE_DIR}/wasm/wasm.json ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmB3IRGeneratorInlines.h)
 
 # LUT generator
 
@@ -387,7 +382,7 @@ endmacro()
 
 foreach (_file ${JavaScriptCore_OBJECT_LUT_SOURCES})
     get_filename_component(_name ${_file} NAME_WE)
-    GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
+    GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/${_file} ${JavaScriptCore_DERIVED_SOURCES_DIR}/${_name}.lut.h)
 endforeach ()
 
 set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
@@ -402,12 +397,12 @@ set(JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
 )
 
 set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Bytecodes.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
 
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
 
     API/APICallbackFunction.h
     API/APICast.h
@@ -1025,54 +1020,54 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
 )
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
-GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Lexer.lut.h)
+GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${JavaScriptCore_DERIVED_SOURCES_DIR}/Lexer.lut.h)
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr)
+file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr)
 
 #GENERATOR: "RegExpJitTables.h": tables used by Yarr
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h
     VERBATIM)
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h)
-WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/RegExpJitTables.h)
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/UnicodePatternTables.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/yarr/generateYarrUnicodePropertyTables.py
     DEPENDS ${JAVASCRIPTCORE_DIR}/yarr/hasher.py ${JAVASCRIPTCORE_DIR}/ucd/DerivedBinaryProperties.txt ${JAVASCRIPTCORE_DIR}/ucd/DerivedCoreProperties.txt ${JAVASCRIPTCORE_DIR}/ucd/DerivedNormalizationProps.txt ${JAVASCRIPTCORE_DIR}/ucd/PropList.txt ${JAVASCRIPTCORE_DIR}/ucd/PropertyAliases.txt ${JAVASCRIPTCORE_DIR}/ucd/PropertyValueAliases.txt ${JAVASCRIPTCORE_DIR}/ucd/ScriptExtensions.txt ${JAVASCRIPTCORE_DIR}/ucd/Scripts.txt ${JAVASCRIPTCORE_DIR}/ucd/UnicodeData.txt ${JAVASCRIPTCORE_DIR}/ucd/emoji-data.txt
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrUnicodePropertyTables.py ${JAVASCRIPTCORE_DIR}/ucd ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/UnicodePatternTables.h
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrUnicodePropertyTables.py ${JAVASCRIPTCORE_DIR}/ucd ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h
     VERBATIM)
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/UnicodePatternTables.h)
-WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/UnicodePatternTables.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/UnicodePatternTables.h)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/UnicodePatternTables.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/UnicodePatternTables.h)
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/YarrCanonicalizeUnicode.cpp
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/YarrCanonicalizeUnicode.cpp
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode
     DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/YarrCanonicalizeUnicode.cpp
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/yarr/YarrCanonicalizeUnicode.cpp
     VERBATIM)
 
 #GENERATOR: "IntlCanonicalizeLanguage.h": tables used by Intl
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/IntlCanonicalizeLanguage.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/IntlCanonicalizeLanguage.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/Scripts/generateIntlCanonicalizeLanguage.py
     DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/language-subtag-registry.txt
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/Scripts/generateIntlCanonicalizeLanguage.py ${JAVASCRIPTCORE_DIR}/ucd/language-subtag-registry.txt ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/IntlCanonicalizeLanguage.h
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/Scripts/generateIntlCanonicalizeLanguage.py ${JAVASCRIPTCORE_DIR}/ucd/language-subtag-registry.txt ${JavaScriptCore_DERIVED_SOURCES_DIR}/IntlCanonicalizeLanguage.h
     VERBATIM)
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/IntlCanonicalizeLanguage.h)
-WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/runtime/IntlObject.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/IntlCanonicalizeLanguage.h)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/IntlCanonicalizeLanguage.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/runtime/IntlObject.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/IntlCanonicalizeLanguage.h)
 
 #GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/KeywordLookupGenerator.py
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/KeywordLookupGenerator.py ${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/KeywordLookupGenerator.py ${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table > ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h
     VERBATIM)
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
-WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/KeywordLookup.h)
 
 
 # Inspector Interfaces
@@ -1142,26 +1137,26 @@ if (ENABLE_SERVICE_WORKER)
 endif ()
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py
     DEPENDS ${JavaScriptCore_INSPECTOR_DOMAINS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-combined-inspector-json.py ${JavaScriptCore_INSPECTOR_DOMAINS} > ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol)
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector)
+file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector)
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.cpp
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.cpp
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.cpp
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
-           ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendCommands.js
-    MAIN_DEPENDENCY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.cpp
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.cpp
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.cpp
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
+           ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendCommands.js
+    MAIN_DEPENDENCY ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     DEPENDS ${JavaScriptCore_INSPECTOR_PROTOCOL_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector" --framework JavaScriptCore ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/CombinedDomains.json
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_INSPECTOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector" --framework JavaScriptCore ${JavaScriptCore_DERIVED_SOURCES_DIR}/CombinedDomains.json
     VERBATIM)
 
 # JSCBuiltins
@@ -1221,52 +1216,52 @@ set(JavaScriptCore_BUILTINS_SOURCES
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.cpp ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
     MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
     DEPENDS ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${JavaScriptCore_DERIVED_SOURCES_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
     VERBATIM)
 
 list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorProtocolObjects.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcode.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcodeGenerated.h
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes
     DEPENDS ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb
     COMMAND ${RUBY_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes VERBATIM
-    WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
+    WORKING_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}
 )
 
 list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcode.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcodeGenerated.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcode.h
+    ${JavaScriptCore_DERIVED_SOURCES_DIR}/AirOpcodeGenerated.h
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.min.js
+    OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.h ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.min.js
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/inspector/InjectedScriptSource.js
     DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py
-    COMMAND ${CMAKE_COMMAND} -E echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.min.js
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${JAVASCRIPTCORE_DIR}/inspector/InjectedScriptSource.js >> ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.min.js
-    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl InjectedScriptSource_js ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.min.js ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.h
+    COMMAND ${CMAKE_COMMAND} -E echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${JAVASCRIPTCORE_DIR}/inspector/InjectedScriptSource.js >> ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.min.js
+    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl InjectedScriptSource_js ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.min.js ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.h
     VERBATIM)
 
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.h)
+list(APPEND JavaScriptCore_HEADERS ${JavaScriptCore_DERIVED_SOURCES_DIR}/InjectedScriptSource.h)
 
 if (WTF_CPU_X86_64)
     if (MSVC AND NOT ENABLE_C_LOOP)
         add_custom_command(
-            OUTPUT ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj
+            OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj
             MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
-            COMMAND ml64 -nologo -c -Fo ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
+            COMMAND ml64 -nologo -c -Fo ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj ${JAVASCRIPTCORE_DIR}/jit/JITStubsMSVC64.asm
             VERBATIM)
 
-        list(APPEND JavaScriptCore_SOURCES ${DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
+        list(APPEND JavaScriptCore_SOURCES ${JavaScriptCore_DERIVED_SOURCES_DIR}/JITStubsMSVC64.obj)
     endif ()
 endif ()
 
@@ -1328,12 +1323,12 @@ if (MSVC)
     add_custom_command(
         TARGET JavaScriptCore
         PRE_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${DERIVED_SOURCES_DIR}
+        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${JavaScriptCore_DERIVED_SOURCES_DIR}
         VERBATIM)
 
     add_custom_command(
         TARGET JavaScriptCore
         POST_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_DIR} $<TARGET_FILE:JavaScriptCore>
+        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${JavaScriptCore_DERIVED_SOURCES_DIR} $<TARGET_FILE:JavaScriptCore>
         VERBATIM)
 endif ()

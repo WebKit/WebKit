@@ -71,3 +71,7 @@ endif ()
 
 # Warnings as errors (ignore narrowing conversions)
 add_compile_options(/WX /Wv:18)
+
+if (INTERNAL_BUILD)
+    set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
+endif ()

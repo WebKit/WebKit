@@ -275,12 +275,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     )
 endif ()
 
-if (WIN32 AND INTERNAL_BUILD)
-    set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
-else ()
-    set(JavaScriptCore_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/JavaScriptCore/Scripts")
-endif ()
-
 if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
     list(APPEND WebKit_LIBRARIES PRIVATE atomic)
 endif ()
