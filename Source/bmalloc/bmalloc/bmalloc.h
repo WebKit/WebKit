@@ -111,7 +111,7 @@ inline size_t availableMemory()
     return bmalloc::availableMemory();
 }
     
-#if BPLATFORM(IOS_FAMILY)
+#if BPLATFORM(IOS_FAMILY) || BOS(LINUX)
 inline size_t memoryFootprint()
 {
     return bmalloc::memoryFootprint();

@@ -1,3 +1,41 @@
+2019-04-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [bmalloc][Linux] Add support for memory status calculation
+        https://bugs.webkit.org/show_bug.cgi?id=195938
+
+        Reviewed by Carlos Garcia Campos.
+
+        Memory status and under-memory-pressure capabilities in bmalloc can be
+        implemented on Linux by reading and parsing the statm file under the
+        proc filesystem.
+
+        We retrieve the resident set size from the statm file and multiply it
+        with the page size. This gives an upper-bound estimate of the memory
+        that's being consumed by the process.
+
+        The statm-based estimate seems preferable to other alternatives. One
+        such alternative would be reading and parsing more-detailed smaps file,
+        also exposed under the proc filesystem. This is at the moment being done
+        in WTF's MemoryFootprint implementation for Linux systems, but on Linux
+        ports this operation is being throttled to only execute once per second
+        because of the big computing expense required to read and parse out the
+        data. A future MemoryFootprint implementation could simply retrieve the
+        memory footprint value from bmalloc.
+
+        Another alternative is the Linux taskstats interface. This one would
+        require utilizing a netlink socket to retrieve the necessary statistics,
+        but it requires the process to have elevated privileges, which is a
+        blocker.
+
+        * bmalloc/AvailableMemory.cpp:
+        (bmalloc::LinuxMemory::singleton):
+        (bmalloc::LinuxMemory::footprint const):
+        (bmalloc::computeAvailableMemory):
+        (bmalloc::memoryStatus):
+        * bmalloc/AvailableMemory.h:
+        (bmalloc::isUnderMemoryPressure):
+        * bmalloc/bmalloc.h:
+
 2019-04-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WebCore] Put most of derived classes of ScriptWrappable into IsoHeap
