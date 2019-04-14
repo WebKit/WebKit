@@ -27,6 +27,8 @@
 
 #include "MessageReceiver.h"
 
+#include <wtf/WeakPtr.h>
+
 #if PLATFORM(COCOA)
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
@@ -47,7 +49,7 @@ namespace WebKit {
 
 class NetworkProcessProxy;
 
-class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
+class LegacyCustomProtocolManagerProxy : public CanMakeWeakPtr<LegacyCustomProtocolManagerProxy>, public IPC::MessageReceiver {
 public:
     LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();

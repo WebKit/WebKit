@@ -34,26 +34,25 @@
 
 @interface WKCustomProtocolLoader : NSObject <NSURLConnectionDelegate> {
 @private
-    WebKit::LegacyCustomProtocolManagerProxy* _customProtocolManagerProxy;
+    WeakPtr<WebKit::LegacyCustomProtocolManagerProxy> _customProtocolManagerProxy;
     uint64_t _customProtocolID;
     NSURLCacheStoragePolicy _storagePolicy;
     NSURLConnection *_urlConnection;
 }
-- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
-- (void)customProtocolManagerProxyDestroyed;
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request;
+- (void)cancel;
 @end
 
 @implementation WKCustomProtocolLoader
 
-- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy*)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
+- (id)initWithLegacyCustomProtocolManagerProxy:(WebKit::LegacyCustomProtocolManagerProxy&)customProtocolManagerProxy customProtocolID:(uint64_t)customProtocolID request:(NSURLRequest *)request
 {
     self = [super init];
     if (!self)
         return nil;
 
-    ASSERT(customProtocolManagerProxy);
     ASSERT(request);
-    _customProtocolManagerProxy = customProtocolManagerProxy;
+    _customProtocolManagerProxy = makeWeakPtr(customProtocolManagerProxy);
     _customProtocolID = customProtocolID;
     _storagePolicy = NSURLCacheStorageNotAllowed;
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -72,7 +71,7 @@
     [super dealloc];
 }
 
-- (void)customProtocolManagerProxyDestroyed
+- (void)cancel
 {
     ASSERT(_customProtocolManagerProxy);
     _customProtocolManagerProxy = nullptr;
@@ -81,6 +80,9 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+    if (!_customProtocolManagerProxy)
+        return;
+
     WebCore::ResourceError coreError(error);
     _customProtocolManagerProxy->didFailWithError(_customProtocolID, coreError);
     _customProtocolManagerProxy->stopLoading(_customProtocolID);
@@ -95,18 +97,27 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
+    if (!_customProtocolManagerProxy)
+        return;
+
     WebCore::ResourceResponse coreResponse(response);
     _customProtocolManagerProxy->didReceiveResponse(_customProtocolID, coreResponse, _storagePolicy);
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
+    if (!_customProtocolManagerProxy)
+        return;
+
     IPC::DataReference coreData(static_cast<const uint8_t*>([data bytes]), [data length]);
     _customProtocolManagerProxy->didLoadData(_customProtocolID, coreData);
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
+    if (!_customProtocolManagerProxy)
+        return nil;
+
     if (redirectResponse) {
         _customProtocolManagerProxy->wasRedirectedToRequest(_customProtocolID, request, redirectResponse);
         return nil;
@@ -116,6 +127,9 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    if (!_customProtocolManagerProxy)
+        return;
+
     _customProtocolManagerProxy->didFinishLoading(_customProtocolID);
     _customProtocolManagerProxy->stopLoading(_customProtocolID);
 }
@@ -131,7 +145,7 @@ void LegacyCustomProtocolManagerClient::startLoading(LegacyCustomProtocolManager
     if (!request)
         return;
 
-    WKCustomProtocolLoader *loader = [[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:&manager customProtocolID:customProtocolID request:request];
+    WKCustomProtocolLoader *loader = [[WKCustomProtocolLoader alloc] initWithLegacyCustomProtocolManagerProxy:manager customProtocolID:customProtocolID request:request];
     ASSERT(loader);
     ASSERT(!m_loaderMap.contains(customProtocolID));
     m_loaderMap.add(customProtocolID, loader);
@@ -148,7 +162,7 @@ void LegacyCustomProtocolManagerClient::invalidate(LegacyCustomProtocolManagerPr
     while (!m_loaderMap.isEmpty()) {
         auto loader = m_loaderMap.take(m_loaderMap.begin()->key);
         ASSERT(loader);
-        [loader customProtocolManagerProxyDestroyed];
+        [loader cancel];
     }
 }
 
