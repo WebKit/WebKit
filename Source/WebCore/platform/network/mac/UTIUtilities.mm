@@ -58,10 +58,10 @@ String MIMETypeFromUTITree(const String& uti)
     // If not, walk the ancestory of this UTI via its "ConformsTo" tags and return the first MIME type we find.
     RetainPtr<CFDictionaryRef> decl = adoptCF(UTTypeCopyDeclaration(utiCF.get()));
     if (!decl)
-        return String();
+        return emptyString();
     CFTypeRef value = CFDictionaryGetValue(decl.get(), kUTTypeConformsToKey);
     if (!value)
-        return String();
+        return emptyString();
     CFTypeID typeID = CFGetTypeID(value);
 
     if (typeID == CFStringGetTypeID())
@@ -81,7 +81,7 @@ String MIMETypeFromUTITree(const String& uti)
         }
     }
 
-    return String();
+    return emptyString();
 }
 
 static String UTIFromUnknownMIMEType(const String& mimeType)
@@ -118,7 +118,7 @@ public:
     {
         auto type = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, key.createCFString().get(), 0));
         if (type)
-            return String(type.get());
+            return type.get();
         return UTIFromUnknownMIMEType(key);
     }
 };

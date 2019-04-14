@@ -1,3 +1,17 @@
+2019-04-14  Dean Jackson  <dino@apple.com>
+
+        Extract UTI mapping and allow for additions
+        https://bugs.webkit.org/show_bug.cgi?id=196822
+        <rdar://problem/49822339>
+
+        Reviewed by Darin Adler
+
+        Post landing feedback on minimizing String constructors.
+
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::MIMETypeFromUTITree):
+        (WebCore::UTIFromMIMETypeCachePolicy::createValueForKey):
+
 2019-04-14  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] JavaScriptCore derived sources should only be referenced inside JavaScriptCore
