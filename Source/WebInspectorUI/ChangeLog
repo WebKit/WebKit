@@ -1,5 +1,47 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: DOMDebugger: move breakpoint storage to use `WI.ObjectStore`
+        https://bugs.webkit.org/show_bug.cgi?id=196231
+        <rdar://problem/49236864>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMDebuggerManager.js:
+        (WI.DOMDebuggerManager):
+        (WI.DOMDebuggerManager.prototype.addDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeDOMBreakpointsForNode):
+        (WI.DOMDebuggerManager.prototype.addEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeEventBreakpoint):
+        (WI.DOMDebuggerManager.prototype.addURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype.removeURLBreakpoint):
+        (WI.DOMDebuggerManager.prototype._handleDOMBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._handleEventBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._handleURLBreakpointDisabledStateChanged):
+        (WI.DOMDebuggerManager.prototype._saveDOMBreakpoints): Deleted.
+        (WI.DOMDebuggerManager.prototype._saveEventBreakpoints): Deleted.
+        (WI.DOMDebuggerManager.prototype._saveURLBreakpoints): Deleted.
+
+        * UserInterface/Models/DOMBreakpoint.js:
+        (WI.DOMBreakpoint.prototype.saveIdentityToCookie):
+        (WI.DOMBreakpoint.prototype.toJSON): Added.
+        (WI.DOMBreakpoint.prototype.get serializableInfo): Deleted.
+        * UserInterface/Models/EventBreakpoint.js:
+        (WI.EventBreakpoint.prototype.saveIdentityToCookie):
+        (WI.EventBreakpoint.prototype.toJSON): Added.
+        (WI.EventBreakpoint.prototype.get serializableInfo): Deleted.
+        * UserInterface/Models/URLBreakpoint.js:
+        (WI.URLBreakpoint.prototype.saveIdentityToCookie):
+        (WI.URLBreakpoint.prototype.toJSON): Added.
+        (WI.URLBreakpoint.prototype.get serializableInfo): Deleted.
+        Replace `get serializableInfo` with `toJSON` as required by `WI.ObjectStore`.
+
+        * UserInterface/Base/ObjectStore.js:
+        (WI.ObjectStore._open):
+        Increment version.
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: drag/drop over the sidebar should load an imported file in Canvas/Audit tab
         https://bugs.webkit.org/show_bug.cgi?id=196873
         <rdar://problem/49858190>

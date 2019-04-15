@@ -96,26 +96,27 @@ WI.DOMBreakpoint = class DOMBreakpoint extends WI.Object
         this.dispatchEventToListeners(WI.DOMBreakpoint.Event.DOMNodeChanged, data);
     }
 
-    get serializableInfo()
-    {
-        let info = {url: this._url, path: this._path, type: this._type};
-        if (this._disabled)
-            info.disabled = true;
-
-        return info;
-    }
-
     saveIdentityToCookie(cookie)
     {
-        cookie[WI.DOMBreakpoint.DocumentURLCookieKey] = this.url;
-        cookie[WI.DOMBreakpoint.NodePathCookieKey] = this.path;
-        cookie[WI.DOMBreakpoint.TypeCookieKey] = this.type;
+        cookie["dom-breakpoint-url"] = this._url;
+        cookie["dom-breakpoint-path"] = this._path;
+        cookie["dom-breakpoint-type"] = this._type;
+    }
+
+    toJSON(key)
+    {
+        let json = {
+            url: this._url,
+            path: this._path,
+            type: this._type,
+        };
+        if (this._disabled)
+            json.disabled = true;
+        if (key === WI.ObjectStore.toJSONSymbol)
+            json[WI.objectStores.domBreakpoints.keyPath] = this._url + ":" + this._path + ":" + this._type;
+        return json;
     }
 };
-
-WI.DOMBreakpoint.DocumentURLCookieKey = "dom-breakpoint-document-url";
-WI.DOMBreakpoint.NodePathCookieKey = "dom-breakpoint-node-path";
-WI.DOMBreakpoint.TypeCookieKey = "dom-breakpoint-type";
 
 WI.DOMBreakpoint.Type = {
     SubtreeModified: "subtree-modified",

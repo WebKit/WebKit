@@ -66,18 +66,23 @@ WI.URLBreakpoint = class URLBreakpoint extends WI.Object
         this.dispatchEventToListeners(WI.URLBreakpoint.Event.DisabledStateChanged);
     }
 
-    get serializableInfo()
-    {
-        let info = {type: this._type, url: this._url};
-        if (this._disabled)
-            info.disabled = true;
-
-        return info;
-    }
-
     saveIdentityToCookie(cookie)
     {
+        cookie["url-breakpoint-type"] = this._type;
         cookie["url-breakpoint-url"] = this._url;
+    }
+
+    toJSON(key)
+    {
+        let json = {
+            type: this._type,
+            url: this._url,
+        };
+        if (this._disabled)
+            json.disabled = true;
+        if (key === WI.ObjectStore.toJSONSymbol)
+            json[WI.objectStores.urlBreakpoints.keyPath] = this._type + ":" + this._url;
+        return json;
     }
 };
 
