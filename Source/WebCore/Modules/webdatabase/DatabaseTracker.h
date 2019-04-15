@@ -59,7 +59,6 @@ public:
     static void initializeTracker(const String& databasePath);
 
     WEBCORE_EXPORT static DatabaseTracker& singleton();
-    WEBCORE_EXPORT static bool isInitialized();
     // This singleton will potentially be used from multiple worker threads and the page's context thread simultaneously.  To keep this safe, it's
     // currently using 4 locks.  In order to avoid deadlock when taking multiple locks, you must take them in the correct order:
     // m_databaseGuard before quotaManager if both locks are needed.

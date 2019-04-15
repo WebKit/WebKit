@@ -52,15 +52,6 @@ WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(WebProcess& process)
     SQLiteDatabaseTracker::setClient(this);
 }
 
-WebSQLiteDatabaseTracker::~WebSQLiteDatabaseTracker()
-{
-    ASSERT(RunLoop::isMain());
-    SQLiteDatabaseTracker::setClient(nullptr);
-
-    if (m_hysteresis.state() == PAL::HysteresisState::Started)
-        hysteresisUpdated(PAL::HysteresisState::Stopped);
-}
-
 void WebSQLiteDatabaseTracker::willBeginFirstTransaction()
 {
     callOnMainThread([this] {

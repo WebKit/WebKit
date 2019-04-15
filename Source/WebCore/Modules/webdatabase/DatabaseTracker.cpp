@@ -80,11 +80,6 @@ void DatabaseTracker::initializeTracker(const String& databasePath)
     staticTracker = new DatabaseTracker(databasePath);
 }
 
-bool DatabaseTracker::isInitialized()
-{
-    return !!staticTracker;
-}
-    
 DatabaseTracker& DatabaseTracker::singleton()
 {
     if (!staticTracker)

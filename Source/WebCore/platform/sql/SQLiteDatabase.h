@@ -136,8 +136,6 @@ public:
     WEBCORE_EXPORT void disableThreadingChecks() {}
 #endif
 
-    WEBCORE_EXPORT static void setIsDatabaseOpeningForbidden(bool);
-
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 

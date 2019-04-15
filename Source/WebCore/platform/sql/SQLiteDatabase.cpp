@@ -71,15 +71,6 @@ static void initializeSQLiteIfNecessary()
     });
 }
 
-static bool isDatabaseOpeningForbidden = false;
-static Lock isDatabaseOpeningForbiddenMutex;
-
-void SQLiteDatabase::setIsDatabaseOpeningForbidden(bool isForbidden)
-{
-    std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
-    isDatabaseOpeningForbidden = isForbidden;
-}
-
 SQLiteDatabase::SQLiteDatabase() = default;
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -93,17 +84,14 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 
     close();
 
-    {
-        std::lock_guard<Lock> lock(isDatabaseOpeningForbiddenMutex);
-        m_openError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
-        if (m_openError != SQLITE_OK) {
-            m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
-            LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
-                m_openErrorMessage.data());
-            sqlite3_close(m_db);
-            m_db = 0;
-            return false;
-        }
+    m_openError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
+    if (m_openError != SQLITE_OK) {
+        m_openErrorMessage = m_db ? sqlite3_errmsg(m_db) : "sqlite_open returned null";
+        LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
+            m_openErrorMessage.data());
+        sqlite3_close(m_db);
+        m_db = 0;
+        return false;
     }
 
     overrideUnauthorizedFunctions();
