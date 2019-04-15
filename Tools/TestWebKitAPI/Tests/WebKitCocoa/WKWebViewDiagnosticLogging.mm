@@ -28,14 +28,30 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKDiagnosticLoggingDelegate.h>
 #import <wtf/RetainPtr.h>
+
+static bool isDone;
 
 @interface TestLoggingDelegate : NSObject <_WKDiagnosticLoggingDelegate>
 @end
 
 @implementation TestLoggingDelegate
+
+- (void)_webView:(WKWebView *)webView logDiagnosticMessage:(NSString *)message description:(NSString *)description valueDictionary:(NSDictionary *)valueDictionary
+{
+    EXPECT_TRUE([[valueDictionary objectForKey:@"stringKey"] isEqualToString:@"stringValue"]);
+    EXPECT_TRUE([[valueDictionary objectForKey:@"uint64Key"] unsignedLongLongValue] == std::numeric_limits<uint64_t>::max());
+    EXPECT_TRUE([[valueDictionary objectForKey:@"int64Key"] longLongValue] == std::numeric_limits<int64_t>::min());
+    EXPECT_TRUE([[valueDictionary objectForKey:@"boolKey"] boolValue]);
+    EXPECT_TRUE([[valueDictionary objectForKey:@"doubleKey"] doubleValue] == 2.7182818284590452353602874);
+
+    isDone = true;
+}
+
 @end
 
 TEST(WKWebView, PrivateSessionDiagnosticLoggingDelegate)
@@ -69,3 +85,13 @@ TEST(WKWebView, DiagnosticLoggingDelegateAfterClose)
     EXPECT_EQ(nil, webView.get()._diagnosticLoggingDelegate);
 }
 
+TEST(WKWebView, DiagnosticLoggingDictionary)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:[WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals"]]);
+    auto testLoggingDelegate = adoptNS([TestLoggingDelegate new]);
+    [webView _setDiagnosticLoggingDelegate:testLoggingDelegate.get()];
+    [webView configuration].preferences._diagnosticLoggingEnabled = YES;
+
+    [webView loadHTMLString:@"<script>window.internals.testDictionaryLogging()</script>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDone);
+}

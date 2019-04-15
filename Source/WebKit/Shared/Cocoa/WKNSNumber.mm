@@ -33,6 +33,7 @@ using namespace WebKit;
         API::ObjectStorage<API::Boolean> _boolean;
         API::ObjectStorage<API::Double> _double;
         API::ObjectStorage<API::UInt64> _uint64;
+        API::ObjectStorage<API::Int64> _int64;
     } _number;
 }
 
@@ -49,6 +50,10 @@ using namespace WebKit;
 
     case API::Object::Type::UInt64:
         _number._uint64->~Number<uint64_t, API::Object::Type::UInt64>();
+        break;
+
+    case API::Object::Type::Int64:
+        _number._int64->~Number<int64_t, API::Object::Type::Int64>();
         break;
 
     default:
@@ -75,6 +80,10 @@ using namespace WebKit;
         return @encode(uint64_t);
         break;
 
+    case API::Object::Type::Int64:
+        return @encode(int64_t);
+        break;
+
     default:
         ASSERT_NOT_REACHED();
     }
@@ -95,6 +104,10 @@ using namespace WebKit;
 
     case API::Object::Type::UInt64:
         *reinterpret_cast<uint64_t*>(value) = _number._uint64->value();
+        break;
+
+    case API::Object::Type::Int64:
+        *reinterpret_cast<int64_t*>(value) = _number._int64->value();
         break;
 
     default:
@@ -128,6 +141,14 @@ using namespace WebKit;
     return super.unsignedLongLongValue;
 }
 
+- (long long)longLongValue
+{
+    if (_type == API::Object::Type::Int64)
+        return _number._int64->value();
+
+    return super.longLongValue;
+}
+
 // MARK: NSCopying protocol implementation
 
 - (id)copyWithZone:(NSZone *)zone
@@ -150,6 +171,10 @@ using namespace WebKit;
 
     case API::Object::Type::UInt64:
         return *_number._uint64;
+        break;
+
+    case API::Object::Type::Int64:
+        return *_number._int64;
         break;
 
     default:

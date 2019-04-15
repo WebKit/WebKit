@@ -131,6 +131,7 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessageWithResult(const String&, const String&, DiagnosticLoggingResultType, ShouldSample) final { }
     void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
     void logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
+    void logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
 };
 
 #if ENABLE(DRAG_SUPPORT)

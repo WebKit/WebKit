@@ -88,6 +88,7 @@ public:
         Boolean,
         Double,
         UInt64,
+        Int64,
         
         // Geometry types
         Point,

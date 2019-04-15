@@ -69,6 +69,7 @@ private:
 typedef Number<bool, API::Object::Type::Boolean> Boolean;
 typedef Number<double, API::Object::Type::Double> Double;
 typedef Number<uint64_t, API::Object::Type::UInt64> UInt64;
+typedef Number<int64_t, API::Object::Type::Int64> Int64;
 
 } // namespace API
 

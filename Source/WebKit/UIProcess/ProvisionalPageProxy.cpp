@@ -381,6 +381,7 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessage::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacy::name()
+        || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionary::name()
         || decoder.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
 #if USE(QUICK_LOOK)
         || decoder.messageName() == Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame::name()

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "DiagnosticLoggingClient.h"
 
+#import "APIDictionary.h"
 #import "WKSharedAPICast.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 
@@ -49,6 +50,7 @@ void DiagnosticLoggingClient::setDelegate(id <_WKDiagnosticLoggingDelegate> dele
     m_delegateMethods.webviewLogDiagnosticMessageWithResult = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithResult:description:result:)];
     m_delegateMethods.webviewLogDiagnosticMessageWithValue = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithValue:description:value:)];
     m_delegateMethods.webviewLogDiagnosticMessageWithEnhancedPrivacy = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessageWithEnhancedPrivacy:description:)];
+    m_delegateMethods.webviewLogDiagnosticMessageWithValueDictionary = [delegate respondsToSelector:@selector(_webView:logDiagnosticMessage:description:valueDictionary:)];
 }
 
 void DiagnosticLoggingClient::logDiagnosticMessage(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description)
@@ -86,5 +88,12 @@ void DiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(WebKit::We
     if (m_delegateMethods.webviewLogDiagnosticMessageWithEnhancedPrivacy)
         [m_delegate.get() _webView:m_webView logDiagnosticMessageWithEnhancedPrivacy:message description:description];
 }
+
+void DiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(WebPageProxy*, const String& message, const String& description, Ref<API::Dictionary>&& valueDictionary)
+{
+    if (m_delegateMethods.webviewLogDiagnosticMessageWithValueDictionary)
+        [m_delegate.get() _webView:m_webView logDiagnosticMessage:message description:description valueDictionary:static_cast<NSDictionary*>(valueDictionary->wrapper())];
+}
+
 
 } // namespace WebKit

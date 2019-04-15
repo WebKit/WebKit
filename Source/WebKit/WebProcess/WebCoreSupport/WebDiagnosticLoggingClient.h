@@ -43,6 +43,7 @@ private:
     void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, WebCore::ShouldSample) override;
 
     WebPage& m_page;
 };

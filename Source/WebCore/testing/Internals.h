@@ -814,6 +814,8 @@ public:
     void processWillSuspend();
     void processDidResume();
 
+    void testDictionaryLogging();
+        
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

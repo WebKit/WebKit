@@ -242,6 +242,7 @@ messages -> WebPageProxy {
     LogDiagnosticMessageWithResult(String message, String description, uint32_t result, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithValue(String message, String description, double value, unsigned significantFigures, enum:bool WebCore::ShouldSample shouldSample)
     LogDiagnosticMessageWithEnhancedPrivacy(String message, String description, enum:bool WebCore::ShouldSample shouldSample)
+    LogDiagnosticMessageWithValueDictionary(String message, String description, WebCore::DiagnosticLoggingClient::ValueDictionary value, enum:bool WebCore::ShouldSample shouldSample)
 
     # Performance logging
     LogScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)

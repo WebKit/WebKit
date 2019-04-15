@@ -70,6 +70,7 @@
 #include <WebCore/ActivityState.h>
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/Color.h>
+#include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EventTrackingRegions.h>
 #include <WebCore/FontAttributes.h>
@@ -1345,6 +1346,7 @@ public:
     void logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
     void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
 
     // Performance logging.
     void logScrollingEvent(uint32_t eventType, MonotonicTime, uint64_t);

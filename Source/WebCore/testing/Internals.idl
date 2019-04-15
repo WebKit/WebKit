@@ -744,4 +744,6 @@ enum CompositingPolicy {
 
     void processWillSuspend();
     void processDidResume();
+
+    void testDictionaryLogging();
 };

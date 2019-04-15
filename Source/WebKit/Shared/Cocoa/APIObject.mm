@@ -163,6 +163,7 @@ void* Object::newObject(size_t size, Type type)
     case Type::Boolean:
     case Type::Double:
     case Type::UInt64:
+    case Type::Int64:
         wrapper = [WKNSNumber alloc];
         ((WKNSNumber *)wrapper)->_type = type;
         break;

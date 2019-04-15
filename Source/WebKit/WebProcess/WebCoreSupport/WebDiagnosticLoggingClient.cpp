@@ -83,4 +83,14 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithEnhancedPrivacy(const S
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacy(message, description, ShouldSample::No));
 }
 
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary& value, ShouldSample shouldSample)
+{
+    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+
+    if (!shouldLogAfterSampling(shouldSample))
+        return;
+
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionary(message, description, value, ShouldSample::No));
+}
+
 } // namespace WebKit

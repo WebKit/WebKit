@@ -6532,6 +6532,27 @@ void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message
     effectiveClient->logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
 }
 
+void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
+{
+    auto* effectiveClient = effectiveDiagnosticLoggingClient(shouldSample);
+    if (!effectiveClient)
+        return;
+
+    auto apiDictionary = API::Dictionary::create();
+
+    for (auto& keyValuePair : valueDictionary) {
+        apiDictionary->add(keyValuePair.key, WTF::switchOn(keyValuePair.value,
+            [](const String& value) -> Ref<Object> { return API::String::create(value); },
+            [](uint64_t value) -> Ref<Object> { return API::UInt64::create(value); },
+            [](int64_t value) -> Ref<Object> { return API::Int64::create(value); },
+            [](bool value) -> Ref<Object> { return API::Boolean::create(value); },
+            [](double value) -> Ref<Object> { return API::Double::create(value); }
+        ));
+    }
+
+    effectiveClient->logDiagnosticMessageWithValueDictionary(this, message, description, WTFMove(apiDictionary));
+}
+
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
 {
     PerformanceLoggingClient::ScrollingEvent event = static_cast<PerformanceLoggingClient::ScrollingEvent>(eventType);

@@ -51,6 +51,7 @@ private:
     void logDiagnosticMessageWithResult(WebPageProxy*, const String& message, const String& description, WebCore::DiagnosticLoggingResultType) override;
     void logDiagnosticMessageWithValue(WebPageProxy*, const String& message, const String& description, const String& value) override;
     void logDiagnosticMessageWithEnhancedPrivacy(WebPageProxy*, const String& message, const String& description) override;
+    void logDiagnosticMessageWithValueDictionary(WebPageProxy*, const String& message, const String& description, Ref<API::Dictionary>&&) override;
 
     WKWebView *m_webView;
     WeakObjCPtr<id <_WKDiagnosticLoggingDelegate>> m_delegate;
@@ -60,6 +61,7 @@ private:
         unsigned webviewLogDiagnosticMessageWithResult : 1;
         unsigned webviewLogDiagnosticMessageWithValue : 1;
         unsigned webviewLogDiagnosticMessageWithEnhancedPrivacy : 1;
+        unsigned webviewLogDiagnosticMessageWithValueDictionary : 1;
     } m_delegateMethods;
 };
 
