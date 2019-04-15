@@ -1,3 +1,14 @@
+2019-04-15  Dean Jackson  <dino@apple.com>
+
+        Provide option to not create a longpress gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=196937
+        <rdar://problem/49918278>
+
+        Build fix for iOS platforms that don't have link preview.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+
 2019-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         InjectedBundle parameters often need initialization function called before unarchiving

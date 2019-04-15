@@ -742,7 +742,9 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_highlightLongPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
+#if HAVE(LINK_PREVIEW)
     if (!self.shouldUsePreviewForLongPress)
+#endif
         [self _createAndConfigureLongPressGestureRecognizer];
 
 #if ENABLE(DATA_INTERACTION)
