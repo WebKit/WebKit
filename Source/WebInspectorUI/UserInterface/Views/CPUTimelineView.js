@@ -225,7 +225,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let energyChartElement = energyContainerElement.parentElement;
         let energySubtitleElement = energyChartElement.firstChild;
         let energyInfoElement = energySubtitleElement.appendChild(document.createElement("span"));
-        energyInfoElement.className = "info";
+        energyInfoElement.classList.add("info", WI.Popover.IgnoreAutoDismissClassName);
         energyInfoElement.textContent = "?";
 
         this._energyInfoPopover = null;
