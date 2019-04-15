@@ -1,3 +1,12 @@
+2019-04-15  Robin Morisset  <rmorisset@apple.com>
+
+        MarkedSpace.cpp is not in the Xcode workspace
+        https://bugs.webkit.org/show_bug.cgi?id=196928
+
+        Reviewed by Saam Barati.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-04-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Incremental bytecode cache should not append function updates when loaded from memory

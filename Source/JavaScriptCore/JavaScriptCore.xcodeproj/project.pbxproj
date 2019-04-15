@@ -3358,6 +3358,7 @@
 		3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3OptimizeAssociativeExpressionTrees.h; path = b3/B3OptimizeAssociativeExpressionTrees.h; sourceTree = "<group>"; };
 		3395C70422555F6C00BDBFAD /* B3EliminateDeadCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3EliminateDeadCode.cpp; path = b3/B3EliminateDeadCode.cpp; sourceTree = "<group>"; };
 		3395C70522555F6D00BDBFAD /* B3EliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3EliminateDeadCode.h; path = b3/B3EliminateDeadCode.h; sourceTree = "<group>"; };
+		33B2A54522651D53005A0F79 /* MarkedSpace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedSpace.cpp; sourceTree = "<group>"; };
 		37119A7720CCB5DC002C6DC9 /* WebKitTargetConditionals.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitTargetConditionals.xcconfig; sourceTree = "<group>"; };
 		371D842C17C98B6E00ECF994 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		37C738D11EDB5672003F2B0B /* ParseInt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParseInt.h; sourceTree = "<group>"; };
@@ -5989,6 +5990,7 @@
 				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				14D2F3D9139F4BE200491031 /* MarkedSpace.h */,
 				0F7DF1301E2970D50095951B /* MarkedSpaceInlines.h */,
+				33B2A54522651D53005A0F79 /* MarkedSpace.cpp */,
 				0F660E331E0517B70031462C /* MarkingConstraint.cpp */,
 				0F660E341E0517B70031462C /* MarkingConstraint.h */,
 				0F660E351E0517B70031462C /* MarkingConstraintSet.cpp */,
