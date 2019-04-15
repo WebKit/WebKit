@@ -167,6 +167,7 @@ enum {
     PROP_ENABLE_BACK_FORWARD_NAVIGATION_GESTURES,
 #endif
     PROP_ENABLE_JAVASCRIPT_MARKUP,
+    PROP_ENABLE_MEDIA,
 };
 
 static void webKitSettingsDispose(GObject* object)
@@ -393,6 +394,9 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ENABLE_JAVASCRIPT_MARKUP:
         webkit_settings_set_enable_javascript_markup(settings, g_value_get_boolean(value));
         break;
+    case PROP_ENABLE_MEDIA:
+        webkit_settings_set_enable_media(settings, g_value_get_boolean(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -577,6 +581,9 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
 #endif
     case PROP_ENABLE_JAVASCRIPT_MARKUP:
         g_value_set_boolean(value, webkit_settings_get_enable_javascript_markup(settings));
+        break;
+    case PROP_ENABLE_MEDIA:
+        g_value_set_boolean(value, webkit_settings_get_enable_media(settings));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1493,6 +1500,24 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable JavaScript in document markup."),
             TRUE,
             readWriteConstructParamFlags));
+
+    /**
+     * WebKitSettings:enable-media:
+     *
+     * Enable or disable support for media playback on pages. This setting is enabled by
+     * default. Disabling it means <audio>, <track> and <video> elements will have
+     * playback support disabled.
+     *
+     * Since: 2.26
+     */
+    g_object_class_install_property(gObjectClass,
+        PROP_ENABLE_MEDIA,
+        g_param_spec_boolean("enable-media",
+            _("Enable media"),
+            _("Whether media content should be handled"),
+            TRUE,
+            readWriteConstructParamFlags));
+
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -3673,4 +3698,43 @@ void webkit_settings_set_enable_javascript_markup(WebKitSettings* settings, gboo
 
     priv->preferences->setJavaScriptMarkupEnabled(enabled);
     g_object_notify(G_OBJECT(settings), "enable-javascript-markup");
+}
+
+/**
+ * webkit_settings_get_enable_media:
+ * @settings: a #WebKitSettings
+ *
+ * Get the #WebKitSettings:enable-media property.
+ *
+ * Returns: %TRUE if media support is enabled or %FALSE otherwise.
+ *
+ * Since: 2.26
+ */
+gboolean webkit_settings_get_enable_media(WebKitSettings* settings)
+{
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
+
+    return settings->priv->preferences->mediaEnabled();
+}
+
+/**
+ * webkit_settings_set_enable_media:
+ * @settings: a #WebKitSettings
+ * @enabled: Value to be set
+ *
+ * Set the #WebKitSettings:enable-media property.
+ *
+ * Since: 2.26
+ */
+void webkit_settings_set_enable_media(WebKitSettings* settings, gboolean enabled)
+{
+    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
+
+    WebKitSettingsPrivate* priv = settings->priv;
+    bool currentValue = priv->preferences->mediaEnabled();
+    if (currentValue == enabled)
+        return;
+
+    priv->preferences->setMediaEnabled(enabled);
+    g_object_notify(G_OBJECT(settings), "enable-media");
 }

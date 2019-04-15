@@ -524,6 +524,12 @@ MediaStreamEnabled:
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(MEDIA_STREAM)
 
+MediaEnabled:
+  type: bool
+  defaultValue: true
+  webcoreName: mediaEnabled
+  condition: ENABLE(VIDEO)
+
 ScreenCaptureEnabled:
   type: bool
   defaultValue: true

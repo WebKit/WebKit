@@ -1,3 +1,24 @@
+2019-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Add enable-media websetting
+        https://bugs.webkit.org/show_bug.cgi?id=196863
+
+        Reviewed by Michael Catanzaro.
+
+        It can be useful for headless browsers, for instance. The setting is enabled by default.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_media):
+        (webkit_settings_set_enable_media):
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitSettings.h:
+        * UIProcess/API/wpe/docs/wpe-1.0-sections.txt:
+
 2019-04-14  Rob Buis  <rbuis@igalia.com>
 
         Link prefetch not useful for top-level navigation

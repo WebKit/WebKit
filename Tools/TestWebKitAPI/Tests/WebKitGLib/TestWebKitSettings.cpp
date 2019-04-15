@@ -339,6 +339,11 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_allow_universal_access_from_file_urls(settings, TRUE);
     g_assert_true(webkit_settings_get_allow_universal_access_from_file_urls(settings));
 
+    // Media is enabled by default.
+    g_assert_true(webkit_settings_get_enable_media(settings));
+    webkit_settings_set_enable_media(settings, FALSE);
+    g_assert_false(webkit_settings_get_enable_media(settings));
+
 #if PLATFORM(GTK)
     // Ondemand is the default hardware acceleration policy.
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
