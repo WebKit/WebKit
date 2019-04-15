@@ -54,6 +54,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; path=/foo
 PASS: Value should be a WI.Cookie.
@@ -67,6 +68,7 @@ PASS: cookie.path should be '/foo'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; domain=example.com
 PASS: Value should be a WI.Cookie.
@@ -80,6 +82,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'example.com'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; secure
 PASS: Value should be a WI.Cookie.
@@ -93,6 +96,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'true'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; Secure
 PASS: Value should be a WI.Cookie.
@@ -106,6 +110,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'true'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; HttpOnly
 PASS: Value should be a WI.Cookie.
@@ -119,6 +124,63 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'true'.
+PASS: cookie.sameSite should be 'None'.
+
+HEADER: Set-Cookie: name=value; SameSite=lax
+PASS: Value should be a WI.Cookie.
+PASS: cookie.header should be the original header text.
+PASS: cookie.type should be WI.Cookie.Type.Response.
+PASS: cookie.name should be 'name'.
+PASS: cookie.value should be 'value'.
+PASS: cookie.expires should be 'null'.
+PASS: cookie.maxAge should be 'null'.
+PASS: cookie.path should be 'null'.
+PASS: cookie.domain should be 'null'.
+PASS: cookie.secure should be 'false'.
+PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'Lax'.
+
+HEADER: Set-Cookie: name=value; SameSite=strict
+PASS: Value should be a WI.Cookie.
+PASS: cookie.header should be the original header text.
+PASS: cookie.type should be WI.Cookie.Type.Response.
+PASS: cookie.name should be 'name'.
+PASS: cookie.value should be 'value'.
+PASS: cookie.expires should be 'null'.
+PASS: cookie.maxAge should be 'null'.
+PASS: cookie.path should be 'null'.
+PASS: cookie.domain should be 'null'.
+PASS: cookie.secure should be 'false'.
+PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'Strict'.
+
+HEADER: Set-Cookie: name=value; SameSite=invalid
+PASS: Value should be a WI.Cookie.
+PASS: cookie.header should be the original header text.
+PASS: cookie.type should be WI.Cookie.Type.Response.
+PASS: cookie.name should be 'name'.
+PASS: cookie.value should be 'value'.
+PASS: cookie.expires should be 'null'.
+PASS: cookie.maxAge should be 'null'.
+PASS: cookie.path should be 'null'.
+PASS: cookie.domain should be 'null'.
+PASS: cookie.secure should be 'false'.
+PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
+
+HEADER: Set-Cookie: name=value; SameSite
+PASS: Value should be a WI.Cookie.
+PASS: cookie.header should be the original header text.
+PASS: cookie.type should be WI.Cookie.Type.Response.
+PASS: cookie.name should be 'name'.
+PASS: cookie.value should be 'value'.
+PASS: cookie.expires should be 'null'.
+PASS: cookie.maxAge should be 'null'.
+PASS: cookie.path should be 'null'.
+PASS: cookie.domain should be 'null'.
+PASS: cookie.secure should be 'false'.
+PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; expires=Fri 06-Oct-2017 03:20:27 GMT; Max-Age=3600
 PASS: Value should be a WI.Cookie.
@@ -132,6 +194,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; expires=Fri 06-Oct-2017 03:43:47 GMT; Max-Age=5000; path=/foo; domain=example.com; secure; HttpOnly
 PASS: Value should be a WI.Cookie.
@@ -145,6 +208,7 @@ PASS: cookie.path should be '/foo'.
 PASS: cookie.domain should be 'example.com'.
 PASS: cookie.secure should be 'true'.
 PASS: cookie.httpOnly should be 'true'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; Unknown; path=/one/two
 WARN: Unknown Cookie attribute: Unknown
@@ -159,6 +223,7 @@ PASS: cookie.path should be '/one/two'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=value; Unknown=Ignored; path=/one/two
 WARN: Unknown Cookie attribute: Unknown=Ignored
@@ -173,6 +238,7 @@ PASS: cookie.path should be '/one/two'.
 PASS: cookie.domain should be 'null'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name=somewhat longer value than normal with spaces, and commas; domain=other.example.com
 PASS: Value should be a WI.Cookie.
@@ -186,6 +252,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be 'other.example.com'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 HEADER: Set-Cookie: name==value=;Domain=.example.com;Expires=Wed, 04-Apr-2018 03:34:02 GMT
 PASS: Value should be a WI.Cookie.
@@ -199,6 +266,7 @@ PASS: cookie.path should be 'null'.
 PASS: cookie.domain should be '.example.com'.
 PASS: cookie.secure should be 'false'.
 PASS: cookie.httpOnly should be 'false'.
+PASS: cookie.sameSite should be 'None'.
 
 
 -- Running test case: WI.Cookie.url

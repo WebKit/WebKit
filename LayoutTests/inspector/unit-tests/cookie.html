@@ -68,6 +68,7 @@ function test()
                 InspectorTest.expectEqual(cookie.domain, expected.domain, `cookie.domain should be '${expected.domain}'.`);
                 InspectorTest.expectEqual(cookie.secure, expected.secure, `cookie.secure should be '${expected.secure}'.`);
                 InspectorTest.expectEqual(cookie.httpOnly, expected.httpOnly, `cookie.httpOnly should be '${expected.httpOnly}'.`);
+                InspectorTest.expectEqual(cookie.sameSite, expected.sameSite, `cookie.sameSite should be '${expected.sameSite}'.`);
                 InspectorTest.log("");
             }
 
@@ -82,6 +83,7 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; path=/foo`, {
@@ -93,6 +95,7 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; domain=example.com`, {
@@ -104,6 +107,7 @@ function test()
                 domain: "example.com",
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; secure`, {
@@ -115,6 +119,7 @@ function test()
                 domain: null,
                 secure: true,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; Secure`, {
@@ -126,6 +131,7 @@ function test()
                 domain: null,
                 secure: true,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; HttpOnly`, {
@@ -137,6 +143,57 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: true,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            test(`name=value; SameSite=lax`, {
+                name: "name",
+                value: "value",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.Lax,
+            });
+
+            test(`name=value; SameSite=strict`, {
+                name: "name",
+                value: "value",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.Strict,
+            });
+
+            // SameSite with unknown value is ignored.
+            test(`name=value; SameSite=invalid`, {
+                name: "name",
+                value: "value",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
+            });
+
+            // SameSite without value is ignored.
+            test(`name=value; SameSite`, {
+                name: "name",
+                value: "value",
+                expires: null,
+                maxAge: null,
+                path: null,
+                domain: null,
+                secure: false,
+                httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; expires=Fri 06-Oct-2017 03:20:27 GMT; Max-Age=3600`, {
@@ -148,6 +205,7 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; expires=Fri 06-Oct-2017 03:43:47 GMT; Max-Age=5000; path=/foo; domain=example.com; secure; HttpOnly`, {
@@ -159,6 +217,7 @@ function test()
                 domain: "example.com",
                 secure: true,
                 httpOnly: true,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; Unknown; path=/one/two`, {
@@ -170,6 +229,7 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=value; Unknown=Ignored; path=/one/two`, {
@@ -181,6 +241,7 @@ function test()
                 domain: null,
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             test(`name=somewhat longer value than normal with spaces, and commas; domain=other.example.com`, {
@@ -192,6 +253,7 @@ function test()
                 domain: "other.example.com",
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             // Some servers omit the required space after the semicolon.
@@ -204,6 +266,7 @@ function test()
                 domain: ".example.com",
                 secure: false,
                 httpOnly: false,
+                sameSite: WI.Cookie.SameSiteType.None,
             });
 
             return true;

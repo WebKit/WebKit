@@ -114,18 +114,20 @@ WI.Cookie = class Cookie
         }
     }
 
-    // Derived from <https://tools.ietf.org/html/draft-west-first-party-cookies-06#section-3.2>.
+    // <https://httpwg.org/http-extensions/rfc6265bis.html#the-samesite-attribute-1>
     static parseSameSiteAttributeValue(attributeValue)
     {
         if (!attributeValue)
-            return WI.Cookie.SameSiteType.Strict;
+            return WI.Cookie.SameSiteType.None;
+
         switch (attributeValue.toLowerCase()) {
         case "lax":
             return WI.Cookie.SameSiteType.Lax;
         case "strict":
-        default:
             return WI.Cookie.SameSiteType.Strict;
         }
+
+        return WI.Cookie.SameSiteType.None;
     }
 
     static parseSetCookieResponseHeader(header)

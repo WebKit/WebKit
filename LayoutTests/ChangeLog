@@ -1,3 +1,14 @@
+2019-04-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: SameSite parsing should be stricter
+        https://bugs.webkit.org/show_bug.cgi?id=196927
+        <rdar://problem/42291601>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/cookie.html:
+        * inspector/unit-tests/cookie-expected.txt:
+
 2019-04-15  John Wilander  <wilander@apple.com>
 
         Send delayed Ad Click Attribution conversion requests to the click source
