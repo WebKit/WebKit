@@ -27,9 +27,11 @@ import re
 
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 from ews.common.buildbot import Buildbot
+from ews.models.build import Build
 from ews.models.patch import Patch
 import ews.config as config
 
@@ -58,7 +60,9 @@ class StatusBubble(View):
 
         if not build:
             bubble['state'] = 'none'
-            bubble['details_message'] = 'Waiting in queue, processing has not started yet.'
+            queue_position = self._queue_position(patch, queue, self._get_parent_queue(queue))
+            bubble['queue_position'] = queue_position
+            bubble['details_message'] = 'Waiting in queue, processing has not started yet.\n\nPosition in queue: {}'.format(queue_position)
             return bubble
 
         bubble['url'] = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
@@ -166,6 +170,29 @@ class StatusBubble(View):
 
     def _should_show_bubble_for_queue(self, queue):
         return queue in StatusBubble.ENABLED_QUEUES
+
+    def _queue_position(self, patch, queue, parent_queue=None):
+        # FIXME: Handle retried builds and cancelled build-requests as well.
+        DAYS_TO_CHECK = 3
+        from_timestamp = timezone.now() - datetime.timedelta(days=DAYS_TO_CHECK)
+
+        previously_sent_patches = set(Patch.objects
+                                          .filter(modified__gte=from_timestamp)
+                                          .filter(sent_to_buildbot=True)
+                                          .filter(obsolete=False)
+                                          .filter(modified__lt=patch.modified))
+        if parent_queue:
+            recent_builds_parent_queue = Build.objects \
+                                             .filter(modified__gte=from_timestamp) \
+                                             .filter(builder_display_name=parent_queue)
+            processed_patches_parent_queue = set([build.patch for build in recent_builds_parent_queue])
+            return len(previously_sent_patches - processed_patches_parent_queue) + 1
+
+        recent_builds = Build.objects \
+                            .filter(modified__gte=from_timestamp) \
+                            .filter(builder_display_name=queue)
+        processed_patches = set([build.patch for build in recent_builds])
+        return len(previously_sent_patches - processed_patches) + 1
 
     def _build_bubbles_for_patch(self, patch):
         show_submit_to_ews = True
