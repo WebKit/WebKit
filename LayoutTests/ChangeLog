@@ -1,5 +1,14 @@
 2019-04-15  Shawn Roberts  <sroberts@apple.com>
 
+        inspector/canvas/recording-webgl-snapshots.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196875
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations
+
+2019-04-15  Shawn Roberts  <sroberts@apple.com>
+
         inspector/timeline/timeline-recording.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=196915
 
