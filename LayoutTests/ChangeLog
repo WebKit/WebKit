@@ -1,3 +1,16 @@
+2019-04-11  Antoine Quint  <graouts@apple.com>
+
+        Ensure iOS layout traits are used for media controls in modern compatibility mode
+        https://bugs.webkit.org/show_bug.cgi?id=196812
+        <rdar://problem/47460637>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that enforces modern compatibility mode and checks that the iOS controls are used.
+
+        * media/modern-media-controls/media-controller/ios/media-controller-ios-layout-traits-modern-compatibility-mode-expected.txt: Added.
+        * media/modern-media-controls/media-controller/ios/media-controller-ios-layout-traits-modern-compatibility-mode.html: Added.
+
 2019-04-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WKL] Unreviewed test gardening.

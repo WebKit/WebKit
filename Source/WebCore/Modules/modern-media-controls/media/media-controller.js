@@ -99,7 +99,7 @@ class MediaController
         if (this.host && this.host.compactMode)
             return LayoutTraits.Compact;
 
-        let traits = window.navigator.platform === "MacIntel" ? LayoutTraits.macOS : LayoutTraits.iOS;
+        let traits = GestureRecognizer.SupportsTouches ? LayoutTraits.iOS : LayoutTraits.macOS;
         if (this.isFullscreen)
             return traits | LayoutTraits.Fullscreen;
         return traits;
