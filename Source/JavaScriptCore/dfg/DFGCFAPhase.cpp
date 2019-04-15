@@ -188,9 +188,7 @@ private:
                 dataLog("   Widening ", VirtualRegister(operand), " with ", value.value(), "\n");
             
             AbstractValue& target = block->valuesAtHead.operand(operand);
-            changed |= target.mergeOSREntryValue(m_graph, value.value());
-            target.fixTypeForRepresentation(
-                m_graph, resultFor(node->variableAccessData()->flushFormat()), node);
+            changed |= target.mergeOSREntryValue(m_graph, value.value(), node->variableAccessData(), node);
         }
         
         if (changed || !block->cfaHasVisited) {

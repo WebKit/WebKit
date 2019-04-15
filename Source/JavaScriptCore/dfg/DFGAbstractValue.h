@@ -48,6 +48,7 @@ namespace DFG {
 
 class Graph;
 struct Node;
+class VariableAccessData;
 
 struct AbstractValue {
     AbstractValue()
@@ -303,7 +304,7 @@ struct AbstractValue {
         return result;
     }
     
-    bool mergeOSREntryValue(Graph&, JSValue);
+    bool mergeOSREntryValue(Graph&, JSValue, VariableAccessData*, Node*);
     
     void merge(SpeculatedType type)
     {

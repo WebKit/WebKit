@@ -1,3 +1,29 @@
+2019-04-15  Saam barati  <sbarati@apple.com>
+
+        mergeOSREntryValue is wrong when the incoming value does not match up with the flush format
+        https://bugs.webkit.org/show_bug.cgi?id=196918
+
+        Reviewed by Yusuke Suzuki.
+
+        r244238 lead to some debug failures because we were calling checkConsistency()
+        before doing fixTypeForRepresentation when merging in must handle values in
+        CFA. This patch fixes that.
+        
+        However, as I was reading over mergeOSREntryValue, I realized it was wrong. It
+        was possible it could merge in a value/type outside of the variable's flushed type.
+        Once the flush format types are locked in, we can't introduce a type out of
+        that range. This probably never lead to any crashes as our profiling injection
+        and speculation decision code is solid. However, what we were doing is clearly
+        wrong, and something a fuzzer could have found if we fuzzed the must handle
+        values inside prediction injection. We should do that fuzzing:
+        https://bugs.webkit.org/show_bug.cgi?id=196924
+
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::mergeOSREntryValue):
+        * dfg/DFGAbstractValue.h:
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::injectOSR):
+
 2019-04-15  Robin Morisset  <rmorisset@apple.com>
 
         Several structures and enums in the Yarr interpreter can be shrunk

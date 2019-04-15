@@ -180,8 +180,19 @@ void AbstractValue::fixTypeForRepresentation(Graph& graph, Node* node)
     fixTypeForRepresentation(graph, node->result(), node);
 }
 
-bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
+bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value, VariableAccessData* variable, Node* node)
 {
+    FlushFormat flushFormat = variable->flushFormat();
+
+    {
+        if (flushFormat == FlushedDouble && value.isNumber())
+            value = jsDoubleNumber(value.asNumber());
+        SpeculatedType incomingType = resultFor(flushFormat) == NodeResultInt52 ? int52AwareSpeculationFromValue(value) : speculationFromValue(value);
+        SpeculatedType requiredType = typeFilterFor(flushFormat);
+        if (incomingType & ~requiredType)
+            return false;
+    }
+
     AbstractValue oldMe = *this;
     
     if (isClear()) {
@@ -207,8 +218,11 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value)
             m_value = JSValue();
     }
     
-    checkConsistency();
     assertIsRegistered(graph);
+
+    fixTypeForRepresentation(graph, resultFor(flushFormat), node);
+
+    checkConsistency();
     
     return oldMe != *this;
 }
