@@ -1,5 +1,14 @@
 2019-04-15  Shawn Roberts  <sroberts@apple.com>
 
+        inspector/timeline/timeline-recording.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=196915
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Updating test expectations for flaky failure
+
+2019-04-15  Shawn Roberts  <sroberts@apple.com>
+
         Layout tests 
         inspector/heap/imported-snapshot.html
         inspector/heap/snapshot.html are flaky failures
