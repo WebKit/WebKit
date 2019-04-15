@@ -58,7 +58,7 @@ public:
             [&] (const ValueKey& key) -> bool {
                 return key.opcode() == ConstFloat || key.opcode() == ConstDouble;
             });
-        
+
         lowerFPConstants();
         
         hoistConstants(

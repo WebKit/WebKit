@@ -189,11 +189,6 @@ void ConstFloatValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.printf("%le", m_value);
 }
 
-Value* ConstFloatValue::cloneImpl() const
-{
-    return new ConstFloatValue(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

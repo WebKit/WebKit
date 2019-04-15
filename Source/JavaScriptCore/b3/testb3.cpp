@@ -10960,7 +10960,7 @@ void testCallFunctionWithHellaArguments()
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments, B3CCallPtrTag)));
-    call->children().appendVector(args);
+    call->appendArgs(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
 
@@ -10986,7 +10986,7 @@ void testCallFunctionWithHellaArguments2()
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int64, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments2, B3CCallPtrTag)));
-    call->children().appendVector(args);
+    call->appendArgs(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
 
@@ -11008,7 +11008,7 @@ void testCallFunctionWithHellaArguments3()
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Int32, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaArguments3, B3CCallPtrTag)));
-    call->children().appendVector(args);
+    call->appendArgs(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
 
@@ -11108,7 +11108,7 @@ void testCallFunctionWithHellaDoubleArguments()
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Double, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaDoubleArguments, B3CCallPtrTag)));
-    call->children().appendVector(args);
+    call->appendArgs(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
 
@@ -11132,7 +11132,7 @@ void testCallFunctionWithHellaFloatArguments()
     CCallValue* call = root->appendNew<CCallValue>(
         proc, Float, Origin(),
         root->appendNew<ConstPtrValue>(proc, Origin(), tagCFunctionPtr<void*>(functionWithHellaFloatArguments, B3CCallPtrTag)));
-    call->children().appendVector(args);
+    call->appendArgs(args);
     
     root->appendNewControlValue(proc, Return, Origin(), call);
 

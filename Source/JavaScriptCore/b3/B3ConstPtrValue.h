@@ -51,12 +51,17 @@ public:
 
 private:
     friend class Procedure;
+    friend class Value;
 
+    template<typename T>
+    static Opcode opcodeFromConstructor(Origin, T*) { return ConstPtrValueBase::opcodeFromConstructor(); }
     template<typename T>
     ConstPtrValue(Origin origin, T* pointer)
         : ConstPtrValueBase(origin, bitwise_cast<intptr_t>(pointer))
     {
     }
+    template<typename T>
+    static Opcode opcodeFromConstructor(Origin, T) { return ConstPtrValueBase::opcodeFromConstructor(); }
     template<typename T>
     ConstPtrValue(Origin origin, T pointer)
         : ConstPtrValueBase(origin, static_cast<intptr_t>(pointer))

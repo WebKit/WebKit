@@ -380,7 +380,7 @@ public:
     LValue call(LType type, LValue function, const VectorType& vector)
     {
         B3::CCallValue* result = m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function);
-        result->children().appendVector(vector);
+        result->appendArgs(vector);
         return result;
     }
     LValue call(LType type, LValue function) { return m_block->appendNew<B3::CCallValue>(m_proc, type, origin(), function); }

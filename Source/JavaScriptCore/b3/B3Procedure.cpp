@@ -93,7 +93,6 @@ Value* Procedure::clone(Value* value)
     return m_values.add(WTFMove(clone));
 }
 
-
 Value* Procedure::addIntConstant(Origin origin, Type type, int64_t value)
 {
     switch (type) {

@@ -27,18 +27,156 @@
 
 #if ENABLE(B3_JIT)
 
+#include "B3ArgumentRegValue.h"
+#include "B3AtomicValue.h"
+#include "B3CCallValue.h"
 #include "B3CheckValue.h"
 #include "B3Const32Value.h"
 #include "B3Const64Value.h"
 #include "B3ConstDoubleValue.h"
 #include "B3ConstFloatValue.h"
+#include "B3FenceValue.h"
+#include "B3MemoryValue.h"
 #include "B3PatchpointValue.h"
 #include "B3PhiChildren.h"
 #include "B3Procedure.h"
+#include "B3SlotBaseValue.h"
+#include "B3SwitchValue.h"
+#include "B3UpsilonValue.h"
 #include "B3Value.h"
+#include "B3VariableValue.h"
+#include "B3WasmAddressValue.h"
+#include "B3WasmBoundsCheckValue.h"
 #include <wtf/GraphNodeWorklist.h>
 
 namespace JSC { namespace B3 {
+
+#define DISPATCH_ON_KIND(MACRO) \
+    switch (kind().opcode()) { \
+    case FramePointer: \
+    case Nop: \
+    case Phi: \
+    case Jump: \
+    case Oops: \
+    case EntrySwitch: \
+    case Return: \
+    case Identity: \
+    case Opaque: \
+    case Neg: \
+    case Clz: \
+    case Abs: \
+    case Ceil: \
+    case Floor: \
+    case Sqrt: \
+    case SExt8: \
+    case SExt16: \
+    case Trunc: \
+    case SExt32: \
+    case ZExt32: \
+    case FloatToDouble: \
+    case IToD: \
+    case DoubleToFloat: \
+    case IToF: \
+    case BitwiseCast: \
+    case Branch: \
+    case Depend: \
+    case Add: \
+    case Sub: \
+    case Mul: \
+    case Div: \
+    case UDiv: \
+    case Mod: \
+    case UMod: \
+    case BitAnd: \
+    case BitOr: \
+    case BitXor: \
+    case Shl: \
+    case SShr: \
+    case ZShr: \
+    case RotR: \
+    case RotL: \
+    case Equal: \
+    case NotEqual: \
+    case LessThan: \
+    case GreaterThan: \
+    case LessEqual: \
+    case GreaterEqual: \
+    case Above: \
+    case Below: \
+    case AboveEqual: \
+    case BelowEqual: \
+    case EqualOrUnordered: \
+    case Select: \
+        return MACRO(Value); \
+    case ArgumentReg: \
+        return MACRO(ArgumentRegValue); \
+    case Const32: \
+        return MACRO(Const32Value); \
+    case Const64: \
+        return MACRO(Const64Value); \
+    case ConstFloat: \
+        return MACRO(ConstFloatValue); \
+    case ConstDouble: \
+        return MACRO(ConstDoubleValue); \
+    case Fence: \
+        return MACRO(FenceValue); \
+    case SlotBase: \
+        return MACRO(SlotBaseValue); \
+    case Get: \
+    case Set: \
+        return MACRO(VariableValue); \
+    case Load8Z: \
+    case Load8S: \
+    case Load16Z: \
+    case Load16S: \
+    case Load: \
+    case Store8: \
+    case Store16: \
+    case Store: \
+        return MACRO(MemoryValue); \
+    case Switch: \
+        return MACRO(SwitchValue); \
+    case Upsilon: \
+        return MACRO(UpsilonValue); \
+    case WasmAddress: \
+        return MACRO(WasmAddressValue); \
+    case WasmBoundsCheck: \
+        return MACRO(WasmBoundsCheckValue); \
+    case AtomicXchgAdd: \
+    case AtomicXchgAnd: \
+    case AtomicXchgOr: \
+    case AtomicXchgSub: \
+    case AtomicXchgXor: \
+    case AtomicXchg: \
+    case AtomicWeakCAS: \
+    case AtomicStrongCAS: \
+        return MACRO(AtomicValue); \
+    case CCall: \
+        return MACRO(CCallValue); \
+    case Check: \
+    case CheckAdd: \
+    case CheckSub: \
+    case CheckMul: \
+        return MACRO(CheckValue); \
+    case Patchpoint: \
+        return MACRO(PatchpointValue); \
+    default: \
+        RELEASE_ASSERT_NOT_REACHED(); \
+    }
+
+ALWAYS_INLINE size_t Value::adjacencyListOffset() const
+{
+#define VALUE_TYPE_SIZE(ValueType) sizeof(ValueType)
+    DISPATCH_ON_KIND(VALUE_TYPE_SIZE);
+#undef VALUE_TYPE_SIZE
+}
+
+ALWAYS_INLINE Value* Value::cloneImpl() const
+{
+#define VALUE_TYPE_CLONE(ValueType) allocate<ValueType>(*static_cast<const ValueType*>(this))
+    DISPATCH_ON_KIND(VALUE_TYPE_CLONE);
+#undef VALUE_TYPE_CLONE
+}
 
 template<typename BottomProvider>
 void Value::replaceWithBottom(const BottomProvider& bottomProvider)

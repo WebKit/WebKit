@@ -292,7 +292,7 @@ private:
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
 };
-
+    
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

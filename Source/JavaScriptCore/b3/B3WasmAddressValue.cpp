@@ -39,13 +39,8 @@ void WasmAddressValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, m_pinnedGPR);
 }
 
-Value* WasmAddressValue::cloneImpl() const
-{
-    return new WasmAddressValue(*this);
-}
-
 WasmAddressValue::WasmAddressValue(Origin origin, Value* value, GPRReg pinnedGPR)
-    : Value(CheckedOpcode, WasmAddress, Int64, origin, value)
+    : Value(CheckedOpcode, WasmAddress, Int64, One, origin, value)
     , m_pinnedGPR(pinnedGPR)
 {
 }

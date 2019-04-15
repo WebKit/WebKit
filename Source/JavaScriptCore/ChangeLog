@@ -1,3 +1,139 @@
+2019-04-15  Robin Morisset  <rmorisset@apple.com>
+
+        B3::Value should have different kinds of adjacency lists
+        https://bugs.webkit.org/show_bug.cgi?id=196091
+
+        Reviewed by Filip Pizlo.
+
+        The key idea of this optimization is to replace the Vector<Value*, 3> m_children in B3::Value (40 bytes on 64-bits platform) by one of the following:
+        - Nothing (0 bytes)
+        - 1 Value* (8 bytes)
+        - 2 Value* (16 bytes)
+        - 3 Value* (24 bytes)
+        - A Vector<Value*, 3>
+        after the end of the Value object, depending on the kind of the Value.
+        So for example, when allocating an Add, we would allocate an extra 16 bytes into which to store 2 Values.
+        This would halve the memory consumption of Const64/Const32/Nop/Identity and a bunch more kinds of values, and reduce by a more moderate amount the memory consumption of the rest of non-varargs values (e.g. Add would go from 72 to 48 bytes).
+
+        A few implementation points:
+        - Even if there is no children, we must remember to allocate at least enough space for replaceWithIdentity to work later. It needs sizeof(Value) (for the object itself) + sizeof(Value*) (for the pointer to its child)
+        - We must make sure to destroy the vector whenever we destroy a Value which is VarArgs
+        - We must remember how many elements there are in the case where we did not allocate a Vector. We cannot do it purely by relying on the kind, both for speed reasons and because Return can have either 0 or 1 argument in B3
+          Thankfully, we have an extra byte of padding to use in the middle of B3::Value
+        - In order to support clone(), we must have a separate version of allocate, which extracts the opcode from the to-be-cloned object instead of from the call to the constructor
+        - Speaking of which, we need a special templated function opcodeFromConstructor, because some of the constructors of subclasses of Value don't take an explicit Opcode as argument, typically because they match a single one.
+        - To maximize performance, we provide specialized versions of child/lastChild/numChildren/children in the subclasses of Value, skipping checks when the actual type of the Value is already known.
+          This is done through the B3_SPECIALIZE_VALUE_FOR_... defined at the bottom of B3Value.h
+        - In the constructors of Value, we convert all extra children arguments to Value* eagerly. It is not required for correctness (they will be converted when put into a Vector<Value*> or a Value* in the end), but it helps limit an explosion in the number of template instantiations.
+        - I moved DeepValueDump::dump from the .h to the .cpp, as there is no good reason to inline it, and recompiling JSC is already slow enough
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * b3/B3ArgumentRegValue.cpp:
+        (JSC::B3::ArgumentRegValue::cloneImpl const): Deleted.
+        * b3/B3ArgumentRegValue.h:
+        * b3/B3AtomicValue.cpp:
+        (JSC::B3::AtomicValue::AtomicValue):
+        (JSC::B3::AtomicValue::cloneImpl const): Deleted.
+        * b3/B3AtomicValue.h:
+        * b3/B3BasicBlock.h:
+        * b3/B3BasicBlockInlines.h:
+        (JSC::B3::BasicBlock::appendNewNonTerminal): Deleted.
+        * b3/B3CCallValue.cpp:
+        (JSC::B3::CCallValue::appendArgs):
+        (JSC::B3::CCallValue::cloneImpl const): Deleted.
+        * b3/B3CCallValue.h:
+        * b3/B3CheckValue.cpp:
+        (JSC::B3::CheckValue::cloneImpl const): Deleted.
+        * b3/B3CheckValue.h:
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::cloneImpl const): Deleted.
+        * b3/B3Const32Value.h:
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::cloneImpl const): Deleted.
+        * b3/B3Const64Value.h:
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::cloneImpl const): Deleted.
+        * b3/B3ConstDoubleValue.h:
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::cloneImpl const): Deleted.
+        * b3/B3ConstFloatValue.h:
+        * b3/B3ConstPtrValue.h:
+        (JSC::B3::ConstPtrValue::opcodeFromConstructor):
+        * b3/B3FenceValue.cpp:
+        (JSC::B3::FenceValue::FenceValue):
+        (JSC::B3::FenceValue::cloneImpl const): Deleted.
+        * b3/B3FenceValue.h:
+        * b3/B3MemoryValue.cpp:
+        (JSC::B3::MemoryValue::MemoryValue):
+        (JSC::B3::MemoryValue::cloneImpl const): Deleted.
+        * b3/B3MemoryValue.h:
+        * b3/B3MoveConstants.cpp:
+        * b3/B3PatchpointValue.cpp:
+        (JSC::B3::PatchpointValue::cloneImpl const): Deleted.
+        * b3/B3PatchpointValue.h:
+        (JSC::B3::PatchpointValue::opcodeFromConstructor):
+        * b3/B3Procedure.cpp:
+        * b3/B3Procedure.h:
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::add):
+        * b3/B3SlotBaseValue.cpp:
+        (JSC::B3::SlotBaseValue::cloneImpl const): Deleted.
+        * b3/B3SlotBaseValue.h:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isValidImpl):
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::append):
+        (JSC::B3::StackmapValue::StackmapValue):
+        * b3/B3StackmapValue.h:
+        * b3/B3SwitchValue.cpp:
+        (JSC::B3::SwitchValue::SwitchValue):
+        (JSC::B3::SwitchValue::cloneImpl const): Deleted.
+        * b3/B3SwitchValue.h:
+        (JSC::B3::SwitchValue::opcodeFromConstructor):
+        * b3/B3UpsilonValue.cpp:
+        (JSC::B3::UpsilonValue::cloneImpl const): Deleted.
+        * b3/B3UpsilonValue.h:
+        * b3/B3Value.cpp:
+        (JSC::B3::DeepValueDump::dump const):
+        (JSC::B3::Value::~Value):
+        (JSC::B3::Value::replaceWithIdentity):
+        (JSC::B3::Value::replaceWithNopIgnoringType):
+        (JSC::B3::Value::replaceWithPhi):
+        (JSC::B3::Value::replaceWithJump):
+        (JSC::B3::Value::replaceWithOops):
+        (JSC::B3::Value::replaceWith):
+        (JSC::B3::Value::invertedCompare const):
+        (JSC::B3::Value::returnsBool const):
+        (JSC::B3::Value::cloneImpl const): Deleted.
+        * b3/B3Value.h:
+        (JSC::B3::DeepValueDump::dump const): Deleted.
+        * b3/B3ValueInlines.h:
+        (JSC::B3::Value::adjacencyListOffset const):
+        (JSC::B3::Value::cloneImpl const):
+        * b3/B3VariableValue.cpp:
+        (JSC::B3::VariableValue::VariableValue):
+        (JSC::B3::VariableValue::cloneImpl const): Deleted.
+        * b3/B3VariableValue.h:
+        * b3/B3WasmAddressValue.cpp:
+        (JSC::B3::WasmAddressValue::WasmAddressValue):
+        (JSC::B3::WasmAddressValue::cloneImpl const): Deleted.
+        * b3/B3WasmAddressValue.h:
+        * b3/B3WasmBoundsCheckValue.cpp:
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::cloneImpl const): Deleted.
+        * b3/B3WasmBoundsCheckValue.h:
+        (JSC::B3::WasmBoundsCheckValue::accepts):
+        (JSC::B3::WasmBoundsCheckValue::opcodeFromConstructor):
+        * b3/testb3.cpp:
+        (JSC::B3::testCallFunctionWithHellaArguments):
+        (JSC::B3::testCallFunctionWithHellaArguments2):
+        (JSC::B3::testCallFunctionWithHellaArguments3):
+        (JSC::B3::testCallFunctionWithHellaDoubleArguments):
+        (JSC::B3::testCallFunctionWithHellaFloatArguments):
+        * ftl/FTLOutput.h:
+        (JSC::FTL::Output::call):
+
 2019-04-15  Tadeu Zagallo  <tzagallo@apple.com>
 
         Bytecode cache should not encode the SourceProvider for UnlinkedFunctionExecutable's classSource

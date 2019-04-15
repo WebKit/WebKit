@@ -61,14 +61,16 @@ public:
     uint8_t numGPScratchRegisters { 0 };
     uint8_t numFPScratchRegisters { 0 };
 
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
 private:
     friend class Procedure;
+    friend class Value;
 
+    static Opcode opcodeFromConstructor(Type, Origin) { return Patchpoint; }
     JS_EXPORT_PRIVATE PatchpointValue(Type, Origin);
 };
 

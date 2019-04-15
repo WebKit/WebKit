@@ -75,20 +75,24 @@ public:
     TriState aboveEqualConstant(const Value* other) const override;
     TriState belowEqualConstant(const Value* other) const override;
 
+    B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
-    friend class Procedure;
+    // Protected because of ConstPtrValue
+    static Opcode opcodeFromConstructor(Origin = Origin(), int64_t = 0) { return Const64; }
 
     Const64Value(Origin origin, int64_t value)
-        : Value(CheckedOpcode, Const64, Int64, origin)
+        : Value(CheckedOpcode, Const64, Int64, Zero, origin)
         , m_value(value)
     {
     }
-    
+
 private:
+    friend class Procedure;
+    friend class Value;
+
     int64_t m_value;
 };
 

@@ -45,19 +45,22 @@ public:
         m_phi = phi;
     }
 
+    B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
 private:
     friend class Procedure;
+    friend class Value;
 
+    static Opcode opcodeFromConstructor(Origin, Value*, Value* = nullptr) { return Upsilon; }
     // Note that passing the Phi during construction is optional. A valid pattern is to first create
     // the Upsilons without the Phi, then create the Phi, then go back and tell the Upsilons about
     // the Phi. This allows you to emit code in its natural order.
     UpsilonValue(Origin origin, Value* value, Value* phi = nullptr)
-        : Value(CheckedOpcode, Upsilon, Void, origin, value)
+        : Value(CheckedOpcode, Upsilon, Void, One, origin, value)
         , m_phi(phi)
     {
         if (phi)

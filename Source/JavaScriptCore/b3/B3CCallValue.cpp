@@ -34,9 +34,9 @@ CCallValue::~CCallValue()
 {
 }
 
-Value* CCallValue::cloneImpl() const
+void CCallValue::appendArgs(const Vector<Value*>& args)
 {
-    return new CCallValue(*this);
+    childrenVector().appendVector(args);
 }
 
 } } // namespace JSC::B3

@@ -64,16 +64,18 @@ public:
     TriState greaterEqualConstant(const Value* other) const override;
     TriState equalOrUnorderedConstant(const Value* other) const override;
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
+    B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
 private:
     friend class Procedure;
+    friend class Value;
+
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+
+    static Opcode opcodeFromConstructor(Origin, double) { return ConstDouble; }
 
     ConstDoubleValue(Origin origin, double value)
-        : Value(CheckedOpcode, ConstDouble, Double, origin)
+        : Value(CheckedOpcode, ConstDouble, Double, Zero, origin)
         , m_value(value)
     {
     }

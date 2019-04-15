@@ -83,11 +83,11 @@ void StackmapSpecial::forEachArgImpl(
 
     // Check that insane things have not happened.
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
-    ASSERT(value->children().size() >= numIgnoredB3Args);
-    ASSERT(inst.args.size() - numIgnoredAirArgs >= value->children().size() - numIgnoredB3Args);
+    ASSERT(value->numChildren() >= numIgnoredB3Args);
+    ASSERT(inst.args.size() - numIgnoredAirArgs >= value->numChildren() - numIgnoredB3Args);
     ASSERT(inst.args[0].kind() == Arg::Kind::Special);
 
-    for (unsigned i = 0; i < value->children().size() - numIgnoredB3Args; ++i) {
+    for (unsigned i = 0; i < value->numChildren() - numIgnoredB3Args; ++i) {
         Arg& arg = inst.args[i + numIgnoredAirArgs];
         ConstrainedValue child = value->constrainedChild(i + numIgnoredB3Args);
 
@@ -160,16 +160,16 @@ bool StackmapSpecial::isValidImpl(
 
     // Check that insane things have not happened.
     ASSERT(inst.args.size() >= numIgnoredAirArgs);
-    ASSERT(value->children().size() >= numIgnoredB3Args);
+    ASSERT(value->numChildren() >= numIgnoredB3Args);
 
     // For the Inst to be valid, it needs to have the right number of arguments.
-    if (inst.args.size() - numIgnoredAirArgs < value->children().size() - numIgnoredB3Args)
+    if (inst.args.size() - numIgnoredAirArgs < value->numChildren() - numIgnoredB3Args)
         return false;
 
     // Regardless of constraints, stackmaps have some basic requirements for their arguments. For
     // example, you can't have a non-FP-offset address. This verifies those conditions as well as the
     // argument types.
-    for (unsigned i = 0; i < value->children().size() - numIgnoredB3Args; ++i) {
+    for (unsigned i = 0; i < value->numChildren() - numIgnoredB3Args; ++i) {
         Value* child = value->child(i + numIgnoredB3Args);
         Arg& arg = inst.args[i + numIgnoredAirArgs];
 
@@ -178,7 +178,7 @@ bool StackmapSpecial::isValidImpl(
     }
 
     // The number of constraints has to be no greater than the number of B3 children.
-    ASSERT(value->m_reps.size() <= value->children().size());
+    ASSERT(value->m_reps.size() <= value->numChildren());
 
     // Verify any explicitly supplied constraints.
     for (unsigned i = numIgnoredB3Args; i < value->m_reps.size(); ++i) {

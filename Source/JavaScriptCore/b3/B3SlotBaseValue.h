@@ -41,16 +41,17 @@ public:
 
     StackSlot* slot() const { return m_slot; }
 
-protected:
-    void dumpMeta(CommaPrinter&, PrintStream&) const override;
-
-    Value* cloneImpl() const override;
+    B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
 private:
     friend class Procedure;
+    friend class Value;
 
+    void dumpMeta(CommaPrinter&, PrintStream&) const override;
+
+    static Opcode opcodeFromConstructor(Origin, StackSlot*) { return SlotBase; }
     SlotBaseValue(Origin origin, StackSlot* slot)
-        : Value(CheckedOpcode, SlotBase, pointerType(), origin)
+        : Value(CheckedOpcode, SlotBase, pointerType(), Zero, origin)
         , m_slot(slot)
     {
     }

@@ -40,16 +40,19 @@ public:
 
     Reg argumentReg() const { return m_reg; }
 
+    B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
 private:
     friend class Procedure;
+    friend class Value;
+    
+    static Opcode opcodeFromConstructor(Origin, Reg) { return ArgumentReg; }
 
     ArgumentRegValue(Origin origin, Reg reg)
-        : Value(CheckedOpcode, ArgumentReg, reg.isGPR() ? pointerType() : Double, origin)
+        : Value(CheckedOpcode, ArgumentReg, reg.isGPR() ? pointerType() : Double, Zero, origin)
         , m_reg(reg)
     {
         ASSERT(reg.isSet());

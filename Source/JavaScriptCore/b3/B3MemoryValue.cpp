@@ -73,15 +73,10 @@ void MemoryValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
         out.print(comma, "fenceRange = ", fenceRange());
 }
 
-Value* MemoryValue::cloneImpl() const
-{
-    return new MemoryValue(*this);
-}
-
 // Use this form for Load (but not Load8Z, Load8S, or any of the Loads that have a suffix that
 // describes the returned type).
 MemoryValue::MemoryValue(MemoryValue::MemoryValueLoad, Kind kind, Type type, Origin origin, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
-    : Value(CheckedOpcode, kind, type, origin, pointer)
+    : Value(CheckedOpcode, kind, type, One, origin, pointer)
     , m_offset(offset)
     , m_range(range)
     , m_fenceRange(fenceRange)
@@ -126,7 +121,7 @@ MemoryValue::MemoryValue(MemoryValue::MemoryValueLoadImplied, Kind kind, Origin 
 
 // Use this form for stores.
 MemoryValue::MemoryValue(MemoryValue::MemoryValueStore, Kind kind, Origin origin, Value* value, Value* pointer, MemoryValue::OffsetType offset, HeapRange range, HeapRange fenceRange)
-    : Value(CheckedOpcode, kind, Void, origin, value, pointer)
+    : Value(CheckedOpcode, kind, Void, Two, origin, value, pointer)
     , m_offset(offset)
     , m_range(range)
     , m_fenceRange(fenceRange)

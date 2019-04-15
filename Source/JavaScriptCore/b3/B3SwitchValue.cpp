@@ -106,13 +106,8 @@ void SwitchValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, "cases = [", listDump(m_values), "]");
 }
 
-Value* SwitchValue::cloneImpl() const
-{
-    return new SwitchValue(*this);
-}
-
 SwitchValue::SwitchValue(Origin origin, Value* child)
-    : Value(CheckedOpcode, Switch, Void, origin, child)
+    : Value(CheckedOpcode, Switch, Void, One, origin, child)
 {
 }
 

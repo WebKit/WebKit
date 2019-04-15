@@ -303,11 +303,6 @@ void Const64Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, m_value);
 }
 
-Value* Const64Value::cloneImpl() const
-{
-    return new Const64Value(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -45,11 +45,6 @@ void UpsilonValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     }
 }
 
-Value* UpsilonValue::cloneImpl() const
-{
-    return new UpsilonValue(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

@@ -50,11 +50,11 @@ public:
 
     void convertToAdd();
 
-protected:
-    Value* cloneImpl() const override;
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
     
 private:
     friend class Procedure;
+    friend class Value;
 
     // Use this form for CheckAdd, CheckSub, and CheckMul.
     JS_EXPORT_PRIVATE CheckValue(Kind, Origin, Value* left, Value* right);

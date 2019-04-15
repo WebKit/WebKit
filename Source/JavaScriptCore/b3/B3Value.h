@@ -38,7 +38,7 @@
 #include "B3Width.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/IteratorRange.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TriState.h>
 
@@ -53,8 +53,6 @@ class Procedure;
 class JS_EXPORT_PRIVATE Value {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef Vector<Value*, 3> AdjacencyList;
-
     static const char* const dumpPrefix;
 
     static bool accepts(Kind) { return true; }
@@ -82,14 +80,6 @@ public:
     Origin origin() const { return m_origin; }
     void setOrigin(Origin origin) { m_origin = origin; }
     
-    Value*& child(unsigned index) { return m_children[index]; }
-    Value* child(unsigned index) const { return m_children[index]; }
-
-    Value*& lastChild() { return m_children.last(); }
-    Value* lastChild() const { return m_children.last(); }
-
-    unsigned numChildren() const { return m_children.size(); }
-
     Type type() const { return m_type; }
     void setType(Type type) { m_type = type; }
 
@@ -97,8 +87,57 @@ public:
     Bank resultBank() const { return bankForType(type()); }
     Width resultWidth() const { return widthForType(type()); }
 
-    AdjacencyList& children() { return m_children; } 
-    const AdjacencyList& children() const { return m_children; }
+    unsigned numChildren() const
+    {
+        if (m_numChildren == VarArgs)
+            return childrenVector().size();
+        return m_numChildren;
+    }
+    
+    Value*& child(unsigned index)
+    {
+        ASSERT(index < numChildren());
+        return m_numChildren == VarArgs ? childrenVector()[index] : childrenArray()[index];
+    }
+    Value* child(unsigned index) const
+    {
+        ASSERT(index < numChildren());
+        return m_numChildren == VarArgs ? childrenVector()[index] : childrenArray()[index];
+    }
+    
+    Value*& lastChild()
+    {
+        if (m_numChildren == VarArgs)
+            return childrenVector().last();
+        ASSERT(m_numChildren >= 1);
+        return childrenArray()[m_numChildren - 1];
+    }
+    Value* lastChild() const
+    {
+        if (m_numChildren == VarArgs)
+            return childrenVector().last();
+        ASSERT(m_numChildren >= 1);
+        return childrenArray()[m_numChildren - 1];
+    }
+
+    WTF::IteratorRange<Value**> children()
+    {
+        if (m_numChildren == VarArgs) {
+            Vector<Value*, 3>& vec = childrenVector();
+            return WTF::makeIteratorRange(&*vec.begin(), &*vec.end());
+        }
+        Value** buffer = childrenArray();
+        return {buffer, buffer + m_numChildren };
+    }
+    WTF::IteratorRange<Value* const*> children() const
+    {
+        if (m_numChildren == VarArgs) {
+            const Vector<Value*, 3>& vec = childrenVector();
+            return WTF::makeIteratorRange(&*vec.begin(), &*vec.end());
+        }
+        Value* const* buffer = childrenArray();
+        return {buffer, buffer + m_numChildren };
+    }
 
     // If you want to replace all uses of this value with a different value, then replace this
     // value with Identity. Then do a pass of performSubstitution() on all of the values that use
@@ -301,19 +340,218 @@ public:
         typename std::enable_if<sizeof(Int) <= sizeof(OffsetType)>::type
     > { };
 
-
 protected:
-    virtual Value* cloneImpl() const;
-    
+    Value* cloneImpl() const;
+
+    void replaceWith(Kind, Type, BasicBlock*);
+    void replaceWith(Kind, Type, BasicBlock*, Value*);
+
     virtual void dumpChildren(CommaPrinter&, PrintStream&) const;
     virtual void dumpMeta(CommaPrinter&, PrintStream&) const;
 
+    // The specific value of VarArgs does not matter, but the value of the others is assumed to match their meaning.
+    enum NumChildren : uint8_t { Zero = 0, One = 1, Two = 2, Three = 3, VarArgs = 4};
+
+    char* childrenAlloc() { return bitwise_cast<char*>(this) + adjacencyListOffset(); }
+    const char* childrenAlloc() const { return bitwise_cast<const char*>(this) + adjacencyListOffset(); }
+    Vector<Value*, 3>& childrenVector()
+    {
+        ASSERT(m_numChildren == VarArgs);
+        return *bitwise_cast<Vector<Value*, 3>*>(childrenAlloc());
+    }
+    const Vector<Value*, 3>& childrenVector() const
+    {
+        ASSERT(m_numChildren == VarArgs);
+        return *bitwise_cast<Vector<Value*, 3> const*>(childrenAlloc());
+    }
+    Value** childrenArray()
+    {
+        ASSERT(m_numChildren != VarArgs);
+        return bitwise_cast<Value**>(childrenAlloc());
+    }
+    Value* const* childrenArray() const
+    {
+        ASSERT(m_numChildren != VarArgs);
+        return bitwise_cast<Value* const*>(childrenAlloc());
+    }
+
+    template<typename... Arguments>
+    static Opcode opcodeFromConstructor(Kind kind, Arguments...) { return kind.opcode(); }
+    ALWAYS_INLINE static size_t adjacencyListSpace(Kind kind)
+    {
+        switch (kind.opcode()) {
+        case FramePointer:
+        case Nop:
+        case Phi:
+        case Jump:
+        case Oops:
+        case EntrySwitch:
+        case ArgumentReg:
+        case Const32:
+        case Const64:
+        case ConstFloat:
+        case ConstDouble:
+        case Fence:
+        case SlotBase:
+        case Get:
+            return 0;
+        case Return:
+        case Identity:
+        case Opaque:
+        case Neg:
+        case Clz:
+        case Abs:
+        case Ceil:
+        case Floor:
+        case Sqrt:
+        case SExt8:
+        case SExt16:
+        case Trunc:
+        case SExt32:
+        case ZExt32:
+        case FloatToDouble:
+        case IToD:
+        case DoubleToFloat:
+        case IToF:
+        case BitwiseCast:
+        case Branch:
+        case Depend:
+        case Load8Z:
+        case Load8S:
+        case Load16Z:
+        case Load16S:
+        case Load:
+        case Switch:
+        case Upsilon:
+        case Set:
+        case WasmAddress:
+        case WasmBoundsCheck:
+            return sizeof(Value*);
+        case Add:
+        case Sub:
+        case Mul:
+        case Div:
+        case UDiv:
+        case Mod:
+        case UMod:
+        case BitAnd:
+        case BitOr:
+        case BitXor:
+        case Shl:
+        case SShr:
+        case ZShr:
+        case RotR:
+        case RotL:
+        case Equal:
+        case NotEqual:
+        case LessThan:
+        case GreaterThan:
+        case LessEqual:
+        case GreaterEqual:
+        case Above:
+        case Below:
+        case AboveEqual:
+        case BelowEqual:
+        case EqualOrUnordered:
+        case AtomicXchgAdd:
+        case AtomicXchgAnd:
+        case AtomicXchgOr:
+        case AtomicXchgSub:
+        case AtomicXchgXor:
+        case AtomicXchg:
+        case Store8:
+        case Store16:
+        case Store:
+            return 2 * sizeof(Value*);
+        case Select:
+        case AtomicWeakCAS:
+        case AtomicStrongCAS:
+            return 3 * sizeof(Value*);
+        case CCall:
+        case Check:
+        case CheckAdd:
+        case CheckSub:
+        case CheckMul:
+        case Patchpoint:
+            return sizeof(Vector<Value*, 3>);
+        default:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+        return 0;
+    }
+
 private:
+    static char* allocateSpace(Opcode opcode, size_t size)
+    {
+        size_t adjacencyListSpace = Value::adjacencyListSpace(opcode);
+        // We must allocate enough space that replaceWithIdentity can work without buffer overflow.
+        size_t allocIdentitySize = sizeof(Value) + sizeof(Value*);
+        size_t allocSize = std::max(size + adjacencyListSpace, allocIdentitySize);
+        return static_cast<char*>(WTF::fastMalloc(allocSize));
+    }
+
+protected:
+    template<typename ValueType, typename... Arguments>
+    static ValueType* allocate(Arguments... arguments)
+    {
+        char* alloc = allocateSpace(ValueType::opcodeFromConstructor(arguments...), sizeof(ValueType));
+        return new (alloc) ValueType(arguments...);
+    }
+    template<typename ValueType>
+    static ValueType* allocate(const ValueType& valueToClone)
+    {
+        char* alloc = allocateSpace(valueToClone.opcode(), sizeof(ValueType));
+        ValueType* result = new (alloc) ValueType(valueToClone);
+        result->buildAdjacencyList(sizeof(ValueType), valueToClone);
+        return result;
+    }
+
+    // Protected so it will only be called from allocate above, possibly through the subclasses'copy constructors
+    Value(const Value&) = default;
+
+    Value(Value&&) = delete;
+    Value& operator=(const Value&) = delete;
+    Value& operator=(Value&&) = delete;
+    
+    size_t adjacencyListOffset() const;
+
     friend class Procedure;
     friend class SparseCollection<Value>;
 
+private:
+    template<typename... Arguments>
+    void buildAdjacencyList(NumChildren numChildren, Arguments... arguments)
+    {
+        if (numChildren == VarArgs) {
+            new (childrenAlloc()) Vector<Value*, 3> { arguments... };
+            return;
+        }
+        ASSERT(numChildren == sizeof...(arguments));
+        new (childrenAlloc()) Value*[sizeof...(arguments)] { arguments... };
+    }
+    void buildAdjacencyList(size_t offset, const Value& valueToClone)
+    {
+        switch (valueToClone.m_numChildren) {
+        case VarArgs:
+            new (bitwise_cast<char*>(this) + offset) Vector<Value*, 3> (valueToClone.childrenVector());
+            break;
+        case Three:
+            bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[2] = valueToClone.childrenArray()[2];
+            FALLTHROUGH;
+        case Two:
+            bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[1] = valueToClone.childrenArray()[1];
+            FALLTHROUGH;
+        case One:
+            bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[0] = valueToClone.childrenArray()[0];
+            break;
+        case Zero:
+            break;
+        }
+    }
+    
     // Checks that this kind is valid for use with B3::Value.
-    ALWAYS_INLINE static void checkKind(Kind kind, unsigned numArgs)
+    ALWAYS_INLINE static NumChildren numChildrenForKind(Kind kind, unsigned numArgs)
     {
         switch (kind.opcode()) {
         case FramePointer:
@@ -324,11 +562,11 @@ private:
         case EntrySwitch:
             if (UNLIKELY(numArgs))
                 badKind(kind, numArgs);
-            break;
+            return Zero;
         case Return:
             if (UNLIKELY(numArgs > 1))
                 badKind(kind, numArgs);
-            break;
+            return numArgs ? One : Zero;
         case Identity:
         case Opaque:
         case Neg:
@@ -351,7 +589,7 @@ private:
         case Depend:
             if (UNLIKELY(numArgs != 1))
                 badKind(kind, numArgs);
-            break;
+            return One;
         case Add:
         case Sub:
         case Mul:
@@ -380,129 +618,105 @@ private:
         case EqualOrUnordered:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
-            break;
+            return Two;
         case Select:
             if (UNLIKELY(numArgs != 3))
                 badKind(kind, numArgs);
-            break;
+            return Three;
         default:
             badKind(kind, numArgs);
             break;
         }
+        return VarArgs;
     }
 
 protected:
     enum CheckedOpcodeTag { CheckedOpcode };
-
-    Value(const Value&) = default;
-    Value& operator=(const Value&) = default;
     
     // Instantiate values via Procedure.
     // This form requires specifying the type explicitly:
     template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, Value* firstChild, Arguments... arguments)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, NumChildren numChildren, Origin origin, Value* firstChild, Arguments... arguments)
         : m_kind(kind)
         , m_type(type)
+        , m_numChildren(numChildren)
         , m_origin(origin)
-        , m_children{ firstChild, arguments... }
     {
+        buildAdjacencyList(numChildren, firstChild, arguments...);
     }
     // This form is for specifying the type explicitly when the opcode has no children:
-    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin)
+    explicit Value(CheckedOpcodeTag, Kind kind, Type type, NumChildren numChildren, Origin origin)
         : m_kind(kind)
         , m_type(type)
+        , m_numChildren(numChildren)
         , m_origin(origin)
     {
-    }
-    // This form is for those opcodes that can infer their type from the opcode and first child:
-    template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin, Value* firstChild)
-        : m_kind(kind)
-        , m_type(typeFor(kind, firstChild))
-        , m_origin(origin)
-        , m_children{ firstChild }
-    {
-    }
-    // This form is for those opcodes that can infer their type from the opcode and first and second child:
-    template<typename... Arguments>
-    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
-        : m_kind(kind)
-        , m_type(typeFor(kind, firstChild, secondChild))
-        , m_origin(origin)
-        , m_children{ firstChild, secondChild, arguments... }
-    {
+        buildAdjacencyList(numChildren);
     }
     // This form is for those opcodes that can infer their type from the opcode alone, and that don't
     // take any arguments:
-    explicit Value(CheckedOpcodeTag, Kind kind, Origin origin)
+    explicit Value(CheckedOpcodeTag, Kind kind, NumChildren numChildren, Origin origin)
         : m_kind(kind)
         , m_type(typeFor(kind, nullptr))
+        , m_numChildren(numChildren)
         , m_origin(origin)
     {
+        buildAdjacencyList(numChildren);
     }
-    // Use this form for varargs.
-    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, const AdjacencyList& children)
+    // This form is for those opcodes that can infer their type from the opcode and first child:
+    explicit Value(CheckedOpcodeTag, Kind kind, NumChildren numChildren, Origin origin, Value* firstChild)
         : m_kind(kind)
-        , m_type(type)
+        , m_type(typeFor(kind, firstChild))
+        , m_numChildren(numChildren)
         , m_origin(origin)
-        , m_children(children)
     {
+        buildAdjacencyList(numChildren, firstChild);
     }
-    explicit Value(CheckedOpcodeTag, Kind kind, Type type, Origin origin, AdjacencyList&& children)
+    // This form is for those opcodes that can infer their type from the opcode and first and second child:
+    template<typename... Arguments>
+    explicit Value(CheckedOpcodeTag, Kind kind, NumChildren numChildren, Origin origin, Value* firstChild, Value* secondChild, Arguments... arguments)
         : m_kind(kind)
-        , m_type(type)
+        , m_type(typeFor(kind, firstChild, secondChild))
+        , m_numChildren(numChildren)
         , m_origin(origin)
-        , m_children(WTFMove(children))
     {
+        buildAdjacencyList(numChildren, firstChild, secondChild, arguments...);
     }
 
     // This is the constructor you end up actually calling, if you're instantiating Value
     // directly.
-    template<typename... Arguments>
-        explicit Value(Kind kind, Type type, Origin origin)
-        : Value(CheckedOpcode, kind, type, origin)
+    explicit Value(Kind kind, Type type, Origin origin)
+        : Value(CheckedOpcode, kind, type, Zero, origin)
     {
-        checkKind(kind, 0);
+        RELEASE_ASSERT(numChildrenForKind(kind, 0) == Zero);
+    }
+    // We explicitly convert the extra arguments to Value* (they may be pointers to some subclasses of Value) to limit template explosion
+    template<typename... Arguments>
+    explicit Value(Kind kind, Origin origin, Arguments... arguments)
+        : Value(CheckedOpcode, kind, numChildrenForKind(kind, sizeof...(arguments)), origin, static_cast<Value*>(arguments)...)
+    {
     }
     template<typename... Arguments>
-        explicit Value(Kind kind, Type type, Origin origin, Value* firstChild, Arguments&&... arguments)
-        : Value(CheckedOpcode, kind, type, origin, firstChild, std::forward<Arguments>(arguments)...)
+    explicit Value(Kind kind, Type type, Origin origin, Value* firstChild, Arguments... arguments)
+        : Value(CheckedOpcode, kind, type, numChildrenForKind(kind, 1 + sizeof...(arguments)), origin, firstChild, static_cast<Value*>(arguments)...)
     {
-        checkKind(kind, 1 + sizeof...(arguments));
-    }
-    template<typename... Arguments>
-        explicit Value(Kind kind, Type type, Origin origin, const AdjacencyList& children)
-        : Value(CheckedOpcode, kind, type, origin, children)
-    {
-        checkKind(kind, children.size());
-    }
-    template<typename... Arguments>
-        explicit Value(Kind kind, Type type, Origin origin, AdjacencyList&& children)
-        : Value(CheckedOpcode, kind, type, origin, WTFMove(children))
-    {
-        checkKind(kind, m_children.size());
-    }
-    template<typename... Arguments>
-        explicit Value(Kind kind, Origin origin, Arguments&&... arguments)
-        : Value(CheckedOpcode, kind, origin, std::forward<Arguments>(arguments)...)
-    {
-        checkKind(kind, sizeof...(arguments));
     }
 
 private:
     friend class CheckValue; // CheckValue::convertToAdd() modifies m_kind.
-    
+
     static Type typeFor(Kind, Value* firstChild, Value* secondChild = nullptr);
 
-    // This group of fields is arranged to fit in 64 bits.
+    // m_index to m_numChildren are arranged to fit in 64 bits.
 protected:
     unsigned m_index { UINT_MAX };
 private:
     Kind m_kind;
     Type m_type;
-    
+protected:
+    NumChildren m_numChildren;
+private:
     Origin m_origin;
-    AdjacencyList m_children;
 
     NO_RETURN_DUE_TO_CRASH static void badKind(Kind, unsigned);
 
@@ -518,13 +732,7 @@ public:
     {
     }
 
-    void dump(PrintStream& out) const
-    {
-        if (m_value)
-            m_value->deepDump(m_proc, out);
-        else
-            out.print("<null>");
-    }
+    void dump(PrintStream& out) const;
 
 private:
     const Procedure* m_proc;
@@ -539,6 +747,116 @@ inline DeepValueDump deepDump(const Value* value)
 {
     return DeepValueDump(nullptr, value);
 }
+
+// The following macros are designed for subclasses of B3::Value to use.
+// They are never required for correctness, but can improve the performance of child/lastChild/numChildren/children methods,
+// for users that already know the specific subclass of Value they are manipulating.
+// The first set is to be used when you know something about the number of children of all values of a class, including its subclasses:
+// - B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN: always 0 children (e.g. Const32Value)
+// - B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(n): always n children, with n in {1, 2, 3} (e.g. UpsilonValue, with n = 1)
+// - B3_SPECIALIZE_VALUE_FOR_NON_VARARGS_CHILDREN: different numbers of children, but never a variable number at runtime (e.g. MemoryValue, that can have between 1 and 3 children)
+// - B3_SPECIALIZE_VALUE_FOR_VARARGS_CHILDREN: always a varargs (e.g. CCallValue)
+// The second set is only to be used by classes that we know are not further subclassed by anyone adding fields,
+// as they hardcode the offset of the children array/vector (which is equal to the size of the object).
+// - B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
+// - B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
+#define B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN \
+    unsigned numChildren() const { return 0; } \
+    WTF::IteratorRange<Value**> children() { return {nullptr, nullptr}; } \
+    WTF::IteratorRange<Value* const*> children() const { return { nullptr, nullptr}; }
+
+#define B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(n) \
+public: \
+    unsigned numChildren() const { return n; } \
+    Value*& child(unsigned index) \
+    { \
+        ASSERT(index <= n); \
+        return childrenArray()[index]; \
+    } \
+    Value* child(unsigned index) const \
+    { \
+        ASSERT(index <= n); \
+        return childrenArray()[index]; \
+    } \
+    Value*& lastChild() \
+    { \
+        return childrenArray()[n - 1]; \
+    } \
+    Value* lastChild() const \
+    { \
+        return childrenArray()[n - 1]; \
+    } \
+    WTF::IteratorRange<Value**> children() \
+    { \
+        Value** buffer = childrenArray(); \
+        return {buffer, buffer + n }; \
+    } \
+    WTF::IteratorRange<Value* const*> children() const \
+    { \
+        Value* const* buffer = childrenArray(); \
+        return {buffer, buffer + n }; \
+    } \
+
+#define B3_SPECIALIZE_VALUE_FOR_NON_VARARGS_CHILDREN \
+public: \
+    unsigned numChildren() const { return m_numChildren; } \
+    Value*& child(unsigned index) { return childrenArray()[index]; } \
+    Value* child(unsigned index) const { return childrenArray()[index]; } \
+    Value*& lastChild() { return childrenArray()[numChildren() - 1]; } \
+    Value* lastChild() const { return childrenArray()[numChildren() - 1]; } \
+    WTF::IteratorRange<Value**> children() \
+    { \
+        Value** buffer = childrenArray(); \
+        return {buffer, buffer + numChildren() }; \
+    } \
+    WTF::IteratorRange<Value* const*> children() const \
+    { \
+        Value* const* buffer = childrenArray(); \
+        return {buffer, buffer + numChildren() }; \
+    } \
+
+#define B3_SPECIALIZE_VALUE_FOR_VARARGS_CHILDREN \
+public: \
+    unsigned numChildren() const { return childrenVector().size(); } \
+    Value*& child(unsigned index) { return childrenVector()[index]; } \
+    Value* child(unsigned index) const { return childrenVector()[index]; } \
+    Value*& lastChild() { return childrenVector().last(); } \
+    Value* lastChild() const { return childrenVector().last(); } \
+    WTF::IteratorRange<Value**> children() \
+    { \
+        Vector<Value*, 3>& vec = childrenVector(); \
+        return WTF::makeIteratorRange(&*vec.begin(), &*vec.end()); \
+    } \
+    WTF::IteratorRange<Value* const*> children() const \
+    { \
+        const Vector<Value*, 3>& vec = childrenVector(); \
+        return WTF::makeIteratorRange(&*vec.begin(), &*vec.end()); \
+    } \
+
+// Only use this for classes with no subclass that add new fields (as it uses sizeof(*this))
+// Also there is no point in applying this to classes with no children, as they don't have a children array to access.
+#define B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN \
+private: \
+    Value** childrenArray() \
+    { \
+        return bitwise_cast<Value**>(bitwise_cast<char*>(this) + sizeof(*this)); \
+    } \
+    Value* const* childrenArray() const \
+    { \
+        return bitwise_cast<Value* const*>(bitwise_cast<char const*>(this) + sizeof(*this)); \
+    }
+
+// Only use this for classes with no subclass that add new fields (as it uses sizeof(*this))
+#define B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN \
+private: \
+    Vector<Value*, 3>& childrenVector() \
+    { \
+        return *bitwise_cast<Vector<Value*, 3>*>(bitwise_cast<char*>(this) + sizeof(*this)); \
+    } \
+    const Vector<Value*, 3>& childrenVector() const \
+    { \
+        return *bitwise_cast<Vector<Value*, 3> const*>(bitwise_cast<char const*>(this) + sizeof(*this)); \
+    } \
 
 } } // namespace JSC::B3
 

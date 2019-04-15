@@ -29,13 +29,14 @@
 
 #include "B3BasicBlock.h"
 #include "B3Procedure.h"
+#include "B3Value.h"
 
 namespace JSC { namespace B3 {
-
+    
 template<typename ValueType, typename... Arguments>
 ValueType* Procedure::add(Arguments... arguments)
 {
-    return static_cast<ValueType*>(addValueImpl(new ValueType(arguments...)));
+    return static_cast<ValueType*>(addValueImpl(Value::allocate<ValueType>(arguments...)));
 }
 
 } } // namespace JSC::B3

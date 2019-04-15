@@ -197,11 +197,6 @@ void ConstDoubleValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.printf("%le", m_value);
 }
 
-Value* ConstDoubleValue::cloneImpl() const
-{
-    return new ConstDoubleValue(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

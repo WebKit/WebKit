@@ -34,13 +34,8 @@ FenceValue::~FenceValue()
 {
 }
 
-Value* FenceValue::cloneImpl() const
-{
-    return new FenceValue(*this);
-}
-
 FenceValue::FenceValue(Origin origin, HeapRange read, HeapRange write)
-    : Value(CheckedOpcode, Fence, Void, origin)
+    : Value(CheckedOpcode, Fence, Void, Zero, origin)
     , read(read)
     , write(write)
 {

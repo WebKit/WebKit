@@ -60,8 +60,7 @@ public:
 
     ~StackmapValue();
 
-    // Use this to add children. Note that you could also add children by doing
-    // children().append(). That will work fine, but it's not recommended.
+    // Use this to add children.
     void append(const ConstrainedValue& value)
     {
         append(value.value(), value.rep());
@@ -284,6 +283,8 @@ public:
     {
         return ConstrainedValueCollection(*this);
     }
+
+    B3_SPECIALIZE_VALUE_FOR_VARARGS_CHILDREN
 
 protected:
     void dumpChildren(CommaPrinter&, PrintStream&) const override;

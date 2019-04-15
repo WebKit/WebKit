@@ -38,17 +38,23 @@ public:
 
     ~CCallValue();
 
+    void appendArgs(const Vector<Value*>&);
+    
     Effects effects;
 
-protected:
-    Value* cloneImpl() const override;
-    
+    B3_SPECIALIZE_VALUE_FOR_VARARGS_CHILDREN
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_VARARGS_CHILDREN
+
 private:
     friend class Procedure;
+    friend class Value;
+
+    template<typename... Arguments>
+    static Opcode opcodeFromConstructor(Arguments...) { return CCall; }
 
     template<typename... Arguments>
     CCallValue(Type type, Origin origin, Arguments... arguments)
-        : Value(CheckedOpcode, CCall, type, origin, arguments...)
+        : Value(CheckedOpcode, CCall, type, VarArgs, origin, static_cast<Value*>(arguments)...)
         , effects(Effects::forCall())
     {
         RELEASE_ASSERT(numChildren() >= 1);
@@ -56,7 +62,7 @@ private:
 
     template<typename... Arguments>
     CCallValue(Type type, Origin origin, const Effects& effects, Arguments... arguments)
-        : Value(CheckedOpcode, CCall, type, origin, arguments...)
+        : Value(CheckedOpcode, CCall, type, VarArgs, origin, static_cast<Value*>(arguments)...)
         , effects(effects)
     {
         RELEASE_ASSERT(numChildren() >= 1);

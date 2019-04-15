@@ -34,15 +34,7 @@ namespace JSC { namespace B3 {
 
 class WasmBoundsCheckValue : public Value {
 public:
-    static bool accepts(Kind kind)
-    {
-        switch (kind.opcode()) {
-        case WasmBoundsCheck:
-            return true;
-        default:
-            return false;
-        }
-    }
+    static bool accepts(Kind kind) { return kind == WasmBoundsCheck; }
     
     ~WasmBoundsCheckValue();
 
@@ -60,15 +52,20 @@ public:
     Type boundsType() const { return m_boundsType; }
     Bounds bounds() const { return m_bounds; }
 
+    B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
 private:
     friend class Procedure;
+    friend class Value;
 
+    static Opcode opcodeFromConstructor(Origin, GPRReg, Value*, unsigned) { return WasmBoundsCheck; }
     JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, GPRReg pinnedGPR, Value* ptr, unsigned offset);
+
+    static Opcode opcodeFromConstructor(Origin, Value*, unsigned, size_t) { return WasmBoundsCheck; }
     JS_EXPORT_PRIVATE WasmBoundsCheckValue(Origin, Value* ptr, unsigned offset, size_t maximum);
 
     unsigned m_offset;

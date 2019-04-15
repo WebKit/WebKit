@@ -39,11 +39,6 @@ void ArgumentRegValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, m_reg);
 }
 
-Value* ArgumentRegValue::cloneImpl() const
-{
-    return new ArgumentRegValue(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

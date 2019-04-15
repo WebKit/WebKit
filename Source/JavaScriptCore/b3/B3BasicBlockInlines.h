@@ -42,14 +42,6 @@ ValueType* BasicBlock::appendNew(Procedure& procedure, Arguments... arguments)
 }
 
 template<typename ValueType, typename... Arguments>
-ValueType* BasicBlock::appendNewNonTerminal(Procedure& procedure, Arguments... arguments)
-{
-    ValueType* result = procedure.add<ValueType>(arguments...);
-    appendNonTerminal(result);
-    return result;
-}
-
-template<typename ValueType, typename... Arguments>
 ValueType* BasicBlock::replaceLastWithNew(Procedure& procedure, Arguments... arguments)
 {
     ValueType* result = procedure.add<ValueType>(arguments...);

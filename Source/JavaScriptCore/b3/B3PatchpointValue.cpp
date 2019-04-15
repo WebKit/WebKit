@@ -44,11 +44,6 @@ void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
         out.print(comma, "numFPScratchRegisters = ", numFPScratchRegisters);
 }
 
-Value* PatchpointValue::cloneImpl() const
-{
-    return new PatchpointValue(*this);
-}
-
 PatchpointValue::PatchpointValue(Type type, Origin origin)
     : Base(CheckedOpcode, Patchpoint, type, origin)
     , effects(Effects::forCall())

@@ -40,14 +40,17 @@ public:
 
     GPRReg pinnedGPR() const { return m_pinnedGPR; }
 
+    B3_SPECIALIZE_VALUE_FOR_FIXED_CHILDREN(1)
+    B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
+
 protected:
     void dumpMeta(CommaPrinter&, PrintStream&) const override;
 
-    Value* cloneImpl() const override;
-
 private:
     friend class Procedure;
+    friend class Value;
 
+    static Opcode opcodeFromConstructor(Origin, Value*, GPRReg) { return WasmAddress; }
     WasmAddressValue(Origin, Value*, GPRReg);
 
     GPRReg m_pinnedGPR;

@@ -41,11 +41,6 @@ void SlotBaseValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, pointerDump(m_slot));
 }
 
-Value* SlotBaseValue::cloneImpl() const
-{
-    return new SlotBaseValue(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

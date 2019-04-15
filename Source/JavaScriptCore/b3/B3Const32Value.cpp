@@ -303,11 +303,6 @@ void Const32Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
     out.print(comma, m_value);
 }
 
-Value* Const32Value::cloneImpl() const
-{
-    return new Const32Value(*this);
-}
-
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)
