@@ -1,3 +1,16 @@
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
+        WebDriver: Set Cookie endpoint does not correctly set subdomain cookies
+        https://bugs.webkit.org/show_bug.cgi?id=196872
+        <rdar://problem/49233240>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::addSingleCookie):
+        Rather than try to "force" the cookie to be set on the current active URL, use the cookie
+        itself to figure out which domain it should be set on.
+
 2019-04-15  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Add enable-media websetting
