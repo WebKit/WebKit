@@ -12,7 +12,7 @@ function createDataChannel() {
 
     let dc = null;
 
-    let pc = new RTCPeerConnection();
+    let pc = new RTCPeerConnection;
     pc.onicecandidate = (event) => {
         if (event.candidate) {
             if (!receivedCandidate)
@@ -21,16 +21,14 @@ function createDataChannel() {
             return;
         }
 
+        TestPage.dispatchEventToFrontend("DataChannel", {success: !!receivedCandidate});
+
         delete pc.onicecandidate;
         pc.close();
         dc.close();
-
-        if (receivedCandidate) {
-            TestPage.dispatchEventToFrontend("DataChannel", {success: true});
-        } else
-            TestPage.dispatchEventToFrontend("DataChannel", {success: false});
     };
 
+    TestPage.addResult("Creating data channel...");
     dc = pc.createDataChannel("sendDataChannel");
 
     pc.createOffer()
@@ -45,18 +43,14 @@ function createDataChannel() {
 
 function test()
 {
+    InspectorTest.debug();
+
     let suite = InspectorTest.createAsyncSuite("Page.overrideSetting");
 
     suite.addTestCase({
         name: "Page.overrideSetting.ICECandidateFilteringEnabled",
         description: "Test that changing whether ice candidate filtering is enabled has an effect.",
         async test() {
-            let [defaultResult] = await Promise.all([
-                InspectorTest.awaitEvent("DataChannel"),
-                InspectorTest.evaluateInPage(`createDataChannel()`),
-            ]);
-            InspectorTest.expectFalse(defaultResult.data.success, "Should not be able to establish a connection when filtering ice candidates.");
-
             InspectorTest.log("Overriding ICECandidateFilteringEnabled to false...");
             await PageAgent.overrideSetting(PageAgent.Setting.ICECandidateFilteringEnabled, false);
 
@@ -64,7 +58,7 @@ function test()
                 InspectorTest.awaitEvent("DataChannel"),
                 InspectorTest.evaluateInPage(`createDataChannel()`),
             ])
-            InspectorTest.expectFalse(defaultResult.data.success, "Should be able to establish a connection when filtering ice candidates.");
+            InspectorTest.expectThat(overriddenResult.data.success, "Should be able to establish a connection when filtering ice candidates.");
 
             InspectorTest.log("Removing ICECandidateFilteringEnabled override...");
             await PageAgent.overrideSetting(PageAgent.Setting.ICECandidateFilteringEnabled);
@@ -73,7 +67,7 @@ function test()
                 InspectorTest.awaitEvent("DataChannel"),
                 InspectorTest.evaluateInPage(`createDataChannel()`),
             ])
-            InspectorTest.expectFalse(defaultResult.data.success, "Should not be able to establish a connection when filtering ice candidates.");
+            InspectorTest.expectFalse(originalResult.data.success, "Should not be able to establish a connection when filtering ice candidates.");
         },
     });
 
