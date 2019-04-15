@@ -220,9 +220,10 @@ private:
     LeafExecutableMap m_leafExecutables;
 };
 
-Decoder::Decoder(VM& vm, Ref<CachedBytecode> cachedBytecode)
+Decoder::Decoder(VM& vm, Ref<CachedBytecode> cachedBytecode, RefPtr<SourceProvider> provider)
     : m_vm(vm)
     , m_cachedBytecode(WTFMove(cachedBytecode))
+    , m_provider(provider)
 {
 }
 
@@ -232,9 +233,9 @@ Decoder::~Decoder()
         finalizer();
 }
 
-Ref<Decoder> Decoder::create(VM& vm, Ref<CachedBytecode> cachedBytecode)
+Ref<Decoder> Decoder::create(VM& vm, Ref<CachedBytecode> cachedBytecode, RefPtr<SourceProvider> provider)
 {
-    return adoptRef(*new Decoder(vm, WTFMove(cachedBytecode)));
+    return adoptRef(*new Decoder(vm, WTFMove(cachedBytecode), WTFMove(provider)));
 }
 
 size_t Decoder::size() const
@@ -292,6 +293,11 @@ template<typename Functor>
 void Decoder::addFinalizer(const Functor& fn)
 {
     m_finalizers.append(fn);
+}
+
+RefPtr<SourceProvider> Decoder::provider() const
+{
+    return m_provider;
 }
 
 template<typename T>
@@ -1547,6 +1553,35 @@ private:
     int m_startColumn;
 };
 
+class CachedSourceCodeWithoutProvider : public CachedObject<SourceCode> {
+public:
+    void encode(Encoder&, const SourceCode& sourceCode)
+    {
+        m_hasProvider = !!sourceCode.provider();
+        m_startOffset = sourceCode.startOffset();
+        m_endOffset = sourceCode.endOffset();
+        m_firstLine = sourceCode.firstLine().zeroBasedInt();
+        m_startColumn = sourceCode.startColumn().zeroBasedInt();
+    }
+
+    void decode(Decoder& decoder, SourceCode& sourceCode) const
+    {
+        if (m_hasProvider)
+            sourceCode.m_provider = decoder.provider();
+        sourceCode.m_startOffset = m_startOffset;
+        sourceCode.m_endOffset = m_endOffset;
+        sourceCode.m_firstLine = OrdinalNumber::fromZeroBasedInt(m_firstLine);
+        sourceCode.m_startColumn = OrdinalNumber::fromZeroBasedInt(m_startColumn);
+    }
+
+private:
+    bool m_hasProvider;
+    int m_startOffset;
+    int m_endOffset;
+    int m_firstLine;
+    int m_startColumn;
+};
+
 class CachedFunctionExecutableRareData : public CachedObject<UnlinkedFunctionExecutable::RareData> {
 public:
     void encode(Encoder& encoder, const UnlinkedFunctionExecutable::RareData& rareData)
@@ -1565,7 +1600,7 @@ public:
     }
 
 private:
-    CachedSourceCode m_classSource;
+    CachedSourceCodeWithoutProvider m_classSource;
     CachedCompactVariableMapHandle m_parentScopeTDZVariables;
 };
 
@@ -2297,7 +2332,7 @@ Ref<CachedBytecode> encodeFunctionCodeBlock(VM& vm, const UnlinkedFunctionCodeBl
 UnlinkedCodeBlock* decodeCodeBlockImpl(VM& vm, const SourceCodeKey& key, Ref<CachedBytecode> cachedBytecode)
 {
     const auto* cachedEntry = bitwise_cast<const GenericCacheEntry*>(cachedBytecode->data());
-    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode));
+    Ref<Decoder> decoder = Decoder::create(vm, WTFMove(cachedBytecode), &key.source().provider());
     std::pair<SourceCodeKey, UnlinkedCodeBlock*> entry;
     {
         DeferGC deferGC(vm.heap);

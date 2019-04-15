@@ -34,6 +34,7 @@ namespace JSC {
 
     class SourceCode : public UnlinkedSourceCode {
         friend class CachedSourceCode;
+        friend class CachedSourceCodeWithoutProvider;
 
     public:
         SourceCode()
