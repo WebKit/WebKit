@@ -1,5 +1,16 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Heap: logging an object from a snapshot shouldn't use the "special" style if the object is reachable
+        https://bugs.webkit.org/show_bug.cgi?id=196889
+        <rdar://problem/49870693>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/HeapSnapshotInstanceDataGridNode.js:
+        (WI.HeapSnapshotInstanceDataGridNode.logHeapSnapshotNode):
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Debugger: deleting a special breakpoint should disable it
         https://bugs.webkit.org/show_bug.cgi?id=196737
         <rdar://problem/49740680>
