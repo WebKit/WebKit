@@ -2311,15 +2311,15 @@ void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
     m_frontendDispatcher->characterDataModified(id, characterData.data());
 }
 
-void InspectorDOMAgent::didInvalidateStyleAttr(Node& node)
+void InspectorDOMAgent::didInvalidateStyleAttr(Element& element)
 {
-    int id = m_documentNodeToIdMap.get(&node);
+    int id = m_documentNodeToIdMap.get(&element);
     if (!id)
         return;
 
     if (!m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask = std::make_unique<RevalidateStyleAttributeTask>(this);
-    m_revalidateStyleAttrTask->scheduleFor(downcast<Element>(&node));
+    m_revalidateStyleAttrTask->scheduleFor(&element);
 }
 
 void InspectorDOMAgent::didPushShadowRoot(Element& host, ShadowRoot& root)

@@ -146,7 +146,7 @@ public:
     void didModifyDOMAttr(Element&, const AtomicString& name, const AtomicString& value);
     void didRemoveDOMAttr(Element&, const AtomicString& name);
     void characterDataModified(CharacterData&);
-    void didInvalidateStyleAttr(Node&);
+    void didInvalidateStyleAttr(Element&);
     void didPushShadowRoot(Element& host, ShadowRoot&);
     void willPopShadowRoot(Element& host, ShadowRoot&);
     void didChangeCustomElementState(Element&);

@@ -104,8 +104,9 @@ public:
         PropertySetCSSStyleDeclaration* localCopyStyleDecl = s_currentDecl;
         s_currentDecl = nullptr;
         s_shouldNotifyInspector = false;
-        if (localCopyStyleDecl->parentElement())
-            InspectorInstrumentation::didInvalidateStyleAttr(localCopyStyleDecl->parentElement()->document(), *localCopyStyleDecl->parentElement());
+
+        if (auto* parentElement = localCopyStyleDecl->parentElement())
+            InspectorInstrumentation::didInvalidateStyleAttr(*parentElement);
     }
 
     void enqueueMutationRecord()
@@ -419,6 +420,13 @@ void StyleRuleCSSStyleDeclaration::reattach(MutableStyleProperties& propertySet)
     m_propertySet->deref();
     m_propertySet = &propertySet;
     m_propertySet->ref();
+}
+
+bool InlineCSSStyleDeclaration::willMutate()
+{
+    if (m_parentElement)
+        InspectorInstrumentation::willInvalidateStyleAttr(*m_parentElement);
+    return true;
 }
 
 void InlineCSSStyleDeclaration::didMutate(MutationType type)

@@ -170,14 +170,14 @@ void InspectorDOMDebuggerAgent::removeEventBreakpoint(ErrorString& error, const 
     m_eventBreakpoints.remove(std::make_pair(*breakpointType, eventName));
 }
 
-void InspectorDOMDebuggerAgent::didInvalidateStyleAttr(Node& node)
+void InspectorDOMDebuggerAgent::willInvalidateStyleAttr(Element& element)
 {
     if (!m_debuggerAgent->breakpointsActive())
         return;
 
-    if (hasBreakpoint(&node, AttributeModified)) {
+    if (hasBreakpoint(&element, AttributeModified)) {
         Ref<JSON::Object> eventData = JSON::Object::create();
-        descriptionForDOMEvent(node, AttributeModified, false, eventData.get());
+        descriptionForDOMEvent(element, AttributeModified, false, eventData.get());
         m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(eventData));
     }
 }

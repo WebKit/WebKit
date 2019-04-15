@@ -115,7 +115,8 @@ public:
     static void didModifyDOMAttr(Document&, Element&, const AtomicString& name, const AtomicString& value);
     static void didRemoveDOMAttr(Document&, Element&, const AtomicString& name);
     static void characterDataModified(Document&, CharacterData&);
-    static void didInvalidateStyleAttr(Document&, Node&);
+    static void willInvalidateStyleAttr(Element&);
+    static void didInvalidateStyleAttr(Element&);
     static void documentDetached(Document&);
     static void frameWindowDiscarded(Frame&, DOMWindow*);
     static void mediaQueryResultChanged(Document&);
@@ -308,7 +309,8 @@ private:
     static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& name, const AtomicString& value);
     static void didRemoveDOMAttrImpl(InstrumentingAgents&, Element&, const AtomicString& name);
     static void characterDataModifiedImpl(InstrumentingAgents&, CharacterData&);
-    static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Node&);
+    static void willInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
+    static void didInvalidateStyleAttrImpl(InstrumentingAgents&, Element&);
     static void documentDetachedImpl(InstrumentingAgents&, Document&);
     static void frameWindowDiscardedImpl(InstrumentingAgents&, DOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents&);
@@ -552,11 +554,18 @@ inline void InspectorInstrumentation::didRemoveDOMAttr(Document& document, Eleme
         didRemoveDOMAttrImpl(*instrumentingAgents, element, name);
 }
 
-inline void InspectorInstrumentation::didInvalidateStyleAttr(Document& document, Node& node)
+inline void InspectorInstrumentation::willInvalidateStyleAttr(Element& element)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didInvalidateStyleAttrImpl(*instrumentingAgents, node);
+    if (auto* instrumentingAgents = instrumentingAgentsForDocument(element.document()))
+        willInvalidateStyleAttrImpl(*instrumentingAgents, element);
+}
+
+inline void InspectorInstrumentation::didInvalidateStyleAttr(Element& element)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* instrumentingAgents = instrumentingAgentsForDocument(element.document()))
+        didInvalidateStyleAttrImpl(*instrumentingAgents, element);
 }
 
 inline void InspectorInstrumentation::documentDetached(Document& document)

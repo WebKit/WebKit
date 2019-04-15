@@ -134,6 +134,7 @@ private:
     StyledElement* parentElement() const final { return m_parentElement; }
     void clearParentElement() final { m_parentElement = nullptr; }
 
+    bool willMutate() final WARN_UNUSED_RETURN;
     void didMutate(MutationType) final;
     CSSParserContext cssParserContext() const final;
 
