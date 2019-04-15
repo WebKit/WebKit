@@ -1,3 +1,21 @@
+2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Throw TypeError when custom element constructor returns a wrong element or tries to create itself
+        https://bugs.webkit.org/show_bug.cgi?id=196892
+
+        Reviewed by Dean Jackson.
+
+        Throw TypeError instead of InvalidStateError for consistency. This updates WebKit's custom elements
+        implementation for https://github.com/whatwg/html/pull/4525.
+
+        Tests: imported/w3c/web-platform-tests/custom-elements/upgrading/Node-cloneNode.html
+               imported/w3c/web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element.html
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::constructJSHTMLElement):
+
 2019-04-15  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] WebCore derived sources should only be referenced inside WebCore

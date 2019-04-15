@@ -1,3 +1,17 @@
+2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Throw TypeError when custom element constructor returns a wrong element or tries to create itself
+        https://bugs.webkit.org/show_bug.cgi?id=196892
+
+        Reviewed by Dean Jackson.
+
+        Update the tests according to https://github.com/web-platform-tests/wpt/pull/16328.
+
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/Node-cloneNode.html:
+        * web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element-expected.txt:
+        * web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element.html:
+
 2019-04-12  Rob Buis  <rbuis@igalia.com>
 
         Import WPT preload tests
