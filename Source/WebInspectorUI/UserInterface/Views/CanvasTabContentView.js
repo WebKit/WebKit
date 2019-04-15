@@ -56,9 +56,6 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         this._recordSingleFrameShortcut.implicitlyPreventsDefault = false;
         this._recordSingleFrameShortcut.disabled = true;
 
-        this.element.addEventListener("dragover", this._handleDragOver.bind(this));
-        this.element.addEventListener("drop", this._handleDrop.bind(this));
-
         WI.canvasManager.enable();
     }
 
@@ -139,6 +136,11 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
     saveStateToCookie(cookie)
     {
         // FIXME: implement once <https://webkit.org/b/177606> is complete.
+    }
+
+    async handleFileDrop(files)
+    {
+        await WI.FileUtilities.readJSON(files, (result) => WI.canvasManager.processJSON(result));
     }
 
     // Protected
@@ -302,25 +304,6 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
         }
 
         event.preventDefault();
-    }
-
-    _handleDragOver(event)
-    {
-        if (event.dataTransfer.types.includes("Files"))
-            event.preventDefault();
-    }
-
-    _handleDrop(event)
-    {
-        if (!event.dataTransfer.files || !event.dataTransfer.files.length)
-            return;
-
-        event.preventDefault();
-
-        WI.FileUtilities.readJSON(event.dataTransfer.files, (result) => WI.canvasManager.processJSON(result))
-        .then(() => {
-            event.dataTransfer.clearData();
-        });
     }
 };
 

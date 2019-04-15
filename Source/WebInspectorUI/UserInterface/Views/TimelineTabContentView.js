@@ -343,6 +343,11 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
         return representedObject instanceof WI.TimelineRecording;
     }
 
+    async handleFileDrop(files)
+    {
+        await WI.FileUtilities.readJSON(files, (result) => WI.timelineManager.processJSON(result));
+    }
+
     // Protected
 
     restoreFromCookie(cookie)

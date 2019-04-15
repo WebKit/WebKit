@@ -264,7 +264,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         this._activeRecording.stop(this._initiatedByBackendStop);
     }
 
-    processJSON({filename, json, error})
+    async processJSON({filename, json, error})
     {
         if (error) {
             WI.TimelineManager.synthesizeImportError(error);

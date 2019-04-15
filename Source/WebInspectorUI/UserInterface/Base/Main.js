@@ -271,7 +271,8 @@ WI.contentLoaded = function()
     document.addEventListener("copy", WI._copy);
 
     document.addEventListener("click", WI._mouseWasClicked);
-    document.addEventListener("dragover", WI._dragOver);
+    document.addEventListener("dragover", WI._handleDragOver);
+    document.addEventListener("drop", WI._handleDrop);
     document.addEventListener("focus", WI._focusChanged, true);
 
     window.addEventListener("focus", WI._windowFocused);
@@ -1523,7 +1524,7 @@ WI._mouseWasClicked = function(event)
     WI.handlePossibleLinkClick(event);
 };
 
-WI._dragOver = function(event)
+WI._handleDragOver = function(event)
 {
     // Do nothing if another event listener handled the event already.
     if (event.defaultPrevented)
@@ -1533,9 +1534,34 @@ WI._dragOver = function(event)
     if (WI.isEventTargetAnEditableField(event))
         return;
 
-    // Prevent the drop from being accepted.
-    event.dataTransfer.dropEffect = "none";
+    let tabContentView = WI.tabBrowser.selectedTabContentView;
+    if (!tabContentView || !tabContentView.handleFileDrop || !event.dataTransfer.types.includes("Files")) {
+        // Prevent the drop from being accepted.
+        event.dataTransfer.dropEffect = "none";
+    }
+
     event.preventDefault();
+};
+
+WI._handleDrop = function(event)
+{
+    // Do nothing if another event listener handled the event already.
+    if (event.defaultPrevented)
+        return;
+
+    // Allow dropping into editable areas.
+    if (WI.isEventTargetAnEditableField(event))
+        return;
+
+    let tabContentView = WI.tabBrowser.selectedTabContentView;
+    if (tabContentView && tabContentView.handleFileDrop && event.dataTransfer.files) {
+        event.preventDefault();
+
+        tabContentView.handleFileDrop(event.dataTransfer.files)
+        .then(() => {
+            event.dataTransfer.clearData();
+        });
+    }
 };
 
 WI._debuggerDidPause = function(event)

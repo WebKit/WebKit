@@ -75,7 +75,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         return Array.from(this._shaderProgramIdentifierMap.values());
     }
 
-    processJSON({filename, json, error})
+    async processJSON({filename, json, error})
     {
         if (error) {
             WI.Recording.synthesizeError(error);

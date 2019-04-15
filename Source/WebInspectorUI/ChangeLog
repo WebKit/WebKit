@@ -1,5 +1,42 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: drag/drop over the sidebar should load an imported file in Canvas/Audit tab
+        https://bugs.webkit.org/show_bug.cgi?id=196873
+        <rdar://problem/49858190>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI._handleDragOver): Added.
+        (WI._handleDrop): Added.
+        (WI._dragOver): Deleted.
+        * UserInterface/Views/AuditTabContentView.js:
+        (WI.AuditTabContentView):
+        (WI.AuditTabContentView.prototype.async handleFileDrop): Added.
+        (WI.AuditTabContentView.prototype._handleDragOver): Deleted.
+        (WI.AuditTabContentView.prototype._handleDrop): Deleted.
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.async handleFileDrop): Added.
+        (WI.CanvasTabContentView.prototype._handleDragOver): Deleted.
+        (WI.CanvasTabContentView.prototype._handleDrop): Deleted.
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView.prototype.async handleFileDrop): Added.
+        Check whether the current tab is able to handle a file drop, and if so, don't prevent the
+        drag from occuring. This now allows the user to drop anywhere on the Web Inspector area to
+        import files, so long as the relevant tab is currently selected.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.async processJSON): Added.
+        (WI.CanvasManager.prototype.processJSON): Deleted.
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.prototype.async processJSON): Added.
+        (WI.TimelineManager.prototype.processJSON): Deleted.
+        Make `async` to match other `processJSON` functions.
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Heap: logging an object from a snapshot shouldn't use the "special" style if the object is reachable
         https://bugs.webkit.org/show_bug.cgi?id=196889
         <rdar://problem/49870693>
