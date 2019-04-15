@@ -278,7 +278,7 @@ HeapSnapshot = class HeapSnapshot
         // Internal nodes are avoided, so if the path is empty this
         // node is either a gcRoot or only reachable via Internal nodes.
 
-        let paths = this._gcRootPathes(nodeIdentifier);
+        let paths = this._determineGCRootPaths(nodeIdentifier);
         if (!paths.length)
             return [];
 
@@ -734,7 +734,7 @@ HeapSnapshot = class HeapSnapshot
             || className === "GlobalObject";
     }
 
-    _gcRootPathes(nodeIdentifier)
+    _determineGCRootPaths(nodeIdentifier)
     {
         let targetNodeOrdinal = this._nodeIdentifierToOrdinal.get(nodeIdentifier);
 
@@ -743,22 +743,34 @@ HeapSnapshot = class HeapSnapshot
 
         // FIXME: Array push/pop can affect performance here, but in practice it hasn't been an issue.
 
-        let paths = [];
-        let currentPath = [];
+        let gcRootPaths = [];
         let visited = new Uint8Array(this._nodeCount);
 
-        function visitNode(nodeOrdinal)
-        {
+        let pathsBeingProcessed = [
+            {
+                currentPath: [],
+                nodeOrdinal: targetNodeOrdinal,
+            },
+        ];
+        for (let i = 0; i < pathsBeingProcessed.length; ++i) {
+            let {currentPath, nodeOrdinal} = pathsBeingProcessed[i];
+
+            // Rather than use `Array.prototype.unshift`, which may be very expensive, keep track of
+            // the "current" position as `i` and "delete" the values already processed by clearing
+            // the value at that index.
+            pathsBeingProcessed[i] = undefined;
+
             if (this._nodeOrdinalIsGCRoot[nodeOrdinal]) {
                 let fullPath = currentPath.slice();
                 let nodeIndex = nodeOrdinal * this._nodeFieldCount;
                 fullPath.push({node: nodeIndex});
-                paths.push(fullPath);
-                return;
+                gcRootPaths.push(fullPath);
+                continue;
             }
 
             if (visited[nodeOrdinal])
-                return;
+                continue;
+
             visited[nodeOrdinal] = 1;
 
             let nodeIndex = nodeOrdinal * this._nodeFieldCount;
@@ -775,18 +787,13 @@ HeapSnapshot = class HeapSnapshot
                 if (fromNodeIsInternal)
                     continue;
 
-                let edgeIndex = this._incomingEdges[incomingEdgeIndex];
-                currentPath.push({edge: edgeIndex});
-                visitNode.call(this, fromNodeOrdinal);
-                currentPath.pop();
+                let newPath = currentPath.slice();
+                newPath.push({edge: this._incomingEdges[incomingEdgeIndex]});
+                pathsBeingProcessed.push({currentPath: newPath, nodeOrdinal: fromNodeOrdinal});
             }
-
-            currentPath.pop();
         }
 
-        visitNode.call(this, targetNodeOrdinal);
-
-        return paths;
+        return gcRootPaths;
     }
 };
 
