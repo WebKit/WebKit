@@ -197,8 +197,16 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             return treeElement;
         });
 
+        // It's possible that a previously selected node will no longer exist (e.g. after navigation).
+        selectedTreeElements = selectedTreeElements.filter((x) => !!x);
+
+        if (!selectedTreeElements.length)
+            return;
+
         this.selectTreeElements(selectedTreeElements);
-        this.selectedTreeElement.reveal();
+
+        if (this.selectedTreeElement)
+            this.selectedTreeElement.reveal();
     }
 
     updateSelectionArea()
