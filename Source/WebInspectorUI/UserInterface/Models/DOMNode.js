@@ -587,6 +587,7 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     getEventListeners(callback)
     {
+        console.assert(WI.domManager.inspectedNode === this);
         DOMAgent.getEventListenersForNode(this.id, callback);
     }
 

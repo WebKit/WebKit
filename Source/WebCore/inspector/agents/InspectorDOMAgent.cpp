@@ -952,6 +952,9 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString& errorString, int n
                 addListener(*listener, info);
         }
     }
+
+    if (m_inspectedNode == node)
+        m_suppressEventListenerChangedEvent = false;
 }
 
 void InspectorDOMAgent::setEventListenerDisabled(ErrorString& errorString, int eventListenerId, bool disabled)
@@ -1398,8 +1401,12 @@ void InspectorDOMAgent::setInspectedNode(ErrorString& errorString, int nodeId)
         return;
     }
 
+    m_inspectedNode = node;
+
     if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
         commandLineAPIHost->addInspectedObject(std::make_unique<InspectableNode>(node));
+
+    m_suppressEventListenerChangedEvent = false;
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString& errorString, int nodeId, const String* objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result)
@@ -2388,9 +2395,18 @@ void InspectorDOMAgent::didAddEventListener(EventTarget& target)
     if (!is<Node>(target))
         return;
 
-    int nodeId = boundNodeId(&downcast<Node>(target));
+    auto& node = downcast<Node>(target);
+    if (!node.contains(m_inspectedNode.get()))
+        return;
+
+    int nodeId = boundNodeId(&node);
     if (!nodeId)
         return;
+
+    if (m_suppressEventListenerChangedEvent)
+        return;
+
+    m_suppressEventListenerChangedEvent = true;
 
     m_frontendDispatcher->didAddEventListener(nodeId);
 }
@@ -2399,7 +2415,10 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const Atomi
 {
     if (!is<Node>(target))
         return;
+
     auto& node = downcast<Node>(target);
+    if (!node.contains(m_inspectedNode.get()))
+        return;
 
     int nodeId = boundNodeId(&node);
     if (!nodeId)
@@ -2419,6 +2438,11 @@ void InspectorDOMAgent::willRemoveEventListener(EventTarget& target, const Atomi
     m_eventListenerEntries.removeIf([&] (auto& entry) {
         return entry.value.matches(target, eventType, listener, capture);
     });
+
+    if (m_suppressEventListenerChangedEvent)
+        return;
+
+    m_suppressEventListenerChangedEvent = true;
 
     m_frontendDispatcher->willRemoveEventListener(nodeId);
 }

@@ -1,3 +1,21 @@
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Elements: event listener change events should only be fired for the selected node and it's ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=196887
+        <rdar://problem/49870627>
+
+        Reviewed by Timothy Hatcher.
+
+        Test: inspector/dom/event-listener-add-remove.html
+              inspector/dom/event-listener-inspected-node.html
+
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode):
+        (WebCore::InspectorDOMAgent::setInspectedNode):
+        (WebCore::InspectorDOMAgent::didAddEventListener):
+        (WebCore::InspectorDOMAgent::willRemoveEventListener):
+
 2019-04-15  Antoine Quint  <graouts@apple.com>
 
         Ensure iOS layout traits are used for media controls in modern compatibility mode

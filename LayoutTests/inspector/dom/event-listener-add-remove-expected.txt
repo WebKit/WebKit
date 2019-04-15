@@ -1,5 +1,6 @@
 Testing events for adding and removing event listeners.
 
+Changing inspected node to #document...
 
 == Running test suite: DOM.eventListeners
 -- Running test case: DOM.eventListeners.Initial

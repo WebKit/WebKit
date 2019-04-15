@@ -251,11 +251,13 @@ private:
     std::unique_ptr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<Node> m_mousedOverNode;
+    RefPtr<Node> m_inspectedNode;
     std::unique_ptr<HighlightConfig> m_inspectModeHighlightConfig;
     std::unique_ptr<InspectorHistory> m_history;
     std::unique_ptr<DOMEditor> m_domEditor;
     bool m_searchingForNode { false };
     bool m_suppressAttributeModifiedEvent { false };
+    bool m_suppressEventListenerChangedEvent { false };
     bool m_documentRequested { false };
 
 #if ENABLE(VIDEO)

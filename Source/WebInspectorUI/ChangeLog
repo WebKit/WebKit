@@ -1,5 +1,16 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Elements: event listener change events should only be fired for the selected node and it's ancestors
+        https://bugs.webkit.org/show_bug.cgi?id=196887
+        <rdar://problem/49870627>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.getEventListeners):
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: replace all uses of `this` with `WI` in Main.js/Test.js
         https://bugs.webkit.org/show_bug.cgi?id=196795
         <rdar://problem/49796618>

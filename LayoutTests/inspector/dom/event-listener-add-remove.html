@@ -209,15 +209,15 @@ function test() {
 
                         addAttribute("onload", 2);
                     });
-                } else if (eventCount === 2)
+                } else if (eventCount === 2) {
                     InspectorTest.log("Attribute event listener replaced.");
-                else if (eventCount === 3) {
+
                     logListeners(1).then(() => {
                         InspectorTest.log("");
 
                         removeAttribute("onload");
                     });
-                } else if (eventCount === 4)
+                } else if (eventCount === 3)
                     logListeners(0).then(resolve, reject);
                 else
                     reject("Event listeners changed too many times.");
@@ -227,8 +227,16 @@ function test() {
         }
     });
 
-    WI.domManager.requestDocument((documentNode) => {
+    WI.domManager.requestDocument(async (documentNode) => {
         node = documentNode;
+
+        InspectorTest.assert(node !== WI.domManager.inspectedNode);
+        InspectorTest.log("Changing inspected node to #document...");
+        await Promise.all([
+            WI.domManager.awaitEvent(WI.DOMManager.Event.InspectedNodeChanged),
+            WI.domManager.setInspectedNode(node),
+        ]);
+        InspectorTest.assert(node === WI.domManager.inspectedNode);
 
         suite.runTestCasesAndFinish();
     });
