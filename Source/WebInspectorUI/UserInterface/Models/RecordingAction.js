@@ -211,7 +211,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             if (context instanceof CanvasRenderingContext2D)
                 return context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
 
-            if (context instanceof WebGLRenderingContext || context instanceof WebGL2RenderingContext) {
+            if (context instanceof WebGLRenderingContext || (window.WebGL2RenderingContext && context instanceof WebGL2RenderingContext)) {
                 let pixels = new Uint8Array(context.drawingBufferWidth * context.drawingBufferHeight * 4);
                 context.readPixels(0, 0, context.canvas.width, context.canvas.height, context.RGBA, context.UNSIGNED_BYTE, pixels);
                 return pixels;

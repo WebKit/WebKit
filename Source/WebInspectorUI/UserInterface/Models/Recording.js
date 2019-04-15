@@ -451,7 +451,7 @@ WI.Recording = class Recording extends WI.Object
         if (this._type === WI.Recording.Type.Canvas2D)
             return createCanvasContext("2d");
 
-        if (this._type === WI.Recording.Type.BitmapRenderer)
+        if (this._type === WI.Recording.Type.CanvasBitmapRenderer)
             return createCanvasContext("bitmaprenderer");
 
         if (this._type === WI.Recording.Type.CanvasWebGL)
