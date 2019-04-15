@@ -343,7 +343,7 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
         // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
         // FIXME: Ensure offset < buffer's stride + format's data size.
         NSUInteger attributeOffset = 0;
-        if (!WTF::convertSafely<NSUInteger, uint64_t>(attributes[i].offset, attributeOffset)) {
+        if (!WTF::convertSafely(attributes[i].offset, attributeOffset)) {
             LOG(WebGPU, "%s: Buffer offset for vertex attribute %u is too large!", functionName, location);
             return false;
         }
@@ -365,7 +365,7 @@ static bool trySetInputStateForPipelineDescriptor(const char* const functionName
             return false;
         }
         NSUInteger inputStride = 0;
-        if (!WTF::convertSafely<NSUInteger, uint64_t>(inputs[j].stride, inputStride)) {
+        if (!WTF::convertSafely(inputs[j].stride, inputStride)) {
             LOG(WebGPU, "%s: Stride for vertex buffer slot %d is too large!", functionName, slot);
             return false;
         }

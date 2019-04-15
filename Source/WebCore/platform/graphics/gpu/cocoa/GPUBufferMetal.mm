@@ -66,7 +66,7 @@ RefPtr<GPUBuffer> GPUBuffer::tryCreate(Ref<GPUDevice>&& device, const GPUBufferD
 {
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger size = 0;
-    if (!WTF::convertSafely<NSUInteger, uint64_t>(descriptor.size, size)) {
+    if (!WTF::convertSafely(descriptor.size, size)) {
         LOG(WebGPU, "GPUBuffer::tryCreate(): Buffer size is too large!");
         return nullptr;
     }

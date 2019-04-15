@@ -141,7 +141,7 @@ void GPUCommandBuffer::copyBufferToTexture(GPUBufferCopyView&& srcBuffer, GPUTex
 
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger sourceOffset = 0;
-    if (!WTF::convertSafely<NSUInteger, uint64_t>(srcBuffer.offset, sourceOffset)) {
+    if (!WTF::convertSafely(srcBuffer.offset, sourceOffset)) {
         LOG(WebGPU, "GPUCommandBuffer::copyBufferToTexture(): Source offset is too large!");
         return;
     }
@@ -185,7 +185,7 @@ void GPUCommandBuffer::copyTextureToBuffer(GPUTextureCopyView&& srcTexture, GPUB
     }
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     NSUInteger destinationOffset = 0;
-    if (!WTF::convertSafely<NSUInteger, uint64_t>(dstBuffer.offset, destinationOffset)) {
+    if (!WTF::convertSafely(dstBuffer.offset, destinationOffset)) {
         LOG(WebGPU, "GPUCommandBuffer::copyTextureToBuffer(): Destination offset is too large!");
         return;
     }

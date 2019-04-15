@@ -1,3 +1,17 @@
+2019-04-15  Justin Fan  <justin_fan@apple.com>
+
+        Let WTF::convertSafely deduce types from arguments.
+
+        Reviewer's (Darin Adler) follow-up to https://bugs.webkit.org/show_bug.cgi?id=196793.
+
+        * platform/graphics/gpu/cocoa/GPUBufferMetal.mm:
+        (WebCore::GPUBuffer::tryCreate):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToTexture):
+        (WebCore::GPUCommandBuffer::copyTextureToBuffer):
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::trySetInputStateForPipelineDescriptor):
+
 2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Throw TypeError when custom element constructor returns a wrong element or tries to create itself
