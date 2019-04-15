@@ -1,3 +1,37 @@
+2019-04-15  John Wilander  <wilander@apple.com>
+
+        Send delayed Ad Click Attribution conversion requests to the click source
+        https://bugs.webkit.org/show_bug.cgi?id=196838
+        <rdar://problem/47650157>
+
+        Reviewed by Chris Dumez and Youenn Fablet.
+
+        WebCore::AdClickAttribution now:
+        - Sets m_earliestTimeToSend correctly based on WallTime::now().
+        - Allows for a test override of the base URL for conversions.
+        - Holds state for whether or not a conversion request has been sent.
+        - Outputs m_earliestTimeToSend and m_conversion->hasBeenSent in toString().
+        - Returns m_earliestTimeToSend as a result of a call to
+        convertAndGetEarliestTimeToSend() which used to be called setConversion().
+
+        Test: http/tests/adClickAttribution/send-attribution-conversion-request.html
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::convertAndGetEarliestTimeToSend):
+        (WebCore::AdClickAttribution::url const):
+        (WebCore::AdClickAttribution::urlForTesting const):
+        (WebCore::AdClickAttribution::markConversionAsSent):
+        (WebCore::AdClickAttribution::wasConversionSent const):
+        (WebCore::AdClickAttribution::toString const):
+        (WebCore::AdClickAttribution::setConversion): Deleted.
+            Renamed convertAndGetEarliestTimeToSend().
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::Conversion::Conversion):
+        (WebCore::AdClickAttribution::Conversion::encode const):
+        (WebCore::AdClickAttribution::Conversion::decode):
+        * platform/Timer.h:
+            Now exports nextFireInterval.
+
 2019-04-15  Chris Dumez  <cdumez@apple.com>
 
         Regression(r237903) Speedometer 2 is 1-2% regressed on iOS

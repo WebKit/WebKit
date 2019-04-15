@@ -2738,3 +2738,17 @@ void WKPageClearAdClickAttribution(WKPageRef page, WKPageClearAdClickAttribution
         callback(callbackContext);
     });
 }
+
+void WKPageSetAdClickAttributionOverrideTimerForTesting(WKPageRef page, bool value, WKPageSetAdClickAttributionOverrideTimerForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setAdClickAttributionOverrideTimerForTesting(value, [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}
+
+void WKPageSetAdClickAttributionConversionURLForTesting(WKPageRef page, WKURLRef URLRef, WKPageSetAdClickAttributionOverrideTimerForTestingFunction callback, void* callbackContext)
+{
+    toImpl(page)->setAdClickAttributionConversionURLForTesting(URL(URL(), toWTFString(URLRef)), [callbackContext, callback] () {
+        callback(callbackContext);
+    });
+}

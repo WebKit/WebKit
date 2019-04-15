@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT void stop();
     bool isActive() const;
 
-    Seconds nextFireInterval() const;
+    WEBCORE_EXPORT Seconds nextFireInterval() const;
     Seconds nextUnalignedFireInterval() const;
     Seconds repeatInterval() const { return m_repeatInterval; }
 

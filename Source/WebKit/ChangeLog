@@ -1,3 +1,86 @@
+2019-04-15  John Wilander  <wilander@apple.com>
+
+        Send delayed Ad Click Attribution conversion requests to the click source
+        https://bugs.webkit.org/show_bug.cgi?id=196838
+        <rdar://problem/47650157>
+
+        Reviewed by Chris Dumez and Youenn Fablet.
+
+        This patch schedules a conversion request with appropriate data going to the
+        click source as a result of an ad click conversion.
+
+        WebKit::AdClickAttributionManager makes use of existing WebKit::PingLoad
+        infrastructure to make the request. This will probably be reworked into a
+        dedicated load class further on.
+
+        New test infrastructure allows for an override of both the conversion URL
+        and the 24-48 hour timer.
+
+        * NetworkProcess/AdClickAttributionManager.cpp: Added.
+        (WebKit::AdClickAttributionManager::ensureDestinationMapForSource):
+        (WebKit::AdClickAttributionManager::store):
+        (WebKit::AdClickAttributionManager::startTimer):
+            Convenience function to support test override.
+        (WebKit::AdClickAttributionManager::convert):
+            This function now sets the timer.
+        (WebKit::AdClickAttributionManager::fireConversionRequest):
+            Fire an individual request.
+        (WebKit::AdClickAttributionManager::firePendingConversionRequests):
+            This is the timer function that iterates over all pending attributions.
+        (WebKit::AdClickAttributionManager::clear):
+            Now clears the two new test settings members.
+        (WebKit::AdClickAttributionManager::toString const):
+        * NetworkProcess/AdClickAttributionManager.h: Renamed from Source/WebKit/NetworkProcess/NetworkAdClickAttribution.h.
+        (WebKit::AdClickAttributionManager::AdClickAttributionManager):
+        (WebKit::AdClickAttributionManager::setPingLoadFunction):
+        (WebKit::AdClickAttributionManager::setOverrideTimerForTesting):
+        (WebKit::AdClickAttributionManager::setConversionURLForTesting):
+        * NetworkProcess/NetworkAdClickAttribution.cpp: Renamed from Source/WebKit/NetworkProcess/NetworkAdClickAttribution.cpp.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::storeAdClickAttribution):
+        (WebKit::NetworkProcess::dumpAdClickAttribution):
+        (WebKit::NetworkProcess::clearAdClickAttribution):
+        (WebKit::NetworkProcess::setAdClickAttributionOverrideTimerForTesting):
+        (WebKit::NetworkProcess::setAdClickAttributionConversionURLForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::NetworkSession):
+        (WebKit::NetworkSession::setAdClickAttributionOverrideTimerForTesting):
+        (WebKit::NetworkSession::setAdClickAttributionConversionURLForTesting):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::PingLoad):
+        (WebKit::m_blobFiles):
+        (WebKit::PingLoad::initialize):
+            The PingLoad constructor is now split in two to allow for construction
+            without a WebKit::NetworkConnectionToWebProcess object. The body of
+            the constructor was moved into the new initialize() function which is
+            shared between constructors.
+        * NetworkProcess/PingLoad.h:
+        * Sources.txt:
+            Removed NetworkProcess/NetworkAdClickAttribution.cpp and added
+            NetworkProcess/NetworkAdClickAttribution.cpp.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetAdClickAttributionOverrideTimerForTesting):
+        (WKPageSetAdClickAttributionConversionURLForTesting):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::dumpAdClickAttribution): Deleted.
+        (WebKit::NetworkProcessProxy::clearAdClickAttribution): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dumpAdClickAttribution):
+        (WebKit::WebPageProxy::clearAdClickAttribution):
+        (WebKit::WebPageProxy::setAdClickAttributionOverrideTimerForTesting):
+        (WebKit::WebPageProxy::setAdClickAttributionConversionURLForTesting):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::dumpAdClickAttribution): Deleted.
+        (WebKit::WebProcessPool::clearAdClickAttribution): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
         WebDriver: Set Cookie endpoint does not correctly set subdomain cookies

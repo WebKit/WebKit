@@ -1606,13 +1606,27 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "dumpAdClickAttribution")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "DumpAdClickAttribution")) {
         dumpAdClickAttribution();
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "clearAdClickAttribution")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearAdClickAttribution")) {
         TestController::singleton().clearAdClickAttribution();
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAdClickAttributionOverrideTimerForTesting")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef value = static_cast<WKBooleanRef>(messageBody);
+        TestController::singleton().setAdClickAttributionOverrideTimerForTesting(WKBooleanGetValue(value));
+        return nullptr;
+    }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAdClickAttributionConversionURLForTesting")) {
+        ASSERT(WKGetTypeID(messageBody) == WKURLGetTypeID());
+        WKURLRef url = static_cast<WKURLRef>(messageBody);
+        TestController::singleton().setAdClickAttributionConversionURLForTesting(url);
         return nullptr;
     }
     

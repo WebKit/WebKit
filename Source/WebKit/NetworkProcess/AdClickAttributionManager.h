@@ -25,15 +25,19 @@
 
 #pragma once
 
+#include "NetworkResourceLoadParameters.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceResponse.h>
+#include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class NetworkAdClickAttribution {
+class AdClickAttributionManager {
 public:
 
     using RegistrableDomain = WebCore::RegistrableDomain;
@@ -43,15 +47,34 @@ public:
     using DestinationMap = HashMap<Destination, AdClickAttribution>;
     using Conversion = WebCore::AdClickAttribution::Conversion;
 
+    AdClickAttributionManager()
+        : m_firePendingConversionRequestsTimer(*this, &AdClickAttributionManager::firePendingConversionRequests)
+    , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
+        UNUSED_PARAM(params);
+        completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
+    })
+    {
+    }
+
     void store(AdClickAttribution&&);
     void convert(const Source&, const Destination&, Conversion&&);
     void clear(CompletionHandler<void()>&&);
     void toString(CompletionHandler<void(String)>&&) const;
+    void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
+    void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
+    void setConversionURLForTesting(URL&& testURL) { m_conversionBaseURLForTesting = WTFMove(testURL); }
 
 private:
     DestinationMap& ensureDestinationMapForSource(const Source&);
+    void startTimer(Seconds);
+    void fireConversionRequest(const AdClickAttribution&);
+    void firePendingConversionRequests();
 
     HashMap<Source, DestinationMap> m_adClickAttributionMap;
+    WebCore::Timer m_firePendingConversionRequestsTimer;
+    Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
+    bool m_isRunningTest { false };
+    Optional<URL> m_conversionBaseURLForTesting;
 };
     
 } // namespace WebKit

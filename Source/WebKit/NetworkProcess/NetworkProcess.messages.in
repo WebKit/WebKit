@@ -169,4 +169,6 @@ messages -> NetworkProcess LegacyReceiver {
     StoreAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution adClickAttribution)
     DumpAdClickAttribution(PAL::SessionID sessionID) -> (String adClickAttributionState) Async
     ClearAdClickAttribution(PAL::SessionID sessionID) -> () Async
+    SetAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
+    SetAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
 }

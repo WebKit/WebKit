@@ -306,6 +306,8 @@ public:
 
     String dumpAdClickAttribution();
     void clearAdClickAttribution();
+    void setAdClickAttributionOverrideTimerForTesting(bool value);
+    void setAdClickAttributionConversionURLForTesting(WKURLRef);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);

@@ -8858,12 +8858,46 @@ void WebPageProxy::removeDataDetectedLinks(CompletionHandler<void(const DataDete
 
 void WebPageProxy::dumpAdClickAttribution(CompletionHandler<void(const String&)>&& completionHandler)
 {
-    m_process->processPool().dumpAdClickAttribution(m_websiteDataStore->sessionID(), WTFMove(completionHandler));
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler(emptyString());
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::DumpAdClickAttribution(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    }
 }
 
 void WebPageProxy::clearAdClickAttribution(CompletionHandler<void()>&& completionHandler)
 {
-    m_process->processPool().clearAdClickAttribution(m_websiteDataStore->sessionID(), WTFMove(completionHandler));
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler();
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::ClearAdClickAttribution(m_websiteDataStore->sessionID()), WTFMove(completionHandler));
+    }
+}
+
+void WebPageProxy::setAdClickAttributionOverrideTimerForTesting(bool value, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler();
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SetAdClickAttributionOverrideTimerForTesting(m_websiteDataStore->sessionID(), value), WTFMove(completionHandler));
+    }
+}
+
+void WebPageProxy::setAdClickAttributionConversionURLForTesting(const URL& url, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* networkProcess = m_process->processPool().networkProcess()) {
+        if (!networkProcess->canSendMessage()) {
+            completionHandler();
+            return;
+        }
+        networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SetAdClickAttributionConversionURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
+    }
 }
 
 #if ENABLE(SPEECH_SYNTHESIS)

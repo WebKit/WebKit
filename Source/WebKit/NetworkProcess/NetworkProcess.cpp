@@ -2497,13 +2497,13 @@ void NetworkProcess::platformSyncAllCookies(CompletionHandler<void()>&& completi
 
 void NetworkProcess::storeAdClickAttribution(PAL::SessionID sessionID, WebCore::AdClickAttribution&& adClickAttribution)
 {
-    if (auto session = networkSession(sessionID))
+    if (auto* session = networkSession(sessionID))
         session->storeAdClickAttribution(WTFMove(adClickAttribution));
 }
 
 void NetworkProcess::dumpAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
-    if (auto session = networkSession(sessionID))
+    if (auto* session = networkSession(sessionID))
         return session->dumpAdClickAttribution(WTFMove(completionHandler));
 
     completionHandler({ });
@@ -2511,8 +2511,24 @@ void NetworkProcess::dumpAdClickAttribution(PAL::SessionID sessionID, Completion
 
 void NetworkProcess::clearAdClickAttribution(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-    if (auto session = networkSession(sessionID))
+    if (auto* session = networkSession(sessionID))
         return session->clearAdClickAttribution(WTFMove(completionHandler));
+    
+    completionHandler();
+}
+
+void NetworkProcess::setAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setAdClickAttributionOverrideTimerForTesting(value);
+    
+    completionHandler();
+}
+
+void NetworkProcess::setAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL&& url, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* session = networkSession(sessionID))
+        session->setAdClickAttributionConversionURLForTesting(WTFMove(url));
     
     completionHandler();
 }

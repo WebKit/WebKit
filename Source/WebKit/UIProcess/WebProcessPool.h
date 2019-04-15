@@ -493,8 +493,6 @@ public:
     void sendDisplayConfigurationChangedMessageForTesting();
     void clearCurrentModifierStateForTesting();
 
-    void dumpAdClickAttribution(PAL::SessionID, CompletionHandler<void(const String&)>&&);
-    void clearAdClickAttribution(PAL::SessionID, CompletionHandler<void()>&&);
     void committedCrossSiteLoadWithLinkDecoration(PAL::SessionID, const WebCore::RegistrableDomain& fromDomain, const WebCore::RegistrableDomain& toDomain, uint64_t pageID);
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

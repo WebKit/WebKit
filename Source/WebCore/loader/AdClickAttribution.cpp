@@ -80,15 +80,17 @@ Optional<AdClickAttribution::Conversion> AdClickAttribution::parseConversionRequ
     return { };
 }
 
-void AdClickAttribution::setConversion(Conversion&& conversion)
+Optional<Seconds> AdClickAttribution::convertAndGetEarliestTimeToSend(Conversion&& conversion)
 {
     if (!conversion.isValid() || (m_conversion && m_conversion->priority > conversion.priority))
-        return;
+        return { };
 
     m_conversion = WTFMove(conversion);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
-    m_earliestTimeToSend = m_timeOfAdClick + 24_h + Seconds(randomNumber() * (24_h).value());
+    auto seconds = 24_h + Seconds(randomNumber() * (24_h).value());
+    m_earliestTimeToSend = WallTime::now() + seconds;
+    return seconds;
 }
 
 URL AdClickAttribution::url() const
@@ -99,7 +101,7 @@ URL AdClickAttribution::url() const
     StringBuilder builder;
     builder.appendLiteral("https://");
     builder.append(m_source.registrableDomain.string());
-    builder.appendLiteral("/.well-known/ad-click-attribution/");
+    builder.appendLiteral(adClickAttributionPathPrefix);
     builder.appendNumber(m_conversion.value().data);
     builder.append('/');
     builder.appendNumber(m_campaign.id);
@@ -128,6 +130,32 @@ URL AdClickAttribution::referrer() const
     return URL();
 }
 
+URL AdClickAttribution::urlForTesting(const URL& baseURL) const
+{
+    auto host = m_source.registrableDomain.string();
+    if (host != "localhost" && host != "127.0.0.1")
+        return URL();
+
+    StringBuilder builder;
+    builder.appendLiteral("?conversion=");
+    builder.appendNumber(m_conversion.value().data);
+    builder.appendLiteral("&campaign=");
+    builder.appendNumber(m_campaign.id);
+    return URL(baseURL, builder.toString());
+}
+
+void AdClickAttribution::markConversionAsSent()
+{
+    ASSERT(m_conversion);
+    if (m_conversion)
+        m_conversion->wasSent = Conversion::WasSent::Yes;
+}
+
+bool AdClickAttribution::wasConversionSent() const
+{
+    return m_conversion && m_conversion->wasSent == Conversion::WasSent::Yes;
+}
+
 String AdClickAttribution::toString() const
 {
     StringBuilder builder;
@@ -142,6 +170,15 @@ String AdClickAttribution::toString() const
         builder.appendNumber(m_conversion.value().data);
         builder.appendLiteral("\nConversion priority: ");
         builder.appendNumber(m_conversion.value().priority);
+        builder.appendLiteral("\nConversion earliest time to send: ");
+        if (!m_earliestTimeToSend)
+            builder.appendLiteral("Not set");
+        else {
+            auto secondsUntilSend = *m_earliestTimeToSend - WallTime::now();
+            builder.append((secondsUntilSend >= 24_h && secondsUntilSend <= 48_h) ? "Within 24-48 hours" : "Outside 24-48 hours");
+        }
+        builder.appendLiteral("\nConversion request sent: ");
+        builder.append((wasConversionSent() ? "true" : "false"));
     } else
         builder.appendLiteral("\nNo conversion data.");
     builder.append('\n');

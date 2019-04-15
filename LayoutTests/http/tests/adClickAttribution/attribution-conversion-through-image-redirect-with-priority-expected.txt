@@ -7,3 +7,5 @@ Destination: localhost
 Campaign ID: 3
 Conversion data: 12
 Conversion priority: 3
+Conversion earliest time to send: Within 24-48 hours
+Conversion request sent: false

@@ -2795,14 +2795,29 @@ void TestRunner::setShouldDismissJavaScriptAlertsAsynchronously(bool shouldDismi
 
 void TestRunner::dumpAdClickAttribution()
 {
-    auto messageName = adoptWK(WKStringCreateWithUTF8CString("dumpAdClickAttribution"));
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("DumpAdClickAttribution"));
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
 }
 
 void TestRunner::clearAdClickAttribution()
 {
-    auto messageName = adoptWK(WKStringCreateWithUTF8CString("clearAdClickAttribution"));
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("ClearAdClickAttribution"));
     WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), nullptr, nullptr);
+}
+
+void TestRunner::setAdClickAttributionOverrideTimerForTesting(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAdClickAttributionOverrideTimerForTesting"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), nullptr);
+}
+
+void TestRunner::setAdClickAttributionConversionURLForTesting(JSStringRef urlString)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAdClickAttributionConversionURLForTesting"));
+    auto wtfURLString = toWTFString(WKStringCreateWithJSString(urlString));
+    WKRetainPtr<WKURLRef> messageBody(AdoptWK, WKURLCreateWithUTF8CString(wtfURLString.utf8().data()));
+    WKBundlePagePostSynchronousMessageForTesting(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get(), nullptr);
 }
 
 } // namespace WTR

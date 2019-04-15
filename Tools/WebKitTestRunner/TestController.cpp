@@ -3574,4 +3574,18 @@ void TestController::clearAdClickAttribution()
     runUntil(callbackContext.done, noTimeout);
 }
 
+void TestController::setAdClickAttributionOverrideTimerForTesting(bool value)
+{
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageSetAdClickAttributionOverrideTimerForTesting(m_mainWebView->page(), value, adClickAttributionVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
+void TestController::setAdClickAttributionConversionURLForTesting(WKURLRef url)
+{
+    AdClickAttributionVoidCallbackContext callbackContext(*this);
+    WKPageSetAdClickAttributionConversionURLForTesting(m_mainWebView->page(), url, adClickAttributionVoidCallback, &callbackContext);
+    runUntil(callbackContext.done, noTimeout);
+}
+
 } // namespace WTR

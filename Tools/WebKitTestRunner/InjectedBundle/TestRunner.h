@@ -494,6 +494,8 @@ public:
     // Ad Click Attribution.
     void dumpAdClickAttribution();
     void clearAdClickAttribution();
+    void setAdClickAttributionOverrideTimerForTesting(bool value);
+    void setAdClickAttributionConversionURLForTesting(JSStringRef);
 
 private:
     TestRunner();

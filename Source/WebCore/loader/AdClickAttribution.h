@@ -203,9 +203,12 @@ public:
     };
     
     struct Conversion {
-        explicit Conversion(ConversionData data, Priority priority)
+        enum class WasSent : bool { No, Yes };
+        
+        Conversion(ConversionData data, Priority priority, WasSent wasSent = WasSent::No)
             : data { data }
             , priority { priority.value }
+            , wasSent { wasSent }
         {
         }
 
@@ -216,6 +219,7 @@ public:
         
         ConversionData data;
         PriorityValue priority;
+        WasSent wasSent = WasSent::No;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<Conversion> decode(Decoder&);
@@ -231,12 +235,15 @@ public:
     }
 
     WEBCORE_EXPORT static Optional<Conversion> parseConversionRequest(const URL& redirectURL);
-    WEBCORE_EXPORT void setConversion(Conversion&&);
+    WEBCORE_EXPORT Optional<Seconds> convertAndGetEarliestTimeToSend(Conversion&&);
     WEBCORE_EXPORT URL url() const;
+    WEBCORE_EXPORT URL urlForTesting(const URL& baseURLForTesting) const;
     WEBCORE_EXPORT URL referrer() const;
     const Source& source() const { return m_source; };
     const Destination& destination() const { return m_destination; };
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
+    WEBCORE_EXPORT void markConversionAsSent();
+    WEBCORE_EXPORT bool wasConversionSent() const;
 
     WEBCORE_EXPORT String toString() const;
 
@@ -304,7 +311,7 @@ Optional<AdClickAttribution> AdClickAttribution::decode(Decoder& decoder)
 template<class Encoder>
 void AdClickAttribution::Conversion::encode(Encoder& encoder) const
 {
-    encoder << data << priority;
+    encoder << data << priority << wasSent;
 }
 
 template<class Decoder>
@@ -320,7 +327,12 @@ Optional<AdClickAttribution::Conversion> AdClickAttribution::Conversion::decode(
     if (!priority)
         return WTF::nullopt;
     
-    return Conversion { WTFMove(*data), Priority { WTFMove(*priority) } };
+    Optional<WasSent> wasSent;
+    decoder >> wasSent;
+    if (!wasSent)
+        return WTF::nullopt;
+    
+    return Conversion { WTFMove(*data), Priority { *priority }, *wasSent };
 }
 
 } // namespace WebCore

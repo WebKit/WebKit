@@ -381,4 +381,6 @@ interface TestRunner {
 
     // Ad Click Attribution
     void clearAdClickAttribution();
+    void setAdClickAttributionOverrideTimerForTesting(boolean value);
+    void setAdClickAttributionConversionURLForTesting(DOMString url);
 };

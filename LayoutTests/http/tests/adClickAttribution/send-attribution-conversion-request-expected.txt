@@ -1,0 +1,19 @@
+Tests sending of ad click attribution requests after a conversion.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Conversion received.
+HTTP_HOST: 127.0.0.1:8000
+REQUEST_URI: /adClickAttribution/resources/conversionReport.php?conversion=12&campaign=3
+No cookies in conversion request.
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+Conversion data: 12
+Conversion priority: 0
+Conversion earliest time to send: Within 24-48 hours
+Conversion request sent: true
