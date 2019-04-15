@@ -43,11 +43,6 @@ public:
         return adoptRef(*new Private(pattern, caseSensitivity, multilineMode, unicodeMode));
     }
 
-    int lastMatchLength { -1 };
-
-    unsigned m_numSubpatterns;
-    std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
-
 private:
     Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
         : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode, unicodeMode))
@@ -78,8 +73,13 @@ private:
         return JSC::Yarr::byteCompile(pattern, &m_regexAllocator);
     }
 
-    BumpPointerAllocator m_regexAllocator;
     JSC::Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
+    BumpPointerAllocator m_regexAllocator;
+
+public:
+    int lastMatchLength { -1 };
+    unsigned m_numSubpatterns;
+    std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 };
 
 RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)

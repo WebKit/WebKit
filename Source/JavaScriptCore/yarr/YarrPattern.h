@@ -122,14 +122,14 @@ public:
     bool m_anyCharacter : 1;
 };
 
-enum QuantifierType {
+enum QuantifierType : uint8_t {
     QuantifierFixedCount,
     QuantifierGreedy,
     QuantifierNonGreedy,
 };
 
 struct PatternTerm {
-    enum Type {
+    enum Type : uint8_t {
         TypeAssertionBOL,
         TypeAssertionEOL,
         TypeAssertionWordBoundary,
@@ -143,6 +143,9 @@ struct PatternTerm {
     } type;
     bool m_capture :1;
     bool m_invert :1;
+    QuantifierType quantityType;
+    Checked<unsigned> quantityMinCount;
+    Checked<unsigned> quantityMaxCount;
     union {
         UChar32 patternCharacter;
         CharacterClass* characterClass;
@@ -159,9 +162,6 @@ struct PatternTerm {
             bool eolAnchor : 1;
         } anchors;
     };
-    QuantifierType quantityType;
-    Checked<unsigned> quantityMinCount;
-    Checked<unsigned> quantityMaxCount;
     unsigned inputPosition;
     unsigned frameLocation;
 

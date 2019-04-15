@@ -770,7 +770,7 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
             move(output, reg);
     }
 
-    enum YarrOpCode {
+    enum YarrOpCode : uint8_t {
         // These nodes wrap body alternatives - those in the main disjunction,
         // rather than subpatterns or assertions. These are chained together in
         // a doubly linked list, with a 'begin' node for the first alternative,
@@ -816,8 +816,8 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
     // and JIT compilation data structures.
     struct YarrOp {
         explicit YarrOp(PatternTerm* term)
-            : m_op(OpTerm)
-            , m_term(term)
+            : m_term(term)
+            , m_op(OpTerm)
             , m_isDeadCode(false)
         {
         }
@@ -828,10 +828,6 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         {
         }
 
-        // The operation, as a YarrOpCode, and also a reference to the PatternTerm.
-        YarrOpCode m_op;
-        PatternTerm* m_term;
-
         // For alternatives, this holds the PatternAlternative and doubly linked
         // references to this alternative's siblings. In the case of the
         // OpBodyAlternativeEnd node at the end of a section of repeating nodes,
@@ -840,6 +836,10 @@ class YarrGenerator : public YarrJITInfo, private MacroAssembler {
         PatternAlternative* m_alternative;
         size_t m_previousOp;
         size_t m_nextOp;
+        
+        // The operation, as a YarrOpCode, and also a reference to the PatternTerm.
+        PatternTerm* m_term;
+        YarrOpCode m_op;
 
         // Used to record a set of Jumps out of the generated code, typically
         // used for jumps out to backtracking code, and a single reentry back

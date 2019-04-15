@@ -585,7 +585,7 @@ private:
     /*
      * parseCharacterClass():
      *
-     * Helper for parseTokens(); calls dirctly and indirectly (via parseCharacterClassEscape)
+     * Helper for parseTokens(); calls directly and indirectly (via parseCharacterClassEscape)
      * to an instance of CharacterClassParserDelegate, to describe the character class to the
      * delegate.
      */
