@@ -102,7 +102,7 @@ enum class WebsiteDataType;
 struct WebPageCreationParameters;
 struct WebPageGroupData;
 struct WebPreferencesStore;
-class WebSQLiteDatabaseTracker;
+class WebSQLiteDatabaseTracker
 struct WebProcessCreationParameters;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
