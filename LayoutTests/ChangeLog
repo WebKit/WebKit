@@ -1,5 +1,14 @@
 2019-04-15  Shawn Roberts  <sroberts@apple.com>
 
+        storage/indexeddb/modern/gc-closes-database-private.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=194450
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations: Updating test expectations
+
+2019-04-15  Shawn Roberts  <sroberts@apple.com>
+
         imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=196944
 

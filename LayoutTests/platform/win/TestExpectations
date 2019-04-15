@@ -4333,3 +4333,5 @@ webkit.org/b/196869 imported/mozilla/css-animations/test_animation-currenttime.h
 
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
+
+webkit.org/b/194450 storage/indexeddb/modern/gc-closes-database-private.html [ Skip ]
