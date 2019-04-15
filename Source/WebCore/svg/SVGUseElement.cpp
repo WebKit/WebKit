@@ -321,6 +321,8 @@ static inline void disassociateAndRemoveClones(const Vector<Element*>& clones)
     for (auto& clone : clones) {
         for (auto& descendant : descendantsOfType<SVGElement>(*clone))
             descendant.setCorrespondingElement(nullptr);
+        if (is<SVGElement>(clone))
+            downcast<SVGElement>(*clone).setCorrespondingElement(nullptr);
         clone->parentNode()->removeChild(*clone);
     }
 }

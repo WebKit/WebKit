@@ -1,3 +1,31 @@
+2019-04-15  Said Abou-Hallawa  <said@apple.com>
+
+        ASSERT fires when removing a disallowed clone from the shadow tree without reseting its corresponding element
+        https://bugs.webkit.org/show_bug.cgi?id=196895
+
+        Reviewed by Darin Adler.
+
+        When cloning elements to the shadow tree of an SVGUseElement, the
+        corresponding element links are set from the clones to the originals.
+        Later some of the elements may be disallowed to exist in the shadow tree.
+        For example the SVGPatternElement is disallowed and has to be removed 
+        even after cloning. The problem is the corresponding elements are not
+        reset to null. Usually this is not a problem because the removed elements
+        will be deleted and the destructor of SVGElement will reset the corresponding
+        element links. However in some cases, the cloned element is referenced
+        from another SVGElement, for example the target of a SVGTRefElement. In
+        this case the clone won't be deleted but it will be linked to the original
+        and the event listeners won't be copied from the original. When the
+        original is deleted, its event listeners have to be removed. The event
+        listeners of the clones also ave to be removed. But because the event
+        listeners of the original were not copied when cloning, the assertion in
+        SVGElement::removeEventListener() fires.
+
+        Test: svg/custom/use-disallowed-element-clear-corresponding-element.html
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::disassociateAndRemoveClones):
+
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: DOMDebugger: "Attribute Modified" breakpoints pause after the modification occurs for the style attribute
