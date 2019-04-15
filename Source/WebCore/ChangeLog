@@ -1,3 +1,26 @@
+2019-04-15  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r237903) Speedometer 2 is 1-2% regressed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=196841
+        <rdar://problem/45957016>
+
+        Reviewed by Myles C. Maxfield.
+
+        Speedometer 2 content does not use the text-underline-offset and text-decoration-thickness
+        features that were added in r237903 so I looked for behavior changes in the context of
+        Speedometer from r237903. I found that RenderStyle::changeAffectsVisualOverflow() started
+        returning true a lot more often after r237903. The reason is that r237903 dropped the
+        visualOverflowForDecorations() checks in this method and started returning true a lot
+        more as a result.
+
+        To restore previous behavior, this patch adds back the visualOverflowForDecorations() checks
+        that were dropped in r237903. I have verified that with this patch,
+        RenderStyle::changeAffectsVisualOverflow() returns true as many times as it used to before
+        r237903.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+
 2019-04-15  Said Abou-Hallawa  <said@apple.com>
 
         ASSERT fires when removing a disallowed clone from the shadow tree without reseting its corresponding element
