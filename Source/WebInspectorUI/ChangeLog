@@ -1,5 +1,18 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: sidebar panels shouldn't be added as subviews unless visible
+        https://bugs.webkit.org/show_bug.cgi?id=196888
+        <rdar://problem/49870659>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.insertSidebarPanel):
+        (WI.Sidebar.prototype.removeSidebarPanel):
+        (WI.Sidebar.prototype.set selectedSidebarPanel):
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Elements: event listener change events should only be fired for the selected node and it's ancestors
         https://bugs.webkit.org/show_bug.cgi?id=196887
         <rdar://problem/49870627>
