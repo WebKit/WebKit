@@ -1,3 +1,9 @@
+2019-04-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WKL] Unreviewed test gardening.
+
+        * platform/wincairo-wk1/TestExpectations: Skip animation tests.
+
 2019-04-14  Rob Buis  <rbuis@igalia.com>
 
         Link prefetch not useful for top-level navigation
