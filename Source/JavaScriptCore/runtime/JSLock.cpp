@@ -147,7 +147,11 @@ void JSLock::didAcquireLock()
     void* p = currentStackPointer();
     m_vm->setStackPointerAtVMEntry(p);
 
-    m_vm->heap.machineThreads().addCurrentThread();
+    if (m_vm->heap.machineThreads().addCurrentThread()) {
+        if (isKernTCSMAvailable())
+            enableKernTCSM();
+    }
+
 #if ENABLE(WEBASSEMBLY)
     Wasm::startTrackingCurrentThread();
 #endif

@@ -27,6 +27,7 @@
 #include "Options.h"
 
 #include "AssemblerCommon.h"
+#include "CPU.h"
 #include "LLIntCommon.h"
 #include "MinimumReservedZoneSize.h"
 #include "SigillCrashAnalyzer.h"
@@ -204,7 +205,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
 
 static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int minimum = 1)
 {
-    int cpusToUse = std::min(WTF::numberOfProcessorCores(), maxNumberOfWorkerThreads);
+    int cpusToUse = std::min(kernTCSMAwareNumberOfProcessorCores(), maxNumberOfWorkerThreads);
 
     // Be paranoid, it is the OS we're dealing with, after all.
     ASSERT(cpusToUse >= 1);
@@ -213,7 +214,7 @@ static unsigned computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int m
 
 static int32_t computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta)
 {
-    if (WTF::numberOfProcessorCores() <= 2)
+    if (kernTCSMAwareNumberOfProcessorCores() <= 2)
         return twoCorePriorityDelta;
 
     return multiCorePriorityDelta;
