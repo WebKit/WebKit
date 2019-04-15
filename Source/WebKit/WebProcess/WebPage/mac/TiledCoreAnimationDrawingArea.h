@@ -86,7 +86,7 @@ private:
 
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
-    bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
+    bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones) override;
 
     enum class FlushType { Normal, TransientZoom };
     void flushLayers(FlushType = FlushType::Normal);
@@ -125,7 +125,7 @@ private:
     void updateScrolledExposedRect();
     void scaleViewToFitDocumentIfNeeded();
 
-    void sendPendingNewlyReachedLayoutMilestones();
+    void sendPendingNewlyReachedPaintingMilestones();
 
     void layerFlushRunLoopCallback();
     void invalidateLayerFlushRunLoopObserver();
@@ -163,7 +163,7 @@ private:
 
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 
-    OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedLayoutMilestones;
+    OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
     Vector<CallbackID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_layerFlushRunLoopObserver;
@@ -177,6 +177,12 @@ private:
     bool m_isLayerFlushThrottlingTemporarilyDisabledForInteraction { false };
     bool m_needsSendEnterAcceleratedCompositingMode { true };
 };
+
+inline bool TiledCoreAnimationDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)
+{
+    m_pendingNewlyReachedPaintingMilestones.add(paintMilestones);
+    return true;
+}
 
 } // namespace WebKit
 

@@ -6225,8 +6225,12 @@ void WebPage::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone
     ASSERT(!userData);
 
     // The drawing area might want to defer dispatch of didLayout to the UI process.
-    if (m_drawingArea && m_drawingArea->dispatchDidReachLayoutMilestone(milestones))
-        return;
+    if (m_drawingArea) {
+        static auto paintMilestones = OptionSet<WebCore::LayoutMilestone> { DidHitRelevantRepaintedObjectsAreaThreshold, DidFirstFlushForHeaderLayer, DidFirstPaintAfterSuppressedIncrementalRendering, DidRenderSignificantAmountOfText, DidFirstMeaningfulPaint };   
+        auto drawingAreaRelatedMilestones = milestones & paintMilestones;
+        if (drawingAreaRelatedMilestones && m_drawingArea->addMilestonesToDispatch(drawingAreaRelatedMilestones))
+            milestones.remove(drawingAreaRelatedMilestones);
+    }
 
     send(Messages::WebPageProxy::DidReachLayoutMilestone(milestones));
 }

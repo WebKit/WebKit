@@ -390,8 +390,8 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     backingStoreCollection.willCommitLayerTree(layerTransaction);
     m_webPage.willCommitLayerTree(layerTransaction);
 
-    layerTransaction.setNewlyReachedLayoutMilestones(m_pendingNewlyReachedLayoutMilestones);
-    m_pendingNewlyReachedLayoutMilestones = { };
+    layerTransaction.setNewlyReachedPaintingMilestones(m_pendingNewlyReachedPaintingMilestones);
+    m_pendingNewlyReachedPaintingMilestones = { };
 
     layerTransaction.setActivityStateChangeID(m_activityStateChangeID);
     m_activityStateChangeID = ActivityStateChangeAsynchronous;
@@ -530,12 +530,6 @@ void RemoteLayerTreeDrawingArea::addTransactionCallbackID(CallbackID callbackID)
 
     m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
     scheduleCompositingLayerFlush();
-}
-
-bool RemoteLayerTreeDrawingArea::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
-{
-    m_pendingNewlyReachedLayoutMilestones.add(layoutMilestones);
-    return true;
 }
 
 void RemoteLayerTreeDrawingArea::adoptLayersFromDrawingArea(DrawingArea& oldDrawingArea)

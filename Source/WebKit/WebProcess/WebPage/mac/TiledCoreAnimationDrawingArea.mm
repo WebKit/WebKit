@@ -436,13 +436,13 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(W
 #endif
 }
 
-void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones()
+void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
 {
-    if (!m_pendingNewlyReachedLayoutMilestones)
+    if (!m_pendingNewlyReachedPaintingMilestones)
         return;
 
-    m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedLayoutMilestones));
-    m_pendingNewlyReachedLayoutMilestones = { };
+    m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(m_pendingNewlyReachedPaintingMilestones));
+    m_pendingNewlyReachedPaintingMilestones = { };
 }
 
 void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
@@ -484,7 +484,7 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
                     corePage->inspectorController().didComposite(*coreFrame);
             }
             if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
-                drawingArea->sendPendingNewlyReachedLayoutMilestones();
+                drawingArea->sendPendingNewlyReachedPaintingMilestones();
         } forPhase:kCATransactionPhasePostCommit];
 
         bool didFlushAllFrames = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
@@ -929,12 +929,6 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, Float
 void TiledCoreAnimationDrawingArea::addFence(const MachSendRight& fencePort)
 {
     m_layerHostingContext->setFencePort(fencePort.sendRight());
-}
-
-bool TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone> layoutMilestones)
-{
-    m_pendingNewlyReachedLayoutMilestones.add(layoutMilestones);
-    return true;
 }
 
 void TiledCoreAnimationDrawingArea::layerFlushRunLoopCallback()

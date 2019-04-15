@@ -132,7 +132,7 @@ public:
 
     virtual void setShouldScaleViewToFitDocument(bool) { }
 
-    virtual bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) { return false; }
+    virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.

@@ -255,7 +255,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     didRefreshDisplay();
 #endif
 
-    if (auto milestones = layerTreeTransaction.newlyReachedLayoutMilestones())
+    if (auto milestones = layerTreeTransaction.newlyReachedPaintingMilestones())
         m_webPageProxy.didReachLayoutMilestone(milestones);
 
     for (auto& callbackID : layerTreeTransaction.callbackIDs()) {

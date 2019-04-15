@@ -1,3 +1,43 @@
+2019-04-15  Zalan Bujtas  <zalan@apple.com>
+
+        DrawingArea should only capture painting related milestones
+        https://bugs.webkit.org/show_bug.cgi?id=196926
+        <rdar://problem/48003845>
+
+        Reviewed by Tim Horton.
+
+        While dispatching layout milestones (mixture of layout and painting items), the associated drawing areas should only capture the painting related milestones.
+        These captured milestones get dispatched later in the commit handler to ensure that they are not forwarded prematurely.
+        However the truly layout related milestones (e.g. DidFirstVisuallyNonEmptyLayout) should be dispatched right away with no delay.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::newlyReachedPaintingMilestones const):
+        (WebKit::RemoteLayerTreeTransaction::setNewlyReachedPaintingMilestones):
+        (WebKit::RemoteLayerTreeTransaction::newlyReachedLayoutMilestones const): Deleted.
+        (WebKit::RemoteLayerTreeTransaction::setNewlyReachedLayoutMilestones): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode const):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::addMilestonesToDispatch):
+        (WebKit::DrawingArea::dispatchDidReachLayoutMilestone): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::addMilestonesToDispatch):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        (WebKit::RemoteLayerTreeDrawingArea::dispatchDidReachLayoutMilestone): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dispatchDidReachLayoutMilestone):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (WebKit::TiledCoreAnimationDrawingArea::addMilestonesToDispatch):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::sendPendingNewlyReachedLayoutMilestones): Deleted.
+        (WebKit::TiledCoreAnimationDrawingArea::dispatchDidReachLayoutMilestone): Deleted.
+
 2019-04-15  John Wilander  <wilander@apple.com>
 
         Send delayed Ad Click Attribution conversion requests to the click source

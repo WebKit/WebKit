@@ -271,8 +271,8 @@ public:
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
     void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTFMove(callbackIDs); }
 
-    OptionSet<WebCore::LayoutMilestone> newlyReachedLayoutMilestones() const { return m_newlyReachedLayoutMilestones; }
-    void setNewlyReachedLayoutMilestones(OptionSet<WebCore::LayoutMilestone> milestones) { m_newlyReachedLayoutMilestones = milestones; }
+    OptionSet<WebCore::LayoutMilestone> newlyReachedPaintingMilestones() const { return m_newlyReachedPaintingMilestones; }
+    void setNewlyReachedPaintingMilestones(OptionSet<WebCore::LayoutMilestone> milestones) { m_newlyReachedPaintingMilestones = milestones; }
 
     bool hasEditorState() const { return !!m_editorState; }
     const EditorState& editorState() const { return m_editorState.value(); }
@@ -308,7 +308,7 @@ private:
     uint64_t m_renderTreeSize { 0 };
     uint64_t m_transactionID { 0 };
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
-    OptionSet<WebCore::LayoutMilestone> m_newlyReachedLayoutMilestones;
+    OptionSet<WebCore::LayoutMilestone> m_newlyReachedPaintingMilestones;
     bool m_scaleWasSetByUIProcess { false };
     bool m_allowsUserScaling { false };
     bool m_avoidsUnsafeArea { true };

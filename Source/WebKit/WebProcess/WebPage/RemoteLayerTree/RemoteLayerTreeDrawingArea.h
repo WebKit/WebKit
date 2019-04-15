@@ -109,7 +109,7 @@ private:
 
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
 
-    bool dispatchDidReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>) override;
+    bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) override;
 
     void updateScrolledExposedRect();
     void updateRootLayers();
@@ -173,11 +173,17 @@ private:
     Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
-    OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedLayoutMilestones;
+    OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
 
     RefPtr<WebCore::GraphicsLayer> m_contentLayer;
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 };
+
+inline bool RemoteLayerTreeDrawingArea::addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone> paintMilestones)
+{
+    m_pendingNewlyReachedPaintingMilestones.add(paintMilestones);
+    return true;
+}
 
 } // namespace WebKit
 
