@@ -95,3 +95,5 @@ webkit.org/b/196612 scrollingcoordinator/ios/ui-scroll-fixed.html [ Pass ImageOn
 webkit.org/b/196654 [ Debug ] editing/execCommand/print.html [ Skip ]
 
 webkit.org/b/186581 [ Debug ] fast/parser/xml-error-adopted.xml [ Pass Timeout ]
+
+webkit.org/b/196944 imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html [ Pass Failure ]
