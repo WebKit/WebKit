@@ -1,5 +1,16 @@
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Debugger: deleting a special breakpoint should disable it
+        https://bugs.webkit.org/show_bug.cgi?id=196737
+        <rdar://problem/49740680>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondelete):
+
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: null is not an object (evaluating 'this.selectedTreeElement.reveal')
         https://bugs.webkit.org/show_bug.cgi?id=196804
         <rdar://problem/49800708>

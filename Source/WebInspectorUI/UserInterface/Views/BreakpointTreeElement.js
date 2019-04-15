@@ -77,8 +77,13 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     ondelete()
     {
-        if (!WI.debuggerManager.isBreakpointRemovable(this._breakpoint))
+        if (!WI.debuggerManager.isBreakpointRemovable(this._breakpoint)) {
+            if (this._breakpoint.disabled)
+                InspectorFrontendHost.beep();
+            else
+                this._breakpoint.disabled = true;
             return true;
+        }
 
         // We set this flag so that TreeOutlines that will remove this
         // BreakpointTreeElement will know whether it was deleted from
