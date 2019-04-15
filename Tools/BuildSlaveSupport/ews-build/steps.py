@@ -792,12 +792,16 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
         second_run_failures = getAPITestFailures(second_run_results)
         clean_tree_failures = getAPITestFailures(clean_tree_results)
 
-        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
-        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(first_run_failures))
-        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures))
         failures_with_patch = first_run_failures.intersection(second_run_failures)
+        flaky_failures = first_run_failures.union(second_run_failures) - first_run_failures.intersection(second_run_failures)
+        flaky_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in flaky_failures])
         new_failures = failures_with_patch - clean_tree_failures
         new_failures_string = ', '.join([failure_name.replace('TestWebKitAPI.', '') for failure_name in new_failures])
+
+        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(first_run_failures))
+        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(second_run_failures))
+        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures))
+        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures))
 
         if new_failures:
             self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures))
@@ -812,6 +816,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
             message = 'Found {} pre-existing API tests failures'.format(len(clean_tree_failures))
+            if flaky_failures:
+                message += '. Flaky tests: {}'.format(flaky_failures_string)
             self.build.buildFinished([message], SUCCESS)
 
     @defer.inlineCallbacks

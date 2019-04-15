@@ -1,3 +1,13 @@
+2019-04-15  Aakash Jain  <aakash_jain@apple.com>
+
+        ews-build should clearly indicate flaky test failures
+        https://bugs.webkit.org/show_bug.cgi?id=196947
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults):
+
 2019-04-15  Brent Fulgham  <bfulgham@apple.com>
 
         InjectedBundle parameters often need initialization function called before unarchiving
