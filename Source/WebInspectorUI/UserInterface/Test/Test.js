@@ -67,7 +67,7 @@ WI.loaded = function()
     ];
 
     // Register for events.
-    document.addEventListener("DOMContentLoaded", this.contentLoaded);
+    document.addEventListener("DOMContentLoaded", WI.contentLoaded);
 
     // Non-default global setting values for tests.
     WI.settings.showShadowDOM.value = true;
