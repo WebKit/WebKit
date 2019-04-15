@@ -1346,16 +1346,27 @@ TEST(WKAttachmentTests, ChangeFileWrapperForPastedImage)
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
 }
 
-TEST(WKAttachmentTests, DISABLED_AddAttachmentToConnectedImageElement)
+TEST(WKAttachmentTests, AddAttachmentToConnectedImageElement)
 {
     auto webView = webViewForTestingAttachments();
     [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<img></img>"];
 
+    __block bool doneWaitingForAttachmentInsertion = false;
+    [webView performAfterReceivingMessage:@"inserted" action:^{
+        doneWaitingForAttachmentInsertion = true;
+    }];
+
+    const char *scriptForEnsuringAttachmentIdentifier = \
+        "const identifier = HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img'));"
+        "setTimeout(() => webkit.messageHandlers.testHandler.postMessage('inserted'), 0);"
+        "identifier";
+
     ObserveAttachmentUpdatesForScope observer(webView.get());
-    NSString *attachmentIdentifier = [webView stringByEvaluatingJavaScript:@"HTMLAttachmentElement.getAttachmentIdentifier(document.querySelector('img'))"];
+    NSString *attachmentIdentifier = [webView stringByEvaluatingJavaScript:@(scriptForEnsuringAttachmentIdentifier)];
     auto attachment = retainPtr([webView _attachmentForIdentifier:attachmentIdentifier]);
     EXPECT_WK_STREQ(attachmentIdentifier, [attachment uniqueIdentifier]);
     EXPECT_WK_STREQ(attachmentIdentifier, [webView stringByEvaluatingJavaScript:@"document.querySelector('img').attachmentIdentifier"]);
+    Util::run(&doneWaitingForAttachmentInsertion);
     observer.expectAttachmentUpdates(@[ ], @[ attachment.get() ]);
 
     auto firstImage = adoptNS([[NSFileWrapper alloc] initWithURL:testImageFileURL() options:0 error:nil]);

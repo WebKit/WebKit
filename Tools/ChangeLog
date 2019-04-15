@@ -1,3 +1,37 @@
+2019-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        API test WKAttachmentTests.AddAttachmentToConnectedImageElement is a flaky failure on Mac Release builds
+        https://bugs.webkit.org/show_bug.cgi?id=196905
+        <rdar://problem/49886096>
+
+        Reviewed by Tim Horton.
+
+        This flaky test exercises a race condition between when attachment insertion updates are dispatched from the web
+        process to the UI process, and when script is executed via -[WKWebView evaluateJavaScript:completionHandler:].
+        Since attachment insertion and removal updates from the web process to the UI process are scheduled on a zero-
+        delay timer, we end up with this sequence of events in the problematic (failure) case:
+
+        (a) [UI]    Run script #1 (which calls `HTMLAttachmentElement.getAttachmentIdentifier`)
+            ...IPC from UI to web process...
+        (b) [Web]   Evaluate script #1 in the web process, which schedules attachment updates on a zero-delay timer
+            ...IPC from web to UI process...
+        (c) [UI]    Invoke completion handler for script #1
+        (d) [UI]    Run script #2 (which calls `document.querySelector('img').attachmentIdentifier`)
+            ...IPC from UI to web process...
+        (e) [Web]   Evaluate script #2 in the web process
+        (f) [Web]   Zero-delay timer fires and dispatches attachment updates to the UI process
+
+        ...which means that script #2 will complete before the UI process has received the attachment updates sent in
+        step (f). However, in the case where the flaky test succeeds, the zero-delay timer in (f) fires *before* script
+        #2 is run in step (e).
+
+        This patch fixes the flaky test by waiting until attachment insertion updates are guaranteed to be received in
+        the UI process by waiting on a script message posted by the web process, after attachment updates are
+        dispatched.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-04-14  Aakash Jain  <aakash_jain@apple.com>
 
         Disable Flaky API Test WKAttachmentTests.AddAttachmentToConnectedImageElement
