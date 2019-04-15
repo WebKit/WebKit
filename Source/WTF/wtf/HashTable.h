@@ -464,12 +464,14 @@ namespace WTF {
         void removeAndInvalidate(ValueType*);
         void remove(ValueType*);
 
+        static constexpr unsigned computeBestTableSize(unsigned keyCount);
         bool shouldExpand() const { return (m_keyCount + m_deletedCount) * m_maxLoad >= m_tableSize; }
         bool mustRehashInPlace() const { return m_keyCount * m_minLoad < m_tableSize * 2; }
         bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > KeyTraits::minimumTableSize; }
         ValueType* expand(ValueType* entry = nullptr);
         void shrink() { rehash(m_tableSize / 2, nullptr); }
-
+        void shrinkToBestSize();
+    
         void deleteReleasedWeakBuckets();
 
         ValueType* rehash(unsigned newTableSize, ValueType* entry);
@@ -1149,7 +1151,7 @@ namespace WTF {
         m_keyCount -= removedBucketCount;
 
         if (shouldShrink())
-            shrink();
+            shrinkToBestSize();
         
         internalCheckTableConsistency();
         return removedBucketCount;
@@ -1193,6 +1195,29 @@ namespace WTF {
             newSize = m_tableSize * 2;
 
         return rehash(newSize, entry);
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    constexpr unsigned HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::computeBestTableSize(unsigned keyCount)
+    {
+        unsigned bestTableSize = WTF::roundUpToPowerOfTwo(keyCount) * 2;
+
+        // With maxLoad at 1/2 and minLoad at 1/6, our average load is 2/6.
+        // If we are getting halfway between 2/6 and 1/2 (past 5/12), we double the size to avoid being too close to
+        // loadMax and bring the ratio close to 2/6. This give us a load in the bounds [3/12, 5/12).
+        bool aboveThreeQuarterLoad = keyCount * 12 >= bestTableSize * 5;
+        if (aboveThreeQuarterLoad)
+            bestTableSize *= 2;
+
+        unsigned minimumTableSize = KeyTraits::minimumTableSize;
+        return std::max<unsigned>(bestTableSize, minimumTableSize);
+    }
+
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::shrinkToBestSize()
+    {
+        unsigned minimumTableSize = KeyTraits::minimumTableSize;
+        rehash(std::max<unsigned>(minimumTableSize, computeBestTableSize(m_keyCount)), nullptr);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
@@ -1301,17 +1326,7 @@ namespace WTF {
         if (!otherKeyCount)
             return;
 
-        unsigned bestTableSize = WTF::roundUpToPowerOfTwo(otherKeyCount) * 2;
-
-        // With maxLoad at 1/2 and minLoad at 1/6, our average load is 2/6.
-        // If we are getting halfway between 2/6 and 1/2 (past 5/12), we double the size to avoid being too close to
-        // loadMax and bring the ratio close to 2/6. This give us a load in the bounds [3/12, 5/12).
-        bool aboveThreeQuarterLoad = otherKeyCount * 12 >= bestTableSize * 5;
-        if (aboveThreeQuarterLoad)
-            bestTableSize *= 2;
-
-        unsigned minimumTableSize = KeyTraits::minimumTableSize;
-        m_tableSize = std::max<unsigned>(bestTableSize, minimumTableSize);
+        m_tableSize = computeBestTableSize(otherKeyCount);
         m_tableSizeMask = m_tableSize - 1;
         m_keyCount = otherKeyCount;
         m_table = allocateTable(m_tableSize);

@@ -1,3 +1,19 @@
+2019-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HashTable::removeIf always shrinks the hash table by half even if there is nothing left
+        https://bugs.webkit.org/show_bug.cgi?id=196681
+
+        Reviewed by Darin Adler.
+
+        Made HashTable::removeIf shrink to the "best size", which is the least power of two bigger
+        than twice the key count as already used in the copy constructor.
+
+        * wtf/HashTable.h:
+        (WTF::HashTable::computeBestTableSize): Extracted from the copy constructor.
+        (WTF::HashTable::shrinkToBestSize): Added.
+        (WTF::HashTable::removeIf): Use shrinkToBestSize instead of shrink.
+        (WTF::HashTable::HashTable):
+
 2019-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         Update AudioSession route sharing policy

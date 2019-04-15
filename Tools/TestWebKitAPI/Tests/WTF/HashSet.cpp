@@ -466,4 +466,40 @@ TEST(WTF_HashSet, RemoveRandom)
     ASSERT_TRUE(set1.isEmpty());
 }
 
+TEST(WTF_HashSet, RemoveIf)
+{
+    HashSet<unsigned> set1 { 1, 2, 3, 4, 5 };
+    ASSERT_EQ(set1.size(), 5u);
+    set1.removeIf([] (unsigned item) { return item % 2;  });
+    set1.checkConsistency();
+    ASSERT_TRUE(!set1.contains(1));
+    ASSERT_TRUE(set1.contains(2));
+    ASSERT_TRUE(!set1.contains(3));
+    ASSERT_TRUE(set1.contains(4));
+    ASSERT_TRUE(!set1.contains(5));
+    ASSERT_EQ(set1.size(), 2u);
+}
+
+TEST(WTF_HashSet, RemoveIfShrinkToBestSize)
+{
+    HashSet<unsigned> set1;
+    set1.add(1);
+    unsigned originalCapacity = set1.capacity();
+    while (set1.capacity() < originalCapacity * 4)
+        set1.add(set1.size() + 1);
+    set1.removeIf([] (unsigned item) { return item != 1; });
+    set1.checkConsistency();
+    ASSERT_EQ(set1.size(), 1u);
+    ASSERT_EQ(set1.capacity(), originalCapacity);
+
+    set1.clear();
+    set1.checkConsistency();
+    while (set1.capacity() < originalCapacity * 8)
+        set1.add(set1.size() + 1);
+    set1.removeIf([originalCapacity] (unsigned item) { return item >= originalCapacity / 2; });
+    set1.checkConsistency();
+    ASSERT_EQ(set1.size(), originalCapacity / 2 - 1);
+    ASSERT_EQ(set1.capacity(), originalCapacity);
+}
+
 } // namespace TestWebKitAPI
