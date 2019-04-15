@@ -114,6 +114,7 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
         WI.TimelineView.addEventListener(WI.TimelineView.Event.RecordWasSelected, this._handleTimelineViewRecordSelected, this);
         WI.TimelineView.addEventListener(WI.TimelineView.Event.ScannerShow, this._handleTimelineViewScannerShow, this);
         WI.TimelineView.addEventListener(WI.TimelineView.Event.ScannerHide, this._handleTimelineViewScannerHide, this);
+        WI.TimelineView.addEventListener(WI.TimelineView.Event.NeedsEntireSelectedRange, this._handleTimelineViewNeedsEntireSelectedRange, this);
 
         WI.notifications.addEventListener(WI.Notification.VisibilityStateDidChange, this._inspectorVisibilityStateChanged, this);
 
@@ -931,6 +932,14 @@ WI.TimelineRecordingContentView = class TimelineRecordingContentView extends WI.
             return;
 
         this._timelineOverview.hideScanner();
+    }
+
+    _handleTimelineViewNeedsEntireSelectedRange(event)
+    {
+        if (!this.visible)
+            return;
+
+        this._timelineOverview.timelineRuler.selectEntireRange();
     }
 
     _updateProgressView()
