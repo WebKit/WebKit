@@ -1,3 +1,14 @@
+2019-04-15  Shawn Roberts  <sroberts@apple.com>
+
+        Layout tests 
+        inspector/heap/imported-snapshot.html
+        inspector/heap/snapshot.html are flaky failures
+        https://bugs.webkit.org/show_bug.cgi?id=155607
+
+        Unreviewed test gardening
+
+        * platform/mac/TestExpectations: Updating expectations for flaky failures
+
 2019-04-11  Antoine Quint  <graouts@apple.com>
 
         Ensure iOS layout traits are used for media controls in modern compatibility mode
