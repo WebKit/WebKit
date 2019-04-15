@@ -1,3 +1,13 @@
+2019-04-14  Aakash Jain  <aakash_jain@apple.com>
+
+        Disable Flaky API Test WKAttachmentTests.AddAttachmentToConnectedImageElement
+        https://bugs.webkit.org/show_bug.cgi?id=196909
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-04-13  Tadeu Zagallo  <tzagallo@apple.com>
 
         CodeCache should check that the UnlinkedCodeBlock was successfully created before caching it

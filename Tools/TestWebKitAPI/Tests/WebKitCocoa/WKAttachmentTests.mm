@@ -1346,7 +1346,7 @@ TEST(WKAttachmentTests, ChangeFileWrapperForPastedImage)
     [webView waitForImageElementSizeToBecome:CGSizeMake(215, 174)];
 }
 
-TEST(WKAttachmentTests, AddAttachmentToConnectedImageElement)
+TEST(WKAttachmentTests, DISABLED_AddAttachmentToConnectedImageElement)
 {
     auto webView = webViewForTestingAttachments();
     [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<img></img>"];
