@@ -1,3 +1,17 @@
+2019-04-15  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Do not run clean build by default on EWS builders
+        https://bugs.webkit.org/show_bug.cgi?id=196897
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ApplyPatch.start): Do not create .buildbot-patched file. This is a special file for Buildbot and if this
+        file is present, during the Source checkout, Buildbot cleans the working directory completely (including removing 
+        untracked directories like WebKitBuild).
+        (CheckOutSource.__init__): Pass method=clean so that Buildbot clean the working directory. This does not remove
+        untracked files/directories (like WebKitBuild).
+
 2019-04-15  Per Arne Vollan  <pvollan@apple.com>
 
         TestRunner::notifyDone() should be safely reentrant

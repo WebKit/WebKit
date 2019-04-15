@@ -93,6 +93,7 @@ class CheckOutSource(git.Git):
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                                 timeout=2 * 60 * 60,
                                                 alwaysUseLatest=True,
+                                                method='clean',
                                                 progress=True,
                                                 **kwargs)
 
@@ -133,7 +134,6 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
             return None
 
         d = self.downloadFileContentToWorker('.buildbot-diff', patch)
-        d.addCallback(lambda _: self.downloadFileContentToWorker('.buildbot-patched', 'patched\n'))
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
     def getResultSummary(self):
