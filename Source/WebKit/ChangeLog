@@ -1,3 +1,14 @@
+2019-04-15  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WebCore derived sources should only be referenced inside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=196904
+
+        Reviewed by Konstantin Tokarev.
+
+        Remove reference to DERIVED_SOURCES_WEBCORE_DIR in PlatformMac.cmake.
+
+        * PlatformMac.cmake:
+
 2019-04-15  Zalan Bujtas  <zalan@apple.com>
 
         DrawingArea should only capture painting related milestones

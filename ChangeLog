@@ -1,3 +1,14 @@
+2019-04-15  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WebCore derived sources should only be referenced inside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=196904
+
+        Reviewed by Konstantin Tokarev.
+
+        Override WebCore_DERIVED_SOURCES_DIR for WinCairo.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2019-04-14  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] JavaScriptCore derived sources should only be referenced inside JavaScriptCore

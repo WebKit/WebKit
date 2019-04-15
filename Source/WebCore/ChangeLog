@@ -1,3 +1,17 @@
+2019-04-15  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WebCore derived sources should only be referenced inside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=196904
+
+        Reviewed by Konstantin Tokarev.
+
+        Use WebCore_DERIVED_SOURCES_DIR instead of DERIVED_SOURCES_WEBCORE_DIR.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformWin.cmake:
+        * WebCoreMacros.cmake:
+
 2019-04-15  John Wilander  <wilander@apple.com>
 
         Send delayed Ad Click Attribution conversion requests to the click source

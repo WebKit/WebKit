@@ -176,6 +176,7 @@ add_library(WebCorePlatformGTK ${WebCore_LIBRARY_TYPE} ${WebCorePlatformGTK_SOUR
 add_dependencies(WebCorePlatformGTK WebCore)
 target_include_directories(WebCorePlatformGTK PRIVATE
     ${WebCore_INCLUDE_DIRECTORIES}
+    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
 )
 target_include_directories(WebCorePlatformGTK SYSTEM PRIVATE
     ${WebCore_SYSTEM_INCLUDE_DIRECTORIES}

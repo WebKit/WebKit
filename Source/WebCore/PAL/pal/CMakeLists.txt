@@ -28,6 +28,8 @@ set(PAL_SOURCES
 )
 
 set(PAL_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
+    "${PAL_DERIVED_SOURCES_DIR}"
     "${PAL_DIR}"
     "${PAL_DIR}/pal"
     "${PAL_DIR}/pal/crypto"

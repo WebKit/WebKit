@@ -1,3 +1,15 @@
+2019-04-15  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] WebCore derived sources should only be referenced inside WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=196904
+
+        Reviewed by Konstantin Tokarev.
+
+        Specify PAL_DERIVED_SOURCES_DIR as a private include directory.
+
+        * pal/CMakeLists.txt:
+        * pal/PlatformWin.cmake:
+
 2019-04-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Software keyboard is shown too frequently on some websites

@@ -1,7 +1,6 @@
 add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${CMAKE_BINARY_DIR}/../include/private"
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${WEBCORE_DIR}/accessibility/win"
@@ -13,6 +12,11 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/network/win"
     "${WEBCORE_DIR}/platform/win"
+)
+
+# FIXME: ANGLE should put its headers into a single directory
+list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${THIRDPARTY_DIR}/ANGLE/include"
     "${THIRDPARTY_DIR}/ANGLE/include/egl"
 )
@@ -280,11 +284,11 @@ else ()
 endif ()
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj)
+    list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj)
     add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj
+        OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj
         DEPENDS ${WEBCORE_DIR}/platform/win/makesafeseh.asm
-        COMMAND ml /safeseh /c /Fo ${DERIVED_SOURCES_WEBCORE_DIR}/makesafeseh.obj ${WEBCORE_DIR}/platform/win/makesafeseh.asm
+        COMMAND ml /safeseh /c /Fo ${WebCore_DERIVED_SOURCES_DIR}/makesafeseh.obj ${WEBCORE_DIR}/platform/win/makesafeseh.asm
         VERBATIM)
 endif ()
 
@@ -321,36 +325,36 @@ if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
 endif ()
 
 set(WebCore_PRIVATE_FRAMEWORK_HEADERS
-    ${DERIVED_SOURCES_WEBCORE_DIR}/CSSPropertyNames.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/CSSValueKeywords.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/EventInterfaces.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/EventTargetInterfaces.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/HTMLElementTypeHelpers.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/HTMLNames.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/HTTPHeaderNames.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSBlob.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSCSSStyleDeclaration.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSDOMBindingInternalsBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSDOMWindow.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSDocument.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSElement.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSEventTarget.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSFile.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSHTMLElement.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSNode.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSNotification.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSRange.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSReadableStream.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/JSReadableStreamDefaultController.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/RTCPeerConnectionInternalsBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/ReadableByteStreamInternalsBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/ReadableStreamInternalsBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/Settings.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/StreamInternalsBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltinInternals.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/WebCoreJSBuiltins.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitFontFamilyNames.h
-    ${DERIVED_SOURCES_WEBCORE_DIR}/WritableStreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/CSSPropertyNames.h
+    ${WebCore_DERIVED_SOURCES_DIR}/CSSValueKeywords.h
+    ${WebCore_DERIVED_SOURCES_DIR}/EventInterfaces.h
+    ${WebCore_DERIVED_SOURCES_DIR}/EventTargetInterfaces.h
+    ${WebCore_DERIVED_SOURCES_DIR}/HTMLElementTypeHelpers.h
+    ${WebCore_DERIVED_SOURCES_DIR}/HTMLNames.h
+    ${WebCore_DERIVED_SOURCES_DIR}/HTTPHeaderNames.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSBlob.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSCSSStyleDeclaration.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSDOMBindingInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSDOMWindow.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSDocument.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSElement.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSEventTarget.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSFile.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSHTMLElement.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSNode.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSNotification.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSRange.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSReadableStream.h
+    ${WebCore_DERIVED_SOURCES_DIR}/JSReadableStreamDefaultController.h
+    ${WebCore_DERIVED_SOURCES_DIR}/RTCPeerConnectionInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/ReadableByteStreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/ReadableStreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/Settings.h
+    ${WebCore_DERIVED_SOURCES_DIR}/StreamInternalsBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltinInternals.h
+    ${WebCore_DERIVED_SOURCES_DIR}/WebCoreJSBuiltins.h
+    ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.h
+    ${WebCore_DERIVED_SOURCES_DIR}/WritableStreamInternalsBuiltins.h
 )
 
 WEBKIT_MAKE_FORWARDING_HEADERS(WebCore

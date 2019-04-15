@@ -9,7 +9,6 @@ list(APPEND PAL_SOURCES
 )
 
 list(APPEND PAL_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}"
     "${CMAKE_BINARY_DIR}/../include/private"
 )
 
