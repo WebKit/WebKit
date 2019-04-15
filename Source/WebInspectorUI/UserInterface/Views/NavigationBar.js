@@ -208,11 +208,27 @@ WI.NavigationBar = class NavigationBar extends WI.View
         super.needsLayout();
     }
 
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        this._updateContent();
+    }
+
     layout()
     {
-        if (this.layoutReason !== WI.View.LayoutReason.Resize && !this._forceLayout)
+        super.layout();
+
+        if (!this._forceLayout)
             return;
 
+        this._updateContent();
+    }
+
+    // Private
+
+    _updateContent()
+    {
         this._forceLayout = false;
 
         // Remove the collapsed style class to test if the items can fit at full width.
@@ -284,8 +300,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
         if (isDivider(previousItem))
             forceItemHidden(previousItem);
     }
-
-    // Private
 
     _mouseDown(event)
     {

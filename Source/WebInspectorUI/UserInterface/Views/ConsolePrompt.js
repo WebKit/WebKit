@@ -144,9 +144,11 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
         return !!this.text;
     }
 
-    layout()
+    sizeDidChange()
     {
-        if (this.layoutReason === WI.View.LayoutReason.Resize && this.text)
+        super.sizeDidChange();
+
+        if (this.text)
             this._codeMirror.refresh();
     }
 

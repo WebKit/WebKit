@@ -214,10 +214,9 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
     // Protected
 
-    layout()
+    sizeDidChange()
     {
-        if (this.layoutReason !== WI.View.LayoutReason.Resize)
-            return;
+        super.sizeDidChange();
 
         for (let tabContentView of this._recentTabContentViews)
             tabContentView[WI.TabBrowser.NeedsResizeLayoutSymbol] = tabContentView !== this.selectedTabContentView;

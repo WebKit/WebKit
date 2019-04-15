@@ -93,15 +93,12 @@ WI.ConsoleDrawer = class ConsoleDrawer extends WI.ContentBrowser
 
     // Protected
 
-    layout()
+    sizeDidChange()
     {
+        super.sizeDidChange();
+
         if (this._collapsed)
             return;
-
-        if (this.layoutReason !== WI.View.LayoutReason.Resize)
-            return;
-
-        super.layout();
 
         let height = this.height;
         this._restoreDrawerHeight();
