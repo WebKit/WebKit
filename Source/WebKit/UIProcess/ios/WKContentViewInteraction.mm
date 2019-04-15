@@ -742,7 +742,8 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     [_highlightLongPressGestureRecognizer setDelegate:self];
     [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
-    [self _createAndConfigureLongPressGestureRecognizer];
+    if (!self.shouldUsePreviewForLongPress)
+        [self _createAndConfigureLongPressGestureRecognizer];
 
 #if ENABLE(DATA_INTERACTION)
     [self setupDragAndDropInteractions];
@@ -1699,8 +1700,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return _page->editorState().postLayoutData().focusedElementRect;
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteraction.mm>)
-#include <WebKitAdditions/WKContentViewInteraction.mm>
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteractionWKInteraction.mm>)
+#include <WebKitAdditions/WKContentViewInteractionWKInteraction.mm>
 #else
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(UIGestureRecognizer *)preventedGestureRecognizer
@@ -7128,6 +7129,20 @@ static WebEventFlags webEventFlagsForUIKeyModifierFlags(UIKeyModifierFlags flags
 #if HAVE(LINK_PREVIEW)
 
 @implementation WKContentView (WKInteractionPreview)
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.mm>)
+#include <WebKitAdditions/WKInteractionPreviewAdditions.mm>
+#else
+static BOOL shouldUsePreviewForLongPress()
+{
+    return NO;
+}
+#endif
+
+- (BOOL)shouldUsePreviewForLongPress
+{
+    return shouldUsePreviewForLongPress();
+}
 
 - (void)_registerPreview
 {

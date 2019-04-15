@@ -502,8 +502,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if HAVE(LINK_PREVIEW)
 @interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
 
+@property (nonatomic, readonly) BOOL shouldUsePreviewForLongPress;
+
 - (void)_registerPreview;
 - (void)_unregisterPreview;
+
 @end
 #endif
 
