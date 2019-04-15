@@ -118,8 +118,7 @@ void JSGlobalObjectInspectorController::connectFrontend(FrontendChannel& fronten
     m_agents.didCreateFrontendAndBackend(nullptr, nullptr);
 
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
-    ASSERT(m_inspectorAgent);
-    m_inspectorAgent->activateExtraDomains(m_agents.extraDomains());
+    ensureInspectorAgent().activateExtraDomains(m_agents.extraDomains());
 
     if (m_augmentingClient)
         m_augmentingClient->inspectorConnected();
@@ -237,10 +236,9 @@ void JSGlobalObjectInspectorController::frontendInitialized()
     if (m_pauseAfterInitialization) {
         m_pauseAfterInitialization = false;
 
-        ASSERT(m_debuggerAgent);
         ErrorString ignored;
-        m_debuggerAgent->enable(ignored);
-        m_debuggerAgent->pause(ignored);
+        ensureDebuggerAgent().enable(ignored);
+        ensureDebuggerAgent().pause(ignored);
     }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -274,10 +272,32 @@ void JSGlobalObjectInspectorController::appendExtraAgent(std::unique_ptr<Inspect
 
     m_agents.appendExtraAgent(WTFMove(agent));
 
-    ASSERT(m_inspectorAgent);
-    m_inspectorAgent->activateExtraDomain(domainName);
+    ensureInspectorAgent().activateExtraDomain(domainName);
 }
 #endif
+
+InspectorAgent& JSGlobalObjectInspectorController::ensureInspectorAgent()
+{
+    if (!m_inspectorAgent) {
+        auto context = jsAgentContext();
+        auto inspectorAgent = std::make_unique<InspectorAgent>(context);
+        m_inspectorAgent = inspectorAgent.get();
+        m_agents.append(WTFMove(inspectorAgent));
+    }
+    return *m_inspectorAgent;
+}
+
+InspectorDebuggerAgent& JSGlobalObjectInspectorController::ensureDebuggerAgent()
+{
+    if (!m_debuggerAgent) {
+        auto context = jsAgentContext();
+        auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, m_consoleAgent);
+        m_debuggerAgent = debuggerAgent.get();
+        m_consoleClient->setInspectorDebuggerAgent(m_debuggerAgent);
+        m_agents.append(WTFMove(debuggerAgent));
+    }
+    return *m_debuggerAgent;
+}
 
 JSAgentContext JSGlobalObjectInspectorController::jsAgentContext()
 {
@@ -305,16 +325,11 @@ void JSGlobalObjectInspectorController::createLazyAgents()
 
     auto context = jsAgentContext();
 
-    auto inspectorAgent = std::make_unique<InspectorAgent>(context);
-    m_inspectorAgent = inspectorAgent.get();
-    m_agents.append(WTFMove(inspectorAgent));
+    ensureInspectorAgent();
 
     m_agents.append(std::make_unique<JSGlobalObjectRuntimeAgent>(context));
 
-    auto debuggerAgent = std::make_unique<JSGlobalObjectDebuggerAgent>(context, m_consoleAgent);
-    m_debuggerAgent = debuggerAgent.get();
-    m_consoleClient->setInspectorDebuggerAgent(m_debuggerAgent);
-    m_agents.append(WTFMove(debuggerAgent));
+    ensureDebuggerAgent();
 
     auto scriptProfilerAgentPtr = std::make_unique<InspectorScriptProfilerAgent>(context);
     m_consoleClient->setInspectorScriptProfilerAgent(scriptProfilerAgentPtr.get());

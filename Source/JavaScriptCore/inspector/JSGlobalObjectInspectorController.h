@@ -104,6 +104,9 @@ public:
 private:
     void appendAPIBacktrace(ScriptCallStack&);
 
+    InspectorAgent& ensureInspectorAgent();
+    InspectorDebuggerAgent& ensureDebuggerAgent();
+
     JSAgentContext jsAgentContext();
     void createLazyAgents();
 
@@ -114,8 +117,10 @@ private:
     JSGlobalObjectScriptDebugServer m_scriptDebugServer;
 
     AgentRegistry m_agents;
-    InspectorAgent* m_inspectorAgent { nullptr };
     InspectorConsoleAgent* m_consoleAgent { nullptr };
+
+    // Lazy, but also on-demand agents.
+    InspectorAgent* m_inspectorAgent { nullptr };
     InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
     Ref<FrontendRouter> m_frontendRouter;
