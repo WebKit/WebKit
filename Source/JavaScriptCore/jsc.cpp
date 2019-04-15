@@ -972,14 +972,14 @@ public:
 
     RefPtr<CachedBytecode> cachedBytecode() const override
     {
-        if (!m_cachedBytecode->size())
+        if (!m_cachedBytecode)
             loadBytecode();
         return m_cachedBytecode.copyRef();
     }
 
     void updateCache(const UnlinkedFunctionExecutable* executable, const SourceCode&, CodeSpecializationKind kind, const UnlinkedFunctionCodeBlock* codeBlock) const override
     {
-        if (!cacheEnabled())
+        if (!cacheEnabled() || !m_cachedBytecode)
             return;
         Ref<CachedBytecode> cachedBytecode = encodeFunctionCodeBlock(*executable->vm(), codeBlock);
         m_cachedBytecode->addFunctionUpdate(executable, kind, WTFMove(cachedBytecode));
@@ -989,17 +989,19 @@ public:
     {
         if (!cacheEnabled())
             return;
+        if (!m_cachedBytecode)
+            m_cachedBytecode = CachedBytecode::create();
         m_cachedBytecode->addGlobalUpdate(generator());
     }
 
     void commitCachedBytecode() const override
     {
 #if OS(DARWIN)
-        if (!cacheEnabled() || !m_cachedBytecode->hasUpdates())
+        if (!cacheEnabled() || !m_cachedBytecode || !m_cachedBytecode->hasUpdates())
             return;
 
         auto clearBytecode = makeScopeExit([&] {
-            m_cachedBytecode = CachedBytecode::create();
+            m_cachedBytecode = nullptr;
         });
 
         String filename = cachePath();
@@ -1075,9 +1077,7 @@ private:
 
     ShellSourceProvider(const String& source, const SourceOrigin& sourceOrigin, URL&& url, const TextPosition& startPosition, SourceProviderSourceType sourceType)
         : StringSourceProvider(source, sourceOrigin, WTFMove(url), startPosition, sourceType)
-        , m_cachedBytecode(CachedBytecode::create())
     {
-        loadBytecode();
     }
 
     static bool cacheEnabled()
@@ -1086,7 +1086,7 @@ private:
         return enabled;
     }
 
-    mutable Ref<CachedBytecode> m_cachedBytecode;
+    mutable RefPtr<CachedBytecode> m_cachedBytecode;
 };
 
 static inline SourceCode jscSource(const String& source, const SourceOrigin& sourceOrigin, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), SourceProviderSourceType sourceType = SourceProviderSourceType::Program)

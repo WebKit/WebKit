@@ -1,3 +1,21 @@
+2019-04-15  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Incremental bytecode cache should not append function updates when loaded from memory
+        https://bugs.webkit.org/show_bug.cgi?id=196865
+
+        Reviewed by Filip Pizlo.
+
+        Function updates hold the assumption that a function can only be executed/cached
+        after its containing code block has already been cached. This assumptions does
+        not hold if the UnlinkedCodeBlock is loaded from memory by the CodeCache, since
+        we might have two independent SourceProviders executing different paths of the
+        code and causing the same UnlinkedCodeBlock to be modified in memory.
+        Use a RefPtr instead of Ref for m_cachedBytecode in ShellSourceProvider to distinguish
+        between a new, empty cache and a cache that was not loaded and therefore cannot be updated.
+
+        * jsc.cpp:
+        (ShellSourceProvider::ShellSourceProvider):
+
 2019-04-15  Saam barati  <sbarati@apple.com>
 
         mergeOSREntryValue is wrong when the incoming value does not match up with the flush format
