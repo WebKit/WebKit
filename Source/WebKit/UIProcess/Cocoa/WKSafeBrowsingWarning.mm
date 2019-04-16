@@ -562,9 +562,6 @@ static void setBackground(ViewType *view, ColorType *color)
 #if !PLATFORM(MAC)
     self.scrollEnabled = NO;
 #endif
-#if PLATFORM(WATCHOS)
-    self.layoutManager.hyphenationFactor = 1;
-#endif
 
     return self;
 }
