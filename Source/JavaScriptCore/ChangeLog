@@ -1,3 +1,26 @@
+2019-04-16  Caitlin Potter  <caitp@igalia.com>
+
+        [JSC] Filter DontEnum properties in ProxyObject::getOwnPropertyNames()
+        https://bugs.webkit.org/show_bug.cgi?id=176810
+
+        Reviewed by Saam Barati.
+
+        This adds conditional logic following the invariant checks, to perform
+        filtering in common uses of getOwnPropertyNames.
+
+        While this would ideally only be done in JSPropertyNameEnumerator, adding
+        the filtering to ProxyObject::performGetOwnPropertyNames maintains the
+        invariant that the EnumerationMode is properly followed.
+
+        This was originally rolled out in r244020, as DontEnum filtering code
+        in ObjectConstructor.cpp's ownPropertyKeys() had not been removed. It's
+        now redundant due to being handled in ProxyObject::getOwnPropertyNames().
+
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::reset):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+
 2019-04-15  Saam barati  <sbarati@apple.com>
 
         Modify how we do SetArgument when we inline varargs calls

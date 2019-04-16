@@ -135,6 +135,22 @@ function assert(b) {
         assert(called);
         called = false;
     }
+
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        let foundKey = false;
+        try {
+            for (let k in proxy)
+                foundKey = true;
+        } catch(e) {
+            threw = true;
+            assert(e.toString() === "TypeError: Proxy object's non-extensible 'target' has configurable property 'x' that was not in the result from the 'ownKeys' trap");
+            assert(!foundKey);
+        }
+        assert(threw);
+        assert(called);
+        called = false;
+    }
 }
 
 {
@@ -164,6 +180,22 @@ function assert(b) {
         }
         assert(threw);
         assert(called);
+        called = false;
+    }
+
+    for (let i = 0; i < 500; i++) {
+        let threw = false;
+        let reached = false;
+        try {
+            for (let k in proxy)
+                reached = true;
+        } catch (e) {
+            threw = true;
+            assert(e.toString() === "TypeError: Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target");
+        }
+        assert(threw);
+        assert(called);
+        assert(!reached);
         called = false;
     }
 }
@@ -665,5 +697,70 @@ function shallowEq(a, b) {
         }
         assert(threw);
         error = null;
+    }
+}
+
+{
+    let error = null;
+    let s1 = Symbol();
+    let s2 = Symbol();
+    let target = Object.defineProperties({}, {
+        x: {
+            value: "X",
+            enumerable: true,
+            configurable: true,
+        },
+        dontEnum1: {
+            value: "dont-enum",
+            enumerable: false,
+            configurable: true,
+        },
+        y: {
+            get() { return "Y"; },
+            enumerable: true,
+            configurable: true,
+        },
+        dontEnum2: {
+            get() { return "dont-enum-accessor" },
+            enumerable: false,
+            configurable: true
+        },
+        [s1]: {
+            value: "s1",
+            enumerable: true,
+            configurable: true,
+        },
+        [s2]: {
+            value: "dont-enum-symbol",
+            enumerable: false,
+            configurable: true,  
+        },
+    });
+    let checkedOwnKeys = false;
+    let checkedPropertyDescriptor = false;
+    let handler = {
+        ownKeys() {
+            checkedOwnKeys = true;
+            return ["x", "dontEnum1", "y", "dontEnum2", s1, s2];
+        },
+        getOwnPropertyDescriptor(t, k) {
+            checkedPropertyDescriptors = true;
+            return Reflect.getOwnPropertyDescriptor(t, k);
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let i = 0; i < 500; i++) {
+        checkedPropertyDescriptors = false;
+        assert(shallowEq(["x", "dontEnum1", "y", "dontEnum2", s1, s2], Reflect.ownKeys(proxy)));
+        assert(checkedOwnKeys);
+        assert(!checkedPropertyDescriptors);
+        checkedOwnKeys = false;
+
+        let enumerableStringKeys = [];
+        for (let k in proxy)
+            enumerableStringKeys.push(k);
+        assert(shallowEq(["x", "y"], enumerableStringKeys));
+        assert(checkedOwnKeys);
+        assert(checkedPropertyDescriptors);
     }
 }

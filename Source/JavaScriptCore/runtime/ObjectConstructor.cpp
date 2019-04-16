@@ -920,23 +920,9 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    // https://tc39.github.io/ecma262/#sec-enumerableownproperties
-    // If {object} is a Proxy, an explicit and observable [[GetOwnProperty]] op is required to filter out non-enumerable properties.
-    // In other cases, filtering has already been performed.
-    const bool mustFilterProperty = dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude && object->type() == ProxyObjectType;
-    auto filterPropertyIfNeeded = [exec, object, mustFilterProperty](const Identifier& identifier) {
-        if (!mustFilterProperty)
-            return true;
-        PropertyDescriptor descriptor;
-        PropertyName name(identifier);
-        return object->getOwnPropertyDescriptor(exec, name, descriptor) && descriptor.enumerable();
-    };
-
-    // If !mustFilterProperty and PropertyNameMode::Strings mode, we do not need to filter out any entries in PropertyNameArray.
-    // We can use fast allocation and initialization.
     if (propertyNameMode != PropertyNameMode::StringsAndSymbols) {
         ASSERT(propertyNameMode == PropertyNameMode::Strings || propertyNameMode == PropertyNameMode::Symbols);
-        if (!mustFilterProperty && properties.size() < MIN_SPARSE_ARRAY_INDEX) {
+        if (properties.size() < MIN_SPARSE_ARRAY_INDEX) {
             if (LIKELY(!globalObject->isHavingABadTime())) {
                 if (isObjectKeys) {
                     Structure* structure = object->structure(vm);
@@ -993,10 +979,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         for (size_t i = 0; i < numProperties; i++) {
             const auto& identifier = properties[i];
             ASSERT(!identifier.isSymbol());
-            bool hasProperty = filterPropertyIfNeeded(identifier);
-            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-            if (hasProperty)
-                pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
+            pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
@@ -1008,10 +991,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             const auto& identifier = properties[i];
             ASSERT(identifier.isSymbol());
             ASSERT(!identifier.isPrivateName());
-            bool hasProperty = filterPropertyIfNeeded(identifier);
-            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-            if (hasProperty)
-                pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
@@ -1028,19 +1008,13 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
                 continue;
             }
 
-            bool hasProperty = filterPropertyIfNeeded(identifier);
-            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-            if (hasProperty)
-                pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
+            pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
 
         // To ensure the order defined in the spec (9.1.12), we append symbols at the last elements of keys.
         for (const auto& identifier : propertySymbols) {
-            bool hasProperty = filterPropertyIfNeeded(identifier);
-            EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
-            if (hasProperty)
-                pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+            pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
 

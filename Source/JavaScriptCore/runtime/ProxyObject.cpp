@@ -1006,19 +1006,35 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
         }
     }
 
-    if (targetIsExensible)
-        return;
+    if (!targetIsExensible) {
+        for (UniquedStringImpl* impl : targetConfigurableKeys) {
+            if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
+                throwVMTypeError(exec, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+                return;
+            }
+        }
 
-    for (UniquedStringImpl* impl : targetConfigurableKeys) {
-        if (removeIfContainedInUncheckedResultKeys(impl) == IsNotContainedIn) {
-            throwVMTypeError(exec, scope, makeString("Proxy object's non-extensible 'target' has configurable property '", String(impl), "' that was not in the result from the 'ownKeys' trap"));
+        if (uncheckedResultKeys.size()) {
+            throwVMTypeError(exec, scope, "Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"_s);
             return;
         }
     }
 
-    if (uncheckedResultKeys.size()) {
-        throwVMTypeError(exec, scope, "Proxy handler's 'ownKeys' method returned a key that was not present in its non-extensible target"_s);
-        return;
+    if (!enumerationMode.includeDontEnumProperties()) {
+        // Filtering DontEnum properties is observable in proxies and must occur following the invariant checks above.
+        auto data = trapResult.releaseData();
+        trapResult.reset();
+
+        for (auto propertyName : data->propertyNameVector()) {
+            PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
+            auto result = getOwnPropertySlotCommon(exec, propertyName, slot);
+            RETURN_IF_EXCEPTION(scope, void());
+            if (!result)
+                continue;
+            if (slot.attributes() & PropertyAttribute::DontEnum)
+                continue;
+            trapResult.addUnchecked(propertyName.impl());
+        }
     }
 }
 
