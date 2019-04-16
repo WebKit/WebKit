@@ -92,7 +92,7 @@ static size_t jetsamLimit()
 }
 #endif
 
-#if BOS(UNIX)
+#if BOS(LINUX)
 struct LinuxMemory {
     static const LinuxMemory& singleton()
     {
