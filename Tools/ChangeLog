@@ -1,3 +1,19 @@
+2019-04-15  Chris Dumez  <cdumez@apple.com>
+
+        URL set by document.open() is not communicated to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=196941
+        <rdar://problem/49237544>
+
+        Reviewed by Geoffrey Garen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/open-window-then-write-to-it.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        (-[OpenWindowThenDocumentOpenUIDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+
 2019-04-15  Dean Johnson  <dean_johnson@apple.com>
 
         Using Tools/Scripts/clean-webkit should not install requests
