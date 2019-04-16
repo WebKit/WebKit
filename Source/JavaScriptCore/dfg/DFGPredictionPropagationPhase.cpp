@@ -1254,6 +1254,7 @@ private:
         case ProfileControlFlow:
         case ForceOSRExit:
         case SetArgumentDefinitely:
+        case SetArgumentMaybe:
         case SetFunctionName:
         case CheckStructure:
         case CheckCell:

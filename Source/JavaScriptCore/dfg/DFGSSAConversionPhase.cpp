@@ -261,6 +261,8 @@ public:
         //     valueForOperand.
         //
         //   - SetArgumentDefinitely is removed. Note that GetStack nodes have already been inserted.
+        //
+        //   - SetArgumentMaybe is removed. It should not have any data flow uses.
         Operands<Node*> valueForOperand(OperandsLike, m_graph.block(0)->variablesAtHead);
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             valueForOperand.clear();
@@ -393,6 +395,11 @@ public:
                     break;
                 }
 
+                case SetArgumentMaybe: {
+                    node->remove(m_graph);
+                    break;
+                }
+                    
                 default:
                     break;
                 }

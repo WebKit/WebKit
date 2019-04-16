@@ -235,6 +235,7 @@ bool InPlaceAbstractState::endBasicBlock()
             switch (node->op()) {
             case Phi:
             case SetArgumentDefinitely:
+            case SetArgumentMaybe:
             case PhantomLocal:
             case Flush: {
                 // The block transfers the value from head to tail.

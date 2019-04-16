@@ -1863,6 +1863,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
         m_currentBlock->variablesAtTail.setOperand(countVariable->local(), setArgumentCount);
         
         set(VirtualRegister(argumentStart), get(thisArgument), ImmediateNakedSet);
+        unsigned numSetArguments = 0;
         for (unsigned argument = 1; argument < maxNumArguments; ++argument) {
             VariableAccessData* variable = newVariableAccessData(VirtualRegister(remappedArgumentStart + argument));
             variable->mergeShouldNeverUnbox(true); // We currently have nowhere to put the type check on the LoadVarargs. LoadVarargs is effectful, so after it finishes, we cannot exit.
@@ -1882,8 +1883,9 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, VirtualRegister
                 variable->predict(profile.computeUpdatedPrediction(locker));
             }
             
-            Node* setArgument = addToGraph(SetArgumentDefinitely, OpInfo(variable));
+            Node* setArgument = addToGraph(numSetArguments >= mandatoryMinimum ? SetArgumentMaybe : SetArgumentDefinitely, OpInfo(variable));
             m_currentBlock->variablesAtTail.setOperand(variable->local(), setArgument);
+            ++numSetArguments;
         }
     };
 

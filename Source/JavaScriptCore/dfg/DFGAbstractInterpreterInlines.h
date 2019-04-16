@@ -323,7 +323,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
         
     case SetArgumentDefinitely:
-        // Assert that the state of arguments has been set. SetArgumentDefinitely means
+    case SetArgumentMaybe:
+        // Assert that the state of arguments has been set. SetArgumentDefinitely/SetArgumentMaybe means
         // that someone set the argument values out-of-band, and currently this always means setting to a
         // non-clear value.
         ASSERT(!m_state.operand(node->local()).isClear());

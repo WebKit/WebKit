@@ -76,7 +76,7 @@ public:
                         isPrimordialSetArgument = node == iter->value[node->local().toArgument()];
                 }
 
-                if (node->op() == SetLocal || (node->op() == SetArgumentDefinitely && !isPrimordialSetArgument)) {
+                if (node->op() == SetLocal || (node->op() == SetArgumentDefinitely && !isPrimordialSetArgument) || node->op() == SetArgumentMaybe) {
                     VirtualRegister operand = node->local();
                     VariableAccessData* flushAccessData = currentBlockAccessData.operand(operand);
                     if (!flushAccessData)
@@ -136,7 +136,7 @@ public:
 
         for (unsigned i = 0; i < block->variablesAtTail.numberOfLocals(); i++) {
             VirtualRegister operand = virtualRegisterForLocal(i);
-            DFG_ASSERT(m_graph, nullptr, initialAccessNodes.operand(operand)->op() == Flush); // We should have inserted a Flush before any SetLocal/SetArgumentDefinitely for the local that we are analyzing now.
+            DFG_ASSERT(m_graph, nullptr, initialAccessNodes.operand(operand)->op() == Flush); // We should have inserted a Flush before any SetLocal/SetArgumentDefinitely/SetArgumentMaybe for the local that we are analyzing now.
             VariableAccessData* accessData = initialAccessData.operand(operand);
             DFG_ASSERT(m_graph, nullptr, accessData);
             insertionSet.insertNode(0, SpecNone, 

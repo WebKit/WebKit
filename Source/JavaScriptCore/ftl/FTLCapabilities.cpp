@@ -57,6 +57,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Flush:
     case PhantomLocal:
     case SetArgumentDefinitely:
+    case SetArgumentMaybe:
     case Return:
     case ArithBitNot:
     case ArithBitAnd:

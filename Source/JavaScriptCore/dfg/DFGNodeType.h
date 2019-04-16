@@ -103,8 +103,10 @@ namespace JSC { namespace DFG {
     macro(CheckTierUpAndOSREnter, NodeMustGenerate) \
     macro(CheckTierUpAtReturn, NodeMustGenerate) \
     \
-    /* Marker for an argument being set at the prologue of a function. */\
+    /* Marker for an argument being set at the prologue of a function. The argument is guaranteed to be set after this node. */\
     macro(SetArgumentDefinitely, 0) \
+    /* A marker like the above that we use to track variable liveness and OSR exit state. However, it's not guaranteed to be set. To verify it was set, you'd need to check the actual argument length. We use this for varargs when we're unsure how many argument may actually end up on the stack. */\
+    macro(SetArgumentMaybe, 0) \
     \
     /* Marker of location in the IR where we may possibly perform jump replacement to */\
     /* invalidate this code block. */\

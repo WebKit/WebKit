@@ -1,3 +1,86 @@
+2019-04-15  Saam barati  <sbarati@apple.com>
+
+        Modify how we do SetArgument when we inline varargs calls
+        https://bugs.webkit.org/show_bug.cgi?id=196712
+        <rdar://problem/49605012>
+
+        Reviewed by Michael Saboff.
+
+        When we inline varargs calls, we guarantee that the number of arguments that
+        go on the stack are somewhere between the "mandatoryMinimum" and the "limit - 1".
+        However, we can't statically guarantee that the arguments between these two
+        ranges was filled out by Load/ForwardVarargs. This is because in the general
+        case we don't know the argument count statically.
+        
+        However, we used to always emit SetArgumentDefinitely up to "limit - 1" for
+        all arguments, even when some arguments aren't guaranteed to be in a valid
+        state. Emitting these SetArgumentDefinitely were helpful because they let us
+        handle variable liveness and OSR exit metadata. However, when we converted
+        to SSA, we ended up emitting a GetStack for each such SetArgumentDefinitely.
+        
+        This is wrong, as we can't guarantee such SetArgumentDefinitely nodes are
+        actually looking at a range of the stack that are guaranteed to be initialized.
+        This patch introduces a new form of SetArgument node: SetArgumentMaybe. In terms
+        of OSR exit metadata and variable liveness tracking, it behaves like SetArgumentDefinitely.
+        
+        However, it differs in a couple key ways:
+        1. In ThreadedCPS, GetLocal(@SetArgumentMaybe) is invalid IR, as this implies
+        you might be loading uninitialized stack. (This same rule applies when you do
+        the full data flow reachability analysis over CPS Phis.) If someone logically
+        wanted to emit code like this, the correct node to emit would be GetArgument,
+        not GetLocal. For similar reasons, PhantomLocal(@SetArgumentMaybe) is also
+        invalid IR.
+        2. To track liveness, Flush(@SetArgumentMaybe) is valid, and is the main user
+        of SetArgumentMaybe.
+        3. In SSA conversion, we don't lower SetArgumentMaybe to GetStack, as there
+        should be no data flow user of SetArgumentMaybe.
+        
+        SetArgumentDefinitely guarantees that the stack slot is initialized.
+        SetArgumentMaybe makes no such guarantee.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleVarargsInlining):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        (JSC::DFG::CPSRethreadingPhase::propagatePhis):
+        (JSC::DFG::CPSRethreadingPhase::computeIsFlushed):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGCommon.h:
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::endBasicBlock):
+        * dfg/DFGLiveCatchVariablePreservationPhase.cpp:
+        (JSC::DFG::LiveCatchVariablePreservationPhase::handleBlockForTryCatch):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRootBlock):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+
 2019-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r243672.

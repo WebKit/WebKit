@@ -198,6 +198,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case Flush:
     case PhantomLocal:
     case SetArgumentDefinitely:
+    case SetArgumentMaybe:
     case ArithBitNot:
     case ArithBitAnd:
     case ArithBitOr:

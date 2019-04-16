@@ -1,5 +1,16 @@
 2019-04-15  Saam barati  <sbarati@apple.com>
 
+        Modify how we do SetArgument when we inline varargs calls
+        https://bugs.webkit.org/show_bug.cgi?id=196712
+        <rdar://problem/49605012>
+
+        Reviewed by Michael Saboff.
+
+        * stress/get-stack-wrong-type-when-inline-varargs.js: Added.
+        (foo):
+
+2019-04-15  Saam barati  <sbarati@apple.com>
+
         SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base
         https://bugs.webkit.org/show_bug.cgi?id=196945
         <rdar://problem/49802750>

@@ -48,6 +48,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     // conservative when maintaining this list, because adding new node types to it doesn't
     // generally make things a lot better but it might introduce subtle bugs.
     case SetArgumentDefinitely:
+    case SetArgumentMaybe:
     case JSConstant:
     case DoubleConstant:
     case LazyJSConstant:

@@ -198,7 +198,7 @@ public:
                 currentExceptionHandler = newHandler;
             }
 
-            if (currentExceptionHandler && (node->op() == SetLocal || node->op() == SetArgumentDefinitely)) {
+            if (currentExceptionHandler && (node->op() == SetLocal || node->op() == SetArgumentDefinitely || node->op() == SetArgumentMaybe)) {
                 InlineCallFrame* inlineCallFrame = node->origin.semantic.inlineCallFrame();
                 if (inlineCallFrame)
                     seenInlineCallFrames.add(inlineCallFrame);
