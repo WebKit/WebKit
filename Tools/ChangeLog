@@ -1,3 +1,17 @@
+2019-04-15  Dean Johnson  <dean_johnson@apple.com>
+
+        Using Tools/Scripts/clean-webkit should not install requests
+        https://bugs.webkit.org/show_bug.cgi?id=196940
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/common/system/autoinstall.py: Drive-by fix for no logging handlers
+        existing, depending on the path autoinstalled is run through.
+        * Scripts/webkitpy/port/base.py: Import webkitpy.results.upload.Upload only where it's
+        needed.
+        (Port.configuration_for_upload):
+        (Port.commits_for_upload):
+
 2019-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Add a DiagnosticLogging method taking an arbitrary dictionary of values.

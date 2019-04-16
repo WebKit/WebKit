@@ -62,7 +62,6 @@ from webkitpy.port.factory import PortFactory
 from webkitpy.layout_tests.servers import apache_http_server, http_server, http_server_base
 from webkitpy.layout_tests.servers import web_platform_test_server
 from webkitpy.layout_tests.servers import websocket_server
-from webkitpy.results.upload import Upload
 
 _log = logging.getLogger(__name__)
 
@@ -1638,6 +1637,8 @@ class Port(object):
         pass
 
     def configuration_for_upload(self, host=None):
+        from webkitpy.results.upload import Upload
+
         configuration = self.test_configuration()
         host = self.host or host
 
@@ -1652,12 +1653,13 @@ class Port(object):
 
     @memoized
     def commits_for_upload(self):
+        from webkitpy.results.upload import Upload
+
         self.host.initialize_scm()
 
+        repos = {}
         if port_config.apple_additions() and getattr(port_config.apple_additions(), 'repos', False):
             repos = port_config.apple_additions().repos()
-        else:
-            repos = {}
 
         up = os.path.dirname
         repos['webkit'] = up(up(up(up(up(os.path.abspath(__file__))))))

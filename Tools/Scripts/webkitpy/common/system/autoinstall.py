@@ -47,7 +47,15 @@ from distutils import dir_util
 from glob import glob
 import urlparse
 
+
 _log = logging.getLogger(__name__)
+if not _log.handlers:  # No parent loggers setup.
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    _log.addHandler(handler)
+
 _MIRROR_REGEXS = re.compile('.*sourceforge.*'), re.compile('.*pypi.*')
 _PYPI_ENV_VAR = 'PYPI_MIRRORS'
 _SOURCEFORGE_ENV_VAR = 'SOURCEFORGE_MIRRORS'
