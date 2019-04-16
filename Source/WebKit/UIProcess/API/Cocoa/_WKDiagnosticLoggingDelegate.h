@@ -33,6 +33,8 @@ typedef NS_ENUM(NSInteger, _WKDiagnosticLoggingResultType) {
     _WKDiagnosticLoggingResultNoop,
 } WK_API_AVAILABLE(macos(10.11), ios(9.0));
 
+@class WKWebView;
+
 @protocol _WKDiagnosticLoggingDelegate <NSObject>
 @optional
 

@@ -1,3 +1,10 @@
+2019-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Forward declare WKWebView in _WKDiagnosticLoggingDelegate.h
+
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        This fixes builds where _WKDiagnosticLoggingDelegate.h is the only WebKit header included, such as my work on rdar://problem/35175989
+
 2019-04-15  Jer Noble  <jer.noble@apple.com>
 
         Add a DiagnosticLogging method taking an arbitrary dictionary of values.
