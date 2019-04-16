@@ -181,7 +181,6 @@ public:
     virtual void dispatchDidFailLoad(const ResourceError&) = 0;
     virtual void dispatchDidFinishDocumentLoad() = 0;
     virtual void dispatchDidFinishLoad() = 0;
-    virtual void dispatchDidExplicitOpen(const URL&) { }
 #if ENABLE(DATA_DETECTION)
     virtual void dispatchDidFinishDataDetection(NSArray *detectionResults) = 0;
 #endif

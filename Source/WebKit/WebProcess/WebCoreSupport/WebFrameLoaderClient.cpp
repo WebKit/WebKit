@@ -458,16 +458,6 @@ void WebFrameLoaderClient::dispatchWillClose()
     notImplemented();
 }
 
-void WebFrameLoaderClient::dispatchDidExplicitOpen(const URL& url)
-{
-    auto* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidExplicitOpenForFrame(m_frame->frameID(), url));
-}
-
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     WebPage* webPage = m_frame->page();

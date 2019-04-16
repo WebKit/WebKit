@@ -282,38 +282,3 @@ TEST(WebKit, OpenWindowFeatures)
     EXPECT_FALSE([openWindowFeatures _fullscreenDisplay].boolValue);
     openWindowFeatures = nullptr;
 }
-
-@interface OpenWindowThenDocumentOpenUIDelegate : NSObject <WKUIDelegate>
-@end
-
-@implementation OpenWindowThenDocumentOpenUIDelegate
-
-- (WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
-{
-    openedWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
-    [openedWebView setUIDelegate:sharedUIDelegate.get()];
-    return openedWebView.get();
-}
-
-@end
-
-TEST(WebKit, OpenWindowThenDocumentOpen)
-{
-    resetToConsistentState();
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-
-    auto uiDelegate = adoptNS([[OpenWindowThenDocumentOpenUIDelegate alloc] init]);
-    [webView setUIDelegate:uiDelegate.get()];
-    [webView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"open-window-then-write-to-it" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
-    [webView loadRequest:request];
-
-    while (!openedWebView)
-        TestWebKitAPI::Util::sleep(0.1);
-
-    // Both WebViews should have the same URL because of document.open().
-    while (![[[openedWebView URL] absoluteString] isEqualToString:[[webView URL] absoluteString]])
-        TestWebKitAPI::Util::sleep(0.1);
-}

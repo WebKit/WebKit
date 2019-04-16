@@ -1,3 +1,18 @@
+2019-04-16  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244321.
+        https://bugs.webkit.org/show_bug.cgi?id=196968
+
+        Causing all WK2 Debug builds to exit early after Assertion
+        failures. (Requested by ShawnRoberts on #webkit).
+
+        Reverted changeset:
+
+        "URL set by document.open() is not communicated to the
+        UIProcess"
+        https://bugs.webkit.org/show_bug.cgi?id=196941
+        https://trac.webkit.org/changeset/244321
+
 2019-04-16  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Filter DontEnum properties in ProxyObject::getOwnPropertyNames()

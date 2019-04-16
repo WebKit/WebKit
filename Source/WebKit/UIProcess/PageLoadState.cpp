@@ -246,15 +246,6 @@ void PageLoadState::clearPendingAPIRequestURL(const Transaction::Token& token)
     m_uncommittedState.pendingAPIRequestURL = String();
 }
 
-void PageLoadState::didExplicitOpen(const Transaction::Token& token, const String& url)
-{
-    ASSERT_UNUSED(token, &token.m_pageLoadState == this);
-
-    m_uncommittedState.state = State::Finished;
-    m_uncommittedState.url = url;
-    m_uncommittedState.provisionalURL = String();
-}
-
 void PageLoadState::didStartProvisionalLoad(const Transaction::Token& token, const String& url, const String& unreachableURL)
 {
     ASSERT_UNUSED(token, &token.m_pageLoadState == this);
