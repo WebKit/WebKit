@@ -604,7 +604,8 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
-        if (observedContentChange == WKContentVisibilityChange) {
+        auto shouldStayAtHoverState = observedContentChange == WKContentVisibilityChange && !is<HTMLFormControlElement>(targetNode);
+        if (shouldStayAtHoverState) {
             // The move event caused new contents to appear. Don't send synthetic click event, but just ensure that the mouse is on the most recent content.
             dispatchSyntheticMouseMove(protectedThis->corePage()->mainFrame(), location, modifiers);
             LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
