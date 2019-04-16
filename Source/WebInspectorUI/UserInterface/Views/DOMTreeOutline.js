@@ -30,9 +30,9 @@
 
 WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 {
-    constructor(omitRootDOMNode, selectable, excludeRevealElementContextMenu)
+    constructor({omitRootDOMNode, excludeRevealElementContextMenu, showLastSelected} = {})
     {
-        super(selectable);
+        super();
 
         this.element.addEventListener("mousedown", this._onmousedown.bind(this), false);
         this.element.addEventListener("mousemove", this._onmousemove.bind(this), false);
@@ -44,6 +44,9 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         this.element.addEventListener("dragend", this._ondragend.bind(this), false);
 
         this.element.classList.add("dom", WI.SyntaxHighlightedStyleClassName);
+
+        if (showLastSelected)
+            this.element.classList.add("show-last-selected");
 
         this._includeRootDOMNode = !omitRootDOMNode;
         this._excludeRevealElementContextMenu = excludeRevealElementContextMenu;

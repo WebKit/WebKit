@@ -72,6 +72,10 @@
     -webkit-user-select: none !important;
 }
 
+.formatted-node > .tree-outline.dom li.selected .selection-area {
+    background-color: transparent;
+}
+
 .formatted-node > .tree-outline.dom li.hovered:not(.selected) .selection-area {
     display: block;
     left: -1px;

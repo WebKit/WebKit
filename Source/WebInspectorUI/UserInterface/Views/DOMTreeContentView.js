@@ -63,7 +63,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this.element.classList.add("dom-tree");
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
-        this._domTreeOutline = new WI.DOMTreeOutline(true, true, true);
+        this._domTreeOutline = new WI.DOMTreeOutline({omitRootDOMNode: true, excludeRevealElementContextMenu: true, showLastSelected: true});
         this._domTreeOutline.allowsEmptySelection = false;
         this._domTreeOutline.allowsMultipleSelection = true;
         this._domTreeOutline.addEventListener(WI.TreeOutline.Event.ElementAdded, this._domTreeElementAdded, this);
