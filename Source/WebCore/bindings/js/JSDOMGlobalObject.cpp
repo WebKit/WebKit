@@ -100,7 +100,10 @@ EncodedJSValue JSC_HOST_CALL makeGetterTypeErrorForBuiltins(ExecState* execState
     scope.assertNoException();
     auto attributeName = execState->uncheckedArgument(1).getString(execState);
     scope.assertNoException();
-    return JSValue::encode(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
+
+    auto error = static_cast<ErrorInstance*>(createTypeError(execState, makeGetterTypeErrorMessage(interfaceName.utf8().data(), attributeName.utf8().data())));
+    error->setNativeGetterTypeError();
+    return JSValue::encode(error);
 }
 
 #if ENABLE(STREAMS_API)

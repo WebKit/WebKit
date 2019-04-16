@@ -123,6 +123,15 @@ JSObject* createError(ExecState* exec, ErrorType errorType, const String& messag
     return nullptr;
 }
 
+JSObject* createGetterTypeError(ExecState* exec, const String& message)
+{
+    ASSERT(!message.isEmpty());
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    auto* error = ErrorInstance::create(exec, globalObject->vm(), globalObject->errorStructure(ErrorType::TypeError), message);
+    error->setNativeGetterTypeError();
+    return error;
+}
+
 class FindFirstCallerFrameWithCodeblockFunctor {
 public:
     FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
@@ -290,9 +299,14 @@ Exception* throwSyntaxError(ExecState* exec, ThrowScope& scope, const String& me
     return throwException(exec, scope, createSyntaxError(exec, message));
 }
 
+Exception* throwGetterTypeError(ExecState* exec, ThrowScope& scope, const String& message)
+{
+    return throwException(exec, scope, createGetterTypeError(exec, message));
+}
+
 JSValue throwDOMAttributeGetterTypeError(ExecState* exec, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName)
 {
-    return throwTypeError(exec, scope, makeString("The ", classInfo->className, '.', String(propertyName.uid()), " getter can only be used on instances of ", classInfo->className));
+    return throwGetterTypeError(exec, scope, makeString("The ", classInfo->className, '.', String(propertyName.uid()), " getter can only be used on instances of ", classInfo->className));
 }
 
 JSObject* createError(ExecState* exec, const String& message)

@@ -270,12 +270,12 @@ String makeGetterTypeErrorMessage(const char* interfaceName, const char* attribu
 
 JSC::EncodedJSValue throwGetterTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* interfaceName, const char* attributeName)
 {
-    return throwVMTypeError(&state, scope, makeGetterTypeErrorMessage(interfaceName, attributeName));
+    return throwVMGetterTypeError(&state, scope, makeGetterTypeErrorMessage(interfaceName, attributeName));
 }
 
 JSC::EncodedJSValue rejectPromiseWithGetterTypeError(JSC::ExecState& state, const char* interfaceName, const char* attributeName)
 {
-    return createRejectedPromiseWithTypeError(state, makeGetterTypeErrorMessage(interfaceName, attributeName));
+    return createRejectedPromiseWithTypeError(state, makeGetterTypeErrorMessage(interfaceName, attributeName), RejectedPromiseWithTypeErrorCause::NativeGetter);
 }
 
 bool throwSetterTypeError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* interfaceName, const char* attributeName)
@@ -302,7 +302,7 @@ JSC::EncodedJSValue rejectPromiseWithThisTypeError(DeferredPromise& promise, con
 
 JSC::EncodedJSValue rejectPromiseWithThisTypeError(JSC::ExecState& state, const char* interfaceName, const char* methodName)
 {
-    return createRejectedPromiseWithTypeError(state, makeThisTypeErrorMessage(interfaceName, methodName));
+    return createRejectedPromiseWithTypeError(state, makeThisTypeErrorMessage(interfaceName, methodName), RejectedPromiseWithTypeErrorCause::InvalidThis);
 }
 
 void throwDOMSyntaxError(JSC::ExecState& state, JSC::ThrowScope& scope, ASCIILiteral message)

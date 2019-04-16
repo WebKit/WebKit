@@ -142,6 +142,21 @@ JSValue JSInjectedScriptHost::isHTMLAllCollection(ExecState* exec)
     return jsBoolean(impl().isHTMLAllCollection(vm, value));
 }
 
+JSValue JSInjectedScriptHost::isPromiseRejectedWithNativeGetterTypeError(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* promise = jsDynamicCast<JSPromise*>(vm, exec->argument(0));
+    if (!promise || promise->status(vm) != JSPromise::Status::Rejected)
+        return throwTypeError(exec, scope, "InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError first argument must be a rejected Promise."_s);
+
+    bool result = false;
+    if (auto* errorInstance = jsDynamicCast<ErrorInstance*>(vm, promise->result(vm)))
+        result = errorInstance->isNativeGetterTypeError();
+    return jsBoolean(result);
+}
+
 JSValue JSInjectedScriptHost::subtype(ExecState* exec)
 {
     VM& vm = exec->vm();

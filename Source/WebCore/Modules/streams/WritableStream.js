@@ -154,7 +154,7 @@ function closed()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(@makeTypeError("The WritableStream.closed getter can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeGetterTypeError("WritableStream", "closed"));
 
     return @getByIdDirectPrivate(this, "closedPromiseCapability").@promise;
 }
@@ -165,7 +165,7 @@ function ready()
     "use strict";
 
     if (!@isWritableStream(this))
-        return @Promise.@reject(@makeTypeError("The WritableStream.ready getter can only be used on instances of WritableStream"));
+        return @Promise.@reject(@makeGetterTypeError("WritableStream", "ready"));
 
     return @getByIdDirectPrivate(this, "readyPromiseCapability").@promise;
 }

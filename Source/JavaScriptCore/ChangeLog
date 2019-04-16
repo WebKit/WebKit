@@ -1,3 +1,37 @@
+2019-04-15  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: fake value descriptors for promises add a catch handler, preventing "rejectionhandled" events from being fired
+        https://bugs.webkit.org/show_bug.cgi?id=196484
+        <rdar://problem/49114725>
+
+        Reviewed by Joseph Pecoraro.
+
+        Only add a catch handler when the promise is reachable via a native getter and is known to
+        have rejected. A non-rejected promise doesn't need a catch handler, and any promise that
+        isn't reachable via a getter won't actually be reached, as `InjectedScript` doesn't call any
+        functions, instead only getting the function object itself.
+
+        * inspector/InjectedScriptSource.js:
+        (InjectedScript.prototype._propertyDescriptors.createFakeValueDescriptor):
+
+        * inspector/JSInjectedScriptHost.h:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::isPromiseRejectedWithNativeGetterTypeError): Added.
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        (Inspector::jsInjectedScriptHostPrototypeFunctionIsPromiseRejectedWithNativeGetterTypeError): Added.
+
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::setNativeGetterTypeError): Added.
+        (JSC::ErrorInstance::isNativeGetterTypeError const): Added.
+
+        * runtime/Error.h:
+        (JSC::throwVMGetterTypeError): Added.
+        * runtime/Error.cpp:
+        (JSC::createGetterTypeError): Added.
+        (JSC::throwGetterTypeError): Added.
+        (JSC::throwDOMAttributeGetterTypeError):
+
 2019-04-15  Robin Morisset  <rmorisset@apple.com>
 
         B3::Value should have different kinds of adjacency lists

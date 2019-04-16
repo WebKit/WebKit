@@ -257,7 +257,9 @@ void fulfillPromiseWithJSON(Ref<DeferredPromise>&&, const String&);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, ArrayBuffer*);
 void fulfillPromiseWithArrayBuffer(Ref<DeferredPromise>&&, const void*, size_t);
 WEBCORE_EXPORT void rejectPromiseWithExceptionIfAny(JSC::ExecState&, JSDOMGlobalObject&, JSC::JSPromiseDeferred&);
-JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&);
+
+enum class RejectedPromiseWithTypeErrorCause { NativeGetter, InvalidThis };
+JSC::EncodedJSValue createRejectedPromiseWithTypeError(JSC::ExecState&, const String&, RejectedPromiseWithTypeErrorCause);
 
 using PromiseFunction = void(JSC::ExecState&, Ref<DeferredPromise>&&);
 

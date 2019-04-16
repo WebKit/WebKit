@@ -653,7 +653,7 @@ let InjectedScript = class InjectedScript
                 if (symbol)
                     fakeDescriptor.symbol = symbol;
                 // Silence any possible unhandledrejection exceptions created from accessing a native accessor with a wrong this object.
-                if (fakeDescriptor.value instanceof Promise)
+                if (fakeDescriptor.value instanceof Promise && InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError(fakeDescriptor.value))
                     fakeDescriptor.value.catch(function(){});
                 return fakeDescriptor;
             } catch (e) {

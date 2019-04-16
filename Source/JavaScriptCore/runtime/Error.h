@@ -67,6 +67,8 @@ JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(ExecState*, const String&);
 
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, ErrorType, const String&);
 
+JSObject* createGetterTypeError(ExecState*, const String&);
+
 std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState*, VM&, JSObject*, bool useCurrentFrame);
 void getBytecodeOffset(ExecState*, VM&, Vector<StackFrame>*, CallFrame*&, unsigned& bytecodeOffset);
 bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL);
@@ -84,6 +86,8 @@ JS_EXPORT_PRIVATE Exception* throwTypeError(ExecState*, ThrowScope&, const Strin
 JS_EXPORT_PRIVATE Exception* throwSyntaxError(ExecState*, ThrowScope&);
 JS_EXPORT_PRIVATE Exception* throwSyntaxError(ExecState*, ThrowScope&, const String& errorMessage);
 inline Exception* throwRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return throwException(state, scope, createRangeError(state, errorMessage)); }
+
+JS_EXPORT_PRIVATE Exception* throwGetterTypeError(ExecState*, ThrowScope&, const String& errorMessage);
 JS_EXPORT_PRIVATE JSValue throwDOMAttributeGetterTypeError(ExecState*, ThrowScope&, const ClassInfo*, PropertyName);
 
 // Convenience wrappers, wrap result as an EncodedJSValue.
@@ -94,6 +98,7 @@ inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope) { ret
 inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope, ASCIILiteral errorMessage) { return JSValue::encode(throwTypeError(exec, scope, errorMessage)); }
 inline EncodedJSValue throwVMTypeError(ExecState* exec, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwTypeError(exec, scope, errorMessage)); }
 inline EncodedJSValue throwVMRangeError(ExecState* state, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwRangeError(state, scope, errorMessage)); }
+inline EncodedJSValue throwVMGetterTypeError(ExecState* exec, ThrowScope& scope, const String& errorMessage) { return JSValue::encode(throwGetterTypeError(exec, scope, errorMessage)); }
 inline EncodedJSValue throwVMDOMAttributeGetterTypeError(ExecState* state, ThrowScope& scope, const ClassInfo* classInfo, PropertyName propertyName) { return JSValue::encode(throwDOMAttributeGetterTypeError(state, scope, classInfo, propertyName)); }
 
 } // namespace JSC
