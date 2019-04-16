@@ -1,3 +1,16 @@
+2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r238168) Web Inspector: <iframe src=...> request does not show up in Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=193505
+        <rdar://problem/47325957>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype._handleFrameWasAdded):
+        Handle new frames by adding the frame's main resource.
+
 2019-04-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Uncaught Exception: TypeError: null is not an object (evaluating 'this._contentViewContainer.currentContentView.selectionPathComponents')

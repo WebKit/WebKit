@@ -162,6 +162,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Target.addEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
+        WI.Frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._handleFrameWasAdded, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFinish, this._resourceLoadingDidFinish, this);
         WI.Resource.addEventListener(WI.Resource.Event.LoadingDidFail, this._resourceLoadingDidFail, this);
         WI.Resource.addEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
@@ -1667,6 +1668,22 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         });
     }
 
+    _handleFrameWasAdded(event)
+    {
+        if (this._needsInitialPopulate)
+            return;
+
+        this._runForMainCollection((collection) => {
+            let frame = event.data.childFrame;
+            let mainResource = frame.provisionalMainResource || frame.mainResource;
+            console.assert(mainResource, "Frame should have a main resource.");
+            this._insertResourceAndReloadTable(mainResource);
+
+            console.assert(!frame.resourceCollection.size, "New frame should be empty.");
+            console.assert(!frame.childFrameCollection.size, "New frame should be empty.");
+        });
+    }
+
     _runForMainCollection(callback)
     {
         let currentCollection = this._activeCollection;
@@ -2057,7 +2074,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         if (this._hasURLFilter()) {
             for (let entry of this._activeCollection.entries)
-                this._checkURLFilterAgainstResource(entry.resource);            
+                this._checkURLFilterAgainstResource(entry.resource);
         }
     }
 
