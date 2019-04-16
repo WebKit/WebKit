@@ -37,8 +37,6 @@
 
 - (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value inContext:(JSContext *)context;
 
-- (void)removeWrapper:(JSValue *)wrapper;
-
 @end
 
 id tryUnwrapObjcObject(JSGlobalContextRef, JSValueRef);

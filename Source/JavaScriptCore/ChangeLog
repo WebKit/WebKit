@@ -1,3 +1,19 @@
+2019-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r243672.
+        https://bugs.webkit.org/show_bug.cgi?id=196952
+
+        [JSValue release] should be thread-safe (Requested by
+        yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "[JSC] JSWrapperMap should not use Objective-C Weak map
+        (NSMapTable with NSPointerFunctionsWeakMemory) for
+        m_cachedObjCWrappers"
+        https://bugs.webkit.org/show_bug.cgi?id=196392
+        https://trac.webkit.org/changeset/243672
+
 2019-04-15  Saam barati  <sbarati@apple.com>
 
         SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base

@@ -369,11 +369,6 @@
     return [[self wrapperMap] objcWrapperForJSValueRef:value inContext:self];
 }
 
-- (void)removeWrapper:(JSValue *)value
-{
-    return [[self wrapperMap] removeWrapper:value];
-}
-
 + (JSContext *)contextWithJSGlobalContextRef:(JSGlobalContextRef)globalContext
 {
     JSContext *context = (__bridge JSContext *)toJSGlobalObject(globalContext)->apiWrapper();
