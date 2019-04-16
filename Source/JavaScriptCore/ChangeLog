@@ -1,3 +1,14 @@
+2019-04-15  Saam barati  <sbarati@apple.com>
+
+        SafeToExecute for GetByOffset/GetGetterByOffset/PutByOffset is using the wrong child for the base
+        https://bugs.webkit.org/show_bug.cgi?id=196945
+        <rdar://problem/49802750>
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+
 2019-04-15  Robin Morisset  <rmorisset@apple.com>
 
         DFG should be able to constant fold Object.create() with a constant prototype operand
