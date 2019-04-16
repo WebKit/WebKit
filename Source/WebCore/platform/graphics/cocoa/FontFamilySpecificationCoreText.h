@@ -45,4 +45,6 @@ private:
     RetainPtr<CTFontDescriptorRef> m_fontDescriptor;
 };
 
+void clearFontFamilySpecificationCoreTextCache();
+
 }

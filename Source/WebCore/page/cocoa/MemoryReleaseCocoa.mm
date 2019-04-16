@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MemoryRelease.h"
 
+#import "FontFamilySpecificationCoreText.h"
 #import "GCController.h"
 #import "IOSurfacePool.h"
 #import "LayerPool.h"
@@ -46,6 +47,7 @@ void platformReleaseMemory(Critical)
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
     SystemFontDatabaseCoreText::singleton().clear();
 #endif
+    clearFontFamilySpecificationCoreTextCache();
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(IOSMAC)
     // FIXME: Remove this call to GSFontInitialize() once <rdar://problem/32886715> is fixed.

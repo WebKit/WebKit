@@ -369,6 +369,16 @@ struct RetainPtrObjectHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
+inline bool safeCFEqual(CFTypeRef a, CFTypeRef b)
+{
+    return (!a && !b) || (a && b && CFEqual(a, b));
+}
+
+inline CFHashCode safeCFHash(CFTypeRef a)
+{
+    return a ? CFHash(a) : 0;
+}
+
 #ifdef __OBJC__
 template<typename T> T* dynamic_objc_cast(id object)
 {

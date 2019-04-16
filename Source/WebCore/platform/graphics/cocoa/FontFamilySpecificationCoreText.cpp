@@ -26,13 +26,67 @@
 #include "config.h"
 #include "FontFamilySpecificationCoreText.h"
 
-#include <pal/spi/cocoa/CoreTextSPI.h>
 #include "FontCache.h"
 #include "FontSelector.h"
+#include <pal/spi/cocoa/CoreTextSPI.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
 
 #include <CoreText/CoreText.h>
 
 namespace WebCore {
+
+struct FontFamilySpecificationKey {
+    FontFamilySpecificationKey() = default;
+
+    FontFamilySpecificationKey(CTFontDescriptorRef fontDescriptor, const FontDescription& fontDescription)
+        : fontDescriptor(fontDescriptor)
+        , fontDescriptionKey(fontDescription)
+    { }
+
+    explicit FontFamilySpecificationKey(WTF::HashTableDeletedValueType deletedValue)
+        : fontDescriptionKey(deletedValue)
+    { }
+
+    bool operator==(const FontFamilySpecificationKey& other) const
+    {
+        return WTF::safeCFEqual(fontDescriptor.get(), other.fontDescriptor.get()) && fontDescriptionKey == other.fontDescriptionKey;
+    }
+
+    bool operator!=(const FontFamilySpecificationKey& other) const
+    {
+        return !(*this == other);
+    }
+
+    bool isHashTableDeletedValue() const { return fontDescriptionKey.isHashTableDeletedValue(); }
+
+    unsigned computeHash() const
+    {
+        return WTF::pairIntHash(WTF::safeCFHash(fontDescriptor.get()), fontDescriptionKey.computeHash());
+    }
+
+    RetainPtr<CTFontDescriptorRef> fontDescriptor;
+    FontDescriptionKey fontDescriptionKey;
+};
+
+struct FontFamilySpecificationKeyHash {
+    static unsigned hash(const FontFamilySpecificationKey& key) { return key.computeHash(); }
+    static bool equal(const FontFamilySpecificationKey& a, const FontFamilySpecificationKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
+using FontMap = HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, WTF::SimpleClassHashTraits<FontFamilySpecificationKey>>;
+
+static FontMap& fontMap()
+{
+    static NeverDestroyed<FontMap> fontMap;
+    return fontMap;
+}
+
+void clearFontFamilySpecificationCoreTextCache()
+{
+    fontMap().clear();
+}
 
 FontFamilySpecificationCoreText::FontFamilySpecificationCoreText(CTFontDescriptorRef fontDescriptor)
     : m_fontDescriptor(fontDescriptor)
@@ -43,24 +97,28 @@ FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText() = default;
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {
-    auto size = fontDescription.computedSize();
+    auto& fontPlatformData = fontMap().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&] () {
+        auto size = fontDescription.computedSize();
 
-    auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
+        auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
 
-    auto fontForSynthesisComputation = font;
+        auto fontForSynthesisComputation = font;
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
-    if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font.get())))
-        fontForSynthesisComputation = physicalFont;
+        if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font.get())))
+            fontForSynthesisComputation = physicalFont;
 #endif
 
-    font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { }, fontDescription.computedSize());
+        font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { }, fontDescription.computedSize());
 
-    bool syntheticBold, syntheticOblique;
-    std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
+        bool syntheticBold, syntheticOblique;
+        std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
 
-    FontPlatformData fontPlatformData(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+        return std::make_unique<FontPlatformData>(font.get(), size, false, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
+    }).iterator->value;
 
-    return FontRanges(FontCache::singleton().fontForPlatformData(fontPlatformData));
+    ASSERT(fontPlatformData);
+
+    return FontRanges(FontCache::singleton().fontForPlatformData(*fontPlatformData));
 }
 
 }

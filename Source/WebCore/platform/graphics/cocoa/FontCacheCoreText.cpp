@@ -27,6 +27,7 @@
 #include "FontCache.h"
 
 #include "Font.h"
+#include "FontFamilySpecificationCoreText.h"
 #include "SystemFontDatabaseCoreText.h"
 #include <pal/spi/cocoa/CoreTextSPI.h>
 
@@ -1204,6 +1205,7 @@ static void invalidateFontCache()
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
     SystemFontDatabaseCoreText::singleton().clear();
 #endif
+    clearFontFamilySpecificationCoreTextCache();
 
     FontDatabase::singletonAllowingUserInstalledFonts().clear();
     FontDatabase::singletonDisallowingUserInstalledFonts().clear();

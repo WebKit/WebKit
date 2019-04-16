@@ -1,3 +1,39 @@
+2019-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] FontPlatformData objects aren't cached at all when using font-family:system-ui
+        https://bugs.webkit.org/show_bug.cgi?id=196846
+        <rdar://problem/49499971>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        When adding the special codepath for system-ui to behave as an entire list of fonts rather than a single item,
+        I never added a cache for the FontPlatformData objects that codepath creates. The non-system-ui codepath already
+        has a cache in fontPlatformDataCache() in FontCache.cpp.
+
+        This patch causes a 16.8x performance improvement on the attached benchmark.
+
+        Test: PerformanceTests/Layout/system-ui-rebuild-emoji.html
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::invalidateFontCache):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationKey::FontFamilySpecificationKey):
+        (WebCore::FontFamilySpecificationKey::operator== const):
+        (WebCore::FontFamilySpecificationKey::operator!= const):
+        (WebCore::FontFamilySpecificationKey::isHashTableDeletedValue const):
+        (WebCore::FontFamilySpecificationKey::computeHash const):
+        (WebCore::FontFamilySpecificationKeyHash::hash):
+        (WebCore::FontFamilySpecificationKeyHash::equal):
+        (WebCore::fontMap):
+        (WebCore::clearFontFamilySpecificationCoreTextCache):
+        (WebCore::FontFamilySpecificationCoreText::fontRanges const):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.h:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        (WebCore::safeCFEqual): Deleted.
+
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: fake value descriptors for promises add a catch handler, preventing "rejectionhandled" events from being fired
