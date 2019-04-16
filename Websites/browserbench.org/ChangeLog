@@ -1,3 +1,15 @@
+2019-04-16  Jon Lee  <jonlee@apple.com>
+
+        [MotionMark] The text "kkkj" is causing Firefox console warning: `unreachable code after return statement`
+        https://bugs.webkit.org/show_bug.cgi?id=196814
+
+        Reviewed by Wenson Hsieh.
+
+        * MotionMark/resources/extensions.js:
+        (subtract.subtract.sampleY):
+        * MotionMark1.1/resources/extensions.js:
+        (subtract.subtract.sampleY):
+
 2019-03-27  Saam Barati  <sbarati@apple.com>
 
         JetStream 2 should not report time values as scores
