@@ -116,8 +116,8 @@ async function setup()
     await setCookie("with-expiration", "with-expiration", {"Expires": new Date("01/04/5000").toGMTString()});
     await setCookie("http-only", "http-only", {"HttpOnly": null});
     await setCookie("same-site-strict", "same-site-strict", {"SameSite": "Strict", "path": "/"});
-    await setCookie("same-site-implicit-strict", "same-site-implicit-strict", {"SameSite": null, "path": "/"});
-    await setCookie("same-site-strict-because-invalid-SameSite-value", "same-site-strict-because-invalid-SameSite-value", {"SameSite": "invalid", "path": "/"});
+    await setCookie("same-site-ignored-because-no-value", "same-site-ignored-because-no-value", {"SameSite": null, "path": "/"});
+    await setCookie("same-site-ignored-because-unknown-value", "same-site-ignored-because-unknown-value", {"SameSite": "invalid", "path": "/"});
     await setCookie("same-site-lax", "same-site-lax", {"SameSite": "Lax", "path": "/"});
     TestPage.dispatchEventToFrontend("SetupComplete");
 }

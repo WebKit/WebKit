@@ -1,3 +1,11 @@
+2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed test gardening, rebaseline HAR test after r244294.
+
+        * http/tests/inspector/network/har/har-page-expected.txt:
+        * http/tests/inspector/network/har/har-page.html:
+        Update for stricter SameSite parsing.
+
 2019-04-16  Shawn Roberts  <sroberts@apple.com>
 
         media/W3C/video/events/event_progress_manual.html is a flaky failure
