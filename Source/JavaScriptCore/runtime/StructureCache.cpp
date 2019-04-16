@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #include "config.h"
 #include "StructureCache.h"
 
-#include "IndexingType.h"
 #include "JSGlobalObject.h"
 #include "JSCInlines.h"
+#include <wtf/Locker.h>
 
 namespace JSC {
 
@@ -36,6 +36,7 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
 {
     RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
 
+    // We don't need to lock here because only the main thread can get here, and only the main thread can mutate the cache
     PrototypeKey key { makePolyProtoStructure ? nullptr : prototype, executable, inlineCapacity, classInfo, globalObject };
     if (Structure* structure = m_structures.get(key)) {
         if (makePolyProtoStructure) {
@@ -58,9 +59,22 @@ inline Structure* StructureCache::createEmptyStructure(JSGlobalObject* globalObj
         structure = Structure::create(
             vm, globalObject, prototype, typeInfo, classInfo, indexingType, inlineCapacity);
     }
+    auto locker = holdLock(m_lock);
     m_structures.set(key, structure);
-
     return structure;
+}
+
+Structure* StructureCache::emptyObjectStructureConcurrently(JSGlobalObject* globalObject, JSObject* prototype, unsigned inlineCapacity)
+{
+    RELEASE_ASSERT(!!prototype); // We use nullptr inside the HashMap for prototype to mean poly proto, so user's of this API must provide non-null prototypes.
+    
+    PrototypeKey key { prototype, nullptr, inlineCapacity, JSFinalObject::info(), globalObject };
+    auto locker = holdLock(m_lock);
+    if (Structure* structure = m_structures.get(key)) {
+        ASSERT(prototype->mayBePrototype());
+        return structure;
+    }
+    return nullptr;
 }
 
 Structure* StructureCache::emptyStructureForPrototypeFromBaseStructure(JSGlobalObject* globalObject, JSObject* prototype, Structure* baseStructure)

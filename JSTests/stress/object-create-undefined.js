@@ -24,3 +24,10 @@ for (var i = 0; i < 1e4; ++i) {
         test(undefined);
     }, `TypeError: Object prototype may only be an Object or null.`);
 }
+for (var i = 0; i < 1e4; ++i) {
+    // Some folding does not happen in the non-inlined version, so this can test a different path through the compiler
+    // than the previous loop.
+    shouldThrow(() => {
+        Object.create(undefined);
+    }, `TypeError: Object prototype may only be an Object or null.`);
+}

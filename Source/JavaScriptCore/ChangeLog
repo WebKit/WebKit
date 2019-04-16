@@ -1,3 +1,34 @@
+2019-04-15  Robin Morisset  <rmorisset@apple.com>
+
+        DFG should be able to constant fold Object.create() with a constant prototype operand
+        https://bugs.webkit.org/show_bug.cgi?id=196886
+
+        Reviewed by Yusuke Suzuki.
+
+
+        It is a fairly simple and limited patch, as it only works when the DFG can prove the exact object used as prototype.
+        But when it applies it can be a significant win:
+                                                        Baseline                   Optim                                       
+        object-create-constant-prototype              3.6082+-0.0979     ^      1.6947+-0.0756        ^ definitely 2.1292x faster
+        object-create-null                           11.4492+-0.2510     ?     11.5030+-0.2402        ?
+        object-create-unknown-object-prototype       15.6067+-0.1851     ?     15.7500+-0.2322        ?
+        object-create-untyped-prototype               8.8873+-0.1240     ?      8.9806+-0.1202        ? might be 1.0105x slower
+        <geometric>                                   8.6967+-0.1208     ^      7.2408+-0.1367        ^ definitely 1.2011x faster
+
+        The only subtlety is that we need to to access the StructureCache concurrently from the compiler thread (see https://bugs.webkit.org/show_bug.cgi?id=186199)
+        I solved this with a simple lock, taken when the compiler thread tries to read it, and when the main thread tries to modify it.
+        I expect it to be extremely low contention, but will watch the bots just in case.
+        The lock is taken neither when the main thread is only reading the cache (it has no-one to race with), nor when the GC purges it of dead entries (it does not free anything while a compiler thread is in the middle of a phase).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * runtime/StructureCache.cpp:
+        (JSC::StructureCache::createEmptyStructure):
+        (JSC::StructureCache::tryEmptyObjectStructureForPrototypeFromCompilerThread):
+        * runtime/StructureCache.h:
+
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: fake value descriptors for promises add a catch handler, preventing "rejectionhandled" events from being fired

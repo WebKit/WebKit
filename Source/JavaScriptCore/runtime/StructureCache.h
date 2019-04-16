@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "JSTypeInfo.h"
 #include "PrototypeKey.h"
 #include "WeakGCMap.h"
+#include <wtf/Lock.h>
 #include <wtf/TriState.h>
 
 namespace JSC {
@@ -51,12 +52,14 @@ public:
 
     JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false, FunctionExecutable* = nullptr);
     JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
+    JS_EXPORT_PRIVATE Structure* emptyObjectStructureConcurrently(JSGlobalObject*, JSObject* prototype, unsigned inlineCapacity);
 
 private:
     Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*);
 
     using StructureMap = WeakGCMap<PrototypeKey, Structure>;
     StructureMap m_structures;
+    Lock m_lock;
 };
 
 } // namespace JSC

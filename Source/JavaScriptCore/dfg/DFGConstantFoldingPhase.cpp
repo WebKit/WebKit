@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include "GetByIdStatus.h"
 #include "JSCInlines.h"
 #include "PutByIdStatus.h"
+#include "StructureCache.h"
 
 namespace JSC { namespace DFG {
 
@@ -750,15 +751,18 @@ private:
 
             case ObjectCreate: {
                 if (JSValue base = m_state.forNode(node->child1()).m_value) {
-                    if (base.isNull()) {
-                        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                        node->convertToNewObject(m_graph.registerStructure(globalObject->nullPrototypeObjectStructure()));
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    Structure* structure = nullptr;
+                    if (base.isNull())
+                        structure = globalObject->nullPrototypeObjectStructure();
+                    else if (base.isObject())
+                        structure = globalObject->vm().structureCache.emptyObjectStructureConcurrently(globalObject, base.getObject(), JSFinalObject::defaultInlineCapacity());
+                    
+                    if (structure) {
+                        node->convertToNewObject(m_graph.registerStructure(structure));
                         changed = true;
                         break;
                     }
-                    // FIXME: We should get a structure for a constant prototype. We need to allow concurrent
-                    // access to StructureCache from compiler threads.
-                    // https://bugs.webkit.org/show_bug.cgi?id=186199
                 }
                 break;
             }
