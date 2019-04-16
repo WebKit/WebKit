@@ -143,6 +143,7 @@ public:
     void clearPendingAPIRequestURL(const Transaction::Token&);
 
     void didStartProvisionalLoad(const Transaction::Token&, const String& url, const String& unreachableURL);
+    void didExplicitOpen(const Transaction::Token&, const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
     void didFailProvisionalLoad(const Transaction::Token&);
 

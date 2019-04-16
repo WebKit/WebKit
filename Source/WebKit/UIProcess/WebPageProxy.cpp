@@ -3922,6 +3922,23 @@ void WebPageProxy::didStartProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& 
         m_navigationClient->didStartProvisionalNavigation(*this, navigation.get(), process->transformHandlesToObjects(userData.object()).get());
 }
 
+void WebPageProxy::didExplicitOpenForFrame(uint64_t frameID, URL&& url)
+{
+    auto* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(m_process, frame);
+    MESSAGE_CHECK_URL(m_process, url);
+
+    auto transaction = m_pageLoadState.transaction();
+
+    if (frame->isMainFrame())
+        m_pageLoadState.didExplicitOpen(transaction, url);
+
+    m_hasCommittedAnyProvisionalLoads = true;
+    m_process->didCommitProvisionalLoad();
+
+    m_pageLoadState.commitChanges();
+}
+
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, uint64_t navigationID, ResourceRequest&& request, const UserData& userData)
 {
     didReceiveServerRedirectForProvisionalLoadForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(request), userData);

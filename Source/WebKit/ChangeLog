@@ -1,5 +1,28 @@
 2019-04-16  Chris Dumez  <cdumez@apple.com>
 
+        URL set by document.open() is not communicated to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=196941
+        <rdar://problem/49237544>
+
+        Reviewed by Geoff Garen.
+
+        Whenever the UIProcess is notified of an explicit document.open() call, update the
+        PageLoadState to make sure the URL is up-to-date. Also make sure the page / process
+        knows it committed a load (i.e. It is no longer showing the initially empty document).
+
+        * UIProcess/PageLoadState.cpp:
+        (WebKit::PageLoadState::didExplicitOpen):
+        * UIProcess/PageLoadState.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didExplicitOpenForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidExplicitOpen):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2019-04-16  Chris Dumez  <cdumez@apple.com>
+
         Show prompt for device orientation access if the client does not implement the corresponding API delegate
         https://bugs.webkit.org/show_bug.cgi?id=196971
         <rdar://problem/49945840>
