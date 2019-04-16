@@ -1,3 +1,14 @@
+2019-04-16  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Set WTF_SCRIPTS_DIR
+        https://bugs.webkit.org/show_bug.cgi?id=196917
+
+        Reviewed by Konstantin Tokarev.
+
+        Use WTF_SCRIPTS_DIR for copying the unified sources script.
+
+        * wtf/CMakeLists.txt:
+
 2019-04-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] FontPlatformData objects aren't cached at all when using font-family:system-ui

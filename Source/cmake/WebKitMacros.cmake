@@ -12,12 +12,6 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
       list(APPEND _sourceListFileTruePaths "${CMAKE_CURRENT_SOURCE_DIR}/${_sourcesListFile}")
     endforeach ()
 
-    if (WIN32 AND INTERNAL_BUILD)
-        set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
-    else ()
-        set(WTF_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/wtf/Scripts")
-    endif ()
-
     if (ENABLE_UNIFIED_BUILDS)
         execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
             "--derived-sources-path" "${_derivedSourcesPath}"

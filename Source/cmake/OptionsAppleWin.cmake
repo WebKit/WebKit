@@ -73,5 +73,6 @@ endif ()
 add_compile_options(/WX /Wv:18)
 
 if (INTERNAL_BUILD)
+    set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
     set(JavaScriptCore_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore/Scripts")
 endif ()
