@@ -562,6 +562,9 @@ void WebInspectorProxy::inspectedViewFrameDidChange(CGFloat currentDimension)
         return;
     }
 
+    if (!inspectedPage())
+        return;
+
     NSView *inspectedView = inspectedPage()->inspectorAttachmentView();
     WKWebView *inspectorView = [m_inspectorViewController webView];
 
