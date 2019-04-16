@@ -1,3 +1,29 @@
+2019-04-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Storage: values truncated in Local/Session table
+        https://bugs.webkit.org/show_bug.cgi?id=178318
+        <rdar://problem/34998581>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid):
+        (WI.DataGrid.prototype._copyTextForDataGridNode):
+        * UserInterface/Views/TimelineDataGrid.js:
+        (WI.TimelineDataGrid):
+        Refactor `WI.DataGrid` constructor to allow for more optional arguments.
+        Introduce a new optional argument `copyCallback` that can be used to override the text that
+        would be copied for any `WI.DataGridNode` in any column.
+
+        * UserInterface/Views/DOMStorageContentView.js:
+        (WI.DOMStorageContentView):
+        (WI.DOMStorageContentView.prototype.itemAdded):
+        (WI.DOMStorageContentView.prototype.itemUpdated):
+        (WI.DOMStorageContentView.prototype._populate):
+        (WI.DOMStorageContentView.prototype._dataGridCopy): Added.
+        Save the full non-truncated value as part of the `WI.DataGridNode`'s `data`. When copying,
+        use the full non-truncated value instead of what was shown in the DOM.
+
 2019-04-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: DOM Nodes should not show $0 when selected in Console area

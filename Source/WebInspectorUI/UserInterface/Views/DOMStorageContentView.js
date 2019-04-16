@@ -41,7 +41,11 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
         columns.key = {title: WI.UIString("Key"), sortable: true};
         columns.value = {title: WI.UIString("Value"), sortable: true};
 
-        this._dataGrid = new WI.DataGrid(columns, this._editingCallback.bind(this), this._deleteCallback.bind(this));
+        this._dataGrid = new WI.DataGrid(columns, {
+            editingCallback: this._editingCallback.bind(this),
+            copyCallback: this._dataGridCopy.bind(this),
+            deleteCallback: this._deleteCallback.bind(this),
+        });
         this._dataGrid.sortOrder = WI.DataGrid.SortOrder.Ascending;
         this._dataGrid.sortColumnIdentifier = "key";
         this._dataGrid.createSettings("dom-storage-content-view");
@@ -85,6 +89,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
     itemAdded(event)
     {
         let {key, value} = event.data;
+        let originalValue = value;
         value = this._truncateValue(value);
 
         // Enforce key uniqueness.
@@ -93,13 +98,14 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 return;
         }
 
-        this._dataGrid.appendChild(new WI.DataGridNode({key, value}, false));
+        this._dataGrid.appendChild(new WI.DataGridNode({key, value, originalValue}, false));
         this._sortDataGrid();
     }
 
     itemUpdated(event)
     {
         let {key, value} = event.data;
+        let originalValue = value;
         value = this._truncateValue(value);
 
         let keyFound = false;
@@ -113,6 +119,7 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
 
                 keyFound = true;
                 childNode.data.value = value;
+                childNode.data.originalValue = originalValue;
                 childNode.refresh();
             }
         }
@@ -136,8 +143,9 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 if (!key || !value)
                     continue;
 
+                let originalValue = value;
                 value = this._truncateValue(value);
-                let node = new WI.DataGridNode({key, value}, false);
+                let node = new WI.DataGridNode({key, value, originalValue}, false);
                 this._dataGrid.appendChild(node);
             }
 
@@ -252,6 +260,13 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
             this._dataGrid.addPlaceholderNode();
         cleanup();
         domStorage.setItem(key, value);
+    }
+
+    _dataGridCopy(node, columnIdentifier, text)
+    {
+        if (columnIdentifier === "value" && node.data.originalValue)
+            return node.data.originalValue;
+        return text;
     }
 };
 

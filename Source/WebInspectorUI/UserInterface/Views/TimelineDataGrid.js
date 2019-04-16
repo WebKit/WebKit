@@ -25,9 +25,9 @@
 
 WI.TimelineDataGrid = class TimelineDataGrid extends WI.DataGrid
 {
-    constructor(columns, editCallback, deleteCallback)
+    constructor(columns)
     {
-        super(columns, editCallback, deleteCallback);
+        super(columns);
 
         this.element.classList.add("timeline");
 

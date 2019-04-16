@@ -25,7 +25,7 @@
 
 WI.DataGrid = class DataGrid extends WI.View
 {
-    constructor(columnsData, editCallback, deleteCallback, preferredColumnOrder)
+    constructor(columnsData, {editCallback, copyCallback, deleteCallback, preferredColumnOrder} = {})
     {
         super();
 
@@ -109,6 +109,9 @@ WI.DataGrid = class DataGrid extends WI.View
             this._editCallback = editCallback;
         }
 
+        if (copyCallback)
+            this._copyCallback = copyCallback;
+
         if (deleteCallback)
             this._deleteCallback = deleteCallback;
 
@@ -168,7 +171,7 @@ WI.DataGrid = class DataGrid extends WI.View
             };
         }
 
-        var dataGrid = new WI.DataGrid(columnsData, undefined, undefined, columnNames);
+        let dataGrid = new WI.DataGrid(columnsData, {preferredColumnOrder: columnNames});
         for (var i = 0; i < values.length / numColumns; ++i) {
             var data = {};
             for (var j = 0; j < columnNames.length; ++j)
@@ -1697,7 +1700,12 @@ WI.DataGrid = class DataGrid extends WI.View
 
     _copyTextForDataGridNode(node)
     {
-        let fields = node.dataGrid.orderedColumns.map((identifier) => this.textForDataGridNodeColumn(node, identifier));
+        let fields = node.dataGrid.orderedColumns.map((identifier) => {
+            let text = this.textForDataGridNodeColumn(node, identifier);
+            if (this._copyCallback)
+                text = this._copyCallback(node, identifier, text);
+            return text;
+        });
         return fields.join(this._copyTextDelimiter);
     }
 
