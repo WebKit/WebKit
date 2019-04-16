@@ -1,3 +1,10 @@
+2019-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening
+
+        * platform/gtk/TestExpectations:
+        media/media-controls-accessibility.html times out since r244182.
+
 2019-04-15  Antoine Quint  <graouts@apple.com>
 
         [iOS] Redundant pointer events causes material design buttons to flush twice

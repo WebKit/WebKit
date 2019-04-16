@@ -3225,7 +3225,7 @@ webkit.org/b/163335 fast/loader/file-URL-with-port-number.html [ Timeout ]
 # Crash is bug #186251
 webkit.org/b/163383 accessibility/meter-element.html [ Failure Crash ]
 
-webkit.org/b/163512 media/media-controls-accessibility.html [ Failure ]
+webkit.org/b/163512 media/media-controls-accessibility.html [ Timeout ]
 webkit.org/b/163521 media/tab-focus-inside-media-elements.html [ Failure ]
 webkit.org/b/163523 media/track/track-manual-mode.html [ Failure Timeout ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
