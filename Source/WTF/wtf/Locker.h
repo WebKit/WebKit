@@ -30,6 +30,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
+#include <wtf/Compiler.h>
 #include <wtf/Noncopyable.h>
 
 namespace WTF {
@@ -119,17 +120,23 @@ private:
 // Use this lock scope like so:
 // auto locker = holdLock(lock);
 template<typename LockType>
+Locker<LockType> holdLock(LockType&) WARN_UNUSED_RETURN;
+template<typename LockType>
 Locker<LockType> holdLock(LockType& lock)
 {
     return Locker<LockType>(lock);
 }
 
 template<typename LockType>
+Locker<LockType> holdLockIf(LockType&, bool predicate) WARN_UNUSED_RETURN;
+template<typename LockType>
 Locker<LockType> holdLockIf(LockType& lock, bool predicate)
 {
     return Locker<LockType>(predicate ? &lock : nullptr);
 }
 
+template<typename LockType>
+Locker<LockType> tryHoldLock(LockType&) WARN_UNUSED_RETURN;
 template<typename LockType>
 Locker<LockType> tryHoldLock(LockType& lock)
 {

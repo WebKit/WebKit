@@ -1,3 +1,17 @@
+2019-04-16  Robin Morisset  <rmorisset@apple.com>
+
+        [WTF] holdLock should be marked WARN_UNUSED_RETURN
+        https://bugs.webkit.org/show_bug.cgi?id=196922
+
+        Reviewed by Keith Miller.
+
+        There was one case where holdLock was used and the result ignored.
+        From a comment that was deleted in https://bugs.webkit.org/attachment.cgi?id=328438&action=prettypatch, I believe that it is on purpose.
+        So I brought back a variant of the comment, and made the ignoring of the return explicit.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::isPagedOut):
+
 2019-04-16  Caitlin Potter  <caitp@igalia.com>
 
         [JSC] Filter DontEnum properties in ProxyObject::getOwnPropertyNames()
