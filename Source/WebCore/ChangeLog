@@ -1,3 +1,18 @@
+2019-04-15  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Redundant pointer events causes material design buttons to flush twice
+        https://bugs.webkit.org/show_bug.cgi?id=196914
+        <rdar://problem/49571860>
+
+        Reviewed by Dean Jackson.
+
+        Test: pointerevents/ios/pointer-event-order.html
+
+        Do not dispatch pointer events for mouse events on iOS since we're already dispatching them when processing touch events.
+
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseEvent):
+
 2019-04-15  John Wilander  <wilander@apple.com>
 
         Add a query string nonce to LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html to address flakiness

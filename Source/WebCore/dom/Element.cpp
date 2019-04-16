@@ -302,7 +302,7 @@ bool Element::dispatchMouseEvent(const PlatformMouseEvent& platformEvent, const 
 
     bool didNotSwallowEvent = true;
 
-#if ENABLE(POINTER_EVENTS)
+#if ENABLE(POINTER_EVENTS) && !ENABLE(TOUCH_EVENTS)
     if (RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled()) {
         if (auto pointerEvent = PointerEvent::create(mouseEvent)) {
             if (auto* page = document().page())

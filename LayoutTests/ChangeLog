@@ -1,3 +1,22 @@
+2019-04-15  Antoine Quint  <graouts@apple.com>
+
+        [iOS] Redundant pointer events causes material design buttons to flush twice
+        https://bugs.webkit.org/show_bug.cgi?id=196914
+        <rdar://problem/49571860>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that listens to all pointer event types as well as click, which forces the dispatch of compatibility mouse events
+        along with the click which would trigger duplicated pointer events prior to the source changes.
+
+        To ensure the new test added runs smoothly with a preceeding test that also uses ui.tap(), we add a delay to guarantee that no
+        double-taps are seen rather two successive single taps.
+
+        * pointerevents/ios/pointer-event-order-expected.txt: Added.
+        * pointerevents/ios/pointer-event-order.html: Added.
+        * pointerevents/utils.js:
+        (const.ui.new.UIController.prototype.tap):
+
 2019-04-15  John Wilander  <wilander@apple.com>
 
         Add a query string nonce to LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html to address flakiness
