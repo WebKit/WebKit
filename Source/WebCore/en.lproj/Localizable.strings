@@ -109,6 +109,9 @@
 /* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";
 
+/* Button title in Device Orientation Permission API prompt */
+"Allow (device motion and orientation access)" = "Allow";
+
 /* Message for requesting cross-site cookie and website data access. */
 "Allow \"%@\" to use cookies and website data while browsing \"%@\"?" = "Allow \"%@\" to use cookies and website data while browsing \"%@\"?";
 
@@ -153,6 +156,9 @@
 
 /* Cancel */
 "Cancel" = "Cancel";
+
+/* Button title in Device Orientation Permission API prompt */
+"Cancel (device motion and orientation access)" = "Cancel";
 
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
@@ -966,6 +972,9 @@
 
 /* message in authentication panel */
 "Your password will be sent unencrypted." = "Your password will be sent unencrypted.";
+
+/* Message for requesting access to the device motion and orientation */
+"\"%@\" Would Like to Access Motion and Orientation" = "\"%@\" Would Like to Access Motion and Orientation";
 
 /* HTTP result code string */
 "accepted" = "accepted";

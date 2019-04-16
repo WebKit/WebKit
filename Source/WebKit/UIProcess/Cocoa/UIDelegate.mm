@@ -39,6 +39,7 @@
 #import "WKNSDictionary.h"
 #import "WKNavigationActionInternal.h"
 #import "WKOpenPanelParametersInternal.h"
+#import "WKOrientationAccessAlert.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
 #import "WKUIDelegatePrivate.h"
@@ -849,12 +850,14 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy&, WebFrameProxy& webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, CompletionHandler<void(bool)>&& completionHandler)
 {
-    if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler)
-        return completionHandler(false);
-
     auto delegate = m_uiDelegate.m_delegate.get();
     if (!delegate)
         return completionHandler(false);
+
+    if (!m_uiDelegate.m_delegateMethods.webViewShouldAllowDeviceOrientationAndMotionAccessRequestedByFrameDecisionHandler) {
+        presentOrientationAccessAlert(m_uiDelegate.m_webView, securityOriginData.host, WTFMove(completionHandler));
+        return;
+    }
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:wrapper(API::FrameInfo::create(webFrameProxy, securityOriginData.securityOrigin())) decisionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL granted) mutable {
