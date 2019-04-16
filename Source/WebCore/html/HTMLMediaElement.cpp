@@ -2098,9 +2098,10 @@ bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIf
 
     RefPtr<Frame> frame = document().frame();
     if (!frame || !document().securityOrigin().canDisplay(url)) {
-        if (actionIfInvalid == Complain)
+        if (actionIfInvalid == Complain) {
             FrameLoader::reportLocalLoadFailed(frame.get(), url.stringCenterEllipsizedToLength());
             ERROR_LOG(LOGIDENTIFIER, url , " was rejected by SecurityOrigin");
+        }
         return false;
     }
 
