@@ -174,7 +174,7 @@ TEST(WebKit, AutoLayoutIntegration)
     [webView _setShouldExpandContentToViewHeightForAutoLayout:NO];
 }
 
-TEST(WebKit, AutoLayoutRenderingProgressRelativeOrdering)
+TEST(WebKit, DISABLED_AutoLayoutRenderingProgressRelativeOrdering)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
