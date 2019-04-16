@@ -246,7 +246,7 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
             this._domSearchIdentifier = searchId;
 
             let domSearchResults = ({nodeIds}) => {
-                // If someone started a new search, then return early and stop showing seach results from the old query.
+                // If someone started a new search, then return early and stop showing search results from the old query.
                 if (this._domSearchIdentifier !== searchId)
                     return;
 

@@ -1,3 +1,10 @@
+2019-04-15  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Unreviewed, fix typo in a comment.
+
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.performSearch):
+
 2019-04-15  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Heap: don't use recursion when calculating root paths
