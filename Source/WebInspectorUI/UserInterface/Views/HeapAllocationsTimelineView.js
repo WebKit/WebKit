@@ -153,6 +153,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
         for (let dataGridNode of this._dataGrid.children) {
             if (dataGridNode.record === heapSnapshotTimelineRecord) {
+                dataGridNode.hidden = false;
                 dataGridNode.select();
                 break;
             }
@@ -194,7 +195,10 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             return items;
         }
 
-        return this._contentViewContainer.currentContentView.navigationItems;
+        if (this._contentViewContainer.currentContentView)
+            return this._contentViewContainer.currentContentView.navigationItems;
+
+        return [];
     }
 
     get selectionPathComponents()
@@ -215,7 +219,10 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             components.push(heapSnapshotPathComponent);
         }
 
-        return components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
+        if (this._contentViewContainer.currentContentView)
+            components = components.concat(this._contentViewContainer.currentContentView.selectionPathComponents);
+
+        return components;
     }
 
     selectRecord(record)
