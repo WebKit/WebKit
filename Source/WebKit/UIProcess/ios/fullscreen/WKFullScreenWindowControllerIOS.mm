@@ -132,7 +132,9 @@ struct WKWebViewState {
         _savedObscuredInsets = [webView _obscuredInsets];
         _savedEdgeInset = [[webView scrollView] contentInset];
         _savedContentOffset = [[webView scrollView] contentOffset];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         _savedScrollIndicatorInsets = [[webView scrollView] scrollIndicatorInsets];
+ALLOW_DEPRECATED_DECLARATIONS_END
         if (auto* page = webView._page) {
             _savedTopContentInset = page->topContentInset();
             _savedForceAlwaysUserScalable = page->forceAlwaysUserScalable();
