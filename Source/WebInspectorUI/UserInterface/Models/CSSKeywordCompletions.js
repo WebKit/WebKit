@@ -1132,7 +1132,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "none", "all", "auto", "visible", "visiblePainted", "visibleFill", "visibleStroke", "painted", "fill", "stroke",
     ],
     "position": [
-        "absolute", "fixed", "relative", "static", "-webkit-sticky",
+        "absolute", "fixed", "relative", "static", "sticky", "-webkit-sticky",
     ],
     "resize": [
         "none", "auto", "both", "horizontal", "vertical",

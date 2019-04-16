@@ -1,3 +1,63 @@
+2019-04-16  Devin Rousso  <drousso@apple.com>
+
+        Unprefix -webkit-sticky
+        https://bugs.webkit.org/show_bug.cgi?id=196962
+        <rdar://problem/40903458>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/layer-creation/no-compositing-for-sticky.html:
+        * editing/pasteboard/copy-paste-converts-sticky.html:
+        * editing/pasteboard/copy-paste-converts-sticky-expected.txt:
+        * fast/block/positioning/fixed-container-with-sticky-parent.html:
+        * fast/block/sticky-position-containing-block-crash.html:
+        * fast/css/sticky/inflow-sticky.html:
+        * fast/css/sticky/inline-sticky-abspos-child.html:
+        * fast/css/sticky/inline-sticky.html:
+        * fast/css/sticky/multiple-layers-sticky-crash.html:
+        * fast/css/sticky/parsing-position-sticky-expected.txt:
+        * fast/css/sticky/remove-inline-sticky-crash.html:
+        * fast/css/sticky/remove-sticky-crash.html:
+        * fast/css/sticky/replaced-sticky.html:
+        * fast/css/sticky/resources/parsing-position-sticky.js:
+        * fast/css/sticky/sticky-as-positioning-container.html:
+        * fast/css/sticky/sticky-both-sides.html:
+        * fast/css/sticky/sticky-bottom-overflow-padding.html:
+        * fast/css/sticky/sticky-left-percentage.html:
+        * fast/css/sticky/sticky-left.html:
+        * fast/css/sticky/sticky-margins.html:
+        * fast/css/sticky/sticky-overflowing.html:
+        * fast/css/sticky/sticky-side-margins.html:
+        * fast/css/sticky/sticky-stacking-context.html:
+        * fast/css/sticky/sticky-stacking-context-expected.html:
+        * fast/css/sticky/sticky-table-row-top.html:
+        * fast/css/sticky/sticky-table-thead-top.html:
+        * fast/css/sticky/sticky-top-margins.html:
+        * fast/css/sticky/sticky-top-overflow-container-overflow.html:
+        * fast/css/sticky/sticky-top-overflow.html:
+        * fast/css/sticky/sticky-top-zoomed.html:
+        * fast/css/sticky/sticky-top-zoomed-expected.html:
+        * fast/css/sticky/sticky-top.html:
+        * fast/css/sticky/sticky-writing-mode-horizontal-bt.html:
+        * fast/css/sticky/sticky-writing-mode-vertical-lr.html:
+        * fast/css/sticky/sticky-writing-mode-vertical-rl.html:
+        * fast/multicol/newmulticol/table-section-crash.html:
+        * fast/scrolling/ios/reconcile-layer-position-recursive.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-document.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-iframe.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html:
+        * fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html:
+        * fast/scrolling/sticky-to-fixed.html:
+        * legacy-animation-engine/fast/multicol/newmulticol/table-section-crash.html:
+        * scrollingcoordinator/scrolling-tree/resources/doc-with-sticky.html:
+        * svg/text/select-text-inside-non-static-position.html:
+        * tiled-drawing/scrolling/sticky/negative-scroll-offset.html:
+        * tiled-drawing/scrolling/sticky/sticky-horizontal.html:
+        * tiled-drawing/scrolling/sticky/sticky-layers.html:
+        * tiled-drawing/scrolling/sticky/sticky-vertical.html:
+
 2019-04-16  John Wilander  <wilander@apple.com>
 
         Increase timeout threshold in http/tests/adClickAttribution/send-attribution-conversion-request.html to address flakiness

@@ -43,7 +43,7 @@
 }
 
 .content-view.audit-test-group.contains-test-case > header {
-    position: -webkit-sticky;
+    position: sticky;
     top: -1px;
     z-index: var(--z-index-header);
     background-color: var(--audit-test-header-background-color);

@@ -1,4 +1,4 @@
-description("This tests checks that the -webkit-sticky value for position parses correctly.");
+description("This tests checks that the sticky value for position parses correctly.");
 
 function test(value)
 {
@@ -12,4 +12,4 @@ function test(value)
 }
 
 shouldBe('test("position: -webkit-sticky;")', '"-webkit-sticky"');
-shouldBeEqualToString('test("position: sticky;")', '');
+shouldBe('test("position: sticky;")', '"sticky"');

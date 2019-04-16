@@ -51,7 +51,7 @@
 }
 
 .changes-panel .resource-section > .header {
-    position: -webkit-sticky;
+    position: sticky;
     top: 0;
     z-index: var(--z-index-header);
     padding: 4px 8px;

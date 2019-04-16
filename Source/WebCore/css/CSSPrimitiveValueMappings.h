@@ -2335,7 +2335,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(PositionType e)
         m_value.valueID = CSSValueFixed;
         break;
     case PositionType::Sticky:
-        m_value.valueID = CSSValueWebkitSticky;
+        m_value.valueID = CSSValueSticky;
         break;
     }
 }
@@ -2353,6 +2353,7 @@ template<> inline CSSPrimitiveValue::operator PositionType() const
         return PositionType::Absolute;
     case CSSValueFixed:
         return PositionType::Fixed;
+    case CSSValueSticky:
     case CSSValueWebkitSticky:
         return PositionType::Sticky;
     default:

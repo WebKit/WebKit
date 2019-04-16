@@ -21,7 +21,7 @@ first test - before:
 |     "
 abc"
 |     <div>
-|       style="position: -webkit-sticky; left: 0px; top: 0px;"
+|       style="position: sticky; left: 0px; top: 0px;"
 |       "def"
 |     "ghi
 "

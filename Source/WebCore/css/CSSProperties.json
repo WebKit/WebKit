@@ -3501,9 +3501,12 @@
                 "absolute",
                 "fixed",
                 {
-                    "value": "-webkit-sticky",
-                    "status": "experimental",
+                    "value": "sticky",
                     "url": "https://www.w3.org/TR/css-position-3/#valdef-position-sticky"
+                },
+                {
+                    "value": "-webkit-sticky",
+                    "status": "deprecated"
                 }
             ],
             "specification": {

@@ -1153,6 +1153,7 @@ edges
 alphabetic
 
 // position
+sticky
 -webkit-sticky
 
 // (pointer:) media feature

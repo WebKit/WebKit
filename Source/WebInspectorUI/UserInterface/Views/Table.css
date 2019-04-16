@@ -35,7 +35,7 @@
 }
 
 .table > .header {
-    position: -webkit-sticky;
+    position: sticky;
     top: 0;
     height: var(--navigation-bar-height);
     line-height: calc(var(--navigation-bar-height) - 1px);
