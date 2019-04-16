@@ -41,7 +41,7 @@
         document.body.removeChild(document.getElementById("pixel"));
 
         let iframeElement = document.createElement("iframe");
-        iframeElement.src = "http://127.0.0.1:8000/adClickAttribution/resources/getConversionData.php?endTest=true&timeout_ms=2000&nonce=" + nonce;
+        iframeElement.src = "http://127.0.0.1:8000/adClickAttribution/resources/getConversionData.php?endTest=true&timeout_ms=4000&nonce=" + nonce;
         document.body.appendChild(iframeElement);
     }
 
