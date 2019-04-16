@@ -583,8 +583,7 @@ WI.contentLoaded = function()
         InspectorFrontendAPI.loadCompleted();
     });
 
-    let mainElementRect = document.getElementById("main").getBoundingClientRect();
-    InspectorFrontendHost.setSheetRect(mainElementRect.x, mainElementRect.y, mainElementRect.width, mainElementRect.height);
+    WI._updateSheetRect();
 
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
@@ -1678,6 +1677,13 @@ WI._windowResized = function(event)
     WI.toolbar.updateLayout(WI.View.LayoutReason.Resize);
     WI.tabBar.updateLayout(WI.View.LayoutReason.Resize);
     WI._tabBrowserSizeDidChange();
+    WI._updateSheetRect();
+};
+
+WI._updateSheetRect = function()
+{
+    let mainElementRect = document.getElementById("main").getBoundingClientRect();
+    InspectorFrontendHost.setSheetRect(mainElementRect.x, mainElementRect.y, mainElementRect.width, mainElementRect.height);
 };
 
 WI._updateModifierKeys = function(event)
