@@ -1,3 +1,16 @@
+2019-04-16  Timothy Hatcher  <timothy@apple.com>
+
+        FrameView base background color always starts white.
+        https://bugs.webkit.org/show_bug.cgi?id=196976
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Set m_backgroundColor before calling
+        WebFrame::createWithCoreMainFrame so the call to create the FrameView
+        for the empty page in transitionToCommittedForNewPage() gets
+        the correct color from WebPage.
+
 2019-04-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, fix the build with recent SDKs.

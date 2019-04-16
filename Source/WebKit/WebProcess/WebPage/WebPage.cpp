@@ -497,6 +497,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
     updatePreferences(parameters.store);
 
+    m_backgroundColor = parameters.backgroundColor;
+
     m_drawingArea = DrawingArea::create(*this, parameters);
     m_drawingArea->setPaintingEnabled(false);
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
@@ -670,8 +672,6 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if USE(AUDIO_SESSION)
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(true);
 #endif
-
-    setBackgroundColor(parameters.backgroundColor);
 }
 
 #if ENABLE(WEB_RTC)

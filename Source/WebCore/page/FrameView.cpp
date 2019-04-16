@@ -2984,7 +2984,11 @@ Color FrameView::baseBackgroundColor() const
 
 void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 {
-    m_baseBackgroundColor = backgroundColor.isValid() ? backgroundColor : Color::white;
+    Color newBaseBackgroundColor = backgroundColor.isValid() ? backgroundColor : Color::white;
+    if (m_baseBackgroundColor == newBaseBackgroundColor)
+        return;
+
+    m_baseBackgroundColor = newBaseBackgroundColor;
 
     if (!isViewForDocumentInFrame())
         return;
