@@ -1,3 +1,14 @@
+2019-04-16  John Wilander  <wilander@apple.com>
+
+        Set test conditions closer to conversion redirect in LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html
+        https://bugs.webkit.org/show_bug.cgi?id=196983
+        <rdar://problem/49952679>
+
+        Unreviewed test gardening.
+
+        * http/tests/adClickAttribution/resources/redirectToConversion.php:
+        * http/tests/adClickAttribution/send-attribution-conversion-request.html:
+
 2019-04-16  Devin Rousso  <drousso@apple.com>
 
         Unprefix -webkit-sticky
