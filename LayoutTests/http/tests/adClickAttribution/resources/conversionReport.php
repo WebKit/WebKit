@@ -5,9 +5,16 @@ $conversionFile = fopen($conversionFilePath . ".tmp", 'w');
 $httpHeaders = $_SERVER;
 $cookiesFound = false;
 foreach ($httpHeaders as $name => $value) {
-    if ($name === "HTTP_HOST" || $name === "REQUEST_URI")
+    if ($name === "HTTP_HOST") {
         fwrite($conversionFile, "$name: $value\n");
-    else if ($name === "HTTP_COOKIE") {
+    } else if ($name === "REQUEST_URI") {
+        $positionOfNonce = strpos($value, "&nonce=");
+        if ($positionOfNonce === false)
+            $outputURL = $value;
+        else
+            $outputURL = substr($value, 0, $positionOfNonce);
+        fwrite($conversionFile, "$name: $outputURL\n");
+    } else if ($name === "HTTP_COOKIE") {
         fwrite($conversionFile, "Cookies in conversion request: $value\n");
         $cookiesFound = true;
     }

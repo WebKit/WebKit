@@ -36,7 +36,7 @@ if ($conversionFileFound) {
     fclose($conversionFile);
     unlink($conversionFilePath);
 } else {
-    echo "Conversion not received - timed out.";
+    echo "Conversion not received - timed out.<br>";
 }
 
 if (isset($_GET['endTest'])) {

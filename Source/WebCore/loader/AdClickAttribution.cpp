@@ -141,6 +141,10 @@ URL AdClickAttribution::urlForTesting(const URL& baseURL) const
     builder.appendNumber(m_conversion.value().data);
     builder.appendLiteral("&campaign=");
     builder.appendNumber(m_campaign.id);
+    if (baseURL.hasQuery()) {
+        builder.append('&');
+        builder.append(baseURL.query());
+    }
     return URL(baseURL, builder.toString());
 }
 

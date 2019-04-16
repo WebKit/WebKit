@@ -1,3 +1,17 @@
+2019-04-15  John Wilander  <wilander@apple.com>
+
+        Add a query string nonce to LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html to address flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=196955
+
+        Unreviewed test gardening. The WebCore change is only in a dedicated
+        test function.
+
+        No new tests. Existing test updated.
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::urlForTesting const):
+            Now preserves the query string in the test URL.
+
 2019-04-15  Chris Dumez  <cdumez@apple.com>
 
         URL set by document.open() is not communicated to the UIProcess
