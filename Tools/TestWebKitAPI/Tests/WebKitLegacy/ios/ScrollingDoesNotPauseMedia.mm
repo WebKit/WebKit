@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import <WebKit/DOMHTMLMediaElement.h>
 #import <WebKit/WebFramePrivate.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 
 @interface ScrollingDoesNotPauseMediaDelegate : NSObject <UIWebViewDelegate, DOMEventListener> {
@@ -90,22 +91,30 @@ TEST(WebKitLegacy, ScrollingDoesNotPauseMedia)
     Util::run(&didFinishLoad);
     Util::run(&gotMainFrame);
 
-    DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[mainFrame.DOMDocument querySelector:@"video"];
-    ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
+    callOnMainThreadAndWait([&] () mutable {
+        DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[mainFrame.DOMDocument querySelector:@"video"];
+        ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 
-    [video addEventListener:@"playing" listener:testController.get() useCapture:NO];
-    [video addEventListener:@"pause" listener:testController.get() useCapture:NO];
+        [video addEventListener:@"playing" listener:testController.get() useCapture:NO];
 
-    [mainFrame setTimeoutsPaused:YES];
+        [mainFrame setTimeoutsPaused:YES];
+        didReceivePlaying = false;
+        [video play];
+    });
 
-    didReceivePlaying = false;
-    [video play];
     Util::run(&didReceivePlaying);
 
-    [mainFrame setTimeoutsPaused:NO];
+    callOnMainThreadAndWait([&] () mutable {
+        DOMHTMLMediaElement* video = (DOMHTMLMediaElement*)[mainFrame.DOMDocument querySelector:@"video"];
+        ASSERT_TRUE([video isKindOfClass:[DOMHTMLMediaElement class]]);
 
-    didReceivePause = false;
-    [video play];
+        [video addEventListener:@"pause" listener:testController.get() useCapture:NO];
+
+        [mainFrame setTimeoutsPaused:NO];
+        didReceivePause = false;
+        [video pause];
+    });
+
     Util::run(&didReceivePause);
 }
 
