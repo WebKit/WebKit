@@ -28,6 +28,7 @@ import logging
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 from ews.fetcher import BugzillaPatchFetcher
 from ews.models.patch import Patch
@@ -39,6 +40,7 @@ class SubmitToEWS(View):
     def get(self, request):
         return render(request, 'submittoews.html', {})
 
+    @xframe_options_exempt
     def post(self, request):
         try:
             patch_id = request.POST.get('patch_id')

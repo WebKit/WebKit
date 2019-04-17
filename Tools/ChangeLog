@@ -1,3 +1,13 @@
+2019-04-17  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Clicking 'submit to new ews' doesn't reload status-bubble
+        https://bugs.webkit.org/show_bug.cgi?id=196675
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/submittoews.py:
+        (SubmitToEWS): Added @xframe_options_exempt similar to statusbubble.py
+
 2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
