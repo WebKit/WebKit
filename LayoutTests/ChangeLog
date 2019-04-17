@@ -1,3 +1,15 @@
+2019-04-17  Cathie Chen  <cathiechen@igalia.com>
+
+        Update the test result of resize-observer/eventloop.html.
+        https://bugs.webkit.org/show_bug.cgi?id=197001
+
+        Reviewed by Frédéric Wang.
+
+        Since 177484 has landed, the order of requestAnimationFrame and resizeobserver callback is right.
+        No need to mark eventloop.html as flaky.
+
+        * TestExpectations:
+
 2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
