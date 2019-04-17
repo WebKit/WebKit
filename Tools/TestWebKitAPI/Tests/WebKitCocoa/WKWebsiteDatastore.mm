@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/text/WTFString.h>
@@ -47,4 +48,17 @@ TEST(WKWebsiteDataStore, RemoveAndFetchData)
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
+}
+
+TEST(WKWebsiteDataStore, RemoveEphemeralData)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    __block bool done = false;
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler: ^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
 }

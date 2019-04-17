@@ -1,3 +1,17 @@
+2019-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r244162) Clearing website data from ephemeral WKWebsiteDataStore should finish instead of asserting or hanging
+        https://bugs.webkit.org/show_bug.cgi?id=196995
+
+        Reviewed by Brady Eidson.
+
+        Always call CompletionHandlers.  Otherwise things hang or assert.
+        I added an API test that asserts without this change so we don't regress this again.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearAllCaches):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+
 2019-04-16  Chris Dumez  <cdumez@apple.com>
 
         URL set by document.open() is not communicated to the UIProcess

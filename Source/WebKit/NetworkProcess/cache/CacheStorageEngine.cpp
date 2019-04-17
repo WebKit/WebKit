@@ -525,7 +525,7 @@ void Engine::clearAllCaches(CompletionHandler<void()>&& completionHandler)
 
     auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!this->shouldPersist())
-            return;
+            return completionHandler();
         
         this->clearAllCachesFromDisk(WTFMove(completionHandler));
     });
@@ -553,7 +553,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Com
 
     auto callbackAggregator = CallbackAggregator::create([this, protectedThis = makeRef(*this), origin, completionHandler = WTFMove(completionHandler)]() mutable {
         if (!this->shouldPersist())
-            return;
+            return completionHandler();
 
         this->clearCachesForOriginFromDisk(origin, [completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();

@@ -1,3 +1,13 @@
+2019-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r244162) Clearing website data from ephemeral WKWebsiteDataStore should finish instead of asserting or hanging
+        https://bugs.webkit.org/show_bug.cgi?id=196995
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebsiteDatastore.mm:
+        (TEST):
+
 2019-04-16  Chris Dumez  <cdumez@apple.com>
 
         URL set by document.open() is not communicated to the UIProcess
