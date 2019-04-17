@@ -1,3 +1,14 @@
+2019-04-17  Devin Rousso  <drousso@apple.com>
+
+        AX: AccessibilityObject::parentObject() doesn't need to be pure virtual
+        https://bugs.webkit.org/show_bug.cgi?id=197026
+        <rdar://problem/49448209>
+
+        Reviewed by Timothy Hatcher.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::parentObject const):
+
 2019-04-17  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Use aria role as a hint whether a tap should result in a synthetic click

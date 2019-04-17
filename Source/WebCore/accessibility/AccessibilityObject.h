@@ -597,7 +597,7 @@ public:
     virtual AccessibilityObject* nextSibling() const { return nullptr; }
     virtual AccessibilityObject* nextSiblingUnignored(int limit) const;
     virtual AccessibilityObject* previousSiblingUnignored(int limit) const;
-    virtual AccessibilityObject* parentObject() const = 0;
+    virtual AccessibilityObject* parentObject() const { return nullptr; }
     virtual AccessibilityObject* parentObjectUnignored() const;
     AccessibilityObjectInterface* parentObjectInterfaceUnignored() const override { return parentObjectUnignored(); }
     virtual AccessibilityObject* parentObjectIfExists() const { return nullptr; }
