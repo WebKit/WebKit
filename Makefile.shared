@@ -38,6 +38,12 @@ ifneq (,$(SDK_VARIANT))
 	XCODE_OPTIONS += SDK_VARIANT="$(SDK_VARIANT)"
 endif
 
+ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
+	ifneq (, $(shell which ccache))
+		XCODE_OPTIONS += WK_USE_CCACHE=YES
+	endif
+endif
+
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
 
