@@ -36,7 +36,7 @@ test(function() {
 
 test(function() {
     let styleElement = document.createElement("style");
-    styleElement.textContent = ":root { supported-color-schemes: light dark; }";
+    styleElement.textContent = ":root { color-scheme: light dark; }";
     document.head.appendChild(styleElement);
 }, "Set prefers-color-schemes: light dark on the body");
 

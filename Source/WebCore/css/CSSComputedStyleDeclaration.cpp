@@ -453,7 +453,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyStrokeOpacity,
     CSSPropertyStrokeWidth,
 #if ENABLE(DARK_MODE_CSS)
-    CSSPropertySupportedColorSchemes,
+    CSSPropertyColorScheme,
 #endif
     CSSPropertyAlignmentBaseline,
     CSSPropertyBaselineShift,
@@ -4045,20 +4045,20 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-        case CSSPropertySupportedColorSchemes: {
+        case CSSPropertyColorScheme: {
             if (!RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
                 return nullptr;
 
-            auto supportedColorSchemes = style.supportedColorSchemes();
-            if (supportedColorSchemes.isAuto())
+            auto colorScheme = style.colorScheme();
+            if (colorScheme.isAuto())
                 return cssValuePool.createIdentifierValue(CSSValueAuto);
 
             auto list = CSSValueList::createSpaceSeparated();
-            if (supportedColorSchemes.contains(ColorSchemes::Light))
+            if (colorScheme.contains(ColorScheme::Light))
                 list->append(cssValuePool.createIdentifierValue(CSSValueLight));
-            if (supportedColorSchemes.contains(ColorSchemes::Dark))
+            if (colorScheme.contains(ColorScheme::Dark))
                 list->append(cssValuePool.createIdentifierValue(CSSValueDark));
-            if (!supportedColorSchemes.allowsTransformations())
+            if (!colorScheme.allowsTransformations())
                 list->append(cssValuePool.createIdentifierValue(CSSValueOnly));
             ASSERT(list->length());
             return list;

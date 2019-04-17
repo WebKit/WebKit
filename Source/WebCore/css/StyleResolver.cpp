@@ -1418,7 +1418,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
 #if ENABLE(DARK_MODE_CSS)
         // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-        applyCascadedProperties(CSSPropertySupportedColorSchemes, CSSPropertySupportedColorSchemes, applyState);
+        applyCascadedProperties(CSSPropertyColorScheme, CSSPropertyColorScheme, applyState);
 #endif
 
         applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);
@@ -1447,7 +1447,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
 #if ENABLE(DARK_MODE_CSS)
     // Supported color schemes can affect resolved colors, so we need to apply that property before any color properties.
-    applyCascadedProperties(CSSPropertySupportedColorSchemes, CSSPropertySupportedColorSchemes, applyState);
+    applyCascadedProperties(CSSPropertyColorScheme, CSSPropertyColorScheme, applyState);
 #endif
 
     applyCascadedProperties(firstCSSProperty, lastHighPriorityProperty, applyState);

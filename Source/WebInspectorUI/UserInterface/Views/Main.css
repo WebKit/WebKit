@@ -28,7 +28,7 @@
 }
 
 :root {
-    supported-color-schemes: light dark;
+    color-scheme: light dark;
 }
 
 summary {

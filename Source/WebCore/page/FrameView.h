@@ -738,7 +738,7 @@ private:
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    RenderObject* rendererForSupportedColorSchemes() const;
+    RenderObject* rendererForColorScheme() const;
 #endif
 
     bool usesCompositedScrolling() const final;

@@ -32,40 +32,40 @@
 
 namespace WebCore {
 
-class StyleSupportedColorSchemes {
+class StyleColorScheme {
 public:
-    StyleSupportedColorSchemes() { }
+    StyleColorScheme() { }
 
-    StyleSupportedColorSchemes(const StyleSupportedColorSchemes& other)
-        : m_colorSchemes(other.m_colorSchemes)
+    StyleColorScheme(const StyleColorScheme& other)
+        : m_colorScheme(other.m_colorScheme)
         , m_allowsTransformations(other.m_allowsTransformations)
     { }
 
-    StyleSupportedColorSchemes(OptionSet<ColorSchemes> colorSchemes, bool allowsTransformations)
-        : m_colorSchemes(colorSchemes)
+    StyleColorScheme(OptionSet<ColorScheme> colorScheme, bool allowsTransformations)
+        : m_colorScheme(colorScheme)
         , m_allowsTransformations(allowsTransformations)
     { }
 
-    bool operator==(const StyleSupportedColorSchemes& other) const
+    bool operator==(const StyleColorScheme& other) const
     {
-        return m_colorSchemes == other.m_colorSchemes && m_allowsTransformations == other.m_allowsTransformations;
+        return m_colorScheme == other.m_colorScheme && m_allowsTransformations == other.m_allowsTransformations;
     }
 
-    bool operator!=(const StyleSupportedColorSchemes& other) const { return !(*this == other); }
+    bool operator!=(const StyleColorScheme& other) const { return !(*this == other); }
 
-    bool isAuto() const { return m_colorSchemes.isEmpty() && m_allowsTransformations; }
-    bool isOnly() const { return m_colorSchemes.isEmpty() && !m_allowsTransformations; }
+    bool isAuto() const { return m_colorScheme.isEmpty() && m_allowsTransformations; }
+    bool isOnly() const { return m_colorScheme.isEmpty() && !m_allowsTransformations; }
 
-    OptionSet<ColorSchemes> colorSchemes() const { return m_colorSchemes; }
+    OptionSet<ColorScheme> colorScheme() const { return m_colorScheme; }
 
-    void add(ColorSchemes colorScheme) { m_colorSchemes.add(colorScheme); }
-    bool contains(ColorSchemes colorScheme) const { return m_colorSchemes.contains(colorScheme); }
+    void add(ColorScheme colorScheme) { m_colorScheme.add(colorScheme); }
+    bool contains(ColorScheme colorScheme) const { return m_colorScheme.contains(colorScheme); }
 
     void setAllowsTransformations(bool allow) { m_allowsTransformations = allow; }
     bool allowsTransformations() const { return m_allowsTransformations; }
 
 private:
-    OptionSet<ColorSchemes> m_colorSchemes;
+    OptionSet<ColorScheme> m_colorScheme;
     bool m_allowsTransformations { true };
 };
 

@@ -3767,7 +3767,7 @@ static RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)
 
 #if ENABLE(DARK_MODE_CSS)
 
-static RefPtr<CSSValue> consumeSupportedColorSchemes(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range)
 {
     if (isAuto(range.peek().id()))
         return consumeIdent(range);
@@ -4357,10 +4357,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitTextEmphasisPosition:
         return consumeTextEmphasisPosition(m_range);
 #if ENABLE(DARK_MODE_CSS)
-    case CSSPropertySupportedColorSchemes:
+    case CSSPropertyColorScheme:
         if (!RuntimeEnabledFeatures::sharedFeatures().darkModeCSSEnabled())
             return nullptr;
-        return consumeSupportedColorSchemes(m_range);
+        return consumeColorScheme(m_range);
 #endif
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:

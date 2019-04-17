@@ -79,7 +79,7 @@ public:
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(StyleResolver&, CSSValue&);
     static TransformOperations convertTransform(StyleResolver&, const CSSValue&);
 #if ENABLE(DARK_MODE_CSS)
-    static StyleSupportedColorSchemes convertSupportedColorSchemes(StyleResolver&, const CSSValue&);
+    static StyleColorScheme convertColorScheme(StyleResolver&, const CSSValue&);
 #endif
     static String convertString(StyleResolver&, const CSSValue&);
     static String convertStringOrAuto(StyleResolver&, const CSSValue&);
@@ -173,7 +173,7 @@ private:
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    static void updateSupportedColorSchemes(const CSSPrimitiveValue&, StyleSupportedColorSchemes&);
+    static void updateColorScheme(const CSSPrimitiveValue&, StyleColorScheme&);
 #endif
 
     static Length convertTo100PercentMinusLength(const Length&);
@@ -465,22 +465,22 @@ inline TransformOperations StyleBuilderConverter::convertTransform(StyleResolver
 }
 
 #if ENABLE(DARK_MODE_CSS)
-inline void StyleBuilderConverter::updateSupportedColorSchemes(const CSSPrimitiveValue& primitiveValue, StyleSupportedColorSchemes& supportedColorSchemes)
+inline void StyleBuilderConverter::updateColorScheme(const CSSPrimitiveValue& primitiveValue, StyleColorScheme& colorScheme)
 {
     ASSERT(primitiveValue.isValueID());
 
     switch (primitiveValue.valueID()) {
     case CSSValueAuto:
-        supportedColorSchemes = StyleSupportedColorSchemes();
+        colorScheme = StyleColorScheme();
         break;
     case CSSValueOnly:
-        supportedColorSchemes.setAllowsTransformations(false);
+        colorScheme.setAllowsTransformations(false);
         break;
     case CSSValueLight:
-        supportedColorSchemes.add(ColorSchemes::Light);
+        colorScheme.add(ColorScheme::Light);
         break;
     case CSSValueDark:
-        supportedColorSchemes.add(ColorSchemes::Dark);
+        colorScheme.add(ColorScheme::Dark);
         break;
     default:
         // Unknown identifiers are allowed and ignored.
@@ -488,21 +488,21 @@ inline void StyleBuilderConverter::updateSupportedColorSchemes(const CSSPrimitiv
     }
 }
 
-inline StyleSupportedColorSchemes StyleBuilderConverter::convertSupportedColorSchemes(StyleResolver&, const CSSValue& value)
+inline StyleColorScheme StyleBuilderConverter::convertColorScheme(StyleResolver&, const CSSValue& value)
 {
-    StyleSupportedColorSchemes supportedColorSchemes;
+    StyleColorScheme colorScheme;
 
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            updateSupportedColorSchemes(downcast<CSSPrimitiveValue>(currentValue.get()), supportedColorSchemes);
+            updateColorScheme(downcast<CSSPrimitiveValue>(currentValue.get()), colorScheme);
     } else if (is<CSSPrimitiveValue>(value))
-        updateSupportedColorSchemes(downcast<CSSPrimitiveValue>(value), supportedColorSchemes);
+        updateColorScheme(downcast<CSSPrimitiveValue>(value), colorScheme);
 
     // If the value was just "only", that is synonymous for "only light".
-    if (supportedColorSchemes.isOnly())
-        supportedColorSchemes.add(ColorSchemes::Light);
+    if (colorScheme.isOnly())
+        colorScheme.add(ColorScheme::Light);
 
-    return supportedColorSchemes;
+    return colorScheme;
 }
 #endif
 

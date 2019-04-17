@@ -86,7 +86,7 @@
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-#include "StyleSupportedColorSchemes.h"
+#include "StyleColorScheme.h"
 #endif
 
 #define SET_VAR(group, variable, value) do { \
@@ -638,9 +638,9 @@ public:
     RubyPosition rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
 
 #if ENABLE(DARK_MODE_CSS)
-    StyleSupportedColorSchemes supportedColorSchemes() const { return m_rareInheritedData->supportedColorSchemes; }
-    void setHasExplicitlySetSupportedColorSchemes(bool v) { m_nonInheritedFlags.hasExplicitlySetSupportedColorSchemes = v; }
-    bool hasExplicitlySetSupportedColorSchemes() const { return m_nonInheritedFlags.hasExplicitlySetSupportedColorSchemes; };
+    StyleColorScheme colorScheme() const { return m_rareInheritedData->colorScheme; }
+    void setHasExplicitlySetColorScheme(bool v) { m_nonInheritedFlags.hasExplicitlySetColorScheme = v; }
+    bool hasExplicitlySetColorScheme() const { return m_nonInheritedFlags.hasExplicitlySetColorScheme; };
 #endif
 
     TextOrientation textOrientation() const { return static_cast<TextOrientation>(m_rareInheritedData->textOrientation); }
@@ -1179,7 +1179,7 @@ public:
     void setRubyPosition(RubyPosition position) { SET_VAR(m_rareInheritedData, rubyPosition, static_cast<unsigned>(position)); }
 
 #if ENABLE(DARK_MODE_CSS)
-    void setSupportedColorSchemes(StyleSupportedColorSchemes supported) { SET_VAR(m_rareInheritedData, supportedColorSchemes, supported); }
+    void setColorScheme(StyleColorScheme supported) { SET_VAR(m_rareInheritedData, colorScheme, supported); }
 #endif
 
     void setFilter(const FilterOperations& ops) { SET_NESTED_VAR(m_rareNonInheritedData, filter, operations, ops); }
@@ -1601,7 +1601,7 @@ public:
     static const AtomicString& initialContentAltText() { return emptyAtom(); }
 
 #if ENABLE(DARK_MODE_CSS)
-    static StyleSupportedColorSchemes initialSupportedColorSchemes() { return { }; }
+    static StyleColorScheme initialColorScheme() { return { }; }
 #endif
 
 #if ENABLE(CSS3_TEXT)
@@ -1793,7 +1793,7 @@ private:
         unsigned hasExplicitlySetWritingMode : 1;
         unsigned hasExplicitlySetTextAlign : 1;
 #if ENABLE(DARK_MODE_CSS)
-        unsigned hasExplicitlySetSupportedColorSchemes : 1;
+        unsigned hasExplicitlySetColorScheme : 1;
 #endif
         unsigned hasViewportUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
@@ -1922,7 +1922,7 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
         && hasExplicitlySetTextAlign == other.hasExplicitlySetTextAlign
 #if ENABLE(DARK_MODE_CSS)
-        && hasExplicitlySetSupportedColorSchemes == other.hasExplicitlySetSupportedColorSchemes
+        && hasExplicitlySetColorScheme == other.hasExplicitlySetColorScheme
 #endif
         && hasViewportUnits == other.hasViewportUnits
         && hasExplicitlyInheritedProperties == other.hasExplicitlyInheritedProperties

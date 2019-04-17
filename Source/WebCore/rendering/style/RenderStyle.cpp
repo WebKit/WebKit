@@ -963,7 +963,7 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
 #if ENABLE(DARK_MODE_CSS)
-        || first.supportedColorSchemes != second.supportedColorSchemes
+        || first.colorScheme != second.colorScheme
 #endif
     ;
 }

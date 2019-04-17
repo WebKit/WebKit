@@ -2003,12 +2003,12 @@ bool FrameView::shouldSetCursor() const
 }
 
 #if ENABLE(DARK_MODE_CSS)
-RenderObject* FrameView::rendererForSupportedColorSchemes() const
+RenderObject* FrameView::rendererForColorScheme() const
 {
     auto* document = frame().document();
     auto* documentElement = document ? document->documentElement() : nullptr;
     auto* documentElementRenderer = documentElement ? documentElement->renderer() : nullptr;
-    if (documentElementRenderer && documentElementRenderer->style().hasExplicitlySetSupportedColorSchemes())
+    if (documentElementRenderer && documentElementRenderer->style().hasExplicitlySetColorScheme())
         return documentElementRenderer;
     auto* bodyElement = document ? document->bodyOrFrameset() : nullptr;
     return bodyElement ? bodyElement->renderer() : nullptr;
@@ -2018,7 +2018,7 @@ RenderObject* FrameView::rendererForSupportedColorSchemes() const
 bool FrameView::useDarkAppearance() const
 {
 #if ENABLE(DARK_MODE_CSS)
-    if (auto* renderer = rendererForSupportedColorSchemes())
+    if (auto* renderer = rendererForColorScheme())
         return renderer->useDarkAppearance();
 #endif
     if (auto* document = frame().document())
@@ -2029,7 +2029,7 @@ bool FrameView::useDarkAppearance() const
 OptionSet<StyleColor::Options> FrameView::styleColorOptions() const
 {
 #if ENABLE(DARK_MODE_CSS)
-    if (auto* renderer = rendererForSupportedColorSchemes())
+    if (auto* renderer = rendererForColorScheme())
         return renderer->styleColorOptions();
 #endif
     if (auto* document = frame().document())

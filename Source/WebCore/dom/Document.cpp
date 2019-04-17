@@ -3621,36 +3621,36 @@ static bool isColorSchemeSeparator(UChar character)
     return isASCIISpace(character) || character == ',';
 }
 
-static void processColorSchemes(StringView colorSchemes, const WTF::Function<void(StringView key)>& callback)
+static void processColorSchemeString(StringView colorScheme, const WTF::Function<void(StringView key)>& callback)
 {
-    unsigned length = colorSchemes.length();
+    unsigned length = colorScheme.length();
     for (unsigned i = 0; i < length; ) {
         // Skip to first non-separator.
-        while (i < length && isColorSchemeSeparator(colorSchemes[i]))
+        while (i < length && isColorSchemeSeparator(colorScheme[i]))
             ++i;
         unsigned keyBegin = i;
 
         // Skip to first separator.
-        while (i < length && !isColorSchemeSeparator(colorSchemes[i]))
+        while (i < length && !isColorSchemeSeparator(colorScheme[i]))
             ++i;
         unsigned keyEnd = i;
 
         if (keyBegin == keyEnd)
             continue;
 
-        callback(colorSchemes.substring(keyBegin, keyEnd - keyBegin));
+        callback(colorScheme.substring(keyBegin, keyEnd - keyBegin));
     }
 }
 
-void Document::processSupportedColorSchemes(const String& colorSchemes)
+void Document::processColorScheme(const String& colorSchemeString)
 {
-    OptionSet<ColorSchemes> supportedColorSchemes;
+    OptionSet<ColorScheme> colorScheme;
     bool allowsTransformations = true;
     bool autoEncountered = false;
 
-    processColorSchemes(colorSchemes, [&](StringView key) {
+    processColorSchemeString(colorSchemeString, [&](StringView key) {
         if (equalLettersIgnoringASCIICase(key, "auto")) {
-            supportedColorSchemes = { };
+            colorScheme = { };
             allowsTransformations = true;
             autoEncountered = true;
             return;
@@ -3660,18 +3660,18 @@ void Document::processSupportedColorSchemes(const String& colorSchemes)
             return;
 
         if (equalLettersIgnoringASCIICase(key, "light"))
-            supportedColorSchemes.add(ColorSchemes::Light);
+            colorScheme.add(ColorScheme::Light);
         else if (equalLettersIgnoringASCIICase(key, "dark"))
-            supportedColorSchemes.add(ColorSchemes::Dark);
+            colorScheme.add(ColorScheme::Dark);
         else if (equalLettersIgnoringASCIICase(key, "only"))
             allowsTransformations = false;
     });
 
     // If the value was just "only", that is synonymous for "only light".
-    if (supportedColorSchemes.isEmpty() && !allowsTransformations)
-        supportedColorSchemes.add(ColorSchemes::Light);
+    if (colorScheme.isEmpty() && !allowsTransformations)
+        colorScheme.add(ColorScheme::Light);
 
-    m_supportedColorSchemes = supportedColorSchemes;
+    m_colorScheme = colorScheme;
     m_allowsColorSchemeTransformations = allowsTransformations;
 
     if (auto* frameView = view())
@@ -7471,17 +7471,17 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
 #if ENABLE(DARK_MODE_CSS)
-    OptionSet<ColorSchemes> supportedColorSchemes;
+    OptionSet<ColorScheme> colorScheme;
 
     // Use the style's supported color schemes, if supplied.
     if (style)
-        supportedColorSchemes = style->supportedColorSchemes().colorSchemes();
+        colorScheme = style->colorScheme().colorScheme();
 
     // Fallback to the document's supported color schemes if style was empty (auto).
-    if (supportedColorSchemes.isEmpty())
-        supportedColorSchemes = m_supportedColorSchemes;
+    if (colorScheme.isEmpty())
+        colorScheme = m_colorScheme;
 
-    if (supportedColorSchemes.contains(ColorSchemes::Dark) && !supportedColorSchemes.contains(ColorSchemes::Light))
+    if (colorScheme.contains(ColorScheme::Dark) && !colorScheme.contains(ColorScheme::Light))
         return true;
 #else
     UNUSED_PARAM(style);
@@ -7495,7 +7495,7 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
         return pageUsesDarkAppearance;
 
 #if ENABLE(DARK_MODE_CSS)
-    if (supportedColorSchemes.contains(ColorSchemes::Dark))
+    if (colorScheme.contains(ColorScheme::Dark))
         return pageUsesDarkAppearance;
 #endif
 #else

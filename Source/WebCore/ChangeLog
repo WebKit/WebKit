@@ -1,3 +1,91 @@
+2019-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Rename `supported-color-schemes` to `color-scheme`.
+        https://bugs.webkit.org/show_bug.cgi?id=197016
+        rdar://problem/49980259
+
+        Reviewed by Simon Fraser.
+
+        Changed `supported-color-schemes` to `color-scheme` to follow the spec changes
+        being tracked by: https://github.com/w3c/csswg-drafts/issues/3807
+
+        The old `supported-color-schemes` is now an alias of `color-scheme` for compatibility.
+
+        Tests: css-dark-mode/color-scheme-css-parse.html
+               css-dark-mode/color-scheme-css.html
+               css-dark-mode/color-scheme-meta.html
+               css-dark-mode/color-scheme-priority.html
+               css-dark-mode/color-scheme-scrollbar.html
+               css-dark-mode/older-syntax/supported-color-schemes-css.html
+               css-dark-mode/older-syntax/supported-color-schemes-meta.html
+               css-dark-mode/older-systems/color-scheme-css.html
+               css-dark-mode/older-systems/color-scheme-meta.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::updateColorScheme):
+        (WebCore::StyleBuilderConverter::convertColorScheme):
+        (WebCore::StyleBuilderConverter::updateSupportedColorSchemes): Deleted.
+        (WebCore::StyleBuilderConverter::convertSupportedColorSchemes): Deleted.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueColorScheme):
+        (WebCore::StyleBuilderCustom::applyValueSupportedColorSchemes): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyMatchedProperties):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeColorScheme):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeSupportedColorSchemes): Deleted.
+        * dom/Document.cpp:
+        (WebCore::processColorSchemeString):
+        (WebCore::Document::processColorScheme):
+        (WebCore::Document::useDarkAppearance const):
+        (WebCore::processColorSchemes): Deleted.
+        (WebCore::Document::processSupportedColorSchemes): Deleted.
+        * dom/Document.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::process):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::rendererForColorScheme const):
+        (WebCore::FrameView::useDarkAppearance const):
+        (WebCore::FrameView::styleColorOptions const):
+        (WebCore::FrameView::rendererForSupportedColorSchemes const): Deleted.
+        * page/FrameView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareInheritedDataChangeRequiresRepaint):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::colorScheme const):
+        (WebCore::RenderStyle::setHasExplicitlySetColorScheme):
+        (WebCore::RenderStyle::hasExplicitlySetColorScheme const):
+        (WebCore::RenderStyle::setColorScheme):
+        (WebCore::RenderStyle::initialColorScheme):
+        (WebCore::RenderStyle::NonInheritedFlags::operator== const):
+        (WebCore::RenderStyle::supportedColorSchemes const): Deleted.
+        (WebCore::RenderStyle::setHasExplicitlySetSupportedColorSchemes): Deleted.
+        (WebCore::RenderStyle::hasExplicitlySetSupportedColorSchemes const): Deleted.
+        (WebCore::RenderStyle::setSupportedColorSchemes): Deleted.
+        (WebCore::RenderStyle::initialSupportedColorSchemes): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleColorScheme.h: Renamed from Source/WebCore/rendering/style/StyleSupportedColorSchemes.h.
+        (WebCore::StyleColorScheme::StyleColorScheme):
+        (WebCore::StyleColorScheme::operator== const):
+        (WebCore::StyleColorScheme::operator!= const):
+        (WebCore::StyleColorScheme::isAuto const):
+        (WebCore::StyleColorScheme::isOnly const):
+        (WebCore::StyleColorScheme::colorScheme const):
+        (WebCore::StyleColorScheme::add):
+        (WebCore::StyleColorScheme::contains const):
+        (WebCore::StyleColorScheme::setAllowsTransformations):
+        (WebCore::StyleColorScheme::allowsTransformations const):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2019-04-17  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUComputePassEncoder::dispatch number of thread groups, not grid size

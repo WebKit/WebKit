@@ -28,8 +28,8 @@ test(function() {
 }, "Element colors are correct in light color scheme with only light supported color scheme");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "light dark");
-}, "Supported color schemes changed to light and dark");
+    document.body.style.setProperty("color-scheme", "light dark");
+}, "Color schemes changed to light and dark");
 
 test(function() {
     // The semantic text color should be black.
@@ -37,16 +37,16 @@ test(function() {
 }, "Element colors are correct in light color scheme with light and dark supported color scheme");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "dark");
-}, "Supported color schemes changed to dark");
+    document.body.style.setProperty("color-scheme", "dark");
+}, "Color schemes changed to dark");
 
 test(function() {
     test_color_is_black("test1");
 }, "Element colors are correct in light color scheme with only dark supported color scheme");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "light foo");
-}, "Supported color schemes changed to light and a bogus value");
+    document.body.style.setProperty("color-scheme", "light foo");
+}, "Color schemes changed to light and a bogus value");
 
 test(function() {
     // The semantic text color should be black again.
@@ -54,8 +54,8 @@ test(function() {
 }, "Element colors are correct in light color scheme with only light supported color scheme");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "auto");
-}, "Supported color schemes changed to auto value");
+    document.body.style.setProperty("color-scheme", "auto");
+}, "Color schemes changed to auto value");
 
 test(function() {
     // The semantic text color should be black still.
@@ -65,18 +65,18 @@ test(function() {
 test(function() {
     let meta = document.createElement("meta");
     meta.id = "test-meta";
-    meta.name = "supported-color-schemes";
+    meta.name = "color-scheme";
     meta.content = "light dark";
     document.head.appendChild(meta);
-}, "Supported color schemes changed to light and dark via <meta> element");
+}, "Color schemes changed to light and dark via <meta> element");
 
 test(function() {
     test_color_is_black("test1");
 }, "Element colors are correct in light color scheme with light and dark supported color scheme via <meta> element");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "light");
-}, "Supported color schemes changed to light value");
+    document.body.style.setProperty("color-scheme", "light");
+}, "Color schemes changed to light value");
 
 test(function() {
     // The semantic text color should be black again.
@@ -88,16 +88,16 @@ test(function() {
 }, "Remove test meta element");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "light dark");
-}, "Supported color schemes changed to light and dark");
+    document.body.style.setProperty("color-scheme", "light dark");
+}, "Color schemes changed to light and dark");
 
 test(function() {
     test_color_is_black("test1");
 }, "Element colors are correct in light color scheme with light and dark supported color scheme");
 
 test(function() {
-    document.body.style.setProperty("supported-color-schemes", "foo dark");
-}, "Supported color schemes changed to a bogus value and dark");
+    document.body.style.setProperty("color-scheme", "foo dark");
+}, "Color schemes changed to a bogus value and dark");
 
 test(function() {
     test_color_is_black("test1");

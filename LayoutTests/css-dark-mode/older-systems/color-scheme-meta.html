@@ -11,7 +11,7 @@
 }
 </style>
 
-<meta id="meta" name="supported-color-schemes" content="light">
+<meta id="meta" name="color-scheme" content="light">
 
 <div id="test1"></div>
 
@@ -26,53 +26,53 @@ function test_color_is_black(id) {
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with only light supported color scheme");
+}, "Element colors are correct in light color scheme with only light color scheme");
 
 test(function() {
     document.getElementById("meta").content = "light dark";
-}, "Supported color schemes changed to light and dark");
+}, "Color schemes changed to light and dark");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+}, "Element colors are correct in light color scheme with light and dark color scheme");
 
 test(function() {
     document.getElementById("meta").content = "dark";
-}, "Supported color schemes changed to dark");
+}, "Color schemes changed to dark");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with only dark supported color scheme");
+}, "Element colors are correct in light color scheme with only dark color scheme");
 
 test(function() {
     document.getElementById("meta").content = "light ,foo ";
-}, "Supported color schemes changed to light and a bogus value");
+}, "Color schemes changed to light and a bogus value");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with only light supported color scheme");
+}, "Element colors are correct in light color scheme with only light color scheme");
 
 test(function() {
     document.getElementById("meta").content = "";
-}, "Supported color schemes changed to empty value");
+}, "Color schemes changed to empty value");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with implicit light supported color scheme");
+}, "Element colors are correct in light color scheme with implicit light color scheme");
 
 test(function() {
     document.getElementById("meta").content = "   light, dark ";
-}, "Supported color schemes changed to light and dark");
+}, "Color schemes changed to light and dark");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with light and dark supported color scheme");
+}, "Element colors are correct in light color scheme with light and dark color scheme");
 
 test(function() {
     document.getElementById("meta").content = ", foo dark";
-}, "Supported color schemes changed to a bogus value and dark");
+}, "Color schemes changed to a bogus value and dark");
 
 test(function() {
     test_color_is_black("test1");
-}, "Element colors are correct in light color scheme with dark supported color scheme");
+}, "Element colors are correct in light color scheme with dark color scheme");
 </script>

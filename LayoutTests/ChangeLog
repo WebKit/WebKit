@@ -1,3 +1,31 @@
+2019-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Rename `supported-color-schemes` to `color-scheme`.
+        https://bugs.webkit.org/show_bug.cgi?id=197016
+        rdar://problem/49980259
+
+        Reviewed by Simon Fraser.
+
+        * css-dark-mode/color-scheme-css-expected.txt: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-css-expected.txt.
+        * css-dark-mode/color-scheme-css.html: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-css.html.
+        * css-dark-mode/color-scheme-meta-expected.txt: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-expected.txt.
+        * css-dark-mode/color-scheme-meta.html: Renamed from LayoutTests/css-dark-mode/supported-color-schemes.html.
+        * css-dark-mode/color-scheme-parse-expected.txt: Renamed from LayoutTests/css-dark-mode/parse-supported-color-schemes-expected.txt.
+        * css-dark-mode/color-scheme-parse.html: Renamed from LayoutTests/css-dark-mode/parse-supported-color-schemes.html.
+        * css-dark-mode/color-scheme-priority-expected.txt: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-priority-expected.txt.
+        * css-dark-mode/color-scheme-priority.html: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-priority.html.
+        * css-dark-mode/color-scheme-scrollbar-expected.txt: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-scrollbar-expected.txt.
+        * css-dark-mode/color-scheme-scrollbar.html: Renamed from LayoutTests/css-dark-mode/supported-color-schemes-scrollbar.html.
+        * css-dark-mode/older-syntax/supported-color-schemes-css-expected.txt: Copied from LayoutTests/css-dark-mode/supported-color-schemes-css-expected.txt.
+        * css-dark-mode/older-syntax/supported-color-schemes-css.html: Copied from LayoutTests/css-dark-mode/supported-color-schemes-css.html.
+        * css-dark-mode/older-syntax/supported-color-schemes-meta-expected.txt: Copied from LayoutTests/css-dark-mode/supported-color-schemes-expected.txt.
+        * css-dark-mode/older-syntax/supported-color-schemes-meta.html: Copied from LayoutTests/css-dark-mode/supported-color-schemes.html.
+        * css-dark-mode/older-systems/color-scheme-css-expected.txt: Renamed from LayoutTests/css-dark-mode/older-systems/supported-color-schemes-css-expected.txt
+        * css-dark-mode/older-systems/color-scheme-css.html: Renamed from LayoutTests/css-dark-mode/older-systems/supported-color-schemes-css.html.
+        * css-dark-mode/older-systems/color-scheme-meta-expected.txt: Renamed from LayoutTests/css-dark-mode/older-systems/supported-color-schemes-expected.txt.
+        * css-dark-mode/older-systems/color-scheme-meta.html: Renamed from LayoutTests/css-dark-mode/older-systems/supported-color-schemes.html.
+        * fast/css/style-enumerate-properties.html: Updated property count.
+
 2019-04-17  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] GPUComputePassEncoder::dispatch number of thread groups, not grid size

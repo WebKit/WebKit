@@ -38,7 +38,7 @@
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-#include "StyleSupportedColorSchemes.h"
+#include "StyleColorScheme.h"
 #endif
 
 namespace WebCore {
@@ -187,7 +187,7 @@ public:
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    StyleSupportedColorSchemes supportedColorSchemes;
+    StyleColorScheme colorScheme;
 #endif
 
 private:

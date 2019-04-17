@@ -7,7 +7,7 @@
 
 <style>
 body {
-    supported-color-schemes: light dark;
+    color-scheme: light dark;
 }
 
 #test {
@@ -43,12 +43,12 @@ test(function() {
 }, "Set view to transparent");
 
 test(function() {
-    test_prop(document.body, "supported-color-schemes", "light dark");
-}, "Body Element supported color scheme is light and dark");
+    test_prop(document.body, "color-scheme", "light dark");
+}, "Body Element color scheme is light and dark");
 
 test(function() {
-    test_prop(document.documentElement, "supported-color-schemes", "auto");
-}, "Document Element supported color scheme is auto");
+    test_prop(document.documentElement, "color-scheme", "auto");
+}, "Document Element color scheme is auto");
 
 test(function() {
     if (!window.internals)
@@ -76,17 +76,17 @@ test(function() {
 
 test(function() {
     let styleElement = document.createElement("style");
-    styleElement.textContent = ":root { supported-color-schemes: light }";
+    styleElement.textContent = ":root { color-scheme: light }";
     document.head.appendChild(styleElement);
-}, "Set prefers-color-schemes: light on the document element");
+}, "Set color scheme to light on the document element");
 
 test(function() {
-    test_prop(document.body, "supported-color-schemes", "light dark");
-}, "Body Element supported color scheme is light and dark");
+    test_prop(document.body, "color-scheme", "light dark");
+}, "Body Element color scheme is light and dark");
 
 test(function() {
-    test_prop(document.documentElement, "supported-color-schemes", "light");
-}, "Document Element supported color scheme is light");
+    test_prop(document.documentElement, "color-scheme", "light");
+}, "Document Element color scheme is light");
 
 test(function() {
     if (!window.internals)

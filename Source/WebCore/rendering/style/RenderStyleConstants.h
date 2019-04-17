@@ -1020,12 +1020,12 @@ enum class RubyPosition : uint8_t {
 };
 
 #if ENABLE(DARK_MODE_CSS)
-enum class ColorSchemes : uint8_t {
+enum class ColorScheme : uint8_t {
     Light = 1 << 0,
     Dark = 1 << 1
 };
 
-static const size_t ColorSchemesBits = 2;
+static const size_t ColorSchemeBits = 2;
 #endif
 
 static const size_t GridAutoFlowBits = 4;

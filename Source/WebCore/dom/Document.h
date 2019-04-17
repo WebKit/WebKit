@@ -892,7 +892,7 @@ public:
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
 
 #if ENABLE(DARK_MODE_CSS)
-    void processSupportedColorSchemes(const String& colorSchemes);
+    void processColorScheme(const String& colorScheme);
 #endif
 
     // Returns the owning element in the parent document.
@@ -1805,7 +1805,7 @@ private:
     HashSet<SVGUseElement*> m_svgUseElements;
 
 #if ENABLE(DARK_MODE_CSS)
-    OptionSet<ColorSchemes> m_supportedColorSchemes;
+    OptionSet<ColorScheme> m_colorScheme;
     bool m_allowsColorSchemeTransformations { true };
 #endif
 

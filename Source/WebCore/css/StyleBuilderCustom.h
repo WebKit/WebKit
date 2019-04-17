@@ -143,7 +143,7 @@ public:
     static void applyValueWillChange(StyleResolver&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
-    static void applyValueSupportedColorSchemes(StyleResolver&, CSSValue&);
+    static void applyValueColorScheme(StyleResolver&, CSSValue&);
 #endif
 
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
@@ -832,10 +832,10 @@ inline void StyleBuilderCustom::applyValueWebkitTextZoom(StyleResolver& styleRes
 }
 
 #if ENABLE(DARK_MODE_CSS)
-inline void StyleBuilderCustom::applyValueSupportedColorSchemes(StyleResolver& styleResolver, CSSValue& value)
+inline void StyleBuilderCustom::applyValueColorScheme(StyleResolver& styleResolver, CSSValue& value)
 {
-    styleResolver.style()->setSupportedColorSchemes(StyleBuilderConverter::convertSupportedColorSchemes(styleResolver, value));
-    styleResolver.style()->setHasExplicitlySetSupportedColorSchemes(true);
+    styleResolver.style()->setColorScheme(StyleBuilderConverter::convertColorScheme(styleResolver, value));
+    styleResolver.style()->setHasExplicitlySetColorScheme(true);
 }
 #endif
 

@@ -5965,7 +5965,7 @@
             },
             "status": "non-standard"
         },
-        "supported-color-schemes": {
+        "color-scheme": {
             "inherited": true,
             "values": [
                 "auto",
@@ -5974,14 +5974,18 @@
                 "only"
             ],
             "codegen-properties": {
-                "converter": "SupportedColorSchemes",
+                "aliases": [
+                    "supported-color-schemes"
+                ],
+                "converter": "ColorScheme",
                 "comment": "This is the second highest priority property, to ensure that its value can be checked when resolving colors.",
                 "custom": "Value",
                 "enable-if": "ENABLE_DARK_MODE_CSS",
                 "high-priority": true
             },
             "status": {
-                "status": "non-standard"
+                "status": "in development",
+                "enabled-by-default": true
             }
         },
         "order": {
