@@ -381,6 +381,11 @@ bool UIScriptController::isShowingMenu() const
     return false;
 }
 
+bool UIScriptController::isDismissingMenu() const
+{
+    return false;
+}
+
 void UIScriptController::platformSetDidEndScrollingCallback()
 {
 }

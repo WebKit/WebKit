@@ -355,6 +355,11 @@ public:
     void runUIScript(JSStringRef script, JSValueRef callback);
     void runUIScriptCallback(unsigned callbackID, JSStringRef result);
 
+    // Contextual menu actions
+    void setAllowedMenuActions(JSValueRef);
+    void installCustomMenuAction(JSStringRef name, bool dismissesAutomatically, JSValueRef callback);
+    void performCustomMenuAction();
+
     void installDidBeginSwipeCallback(JSValueRef);
     void installWillEndSwipeCallback(JSValueRef);
     void installDidEndSwipeCallback(JSValueRef);

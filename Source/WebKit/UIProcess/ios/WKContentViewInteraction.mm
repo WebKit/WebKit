@@ -3880,6 +3880,15 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self.inputDelegate selectionDidChange:self];
 }
 
+- (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
+{
+    _ignoreSelectionCommandFadeCount++;
+    _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] (auto) {
+        if (auto strongSelf = weakSelf.get())
+            strongSelf->_ignoreSelectionCommandFadeCount--;
+    });
+}
+
 - (void)_didChangeWebViewEditability
 {
     if ([_formAccessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
@@ -5647,8 +5656,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         // FIXME: We need to figure out what to do if the selection is changed by Javascript.
         if (_textSelectionAssistant) {
             _markedText = (_page->editorState().hasComposition) ? _page->editorState().markedText : String();
-            if (!_showingTextStyleOptions)
-                [_textSelectionAssistant selectionChanged];
+            [_textSelectionAssistant selectionChanged];
         }
 
         _selectionNeedsUpdate = NO;
@@ -5668,6 +5676,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
         _needsDeferredEndScrollingSelectionUpdate = NO;
     }
+}
+
+- (BOOL)shouldAllowHidingSelectionCommands
+{
+    ASSERT(_ignoreSelectionCommandFadeCount >= 0);
+    return !_ignoreSelectionCommandFadeCount;
 }
 
 - (BOOL)_shouldSuppressSelectionCommands

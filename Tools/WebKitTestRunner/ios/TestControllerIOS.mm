@@ -163,6 +163,8 @@ void TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView _clearOverrideLayoutParameters];
         [webView _clearInterfaceOrientationOverride];
         [webView resetInteractionCallbacks];
+        [webView resetCustomMenuAction];
+        [webView setAllowedMenuActions:nil];
 
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];

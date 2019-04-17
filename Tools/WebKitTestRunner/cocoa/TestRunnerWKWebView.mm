@@ -29,6 +29,8 @@
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Assertions.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -45,16 +47,25 @@
 @end
 #endif
 
+struct CustomMenuActionInfo {
+    RetainPtr<NSString> name;
+    BOOL dismissesAutomatically { NO };
+    BlockPtr<void()> callback;
+};
+
 @interface TestRunnerWKWebView () <WKUIDelegatePrivate> {
     RetainPtr<NSNumber> m_stableStateOverride;
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
+    Optional<CustomMenuActionInfo> _customMenuActionInfo;
+    RetainPtr<NSArray<NSString *>> _allowedMenuActions;
 }
 
 @property (nonatomic, copy) void (^zoomToScaleCompletionHandler)(void);
 @property (nonatomic, copy) void (^retrieveSpeakSelectionContentCompletionHandler)(void);
 @property (nonatomic, getter=isShowingKeyboard, setter=setIsShowingKeyboard:) BOOL showingKeyboard;
 @property (nonatomic, getter=isShowingMenu, setter=setIsShowingMenu:) BOOL showingMenu;
+@property (nonatomic, getter=isDismissingMenu, setter=setIsDismissingMenu:) BOOL dismissingMenu;
 @property (nonatomic, getter=isShowingPopover, setter=setIsShowingPopover:) BOOL showingPopover;
 
 @end
@@ -79,6 +90,7 @@ IGNORE_WARNINGS_END
         [center addObserver:self selector:@selector(_invokeShowKeyboardCallbackIfNecessary) name:UIKeyboardDidShowNotification object:nil];
         [center addObserver:self selector:@selector(_invokeHideKeyboardCallbackIfNecessary) name:UIKeyboardDidHideNotification object:nil];
         [center addObserver:self selector:@selector(_didShowMenu) name:UIMenuControllerDidShowMenuNotification object:nil];
+        [center addObserver:self selector:@selector(_willHideMenu) name:UIMenuControllerWillHideMenuNotification object:nil];
         [center addObserver:self selector:@selector(_didHideMenu) name:UIMenuControllerDidHideMenuNotification object:nil];
         [center addObserver:self selector:@selector(_willPresentPopover) name:@"UIPopoverControllerWillPresentPopoverNotification" object:nil];
         [center addObserver:self selector:@selector(_didDismissPopover) name:@"UIPopoverControllerDidDismissPopoverNotification" object:nil];
@@ -130,6 +142,88 @@ IGNORE_WARNINGS_END
 {
     if (self.didDismissForcePressPreviewCallback)
         self.didDismissForcePressPreviewCallback();
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL wasFirstResponder = self.isFirstResponder;
+    BOOL becameFirstResponder = [super becomeFirstResponder];
+    if (!wasFirstResponder && becameFirstResponder)
+        [self _addCustomItemToMenuControllerIfNecessary];
+    return becameFirstResponder;
+}
+
+- (void)_addCustomItemToMenuControllerIfNecessary
+{
+    if (!_customMenuActionInfo)
+        return;
+
+    auto item = adoptNS([[UIMenuItem alloc] initWithTitle:_customMenuActionInfo->name.get() action:@selector(performCustomAction:)]);
+    [item setDontDismiss:!_customMenuActionInfo->dismissesAutomatically];
+    UIMenuController *controller = UIMenuController.sharedMenuController;
+    controller.menuItems = @[ item.get() ];
+    [controller update];
+}
+
+- (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback
+{
+    _customMenuActionInfo = {{ name, dismissesAutomatically, callback }};
+    [self _addCustomItemToMenuControllerIfNecessary];
+}
+
+- (void)setAllowedMenuActions:(NSArray<NSString *> *)actions
+{
+    _allowedMenuActions = actions;
+}
+
+- (void)resetCustomMenuAction
+{
+    _customMenuActionInfo.reset();
+    UIMenuController.sharedMenuController.menuItems = @[ ];
+}
+
+- (void)performCustomAction:(id)sender
+{
+    if (!_customMenuActionInfo)
+        return;
+
+    if (!_customMenuActionInfo->callback) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    _customMenuActionInfo->callback();
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    BOOL isCustomAction = action == @selector(performCustomAction:);
+    BOOL canPerformActionByDefault = [super canPerformAction:action withSender:sender];
+    if (isCustomAction)
+        canPerformActionByDefault = _customMenuActionInfo.hasValue();
+
+    if (canPerformActionByDefault && _allowedMenuActions && sender == UIMenuController.sharedMenuController) {
+        BOOL isAllowed = NO;
+        if (isCustomAction) {
+            for (NSString *allowedAction in _allowedMenuActions.get()) {
+                if ([[_customMenuActionInfo->name lowercaseString] isEqualToString:allowedAction.lowercaseString]) {
+                    isAllowed = YES;
+                    break;
+                }
+            }
+        } else {
+            for (NSString *allowedAction in _allowedMenuActions.get()) {
+                NSString *lowercaseSelectorName = [[allowedAction lowercaseString] stringByAppendingString:@":"];
+                if ([NSStringFromSelector(action).lowercaseString isEqualToString:lowercaseSelectorName]) {
+                    isAllowed = YES;
+                    break;
+                }
+            }
+        }
+        if (!isAllowed)
+            return NO;
+    }
+    return canPerformActionByDefault;
 }
 
 - (void)resetInteractionCallbacks
@@ -195,8 +289,15 @@ IGNORE_WARNINGS_END
         self.didShowMenuCallback();
 }
 
+- (void)_willHideMenu
+{
+    self.dismissingMenu = YES;
+}
+
 - (void)_didHideMenu
 {
+    self.dismissingMenu = NO;
+
     if (!self.showingMenu)
         return;
 

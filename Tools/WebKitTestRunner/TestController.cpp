@@ -3511,6 +3511,14 @@ bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
     return false;
 }
 
+void TestController::installCustomMenuAction(const String&, bool)
+{
+}
+
+void TestController::setAllowedMenuActions(const Vector<String>&)
+{
+}
+
 #endif
 
 void TestController::sendDisplayConfigurationChangedMessageForTesting()

@@ -175,6 +175,7 @@ public:
     void setWillPresentPopoverCallback(JSValueRef);
     JSValueRef willPresentPopoverCallback() const;
 
+    bool isDismissingMenu() const;
     bool isShowingMenu() const;
     JSObjectRef rectForMenuAction(JSStringRef action) const;
     JSObjectRef menuRect() const;

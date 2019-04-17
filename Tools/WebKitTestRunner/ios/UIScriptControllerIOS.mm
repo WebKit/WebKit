@@ -971,6 +971,11 @@ JSObjectRef UIScriptController::menuRect() const
     return m_context->objectFromRect(WebCore::FloatRect(rectInRootViewCoordinates.origin.x, rectInRootViewCoordinates.origin.y, rectInRootViewCoordinates.size.width, rectInRootViewCoordinates.size.height));
 }
 
+bool UIScriptController::isDismissingMenu() const
+{
+    return TestController::singleton().mainWebView()->platformView().dismissingMenu;
+}
+
 bool UIScriptController::isShowingMenu() const
 {
     return TestController::singleton().mainWebView()->platformView().showingMenu;

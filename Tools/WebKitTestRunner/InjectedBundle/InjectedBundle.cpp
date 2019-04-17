@@ -445,6 +445,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         m_testRunner->didGetApplicationManifest();
         return;
     }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "PerformCustomMenuAction")) {
+        m_testRunner->performCustomMenuAction();
+        return;
+    }
     
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
     WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));

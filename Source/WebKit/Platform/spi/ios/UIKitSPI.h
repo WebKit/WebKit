@@ -48,6 +48,7 @@
 #import <UIKit/UIKeyboardIntl.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UILongPressGestureRecognizer_Private.h>
+#import <UIKit/UIMenuController_Private.h>
 #import <UIKit/UIPeripheralHost.h>
 #import <UIKit/UIPeripheralHost_Private.h>
 #import <UIKit/UIPickerContentView_Private.h>
@@ -986,6 +987,10 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @end
 
 #endif
+
+@interface UIMenuItem (UIMenuController_SPI)
+@property (nonatomic) BOOL dontDismiss;
+@end
 
 @interface UICalloutBar : UIView
 + (UICalloutBar *)activeCalloutBar;

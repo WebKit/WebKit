@@ -827,6 +827,20 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isShowingMenu()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.isShowingMenu`, result => resolve(result === "true"));
+        });
+    }
+
+    static isDismissingMenu()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.isDismissingMenu`, result => resolve(result === "true"));
+        });
+    }
+
     static menuRect()
     {
         return new Promise(resolve => {
@@ -837,5 +851,24 @@ window.UIHelper = class UIHelper {
     static setHardwareKeyboardAttached(attached)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));
+    }
+
+    static rectForMenuAction(action)
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                const rect = uiController.rectForMenuAction("${action}");
+                uiController.uiScriptComplete(rect ? JSON.stringify(rect) : "");
+            `, stringResult => {
+                resolve(stringResult.length ? JSON.parse(stringResult) : null);
+            });
+        });
+    }
+
+    static async chooseMenuAction(action)
+    {
+        const menuRect = await this.rectForMenuAction(action);
+        if (menuRect)
+            await this.activateAt(menuRect.left + menuRect.width / 2, menuRect.top + menuRect.height / 2);
     }
 }

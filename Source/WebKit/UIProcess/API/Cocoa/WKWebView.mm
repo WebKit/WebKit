@@ -1553,6 +1553,11 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return [super targetForAction:action withSender:sender];
 }
 
+- (void)willFinishIgnoringCalloutBarFadeAfterPerformingAction
+{
+    [_contentView willFinishIgnoringCalloutBarFadeAfterPerformingAction];
+}
+
 static inline CGFloat floorToDevicePixel(CGFloat input, float deviceScaleFactor)
 {
     return CGFloor(input * deviceScaleFactor) / deviceScaleFactor;

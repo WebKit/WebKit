@@ -793,6 +793,7 @@ enum {
     TextDidChangeInTextFieldCallbackID,
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
+    CustomMenuActionCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -1340,6 +1341,52 @@ void TestRunner::runUIScriptCallback(unsigned callbackID, JSStringRef result)
 
     JSValueRef resultValue = JSValueMakeString(context, result);
     callTestRunnerCallback(callbackID, 1, &resultValue);
+}
+
+void TestRunner::setAllowedMenuActions(JSValueRef actions)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetAllowedMenuActions"));
+    WKRetainPtr<WKMutableArrayRef> messageBody(AdoptWK, WKMutableArrayCreate());
+
+    auto page = InjectedBundle::singleton().page()->page();
+    auto mainFrame = WKBundlePageGetMainFrame(page);
+    auto context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    auto lengthPropertyName = adopt(JSStringCreateWithUTF8CString("length"));
+    auto actionsArray = JSValueToObject(context, actions, nullptr);
+    auto lengthValue = JSObjectGetProperty(context, actionsArray, lengthPropertyName.get(), nullptr);
+    if (!JSValueIsNumber(context, lengthValue))
+        return;
+
+    auto length = static_cast<size_t>(JSValueToNumber(context, lengthValue, 0));
+    for (size_t i = 0; i < length; ++i) {
+        auto value = JSObjectGetPropertyAtIndex(context, actionsArray, i, 0);
+        if (!JSValueIsString(context, value))
+            continue;
+
+        auto actionName = adopt(JSValueToStringCopy(context, value, 0));
+        WKRetainPtr<WKStringRef> action(AdoptWK, WKStringCreateWithJSString(actionName.get()));
+        WKArrayAppendItem(messageBody.get(), action.get());
+    }
+
+    WKBundlePagePostMessage(page, messageName.get(), messageBody.get());
+}
+
+void TestRunner::installCustomMenuAction(JSStringRef name, bool dismissesAutomatically, JSValueRef callback)
+{
+    cacheTestRunnerCallback(CustomMenuActionCallbackID, callback);
+
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("InstallCustomMenuAction"));
+    WKRetainPtr<WKMutableDictionaryRef> messageBody(AdoptWK, WKMutableDictionaryCreate());
+
+    WKRetainPtr<WKStringRef> nameKey(AdoptWK, WKStringCreateWithUTF8CString("name"));
+    WKRetainPtr<WKStringRef> nameValue(AdoptWK, WKStringCreateWithJSString(name));
+    WKDictionarySetItem(messageBody.get(), nameKey.get(), nameValue.get());
+
+    WKRetainPtr<WKStringRef> dismissesAutomaticallyKey(AdoptWK, WKStringCreateWithUTF8CString("dismissesAutomatically"));
+    WKRetainPtr<WKBooleanRef> dismissesAutomaticallyValue(AdoptWK, WKBooleanCreate(dismissesAutomatically));
+    WKDictionarySetItem(messageBody.get(), dismissesAutomaticallyKey.get(), dismissesAutomaticallyValue.get());
+
+    WKBundlePagePostMessage(InjectedBundle::singleton().page()->page(), messageName.get(), messageBody.get());
 }
 
 void TestRunner::installDidBeginSwipeCallback(JSValueRef callback)
@@ -2463,6 +2510,11 @@ void TestRunner::getApplicationManifestThen(JSValueRef callback)
 void TestRunner::didGetApplicationManifest()
 {
     callTestRunnerCallback(GetApplicationManifestCallbackID);
+}
+
+void TestRunner::performCustomMenuAction()
+{
+    callTestRunnerCallback(CustomMenuActionCallbackID);
 }
 
 size_t TestRunner::userScriptInjectedCount() const

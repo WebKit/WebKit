@@ -1,3 +1,35 @@
+2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
+        https://bugs.webkit.org/show_bug.cgi?id=196919
+        <rdar://problem/41630459>
+
+        Reviewed by Tim Horton.
+
+        Add a new iOS layout test that installs a custom, non-dismissing action in the callout menu that enlarges text.
+        The test then activates this custom menu item and checks that the selection rects after triggering this custom
+        action are updated, and the callout bar is still showing.
+
+        * editing/selection/ios/selection-after-changing-text-with-callout-menu-expected.txt: Added.
+        * editing/selection/ios/selection-after-changing-text-with-callout-menu.html: Added.
+
+        This test additionally suppresses all callout bar menu items except for the custom "Embiggen" action, to ensure
+        that the "Embiggen" option can be tapped from the layout test without having to navigate callout bar items by
+        tapping on the "Next" and "Show styles" buttons. This latter approach is very challenging to make reliable in
+        automation; when navigating submenus in the callout bar, the next button can't be tapped until the current
+        callout bar transition animation is complete, but there's no delegate method invoked or notification posted when
+        this happens.
+
+        * resources/ui-helper.js:
+        (window.UIHelper.isShowingMenu):
+        (window.UIHelper.isDismissingMenu):
+        (window.UIHelper.rectForMenuAction):
+        (window.UIHelper.async.chooseMenuAction):
+
+        Additionally add a few more UIHelper methods.
+
+        (window.UIHelper):
+
 2019-04-16  John Wilander  <wilander@apple.com>
 
         Set test conditions closer to conversion redirect in LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html

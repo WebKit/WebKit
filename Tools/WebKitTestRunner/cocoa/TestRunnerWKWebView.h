@@ -49,6 +49,11 @@
 @property (nonatomic, copy) void (^rotationDidEndCallback)(void);
 @property (nonatomic, copy) NSString *accessibilitySpeakSelectionContent;
 
+- (void)setAllowedMenuActions:(NSArray<NSString *> *)actions;
+
+- (void)resetCustomMenuAction;
+- (void)installCustomMenuAction:(NSString *)name dismissesAutomatically:(BOOL)dismissesAutomatically callback:(dispatch_block_t)callback;
+
 - (void)resetInteractionCallbacks;
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler;
 - (void)accessibilityRetrieveSpeakSelectionContentWithCompletionHandler:(void (^)(void))completionHandler;
@@ -58,6 +63,7 @@
 
 @property (nonatomic, readonly, getter=isShowingKeyboard) BOOL showingKeyboard;
 @property (nonatomic, readonly, getter=isShowingMenu) BOOL showingMenu;
+@property (nonatomic, readonly, getter=isDismissingMenu) BOOL dismissingMenu;
 @property (nonatomic, readonly, getter=isShowingPopover) BOOL showingPopover;
 @property (nonatomic, assign) BOOL usesSafariLikeRotation;
 @property (nonatomic, readonly, getter=isInteractingWithFormControl) BOOL interactingWithFormControl;

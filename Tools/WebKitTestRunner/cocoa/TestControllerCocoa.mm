@@ -400,6 +400,32 @@ bool TestController::canDoServerTrustEvaluationInNetworkProcess() const
 #endif
 }
 
+void TestController::installCustomMenuAction(const String& name, bool dismissesAutomatically)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto* invocation = m_currentInvocation.get();
+    [m_mainWebView->platformView() installCustomMenuAction:name dismissesAutomatically:dismissesAutomatically callback:[invocation] {
+        if (TestController::singleton().isCurrentInvocation(invocation))
+            invocation->performCustomMenuAction();
+    }];
+#else
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(dismissesAutomatically);
+#endif
+}
+
+void TestController::setAllowedMenuActions(const Vector<String>& actions)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto actionNames = adoptNS([[NSMutableArray<NSString *> alloc] initWithCapacity:actions.size()]);
+    for (auto action : actions)
+        [actionNames addObject:action];
+    [m_mainWebView->platformView() setAllowedMenuActions:actionNames.get()];
+#else
+    UNUSED_PARAM(actions);
+#endif
+}
+
 bool TestController::isDoingMediaCapture() const
 {
     return m_mainWebView->platformView()._mediaCaptureState != _WKMediaCaptureStateNone;

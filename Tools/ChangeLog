@@ -1,3 +1,87 @@
+2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
+        https://bugs.webkit.org/show_bug.cgi?id=196919
+        <rdar://problem/41630459>
+
+        Reviewed by Tim Horton.
+
+        Add iOS support for several new testing hooks. See below for more detail.
+
+        * DumpRenderTree/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isDismissingMenu const):
+
+        Add a new script controller method to query whether the platform menu (on iOS, the callout bar) is done
+        dismissing. We consider the menu to be dismissing in between the `-WillHide` and `-DidHide` notifications sent
+        by UIKit when dismissing the callout bar (i.e. UIMenuController).
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.cpp:
+        (WTR::UIScriptController::isDismissingMenu const):
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAllowedMenuActions):
+
+        Add a new helper method to specify a list of allowed actions when bringing up the menu. On iOS, in the case of
+        actions supported by the platform, this matches against method selector names (for instance, "SelectAll", or
+        "Copy", or "Paste"). In the case of the custom actions installed via `installCustomMenuAction`, we instead match
+        against the name of the custom action.
+
+        (WTR::TestRunner::installCustomMenuAction):
+
+        Add a new helper method to install a custom action for the context menu (on iOS, this is the callout bar). This
+        takes the name of the action (which appears in a button in the callout bar), whether the action should cause
+        the callout bar to automatically dismiss, and finally, a JavaScript callback that is invoked when the action is
+        triggered.
+
+        (WTR::TestRunner::performCustomMenuAction):
+
+        Invoked when the custom menu action is triggered.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::installCustomMenuAction):
+        (WTR::TestController::setAllowedMenuActions):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::performCustomMenuAction):
+
+        Add plumbing to call back into the injected bundle when performing the custom action.
+
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::installCustomMenuAction):
+        (WTR::TestController::setAllowedMenuActions):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView initWithFrame:configuration:]):
+        (-[TestRunnerWKWebView becomeFirstResponder]):
+        (-[TestRunnerWKWebView _addCustomItemToMenuControllerIfNecessary]):
+
+        Helper method that converts web view's current custom menu action info into a UIMenuItem, and adds it to the
+        shared menu controller. This is also invoked when the web view becomes first responder, which matches behavior
+        in the Mail app on iOS.
+
+        (-[TestRunnerWKWebView installCustomMenuAction:dismissesAutomatically:callback:]):
+        (-[TestRunnerWKWebView setAllowedMenuActions:]):
+        (-[TestRunnerWKWebView resetCustomMenuAction]):
+        (-[TestRunnerWKWebView performCustomAction:]):
+        (-[TestRunnerWKWebView canPerformAction:withSender:]):
+        (-[TestRunnerWKWebView _willHideMenu]):
+        (-[TestRunnerWKWebView _didHideMenu]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+
+        Reset both any custom installed actions on the shared menu controller, as well as the list of allowed actions,
+        if specified.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptController::isDismissingMenu const):
+
 2019-04-16  Megan Gardner  <megan_gardner@apple.com>
 
         Allow sharing from imageSheet on an image document

@@ -272,6 +272,10 @@ interface TestRunner {
 
     void accummulateLogsForChannel(DOMString channel);
 
+    // Contextual menu actions
+    void setAllowedMenuActions(object actions);
+    void installCustomMenuAction(DOMString name, boolean dismissesAutomatically, object callback);
+
     // Gamepad
     void setMockGamepadDetails(unsigned long index, DOMString id, unsigned long axisCount, unsigned long buttonCount);
     void setMockGamepadAxisValue(unsigned long index, unsigned long axisIndex, double value);

@@ -88,6 +88,7 @@ public:
     bool canOpenWindows() const { return m_canOpenWindows; }
 
     void dumpAdClickAttribution();
+    void performCustomMenuAction();
 
 private:
     WKRetainPtr<WKMutableDictionaryRef> createTestSettingsDictionary();

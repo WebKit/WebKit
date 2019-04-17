@@ -768,6 +768,27 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "InstallCustomMenuAction")) {
+        auto messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
+        WKRetainPtr<WKStringRef> nameKey(AdoptWK, WKStringCreateWithUTF8CString("name"));
+        WKRetainPtr<WKStringRef> name = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, nameKey.get()));
+        WKRetainPtr<WKStringRef> dismissesAutomaticallyKey(AdoptWK, WKStringCreateWithUTF8CString("dismissesAutomatically"));
+        auto dismissesAutomatically = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, dismissesAutomaticallyKey.get()));
+        TestController::singleton().installCustomMenuAction(toWTFString(name.get()), WKBooleanGetValue(dismissesAutomatically));
+        return;
+    }
+
+    if (WKStringIsEqualToUTF8CString(messageName, "SetAllowedMenuActions")) {
+        auto messageBodyArray = static_cast<WKArrayRef>(messageBody);
+        auto size = WKArrayGetSize(messageBodyArray);
+        Vector<String> actions;
+        actions.reserveInitialCapacity(size);
+        for (size_t index = 0; index < size; ++index)
+            actions.append(toWTFString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(messageBodyArray, index))));
+        TestController::singleton().setAllowedMenuActions(actions);
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetOpenPanelFileURLs")) {
         TestController::singleton().setOpenPanelFileURLs(static_cast<WKArrayRef>(messageBody));
         return;
@@ -1783,6 +1804,12 @@ void TestInvocation::dumpResourceLoadStatistics()
 void TestInvocation::dumpAdClickAttribution()
 {
     m_shouldDumpAdClickAttribution = true;
+}
+
+void TestInvocation::performCustomMenuAction()
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("PerformCustomMenuAction"));
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
 }
 
 } // namespace WTR

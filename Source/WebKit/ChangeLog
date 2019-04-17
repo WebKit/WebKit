@@ -1,3 +1,42 @@
+2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
+        https://bugs.webkit.org/show_bug.cgi?id=196919
+        <rdar://problem/41630459>
+
+        Reviewed by Tim Horton.
+
+        Adds modern WebKit support for -dontDismiss by implementing a couple of new platform hooks. Covered by a new
+        layout test: editing/selection/ios/selection-after-changing-text-with-callout-menu.html.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Declare the private -dontDismiss property of UIMenuItem.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView willFinishIgnoringCalloutBarFadeAfterPerformingAction]):
+
+        Additionally teach the web view (not just the content view) to respond to the hook. This matters in the case
+        where the WebKit client (most notably, Mail) overrides WKWebView methods to define custom actions in the menu
+        controller. This scenario is exercised by the new layout test.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView willFinishIgnoringCalloutBarFadeAfterPerformingAction]):
+
+        If an action was performed where callout bar fading was ignored, then in WebKit, don't allow selection changes
+        to fade the callout bar until after the next remote layer tree commit.
+
+        (-[WKContentView _updateChangedSelection:]):
+
+        Stop suppressing selection updates when showing B/I/U controls, now that we can properly honor the -dontDismiss
+        property. This was originally introduced in <rdar://problem/15199925>, presumably to ensure that B/I/U buttons
+        (which have -dontDismiss set to YES) don't trigger selection change and end up dismissing themselves; however,
+        if triggering B/I/U actually changes the selection rects, this also means that the selection rects on-screen
+        would be stale after triggering these actions. This effect is most noticeable when bolding text.
+
+        (-[WKContentView shouldAllowHidingSelectionCommands]):
+
 2019-04-16  Ross Kirsling  <ross.kirsling@sony.com>
 
         Unreviewed non-unified build fix after r244307.
