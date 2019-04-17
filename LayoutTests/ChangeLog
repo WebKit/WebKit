@@ -1,3 +1,50 @@
+2019-04-17  Zalan Bujtas  <zalan@apple.com>
+
+		[iOS] Unreviewed gardening.
+
+        2 single taps in fast loading subsequent tests are recognized as double tap. Turn off double taps for content observation tests.
+
+        * fast/events/touch/ios/content-observation/0ms-delay-0ms-transition-on-mousemove.html:
+        * fast/events/touch/ios/content-observation/0ms-transition-on-touch-start.html:
+        * fast/events/touch/ios/content-observation/100ms-delay-10ms-transition-on-mousemove.html:
+        * fast/events/touch/ios/content-observation/100ms-transition-on-touch-start.html:
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-mousemove.html:
+        * fast/events/touch/ios/content-observation/10ms-delay-0ms-transition-on-touch-start.html:
+        * fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start-with-non-0px-end.html:
+        * fast/events/touch/ios/content-observation/10ms-delay-transition-on-touch-start.html:
+        * fast/events/touch/ios/content-observation/350ms-hover-intent.html:
+        * fast/events/touch/ios/content-observation/400ms-hover-intent.html:
+        * fast/events/touch/ios/content-observation/click-instead-of-hover-simple.html:
+        * fast/events/touch/ios/content-observation/clickable-content-is-inside-a-container.html:
+        * fast/events/touch/ios/content-observation/crash-on-anonymous-renderer.html:
+        * fast/events/touch/ios/content-observation/hover-when-style-change-is-async.html:
+        * fast/events/touch/ios/content-observation/hover-while-loading-subframe.html:
+        * fast/events/touch/ios/content-observation/iframe-is-shown-on-hover.html:
+        * fast/events/touch/ios/content-observation/mouse-out-event-should-fire-on-click.html:
+        * fast/events/touch/ios/content-observation/move-content-from-offscreen.html:
+        * fast/events/touch/ios/content-observation/new-content-covers-tap-target.html:
+        * fast/events/touch/ios/content-observation/non-visible-becomes-visible-and-gains-new-renderer.html:
+        * fast/events/touch/ios/content-observation/non-visible-content-gains-new-renderer.html:
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-opacity-and-left.html:
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove-with-transition.html:
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-mousemove.html:
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart-with-transition.html:
+        * fast/events/touch/ios/content-observation/opacity-change-happens-on-touchstart.html:
+        * fast/events/touch/ios/content-observation/remove-subframe-while-observing.html:
+        * fast/events/touch/ios/content-observation/stuck-with-hover-state.html:
+        * fast/events/touch/ios/content-observation/style-recalc-schedule-and-force-relalc.html:
+        * fast/events/touch/ios/content-observation/tap-on-input-type-button-element.html:
+        * fast/events/touch/ios/content-observation/tap-on-input-type-text-element.html:
+        * fast/events/touch/ios/content-observation/transition-on-touch-start-and-remove.html:
+        * fast/events/touch/ios/content-observation/visibility-change-after-touch-end.html:
+        * fast/events/touch/ios/content-observation/visibility-change-happens-at-the-second-timer.html:
+        * fast/events/touch/ios/content-observation/visibility-change-happens-on-timer-hops.html:
+        * fast/events/touch/ios/content-observation/visibility-change-happens-while-in-mousemoved.html:
+        * fast/events/touch/ios/content-observation/visibility-change-is-max-height-change.html:
+        * fast/events/touch/ios/content-observation/visibility-change-on-touch-start-simple.html:
+        * fast/events/touch/ios/content-observation/visibility-change-with-image-content.html:
+        * fast/events/touch/ios/content-observation/visible-content-gains-new-renderer.html:
+
 2019-04-17  Cathie Chen  <cathiechen@igalia.com>
 
         Update the test result of resize-observer/eventloop.html.
