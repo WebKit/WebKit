@@ -341,8 +341,6 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
         return;
     }
 
-    m_outstandingOutgoingSynchronousReplyCount++;
-
     auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 
     // Hand off both the decoder and encoder to the work queue message receiver.
@@ -460,9 +458,6 @@ void Connection::sendMessageWithReply(uint64_t requestID, std::unique_ptr<Encode
 
 bool Connection::sendSyncReply(std::unique_ptr<Encoder> encoder)
 {
-    ASSERT(m_outstandingOutgoingSynchronousReplyCount);
-    m_outstandingOutgoingSynchronousReplyCount--;
-
     return sendMessage(WTFMove(encoder), { });
 }
 
@@ -892,8 +887,6 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         decoder.markInvalid();
         return;
     }
-
-    m_outstandingOutgoingSynchronousReplyCount++;
 
     auto replyEncoder = std::make_unique<Encoder>("IPC", "SyncMessageReply", syncRequestID);
 

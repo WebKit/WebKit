@@ -1,3 +1,16 @@
+2019-04-17  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, rolling out r244400.
+
+        Caused testing to exit early with assertionon Debug WK2
+
+        Reverted changeset:
+
+        "UI↔Web deadlock when printing with a JavaScript alert
+        visible"
+        https://bugs.webkit.org/show_bug.cgi?id=196839
+        https://trac.webkit.org/changeset/244400
+
 2019-04-17  Brady Eidson  <beidson@apple.com>
 
         Link clicks in PDFs shouldn't send referrer headers.
