@@ -1,3 +1,17 @@
+2019-04-17  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244386.
+        https://bugs.webkit.org/show_bug.cgi?id=197031
+
+        Causing build failures on several internal builders (Requested
+        by ShawnRoberts on #webkit).
+
+        Reverted changeset:
+
+        "Move MiG .def files into their own "Copy files" build step"
+        https://bugs.webkit.org/show_bug.cgi?id=196982
+        https://trac.webkit.org/changeset/244386
+
 2019-04-17  Keith Rollin  <krollin@apple.com>
 
         Move MiG .def files into their own "Copy files" build step
