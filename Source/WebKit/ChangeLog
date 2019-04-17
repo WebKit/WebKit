@@ -1,3 +1,21 @@
+2019-04-17  Andy Estes  <aestes@apple.com>
+
+        [iOS] Support multiple file selection in UIDocumentPickerViewController
+        https://bugs.webkit.org/show_bug.cgi?id=197014
+        <rdar://problem/49963514>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Allowed multiple file selection in our UIDocumentPickerViewController when
+        _allowMultipleFiles is YES.
+
+        (displayStringForDocumentsAtURLs):
+        (-[WKFileUploadPanel documentPicker:didPickDocumentsAtURLs:]):
+        Changed to support multiple file selection. When more than one file is selected, use
+        WebCore::multipleFileUploadText() as the display string.
+
 2019-04-17  Alex Christensen  <achristensen@webkit.org>
 
         Make WebCompiledContentRuleListData non-default-constructible, move its nonserialized member to API::ContentRuleList
