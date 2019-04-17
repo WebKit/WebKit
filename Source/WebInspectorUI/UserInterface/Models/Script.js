@@ -29,7 +29,6 @@ WI.Script = class Script extends WI.SourceCode
     {
         super();
 
-        console.assert(id);
         console.assert(target instanceof WI.Target);
         console.assert(range instanceof WI.TextRange);
 

@@ -1,3 +1,24 @@
+2019-04-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Extension scripts with parse errors do not show up in Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=196996
+        <rdar://problem/47054804>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype.scriptDidFail):
+        Create a LocalScript that can be linked to but ignore it
+        if we already have a Resource for the URL.
+
+        * UserInterface/Protocol/DebuggerObserver.js:
+        (WI.DebuggerObserver.prototype.scriptFailedToParse):
+        Let DebuggerManager potentially create a script for this.
+
+        * UserInterface/Models/Script.js:
+        (WI.Script):
+        Local scripts provide a null id and id is not required below.
+
 2019-04-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Worker imported scripts not showing up in Open Quickly dialog if inspector open after workers exist

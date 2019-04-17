@@ -759,6 +759,23 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             target.addScript(script);
     }
 
+    scriptDidFail(target, url, scriptSource)
+    {
+        const sourceType = WI.Script.SourceType.Program;
+        let script = new WI.LocalScript(target, url, sourceType, scriptSource);
+
+        // If there is already a resource we don't need to have the script anymore,
+        // we only need a script to use for parser error location links.
+        if (script.resource)
+            return;
+
+        let targetData = this.dataForTarget(target);
+        targetData.addScript(script);
+        target.addScript(script);
+
+        this.dispatchEventToListeners(WI.DebuggerManager.Event.ScriptAdded, {script});
+    }
+
     didSampleProbe(target, sample)
     {
         console.assert(this._probesByIdentifier.has(sample.probeId), "Unknown probe identifier specified for sample: ", sample);

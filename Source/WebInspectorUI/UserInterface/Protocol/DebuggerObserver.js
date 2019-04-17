@@ -55,7 +55,8 @@ WI.DebuggerObserver = class DebuggerObserver
 
     scriptFailedToParse(url, scriptSource, startLine, errorLine, errorMessage)
     {
-        // FIXME: Not implemented.
+        // NOTE: A Console.messageAdded event will handle the error message.
+        WI.debuggerManager.scriptDidFail(this.target, url, scriptSource);
     }
 
     breakpointResolved(breakpointId, location)
