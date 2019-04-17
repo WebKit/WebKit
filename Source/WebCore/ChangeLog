@@ -1,3 +1,11 @@
+2019-04-17  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed build fix for iOSMac after r244223.
+
+        * platform/audio/ios/AudioSessionIOS.mm:
+        (WebCore::AudioSession::routeSharingPolicy const): Add ALLOW_DEPRECATED_DECLARATIONS_BEGIN/END
+        around AVAudioSessionRouteSharingPolicyLongForm use.
+
 2019-04-17  Chris Dumez  <cdumez@apple.com>
 
         Remember device orientation permission for the duration of the browsing session
