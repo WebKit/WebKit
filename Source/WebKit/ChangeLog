@@ -1,3 +1,15 @@
+2019-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash during teardown of PingLoad
+        https://bugs.webkit.org/show_bug.cgi?id=197024
+        <rdar://problem/49973077>
+
+        Reviewed by Jer Noble.
+
+        * NetworkProcess/PingLoad.cpp:
+        (WebKit::PingLoad::initialize):
+        Early return if weakThis is null.
+
 2019-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r243926): [iOS] Release assertion when computing editor state during an overflow scroll triggered by layout
