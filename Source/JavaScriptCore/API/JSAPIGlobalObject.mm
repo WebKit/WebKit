@@ -194,18 +194,10 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         if (UNLIKELY([jsScript type] != kJSScriptTypeModule))
             return rejectPromise("The JSScript that was provided did not have expected type of kJSScriptTypeModule."_s);
 
-        // FIXME: The SPI we're deprecating did not require sourceURL, so we just
-        // ignore this check for such use cases until we can remove that SPI. Once
-        // we do that, we can remove the null check for sourceURL:
-        // https://bugs.webkit.org/show_bug.cgi?id=194909
-        if (NSURL *sourceURL = [jsScript sourceURL]) {
-            String oldModuleKey { [sourceURL absoluteString] };
-            if (UNLIKELY(Identifier::fromString(&vm, oldModuleKey) != moduleKey))
-                return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
-        } else {
-            [jsScript setSourceURL:[NSURL URLWithString:static_cast<NSString *>(moduleKey.string())]];
-            source = [jsScript jsSourceCode];
-        }
+        NSURL *sourceURL = [jsScript sourceURL];
+        String oldModuleKey { [sourceURL absoluteString] };
+        if (UNLIKELY(Identifier::fromString(&vm, oldModuleKey) != moduleKey))
+            return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
 
         args.append(source);
         call(exec, deferredPromise->JSPromiseDeferred::resolve(), args, "This should never be seen...");

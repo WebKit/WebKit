@@ -53,75 +53,6 @@
     RefPtr<JSC::CachedBytecode> m_cachedBytecode;
 }
 
-+ (instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm
-{
-    JSScript *result = [[[JSScript alloc] init] autorelease];
-    result->m_source = source;
-    result->m_virtualMachine = vm;
-    result->m_type = kJSScriptTypeModule;
-    return result;
-}
-
-template<typename Vector>
-static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
-{
-    // We might have injected "use strict"; at the top.
-    size_t initialSize = buffer.size();
-    if (fseek(file, 0, SEEK_END) == -1)
-        return false;
-    long bufferCapacity = ftell(file);
-    if (bufferCapacity == -1)
-        return false;
-    if (fseek(file, 0, SEEK_SET) == -1)
-        return false;
-    buffer.resize(bufferCapacity + initialSize);
-    size_t readSize = fread(buffer.data() + initialSize, 1, buffer.size(), file);
-    return readSize == buffer.size() - initialSize;
-}
-
-static bool fillBufferWithContentsOfFile(const String& fileName, Vector<LChar>& buffer)
-{
-    FILE* f = fopen(fileName.utf8().data(), "rb");
-    if (!f) {
-        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
-        return false;
-    }
-
-    bool result = fillBufferWithContentsOfFile(f, buffer);
-    fclose(f);
-
-    return result;
-}
-
-
-+ (instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
-{
-    UNUSED_PARAM(codeSigningPath);
-    UNUSED_PARAM(cachePath);
-
-    URL filePathURL([filePath absoluteURL]);
-    if (!filePathURL.isLocalFile())
-        return nil;
-
-    Vector<LChar> buffer;
-    if (!fillBufferWithContentsOfFile(filePathURL.fileSystemPath(), buffer))
-        return nil;
-
-    if (!charactersAreAllASCII(buffer.data(), buffer.size()))
-        return nil;
-
-    JSScript *result = [[[JSScript alloc] init] autorelease];
-    result->m_virtualMachine = vm;
-    result->m_source = String::fromUTF8WithLatin1Fallback(buffer.data(), buffer.size());
-    result->m_type = kJSScriptTypeModule;
-    return result;
-}
-
-+ (instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(NSURL *)codeSigningPath andBytecodeCache:(NSURL *)cachePath
-{
-    return [JSScript scriptFromASCIIFile:filePath inVirtualMachine:vm withCodeSigning:codeSigningPath andBytecodeCache:cachePath];
-}
-
 static JSScript *createError(NSString *message, NSError** error)
 {
     if (error)
@@ -329,11 +260,6 @@ static JSScript *createError(NSString *message, NSError** error)
     }
 
     return YES;
-}
-
-- (void)setSourceURL:(NSURL *)url
-{
-    m_sourceURL = url;
 }
 
 @end

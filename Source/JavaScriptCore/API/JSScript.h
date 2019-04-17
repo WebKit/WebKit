@@ -47,21 +47,6 @@ JSC_CLASS_AVAILABLE(macos(JSC_MAC_TBA), ios(JSC_IOS_TBA))
 @interface JSScript : NSObject
 
 /*!
- This SPI is deprecated and should not be used. Use "scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error:" instead.
- */
-+ (nullable instancetype)scriptWithSource:(NSString *)source inVirtualMachine:(JSVirtualMachine *)vm JSC_API_DEPRECATED("Use +scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error: instead.", macos(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
-
-/*!
- This SPI is deprecated and should not be used. Use "scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error:" instead.
- */
-+ (nullable instancetype)scriptFromASCIIFile:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath JSC_API_DEPRECATED("Use +scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error: instead.", macos(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
-
-/*!
- This API is deprecated and should not be used.
- */
-+ (nullable instancetype)scriptFromUTF8File:(NSURL *)filePath inVirtualMachine:(JSVirtualMachine *)vm withCodeSigning:(nullable NSURL *)codeSigningPath andBytecodeCache:(nullable NSURL *)cachePath JSC_API_DEPRECATED("Do not use this. Use +scriptOfType:memoryMappedFromASCIIFile:withSourceURL:andBytecodeCache:inVirtualMachine:error: or +scriptOfType:withSource:andSourceURL:andBytecodeCache:inVirtualMachine:error: instead", macos(JSC_MAC_TBA, JSC_MAC_TBA), ios(JSC_IOS_TBA, JSC_IOS_TBA));
-
-/*!
  @method
  @abstract Create a JSScript for the specified virtual machine.
  @param type The type of JavaScript source.
