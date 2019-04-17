@@ -1,3 +1,16 @@
+2019-04-17  Tim Horton  <timothy_horton@apple.com>
+
+        UI↔Web deadlock when printing with a JavaScript alert visible
+        https://bugs.webkit.org/show_bug.cgi?id=196839
+        <rdar://problem/49157642>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewPrintFormatter.mm: Added.
+        (-[PrintOnAlertUIDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
 2019-04-17  Alex Christensen  <achristensen@webkit.org>
 
         WKRetainPtr's adoption constructor should be private

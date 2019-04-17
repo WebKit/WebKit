@@ -196,6 +196,8 @@ public:
 
     bool inSendSync() const { return m_inSendSyncCount; }
 
+    bool hasOutstandingOutgoingSynchronousReplies() const { return m_outstandingOutgoingSynchronousReplyCount; }
+
     Identifier identifier() const;
 
 #if PLATFORM(COCOA)
@@ -297,6 +299,7 @@ private:
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
     unsigned m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting { 0 };
+    unsigned m_outstandingOutgoingSynchronousReplyCount { 0 };
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
     bool m_didReceiveInvalidMessage;

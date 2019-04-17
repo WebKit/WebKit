@@ -6323,6 +6323,9 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 - (_WKWebViewPrintFormatter *)_webViewPrintFormatter
 {
 #if !PLATFORM(IOSMAC)
+    if (_page->process().connection()->hasOutstandingOutgoingSynchronousReplies())
+        return nil;
+
     UIViewPrintFormatter *viewPrintFormatter = self.viewPrintFormatter;
     ASSERT([viewPrintFormatter isKindOfClass:[_WKWebViewPrintFormatter class]]);
     return (_WKWebViewPrintFormatter *)viewPrintFormatter;

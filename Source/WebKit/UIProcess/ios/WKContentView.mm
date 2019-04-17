@@ -726,6 +726,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (_isPrintingToPDF)
         return 0;
 
+    if (_page->process().connection()->hasOutstandingOutgoingSynchronousReplies())
+        return 0;
+
     uint64_t frameID;
     if (_WKFrameHandle *handle = printFormatter.frameToPrint)
         frameID = handle._frameID;
@@ -769,6 +772,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
+    if (_page->process().connection()->hasOutstandingOutgoingSynchronousReplies())
+        return nullptr;
+
     if (_isPrintingToPDF) {
         if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::DrawToPDFCallback>(_page->pageID(), Seconds::infinity())) {
             ASSERT_NOT_REACHED();
