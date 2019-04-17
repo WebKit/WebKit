@@ -1,3 +1,18 @@
+2019-04-17  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: CPU Usage Timeline - Include # of Network Requests in the Statistics section
+        https://bugs.webkit.org/show_bug.cgi?id=197039
+        <rdar://problem/49996299>
+
+        Reviewed by Timothy Hatcher.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CPUTimelineView.js:
+        (WI.CPUTimelineView.prototype.initialLayout):
+        (WI.CPUTimelineView.prototype._computeStatisticsData):
+        (WI.CPUTimelineView.prototype._clearStatistics):
+        Add the number of network requests started in the selected range.
+
 2019-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Rename `supported-color-schemes` to `color-scheme`.
