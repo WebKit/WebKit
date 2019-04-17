@@ -350,6 +350,15 @@ static UICalloutBar *suppressUICalloutBar()
 #endif
 }
 
+- (void)addToTestWindow
+{
+#if PLATFORM(MAC)
+    [[_hostWindow contentView] addSubview:self];
+#else
+    [_hostWindow addSubview:self];
+#endif
+}
+
 - (void)clearMessageHandlers:(NSArray *)messageNames
 {
     for (NSString *messageName in messageNames)

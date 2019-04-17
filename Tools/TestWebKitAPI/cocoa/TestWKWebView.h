@@ -76,6 +76,7 @@
 - (NSString *)stylePropertyAtSelectionEnd:(NSString *)propertyName;
 - (void)collapseToStart;
 - (void)collapseToEnd;
+- (void)addToTestWindow;
 @end
 
 #if PLATFORM(IOS_FAMILY)
