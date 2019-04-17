@@ -39,6 +39,7 @@
 
 @implementation _WKActivatedElementInfo  {
     RetainPtr<NSURL> _URL;
+    RetainPtr<NSURL> _imageURL;
     RetainPtr<NSString> _title;
     CGPoint _interactionLocation;
     RetainPtr<NSString> _ID;
@@ -64,6 +65,7 @@
         return nil;
     
     _URL = information.url;
+    _imageURL = information.imageURL;
     _interactionLocation = information.request.point;
     _title = information.title;
     _boundingRect = information.bounds;
@@ -84,17 +86,18 @@
 }
 #endif
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
-    return [self _initWithType:type URL:url location:location title:title ID:ID rect:rect image:image userInfo:nil];
+    return [self _initWithType:type URL:url imageURL:imageURL location:location title:title ID:ID rect:rect image:image userInfo:nil];
 }
 
-- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
+- (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url imageURL:(NSURL *)imageURL location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo
 {
     if (!(self = [super init]))
         return nil;
 
     _URL = adoptNS([url copy]);
+    _imageURL = adoptNS([imageURL copy]);
     _interactionLocation = location;
     _title = adoptNS([title copy]);
     _boundingRect = rect;
@@ -111,6 +114,11 @@
 - (NSURL *)URL
 {
     return _URL.get();
+}
+
+- (NSURL *)imageURL
+{
+    return _imageURL.get();
 }
 
 - (NSString *)title

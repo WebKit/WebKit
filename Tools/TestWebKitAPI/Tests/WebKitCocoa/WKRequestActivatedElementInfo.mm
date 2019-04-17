@@ -72,6 +72,30 @@ TEST(WebKit, RequestActivatedElementInfoForLink)
     TestWebKitAPI::Util::run(&finished);
 }
     
+TEST(WebKit, RequestActivatedElementInfoForImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 215, 174)]);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+    
+    __block bool finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
+        
+        EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeImage);
+        EXPECT_WK_STREQ(elementInfo.imageURL.lastPathComponent, "icon.png");
+        EXPECT_NOT_NULL(elementInfo.image);
+        EXPECT_EQ(elementInfo.boundingRect.size.width, 215);
+        EXPECT_EQ(elementInfo.boundingRect.size.height, 174);
+        EXPECT_EQ(elementInfo.image.size.width, 215);
+        EXPECT_EQ(elementInfo.image.size.height, 174);
+        
+        finished = true;
+    }];
+    
+    TestWebKitAPI::Util::run(&finished);
+}
+    
 TEST(WebKit, RequestActivatedElementInfoForBlank)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

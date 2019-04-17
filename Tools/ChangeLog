@@ -1,3 +1,16 @@
+2019-04-16  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow sharing from imageSheet on an image document
+        https://bugs.webkit.org/show_bug.cgi?id=196891
+        <rdar://problem/25377386>
+
+        Reviewed by Tim Horton.
+
+        Test to make sure that the correct imageURL is extracted from an image element.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::TEST):
+
 2019-04-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r244162) Clearing website data from ephemeral WKWebsiteDataStore should finish instead of asserting or hanging

@@ -392,10 +392,11 @@ static const CGFloat presentationElementRectPadding = 15;
 
     void (^showImageSheetWithAlternateURLBlock)(NSURL*, NSDictionary *userInfo) = ^(NSURL *alternateURL, NSDictionary *userInfo) {
         NSURL *targetURL = _positionInformation->url;
+        NSURL *imageURL = _positionInformation->imageURL;
         if (!targetURL)
             targetURL = alternateURL;
         auto elementBounds = _positionInformation->bounds;
-        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() userInfo:userInfo]);
+        auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeImage URL:targetURL imageURL:imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:elementBounds image:_positionInformation->image.get() userInfo:userInfo]);
         if ([delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()])
             return;
         auto defaultActions = [self defaultActionsForImageSheet:elementInfo.get()];
@@ -536,7 +537,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (targetURL) {
         [self _appendOpenActionsForURL:targetURL actions:defaultActions.get() elementInfo:elementInfo];
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
-    }
+    } else if ([elementInfo imageURL])
+        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)
     if ([getSSReadingListClass() supportsURL:targetURL])
@@ -571,7 +573,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
-    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get()]);
+    auto elementInfo = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeLink URL:targetURL imageURL:(NSURL*)_positionInformation->imageURL location:_positionInformation->request.point title:_positionInformation->title ID:_positionInformation->idAttribute rect:_positionInformation->bounds image:_positionInformation->image.get()]);
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:showCustomSheetForElement:)] && [_delegate actionSheetAssistant:self showCustomSheetForElement:elementInfo.get()]) {
         _needsLinkIndicator = NO;
         return;

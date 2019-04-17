@@ -129,7 +129,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     case _WKElementActionTypeShare:
         title = WEB_UI_STRING("Share…", "Title for Share action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
-            [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL rect:actionInfo.boundingRect];
+            [assistant.delegate actionSheetAssistant:assistant shareElementWithURL:actionInfo.URL ?: actionInfo.imageURL rect:actionInfo.boundingRect];
         };
         break;
     default:
