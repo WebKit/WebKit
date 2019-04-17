@@ -122,6 +122,7 @@ WI.NavigationSidebarPanel = class NavigationSidebarPanel extends WI.SidebarPanel
 
     cancelRestoringState()
     {
+        this._pendingViewStateCookie = null;
         if (!this._finalAttemptToRestoreViewStateTimeout)
             return;
 

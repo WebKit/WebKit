@@ -1,3 +1,21 @@
+2019-04-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Navigating to resource sometimes shows different resource
+        https://bugs.webkit.org/show_bug.cgi?id=195978
+        <rdar://problem/49043191>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/NavigationSidebarPanel.js:
+        (WI.NavigationSidebarPanel.prototype.cancelRestoringState):
+        Reset _pendingViewStateCookie so _checkElementsForPendingViewStateCookie could exit early.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype.initialLayout):
+        (WI.ResourceSidebarPanel.prototype._mainFrameMainResourceDidChange):
+        (WI.ResourceSidebarPanel.prototype._createMainFrameTreeElement):
+        Don't try to change content view on initialLayout.
+
 2019-04-17  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: CPU Usage Timeline - Include # of Network Requests in the Statistics section
