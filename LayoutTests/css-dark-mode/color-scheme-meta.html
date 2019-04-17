@@ -92,7 +92,7 @@ test(function() {
 }, "Element colors are correct in dark color scheme with only dark color scheme");
 
 test(function() {
-    document.getElementById("meta").content = "light ,foo ";
+    document.getElementById("meta").content = "light  foo ";
 }, "Color schemes changed to light and a bogus value");
 
 test(function() {
@@ -110,16 +110,16 @@ test(function() {
 }, "Element colors are correct in dark color scheme with implicit light color scheme");
 
 test(function() {
-    document.getElementById("meta").content = "   light, dark ";
-}, "Color schemes changed to light and dark");
+    document.getElementById("meta").content = "   light,dark ";
+}, "Color schemes changed to light,dark");
 
 test(function() {
-    // The semantic text color should be white now.
-    test_color_is_white("test1");
-}, "Element colors are correct in dark color scheme with light and dark color scheme");
+    // The semantic text color should be black now.
+    test_color_is_black("test1");
+}, "Element colors are in light color scheme since comma is not an allowed seperator");
 
 test(function() {
-    document.getElementById("meta").content = ", foo dark";
+    document.getElementById("meta").content = "  foo dark";
 }, "Color schemes changed to a bogus value and dark");
 
 test(function() {

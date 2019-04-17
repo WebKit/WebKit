@@ -1,5 +1,21 @@
 2019-04-17  Timothy Hatcher  <timothy@apple.com>
 
+        Standardize the `<meta name="color-scheme">` separator.
+        https://bugs.webkit.org/show_bug.cgi?id=193931
+
+        Reviewed by Simon Fraser.
+
+        Drop support for comma as a valid seperator in <meta name="color-scheme"> to
+        match the proposal being tracked by: https://github.com/whatwg/html/issues/4504
+
+        Tests: css-dark-mode/color-scheme-meta.html
+               css-dark-mode/older-syntax/supported-color-schemes-meta.html
+
+        * dom/Document.cpp:
+        (WebCore::isColorSchemeSeparator): Drop support for comma.
+
+2019-04-17  Timothy Hatcher  <timothy@apple.com>
+
         Rename `supported-color-schemes` to `color-scheme`.
         https://bugs.webkit.org/show_bug.cgi?id=197016
         rdar://problem/49980259

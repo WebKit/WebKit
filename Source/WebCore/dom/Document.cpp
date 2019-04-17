@@ -3616,9 +3616,9 @@ void Document::updateViewportArguments()
 }
 
 #if ENABLE(DARK_MODE_CSS)
-static bool isColorSchemeSeparator(UChar character)
+static inline bool isColorSchemeSeparator(UChar character)
 {
-    return isASCIISpace(character) || character == ',';
+    return isASCIISpace(character);
 }
 
 static void processColorSchemeString(StringView colorScheme, const WTF::Function<void(StringView key)>& callback)

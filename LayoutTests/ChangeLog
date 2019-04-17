@@ -1,5 +1,17 @@
 2019-04-17  Timothy Hatcher  <timothy@apple.com>
 
+        Standardize the `<meta name="color-scheme">` separator.
+        https://bugs.webkit.org/show_bug.cgi?id=193931
+
+        Reviewed by Simon Fraser.
+
+        * css-dark-mode/color-scheme-meta-expected.txt:
+        * css-dark-mode/color-scheme-meta.html:
+        * css-dark-mode/older-syntax/supported-color-scheme-meta-expected.txt:
+        * css-dark-mode/older-syntax/supported-color-schemes-meta.html:
+
+2019-04-17  Timothy Hatcher  <timothy@apple.com>
+
         Rename `supported-color-schemes` to `color-scheme`.
         https://bugs.webkit.org/show_bug.cgi?id=197016
         rdar://problem/49980259
