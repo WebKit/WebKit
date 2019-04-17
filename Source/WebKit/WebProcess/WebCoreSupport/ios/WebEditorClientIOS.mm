@@ -93,7 +93,7 @@ void WebEditorClient::updateStringForFind(const String& findString)
 
 void WebEditorClient::overflowScrollPositionChanged()
 {
-    m_page->didChangeSelection();
+    m_page->didChangeOverflowScrollPosition();
 }
 
 } // namespace WebKit

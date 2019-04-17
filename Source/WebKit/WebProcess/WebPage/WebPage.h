@@ -764,6 +764,7 @@ public:
 
     void didApplyStyle();
     void didChangeSelection();
+    void didChangeOverflowScrollPosition();
     void didChangeContents();
     void discardedComposition();
     void canceledComposition();
@@ -1270,6 +1271,9 @@ private:
     void validateCommand(const String&, CallbackID);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
+
+    enum class EditorStateUpdateScheduling { Deferred, Immediate };
+    void didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling);
 
     void increaseListLevel();
     void decreaseListLevel();

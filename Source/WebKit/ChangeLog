@@ -1,3 +1,36 @@
+2019-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r243926): [iOS] Release assertion when computing editor state during an overflow scroll triggered by layout
+        https://bugs.webkit.org/show_bug.cgi?id=197012
+        <rdar://problem/49908848>
+
+        Reviewed by Simon Fraser.
+
+        We hit the release assertion due to the following sequence of events:
+        - Dispatch a queued event (in this case, a scroll event)
+        - Invoke the scroll event listener, which modifies layout in some way
+        - This scrolls an overflow scrollable container under the scope of layout
+        - Overflow scrolling then calls didChangeSelection and triggers an editor state update, which updates layout
+
+        In the case where the selection is in the main frame, we bail early due to the check for recursive layout (i.e.
+        frameView->layoutContext().isInRenderTreeLayout()). However, in the case where the selection is inside a
+        subframe, we end up skipping past this check, since the subframe's FrameView isn't currently laying out, and so
+        we end up hitting the release assertion underneath the early return.
+
+        To fix this, simply defer editor state updates due to overflow scrolling until the next remote layer tree commit
+        instead of computing and sending the information immediately. While this only defers editor state updates during
+        overflow scrolling, <rdar://problem/47258878> tracks making editor state updates deferred in the general case.
+
+        Test: editing/selection/overflow-scroll-while-selecting-text.html
+
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::overflowScrollPositionChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeOverflowScrollPosition):
+        (WebKit::WebPage::didChangeSelection):
+        (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+        * WebProcess/WebPage/WebPage.h:
+
 2019-04-17  Chris Dumez  <cdumez@apple.com>
 
         Remember device orientation permission for the duration of the browsing session

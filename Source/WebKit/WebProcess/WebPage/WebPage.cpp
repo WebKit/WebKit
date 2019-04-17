@@ -5284,7 +5284,17 @@ void WebPage::didChangeContents()
     sendEditorStateUpdate();
 }
 
+void WebPage::didChangeOverflowScrollPosition()
+{
+    didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling::Deferred);
+}
+
 void WebPage::didChangeSelection()
+{
+    didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling::Immediate);
+}
+
+void WebPage::didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling editorStateScheduling)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     // The act of getting Dictionary Popup info can make selection changes that we should not propagate to the UIProcess.
@@ -5327,7 +5337,10 @@ void WebPage::didChangeSelection()
     }
 #endif
 
-    sendPartialEditorStateAndSchedulePostLayoutUpdate();
+    if (editorStateScheduling == EditorStateUpdateScheduling::Immediate)
+        sendPartialEditorStateAndSchedulePostLayoutUpdate();
+    else
+        scheduleFullEditorStateUpdate();
 }
 
 void WebPage::resetFocusedElementForFrame(WebFrame* frame)
