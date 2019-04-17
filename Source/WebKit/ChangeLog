@@ -1,3 +1,21 @@
+2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Add a way for Apple-internal clients to opt into recommended compatibility mode
+        https://bugs.webkit.org/show_bug.cgi?id=196977
+        <rdar://problem/49871194>
+
+        Reviewed by Tim Horton.
+
+        Add a helper method to query whether the navigation client should bypass policy safeguards when determining the
+        recommended compatibility mode. We bypass policy safeguards in Cocoa platforms if the navigation delegate
+        implements the new navigation delegate API.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::shouldBypassCompatibilityModeSafeguards const):
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::shouldBypassCompatibilityModeSafeguards const):
+
 2019-04-16  Per Arne Vollan  <pvollan@apple.com>
 
         -[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:] never returns _WKWebsiteDataTypeCredentials
