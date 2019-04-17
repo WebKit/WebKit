@@ -1,3 +1,14 @@
+2019-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        [Mac iOS WK2] Layout Test http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=196974
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html:
+        Make test do one thing at a time to avoid race conditions.
+        Clean up state on the server after test is finished to prevent corrupting future test state.
+
 2019-04-17  Zalan Bujtas  <zalan@apple.com>
 
 		[iOS] Unreviewed gardening.

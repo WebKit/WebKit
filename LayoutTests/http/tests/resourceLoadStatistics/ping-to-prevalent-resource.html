@@ -57,9 +57,9 @@
                 break;
             case "#step3":
                 // Set localhost as prevalent to put it in the blocking category.
-                document.location.hash = "step4";
                 testRunner.setStatisticsPrevalentResource(thirdPartyOrigin, true, function() {
                     testRunner.statisticsUpdateCookieBlocking(runTest);
+                    document.location.hash = "step4";
                 });
                 break;
             case "#step4":
@@ -73,7 +73,7 @@
                     openIframe(thirdPartyOrigin + "/contentextensions/resources/get-ping-data.php?test=ping-to-prevalent-resource", function() {
                         document.body.removeChild(document.getElementById("targetLink"));
                         setEnableFeature(false, function() {
-                            testRunner.notifyDone();
+                            fetch("/contentextensions/resources/delete-ping.php?test=ping-to-prevalent-resource").then(()=>{ testRunner.notifyDone(); });
                         });
                     });
                 });
