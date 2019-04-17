@@ -1,0 +1,13 @@
+PointerMove
+
+Test Description: This test checks if pointermove event triggers. Move your mouse over the black rectangle or slide it if you are using touchscreen.
+
+Pointer Events pointermove Tests
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointermove event received 
+

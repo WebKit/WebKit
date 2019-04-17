@@ -1,0 +1,20 @@
+Pointer Events Capture Test - release capture on pointerup
+
+Test Description: This test checks if setCapture/releaseCapture functions works properly. Complete the following actions:
+Press and hold left mouse button over "Set Capture" button
+Release left mouse button anywhere over the document. "lostpointercapture" should be logged inside of the black rectangle immediately after "pointerup"
+
+Test passes if the proper behavior of the events is observed.
+
+
+Pointer Events Capture Test
+
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: mouse.
+
+The following events were logged: gotpointercapture@target0, pointerup@target0, lostpointercapture@target0.
+
+
+PASS pointerup was received before lostpointercapture 
+

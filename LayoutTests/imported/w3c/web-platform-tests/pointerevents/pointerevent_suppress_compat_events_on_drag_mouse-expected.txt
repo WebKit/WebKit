@@ -1,0 +1,30 @@
+Pointer Event: Suppress compatibility mouse events on drag
+
+When a pointerdown is canceled, a mouse drag shouldn't fire any compatibility mouse events.
+
+Drag mouse within Target0 & release.
+Drag mouse within Target1 & release.
+Click Done.
+Target0
+Target1
+Done
+The following pointer types were detected: mouse.
+
+The following events were logged: mouseup@target0, mousedown@target1, mousemove@target1, mouseup@target1.
+
+
+Harness Error (FAIL), message = 1 duplicate test name: "mouseup's time stamp should be the same as pointerup's time stamp."
+
+PASS Suppress compat mouse events on drag 
+PASS primary pointer pointerdown@target0 
+PASS mouseup's time stamp should be the same as pointerup's time stamp. 
+PASS Pointer Event: Suppress compatibility mouse events on drag 
+PASS primary pointer pointerdown@target1 
+PASS mousedown's time stamp should be the same as pointerdown's time stamp. 
+PASS Pointer Event: Suppress compatibility mouse events on drag 1 
+PASS mousemove's time stamp should be the same as pointermove's time stamp. 
+FAIL Pointer Event: Suppress compatibility mouse events on drag 2 assert_equals: The time stamp of the compat mouse event should be the same as its pointerevent expected 100 but got 99
+PASS mouseup's time stamp should be the same as pointerup's time stamp. 
+PASS Pointer Event: Suppress compatibility mouse events on drag 3 
+FAIL Event log assert_equals: expected "mousedown@target1, mousemove@target1, mouseup@target1" but got "mouseup@target0, mousedown@target1, mousemove@target1, mouseup@target1"
+

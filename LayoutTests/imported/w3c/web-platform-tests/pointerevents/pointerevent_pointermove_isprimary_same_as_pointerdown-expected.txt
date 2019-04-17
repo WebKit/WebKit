@@ -1,0 +1,16 @@
+Pointer Event: pointermove has the same isPrimary as last pointerdown with the same pointerId
+
+Test Description: The isPrimary attribute of a pointermove event must have the same value as the isPrimary attribute of the last pointerdown event with the same pointerId attribute.
+
+Press and hold a mouse button, touch contact or pen contact on this element. Move around inside the element while maintaining contact/button down. Only use one device per test run.
+Lift off of the element to complete the test.
+
+Test complete: Scroll to Summary to view Pass/Fail Results.
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointermove has same isPrimary as last pointerdown 
+

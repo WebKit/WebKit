@@ -1,0 +1,15 @@
+pointerout received just once
+
+Test Description: This test checks if pointerout event dispatched properly.
+Put your mouse over the black rectangle.
+Move your mouse out of the black rectangle
+
+Pointer Events pointerout received once test
+
+The following pointer types were detected: mouse.
+
+Refresh the page to run the tests again with a different pointer type.
+
+
+PASS pointerout received just once 
+
