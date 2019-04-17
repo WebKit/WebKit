@@ -1,3 +1,17 @@
+2019-04-16  Per Arne Vollan  <pvollan@apple.com>
+
+        -[WKWebsiteDataStore fetchDataRecordsOfTypes:completionHandler:] never returns _WKWebsiteDataTypeCredentials
+        https://bugs.webkit.org/show_bug.cgi?id=196991
+        <rdar://problem/45507423>
+
+        Reviewed by Brent Fulgham.
+
+        The credentials are stored in the Network process. To enable fetching credentials from the Network process,
+        a proper process access type needs to be set for the credential Website data type.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::computeNetworkProcessAccessTypeForDataFetch):
+
 2019-04-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r244162) Clearing website data from ephemeral WKWebsiteDataStore should finish instead of asserting or hanging
