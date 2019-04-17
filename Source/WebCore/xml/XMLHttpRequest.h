@@ -130,6 +130,8 @@ public:
 private:
     explicit XMLHttpRequest(ScriptExecutionContext&);
 
+    TextEncoding finalResponseCharset() const;
+
     // ActiveDOMObject
     void contextDestroyed() override;
     bool canSuspendForDocumentSuspension() const override;

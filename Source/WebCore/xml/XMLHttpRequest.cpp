@@ -981,10 +981,23 @@ static inline bool shouldDecodeResponse(XMLHttpRequest::ResponseType type)
     return true;
 }
 
+// https://xhr.spec.whatwg.org/#final-charset
+TextEncoding XMLHttpRequest::finalResponseCharset() const
+{
+    String label = m_responseEncoding;
+
+    String overrideResponseCharset = extractCharsetFromMediaType(m_mimeTypeOverride);
+    if (!overrideResponseCharset.isEmpty())
+        label = overrideResponseCharset;
+
+    return TextEncoding(label);
+}
+
 Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
 {
-    if (!m_responseEncoding.isEmpty())
-        return TextResourceDecoder::create("text/plain", m_responseEncoding);
+    TextEncoding finalResponseCharset = this->finalResponseCharset();
+    if (finalResponseCharset.isValid())
+        return TextResourceDecoder::create("text/plain", finalResponseCharset);
 
     switch (responseType()) {
     case ResponseType::EmptyString:

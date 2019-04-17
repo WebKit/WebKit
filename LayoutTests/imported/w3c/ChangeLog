@@ -1,3 +1,28 @@
+2019-04-17  Rob Buis  <rbuis@igalia.com>
+
+        XMLHttpRequest has the wrong fallback encoding
+        https://bugs.webkit.org/show_bug.cgi?id=191741
+
+        Reviewed by Alex Christensen.
+
+        Update improved test expectations and sync unsupported-encodings.any.js and
+        replacement-encodings.any.js tests.
+
+        * web-platform-tests/encoding/replacement-encodings.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/encoding/replacement-encodings-expected.txt.
+        * web-platform-tests/encoding/replacement-encodings.any.html: Added.
+        * web-platform-tests/encoding/replacement-encodings.any.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/encoding/replacement-encodings.html.
+        * web-platform-tests/encoding/replacement-encodings.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/encoding/replacement-encodings-expected.txt.
+        * web-platform-tests/encoding/replacement-encodings.any.worker.html: Added.
+        * web-platform-tests/encoding/unsupported-encodings-expected.txt: Removed.
+        * web-platform-tests/encoding/unsupported-encodings.any-expected.txt: Added.
+        * web-platform-tests/encoding/unsupported-encodings.any.html: Added.
+        * web-platform-tests/encoding/unsupported-encodings.any.js: Added.
+        * web-platform-tests/encoding/unsupported-encodings.any.worker-expected.txt: Added.
+        * web-platform-tests/encoding/unsupported-encodings.any.worker.html: Added.
+        * web-platform-tests/encoding/unsupported-encodings.html: Removed.
+        * web-platform-tests/xhr/overridemimetype-edge-cases.window-expected.txt:
+        * web-platform-tests/xhr/responsetext-decoding-expected.txt:
+
 2019-04-17  Cathie Chen  <cathiechen@igalia.com>
 
         Update the test result of resize-observer/eventloop.html.

@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<title>Encoding API: replacement encoding</title>
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<script src="resources/encodings.js"></script>
-<script src="resources/decoding-helpers.js"></script>
-<script>
+// META: title=Encoding API: replacement encoding
+// META: script=resources/encodings.js
+// META: script=resources/decoding-helpers.js
 
 const replacement_labels = [];
 encodings_table.forEach(section => {
@@ -27,4 +23,3 @@ replacement_labels.forEach(label => {
     '',
     '', `${label} - empty input decodes to empty output.`);
 });
-</script>
