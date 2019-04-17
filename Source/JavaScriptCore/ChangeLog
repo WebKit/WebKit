@@ -1,3 +1,13 @@
+2019-04-16  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Update port for system library changes
+        https://bugs.webkit.org/show_bug.cgi?id=196978
+
+        Reviewed by Ross Kirsling.
+
+        * shell/playstation/Initializer.cpp:
+        Add reference to new posix compatibility library.
+
 2019-04-16  Robin Morisset  <rmorisset@apple.com>
 
         [WTF] holdLock should be marked WARN_UNUSED_RETURN

@@ -38,6 +38,9 @@ static void initializer(void)
     handle = dlopen("Perf", RTLD_NOW);
     if (!handle)
         exit(1);
+    handle = dlopen("PosixWebKit", RTLD_NOW);
+    if (!handle)
+        exit(1);
     handle = dlopen("libJavaScriptCore", RTLD_NOW);
     if (!handle)
         exit(1);
