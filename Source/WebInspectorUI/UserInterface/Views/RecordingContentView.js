@@ -167,8 +167,12 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._sliderElement.min = 0;
         this._sliderElement.max = 0;
 
-        if (!this.representedObject.ready)
+        if (!this.representedObject.ready) {
             this.representedObject.addEventListener(WI.Recording.Event.ProcessedAction, this._handleRecordingProcessedAction, this);
+
+            if (!this.representedObject.processing)
+                this.representedObject.startProcessing();
+        }
     }
 
     // Private
