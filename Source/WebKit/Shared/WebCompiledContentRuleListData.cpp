@@ -60,9 +60,6 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
         encoder << IPC::SharedBufferDataReference { *WTF::get<RefPtr<WebCore::SharedBuffer>>(data) };
     }
 
-    // fileData needs to be kept in the UIProcess, but it does not need to be serialized.
-    // FIXME: Move it to API::ContentRuleList
-
     encoder << conditionsApplyOnlyToDomainOffset;
     encoder << actionsOffset;
     encoder << actionsSize;
@@ -76,44 +73,82 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 
 Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
-    WebCompiledContentRuleListData compiledContentRuleListData;
+    Variant<RefPtr<SharedMemory>, RefPtr<WebCore::SharedBuffer>> data;
 
     Optional<bool> hasSharedMemory;
     decoder >> hasSharedMemory;
     if (!hasSharedMemory)
         return WTF::nullopt;
+
     if (*hasSharedMemory) {
         SharedMemory::Handle handle;
         if (!decoder.decode(handle))
             return WTF::nullopt;
-        compiledContentRuleListData.data = { SharedMemory::map(handle, SharedMemory::Protection::ReadOnly) };
+        data = { SharedMemory::map(handle, SharedMemory::Protection::ReadOnly) };
     } else {
         IPC::DataReference dataReference;
         if (!decoder.decode(dataReference))
             return WTF::nullopt;
-        compiledContentRuleListData.data = { RefPtr<WebCore::SharedBuffer>(WebCore::SharedBuffer::create(dataReference.data(), dataReference.size())) };
+        data = { RefPtr<WebCore::SharedBuffer>(WebCore::SharedBuffer::create(dataReference.data(), dataReference.size())) };
     }
 
-    if (!decoder.decode(compiledContentRuleListData.conditionsApplyOnlyToDomainOffset))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.actionsOffset))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.actionsSize))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeOffset))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.filtersWithoutConditionsBytecodeSize))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeOffset))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.filtersWithConditionsBytecodeSize))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeOffset))
-        return WTF::nullopt;
-    if (!decoder.decode(compiledContentRuleListData.topURLFiltersBytecodeSize))
+    Optional<unsigned> conditionsApplyOnlyToDomainOffset;
+    decoder >> conditionsApplyOnlyToDomainOffset;
+    if (!conditionsApplyOnlyToDomainOffset)
         return WTF::nullopt;
 
-    return compiledContentRuleListData;
+    Optional<unsigned> actionsOffset;
+    decoder >> actionsOffset;
+    if (!actionsOffset)
+        return WTF::nullopt;
+
+    Optional<unsigned> actionsSize;
+    decoder >> actionsSize;
+    if (!actionsSize)
+        return WTF::nullopt;
+
+    Optional<unsigned> filtersWithoutConditionsBytecodeOffset;
+    decoder >> filtersWithoutConditionsBytecodeOffset;
+    if (!filtersWithoutConditionsBytecodeOffset)
+        return WTF::nullopt;
+
+    Optional<unsigned> filtersWithoutConditionsBytecodeSize;
+    decoder >> filtersWithoutConditionsBytecodeSize;
+    if (!filtersWithoutConditionsBytecodeSize)
+        return WTF::nullopt;
+
+    Optional<unsigned> filtersWithConditionsBytecodeOffset;
+    decoder >> filtersWithConditionsBytecodeOffset;
+    if (!filtersWithConditionsBytecodeOffset)
+        return WTF::nullopt;
+
+    Optional<unsigned> filtersWithConditionsBytecodeSize;
+    decoder >> filtersWithConditionsBytecodeSize;
+    if (!filtersWithConditionsBytecodeSize)
+        return WTF::nullopt;
+
+    Optional<unsigned> topURLFiltersBytecodeOffset;
+    decoder >> topURLFiltersBytecodeOffset;
+    if (!topURLFiltersBytecodeOffset)
+        return WTF::nullopt;
+
+    Optional<unsigned> topURLFiltersBytecodeSize;
+    decoder >> topURLFiltersBytecodeSize;
+    if (!topURLFiltersBytecodeSize)
+        return WTF::nullopt;
+
+    return {{
+        WTFMove(data),
+        WTFMove(*conditionsApplyOnlyToDomainOffset),
+        WTFMove(*actionsOffset),
+        WTFMove(*actionsSize),
+        WTFMove(*filtersWithoutConditionsBytecodeOffset),
+        WTFMove(*filtersWithoutConditionsBytecodeSize),
+        WTFMove(*filtersWithConditionsBytecodeOffset),
+        WTFMove(*filtersWithConditionsBytecodeSize),
+        WTFMove(*topURLFiltersBytecodeOffset),
+        WTFMove(*topURLFiltersBytecodeSize)
+    }};
 }
 
 } // namespace WebKit

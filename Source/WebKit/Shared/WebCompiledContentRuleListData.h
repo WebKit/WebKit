@@ -27,7 +27,6 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include "NetworkCacheData.h"
 #include "SharedMemory.h"
 #include <WebCore/SharedBuffer.h>
 #include <wtf/RefPtr.h>
@@ -42,11 +41,8 @@ namespace WebKit {
 
 class WebCompiledContentRuleListData {
 public:
-    WebCompiledContentRuleListData() = default;
-
-    WebCompiledContentRuleListData(Variant<RefPtr<SharedMemory>, RefPtr<WebCore::SharedBuffer>>&& data, NetworkCache::Data fileData, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
+    WebCompiledContentRuleListData(Variant<RefPtr<SharedMemory>, RefPtr<WebCore::SharedBuffer>>&& data, unsigned conditionsApplyOnlyToDomainOffset, unsigned actionsOffset, unsigned actionsSize, unsigned filtersWithoutConditionsBytecodeOffset, unsigned filtersWithoutConditionsBytecodeSize, unsigned filtersWithConditionsBytecodeOffset, unsigned filtersWithConditionsBytecodeSize, unsigned topURLFiltersBytecodeOffset, unsigned topURLFiltersBytecodeSize)
         : data(WTFMove(data))
-        , fileData(fileData)
         , conditionsApplyOnlyToDomainOffset(conditionsApplyOnlyToDomainOffset)
         , actionsOffset(actionsOffset)
         , actionsSize(actionsSize)
@@ -66,7 +62,6 @@ public:
     const void* dataPointer() const;
     
     Variant<RefPtr<SharedMemory>, RefPtr<WebCore::SharedBuffer>> data;
-    NetworkCache::Data fileData;
     unsigned conditionsApplyOnlyToDomainOffset { 0 };
     unsigned actionsOffset { 0 };
     unsigned actionsSize { 0 };

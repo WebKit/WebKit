@@ -439,7 +439,6 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
     const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + data.metaData.sourceSize;
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
         WTFMove(mappedOrCopiedFileData),
-        WTF::holds_alternative<WebKit::NetworkCache::Data>(data.data) ? WTF::get<WebKit::NetworkCache::Data>(data.data) : WebKit::NetworkCache::Data { },
         ConditionsApplyOnlyToDomainOffset,
         headerAndSourceSize,
         data.metaData.actionsSize,
@@ -457,7 +456,7 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
         data.metaData.conditionedFiltersBytecodeSize
     );
     auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
-    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList));
+    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList), WTF::holds_alternative<WebKit::NetworkCache::Data>(data.data) ? WTF::get<WebKit::NetworkCache::Data>(data.data) : WebKit::NetworkCache::Data { });
 }
 
 void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)

@@ -32,9 +32,10 @@
 
 namespace API {
 
-ContentRuleList::ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList)
+ContentRuleList::ContentRuleList(const WTF::String& name, Ref<WebKit::WebCompiledContentRuleList>&& contentRuleList, WebKit::NetworkCache::Data&& mappedFile)
     : m_name(name)
     , m_compiledRuleList(WTFMove(contentRuleList))
+    , m_mappedFile(WTFMove(mappedFile))
 {
 }
 
