@@ -1,3 +1,16 @@
+2019-04-17  Rob Buis  <rbuis@igalia.com>
+
+        Link prefetch not useful for top-level navigation
+        https://bugs.webkit.org/show_bug.cgi?id=195623
+
+        Reviewed by Alex Christensen.
+
+        Fix macOS and iOS Debug WK2 bots ASSERTS after r367404, by simply
+        not sending the DidReceiveResponse message.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+
 2019-04-17  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, rolling out r244400.

@@ -465,10 +465,9 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return completionHandler(PolicyAction::Use);
     }
 
-    if (isCrossOriginPrefetch(originalRequest())) {
-        send(Messages::WebResourceLoader::DidReceiveResponse { ResourceResponse { }, false });
+    if (isCrossOriginPrefetch(originalRequest()))
         return completionHandler(PolicyAction::Use);
-    }
+
     // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
     // a main resource because the embedding client must decide whether to allow the load.
     bool willWaitForContinueDidReceiveResponse = isMainResource();
