@@ -1,3 +1,19 @@
+2019-04-16  Andy Estes  <aestes@apple.com>
+
+        [iOSMac] Use UIDocumentPickerViewController for picking files
+        https://bugs.webkit.org/show_bug.cgi?id=196999
+        <rdar://problem/49961414>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showDocumentPickerMenu]):
+        Changed to present a UIDocumentPickerViewController on iOSMac.
+
+        (-[WKFileUploadPanel documentPicker:didPickDocumentsAtURLs:]):
+        (-[WKFileUploadPanel documentPicker:didPickDocumentAtURL:]):
+        Replaced a deprecated delegate method implementation.
+
 2019-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WebKit2] Add support for honoring -[UIMenuItem dontDismiss]
