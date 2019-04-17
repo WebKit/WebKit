@@ -51,7 +51,7 @@ public:
         }
 
         // Change the main frame URL.
-        WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple2", "html"));
+        WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple2", "html"));
         return WKURLRequestCreateWithWKURL(url.get());
     }
 

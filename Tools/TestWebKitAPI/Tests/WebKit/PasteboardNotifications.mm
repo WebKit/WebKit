@@ -67,7 +67,7 @@ TEST(WebKit, PasteboardNotifications)
 
     PlatformWebView webView(context.get());
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetJavaScriptCanAccessClipboard(preferences.get(), true);
 
     WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());

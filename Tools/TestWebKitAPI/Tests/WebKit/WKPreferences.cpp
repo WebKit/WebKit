@@ -106,12 +106,12 @@ TEST(WebKit, WKPreferencesDefaults)
 
 TEST(WebKit, WKPreferencesCopying)
 {
-    WKRetainPtr<WKStringRef> identifier(AdoptWK, WKStringCreateWithUTF8CString("identifier"));
+    WKRetainPtr<WKStringRef> identifier = adoptWK(WKStringCreateWithUTF8CString("identifier"));
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreateWithIdentifier(identifier.get()));
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreateWithIdentifier(identifier.get()));
     WKPreferencesSetDefaultFontSize(preferences.get(), 36);
 
-    WKRetainPtr<WKPreferencesRef> copy(AdoptWK, WKPreferencesCreateCopy(preferences.get()));
+    WKRetainPtr<WKPreferencesRef> copy = adoptWK(WKPreferencesCreateCopy(preferences.get()));
 
     WKPreferencesSetDefaultFontSize(preferences.get(), 24);
     EXPECT_EQ(24u, WKPreferencesGetDefaultFontSize(preferences.get()));

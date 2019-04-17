@@ -108,7 +108,7 @@ TEST(WebKit, PageLoadBasic)
 {
     State state;
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -127,7 +127,7 @@ TEST(WebKit, PageLoadBasic)
     // Before loading anything, the active url should be null
     EXPECT_NULL(WKPageCopyActiveURL(webView.page()));
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     // But immediately after starting a load, the active url should reflect the request
@@ -140,14 +140,14 @@ TEST(WebKit, PageLoadBasic)
 
 TEST(WebKit, PageReload)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     // Reload test before url loading.
     WKPageReload(webView.page());
     WKPageReload(webView.page());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     // Reload test after url loading.
@@ -160,7 +160,7 @@ TEST(WebKit, PageReload)
 
 TEST(WebKit, PageLoadTwiceAndReload)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     test1Done = false;
@@ -183,8 +183,8 @@ TEST(WebKit, PageLoadTwiceAndReload)
     };
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple", "html"));
-    WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple2", "html"));
+    WKRetainPtr<WKURLRef> url1 = adoptWK(Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url2 = adoptWK(Util::createURLForResource("simple2", "html"));
     WKPageLoadURL(webView.page(), url1.get());
     WKPageLoadURL(webView.page(), url2.get());
 

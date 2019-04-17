@@ -51,7 +51,7 @@ static void didCountStringMatches(WKPageRef page, WKStringRef string, unsigned n
 
 TEST(WebKit, Find)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;
@@ -70,12 +70,12 @@ TEST(WebKit, Find)
 
     WKPageSetPageFindClient(webView.page(), &findClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("find", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("find", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&didFinishLoad);
 
-    WKRetainPtr<WKStringRef> findString(AdoptWK, WKStringCreateWithUTF8CString("Hello"));
+    WKRetainPtr<WKStringRef> findString = adoptWK(WKStringCreateWithUTF8CString("Hello"));
     WKPageCountStringMatches(webView.page(), findString.get(), true, 100);
 
     Util::run(&didCallCountStringMatches);

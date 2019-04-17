@@ -53,7 +53,7 @@ static void didPerformServerRedirect(WKContextRef context, WKPageRef page, WKURL
 
 TEST(WebKit, LoadCanceledNoServerRedirectCallback)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("LoadCanceledNoServerRedirectCallbackTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("LoadCanceledNoServerRedirectCallbackTest"));
     
     WKContextInjectedBundleClientV0 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -80,7 +80,7 @@ TEST(WebKit, LoadCanceledNoServerRedirectCallback)
 
     WKContextSetHistoryClient(context.get(), &historyClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple-iframe", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple-iframe", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&loadedAllFrames);
     

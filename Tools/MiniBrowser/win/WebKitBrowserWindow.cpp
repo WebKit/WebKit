@@ -320,7 +320,7 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
         if (thisWindow.canTrustServerCertificate(protectionSpace)) {
             WKRetainPtr<WKStringRef> username = createWKString("accept server trust");
             WKRetainPtr<WKStringRef> password = createWKString("");
-            WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+            WKRetainPtr<WKCredentialRef> wkCredential = adoptWK(WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
             WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
             return;
         }
@@ -330,7 +330,7 @@ void WebKitBrowserWindow::didReceiveAuthenticationChallenge(WKPageRef page, WKAu
         if (auto credential = askCredential(thisWindow.hwnd(), createString(realm.get()))) {
             WKRetainPtr<WKStringRef> username = createWKString(credential->username);
             WKRetainPtr<WKStringRef> password = createWKString(credential->password);
-            WKRetainPtr<WKCredentialRef> wkCredential(AdoptWK, WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
+            WKRetainPtr<WKCredentialRef> wkCredential = adoptWK(WKCredentialCreate(username.get(), password.get(), kWKCredentialPersistenceForSession));
             WKAuthenticationDecisionListenerUseCredential(decisionListener, wkCredential.get());
             return;
         }

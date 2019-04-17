@@ -50,7 +50,7 @@ public:
         auto world = WKBundleScriptWorldCreateWorld();
         WKBundleScriptWorldMakeAllShadowRootsOpen(world);
 
-        WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString(
+        WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString(
             "window.onload = function () {\n"
             "    const element = document.createElement('div');\n"
             "    const queryMethodName = 'collectMatchingElementsInFlatTree';\n"

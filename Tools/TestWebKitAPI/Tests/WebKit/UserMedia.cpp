@@ -71,7 +71,7 @@ TEST(WebKit, UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
@@ -107,7 +107,7 @@ TEST(WebKit, OnDeviceChangeCrash)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
@@ -167,7 +167,7 @@ TEST(WebKit, EnumerateDevicesCrash)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("GetUserMedia").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetMediaDevicesEnabled(preferences, true);
     WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);

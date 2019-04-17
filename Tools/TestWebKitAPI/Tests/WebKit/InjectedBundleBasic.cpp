@@ -53,7 +53,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 TEST(WebKit, InjectedBundleBasic)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleBasicTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleBasicTest"));
 
     WKContextInjectedBundleClientV0 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -73,7 +73,7 @@ TEST(WebKit, InjectedBundleBasic)
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

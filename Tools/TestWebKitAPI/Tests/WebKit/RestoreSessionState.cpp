@@ -85,7 +85,7 @@ static WKRetainPtr<WKDataRef> createSessionStateData(WKContextRef context)
 
 TEST(WebKit, RestoreSessionStateContainingScrollRestorationDefault)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
@@ -103,7 +103,7 @@ TEST(WebKit, RestoreSessionStateContainingScrollRestorationDefault)
 
 TEST(WebKit, RestoreSessionStateContainingScrollRestorationDefaultWithAsyncPolicyDelegates)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

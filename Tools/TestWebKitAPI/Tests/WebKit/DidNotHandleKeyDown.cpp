@@ -46,7 +46,7 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 
 TEST(WebKit, DidNotHandleKeyDown)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
 
     WKPageUIClientV0 uiClient;
@@ -57,7 +57,7 @@ TEST(WebKit, DidNotHandleKeyDown)
 
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     webView.simulateSpacebarKeyPress();

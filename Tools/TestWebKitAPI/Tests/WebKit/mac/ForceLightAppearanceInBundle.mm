@@ -57,7 +57,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRe
 
 TEST(WebKit, ForceLightAppearanceInBundle)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("ForceLightAppearanceInBundleTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ForceLightAppearanceInBundleTest"));
 
     PlatformWebView webView(context.get());
 

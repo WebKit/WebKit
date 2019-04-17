@@ -51,10 +51,10 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
 
 TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
-    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("throw 'Hello'"));
+    WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("throw 'Hello'"));
     WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
 
     Util::run(&testDone);

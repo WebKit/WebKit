@@ -715,7 +715,7 @@ TEST(WebKit, WebsitePoliciesArbitraryUserGestureQuirk)
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
     WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
 
@@ -748,7 +748,7 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirks)
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
     WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
 
@@ -806,7 +806,7 @@ TEST(WebKit, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
     WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
 
@@ -869,7 +869,7 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
     auto delegate = adoptNS([[AsyncAutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
     WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
 

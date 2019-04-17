@@ -60,11 +60,11 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
 
 TEST(WebKit, PreventEmptyUserAgent)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageSetCustomUserAgent(webView.page(), WKStringCreateWithUTF8CString(""));
-    WKRetainPtr<WKStringRef> javaScriptString(AdoptWK, WKStringCreateWithUTF8CString("navigator.userAgent"));
+    WKRetainPtr<WKStringRef> javaScriptString = adoptWK(WKStringCreateWithUTF8CString("navigator.userAgent"));
     WKPageRunJavaScriptInMainFrame(webView.page(), javaScriptString.get(), reinterpret_cast<void*>(0x1234578), didRunJavaScript);
 
     Util::run(&testDone);

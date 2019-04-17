@@ -63,7 +63,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
 
 TEST(WebKit, CloseFromWithinCreatePage)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     PlatformWebView webView(context.get());
 
@@ -76,12 +76,12 @@ TEST(WebKit, CloseFromWithinCreatePage)
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     // Allow file URLs to load non-file resources
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
     WKPageGroupSetPreferences(pageGroup, preferences.get());
     
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("close-from-within-create-page", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("close-from-within-create-page", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&testDone);

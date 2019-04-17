@@ -201,7 +201,7 @@ TEST(PictureInPicture, AudioCannotTogglePictureInPicture)
 TEST(PictureInPicture, WKPageUIClient)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("PictureInPicture").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("PictureInPicture").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetFullScreenEnabled(preferences, true);
     WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
@@ -226,7 +226,7 @@ TEST(PictureInPicture, WKPageUIClient)
     [window.get().contentView addSubview:webView.platformView()];
     
     receivedLoadedMessage = false;
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("PictureInPictureDelegate", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("PictureInPictureDelegate", "html"));
     WKPageLoadURL(webView.page(), url.get());
     TestWebKitAPI::Util::run(&receivedLoadedMessage);
     waitUntilOnLoadIsCompleted(webView.page());

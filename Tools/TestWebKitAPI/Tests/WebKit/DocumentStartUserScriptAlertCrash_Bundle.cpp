@@ -48,7 +48,7 @@ public:
         assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
         WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
 
-        WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString("alert('an alert');"));
+        WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString("alert('an alert');"));
         WKBundleAddUserScript(bundle, pageGroup, WKBundleScriptWorldNormalWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
     }
 };

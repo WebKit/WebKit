@@ -71,7 +71,7 @@ static void didCrash(WKPageRef page, const void*)
 
 TEST(WebKit, RestoreStateAfterTermination)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     // Add view to a Window and make it visible.

@@ -48,8 +48,8 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef context, c
 
 TEST(WebKit, InjectedBundleInitializationUserDataCallbackWins)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
-    WKRetainPtr<WKDictionaryRef> initializationDictionary(AdoptWK, Util::createInitializationDictionaryForInjectedBundleTest("InjectedBundleInitializationUserDataCallbackWinsTest",  Util::toWK("Set with WKContextSetInitializationUserDataForInjectedBundle").get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
+    WKRetainPtr<WKDictionaryRef> initializationDictionary = adoptWK(Util::createInitializationDictionaryForInjectedBundleTest("InjectedBundleInitializationUserDataCallbackWinsTest",  Util::toWK("Set with WKContextSetInitializationUserDataForInjectedBundle").get()));
     WKContextSetInitializationUserDataForInjectedBundle(context.get(), initializationDictionary.get());
 
     WKContextInjectedBundleClientV1 injectedBundleClient;
@@ -63,7 +63,7 @@ TEST(WebKit, InjectedBundleInitializationUserDataCallbackWins)
 
     PlatformWebView webView(context.get());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

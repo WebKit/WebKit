@@ -71,7 +71,7 @@ static void setPageLoaderClient(WKPageRef page)
 
 TEST(WebKit, NewFirstVisuallyNonEmptyLayoutFails)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutFailsTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutFailsTest"));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

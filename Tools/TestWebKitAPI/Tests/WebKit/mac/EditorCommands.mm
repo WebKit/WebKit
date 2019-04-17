@@ -42,11 +42,11 @@ static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const voi
 
 TEST(WebKit, ScrollByLineCommands)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
     // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
     // update using WKPageForceRepaint would be better, but for some reason the test still fails occasionally.
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetThreadedScrollingEnabled(preferences, false);
 
@@ -60,7 +60,7 @@ TEST(WebKit, ScrollByLineCommands)
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple-tall", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple-tall", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 

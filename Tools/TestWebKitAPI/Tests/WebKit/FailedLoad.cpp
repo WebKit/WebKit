@@ -51,7 +51,7 @@ static void didFailProvisionalNavigation(WKPageRef page, WKNavigationRef, WKErro
 
 TEST(WebKit, FailedLoad)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -62,7 +62,7 @@ TEST(WebKit, FailedLoad)
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::URLForNonExistentResource());
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::URLForNonExistentResource());
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&testDone);

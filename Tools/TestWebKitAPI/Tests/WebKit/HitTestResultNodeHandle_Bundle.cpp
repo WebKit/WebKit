@@ -45,7 +45,7 @@ public:
 
     static void getContextMenuFromDefaultMenu(WKBundlePageRef page, WKBundleHitTestResultRef hitTestResult, WKArrayRef defaultMenu, WKArrayRef* newMenu, WKTypeRef* userData, const void* clientInfo)
     {
-        WKRetainPtr<WKBundleNodeHandleRef> nodeHandle(AdoptWK, WKBundleHitTestResultCopyNodeHandle(hitTestResult));
+        WKRetainPtr<WKBundleNodeHandleRef> nodeHandle = adoptWK(WKBundleHitTestResultCopyNodeHandle(hitTestResult));
         if (!nodeHandle)
             return;
         

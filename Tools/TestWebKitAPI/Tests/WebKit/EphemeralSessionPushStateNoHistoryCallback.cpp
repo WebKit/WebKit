@@ -77,13 +77,13 @@ TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
 
     WKPageSetPageNavigationClient(webView.page(), &pageLoaderClient.base);
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
 
     WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
     WKPageGroupSetPreferences(pageGroup, preferences.get());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("push-state", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("push-state", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&testDone);

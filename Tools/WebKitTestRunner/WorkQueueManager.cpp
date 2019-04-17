@@ -75,7 +75,7 @@ template <WorkQueueItem::Type type>
 class ScriptItem : public WorkQueueItem {
 public:
     explicit ScriptItem(const String& script)
-        : m_script(AdoptWK, WKStringCreateWithUTF8CString(script.utf8().data()))
+        : m_script(adoptWK(WKStringCreateWithUTF8CString(script.utf8().data())))
     {
     }
 
@@ -131,7 +131,7 @@ void WorkQueueManager::queueLoad(const String& url, const String& target, bool s
     class LoadItem : public WorkQueueItem {
     public:
         LoadItem(const String& url, const String& target, bool shouldOpenExternalURLs)
-            : m_url(AdoptWK, WKURLCreateWithUTF8CString(url.utf8().data()))
+            : m_url(adoptWK(WKURLCreateWithUTF8CString(url.utf8().data())))
             , m_target(target)
             , m_shouldOpenExternalURLs(shouldOpenExternalURLs)
         {
@@ -161,9 +161,9 @@ void WorkQueueManager::queueLoadHTMLString(const String& content, const String& 
     class LoadHTMLStringItem : public WorkQueueItem {
     public:
         LoadHTMLStringItem(const String& content, const String& baseURL, const String& unreachableURL)
-            : m_content(AdoptWK, WKStringCreateWithUTF8CString(content.utf8().data()))
-            , m_baseURL(AdoptWK, WKURLCreateWithUTF8CString(baseURL.utf8().data()))
-            , m_unreachableURL(AdoptWK, WKURLCreateWithUTF8CString(unreachableURL.utf8().data()))
+            : m_content(adoptWK(WKStringCreateWithUTF8CString(content.utf8().data())))
+            , m_baseURL(adoptWK(WKURLCreateWithUTF8CString(baseURL.utf8().data())))
+            , m_unreachableURL(adoptWK(WKURLCreateWithUTF8CString(unreachableURL.utf8().data())))
         {
         }
 

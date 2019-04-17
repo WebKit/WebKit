@@ -83,9 +83,9 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 
 TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionNoCachePageGroup")));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionNoCachePageGroup")));
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("DOMWindowExtensionNoCache", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionNoCache", pageGroup.get()));
 
     WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -101,14 +101,14 @@ TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
     PlatformWebView webView(context.get(), pageGroup.get());
 
     // Make sure the extensions for each frame are installed in each world.
-    WKRetainPtr<WKURLRef> url1(AdoptWK, Util::createURLForResource("simple-iframe", "html"));
+    WKRetainPtr<WKURLRef> url1 = adoptWK(Util::createURLForResource("simple-iframe", "html"));
     WKPageLoadURL(webView.page(), url1.get());
 
     Util::run(&finished);
     finished = false;
 
     // Make sure those first 4 extensions are destroyed, and 2 new ones are installed.
-    WKRetainPtr<WKURLRef> url2(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url2 = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url2.get());
 
     Util::run(&finished);

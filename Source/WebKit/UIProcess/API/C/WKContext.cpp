@@ -212,7 +212,7 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
                 return completionHandler(WebKit::AllowOverwrite::No, { });
 
             bool allowOverwrite = false;
-            WKRetainPtr<WKStringRef> destination(AdoptWK, m_client.decideDestinationWithSuggestedFilename(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
+            auto destination = adoptWK(m_client.decideDestinationWithSuggestedFilename(WebKit::toAPI(&processPool), WebKit::toAPI(&downloadProxy), WebKit::toAPI(filename.impl()), &allowOverwrite, m_client.base.clientInfo));
             completionHandler(allowOverwrite ? WebKit::AllowOverwrite::Yes : WebKit::AllowOverwrite::No, WebKit::toWTFString(destination.get()));
         }
 

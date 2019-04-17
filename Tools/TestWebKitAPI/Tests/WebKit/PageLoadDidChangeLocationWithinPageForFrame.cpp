@@ -56,7 +56,7 @@ static void didSameDocumentNavigation(WKPageRef, WKNavigationRef, WKSameDocument
 
 TEST(WebKit, PageLoadDidChangeLocationWithinPage)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -70,7 +70,7 @@ TEST(WebKit, PageLoadDidChangeLocationWithinPage)
 
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("file-with-anchor", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("file-with-anchor", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 

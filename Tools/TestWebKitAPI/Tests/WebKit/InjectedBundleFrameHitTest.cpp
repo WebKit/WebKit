@@ -57,7 +57,7 @@ static void setInjectedBundleClient(WKContextRef context)
 
 TEST(WebKit, InjectedBundleFrameHitTest)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleFrameHitTestTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleFrameHitTestTest"));
     
     setInjectedBundleClient(context.get());
 

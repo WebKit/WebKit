@@ -118,7 +118,7 @@ static void didGetImageForMatchResult(WKPageRef page, WKImageRef image, uint32_t
 
 TEST(WebKit, FindMatches)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     
     WKPageNavigationClientV0 loaderClient;
@@ -140,12 +140,12 @@ TEST(WebKit, FindMatches)
 
     // This HTML file contains 3 occurrences of the word Hello and has the second occurence of the word 'world' selected.
     // It contains 1 occurrence of the word 'crazy' that is before the selected word.
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("findRanges", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("findRanges", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&didFinishLoad);
 
-    WKRetainPtr<WKStringRef> findString(AdoptWK, WKStringCreateWithUTF8CString("Hello"));
+    WKRetainPtr<WKStringRef> findString = adoptWK(WKStringCreateWithUTF8CString("Hello"));
 
     WKPageFindStringMatches(webView.page(), findString.get(), findOptions, 100);
     Util::run(&didCallFindStringMatches);
@@ -168,7 +168,7 @@ TEST(WebKit, FindMatches)
 
     didCallFindStringMatches = false;
     findOptions &= ~kWKFindOptionsBackwards;
-    WKRetainPtr<WKStringRef> findOtherString(AdoptWK, WKStringCreateWithUTF8CString("crazy"));
+    WKRetainPtr<WKStringRef> findOtherString = adoptWK(WKStringCreateWithUTF8CString("crazy"));
     WKPageFindStringMatches(webView.page(), findOtherString.get(), findOptions, 100);
     Util::run(&didCallFindStringMatches);
 

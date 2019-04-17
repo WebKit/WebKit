@@ -58,7 +58,7 @@ TEST(WebKit, MouseMoveAfterCrash)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("mouse-move-listener", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("mouse-move-listener", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 

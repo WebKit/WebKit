@@ -126,7 +126,7 @@ void TestController::platformDestroy()
 
 static WKRetainPtr<WKStringRef> toWK(const char* string)
 {
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(string));
+    return adoptWK(WKStringCreateWithUTF8CString(string));
 }
 
 void TestController::platformInitializeContext()

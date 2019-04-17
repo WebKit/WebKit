@@ -199,7 +199,7 @@ static WTF::String securityOriginToStr(WKSecurityOriginRef origin)
 
 static WTF::String frameToStr(WKBundleFrameRef frame)
 {
-    WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
+    WKRetainPtr<WKStringRef> name = adoptWK(WKBundleFrameCopyName(frame));
     StringBuilder stringBuilder;
     if (WKBundleFrameIsMainFrame(frame)) {
         if (!WKStringIsEmpty(name.get())) {
@@ -267,7 +267,7 @@ static inline void dumpResourceURL(uint64_t identifier, StringBuilder& stringBui
 
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
-    , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
+    , m_world(adoptWK(WKBundleScriptWorldCreateWorld()))
 {
     WKBundlePageLoaderClientV9 loaderClient = {
         { 9, this },
@@ -451,7 +451,7 @@ void InjectedBundlePage::resetAfterTest()
 // String output must be identical to -[WebFrame _drt_descriptionSuitableForTestResult].
 static void dumpFrameDescriptionSuitableForTestResult(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-    WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
+    WKRetainPtr<WKStringRef> name = adoptWK(WKBundleFrameCopyName(frame));
     if (WKBundleFrameIsMainFrame(frame)) {
         if (WKStringIsEmpty(name.get())) {
             stringBuilder.appendLiteral("main frame");
@@ -780,7 +780,7 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
         return;
 
     if (shouldIncludeFrameName) {
-        WKRetainPtr<WKStringRef> name(AdoptWK, WKBundleFrameCopyName(frame));
+        WKRetainPtr<WKStringRef> name = adoptWK(WKBundleFrameCopyName(frame));
         stringBuilder.appendLiteral("frame '");
         stringBuilder.append(toWTFString(name));
         stringBuilder.appendLiteral("' ");
@@ -794,7 +794,7 @@ static void dumpFrameScrollPosition(WKBundleFrameRef frame, StringBuilder& strin
 
 static void dumpDescendantFrameScrollPositions(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-    WKRetainPtr<WKArrayRef> childFrames(AdoptWK, WKBundleFrameCopyChildFrames(frame));
+    WKRetainPtr<WKArrayRef> childFrames = adoptWK(WKBundleFrameCopyChildFrames(frame));
     size_t size = WKArrayGetSize(childFrames.get());
     for (size_t i = 0; i < size; ++i) {
         WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(childFrames.get(), i));
@@ -842,18 +842,18 @@ static void dumpFrameText(WKBundleFrameRef frame, StringBuilder& stringBuilder)
     if (!hasDocumentElement(frame))
         return;
 
-    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyInnerText(frame));
+    WKRetainPtr<WKStringRef> text = adoptWK(WKBundleFrameCopyInnerText(frame));
     stringBuilder.append(toWTFString(text));
     stringBuilder.append('\n');
 }
 
 static void dumpDescendantFramesText(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-    WKRetainPtr<WKArrayRef> childFrames(AdoptWK, WKBundleFrameCopyChildFrames(frame));
+    WKRetainPtr<WKArrayRef> childFrames = adoptWK(WKBundleFrameCopyChildFrames(frame));
     size_t size = WKArrayGetSize(childFrames.get());
     for (size_t i = 0; i < size; ++i) {
         WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(childFrames.get(), i));
-        WKRetainPtr<WKStringRef> subframeName(AdoptWK, WKBundleFrameCopyName(subframe));
+        WKRetainPtr<WKStringRef> subframeName = adoptWK(WKBundleFrameCopyName(subframe));
 
         // DumpRenderTree ignores empty frames, so do the same thing here.
         if (!hasDocumentElement(subframe))

@@ -52,7 +52,7 @@ TEST(WebKit2CustomProtocolsTest, SyncXHR)
     RetainPtr<WKBrowsingContextGroup> browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
 
     // Allow file URLs to load non-file resources
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
     WKPageGroupSetPreferences(browsingContextGroup.get()._pageGroupRef, preferences.get());
 

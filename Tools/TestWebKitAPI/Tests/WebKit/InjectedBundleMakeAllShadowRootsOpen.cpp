@@ -85,9 +85,9 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
 
 TEST(WebKit, InjectedBundleMakeAllShadowRootOpenTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleMakeAllShadowRootOpenTestPageGroup")));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleMakeAllShadowRootOpenTestPageGroup")));
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleMakeAllShadowRootOpenTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleMakeAllShadowRootOpenTest", pageGroup.get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;
@@ -98,7 +98,7 @@ TEST(WebKit, InjectedBundleMakeAllShadowRootOpenTest)
 
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("closed-shadow-tree-test", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("closed-shadow-tree-test", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

@@ -48,9 +48,9 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
 
 TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest", pageGroup.get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;
@@ -61,7 +61,7 @@ TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
 
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

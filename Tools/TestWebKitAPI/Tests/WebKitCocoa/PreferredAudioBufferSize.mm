@@ -42,7 +42,7 @@ public:
     void SetUp() override
     {
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+        WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
         configuration.get().processPool = (WKProcessPool *)context.get();
         configuration.get().preferences._lowPowerVideoAudioBufferSizeEnabled = YES;
     }

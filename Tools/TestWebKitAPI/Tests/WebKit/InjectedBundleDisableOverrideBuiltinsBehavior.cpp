@@ -50,9 +50,9 @@ static void runJavaScriptAlertEnabled(WKPageRef page, WKStringRef alertText, WKF
 
 TEST(WebKit, InjectedBundleNoDisableOverrideBuiltinsBehaviorTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleNoDisableOverrideBuiltinsBehaviorTestPageGroup")));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleNoDisableOverrideBuiltinsBehaviorTestPageGroup")));
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleNoDisableOverrideBuiltinsBehaviorTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleNoDisableOverrideBuiltinsBehaviorTest", pageGroup.get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;
@@ -65,7 +65,7 @@ TEST(WebKit, InjectedBundleNoDisableOverrideBuiltinsBehaviorTest)
 
     testNumber = 0;
     done = false;
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("override-builtins-test", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("override-builtins-test", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);
@@ -84,9 +84,9 @@ static void runJavaScriptAlertDisabled(WKPageRef page, WKStringRef alertText, WK
 
 TEST(WebKit, InjectedBundleDisableOverrideBuiltinsBehaviorTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleDisableOverrideBuiltinsBehaviorTestPageGroup")));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleDisableOverrideBuiltinsBehaviorTestPageGroup")));
 
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleDisableOverrideBuiltinsBehaviorTest", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleDisableOverrideBuiltinsBehaviorTest", pageGroup.get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageUIClientV0 uiClient;
@@ -99,7 +99,7 @@ TEST(WebKit, InjectedBundleDisableOverrideBuiltinsBehaviorTest)
 
     testNumber = 0;
     done = false;
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("override-builtins-test", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("override-builtins-test", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

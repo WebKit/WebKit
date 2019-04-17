@@ -69,7 +69,7 @@ TEST(WebKit, EventModifiers)
     PlatformWebView webView(context.get());
     setClients(webView.page());
     
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
     

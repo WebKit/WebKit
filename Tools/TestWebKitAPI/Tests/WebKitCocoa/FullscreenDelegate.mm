@@ -118,7 +118,7 @@ TEST(Fullscreen, Delegate)
 TEST(Fullscreen, WKViewDelegate)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("FullscreenDelegate").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("FullscreenDelegate").get()));
     WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
     WKPreferencesSetFullScreenEnabled(preferences, true);
 
@@ -135,7 +135,7 @@ TEST(Fullscreen, WKViewDelegate)
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
     receivedLoadedMessage = false;
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("FullscreenDelegate", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("FullscreenDelegate", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     TestWebKitAPI::Util::run(&receivedLoadedMessage);

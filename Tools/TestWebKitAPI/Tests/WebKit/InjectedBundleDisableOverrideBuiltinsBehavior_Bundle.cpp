@@ -47,7 +47,7 @@ public:
         assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
         WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
 
-        WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString(
+        WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString(
             "window.onload = function () {\n"
             "    const form = document.getElementById('test').parentNode;\n"
             "    alert(form.tagName != 'FORM' ? 'PASS: [OverrideBuiltins] was not disabled' : 'FAIL: [OverrideBuiltins] was disabled');\n"
@@ -72,7 +72,7 @@ public:
         assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
         WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
 
-        WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString(
+        WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString(
             "window.onload = function () {\n"
             "    const form = document.getElementById('test').parentNode;\n"
             "    alert(form.tagName === 'FORM' ? 'PASS: [OverrideBuiltins] was disabled' : 'FAIL: [OverrideBuiltins] was not disabled');\n"

@@ -60,7 +60,7 @@ TEST(WebKit, DeferredViewInWindowStateChange)
     WKView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("lots-of-text", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("lots-of-text", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;

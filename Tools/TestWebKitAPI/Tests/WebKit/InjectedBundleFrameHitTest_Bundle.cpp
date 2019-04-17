@@ -74,7 +74,7 @@ void InjectedBundleFrameHitTestTest::didCreatePage(WKBundleRef bundle, WKBundleP
 void InjectedBundleFrameHitTestTest::frameLoadFinished(WKBundleFrameRef frame)
 {
     WKBundleHitTestResultRef hitTestResult = WKBundleFrameCreateHitTestResult(frame, WKPointMake(50, 50));
-    WKRetainPtr<WKStringRef> linkTitle(AdoptWK, WKBundleHitTestResultCopyLinkTitle(hitTestResult));
+    WKRetainPtr<WKStringRef> linkTitle = adoptWK(WKBundleHitTestResultCopyLinkTitle(hitTestResult));
     WKBundlePostMessage(m_bundle, Util::toWK("InjectedBundleFrameHitTestDone").get(), linkTitle.get());
 }
 

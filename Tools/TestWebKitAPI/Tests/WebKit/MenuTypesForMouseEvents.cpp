@@ -53,11 +53,11 @@ static void setPageLoaderClient(WKPageRef page)
 
 static void buildAndPerformTest(WKEventMouseButton button, WKEventModifiers modifiers, const char* expectedButton, const char* expectedMenuType)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("mouse-button-listener", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("mouse-button-listener", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 

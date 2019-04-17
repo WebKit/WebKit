@@ -47,7 +47,7 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -57,7 +57,7 @@ static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
     loaderClient.didFinishNavigation = didFinishNavigation;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKStringRef> alternateHTMLString(AdoptWK, WKStringCreateWithUTF8CString("<html><body><img src='icon.png'></body></html>"));
+    WKRetainPtr<WKStringRef> alternateHTMLString = adoptWK(WKStringCreateWithUTF8CString("<html><body><img src='icon.png'></body></html>"));
     WKPageLoadAlternateHTMLString(webView.page(), alternateHTMLString.get(), baseURL, unreachableURL);
 
     // If we can finish loading the html without resulting in an invalid message being sent from the WebProcess, this test passes.
@@ -67,7 +67,7 @@ static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
 TEST(WebKit, LoadAlternateHTMLStringWithNonDirectoryURL)
 {
     // Call WKPageLoadAlternateHTMLString() with fileURL which does not point to a directory.
-    WKRetainPtr<WKURLRef> fileURL(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKRetainPtr<WKURLRef> fileURL = adoptWK(Util::createURLForResource("simple", "html"));
     loadAlternateHTMLString(fileURL.get(), fileURL.get());
 }
 
@@ -76,7 +76,7 @@ TEST(WebKit, LoadAlternateHTMLStringWithEmptyBaseURL)
     // Call WKPageLoadAlternateHTMLString() with empty baseURL to make sure this test works
     // when baseURL does not grant read access to the unreachableURL. We use a separate test
     // to ensure the previous test does not pollute the result.
-    WKRetainPtr<WKURLRef> unreachableURL(AdoptWK, Util::URLForNonExistentResource());
+    WKRetainPtr<WKURLRef> unreachableURL = adoptWK(Util::URLForNonExistentResource());
     loadAlternateHTMLString(nullptr, unreachableURL.get());
 }
 

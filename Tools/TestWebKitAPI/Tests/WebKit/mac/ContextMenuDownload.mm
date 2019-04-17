@@ -80,7 +80,7 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
 // the "Download Linked File" item in the context menu.
 TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
     WKContextDownloadClientV0 client;
     memset(&client, 0, sizeof(client));
@@ -88,7 +88,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
     client.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilename;
     WKContextSetDownloadClient(context.get(), &client.base);
 
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -103,7 +103,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
     contextMenuClient.getContextMenuFromProposedMenu = getContextMenuFromProposedMenu;
     WKPageSetPageContextMenuClient(webView.page(), &contextMenuClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("link-with-download-attribute", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("link-with-download-attribute", "html"));
 
     expectedOriginatingPage = webView.page();
     WKPageLoadURL(webView.page(), url.get());
@@ -127,7 +127,7 @@ static WKStringRef decideDestinationWithSuggestedFilenameContainingSlashes(WKCon
 
 TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
 
     WKContextDownloadClientV0 client;
     memset(&client, 0, sizeof(client));
@@ -135,7 +135,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
     client.decideDestinationWithSuggestedFilename = decideDestinationWithSuggestedFilenameContainingSlashes;
     WKContextSetDownloadClient(context.get(), &client.base);
 
-    WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
+    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MyGroup").get()));
     PlatformWebView webView(context.get(), pageGroup.get());
 
     WKPageNavigationClientV0 loaderClient;
@@ -150,7 +150,7 @@ TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
     contextMenuClient.getContextMenuFromProposedMenu = getContextMenuFromProposedMenu;
     WKPageSetPageContextMenuClient(webView.page(), &contextMenuClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("link-with-download-attribute-with-slashes", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("link-with-download-attribute-with-slashes", "html"));
 
     expectedOriginatingPage = webView.page();
     WKPageLoadURL(webView.page(), url.get());

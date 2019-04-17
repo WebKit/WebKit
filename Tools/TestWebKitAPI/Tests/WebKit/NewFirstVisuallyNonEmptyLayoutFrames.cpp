@@ -77,7 +77,7 @@ static void setPageLoaderClient(WKPageRef page)
 TEST(WebKit, NewFirstVisuallyNonEmptyLayoutFrames)
 {
     didHitRelevantRepaintedObjectsAreaThresholdCounter = 0;
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutFramesTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutFramesTest"));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

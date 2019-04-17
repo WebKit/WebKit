@@ -52,7 +52,7 @@ void didRemoveFrameFromHierarchyCallback(WKBundlePageRef page, WKBundleFrameRef 
 
     RELEASE_ASSERT(!WKBundleFrameGetParentFrame(frame));
 
-    WKRetainPtr<WKStringRef> message(AdoptWK, WKStringCreateWithUTF8CString("DidRemoveFrameFromHierarchy"));
+    WKRetainPtr<WKStringRef> message = adoptWK(WKStringCreateWithUTF8CString("DidRemoveFrameFromHierarchy"));
     WKBundlePagePostMessage(page, message.get(), message.get());
 }
 

@@ -75,7 +75,7 @@ static void setPageLoaderClient(WKPageRef page)
 // this test have a long-running resource.
 TEST(WebKit, DISABLED_NewFirstVisuallyNonEmptyLayout)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutTest"));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

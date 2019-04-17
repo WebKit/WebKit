@@ -36,7 +36,7 @@
 TEST(WebKit, ProcessSuspendMediaBuffering)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     configuration.get().processPool = (WKProcessPool *)context.get();
     configuration.get()._mediaDataLoadsAutomatically = YES;
     configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;

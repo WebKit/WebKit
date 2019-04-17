@@ -191,7 +191,7 @@ TEST(ResourceLoadStatistics, IPCAfterStoreDestruction)
 
     // Test page requires window.internals.
 #if WK_HAVE_C_SPI
-    WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     configuration.get().processPool = (WKProcessPool *)context.get();
 #endif
 

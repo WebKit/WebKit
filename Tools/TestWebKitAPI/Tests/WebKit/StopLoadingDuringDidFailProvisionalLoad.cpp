@@ -62,7 +62,7 @@ static void didFailProvisionalNavigation(WKPageRef, WKNavigationRef, WKErrorRef,
 
 TEST(WebKit, StopLoadingDuringDidFailProvisionalLoadTest)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("StopLoadingDuringDidFailProvisionalLoadTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("StopLoadingDuringDidFailProvisionalLoadTest"));
     setInjectedBundleClient(context.get());
 
     PlatformWebView webView(context.get());
@@ -72,7 +72,7 @@ TEST(WebKit, StopLoadingDuringDidFailProvisionalLoadTest)
     loaderClient.didFailProvisionalNavigation = didFailProvisionalNavigation;
     WKPageSetPageNavigationClient(webView.page(), &loaderClient.base);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::URLForNonExistentResource());
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::URLForNonExistentResource());
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);

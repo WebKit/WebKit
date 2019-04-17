@@ -1,5 +1,417 @@
 2019-04-17  Alex Christensen  <achristensen@webkit.org>
 
+        WKRetainPtr's adoption constructor should be private
+        https://bugs.webkit.org/show_bug.cgi?id=197019
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFramesAsText):
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextWithInjectedBundle):
+        (TestWebKitAPI::Util::createInitializationDictionaryForInjectedBundleTest):
+        (TestWebKitAPI::Util::createContextForInjectedBundleTest):
+        (TestWebKitAPI::Util::toWK):
+        * TestWebKitAPI/Tests/CustomProtocolsSyncXHRTest.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/CloseFromWithinCreatePage.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/CloseThenTerminate.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionBasic::initialize):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp:
+        (TestWebKitAPI::DOMWindowExtensionNoCache::initialize):
+        * TestWebKitAPI/Tests/WebKit/DeferredViewInWindowStateChange.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DidNotHandleKeyDown.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DidRemoveFrameFromHiearchyInPageCache_Bundle.cpp:
+        (TestWebKitAPI::didRemoveFrameFromHierarchyCallback):
+        * TestWebKitAPI/Tests/WebKit/DocumentStartUserScriptAlertCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::initialize):
+        * TestWebKitAPI/Tests/WebKit/EnumerateMediaDevices.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EphemeralSessionPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EvaluateJavaScript.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/EventModifiers.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FailedLoad.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/Find.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FindMatches.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FirstMeaningfulPaintMilestone.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ForceRepaint.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameHandle.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypeHTML.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/FrameMIMETypePNG.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/Geolocation.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/GetInjectedBundleInitializationUserDataCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/HitTestResultNodeHandle.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/HitTestResultNodeHandle_Bundle.cpp:
+        (TestWebKitAPI::HitTestResultNodeHandleTest::getContextMenuFromDefaultMenu):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleNoDisableOverrideBuiltinsBehaviorTest::initialize):
+        (TestWebKitAPI::InjectedBundleDisableOverrideBuiltinsBehaviorTest::initialize):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleFrameHitTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleFrameHitTest_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleFrameHitTestTest::frameLoadFinished):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleInitializationUserDataCallbackWins.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleMakeAllShadowRootsOpen.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp:
+        (TestWebKitAPI::InjectedBundleMakeAllShadowRootOpenTest::initialize):
+        * TestWebKitAPI/Tests/WebKit/LayoutMilestonesWithAllContentInFrame.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/LoadAlternateHTMLStringWithNonDirectoryURL.cpp:
+        (TestWebKitAPI::loadAlternateHTMLString):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/LoadCanceledNoServerRedirectCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/LoadPageOnCrash.cpp:
+        (TestWebKitAPI::WebKit2CrashLoader::WebKit2CrashLoader):
+        * TestWebKitAPI/Tests/WebKit/MenuTypesForMouseEvents.cpp:
+        (TestWebKitAPI::buildAndPerformTest):
+        * TestWebKitAPI/Tests/WebKit/ModalAlertsSPI.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/MouseMoveAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayout.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFails.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutForImages.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PasteboardNotifications.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PendingAPIRequestURL.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PreventEmptyUserAgent.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/PrivateBrowsingPushStateNoHistoryCallback.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ProcessDidTerminate.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ReloadPageAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ResizeReversePaginatedWebView.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ResizeWindowAfterCrash.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionState.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/RestoreSessionStateContainingFormData.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ScrollPinningBehaviors.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/ShouldKeepCurrentBackForwardListItemInList.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/SpacebarScrolling.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/StopLoadingDuringDidFailProvisionalLoad.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/TerminateTwice.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/UserMedia.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageCopySessionStateWithFiltering.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageGetScaleFactorNotZero.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPageIsPlayingAudio.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WKThumbnailView.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/WillSendSubmitEvent.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+        * TestWebKitAPI/Tests/WebKit/mac/AttributedSubstringForProposedRangeWithImage.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuDownload.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/CustomBundleParameter.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/EditorCommands.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/ForceLightAppearanceInBundle.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/GetPIDAfterAbortedProcessLaunch.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/InjectedBundleAppleEvent.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/mac/RestoreStateAfterTermination.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/FullscreenDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PictureInPictureDelegate.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/PreferredAudioBufferSize.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSuspendMediaBuffering.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/mac/FirstResponderScrollingPosition.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        (TestWebKitAPI::FullscreenZoomInitialFrame::initializeView):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::getMenuItemTitleCallback):
+        (WTR::createMouseMessageBody):
+        (WTR::EventSendingController::mouseDown):
+        (WTR::EventSendingController::mouseUp):
+        (WTR::EventSendingController::mouseMoveTo):
+        (WTR::EventSendingController::mouseForceClick):
+        (WTR::EventSendingController::startAndCancelMouseForceClick):
+        (WTR::EventSendingController::mouseForceDown):
+        (WTR::EventSendingController::mouseForceUp):
+        (WTR::EventSendingController::mouseForceChanged):
+        (WTR::EventSendingController::leapForward):
+        (WTR::EventSendingController::scheduleAsynchronousClick):
+        (WTR::createKeyDownMessageBody):
+        (WTR::EventSendingController::keyDown):
+        (WTR::EventSendingController::scheduleAsynchronousKeyDown):
+        (WTR::EventSendingController::mouseScrollBy):
+        (WTR::EventSendingController::mouseScrollByWithWheelAndMomentumPhases):
+        (WTR::EventSendingController::continuousMouseScrollBy):
+        (WTR::EventSendingController::addTouchPoint):
+        (WTR::EventSendingController::updateTouchPoint):
+        (WTR::EventSendingController::setTouchModifier):
+        (WTR::EventSendingController::setTouchPointRadius):
+        (WTR::EventSendingController::touchStart):
+        (WTR::EventSendingController::touchMove):
+        (WTR::EventSendingController::touchEnd):
+        (WTR::EventSendingController::touchCancel):
+        (WTR::EventSendingController::clearTouchPoints):
+        (WTR::EventSendingController::releaseTouchPoint):
+        (WTR::EventSendingController::cancelTouchPoint):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didCreatePage):
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        (WTR::InjectedBundle::booleanForKey):
+        (WTR::InjectedBundle::done):
+        (WTR::InjectedBundle::dumpToStdErr):
+        (WTR::InjectedBundle::outputText):
+        (WTR::InjectedBundle::postNewBeforeUnloadReturnValue):
+        (WTR::InjectedBundle::postAddChromeInputField):
+        (WTR::InjectedBundle::postRemoveChromeInputField):
+        (WTR::InjectedBundle::postFocusWebView):
+        (WTR::InjectedBundle::postSetBackingScaleFactor):
+        (WTR::InjectedBundle::postSetWindowIsKey):
+        (WTR::InjectedBundle::postSetViewSize):
+        (WTR::InjectedBundle::postSimulateWebNotificationClick):
+        (WTR::InjectedBundle::postSetAddsVisitedLinks):
+        (WTR::InjectedBundle::setGeolocationPermission):
+        (WTR::InjectedBundle::setMockGeolocationPosition):
+        (WTR::InjectedBundle::setMockGeolocationPositionUnavailableError):
+        (WTR::InjectedBundle::isGeolocationProviderActive const):
+        (WTR::InjectedBundle::imageCountInGeneralPasteboard const):
+        (WTR::InjectedBundle::setUserMediaPersistentPermissionForOrigin):
+        (WTR::InjectedBundle::userMediaPermissionRequestCountForOrigin const):
+        (WTR::InjectedBundle::resetUserMediaPermissionRequestCountForOrigin):
+        (WTR::InjectedBundle::setCustomPolicyDelegate):
+        (WTR::InjectedBundle::setHidden):
+        (WTR::InjectedBundle::setCacheModel):
+        (WTR::InjectedBundle::shouldProcessWorkQueue const):
+        (WTR::InjectedBundle::processWorkQueue):
+        (WTR::InjectedBundle::queueBackNavigation):
+        (WTR::InjectedBundle::queueForwardNavigation):
+        (WTR::InjectedBundle::queueLoad):
+        (WTR::InjectedBundle::queueLoadHTMLString):
+        (WTR::InjectedBundle::queueReload):
+        (WTR::InjectedBundle::queueLoadingScript):
+        (WTR::InjectedBundle::queueNonLoadingScript):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::frameToStr):
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::dumpFrameDescriptionSuitableForTestResult):
+        (WTR::dumpFrameScrollPosition):
+        (WTR::dumpDescendantFrameScrollPositions):
+        (WTR::dumpFrameText):
+        (WTR::dumpDescendantFramesText):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::shouldDumpPixels const):
+        (WTR::TestRunner::setDumpPixels):
+        (WTR::TestRunner::whatToDump const):
+        (WTR::TestRunner::setWhatToDump):
+        (WTR::TestRunner::setWaitUntilDone):
+        (WTR::TestRunner::shouldWaitUntilDone const):
+        (WTR::TestRunner::setShouldDumpFrameLoadCallbacks):
+        (WTR::TestRunner::shouldDumpFrameLoadCallbacks):
+        (WTR::TestRunner::clearAllDatabases):
+        (WTR::TestRunner::setIDBPerOriginQuota):
+        (WTR::TestRunner::originsWithApplicationCache):
+        (WTR::TestRunner::setCanOpenWindows):
+        (WTR::TestRunner::setXSSAuditorEnabled):
+        (WTR::TestRunner::setMediaDevicesEnabled):
+        (WTR::TestRunner::setWebRTCMDNSICECandidatesEnabled):
+        (WTR::TestRunner::setWebRTCUnifiedPlanEnabled):
+        (WTR::TestRunner::setCustomUserAgent):
+        (WTR::TestRunner::setWebAPIStatisticsEnabled):
+        (WTR::TestRunner::setModernMediaControlsEnabled):
+        (WTR::TestRunner::setWebGL2Enabled):
+        (WTR::TestRunner::setWritableStreamAPIEnabled):
+        (WTR::TestRunner::setReadableByteStreamAPIEnabled):
+        (WTR::TestRunner::setEncryptedMediaAPIEnabled):
+        (WTR::TestRunner::setAllowsAnySSLCertificate):
+        (WTR::TestRunner::setPluginsEnabled):
+        (WTR::TestRunner::setValueForUser):
+        (WTR::TestRunner::setAudioResult):
+        (WTR::TestRunner::didReceiveServerRedirectForProvisionalNavigation const):
+        (WTR::TestRunner::clearDidReceiveServerRedirectForProvisionalNavigation):
+        (WTR::TestRunner::setAlwaysAcceptCookies):
+        (WTR::TestRunner::setOnlyAcceptFirstPartyCookies):
+        (WTR::TestRunner::isDoingMediaCapture const):
+        (WTR::TestRunner::queueLoad):
+        (WTR::TestRunner::setRejectsProtectionSpaceAndContinueForAuthenticationChallenges):
+        (WTR::TestRunner::setHandlesAuthenticationChallenges):
+        (WTR::TestRunner::setShouldLogCanAuthenticateAgainstProtectionSpace):
+        (WTR::TestRunner::setShouldLogDownloadCallbacks):
+        (WTR::TestRunner::setAuthenticationUsername):
+        (WTR::TestRunner::setAuthenticationPassword):
+        (WTR::TestRunner::secureEventInputIsEnabled const):
+        (WTR::TestRunner::setBlockAllPlugins):
+        (WTR::TestRunner::setPluginSupportedMode):
+        (WTR::TestRunner::setShouldDecideNavigationPolicyAfterDelay):
+        (WTR::TestRunner::setShouldDecideResponsePolicyAfterDelay):
+        (WTR::TestRunner::setNavigationGesturesEnabled):
+        (WTR::TestRunner::setIgnoresViewportScaleLimits):
+        (WTR::TestRunner::setShouldDownloadUndisplayableMIMETypes):
+        (WTR::TestRunner::setShouldAllowDeviceOrientationAndMotionAccess):
+        (WTR::TestRunner::terminateNetworkProcess):
+        (WTR::TestRunner::terminateServiceWorkerProcess):
+        (WTR::TestRunner::runUIScript):
+        (WTR::TestRunner::setStatisticsDebugMode):
+        (WTR::TestRunner::setStatisticsPrevalentResourceForDebugMode):
+        (WTR::TestRunner::setStatisticsLastSeen):
+        (WTR::TestRunner::setStatisticsPrevalentResource):
+        (WTR::TestRunner::setStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::dumpResourceLoadStatistics):
+        (WTR::TestRunner::isStatisticsPrevalentResource):
+        (WTR::TestRunner::isStatisticsVeryPrevalentResource):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubresourceUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestRunner::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestRunner::setStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::isStatisticsHasHadUserInteraction):
+        (WTR::TestRunner::setStatisticsGrandfathered):
+        (WTR::TestRunner::isStatisticsGrandfathered):
+        (WTR::TestRunner::setStatisticsSubframeUnderTopFrameOrigin):
+        (WTR::TestRunner::setStatisticsSubresourceUnderTopFrameOrigin):
+        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectTo):
+        (WTR::TestRunner::setStatisticsSubresourceUniqueRedirectFrom):
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectTo):
+        (WTR::TestRunner::setStatisticsTopFrameUniqueRedirectFrom):
+        (WTR::TestRunner::setStatisticsCrossSiteLoadWithLinkDecoration):
+        (WTR::TestRunner::setStatisticsTimeToLiveUserInteraction):
+        (WTR::TestRunner::installStatisticsDidScanDataRecordsCallback):
+        (WTR::TestRunner::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestRunner::statisticsUpdateCookieBlocking):
+        (WTR::TestRunner::statisticsSubmitTelemetry):
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestRunner::setStatisticsIsRunningTest):
+        (WTR::TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        (WTR::TestRunner::setStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        (WTR::TestRunner::setStatisticsGrandfatheringTime):
+        (WTR::TestRunner::setStatisticsMaxStatisticsEntries):
+        (WTR::TestRunner::setStatisticsPruneEntriesDownTo):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestRunner::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestRunner::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::TestRunner::statisticsDeleteCookiesForHost):
+        (WTR::TestRunner::setStatisticsCacheMaxAgeCap):
+        (WTR::TestRunner::statisticsResetToConsistentState):
+        (WTR::TestRunner::setStorageAccessAPIEnabled):
+        (WTR::TestRunner::getAllStorageAccessEntries):
+        (WTR::TestRunner::addMockMediaDevice):
+        (WTR::TestRunner::clearMockMediaDevices):
+        (WTR::TestRunner::removeMockMediaDevice):
+        (WTR::TestRunner::resetMockMediaDevices):
+        (WTR::TestRunner::connectMockGamepad):
+        (WTR::TestRunner::disconnectMockGamepad):
+        (WTR::TestRunner::setMockGamepadDetails):
+        (WTR::TestRunner::setMockGamepadAxisValue):
+        (WTR::TestRunner::setMockGamepadButtonValue):
+        (WTR::TestRunner::removeAllSessionCredentials):
+        (WTR::TestRunner::clearDOMCache):
+        (WTR::TestRunner::clearDOMCaches):
+        (WTR::TestRunner::hasDOMCache):
+        (WTR::TestRunner::domCacheSize):
+        (WTR::TestRunner::setAllowStorageQuotaIncrease):
+        (WTR::TestRunner::getApplicationManifestThen):
+        (WTR::TestRunner::injectUserScript):
+        (WTR::TestRunner::sendDisplayConfigurationChangedMessageForTesting):
+        (WTR::TestRunner::setWebAuthenticationMockConfiguration):
+        (WTR::TestRunner::addTestKeyToKeychain):
+        (WTR::TestRunner::cleanUpKeychain):
+        (WTR::TestRunner::keyExistsInKeychain):
+        (WTR::TestRunner::setCanHandleHTTPSServerTrustEvaluation):
+        (WTR::TestRunner::canDoServerTrustEvaluationInNetworkProcess):
+        (WTR::TestRunner::serverTrustEvaluationCallbackCallsCount):
+        (WTR::TestRunner::setShouldDismissJavaScriptAlertsAsynchronously):
+        (WTR::TestRunner::setAdClickAttributionOverrideTimerForTesting):
+        (WTR::TestRunner::setAdClickAttributionConversionURLForTesting):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::parseStringTestHeaderValueAsRelativePath):
+        (WTR::updateTestOptionsFromTestHeader):
+        (WTR::TestController::runTest):
+        (WTR::TestController::didReceiveLiveDocumentsList):
+        (WTR::TestController::didReceiveMessageFromInjectedBundle):
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestController::didFinishNavigation):
+        (WTR::TestController::didReceiveAuthenticationChallenge):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::uiScriptDidComplete):
+        (WTR::TestInvocation::didReceiveAllStorageAccessEntries):
+        * WebKitTestRunner/WebNotificationProvider.cpp:
+        (WTR::WebNotificationProvider::closeWebNotification):
+        * WebKitTestRunner/WorkQueueManager.cpp:
+        (WTR::ScriptItem::ScriptItem):
+        (WTR::WorkQueueManager::queueLoad):
+        (WTR::WorkQueueManager::queueLoadHTMLString):
+
+2019-04-17  Alex Christensen  <achristensen@webkit.org>
+
         Add a comment to make my test from r244139 less mysterious.
         https://bugs.webkit.org/show_bug.cgi?id=196744
 

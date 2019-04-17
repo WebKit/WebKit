@@ -102,7 +102,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("lots-of-text", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("lots-of-text", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;
@@ -148,7 +148,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("lots-of-text", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("lots-of-text", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;

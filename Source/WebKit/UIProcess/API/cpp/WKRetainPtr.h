@@ -35,8 +35,6 @@
 
 namespace WebKit {
 
-enum WKAdoptTag { AdoptWK };
-
 template<typename T> class WKRetainPtr {
 public:
     typedef T PtrType;
@@ -53,11 +51,6 @@ public:
             WKRetain(ptr);
     }
 
-    WKRetainPtr(WKAdoptTag, PtrType ptr)
-        : m_ptr(ptr)
-    {
-    }
-    
     template<typename U> WKRetainPtr(const WKRetainPtr<U>& o)
         : m_ptr(o.get())
     {
@@ -133,6 +126,11 @@ public:
     void swap(WKRetainPtr&);
 
 private:
+    template<typename U> friend WKRetainPtr<U> adoptWK(U);
+    enum WKAdoptTag { AdoptWK };
+    WKRetainPtr(WKAdoptTag, PtrType ptr)
+        : m_ptr(ptr) { }
+
     PtrType m_ptr;
 };
 
@@ -249,7 +247,7 @@ template<typename T> inline WKRetainPtr<T> adoptWK(T) __attribute__((warn_unused
 #endif
 template<typename T> inline WKRetainPtr<T> adoptWK(T o)
 {
-    return WKRetainPtr<T>(AdoptWK, o);
+    return WKRetainPtr<T>(WKRetainPtr<T>::AdoptWK, o);
 }
 
 template<typename T> inline WKRetainPtr<T> retainWK(T ptr)
@@ -260,7 +258,6 @@ template<typename T> inline WKRetainPtr<T> retainWK(T ptr)
 } // namespace WebKit
 
 using WebKit::WKRetainPtr;
-using WebKit::AdoptWK;
 using WebKit::adoptWK;
 using WebKit::retainWK;
 

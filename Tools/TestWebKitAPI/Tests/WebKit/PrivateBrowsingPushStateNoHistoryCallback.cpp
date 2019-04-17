@@ -51,7 +51,7 @@ static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, 
 
 TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));
@@ -73,14 +73,14 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 
     WKPageSetPageNavigationClient(webView.page(), &pageLoaderClient.base);
 
-    WKRetainPtr<WKPreferencesRef> preferences(AdoptWK, WKPreferencesCreate());
+    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
     WKPreferencesSetPrivateBrowsingEnabled(preferences.get(), true);
     WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
 
     WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
     WKPageGroupSetPreferences(pageGroup, preferences.get());
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("push-state", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("push-state", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&didSameDocumentNavigation);

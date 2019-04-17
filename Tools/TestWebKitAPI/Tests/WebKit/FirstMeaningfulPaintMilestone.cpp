@@ -54,7 +54,7 @@ static void setPageLoaderClient(WKPageRef page)
 
 TEST(WebKit, FirstMeaningfulPaint)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("FirstMeaningfulPaintMilestoneTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("FirstMeaningfulPaintMilestoneTest"));
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());

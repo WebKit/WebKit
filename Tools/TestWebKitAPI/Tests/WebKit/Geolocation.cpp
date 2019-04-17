@@ -161,7 +161,7 @@ struct GeolocationBasicStateTracker : GeolocationStateTracker {
 
 TEST(WebKit, GeolocationBasic)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     GeolocationBasicStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -169,7 +169,7 @@ TEST(WebKit, GeolocationBasic)
     PlatformWebView webView(context.get());
     setupView(webView);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("geolocationGetCurrentPosition", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("geolocationGetCurrentPosition", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&stateTracker.finished);
@@ -203,7 +203,7 @@ struct GeolocationBasicWithHighAccuracyStateTracker : GeolocationStateTracker {
 
 TEST(WebKit, GeolocationBasicWithHighAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     GeolocationBasicWithHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -211,7 +211,7 @@ TEST(WebKit, GeolocationBasicWithHighAccuracy)
     PlatformWebView webView(context.get());
     setupView(webView);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("geolocationGetCurrentPositionWithHighAccuracy", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("geolocationGetCurrentPositionWithHighAccuracy", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&stateTracker.finished);
@@ -256,20 +256,20 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
 
 TEST(WebKit, GeolocationTransitionToHighAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     GeolocationTransitionToHighAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
 
     PlatformWebView lowAccuracyWebView(context.get());
     setupView(lowAccuracyWebView);
-    WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
+    WKRetainPtr<WKURLRef> lowAccuracyURL = adoptWK(Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());
     Util::run(&stateTracker.finishedFirstStep);
 
     PlatformWebView highAccuracyWebView(lowAccuracyWebView.page());
     setupView(highAccuracyWebView);
-    WKRetainPtr<WKURLRef> highAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
+    WKRetainPtr<WKURLRef> highAccuracyURL = adoptWK(Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
     WKPageLoadURL(highAccuracyWebView.page(), highAccuracyURL.get());
     Util::run(&stateTracker.enabledHighAccuracy);
     
@@ -329,14 +329,14 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
 
 TEST(WebKit, GeolocationTransitionToLowAccuracy)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     GeolocationTransitionToLowAccuracyStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
 
     PlatformWebView highAccuracyWebView(context.get());
     setupView(highAccuracyWebView);
-    WKRetainPtr<WKURLRef> highAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
+    WKRetainPtr<WKURLRef> highAccuracyURL = adoptWK(Util::createURLForResource("geolocationWatchPositionWithHighAccuracy", "html"));
     WKPageLoadURL(highAccuracyWebView.page(), highAccuracyURL.get());
     Util::run(&stateTracker.finishedFirstStep);
 
@@ -353,7 +353,7 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     WKPageSetPageUIClient(lowAccuracyWebView.page(), &uiClient.base);
 
-    WKRetainPtr<WKURLRef> lowAccuracyURL(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
+    WKRetainPtr<WKURLRef> lowAccuracyURL = adoptWK(Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(lowAccuracyWebView.page(), lowAccuracyURL.get());
     Util::run(&secondStepContext.didRun);
     EXPECT_EQ(secondStepContext.alertText, "SUCCESS");
@@ -371,7 +371,7 @@ TEST(WebKit, GeolocationTransitionToLowAccuracy)
 
 TEST(WebKit, GeolocationWatchMultiprocess)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreateWithConfiguration(nullptr));
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     GeolocationStateTracker stateTracker;
     setupGeolocationProvider(context.get(), &stateTracker);
@@ -387,7 +387,7 @@ TEST(WebKit, GeolocationWatchMultiprocess)
 
     PlatformWebView view1(context.get());
     WKPageSetPageUIClient(view1.page(), &uiClient.base);
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("geolocationWatchPosition", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("geolocationWatchPosition", "html"));
     WKPageLoadURL(view1.page(), url.get());
     Util::run(&testContext.didRun);
     EXPECT_EQ(testContext.alertText, "SUCCESS");

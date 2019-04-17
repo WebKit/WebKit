@@ -154,7 +154,7 @@ void DOMWindowExtensionNoCache::initialize(WKBundleRef bundle, WKTypeRef userDat
     assert(WKGetTypeID(userData) == WKBundlePageGroupGetTypeID());
     WKBundlePageGroupRef pageGroup = static_cast<WKBundlePageGroupRef>(userData);
 
-    WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString("alert('Unimportant alert');"));
+    WKRetainPtr<WKStringRef> source = adoptWK(WKStringCreateWithUTF8CString("alert('Unimportant alert');"));
     WKBundleAddUserScript(bundle, pageGroup, WKBundleScriptWorldCreateWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
 }
 

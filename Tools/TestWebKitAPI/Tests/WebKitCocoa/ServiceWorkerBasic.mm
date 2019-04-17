@@ -964,7 +964,7 @@ TEST(ServiceWorkers, WaitForPolicyDelegate)
 
 void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
     configuration.processPool = (WKProcessPool *)context.get();
     auto pool = configuration.processPool;
     [pool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
