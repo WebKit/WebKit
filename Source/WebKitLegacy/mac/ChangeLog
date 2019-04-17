@@ -1,3 +1,13 @@
+2019-04-17  Brady Eidson  <beidson@apple.com>
+
+        Link clicks in PDFs shouldn't send referrer headers.
+        <rdar://problem/21142581> and https://bugs.webkit.org/show_bug.cgi?id=196980
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2019-04-10  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         requestAnimationFrame should execute before the next frame

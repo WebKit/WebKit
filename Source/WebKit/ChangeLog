@@ -1,3 +1,15 @@
+2019-04-17  Brady Eidson  <beidson@apple.com>
+
+        Link clicks in PDFs shouldn't send referrer headers.
+        <rdar://problem/21142581> and https://bugs.webkit.org/show_bug.cgi?id=196980
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::clickedLink):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+
 2019-04-17  Andy Estes  <aestes@apple.com>
 
         [iOS] Support multiple file selection in UIDocumentPickerViewController
