@@ -222,6 +222,8 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
         return true;
     if (equalLettersIgnoringASCIICase(host, "msn.com") || host.endsWithIgnoringASCIICase(".msn.com"))
         return true;
+    if (equalLettersIgnoringASCIICase(host, "flipkart.com") || host.endsWithIgnoringASCIICase(".flipkart.com"))
+        return true;
     if (equalLettersIgnoringASCIICase(host, "maps.google.com"))
         return true;
     if (equalLettersIgnoringASCIICase(host, "trailers.apple.com"))
