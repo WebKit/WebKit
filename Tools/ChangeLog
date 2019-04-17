@@ -1,3 +1,13 @@
+2019-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        Add a comment to make my test from r244139 less mysterious.
+        https://bugs.webkit.org/show_bug.cgi?id=196744
+
+        As suggested by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleRetainPagePlugIn.mm:
+        (-[BundleRetainPagePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+
 2019-04-17  Chris Dumez  <cdumez@apple.com>
 
         Remember device orientation permission for the duration of the browsing session
