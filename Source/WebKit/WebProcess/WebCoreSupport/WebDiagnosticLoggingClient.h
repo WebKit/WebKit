@@ -27,7 +27,6 @@
 #define WebDiagnosticLoggingClient_h
 
 #include <WebCore/DiagnosticLoggingClient.h>
-#include <wtf/Forward.h>
 
 namespace WebKit {
 
