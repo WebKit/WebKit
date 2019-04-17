@@ -1,3 +1,12 @@
+2019-04-17  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] GPUComputePassEncoder::dispatch number of thread groups, not grid size
+        https://bugs.webkit.org/show_bug.cgi?id=196984
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgpu/compute-squares.html: One thread group is enough to process the data in a single pass.
+
 2019-04-17  John Wilander  <wilander@apple.com>
 
         Add prioritization of ad click conversions and cleaning of sent ad click conversions

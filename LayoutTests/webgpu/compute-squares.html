@@ -58,7 +58,8 @@ promise_test(async () => {
     
     passEncoder.setPipeline(pipeline);
     
-    passEncoder.dispatch(data.length, 1, 1);
+    // One thread group.
+    passEncoder.dispatch(1, 1, 1);
     passEncoder.endPass();
     
     device.getQueue().submit([commandEncoder.finish()]);
