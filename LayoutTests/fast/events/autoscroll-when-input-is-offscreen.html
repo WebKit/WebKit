@@ -16,6 +16,7 @@
     
         var output = '';
 
+        await UIHelper.setHardwareKeyboardAttached(false);
         await UIHelper.activateElementAndWaitForInputSession(document.getElementById('editable'));
         
         var programaticScroll = 500;
