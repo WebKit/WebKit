@@ -18,6 +18,8 @@
         testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
         testRunner.setAllowsAnySSLCertificate(true);
+        testRunner.setAdClickAttributionConversionURLForTesting("http://127.0.0.1:8000/adClickAttribution/resources/conversionReport.php?nonce=" + nonce);
+        testRunner.setAdClickAttributionOverrideTimerForTesting(true);
     }
 
     function activateElement(elementID) {
@@ -53,8 +55,6 @@
                 imageElement.onerror = function() {
                     appendConversionDataIframeAndFinish();
                 };
-                testRunner.setAdClickAttributionConversionURLForTesting("http://127.0.0.1:8000/adClickAttribution/resources/conversionReport.php?nonce=" + nonce);
-                testRunner.setAdClickAttributionOverrideTimerForTesting(true);
                 document.body.appendChild(imageElement);
             } else {
                 activateElement("targetLink");

@@ -1,3 +1,28 @@
+2019-04-17  John Wilander  <wilander@apple.com>
+
+        Add prioritization of ad click conversions and cleaning of sent ad click conversions
+        https://bugs.webkit.org/show_bug.cgi?id=196934
+        <rdar://problem/49917773>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/adClickAttribution/attribution-conversion-through-cross-site-image-redirect-expected.txt:
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-with-priority-expected.txt:
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-without-priority-expected.txt:
+        * http/tests/adClickAttribution/resources/getConversionData.php:
+        * http/tests/adClickAttribution/resources/redirectToConversion.php:
+        * http/tests/adClickAttribution/second-attribution-converted-with-higher-priority-expected.txt: Added.
+        * http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html: Added.
+        * http/tests/adClickAttribution/second-attribution-converted-with-lower-priority-expected.txt: Added.
+        * http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html: Added.
+        * http/tests/adClickAttribution/second-conversion-with-higher-priority-expected.txt: Added.
+        * http/tests/adClickAttribution/second-conversion-with-higher-priority.html: Added.
+        * http/tests/adClickAttribution/second-conversion-with-lower-priority-expected.txt: Added.
+        * http/tests/adClickAttribution/second-conversion-with-lower-priority.html: Added.
+        * http/tests/adClickAttribution/send-attribution-conversion-request-expected.txt:
+        * http/tests/adClickAttribution/send-attribution-conversion-request.html:
+        * http/tests/adClickAttribution/store-ad-click-attribution-expected.txt:
+
 2019-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r244220): fast/forms/ios/inputmode-change-update-keyboard.html times out

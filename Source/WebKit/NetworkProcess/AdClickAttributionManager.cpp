@@ -43,17 +43,9 @@ using Destination = AdClickAttribution::Destination;
 using DestinationMap = HashMap<Destination, AdClickAttribution>;
 using Conversion = AdClickAttribution::Conversion;
 
-DestinationMap& AdClickAttributionManager::ensureDestinationMapForSource(const Source& source)
+void AdClickAttributionManager::storeUnconverted(AdClickAttribution&& attribution)
 {
-    return m_adClickAttributionMap.ensure(source, [] {
-        return DestinationMap { };
-    }).iterator->value;
-}
-
-void AdClickAttributionManager::store(AdClickAttribution&& adClickAttribution)
-{
-    auto& destinationMapForSource = ensureDestinationMapForSource(adClickAttribution.source());
-    destinationMapForSource.add(adClickAttribution.destination(), WTFMove(adClickAttribution));
+    m_unconvertedAdClickAttributionMap.set(std::make_pair(attribution.source(), attribution.destination()), WTFMove(attribution));
 }
 
 void AdClickAttributionManager::startTimer(Seconds seconds)
@@ -66,23 +58,38 @@ void AdClickAttributionManager::convert(const Source& source, const Destination&
     if (!conversion.isValid())
         return;
 
-    auto sourceIter = m_adClickAttributionMap.find(source);
-    if (sourceIter == m_adClickAttributionMap.end())
-        return;
+    auto secondsUntilSend = Seconds::infinity();
 
-    auto destinationIter = sourceIter->value.find(destination);
-    if (destinationIter == sourceIter->value.end())
-        return;
+    auto pair = std::make_pair(source, destination);
+    auto previouslyUnconvertedAttribution = m_unconvertedAdClickAttributionMap.take(pair);
+    auto previouslyConvertedAttributionIter = m_convertedAdClickAttributionMap.find(pair);
 
-    auto secondsUntilSend = destinationIter->value.convertAndGetEarliestTimeToSend(WTFMove(conversion));
-    
-    if (!secondsUntilSend)
+    if (!previouslyUnconvertedAttribution.isEmpty()) {
+        // Always convert the pending attribution and remove it from the unconverted map.
+        if (auto optionalSecondsUntilSend = previouslyUnconvertedAttribution.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
+            secondsUntilSend = *optionalSecondsUntilSend;
+            ASSERT(secondsUntilSend != Seconds::infinity());
+        }
+        // If there is no previously converted attribution for this pair, add the new one.
+        // If the newly converted attribution has higher priority, replace the old one.
+        if (previouslyConvertedAttributionIter == m_convertedAdClickAttributionMap.end()
+            || previouslyUnconvertedAttribution.hasHigherPriorityThan(previouslyConvertedAttributionIter->value))
+            m_convertedAdClickAttributionMap.set(pair, WTFMove(previouslyUnconvertedAttribution));
+    } else if (previouslyConvertedAttributionIter != m_convertedAdClickAttributionMap.end()) {
+        // If we have no newly converted attribution, re-convert the old one to respect the new priority.
+        if (auto optionalSecondsUntilSend = previouslyConvertedAttributionIter->value.convertAndGetEarliestTimeToSend(WTFMove(conversion))) {
+            secondsUntilSend = *optionalSecondsUntilSend;
+            ASSERT(secondsUntilSend != Seconds::infinity());
+        }
+    }
+
+    if (secondsUntilSend == Seconds::infinity())
         return;
     
-    if (m_firePendingConversionRequestsTimer.isActive() && m_firePendingConversionRequestsTimer.nextFireInterval() < *secondsUntilSend)
+    if (m_firePendingConversionRequestsTimer.isActive() && m_firePendingConversionRequestsTimer.nextFireInterval() < secondsUntilSend)
         return;
     
-    startTimer(*secondsUntilSend);
+    startTimer(secondsUntilSend);
 }
 
 void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& attribution)
@@ -133,59 +140,83 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
 void AdClickAttributionManager::firePendingConversionRequests()
 {
     auto nextTimeToFire = Seconds::infinity();
-    for (auto& innerMap : m_adClickAttributionMap.values()) {
-        for (auto& attribution : innerMap.values()) {
-            if (attribution.wasConversionSent()) {
-                ASSERT_NOT_REACHED();
-                continue;
-            }
-            auto earliestTimeToSend = attribution.earliestTimeToSend();
-            if (!earliestTimeToSend)
-                continue;
-
-            auto now = WallTime::now();
-            if (*earliestTimeToSend <= now || m_isRunningTest) {
-                fireConversionRequest(attribution);                
-                attribution.markConversionAsSent();
-                continue;
-            }
-
-            auto seconds = *earliestTimeToSend - now;
-            nextTimeToFire = std::min(nextTimeToFire, seconds);
+    for (auto& attribution : m_convertedAdClickAttributionMap.values()) {
+        if (attribution.wasConversionSent()) {
+            ASSERT_NOT_REACHED();
+            continue;
         }
+        auto earliestTimeToSend = attribution.earliestTimeToSend();
+        if (!earliestTimeToSend) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        auto now = WallTime::now();
+        if (*earliestTimeToSend <= now || m_isRunningTest) {
+            fireConversionRequest(attribution);
+            attribution.markConversionAsSent();
+            continue;
+        }
+
+        auto seconds = *earliestTimeToSend - now;
+        nextTimeToFire = std::min(nextTimeToFire, seconds);
     }
+
+    m_convertedAdClickAttributionMap.removeIf([](auto& keyAndValue) {
+        return keyAndValue.value.wasConversionSent();
+    });
 
     if (nextTimeToFire < Seconds::infinity())
         startTimer(nextTimeToFire);
-
-    // FIXME: Add cleaning of sent conversions.
 }
 
 void AdClickAttributionManager::clear(CompletionHandler<void()>&& completionHandler)
 {
-    m_adClickAttributionMap.clear();
-    m_conversionBaseURLForTesting = { };
-    m_isRunningTest = false;
+    m_firePendingConversionRequestsTimer.stop();
+    m_unconvertedAdClickAttributionMap.clear();
+    m_convertedAdClickAttributionMap.clear();
     completionHandler();
 }
 
 void AdClickAttributionManager::toString(CompletionHandler<void(String)>&& completionHandler) const
 {
-    if (m_adClickAttributionMap.isEmpty())
-        return completionHandler("No stored Ad Click Attribution data."_s);
+    if (m_unconvertedAdClickAttributionMap.isEmpty() && m_convertedAdClickAttributionMap.isEmpty())
+        return completionHandler("No stored Ad Click Attribution data.\n"_s);
 
+    unsigned unconvertedAttributionNumber = 0;
     StringBuilder builder;
-    for (auto& innerMap : m_adClickAttributionMap.values()) {
-        unsigned attributionNumber = 1;
-        for (auto& attribution : innerMap.values()) {
-            builder.appendLiteral("WebCore::AdClickAttribution ");
-            builder.appendNumber(attributionNumber++);
+    for (auto& attribution : m_unconvertedAdClickAttributionMap.values()) {
+        if (!unconvertedAttributionNumber)
+            builder.appendLiteral("Unconverted Ad Click Attributions:\n");
+        else
             builder.append('\n');
-            builder.append(attribution.toString());
-        }
+        builder.appendLiteral("WebCore::AdClickAttribution ");
+        builder.appendNumber(++unconvertedAttributionNumber);
+        builder.append('\n');
+        builder.append(attribution.toString());
+}
+
+    unsigned convertedAttributionNumber = 0;
+    for (auto& attribution : m_convertedAdClickAttributionMap.values()) {
+        if (!convertedAttributionNumber)
+            builder.appendLiteral("Converted Ad Click Attributions:\n");
+        else
+            builder.append('\n');
+        builder.appendLiteral("WebCore::AdClickAttribution ");
+        builder.appendNumber(++convertedAttributionNumber + unconvertedAttributionNumber);
+        builder.append('\n');
+        builder.append(attribution.toString());
     }
 
     completionHandler(builder.toString());
+}
+
+void AdClickAttributionManager::setConversionURLForTesting(URL&& testURL)
+{
+    if (testURL.isEmpty())
+        m_conversionBaseURLForTesting = { };
+    else
+        m_conversionBaseURLForTesting = WTFMove(testURL);
 }
 
 } // namespace WebKit

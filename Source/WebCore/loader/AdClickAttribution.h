@@ -135,11 +135,16 @@ public:
         {
         }
 
-        explicit Destination(const RegistrableDomain& domain)
-            : registrableDomain { domain }
+        explicit Destination(WTF::HashTableDeletedValueType)
+            : registrableDomain { WTF::HashTableDeletedValue }
         {
         }
 
+        explicit Destination(RegistrableDomain&& domain)
+            : registrableDomain { WTFMove(domain) }
+        {
+        }
+        
         bool operator==(const Destination& other) const
         {
             return registrableDomain == other.registrableDomain;
@@ -236,6 +241,7 @@ public:
 
     WEBCORE_EXPORT static Optional<Conversion> parseConversionRequest(const URL& redirectURL);
     WEBCORE_EXPORT Optional<Seconds> convertAndGetEarliestTimeToSend(Conversion&&);
+    WEBCORE_EXPORT bool hasHigherPriorityThan(const AdClickAttribution&) const;
     WEBCORE_EXPORT URL url() const;
     WEBCORE_EXPORT URL urlForTesting(const URL& baseURLForTesting) const;
     WEBCORE_EXPORT URL referrer() const;
@@ -244,6 +250,8 @@ public:
     Optional<WallTime> earliestTimeToSend() const { return m_earliestTimeToSend; };
     WEBCORE_EXPORT void markConversionAsSent();
     WEBCORE_EXPORT bool wasConversionSent() const;
+
+    bool isEmpty() const { return m_source.registrableDomain.isEmpty(); };
 
     WEBCORE_EXPORT String toString() const;
 

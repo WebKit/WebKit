@@ -33,6 +33,7 @@ if ($conversionFileFound) {
         echo "<br>";
         echo trim($line);
     }
+    echo "<br>";
     fclose($conversionFile);
     unlink($conversionFilePath);
 } else {
@@ -41,8 +42,11 @@ if ($conversionFileFound) {
 
 if (isset($_GET['endTest'])) {
     echo "<script>";
-    echo "if (window.testRunner)";
+    echo "if (window.testRunner) {";
     echo "    testRunner.notifyDone();";
+    echo "    testRunner.setAdClickAttributionOverrideTimerForTesting(false);";
+    echo "    testRunner.setAdClickAttributionConversionURLForTesting('');";
+    echo "}";
     echo "</script>";
 }
 

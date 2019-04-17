@@ -93,6 +93,17 @@ Optional<Seconds> AdClickAttribution::convertAndGetEarliestTimeToSend(Conversion
     return seconds;
 }
 
+bool AdClickAttribution::hasHigherPriorityThan(const AdClickAttribution& other) const
+{
+    if (!other.m_conversion)
+        return true;
+    
+    if (!m_conversion)
+        return false;
+
+    return m_conversion->priority > other.m_conversion->priority;
+}
+
 URL AdClickAttribution::url() const
 {
     if (!isValid())

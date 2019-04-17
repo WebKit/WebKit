@@ -1,4 +1,4 @@
-Tests triggering of ad click attribution conversions with priority.
+Tests that a second attribution conversion with lower priority does not replace an older with higher priority.
 
 
 Converted Ad Click Attributions:
@@ -7,6 +7,6 @@ Source: 127.0.0.1
 Destination: localhost
 Campaign ID: 3
 Conversion data: 12
-Conversion priority: 3
+Conversion priority: 4
 Conversion earliest time to send: Within 24-48 hours
 Conversion request sent: false

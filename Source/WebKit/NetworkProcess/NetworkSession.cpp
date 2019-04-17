@@ -145,7 +145,7 @@ void NetworkSession::registrableDomainsWithWebsiteData(OptionSet<WebsiteDataType
 
 void NetworkSession::storeAdClickAttribution(WebCore::AdClickAttribution&& adClickAttribution)
 {
-    m_adClickAttribution->store(WTFMove(adClickAttribution));
+    m_adClickAttribution->storeUnconverted(WTFMove(adClickAttribution));
 }
 
 void NetworkSession::convertAdClickAttribution(const WebCore::AdClickAttribution::Source& source, const WebCore::AdClickAttribution::Destination& destination, WebCore::AdClickAttribution::Conversion&& conversion)

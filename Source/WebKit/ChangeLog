@@ -1,3 +1,46 @@
+2019-04-17  John Wilander  <wilander@apple.com>
+
+        Add prioritization of ad click conversions and cleaning of sent ad click conversions
+        https://bugs.webkit.org/show_bug.cgi?id=196934
+        <rdar://problem/49917773>
+
+        Reviewed by Chris Dumez.
+
+        In this description, by "pair" I mean { AdClickAttribution::Source, AdClickAttribution::Destination }.
+
+        This patch adds handling of prioritization of conversions according to these rules:
+        - If we have a matching unconverted attribution, convert it. This consumes the conversion.
+        - If we have no previously converted attribution for this pair, just store.
+        - If we have a previously converted attribution for this pair, replace it if the new one has higher priority.
+        - If we had no matching unconverted attribution but do have a previously converted attribution for this
+        pair, re-convert the previously converted attribution to make sure the highest priority gets set.
+
+        This handling is in part done by dividing the previous m_adClickAttributionMap into 
+        m_unconvertedAdClickAttributionMap and m_convertedAdClickAttributionMap, which now use a std::pair
+        as key instead of a nested HashMap.
+
+        This patch also changes AdClickAttributionManager::firePendingConversionRequests() so that it now
+        removes attributions which have been sent out.
+
+        Finally, AdClickAttributionManager::clear() no longer clears m_conversionBaseURLForTesting and
+        m_isRunningTest since doing so caused test flakiness. It is now up to the test case that sets these
+        members to also clear them when done.
+
+        * NetworkProcess/AdClickAttributionManager.cpp:
+        (WebKit::AdClickAttributionManager::storeUnconverted):
+        (WebKit::AdClickAttributionManager::convert):
+        (WebKit::AdClickAttributionManager::firePendingConversionRequests):
+        (WebKit::AdClickAttributionManager::clear):
+        (WebKit::AdClickAttributionManager::toString const):
+        (WebKit::AdClickAttributionManager::setConversionURLForTesting):
+        (WebKit::AdClickAttributionManager::ensureDestinationMapForSource): Deleted.
+        (WebKit::AdClickAttributionManager::store): Deleted.
+        * NetworkProcess/AdClickAttributionManager.h:
+        (WebKit::AdClickAttributionManager::AdClickAttributionManager):
+        (WebKit::AdClickAttributionManager::setConversionURLForTesting): Deleted.
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::storeAdClickAttribution):
+
 2019-04-17  Tim Horton  <timothy_horton@apple.com>
 
         UI↔Web deadlock when printing with a JavaScript alert visible

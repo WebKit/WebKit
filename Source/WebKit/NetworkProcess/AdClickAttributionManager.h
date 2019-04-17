@@ -44,33 +44,32 @@ public:
     using AdClickAttribution = WebCore::AdClickAttribution;
     using Source = WebCore::AdClickAttribution::Source;
     using Destination = WebCore::AdClickAttribution::Destination;
-    using DestinationMap = HashMap<Destination, AdClickAttribution>;
     using Conversion = WebCore::AdClickAttribution::Conversion;
 
     AdClickAttributionManager()
         : m_firePendingConversionRequestsTimer(*this, &AdClickAttributionManager::firePendingConversionRequests)
-    , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
-        UNUSED_PARAM(params);
-        completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
-    })
+        , m_pingLoadFunction([](NetworkResourceLoadParameters&& params, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&& completionHandler) {
+            UNUSED_PARAM(params);
+            completionHandler(WebCore::ResourceError(), WebCore::ResourceResponse());
+        })
     {
     }
 
-    void store(AdClickAttribution&&);
+    void storeUnconverted(AdClickAttribution&&);
     void convert(const Source&, const Destination&, Conversion&&);
     void clear(CompletionHandler<void()>&&);
     void toString(CompletionHandler<void(String)>&&) const;
     void setPingLoadFunction(Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)>&& pingLoadFunction) { m_pingLoadFunction = WTFMove(pingLoadFunction); }
     void setOverrideTimerForTesting(bool value) { m_isRunningTest = value; }
-    void setConversionURLForTesting(URL&& testURL) { m_conversionBaseURLForTesting = WTFMove(testURL); }
+    void setConversionURLForTesting(URL&&);
 
 private:
-    DestinationMap& ensureDestinationMapForSource(const Source&);
     void startTimer(Seconds);
     void fireConversionRequest(const AdClickAttribution&);
     void firePendingConversionRequests();
 
-    HashMap<Source, DestinationMap> m_adClickAttributionMap;
+    HashMap<std::pair<Source, Destination>, AdClickAttribution> m_unconvertedAdClickAttributionMap;
+    HashMap<std::pair<Source, Destination>, AdClickAttribution> m_convertedAdClickAttributionMap;
     WebCore::Timer m_firePendingConversionRequestsTimer;
     Function<void(NetworkResourceLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::ResourceResponse&)>&&)> m_pingLoadFunction;
     bool m_isRunningTest { false };

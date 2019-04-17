@@ -1,3 +1,25 @@
+2019-04-17  John Wilander  <wilander@apple.com>
+
+        Add prioritization of ad click conversions and cleaning of sent ad click conversions
+        https://bugs.webkit.org/show_bug.cgi?id=196934
+        <rdar://problem/49917773>
+
+        Reviewed by Chris Dumez.
+
+        Tests: http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html
+               http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html
+               http/tests/adClickAttribution/second-conversion-with-higher-priority.html
+               http/tests/adClickAttribution/second-conversion-with-lower-priority.html
+
+        * loader/AdClickAttribution.cpp:
+        (WebCore::AdClickAttribution::hasHigherPriorityThan const):
+            Added to facilitate priority comparison between two attributions.
+        * loader/AdClickAttribution.h:
+        (WebCore::AdClickAttribution::Destination::Destination):
+            Added a WTF::HashTableDeletedValueType constructor and changed the copy constructor to
+            a move constructor.
+        (WebCore::AdClickAttribution::isEmpty const):
+
 2019-04-17  Devin Rousso  <drousso@apple.com>
 
         AX: AccessibilityObject::parentObject() doesn't need to be pure virtual
