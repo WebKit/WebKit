@@ -537,7 +537,7 @@ messages -> WebPageProxy {
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, IPC::DataReference data) Synchronous
 
 #if ENABLE(DEVICE_ORIENTATION)
-    RequestDeviceOrientationAndMotionAccess(uint64_t frameID, struct WebCore::SecurityOriginData origin) -> (bool granted) Async
+    ShouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, struct WebCore::SecurityOriginData origin, bool mayPrompt) -> (enum:uint8_t WebCore::DeviceOrientationOrMotionPermissionState permissionState) Async
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)

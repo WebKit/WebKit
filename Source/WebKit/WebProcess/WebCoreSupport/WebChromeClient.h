@@ -367,7 +367,7 @@ private:
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::Frame&, CompletionHandler<void(bool)>&&) final;
+    void shouldAllowDeviceOrientationAndMotionAccess(WebCore::Frame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;
 #endif
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel) final;

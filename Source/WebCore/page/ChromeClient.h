@@ -25,6 +25,7 @@
 #include "AutoplayEvent.h"
 #include "Cursor.h"
 #include "DatabaseDetails.h"
+#include "DeviceOrientationOrMotionPermissionState.h"
 #include "DisabledAdaptations.h"
 #include "DisplayRefreshMonitor.h"
 #include "FocusDirection.h"
@@ -485,7 +486,7 @@ public:
     virtual void requestStorageAccess(String&& /*subFrameHost*/, String&& /*topFrameHost*/, uint64_t /*frameID*/, uint64_t /*pageID*/, WTF::CompletionHandler<void (bool)>&& callback) { callback(false); }
 
 #if ENABLE(DEVICE_ORIENTATION)
-    virtual void shouldAllowDeviceOrientationAndMotionAccess(Frame&, WTF::CompletionHandler<void(bool)>&& callback) { callback(true); }
+    virtual void shouldAllowDeviceOrientationAndMotionAccess(Frame&, bool /* mayPrompt */, WTF::CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }
 #endif
 
     virtual void didInsertMenuElement(HTMLMenuElement&) { }

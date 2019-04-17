@@ -1204,7 +1204,7 @@
 		460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 460BB6141D0A1BEC00221812 /* Base64Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
 		460E3075222F4EFD009A0606 /* DeviceOrientationOrMotionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 461DA52A222F486F00D05A87 /* DeviceOrientationOrMotionEvent.h */; };
-		460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */; };
+		460E3077222F4F03009A0606 /* DeviceOrientationOrMotionPermissionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 465EDD9F222F4EC300B46E16 /* DeviceOrientationOrMotionPermissionState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46218ACB1F72D64E00574FBE /* DOMHighResTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463521AD2081092A00C28922 /* WindowProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 463521AA2081090B00C28922 /* WindowProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };

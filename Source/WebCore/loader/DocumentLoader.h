@@ -32,6 +32,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContentSecurityPolicyClient.h"
+#include "DeviceOrientationOrMotionPermissionState.h"
 #include "DocumentIdentifier.h"
 #include "DocumentWriter.h"
 #include "FrameDestructionObserver.h"
@@ -280,8 +281,10 @@ public:
     bool userContentExtensionsEnabled() const { return m_userContentExtensionsEnabled; }
     void setUserContentExtensionsEnabled(bool enabled) { m_userContentExtensionsEnabled = enabled; }
 
-    const Optional<bool>& deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
-    void setDeviceOrientationAndMotionAccessState(const Optional<bool>& state) { m_deviceOrientationAndMotionAccessState = state; }
+#if ENABLE(DEVICE_ORIENTATION)
+    DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState() const { return m_deviceOrientationAndMotionAccessState; }
+    void setDeviceOrientationAndMotionAccessState(DeviceOrientationOrMotionPermissionState state) { m_deviceOrientationAndMotionAccessState = state; }
+#endif
 
     AutoplayPolicy autoplayPolicy() const { return m_autoplayPolicy; }
     void setAutoplayPolicy(AutoplayPolicy policy) { m_autoplayPolicy = policy; }
@@ -584,7 +587,9 @@ private:
     String m_customJavaScriptUserAgentAsSiteSpecificQuirks;
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
-    Optional<bool> m_deviceOrientationAndMotionAccessState;
+#if ENABLE(DEVICE_ORIENTATION)
+    DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
+#endif
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };

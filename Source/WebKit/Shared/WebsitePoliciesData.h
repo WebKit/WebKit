@@ -32,6 +32,7 @@
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
 #include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
+#include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/HTTPHeaderField.h>
 #include <wtf/OptionSet.h>
 
@@ -52,7 +53,9 @@ struct WebsitePoliciesData {
     bool contentBlockersEnabled { true };
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
-    Optional<bool> deviceOrientationAndMotionAccessState;
+#if ENABLE(DEVICE_ORIENTATION)
+    WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationAndMotionAccessState;
+#endif
     Vector<WebCore::HTTPHeaderField> customHeaderFields;
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
     Optional<WebsiteDataStoreParameters> websiteDataStoreParameters;

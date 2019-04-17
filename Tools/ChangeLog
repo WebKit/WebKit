@@ -1,3 +1,17 @@
+2019-04-17  Chris Dumez  <cdumez@apple.com>
+
+        Remember device orientation permission for the duration of the browsing session
+        https://bugs.webkit.org/show_bug.cgi?id=196992
+        <rdar://problem/49946067>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DeviceOrientation.mm:
+        (-[DeviceOrientationPermissionUIDelegate _webView:shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:decisionHandler:]):
+        (TEST):
+
 2019-04-17  Aakash Jain  <aakash_jain@apple.com>
 
         [ews-app] Clicking 'submit to new ews' doesn't reload status-bubble

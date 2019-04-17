@@ -36,6 +36,7 @@
 #include "WKRetainPtr.h"
 #include "WKSecurityOriginRef.h"
 #include "WKString.h"
+#include "WebDeviceOrientationAndMotionAccessController.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
@@ -576,6 +577,13 @@ void WKWebsiteDataStoreSetServiceWorkerRegistrationDirectory(WKWebsiteDataStoreR
 void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef dataStoreRef, uint64_t quota)
 {
     WebKit::toImpl(dataStoreRef)->websiteDataStore().setPerOriginStorageQuota(quota);
+}
+
+void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef)
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    WebKit::toImpl(dataStoreRef)->websiteDataStore().deviceOrientationAndMotionAccessController().clearPermissions();
+#endif
 }
 
 void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreRef dataStoreRef, WKDictionaryRef configurationRef)

@@ -1317,11 +1317,11 @@ void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFr
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, CompletionHandler<void(bool)>&& callback)
+void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(Frame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
-    m_page.shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), WTFMove(callback));
+    m_page.shouldAllowDeviceOrientationAndMotionAccess(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), mayPrompt, WTFMove(callback));
 }
 #endif
 

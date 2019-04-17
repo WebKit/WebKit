@@ -1,3 +1,31 @@
+2019-04-17  Chris Dumez  <cdumez@apple.com>
+
+        Remember device orientation permission for the duration of the browsing session
+        https://bugs.webkit.org/show_bug.cgi?id=196992
+        <rdar://problem/49946067>
+
+        Reviewed by Alex Christensen.
+
+        Use DeviceOrientationOrMotionPermissionState type more consistently in the code base
+        instead of bool or Optional<bool>. Added "Prompt" value to this enumeration which is the
+        default state and which indicates we should ask the client.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationAndMotionAccessController.cpp:
+        (WebCore::DeviceOrientationAndMotionAccessController::DeviceOrientationAndMotionAccessController):
+        (WebCore::DeviceOrientationAndMotionAccessController::shouldAllowAccess):
+        * dom/DeviceOrientationAndMotionAccessController.h:
+        (WebCore::DeviceOrientationAndMotionAccessController::accessState const):
+        * dom/DeviceOrientationOrMotionEvent.cpp:
+        (WebCore::DeviceOrientationOrMotionEvent::requestPermission):
+        * dom/DeviceOrientationOrMotionPermissionState.h:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::deviceOrientationAndMotionAccessState const):
+        (WebCore::DocumentLoader::setDeviceOrientationAndMotionAccessState):
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isAllowedToAddDeviceMotionOrientationListener const):
+
 2019-04-17  Rob Buis  <rbuis@igalia.com>
 
         XMLHttpRequest has the wrong fallback encoding

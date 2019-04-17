@@ -27,30 +27,30 @@
 
 #if ENABLE(DEVICE_ORIENTATION)
 
-#include "DeviceOrientationOrMotionPermissionState.h"
-#include "ExceptionOr.h"
-#include <wtf/Function.h>
-#include <wtf/Vector.h>
+#include <WebCore/DeviceOrientationOrMotionPermissionState.h>
+#include <WebCore/SecurityOriginData.h>
+#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class Document;
+class WebPageProxy;
+class WebFrameProxy;
 
-class DeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<DeviceOrientationAndMotionAccessController> {
-    WTF_MAKE_FAST_ALLOCATED;
+class WebDeviceOrientationAndMotionAccessController : public CanMakeWeakPtr<WebDeviceOrientationAndMotionAccessController> {
 public:
-    explicit DeviceOrientationAndMotionAccessController(Document&);
+    WebDeviceOrientationAndMotionAccessController() = default;
 
-
-    DeviceOrientationOrMotionPermissionState accessState() const { return m_accessState; }
-    void shouldAllowAccess(Function<void(DeviceOrientationOrMotionPermissionState)>&&);
+    void shouldAllowAccess(WebPageProxy&, WebFrameProxy&, WebCore::SecurityOriginData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
+    void clearPermissions();
 
 private:
-    Document& m_document;
-    DeviceOrientationOrMotionPermissionState m_accessState { DeviceOrientationOrMotionPermissionState::Prompt };
+    WebCore::DeviceOrientationOrMotionPermissionState deviceOrientationPermission(const WebCore::SecurityOriginData&) const;
+
+    HashMap<WebCore::SecurityOriginData, bool> m_deviceOrientationPermissionDecisions;
+    HashMap<WebCore::SecurityOriginData, Vector<CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>>> m_pendingRequests;
 };
 
-} // namespace WebCore
+}
 
-#endif // ENABLE(DEVICE_ORIENTATION)
+#endif

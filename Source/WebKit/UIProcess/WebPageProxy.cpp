@@ -7297,12 +7297,12 @@ void WebPageProxy::clearUserMediaState()
 }
 
 #if ENABLE(DEVICE_ORIENTATION)
-void WebPageProxy::requestDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&& originData, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(uint64_t frameID, WebCore::SecurityOriginData&& originData, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)
 {
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
 
-    m_uiClient->shouldAllowDeviceOrientationAndMotionAccess(*this, *frame, WTFMove(originData), WTFMove(completionHandler));
+    websiteDataStore().deviceOrientationAndMotionAccessController().shouldAllowAccess(*this, *frame, WTFMove(originData), mayPrompt, WTFMove(completionHandler));
 }
 #endif
 

@@ -39,6 +39,7 @@
 
 static RetainPtr<NSMutableArray> receivedMessages = adoptNS([@[] mutableCopy]);
 static bool didReceiveMessage;
+static bool askedClientForPermission;
 
 @interface DeviceOrientationMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -74,6 +75,7 @@ Function<bool()> _decisionHandler;
 - (void)_webView:(WKWebView *)webView shouldAllowDeviceOrientationAndMotionAccessRequestedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(BOOL))decisionHandler
 {
     decisionHandler(_decisionHandler());
+    askedClientForPermission = true;
 }
 
 @end
@@ -154,6 +156,98 @@ TEST(DeviceOrientation, PermissionGranted)
 TEST(DeviceOrientation, PermissionDenied)
 {
     runDeviceOrientationTest(DeviceOrientationPermission::Denied);
+}
+
+TEST(DeviceOrientation, RememberPermissionForSession)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+
+    auto messageHandler = adoptNS([[DeviceOrientationMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<DeviceOrientationPermissionUIDelegate> uiDelegate = adoptNS([[DeviceOrientationPermissionUIDelegate alloc] initWithHandler:[] { return true; }]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_TRUE(askedClientForPermission);
+    askedClientForPermission = false;
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[0]);
+
+    // Load the same origin again in a new WebView, it should not ask the client.
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) }, (error) => { webkit.messageHandlers.testHandler.postMessage('error'); });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[1]);
+    EXPECT_FALSE(askedClientForPermission);
+    askedClientForPermission = false;
+
+    // Load the same origin again in a new WebView but this time with a different data store, it should ask the client again.
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_TRUE(askedClientForPermission);
+    askedClientForPermission = false;
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[2]);
+
+    // Now go to a different origin, it should ask the client again.
+    NSURLRequest *request2 = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
+    [webView loadRequest:request2];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_TRUE(askedClientForPermission);
+    askedClientForPermission = false;
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[3]);
+
+    // Go back to the first origin in a new WebView (same data store) and make sure it does not ask the client.
+    webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"DeviceOrientationEvent.requestPermission().then((granted) => { webkit.messageHandlers.testHandler.postMessage(granted) }, (error) => { webkit.messageHandlers.testHandler.postMessage('error'); });" completionHandler: [&] (id result, NSError *error) { }];
+
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    didReceiveMessage = false;
+
+    EXPECT_WK_STREQ(@"granted", receivedMessages.get()[4]);
+    EXPECT_FALSE(askedClientForPermission);
+    askedClientForPermission = false;
 }
 
 #endif // PLATFORM(IOS_FAMILY)

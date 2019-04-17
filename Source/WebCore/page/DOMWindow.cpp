@@ -1872,13 +1872,15 @@ bool DOMWindow::isAllowedToAddDeviceMotionOrientationListener(String& message) c
 
     if (frame()->settings().deviceOrientationPermissionAPIEnabled()) {
         auto accessState = document()->deviceOrientationAndMotionAccessController().accessState();
-        if (accessState && !*accessState) {
+        switch (accessState) {
+        case DeviceOrientationOrMotionPermissionState::Denied:
             message = "No device motion or orientation events will be fired because permission to use the API was denied."_s;
             return false;
-        }
-        if (!accessState) {
+        case DeviceOrientationOrMotionPermissionState::Prompt:
             message = "No device motion or orientation events will be fired until permission has been requested and granted."_s;
             return false;
+        case DeviceOrientationOrMotionPermissionState::Granted:
+            break;
         }
     }
 

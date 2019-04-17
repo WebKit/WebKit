@@ -26,10 +26,12 @@
 #pragma once
 
 #include "NetworkSessionCreationParameters.h"
+#include "WebDeviceOrientationAndMotionAccessController.h"
 #include "WebProcessLifetimeObserver.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreConfiguration.h"
 #include <WebCore/Cookie.h>
+#include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
 #include <pal/SessionID.h>
@@ -252,6 +254,10 @@ public:
 
     API::HTTPCookieStore& cookieStore();
 
+#if ENABLE(DEVICE_ORIENTATION)
+    WebDeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController() { return m_deviceOrientationAndMotionAccessController; }
+#endif
+
 #if HAVE(LOAD_OPTIMIZER)
 WEBSITEDATASTORE_LOADOPTIMIZER_ADDITIONS_1
 #endif
@@ -333,6 +339,10 @@ private:
 
 #if ENABLE(WEB_AUTHN)
     UniqueRef<AuthenticatorManager> m_authenticatorManager;
+#endif
+
+#if ENABLE(DEVICE_ORIENTATION)
+    WebDeviceOrientationAndMotionAccessController m_deviceOrientationAndMotionAccessController;
 #endif
 
     UniqueRef<WebsiteDataStoreClient> m_client;

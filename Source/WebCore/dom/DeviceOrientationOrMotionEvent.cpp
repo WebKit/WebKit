@@ -43,10 +43,10 @@ void DeviceOrientationOrMotionEvent::requestPermission(Document& document, Permi
         return promise.resolve(PermissionState::Denied);
     }
 
-    document.deviceOrientationAndMotionAccessController().shouldAllowAccess([promise = WTFMove(promise)](ExceptionOr<bool> granted) mutable {
-        if (granted.hasException())
-            return promise.reject(granted.releaseException());
-        promise.resolve(granted.returnValue() ? PermissionState::Granted : PermissionState::Denied);
+    document.deviceOrientationAndMotionAccessController().shouldAllowAccess([promise = WTFMove(promise)](PermissionState permissionState) mutable {
+        if (permissionState == PermissionState::Prompt)
+            return promise.reject(Exception { NotAllowedError, "Requesting device orientation or motion access requires a user gesture to prompt"_s });
+        promise.resolve(permissionState);
     });
 }
 #endif

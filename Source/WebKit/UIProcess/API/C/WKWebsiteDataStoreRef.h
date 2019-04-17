@@ -129,6 +129,8 @@ WK_EXPORT void WKWebsiteDataStoreSetPerOriginStorageQuota(WKWebsiteDataStoreRef 
 
 WK_EXPORT void WKWebsiteDataStoreSetWebAuthenticationMockConfiguration(WKWebsiteDataStoreRef dataStoreRef, WKDictionaryRef configuration);
 
+WK_EXPORT void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRef dataStoreRef);
+
 #ifdef __cplusplus
 }
 #endif

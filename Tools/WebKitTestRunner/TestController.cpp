@@ -914,6 +914,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKContextClearCachedCredentials(TestController::singleton().context());
 
+    auto websiteDataStore = WKContextGetWebsiteDataStore(TestController::singleton().context());
+    WKWebsiteDataStoreClearAllDeviceOrientationPermissions(websiteDataStore);
+
     ClearIndexedDatabases();
     setIDBPerOriginQuota(50 * MB);
 

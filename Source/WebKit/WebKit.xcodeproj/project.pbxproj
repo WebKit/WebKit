@@ -906,6 +906,7 @@
 		466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */; };
 		467E43E82243FF7D00B13924 /* WebProcessDataStoreParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */; };
 		46A2B6091E5676A600C3DEDA /* BackgroundProcessResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */; };
+		46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */ = {isa = PBXBuildFile; fileRef = 46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */; };
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		4A3CC18B19B0640F00D14AEF /* UserMediaPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3A19AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.h */; };
 		4A3CC18D19B0641900D14AEF /* UserMediaPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F3C19AF7B04002EBAB5 /* UserMediaPermissionRequestProxy.h */; };
@@ -3140,6 +3141,8 @@
 		4683569B21E81CC7006E27A3 /* ProvisionalPageProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProvisionalPageProxy.cpp; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
+		46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationAndMotionAccessController.h; sourceTree = "<group>"; };
+		46B0524522668D2400265B97 /* WebDeviceOrientationAndMotionAccessController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationAndMotionAccessController.cpp; sourceTree = "<group>"; };
 		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		4A410F3519AF7AC3002EBAB5 /* WKUserMediaPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserMediaPermissionRequest.cpp; sourceTree = "<group>"; };
@@ -4948,6 +4951,8 @@
 			isa = PBXGroup;
 			children = (
 				1A4832C01A965A33008B4DFE /* Cocoa */,
+				46B0524522668D2400265B97 /* WebDeviceOrientationAndMotionAccessController.cpp */,
+				46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */,
 				1A4832D81A9D1FD2008B4DFE /* WebsiteDataRecord.cpp */,
 				1A4832CF1A9BD821008B4DFE /* WebsiteDataRecord.h */,
 				1A53C2A41A32569F004E8C70 /* WebsiteDataStore.cpp */,
@@ -9593,6 +9598,7 @@
 				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,
 				E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */,
 				E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */,
+				46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
 				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
