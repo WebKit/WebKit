@@ -932,7 +932,6 @@
 		53529A4C1C457B75000B49C6 /* APIUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 53529A4B1C457B75000B49C6 /* APIUtils.h */; };
 		535557141D9D9EA5006D583B /* WasmMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 535557131D9D9EA5006D583B /* WasmMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535C24611F78928E006EC40E /* create_regex_tables in Headers */ = {isa = PBXBuildFile; fileRef = A718F8211178EB4B002465A7 /* create_regex_tables */; };
-		535C24691F7A1624006EC40E /* JSCBuiltins.cpp in Headers */ = {isa = PBXBuildFile; fileRef = A7D801A61880D6A80026C39B /* JSCBuiltins.cpp */; };
 		535C246C1F7A1778006EC40E /* UnifiedSource136.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 535C246B1F7A1777006EC40E /* UnifiedSource136.cpp */; };
 		536B310C1F71C5990037FC33 /* UnifiedSource119.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B30871F71C5380037FC33 /* UnifiedSource119.cpp */; };
 		536B310D1F71C5990037FC33 /* UnifiedSource125.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 536B30881F71C5380037FC33 /* UnifiedSource125.cpp */; };
@@ -7800,8 +7799,8 @@
 				86D3B2C110156BDE002865E7 /* AssemblerBufferWithConstantPool.h */,
 				43C392AA1C3BEB0000241F53 /* AssemblerCommon.h */,
 				86E116B00FE75AC800B512BC /* CodeLocation.h */,
-				0F30D7BF1D95D62F0053089D /* CPU.h */,
 				52335628225EB8E900268BD2 /* CPU.cpp */,
+				0F30D7BF1D95D62F0053089D /* CPU.h */,
 				0F37308E1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h */,
 				0FF4275615914A20004CB9FF /* LinkBuffer.cpp */,
 				86D3B3C110159D7F002865E7 /* LinkBuffer.h */,
@@ -9370,7 +9369,6 @@
 				BC18C41C0E16F5CD00B34460 /* JSCallbackObjectFunctions.h in Headers */,
 				657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */,
 				53B601EC2034B8C5006BE667 /* JSCast.h in Headers */,
-				535C24691F7A1624006EC40E /* JSCBuiltins.cpp in Headers */,
 				A7D801A91880D6A80026C39B /* JSCBuiltins.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
 				0F9749711687ADE400A4FF6A /* JSCellInlines.h in Headers */,

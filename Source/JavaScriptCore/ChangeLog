@@ -1,3 +1,17 @@
+2019-04-17  Keith Rollin  <krollin@apple.com>
+
+        Remove JSCBuiltins.cpp from Copy Headers phase
+        https://bugs.webkit.org/show_bug.cgi?id=196981
+        <rdar://problem/49952133>
+
+        Reviewed by Alex Christensen.
+
+        JSCBuiltins.cpp is not a header and so doesn't need to be in the Copy
+        Headers phase. Checking its history, it seems to have been added
+        accidentally at the same time that JSCBuiltins.h was added.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2019-04-16  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Update port for system library changes
