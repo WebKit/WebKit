@@ -525,8 +525,8 @@ public:
     AccessibilityObject* selectedListItem();
     virtual int layoutCount() const { return 0; }
     virtual double estimatedLoadingProgress() const { return 0; }
-    static bool isARIAControl(AccessibilityRole);
-    static bool isARIAInput(AccessibilityRole);
+    WEBCORE_EXPORT static bool isARIAControl(AccessibilityRole);
+    WEBCORE_EXPORT static bool isARIAInput(AccessibilityRole);
 
     virtual bool supportsARIAOwns() const { return false; }
     bool isActiveDescendantOfFocusedContainer() const;
@@ -755,7 +755,7 @@ public:
     bool isAncestorOfObject(const AccessibilityObject*) const;
     AccessibilityObject* firstAnonymousBlockChild() const;
 
-    static AccessibilityRole ariaRoleToWebCoreRole(const String&);
+    WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;

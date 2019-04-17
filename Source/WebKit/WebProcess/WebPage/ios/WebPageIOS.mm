@@ -566,6 +566,18 @@ static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoi
     mainFrame.eventHandler().dispatchSyntheticMouseMove(mouseEvent);
 }
 
+static bool nodeAlwaysTriggersClick(const Node& targetNode)
+{
+    if (!is<Element>(targetNode))
+        return false;
+
+    if (is<HTMLFormControlElement>(targetNode))
+        return true;
+
+    auto ariaRole = AccessibilityObject::ariaRoleToWebCoreRole(downcast<Element>(targetNode).getAttribute(HTMLNames::roleAttr));
+    return AccessibilityObject::isARIAControl(ariaRole) || AccessibilityObject::isARIAInput(ariaRole);
+}
+
 void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers)
 {
     if (!nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
@@ -587,8 +599,9 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
 
     auto& contentChangeObserver = respondingDocument.contentChangeObserver();
     auto observedContentChange = contentChangeObserver.observedContentChange();
+    auto targetNodeTriggersClick = nodeAlwaysTriggersClick(nodeRespondingToClick);
 
-    auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || is<HTMLFormControlElement>(nodeRespondingToClick));
+    auto continueContentObservation = !(observedContentChange == WKContentVisibilityChange || targetNodeTriggersClick);
     if (continueContentObservation) {
         // Wait for callback to completePendingSyntheticClickForContentChangeObserver() to decide whether to send the click event.
         const Seconds observationDuration = 32_ms;
@@ -600,11 +613,11 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
         return;
     }
 
-    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange] {
+    callOnMainThread([protectedThis = makeRefPtr(this), targetNode = Ref<Node>(nodeRespondingToClick), location, modifiers, observedContentChange, targetNodeTriggersClick] {
         if (protectedThis->m_isClosed || !protectedThis->corePage())
             return;
 
-        auto shouldStayAtHoverState = observedContentChange == WKContentVisibilityChange && !is<HTMLFormControlElement>(targetNode);
+        auto shouldStayAtHoverState = observedContentChange == WKContentVisibilityChange && !targetNodeTriggersClick;
         if (shouldStayAtHoverState) {
             // The move event caused new contents to appear. Don't send synthetic click event, but just ensure that the mouse is on the most recent content.
             dispatchSyntheticMouseMove(protectedThis->corePage()->mainFrame(), location, modifiers);

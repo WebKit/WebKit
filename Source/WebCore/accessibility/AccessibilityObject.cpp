@@ -2514,7 +2514,9 @@ static ARIAReverseRoleMap& reverseAriaRoleMap()
 
 AccessibilityRole AccessibilityObject::ariaRoleToWebCoreRole(const String& value)
 {
-    ASSERT(!value.isEmpty());
+    if (value.isNull() || value.isEmpty())
+        return AccessibilityRole::Unknown;
+
     for (auto roleName : StringView(value).split(' ')) {
         AccessibilityRole role = ariaRoleMap().get<ASCIICaseInsensitiveStringViewHashTranslator>(roleName);
         if (static_cast<int>(role))
