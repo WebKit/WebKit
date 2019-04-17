@@ -814,7 +814,12 @@ void InspectorNetworkAgent::enable()
 
             unsigned identifier = channel->identifier();
             didCreateWebSocket(identifier, webSocket->url());
-            willSendWebSocketHandshakeRequest(identifier, channel->clientHandshakeRequest());
+            auto cookieRequestHeaderFieldValue = [document = makeWeakPtr(channel->document())] (const URL& url) -> String {
+                if (!document || !document->page())
+                    return { };
+                return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
+            };
+            willSendWebSocketHandshakeRequest(identifier, channel->clientHandshakeRequest(WTFMove(cookieRequestHeaderFieldValue)));
 
             if (channel->handshakeMode() == WebSocketHandshake::Connected)
                 didReceiveWebSocketHandshakeResponse(identifier, channel->serverHandshakeResponse());

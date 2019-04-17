@@ -1,3 +1,34 @@
+2019-04-17  Alex Christensen  <achristensen@webkit.org>
+
+        WebSocketHandshake should not know about a Document
+        https://bugs.webkit.org/show_bug.cgi?id=196468
+
+        Reviewed by Tim Horton.
+
+        I'll need to move WebSocketHandshake to the NetworkProcess for rdar://problem/46287028
+        It currently uses the Document pointer for 3 things:
+        1. To get the user agent, which we can pass in as a creation parameter.
+        2. To get the origin, which we can also pass in as a creation parameter.
+        3. To get cookies for the web inspector.  We can pass in a functor instead and have the inspector provide cookies itself.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::connect):
+        (WebCore::WebSocketChannel::disconnect):
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        (WebCore::WebSocketChannel::clientHandshakeRequest):
+        * Modules/websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::document):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::WebSocketHandshake):
+        (WebCore::WebSocketHandshake::clientHandshakeMessage const):
+        (WebCore::WebSocketHandshake::clientHandshakeRequest const):
+        (WebCore::WebSocketHandshake::clientOrigin const): Deleted.
+        (WebCore::WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy const): Deleted.
+        (WebCore::WebSocketHandshake::clearDocument): Deleted.
+        * Modules/websockets/WebSocketHandshake.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::enable):
+
 2019-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Unreviewed build fix for iOSMac after r244223.

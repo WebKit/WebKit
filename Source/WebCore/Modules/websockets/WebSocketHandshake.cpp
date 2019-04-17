@@ -35,7 +35,6 @@
 
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "Document.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
@@ -119,12 +118,13 @@ String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocket
     return base64Encode(hash.data(), SHA1::hashSize);
 }
 
-WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, Document* document, bool allowCookies)
+WebSocketHandshake::WebSocketHandshake(const URL& url, const String& protocol, const String& userAgent, const String& clientOrigin, bool allowCookies)
     : m_url(url)
     , m_clientProtocol(protocol)
     , m_secure(m_url.protocolIs("wss"))
-    , m_document(makeWeakPtr(document))
     , m_mode(Incomplete)
+    , m_userAgent(userAgent)
+    , m_clientOrigin(clientOrigin)
     , m_allowCookies(allowCookies)
 {
     m_secWebSocketKey = generateSecWebSocketKey();
@@ -164,11 +164,6 @@ bool WebSocketHandshake::secure() const
     return m_secure;
 }
 
-String WebSocketHandshake::clientOrigin() const
-{
-    return m_document->securityOrigin().toString();
-}
-
 String WebSocketHandshake::clientLocation() const
 {
     StringBuilder builder;
@@ -192,7 +187,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     fields.append("Upgrade: websocket");
     fields.append("Connection: Upgrade");
     fields.append("Host: " + hostName(m_url, m_secure));
-    fields.append("Origin: " + clientOrigin());
+    fields.append("Origin: " + m_clientOrigin);
     if (!m_clientProtocol.isEmpty())
         fields.append("Sec-WebSocket-Protocol: " + m_clientProtocol);
 
@@ -213,7 +208,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
         fields.append("Sec-WebSocket-Extensions: " + extensionValue);
 
     // Add a User-Agent header.
-    fields.append("User-Agent: " + m_document->userAgent(m_document->url()));
+    fields.append(makeString("User-Agent: ", m_userAgent));
 
     // Fields in the handshake are sent by the client in a random order; the
     // order is not meaningful.  Thus, it's ok to send the order we constructed
@@ -229,7 +224,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
     return builder.toString().utf8();
 }
 
-ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
+ResourceRequest WebSocketHandshake::clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue) const
 {
     // Keep the following consistent with clientHandshakeMessage().
     ResourceRequest request(m_url);
@@ -237,14 +232,13 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
 
     request.setHTTPHeaderField(HTTPHeaderName::Connection, "Upgrade");
     request.setHTTPHeaderField(HTTPHeaderName::Host, hostName(m_url, m_secure));
-    request.setHTTPHeaderField(HTTPHeaderName::Origin, clientOrigin());
+    request.setHTTPHeaderField(HTTPHeaderName::Origin, m_clientOrigin);
     if (!m_clientProtocol.isEmpty())
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketProtocol, m_clientProtocol);
 
     URL url = httpURLForAuthenticationAndCookies();
-    if (m_allowCookies && m_document && m_document->page()) {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(InspectorInstrumentation::hasFrontends());
-        String cookie = m_document->page()->cookieJar().cookieRequestHeaderFieldValue(*m_document, url);
+    if (m_allowCookies) {
+        String cookie = cookieRequestHeaderFieldValue(url);
         if (!cookie.isEmpty())
             request.setHTTPHeaderField(HTTPHeaderName::Cookie, cookie);
     }
@@ -259,27 +253,15 @@ ResourceRequest WebSocketHandshake::clientHandshakeRequest() const
         request.setHTTPHeaderField(HTTPHeaderName::SecWebSocketExtensions, extensionValue);
 
     // Add a User-Agent header.
-    request.setHTTPUserAgent(m_document->userAgent(m_document->url()));
+    request.setHTTPUserAgent(m_userAgent);
 
     return request;
-}
-
-Optional<CookieRequestHeaderFieldProxy> WebSocketHandshake::clientHandshakeCookieRequestHeaderFieldProxy() const
-{
-    if (!m_document || !m_allowCookies)
-        return WTF::nullopt;
-    return CookieJar::cookieRequestHeaderFieldProxy(*m_document, httpURLForAuthenticationAndCookies());
 }
 
 void WebSocketHandshake::reset()
 {
     m_mode = Incomplete;
     m_extensionDispatcher.reset();
-}
-
-void WebSocketHandshake::clearDocument()
-{
-    m_document = nullptr;
 }
 
 int WebSocketHandshake::readServerHandshake(const char* header, size_t len)

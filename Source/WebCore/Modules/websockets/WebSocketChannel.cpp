@@ -86,7 +86,6 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
     LOG(Network, "WebSocketChannel %p connect()", this);
 
     URL url = requestedURL;
-    bool allowCookies = true;
 #if ENABLE(CONTENT_EXTENSIONS)
     if (auto* page = m_document->page()) {
         if (auto* documentLoader = m_document->loader()) {
@@ -106,14 +105,17 @@ void WebSocketChannel::connect(const URL& requestedURL, const String& protocol)
                     m_client->didUpgradeURL();
             }
             if (results.summary.blockedCookies)
-                allowCookies = false;
+                m_allowCookies = false;
         }
     }
 #endif
     
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
-    m_handshake = std::make_unique<WebSocketHandshake>(url, protocol, m_document.get(), allowCookies);
+    
+    String userAgent = m_document->userAgent(m_document->url());
+    String clientOrigin = m_document->securityOrigin().toString();
+    m_handshake = std::make_unique<WebSocketHandshake>(url, protocol, userAgent, clientOrigin, m_allowCookies);
     m_handshake->reset();
     if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
@@ -247,8 +249,6 @@ void WebSocketChannel::disconnect()
     LOG(Network, "WebSocketChannel %p disconnect()", this);
     if (m_identifier && m_document)
         InspectorInstrumentation::didCloseWebSocket(m_document.get(), m_identifier);
-    if (m_handshake)
-        m_handshake->clearDocument();
     m_client = nullptr;
     m_document = nullptr;
     if (m_handle)
@@ -273,10 +273,18 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
     ASSERT(&handle == m_handle);
     if (!m_document)
         return;
-    if (m_identifier && UNLIKELY(InspectorInstrumentation::hasFrontends()))
-        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document.get(), m_identifier, m_handshake->clientHandshakeRequest());
+    if (m_identifier && UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+        auto cookieRequestHeaderFieldValue = [document = m_document] (const URL& url) -> String {
+            if (!document || !document->page())
+                return { };
+            return document->page()->cookieJar().cookieRequestHeaderFieldValue(*document, url);
+        };
+        InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_document.get(), m_identifier, m_handshake->clientHandshakeRequest(WTFMove(cookieRequestHeaderFieldValue)));
+    }
     auto handshakeMessage = m_handshake->clientHandshakeMessage();
-    auto cookieRequestHeaderFieldProxy = m_handshake->clientHandshakeCookieRequestHeaderFieldProxy();
+    Optional<CookieRequestHeaderFieldProxy> cookieRequestHeaderFieldProxy;
+    if (m_allowCookies)
+        cookieRequestHeaderFieldProxy = CookieJar::cookieRequestHeaderFieldProxy(*m_document, m_handshake->httpURLForAuthenticationAndCookies());
     handle.sendHandshake(WTFMove(handshakeMessage), WTFMove(cookieRequestHeaderFieldProxy), [this, protectedThis = makeRef(*this)] (bool success, bool didAccessSecureCookies) {
         if (!success)
             fail("Failed to send WebSocket handshake.");
@@ -835,9 +843,9 @@ void WebSocketChannel::sendFrame(WebSocketFrame::OpCode opCode, const char* data
     m_handle->sendData(frameData.data(), frameData.size(), WTFMove(completionHandler));
 }
 
-ResourceRequest WebSocketChannel::clientHandshakeRequest()
+ResourceRequest WebSocketChannel::clientHandshakeRequest(Function<String(const URL&)>&& cookieRequestHeaderFieldValue)
 {
-    return m_handshake->clientHandshakeRequest();
+    return m_handshake->clientHandshakeRequest(WTFMove(cookieRequestHeaderFieldValue));
 }
 
 const ResourceResponse& WebSocketChannel::serverHandshakeResponse() const
