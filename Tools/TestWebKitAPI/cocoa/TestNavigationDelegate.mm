@@ -45,6 +45,12 @@
         _didStartProvisionalNavigation(webView, navigation);
 }
 
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+{
+    if (_didCommitNavigation)
+        _didCommitNavigation(webView, navigation);
+}
+
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     if (_didFailProvisionalNavigation)

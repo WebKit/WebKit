@@ -32,6 +32,10 @@
 #import "_WKWebsitePoliciesInternal.h"
 #import <wtf/RetainPtr.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebpagePreferencesAdditionsBefore.mm>
+#endif
+
 @implementation WKWebpagePreferences
 
 + (instancetype)defaultPreferences
@@ -278,7 +282,7 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 }
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebpagePreferencesAdditions.mm>
+#import <WebKitAdditions/WKWebpagePreferencesAdditionsAfter.mm>
 #endif
 
 @end

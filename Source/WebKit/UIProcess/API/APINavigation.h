@@ -30,6 +30,7 @@
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
 #include "WebBackForwardListItem.h"
+#include "WebCompatibilityMode.h"
 #include <WebCore/AdClickAttribution.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
@@ -141,6 +142,9 @@ public:
     void setDestinationFrameSecurityOrigin(const WebCore::SecurityOriginData& origin) { m_destinationFrameSecurityOrigin = origin; }
     const WebCore::SecurityOriginData& destinationFrameSecurityOrigin() const { return m_destinationFrameSecurityOrigin; }
 
+    void setEffectiveCompatibilityMode(WebKit::WebCompatibilityMode compatibilityMode) { m_effectiveCompatibilityMode = compatibilityMode; }
+    WebKit::WebCompatibilityMode effectiveCompatibilityMode() const { return m_effectiveCompatibilityMode; }
+
 #if !LOG_DISABLED
     const char* loggingString() const;
 #endif
@@ -169,6 +173,7 @@ private:
     WebKit::FrameInfoData m_originatingFrameInfo;
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     bool m_userContentExtensionsEnabled { true };
+    WebKit::WebCompatibilityMode m_effectiveCompatibilityMode { WebKit::WebCompatibilityMode::Recommended };
 };
 
 } // namespace API

@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum class WebCompatibilityMode {
+enum class WebCompatibilityMode : uint8_t {
     Recommended,
     Legacy,
     Modern,

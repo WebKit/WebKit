@@ -1,3 +1,17 @@
+2019-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add new compatibility mode API on WKNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=197069
+        <rdar://problem/50025800>
+
+        Reviewed by Tim Horton.
+
+        Add a block property for -didCommitNavigation to TestNavigationDelegate.
+
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webView:didCommitNavigation:]):
+
 2019-04-18  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make WebCore headers copies

@@ -1,3 +1,43 @@
+2019-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add new compatibility mode API on WKNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=197069
+        <rdar://problem/50025800>
+
+        Reviewed by Tim Horton.
+
+        Adds a new property on WKNavigation.
+
+        * Shared/WebCompatibilityMode.h:
+
+        Drive-by fix: make this enum class 8 bits wide.
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setEffectiveCompatibilityMode):
+        (API::Navigation::effectiveCompatibilityMode const):
+
+        Add a new member variable to API::Navigation.
+
+        * UIProcess/API/Cocoa/WKNavigation.h:
+        * UIProcess/API/Cocoa/WKNavigation.mm:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+
+        Add various hooks into WebKitAdditions.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
+        Set API::Navigation's effective compatibility mode.
+
+        (WebKit::WebPageProxy::effectiveCompatibilityModeAfterAdjustingPolicies):
+
+        Renamed and refactored this method to return the effective compatibility mode, chosen while adjusting website
+        policies.
+
+        (WebKit::WebPageProxy::adjustPoliciesForCompatibilityMode): Deleted.
+        * UIProcess/WebPageProxy.h:
+
 2019-04-18  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make WebCore headers copies

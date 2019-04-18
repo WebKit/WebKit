@@ -26,6 +26,7 @@
 #import <WebKit/WKFoundation.h>
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WKWebpagePreferences.h>
 
 /*! A WKNavigation object can be used for tracking the loading progress of a webpage.
  @discussion A navigation is returned from the web view load methods, and is
@@ -34,5 +35,9 @@
  */
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface WKNavigation : NSObject
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKNavigationAdditions.h>
+#endif
 
 @end

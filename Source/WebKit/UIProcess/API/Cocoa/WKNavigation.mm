@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WKNavigationInternal.h"
+#import "WKWebpagePreferencesInternal.h"
 
 #import "APINavigation.h"
 
@@ -43,6 +44,10 @@
 {
     return _navigation->originalRequest().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKNavigationAdditions.mm>
+#endif
 
 #pragma mark WKObject protocol implementation
 

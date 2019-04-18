@@ -4592,7 +4592,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
                         policies = defaultPolicies->copy();
                 }
                 if (policies)
-                    adjustPoliciesForCompatibilityMode(*policies);
+                    navigation->setEffectiveCompatibilityMode(effectiveCompatibilityModeAfterAdjustingPolicies(*policies));
             }
             receivedNavigationPolicyDecision(policyAction, navigation.get(), processSwapRequestedByClient, frame, policies.get(), WTFMove(sender));
         };
@@ -8999,8 +8999,9 @@ void WebPageProxy::speechSynthesisResume(CompletionHandler<void()>&& completionH
 
 #if !PLATFORM(IOS_FAMILY) || !USE(APPLE_INTERNAL_SDK)
 
-void WebPageProxy::adjustPoliciesForCompatibilityMode(API::WebsitePolicies&)
+WebCompatibilityMode WebPageProxy::effectiveCompatibilityModeAfterAdjustingPolicies(API::WebsitePolicies&)
 {
+    return WebCompatibilityMode::Recommended;
 }
 
 #endif // !PLATFORM(IOS_FAMILY) || !USE(APPLE_INTERNAL_SDK)

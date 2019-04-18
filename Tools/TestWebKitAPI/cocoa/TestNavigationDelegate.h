@@ -33,6 +33,7 @@
 @property (nonatomic, copy) void (^decidePolicyForNavigationAction)(WKNavigationAction *, void (^)(WKNavigationActionPolicy));
 @property (nonatomic, copy) void (^didFailProvisionalNavigation)(WKWebView *, WKNavigation *, NSError *);
 @property (nonatomic, copy) void (^didStartProvisionalNavigation)(WKWebView *, WKNavigation *);
+@property (nonatomic, copy) void (^didCommitNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 @property (nonatomic, copy) void (^renderingProgressDidChange)(WKWebView *, _WKRenderingProgressEvents);
 @property (nonatomic, copy) void (^webContentProcessDidTerminate)(WKWebView *);

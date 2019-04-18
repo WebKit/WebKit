@@ -293,6 +293,7 @@ struct URLSchemeTaskParameters;
 
 enum class ProcessSwapRequestedByClient;
 enum class UndoOrRedo : bool;
+enum class WebCompatibilityMode : uint8_t;
 
 #if USE(QUICK_LOOK)
 class QuickLookDocumentData;
@@ -1625,7 +1626,7 @@ private:
     void unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError&, const UserData&);
     void beginSafeBrowsingCheck(const URL&, bool, WebFramePolicyListenerProxy&);
 
-    void adjustPoliciesForCompatibilityMode(API::WebsitePolicies&);
+    WebCompatibilityMode effectiveCompatibilityModeAfterAdjustingPolicies(API::WebsitePolicies&);
 
     void willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const Vector<std::pair<String, String>>& textFieldValues, uint64_t listenerID, const UserData&);
 
