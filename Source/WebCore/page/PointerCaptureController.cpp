@@ -128,6 +128,24 @@ void PointerCaptureController::pointerLockWasApplied()
     }
 }
 
+void PointerCaptureController::elementWasRemoved(Element& element)
+{
+    for (auto& keyAndValue : m_activePointerIdsToCapturingData) {
+        auto& capturingData = keyAndValue.value;
+        if (capturingData.pendingTargetOverride == &element || capturingData.targetOverride == &element) {
+            // https://w3c.github.io/pointerevents/#implicit-release-of-pointer-capture
+            // When the pointer capture target override is no longer connected, the pending pointer capture target override and pointer capture target
+            // override nodes SHOULD be cleared and also a PointerEvent named lostpointercapture corresponding to the captured pointer SHOULD be fired
+            // at the document.
+            auto pointerId = keyAndValue.key;
+            auto pointerType = capturingData.pointerType;
+            releasePointerCapture(&element, pointerId);
+            element.document().enqueueDocumentEvent(PointerEvent::create(eventNames().lostpointercaptureEvent, pointerId, pointerType));
+            return;
+        }
+    }
+}
+
 void PointerCaptureController::touchEndedOrWasCancelledForIdentifier(PointerID pointerId)
 {
     m_activePointerIdsToCapturingData.remove(pointerId);
@@ -231,14 +249,6 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         // Pointer Capture steps to fire lostpointercapture if necessary.
         if (event.type() == eventNames().pointerupEvent)
             capturingData.pendingTargetOverride = nullptr;
-
-        // When the pointer capture target override is no longer connected, the pending pointer capture target override and pointer
-        // capture target override nodes SHOULD be cleared and also a PointerEvent named lostpointercapture corresponding to the captured
-        // pointer SHOULD be fired at the document.
-        if (capturingData.targetOverride && !capturingData.targetOverride->isConnected()) {
-            capturingData.pendingTargetOverride = nullptr;
-            capturingData.targetOverride = nullptr;
-        }
     }
 
     processPendingPointerCapture(event);
@@ -281,7 +291,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     if (!target)
         return;
 
-    auto event = PointerEvent::createPointerCancelEvent(pointerId, capturingData.pointerType);
+    auto event = PointerEvent::create(eventNames().pointercancelEvent, pointerId, capturingData.pointerType);
     target->dispatchEvent(event);
     processPendingPointerCapture(WTFMove(event));
 }

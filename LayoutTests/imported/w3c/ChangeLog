@@ -1,3 +1,12 @@
+2019-04-18  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html
+        https://bugs.webkit.org/show_bug.cgi?id=197004
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node-expected.txt: Added.
+
 2019-04-17  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_on_event_handlers.html

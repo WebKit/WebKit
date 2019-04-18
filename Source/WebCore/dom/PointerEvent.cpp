@@ -84,9 +84,9 @@ RefPtr<PointerEvent> PointerEvent::create(const MouseEvent& mouseEvent)
     return adoptRef(*new PointerEvent(type, canBubble, isCancelable, isComposed, mouseEvent));
 }
 
-Ref<PointerEvent> PointerEvent::createPointerCancelEvent(PointerID pointerId, const String& pointerType)
+Ref<PointerEvent> PointerEvent::create(const String& type, PointerID pointerId, const String& pointerType)
 {
-    return adoptRef(*new PointerEvent(eventNames().pointercancelEvent, CanBubble::Yes, IsCancelable::No, IsComposed::Yes, pointerId, pointerType));
+    return adoptRef(*new PointerEvent(type, CanBubble::Yes, IsCancelable::No, IsComposed::Yes, pointerId, pointerType));
 }
 
 PointerEvent::PointerEvent() = default;

@@ -46,6 +46,7 @@ public:
     bool hasPointerCapture(Element*, PointerID);
 
     void pointerLockWasApplied();
+    void elementWasRemoved(Element&);
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
     std::pair<bool, bool> dispatchEventForTouchAtIndex(EventTarget&, const PlatformTouchEvent&, unsigned, bool isPrimary, WindowProxy&);

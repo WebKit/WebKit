@@ -1,3 +1,27 @@
+2019-04-18  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html
+        https://bugs.webkit.org/show_bug.cgi?id=197004
+
+        Reviewed by Antti Koivisto.
+
+        We need to release pointer capture when an element that has pointer capture is disconnected from the DOM.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor): Notify the PointerCaptureController that an element was disconnected.
+        * dom/PointerEvent.cpp:
+        (WebCore::PointerEvent::create): Broaden createPointerCancelEvent() to take in an event type so that we may use it to create a
+        lostpointercapture event as well.
+        (WebCore::PointerEvent::createPointerCancelEvent): Deleted.
+        * dom/PointerEvent.h:
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::elementWasRemoved): Check whether the provided element matches one of the target overrides recorded
+        in the map of captured pointer IDs.
+        (WebCore::PointerCaptureController::pointerEventWasDispatched): This block of code was actually useless in this location, the new code
+        added in elementWasRemoved() performs the actions that the spec text mandates.
+        (WebCore::PointerCaptureController::cancelPointer): Replace the call to createPointerCancelEvent() with one to create().
+        * page/PointerCaptureController.h:
+
 2019-04-17  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_on_event_handlers.html

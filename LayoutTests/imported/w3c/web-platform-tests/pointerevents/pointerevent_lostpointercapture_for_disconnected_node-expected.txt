@@ -1,0 +1,18 @@
+Pointer Events - lostpointercapture when capturing element is removed
+
+Test Description: This test checks if lostpointercapture is fired at the document when the capturing node is removed from the document. Complete the following actions:
+Press and hold left mouse button over "Set Capture" button. "gotpointercapture" should be logged inside of the black rectangle.
+"lostpointercapture" should be logged inside of the black rectangle after a short delay.
+
+
+
+Pointer Events Capture Test
+
+The following pointer types were detected: mouse.
+
+The following events were logged: gotpointercapture@target1, lostpointercapture@document.
+
+
+PASS lostpointercapture event received 
+PASS lostpointercapture is dispatched on the document 
+

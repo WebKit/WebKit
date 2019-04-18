@@ -1990,6 +1990,10 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     if (document().page())
         document().page()->pointerLockController().elementRemoved(*this);
 #endif
+#if ENABLE(POINTER_EVENTS)
+    if (document().page() && RuntimeEnabledFeatures::sharedFeatures().pointerEventsEnabled())
+        document().page()->pointerCaptureController().elementWasRemoved(*this);
+#endif
 
     setSavedLayerScrollPosition(ScrollPosition());
 
