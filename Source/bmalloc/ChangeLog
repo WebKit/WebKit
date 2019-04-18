@@ -1,3 +1,12 @@
+2019-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix build failure
+        https://bugs.webkit.org/show_bug.cgi?id=195938
+
+        Including <array>.
+
+        * bmalloc/AvailableMemory.cpp:
+
 2019-04-15  Yoshiaki Jitsukawa  <yoshiaki.jitsukawa@sony.com>
 
         Unreviewed. Build fix after r244244.
