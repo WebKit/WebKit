@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CurlRequestClient.h"
 #include "NetworkDataTask.h"
+#include <WebCore/CurlRequestClient.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceResponse.h>

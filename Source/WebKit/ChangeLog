@@ -1,3 +1,28 @@
+2019-04-18  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+        <rdar://problem/37510435>
+
+        Reviewed by Alex Christensen.
+
+        WebCore now uses WebCore_PRIVATE_INCLUDE_DIRECTORIES for all ports. This revealed
+        problems with WebKit's usage of WebCore headers. All include directories directly
+        referencing the WebCore source tree we're removed from the CMake files. Any includes
+        of WebCore headers using "*.h" were modified to <WebCore/*.h>
+
+        Removed generation of forwarding headers for WebCore using the perl script.
+
+        * CMakeLists.txt:
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * Scripts/generate-forwarding-headers.pl:
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp:
+        * UIProcess/API/wpe/WebKitColorPrivate.h:
+        * UIProcess/WebsiteData/win/WebsiteDataStoreWin.cpp:
+        * UIProcess/win/PageClientImpl.cpp:
+
 2019-04-18  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Improve detection of when web views go to background / foreground

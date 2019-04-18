@@ -107,7 +107,6 @@ if (USE_CF)
     )
 endif ()
 
-list(APPEND TestWebKitAPI_DEPENDENCIES WebCorePrivateFrameworkHeaders)
 if (ENABLE_WEBKIT)
     list(APPEND TestWebKitAPI_DEPENDENCIES WebKitFrameworkHeaders)
 endif ()

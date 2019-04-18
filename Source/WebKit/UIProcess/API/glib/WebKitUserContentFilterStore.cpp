@@ -28,10 +28,10 @@
 
 #include "APIContentRuleList.h"
 #include "APIContentRuleListStore.h"
-#include "ContentExtensionError.h"
 #include "WebKitError.h"
 #include "WebKitUserContent.h"
 #include "WebKitUserContentPrivate.h"
+#include <WebCore/ContentExtensionError.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>

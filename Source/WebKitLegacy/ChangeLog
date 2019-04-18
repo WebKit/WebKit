@@ -1,3 +1,21 @@
+2019-04-18  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+        <rdar://problem/37510435>
+
+        Reviewed by Alex Christensen.
+
+        Added WebCorePrivateFrameworkHeaders as a dependency of WebKitLegacy for all
+        ports.
+
+        WebCore now uses WebCore_PRIVATE_INCLUDE_DIRECTORIES for all ports. This revealed
+        problems with WebKit's usage of WebCore headers. All include directories directly
+        referencing the WebCore source tree we're removed from the CMake files.
+
+        * CMakeLists.txt:
+        * PlatformWin.cmake:
+
 2019-04-18  Keith Rollin  <krollin@apple.com>
 
         Move MiG .def files into their own "Copy files" build step

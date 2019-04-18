@@ -2,6 +2,10 @@ include(WebKitCommon)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
+set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
+)
+
 set(WebKit_INCLUDE_DIRECTORIES
     "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
     "${WebKit_FRAMEWORK_HEADERS_DIR}"

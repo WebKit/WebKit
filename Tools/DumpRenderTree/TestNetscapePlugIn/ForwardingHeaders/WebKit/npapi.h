@@ -1,1 +1,1 @@
-#include <plugins/npapi.h>
+#include <WebCore/npapi.h>

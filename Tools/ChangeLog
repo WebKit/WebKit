@@ -1,3 +1,27 @@
+2019-04-18  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+        <rdar://problem/37510435>
+
+        Reviewed by Alex Christensen.
+
+        Added WebCorePrivateFrameworkHeaders as a dependency of TestWebKitAPI for all
+        ports.
+
+        WebCore now uses WebCore_PRIVATE_INCLUDE_DIRECTORIES for all ports. Any includes
+        of WebCore headers using "*.h" were modified to <WebCore/*.h>
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h:
+        * DumpRenderTree/TestNetscapePlugIn/ForwardingHeaders/WebKit/npruntime.h:
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformWin.cmake:
+        * TestWebKitAPI/Tests/WebCore/AbortableTaskQueue.cpp:
+        * TestWebKitAPI/Tests/WebCore/gstreamer/GstMappedBuffer.cpp:
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
         Add support for parsing FairPlayStreaming PSSH boxes.

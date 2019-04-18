@@ -1,4 +1,4 @@
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
@@ -12,6 +12,13 @@ list(APPEND WebCore_SOURCES
     platform/graphics/freetype/SimpleFontDataFreeType.cpp
 
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
+)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/freetype/FcUniquePtr.h
+    platform/graphics/freetype/RefPtrFontconfig.h
+
+    platform/graphics/harfbuzz/HbUniquePtr.h
 )
 
 if (PORT STREQUAL "GTK")

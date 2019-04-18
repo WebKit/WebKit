@@ -3,7 +3,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
         ${CAIRO_INCLUDE_DIRS}
         "${WEBKIT_LIBRARIES_DIR}/include"
-        "${WEBCORE_DIR}/platform/graphics/cairo"
     )
     list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCURL.cpp

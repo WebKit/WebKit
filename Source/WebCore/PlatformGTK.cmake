@@ -3,6 +3,7 @@ include(platform/FreeType.cmake)
 include(platform/GCrypt.cmake)
 include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
+include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
 
 set(WebCore_OUTPUT_NAME WebCoreGTK)
@@ -11,10 +12,9 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 
     "platform/SourcesGLib.txt"
-    "platform/SourcesSoup.txt"
 )
 
-list(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}/ANGLE/"
     "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     "${WEBCORE_DIR}/accessibility/atk"
@@ -35,7 +35,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediastream/gstreamer"
     "${WEBCORE_DIR}/platform/mock/mediasource"
     "${WEBCORE_DIR}/platform/network/gtk"
-    "${WEBCORE_DIR}/platform/network/soup"
     "${WEBCORE_DIR}/platform/text/gtk"
 )
 
@@ -74,6 +73,23 @@ list(APPEND WebCorePlatformGTK_SOURCES
     rendering/RenderThemeGtk.cpp
 )
 
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/x11/PlatformDisplayX11.h
+    platform/graphics/x11/XErrorTrapper.h
+    platform/graphics/x11/XUniquePtr.h
+    platform/graphics/x11/XUniqueResource.h
+
+    platform/gtk/CompositionResults.h
+    platform/gtk/GRefPtrGtk.h
+    platform/gtk/GUniquePtrGtk.h
+    platform/gtk/GtkUtilities.h
+    platform/gtk/GtkVersioning.h
+    platform/gtk/PasteboardHelper.h
+    platform/gtk/SelectionData.h
+
+    platform/text/enchant/TextCheckerEnchant.h
+)
+
 list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsGtk.css
 )
@@ -88,7 +104,6 @@ set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/gtk/RenderTh
 
 list(APPEND WebCore_LIBRARIES
     ${ATK_LIBRARIES}
-    ${CAIRO_LIBRARIES}
     ${ENCHANT_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
@@ -96,7 +111,6 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_LIBRARIES}
     ${LIBSECCOMP_LIBRARIES}
     ${LIBSECRET_LIBRARIES}
-    ${LIBSOUP_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
     ${HYPHEN_LIBRARIES}
     ${UPOWERGLIB_LIBRARIES}
@@ -110,13 +124,11 @@ list(APPEND WebCore_LIBRARIES
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ATK_INCLUDE_DIRS}
-    ${CAIRO_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSECCOMP_INCLUDE_DIRS}
     ${LIBSECRET_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
     ${UPOWERGLIB_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
@@ -164,6 +176,10 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
 endif ()
 
 if (ENABLE_WAYLAND_TARGET)
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/wayland/PlatformDisplayWayland.h
+        platform/graphics/wayland/WlUniquePtr.h
+    )
     list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
         ${WAYLAND_INCLUDE_DIRS}
     )
@@ -191,6 +207,7 @@ target_link_libraries(WebCorePlatformGTK
 
 include_directories(
     ${WebCore_INCLUDE_DIRECTORIES}
+    ${WebCore_PRIVATE_INCLUDE_DIRECTORIES}
     "${WEBCORE_DIR}/bindings/gobject/"
 )
 

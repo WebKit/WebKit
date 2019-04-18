@@ -1,3 +1,41 @@
+2019-04-18  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WebCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182512
+        <rdar://problem/37510435>
+
+        Reviewed by Alex Christensen.
+
+        The header copying is moved to a target WebCorePrivateFrameworkHeaders. This target was
+        originally Windows only but now this is enabled for all CMake based ports.
+
+        Enumerated all headers within WebCore that are used for WebKit(Legacy), tools and
+        tests. Shared headers are within Headers.cmake while port and platform specific headers
+        are in their respective CMake files. Listing out all headers is preferred because globbing
+        will break the build whenever a file is added.
+
+        All include directories within the WebCore source tree are now PRIVATE. They were
+        modified to use WebCore_PRIVATE_INCLUDE_DIRECTORIES. They will not propagate to other targets
+        which will prevent erroneous includes in targets dependent on WebCore.
+
+        * CMakeLists.txt:
+        * Headers.cmake: Added.
+        * PlatformAppleWin.cmake:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformPlayStation.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * PlatformWinCairo.cmake:
+        * platform/Cairo.cmake:
+        * platform/Curl.cmake:
+        * platform/FreeType.cmake:
+        * platform/GStreamer.cmake:
+        * platform/HolePunch.cmake:
+        * platform/ImageDecoders.cmake:
+        * platform/Soup.cmake: Added.
+        * platform/TextureMapper.cmake:
+
 2019-04-18  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Implement API default values

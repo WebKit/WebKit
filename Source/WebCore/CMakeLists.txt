@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.12)
 
 include(WebKitCommon)
 include(WebCoreMacros.cmake)
+include(Headers.cmake)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebCore")
 
@@ -15,14 +16,14 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
     "Sources.txt"
 )
 
-set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}"
-)
-
 set(WebCore_INCLUDE_DIRECTORIES
-    "${WebCore_DERIVED_SOURCES_DIR}"
     "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
     "${PAL_FRAMEWORK_HEADERS_DIR}"
+)
+
+set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}"
+    "${WebCore_DERIVED_SOURCES_DIR}"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/applepay"
@@ -1143,7 +1144,7 @@ else ()
 endif ()
 
 if (ENABLE_GAMEPAD)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/Modules/gamepad"
     )
 
@@ -1488,7 +1489,7 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
         endif ()
     endif ()
 
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${ANGLE_FORWARDING_HEADERS_DIR}"
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
@@ -1650,39 +1651,39 @@ if (ENABLE_USER_MESSAGE_HANDLERS)
 endif ()
 
 if (USE_OPENVR)
-  list(APPEND WebCore_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/openvr/headers")
-  list(APPEND WebCore_INCLUDE_DIRECTORIES "${WEBCORE_DIR}/platform/vr/openvr")
+  list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/openvr/headers")
+  list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WEBCORE_DIR}/platform/vr/openvr")
   list(APPEND WebCore_LIBRARIES openvr_api)
 endif ()
 
 if (USE_WOFF2)
-  list(APPEND WebCore_INCLUDE_DIRECTORIES "${WOFF2DEC_INCLUDE_DIRS}")
+  list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${WOFF2DEC_INCLUDE_DIRS}")
   list(APPEND WebCore_LIBRARIES "${WOFF2DEC_LIBRARIES}")
 endif ()
 
 if (USE_XDGMIME)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/xdgmime/src")
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/xdgmime/src")
     list(APPEND WebCore_LIBRARIES xdgmime)
 endif ()
 
 if (USE_LIBWEBRTC)
-  list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
-      "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
-      "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
-  list(APPEND WebCore_LIBRARIES webrtc)
-  list(APPEND WebCore_SOURCES
-      Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp
-      Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp
-      )
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES "${THIRDPARTY_DIR}/libwebrtc/Source/"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/webrtc"
+        "${THIRDPARTY_DIR}/libwebrtc/Source/third_party/abseil-cpp")
+    list(APPEND WebCore_LIBRARIES webrtc)
+    list(APPEND WebCore_SOURCES
+        Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp
+        Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp
+    )
 endif ()
 
-set(WebCoreTestSupport_INCLUDE_DIRECTORIES
+set(WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/testing"
     "${WEBCORE_DIR}/testing/js"
@@ -1758,6 +1759,12 @@ set(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE ${WebCore_DERIVED_SOURCES_DIR}/Pai
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
+WEBKIT_MAKE_FORWARDING_HEADERS(WebCore
+    TARGET_NAME WebCorePrivateFrameworkHeaders
+    DESTINATION ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore
+    FILES ${WebCore_PRIVATE_FRAMEWORK_HEADERS}
+    FLATTENED
+)
 
 # Generate CommandLineAPIModuleSource.h
 add_custom_command(
@@ -2054,7 +2061,6 @@ list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XLinkNames.cpp)
 GENERATE_DOM_NAMES(XMLNS ${WEBCORE_DIR}/xml/xmlnsattrs.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNSNames.cpp)
 
-
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/XMLNames.cpp)
 
@@ -2067,10 +2073,10 @@ if (MSVC)
     WEBKIT_ADD_PRECOMPILED_HEADER("WebCorePrefix.h" "WebCorePrefix.cpp" WebCore_SOURCES)
 endif ()
 
-
 WEBKIT_FRAMEWORK(WebCore)
 
 add_dependencies(WebCore WebCoreBindings)
+add_dependencies(WebCorePrivateFrameworkHeaders WebCoreBindings)
 
 if (APPLE)
     set_target_properties(WebCore PROPERTIES LINK_FLAGS "-sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
@@ -2100,6 +2106,7 @@ endif ()
 add_library(WebCoreTestSupport ${WebCoreTestSupport_LIBRARY_TYPE} ${WebCoreTestSupport_SOURCES})
 add_dependencies(WebCoreTestSupport WebCore WebCoreTestSupportBindings)
 target_include_directories(WebCoreTestSupport PUBLIC ${WebCoreTestSupport_INCLUDE_DIRECTORIES} ${WebCore_INCLUDE_DIRECTORIES})
+target_include_directories(WebCoreTestSupport PRIVATE ${WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES} ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})
 target_include_directories(WebCoreTestSupport SYSTEM PUBLIC ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WebCoreTestSupport ${WebCoreTestSupport_LIBRARIES})
 

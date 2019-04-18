@@ -174,7 +174,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 
     list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/network/curl"
         "${WEBKIT_DIR}/NetworkProcess/curl"
         "${WEBKIT_DIR}/WebProcess/WebCoreSupport/curl"
     )

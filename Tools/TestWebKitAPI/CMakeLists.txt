@@ -21,7 +21,10 @@ set(TestWebKitAPI_DEPENDENCIES
 )
 
 if (ENABLE_WEBCORE)
-    list(APPEND TestWebKitAPI_DEPENDENCIES PALFrameworkHeaders)
+    list(APPEND TestWebKitAPI_DEPENDENCIES
+        PALFrameworkHeaders
+        WebCorePrivateFrameworkHeaders
+    )
 endif ()
 
 if (ENABLE_WEBKIT)

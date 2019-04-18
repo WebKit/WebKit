@@ -29,7 +29,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include <HWndDC.h>
+#include <WebCore/HWndDC.h>
 #include <cairo.h>
 #include <cstdio>
 #include <windows.h>

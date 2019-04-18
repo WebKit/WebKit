@@ -26,8 +26,8 @@
 
 #include "config.h"
 
-#include <AbortableTaskQueue.h>
-#include <Utilities.h>
+#include "Utilities.h"
+#include <WebCore/AbortableTaskQueue.h>
 #include <wtf/Threading.h>
 
 using namespace WebCore;

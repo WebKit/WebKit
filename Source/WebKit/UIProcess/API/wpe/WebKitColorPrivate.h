@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include "Color.h"
 #include "WebKitColor.h"
+#include <WebCore/Color.h>
 
 void webkitColorFillFromWebCoreColor(const WebCore::Color&, WebKitColor*);
 const WebCore::Color webkitColorToWebCoreColor(WebKitColor*);

@@ -29,9 +29,9 @@
 #if USE(GSTREAMER)
 
 #include "GStreamerTest.h"
-#include "SharedBuffer.h"
 #include "Test.h"
 #include <WebCore/GStreamerCommon.h>
+#include <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
 
