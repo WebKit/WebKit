@@ -1,3 +1,16 @@
+2019-04-17  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed test gardening for WinCairo port
+
+        Following tests expected to fail but passed constantly.
+
+        - css3/masking/clip-path-inset-corners.html
+        - fast/box-shadow/box-shadow-with-zero-radius.html
+        - storage/indexeddb/database-odd-names.html
+        - storage/indexeddb/lazy-index-population.html
+
+        * platform/wincairo/TestExpectations: Unmarked them.
+
 2019-04-17  Timothy Hatcher  <timothy@apple.com>
 
         Standardize the `<meta name="color-scheme">` separator.
