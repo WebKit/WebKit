@@ -1,3 +1,14 @@
+2019-04-18  Brent Fulgham  <bfulgham@apple.com>
+
+        InjectedBundle parameters often need initialization function called before unarchiving
+        https://bugs.webkit.org/show_bug.cgi?id=189709
+        <rdar://problem/44573653>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/cocoa/WebProcessPlugIn/WebProcessPlugIn.mm:
+        (-[WebProcessPlugIn additionalClassesForParameterCoder]): Added.
+
 2019-04-18  Zalan Bujtas  <zalan@apple.com>
 
         Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering
