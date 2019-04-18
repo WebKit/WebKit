@@ -1,3 +1,13 @@
+2019-04-18  Timothy Hatcher  <timothy@apple.com>
+
+        Unreviewed test gardening.
+
+        * css-dark-mode/older-systems/color-scheme-css-expected.txt: Rebaselined.
+        * css-dark-mode/older-systems/color-scheme-meta-expected.txt: Rebaselined.
+        * fast/css/style-enumerate-properties.html: Updated count to work on Windows.
+        * platform/mac-highsierra/css-dark-mode/prefers-color-scheme-picture-element-expected.txt: Removed.
+        * platform/mac-sierra/css-dark-mode/prefers-color-scheme-picture-element-expected.txt: Removed.
+
 2019-04-18  Shawn Roberts  <sroberts@apple.com>
 
         Unreviewed manual rollout of r244248 and r244409
