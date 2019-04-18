@@ -59,6 +59,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "FullscreenManager.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLMediaElement.h"
@@ -251,7 +252,7 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
         if (event.type() == eventNames().webkitfullscreenchangeEvent)
-            data->setBoolean("enabled"_s, !!node->document().webkitFullscreenElement());
+            data->setBoolean("enabled"_s, !!node->document().fullscreenManager().fullscreenElement());
 #endif // ENABLE(FULLSCREEN_API)
 
         auto timestamp = m_domAgent.m_environment.executionStopwatch()->elapsedTime().seconds();

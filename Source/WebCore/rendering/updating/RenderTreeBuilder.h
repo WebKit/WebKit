@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class RenderFullScreen;
 class RenderGrid;
 class RenderTreeUpdater;
 

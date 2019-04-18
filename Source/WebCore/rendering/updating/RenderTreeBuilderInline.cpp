@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeBuilderInline.h"
 
+#include "FullscreenManager.h"
 #include "RenderChildIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
@@ -272,9 +273,9 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     // that renderer is wrapped in a RenderFullScreen, so |this| is not its
     // parent. Since the splitting logic expects |this| to be the parent, set
     // |beforeChild| to be the RenderFullScreen.
-    const Element* fullScreenElement = parent.document().webkitCurrentFullScreenElement();
+    const Element* fullScreenElement = parent.document().fullscreenManager().currentFullscreenElement();
     if (fullScreenElement && beforeChild && beforeChild->node() == fullScreenElement)
-        beforeChild = parent.document().fullScreenRenderer();
+        beforeChild = parent.document().fullscreenManager().fullscreenRenderer();
 #endif
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.

@@ -35,6 +35,7 @@
 #include "DocumentTimeline.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "FullscreenManager.h"
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
@@ -2185,10 +2186,10 @@ static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& lay
 {
     auto& document = layer.renderer().document();
 
-    if (!document.webkitIsFullScreen() || !document.fullScreenRenderer())
+    if (!document.fullscreenManager().isFullscreen() || !document.fullscreenManager().fullscreenRenderer())
         return FullScreenDescendant::NotApplicable;
 
-    auto* fullScreenLayer = document.fullScreenRenderer()->layer();
+    auto* fullScreenLayer = document.fullscreenManager().fullscreenRenderer()->layer();
     if (!fullScreenLayer) {
         ASSERT_NOT_REACHED();
         return FullScreenDescendant::NotApplicable;

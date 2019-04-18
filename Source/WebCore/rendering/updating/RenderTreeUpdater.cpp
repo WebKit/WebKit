@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "DocumentTimeline.h"
 #include "Element.h"
+#include "FullscreenManager.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
@@ -376,7 +377,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     newRenderer->initializeStyle();
 
 #if ENABLE(FULLSCREEN_API)
-    if (m_document.webkitIsFullScreen() && m_document.webkitCurrentFullScreenElement() == &element) {
+    if (m_document.fullscreenManager().isFullscreen() && m_document.fullscreenManager().currentFullscreenElement() == &element) {
         newRenderer = RenderFullScreen::wrapNewRenderer(m_builder, WTFMove(newRenderer), insertionPosition.parent(), m_document);
         if (!newRenderer)
             return;

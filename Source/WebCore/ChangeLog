@@ -1,5 +1,155 @@
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
+        Refactoring: Pull all fullscreen code out of Document and into its own helper class
+        https://bugs.webkit.org/show_bug.cgi?id=197017
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSDefaultStyleSheets.cpp:
+        (WebCore::CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement):
+        * css/SelectorCheckerTestFunctions.h:
+        (WebCore::matchesFullScreenPseudoClass):
+        (WebCore::matchesFullScreenAnimatingFullScreenTransitionPseudoClass):
+        (WebCore::matchesFullScreenDocumentPseudoClass):
+        (WebCore::matchesFullScreenControlsHiddenPseudoClass):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::prepareForDestruction):
+        (WebCore::Document::nodeChildrenWillBeRemoved):
+        (WebCore::Document::nodeWillBeRemoved):
+        (WebCore::isAttributeOnAllOwners): Deleted.
+        (WebCore::Document::fullScreenIsAllowedForElement const): Deleted.
+        (WebCore::Document::requestFullScreenForElement): Deleted.
+        (WebCore::Document::webkitCancelFullScreen): Deleted.
+        (WebCore::Document::webkitExitFullscreen): Deleted.
+        (WebCore::Document::webkitFullscreenEnabled const): Deleted.
+        (WebCore::unwrapFullScreenRenderer): Deleted.
+        (WebCore::Document::webkitWillEnterFullScreen): Deleted.
+        (WebCore::Document::webkitDidEnterFullScreen): Deleted.
+        (WebCore::Document::webkitWillExitFullScreen): Deleted.
+        (WebCore::Document::webkitDidExitFullScreen): Deleted.
+        (WebCore::Document::setFullScreenRenderer): Deleted.
+        (WebCore::Document::dispatchFullScreenChangeEvents): Deleted.
+        (WebCore::Document::dispatchFullScreenChangeOrErrorEvent): Deleted.
+        (WebCore::Document::fullScreenElementRemoved): Deleted.
+        (WebCore::Document::adjustFullScreenElementOnNodeRemoval): Deleted.
+        (WebCore::Document::isAnimatingFullScreen const): Deleted.
+        (WebCore::Document::setAnimatingFullScreen): Deleted.
+        (WebCore::Document::areFullscreenControlsHidden const): Deleted.
+        (WebCore::Document::setFullscreenControlsHidden): Deleted.
+        (WebCore::Document::clearFullscreenElementStack): Deleted.
+        (WebCore::Document::popFullscreenElementStack): Deleted.
+        (WebCore::Document::pushFullscreenElementStack): Deleted.
+        (WebCore::Document::addDocumentToFullScreenChangeEventQueue): Deleted.
+        * dom/Document.h:
+        (WebCore::Document::fullscreenManager):
+        (WebCore::Document::webkitIsFullScreen const): Deleted.
+        (WebCore::Document::webkitFullScreenKeyboardInputAllowed const): Deleted.
+        (WebCore::Document::webkitCurrentFullScreenElement const): Deleted.
+        (WebCore::Document::webkitCurrentFullScreenElementForBindings const): Deleted.
+        (WebCore::Document::fullScreenRenderer const): Deleted.
+        (WebCore::Document::webkitFullscreenElement const): Deleted.
+        (WebCore::Document::webkitFullscreenElementForBindings const): Deleted.
+        * dom/Document.idl:
+        * dom/DocumentFullscreen.h:
+        (WebCore::DocumentFullscreen::webkitFullscreenEnabled):
+        (WebCore::DocumentFullscreen::webkitFullscreenElement):
+        (WebCore::DocumentFullscreen::webkitExitFullscreen):
+        (WebCore::DocumentFullscreen::webkitIsFullScreen):
+        (WebCore::DocumentFullscreen::webkitFullScreenKeyboardInputAllowed):
+        (WebCore::DocumentFullscreen::webkitCurrentFullScreenElement):
+        (WebCore::DocumentFullscreen::webkitCancelFullScreen):
+        * dom/DocumentFullscreen.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRequestFullscreen):
+        * dom/EventPath.cpp:
+        (WebCore::shouldEventCrossShadowBoundary):
+        * dom/FullscreenManager.cpp: Added.
+        (WebCore::isAttributeOnAllOwners):
+        (WebCore::FullscreenManager::FullscreenManager):
+        (WebCore::FullscreenManager::fullscreenIsAllowedForElement const):
+        (WebCore::FullscreenManager::requestFullscreenForElement):
+        (WebCore::FullscreenManager::cancelFullscreen):
+        (WebCore::FullscreenManager::requestExitFullscreen):
+        (WebCore::FullscreenManager::exitFullscreen):
+        (WebCore::FullscreenManager::isFullscreenEnabled const):
+        (WebCore::unwrapFullscreenRenderer):
+        (WebCore::FullscreenManager::willEnterFullscreen):
+        (WebCore::FullscreenManager::didEnterFullscreen):
+        (WebCore::FullscreenManager::willExitFullscreen):
+        (WebCore::FullscreenManager::didExitFullscreen):
+        (WebCore::FullscreenManager::setFullscreenRenderer):
+        (WebCore::FullscreenManager::dispatchFullscreenChangeEvents):
+        (WebCore::FullscreenManager::dispatchFullscreenChangeOrErrorEvent):
+        (WebCore::FullscreenManager::fullscreenElementRemoved):
+        (WebCore::FullscreenManager::adjustFullscreenElementOnNodeRemoval):
+        (WebCore::FullscreenManager::isAnimatingFullscreen const):
+        (WebCore::FullscreenManager::setAnimatingFullscreen):
+        (WebCore::FullscreenManager::areFullscreenControlsHidden const):
+        (WebCore::FullscreenManager::setFullscreenControlsHidden):
+        (WebCore::FullscreenManager::clear):
+        (WebCore::FullscreenManager::emptyEventQueue):
+        (WebCore::FullscreenManager::clearFullscreenElementStack):
+        (WebCore::FullscreenManager::popFullscreenElementStack):
+        (WebCore::FullscreenManager::pushFullscreenElementStack):
+        (WebCore::FullscreenManager::addDocumentToFullscreenChangeEventQueue):
+        * dom/FullscreenManager.h: Added.
+        (WebCore::FullscreenManager::document):
+        (WebCore::FullscreenManager::document const):
+        (WebCore::FullscreenManager::topDocument const):
+        (WebCore::FullscreenManager::page const):
+        (WebCore::FullscreenManager::frame const):
+        (WebCore::FullscreenManager::documentElement const):
+        (WebCore::FullscreenManager::hasLivingRenderTree const):
+        (WebCore::FullscreenManager::pageCacheState const):
+        (WebCore::FullscreenManager::scheduleFullStyleRebuild):
+        (WebCore::FullscreenManager::fullscreenElement const):
+        (WebCore::FullscreenManager::isFullscreen const):
+        (WebCore::FullscreenManager::isFullscreenKeyboardInputAllowed const):
+        (WebCore::FullscreenManager::currentFullscreenElement const):
+        (WebCore::FullscreenManager::fullscreenRenderer const):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isFullscreen const):
+        (WebCore::HTMLMediaElement::isStandardFullscreen const):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager const):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::isKeyEventAllowedInFullScreen const):
+        (WebCore::EventHandler::internalKeyEvent):
+        * page/Page.cpp:
+        (WebCore::Page::setFullscreenControlsHidden):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::wrapNewRenderer):
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::isDescendantOfFullScreenLayer):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::webkitWillEnterFullScreenForElement):
+        (WebCore::Internals::webkitDidEnterFullScreenForElement):
+        (WebCore::Internals::webkitWillExitFullScreenForElement):
+        (WebCore::Internals::webkitDidExitFullScreenForElement):
+        (WebCore::Internals::isAnimatingFullScreen const):
+
+2019-04-18  Jer Noble  <jer.noble@apple.com>
+
         Add support for parsing FairPlayStreaming PSSH boxes.
         https://bugs.webkit.org/show_bug.cgi?id=197064
 

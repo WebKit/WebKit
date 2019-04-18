@@ -37,6 +37,7 @@
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FullscreenManager.h"
 #include "GraphicsContext.h"
 #include "HTMLHeadingElement.h"
 #include "HTMLLIElement.h"
@@ -979,10 +980,10 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event& event)
         // video implementation without requiring them to implement their own full
         // screen behavior.
         if (document().settings().fullScreenEnabled()) {
-            if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == parentMediaElement(this))
-                document().webkitCancelFullScreen();
+            if (document().fullscreenManager().isFullscreen() && document().fullscreenManager().currentFullscreenElement() == parentMediaElement(this))
+                document().fullscreenManager().cancelFullscreen();
             else
-                document().requestFullScreenForElement(parentMediaElement(this).get(), Document::ExemptIFrameAllowFullScreenRequirement);
+                document().fullscreenManager().requestFullscreenForElement(parentMediaElement(this).get(), FullscreenManager::ExemptIFrameAllowFullscreenRequirement);
         } else
 #endif
             mediaController()->enterFullscreen();

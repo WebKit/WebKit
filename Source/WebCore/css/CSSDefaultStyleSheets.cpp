@@ -31,6 +31,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "FullscreenManager.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
@@ -268,7 +269,7 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(const Element& el
 #endif // ENABLE(MATHML)
 
 #if ENABLE(FULLSCREEN_API)
-    if (!fullscreenStyleSheet && element.document().webkitIsFullScreen()) {
+    if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {
         String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::singleton().extraFullScreenStyleSheet();
         fullscreenStyleSheet = parseUASheet(fullscreenRules);
         addToDefaultStyle(*fullscreenStyleSheet);

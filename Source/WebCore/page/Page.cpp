@@ -57,6 +57,7 @@
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "FullscreenManager.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
 #include "HistoryController.h"
@@ -2785,7 +2786,7 @@ void Page::setFullscreenControlsHidden(bool hidden)
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())
             continue;
-        frame->document()->setFullscreenControlsHidden(hidden);
+        frame->document()->fullscreenManager().setFullscreenControlsHidden(hidden);
     }
 #else
     UNUSED_PARAM(hidden);

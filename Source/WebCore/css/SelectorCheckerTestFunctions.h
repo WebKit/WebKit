@@ -27,6 +27,7 @@
 #pragma once
 
 #include "FocusController.h"
+#include "FullscreenManager.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "RenderScrollbar.h"
@@ -351,16 +352,16 @@ ALWAYS_INLINE bool matchesFullScreenPseudoClass(const Element& element)
     // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
     if (element.isFrameElementBase() && element.containsFullScreenElement())
         return true;
-    if (!element.document().webkitIsFullScreen())
+    if (!element.document().fullscreenManager().isFullscreen())
         return false;
-    return &element == element.document().webkitCurrentFullScreenElement();
+    return &element == element.document().fullscreenManager().currentFullscreenElement();
 }
 
 ALWAYS_INLINE bool matchesFullScreenAnimatingFullScreenTransitionPseudoClass(const Element& element)
 {
-    if (&element != element.document().webkitCurrentFullScreenElement())
+    if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
-    return element.document().isAnimatingFullScreen();
+    return element.document().fullscreenManager().isAnimatingFullscreen();
 }
 
 ALWAYS_INLINE bool matchesFullScreenAncestorPseudoClass(const Element& element)
@@ -372,16 +373,16 @@ ALWAYS_INLINE bool matchesFullScreenDocumentPseudoClass(const Element& element)
 {
     // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies
     // to all elements of that Document.
-    if (!element.document().webkitIsFullScreen())
+    if (!element.document().fullscreenManager().isFullscreen())
         return false;
     return true;
 }
 
 ALWAYS_INLINE bool matchesFullScreenControlsHiddenPseudoClass(const Element& element)
 {
-    if (&element != element.document().webkitCurrentFullScreenElement())
+    if (&element != element.document().fullscreenManager().currentFullscreenElement())
         return false;
-    return element.document().areFullscreenControlsHidden();
+    return element.document().fullscreenManager().areFullscreenControlsHidden();
 }
 #endif
 

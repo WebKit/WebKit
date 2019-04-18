@@ -140,18 +140,6 @@ typedef (
     XPathNSResolver createNSResolver(Node? nodeResolver);
     [MayThrowException] XPathResult evaluate(optional DOMString expression = "undefined", optional Node? contextNode, optional XPathNSResolver? resolver, optional unsigned short type = 0, optional XPathResult? inResult); // FIXME: Using "undefined" as default parameter value is wrong.
 
-    // Extensions from FullScreen API (https://fullscreen.spec.whatwg.org/#api).
-    // FIXME: Should probably be unprefixed.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitFullscreenEnabled;
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitFullscreenElementForBindings] readonly attribute Element? webkitFullscreenElement;
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] void webkitExitFullscreen();
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitIsFullScreen; // Mozilla version.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] readonly attribute boolean webkitFullScreenKeyboardInputAllowed; // Mozilla version.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen, ImplementedAs=webkitCurrentFullScreenElementForBindings] readonly attribute Element webkitCurrentFullScreenElement; // Mozilla version.
-    [Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] void webkitCancelFullScreen(); // Mozilla version.
-    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenchange;
-    [NotEnumerable, Conditional=FULLSCREEN_API, EnabledBySetting=FullScreen] attribute EventHandler onwebkitfullscreenerror;
-
     // Extensions from Pointer Lock API (https://www.w3.org/TR/pointerlock/#extensions-to-the-document-interface).
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
     [NotEnumerable, Conditional=POINTER_LOCK] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.

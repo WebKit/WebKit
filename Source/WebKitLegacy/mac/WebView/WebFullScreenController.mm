@@ -36,6 +36,7 @@
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/FullscreenManager.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/RenderLayer.h>
@@ -65,6 +66,7 @@ static IntRect screenRectOfContents(Element* element)
 - (void)_updateMenuAndDockForFullScreen;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
 - (Document*)_document;
+- (FullscreenManager*)_manager;
 - (void)_startEnterFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration;
 @end
@@ -237,8 +239,8 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
     _savedScale = [_webView _viewScaleFactor];
     [_webView _scaleWebView:1 atOrigin:NSMakePoint(0, 0)];
-    [self _document]->webkitWillEnterFullScreen(*_element);
-    [self _document]->setAnimatingFullScreen(true);
+    [self _manager]->willEnterFullscreen(*_element);
+    [self _manager]->setAnimatingFullscreen(true);
     [self _document]->updateLayout();
 
     _finalFrame = screenRectOfContents(_element.get());
@@ -271,8 +273,8 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
         // Screen updates to be re-enabled at the end of this block
         NSDisableScreenUpdates();
         ALLOW_DEPRECATED_DECLARATIONS_END
-        [self _document]->setAnimatingFullScreen(false);
-        [self _document]->webkitDidEnterFullScreen();
+        [self _manager]->setAnimatingFullscreen(false);
+        [self _manager]->didEnterFullscreen();
         
         NSRect windowBounds = [[self window] frame];
         windowBounds.origin = NSZeroPoint;
@@ -303,7 +305,7 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 {
     if (!_element)
         return;
-    _element->document().webkitCancelFullScreen();
+    _element->document().fullscreenManager().cancelFullscreen();
 }
 
 - (void)exitFullScreen
@@ -320,8 +322,8 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 
     _finalFrame = screenRectOfContents(_element.get());
 
-    [self _document]->webkitWillExitFullScreen();
-    [self _document]->setAnimatingFullScreen(true);
+    [self _manager]->willExitFullscreen();
+    [self _manager]->setAnimatingFullscreen(true);
 
     if (_isEnteringFullScreen)
         [self finishedEnterFullScreenAnimation:NO];
@@ -361,8 +363,8 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
     NSDisableScreenUpdates();
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    [self _document]->setAnimatingFullScreen(false);
-    [self _document]->webkitDidExitFullScreen();
+    [self _manager]->setAnimatingFullscreen(false);
+    [self _manager]->didExitFullscreen();
     [_webView _scaleWebView:_savedScale atOrigin:NSMakePoint(0, 0)];
 
     NSResponder *firstResponder = [[self window] firstResponder];
@@ -453,6 +455,11 @@ static void setClipRectForWindow(NSWindow *window, NSRect clipRect)
 - (Document*)_document 
 {
     return &_element->document();
+}
+
+- (FullscreenManager*)_manager
+{
+    return &_element->document().fullscreenManager();
 }
 
 - (void)_swapView:(NSView*)view with:(NSView*)otherView

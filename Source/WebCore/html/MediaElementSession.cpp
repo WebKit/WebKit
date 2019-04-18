@@ -33,6 +33,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "FullscreenManager.h"
 #include "HTMLAudioElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -481,7 +482,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 
 #if ENABLE(FULLSCREEN_API)
     // Elements which are not descendents of the current fullscreen element cannot be main content.
-    auto* fullscreenElement = m_element.document().webkitCurrentFullScreenElement();
+    auto* fullscreenElement = m_element.document().fullscreenManager().currentFullscreenElement();
     if (fullscreenElement && !m_element.isDescendantOf(*fullscreenElement)) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE: outside of full screen");
         return false;

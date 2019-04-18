@@ -37,6 +37,7 @@
 #include <WebCore/Element.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
@@ -150,7 +151,7 @@ void WebFullScreenManager::willEnterFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p willEnterFullScreen() - element %p", this, m_element.get());
 
-    m_element->document().webkitWillEnterFullScreen(*m_element);
+    m_element->document().fullscreenManager().willEnterFullscreen(*m_element);
 #if !PLATFORM(IOS_FAMILY)
     m_page->hidePageBanners();
 #endif
@@ -164,7 +165,7 @@ void WebFullScreenManager::didEnterFullScreen()
 {
     LOG(Fullscreen, "WebFullScreenManager %p didEnterFullScreen() - element %p", this, m_element.get());
 
-    m_element->document().webkitDidEnterFullScreen();
+    m_element->document().fullscreenManager().didEnterFullscreen();
 
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement();
@@ -182,7 +183,7 @@ void WebFullScreenManager::willExitFullScreen()
 #endif
 
     m_finalFrame = screenRectOfContents(m_element.get());
-    m_element->document().webkitWillExitFullScreen();
+    m_element->document().fullscreenManager().willExitFullscreen();
 #if !PLATFORM(IOS_FAMILY)
     m_page->showPageBanners();
 #endif
@@ -196,19 +197,19 @@ void WebFullScreenManager::didExitFullScreen()
     ASSERT(m_element);
     setFullscreenInsets(FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
-    m_element->document().webkitDidExitFullScreen();
+    m_element->document().fullscreenManager().didExitFullscreen();
 }
 
 void WebFullScreenManager::setAnimatingFullScreen(bool animating)
 {
     ASSERT(m_element);
-    m_element->document().setAnimatingFullScreen(animating);
+    m_element->document().fullscreenManager().setAnimatingFullscreen(animating);
 }
 
 void WebFullScreenManager::requestExitFullScreen()
 {
     ASSERT(m_element);
-    m_element->document().webkitCancelFullScreen();
+    m_element->document().fullscreenManager().cancelFullscreen();
 }
 
 void WebFullScreenManager::close()

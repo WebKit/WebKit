@@ -123,6 +123,7 @@ class FontFaceSet;
 class FormController;
 class Frame;
 class FrameView;
+class FullscreenManager;
 class HTMLAllCollection;
 class HTMLBodyElement;
 class HTMLCanvasElement;
@@ -162,7 +163,6 @@ class ProcessingInstruction;
 class QualifiedName;
 class Quirks;
 class Range;
-class RenderFullScreen;
 class RenderTreeBuilder;
 class RenderView;
 class RequestAnimationFrameCallback;
@@ -1175,42 +1175,8 @@ public:
     MediaCanStartListener* takeAnyMediaCanStartListener();
 
 #if ENABLE(FULLSCREEN_API)
-    bool webkitIsFullScreen() const { return m_fullScreenElement.get(); }
-    bool webkitFullScreenKeyboardInputAllowed() const { return m_fullScreenElement.get() && m_areKeysEnabledInFullScreen; }
-    Element* webkitCurrentFullScreenElement() const { return m_fullScreenElement.get(); }
-    Element* webkitCurrentFullScreenElementForBindings() const { return ancestorElementInThisScope(webkitCurrentFullScreenElement()); }
-
-    enum FullScreenCheckType {
-        EnforceIFrameAllowFullScreenRequirement,
-        ExemptIFrameAllowFullScreenRequirement,
-    };
-
-    void requestFullScreenForElement(Element*, FullScreenCheckType);
-    WEBCORE_EXPORT void webkitCancelFullScreen();
-    
-    WEBCORE_EXPORT void webkitWillEnterFullScreen(Element&);
-    WEBCORE_EXPORT void webkitDidEnterFullScreen();
-    WEBCORE_EXPORT void webkitWillExitFullScreen();
-    WEBCORE_EXPORT void webkitDidExitFullScreen();
-    
-    void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen&);
-    RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer.get(); }
-
-    void dispatchFullScreenChangeEvents();
-    bool fullScreenIsAllowedForElement(Element&) const;
-    void fullScreenElementRemoved();
-    void adjustFullScreenElementOnNodeRemoval(Node&, NodeRemoval = NodeRemoval::Node);
-
-    WEBCORE_EXPORT bool isAnimatingFullScreen() const;
-    WEBCORE_EXPORT void setAnimatingFullScreen(bool);
-
-    WEBCORE_EXPORT bool areFullscreenControlsHidden() const;
-    WEBCORE_EXPORT void setFullscreenControlsHidden(bool);
-
-    WEBCORE_EXPORT bool webkitFullscreenEnabled() const;
-    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : nullptr; }
-    Element* webkitFullscreenElementForBindings() const { return ancestorElementInThisScope(webkitFullscreenElement()); }
-    WEBCORE_EXPORT void webkitExitFullscreen();
+    FullscreenManager& fullscreenManager() { return m_fullscreenManager; }
+    const FullscreenManager& fullscreenManager() const { return m_fullscreenManager; }
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -1628,14 +1594,6 @@ private:
 
     template<CollectionType> Ref<HTMLCollection> ensureCachedCollection();
 
-#if ENABLE(FULLSCREEN_API)
-    void dispatchFullScreenChangeOrErrorEvent(Deque<RefPtr<Node>>&, const AtomicString& eventName, bool shouldNotifyMediaElement);
-    void clearFullscreenElementStack();
-    void popFullscreenElementStack();
-    void pushFullscreenElementStack(Element&);
-    void addDocumentToFullScreenChangeEventQueue(Document&);
-#endif
-
     void dispatchDisabledAdaptationsDidChangeForMainFrame();
 
     void setVisualUpdatesAllowed(ReadyState);
@@ -1851,18 +1809,7 @@ private:
     HashSet<MediaCanStartListener*> m_mediaCanStartListeners;
 
 #if ENABLE(FULLSCREEN_API)
-    RefPtr<Element> m_fullScreenElement;
-    Vector<RefPtr<Element>> m_fullScreenElementStack;
-    WeakPtr<RenderFullScreen> m_fullScreenRenderer { nullptr };
-    GenericTaskQueue<Timer> m_fullScreenTaskQueue;
-    Deque<RefPtr<Node>> m_fullScreenChangeEventTargetQueue;
-    Deque<RefPtr<Node>> m_fullScreenErrorEventTargetQueue;
-    LayoutRect m_savedPlaceholderFrameRect;
-    std::unique_ptr<RenderStyle> m_savedPlaceholderRenderStyle;
-
-    bool m_areKeysEnabledInFullScreen { false };
-    bool m_isAnimatingFullScreen { false };
-    bool m_areFullscreenControlsHidden { false };
+    UniqueRef<FullscreenManager> m_fullscreenManager;
 #endif
 
     HashSet<HTMLPictureElement*> m_viewportDependentPictures;

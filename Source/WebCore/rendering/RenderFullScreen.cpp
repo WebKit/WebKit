@@ -28,6 +28,7 @@
 
 #include "RenderFullScreen.h"
 
+#include "FullscreenManager.h"
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
@@ -99,7 +100,7 @@ RenderPtr<RenderFullScreen> RenderFullScreen::wrapNewRenderer(RenderTreeBuilder&
     builder.attach(fullscreenRenderer, WTFMove(renderer));
     fullscreenRenderer.setNeedsLayoutAndPrefWidthsRecalc();
 
-    document.setFullScreenRenderer(builder, fullscreenRenderer);
+    document.fullscreenManager().setFullscreenRenderer(builder, fullscreenRenderer);
 
     return newFullscreenRenderer;
 }
@@ -136,7 +137,7 @@ void RenderFullScreen::wrapExistingRenderer(RenderElement& renderer, Document& d
     builder.attach(fullscreenRenderer, WTFMove(toMove));
     fullscreenRenderer.setNeedsLayoutAndPrefWidthsRecalc();
 
-    document.setFullScreenRenderer(builder, fullscreenRenderer);
+    document.fullscreenManager().setFullscreenRenderer(builder, fullscreenRenderer);
 }
 
 void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)

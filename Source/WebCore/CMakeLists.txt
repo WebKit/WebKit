@@ -685,6 +685,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Document.idl
     dom/DocumentAndElementEventHandlers.idl
     dom/DocumentFragment.idl
+    dom/DocumentFullscreen.idl
     dom/DocumentOrShadowRoot.idl
     dom/DocumentTouch.idl
     dom/DocumentType.idl

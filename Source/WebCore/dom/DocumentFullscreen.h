@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,50 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebKitFullScreenListener.h"
-
-#import <WebCore/Element.h>
+#pragma once
 
 #if ENABLE(FULLSCREEN_API)
 
-#import <WebCore/FullscreenManager.h>
+#include "Document.h"
+#include "FullscreenManager.h"
+#include <wtf/Forward.h>
 
-using namespace WebCore;
+namespace WebCore {
 
-@implementation WebKitFullScreenListener
+class Document;
+class Element;
 
-- (id)initWithElement:(Element*)element
-{
-    if (!(self = [super init]))
-        return nil;
+class DocumentFullscreen {
+public:
+    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
+    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
+    static void webkitExitFullscreen(Document& document) { document.fullscreenManager().exitFullscreen(); }
+    static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
+    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
+    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }
+    static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
+};
 
-    _element = element;
-    return self;
 }
 
-- (void)webkitWillEnterFullScreen
-{
-    if (_element)
-        _element->document().fullscreenManager().willEnterFullscreen(*_element);
-}
-
-- (void)webkitDidEnterFullScreen
-{
-    if (_element)
-        _element->document().fullscreenManager().didEnterFullscreen();
-}
-
-- (void)webkitWillExitFullScreen
-{
-    if (_element)
-        _element->document().fullscreenManager().willExitFullscreen();
-}
-
-- (void)webkitDidExitFullScreen
-{
-    if (_element)
-        _element->document().fullscreenManager().didExitFullscreen();
-}
-
-@end
 #endif

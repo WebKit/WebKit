@@ -25,6 +25,7 @@
 #include "Event.h"
 #include "EventContext.h"
 #include "EventNames.h"
+#include "FullscreenManager.h"
 #include "HTMLSlotElement.h"
 #include "MouseEvent.h"
 #include "Node.h"
@@ -59,7 +60,7 @@ static inline bool shouldEventCrossShadowBoundary(Event& event, ShadowRoot& shad
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
     // detail that should not be detectable by the web content.
     if (is<Node>(target)) {
-        if (auto* element = downcast<Node>(target).document().webkitCurrentFullScreenElement()) {
+        if (auto* element = downcast<Node>(target).document().fullscreenManager().currentFullscreenElement()) {
             // FIXME: We assume that if the full screen element is a media element that it's
             // the video-only full screen. Both here and elsewhere. But that is probably wrong.
             if (element->isMediaElement() && shadowRoot.host() == element)
