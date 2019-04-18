@@ -1,3 +1,22 @@
+2019-04-18  Antti Koivisto  <antti@apple.com>
+
+        Tile update problems in iframe after scrolling page too soon after load
+        https://bugs.webkit.org/show_bug.cgi?id=197057
+        <rdar://problem/49913663>
+
+        Reviewed by Simon Fraser.
+
+        We end up destroying FrameHosting scrolling node when we shouldn't.
+
+        No test, despite attempts I couldn't get this state to stick. The problem is that in
+        most cases the destroying scrolling node gets immediately recreated and connected again.
+        Getting into testably buggy state requires some very specific layer tree configuration update.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::detachFromScrollingCoordinator):
+
+        Test the right thing.
+
 2019-04-18  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html

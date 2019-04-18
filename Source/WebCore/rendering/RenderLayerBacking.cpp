@@ -1850,7 +1850,7 @@ void RenderLayerBacking::detachFromScrollingCoordinator(OptionSet<ScrollCoordina
         m_scrollingNodeID = 0;
     }
 
-    if (roles.contains(ScrollCoordinationRole::Scrolling) && m_frameHostingNodeID) {
+    if (roles.contains(ScrollCoordinationRole::FrameHosting) && m_frameHostingNodeID) {
         LOG(Compositing, "Detaching FrameHosting node %" PRIu64, m_frameHostingNodeID);
         scrollingCoordinator->unparentChildrenAndDestroyNode(m_frameHostingNodeID);
         m_frameHostingNodeID = 0;
