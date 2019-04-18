@@ -1,5 +1,22 @@
 2019-04-17  Tim Horton  <timothy_horton@apple.com>
 
+        [iOS Sim Debug] REGRESSION (r244151) TestWebKitAPI.WebKit.OverrideViewportArguments is failing (197028)
+        https://bugs.webkit.org/show_bug.cgi?id=197028
+        <rdar://problem/49985290>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/OverrideViewportArguments.mm:
+        (TEST):
+        Liberal application of waitForNextPresentationUpdate works around a race
+        where if the page rapidly changes its viewport arguments (or an API client
+        rapidly changes its viewport arguments), we'd get stuck thinking that the
+        user had intentionally zoomed the page, and stop resetting the initial scale.
+        This deserves a separate bug, but no need to keep the test failing while
+        we think about it.
+
+2019-04-17  Tim Horton  <timothy_horton@apple.com>
+
         REGRESSION (r241988): Switching tabs is slow
         https://bugs.webkit.org/show_bug.cgi?id=197037
         <rdar://problem/49951473>

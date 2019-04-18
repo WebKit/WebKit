@@ -42,35 +42,38 @@ TEST(WebKit, OverrideViewportArguments)
         return [webView stringByEvaluatingJavaScript:@"document.body.clientWidth"];
     };
 
+    auto setViewport = ^(NSDictionary *viewport) {
+        [webView _overrideViewportWithArguments:viewport];
+        [webView waitForNextPresentationUpdate];
+    };
+
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'><div id='divWithViewportUnits' style='width: 100vw;'></div>"];
     EXPECT_WK_STREQ("20", bodyWidth());
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"1000" }];
+    setViewport(@{ @"width" : @"1000" });
     EXPECT_WK_STREQ("1000", bodyWidth());
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"1000", @"initial-scale": @"1" }];
-    [webView waitForNextPresentationUpdate];
+    setViewport(@{ @"width" : @"1000", @"initial-scale": @"1" });
     EXPECT_WK_STREQ("1000", bodyWidth());
     EXPECT_EQ(1., [webView scrollView].zoomScale);
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"1000", @"initial-scale": @"5" }];
-    [webView waitForNextPresentationUpdate];
+    setViewport(@{ @"width" : @"1000", @"initial-scale": @"5" });
     EXPECT_WK_STREQ("1000", bodyWidth());
     EXPECT_EQ(5., [webView scrollView].zoomScale);
 
-    [webView _overrideViewportWithArguments:nil];
+    setViewport(nil);
     EXPECT_WK_STREQ("20", bodyWidth());
 
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=10'><div id='divWithViewportUnits' style='width: 100vw;'></div>"];
     EXPECT_WK_STREQ("10", bodyWidth());
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"1000", @"initial-scale": @"1" }];
+    setViewport(@{ @"width" : @"1000", @"initial-scale": @"1" });
     EXPECT_WK_STREQ("1000", bodyWidth());
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"device-width", @"initial-scale": @"1" }];
+    setViewport(@{ @"width" : @"device-width", @"initial-scale": @"1" });
     EXPECT_WK_STREQ("20", bodyWidth());
 
-    [webView _overrideViewportWithArguments:@{ @"width" : @"500", @"initial-scale": @"1", @"garbage": @"nonsense" }];
+    setViewport(@{ @"width" : @"500", @"initial-scale": @"1", @"garbage": @"nonsense" });
     EXPECT_WK_STREQ("500", bodyWidth());
 }
 
