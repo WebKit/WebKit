@@ -344,6 +344,7 @@ typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration;
 - (double)_horizontalVelocity;
 - (double)_verticalVelocity;
+- (void)_flashScrollIndicatorsPersistingPreviousFlashes;
 @property (nonatomic, getter=isZoomEnabled) BOOL zoomEnabled;
 @property (nonatomic, readonly, getter=_isAnimatingZoom) BOOL isAnimatingZoom;
 @property (nonatomic, readonly, getter=_isAnimatingScroll) BOOL isAnimatingScroll;

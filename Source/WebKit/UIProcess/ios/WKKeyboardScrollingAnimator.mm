@@ -593,7 +593,11 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     if (_delegateRespondsToWillScroll)
         [_delegate keyboardScrollViewAnimatorWillScroll:self];
     [scrollView setContentOffset:contentOffsetDelta animated:animated];
+#if HAVE(UI_SCROLL_VIEW_INDICATOR_FLASHING_SPI)
+    [scrollView _flashScrollIndicatorsPersistingPreviousFlashes];
+#else
     [scrollView _flashScrollIndicatorsPersistingPreviousFlashes:YES];
+#endif
 }
 
 - (void)scrollWithScrollToExtentAnimationTo:(CGPoint)offset
