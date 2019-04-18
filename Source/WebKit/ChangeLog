@@ -1,3 +1,17 @@
+2019-04-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Update UIKit when a cut causes a selection change
+        https://bugs.webkit.org/show_bug.cgi?id=197047
+        <rdar://problem/36311563>
+
+        Reviewed by Wenson Hsieh.
+
+        We need to let UIKit know when a cut causes a selection change (always),
+        so that is can appropriately update the button on the keyboard bar.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cutForWebView:]):
+
 2019-04-18  Brent Fulgham  <bfulgham@apple.com>
 
         InjectedBundle parameters often need initialization function called before unarchiving

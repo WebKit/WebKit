@@ -3023,7 +3023,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)cutForWebView:(id)sender
 {
-    _page->executeEditCommand("cut"_s);
+    [self executeEditCommandWithCallback:@"cut"];
 }
 
 - (void)pasteForWebView:(id)sender
