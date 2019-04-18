@@ -1,3 +1,20 @@
+2019-04-18  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Improve detection of when web views go to background / foreground
+        https://bugs.webkit.org/show_bug.cgi?id=197035
+        <rdar://problem/45281182>
+
+        Reviewed by Tim Horton.
+
+        Improve detection of when web views go to background / foreground on iOS.
+
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker): Deleted.
+        (WebKit::ApplicationStateTracker::~ApplicationStateTracker): Deleted.
+        (WebKit::ApplicationStateTracker::applicationDidEnterBackground): Deleted.
+        (WebKit::ApplicationStateTracker::applicationDidFinishSnapshottingAfterEnteringBackground): Deleted.
+        (WebKit::ApplicationStateTracker::applicationWillEnterForeground): Deleted.
+
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Pull all fullscreen code out of Document and into its own helper class

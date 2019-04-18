@@ -105,11 +105,19 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     case ApplicationType::Application: {
         m_isInBackground = application.applicationState == UIApplicationStateBackground;
 
+#if HAVE(UISCENE)
+        m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UISceneDidEnterBackgroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
+#else
         m_didEnterBackgroundObserver = [notificationCenter addObserverForName:UIApplicationDidEnterBackgroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+#endif
             applicationDidEnterBackground();
         }];
 
+#if HAVE(UISCENE)
+        m_willEnterForegroundObserver = [notificationCenter addObserverForName:UISceneWillEnterForegroundNotification object:window.windowScene queue:nil usingBlock:[this](NSNotification *) {
+#else
         m_willEnterForegroundObserver = [notificationCenter addObserverForName:UIApplicationWillEnterForegroundNotification object:application queue:nil usingBlock:[this](NSNotification *) {
+#endif
             applicationWillEnterForeground();
         }];
         break;
