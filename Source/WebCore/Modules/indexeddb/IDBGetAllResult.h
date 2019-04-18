@@ -28,6 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyData.h"
+#include "IDBKeyPath.h"
 #include "IDBValue.h"
 #include "IndexedDB.h"
 
@@ -42,17 +43,10 @@ public:
     {
     }
 
-    IDBGetAllResult(IndexedDB::GetAllType type)
+    IDBGetAllResult(IndexedDB::GetAllType type, const Optional<IDBKeyPath>& keyPath)
         : m_type(type)
+        , m_keyPath(keyPath)
     {
-        switch (m_type) {
-        case IndexedDB::GetAllType::Keys:
-            m_results = Vector<IDBKeyData>();
-            break;
-        case IndexedDB::GetAllType::Values:
-            m_results = Vector<IDBValue>();
-            break;
-        }
     }
 
     enum IsolatedCopyTag { IsolatedCopy };
@@ -60,6 +54,7 @@ public:
     IDBGetAllResult isolatedCopy() const;
 
     IndexedDB::GetAllType type() const { return m_type; }
+    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     const Vector<IDBKeyData>& keys() const;
     const Vector<IDBValue>& values() const;
 
@@ -75,26 +70,15 @@ private:
     static void isolatedCopy(const IDBGetAllResult& source, IDBGetAllResult& destination);
 
     IndexedDB::GetAllType m_type { IndexedDB::GetAllType::Keys };
-    WTF::Variant<Vector<IDBKeyData>, Vector<IDBValue>, std::nullptr_t> m_results { nullptr };
+    Vector<IDBKeyData> m_keys;
+    Vector<IDBValue> m_values;
+    Optional<IDBKeyPath> m_keyPath;
 };
 
 template<class Encoder>
 void IDBGetAllResult::encode(Encoder& encoder) const
 {
-    encoder << m_type << static_cast<uint64_t>(m_results.index());
-
-    switch (m_results.index()) {
-    case 0:
-        encoder << WTF::get<Vector<IDBKeyData>>(m_results);
-        break;
-    case 1:
-        encoder << WTF::get<Vector<IDBValue>>(m_results);
-        break;
-    case 2:
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    encoder << m_type << m_keys << m_values << m_keyPath;
 }
 
 template<class Decoder>
@@ -103,32 +87,14 @@ bool IDBGetAllResult::decode(Decoder& decoder, IDBGetAllResult& result)
     if (!decoder.decode(result.m_type))
         return false;
 
-    uint64_t index;
-    if (!decoder.decode(index))
+    if (!decoder.decode(result.m_keys))
         return false;
 
-    switch (index) {
-    case 0: {
-        result.m_results = Vector<IDBKeyData>();
-        if (!decoder.decode(WTF::get<Vector<IDBKeyData>>(result.m_results)))
-            return false;
-        break;
-    }
-    case 1: {
-        result.m_results = Vector<IDBValue>();
-        Optional<Vector<IDBValue>> optional;
-        decoder >> optional;
-        if (!optional)
-            return false;
-        WTF::get<Vector<IDBValue>>(result.m_results) = WTFMove(*optional);
-        break;
-    }
-    case 2:
-        result.m_results = nullptr;
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+    if (!decoder.decode(result.m_values))
+        return false;
+    
+    if (!decoder.decode(result.m_keyPath))
+        return false;
 
     return true;
 }

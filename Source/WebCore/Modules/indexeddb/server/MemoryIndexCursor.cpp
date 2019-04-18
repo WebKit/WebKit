@@ -75,7 +75,7 @@ void MemoryIndexCursor::currentData(IDBGetResult& getResult)
         getResult = { m_currentKey, m_currentPrimaryKey };
     else {
         IDBValue value = { m_index.objectStore().valueForKey(m_currentPrimaryKey), { }, { }, { } };
-        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value) };
+        getResult = { m_currentKey, m_currentPrimaryKey, WTFMove(value), m_index.objectStore().info().keyPath() };
     }
 }
 

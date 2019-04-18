@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: line 44: runGetTest(): blob
+CONSOLE MESSAGE: line 44: runGetTest(): file
+CONSOLE MESSAGE: line 44: runGetTest(): imageData
+CONSOLE MESSAGE: line 44: runGetTest(): fileList
+CONSOLE MESSAGE: line 61: runGetAllTest()
+Test IndexedDB's IDBObjectStore auto-increment feature with more types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+PASS key is 1
+PASS request.result.primaryKey is blob.primaryKey
+PASS request.result.size is blob.size
+PASS request.result.type is blob.type
+PASS key is 2
+PASS request.result.primaryKey is file.primaryKey
+PASS request.result.name is file.name
+PASS request.result.lastModified is file.lastModified
+PASS request.result.size is file.size
+PASS request.result.type is file.type
+PASS key is 3
+PASS request.result.primaryKey is imageData.primaryKey
+PASS request.result.width is imageData.width
+PASS request.result.height is imageData.height
+PASS key is 4
+PASS request.result.primaryKey is fileList.primaryKey
+PASS request.result.length is fileList.length
+PASS request.result[0].primaryKey is blob.primaryKey
+PASS request.result[0].size is blob.size
+PASS request.result[0].type is blob.type
+PASS request.result[1].primaryKey is file.primaryKey
+PASS request.result[1].name is file.name
+PASS request.result[1].lastModified is file.lastModified
+PASS request.result[1].size is file.size
+PASS request.result[1].type is file.type
+PASS request.result[2].primaryKey is imageData.primaryKey
+PASS request.result[2].width is imageData.width
+PASS request.result[2].height is imageData.height
+PASS request.result[3].primaryKey is fileList.primaryKey
+PASS request.result[3].length is fileList.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

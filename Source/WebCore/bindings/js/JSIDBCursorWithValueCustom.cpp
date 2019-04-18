@@ -38,7 +38,8 @@ using namespace JSC;
 JSC::JSValue JSIDBCursorWithValue::value(JSC::ExecState& state) const
 {
     return cachedPropertyValue(state, *this, wrapped().valueWrapper(), [&] {
-        return deserializeIDBValueToJSValue(state, wrapped().value());
+        auto result = deserializeIDBValueWithKeyInjection(state, wrapped().value(), wrapped().primaryKey(), wrapped().primaryKeyPath());
+        return result ? result.value() : jsNull();
     });
 }
 

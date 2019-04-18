@@ -31,6 +31,7 @@
 
 #include "IDBBindingUtilities.h"
 
+#include "ExceptionCode.h"
 #include "IDBIndexInfo.h"
 #include "IDBKey.h"
 #include "IDBKeyData.h"
@@ -41,6 +42,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConvertDate.h"
 #include "JSDOMConvertNullable.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSFile.h"
 #include "Logging.h"
 #include "MessagePort.h"
@@ -324,6 +326,12 @@ bool injectIDBKeyIntoScriptValue(ExecState& exec, const IDBKeyData& keyData, JSV
     if (!key)
         return false;
 
+    // Do not set if object already has the correct property value.
+    auto jsKey = toJS(exec, *exec.lexicalGlobalObject(), key.get());
+    JSValue existingKey;
+    if (get(exec, parent, keyPathElements.last(), existingKey) && existingKey == jsKey)
+        return true;
+
     if (!set(exec, parent, keyPathElements.last(), toJS(exec, *exec.lexicalGlobalObject(), key.get())))
         return false;
 
@@ -411,9 +419,13 @@ JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, const 
     return toJS(*state, *globalObject, keyData.maybeCreateIDBKey().get());
 }
 
-static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info)
+static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, const IDBIndexInfo& info, Optional<IDBKeyPath> objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
     auto visitor = WTF::makeVisitor([&](const String& string) -> Vector<IDBKeyData> {
+        // Value doesn't contain auto-generated key, so we need to manually add key if it is possibly auto-generated.
+        if (objectStoreKeyPath && WTF::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(string) == objectStoreKeyPath.value())
+            return { objectStoreKey };
+
         auto idbKey = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, string);
         if (!idbKey)
             return { };
@@ -428,10 +440,14 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
     }, [&](const Vector<String>& vector) -> Vector<IDBKeyData> {
         Vector<IDBKeyData> keys;
         for (auto& entry : vector) {
-            auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, entry);
-            if (!key || !key->isValid())
-                return { };
-            keys.append(key.get());
+            if (objectStoreKeyPath && WTF::holds_alternative<String>(objectStoreKeyPath.value()) && IDBKeyPath(entry) == objectStoreKeyPath.value())
+                keys.append(objectStoreKey);
+            else {
+                auto key = internalCreateIDBKeyFromScriptValueAndKeyPath(exec, value, entry);
+                if (!key || !key->isValid())
+                    return { };
+                keys.append(key.get());
+            }
         }
         return keys;
     });
@@ -439,14 +455,29 @@ static Vector<IDBKeyData> createKeyPathArray(ExecState& exec, JSValue value, con
     return WTF::visit(visitor, info.keyPath());
 }
 
-void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue value, IndexKey& outKey)
+void generateIndexKeyForValue(ExecState& exec, const IDBIndexInfo& info, JSValue value, IndexKey& outKey, const Optional<IDBKeyPath>& objectStoreKeyPath, const IDBKeyData& objectStoreKey)
 {
-    auto keyDatas = createKeyPathArray(exec, value, info);
-
+    auto keyDatas = createKeyPathArray(exec, value, info, objectStoreKeyPath, objectStoreKey);
     if (keyDatas.isEmpty())
         return;
 
     outKey = IndexKey(WTFMove(keyDatas));
+}
+
+Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(ExecState& state, const IDBValue& value, const IDBKeyData& key, const Optional<IDBKeyPath>& keyPath)
+{
+    auto jsValue = deserializeIDBValueToJSValue(state, value);
+    if (jsValue.isUndefined() || !keyPath || !WTF::holds_alternative<String>(keyPath.value()) || !isIDBKeyPathValid(keyPath.value()))
+        return jsValue;
+
+    JSLockHolder locker(state.vm());
+    if (!injectIDBKeyIntoScriptValue(state, key, jsValue, keyPath.value())) {
+        auto throwScope = DECLARE_THROW_SCOPE(state.vm());
+        propagateException(state, throwScope, Exception(UnknownError, "Cannot inject key into script value"_s));
+        return WTF::nullopt;
+    }
+
+    return jsValue;
 }
 
 } // namespace WebCore

@@ -344,8 +344,10 @@ bool IDBCursor::setGetResult(IDBRequest& request, const IDBGetResult& getResult)
     m_primaryKeyData = getResult.primaryKeyData();
     m_primaryKey = m_primaryKeyData.maybeCreateIDBKey();
 
-    if (isKeyCursorWithValue())
+    if (isKeyCursorWithValue()) {
         m_value = getResult.value();
+        m_keyPath = getResult.keyPath();
+    }
 
     m_gotValue = true;
     return true;

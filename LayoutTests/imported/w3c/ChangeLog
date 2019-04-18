@@ -1,3 +1,17 @@
+2019-04-18  Sihui Liu  <sihui_liu@apple.com>
+
+        Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options
+        https://bugs.webkit.org/show_bug.cgi?id=196128
+        <rdar://problem/49562115>
+
+        Reviewed by Geoffrey Garen.
+
+        Updated test expectations to PASS.
+
+        * web-platform-tests/IndexedDB/nested-cloning-large-expected.txt:
+        * web-platform-tests/IndexedDB/nested-cloning-large-multiple-expected.txt:
+        * web-platform-tests/IndexedDB/nested-cloning-small-expected.txt:
+
 2019-04-18  Antoine Quint  <graouts@apple.com>
 
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html
