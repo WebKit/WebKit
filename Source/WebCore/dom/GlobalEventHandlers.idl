@@ -107,6 +107,18 @@
     attribute EventHandler onanimationstart;
     attribute EventHandler onanimationcancel;
 
+    // Event handlers from Pointer Events API (https://w3c.github.io/pointerevents/#extensions-to-the-globaleventhandlers-mixin)
+    attribute EventHandler ongotpointercapture;
+    attribute EventHandler onlostpointercapture;
+    attribute EventHandler onpointerdown;
+    attribute EventHandler onpointermove;
+    attribute EventHandler onpointerup;
+    attribute EventHandler onpointercancel;
+    attribute EventHandler onpointerover;
+    attribute EventHandler onpointerout;
+    attribute EventHandler onpointerenter;
+    attribute EventHandler onpointerleave;
+
     // Additions that are not yet part of the standard.
 
     [NotEnumerable] attribute EventHandler onsearch;

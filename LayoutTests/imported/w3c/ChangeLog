@@ -1,5 +1,14 @@
 2019-04-17  Antoine Quint  <graouts@apple.com>
 
+        [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_on_event_handlers.html
+        https://bugs.webkit.org/show_bug.cgi?id=197006
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/pointerevents/pointerevent_on_event_handlers-expected.txt: Added.
+
+2019-04-17  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events WPT] Update WPT tests and provide macOS testdriver
         https://bugs.webkit.org/show_bug.cgi?id=197011
         <rdar://problem/49976553>

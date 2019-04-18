@@ -120,6 +120,16 @@ PASS a["onanimationend"] is null
 PASS a["onanimationiteration"] is null
 PASS a["onanimationstart"] is null
 PASS a["onanimationcancel"] is null
+PASS a["ongotpointercapture"] is null
+PASS a["onlostpointercapture"] is null
+PASS a["onpointerdown"] is null
+PASS a["onpointermove"] is null
+PASS a["onpointerup"] is null
+PASS a["onpointercancel"] is null
+PASS a["onpointerover"] is null
+PASS a["onpointerout"] is null
+PASS a["onpointerenter"] is null
+PASS a["onpointerleave"] is null
 PASS a["namespaceURI"] is http://www.w3.org/1999/xhtml
 PASS a["prefix"] is null
 PASS a["localName"] is a
