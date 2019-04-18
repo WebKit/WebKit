@@ -855,7 +855,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!treeElement)
             return null;
 
-        const skipUnrevealed = false;
+        const skipUnrevealed = true;
         const stayWithin = null;
         const dontPopulate = true;
 
@@ -874,7 +874,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!treeElement)
             return null;
 
-        const skipUnrevealed = false;
+        const skipUnrevealed = true;
         const stayWithin = null;
         const dontPopulate = true;
 

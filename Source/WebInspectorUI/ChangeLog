@@ -1,5 +1,22 @@
 2019-04-18  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION (r244155): pressing down expands folders in trees
+        https://bugs.webkit.org/show_bug.cgi?id=197051
+        <rdar://problem/50006414>
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.selectionControllerPreviousSelectableItem):
+        (WI.TreeOutline.prototype.selectionControllerNextSelectableItem):
+        Skip hidden items when traversing the tree.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.ondelete):
+        Reveal all items about to be deleted so that the above change won't skip any siblings.
+
+2019-04-18  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Canvas: enable WebGL2 for inspector page
         https://bugs.webkit.org/show_bug.cgi?id=196932
         <rdar://problem/49916213>
