@@ -38,7 +38,6 @@ async function test(image) {
     const bufferB = device.createBuffer(bufferDescriptor);
     const bufferViewB = {
         buffer: bufferB,
-        offset: 0,
         rowPitch: image.width * 4,
         imageHeight: 0
     };
@@ -50,28 +49,14 @@ async function test(image) {
     };
     const textureDescriptor = {
         size: textureSize,
-        arrayLayerCount: 1,
-        mipLevelCount: 1,
-        sampleCount: 1,
-        dimension: "2d",
         format: "rgba8unorm",
         usage: GPUTextureUsage.TRANSFER_SRC | GPUTextureUsage.TRANSFER_DST
     };
     const textureA = device.createTexture(textureDescriptor);
-    const textureViewA = {
-        texture: textureA,
-        mipLevel: 0,
-        arrayLayer: 0,
-        origin: { x: 0, y: 0, z: 0 }
-    };
+    const textureViewA = { texture: textureA };
 
     const textureB = device.createTexture(textureDescriptor);
-    const textureViewB = {
-        texture: textureB,
-        mipLevel: 0,
-        arrayLayer: 0,
-        origin: { x: 0, y: 0, z: 0 }
-    };
+    const textureViewB = { texture: textureB };
 
     const readBufferDescriptor = {
         size: imageData.data.byteLength,
@@ -80,7 +65,6 @@ async function test(image) {
     const readBuffer = device.createBuffer(readBufferDescriptor);
     const readBufferView = {
         buffer: readBuffer,
-        offset: 0,
         rowPitch: image.width * 4,
         imageHeight: 0
     };

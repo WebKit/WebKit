@@ -77,7 +77,6 @@ function createInputStateDescriptor() {
         attributes: [{
             shaderLocation: 0,
             inputSlot: 0,
-            offset: 0,
             format: "float4"
         }, {
             shaderLocation: 1,
@@ -87,8 +86,7 @@ function createInputStateDescriptor() {
         }],
         inputs: [{
             inputSlot: 0,
-            stride: 4 * 5,
-            stepMode: "vertex"
+            stride: 4 * 5
         }]
     };
 }

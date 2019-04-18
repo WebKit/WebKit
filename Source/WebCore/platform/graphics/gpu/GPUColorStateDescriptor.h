@@ -38,7 +38,7 @@ struct GPUColorStateDescriptor {
 
     GPUBlendDescriptor alphaBlend;
     GPUBlendDescriptor colorBlend;
-    GPUColorWriteFlags writeMask;
+    GPUColorWriteFlags writeMask { static_cast<GPUColorWriteFlags>(GPUColorWriteBits::Flags::All) };
 };
 
 } // namespace WebCore

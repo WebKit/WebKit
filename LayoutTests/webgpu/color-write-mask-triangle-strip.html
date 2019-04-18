@@ -52,16 +52,8 @@ async function test() {
     const shaderModule = device.createShaderModule({ code: shaderCode });
     const colorStates = [{
         format: "bgra8unorm",
-        alphaBlend: {
-            srcFactor: "one",
-            dstFactor: "zero",
-            operation: "add"
-        },
-        colorBlend: {
-            srcFactor: "one",
-            dstFactor: "zero",
-            operation: "add"
-        },
+        alphaBlend: {},
+        colorBlend: {},
         writeMask: GPUColorWriteBits.GREEN | GPUColorWriteBits.ALPHA
     }];
     const pipeline = createBasicPipeline(shaderModule, device, colorStates);

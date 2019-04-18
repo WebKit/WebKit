@@ -28,5 +28,5 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUBindGroupLayoutDescriptor {
-    sequence<GPUBindGroupLayoutBinding> bindings;
+    required sequence<GPUBindGroupLayoutBinding> bindings;
 };

@@ -31,6 +31,6 @@ typedef unsigned long GPUBufferUsageFlags;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUBufferDescriptor {
-    u64 size;
-    GPUBufferUsageFlags usage;
+    required u64 size;
+    required GPUBufferUsageFlags usage;
 };

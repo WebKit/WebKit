@@ -28,8 +28,8 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUColor {
-    float r;
-    float g;
-    float b;
-    float a;
+    required float r;
+    required float g;
+    required float b;
+    required float a;
 };

@@ -38,7 +38,7 @@ typedef unsigned long long u64;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUVertexInputDescriptor {
-    u32 inputSlot;
-    u64 stride;
-    GPUInputStepMode stepMode;
+    required u32 inputSlot;
+    required u64 stride;
+    GPUInputStepMode stepMode = "vertex";
 };

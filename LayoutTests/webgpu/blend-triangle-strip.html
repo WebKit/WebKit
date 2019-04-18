@@ -52,17 +52,8 @@ async function test() {
 
     const colorStates = [{
         format: "bgra8unorm",
-        alphaBlend: {
-            srcFactor: "one",
-            dstFactor: "one",
-            operation: "add"
-        },
-        colorBlend: {
-            srcFactor: "one",
-            dstFactor: "one",
-            operation: "add"
-        },
-        writeMask: GPUColorWriteBits.ALL
+        alphaBlend: { dstFactor: "one" },
+        colorBlend: { dstFactor: "one" }
     }];
 
     const inputStateDescriptor = {
@@ -70,13 +61,11 @@ async function test() {
         attributes: [{
             shaderLocation: positionAttributeNum,
             inputSlot: 0,
-            offset: 0,
             format: "float4"
         }],
         inputs: [{
             inputSlot: 0,
-            stride: 4 * 4,
-            stepMode: "vertex"
+            stride: 4 * 4
         }]
     };
 

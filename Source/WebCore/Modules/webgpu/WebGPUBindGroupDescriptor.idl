@@ -28,6 +28,6 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUBindGroupDescriptor {
-    WebGPUBindGroupLayout layout;
-    sequence<WebGPUBindGroupBinding> bindings;
+    required WebGPUBindGroupLayout layout;
+    required sequence<WebGPUBindGroupBinding> bindings;
 };

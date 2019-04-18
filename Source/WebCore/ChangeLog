@@ -1,3 +1,58 @@
+2019-04-18  Justin Fan  <justin_fan@apple.com>
+
+        [Web GPU] Implement API default values
+        https://bugs.webkit.org/show_bug.cgi?id=197032
+
+        Reviewed by Myles C. Maxfield.
+
+        Add default values and 'required' qualifiers recently merged to the WebGPU API.
+
+        WebGPU tests specifying these default values have been updated to rely on them for functionality.
+
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl:
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.idl:
+        * Modules/webgpu/GPUBlendDescriptor.idl:
+        * Modules/webgpu/GPUBufferDescriptor.idl:
+        * Modules/webgpu/GPUColor.idl:
+        * Modules/webgpu/GPUColorStateDescriptor.idl:
+        * Modules/webgpu/GPUDepthStencilStateDescriptor.idl:
+        * Modules/webgpu/GPUExtent3D.idl:
+        * Modules/webgpu/GPUInputStateDescriptor.idl:
+        * Modules/webgpu/GPUOrigin3D.h:
+        * Modules/webgpu/GPUOrigin3D.idl:
+        * Modules/webgpu/GPURequestAdapterOptions.idl:
+        * Modules/webgpu/GPUTextureDescriptor.idl:
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl:
+        * Modules/webgpu/GPUVertexInputDescriptor.idl:
+        * Modules/webgpu/WebGPUBindGroupBinding.idl:
+        * Modules/webgpu/WebGPUBindGroupDescriptor.idl:
+        * Modules/webgpu/WebGPUBufferBinding.h:
+        * Modules/webgpu/WebGPUBufferBinding.idl:
+        * Modules/webgpu/WebGPUCommandEncoder.idl:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl:
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl:
+        * Modules/webgpu/WebGPUPipelineStageDescriptor.idl:
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.cpp:
+        (WebCore::WebGPURenderPipelineDescriptor::tryCreateGPURenderPipelineDescriptor const):
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.h:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl:
+        * platform/graphics/gpu/GPUBlendDescriptor.h:
+        * platform/graphics/gpu/GPUColorStateDescriptor.h:
+        * platform/graphics/gpu/GPUCommandBuffer.h:
+        * platform/graphics/gpu/GPUDepthStencilStateDescriptor.h:
+        * platform/graphics/gpu/GPURenderPassDescriptor.h:
+        * platform/graphics/gpu/GPURenderPipelineDescriptor.h:
+        (WebCore::GPURenderPipelineDescriptor::GPURenderPipelineDescriptor):
+        * platform/graphics/gpu/GPURequestAdapterOptions.h:
+        * platform/graphics/gpu/GPUTextureDescriptor.h:
+        * platform/graphics/gpu/GPUVertexAttributeDescriptor.h:
+        * platform/graphics/gpu/GPUVertexInputDescriptor.h:
+        * platform/graphics/gpu/cocoa/GPURenderPipelineMetal.mm:
+        (WebCore::convertRenderPipelineDescriptor):
+        (WebCore::trySetFunctionsForPipelineDescriptor):
+
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Pull all fullscreen code out of Document and into its own helper class

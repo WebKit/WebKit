@@ -108,11 +108,7 @@ function createFloat4Buffer(device, a, b, promises) {
 }
 
 function createBufferBinding(buffer) {
-    return {
-        buffer: buffer,
-        offset: 0,
-        size: vertexSize
-    };
+    return { buffer: buffer, size: vertexSize };
 }
 
 async function test() {
@@ -141,13 +137,11 @@ async function test() {
         attributes: [{
             shaderLocation: 0,
             inputSlot: 0,
-            offset: 0,
             format: "float4"
         }],
         inputs: [{
             inputSlot: 0,
-            stride: vertexSize,
-            stepMode: "vertex"
+            stride: vertexSize
         }]
     };
 

@@ -31,6 +31,6 @@ typedef (WebGPUSampler or WebGPUTextureView or WebGPUBufferBinding) WebGPUBindin
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUBindGroupBinding {
-    u32 binding;
-    WebGPUBindingResource resource;
+    required u32 binding;
+    required WebGPUBindingResource resource;
 };

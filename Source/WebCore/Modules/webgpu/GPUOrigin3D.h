@@ -30,9 +30,9 @@
 namespace WebCore {
 
 struct GPUOrigin3D {
-    unsigned x;
-    unsigned y;
-    unsigned z;
+    unsigned x { 0 };
+    unsigned y { 0 };
+    unsigned z { 0 };
 };
 
 } // namespace WebCore

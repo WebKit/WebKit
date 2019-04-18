@@ -37,16 +37,19 @@ Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateG
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 
     auto vertex = vertexStage.tryCreateGPUPipelineStageDescriptor();
-    auto fragment = fragmentStage.tryCreateGPUPipelineStageDescriptor();
 
-    if (!vertex || !fragment) {
+    Optional<GPUPipelineStageDescriptor> fragment;
+    if (fragmentStage)
+        fragment = fragmentStage->tryCreateGPUPipelineStageDescriptor();
+
+    if (!vertex || (fragmentStage && !fragment)) {
         LOG(WebGPU, "WebGPUDevice::createRenderPipeline(): Invalid GPUPipelineStageDescriptor!");
         return WTF::nullopt;
     }
 
     // FIXME: Web GPU validation, e.g. fail if colorStates is larger than (max number of supported color states).
 
-    return GPURenderPipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*vertex), WTFMove(*fragment), *this };
+    return GPURenderPipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*vertex), WTFMove(fragment), *this };
 }
 
 } // namespace WebCore

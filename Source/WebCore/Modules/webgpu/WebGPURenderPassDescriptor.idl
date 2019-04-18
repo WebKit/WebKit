@@ -29,12 +29,12 @@
     EnabledAtRuntime=WebGPU,
     ImplementedAs=WebGPURenderPassColorAttachmentDescriptor
 ] dictionary GPURenderPassColorAttachmentDescriptor {
-    WebGPUTextureView attachment;
+    required WebGPUTextureView attachment;
     // GPUTextureView? resolveTarget;
 
-    GPULoadOp loadOp;
-    GPUStoreOp storeOp;
-    GPUColor clearColor;
+    required GPULoadOp loadOp;
+    required GPUStoreOp storeOp;
+    GPUColor clearColor; // {r: 0.0, g: 0.0, b: 0.0, a: 1.0}
 };
 
 [
@@ -42,11 +42,11 @@
     EnabledAtRuntime=WebGPU,
     ImplementedAs=WebGPURenderPassDepthStencilAttachmentDescriptor
 ] dictionary GPURenderPassDepthStencilAttachmentDescriptor {
-    WebGPUTextureView attachment;
+    required WebGPUTextureView attachment;
 
-    GPULoadOp depthLoadOp;
-    GPUStoreOp depthStoreOp;
-    float clearDepth;
+    required GPULoadOp depthLoadOp;
+    required GPUStoreOp depthStoreOp;
+    required float clearDepth;
 
 /* Not yet implemented
     GPULoadOp stencilLoadOp;
@@ -59,6 +59,6 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPURenderPassDescriptor {
-    sequence<GPURenderPassColorAttachmentDescriptor> colorAttachments;
-    GPURenderPassDepthStencilAttachmentDescriptor? depthStencilAttachment;
+    required sequence<GPURenderPassColorAttachmentDescriptor> colorAttachments;
+    GPURenderPassDepthStencilAttachmentDescriptor? depthStencilAttachment = null;
 };

@@ -28,8 +28,8 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUDepthStencilStateDescriptor {
-    boolean depthWriteEnabled;
-    GPUCompareFunction depthCompare;
+    boolean depthWriteEnabled = false;
+    GPUCompareFunction depthCompare = "always";
 
 /* Not Yet Implemented
     GPUStencilStateFaceDescriptor stencilFront;

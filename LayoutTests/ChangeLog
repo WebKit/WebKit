@@ -1,3 +1,28 @@
+2019-04-18  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Implement API default values
+        https://bugs.webkit.org/show_bug.cgi?id=197032
+
+        Reviewed by Myles C. Maxfield.
+
+        Update WebGPU tests to use default values wherever applicable.
+
+        * webgpu/bind-groups.html:
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/blit-commands.html:
+        * webgpu/buffer-command-buffer-races.html:
+        * webgpu/buffer-resource-triangles.html:
+        * webgpu/color-write-mask-triangle-strip.html:
+        * webgpu/compute-squares.html:
+        * webgpu/depth-enabled-triangle-strip.html:
+        * webgpu/draw-indexed-triangles.html:
+        * webgpu/js/webgpu-functions.js:
+        (createBasicDepthTexture):
+        * webgpu/texture-triangle-strip.html:
+        * webgpu/textures-textureviews.html:
+        * webgpu/vertex-buffer-triangle-strip.html:
+        * webgpu/whlsl.html:
+
 2019-04-18  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options

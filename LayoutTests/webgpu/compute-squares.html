@@ -45,7 +45,7 @@ promise_test(async () => {
     const bgLayoutBinding = { binding: dataBinding, visibility: GPUShaderStageBit.COMPUTE, type: "storage-buffer" };
     const bgLayout = device.createBindGroupLayout({ bindings: [bgLayoutBinding] });
     
-    const bufferBinding = { buffer: dataBuffer, offset: 0, size: data.byteLength };
+    const bufferBinding = { buffer: dataBuffer, size: data.byteLength };
     const bgBinding = { binding: dataBinding, resource: bufferBinding };
     
     const bindGroupDescriptor = { layout: bgLayout, bindings: [bgBinding] };

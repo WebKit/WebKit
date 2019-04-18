@@ -28,5 +28,5 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUPipelineLayoutDescriptor {
-    sequence<WebGPUBindGroupLayout> bindGroupLayouts;
+    required sequence<WebGPUBindGroupLayout> bindGroupLayouts;
 };

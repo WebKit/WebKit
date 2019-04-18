@@ -53,7 +53,7 @@ struct GPURenderPipelineDescriptorBase {
 };
 
 struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
-    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, GPUPipelineStageDescriptor&& fragment, const GPURenderPipelineDescriptorBase& base)
+    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUPipelineStageDescriptor&& vertex, Optional<GPUPipelineStageDescriptor>&& fragment, const GPURenderPipelineDescriptorBase& base)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , GPURenderPipelineDescriptorBase(base)
         , vertexStage(WTFMove(vertex))
@@ -62,7 +62,7 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelin
     }
 
     GPUPipelineStageDescriptor vertexStage;
-    GPUPipelineStageDescriptor fragmentStage;
+    Optional<GPUPipelineStageDescriptor> fragmentStage;
 };
 
 } // namespace WebCore

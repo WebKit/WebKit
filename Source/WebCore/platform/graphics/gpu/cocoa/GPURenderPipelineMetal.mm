@@ -199,7 +199,8 @@ static Optional<WHLSL::RenderPipelineDescriptor> convertRenderPipelineDescriptor
             return WTF::nullopt;
     }
     whlslDescriptor.vertexEntryPointName = descriptor.vertexStage.entryPoint;
-    whlslDescriptor.fragmentEntryPointName = descriptor.fragmentStage.entryPoint;
+    if (descriptor.fragmentStage)
+        whlslDescriptor.fragmentEntryPointName = descriptor.fragmentStage->entryPoint;
     return whlslDescriptor;
 }
 
@@ -275,19 +276,23 @@ static bool trySetFunctionsForPipelineDescriptor(const char* const functionName,
     const auto& vertexStage = descriptor.vertexStage;
     const auto& fragmentStage = descriptor.fragmentStage;
 
-    if (vertexStage.module.ptr() == fragmentStage.module.ptr()) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195446 Allow WHLSL shaders to come from different programs.
-        const auto& whlslSource = vertexStage.module->whlslSource();
-        if (!whlslSource.isNull())
+    const auto& whlslSource = vertexStage.module->whlslSource();
+    if (!whlslSource.isNull()) {
+        if (!fragmentStage || vertexStage.module.ptr() == fragmentStage->module.ptr()) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195446 Allow WHLSL shaders to come from different programs.
             return trySetWHLSLFunctionsForPipelineDescriptor(functionName, mtlDescriptor, descriptor, whlslSource, device);
+        }
     }
 
     auto vertexLibrary = vertexStage.module->platformShaderModule();
     MTLLibrary *fragmentLibrary = nil;
-    if (!fragmentStage.entryPoint.isNull())
-        fragmentLibrary = fragmentStage.module->platformShaderModule();
+    String fragmentEntryPoint;
+    if (fragmentStage) {
+        fragmentLibrary = fragmentStage->module->platformShaderModule();
+        fragmentEntryPoint = fragmentStage->entryPoint;
+    }
 
-    return trySetMetalFunctionsForPipelineDescriptor(functionName, vertexLibrary, fragmentLibrary, mtlDescriptor, vertexStage.entryPoint, fragmentStage.entryPoint);
+    return trySetMetalFunctionsForPipelineDescriptor(functionName, vertexLibrary, fragmentLibrary, mtlDescriptor, vertexStage.entryPoint, fragmentEntryPoint);
 }
 
 static MTLVertexFormat mtlVertexFormatForGPUVertexFormat(GPUVertexFormat format)

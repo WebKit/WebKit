@@ -30,7 +30,7 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUOrigin3D {
-    u32 x;
-    u32 y;
-    u32 z;
+    u32 x = 0;
+    u32 y = 0;
+    u32 z = 0;
 };

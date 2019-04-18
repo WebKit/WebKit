@@ -30,9 +30,9 @@ typedef unsigned long GPUColorWriteFlags;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUColorStateDescriptor {
-    GPUTextureFormat format;
+    required GPUTextureFormat format;
 
-    GPUBlendDescriptor alphaBlend;
-    GPUBlendDescriptor colorBlend;
-    GPUColorWriteFlags writeMask;
+    required GPUBlendDescriptor alphaBlend;
+    required GPUBlendDescriptor colorBlend;
+    GPUColorWriteFlags writeMask; // GPUColorWriteBits.ALL
 };

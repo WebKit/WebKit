@@ -39,7 +39,7 @@ namespace WebCore {
 struct GPURenderPassColorAttachmentDescriptorBase {
     GPULoadOp loadOp;
     GPUStoreOp storeOp;
-    GPUColor clearColor;
+    GPUColor clearColor { 0, 0, 0, 1 };
 };
 
 struct GPURenderPassColorAttachmentDescriptor final : GPURenderPassColorAttachmentDescriptorBase {

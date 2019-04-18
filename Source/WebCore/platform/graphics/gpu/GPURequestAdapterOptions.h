@@ -27,6 +27,8 @@
 
 #if ENABLE(WEBGPU)
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 enum class GPUPowerPreference {
@@ -35,7 +37,7 @@ enum class GPUPowerPreference {
 };
 
 struct GPURequestAdapterOptions {
-    GPUPowerPreference powerPreference;
+    Optional<GPUPowerPreference> powerPreference;
 };
     
 } // namespace WebCore

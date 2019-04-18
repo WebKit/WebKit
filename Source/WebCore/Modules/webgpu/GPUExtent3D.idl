@@ -30,7 +30,7 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUExtent3D {
-    u32 width;
-    u32 height;
-    u32 depth;
+    required u32 width;
+    required u32 height;
+    required u32 depth;
 };

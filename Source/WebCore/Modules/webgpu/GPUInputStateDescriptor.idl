@@ -37,8 +37,8 @@ typedef unsigned long u32;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUInputStateDescriptor {
-    GPUIndexFormat indexFormat;
+    GPUIndexFormat? indexFormat;
 
-    sequence<GPUVertexAttributeDescriptor> attributes;
-    sequence<GPUVertexInputDescriptor> inputs;
+    required sequence<GPUVertexAttributeDescriptor> attributes;
+    required sequence<GPUVertexInputDescriptor> inputs;
 };

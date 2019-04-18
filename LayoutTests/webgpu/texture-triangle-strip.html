@@ -61,22 +61,18 @@ function createInputStateDescriptor() {
         attributes: [{
             shaderLocation: positionAttributeNum,
             inputSlot: positionBufferIndex,
-            offset: 0,
             format: "float4"
         }, {
             shaderLocation: texCoordsAttributeNum,
             inputSlot: texCoordsBufferIndex,
-            offset: 0,
             format: "float2"
         }],
         inputs: [{
             inputSlot: positionBufferIndex,
-            stride: 4 * 4,
-            stepMode: "vertex"
+            stride: 4 * 4
         }, {
             inputSlot: texCoordsBufferIndex,
-            stride: 4 * 2,
-            stepMode: "vertex"
+            stride: 4 * 2
         }]
     }
 }
@@ -142,10 +138,6 @@ async function test() {
 
     const textureDescriptor = {
         size: { width: image.width, height: image.height, depth: 1 },
-        arrayLayerCount: 1,
-        mipLevelCount: 1,
-        sampleCount: 1,
-        dimension: "2d",
         format: "rgba8unorm",
         usage: GPUTextureUsage.TRANSFER_DST | GPUTextureUsage.SAMPLED
     };
@@ -190,16 +182,10 @@ async function test() {
 
     const bufferCopyView = {
         buffer: textureBuffer,
-        offset: 0,
         rowPitch: image.width * 4,
         imageHeight: 0
     };
-    const textureCopyView = {
-        texture: texture,
-        mipLevel: 0,
-        arrayLayer: 0,
-        origin: { x: 0, y: 0, z: 0 }
-    };
+    const textureCopyView = { texture: texture };
     commandEncoder.copyBufferToTexture(bufferCopyView, textureCopyView, textureSize);
     const passEncoder = beginBasicRenderPass(swapChain, commandEncoder);
     passEncoder.setPipeline(pipeline);

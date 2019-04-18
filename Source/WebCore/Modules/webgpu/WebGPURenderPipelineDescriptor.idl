@@ -38,11 +38,11 @@
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
-    WebGPUPipelineStageDescriptor vertexStage;
-    WebGPUPipelineStageDescriptor fragmentStage;
+    required WebGPUPipelineStageDescriptor vertexStage;
+    WebGPUPipelineStageDescriptor? fragmentStage = null;
 
-    GPUPrimitiveTopology primitiveTopology;
-    sequence<GPUColorStateDescriptor> colorStates;
-    GPUDepthStencilStateDescriptor? depthStencilState;
-    GPUInputStateDescriptor inputState;
+    required GPUPrimitiveTopology primitiveTopology;
+    required sequence<GPUColorStateDescriptor> colorStates;
+    GPUDepthStencilStateDescriptor? depthStencilState = null;
+    required GPUInputStateDescriptor inputState;
 };

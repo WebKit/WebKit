@@ -39,11 +39,11 @@ typedef unsigned long GPUTextureUsageFlags;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUTextureDescriptor {
-    GPUExtent3D size;
-    u32 arrayLayerCount;
-    u32 mipLevelCount;
-    u32 sampleCount;
-    GPUTextureDimension dimension;
-    GPUTextureFormat format;
-    GPUTextureUsageFlags usage;
+    required GPUExtent3D size;
+    u32 arrayLayerCount = 1;
+    u32 mipLevelCount = 1;
+    u32 sampleCount = 1;
+    GPUTextureDimension dimension = "2d";
+    required GPUTextureFormat format;
+    required GPUTextureUsageFlags usage;
 };

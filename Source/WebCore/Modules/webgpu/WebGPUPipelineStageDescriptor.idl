@@ -30,6 +30,6 @@ typedef unsigned long WebGPUShaderStageEnum;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUPipelineStageDescriptor {
-    WebGPUShaderModule module;
-    DOMString entryPoint;
+    required WebGPUShaderModule module;
+    required DOMString entryPoint;
 };

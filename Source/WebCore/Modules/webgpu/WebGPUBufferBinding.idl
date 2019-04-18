@@ -30,7 +30,7 @@ typedef unsigned long long u64;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary WebGPUBufferBinding {
-    WebGPUBuffer buffer;
-    u64 offset;
-    u64 size;
+    required WebGPUBuffer buffer;
+    u64 offset = 0;
+    required u64 size;
 };

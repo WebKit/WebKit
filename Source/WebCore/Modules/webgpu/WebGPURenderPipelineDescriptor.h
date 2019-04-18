@@ -38,7 +38,7 @@ struct WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase, GPURenderP
     Optional<GPURenderPipelineDescriptor> tryCreateGPURenderPipelineDescriptor() const;
 
     WebGPUPipelineStageDescriptor vertexStage;
-    WebGPUPipelineStageDescriptor fragmentStage;
+    Optional<WebGPUPipelineStageDescriptor> fragmentStage;
 };
 
 } // namespace WebCore

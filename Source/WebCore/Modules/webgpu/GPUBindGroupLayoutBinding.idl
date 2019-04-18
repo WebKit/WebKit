@@ -43,7 +43,7 @@ typedef u32 GPUShaderStageFlags;
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] dictionary GPUBindGroupLayoutBinding {
-    u32 binding;
-    GPUShaderStageFlags visibility;
-    GPUBindingType type;
+    required u32 binding;
+    required GPUShaderStageFlags visibility;
+    required GPUBindingType type;
 };
