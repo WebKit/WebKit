@@ -1,3 +1,17 @@
+2019-04-18  Keith Rollin  <krollin@apple.com>
+
+        Move MiG .def files into their own "Copy files" build step
+        https://bugs.webkit.org/show_bug.cgi?id=196982
+
+        Reviewed by Alex Christensen.
+
+        WebKitLegacy's MiG files need to be processed differently from the
+        other files in the "Copy Headers" build phase, so move them into their
+        own "Copy Files" build phase. This arrangement removes them from any
+        post-processing performed on the main group of headers.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2019-04-17  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244386.
