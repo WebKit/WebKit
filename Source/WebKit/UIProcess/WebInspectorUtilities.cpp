@@ -61,14 +61,14 @@ String inspectorPageGroupIdentifierForPage(WebPageProxy* page)
     return makeString("__WebInspectorPageGroupLevel", inspectorLevelForPage(page), "__");
 }
 
-void trackInspectorPage(WebPageProxy* page)
+void trackInspectorPage(WebPageProxy* inspectorPage, WebPageProxy* inspectedPage)
 {
-    pageLevelMap().set(page, inspectorLevelForPage(page));
+    pageLevelMap().set(inspectorPage, inspectorLevelForPage(inspectedPage));
 }
 
-void untrackInspectorPage(WebPageProxy* page)
+void untrackInspectorPage(WebPageProxy* inspectorPage)
 {
-    pageLevelMap().remove(page);
+    pageLevelMap().remove(inspectorPage);
 }
 
 static WebProcessPool* s_mainInspectorProcessPool;

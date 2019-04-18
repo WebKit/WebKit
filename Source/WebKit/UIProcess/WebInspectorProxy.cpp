@@ -389,7 +389,7 @@ void WebInspectorProxy::createFrontendPage()
     if (!m_inspectorPage)
         return;
 
-    trackInspectorPage(m_inspectorPage);
+    trackInspectorPage(m_inspectorPage, m_inspectedPage);
 
     m_inspectorPage->process().addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_inspectedPage->pageID(), *this);
     m_inspectorPage->process().assumeReadAccessToBaseURL(*m_inspectorPage, WebInspectorProxy::inspectorBaseURL());
