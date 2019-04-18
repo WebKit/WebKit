@@ -1541,8 +1541,6 @@ public:
     
     void barrierStoreLoadFence(VM& vm)
     {
-        if (!Options::useConcurrentBarriers())
-            return;
         Jump ok = jumpIfMutatorFenceNotNeeded(vm);
         memoryFence();
         ok.link(this);

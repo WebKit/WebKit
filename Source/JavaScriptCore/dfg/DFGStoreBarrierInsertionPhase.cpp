@@ -478,13 +478,7 @@ private:
         if (clobbersExitState(m_graph, m_node))
             origin = origin.withInvalidExit();
         
-        NodeType type;
-        if (Options::useConcurrentBarriers())
-            type = FencedStoreBarrier;
-        else
-            type = StoreBarrier;
-        
-        m_insertionSet.insertNode(nodeIndex, SpecNone, type, origin, base);
+        m_insertionSet.insertNode(nodeIndex, SpecNone, FencedStoreBarrier, origin, base);
     }
     
     bool reallyInsertBarriers()

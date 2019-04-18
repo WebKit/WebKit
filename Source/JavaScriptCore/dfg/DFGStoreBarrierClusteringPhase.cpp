@@ -140,7 +140,7 @@ private:
                 CodeOrigin semanticOrigin = iter->semanticOrigin;
                 
                 NodeType type;
-                if (Options::useConcurrentBarriers() && iter == m_neededBarriers.begin())
+                if (iter == m_neededBarriers.begin())
                     type = FencedStoreBarrier;
                 else
                     type = StoreBarrier;
