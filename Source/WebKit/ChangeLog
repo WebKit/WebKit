@@ -1,3 +1,37 @@
+2019-04-18  Zalan Bujtas  <zalan@apple.com>
+
+        Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering
+        https://bugs.webkit.org/show_bug.cgi?id=196948
+        <rdar://problem/49927131>
+
+        Reviewed by Tim Horton.
+
+        Move intrinsicContentSizeDidChange out of DrawingArea. Intrinsic content size is a layout concept and
+        after r244291 there's no reason to have it in DrawingArea.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didUpdateGeometry):
+        (WebKit::DrawingAreaProxy::intrinsicContentSizeDidChange): Deleted.
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeIntrinsicContentSize):
+        (WebKit::WebPageProxy::setViewLayoutSize):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::intrinsicContentSizeDidChange): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateIntrinsicContentSizeIfNeeded):
+        (WebKit::WebPage::dispatchDidReachLayoutMilestone):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded): Deleted.
+
 2019-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r244299.

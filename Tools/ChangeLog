@@ -1,3 +1,20 @@
+2019-04-18  Zalan Bujtas  <zalan@apple.com>
+
+        Regression (r244291): Broken API Test AutoLayoutRenderingProgressRelativeOrdering
+        https://bugs.webkit.org/show_bug.cgi?id=196948
+        <rdar://problem/49927131>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/AutoLayoutIntegration.mm:
+        (TEST): 
+        The expected order of incoming events is
+        1. didInvalidateIntrinsicContentSize
+        2. didFirstLayout
+        At setRenderingProgressDidChange, we already check if didInvalidateIntrinsicContentSize comes in first.
+        However it's not guaranteed that the milestone event is delayed until after TestWebKitAPI::Util::run() is finished
+        (and remember, all we care about is ordering).
+
 2019-04-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r244299.

@@ -1555,6 +1555,8 @@ private:
 
     bool shouldDispatchUpdateAfterFocusingElement(const WebCore::Element&) const;
 
+    void updateIntrinsicContentSizeIfNeeded();
+
     uint64_t m_pageID;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -1894,6 +1896,7 @@ private:
 #if PLATFORM(COCOA)
     WeakPtr<RemoteObjectRegistry> m_remoteObjectRegistry;
 #endif
+    WebCore::IntSize m_lastSentIntrinsicContentSize;
 };
 
 } // namespace WebKit

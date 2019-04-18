@@ -278,26 +278,6 @@ void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& s
 {
 }
 
-void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeIfNeeded()
-{
-    if (!m_webPage.viewLayoutSize().width())
-        return;
-
-    FrameView* frameView = m_webPage.mainFrameView();
-    if (!frameView)
-        return;
-
-    if (frameView->needsLayout())
-        return;
-
-    IntSize contentSize = frameView->autoSizingIntrinsicContentSize();
-    if (m_lastSentIntrinsicContentSize == contentSize)
-        return;
-
-    m_lastSentIntrinsicContentSize = contentSize;
-    send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
-}
-
 void TiledCoreAnimationDrawingArea::setShouldScaleViewToFitDocument(bool shouldScaleView)
 {
     if (m_shouldScaleViewToFitDocument == shouldScaleView)
@@ -461,8 +441,6 @@ void TiledCoreAnimationDrawingArea::flushLayers(FlushType flushType)
 
         m_webPage.updateRendering();
         m_webPage.flushPendingEditorStateUpdate();
-
-        updateIntrinsicContentSizeIfNeeded();
 
         if (m_pendingRootLayer) {
             setRootCompositingLayer(m_pendingRootLayer.get());

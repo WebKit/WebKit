@@ -174,7 +174,7 @@ TEST(WebKit, AutoLayoutIntegration)
     [webView _setShouldExpandContentToViewHeightForAutoLayout:NO];
 }
 
-TEST(WebKit, DISABLED_AutoLayoutRenderingProgressRelativeOrdering)
+TEST(WebKit, AutoLayoutRenderingProgressRelativeOrdering)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
@@ -199,7 +199,6 @@ TEST(WebKit, DISABLED_AutoLayoutRenderingProgressRelativeOrdering)
     [webView setExpectedIntrinsicContentSize:NSMakeSize(100, 400)];
     [webView loadHTMLString:@"<body style='margin: 0; height: 400px;'></body>" baseURL:nil];
     TestWebKitAPI::Util::run(&didInvalidateIntrinsicContentSize);
-    EXPECT_FALSE(didFirstLayout);
     TestWebKitAPI::Util::run(&didFirstLayout);
     TestWebKitAPI::Util::run(&didFinishNavigation);
     [webView setNavigationDelegate:nil];

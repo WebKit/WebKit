@@ -789,7 +789,6 @@ public:
     NSView *inspectorAttachmentView();
     _WKRemoteObjectRegistry *remoteObjectRegistry();
 
-    void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize);
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const;
 #endif // PLATFORM(MAC)
 
@@ -1714,6 +1713,7 @@ private:
     void didDestroyNotification(uint64_t notificationID);
 
     void didChangeContentSize(const WebCore::IntSize&);
+    void didChangeIntrinsicContentSize(const WebCore::IntSize&);
 
 #if ENABLE(INPUT_TYPE_COLOR)
     void showColorPicker(const WebCore::Color& initialColor, const WebCore::IntRect&, Vector<WebCore::Color>&&);
