@@ -74,6 +74,10 @@ public:
     static const AtomicString& skdName();
     static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsSkd(const SharedBuffer&);
     static RefPtr<SharedBuffer> sanitizeSkd(const SharedBuffer&);
+
+    static const AtomicString& cencName();
+    static Optional<Vector<Ref<SharedBuffer>>> extractKeyIDsCenc(const SharedBuffer&);
+    static RefPtr<SharedBuffer> sanitizeCenc(const SharedBuffer&);
 };
 
 }

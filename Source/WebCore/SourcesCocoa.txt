@@ -225,6 +225,7 @@ platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm @no-unify
 platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm @no-unify
 platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp @no-unify
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp @no-unify
+platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp
 platform/graphics/avfoundation/MediaPlaybackTargetMac.mm @no-unify
 platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp @no-unify
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm @no-unify

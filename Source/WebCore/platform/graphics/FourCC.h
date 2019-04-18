@@ -30,6 +30,7 @@
 namespace WebCore {
 
 struct FourCC {
+    FourCC() = default;
     FourCC(uint32_t value) : value(value) { }
 
     template<std::size_t N>
@@ -45,7 +46,7 @@ struct FourCC {
     bool operator==(const FourCC& other) const { return value == other.value; }
     bool operator!=(const FourCC& other) const { return value != other.value; }
 
-    uint32_t value;
+    uint32_t value { 0 };
 };
 
 }

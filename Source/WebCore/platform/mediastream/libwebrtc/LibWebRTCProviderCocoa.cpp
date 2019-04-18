@@ -31,6 +31,7 @@
 #include <webrtc/media/engine/webrtcvideodecoderfactory.h>
 #include <webrtc/media/engine/webrtcvideoencoderfactory.h>
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
+#include <wtf/MainThread.h>
 #include <wtf/darwin/WeakLinking.h>
 
 namespace WebCore {

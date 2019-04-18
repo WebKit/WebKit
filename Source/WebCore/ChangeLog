@@ -1,3 +1,42 @@
+2019-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Add support for parsing FairPlayStreaming PSSH boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=197064
+
+        Reviewed by Eric Carlson.
+
+        API Tests: ISO.ISOFairPlayStreamingPsshBox
+
+        Add a new set of ISOBox classes for parsing the contents of a FairPlayStreaming PSSH box,
+        and add support for this new box to CDMFairPlayStreaming.
+
+        Drive-by fix: add an explicit include for MainThread.h to LibWebRTCProviderCocoa.cpp.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/FourCC.h:
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::cencName):
+        (WebCore::fairPlaySystemID):
+        (WebCore::extractSchemeAndKeyIdFromCenc):
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsCenc):
+        (WebCore::CDMPrivateFairPlayStreaming::sanitizeCenc):
+        (WebCore::validInitDataTypes):
+        (WebCore::CDMFactory::platformRegisterFactories):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.cpp: Added.
+        (WebCore::ISOFairPlayStreamingPsshBox::fairPlaySystemID):
+        (WebCore::ISOFairPlayStreamingInfoBox::parse):
+        (WebCore::ISOFairPlayStreamingKeyRequestInfoBox::parse):
+        (WebCore::ISOFairPlayStreamingKeyAssetIdBox::parse):
+        (WebCore::ISOFairPlayStreamingKeyContextBox::parse):
+        (WebCore::ISOFairPlayStreamingKeyVersionListBox::parse):
+        (WebCore::ISOFairPlayStreamingKeyRequestBox::parse):
+        (WebCore::ISOFairPlayStreamingInitDataBox::parse):
+        (WebCore::ISOFairPlayStreamingPsshBox::parse):
+        * platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.h: Added.
+        * platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp:
+
 2019-04-18  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options

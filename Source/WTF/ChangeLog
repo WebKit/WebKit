@@ -1,3 +1,12 @@
+2019-04-18  Jer Noble  <jer.noble@apple.com>
+
+        Add support for parsing FairPlayStreaming PSSH boxes.
+        https://bugs.webkit.org/show_bug.cgi?id=197064
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Platform.h:
+
 2019-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] StringBuilder should set correct m_is8Bit flag when merging

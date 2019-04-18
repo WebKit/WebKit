@@ -27,6 +27,7 @@
 
 #include "Test.h"
 #include <JavaScriptCore/DataView.h>
+#include <WebCore/ISOFairPlayStreamingPsshBox.h>
 #include <WebCore/ISOProtectionSchemeInfoBox.h>
 #include <WebCore/ISOSchemeInformationBox.h>
 #include <WebCore/ISOSchemeTypeBox.h>
@@ -71,6 +72,41 @@ TEST(ISOBox, ISOProtectionSchemeInfoBox)
 
     Vector<uint8_t> defaultIV = {0xD5, 0xFB, 0xD6, 0xB8, 0x2E, 0xD9, 0x3E, 0x4E, 0xF9, 0x8A, 0xE4, 0x09, 0x31, 0xEE, 0x33, 0xB7};
     ASSERT_EQ(defaultIV, trackEncryptionBox->defaultConstantIV());
+}
+
+static const char* base64EncodedPsshWithAssetId = "AAAAqHBzc2gAAAAAlM6G+wf/T0OtuJPS+paMogAAAIgAAACIZnBzZAAAABBmcHNpAAAAAGNlbmMAAAA4ZnBzawAAABhma3JpAAAAAAAAAAAAAAAAAAAAAQAAABhma2FpAAAAAAAAAAAAAAAAAAAA8QAAADhmcHNrAAAAGGZrcmkAAAAAAAAAAAAAAAAAAAACAAAAGGZrYWkAAAAAAAAAAAAAAAAAAADy";
+
+TEST(ISOBox, ISOFairPlayStreamingPsshBox)
+{
+    Vector<uint8_t> psshArray;
+    ASSERT_TRUE(base64Decode(StringView(base64EncodedPsshWithAssetId), psshArray));
+    ASSERT_EQ(168UL, psshArray.size());
+
+    auto view = JSC::DataView::create(ArrayBuffer::create(psshArray.data(), psshArray.size()), 0, psshArray.size());
+
+    ISOFairPlayStreamingPsshBox psshBox;
+
+    ASSERT_TRUE(psshBox.read(view));
+
+    auto infoBox = psshBox.initDataBox().info();
+    ASSERT_EQ(FourCC('cenc'), infoBox.scheme());
+
+    auto requests = psshBox.initDataBox().requests();
+    ASSERT_EQ(2UL, requests.size());
+
+    Vector<uint8_t, 16> expectedFirstKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+    ASSERT_EQ(requests[0].requestInfo().keyID(), expectedFirstKeyID);
+
+    Vector<uint8_t> expectedFirstAssetID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xF1 };
+    ASSERT_TRUE(requests[0].assetID());
+    ASSERT_EQ(requests[0].assetID().value().data(), expectedFirstAssetID);
+
+    Vector<uint8_t, 16> expectedSecondKeyID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2 };
+    ASSERT_EQ(requests[1].requestInfo().keyID(), expectedSecondKeyID);
+
+    Vector<uint8_t> expectedSecondAssetID = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xF2 };
+    ASSERT_TRUE(requests[1].assetID());
+    ASSERT_EQ(requests[1].assetID().value().data(), expectedSecondAssetID);
 }
 
 }
