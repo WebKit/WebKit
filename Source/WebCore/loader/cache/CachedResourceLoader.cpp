@@ -806,7 +806,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frame() && frame()->page() && m_documentLoader && type != CachedResource::Type::LinkPrefetch) {
+    if (frame() && frame()->page() && m_documentLoader) {
         const auto& resourceRequest = request.resourceRequest();
         auto* page = frame()->page();
         auto results = page->userContentProvider().processContentRuleListsForLoad(resourceRequest.url(), toResourceType(type), *m_documentLoader);

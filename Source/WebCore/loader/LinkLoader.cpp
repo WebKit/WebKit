@@ -276,17 +276,8 @@ void LinkLoader::prefetchIfNeeded(const LinkRelAttribute& relAttribute, const UR
         m_cachedLinkResource->removeClient(*this);
         m_cachedLinkResource = nullptr;
     }
-    // FIXME: Add further prefetch restrictions/limitations:
-    // - third-party iframes cannot trigger prefetches
-    // - Number of prefetches of a given page is limited (to 1 maybe?)
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
-    options.certificateInfoPolicy = CertificateInfoPolicy::IncludeCertificateInfo;
-    options.credentials = FetchOptions::Credentials::SameOrigin;
-    options.redirect = FetchOptions::Redirect::Manual;
-    options.mode = FetchOptions::Mode::Navigate;
-    options.serviceWorkersMode = ServiceWorkersMode::None;
-    options.cachingPolicy = CachingPolicy::DisallowCaching;
     m_cachedLinkResource = document.cachedResourceLoader().requestLinkResource(type, CachedResourceRequest(ResourceRequest(document.completeURL(href)), options, priority)).value_or(nullptr);
     if (m_cachedLinkResource)
         m_cachedLinkResource->addClient(*this);

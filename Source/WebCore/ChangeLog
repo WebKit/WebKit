@@ -1,3 +1,19 @@
+2019-04-18  Shawn Roberts  <sroberts@apple.com>
+
+        Unreviewed manual rollout of r244248 and r244409
+        Causing assertion failures on Mac WK2 Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=195623
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::prefetchIfNeeded):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+        * loader/ResourceLoadInfo.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+
 2019-04-18  Antti Koivisto  <antti@apple.com>
 
         Tile update problems in iframe after scrolling page too soon after load
