@@ -1,5 +1,13 @@
 2019-04-18  Antoine Quint  <graouts@apple.com>
 
+        [Mac] Unreviewed test gardening.
+
+        The test imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html is flaky on bots.
+
+        * platform/mac/TestExpectations:
+
+2019-04-18  Antoine Quint  <graouts@apple.com>
+
         [Pointer Events WPT] Unskip imported/w3c/web-platform-tests/pointerevents/pointerevent_lostpointercapture_for_disconnected_node.html
         https://bugs.webkit.org/show_bug.cgi?id=197004
 

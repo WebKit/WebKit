@@ -1883,3 +1883,4 @@ webkit.org/b/197005 imported/w3c/web-platform-tests/pointerevents/pointerevent_l
 webkit.org/b/197008 imported/w3c/web-platform-tests/pointerevents/pointerevent_suppress_compat_events_on_drag_mouse.html [ Pass Failure ]
 webkit.org/b/197007 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_coordinates_when_locked.html [ Skip ]
 webkit.org/b/197009 imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_invalid_pointerid.html [ Failure Pass ]
+webkit.org/b/197058 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Failure Pass ]
