@@ -220,7 +220,7 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
         unsigned length = m_length.unsafeGet();
         if (newCapacity > length) {
             if (!length) {
-                LChar* nullPlaceholder = 0;
+                LChar* nullPlaceholder = nullptr;
                 allocateBuffer(nullPlaceholder, newCapacity);
             } else if (m_string.is8Bit())
                 allocateBuffer(m_string.characters8(), newCapacity);
@@ -273,7 +273,7 @@ CharType* StringBuilder::appendUninitializedSlow(unsigned requiredLength)
         reallocateBuffer<CharType>(expandedCapacity(capacity(), requiredLength));
     } else {
         ASSERT(m_string.length() == m_length.unsafeGet<unsigned>());
-        allocateBuffer(m_length ? m_string.characters<CharType>() : 0, expandedCapacity(capacity(), requiredLength));
+        allocateBuffer(m_length ? m_string.characters<CharType>() : nullptr, expandedCapacity(capacity(), requiredLength));
     }
     if (UNLIKELY(hasOverflowed()))
         return nullptr;
@@ -310,7 +310,7 @@ void StringBuilder::append(const UChar* characters, unsigned length)
             allocateBufferUpConvert(m_buffer->characters8(), expandedCapacity(capacity(), requiredLength.unsafeGet()));
         } else {
             ASSERT(m_string.length() == m_length.unsafeGet<unsigned>());
-            allocateBufferUpConvert(m_string.isNull() ? 0 : m_string.characters8(), expandedCapacity(capacity(), requiredLength.unsafeGet()));
+            allocateBufferUpConvert(m_string.isNull() ? nullptr : m_string.characters8(), expandedCapacity(capacity(), requiredLength.unsafeGet()));
         }
         if (UNLIKELY(hasOverflowed()))
             return;

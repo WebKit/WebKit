@@ -99,6 +99,21 @@ TEST(StringBuilderTest, Append)
     ASSERT_EQ(3U, builderForUChar32Append.length());
     const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), 'A' };
     expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builderForUChar32Append);
+    {
+        StringBuilder builder;
+        StringBuilder builder2;
+        UChar32 frakturAChar = 0x1D504;
+        const UChar data[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
+        builder2.append(data, 2);
+        ASSERT_EQ(2U, builder2.length());
+        String result2 = builder2.toString();
+        ASSERT_EQ(2U, result2.length());
+        builder.append(builder2);
+        builder.append(data, 2);
+        ASSERT_EQ(4U, builder.length());
+        const UChar resultArray[] = { U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar), U16_LEAD(frakturAChar), U16_TRAIL(frakturAChar) };
+        expectBuilderContent(String(resultArray, WTF_ARRAY_LENGTH(resultArray)), builder);
+    }
 }
 
 TEST(StringBuilderTest, ToString)

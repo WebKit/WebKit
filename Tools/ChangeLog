@@ -1,3 +1,13 @@
+2019-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] StringBuilder should set correct m_is8Bit flag when merging
+        https://bugs.webkit.org/show_bug.cgi?id=197053
+
+        Reviewed by Saam Barati.
+
+        * TestWebKitAPI/Tests/WTF/StringBuilder.cpp:
+        (TestWebKitAPI::TEST):
+
 2019-04-17  Tim Horton  <timothy_horton@apple.com>
 
         [iOS Sim Debug] REGRESSION (r244151) TestWebKitAPI.WebKit.OverrideViewportArguments is failing (197028)

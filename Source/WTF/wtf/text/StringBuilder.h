@@ -115,6 +115,7 @@ public:
         if (!m_length && !m_buffer && !other.m_string.isNull()) {
             m_string = other.m_string;
             m_length = other.m_length;
+            m_is8Bit = other.m_is8Bit;
             return;
         }
 
@@ -312,7 +313,7 @@ public:
     {
         ASSERT(m_is8Bit);
         if (!m_length)
-            return 0;
+            return nullptr;
         if (!m_string.isNull())
             return m_string.characters8();
         ASSERT(m_buffer);
@@ -323,7 +324,7 @@ public:
     {
         ASSERT(!m_is8Bit);
         if (!m_length)
-            return 0;
+            return nullptr;
         if (!m_string.isNull())
             return m_string.characters16();
         ASSERT(m_buffer);
@@ -337,7 +338,7 @@ public:
         m_length = 0;
         m_string = String();
         m_buffer = nullptr;
-        m_bufferCharacters8 = 0;
+        m_bufferCharacters8 = nullptr;
         m_is8Bit = true;
     }
 
