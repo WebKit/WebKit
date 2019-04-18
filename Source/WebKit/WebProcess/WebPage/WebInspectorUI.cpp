@@ -53,6 +53,9 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
 {
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setImageBitmapOffscreenCanvasEnabled(true);
+#if ENABLE(WEBGL2)
+    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(true);
+#endif
 }
 
 void WebInspectorUI::establishConnection(uint64_t inspectedPageIdentifier, bool underTest, unsigned inspectionLevel)

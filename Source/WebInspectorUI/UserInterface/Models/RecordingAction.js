@@ -160,12 +160,20 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
     static _prototypeForType(type)
     {
-        if (type === WI.Recording.Type.Canvas2D)
+        switch (type) {
+        case WI.Recording.Type.Canvas2D:
             return CanvasRenderingContext2D.prototype;
-        if (type === WI.Recording.Type.CanvasBitmapRenderer)
-            return ImageBitmapRenderingContext.prototype;
-        if (type === WI.Recording.Type.CanvasWebGL)
-            return WebGLRenderingContext.prototype;
+        case WI.Recording.Type.CanvasBitmapRenderer:
+            if (window.ImageBitmapRenderingContext)
+                return ImageBitmapRenderingContext.prototype;
+            break;
+        case WI.Recording.Type.CanvasWebGL:
+            if (window.WebGLRenderingContext)
+                return WebGLRenderingContext.prototype;
+            break;
+        }
+
+        WI.reportInternalError("Unknown recording type: " + type);
         return null;
     }
 
@@ -211,7 +219,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
             if (context instanceof CanvasRenderingContext2D)
                 return context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
 
-            if (context instanceof WebGLRenderingContext || (window.WebGL2RenderingContext && context instanceof WebGL2RenderingContext)) {
+            if ((window.WebGLRenderingContext && context instanceof WebGLRenderingContext) || (window.WebGL2RenderingContext && context instanceof WebGL2RenderingContext)) {
                 let pixels = new Uint8Array(context.drawingBufferWidth * context.drawingBufferHeight * 4);
                 context.readPixels(0, 0, context.canvas.width, context.canvas.height, context.RGBA, context.UNSIGNED_BYTE, pixels);
                 return pixels;

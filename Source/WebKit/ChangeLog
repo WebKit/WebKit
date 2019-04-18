@@ -1,3 +1,14 @@
+2019-04-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: enable WebGL2 for inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=196932
+        <rdar://problem/49916213>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/WebPage/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::WebInspectorUI):
+
 2019-04-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: InspectorFrontendHost::inspectionLevel returns wrong value for inspector3
