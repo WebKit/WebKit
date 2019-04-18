@@ -36,11 +36,6 @@
     RetainPtr<id <WKWebProcessPlugIn>> _testPlugIn;
 }
 
-- (NSArray *)additionalClassesForParameterCoder
-{
-    return @[@"MockContentFilterEnabler"];
-}
-
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController initializeWithObject:(id)initializationObject
 {
     NSString *testPlugInClassName = [plugInController.parameters valueForKey:TestWebKitAPI::Util::TestPlugInClassNameParameter];

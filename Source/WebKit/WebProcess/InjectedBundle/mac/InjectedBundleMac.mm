@@ -73,28 +73,6 @@ static NSEventModifierFlags currentModifierFlags(id self, SEL _cmd)
 }
 #endif
 
-void InjectedBundle::decodeBundleParameters(API::Data* bundleParameterDataPtr)
-{
-    if (!bundleParameterDataPtr)
-        return;
-
-    auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(bundleParameterDataPtr->bytes())) length:bundleParameterDataPtr->size() freeWhenDone:NO]);
-    
-    auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
-    
-    NSDictionary *dictionary = nil;
-    @try {
-        dictionary = [unarchiver.get() decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
-        ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
-    } @catch (NSException *exception) {
-        LOG_ERROR("Failed to decode bundle parameters: %@", exception);
-        return;
-    }
-    
-    ASSERT(!m_bundleParameters || m_bundleParameters.get());
-    m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
-}
-
 bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, API::Object* initializationUserData)
 {
     if (m_sandboxExtension) {
@@ -142,6 +120,23 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
         }
     }
 
+    if (parameters.bundleParameterData) {
+        auto bundleParameterData = adoptNS([[NSData alloc] initWithBytesNoCopy:const_cast<void*>(static_cast<const void*>(parameters.bundleParameterData->bytes())) length:parameters.bundleParameterData->size() freeWhenDone:NO]);
+
+        auto unarchiver = secureUnarchiverFromData(bundleParameterData.get());
+
+        NSDictionary *dictionary = nil;
+        @try {
+            dictionary = [unarchiver.get() decodeObjectOfClass:[NSObject class] forKey:@"parameters"];
+            ASSERT([dictionary isKindOfClass:[NSDictionary class]]);
+        } @catch (NSException *exception) {
+            LOG_ERROR("Failed to decode bundle parameters: %@", exception);
+        }
+
+        ASSERT(!m_bundleParameters);
+        m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:dictionary]);
+    }
+    
 #if ENABLE(WEBPROCESS_WINDOWSERVER_BLOCKING)
     // Swizzle [NSEvent modiferFlags], since it always returns 0 when the WindowServer is blocked.
     Method method = class_getClassMethod([NSEvent class], @selector(modifierFlags));
@@ -154,7 +149,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
     // First check to see if the bundle has a WKBundleInitialize function.
     if (initializeFunction) {
         initializeFunction(toAPI(this), toAPI(initializationUserData));
-        decodeBundleParameters(parameters.bundleParameterData.get());
         return true;
     }
 
@@ -178,11 +172,6 @@ bool InjectedBundle::initialize(const WebProcessCreationParameters& parameters, 
 
     WKWebProcessPlugInController* plugInController = WebKit::wrapper(*this);
     [plugInController _setPrincipalClassInstance:instance];
-
-    if ([instance respondsToSelector:@selector(additionalClassesForParameterCoder)])
-        [plugInController extendClassesForParameterCoder:[instance additionalClassesForParameterCoder]];
-
-    decodeBundleParameters(parameters.bundleParameterData.get());
 
     if ([instance respondsToSelector:@selector(webProcessPlugIn:initializeWithObject:)]) {
         RetainPtr<id> objCInitializationUserData;
@@ -266,15 +255,13 @@ void InjectedBundle::setBundleParameters(const IPC::DataReference& value)
 
     NSDictionary *parameters = nil;
     @try {
-        parameters = [unarchiver decodeObjectOfClasses:classesForCoder() forKey:@"parameters"];
+        parameters = [unarchiver decodeObjectOfClass:[NSDictionary class] forKey:@"parameters"];
     } @catch (NSException *exception) {
         LOG_ERROR("Failed to decode bundle parameter: %@", exception);
     }
 
     if (!parameters)
         return;
-
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION([parameters isKindOfClass:[NSDictionary class]]);
 
     if (!m_bundleParameters) {
         m_bundleParameters = adoptNS([[WKWebProcessBundleParameters alloc] initWithDictionary:parameters]);
