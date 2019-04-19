@@ -156,6 +156,10 @@ set(WTF_LIBRARY_TYPE SHARED)
 set(PAL_LIBRARY_TYPE STATIC)
 set(WebKitLegacy_LIBRARY_TYPE SHARED)
 
+if (NOT ENABLE_UNIFIED_BUILDS AND WebCore_LIBRARY_TYPE MATCHES STATIC)
+    set(WebCore_LIBRARY_TYPE OBJECT)
+endif ()
+
 find_package(ICU REQUIRED)
 
 # If <winsock2.h> is not included before <windows.h> redefinition errors occur

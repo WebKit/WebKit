@@ -2113,7 +2113,7 @@ target_link_libraries(WebCoreTestSupport ${WebCoreTestSupport_LIBRARIES})
 if (WebCoreTestSupport_OUTPUT_NAME)
     set_target_properties(WebCoreTestSupport PROPERTIES OUTPUT_NAME ${WebCoreTestSupport_OUTPUT_NAME})
     if (MSVC)
-        add_compile_options(/GF- /WX-)
+        add_compile_options(/WX-)
     endif ()
 endif ()
 
