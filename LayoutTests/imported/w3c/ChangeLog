@@ -1,3 +1,28 @@
+2019-04-19  Antoine Quint  <graouts@apple.com>
+
+        [Pointer Events WPT] Provide iOS testdriver
+        https://bugs.webkit.org/show_bug.cgi?id=197101
+        <rdar://problem/50044834>
+
+        Reviewed by Dean Jackson.
+
+        Add support for the "none" action source and for the "touch" pointer type. This allows us to run the touch-specific
+        WPT tests for Pointer Events and add some baseline expectations for those tests.
+
+        * web-platform-tests/pointerevents/pointerevent_change-touch-action-onpointerdown_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_pointercancel_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_pointerleave_after_pointercancel_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_pointerout_after_pointercancel_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_releasepointercapture_onpointercancel_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_touch-action-auto-css_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_touch-action-inherit_highest-parent-none_touch-expected.txt: Added.
+        * web-platform-tests/pointerevents/pointerevent_touch-action-pan-x-pan-y_touch-expected.txt: Added.
+        * web-platform-tests/resources/testdriver-vendor.js:
+        (logDebug): Take a callback so that we don't run code for the purpose of logging unless we're in debug mode.
+        (dispatchMouseActions):
+        (dispatchTouchActions): Use testRunner.runUIScript() to compile an event stream based on the input from the WPT tests.
+        (window.test_driver_internal.action_sequence): Handle the "none" source to insert "pause" commands in the pointer source.
+
 2019-04-18  Sihui Liu  <sihui_liu@apple.com>
 
         Blob type cannot be stored correctly in IDB when IDBObjectStore has autoIncrement and keyPath options

@@ -1,0 +1,15 @@
+pointercancel test
+
+Warning: this test works properly only for devices that have touchscreen
+
+Test Description: This test checks if pointercancel event triggers.
+Start touch over the black rectangle and then move your finger to scroll the page.
+
+
+Pointer Events pointercancel Tests
+
+The following pointer types were detected: touch.
+
+
+FAIL pointercancel event received assert_equals: isPrimary should be the same for pointerdown and pointercancel expected true but got false
+
