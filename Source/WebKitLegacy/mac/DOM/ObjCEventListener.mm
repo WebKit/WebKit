@@ -70,6 +70,9 @@ ObjCEventListener::ObjCEventListener(ObjCListener listener)
 ObjCEventListener::~ObjCEventListener()
 {
     listenerMap->remove(m_listener.get());
+    // Avoid executing arbitrary code during GC; e.g. inside Node::~Node. Use CF* to be ARC safe.
+    CFRetain((__bridge CFTypeRef)m_listener.get());
+    CFAutorelease((__bridge CFTypeRef)m_listener.get());
 }
 
 void ObjCEventListener::handleEvent(ScriptExecutionContext&, Event& event)

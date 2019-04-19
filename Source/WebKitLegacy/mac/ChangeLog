@@ -1,3 +1,21 @@
+2019-04-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in FrameLoader::stopAllLoaders via [WebView dealloc] inside ~ObjCEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=197079
+
+        Reviewed by Darin Adler.
+
+        The crash was caused by the fact deleting a node could end up deleting Objective-C event listeners
+        some of which may be the last object holding onto WebView itself in the middle of running GC.
+
+        It's not generally safe to delete Objective-C objects defiend by client applications since
+        dealloc could execute arbitrary code, and for instance, try to execute JavaScript or load new page.
+
+        Fixed the bug by delaying the dealloc'ing of Objective event listeners via autorelease pool.
+
+        * DOM/ObjCEventListener.mm:
+        (WebCore::ObjCEventListener::~ObjCEventListener):
+
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Pull all fullscreen code out of Document and into its own helper class
