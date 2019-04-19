@@ -26,8 +26,8 @@
 #pragma once
 
 #include "Decoder.h"
+#include "EditingRange.h"
 #include "Encoder.h"
-#include <wtf/NotFound.h>
 #include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,51 +38,35 @@ struct WebAutocorrectionContext {
     String markedText;
     String selectedText;
     String contextAfter;
-    uint64_t location { notFound };
-    uint64_t length { 0 };
+    EditingRange markedTextRange;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<WebAutocorrectionContext> decode(Decoder&);
 };
 
-template<class Encoder> inline void WebAutocorrectionContext::encode(Encoder& encoder) const
+template<class Encoder> void WebAutocorrectionContext::encode(Encoder& encoder) const
 {
-    encoder << contextBefore << markedText << selectedText << contextAfter << location << length;
+    encoder << contextBefore;
+    encoder << markedText;
+    encoder << selectedText;
+    encoder << contextAfter;
+    encoder << markedTextRange;
 }
 
-template<class Decoder> inline Optional<WebAutocorrectionContext> WebAutocorrectionContext::decode(Decoder& decoder)
+template<class Decoder> Optional<WebAutocorrectionContext> WebAutocorrectionContext::decode(Decoder& decoder)
 {
-    Optional<String> contextBefore;
-    decoder >> contextBefore;
-    if (!contextBefore)
+    WebAutocorrectionContext correction;
+    if (!decoder.decode(correction.contextBefore))
         return WTF::nullopt;
-
-    Optional<String> markedText;
-    decoder >> markedText;
-    if (!markedText)
+    if (!decoder.decode(correction.markedText))
         return WTF::nullopt;
-
-    Optional<String> selectedText;
-    decoder >> selectedText;
-    if (!selectedText)
+    if (!decoder.decode(correction.selectedText))
         return WTF::nullopt;
-
-    Optional<String> contextAfter;
-    decoder >> contextAfter;
-    if (!contextAfter)
+    if (!decoder.decode(correction.contextAfter))
         return WTF::nullopt;
-
-    Optional<uint64_t> location;
-    decoder >> location;
-    if (!location)
+    if (!decoder.decode(correction.markedTextRange))
         return WTF::nullopt;
-
-    Optional<uint64_t> length;
-    decoder >> length;
-    if (!length)
-        return WTF::nullopt;
-
-    return {{ WTFMove(*contextBefore), WTFMove(*markedText), WTFMove(*selectedText), WTFMove(*contextAfter), WTFMove(*location), WTFMove(*length) }};
+    return correction;
 }
 
 } // namespace WebKit

@@ -290,7 +290,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 
 @interface WKAutocorrectionContext : UIWKAutocorrectionContext
 + (WKAutocorrectionContext *)emptyAutocorrectionContext;
-+ (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)context;
++ (WKAutocorrectionContext *)autocorrectionContextWithWebContext:(const WebKit::WebAutocorrectionContext&)context;
 @end
 
 @interface UITextInteractionAssistant (UITextInteractionAssistant_Internal)
@@ -3718,7 +3718,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (void)_handleAutocorrectionContext:(const WebKit::WebAutocorrectionContext&)context
 {
-    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithContext:context]];
+    [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -7686,23 +7686,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 + (WKAutocorrectionContext *)emptyAutocorrectionContext
 {
-    return [self autocorrectionContextWithContext:WebKit::WebAutocorrectionContext { }];
+    return [self autocorrectionContextWithWebContext:WebKit::WebAutocorrectionContext { }];
 }
 
-+ (WKAutocorrectionContext *)autocorrectionContextWithContext:(const WebKit::WebAutocorrectionContext&)webContext
++ (WKAutocorrectionContext *)autocorrectionContextWithWebContext:(const WebKit::WebAutocorrectionContext&)webCorrection
 {
-    WKAutocorrectionContext *context = [[WKAutocorrectionContext alloc] init];
-
-    if (!webContext.contextBefore.isEmpty())
-        context.contextBeforeSelection = webContext.contextBefore;
-    if (!webContext.selectedText.isEmpty())
-        context.selectedText = webContext.selectedText;
-    if (!webContext.markedText.isEmpty())
-        context.markedText = webContext.markedText;
-    if (!webContext.contextAfter.isEmpty())
-        context.contextAfterSelection = webContext.contextAfter;
-    context.rangeInMarkedText = NSMakeRange(webContext.location, webContext.length);
-    return [context autorelease];
+    auto correction = adoptNS([[WKAutocorrectionContext alloc] init]);
+    [correction setContextBeforeSelection:nsStringNilIfEmpty(webCorrection.contextBefore)];
+    [correction setSelectedText:nsStringNilIfEmpty(webCorrection.selectedText)];
+    [correction setMarkedText:nsStringNilIfEmpty(webCorrection.markedText)];
+    [correction setContextAfterSelection:nsStringNilIfEmpty(webCorrection.contextAfter)];
+    [correction setRangeInMarkedText:webCorrection.markedTextRange];
+    return correction.autorelease();
 }
 
 @end

@@ -2180,8 +2180,7 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
     String markedText;
     String selectedText;
     String contextAfter;
-    uint64_t location = NSNotFound;
-    uint64_t length = 0;
+    EditingRange markedTextRange;
 
     auto& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> range;
@@ -2205,8 +2204,8 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
             markedTextAfter = plainTextReplacingNoBreakSpace(range.get());
         markedText = markedTextBefore + selectedText + markedTextAfter;
         if (!markedText.isEmpty()) {
-            location = markedTextBefore.length();
-            length = selectedText.length();
+            markedTextRange.location = markedTextBefore.length();
+            markedTextRange.length = selectedText.length();
         }
     } else {
         if (startPosition != startOfEditableContent(startPosition)) {
@@ -2240,7 +2239,14 @@ WebAutocorrectionContext WebPage::autocorrectionContext()
                 contextAfter = plainTextReplacingNoBreakSpace(Range::create(*frame.document(), endPosition, nextPosition).ptr());
         }
     }
-    return { WTFMove(contextBefore), WTFMove(markedText), WTFMove(selectedText), WTFMove(contextAfter), location, length };
+
+    WebAutocorrectionContext correction;
+    correction.contextBefore = WTFMove(contextBefore);
+    correction.markedText = WTFMove(markedText);
+    correction.selectedText = WTFMove(selectedText);
+    correction.contextAfter = WTFMove(contextAfter);
+    correction.markedTextRange = WTFMove(markedTextRange);
+    return correction;
 }
 
 void WebPage::requestAutocorrectionContext()

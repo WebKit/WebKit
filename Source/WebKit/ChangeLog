@@ -1,3 +1,35 @@
+2019-04-19  Daniel Bates  <dabates@apple.com>
+
+        -[WKAutocorrectionContext emptyAutocorrectionContext:] generates invalid empty context
+        https://bugs.webkit.org/show_bug.cgi?id=197119
+
+        Reviewed by Wenson Hsieh.
+
+        Use the existing EditingRange type to represent the location and length of the marked text
+        range for an autocorrection instead of managing integers. This type avoid the need to handle
+        the special case for an empty range represented as NSMakeRange(NSNotFound, 0). Currently
+        WKAutocorrectionContext incorrectly represents the empty range as NSMakeRange(WTF::notFound, 0).
+
+        While I am here, simplify the existing WebAutocorrectionContext encoder/decoder code and rename
+        +[WKAutocorrectionContext autocorrectionContextWithContext:] to +autocorrectionContextWithWebContext
+        to better reflect the expected source of the conversion: a Web-type.
+
+        * Shared/ios/WebAutocorrectionContext.h:
+        (WebKit::WebAutocorrectionContext::encode const): Reformat while I am here to make this logic easy
+        to amend without losing SVN history.
+        (WebKit::WebAutocorrectionContext::decode): Simplify the code while I am here.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _handleAutocorrectionContext:]): Update for renaming.
+        (+[WKAutocorrectionContext emptyAutocorrectionContext]): Update for renaming.
+        (+[WKAutocorrectionContext autocorrectionContextWithWebContext:]): Renamed; formerly named autocorrectionContextWithContext.
+        (+[WKAutocorrectionContext autocorrectionContextWithContext:]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::autocorrectionContext): Update to make use of EditingRange. Also instantiate
+        the struct and return it, initializing its fields individually instead of using the constructor to
+        make this code less error prone. It's easy to introduce an error with the constructor notation when
+        amending the the struct because so many of the arguments are of the same data type. Individually
+        initializing the struct fields makes it less likely for an ordering mistake to be introduced.
+
 2019-04-19  Dean Jackson  <dino@apple.com>
 
         Add more _WKElementActionTypes and provide API to create with custom types
