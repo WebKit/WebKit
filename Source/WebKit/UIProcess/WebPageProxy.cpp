@@ -5464,13 +5464,6 @@ void WebPageProxy::didChangeContentSize(const IntSize& size)
     pageClient().didChangeContentSize(size);
 }
 
-void WebPageProxy::didChangeIntrinsicContentSize(const IntSize& intrinsicContentSize)
-{
-#if USE(APPKIT)
-    pageClient().intrinsicContentSizeDidChange(intrinsicContentSize);
-#endif
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 void WebPageProxy::showColorPicker(const WebCore::Color& initialColor, const IntRect& elementRect, Vector<WebCore::Color>&& suggestions)
 {
@@ -7603,7 +7596,7 @@ void WebPageProxy::setViewLayoutSize(const IntSize& viewLayoutSize)
 
 #if USE(APPKIT)
     if (m_viewLayoutSize.width() <= 0)
-        didChangeIntrinsicContentSize(IntSize(-1, -1));
+        intrinsicContentSizeDidChange(IntSize(-1, -1));
 #endif
 }
 

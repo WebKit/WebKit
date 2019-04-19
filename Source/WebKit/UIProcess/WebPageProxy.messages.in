@@ -88,7 +88,6 @@ messages -> WebPageProxy {
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
 
     DidChangeContentSize(WebCore::IntSize newSize)
-    DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
 
 #if ENABLE(INPUT_TYPE_COLOR)
     ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, Vector<WebCore::Color> suggestions);

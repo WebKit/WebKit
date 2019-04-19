@@ -433,6 +433,11 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
     return result;
 }
 
+void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
+{
+    pageClient().intrinsicContentSizeDidChange(intrinsicContentSize);
+}
+
 void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
     pageClient().setRemoteLayerTreeRootNode(rootNode);

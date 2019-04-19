@@ -631,8 +631,6 @@ void FrameView::setContentsSize(const IntSize& size)
         PageCache::singleton().markPagesForContentsSizeChanged(*page);
     }
     layoutContext().enableSetNeedsLayout();
-    if (m_shouldAutoSize)
-        m_autoSizeContentSize = size; 
 }
 
 void FrameView::adjustViewSize()
@@ -3465,6 +3463,7 @@ void FrameView::autoSizeIfEnabled()
     resize(m_autoSizeConstraint.width(), m_autoSizeConstraint.height());
     document->updateStyleIfNeeded();
     document->updateLayoutIgnorePendingStylesheets();
+    m_autoSizeContentSize = contentsSize();
 
     auto finalWidth = std::max(m_autoSizeConstraint.width(), m_autoSizeContentSize.width());
     auto finalHeight = m_autoSizeFixedMinimumHeight ? std::max(m_autoSizeFixedMinimumHeight, m_autoSizeContentSize.height()) : m_autoSizeContentSize.height();
@@ -4471,7 +4470,6 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize)
 
     m_shouldAutoSize = enable;
     m_autoSizeConstraint = viewSize;
-    m_autoSizeContentSize = contentsSize();
     m_didRunAutosize = false;
 
     setNeedsLayoutAfterViewConfigurationChange();

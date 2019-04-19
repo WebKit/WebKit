@@ -121,6 +121,7 @@ private:
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
 
+    void updateIntrinsicContentSizeIfNeeded();
     void updateScrolledExposedRect();
     void scaleViewToFitDocumentIfNeeded();
 
@@ -148,6 +149,8 @@ private:
 
     WebCore::IntSize m_lastViewSizeForScaleToFit;
     WebCore::IntSize m_lastDocumentSizeForScaleToFit;
+
+    WebCore::IntSize m_lastSentIntrinsicContentSize;
 
     double m_transientZoomScale { 1 };
     WebCore::FloatPoint m_transientZoomOrigin;

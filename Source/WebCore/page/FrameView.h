@@ -401,7 +401,6 @@ public:
     bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
     WEBCORE_EXPORT void enableAutoSizeMode(bool enable, const IntSize& minSize);
     WEBCORE_EXPORT void setAutoSizeFixedMinimumHeight(int);
-    bool isAutoSizeEnabled() const { return m_shouldAutoSize; }
     IntSize autoSizingIntrinsicContentSize() const { return m_autoSizeContentSize; }
 
     WEBCORE_EXPORT void forceLayout(bool allowSubtreeLayout = false);
