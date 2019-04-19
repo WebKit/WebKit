@@ -392,6 +392,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ExceptionData.h
     dom/ExceptionOr.h
     dom/FragmentScriptingPermission.h
+    dom/FullscreenManager.h
     dom/GCReachableRef.h
     dom/GenericEventQueue.h
     dom/InlineStyleSheetOwner.h
