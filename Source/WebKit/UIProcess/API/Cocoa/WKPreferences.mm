@@ -69,8 +69,10 @@
     [coder encodeBool:self.javaScriptCanOpenWindowsAutomatically forKey:@"javaScriptCanOpenWindowsAutomatically"];
 
 #if PLATFORM(MAC)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [coder encodeBool:self.javaEnabled forKey:@"javaEnabled"];
     [coder encodeBool:self.plugInsEnabled forKey:@"plugInsEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
 #endif
 }
@@ -85,8 +87,10 @@
     self.javaScriptCanOpenWindowsAutomatically = [coder decodeBoolForKey:@"javaScriptCanOpenWindowsAutomatically"];
 
 #if PLATFORM(MAC)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.javaEnabled = [coder decodeBoolForKey:@"javaEnabled"];
     self.plugInsEnabled = [coder decodeBoolForKey:@"plugInsEnabled"];
+ALLOW_DEPRECATED_DECLARATIONS_END
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
 #endif
 
@@ -131,26 +135,6 @@
 #pragma mark OS X-specific methods
 
 #if PLATFORM(MAC)
-
-- (BOOL)javaEnabled
-{
-    return _preferences->javaEnabled();
-}
-
-- (void)setJavaEnabled:(BOOL)javaEnabled
-{
-    _preferences->setJavaEnabled(javaEnabled);
-}
-
-- (BOOL)plugInsEnabled
-{
-    return _preferences->pluginsEnabled();
-}
-
-- (void)setPlugInsEnabled:(BOOL)plugInsEnabled
-{
-    _preferences->setPluginsEnabled(plugInsEnabled);
-}
 
 - (BOOL)tabFocusesLinks
 {
@@ -1361,3 +1345,31 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 }
 
 @end
+
+#if !TARGET_OS_IPHONE
+
+@implementation WKPreferences (WKDeprecated)
+
+- (BOOL)javaEnabled
+{
+    return _preferences->javaEnabled();
+}
+
+- (void)setJavaEnabled:(BOOL)javaEnabled
+{
+    _preferences->setJavaEnabled(javaEnabled);
+}
+
+- (BOOL)plugInsEnabled
+{
+    return _preferences->pluginsEnabled();
+}
+
+- (void)setPlugInsEnabled:(BOOL)plugInsEnabled
+{
+    _preferences->setPluginsEnabled(plugInsEnabled);
+}
+
+@end
+
+#endif

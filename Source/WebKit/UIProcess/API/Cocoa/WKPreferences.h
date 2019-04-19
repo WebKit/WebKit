@@ -52,16 +52,6 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @property (nonatomic) BOOL javaScriptCanOpenWindowsAutomatically;
 
 #if !TARGET_OS_IPHONE
-/*! @abstract A Boolean value indicating whether Java is enabled.
- @discussion The default value is NO.
- */
-@property (nonatomic) BOOL javaEnabled;
-
-/*! @abstract A Boolean value indicating whether plug-ins are enabled.
- @discussion The default value is NO.
- */
-@property (nonatomic) BOOL plugInsEnabled;
-
 /*!
  @property tabFocusesLinks
  @abstract If tabFocusesLinks is YES, the tab key will focus links and form controls.
@@ -71,3 +61,14 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 #endif
 
 @end
+
+#if !TARGET_OS_IPHONE
+
+@interface WKPreferences (WKDeprecated)
+
+@property (nonatomic) BOOL javaEnabled WK_API_DEPRECATED("Java is no longer supported", macos(macos(10.10), WK_MAC_TBA));
+@property (nonatomic) BOOL plugInsEnabled WK_API_DEPRECATED("Plug-ins are no longer supported", macos(macos(10.10), WK_MAC_TBA));
+
+@end
+
+#endif
