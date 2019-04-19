@@ -23,7 +23,12 @@
 
     // By default, AppKit on macOS coalesces undo operations that occur within the same runloop. Wait until the next
     // runloop before inserting another unordered list to ensure that it gets its own entry in the undo stack.
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise((resolve) => {
+        if (window.testRunner)
+            testRunner.runUIScript(`(function() { uiController.uiScriptComplete(); })()`, resolve);
+        else
+            setTimeout(resolve, 500);
+    });
 
     document.execCommand("InsertNestedUnorderedList");
     Markup.dump("editor", "After the second unordered list insertion");

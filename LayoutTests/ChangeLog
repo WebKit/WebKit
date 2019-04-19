@@ -1,3 +1,18 @@
+2019-04-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION: (r244182) Layout Test editing/execCommand/insert-nested-lists.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=196985
+
+        Reviewed by Wenson Hsieh.
+
+        The flakiness was caused by the test incorrectly assuming that rAF would
+        be enough to close the undo group in the UI process.
+
+        Fixed the test by explicitly waiting for the runloop in the ui process to run
+        by executing a UI script.
+
+        * editing/execCommand/insert-nested-lists.html:
+
 2019-04-18  Megan Gardner  <megan_gardner@apple.com>
 
         Update autoscroll test to lift at the end and be less flakey
