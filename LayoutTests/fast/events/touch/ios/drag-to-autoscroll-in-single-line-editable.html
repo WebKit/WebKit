@@ -28,8 +28,9 @@
             await didShowKeyboard();
             await longPressAndHoldAtPoint(tapPointX, tapPointY);
             await continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY);
-            await holdAtPoint(dragX, tapPointY, 2.0);
-            await continueTouchAndDragFromPointToPoint(dragX, tapPointY, dragX + 5, tapPointY);
+            await holdAtPoint(dragX, tapPointY + 20, 1.0);
+            await continueTouchAndDragFromPointToPoint(dragX, tapPointY + 20, dragX + 5, tapPointY + 20);
+            await liftUpAtPoint(dragX + 5, tapPointY + 20);
             if (scrollBox.scrollLeft > 0)
                 output += 'PASS: Text Box has been scrolled.';
             else

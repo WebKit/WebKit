@@ -1,3 +1,17 @@
+2019-04-18  Megan Gardner  <megan_gardner@apple.com>
+
+        Update autoscroll test to lift at the end and be less flakey
+        https://bugs.webkit.org/show_bug.cgi?id=197084
+
+        Test not lifting at the end caused issues for other tests.
+        Also the positions were a bit too exact and caused the
+        test to be flakey. These new positions should result in more consistent
+        behaviour.
+
+        Reviewed by Tim Horton.
+
+        * fast/events/touch/ios/drag-to-autoscroll-in-single-line-editable.html:
+
 2019-04-18  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Implement API default values
