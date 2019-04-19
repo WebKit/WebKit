@@ -165,8 +165,6 @@ if (USE_CF)
 
         loader/archive/cf/LegacyWebArchive.cpp
 
-        platform/cf/KeyedDecoderCF.cpp
-        platform/cf/KeyedEncoderCF.cpp
         platform/cf/SharedBufferCF.cpp
 
         platform/cf/win/CertificateCFWin.cpp
@@ -184,10 +182,19 @@ if (USE_CF)
     list(APPEND WebCoreTestSupport_LIBRARIES ${COREFOUNDATION_LIBRARY})
 else ()
     list(APPEND WebCore_SOURCES
+        platform/text/Hyphenation.cpp
+    )
+endif ()
+
+if (USE_CF AND NOT WTF_PLATFORM_WIN_CAIRO)
+    list(APPEND WebCore_SOURCES
+        platform/cf/KeyedDecoderCF.cpp
+        platform/cf/KeyedEncoderCF.cpp
+    )
+else ()
+    list(APPEND WebCore_SOURCES
         platform/generic/KeyedDecoderGeneric.cpp
         platform/generic/KeyedEncoderGeneric.cpp
-
-        platform/text/Hyphenation.cpp
     )
 endif ()
 

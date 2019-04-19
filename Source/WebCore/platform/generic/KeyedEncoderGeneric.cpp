@@ -27,86 +27,121 @@
 #include "KeyedEncoderGeneric.h"
 
 #include "SharedBuffer.h"
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=186410
 std::unique_ptr<KeyedEncoder> KeyedEncoder::encoder()
 {
     return std::make_unique<KeyedEncoderGeneric>();
 }
 
-KeyedEncoderGeneric::KeyedEncoderGeneric()
+void KeyedEncoderGeneric::encodeString(const String& key)
 {
+    auto utf8 = key.utf8();
+    m_encoder << utf8.length();
+    m_encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
 }
 
-KeyedEncoderGeneric::~KeyedEncoderGeneric()
+void KeyedEncoderGeneric::encodeBytes(const String& key, const uint8_t* bytes, size_t size)
 {
+    m_encoder << Type::Bytes;
+    encodeString(key);
+    m_encoder << size;
+    m_encoder.encodeFixedLengthData(bytes, size);
 }
 
-void KeyedEncoderGeneric::encodeBytes(const String&, const uint8_t*, size_t)
+void KeyedEncoderGeneric::encodeBool(const String& key, bool value)
 {
+    m_encoder << Type::Bool;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeBool(const String&, bool)
+void KeyedEncoderGeneric::encodeUInt32(const String& key, uint32_t value)
 {
+    m_encoder << Type::UInt32;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeUInt32(const String&, uint32_t)
+void KeyedEncoderGeneric::encodeUInt64(const String& key, uint64_t value)
 {
+    m_encoder << Type::UInt64;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeUInt64(const String&, uint64_t)
+void KeyedEncoderGeneric::encodeInt32(const String& key, int32_t value)
 {
+    m_encoder << Type::Int32;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeInt32(const String&, int32_t)
+void KeyedEncoderGeneric::encodeInt64(const String& key, int64_t value)
 {
+    m_encoder << Type::Int64;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeInt64(const String&, int64_t)
+void KeyedEncoderGeneric::encodeFloat(const String& key, float value)
 {
+    m_encoder << Type::Float;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeFloat(const String&, float)
+void KeyedEncoderGeneric::encodeDouble(const String& key, double value)
 {
+    m_encoder << Type::Double;
+    encodeString(key);
+    m_encoder << value;
 }
 
-void KeyedEncoderGeneric::encodeDouble(const String&, double)
+void KeyedEncoderGeneric::encodeString(const String& key, const String& value)
 {
+    m_encoder << Type::String;
+    encodeString(key);
+    encodeString(value);
 }
 
-void KeyedEncoderGeneric::encodeString(const String&, const String&)
+void KeyedEncoderGeneric::beginObject(const String& key)
 {
-}
-
-void KeyedEncoderGeneric::beginObject(const String&)
-{
+    m_encoder << Type::BeginObject;
+    encodeString(key);
 }
 
 void KeyedEncoderGeneric::endObject()
 {
+    m_encoder << Type::EndObject;
 }
 
-void KeyedEncoderGeneric::beginArray(const String&)
+void KeyedEncoderGeneric::beginArray(const String& key)
 {
+    m_encoder << Type::BeginArray;
+    encodeString(key);
 }
 
 void KeyedEncoderGeneric::beginArrayElement()
 {
+    m_encoder << Type::BeginArrayElement;
 }
 
 void KeyedEncoderGeneric::endArrayElement()
 {
+    m_encoder << Type::EndArrayElement;
 }
 
 void KeyedEncoderGeneric::endArray()
 {
+    m_encoder << Type::EndArray;
 }
 
 RefPtr<SharedBuffer> KeyedEncoderGeneric::finishEncoding()
 {
-    return nullptr;
+    return SharedBuffer::create(m_encoder.buffer(), m_encoder.bufferSize());
 }
 
 } // namespace WebCore

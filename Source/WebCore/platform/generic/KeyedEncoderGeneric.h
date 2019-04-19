@@ -26,7 +26,9 @@
 #pragma once
 
 #include "KeyedCoding.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -35,8 +37,24 @@ class SharedBuffer;
 
 class KeyedEncoderGeneric final : public KeyedEncoder {
 public:
-    KeyedEncoderGeneric();
-    ~KeyedEncoderGeneric();
+
+    enum class Type : uint8_t {
+        Bytes,
+        Bool,
+        UInt32,
+        UInt64,
+        Int32,
+        Int64,
+        Float,
+        Double,
+        String,
+        BeginObject,
+        EndObject,
+        BeginArray,
+        BeginArrayElement,
+        EndArrayElement,
+        EndArray,
+    };
 
 private:
     RefPtr<SharedBuffer> finishEncoding() override;
@@ -58,6 +76,34 @@ private:
     void beginArrayElement() override;
     void endArrayElement() override;
     void endArray() override;
+
+    void encodeString(const String&);
+
+    WTF::Persistence::Encoder m_encoder;
 };
 
 } // namespace WebCore
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::KeyedEncoderGeneric::Type> {
+    using values = EnumValues<
+        WebCore::KeyedEncoderGeneric::Type,
+        WebCore::KeyedEncoderGeneric::Type::Bytes,
+        WebCore::KeyedEncoderGeneric::Type::Bool,
+        WebCore::KeyedEncoderGeneric::Type::UInt32,
+        WebCore::KeyedEncoderGeneric::Type::UInt64,
+        WebCore::KeyedEncoderGeneric::Type::Int32,
+        WebCore::KeyedEncoderGeneric::Type::Int64,
+        WebCore::KeyedEncoderGeneric::Type::Float,
+        WebCore::KeyedEncoderGeneric::Type::Double,
+        WebCore::KeyedEncoderGeneric::Type::String,
+        WebCore::KeyedEncoderGeneric::Type::BeginObject,
+        WebCore::KeyedEncoderGeneric::Type::EndObject,
+        WebCore::KeyedEncoderGeneric::Type::BeginArray,
+        WebCore::KeyedEncoderGeneric::Type::BeginArrayElement,
+        WebCore::KeyedEncoderGeneric::Type::EndArrayElement,
+        WebCore::KeyedEncoderGeneric::Type::EndArray
+    >;
+};
+
+} // namespace WTF

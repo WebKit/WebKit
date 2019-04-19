@@ -32,7 +32,9 @@ namespace WebCore {
 class KeyedDecoderGeneric final : public KeyedDecoder {
 public:
     KeyedDecoderGeneric(const uint8_t* data, size_t);
-    ~KeyedDecoderGeneric() override;
+
+    class Dictionary;
+    using Array = Vector<std::unique_ptr<Dictionary>>;
 
 private:
     bool decodeBytes(const String& key, const uint8_t*&, size_t&) override;
@@ -52,6 +54,11 @@ private:
     bool beginArrayElement() override;
     void endArrayElement() override;
     void endArray() override;
+
+    std::unique_ptr<Dictionary> m_rootDictionary;
+    Vector<Dictionary*, 16> m_dictionaryStack;
+    Vector<Array*, 16> m_arrayStack;
+    Vector<size_t, 16> m_arrayIndexStack;
 };
 
 } // namespace WebCore

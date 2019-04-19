@@ -26,92 +26,286 @@
 #include "config.h"
 #include "KeyedDecoderGeneric.h"
 
+#include "KeyedEncoderGeneric.h"
+#include <wtf/HashMap.h>
+#include <wtf/Variant.h>
+#include <wtf/Vector.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/text/StringHash.h>
+
 namespace WebCore {
 
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=186410
+class KeyedDecoderGeneric::Dictionary {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    using Node = Variant<Vector<uint8_t>, bool, uint32_t, uint64_t, int32_t, int64_t, float, double, String, std::unique_ptr<Dictionary>, std::unique_ptr<Array>>;
+
+    template <typename T>
+    void add(const String& key, T&& value) { m_map.add(key, std::make_unique<Node>(std::forward<T>(value))); }
+    Node& get(const String& key) { return *m_map.get(key); }
+
+private:
+    HashMap<String, std::unique_ptr<Node>> m_map;
+};
+
+static bool readString(WTF::Persistence::Decoder& decoder, String& result)
+{
+    size_t size;
+    if (!decoder.decode(size))
+        return false;
+    Vector<uint8_t> buffer(size);
+    if (!decoder.decodeFixedLengthData(buffer.data(), size))
+        return false;
+    result = String::fromUTF8(buffer.data(), size);
+    return true;
+}
+
+template<typename T>
+static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGeneric::Dictionary& dictionary)
+{
+    String key;
+    bool ok = readString(decoder, key);
+    if (!ok)
+        return false;
+    T value;
+    ok = decoder.decode(value);
+    if (!ok)
+        return false;
+    dictionary.add(key, WTFMove(value));
+    return true;
+}
+
 std::unique_ptr<KeyedDecoder> KeyedDecoder::decoder(const uint8_t* data, size_t size)
 {
     return std::make_unique<KeyedDecoderGeneric>(data, size);
 }
 
-KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t*, size_t)
+KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
 {
+    WTF::Persistence::Decoder decoder(data, size);
+    KeyedEncoderGeneric::Type type;
+    String key;
+
+    m_rootDictionary = std::make_unique<Dictionary>();
+    m_dictionaryStack.append(m_rootDictionary.get());
+
+    bool ok = true;
+    while (ok && decoder.decodeEnum(type)) {
+        switch (type) {
+        case KeyedEncoderGeneric::Type::Bytes: {
+            ok = readString(decoder, key);
+            if (!ok)
+                break;
+            size_t size;
+            ok = decoder.decode(size);
+            if (!ok)
+                break;
+            Vector<uint8_t> buffer(size);
+            ok = decoder.decodeFixedLengthData(buffer.data(), size);
+            if (!ok)
+                break;
+            m_dictionaryStack.last()->add(key, WTFMove(buffer));
+            break;
+        }
+        case KeyedEncoderGeneric::Type::Bool:
+            ok = readSimpleValue<bool>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::UInt32:
+            ok = readSimpleValue<uint32_t>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::UInt64:
+            ok = readSimpleValue<uint64_t>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::Int32:
+            ok = readSimpleValue<int32_t>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::Int64:
+            ok = readSimpleValue<int64_t>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::Float:
+            ok = readSimpleValue<float>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::Double:
+            ok = readSimpleValue<double>(decoder, *m_dictionaryStack.last());
+            break;
+        case KeyedEncoderGeneric::Type::String: {
+            ok = readString(decoder, key);
+            if (!ok)
+                break;
+            String value;
+            ok = readString(decoder, value);
+            if (!ok)
+                break;
+            m_dictionaryStack.last()->add(key, WTFMove(value));
+            break;
+        }
+        case KeyedEncoderGeneric::Type::BeginObject: {
+            ok = readString(decoder, key);
+            if (!ok)
+                break;
+            auto* currentDictinary = m_dictionaryStack.last();
+            auto newDictionary = std::make_unique<Dictionary>();
+            m_dictionaryStack.append(newDictionary.get());
+            currentDictinary->add(key, WTFMove(newDictionary));
+            break;
+        }
+        case KeyedEncoderGeneric::Type::EndObject:
+            m_dictionaryStack.removeLast();
+            break;
+        case KeyedEncoderGeneric::Type::BeginArray: {
+            ok = readString(decoder, key);
+            if (!ok)
+                break;
+            auto newArray = std::make_unique<Array>();
+            m_arrayStack.append(newArray.get());
+            m_dictionaryStack.last()->add(key, WTFMove(newArray));
+            break;
+        }
+        case KeyedEncoderGeneric::Type::BeginArrayElement: {
+            auto newDictionary = std::make_unique<Dictionary>();
+            m_dictionaryStack.append(newDictionary.get());
+            m_arrayStack.last()->append(WTFMove(newDictionary));
+            break;
+        }
+        case KeyedEncoderGeneric::Type::EndArrayElement:
+            m_dictionaryStack.removeLast();
+            break;
+        case KeyedEncoderGeneric::Type::EndArray:
+            m_arrayStack.removeLast();
+            break;
+        }
+    }
+    while (m_dictionaryStack.size() > 1)
+        m_dictionaryStack.removeLast();
+    while (!m_arrayStack.isEmpty())
+        m_arrayStack.removeLast();
 }
 
-KeyedDecoderGeneric::~KeyedDecoderGeneric()
+bool KeyedDecoderGeneric::decodeBytes(const String& key, const uint8_t*& data, size_t& size)
 {
+    auto* value = WTF::get_if<Vector<uint8_t>>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    data = value->data();
+    size = value->size();
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeBytes(const String&, const uint8_t*&, size_t&)
+bool KeyedDecoderGeneric::decodeBool(const String& key, bool& result)
 {
-    return false;
+    auto* value = WTF::get_if<bool>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeBool(const String&, bool&)
+bool KeyedDecoderGeneric::decodeUInt32(const String& key, uint32_t& result)
 {
-    return false;
+    auto* value = WTF::get_if<uint32_t>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeUInt32(const String&, uint32_t&)
+bool KeyedDecoderGeneric::decodeUInt64(const String& key, uint64_t& result)
 {
-    return false;
+    auto* value = WTF::get_if<uint64_t>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeUInt64(const String&, uint64_t&)
+bool KeyedDecoderGeneric::decodeInt32(const String& key, int32_t& result)
 {
-    return false;
+    auto* value = WTF::get_if<int32_t>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeInt32(const String&, int32_t&)
+bool KeyedDecoderGeneric::decodeInt64(const String& key, int64_t& result)
 {
-    return false;
+    auto* value = WTF::get_if<int64_t>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeInt64(const String&, int64_t&)
+bool KeyedDecoderGeneric::decodeFloat(const String& key, float& result)
 {
-    return false;
+    auto* value = WTF::get_if<float>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeFloat(const String&, float&)
+bool KeyedDecoderGeneric::decodeDouble(const String& key, double& result)
 {
-    return false;
+    auto* value = WTF::get_if<double>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeDouble(const String&, double&)
+bool KeyedDecoderGeneric::decodeString(const String& key, String& result)
 {
-    return false;
+    auto* value = WTF::get_if<String>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    result = *value;
+    return true;
 }
 
-bool KeyedDecoderGeneric::decodeString(const String&, String&)
+bool KeyedDecoderGeneric::beginObject(const String& key)
 {
-    return false;
-}
-
-bool KeyedDecoderGeneric::beginObject(const String&)
-{
-    return false;
+    auto* value = WTF::get_if<std::unique_ptr<Dictionary>>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    m_dictionaryStack.append(value->get());
+    return true;
 }
 
 void KeyedDecoderGeneric::endObject()
 {
+    m_dictionaryStack.removeLast();
 }
 
-bool KeyedDecoderGeneric::beginArray(const String&)
+bool KeyedDecoderGeneric::beginArray(const String& key)
 {
-    return false;
+    auto* value = WTF::get_if<std::unique_ptr<Array>>(m_dictionaryStack.last()->get(key));
+    if (!value)
+        return false;
+    m_arrayStack.append(value->get());
+    m_arrayIndexStack.append(0);
+    return true;
 }
 
 bool KeyedDecoderGeneric::beginArrayElement()
 {
-    return false;
+    if (m_arrayIndexStack.last() >= m_arrayStack.last()->size())
+        return false;
+
+    auto dictionary = m_arrayStack.last()->at(m_arrayIndexStack.last()++).get();
+    m_dictionaryStack.append(dictionary);
+    return true;
 }
 
 void KeyedDecoderGeneric::endArrayElement()
 {
+    m_dictionaryStack.removeLast();
 }
 
 void KeyedDecoderGeneric::endArray()
 {
+    m_arrayStack.removeLast();
+    m_arrayIndexStack.removeLast();
 }
 
 } // namespace WebCore
