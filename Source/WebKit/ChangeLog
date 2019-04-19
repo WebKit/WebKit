@@ -1,3 +1,30 @@
+2019-04-19  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r244458. rdar://problem/50041560
+
+    YouTube and Twitter embeds don't load in News
+    https://bugs.webkit.org/show_bug.cgi?id=197111
+    <rdar://problem/50010081>
+    
+    Reviewed by Timothy Hatcher.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    Adjust this sandbox exception to include both platforms.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@244458 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2019-04-19  Tim Horton  <timothy_horton@apple.com>
+
+            YouTube and Twitter embeds don't load in News
+            https://bugs.webkit.org/show_bug.cgi?id=197111
+            <rdar://problem/50010081>
+
+            Reviewed by Timothy Hatcher.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+            Adjust this sandbox exception to include both platforms.
+
 2019-04-14  Babak Shafiei  <bshafiei@apple.com>
 
         Cherry-pick r243487. rdar://problem/49788895

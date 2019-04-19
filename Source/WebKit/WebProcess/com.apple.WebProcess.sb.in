@@ -617,7 +617,7 @@
 #endif
 )
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400 || PLATFORM(IOSMAC)
 ;; <rdar://problem/47268166>
 (allow mach-lookup (xpc-service-name "com.apple.MTLCompilerService"))
 #endif
