@@ -69,6 +69,13 @@
         internals.changeSelectionListType();
         Markup.dump("top", "After changing the first sublist back to ordered");
 
+        await new Promise((resolve) => {
+            if (window.testRunner)
+                testRunner.runUIScript(`(function() { uiController.uiScriptComplete(); })()`, resolve);
+            else
+                setTimeout(resolve, 500);
+        });
+
         await new Promise(requestAnimationFrame);
         getSelection().setBaseAndExtent(five, 0, six, 1);
         internals.changeSelectionListType();
