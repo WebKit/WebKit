@@ -42,15 +42,18 @@ typedef NS_ENUM(NSInteger, _WKElementActionType) {
     _WKElementActionTypeOpenInDefaultBrowser WK_API_AVAILABLE(ios(9_0)),
     _WKElementActionTypeOpenInExternalApplication WK_API_AVAILABLE(ios(9_0)),
 #endif
-    _WKElementActionTypeShare WK_API_AVAILABLE(ios(10.0)),
+    _WKElementActionTypeShare WK_API_AVAILABLE(macos(10.12), ios(10.0)),
+    _WKElementActionTypeOpenInNewTab WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKElementActionTypeOpenInNewWindow WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKElementActionTypeDownload WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
 } WK_API_AVAILABLE(macos(10.10), ios(8.0));
 
 WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 @interface _WKElementAction : NSObject
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type;
++ (instancetype)elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)title;
-
 + (instancetype)elementActionWithTitle:(NSString *)title actionHandler:(WKElementActionHandler)handler;
 
 - (void)runActionWithElementInfo:(_WKActivatedElementInfo *)info WK_API_AVAILABLE(ios(9_0));

@@ -89,6 +89,11 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
 }
 #endif
 
++ (instancetype)elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler
+{
+    return [_WKElementAction _elementActionWithType:type title:title actionHandler:actionHandler];
+}
+
 + (instancetype)_elementActionWithType:(_WKElementActionType)type title:(NSString *)title actionHandler:(WKElementActionHandler)actionHandler
 {
     WKElementActionHandlerInternal handler = ^(WKActionSheetAssistant *, _WKActivatedElementInfo *actionInfo) { actionHandler(actionInfo); };

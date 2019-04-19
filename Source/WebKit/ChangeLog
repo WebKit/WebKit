@@ -1,3 +1,22 @@
+2019-04-19  Dean Jackson  <dino@apple.com>
+
+        Add more _WKElementActionTypes and provide API to create with custom types
+        https://bugs.webkit.org/show_bug.cgi?id=197117
+        <rdar://problem/50059548>
+
+        Reviewed by Tim Horton.
+
+        We were missing a few obvious types that are well-known
+        browser actions, and/or should be visible in share sheets.
+        Also, clean up the API for constructing new types.
+
+        * UIProcess/API/Cocoa/_WKElementAction.h: Add new types for opening
+        in new tabs, windows and downloading.
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction elementActionWithType:title:actionHandler:]): New constructor
+        with type, title and action.
+        (+[_WKElementAction elementActionWithType:]): Call new method.
+
 2019-04-18  Daniel Bates  <dabates@apple.com>
 
         Use existing KeyEventCodesIOS constants instead of duplicating them
