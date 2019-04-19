@@ -1,3 +1,24 @@
+2019-04-19  Keith Miller  <keith_miller@apple.com>
+
+        Add script to merge run_benchmark jsons
+        https://bugs.webkit.org/show_bug.cgi?id=197107
+
+        Reviewed by Michael Saboff.
+
+        The script basically recursively decends through all json objects until it gets
+        to an array or JSON primitive and concats or takes the first value, respectively.
+
+        This patch also adds +x bits to the compare-results script so it
+        can be run directly from the command line. I had to add a new line so that svn
+        will accept the change... yay svn!
+
+        * Scripts/compare-results:
+        * Scripts/merge-result-jsons: Added.
+        (readJSONFile):
+        (deepAppend):
+        (mergeJSONs):
+        (main):
+
 2019-04-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in FrameLoader::stopAllLoaders via [WebView dealloc] inside ~ObjCEventListener
