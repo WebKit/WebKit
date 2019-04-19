@@ -83,6 +83,7 @@
 #import <WebCore/FloatQuad.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/InputMode.h>
+#import <WebCore/KeyEventCodesIOS.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/Pasteboard.h>
@@ -4503,12 +4504,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
 - (BOOL)_interpretKeyEvent:(::WebEvent *)event isCharEvent:(BOOL)isCharEvent
 {
-    static const unsigned kWebEnterKey = 0x0003;
-    static const unsigned kWebBackspaceKey = 0x0008;
-    static const unsigned kWebReturnKey = 0x000D;
-    static const unsigned kWebDeleteKey = 0x007F;
-    static const unsigned kWebSpaceKey = 0x20;
-
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
         return NO;
 
@@ -4534,30 +4529,21 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         return NO;
 
     switch ([characters characterAtIndex:0]) {
-    case kWebBackspaceKey:
-    case kWebDeleteKey:
+    case NSBackspaceCharacter:
+    case NSDeleteCharacter:
         if (contentEditable) {
             [keyboard deleteFromInputWithFlags:event.keyboardFlags];
             return YES;
         }
         break;
-
-    case kWebSpaceKey:
-        if (contentEditable && isCharEvent) {
-            [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];
-            return YES;
-        }
-        break;
-
-    case kWebEnterKey:
-    case kWebReturnKey:
+    case NSEnterCharacter:
+    case NSCarriageReturnCharacter:
         if (contentEditable && isCharEvent) {
             // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
             [keyboard addInputString:@"\n" withFlags:0 withInputManagerHint:nil];
             return YES;
         }
         break;
-
     default:
         if (contentEditable && isCharEvent) {
             [keyboard addInputString:event.characters withFlags:event.keyboardFlags withInputManagerHint:event.inputManagerHint];

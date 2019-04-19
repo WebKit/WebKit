@@ -6069,11 +6069,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
 #if PLATFORM(IOS_FAMILY)
     
-#define kWebEnterKey         0x0003
-#define kWebBackspaceKey     0x0008
-#define kWebReturnKey        0x000d
-#define kWebDeleteKey        0x007F
-    
 - (BOOL)_handleEditingKeyEvent:(KeyboardEvent *)wcEvent
 {
     // Use the isEditable state to determine whether or not to process tab key events.
@@ -6105,12 +6100,12 @@ static BOOL writingDirectionKeyBindingsEnabled()
         if (!s.length)
             return NO;
         switch ([s characterAtIndex:0]) {
-        case kWebBackspaceKey:
-        case kWebDeleteKey:
+        case NSBackspaceCharacter:
+        case NSDeleteCharacter:
             [[webView _UIKitDelegateForwarder] deleteFromInputWithFlags:event.keyboardFlags];
             return YES;
-        case kWebEnterKey:
-        case kWebReturnKey:
+        case NSEnterCharacter:
+        case NSCarriageReturnCharacter:
             if (isCharEvent) {
                 // Map \r from HW keyboard to \n to match the behavior of the soft keyboard.
                 [[webView _UIKitDelegateForwarder] addInputString:@"\n" withFlags:0];

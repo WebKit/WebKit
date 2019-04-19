@@ -1,3 +1,14 @@
+2019-04-18  Daniel Bates  <dabates@apple.com>
+
+        Use existing KeyEventCodesIOS constants instead of duplicating them
+        https://bugs.webkit.org/show_bug.cgi?id=197081
+
+        Rubber-stamped by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _interpretKeyEvent:isCharEvent:]): While I am here, remove the case for the space key
+        as it is identical to the default switch case.
+
 2019-04-19  Keith Rollin  <krollin@apple.com>
 
         Add postprocess-header-rule scripts
