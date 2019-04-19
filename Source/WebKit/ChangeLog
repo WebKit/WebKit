@@ -1,5 +1,22 @@
 2019-04-19  Daniel Bates  <dabates@apple.com>
 
+        Use RetainPtr and rename +autocorrectionRectsWithRects:lastRect: to +autocorrectionRectsWithFirstCGRect:lastCGRect:
+        https://bugs.webkit.org/show_bug.cgi?id=197122
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionRectsForString:withCompletionHandler:]): Renamed; formerly named +autocorrectionRectsWithRects:lastRect:.
+        While I am here use else-branch to initialize firstRect and lastRect just to make the code closer to the optimal
+        assembly. Also use Vector::{isEmpty, first, last}() instead of using the index operator overload and size() for
+        emptiness checks. The code is more readable at the cost being ever so slightly slower (due to the overflow checks
+        in first() and last()), but this code is likely not hot enough for it to matter.
+        (-[WKContentView applyAutocorrection:toString:withCompletionHandler:]): Update for renaming.
+        (+[WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:lastCGRect:]): Ditto.
+        (+[WKAutocorrectionRects autocorrectionRectsWithRects:lastRect:]): Deleted.
+
+2019-04-19  Daniel Bates  <dabates@apple.com>
+
         -[WKAutocorrectionContext emptyAutocorrectionContext:] generates invalid empty context
         https://bugs.webkit.org/show_bug.cgi?id=197119
 

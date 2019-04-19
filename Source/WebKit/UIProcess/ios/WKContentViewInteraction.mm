@@ -285,7 +285,7 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 @end
 
 @interface WKAutocorrectionRects : UIWKAutocorrectionRects
-+ (WKAutocorrectionRects *)autocorrectionRectsWithRects:(CGRect)firstRect lastRect:(CGRect)lastRect;
++ (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect;
 @end
 
 @interface WKAutocorrectionContext : UIWKAutocorrectionContext
@@ -3467,20 +3467,23 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     }
 
     _page->requestAutocorrectionData(input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& rects, auto& fontName, double fontSize, uint64_t traits, auto) {
-        CGRect firstRect = CGRectZero;
-        CGRect lastRect = CGRectZero;
-        if (rects.size()) {
-            firstRect = rects[0];
-            lastRect = rects[rects.size() - 1];
+        CGRect firstRect;
+        CGRect lastRect;
+        if (rects.isEmpty()) {
+            firstRect = CGRectZero;
+            lastRect = CGRectZero;
+        } else {
+            firstRect = rects.first();
+            lastRect = rects.last();
         }
-        
+
         view->_autocorrectionData.fontName = fontName;
         view->_autocorrectionData.fontSize = fontSize;
         view->_autocorrectionData.fontTraits = traits;
         view->_autocorrectionData.textFirstRect = firstRect;
         view->_autocorrectionData.textLastRect = lastRect;
 
-        completion(rects.size() ? [WKAutocorrectionRects autocorrectionRectsWithRects:firstRect lastRect:lastRect] : nil);
+        completion(!rects.isEmpty() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:firstRect lastCGRect:lastRect] : nil);
     });
 }
 
@@ -3671,13 +3674,13 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
     if (useSyncRequest) {
         if (completionHandler)
-            completionHandler(_page->applyAutocorrection(correction, input) ? [WKAutocorrectionRects autocorrectionRectsWithRects:_autocorrectionData.textFirstRect lastRect:_autocorrectionData.textLastRect] : nil);
+            completionHandler(_page->applyAutocorrection(correction, input) ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:_autocorrectionData.textFirstRect lastCGRect:_autocorrectionData.textLastRect] : nil);
         return;
     }
 
     _page->applyAutocorrection(correction, input, [view = retainPtr(self), completion = makeBlockPtr(completionHandler)](auto& string, auto error) {
         if (completion)
-            completion(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithRects:view->_autocorrectionData.textFirstRect lastRect:view->_autocorrectionData.textLastRect] : nil);
+            completion(!string.isNull() ? [WKAutocorrectionRects autocorrectionRectsWithFirstCGRect:view->_autocorrectionData.textFirstRect lastCGRect:view->_autocorrectionData.textLastRect] : nil);
     });
 }
 
@@ -7672,12 +7675,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @implementation WKAutocorrectionRects
 
-+ (WKAutocorrectionRects *)autocorrectionRectsWithRects:(CGRect)firstRect lastRect:(CGRect)lastRect
++ (WKAutocorrectionRects *)autocorrectionRectsWithFirstCGRect:(CGRect)firstRect lastCGRect:(CGRect)lastRect
 {
-    WKAutocorrectionRects *rects =[[WKAutocorrectionRects alloc] init];
-    rects.firstRect = firstRect;
-    rects.lastRect = lastRect;
-    return [rects autorelease];
+    auto rects = adoptNS([[WKAutocorrectionRects alloc] init]);
+    [rects setFirstRect:firstRect];
+    [rects setLastRect:lastRect];
+    return rects.autorelease();
 }
 
 @end
