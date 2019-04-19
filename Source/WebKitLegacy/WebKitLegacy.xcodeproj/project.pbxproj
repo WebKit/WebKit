@@ -792,6 +792,20 @@
 		F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F834AAD60E64B1C700E2737C /* WebTextIterator.mm */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		535E08C322545B4C00DF00CA /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.h";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+			);
+			script = "exec \"${SRCROOT}/scripts/postprocess-header-rule\"\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		535E08CB2254637200DF00CA /* Copy Mig Files into Private Framework Headers */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -988,6 +1002,7 @@
 		51FDC4D20B0AF5C100F84EB3 /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemPrivate.h; sourceTree = "<group>"; };
 		5241ADF30B1BC48A004012BD /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCache.h; sourceTree = "<group>"; };
 		5241ADF40B1BC48A004012BD /* WebCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCache.mm; sourceTree = "<group>"; };
+		535E08C52254604E00DF00CA /* postprocess-header-rule */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = "postprocess-header-rule"; path = "scripts/postprocess-header-rule"; sourceTree = "<group>"; };
 		598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationClient.h; sourceTree = "<group>"; };
 		598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDeviceOrientationClient.mm; sourceTree = "<group>"; };
 		598AD91F1201CF0700ABAE4E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientation.h; sourceTree = "<group>"; };
@@ -1646,6 +1661,7 @@
 				A10C1D8F1820307D0036883A /* WebKit.iOS.exp */,
 				F5C283730284676D018635CA /* WebKitPrefix.h */,
 				A182B74E199E7B8F001FD95A /* migrate-headers.sh */,
+				535E08C52254604E00DF00CA /* postprocess-header-rule */,
 				A182B74F199E7B8F001FD95A /* postprocess-headers.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F57D194A034E732C01A80180 /* DOM */,
@@ -3160,6 +3176,7 @@
 				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 			);
 			buildRules = (
+				535E08C322545B4C00DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
 			);

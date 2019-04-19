@@ -1,3 +1,33 @@
+2019-04-19  Keith Rollin  <krollin@apple.com>
+
+        Add postprocess-header-rule scripts
+        https://bugs.webkit.org/show_bug.cgi?id=197072
+        <rdar://problem/50027299>
+
+        Reviewed by Brent Fulgham.
+
+        Several projects have post-processing build phases where exported
+        headers are tweaked after they've been copied. This post-processing is
+        performed via scripts called postprocess-headers.sh. For reasons
+        related to XCBuild, we are now transitioning to a build process where
+        the post-processing is performed at the same time as the
+        exporting/copying. To support this process, add similar scripts named
+        postprocess-header-rule, which are geared towards processing a single
+        file at a time rather than all exported files at once. Also add a
+        build rule that makes use of these scripts. These scripts and build
+        rules are not used at the moment; they will come into use in an
+        imminent patch.
+
+        Note that I've named these postprocess-header-rule rather than
+        postprocess-header-rule.sh. Scripts in Tools/Scripts do not have
+        suffixes indicating how the tool is implemented. Scripts in
+        per-project Scripts folders appear to be mixed regarding the use of
+        suffixes. I'm opting here to follow the Tools/Scripts convention, with
+        the expectation that over time we completely standardize on that.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/postprocess-header-rule: Added.
+
 2019-04-18  Saam barati  <sbarati@apple.com>
 
         Remove useConcurrentBarriers option

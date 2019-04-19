@@ -1664,6 +1664,20 @@
 		FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		535E08C422545B7200DF00CA /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.h";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+			);
+			script = "exec \"${SRCROOT}/Scripts/postprocess-header-rule\"\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		2D11BA042126A5AE006F8878 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3396,6 +3410,7 @@
 		532159511DBAE6FC0054AA3C /* NetworkDataTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkDataTask.cpp; sourceTree = "<group>"; };
 		532159521DBAE6FC0054AA3C /* NetworkSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkSession.cpp; sourceTree = "<group>"; };
 		535BCB902069C49C00CCCE02 /* NetworkActivityTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkActivityTracker.h; sourceTree = "<group>"; };
+		535E08CA225460FC00DF00CA /* postprocess-header-rule */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "postprocess-header-rule"; sourceTree = "<group>"; };
 		536F46D3220D385100126322 /* PluginService.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = PluginService.entitlements; sourceTree = "<group>"; };
 		539EB5461DC2EE40009D48CF /* NetworkDataTaskBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkDataTaskBlob.cpp; sourceTree = "<group>"; };
 		539EB5471DC2EE40009D48CF /* NetworkDataTaskBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkDataTaskBlob.h; sourceTree = "<group>"; };
@@ -8723,6 +8738,7 @@
 		C0CE73351247F70E00BC0EC4 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
+				535E08CA225460FC00DF00CA /* postprocess-header-rule */,
 				7CDE73A21F9DA59700390312 /* PreferencesTemplates */,
 				0FC0856E187CE0A900780D86 /* __init__.py */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
@@ -10238,6 +10254,7 @@
 				933170072234674500B32554 /* Create symlinks to XPC services for engineering builds */,
 			);
 			buildRules = (
+				535E08C422545B7200DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
 				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
