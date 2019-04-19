@@ -27,6 +27,7 @@
 
 #include "JITCompilationEffort.h"
 #include "JSCPtrTag.h"
+#include "Options.h"
 #include <stddef.h> // for ptrdiff_t
 #include <limits>
 #include <wtf/Assertions.h>
@@ -111,6 +112,8 @@ T endOfFixedExecutableMemoryPool()
 
 JS_EXPORT_PRIVATE bool isJITPC(void* pc);
 
+JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
+
 #if ENABLE(SEPARATED_WX_HEAP)
 
 typedef void (*JITWriteSeparateHeapsFunction)(off_t, const void*, size_t);
@@ -128,6 +131,9 @@ static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 #endif
     if (isJITPC(dst)) {
         RELEASE_ASSERT(reinterpret_cast<uint8_t*>(dst) + n <= endOfFixedExecutableMemoryPool());
+
+        if (UNLIKELY(Options::dumpJITMemoryPath()))
+            dumpJITMemory(dst, src, n);
 #if ENABLE(FAST_JIT_PERMISSIONS)
 #if ENABLE(SEPARATED_WX_HEAP)
         if (useFastPermisionsJITCopy)

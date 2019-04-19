@@ -1,3 +1,24 @@
+2019-04-19  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Add option to dump JIT memory
+        https://bugs.webkit.org/show_bug.cgi?id=197062
+        <rdar://problem/49744332>
+
+        Reviewed by Saam Barati.
+
+        Dump all writes into JIT memory to the specified file. The format is:
+        - 64-bit destination address for the write
+        - 64-bit size of the content written
+        - Copy of the data that was written to JIT memory
+
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::copyCompactAndLinkCode):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jit/ExecutableAllocator.h:
+        (JSC::performJITMemcpy):
+        * runtime/Options.h:
+
 2019-04-19  Keith Rollin  <krollin@apple.com>
 
         Add postprocess-header-rule scripts

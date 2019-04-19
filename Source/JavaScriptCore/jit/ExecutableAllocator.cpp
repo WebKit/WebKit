@@ -550,6 +550,53 @@ bool isJITPC(void* pc)
     return allocator && allocator->isJITPC(pc);
 }
 
+void dumpJITMemory(const void* dst, const void* src, size_t size)
+{
+    ASSERT(Options::dumpJITMemoryPath());
+
+#if OS(DARWIN)
+    static int fd = -1;
+    static uint8_t* buffer;
+    static constexpr size_t bufferSize = fixedExecutableMemoryPoolSize;
+    static size_t offset = 0;
+    static auto flush = [] {
+        if (fd == -1) {
+            fd = open(Options::dumpJITMemoryPath(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
+            RELEASE_ASSERT(fd != -1);
+        }
+        write(fd, buffer, offset);
+        offset = 0;
+    };
+
+    static Lock dumpJITMemoryLock;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
+        std::atexit([] {
+            LockHolder locker(dumpJITMemoryLock);
+            flush();
+            close(fd);
+        });
+    });
+
+    static auto write = [](const void* src, size_t size) {
+        if (UNLIKELY(offset + size > bufferSize))
+            flush();
+        memcpy(buffer + offset, src, size);
+        offset += size;
+    };
+
+    LockHolder locker(dumpJITMemoryLock);
+    uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
+    write(&dst64, sizeof(dst64));
+    uint64_t size64 = size;
+    write(&size64, sizeof(size64));
+    write(src, size);
+#else
+    RELEASE_ASSERT_NOT_REACHED();
+#endif
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

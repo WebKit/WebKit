@@ -260,6 +260,8 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, void* ow
     performJITMemcpy(codeOutData, outData, m_size);
 #else
     ASSERT(codeOutData == outData);
+    if (UNLIKELY(Options::dumpJITMemoryPath()))
+        dumpJITMemory(outData, outData, m_size);
 #endif
 
     jumpsToLink.clear();

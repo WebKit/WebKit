@@ -517,6 +517,7 @@ constexpr bool enableWebAssemblyStreamingApi = false;
     v(bool, forceDiskCache, false, Restricted, nullptr) \
     v(bool, validateAbstractInterpreterState, false, Restricted, nullptr) \
     v(double, validateAbstractInterpreterStateProbability, 0.5, Normal, nullptr) \
+    v(optionString, dumpJITMemoryPath, nullptr, Restricted, nullptr) \
 
 
 enum OptionEquivalence {
