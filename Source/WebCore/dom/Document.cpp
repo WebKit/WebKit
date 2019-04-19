@@ -3603,22 +3603,17 @@ void Document::updateViewportArguments()
 }
 
 #if ENABLE(DARK_MODE_CSS)
-static inline bool isColorSchemeSeparator(UChar character)
-{
-    return isASCIISpace(character);
-}
-
 static void processColorSchemeString(StringView colorScheme, const WTF::Function<void(StringView key)>& callback)
 {
     unsigned length = colorScheme.length();
     for (unsigned i = 0; i < length; ) {
         // Skip to first non-separator.
-        while (i < length && isColorSchemeSeparator(colorScheme[i]))
+        while (i < length && isHTMLSpace(colorScheme[i]))
             ++i;
         unsigned keyBegin = i;
 
         // Skip to first separator.
-        while (i < length && !isColorSchemeSeparator(colorScheme[i]))
+        while (i < length && !isHTMLSpace(colorScheme[i]))
             ++i;
         unsigned keyEnd = i;
 

@@ -92,7 +92,7 @@ test(function() {
 }, "Element colors are correct in dark color scheme with only dark color scheme");
 
 test(function() {
-    document.getElementById("meta").content = "light  foo ";
+    document.getElementById("meta").content = "\tlight  foo ";
 }, "Color schemes changed to light and a bogus value");
 
 test(function() {
@@ -119,7 +119,16 @@ test(function() {
 }, "Element colors are in light color scheme since comma is not an allowed seperator");
 
 test(function() {
-    document.getElementById("meta").content = "  foo dark";
+    document.getElementById("meta").content = "foo\vdark ";
+}, "Color schemes changed to foo\\vdark");
+
+test(function() {
+    // The semantic text color should be black still.
+    test_color_is_black("test1");
+}, "Element colors are in light color scheme since vertical tab is not an allowed seperator");
+
+test(function() {
+    document.getElementById("meta").content = "  foo\ndark";
 }, "Color schemes changed to a bogus value and dark");
 
 test(function() {

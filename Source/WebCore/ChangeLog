@@ -1,3 +1,17 @@
+2019-04-19  Timothy Hatcher  <timothy@apple.com>
+
+        Standardize the <meta name="color-scheme"> separator.
+        https://bugs.webkit.org/show_bug.cgi?id=193931
+        rdar://problem/49995929
+
+        Reviewed by Darin Adler.
+
+        Tests: css-dark-mode/color-scheme-meta.html
+
+        * dom/Document.cpp:
+        (WebCore::processColorSchemeString): Use isHTMLSpace insead of isColorSchemeSeparator and isASCIISpace.
+        (WebCore::isColorSchemeSeparator): Deleted.
+
 2019-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add quirks to disable autocorrection and autocapitalization in hidden editable areas on some websites

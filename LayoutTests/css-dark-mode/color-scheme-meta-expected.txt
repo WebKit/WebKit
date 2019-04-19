@@ -18,6 +18,8 @@ PASS Color schemes changed to empty value
 PASS Element colors are correct in dark color scheme with implicit light color scheme 
 PASS Color schemes changed to light,dark 
 PASS Element colors are in light color scheme since comma is not an allowed seperator 
+PASS Color schemes changed to foo\vdark 
+PASS Element colors are in light color scheme since vertical tab is not an allowed seperator 
 PASS Color schemes changed to a bogus value and dark 
 PASS Element colors are correct in dark color scheme with dark color scheme 
 
