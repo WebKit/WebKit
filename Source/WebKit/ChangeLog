@@ -1,3 +1,14 @@
+2019-04-19  Tim Horton  <timothy_horton@apple.com>
+
+        YouTube and Twitter embeds don't load in News
+        https://bugs.webkit.org/show_bug.cgi?id=197111
+        <rdar://problem/50010081>
+
+        Reviewed by Timothy Hatcher.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Adjust this sandbox exception to include both platforms.
+
 2019-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add quirks to disable autocorrection and autocapitalization in hidden editable areas on some websites
