@@ -48,6 +48,7 @@ public:
     bool shouldDispatchSimulatedMouseEvents() const;
     bool shouldDisablePointerEventsQuirk() const;
 
+    WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const;
     WEBCORE_EXPORT bool isTouchBarUpdateSupressedForHiddenContentEditable() const;
     WEBCORE_EXPORT bool isNeverRichlyEditableForTouchBar() const;
 

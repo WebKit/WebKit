@@ -195,6 +195,25 @@ bool Quirks::isNeverRichlyEditableForTouchBar() const
     return false;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/QuirksAdditions.cpp>
+#else
+
+static bool shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(const StringView&)
+{
+    return false;
+}
+
+#endif
+
+bool Quirks::shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreasForHost(m_document->topDocument().url().host());
+}
+
 bool Quirks::shouldDispatchSimulatedMouseEvents() const
 {
 #if PLATFORM(IOS_FAMILY)

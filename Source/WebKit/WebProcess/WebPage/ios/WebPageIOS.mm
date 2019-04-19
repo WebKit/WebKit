@@ -106,6 +106,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/Quirks.h>
 #import <WebCore/RenderBlock.h>
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderThemeIOS.h>
@@ -2731,6 +2732,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
             information.autocapitalizeType = AutocapitalizeTypeDefault;
         }
         information.isReadOnly = false;
+    }
+
+    if (m_focusedElement->document().quirks().shouldSuppressAutocorrectionAndAutocaptializationInHiddenEditableAreas() && m_focusedElement->renderer() && enclosingLayerIsTransparentOrFullyClipped(*m_focusedElement->renderer())) {
+        information.autocapitalizeType = AutocapitalizeTypeNone;
+        information.isAutocorrect = false;
     }
 }
 
