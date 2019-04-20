@@ -1210,14 +1210,14 @@ namespace WTF {
             bestTableSize *= 2;
 
         unsigned minimumTableSize = KeyTraits::minimumTableSize;
-        return std::max<unsigned>(bestTableSize, minimumTableSize);
+        return std::max(bestTableSize, minimumTableSize);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::shrinkToBestSize()
     {
         unsigned minimumTableSize = KeyTraits::minimumTableSize;
-        rehash(std::max<unsigned>(minimumTableSize, computeBestTableSize(m_keyCount)), nullptr);
+        rehash(std::max(minimumTableSize, computeBestTableSize(m_keyCount)), nullptr);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
