@@ -1,3 +1,16 @@
+2019-04-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Fix Long Press Image Test
+        https://bugs.webkit.org/show_bug.cgi?id=197130
+        <rdar://problem/50058818>
+
+        Reviewed by Wenson Hsieh.
+
+        Fixing up test to reflect changes in https://bugs.webkit.org/show_bug.cgi?id=196833
+
+        * fast/events/touch/ios/long-press-on-image-expected.txt:
+        * fast/events/touch/ios/long-press-on-image.html:
+
 2019-04-19  John Wilander  <wilander@apple.com>
 
         Disable Ad Click Attribution in ephemeral sessions and make sure conversion requests use an ephemeral, stateless session

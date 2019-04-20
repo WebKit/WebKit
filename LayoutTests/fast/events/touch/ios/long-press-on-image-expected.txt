@@ -1,5 +1,6 @@
 Available Actions: 
-Save Image
+Share…
+Add to Photos
 Copy
 Cancel
 PASS

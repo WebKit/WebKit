@@ -1,4 +1,5 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta charset="utf-8">
 
 <html>
 <head>
@@ -29,14 +30,18 @@
                     var actionDictionary = JSON.parse(result);
                     var actionStrings = actionDictionary.actionSheet;
                     var output = '';
-                    if (actionStrings[0] == 'Save Image' && actionStrings[1] == 'Copy' && actionStrings[2] == 'Cancel') {
+                    if (actionStrings[0] == 'Share…' && actionStrings[1] == 'Add to Photos' && actionStrings[2] == 'Copy' && actionStrings[3] == 'Cancel') {
                         output += 'Available Actions: <br>';
                         output +=  actionStrings.join('<br>');
                         output += '<br>';
                         output += 'PASS';
                     }
-                    else
-                        output = 'FAIL'
+                    else {
+                        output += 'Available Actions: <br>';
+                        output += actionStrings.join('<br>');
+                        output += '<br>';
+                        output += 'FAIL'
+                    }
 
                     document.getElementById('target').innerHTML = output;
                     testRunner.notifyDone();
