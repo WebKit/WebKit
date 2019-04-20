@@ -44,6 +44,7 @@ WEBKIT_ADD_PRECOMPILED_HEADER("WebKitQuartzCoreAdditionsPrefix.h" "WebKitQuartzC
 
 include_directories(
     .
+    "${WTF_FRAMEWORK_HEADERS_DIR}"
     "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
     "${DERIVED_SOURCES_DIR}/WebKitQuartzCoreAdditions"
     "${CMAKE_BINARY_DIR}/../include/private"

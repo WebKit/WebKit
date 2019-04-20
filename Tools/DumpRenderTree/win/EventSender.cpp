@@ -35,11 +35,11 @@
 #include "DraggingInfo.h"
 #include "DumpRenderTree.h"
 #include "WebCoreTestSupport.h"
-#include "WebFrame.h"
 
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/PlatformWheelEvent.h>
+#include <WebKitLegacy/WebFrame.h>
 #include <WebKitLegacy/WebKit.h>
 #include <windows.h>
 #include <wtf/ASCIICType.h>

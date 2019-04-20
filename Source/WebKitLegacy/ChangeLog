@@ -1,3 +1,17 @@
+2019-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use target oriented design for WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=197112
+
+        Reviewed by Konstantin Tokarev.
+
+        Enumerate the public framework headers for WebKitLegacy and copy them. Include
+        directories should be PRIVATE. Migrate to using WebKitLegacy_DERIVED_SOURCES_DIR.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWin.cmake:
+
 2019-04-19  Keith Rollin  <krollin@apple.com>
 
         Add postprocess-header-rule scripts

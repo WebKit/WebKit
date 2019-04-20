@@ -65,8 +65,6 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     TestNetscapePlugIn/Tests
     TestNetscapePlugIn/win
     TestNetscapePlugIn/Tests/win
-    ${WEBKITLegacy_DIR}/win
-    ${DERIVED_SOURCES_DIR}/WebKitLegacy/Interfaces
 )
 
 list(APPEND DumpRenderTree_LIBRARIES

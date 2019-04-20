@@ -1,3 +1,14 @@
+2019-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use target oriented design for WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=197112
+
+        Reviewed by Konstantin Tokarev.
+
+        Fix an include directory.
+
+        * WebKitQuartzCoreAdditions/CMakeLists.txt:
+
 2019-04-18  Jer Noble  <jer.noble@apple.com>
 
         Refactoring: Pull all fullscreen code out of Document and into its own helper class

@@ -3,9 +3,7 @@ find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 
-list(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"
-    "${CMAKE_SOURCE_DIR}/WebKitLibraries"
+list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKITLEGACY_DIR}/mac"
     "${WEBKITLEGACY_DIR}/mac/Carbon"
     "${WEBKITLEGACY_DIR}/mac/DefaultDelegates"
@@ -405,32 +403,32 @@ file(COPY
     mac/Plugins/Hosted/WebKitPluginHost.defs
     mac/Plugins/Hosted/WebKitPluginHostTypes.defs
     mac/Plugins/Hosted/WebKitPluginHostTypes.h
-DESTINATION ${DERIVED_SOURCES_WEBKITLEGACY_DIR})
+DESTINATION ${WebKitLegacy_DERIVED_SOURCES_DIR})
 
 add_custom_command(
     OUTPUT
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyServer.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentReplyUser.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentServer.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostServer.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentReplyServer.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentReplyUser.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentServer.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentUser.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostServer.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostUser.c
     DEPENDS mac/Plugins/Hosted/WebKitPluginAgent.defs mac/Plugins/Hosted/WebKitPluginHost.defs
-    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
+    WORKING_DIRECTORY ${WebKitLegacy_DERIVED_SOURCES_DIR}
     COMMAND mig -I.. WebKitPluginAgent.defs WebKitPluginAgentReply.defs WebKitPluginHost.defs
     VERBATIM)
 add_custom_command(
     OUTPUT
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
-        ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientUser.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginClientServer.c
+        ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginClientUser.c
     DEPENDS mac/Plugins/Hosted/WebKitPluginClient.defs
-    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
+    WORKING_DIRECTORY ${WebKitLegacy_DERIVED_SOURCES_DIR}
     COMMAND mig -I.. -sheader WebKitPluginClientServer.h WebKitPluginClient.defs
     VERBATIM)
 list(APPEND WebKitLegacy_SOURCES
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
-    ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentUser.c
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginClientServer.c
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostUser.c
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
