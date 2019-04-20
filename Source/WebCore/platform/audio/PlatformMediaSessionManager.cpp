@@ -219,12 +219,15 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     }
 
 #if USE(AUDIO_SESSION)
-    if (activeAudioSessionRequired() && !AudioSession::sharedSession().tryToSetActive(true)) {
-        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false failed to set active AudioSession");
-        return false;
-    }
+    if (activeAudioSessionRequired()) {
+        if (!AudioSession::sharedSession().tryToSetActive(true)) {
+            ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " returning false failed to set active AudioSession");
+            return false;
+        }
 
-    m_becameActive = true;
+        ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier(), " sucessfully activated AudioSession");
+        m_becameActive = true;
+    }
 #endif
 
     if (m_interrupted)
