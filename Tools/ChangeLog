@@ -1,3 +1,13 @@
+2019-04-20  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Submit to EWS buttons are not aligned properly with status-bubbles
+        https://bugs.webkit.org/show_bug.cgi?id=197139
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/ews-app/ews/templates/statusbubble.html:
+        * QueueStatusServer/templates/statusbubble.html:
+
 2019-04-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.
