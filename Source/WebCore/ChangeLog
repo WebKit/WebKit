@@ -1,5 +1,16 @@
 2019-04-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Timelines: CPU: ensure that tracking stops when disconnecting Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=197115
+        <rdar://problem/49877875>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/InspectorCPUProfilerAgent.cpp:
+        (WebCore::InspectorCPUProfilerAgent::willDestroyFrontendAndBackend):
+
+2019-04-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: REGRESSION: Elements: "Inspect Element" context menu often doesn't select that element
         https://bugs.webkit.org/show_bug.cgi?id=197091
         <rdar://problem/49953728>

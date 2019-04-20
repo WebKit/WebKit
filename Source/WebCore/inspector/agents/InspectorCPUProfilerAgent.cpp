@@ -51,6 +51,9 @@ void InspectorCPUProfilerAgent::didCreateFrontendAndBackend(FrontendRouter*, Bac
 
 void InspectorCPUProfilerAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
+    ErrorString ignored;
+    stopTracking(ignored);
+
     m_instrumentingAgents.setInspectorCPUProfilerAgent(nullptr);
 }
 
