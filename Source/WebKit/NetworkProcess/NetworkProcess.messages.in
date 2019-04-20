@@ -82,7 +82,7 @@ messages -> NetworkProcess LegacyReceiver {
     CancelPrepareToSuspend()
     ProcessDidResume()
 
-    PreconnectTo(URL url, enum:bool WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
+    PreconnectTo(URL url, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> () Async

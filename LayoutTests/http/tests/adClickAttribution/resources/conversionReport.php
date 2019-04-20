@@ -24,4 +24,8 @@ if (!$cookiesFound) {
 }
 fclose($conversionFile);
 rename($conversionFilePath . ".tmp", $conversionFilePath);
+
+header("HTTP/1.1 200 OK");
+setcookie("cookieSetInConversionReport", "1", 0, "/");
+
 ?>

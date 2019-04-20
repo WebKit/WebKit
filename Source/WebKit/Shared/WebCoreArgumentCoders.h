@@ -854,6 +854,15 @@ template <> struct EnumTraits<WebCore::WorkerType> {
     >;
 };
 
+template<> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
+    using values = EnumValues<
+        WebCore::StoredCredentialsPolicy,
+        WebCore::StoredCredentialsPolicy::DoNotUse,
+        WebCore::StoredCredentialsPolicy::Use,
+        WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless
+    >;
+};
+
 #if USE(CURL)
 template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
     using values = EnumValues<

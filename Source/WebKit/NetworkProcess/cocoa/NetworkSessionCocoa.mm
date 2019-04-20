@@ -998,14 +998,38 @@ NetworkSessionCocoa::~NetworkSessionCocoa()
 {
 }
 
+void NetworkSessionCocoa::initializeEphemeralStatelessCookielessSession()
+{
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
+    NSURLSessionConfiguration *existingConfiguration = m_statelessSession.get().configuration;
+
+    configuration.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
+    configuration.URLCredentialStorage = nil;
+    configuration.URLCache = nil;
+    configuration.allowsCellularAccess = existingConfiguration.allowsCellularAccess;
+    configuration.connectionProxyDictionary = existingConfiguration.connectionProxyDictionary;
+
+    configuration._shouldSkipPreferredClientCertificateLookup = YES;
+    configuration._sourceApplicationAuditTokenData = existingConfiguration._sourceApplicationAuditTokenData;
+    configuration._sourceApplicationSecondaryIdentifier = existingConfiguration._sourceApplicationSecondaryIdentifier;
+#if PLATFORM(IOS_FAMILY)
+    configuration._CTDataConnectionServiceType = existingConfiguration._CTDataConnectionServiceType;
+#endif
+
+    m_ephemeralStatelessCookielessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
+    m_ephemeralStatelessCookielessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_ephemeralStatelessCookielessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+}
+
 void NetworkSessionCocoa::invalidateAndCancel()
 {
     NetworkSession::invalidateAndCancel();
 
     [m_sessionWithCredentialStorage invalidateAndCancel];
     [m_statelessSession invalidateAndCancel];
+    [m_ephemeralStatelessCookielessSession invalidateAndCancel];
     [m_sessionWithCredentialStorageDelegate sessionInvalidated];
     [m_statelessSessionDelegate sessionInvalidated];
+    [m_ephemeralStatelessCookielessSessionDelegate sessionInvalidated];
 }
 
 void NetworkSessionCocoa::clearCredentials()

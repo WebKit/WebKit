@@ -1,3 +1,36 @@
+2019-04-19  John Wilander  <wilander@apple.com>
+
+        Disable Ad Click Attribution in ephemeral sessions and make sure conversion requests use an ephemeral, stateless session
+        https://bugs.webkit.org/show_bug.cgi?id=197108
+        <rdar://problem/49918702>
+
+        Reviewed by Alex Christensen.
+
+        Except for the details below, this patch introduces the utility functions
+        prepareTest() and tearDownAndFinish() and all applicable tests now make use
+        of them.
+
+        * http/tests/adClickAttribution/attribution-conversion-through-cross-site-image-redirect.html:
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-with-priority.html:
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session-expected.txt: Added.
+        * http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html: Copied from LayoutTests/http/tests/adClickAttribution/send-attribution-conversion-request.html.
+        * http/tests/adClickAttribution/resources/conversionReport.php:
+            Now tries to set a cookie in the response.
+        * http/tests/adClickAttribution/resources/util.js: Added.
+        (prepareTest):
+        (tearDownAndFinish):
+        * http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html:
+        * http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html:
+        * http/tests/adClickAttribution/second-conversion-with-higher-priority.html:
+        * http/tests/adClickAttribution/second-conversion-with-lower-priority.html:
+        * http/tests/adClickAttribution/send-attribution-conversion-request-expected.txt:
+        * http/tests/adClickAttribution/send-attribution-conversion-request.html:
+        * http/tests/adClickAttribution/store-ad-click-attribution.html:
+            Now sets a cookie which is checked for it in the conversion report.
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session-expected.txt: Added.
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html: Copied from LayoutTests/http/tests/adClickAttribution/store-ad-click-attribution.html.
+
 2019-04-19  Timothy Hatcher  <timothy@apple.com>
 
         Standardize the `<meta name="color-scheme">` separator.

@@ -405,7 +405,9 @@ Optional<AdClickAttribution> HTMLAnchorElement::parseAdClickAttribution() const
     using Source = AdClickAttribution::Source;
     using Destination = AdClickAttribution::Destination;
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().adClickAttributionEnabled() || !UserGestureIndicator::processingUserGesture())
+    if (document().sessionID().isEphemeral()
+        || !RuntimeEnabledFeatures::sharedFeatures().adClickAttributionEnabled()
+        || !UserGestureIndicator::processingUserGesture())
         return WTF::nullopt;
 
     if (!hasAttributeWithoutSynchronization(adcampaignidAttr) && !hasAttributeWithoutSynchronization(addestinationAttr))

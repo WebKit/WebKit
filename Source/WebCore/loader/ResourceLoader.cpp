@@ -717,7 +717,7 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
 
 bool ResourceLoader::shouldUseCredentialStorage()
 {
-    if (m_options.storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
+    if (m_options.storedCredentialsPolicy != StoredCredentialsPolicy::Use)
         return false;
 
     Ref<ResourceLoader> protectedThis(*this);

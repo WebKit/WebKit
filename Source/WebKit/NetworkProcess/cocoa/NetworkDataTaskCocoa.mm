@@ -193,7 +193,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     bool shouldBlockCookies = false;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
+    shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless || session.networkStorageSession().shouldBlockCookies(request, frameID, pageID);
 #endif
     restrictRequestReferrerToOriginIfNeeded(request, shouldBlockCookies);
 
@@ -201,16 +201,27 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
-    if (storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
+    switch (storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::Use:
         m_task = [cocoaSession.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
         cocoaSession.m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
         LOG(NetworkSession, "%llu Creating stateful NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-    } else {
+        break;
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
         m_task = [cocoaSession.m_statelessSession dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithoutState.contains([m_task taskIdentifier]));
         cocoaSession.m_dataTaskMapWithoutState.add([m_task taskIdentifier], this);
         LOG(NetworkSession, "%llu Creating stateless NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+        break;
+    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
+        if (!cocoaSession.m_ephemeralStatelessCookielessSession)
+            cocoaSession.initializeEphemeralStatelessCookielessSession();
+        m_task = [cocoaSession.m_ephemeralStatelessCookielessSession dataTaskWithRequest:nsRequest];
+        ASSERT(!cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.contains([m_task taskIdentifier]));
+        cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.add([m_task taskIdentifier], this);
+        LOG(NetworkSession, "%llu Creating ephemeral, stateless, cookieless NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+        break;
     }
 
     if (shouldPreconnectOnly == PreconnectOnly::Yes) {
@@ -250,12 +261,19 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         return;
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
-    if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
+    switch (m_storedCredentialsPolicy) {
+    case WebCore::StoredCredentialsPolicy::Use:
         ASSERT(cocoaSession.m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
         cocoaSession.m_dataTaskMapWithCredentials.remove([m_task taskIdentifier]);
-    } else {
+        break;
+    case WebCore::StoredCredentialsPolicy::DoNotUse:
         ASSERT(cocoaSession.m_dataTaskMapWithoutState.get([m_task taskIdentifier]) == this);
         cocoaSession.m_dataTaskMapWithoutState.remove([m_task taskIdentifier]);
+        break;
+    case WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless:
+        ASSERT(cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.get([m_task taskIdentifier]) == this);
+        cocoaSession.m_dataTaskMapEphemeralStatelessCookieless.remove([m_task taskIdentifier]);
+        break;
     }
 }
 
@@ -345,7 +363,7 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.setFirstPartyForCookies(request.url());
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    bool shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
+    bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStatelessCookieless || m_session->networkStorageSession().shouldBlockCookies(request, m_frameID, m_pageID);
 #if !RELEASE_LOG_DISABLED
     if (m_session->shouldLogCookieInformation())
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: %s cookies for redirect URL %s", this, m_pageID, m_frameID, (unsigned long)[m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());

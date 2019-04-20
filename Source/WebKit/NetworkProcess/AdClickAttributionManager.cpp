@@ -119,9 +119,8 @@ void AdClickAttributionManager::fireConversionRequest(const AdClickAttribution& 
     loadParameters.request = request;
     loadParameters.sourceOrigin = SecurityOrigin::create(conversionReferrerURL);
     loadParameters.parentPID = presentingApplicationPID();
-    // FIXME: Switch to the use of an ephemeral, stateless session.
     loadParameters.sessionID = PAL::SessionID::defaultSessionID();
-    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+    loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStatelessCookieless;
     loadParameters.options = options;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
     loadParameters.shouldRestrictHTTPResponseAccess = false;
@@ -181,7 +180,7 @@ void AdClickAttributionManager::clear(CompletionHandler<void()>&& completionHand
 void AdClickAttributionManager::toString(CompletionHandler<void(String)>&& completionHandler) const
 {
     if (m_unconvertedAdClickAttributionMap.isEmpty() && m_convertedAdClickAttributionMap.isEmpty())
-        return completionHandler("No stored Ad Click Attribution data.\n"_s);
+        return completionHandler("\nNo stored Ad Click Attribution data.\n"_s);
 
     unsigned unconvertedAttributionNumber = 0;
     StringBuilder builder;

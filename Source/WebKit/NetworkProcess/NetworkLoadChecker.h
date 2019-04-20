@@ -41,7 +41,7 @@ class ContentSecurityPolicy;
 struct ContentSecurityPolicyClient;
 class SecurityOrigin;
 enum class PreflightPolicy : uint8_t;
-enum class StoredCredentialsPolicy : bool;
+enum class StoredCredentialsPolicy : uint8_t;
 }
 
 namespace WebKit {

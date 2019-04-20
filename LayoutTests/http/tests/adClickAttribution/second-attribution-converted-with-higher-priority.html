@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout(runTest, 0)">
 <div id="description">Tests that a second attribution conversion with higher priority replaces an older with lower priority.</div>
@@ -24,17 +25,13 @@
         }
     ];
 
+    prepareTest();
+
     function configureLink(index) {
         let linkElement = document.getElementById("targetLink");
         linkElement.setAttribute("href", configuration[index].href);
         linkElement.setAttribute("adcampaignid", configuration[index].adcampaignid);
         linkElement.setAttribute("addestination", configuration[index].addestination);
-    }
-
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-        testRunner.setAllowsAnySSLCertificate(true);
     }
 
     function activateElement(elementID) {
@@ -46,7 +43,7 @@
             },
             function () {
                 document.getElementById("output").innerText = "FAIL Promise rejected.";
-                testRunner.notifyDone();
+                tearDownAndFinish();
             }
         );
     }
@@ -79,12 +76,12 @@
                     testRunner.dumpAdClickAttribution();
                     document.body.removeChild(document.getElementById("targetLink"));
                     document.body.removeChild(document.getElementById("pixel"));
-                    testRunner.notifyDone();
+                    tearDownAndFinish();
                 };
                 document.body.appendChild(imageElement);
             } else {
                 document.getElementById("output").innerText = "FAIL Unknown window.location.search == " + window.location.search + ".";
-                testRunner.notifyDone();
+                tearDownAndFinish();
             }
         } else {
             document.getElementById("output").innerText = "FAIL No testRunner.";

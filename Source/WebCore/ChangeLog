@@ -1,3 +1,23 @@
+2019-04-19  John Wilander  <wilander@apple.com>
+
+        Disable Ad Click Attribution in ephemeral sessions and make sure conversion requests use an ephemeral, stateless session
+        https://bugs.webkit.org/show_bug.cgi?id=197108
+        <rdar://problem/49918702>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html
+               http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAdClickAttribution const):
+            Early return for ephemeral sessions.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+            Now returns false for StoredCredentialsPolicy:EphemeralStatelessCookieless.
+        * platform/network/StoredCredentialsPolicy.h:
+            Added enum value EphemeralStatelessCookieless.
+
 2019-04-19  Timothy Hatcher  <timothy@apple.com>
 
         Standardize the <meta name="color-scheme"> separator.

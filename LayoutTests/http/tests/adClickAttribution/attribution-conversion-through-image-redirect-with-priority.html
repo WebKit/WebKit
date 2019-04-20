@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="/js-test-resources/ui-helper.js"></script>
+    <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout(runTest, 0)">
 <div id="description">Tests triggering of ad click attribution conversions with priority.</div>
 <a id="targetLink" href="http://localhost:8000/adClickAttribution/attribution-conversion-through-image-redirect-with-priority.html?stepTwo" adcampaignid="3" addestination="http://localhost:8000">Link</a><br>
 <div id="output"></div>
 <script>
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
-        testRunner.setAllowsAnySSLCertificate(true);
-    }
+    prepareTest();
 
     function activateElement(elementID) {
         var element = document.getElementById(elementID);
@@ -25,7 +22,7 @@
             },
             function () {
                 document.getElementById("output").innerText = "FAIL Promise rejected.";
-                testRunner.notifyDone();
+                tearDownAndFinish();
             }
         );
     }
@@ -40,7 +37,7 @@
                     testRunner.dumpAdClickAttribution();
                     document.body.removeChild(document.getElementById("targetLink"));
                     document.body.removeChild(document.getElementById("pixel"));
-                    testRunner.notifyDone();
+                    tearDownAndFinish();
                 };
                 document.body.appendChild(imageElement);
             } else {

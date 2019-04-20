@@ -7,8 +7,8 @@
     <script src="resources/util.js"></script>
 </head>
 <body onload="setTimeout(runTest, 0)">
-<div id="description">Tests sending of ad click attribution requests after a conversion. Also tests that cookies are not sent in those requests and cookies are not accepted in the responses.</div>
-<a id="targetLink" href="http://localhost:8000/adClickAttribution/send-attribution-conversion-request.html?stepTwo" adcampaignid="3" addestination="http://localhost:8000">Link</a><br>
+<div id="description">Tests that stored attributions cannot be converted in an ephemeral session.</div>
+<a id="targetLink" href="http://localhost:8000/adClickAttribution/conversion-disabled-in-ephemeral-session.html?stepTwo" adcampaignid="3" addestination="http://localhost:8000">Link</a><br>
 <div id="output"></div>
 <script>
     const currentTimeMillis = (new Date()).getTime();
@@ -17,10 +17,8 @@
 
     prepareTest();
 
-    if (window.testRunner) {
-        testRunner.setAdClickAttributionOverrideTimerForTesting(true);
+    if (window.testRunner)
         testRunner.setAdClickAttributionConversionURLForTesting("http://127.0.0.1:8000/adClickAttribution/resources/conversionReport.php?nonce=" + nonce);
-    }
 
     function activateElement(elementID) {
         var element = document.getElementById(elementID);
@@ -49,17 +47,15 @@
         document.body.removeChild(document.getElementById("targetLink"));
         document.body.removeChild(document.getElementById("pixel"));
 
-        appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.php");
-        appendIframe("http://127.0.0.1:8000/adClickAttribution/resources/getConversionData.php?timeout_ms=2000&nonce=" + nonce, function() {
-            appendIframe("http://127.0.0.1:8000/cookies/resources/echo-cookies.php", function() {
-                tearDownAndFinish();
-            });
+        appendIframe("http://127.0.0.1:8000/adClickAttribution/resources/getConversionData.php?timeout_ms=1000&nonce=" + nonce, function() {
+            tearDownAndFinish();
         });
     }
 
     function runTest() {
         if (window.testRunner) {
             if (window.location.search === "?stepTwo") {
+                testRunner.setPrivateBrowsingEnabled(true);
                 let imageElement = document.createElement("img");
                 imageElement.src = "https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12&nonce=" + nonce;
                 imageElement.id = "pixel";

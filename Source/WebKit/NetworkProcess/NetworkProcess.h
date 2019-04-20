@@ -77,7 +77,7 @@ class NetworkStorageSession;
 class ResourceError;
 class SWServer;
 enum class IncludeHttpOnlyCookies : bool;
-enum class StoredCredentialsPolicy : bool;
+enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
 struct SecurityOriginData;

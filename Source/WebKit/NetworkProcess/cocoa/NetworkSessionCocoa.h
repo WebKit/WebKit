@@ -47,6 +47,8 @@ public:
     static Ref<NetworkSession> create(NetworkProcess&, NetworkSessionCreationParameters&&);
     ~NetworkSessionCocoa();
 
+    void initializeEphemeralStatelessCookielessSession();
+
     const String& sourceApplicationBundleIdentifier() const;
     const String& sourceApplicationSecondaryIdentifier() const;
     // Must be called before any NetworkSession has been created.
@@ -77,12 +79,15 @@ private:
 
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithCredentials;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapWithoutState;
+    HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> m_dataTaskMapEphemeralStatelessCookieless;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, DownloadID> m_downloadMap;
 
     RetainPtr<NSURLSession> m_sessionWithCredentialStorage;
     RetainPtr<WKNetworkSessionDelegate> m_sessionWithCredentialStorageDelegate;
     RetainPtr<NSURLSession> m_statelessSession;
     RetainPtr<WKNetworkSessionDelegate> m_statelessSessionDelegate;
+    RetainPtr<NSURLSession> m_ephemeralStatelessCookielessSession;
+    RetainPtr<WKNetworkSessionDelegate> m_ephemeralStatelessCookielessSessionDelegate;
 
     String m_boundInterfaceIdentifier;
     String m_sourceApplicationBundleIdentifier;
