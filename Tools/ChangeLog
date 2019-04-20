@@ -1,5 +1,14 @@
 2019-04-20  Aakash Jain  <aakash_jain@apple.com>
 
+        Update text for old EWS submit button
+        https://bugs.webkit.org/show_bug.cgi?id=197140
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/templates/statusbubble.html:
+
+2019-04-20  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-app] New EWS should poll bugzilla more frequently
         https://bugs.webkit.org/show_bug.cgi?id=197138
 
