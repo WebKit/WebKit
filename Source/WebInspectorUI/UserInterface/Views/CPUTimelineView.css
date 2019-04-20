@@ -30,8 +30,11 @@ body .timeline-view.cpu {
 .timeline-view.cpu > .content > .overview {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
     padding: 10px;
+}
+
+.timeline-view.cpu > .content > .overview:not(:last-child) {
+    margin-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
