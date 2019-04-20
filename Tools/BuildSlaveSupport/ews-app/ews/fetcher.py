@@ -32,7 +32,7 @@ _log = logging.getLogger(__name__)
 
 
 class FetchLoop():
-    def __init__(self, interval=60):
+    def __init__(self, interval=30):
         self.interval = interval
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
