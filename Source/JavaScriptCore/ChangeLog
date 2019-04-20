@@ -1,3 +1,10 @@
+2019-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, suppress warnings in non Darwin environments
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+
 2019-04-19  Saam Barati  <sbarati@apple.com>
 
         AbstractValue can represent more than int52

@@ -593,6 +593,9 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     write(&size64, sizeof(size64));
     write(src, size);
 #else
+    UNUSED_PARAM(dst);
+    UNUSED_PARAM(src);
+    UNUSED_PARAM(size);
     RELEASE_ASSERT_NOT_REACHED();
 #endif
 }
