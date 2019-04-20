@@ -32,15 +32,27 @@
 
 namespace bmalloc {
 
+class IsoHeapImplBase;
 template<typename Config> class IsoDirectoryBase;
 template<typename Config> class IsoHeapImpl;
 
 class IsoPageBase {
 public:    
     static constexpr size_t pageSize = 16384;
+
+    explicit IsoPageBase(bool isShared)
+        : m_isShared(isShared)
+    {
+    }
+
+    static IsoPageBase* pageFor(void*);
+
+    bool isShared() const { return m_isShared; }
     
 protected:
     BEXPORT static void* allocatePageMemory();
+
+    bool m_isShared { false };
 };
 
 template<typename Config>
@@ -81,9 +93,6 @@ private:
         return (sizeof(IsoPage) + Config::objectSize - 1) / Config::objectSize;
     }
     
-    IsoDirectoryBase<Config>& m_directory;
-    unsigned m_index { UINT_MAX };
-    
     // The possible states of a page are as follows. We mark these states by their corresponding
     // eligible, empty, and committed bits (respectively).
     //
@@ -101,13 +110,17 @@ private:
     // freeing.
 
     // This must have a trivial destructor.
-    
-    unsigned m_allocBits[bitsArrayLength(numObjects)];
-    unsigned m_numNonEmptyWords { 0 };
+
     bool m_eligibilityHasBeenNoted { true };
     bool m_isInUseForAllocation { false };
     DeferredTrigger<IsoPageTrigger::Eligible> m_eligibilityTrigger;
     DeferredTrigger<IsoPageTrigger::Empty> m_emptyTrigger;
+
+    IsoDirectoryBase<Config>& m_directory;
+    unsigned m_index { UINT_MAX };
+    
+    unsigned m_allocBits[bitsArrayLength(numObjects)];
+    unsigned m_numNonEmptyWords { 0 };
 };
 
 } // namespace bmalloc

@@ -28,7 +28,7 @@
 #include "BInline.h"
 #include "EligibilityResult.h"
 #include "IsoAllocator.h"
-#include "IsoHeapImpl.h"
+#include "IsoHeapImplInlines.h"
 #include "IsoPage.h"
 
 namespace bmalloc {
@@ -61,6 +61,18 @@ template<typename Config>
 BNO_INLINE void* IsoAllocator<Config>::allocateSlow(bool abortOnFailure)
 {
     std::lock_guard<Mutex> locker(m_heap->lock);
+
+    AllocationMode allocationMode = m_heap->updateAllocationMode();
+    if (allocationMode == AllocationMode::Shared) {
+        if (m_currentPage) {
+            m_currentPage->stopAllocating(m_freeList);
+            m_currentPage = nullptr;
+            m_freeList.clear();
+        }
+        return m_heap->allocateFromShared(abortOnFailure);
+    }
+
+    BASSERT(allocationMode == AllocationMode::Fast);
     
     EligibilityResult<Config> result = m_heap->takeFirstEligible();
     if (result.kind != EligibilityKind::Success) {

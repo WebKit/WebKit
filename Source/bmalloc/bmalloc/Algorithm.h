@@ -71,17 +71,22 @@ constexpr bool isPowerOfTwo(T size)
     return size && !(size & (size - 1));
 }
 
-template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)
+template<typename T> constexpr T roundUpToMultipleOfImpl(size_t divisor, T x)
 {
-    BASSERT(isPowerOfTwo(divisor));
     static_assert(sizeof(T) == sizeof(uintptr_t), "sizeof(T) must be equal to sizeof(uintptr_t).");
     return static_cast<T>((static_cast<uintptr_t>(x) + (divisor - 1)) & ~(divisor - 1));
 }
 
-template<size_t divisor, typename T> inline T roundUpToMultipleOf(T x)
+template<typename T> inline T roundUpToMultipleOf(size_t divisor, T x)
+{
+    BASSERT(isPowerOfTwo(divisor));
+    return roundUpToMultipleOfImpl(divisor, x);
+}
+
+template<size_t divisor, typename T> constexpr T roundUpToMultipleOf(T x)
 {
     static_assert(isPowerOfTwo(divisor), "'divisor' must be a power of two.");
-    return roundUpToMultipleOf(divisor, x);
+    return roundUpToMultipleOfImpl(divisor, x);
 }
 
 template<typename T> inline T* roundUpToMultipleOf(size_t divisor, T* x)

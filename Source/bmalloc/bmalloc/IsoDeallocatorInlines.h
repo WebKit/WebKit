@@ -28,6 +28,7 @@
 #include "BInline.h"
 #include "IsoDeallocator.h"
 #include "IsoPage.h"
+#include "IsoSharedPage.h"
 #include "Mutex.h"
 #include <mutex>
 
@@ -45,11 +46,23 @@ IsoDeallocator<Config>::~IsoDeallocator()
 }
 
 template<typename Config>
-void IsoDeallocator<Config>::deallocate(void* ptr)
+template<typename Type>
+void IsoDeallocator<Config>::deallocate(api::IsoHeap<Type>& handle, void* ptr)
 {
     static constexpr bool verbose = false;
     if (verbose)
         fprintf(stderr, "%p: deallocating %p of size %u\n", &IsoPage<Config>::pageFor(ptr)->heap(), ptr, Config::objectSize);
+
+    // For allocation from shared pages, we deallocate immediately rather than batching deallocations with object log.
+    // The batching delays the reclamation of the shared cells, which can make allocator mistakenly think that "we exhaust shared
+    // cells because this is allocated a lot". Since the number of shared cells are limited, this immediate deallocation path
+    // should be rarely taken. If we see frequent malloc-and-free pattern, we tier up the allocator from shared mode to fast mode.
+    IsoPageBase* page = IsoPageBase::pageFor(ptr);
+    if (page->isShared()) {
+        std::lock_guard<Mutex> locker(*m_lock);
+        static_cast<IsoSharedPage*>(page)->free<Config>(handle, ptr);
+        return;
+    }
 
     if (m_objectLog.size() == m_objectLog.capacity())
         scavenge();

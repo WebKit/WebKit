@@ -41,7 +41,8 @@ public:
     IsoDeallocator(Mutex& lock);
     ~IsoDeallocator();
     
-    void deallocate(void* p);
+    template<typename Type>
+    void deallocate(api::IsoHeap<Type>&, void* p);
     void scavenge();
     
 private:

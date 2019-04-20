@@ -27,6 +27,8 @@
 
 #include "IsoHeapImpl.h"
 #include "IsoTLSDeallocatorEntry.h"
+#include "IsoSharedHeapInlines.h"
+#include "IsoSharedPageInlines.h"
 
 namespace bmalloc {
 
@@ -107,6 +109,8 @@ void IsoHeapImpl<Config>::scavenge(Vector<DeferredDecommit>& decommits)
             directory.scavenge(decommits);
         });
     m_directoryHighWatermark = 0;
+    m_numberOfAllocationsFromSharedInOneCycle = 0;
+    m_allocationMode = AllocationMode::Init;
 }
 
 template<typename Config>
@@ -176,6 +180,11 @@ void IsoHeapImpl<Config>::forEachLiveObject(const Func& func)
         [&] (IsoPage<Config>& page) {
             page.forEachLiveObject(func);
         });
+    for (unsigned index = 0; index < maxAllocationFromShared; ++index) {
+        void* pointer = m_sharedCells[index];
+        if (pointer && !(m_usableBits & (1U << index)))
+            func(pointer);
+    }
 }
 
 template<typename Config>
@@ -219,6 +228,81 @@ void IsoHeapImpl<Config>::isNoLongerFreeable(void* ptr, size_t bytes)
 {
     BUNUSED_PARAM(ptr);
     m_freeableMemory -= bytes;
+}
+
+template<typename Config>
+AllocationMode IsoHeapImpl<Config>::updateAllocationMode()
+{
+    // Exhaust shared free cells, which means we should start activating the fast allocation mode for this type.
+    if (!m_usableBits) {
+        m_slowPathTimePoint = std::chrono::steady_clock::now();
+        return AllocationMode::Fast;
+    }
+
+    switch (m_allocationMode) {
+    case AllocationMode::Shared:
+        // Currently in the shared allocation mode. Until we exhaust shared free cells, continue using the shared allocation mode.
+        // But if we allocate so many shared cells within very short period, we should use the fast allocation mode instead.
+        // This avoids the following pathological case.
+        //
+        //     for (int i = 0; i < 1e6; ++i) {
+        //         auto* ptr = allocate();
+        //         ...
+        //         free(ptr);
+        //     }
+        if (m_numberOfAllocationsFromSharedInOneCycle <= IsoPage<Config>::numObjects)
+            return AllocationMode::Shared;
+        BFALLTHROUGH;
+
+    case AllocationMode::Fast: {
+        // The allocation pattern may change. We should check the allocation rate and decide which mode is more appropriate.
+        // If we don't go to the allocation slow path during 1~ seconds, we think the allocation becomes quiescent state.
+        auto now = std::chrono::steady_clock::now();
+        if ((now - m_slowPathTimePoint) < std::chrono::seconds(1)) {
+            m_slowPathTimePoint = now;
+            return AllocationMode::Fast;
+        }
+
+        m_numberOfAllocationsFromSharedInOneCycle = 0;
+        m_slowPathTimePoint = now;
+        return AllocationMode::Shared;
+    }
+
+    case AllocationMode::Init:
+        m_slowPathTimePoint = std::chrono::steady_clock::now();
+        return AllocationMode::Shared;
+    }
+
+    return AllocationMode::Shared;
+}
+
+template<typename Config>
+void* IsoHeapImpl<Config>::allocateFromShared(bool abortOnFailure)
+{
+    static constexpr bool verbose = false;
+
+    unsigned indexPlusOne = __builtin_ffs(m_usableBits);
+    BASSERT(indexPlusOne);
+    unsigned index = indexPlusOne - 1;
+    void* result = result = m_sharedCells[index];
+    if (result) {
+        if (verbose)
+            fprintf(stderr, "%p: allocated %p from shared again of size %u\n", this, result, Config::objectSize);
+    } else {
+        constexpr unsigned objectSizeWithHeapImplPointer = Config::objectSize + sizeof(uint8_t);
+        result = IsoSharedHeap::get()->allocateNew<objectSizeWithHeapImplPointer>(abortOnFailure);
+        if (!result)
+            return nullptr;
+        if (verbose)
+            fprintf(stderr, "%p: allocated %p from shared of size %u\n", this, result, Config::objectSize);
+        BASSERT(index < IsoHeapImplBase::maxAllocationFromShared);
+        *indexSlotFor<Config>(result) = index;
+        m_sharedCells[index] = result;
+    }
+    BASSERT(result);
+    m_usableBits &= (~(1U << index));
+    ++m_numberOfAllocationsFromSharedInOneCycle;
+    return result;
 }
 
 } // namespace bmalloc

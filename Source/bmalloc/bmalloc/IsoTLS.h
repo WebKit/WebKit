@@ -69,8 +69,8 @@ private:
     template<typename Config, typename Type>
     static void deallocateImpl(api::IsoHeap<Type>&, void* p);
     
-    template<typename Config>
-    void deallocateFast(unsigned offset, void* p);
+    template<typename Config, typename Type>
+    void deallocateFast(api::IsoHeap<Type>&, unsigned offset, void* p);
     
     template<typename Config, typename Type>
     static void deallocateSlow(api::IsoHeap<Type>&, void* p);

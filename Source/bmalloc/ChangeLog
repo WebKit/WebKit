@@ -1,3 +1,92 @@
+2019-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] IsoHeap should have lower tier using shared IsoPage
+        https://bugs.webkit.org/show_bug.cgi?id=196837
+
+        Reviewed by Filip Pizlo.
+
+        IsoHeap had a scalability problem. Once one instance is allocated from IsoHeap, it immediately allocates 16KB page for this type.
+        But some types allocate only a few instances. It leads to memory wastage, and it also limits the scalability of IsoHeap since
+        we need to carefully select classes which will be confined in IsoHeap due to this characteristics. If we can remove this wastage,
+        we can apply IsoHeap more aggressively without causing memory regression, this is the goal of this patch.
+
+        In this patch, we introduce a slow tier to IsoHeap allocation. Initially, the allocator for a certain type allocates instances from
+        a shared page with the other allocators, and eventually, the allocator tiers up and gets dedicated pages if instances of the type
+        are allocated a lot. This "shared" tier is slow, but it is totally OK because we will tier up to the normal fast tier if allocation
+        frequently happens. Even the instance is allocated from pages shared with the other allocators, we still make the allocated memory
+        region dedicated to the specific type: once a memory region is allocated for a certain type from a shared page, this region continues
+        being used only for this type even after this memory is freed. To summarize the changes:
+
+        1. We introduce "shared" tier to IsoHeap allocation. Up to N (N = 8 for now, but we can pick any power-of-two numbers up to 32) allocations,
+           we continue using this tier. We allocate memory from shared pages so that we do not waste 16KB pages for types which only allocates a few instances.
+
+        2. We eventually tier up to the "fast" tier, and eventually tier down to the "shared" tier too. We measure the period between slow paths,
+           and switch the appropriate tier for the type. Currently, we use 1 seconds as heuristics. We also count # of allocations per cycle to
+           avoid pathological slow downs.
+
+        3. Shared page mechanism must keep the characteristics of IsoHeap. Once a memory region is allocated for a certain type, this memory region
+           must be dedicated to this type. We keep track the allocated memory regions from shared pages in IsoHeapImpl, and ensure that we never
+           reuse a memory region for a different type.
+
+        This patch improves PLUM2 by 1.4% (128.4MB v.s. 126.62MB), and early Speedometer2 results are performance-neutral.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/Algorithm.h:
+        (bmalloc::roundUpToMultipleOfImpl):
+        (bmalloc::roundUpToMultipleOf):
+        * bmalloc/BCompiler.h:
+        * bmalloc/BExport.h:
+        * bmalloc/FreeList.h:
+        * bmalloc/IsoAllocator.h:
+        * bmalloc/IsoAllocatorInlines.h:
+        (bmalloc::IsoAllocator<Config>::allocateSlow):
+        * bmalloc/IsoDeallocator.h:
+        * bmalloc/IsoDeallocatorInlines.h:
+        (bmalloc::IsoDeallocator<Config>::deallocate):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavenge):
+        (bmalloc::IsoHeapImpl<Config>::forEachLiveObject):
+        (bmalloc::IsoHeapImpl<Config>::updateAllocationMode):
+        (bmalloc::IsoHeapImpl<Config>::allocateFromShared):
+        * bmalloc/IsoPage.h:
+        (bmalloc::IsoPageBase::IsoPageBase):
+        (bmalloc::IsoPageBase::isShared const):
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::IsoPage):
+        (bmalloc::IsoPageBase::pageFor):
+        (bmalloc::IsoPage<Config>::pageFor):
+        (bmalloc::IsoPage<Config>::free):
+        * bmalloc/IsoSharedConfig.h: Copied from Source/bmalloc/bmalloc/BExport.h.
+        * bmalloc/IsoSharedHeap.cpp: Copied from Source/bmalloc/bmalloc/BExport.h.
+        * bmalloc/IsoSharedHeap.h: Copied from Source/bmalloc/bmalloc/IsoAllocator.h.
+        (bmalloc::VariadicBumpAllocator::VariadicBumpAllocator):
+        (bmalloc::IsoSharedHeap::IsoSharedHeap):
+        * bmalloc/IsoSharedHeapInlines.h: Added.
+        (bmalloc::VariadicBumpAllocator::allocate):
+        (bmalloc::IsoSharedHeap::allocateNew):
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/IsoSharedPage.cpp: Copied from Source/bmalloc/bmalloc/BExport.h.
+        (bmalloc::IsoSharedPage::tryCreate):
+        * bmalloc/IsoSharedPage.h: Copied from Source/bmalloc/bmalloc/IsoDeallocator.h.
+        (bmalloc::IsoSharedPage::IsoSharedPage):
+        (bmalloc::indexSlotFor):
+        * bmalloc/IsoSharedPageInlines.h: Added.
+        (bmalloc::IsoSharedPage::free):
+        (bmalloc::IsoSharedPage::startAllocating):
+        (bmalloc::IsoSharedPage::stopAllocating):
+        * bmalloc/IsoTLS.h:
+        * bmalloc/IsoTLSInlines.h:
+        (bmalloc::IsoTLS::deallocateImpl):
+        (bmalloc::IsoTLS::deallocateFast):
+        (bmalloc::IsoTLS::deallocateSlow):
+        * bmalloc/StdLibExtras.h:
+        (bmalloc::bitwise_cast):
+        * test/testbmalloc.cpp:
+        (testIsoMallocAndFreeFast):
+        (run):
+
 2019-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix build failure

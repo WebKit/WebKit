@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,17 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "BPlatform.h"
+#include "IsoHeap.h"
+#include "IsoPage.h"
+#include "IsoSharedConfig.h"
 
-#if BUSE(EXPORT_MACROS)
-#define BEXPORT __attribute__((visibility("default")))
-#else
-#define BEXPORT
-#endif
+namespace bmalloc {
 
-#define BNOEXPORT
+class IsoHeapImplBase;
+
+class IsoSharedPage : public IsoPageBase {
+public:
+    BEXPORT static IsoSharedPage* tryCreate();
+
+    template<typename Config, typename Type>
+    void free(api::IsoHeap<Type>&, void*);
+    VariadicBumpAllocator startAllocating();
+    void stopAllocating();
+
+private:
+    IsoSharedPage()
+        : IsoPageBase(true)
+    {
+    }
+};
+
+template<typename Config>
+uint8_t* indexSlotFor(void* ptr)
+{
+    BASSERT(IsoPageBase::pageFor(ptr)->isShared());
+    return static_cast<uint8_t*>(ptr) + Config::objectSize;
+}
+
+} // namespace bmalloc
+

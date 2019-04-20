@@ -26,6 +26,7 @@
 #pragma once
 
 #include "BMalloced.h"
+#include "IsoAllocator.h"
 #include "IsoDirectoryPage.h"
 #include "IsoTLSAllocatorEntry.h"
 #include "PhysicalPageMap.h"
@@ -37,6 +38,11 @@ class AllIsoHeaps;
 class BEXPORT IsoHeapImplBase {
     MAKE_BMALLOCED;
 public:
+    static constexpr unsigned maxAllocationFromShared = 8;
+    static constexpr unsigned maxAllocationFromSharedMask = maxAllocationFromShared - 1;
+    static_assert(maxAllocationFromShared <= bmalloc::alignment, "");
+    static_assert(isPowerOfTwo(maxAllocationFromShared), "");
+
     virtual ~IsoHeapImplBase();
     
     virtual void scavenge(Vector<DeferredDecommit>&) = 0;
@@ -45,15 +51,20 @@ public:
     
     void scavengeNow();
     static void finishScavenging(Vector<DeferredDecommit>&);
-    
+
 protected:
     IsoHeapImplBase();
     void addToAllIsoHeaps();
 
-private:
+    friend class IsoSharedPage;
     friend class AllIsoHeaps;
     
     IsoHeapImplBase* m_next { nullptr };
+    std::chrono::steady_clock::time_point m_slowPathTimePoint;
+    std::array<void*, maxAllocationFromShared> m_sharedCells { };
+    unsigned m_numberOfAllocationsFromSharedInOneCycle { 0 };
+    unsigned m_usableBits { maxAllocationFromSharedMask };
+    AllocationMode m_allocationMode { AllocationMode::Init };
 };
 
 template<typename Config>
@@ -98,6 +109,9 @@ public:
 
     void isNowFreeable(void* ptr, size_t bytes);
     void isNoLongerFreeable(void* ptr, size_t bytes);
+
+    AllocationMode updateAllocationMode();
+    void* allocateFromShared(bool abortOnFailure);
     
     // It's almost always the caller's responsibility to grab the lock. This lock comes from the
     // PerProcess<IsoTLSDeallocatorEntry<Config>>::get()->lock. That's pretty weird, and we don't

@@ -255,8 +255,19 @@ static void testIsoFlipFlopFragmentedPagesScavengeInMiddle288()
     assertClean(heap);
 }
 
+static void testIsoMallocAndFreeFast()
+{
+    static IsoHeap<char[256]> heap;
+    void* ptr = nullptr;
+    for (int i = 0; i < 1e6; ++i) {
+        ptr = heap.allocate();
+        heap.deallocate(ptr);
+    }
+    CHECK(!IsoPageBase::pageFor(ptr)->isShared());
+}
+
 class BisoMalloced {
-    MAKE_BISO_MALLOCED(BisoMalloced);
+    MAKE_BISO_MALLOCED(BisoMalloced, BNOEXPORT);
 public:
     BisoMalloced(int x, float y)
         : x(x)
@@ -310,6 +321,7 @@ static void run(const char* filter)
     RUN(testIsoFlipFlopFragmentedPages());
     RUN(testIsoFlipFlopFragmentedPagesScavengeInMiddle());
     RUN(testIsoFlipFlopFragmentedPagesScavengeInMiddle288());
+    RUN(testIsoMallocAndFreeFast());
     RUN(testBisoMalloced());
     RUN(testBisoMallocedInline());
     

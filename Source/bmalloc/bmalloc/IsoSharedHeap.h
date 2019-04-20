@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,17 +20,55 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "BPlatform.h"
+#include "IsoSharedConfig.h"
+#include "IsoSharedPage.h"
+#include "StaticPerProcess.h"
 
-#if BUSE(EXPORT_MACROS)
-#define BEXPORT __attribute__((visibility("default")))
-#else
-#define BEXPORT
-#endif
+namespace bmalloc {
 
-#define BNOEXPORT
+class AllIsoHeaps;
+
+class VariadicBumpAllocator {
+public:
+    VariadicBumpAllocator() = default;
+
+    VariadicBumpAllocator(char* payloadEnd, unsigned remaining)
+        : m_payloadEnd(payloadEnd)
+        , m_remaining(remaining)
+    {
+    }
+
+    template<unsigned, typename Func>
+    void* allocate(const Func& slowPath);
+
+private:
+    char* m_payloadEnd { nullptr };
+    unsigned m_remaining { 0 };
+};
+
+class IsoSharedHeap : public StaticPerProcess<IsoSharedHeap> {
+public:
+    IsoSharedHeap(std::lock_guard<Mutex>&)
+    {
+    }
+
+    template<unsigned>
+    void* allocateNew(bool abortOnFailure);
+
+private:
+    template<unsigned>
+    void* allocateSlow(bool abortOnFailure);
+
+    IsoSharedPage* m_currentPage { nullptr };
+    VariadicBumpAllocator m_allocator;
+};
+DECLARE_STATIC_PER_PROCESS_STORAGE(IsoSharedHeap);
+
+} // namespace bmalloc
+
+

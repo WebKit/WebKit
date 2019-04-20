@@ -27,6 +27,7 @@
 
 #include "CryptoRandom.h"
 #include "IsoDirectory.h"
+#include "IsoHeapImpl.h"
 #include "IsoPage.h"
 #include "StdLibExtras.h"
 #include "VMAllocate.h"
@@ -45,21 +46,28 @@ IsoPage<Config>* IsoPage<Config>::tryCreate(IsoDirectoryBase<Config>& directory,
 
 template<typename Config>
 IsoPage<Config>::IsoPage(IsoDirectoryBase<Config>& directory, unsigned index)
-    : m_directory(directory)
+    : IsoPageBase(false)
+    , m_directory(directory)
     , m_index(index)
 {
     memset(m_allocBits, 0, sizeof(m_allocBits));
 }
 
+inline IsoPageBase* IsoPageBase::pageFor(void* ptr)
+{
+    return reinterpret_cast<IsoPageBase*>(reinterpret_cast<uintptr_t>(ptr) & ~(pageSize - 1));
+}
+
 template<typename Config>
 IsoPage<Config>* IsoPage<Config>::pageFor(void* ptr)
 {
-    return reinterpret_cast<IsoPage<Config>*>(reinterpret_cast<uintptr_t>(ptr) & ~(pageSize - 1));
+    return reinterpret_cast<IsoPage<Config>*>(IsoPageBase::pageFor(ptr));
 }
 
 template<typename Config>
 void IsoPage<Config>::free(void* passedPtr)
 {
+    BASSERT(!m_isShared);
     unsigned offset = static_cast<char*>(passedPtr) - reinterpret_cast<char*>(this);
     unsigned index = offset / Config::objectSize;
     

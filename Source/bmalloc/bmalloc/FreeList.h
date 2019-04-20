@@ -31,6 +31,8 @@
 
 namespace bmalloc {
 
+class VariadicBumpAllocator;
+
 struct FreeCell {
     static uintptr_t scramble(FreeCell* cell, uintptr_t secret)
     {
@@ -57,6 +59,8 @@ struct FreeCell {
 
 class FreeList {
 public:
+    friend class VariadicBumpAllocator;
+
     BEXPORT FreeList();
     BEXPORT ~FreeList();
     
