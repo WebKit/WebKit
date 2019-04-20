@@ -37,25 +37,25 @@ WI.MediaTimelineView = class MediaTimelineView extends WI.TimelineView
         const columns = {
             name: {
                 title: WI.UIString("Name"),
-                width: "10%",
+                width: "200px",
                 icon: true,
                 sortable: true,
                 locked: true,
             },
             element: {
                 title: WI.UIString("Element"),
-                width: "10%",
+                width: "150px",
                 sortable: true,
             },
             time: {
                 title: WI.UIString("Time"),
-                width: "10%",
+                width: "80px",
                 sortable: true,
                 locked: true,
             },
             originator: {
                 title: WI.UIString("Originator"),
-                width: "10%",
+                width: "150px",
                 sortable: true,
                 hidden: true,
             },
