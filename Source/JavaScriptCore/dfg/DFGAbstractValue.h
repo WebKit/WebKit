@@ -526,11 +526,8 @@ private:
             return true;
         
         if (m_type & SpecInt52Any) {
-            ASSERT(!(m_type & ~SpecInt52Any));
-
-            if (mergeSpeculations(m_type, int52AwareSpeculationFromValue(value)) != m_type)
-                return false;
-            return true;
+            if (mergeSpeculations(m_type, int52AwareSpeculationFromValue(value)) == m_type)
+                return true;
         }
 
         if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)

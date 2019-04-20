@@ -452,11 +452,6 @@ void AbstractValue::checkConsistency() const
     if (isClear())
         RELEASE_ASSERT(!m_value);
     
-    if (m_type & SpecInt52Any) {
-        if (m_type != SpecFullTop)
-            RELEASE_ASSERT(isAnyInt52Speculation(m_type));
-    }
-
     if (!!m_value)
         RELEASE_ASSERT(validateTypeAcceptingBoxedInt52(m_value));
 

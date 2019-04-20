@@ -1,3 +1,44 @@
+2019-04-19  Saam Barati  <sbarati@apple.com>
+
+        AbstractValue can represent more than int52
+        https://bugs.webkit.org/show_bug.cgi?id=197118
+        <rdar://problem/49969960>
+
+        Reviewed by Michael Saboff.
+
+        Let's analyze this control flow diamond:
+        
+        #0
+        branch #1, #2
+        
+        #1:
+        PutStack(JSValue, loc42)
+        Jump #3
+        
+        #2:
+        PutStack(Int52, loc42)
+        Jump #3
+        
+        #3:
+        ...
+        
+        Our abstract value for loc42 at the head of #3 will contain an abstract
+        value that us the union of Int52 with other things. Obviously in the
+        above program, a GetStack for loc42 would be inavlid, since it might
+        be loading either JSValue or Int52. However, the abstract interpreter
+        just tracks what the value could be, and it could be Int52 or JSValue.
+        
+        When I did the Int52 refactoring, I expected such things to never happen,
+        but it turns out it does. We should just allow for this instead of asserting
+        against it since it's valid IR to do the above.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        * dfg/DFGAbstractValue.cpp:
+        (JSC::DFG::AbstractValue::checkConsistency const):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::validateTypeAcceptingBoxedInt52 const):
+
 2019-04-19  Tadeu Zagallo  <tzagallo@apple.com>
 
         Add option to dump JIT memory

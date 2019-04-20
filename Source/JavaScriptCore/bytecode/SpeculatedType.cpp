@@ -248,13 +248,7 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
         else
             isTop = false;
     }
-    
-    if (value & SpecInt32AsInt52)
-        strOut.print("Int32AsInt52");
 
-    if (value & SpecNonInt32AsInt52)
-        strOut.print("NonInt32AsInt52");
-        
     if ((value & SpecBytecodeDouble) == SpecBytecodeDouble)
         strOut.print("BytecodeDouble");
     else {
@@ -287,13 +281,31 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
     else
         isTop = false;
     
-    if (isTop)
+    if (value & SpecEmpty)
+        strOut.print("Empty");
+    else
+        isTop = false;
+
+    if (value & SpecInt52Any) {
+        if ((value & SpecInt52Any) == SpecInt52Any)
+            strOut.print("Int52Any");
+        else if (value & SpecInt32AsInt52)
+            strOut.print("Int32AsInt52");
+        else if (value & SpecNonInt32AsInt52)
+            strOut.print("NonInt32AsInt52");
+    } else
+        isTop = false;
+    
+    if (value == SpecBytecodeTop)
+        out.print("BytecodeTop");
+    else if (value == SpecHeapTop)
+        out.print("HeapTop");
+    else if (value == SpecFullTop)
+        out.print("FullTop");
+    else if (isTop)
         out.print("Top");
     else
         out.print(strStream.toCString());
-    
-    if (value & SpecEmpty)
-        out.print("Empty");
 }
 
 // We don't expose this because we don't want anyone relying on the fact that this method currently

@@ -1,3 +1,15 @@
+2019-04-19  Saam Barati  <sbarati@apple.com>
+
+        AbstractValue can represent more than int52
+        https://bugs.webkit.org/show_bug.cgi?id=197118
+        <rdar://problem/49969960>
+
+        Reviewed by Michael Saboff.
+
+        * stress/abstract-value-can-include-int52.js: Added.
+        (foo):
+        (index.index.8.index.60.index.65.index.1234.index.1234.parseInt.string_appeared_here.String.fromCharCode):
+
 2019-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] StringBuilder should set correct m_is8Bit flag when merging
