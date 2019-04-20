@@ -1,3 +1,9 @@
+2019-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * TestWebKitAPI/ios/DragAndDropSimulatorIOS.mm:
+
 2019-04-19  Keith Miller  <keith_miller@apple.com>
 
         Add script to merge run_benchmark jsons

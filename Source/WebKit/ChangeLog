@@ -1,3 +1,14 @@
+2019-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix iOS build with recent SDKs.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (deviceOrientation):
+        * UIProcess/ios/fullscreen/WKFullScreenViewController.mm:
+        (-[WKFullScreenViewController initWithWebView:]):
+        (-[WKFullScreenViewController viewWillTransitionToSize:withTransitionCoordinator:]):
+        (-[WKFullScreenViewController _statusBarFrameDidChange:]):
+
 2019-04-19  John Wilander  <wilander@apple.com>
 
         Disable Ad Click Attribution in ephemeral sessions and make sure conversion requests use an ephemeral, stateless session

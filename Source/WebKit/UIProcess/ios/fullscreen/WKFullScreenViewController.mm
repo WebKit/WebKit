@@ -179,8 +179,10 @@ private:
     if (!self)
         return nil;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     _nonZeroStatusBarHeight = UIApplication.sharedApplication.statusBarFrame.size.height;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_statusBarFrameDidChange:) name:UIApplicationDidChangeStatusBarFrameNotification object:nil];
+ALLOW_DEPRECATED_DECLARATIONS_END
     _secheuristic.setRampUpSpeed(Seconds(0.25));
     _secheuristic.setRampDownSpeed(Seconds(1.));
     _secheuristic.setXWeight(0);
@@ -445,7 +447,9 @@ private:
         [self._webView _beginAnimatedResizeWithUpdates:^{
             [self._webView _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
         }];
+ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self._webView _setInterfaceOrientationOverride:[UIApp statusBarOrientation]];
+ ALLOW_DEPRECATED_DECLARATIONS_END
     } completion:^(id <UIViewControllerTransitionCoordinatorContext>context) {
         [self._webView _endAnimatedResize];
     }];
@@ -536,7 +540,9 @@ private:
 
 - (void)_statusBarFrameDidChange:(NSNotificationCenter *)notification
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CGFloat height = UIApplication.sharedApplication.statusBarFrame.size.height;
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (!height || height == _nonZeroStatusBarHeight)
         return;
 

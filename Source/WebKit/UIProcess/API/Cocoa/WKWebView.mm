@@ -412,7 +412,9 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 
 static int32_t deviceOrientation()
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return deviceOrientationForUIInterfaceOrientation([[UIApplication sharedApplication] statusBarOrientation]);
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (BOOL)_isShowingVideoPictureInPicture

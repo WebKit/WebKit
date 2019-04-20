@@ -285,10 +285,14 @@ static NSArray *dragAndDropEventNames()
 @end
 
 @implementation DragAndDropSimulatorApplication
+
+IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)_cancelAllTouches
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:TestWebKitAPISimulateCancelAllTouchesNotificationName object:nil];
 }
+IGNORE_WARNINGS_END
+
 @end
 
 @implementation DragAndDropSimulator {
