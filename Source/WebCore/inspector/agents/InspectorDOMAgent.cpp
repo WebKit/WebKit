@@ -313,16 +313,15 @@ void InspectorDOMAgent::didCreateFrontendAndBackend(Inspector::FrontendRouter*, 
     for (auto* mediaElement : HTMLMediaElement::allMediaElements())
         addEventListenersToNode(*mediaElement);
 #endif
-
-    if (m_nodeToFocus)
-        focusNode();
 }
 
 void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
     m_history.reset();
     m_domEditor.reset();
+    m_nodeToFocus = nullptr;
     m_mousedOverNode = nullptr;
+    m_inspectedNode = nullptr;
 
     ErrorString unused;
     setSearchingForNode(unused, false, nullptr);
@@ -507,6 +506,9 @@ void InspectorDOMAgent::getDocument(ErrorString& errorString, RefPtr<Inspector::
     m_document = document;
 
     root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
+
+    if (m_nodeToFocus)
+        focusNode();
 }
 
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId, int depth)
@@ -1105,7 +1107,7 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
 
 void InspectorDOMAgent::focusNode()
 {
-    if (!m_frontendDispatcher)
+    if (!m_documentRequested)
         return;
 
     ASSERT(m_nodeToFocus);
@@ -2136,6 +2138,15 @@ Node* InspectorDOMAgent::innerParentNode(Node* node)
 
 void InspectorDOMAgent::didCommitLoad(Document* document)
 {
+    if (m_nodeToFocus && &m_nodeToFocus->document() == document)
+        m_nodeToFocus = nullptr;
+
+    if (m_mousedOverNode && &m_mousedOverNode->document() == document)
+        m_mousedOverNode = nullptr;
+
+    if (m_inspectedNode && &m_inspectedNode->document() == document)
+        m_inspectedNode = nullptr;
+
     RefPtr<Element> frameOwner = document->ownerElement();
     if (!frameOwner)
         return;

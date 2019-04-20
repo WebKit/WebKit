@@ -1,3 +1,22 @@
+2019-04-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: Elements: "Inspect Element" context menu often doesn't select that element
+        https://bugs.webkit.org/show_bug.cgi?id=197091
+        <rdar://problem/49953728>
+
+        Reviewed by Joseph Pecoraro.
+
+        Delay the `inspect` event fron firing with the focued node until the frontend has had a
+        chance to request the document. Otherwise, requesting the document clears the mapping of
+        node-to-id, so the focused node's id would no longer be valid.
+
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorDOMAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::focusNode):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+
 2019-04-19  John Wilander  <wilander@apple.com>
 
         Disable Ad Click Attribution in ephemeral sessions and make sure conversion requests use an ephemeral, stateless session
