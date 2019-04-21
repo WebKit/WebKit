@@ -1,0 +1,23 @@
+This test checks the SVGStringList API - utilizing the viewTarget property of SVGViewElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial viewTarget value
+PASS viewElement.viewTarget.toString() is "[object SVGStringList]"
+PASS viewElement.viewTarget.numberOfItems is 1
+PASS viewElement.viewTarget.getItem(0) is "rect-view"
+
+Check the uniqueness of viewTarget per SVGViewElement
+PASS viewElement.viewTarget is viewTarget
+PASS viewTarget.getItem(0) is "rect-view"
+
+Check modifying viewTarget
+PASS viewTarget.replaceItem('circle-view', 0) is "circle-view"
+PASS viewElement.viewTarget.getItem(0) is "circle-view"
+PASS viewElement.getAttribute('viewTarget') is "circle-view"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

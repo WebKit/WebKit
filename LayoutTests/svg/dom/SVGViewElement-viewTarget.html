@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test checks the SVGStringList API - utilizing the viewTarget property of SVGViewElement");
+
+var viewElement = document.createElementNS("http://www.w3.org/2000/svg", "view");
+viewElement.setAttribute("viewTarget", "rect-view");
+
+debug("");
+debug("Check initial viewTarget value");
+shouldBeEqualToString("viewElement.viewTarget.toString()", "[object SVGStringList]");
+shouldBe("viewElement.viewTarget.numberOfItems", "1");
+shouldBeEqualToString("viewElement.viewTarget.getItem(0)", "rect-view");
+
+var viewTarget = viewElement.viewTarget;
+debug("");
+debug("Check the uniqueness of viewTarget per SVGViewElement");
+shouldBe("viewElement.viewTarget", "viewTarget");
+shouldBeEqualToString("viewTarget.getItem(0)", "rect-view");
+
+debug("");
+debug("Check modifying viewTarget");
+shouldBeEqualToString("viewTarget.replaceItem('circle-view', 0)", "circle-view");
+shouldBeEqualToString("viewElement.viewTarget.getItem(0)", "circle-view");
+shouldBeEqualToString("viewElement.getAttribute('viewTarget')", "circle-view");
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

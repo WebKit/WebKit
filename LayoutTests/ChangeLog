@@ -1,3 +1,13 @@
+2019-04-20  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION (r243137): SVGViewElement.viewTarget should not return a new object
+        https://bugs.webkit.org/show_bug.cgi?id=197137
+
+        Reviewed by Darin Adler.
+
+        * svg/dom/SVGViewElement-viewTarget-expected.txt: Added.
+        * svg/dom/SVGViewElement-viewTarget.html: Added.
+
 2019-04-19  Megan Gardner  <megan_gardner@apple.com>
 
         Fix Long Press Image Test
