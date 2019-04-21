@@ -215,7 +215,7 @@ void WebPage::platformEditorState(Frame& frame, EditorState& result, IncludePost
 #if !PLATFORM(IOSMAC)
     requiresPostLayoutData |= m_keyboardIsAttached;
 #endif
-    if (shouldIncludePostLayoutData == IncludePostLayoutDataHint::No && needsLayout && !requiresPostLayoutData) {
+    if ((shouldIncludePostLayoutData == IncludePostLayoutDataHint::No || needsLayout) && !requiresPostLayoutData) {
         result.isMissingPostLayoutData = true;
         return;
     }
@@ -3255,7 +3255,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         if (selectionIsInsideFixedPositionContainer(frame)) {
             // Ensure that the next layer tree commit contains up-to-date caret/selection rects.
             frameView.frame().selection().setCaretRectNeedsUpdate();
-            sendPartialEditorStateAndSchedulePostLayoutUpdate();
+            scheduleFullEditorStateUpdate();
         }
 
         frameView.didUpdateViewportOverrideRects();

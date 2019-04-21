@@ -1125,7 +1125,7 @@ void WebPage::updateEditorStateAfterLayoutIfEditabilityChanged()
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     EditorStateIsContentEditable editorStateIsContentEditable = frame.selection().selection().isContentEditable() ? EditorStateIsContentEditable::Yes : EditorStateIsContentEditable::No;
     if (m_lastEditorStateWasContentEditable != editorStateIsContentEditable)
-        sendPartialEditorStateAndSchedulePostLayoutUpdate();
+        scheduleFullEditorStateUpdate();
 }
 
 String WebPage::renderTreeExternalRepresentation() const
@@ -2764,7 +2764,7 @@ void WebPage::setNeedsFontAttributes(bool needsFontAttributes)
     m_needsFontAttributes = needsFontAttributes;
 
     if (m_needsFontAttributes)
-        sendPartialEditorStateAndSchedulePostLayoutUpdate();
+        scheduleFullEditorStateUpdate();
 }
 
 void WebPage::restoreSessionInternal(const Vector<BackForwardListItemState>& itemStates, WasRestoredByAPIRequest restoredByAPIRequest, WebBackForwardListProxy::OverwriteExistingItem overwrite)
@@ -5287,15 +5287,15 @@ void WebPage::didChangeContents()
 
 void WebPage::didChangeOverflowScrollPosition()
 {
-    didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling::Deferred);
+    didChangeSelectionOrOverflowScrollPosition();
 }
 
 void WebPage::didChangeSelection()
 {
-    didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling::Immediate);
+    didChangeSelectionOrOverflowScrollPosition();
 }
 
-void WebPage::didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling editorStateScheduling)
+void WebPage::didChangeSelectionOrOverflowScrollPosition()
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     // The act of getting Dictionary Popup info can make selection changes that we should not propagate to the UIProcess.
@@ -5338,10 +5338,7 @@ void WebPage::didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateSchedu
     }
 #endif
 
-    if (editorStateScheduling == EditorStateUpdateScheduling::Immediate)
-        sendPartialEditorStateAndSchedulePostLayoutUpdate();
-    else
-        scheduleFullEditorStateUpdate();
+    scheduleFullEditorStateUpdate();
 }
 
 void WebPage::resetFocusedElementForFrame(WebFrame* frame)
@@ -6023,16 +6020,6 @@ void WebPage::sendTouchBarMenuItemDataRemovedUpdate(HTMLMenuItemElement& element
     send(Messages::WebPageProxy::TouchBarMenuItemDataRemoved(TouchBarMenuItemData {element}));
 }
 #endif
-
-void WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate()
-{
-    Frame& frame = m_page->focusController().focusedOrMainFrame();
-    if (frame.editor().ignoreSelectionChanges())
-        return;
-
-    send(Messages::WebPageProxy::EditorStateChanged(editorState(IncludePostLayoutDataHint::No)), pageID());
-    scheduleFullEditorStateUpdate();
-}
 
 void WebPage::flushPendingEditorStateUpdate()
 {

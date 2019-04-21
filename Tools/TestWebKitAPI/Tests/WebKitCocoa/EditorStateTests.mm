@@ -349,6 +349,7 @@ TEST(EditorStateTests, CaretColorInContentEditable)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<body style=\"caret-color: red;\" contenteditable=\"true\"></body>"];
     [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView waitForNextPresentationUpdate];
     UIView<UITextInputTraits_Private> *textInput = (UIView<UITextInputTraits_Private> *) [webView textInputContentView];
     UIColor *insertionPointColor = textInput.insertionPointColor;
     UIColor *redColor = [UIColor redColor];

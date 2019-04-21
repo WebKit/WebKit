@@ -1113,7 +1113,6 @@ public:
 
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
-    void sendPartialEditorStateAndSchedulePostLayoutUpdate();
     void flushPendingEditorStateUpdate();
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -1272,8 +1271,7 @@ private:
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
-    enum class EditorStateUpdateScheduling { Deferred, Immediate };
-    void didChangeSelectionOrOverflowScrollPosition(EditorStateUpdateScheduling);
+    void didChangeSelectionOrOverflowScrollPosition();
 
     void increaseListLevel();
     void decreaseListLevel();

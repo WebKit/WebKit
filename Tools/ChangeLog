@@ -1,3 +1,21 @@
+2019-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Defer EditorState updates until the next layer tree flush in a few additional circumstances
+        https://bugs.webkit.org/show_bug.cgi?id=197145
+        <rdar://problem/50078170>
+
+        Reviewed by Darin Adler.
+
+        Adjusts several editing API tests to wait for a presentation update following a selection change, programmatic
+        focus, or showing the font manager.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EditorStateTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewTargetForAction.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/mac/FontManagerTests.mm:
+        (TestWebKitAPI::TEST):
+
 2019-04-21  Brian Burg  <bburg@apple.com>
 
         WebDriver: add hooks to make it possible to easily run WPT WebDriver web server by itself

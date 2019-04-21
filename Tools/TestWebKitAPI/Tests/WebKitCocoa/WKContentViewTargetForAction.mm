@@ -50,6 +50,7 @@ TEST(WebKit, WKContentViewTargetForAction)
     [webView synchronouslyLoadTestPageNamed:@"rich-and-plain-text"];
     [webView becomeFirstResponder];
     [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
+    [webView waitForNextPresentationUpdate];
 
     // FIXME: Once this test is running in an application, it should instead use
     // -[UIApplication sendAction:to:from:forEvent:] and verify that the action is dispatched to the

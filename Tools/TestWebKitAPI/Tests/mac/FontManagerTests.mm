@@ -122,6 +122,7 @@ TEST(FontManagerTests, ToggleBoldAndItalicWithMenuItems)
     auto webView = webViewForFontManagerTesting(fontManager);
 
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     [fontManager addFontTrait:menuItemCellForFontAction(NSBoldFontMask).autorelease()];
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionStart:@"font-weight"]);
     EXPECT_WK_STREQ("bold", [webView stylePropertyAtSelectionEnd:@"font-weight"]);
@@ -153,12 +154,14 @@ TEST(FontManagerTests, ChangeFontSizeWithMenuItems)
 
     // Select "foo" and increase font size.
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     [fontManager modifyFont:sizeIncreaseMenuItemCell.get()];
     [fontManager modifyFont:sizeIncreaseMenuItemCell.get()];
 
     // Now select "baz" and decrease font size.
     [webView moveToEndOfParagraph:nil];
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     [fontManager modifyFont:sizeDecreaseMenuItemCell.get()];
     [fontManager modifyFont:sizeDecreaseMenuItemCell.get()];
 
@@ -168,6 +171,7 @@ TEST(FontManagerTests, ChangeFontSizeWithMenuItems)
 
     [webView moveToBeginningOfParagraph:nil];
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     EXPECT_WK_STREQ(@"foo", [webView selectedText]);
     EXPECT_WK_STREQ(@"18px", [webView stylePropertyAtSelectionStart:@"font-size"]);
     EXPECT_WK_STREQ(@"18px", [webView stylePropertyAtSelectionEnd:@"font-size"]);
@@ -190,6 +194,7 @@ TEST(FontManagerTests, ChangeFontWithPanel)
 
     NSFontPanel *fontPanel = [fontManager fontPanel:YES];
     [fontPanel setIsVisible:YES];
+    [webView waitForNextPresentationUpdate];
 
     NSFont *largeHelveticaFont = [NSFont fontWithName:@"Helvetica" size:20];
     [fontPanel setPanelFont:largeHelveticaFont isMultiple:NO];
@@ -239,6 +244,7 @@ TEST(FontManagerTests, ChangeAttributesWithFontEffectsBox)
 
     NSFontPanel *fontPanel = [fontManager fontPanel:YES];
     [fontPanel setIsVisible:YES];
+    [webView waitForNextPresentationUpdate];
 
     auto textDecorationsAroundSelection = [webView] {
         NSString *decorationsAtStart = [webView stylePropertyAtSelectionStart:@"-webkit-text-decorations-in-effect"];
@@ -339,6 +345,7 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     // 1. Select "foo" and turn it red; verify that the font element is used for fully opaque colors.
     colorPanel.color = [NSColor colorWithRed:1 green:0 blue:0 alpha:1];
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     [webView changeColor:colorPanel];
     checkFontColorAtStartAndEndWithInputEvents("rgb(255, 0, 0)");
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"!!foo.querySelector('font')"] boolValue]);
@@ -346,6 +353,7 @@ TEST(FontManagerTests, ChangeFontColorWithColorPanel)
     // 2. Now select "bar" and try a few different colors, starting with a color with alpha.
     colorPanel.color = [NSColor colorWithWhite:1 alpha:0.2];
     [webView selectNextWord];
+    [webView waitForNextPresentationUpdate];
     [webView changeColor:colorPanel];
     checkFontColorAtStartAndEndWithInputEvents("rgba(255, 255, 255, 0.2)");
     EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"!!bar.querySelector('font')"] boolValue]);
@@ -460,6 +468,7 @@ TEST(FontManagerTests, AddFontShadowUsingFontOptions)
     auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager);
 
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
     options.shadowWidth = 3;
     options.shadowHeight = -3;
     options.hasShadow = YES;
@@ -476,6 +485,7 @@ TEST(FontManagerTests, AddAndRemoveColorsUsingFontOptions)
     TestFontOptions *options = TestFontOptions.sharedInstance;
     auto webView = webViewForFontManagerTesting(NSFontManager.sharedFontManager, @"<body contenteditable>hello</body>");
     [webView selectWord:nil];
+    [webView waitForNextPresentationUpdate];
 
     options.backgroundColor = [NSColor colorWithRed:1 green:0 blue:0 alpha:0.2];
     options.foregroundColor = [NSColor colorWithRed:0 green:0 blue:1 alpha:1];

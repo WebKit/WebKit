@@ -1,3 +1,26 @@
+2019-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Defer EditorState updates until the next layer tree flush in a few additional circumstances
+        https://bugs.webkit.org/show_bug.cgi?id=197145
+        <rdar://problem/50078170>
+
+        Reviewed by Darin Adler.
+
+        Gets rid of sendPartialEditorStateAndSchedulePostLayoutUpdate(), in favor of always scheduling a full editor
+        state update after the next compositing flush.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateEditorStateAfterLayoutIfEditabilityChanged):
+        (WebKit::WebPage::setNeedsFontAttributes):
+        (WebKit::WebPage::didChangeOverflowScrollPosition):
+        (WebKit::WebPage::didChangeSelection):
+        (WebKit::WebPage::didChangeSelectionOrOverflowScrollPosition):
+        (WebKit::WebPage::sendPartialEditorStateAndSchedulePostLayoutUpdate): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::platformEditorState const):
+        (WebKit::WebPage::updateVisibleContentRects):
+
 2019-04-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r243767) WebFrame::m_navigationIsContinuingInAnotherProcess flag is never reset
