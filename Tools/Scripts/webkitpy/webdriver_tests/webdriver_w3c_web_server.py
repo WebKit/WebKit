@@ -131,3 +131,23 @@ class WebDriverW3CWebServer(object):
 
     def port(self):
         return self._server_port
+
+    def document_root(self):
+        return self._layout_doc_root
+
+    # Waits indefinitely until the webserver process is terminated.
+    def wait(self):
+        if not self._pid:
+            return
+
+        self._process.wait()
+
+    def __enter__(self):
+        if not self._pid:
+            self.start()
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self._pid:
+            self.stop()

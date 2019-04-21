@@ -1,3 +1,23 @@
+2019-04-21  Brian Burg  <bburg@apple.com>
+
+        WebDriver: add hooks to make it possible to easily run WPT WebDriver web server by itself
+        https://bugs.webkit.org/show_bug.cgi?id=197125
+        <rdar://problem/50061468>
+
+        Reviewed by Darin Adler.
+
+        Sometimes I want to run wptserve independently of tests. Make it easier to script that
+        using this class rather than making our own ./wpt serve invocation.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer):
+        (WebDriverW3CWebServer.document_root): Expose this to clients.
+        (WebDriverW3CWebServer.wait): Add a method that blocks until the server dies.
+
+        (WebDriverW3CWebServer.__enter__):
+        (WebDriverW3CWebServer.__exit__):
+        Make it possible to use the web server with a 'with' statement.
+
 2019-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKitLegacy
