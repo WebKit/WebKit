@@ -278,9 +278,6 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyChec
             documentLoader->setNavigationID(navigationID);
     }
 
-    if (action == PolicyAction::StopAllLoads)
-        m_navigationIsContinuingInAnotherProcess = true;
-
     function(action, identifier);
 }
 
@@ -815,8 +812,6 @@ void WebFrame::setTextDirection(const String& direction)
 
 void WebFrame::documentLoaderDetached(uint64_t navigationID)
 {
-    if (m_navigationIsContinuingInAnotherProcess)
-        return;
     if (auto* page = this->page())
         page->send(Messages::WebPageProxy::DidDestroyNavigation(navigationID));
 }

@@ -1,3 +1,51 @@
+2019-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r243767) WebFrame::m_navigationIsContinuingInAnotherProcess flag is never reset
+        https://bugs.webkit.org/show_bug.cgi?id=197144
+
+        Reviewed by Darin Adler.
+
+        WebFrame::m_navigationIsContinuingInAnotherProcess flag is never reset since it was introduced in
+        r243767. This leads to leaking Navigation objects in the UIProcess when reusing a previously
+        suspended process because such process will no longer send the DidDestroyNavigation IPC.
+
+        It turns out that resetting the flags causes API tests such as ProcessSwap.QuickBackForwardNavigationWithPSON
+        to ASSERT. This is because when the UIProcess quickly navigate back and forth without waiting for policy
+        decisions, we may end up getting the policy decision for a particular navigation *after* we've sent the
+        DidDestroyNavigation.
+
+        As a result, this patch reverts r243767 and fixes in the assertion in http/tests/adClickAttribution/store-ad-click-attribution.html
+        another way. We initially assumed that the logic in WebPageProxy::didDestroyNavigation() was failing to
+        ignore the DidDestroyNavigation from the previous process after a swap due to a race, maybe because it was
+        sometimes received too late and m_provisionalPage was already cleared. However, this would not make sense
+        since the test is crashing consistently and the page would no longer be able to receive IPC from the
+        previous process *after* we've committed the provisional process/page.
+
+        The real issue was that the DidDestroyNavigation IPC was received *before* we could construct the
+        provisional page, which is why the logic in WebPageProxy::didDestroyNavigation() was failing to ignore
+        the bad IPC. In WebPageProxy::receivedNavigationPolicyDecision(), we were calling receivedPolicyDecision()
+        (which would send the DidReceivePolicyDecision to the previous WebProcess) and then continueNavigationInNewProcess()
+        in order to construct the provisional page. I personally did not expect we could receive IPC between the
+        calls to receivedNavigationPolicyDecision() and receivedPolicyDecision(), since we are not yielding and since
+        the DidReceivePolicyDecision IPC is asynchronous. However, this is exactly what was happening in the context
+        of this test. The reason is that the DidReceivePolicyDecision IPC was getting wrapped in a synchronous message
+        and sent as synchronous message due to the Connection::m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting
+        flag which seems to get set in the test due to some EventSender IPC. I believe this is because the test uses
+        EventSender to do a click on a link which triggers the navigation.
+
+        To address the issue, I now call receivedNavigationPolicyDecision() *after* continueNavigationInNewProcess()
+        to make sure that we always start the provisional load in the new process before we tell the previous process
+        to stop loading. This way, there is no way we get IPC from the previous process about the current navigation
+        before we have a provisional page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::didDestroyNavigation):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        (WebKit::WebFrame::documentLoaderDetached):
+        * WebProcess/WebPage/WebFrame.h:
+
 2019-04-20  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix iOS build with recent SDKs.

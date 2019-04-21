@@ -2789,21 +2789,20 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
         } else
             RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "decidePolicyForNavigationAction: keep using process %i for navigation, reason: %{public}s", processIdentifier(), reason.utf8().data());
 
+        if (shouldProcessSwap) {
+            // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
+            // In the case where the destination WebProcess has a SuspendedPageProxy for this WebPage, we should have thrown
+            // it away to support WebProcess re-use.
+            ASSERT(destinationSuspendedPage || !process().processPool().hasSuspendedPageFor(processForNavigation, *this));
+
+            auto suspendedPage = destinationSuspendedPage ? process().processPool().takeSuspendedPage(*destinationSuspendedPage) : nullptr;
+            if (suspendedPage && suspendedPage->failedToSuspend())
+                suspendedPage = nullptr;
+
+            continueNavigationInNewProcess(navigation, WTFMove(suspendedPage), WTFMove(processForNavigation), processSwapRequestedByClient, WTFMove(data));
+        }
+
         receivedPolicyDecision(policyAction, navigation.ptr(), shouldProcessSwap ? WTF::nullopt : WTFMove(data), WTFMove(sender), shouldProcessSwap ? WillContinueLoadInNewProcess::Yes : WillContinueLoadInNewProcess::No);
-
-        if (!shouldProcessSwap)
-            return;
-
-        // FIXME: Architecturally we do not currently support multiple WebPage's with the same ID in a given WebProcess.
-        // In the case where the destination WebProcess has a SuspendedPageProxy for this WebPage, we should have thrown
-        // it away to support WebProcess re-use.
-        ASSERT(destinationSuspendedPage || !process().processPool().hasSuspendedPageFor(processForNavigation, *this));
-
-        auto suspendedPage = destinationSuspendedPage ? process().processPool().takeSuspendedPage(*destinationSuspendedPage) : nullptr;
-        if (suspendedPage && suspendedPage->failedToSuspend())
-            suspendedPage = nullptr;
-
-        continueNavigationInNewProcess(navigation, WTFMove(suspendedPage), WTFMove(processForNavigation), processSwapRequestedByClient, WTFMove(data));
     });
 }
 
@@ -3867,6 +3866,10 @@ void WebPageProxy::hasInsecureContent(CompletionHandler<void(WebCore::HasInsecur
 void WebPageProxy::didDestroyNavigation(uint64_t navigationID)
 {
     PageClientProtector protector(pageClient());
+
+    // On process-swap, the previous process tries to destroy the navigation but the provisional process is actually taking over the navigation.
+    if (m_provisionalPage && m_provisionalPage->navigationID() == navigationID)
+        return;
 
     // FIXME: Message check the navigationID.
     m_navigationState->didDestroyNavigation(navigationID);
