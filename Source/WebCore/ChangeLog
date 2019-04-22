@@ -1,3 +1,17 @@
+2019-04-22  Said Abou-Hallawa  <said@apple.com>
+
+        Mark SVGStringList properties '[SameObject]' in the IDL files
+        Followup to https://bugs.webkit.org/show_bug.cgi?id=197137
+
+        Reviewed by Darin Adler.
+
+        The SVG elements do not create tear-off wrappers for SVGStrigList DOM
+        objects anymore. Instead they return Ref pointers to the same RefCounted
+        objects. So they should be marked '[SameObject]' in their IDL files.
+
+        * svg/SVGTests.idl:
+        * svg/SVGViewElement.idl:
+
 2019-04-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244495.
