@@ -184,6 +184,9 @@ String atkAttributeValueToCoreAttributeValue(AtkAttributeType type, const String
 
 AtkAttributeSet* getAttributeSet(AtkObject* accessible, AtkAttributeType type)
 {
+    if (!accessible)
+        return nullptr;
+
     if (type == ObjectAttributeType)
         return atk_object_get_attributes(accessible);
 

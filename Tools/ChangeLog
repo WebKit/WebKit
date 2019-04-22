@@ -1,3 +1,14 @@
+2019-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r241289): [GTK] accessibility/removed-continuation-element-causes-crash.html and accessibility/removed-anonymous-block-child-causes-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=194630
+
+        Reviewed by Michael Catanzaro.
+
+        Return early from getAttributeSet() is passed in accessible is nullptr.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+
 2019-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Defer EditorState updates until the next layer tree flush in a few additional circumstances

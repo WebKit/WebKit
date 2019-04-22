@@ -1,3 +1,18 @@
+2019-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r241289): [GTK] accessibility/removed-continuation-element-causes-crash.html and accessibility/removed-anonymous-block-child-causes-crash.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=194630
+
+        Reviewed by Michael Catanzaro.
+
+        Do not assume core object always has a wrapper in webkitAccessibleRefChild().
+
+        Fixes: accessibility/removed-continuation-element-causes-crash.html
+               accessibility/removed-anonymous-block-child-causes-crash.html
+
+        * accessibility/atk/WebKitAccessible.cpp:
+        (webkitAccessibleRefChild): Return early if wrapper is nullptr.
+
 2019-04-21  Darin Adler  <darin@apple.com>
 
         WHLSLPrepare.cpp always recompiles, even if nothing was changed
