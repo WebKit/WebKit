@@ -1633,10 +1633,10 @@ $(GENERATE_SETTINGS_PATTERNS) : $(WebCore)/Scripts/GenerateSettings.rb $(GENERAT
 
 # WHLSL Standard Library
 
-all : WHLSLStandardLibrary.h
+all : WHLSLStandardLibrary.cpp
 
-WHLSLStandardLibrary.h : $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
-	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl WHLSLStandardLibrary $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt $<
+WHLSLStandardLibrary.cpp : $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt
+	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl WHLSLStandardLibrary $(WebCore)/Modules/webgpu/WHLSL/WHLSLStandardLibrary.txt WHLSLStandardLibrary.h
 
 # --------
 
