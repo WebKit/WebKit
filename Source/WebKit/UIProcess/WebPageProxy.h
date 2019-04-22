@@ -1083,6 +1083,7 @@ public:
     bool isValidKeypressCommandName(const String& name) const { return m_knownKeypressCommandNames.contains(name); }
 #endif
 
+    WebProcessProxy& ensureRunningProcess();
     WebProcessProxy& process() { return m_process; }
     ProcessID processIdentifier() const;
 
