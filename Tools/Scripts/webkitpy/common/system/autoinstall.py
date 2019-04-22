@@ -46,6 +46,7 @@ import re
 from distutils import dir_util
 from glob import glob
 import urlparse
+import subprocess
 
 
 _log = logging.getLogger(__name__)
@@ -418,8 +419,18 @@ class AutoInstaller(object):
             return cache
 
         target_path = os.path.join(scratch_dir, target_filename)
-        with open(target_path, "wb") as stream:
-            self._download_to_stream(url, stream)
+
+        if os.name == 'posix':
+            try:
+                command = ['curl', url, '-L', '--output', target_path]
+                with open(os.devnull, 'w') as devnull:
+                    subprocess.check_call(command, stdout=devnull, stderr=devnull)
+            except subprocess.CalledProcessError as e:
+                _log.info('Error: Failed to download {} to {}. Command: {}'.format(url, target_path, command))
+                raise
+        else:  # Windows
+            with open(target_path, "wb") as stream:
+                self._download_to_stream(url, stream)
 
         if _CACHE_ENV_VAR in os.environ:
             dir_util.copy_tree(scratch_dir, os.environ[_CACHE_ENV_VAR])
