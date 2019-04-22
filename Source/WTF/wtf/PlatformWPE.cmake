@@ -14,6 +14,7 @@ list(APPEND WTF_SOURCES
     UniStdExtras.cpp
 
     generic/MainThreadGeneric.cpp
+    generic/MemoryFootprintGeneric.cpp
     generic/WorkQueueGeneric.cpp
 
     glib/FileSystemGlib.cpp
@@ -23,7 +24,6 @@ list(APPEND WTF_SOURCES
     glib/URLGLib.cpp
 
     linux/CurrentProcessMemoryStatus.cpp
-    linux/MemoryFootprintLinux.cpp
     linux/MemoryPressureHandlerLinux.cpp
 
     posix/OSAllocatorPOSIX.cpp

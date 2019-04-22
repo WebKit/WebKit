@@ -1,3 +1,20 @@
+2019-04-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WTF] Generic memoryFootprint() implementation should use bmalloc on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=196963
+
+        Reviewed by Don Olmstead.
+
+        Have the generic memoryFootprint() implementation use bmalloc's
+        memoryFootprint() API on Linux, whenever the system malloc option is
+        not enabled. Limitation to Linux platforms is due to the bmalloc
+        implementation being limited to those configurations (excluding iOS
+        which doesn't use MemoryFootprintGeneric.cpp).
+
+        * wtf/PlatformWPE.cmake: Switch to building MemoryFootprintGeneric.cpp.
+        * wtf/generic/MemoryFootprintGeneric.cpp:
+        (WTF::memoryFootprint):
+
 2019-04-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         HashTable::removeIf always shrinks the hash table by half even if there is nothing left
