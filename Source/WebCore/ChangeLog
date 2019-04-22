@@ -1,3 +1,20 @@
+2019-04-21  Darin Adler  <darin@apple.com>
+
+        WHLSLPrepare.cpp always recompiles, even if nothing was changed
+        https://bugs.webkit.org/show_bug.cgi?id=197151
+
+        Reviewed by Dan Bernstein.
+
+        * DerivedSources-input.xcfilelist: Script updated this automatically after
+        DerivedSources.make was corrected.
+        * DerivedSources-output.xcfilelist: Ditto, although I had to manually remove
+        one bogus leftover reference to WHLSLStandardLibrary.cpp.
+
+        * DerivedSources.make: Updated the rule that builds WHSLStandardLibrary.h to
+        no longer refer to nonexistent WHLSLStandardLibrary.cpp. Because the dependency
+        was on a file that was never created, the rule to regenerate WHSLStandardLibrary.h
+        was running on every build, instead of only when one of the dependencies changed.
+
 2019-04-20  Said Abou-Hallawa  <said@apple.com>
 
         REGRESSION (r243137): SVGViewElement.viewTarget should not return a new object
