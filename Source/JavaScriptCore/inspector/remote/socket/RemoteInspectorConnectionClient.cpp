@@ -23,32 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RemoteInspectorConnectionClient.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspectorSocket.h"
-#include <wtf/Vector.h>
+#include "RemoteInspectorSocketEndpoint.h"
+#include <wtf/JSONValues.h>
+#include <wtf/RunLoop.h>
 
 namespace Inspector {
 
-class MessageParser {
-public:
-    static Vector<uint8_t> createMessage(const uint8_t*, size_t);
+void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ClientID clientID, Vector<uint8_t>&& data)
+{
+    ASSERT(!isMainThread());
 
-    MessageParser(ClientID, size_t);
-    void pushReceivedData(const uint8_t*, size_t);
-    void setDidParseMessageListener(Function<void(ClientID, Vector<uint8_t>)>&& listener) { m_didParseMessageListener = WTFMove(listener); }
+    if (data.isEmpty())
+        return;
 
-    void clearReceivedData();
+    String jsonData = String::fromUTF8(data);
 
-private:
-    bool parse();
+    RefPtr<JSON::Value> messageValue;
+    if (!JSON::Value::parseJSON(jsonData, messageValue))
+        return;
 
-    Function<void(ClientID, Vector<uint8_t>&&)> m_didParseMessageListener;
-    Vector<uint8_t> m_buffer;
-    ClientID m_clientID;
-};
+    RefPtr<JSON::Object> messageObject;
+    if (!messageValue->asObject(messageObject))
+        return;
+
+    String methodName;
+    if (!messageObject->getString("event"_s, methodName))
+        return;
+
+    struct Event event;
+    event.clientID = clientID;
+
+    uint64_t connectionID;
+    if (messageObject->getInteger("connectionID"_s, connectionID))
+        event.connectionID = connectionID;
+
+    uint64_t targetID;
+    if (messageObject->getInteger("targetID"_s, targetID))
+        event.targetID = targetID;
+
+    String message;
+    if (messageObject->getString("message"_s, message))
+        event.message = message;
+
+    RunLoop::main().dispatch([this, methodName, event = WTFMove(event)] {
+        auto& methods = dispatchMap();
+        if (methods.contains(methodName)) {
+            auto call = methods.get(methodName);
+            (this->*call)(event);
+        } else
+            LOG_ERROR("Unknown event: %s", methodName.utf8().data());
+    });
+}
 
 } // namespace Inspector
 

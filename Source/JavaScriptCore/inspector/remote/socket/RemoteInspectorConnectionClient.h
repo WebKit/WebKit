@@ -23,62 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteInspectorConnectionClient.h"
+#pragma once
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspectorSocket.h"
-#include <wtf/JSONValues.h>
-#include <wtf/RunLoop.h>
+#include "RemoteInspectorSocketEndpoint.h"
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-void RemoteInspectorConnectionClient::didReceiveWebInspectorEvent(ClientID clientID, Vector<uint8_t>&& data)
-{
-    ASSERT(!isMainThread());
+class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
+public:
+    void didReceiveWebInspectorEvent(ClientID, Vector<uint8_t>&&);
+    virtual void didAccept(ClientID, Socket::Domain) { };
+    virtual void didClose(ClientID) = 0;
 
-    if (data.isEmpty())
-        return;
+    struct Event {
+        ClientID clientID;
+        Optional<uint64_t> connectionID;
+        Optional<uint64_t> targetID;
+        Optional<String> message;
+    };
 
-    String jsonData = String::fromUTF8(data);
-
-    RefPtr<JSON::Value> messageValue;
-    if (!JSON::Value::parseJSON(jsonData, messageValue))
-        return;
-
-    RefPtr<JSON::Object> messageObject;
-    if (!messageValue->asObject(messageObject))
-        return;
-
-    String methodName;
-    if (!messageObject->getString("event"_s, methodName))
-        return;
-
-    struct Event event;
-    event.clientID = clientID;
-
-    uint64_t connectionID;
-    if (messageObject->getInteger("connectionID"_s, connectionID))
-        event.connectionID = connectionID;
-
-    uint64_t targetID;
-    if (messageObject->getInteger("targetID"_s, targetID))
-        event.targetID = targetID;
-
-    String message;
-    if (messageObject->getString("message"_s, message))
-        event.message = message;
-
-    RunLoop::main().dispatch([this, methodName, event = WTFMove(event)] {
-        auto& methods = dispatchMap();
-        if (methods.contains(methodName)) {
-            auto call = methods.get(methodName);
-            (this->*call)(event);
-        } else
-            LOG_ERROR("Unknown event: %s", methodName.utf8().data());
-    });
-}
+    using CallHandler = void (RemoteInspectorConnectionClient::*)(const struct Event&);
+    virtual HashMap<String, CallHandler>& dispatchMap() = 0;
+};
 
 } // namespace Inspector
 

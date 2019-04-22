@@ -44,17 +44,17 @@ void RemoteInspectorServer::addServerConnection(PlatformSocketType identifier)
     }
 }
 
-void RemoteInspectorServer::didAccept(ClientID clientID, RemoteInspectorSocket::DomainType type)
+void RemoteInspectorServer::didAccept(ClientID clientID, Socket::Domain type)
 {
     ASSERT(!isMainThread());
 
-    if (type == RemoteInspectorSocket::DomainType::Inet) {
+    if (type == Socket::Domain::Network) {
         if (m_clientConnection) {
             LOG_ERROR("Inspector server can accept only 1 client");
             return;
         }
         m_clientConnection = clientID;
-    } else if (type == RemoteInspectorSocket::DomainType::Unix) {
+    } else if (type == Socket::Domain::Local) {
         LockHolder lock(m_connectionsLock);
         m_inspectorConnections.append(clientID);
     }
@@ -106,7 +106,7 @@ RemoteInspectorServer& RemoteInspectorServer::singleton()
 
 bool RemoteInspectorServer::start(uint16_t port)
 {
-    m_server = RemoteInspectorSocketServer::create(this);
+    m_server = RemoteInspectorSocketEndpoint::create(this, "RemoteInspectorServer");
 
     if (!m_server->listenInet(port)) {
         m_server = nullptr;

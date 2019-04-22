@@ -1,5 +1,5 @@
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}/inspector/remote/playstation"
+    "${JAVASCRIPTCORE_DIR}/inspector/remote/socket"
 )
 
 list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
@@ -9,12 +9,11 @@ list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     inspector/remote/RemoteInspectionTarget.h
     inspector/remote/RemoteInspector.h
 
-    inspector/remote/playstation/RemoteInspectorConnectionClient.h
-    inspector/remote/playstation/RemoteInspectorMessageParser.h
-    inspector/remote/playstation/RemoteInspectorServer.h
-    inspector/remote/playstation/RemoteInspectorSocket.h
-    inspector/remote/playstation/RemoteInspectorSocketClient.h
-    inspector/remote/playstation/RemoteInspectorSocketServer.h
+    inspector/remote/socket/RemoteInspectorConnectionClient.h
+    inspector/remote/socket/RemoteInspectorMessageParser.h
+    inspector/remote/socket/RemoteInspectorServer.h
+    inspector/remote/socket/RemoteInspectorSocket.h
+    inspector/remote/socket/RemoteInspectorSocketEndpoint.h
 )
 
 list(APPEND JavaScriptCore_SOURCES
@@ -26,13 +25,13 @@ list(APPEND JavaScriptCore_SOURCES
     inspector/remote/RemoteInspectionTarget.cpp
     inspector/remote/RemoteInspector.cpp
 
-    inspector/remote/playstation/RemoteInspectorConnectionClientPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorMessageParserPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorServerPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorSocketClientPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorSocketPlayStation.cpp
-    inspector/remote/playstation/RemoteInspectorSocketServerPlayStation.cpp
+    inspector/remote/socket/RemoteInspectorConnectionClient.cpp
+    inspector/remote/socket/RemoteInspectorMessageParser.cpp
+    inspector/remote/socket/RemoteInspectorServer.cpp
+    inspector/remote/socket/RemoteInspectorSocket.cpp
+    inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp
+
+    inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp
 )
 
 if (${WTF_LIBRARY_TYPE} STREQUAL "STATIC")

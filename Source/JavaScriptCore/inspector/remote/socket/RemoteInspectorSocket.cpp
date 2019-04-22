@@ -92,7 +92,7 @@ void RemoteInspector::start()
 
     m_enabled = true;
 
-    m_socketConnection = RemoteInspectorSocketClient::create(this);
+    m_socketConnection = RemoteInspectorSocketEndpoint::create(this, "RemoteInspector");
 
     m_clientID = m_socketConnection->createClient(s_connectionIdentifier);
 

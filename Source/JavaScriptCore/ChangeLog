@@ -1,3 +1,70 @@
+2019-04-22  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Restructuring Remote Inspector classes to support multiple platform.
+        https://bugs.webkit.org/show_bug.cgi?id=197030
+
+        Reviewed by Don Olmstead.
+
+        Restructuring the PlayStation's RemoteInspector backend which uses native socket for the communication to be ready for WinCairo.
+
+        What we did is basically:
+        - Renamed `remote/playstation/` to `remote/socket/`. This directory is now platform independent implementation of socket backend. 
+        - Renamed `RemoteInspectorSocket` class to `RemoteInspectorSocketEndpoint`. This class is platform independent and core of the backend.
+        - Merged `RemoteInspectorSocket{Client|Server}` classes into `RemoteInspectorSocketEndpoint` class because the differences are little.
+        - Defined a new interface functions in `Inspector::Socket` (new) namespace.
+        - Moved POSIX socket implementation into `posix\RemoteInspectorSocketPOSIX.{h|cpp}`.
+
+        * PlatformPlayStation.cmake:
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/playstation/RemoteInspectorSocketClient.h: Merged into RemoteInspectorSocketEndpoint.
+        * inspector/remote/playstation/RemoteInspectorSocketClientPlayStation.cpp: Merged into RemoteInspectorSocketEndpoint.
+        * inspector/remote/playstation/RemoteInspectorSocketPlayStation.cpp: Removed.
+        * inspector/remote/playstation/RemoteInspectorSocketServer.h: Merged into RemoteInspectorSocketEndpoint.
+        * inspector/remote/playstation/RemoteInspectorSocketServerPlayStation.cpp: Merged into RemoteInspectorSocketEndpoint.
+        * inspector/remote/socket/RemoteInspectorConnectionClient.cpp: Renamed from inspector\remote\playstation\RemoteInspectorConnectionClientPlayStation.cpp.
+        * inspector/remote/socket/RemoteInspectorConnectionClient.h: Renamed from inspector\remote\playstation\RemoteInspectorConnectionClient.h.
+        (Inspector::RemoteInspectorConnectionClient::didAccept):
+        * inspector/remote/socket/RemoteInspectorMessageParser.cpp: Renamed from inspector\remote\playstation\RemoteInspectorMessageParserPlayStation.cpp.
+        * inspector/remote/socket/RemoteInspectorMessageParser.h: Renamed from inspector\remote\playstation\RemoteInspectorMessageParser.h.
+        * inspector/remote/socket/RemoteInspectorServer.cpp: Renamed from inspector\remote\playstation\RemoteInspectorServerPlayStation.cpp.
+        (Inspector::RemoteInspectorServer::didAccept):
+        (Inspector::RemoteInspectorServer::start):
+        * inspector/remote/socket/RemoteInspectorServer.h: Renamed from inspector\remote\playstation\RemoteInspectorServer.h.
+        * inspector/remote/socket/RemoteInspectorSocket.cpp: Renamed from inspector\remote\playstation\RemoteInspectorPlayStation.cpp.
+        (Inspector::RemoteInspector::start):
+        * inspector/remote/socket/RemoteInspectorSocket.h: Copied from inspector\remote\playstation\RemoteInspectorSocket.h.
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.cpp: Added.
+        (Inspector::RemoteInspectorSocketEndpoint::RemoteInspectorSocketEndpoint):
+        (Inspector::RemoteInspectorSocketEndpoint::~RemoteInspectorSocketEndpoint):
+        (Inspector::RemoteInspectorSocketEndpoint::wakeupWorkerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::connectInet):
+        (Inspector::RemoteInspectorSocketEndpoint::listenInet):
+        (Inspector::RemoteInspectorSocketEndpoint::isListening):
+        (Inspector::RemoteInspectorSocketEndpoint::workerThread):
+        (Inspector::RemoteInspectorSocketEndpoint::createClient):
+        (Inspector::RemoteInspectorSocketEndpoint::recvIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::sendIfEnabled):
+        (Inspector::RemoteInspectorSocketEndpoint::send):
+        (Inspector::RemoteInspectorSocketEndpoint::acceptInetSocketIfEnabled):
+        * inspector/remote/socket/RemoteInspectorSocketEndpoint.h: Renamed from inspector\remote\playstation\RemoteInspectorSocket.h.
+        * inspector/remote/socket/posix/RemoteInspectorSocketPOSIX.cpp: Added.
+        (Inspector::Socket::connect):
+        (Inspector::Socket::listen):
+        (Inspector::Socket::accept):
+        (Inspector::Socket::createPair):
+        (Inspector::Socket::setup):
+        (Inspector::Socket::isValid):
+        (Inspector::Socket::isListening):
+        (Inspector::Socket::read):
+        (Inspector::Socket::write):
+        (Inspector::Socket::close):
+        (Inspector::Socket::preparePolling):
+        (Inspector::Socket::poll):
+        (Inspector::Socket::isReadable):
+        (Inspector::Socket::isWritable):
+        (Inspector::Socket::markWaitingWritable):
+        (Inspector::Socket::clearWaitingWritable):
+
 2019-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, suppress warnings in non Darwin environments

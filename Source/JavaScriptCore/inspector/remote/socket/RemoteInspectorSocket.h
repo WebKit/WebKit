@@ -27,65 +27,76 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include <poll.h>
-#include <thread>
-#include <wtf/Condition.h>
-#include <wtf/Function.h>
-#include <wtf/HashMap.h>
-#include <wtf/Lock.h>
-#include <wtf/Threading.h>
+#include <array>
+#include <wtf/Optional.h>
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
+
+#if PLATFORM(PLAYSTATION)
+#include <poll.h>
+#endif
+
+#if OS(WINDOWS)
+#include <winsock2.h>
+#endif
 
 namespace Inspector {
 
+#if OS(WINDOWS)
+
+using ClientID = unsigned;
+using PlatformSocketType = SOCKET;
+using PollingDescriptor = WSAPOLLFD;
+constexpr PlatformSocketType INVALID_SOCKET_VALUE = INVALID_SOCKET;
+
+#else
+
 using ClientID = unsigned;
 using PlatformSocketType = int;
+using PollingDescriptor = struct pollfd;
 constexpr PlatformSocketType INVALID_SOCKET_VALUE = -1;
 
+#endif
+
 class MessageParser;
-class RemoteInspectorConnectionClient;
 
-class JS_EXPORT_PRIVATE RemoteInspectorSocket {
-public:
-    RemoteInspectorSocket(RemoteInspectorConnectionClient*);
-    ~RemoteInspectorSocket();
+namespace Socket {
 
-    enum class DomainType {
-        Unix,
-        Inet,
-    };
-
-    void send(ClientID, const uint8_t* data, size_t);
-
-    Optional<ClientID> createClient(PlatformSocketType fd);
-
-protected:
-    void recvIfEnabled(ClientID);
-    void sendIfEnabled(ClientID);
-    void workerThread();
-    void wakeupWorkerThread();
-    void acceptInetSocketIfEnabled(ClientID);
-    bool isListening(ClientID);
-
-    struct Connection {
-        std::unique_ptr<MessageParser> parser;
-        Vector<uint8_t> sendBuffer;
-        struct pollfd poll;
-        PlatformSocketType socket { INVALID_SOCKET_VALUE };
-    };
-
-    Lock m_connectionsLock;
-    HashMap<ClientID, std::unique_ptr<struct Connection>> m_connections;
-
-    PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
-    PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };
-
-    RefPtr<Thread> m_workerThread;
-    std::atomic<bool> m_shouldAbortWorkerThread { false };
-
-    WeakPtr<RemoteInspectorConnectionClient> m_inspectorClient;
+enum class Domain {
+    Local,
+    Network,
 };
+
+Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort);
+Optional<PlatformSocketType> listen(uint16_t port);
+Optional<PlatformSocketType> accept(PlatformSocketType);
+Optional<std::array<PlatformSocketType, 2>> createPair();
+
+void setup(PlatformSocketType);
+bool isValid(PlatformSocketType);
+bool isListening(PlatformSocketType);
+
+Optional<size_t> read(PlatformSocketType, void* buffer, int bufferSize);
+Optional<size_t> write(PlatformSocketType, const void* data, int size);
+
+void close(PlatformSocketType&);
+
+PollingDescriptor preparePolling(PlatformSocketType);
+bool poll(Vector<PollingDescriptor>&, int timeout);
+bool isReadable(const PollingDescriptor&);
+bool isWritable(const PollingDescriptor&);
+void markWaitingWritable(PollingDescriptor&);
+void clearWaitingWritable(PollingDescriptor&);
+
+struct Connection {
+    std::unique_ptr<MessageParser> parser;
+    Vector<uint8_t> sendBuffer;
+    PlatformSocketType socket { INVALID_SOCKET_VALUE };
+    PollingDescriptor poll;
+};
+
+constexpr size_t BufferSize = 65536;
+
+} // namespace Socket
 
 } // namespace Inspector
 

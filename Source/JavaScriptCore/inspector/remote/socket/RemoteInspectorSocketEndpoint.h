@@ -28,26 +28,55 @@
 #if ENABLE(REMOTE_INSPECTOR)
 
 #include "RemoteInspectorSocket.h"
+
+#include <wtf/Condition.h>
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/Lock.h>
+#include <wtf/Threading.h>
+#include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace Inspector {
 
-class RemoteInspectorConnectionClient : public CanMakeWeakPtr<RemoteInspectorConnectionClient> {
+class MessageParser;
+class RemoteInspectorConnectionClient;
+
+class JS_EXPORT_PRIVATE RemoteInspectorSocketEndpoint {
 public:
-    void didReceiveWebInspectorEvent(ClientID, Vector<uint8_t>&&);
-    virtual void didAccept(ClientID, RemoteInspectorSocket::DomainType) { };
-    virtual void didClose(ClientID) = 0;
+    static std::unique_ptr<RemoteInspectorSocketEndpoint> create(RemoteInspectorConnectionClient* inspectorClient, const char* name)
+    {
+        return std::make_unique<RemoteInspectorSocketEndpoint>(inspectorClient, name);
+    }
 
-    struct Event {
-        ClientID clientID;
-        Optional<uint64_t> connectionID;
-        Optional<uint64_t> targetID;
-        Optional<String> message;
-    };
+    RemoteInspectorSocketEndpoint(RemoteInspectorConnectionClient*, const char*);
+    ~RemoteInspectorSocketEndpoint();
 
-    using CallHandler = void (RemoteInspectorConnectionClient::*)(const struct Event&);
-    virtual HashMap<String, CallHandler>& dispatchMap() = 0;
+    Optional<ClientID> connectInet(const char* serverAddr, uint16_t serverPort);
+    bool listenInet(uint16_t port);
+
+    void send(ClientID, const uint8_t* data, size_t);
+
+    Optional<ClientID> createClient(PlatformSocketType fd);
+
+protected:
+    void recvIfEnabled(ClientID);
+    void sendIfEnabled(ClientID);
+    void workerThread();
+    void wakeupWorkerThread();
+    void acceptInetSocketIfEnabled(ClientID);
+    bool isListening(ClientID);
+
+    Lock m_connectionsLock;
+    HashMap<ClientID, std::unique_ptr<Socket::Connection>> m_connections;
+
+    PlatformSocketType m_wakeupSendSocket { INVALID_SOCKET_VALUE };
+    PlatformSocketType m_wakeupReceiveSocket { INVALID_SOCKET_VALUE };
+
+    RefPtr<Thread> m_workerThread;
+    std::atomic<bool> m_shouldAbortWorkerThread { false };
+
+    WeakPtr<RemoteInspectorConnectionClient> m_inspectorClient;
 };
 
 } // namespace Inspector

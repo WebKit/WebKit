@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteInspectorMessageParser.h"
 
-#include <netinet/in.h>
+#include <wtf/ByteOrder.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 

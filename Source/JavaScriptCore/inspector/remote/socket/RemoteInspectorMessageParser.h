@@ -27,54 +27,27 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspector.h"
-
-#include "RemoteInspectorConnectionClient.h"
-#include "RemoteInspectorSocketServer.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/Lock.h>
+#include "RemoteInspectorSocketEndpoint.h"
+#include <wtf/Vector.h>
 
 namespace Inspector {
 
-class RemoteInspectorServer : public RemoteInspectorConnectionClient {
+class MessageParser {
 public:
-    JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
+    static Vector<uint8_t> createMessage(const uint8_t*, size_t);
 
-    JS_EXPORT_PRIVATE bool start(uint16_t);
-    bool isRunning() const { return !!m_server; }
+    MessageParser(ClientID, size_t);
+    void pushReceivedData(const uint8_t*, size_t);
+    void setDidParseMessageListener(Function<void(ClientID, Vector<uint8_t>)>&& listener) { m_didParseMessageListener = WTFMove(listener); }
 
-    JS_EXPORT_PRIVATE void addServerConnection(PlatformSocketType);
+    void clearReceivedData();
 
 private:
-    void connectionClosed(uint64_t connectionID);
+    bool parse();
 
-    void setTargetList(const struct Event&);
-    void setupInspectorClient(const struct Event&);
-    void setup(const struct Event&);
-    void close(const struct Event&);
-    void sendMessageToFrontend(const struct Event&);
-    void sendMessageToBackend(const struct Event&);
-
-    void sendCloseEvent(uint64_t connectionID, uint64_t targetID);
-    void clientConnectionClosed();
-
-    void didAccept(ClientID, RemoteInspectorSocket::DomainType) override;
-    void didClose(ClientID) override;
-
-    void sendWebInspectorEvent(ClientID, const String&);
-
-    HashMap<String, CallHandler>& dispatchMap();
-
-    HashSet<std::pair<uint64_t, uint64_t>> m_inspectionTargets;
-    std::unique_ptr<RemoteInspectorSocketServer> m_server;
-
-    // Connections to the WebProcess.
-    Vector<ClientID> m_inspectorConnections;
-    Lock m_connectionsLock;
-
-    // Connections from RemoteInspectorClient.
-    Optional<ClientID> m_clientConnection;
+    Function<void(ClientID, Vector<uint8_t>&&)> m_didParseMessageListener;
+    Vector<uint8_t> m_buffer;
+    ClientID m_clientID;
 };
 
 } // namespace Inspector

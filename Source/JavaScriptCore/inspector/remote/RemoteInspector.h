@@ -54,7 +54,7 @@ typedef struct _GDBusInterfaceVTable GDBusInterfaceVTable;
 #if PLATFORM(PLAYSTATION)
 #include "RemoteConnectionToTarget.h"
 #include "RemoteInspectorConnectionClient.h"
-#include "RemoteInspectorSocketClient.h"
+#include "RemoteInspectorSocketEndpoint.h"
 #include <wtf/JSONValues.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -236,7 +236,7 @@ private:
 #endif
 
 #if PLATFORM(PLAYSTATION)
-    std::unique_ptr<RemoteInspectorSocketClient> m_socketConnection;
+    std::unique_ptr<RemoteInspectorSocketEndpoint> m_socketConnection;
     static PlatformSocketType s_connectionIdentifier;
     Optional<ClientID> m_clientID;
 #endif

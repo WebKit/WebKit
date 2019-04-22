@@ -27,20 +27,53 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "RemoteInspectorSocket.h"
+#include "RemoteInspector.h"
+
+#include "RemoteInspectorConnectionClient.h"
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/Lock.h>
 
 namespace Inspector {
 
-class JS_EXPORT_PRIVATE RemoteInspectorSocketServer : public RemoteInspectorSocket {
+class RemoteInspectorServer : public RemoteInspectorConnectionClient {
 public:
-    static std::unique_ptr<RemoteInspectorSocketServer> create(RemoteInspectorConnectionClient* inspectorClient)
-    {
-        return std::make_unique<RemoteInspectorSocketServer>(inspectorClient);
-    }
+    JS_EXPORT_PRIVATE static RemoteInspectorServer& singleton();
 
-    explicit RemoteInspectorSocketServer(RemoteInspectorConnectionClient*);
+    JS_EXPORT_PRIVATE bool start(uint16_t);
+    bool isRunning() const { return !!m_server; }
 
-    bool listenInet(uint16_t port);
+    JS_EXPORT_PRIVATE void addServerConnection(PlatformSocketType);
+
+private:
+    void connectionClosed(uint64_t connectionID);
+
+    void setTargetList(const struct Event&);
+    void setupInspectorClient(const struct Event&);
+    void setup(const struct Event&);
+    void close(const struct Event&);
+    void sendMessageToFrontend(const struct Event&);
+    void sendMessageToBackend(const struct Event&);
+
+    void sendCloseEvent(uint64_t connectionID, uint64_t targetID);
+    void clientConnectionClosed();
+
+    void didAccept(ClientID, Socket::Domain) override;
+    void didClose(ClientID) override;
+
+    void sendWebInspectorEvent(ClientID, const String&);
+
+    HashMap<String, CallHandler>& dispatchMap();
+
+    HashSet<std::pair<uint64_t, uint64_t>> m_inspectionTargets;
+    std::unique_ptr<RemoteInspectorSocketEndpoint> m_server;
+
+    // Connections to the WebProcess.
+    Vector<ClientID> m_inspectorConnections;
+    Lock m_connectionsLock;
+
+    // Connections from RemoteInspectorClient.
+    Optional<ClientID> m_clientConnection;
 };
 
 } // namespace Inspector
