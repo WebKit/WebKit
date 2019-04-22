@@ -1,3 +1,16 @@
+2019-04-22  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc logging when WebCore WebRTC logging is updated
+        https://bugs.webkit.org/show_bug.cgi?id=197166
+
+        Reviewed by Eric Carlson.
+
+        When updating WebRTC logging from Web Inspector, update libwebrtc logging so that no page reload is required.
+        Manually tested.
+
+        * page/Page.cpp:
+        (WebCore::Page::configureLoggingChannel):
+
 2019-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Introduce the concept of "opportunistic" stacking contexts
