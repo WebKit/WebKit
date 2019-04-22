@@ -258,7 +258,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()
+    if (!pattern.containsUnsignedLengthPattern() && VM::canUseJIT() && Options::useRegExpJIT()
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif
@@ -316,7 +316,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
     }
 
 #if ENABLE(YARR_JIT)
-    if (!pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()
+    if (!pattern.containsUnsignedLengthPattern() && VM::canUseJIT() && Options::useRegExpJIT()
 #if !ENABLE(YARR_JIT_BACKREFERENCES)
         && !pattern.m_containsBackreferences
 #endif

@@ -633,7 +633,6 @@ public:
     };
 
     static JS_EXPORT_PRIVATE bool canUseAssembler();
-    static JS_EXPORT_PRIVATE bool canUseRegExpJIT();
     static JS_EXPORT_PRIVATE bool isInMiniMode();
 
     static void computeCanUseJIT();

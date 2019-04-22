@@ -38,8 +38,7 @@ namespace JSC { namespace DFG {
 
 bool isSupported()
 {
-    return Options::useDFGJIT()
-        && MacroAssembler::supportsFloatingPoint();
+    return VM::canUseJIT() && Options::useDFGJIT() && MacroAssembler::supportsFloatingPoint();
 }
 
 bool isSupportedForInlining(CodeBlock* codeBlock)

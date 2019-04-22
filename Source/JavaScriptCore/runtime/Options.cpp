@@ -392,15 +392,17 @@ static void recomputeDependentOptions()
 #if !ENABLE(JIT)
     Options::useLLInt() = true;
     Options::useJIT() = false;
+    Options::useBaselineJIT() = false;
     Options::useDFGJIT() = false;
     Options::useFTLJIT() = false;
     Options::useDOMJIT() = false;
-#endif
-#if !ENABLE(YARR_JIT)
     Options::useRegExpJIT() = false;
 #endif
 #if !ENABLE(CONCURRENT_JS)
     Options::useConcurrentJIT() = false;
+#endif
+#if !ENABLE(YARR_JIT)
+    Options::useRegExpJIT() = false;
 #endif
 #if !ENABLE(DFG_JIT)
     Options::useDFGJIT() = false;
@@ -412,12 +414,6 @@ static void recomputeDependentOptions()
     
 #if !CPU(X86_64) && !CPU(ARM64)
     Options::useConcurrentGC() = false;
-#endif
-    
-#if ENABLE(JIT) && CPU(X86)
-    // Disable JIT on IA-32 if SSE2 is not present
-    if (!MacroAssemblerX86::supportsFloatingPoint())
-        Options::useJIT() = false;
 #endif
 
     if (!Options::useJIT()) {
