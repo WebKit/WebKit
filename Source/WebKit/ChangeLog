@@ -1,3 +1,17 @@
+2019-04-22  Ludovico de Nittis  <ludovico.denittis@collabora.com>
+
+        [GTK] fix gtk_style_context_set_background deprecation
+        https://bugs.webkit.org/show_bug.cgi?id=196912
+
+        Reviewed by Carlos Garcia Campos.
+
+        Since gtk 3.18 gtk_style_context_set_background has been deprecated.
+        Backgrounds are not rendered in the UI process, so it can be
+        simply removed.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+
 2019-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Defer EditorState updates until the next layer tree flush in a few additional circumstances

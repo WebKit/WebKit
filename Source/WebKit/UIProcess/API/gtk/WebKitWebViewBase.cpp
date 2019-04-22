@@ -383,8 +383,6 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     }
 #endif
 
-    gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
-
     gtk_im_context_set_client_window(priv->inputMethodFilter.context(), window);
 }
 
