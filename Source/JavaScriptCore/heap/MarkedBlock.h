@@ -374,6 +374,11 @@ public:
     CountingLock& lock() { return footer().m_lock; }
     
     Subspace* subspace() const { return footer().m_subspace; }
+
+    void populatePage() const
+    {
+        *bitwise_cast<volatile uint8_t*>(&footer());
+    }
     
     static constexpr size_t offsetOfFooter = endAtom * atomSize;
 

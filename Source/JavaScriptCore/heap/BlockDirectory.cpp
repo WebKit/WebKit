@@ -61,11 +61,8 @@ bool BlockDirectory::isPagedOut(MonotonicTime deadline)
 {
     unsigned itersSinceLastTimeCheck = 0;
     for (auto* block : m_blocks) {
-        if (block) {
-            // We take and drop the lock as a way of touching that page of memory.
-            // FIXME: should we instead do a cheaper thing like a volatile load in the page?
-            (void) holdLock(block->block().lock());
-        }
+        if (block)
+            block->block().populatePage();
         ++itersSinceLastTimeCheck;
         if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
             MonotonicTime currentTime = MonotonicTime::now();

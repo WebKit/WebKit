@@ -1,5 +1,19 @@
 2019-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Use volatile load to populate backing page in MarkedBlock::Footer instead of using holdLock
+        https://bugs.webkit.org/show_bug.cgi?id=197152
+
+        Reviewed by Saam Barati.
+
+        Emit volatile load instead of using holdLock to populate backing page in MarkedBlock::Footer.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::isPagedOut):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::populatePage const):
+
+2019-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] useJIT should subsume useRegExpJIT
         https://bugs.webkit.org/show_bug.cgi?id=197153
 
