@@ -192,7 +192,6 @@
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "TouchBarMenuData.h"
 #include "TouchBarMenuItemData.h"
-#include "VersionChecks.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
 #include <WebCore/RunLoopObserver.h>
@@ -2751,7 +2750,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     }
 
 #if PLATFORM(COCOA)
-    static const bool forceDownloadFromDownloadAttribute = !WebKit::linkedOnOrAfter(SDKVersion::FirstWhereDownloadAttributeDoesNotOverrideNavigationDelegate);
+    static const bool forceDownloadFromDownloadAttribute = false;
 #else
     static const bool forceDownloadFromDownloadAttribute = true;
 #endif

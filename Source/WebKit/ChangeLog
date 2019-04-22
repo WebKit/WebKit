@@ -1,3 +1,19 @@
+2019-04-22  David Quesada  <david_quesada@apple.com>
+
+        Remove linked-on-or-after check for download attribute handling
+        https://bugs.webkit.org/show_bug.cgi?id=197176
+        rdar://problem/48459714
+
+        Reviewed by Alex Christensen.
+
+        There are no apps linked prior to this SDK version that are using the _WKDownload SPI,
+        so it doesn't make sense to preserve the old behavior of forcing download-attribute
+        links to start downloads.
+
+        * UIProcess/Cocoa/VersionChecks.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2019-04-22  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r244502.
