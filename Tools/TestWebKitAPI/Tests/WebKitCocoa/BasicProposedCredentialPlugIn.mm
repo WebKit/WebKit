@@ -23,32 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#include <thread>
-#include <wtf/Function.h>
-#include <wtf/Vector.h>
+#import <WebKit/WKBundlePage.h>
+#import <WebKit/WKBundlePageResourceLoadClient.h>
+#import <WebKit/WKWebProcessPlugIn.h>
+#import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 
-namespace TestWebKitAPI {
+@interface BasicProposedCredentialPlugIn : NSObject<WKWebProcessPlugIn>
+@end
 
-class TCPServer {
-public:
-    using Socket = int;
-    using Port = uint16_t;
-    static constexpr Port InvalidPort = 0;
-    
-    TCPServer(Function<void(Socket)>&&, size_t connections = 1);
-    ~TCPServer();
-    
-    Port port() const { return m_port; }
-    
-private:
-    Optional<Socket> socketBindListen(size_t connections);
+@implementation BasicProposedCredentialPlugIn
 
-    Port m_port { InvalidPort };
-    std::thread m_listeningThread;
-    Vector<std::thread> m_connectionThreads;
-    Function<void(Socket)> m_connectionHandler;
-};
+- (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
+{
+    WKBundlePageResourceLoadClientV1 client;
+    memset(&client, 0, sizeof(client));
+    client.base.version = 1;
+    client.shouldUseCredentialStorage = [](auto...) {
+        static size_t queries { 0 };
+        ASSERT(queries < 2);
+        return !queries++;
+    };
+    WKBundlePageSetResourceLoadClient([browserContextController _bundlePageRef], &client.base);
+}
 
-} // namespace TestWebKitAPI
+@end

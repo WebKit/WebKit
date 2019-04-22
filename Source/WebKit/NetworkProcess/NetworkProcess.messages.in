@@ -171,4 +171,5 @@ messages -> NetworkProcess LegacyReceiver {
     ClearAdClickAttribution(PAL::SessionID sessionID) -> () Async
     SetAdClickAttributionOverrideTimerForTesting(PAL::SessionID sessionID, bool value) -> () Async
     SetAdClickAttributionConversionURLForTesting(PAL::SessionID sessionID, URL url) -> () Async
+    RemoveCredential(WebCore::Credential credential, WebCore::ProtectionSpace protectionSpace) -> () Async
 }

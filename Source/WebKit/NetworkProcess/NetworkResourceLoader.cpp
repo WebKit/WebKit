@@ -270,7 +270,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
 
     NetworkLoadParameters parameters = m_parameters;
     parameters.networkActivityTracker = m_networkActivityTracker;
-    if (m_networkLoadChecker)
+    if (parameters.storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use && m_networkLoadChecker)
         parameters.storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy();
 
     if (request.url().protocolIsBlob())

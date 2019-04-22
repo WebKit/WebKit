@@ -72,6 +72,7 @@ namespace WebCore {
 class CertificateInfo;
 class CurlProxySettings;
 class DownloadID;
+class ProtectionSpace;
 class StorageQuotaManager;
 class NetworkStorageSession;
 class ResourceError;
@@ -425,6 +426,8 @@ private:
 #endif
 
     void platformSyncAllCookies(CompletionHandler<void()>&&);
+
+    void removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
 
     void registerURLSchemeAsSecure(const String&) const;
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String&) const;

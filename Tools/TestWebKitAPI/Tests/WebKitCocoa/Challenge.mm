@@ -29,6 +29,37 @@
 #import "TCPServer.h"
 #import "Test.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKProcessPoolPrivate.h>
+
+static bool navigationFinished;
+
+static void respondWithChallengeThenOK(int socket)
+{
+    char readBuffer[1000];
+    auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+    EXPECT_GT(bytesRead, 0);
+    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+    
+    const char* challengeHeader =
+    "HTTP/1.1 401 Unauthorized\r\n"
+    "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
+    "Content-Length: 0\r\n"
+    "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
+    auto bytesWritten = ::write(socket, challengeHeader, strlen(challengeHeader));
+    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(challengeHeader));
+    
+    bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
+    EXPECT_GT(bytesRead, 0);
+    EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
+    
+    const char* responseHeader =
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Length: 13\r\n\r\n"
+    "Hello, World!";
+    bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
+    EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
+}
 
 #if PLATFORM(MAC)
 
@@ -170,7 +201,6 @@ static std::pair<RetainPtr<NSURLCredential>, RetainPtr<NSString>> credentialWith
     };
 }
 
-static bool navigationFinished;
 static RetainPtr<NSString> keychainPath;
 
 @interface ChallengeDelegate : NSObject <WKNavigationDelegate>
@@ -208,31 +238,7 @@ namespace TestWebKitAPI {
 
 TEST(Challenge, SecIdentity)
 {
-    TCPServer server([] (auto socket) {
-        char readBuffer[1000];
-        auto bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
-        EXPECT_GT(bytesRead, 0);
-        EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
-        
-        const char* challengeHeader =
-        "HTTP/1.1 401 Unauthorized\r\n"
-        "Date: Sat, 23 Mar 2019 06:29:01 GMT\r\n"
-        "Content-Length: 0\r\n"
-        "WWW-Authenticate: Basic realm=\"testrealm\"\r\n\r\n";
-        auto bytesWritten = ::write(socket, challengeHeader, strlen(challengeHeader));
-        EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(challengeHeader));
-        
-        bytesRead = ::read(socket, readBuffer, sizeof(readBuffer));
-        EXPECT_GT(bytesRead, 0);
-        EXPECT_TRUE(static_cast<size_t>(bytesRead) < sizeof(readBuffer));
-        
-        const char* responseHeader =
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Length: 13\r\n\r\n"
-        "Hello, World!";
-        bytesWritten = ::write(socket, responseHeader, strlen(responseHeader));
-        EXPECT_EQ(static_cast<size_t>(bytesWritten), strlen(responseHeader));
-    });
+    TCPServer server(respondWithChallengeThenOK);
 
     auto webView = adoptNS([WKWebView new]);
     auto delegate = adoptNS([ChallengeDelegate new]);
@@ -250,3 +256,55 @@ TEST(Challenge, SecIdentity)
 } // namespace TestWebKitAPI
 
 #endif
+
+static bool receivedSecondChallenge;
+static RetainPtr<NSURLCredential> persistentCredential;
+
+@interface ProposedCredentialDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation ProposedCredentialDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    navigationFinished = true;
+}
+
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
+{
+    static bool firstChallenge = true;
+    if (firstChallenge) {
+        firstChallenge = false;
+        persistentCredential = adoptNS([[NSURLCredential alloc] initWithUser:@"testuser" password:@"testpassword" persistence:NSURLCredentialPersistencePermanent]);
+        return completionHandler(NSURLSessionAuthChallengeUseCredential, persistentCredential.get());
+        
+    }
+    receivedSecondChallenge = true;
+    return completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+}
+
+@end
+
+TEST(Challenge, BasicProposedCredential)
+{
+    using namespace TestWebKitAPI;
+    TCPServer server(respondWithChallengeThenOK, 2);
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BasicProposedCredentialPlugIn"]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    auto delegate = adoptNS([ProposedCredentialDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+    RetainPtr<NSURLRequest> request = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]];
+    [webView loadRequest:request.get()];
+    Util::run(&navigationFinished);
+    navigationFinished = false;
+    [webView loadRequest:request.get()];
+    Util::run(&navigationFinished);
+    EXPECT_TRUE(receivedSecondChallenge);
+    
+    NSURLProtectionSpace *protectionSpace = [[[NSURLProtectionSpace alloc] initWithHost:@"127.0.0.1" port:server.port() protocol:NSURLProtectionSpaceHTTP realm:@"testrealm" authenticationMethod:NSURLAuthenticationMethodHTTPBasic] autorelease];
+    __block bool removedCredential = false;
+    [[webView configuration].processPool _removeCredential:persistentCredential.get() forProtectionSpace:protectionSpace completionHandler:^{
+        removedCredential = true;
+    }];
+    Util::run(&removedCredential);
+}

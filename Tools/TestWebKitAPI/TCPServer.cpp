@@ -29,35 +29,39 @@
 #include <netinet/in.h>
 #include <thread>
 #include <unistd.h>
-#include <vector>
+#include <wtf/Optional.h>
 
 namespace TestWebKitAPI {
 
-TCPServer::TCPServer(Function<void(Socket)>&& socketHandler)
-    : m_socketHandler(WTFMove(socketHandler))
+TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connections)
+    : m_connectionHandler(WTFMove(connectionHandler))
 {
-    socketBindListen();
-    m_thread = std::thread(&TCPServer::waitForAndReplyToRequests, this);
+    auto listeningSocket = socketBindListen(connections);
+    ASSERT(listeningSocket);
+    m_listeningThread = std::thread([this, listeningSocket = *listeningSocket, connections] {
+        for (size_t i = 0; i < connections; ++i) {
+            Socket connectionSocket = accept(listeningSocket, nullptr, nullptr);
+            m_connectionThreads.append(std::thread([this, connectionSocket] {
+                m_connectionHandler(connectionSocket);
+                shutdown(connectionSocket, SHUT_RDWR);
+                close(connectionSocket);
+            }));
+        }
+    });
 }
 
 TCPServer::~TCPServer()
 {
-    m_thread.join();
-    if (m_listeningSocket != InvalidSocket) {
-        close(m_listeningSocket);
-        m_listeningSocket = InvalidSocket;
-    }
-    if (m_connectionSocket != InvalidSocket) {
-        close(m_connectionSocket);
-        m_connectionSocket = InvalidSocket;
-    }
+    m_listeningThread.join();
+    for (auto& connectionThreads : m_connectionThreads)
+        connectionThreads.join();
 }
 
-void TCPServer::socketBindListen()
+auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
 {
-    m_listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
-    if (m_listeningSocket == InvalidSocket)
-        return;
+    Socket listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
+    if (listeningSocket == -1)
+        return WTF::nullopt;
     
     // Ports 49152-65535 are unallocated ports. Try until we find one that's free.
     for (Port port = 49152; port; port++) {
@@ -66,34 +70,22 @@ void TCPServer::socketBindListen()
         name.sin_family = AF_INET;
         name.sin_port = htons(port);
         name.sin_addr.s_addr = htonl(INADDR_ANY);
-        if (bind(m_listeningSocket, reinterpret_cast<sockaddr*>(&name), sizeof(name)) < 0) {
+        if (bind(listeningSocket, reinterpret_cast<sockaddr*>(&name), sizeof(name)) < 0) {
             // This port is busy. Try the next port.
             continue;
         }
-        const unsigned maxConnections = 1;
-        if (listen(m_listeningSocket, maxConnections) == -1) {
+        if (listen(listeningSocket, connections) == -1) {
             // Listening failed.
-            close(m_listeningSocket);
-            m_listeningSocket = InvalidSocket;
-            return;
+            close(listeningSocket);
+            return WTF::nullopt;
         }
         m_port = port;
-        return; // Successfully set up listening port.
+        return listeningSocket; // Successfully set up listening port.
     }
     
     // Couldn't find an available port.
-    close(m_listeningSocket);
-    m_listeningSocket = InvalidSocket;
-}
-
-void TCPServer::waitForAndReplyToRequests()
-{
-    if (m_listeningSocket == InvalidSocket)
-        return;
-    
-    m_connectionSocket = accept(m_listeningSocket, nullptr, nullptr);
-    m_socketHandler(m_connectionSocket);
-    shutdown(m_connectionSocket, SHUT_RDWR);
+    close(listeningSocket);
+    return WTF::nullopt;
 }
 
 } // namespace TestWebKitAPI

@@ -1721,6 +1721,11 @@ void WebProcessPool::useTestingNetworkSession()
     m_shouldUseTestingNetworkSession = true;
 }
 
+void WebProcessPool::removeCredential(WebCore::Credential&& credential, WebCore::ProtectionSpace&& protectionSpace, CompletionHandler<void()>&& completionHandler)
+{
+    m_networkProcess->sendWithAsyncReply(Messages::NetworkProcess::RemoveCredential(credential, protectionSpace), WTFMove(completionHandler));
+}
+
 template<typename T, typename U>
 void WebProcessPool::sendSyncToNetworkingProcess(T&& message, U&& reply)
 {

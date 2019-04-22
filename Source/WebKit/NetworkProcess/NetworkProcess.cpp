@@ -2470,6 +2470,11 @@ StorageQuotaManager& NetworkProcess::storageQuotaManager(PAL::SessionID sessionI
 }
 
 #if !PLATFORM(COCOA)
+void NetworkProcess::removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 void NetworkProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {
 }

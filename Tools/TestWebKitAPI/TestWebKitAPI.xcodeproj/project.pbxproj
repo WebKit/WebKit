@@ -314,6 +314,7 @@
 		5C23DF0B2246015800F454B6 /* Challenge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C23DF0A2245C9D700F454B6 /* Challenge.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */; };
 		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
 		5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */; };
 		5C6E27A7224EEBEA00128736 /* URLCanonicalization.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E27A6224EEBEA00128736 /* URLCanonicalization.mm */; };
@@ -1728,6 +1729,7 @@
 		5C23DF0A2245C9D700F454B6 /* Challenge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Challenge.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
+		5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BasicProposedCredentialPlugIn.mm; sourceTree = "<group>"; };
 		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
 		5C69BDD41F82A7EB000F4F4B /* JavaScriptDuringNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptDuringNavigation.mm; sourceTree = "<group>"; };
@@ -2529,6 +2531,7 @@
 				754CEC801F6722DC00D0039A /* AutoFillAvailable.mm */,
 				2DD355351BD08378005DF4A7 /* AutoLayoutIntegration.mm */,
 				07CD32F52065B5420064A4BE /* AVFoundationPreference.mm */,
+				5C42594422669E9B0039AA7A /* BasicProposedCredentialPlugIn.mm */,
 				374B7A5E1DF36EEE00ACCB6C /* BundleEditingDelegate.mm */,
 				374B7A5F1DF36EEE00ACCB6C /* BundleEditingDelegatePlugIn.mm */,
 				374B7A621DF3734C00ACCB6C /* BundleEditingDelegateProtocol.h */,
@@ -4483,6 +4486,7 @@
 			files = (
 				37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */,
 				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
+				5C4259462266A68A0039AA7A /* BasicProposedCredentialPlugIn.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,

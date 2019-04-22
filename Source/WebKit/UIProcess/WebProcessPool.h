@@ -507,6 +507,8 @@ public:
 
     void disableDelayedWebProcessLaunch() { m_isDelayedWebProcessLaunchDisabled = true; }
 
+    void removeCredential(WebCore::Credential&&, WebCore::ProtectionSpace&&, CompletionHandler<void()>&&);
+    
 private:
     void platformInitialize();
 

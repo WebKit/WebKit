@@ -205,6 +205,18 @@ void NetworkProcess::clearDiskCache(WallTime modifiedSince, CompletionHandler<vo
     }).get());
 }
 
+void NetworkProcess::removeCredential(WebCore::Credential&& credential, WebCore::ProtectionSpace&& protectionSpace, CompletionHandler<void()>&& completionHandler)
+{
+    NSURLProtectionSpace *nsSpace = protectionSpace.nsSpace();
+    NSURLCredential *nsCredential = [[[NSURLCredentialStorage sharedCredentialStorage] credentialsForProtectionSpace:nsSpace] objectForKey:credential.user()];
+    RELEASE_ASSERT(nsCredential);
+    RELEASE_ASSERT([nsCredential.user isEqualToString:credential.user()]);
+    RELEASE_ASSERT([nsCredential.password isEqualToString:credential.password()]);
+    [[NSURLCredentialStorage sharedCredentialStorage] removeCredential:nsCredential forProtectionSpace:nsSpace];
+    RELEASE_ASSERT(![[[NSURLCredentialStorage sharedCredentialStorage] credentialsForProtectionSpace:nsSpace] objectForKey:credential.user()]);
+    completionHandler();
+}
+
 #if PLATFORM(MAC)
 void NetworkProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {

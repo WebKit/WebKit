@@ -1,3 +1,33 @@
+2019-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r230681) Do not use stored credentials if WKBundlePageResourceLoadClient.shouldUseCredentialStorage returns false
+        https://bugs.webkit.org/show_bug.cgi?id=197093
+        <rdar://problem/49708268>
+
+        Reviewed by Chris Dumez.
+
+        Add a test that does two loads.  The first load shouldUseCredentialStorage returns true and we provide a persistent credential.
+        The second load shouldUseCredentialStorage returns false and we verify that a challenge is received with no suggested credential.
+        We also need to make the TCPServer able to handle more than one connection because we need these two loads to come from the same protection space,
+        and our current Cocoa implementation of NetworkSession uses two NSURLSessions that don't share a connection cache, one for loads with credentials
+        and one for loads without credentials, so there are two TCP connections to the same server in this test.
+
+        * TestWebKitAPI/TCPServer.cpp:
+        (TestWebKitAPI::TCPServer::TCPServer):
+        (TestWebKitAPI::TCPServer::~TCPServer):
+        (TestWebKitAPI::TCPServer::socketBindListen):
+        (TestWebKitAPI::TCPServer::waitForAndReplyToRequests): Deleted.
+        * TestWebKitAPI/TCPServer.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/BasicProposedCredentialPlugIn.mm: Added.
+        (-[BasicProposedCredentialPlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (respondWithChallengeThenOK):
+        (TestWebKitAPI::TEST):
+        (-[ProposedCredentialDelegate webView:didFinishNavigation:]):
+        (-[ProposedCredentialDelegate webView:didReceiveAuthenticationChallenge:completionHandler:]):
+        (TEST):
+
 2019-04-22  Chris Dumez  <cdumez@apple.com>
 
         Delayed WebProcessLaunch may break the _relatedWebView SPI
