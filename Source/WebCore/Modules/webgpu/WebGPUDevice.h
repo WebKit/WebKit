@@ -65,6 +65,7 @@ public:
     static RefPtr<WebGPUDevice> tryCreate(Ref<const WebGPUAdapter>&&);
 
     const WebGPUAdapter& adapter() const { return m_adapter.get(); }
+    GPUDevice& device() { return m_device.get(); }
     const GPUDevice& device() const { return m_device.get(); }
 
     Ref<WebGPUBuffer> createBuffer(const GPUBufferDescriptor&) const;
@@ -80,8 +81,6 @@ public:
     Ref<WebGPUComputePipeline> createComputePipeline(const WebGPUComputePipelineDescriptor&) const;
 
     Ref<WebGPUCommandEncoder> createCommandEncoder() const;
-
-    Ref<WebGPUSwapChain> createSwapChain(const WebGPUSwapChainDescriptor&) const;
 
     Ref<WebGPUQueue> getQueue() const;
 

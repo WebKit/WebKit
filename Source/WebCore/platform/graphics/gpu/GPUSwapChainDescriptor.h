@@ -27,14 +27,25 @@
 
 #if ENABLE(WEBGPU)
 
+#include "GPUDevice.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
 
 namespace WebCore {
 
-struct GPUSwapChainDescriptor {
+struct GPUSwapChainDescriptorBase {
     GPUTextureFormat format;
     GPUTextureUsageFlags usage { static_cast<GPUTextureUsageFlags>(GPUTextureUsage::Flags::OutputAttachment) };
+};
+
+struct GPUSwapChainDescriptor : GPUSwapChainDescriptorBase {
+    GPUSwapChainDescriptor(Ref<GPUDevice>&& gpuDevice, const GPUSwapChainDescriptorBase& base)
+        : GPUSwapChainDescriptorBase(base)
+        , device(WTFMove(gpuDevice))
+    {
+    }
+    
+    Ref<GPUDevice> device;
 };
 
 } // namespace WebCore

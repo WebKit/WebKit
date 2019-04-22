@@ -43,7 +43,6 @@
 #include "GPUSamplerDescriptor.h"
 #include "GPUShaderModule.h"
 #include "GPUShaderModuleDescriptor.h"
-#include "GPUSwapChain.h"
 #include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
@@ -96,18 +95,17 @@ RefPtr<GPUCommandBuffer> GPUDevice::tryCreateCommandBuffer() const
     return GPUCommandBuffer::tryCreate(*this);
 }
 
-RefPtr<GPUSwapChain> GPUDevice::tryCreateSwapChain(const GPUSwapChainDescriptor& descriptor, int width, int height) const
-{
-    m_swapChain = GPUSwapChain::tryCreate(*this, descriptor, width, height);
-    return m_swapChain;
-}
-
 RefPtr<GPUQueue> GPUDevice::tryGetQueue() const
 {
     if (!m_queue)
         m_queue = GPUQueue::tryCreate(*this);
 
     return m_queue;
+}
+    
+void GPUDevice::setSwapChain(RefPtr<GPUSwapChain>&& swapChain)
+{
+    m_swapChain = WTFMove(swapChain);
 }
 
 } // namespace WebCore

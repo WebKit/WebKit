@@ -6,7 +6,7 @@ async function getBasicDevice() {
 
 function createBasicSwapChain(canvas, device) {
     const context = canvas.getContext("gpu");
-    return device.createSwapChain({ context: context, format: "bgra8unorm" });
+    return context.configureSwapChain({ device: device, format: "bgra8unorm" });
 }
 
 function createBasicDepthStateDescriptor() {

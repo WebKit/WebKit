@@ -25,8 +25,9 @@
 
 #include "config.h"
 #include "GPUCanvasContext.h"
-
 #include "InspectorInstrumentation.h"
+#include "Logging.h"
+#include "WebGPUSwapChainDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
@@ -51,14 +52,26 @@ GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
 {
 }
 
-void GPUCanvasContext::replaceSwapChain(Ref<WebGPUSwapChain>&& newSwapChain)
+Ref<WebGPUSwapChain> GPUCanvasContext::configureSwapChain(const WebGPUSwapChainDescriptor& descriptor)
 {
-    ASSERT(newSwapChain->swapChain());
-
-    if (m_swapChain)
-        m_swapChain->destroy();
-
-    m_swapChain = WTFMove(newSwapChain);
+    auto gpuDescriptor = descriptor.asGPUSwapChainDescriptor();
+    if (!gpuDescriptor)
+        return WebGPUSwapChain::create(nullptr);
+    
+    auto gpuSwapChain = GPUSwapChain::tryCreate(*gpuDescriptor, canvasBase().width(), canvasBase().height());
+    bool success = gpuSwapChain;
+    auto newSwapChain = WebGPUSwapChain::create(WTFMove(gpuSwapChain));
+    
+    // Upon success, invalidate and replace any existing swap chain.
+    if (success) {
+        // FIXME: Test that this works as expected with error reporting.
+        if (m_swapChain)
+            m_swapChain->destroy();
+        
+        m_swapChain = newSwapChain.copyRef();
+    }
+    
+    return newSwapChain;
 }
 
 CALayer* GPUCanvasContext::platformLayer() const

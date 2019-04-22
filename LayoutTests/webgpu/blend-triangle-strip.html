@@ -81,7 +81,7 @@ async function test() {
     vertexBuffer.setSubData(0, vertexData.buffer);
 
     const context = canvas.getContext("gpu");
-    const swapChain = device.createSwapChain({ context: context, format: "bgra8unorm" });
+    const swapChain = context.configureSwapChain({ device: device, format: "bgra8unorm" });
     const colorAttachment = {
         attachment: swapChain.getCurrentTexture().createDefaultView(),
         loadOp: "clear",

@@ -90,8 +90,8 @@ async function start() {
 
     const canvas = document.getElementById("canvas");
     const context = canvas.getContext("gpu");
-    const swapChainDescriptor = {context, format: "bgra8unorm"};
-    const swapChain = device.createSwapChain(swapChainDescriptor);
+    const swapChainDescriptor = {device, format: "bgra8unorm"};
+    const swapChain = context.configureSwapChain(swapChainDescriptor);
     const outputTexture = swapChain.getCurrentTexture();
     const outputTextureView = outputTexture.createDefaultView();
 

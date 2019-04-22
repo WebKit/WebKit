@@ -24,18 +24,6 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
-typedef unsigned long GPUTextureUsageFlags;
-
-[
-    Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
-    ImplementedAs=WebGPUSwapChainDescriptor
-] dictionary WebGPUSwapChainDescriptor {
-    required GPUCanvasContext context;
-    required GPUTextureFormat format;
-    GPUTextureUsageFlags usage = 16; // FIXME: How to set this to GPUTextureUsage.OUTPUT_ATTACHMENT in IDL?
-};
-
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU,
@@ -57,8 +45,6 @@ typedef unsigned long GPUTextureUsageFlags;
 
     // FIXME: Currently, GPUCommandEncoderDescriptor is an empty dictionary.
     WebGPUCommandEncoder createCommandEncoder(/*GPUCommandEncoderDescriptor descriptor*/);
-
-    WebGPUSwapChain createSwapChain(WebGPUSwapChainDescriptor descriptor);
 
     WebGPUQueue getQueue();
 

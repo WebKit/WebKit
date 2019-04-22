@@ -27,14 +27,17 @@
 
 #if ENABLE(WEBGPU)
 
-#include "GPUCanvasContext.h"
 #include "GPUSwapChainDescriptor.h"
+#include "WebGPUDevice.h"
+#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-struct WebGPUSwapChainDescriptor : GPUSwapChainDescriptor {
-    RefPtr<GPUCanvasContext> context;
+struct WebGPUSwapChainDescriptor : GPUSwapChainDescriptorBase {
+    Optional<GPUSwapChainDescriptor> asGPUSwapChainDescriptor() const;
+
+    RefPtr<WebGPUDevice> device;
 };
 
 } // namespace WebCore

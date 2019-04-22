@@ -372,6 +372,7 @@ Modules/webgpu/WebGPURenderPipelineDescriptor.cpp
 Modules/webgpu/WebGPUSampler.cpp
 Modules/webgpu/WebGPUShaderModule.cpp
 Modules/webgpu/WebGPUSwapChain.cpp
+Modules/webgpu/WebGPUSwapChainDescriptor.cpp
 Modules/webgpu/WebGPUTexture.cpp
 Modules/webgpu/WebGPUTextureView.cpp
 

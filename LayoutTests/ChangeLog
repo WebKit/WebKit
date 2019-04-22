@@ -1,3 +1,17 @@
+2019-04-22  Justin Fan  <justin_fan@apple.com>
+
+        [WebGPU] Move swap chain methods from GPUDevice to GPUCanvasContext
+        https://bugs.webkit.org/show_bug.cgi?id=197126
+
+        Reviewed by Dean Jackson.
+
+        GPUSwapChains are now configured via GPUCanvasContext instead of GPUDevice.
+
+        * webgpu/blend-triangle-strip.html:
+        * webgpu/js/webgpu-functions.js:
+        (createBasicSwapChain):
+        * webgpu/whlsl.html:
+
 2019-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r241289): [GTK] accessibility/removed-continuation-element-causes-crash.html and accessibility/removed-anonymous-block-child-causes-crash.html crashes

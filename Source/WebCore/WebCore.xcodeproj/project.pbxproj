@@ -13826,6 +13826,7 @@
 		D003288721C9A4E500622AA6 /* GPUPipelineLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUPipelineLayout.cpp; sourceTree = "<group>"; };
 		D003914122248D400098998C /* GPUProgrammablePassEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProgrammablePassEncoder.cpp; sourceTree = "<group>"; };
 		D00487D222457BEA00EED7D9 /* WebGPUPipelineLayoutDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPipelineLayoutDescriptor.cpp; sourceTree = "<group>"; };
+		D00487E5226A634200EED7D9 /* WebGPUSwapChainDescriptor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChainDescriptor.cpp; sourceTree = "<group>"; };
 		D00D77FD2242ED450043F12C /* WebGPUComputePassEncoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUComputePassEncoder.h; sourceTree = "<group>"; };
 		D00D77FE2242ED450043F12C /* WebGPUComputePassEncoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUComputePassEncoder.cpp; sourceTree = "<group>"; };
 		D00D77FF2242ED450043F12C /* WebGPUComputePassEncoder.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUComputePassEncoder.idl; sourceTree = "<group>"; };
@@ -18239,6 +18240,7 @@
 				312FF8C021A4C2F200EB199D /* GPUShaderModuleDescriptor.h */,
 				D08AA032220D0D0B0058C502 /* GPUStoreOp.h */,
 				312FF8BA21A4C2EF00EB199D /* GPUSwapChain.h */,
+				D0ADB27F2232F17300A22935 /* GPUSwapChainDescriptor.h */,
 				312FF8C521A4C2F400EB199D /* GPUTexture.h */,
 				D026F48C220A5BAD00AC5F49 /* GPUTextureDescriptor.h */,
 				312FF8C321A4C2F300EB199D /* GPUTextureFormat.h */,
@@ -25791,7 +25793,6 @@
 				D0DE8FB8222E09E200882550 /* GPUShaderStageBit.h */,
 				D0DE8FB9222E09E200882550 /* GPUShaderStageBit.idl */,
 				D08AA031220D0CE60058C502 /* GPUStoreOp.idl */,
-				D0ADB27F2232F17300A22935 /* GPUSwapChainDescriptor.h */,
 				D026F48B220A5B0B00AC5F49 /* GPUTextureDescriptor.idl */,
 				D0EACFAE219E30FD000FA75C /* GPUTextureFormat.idl */,
 				D026F483220A472F00AC5F49 /* GPUTextureUsage.idl */,
@@ -25878,6 +25879,7 @@
 				D0DA0BE5217930E2007FE2AC /* WebGPUSwapChain.cpp */,
 				D0DA0BE4217930E2007FE2AC /* WebGPUSwapChain.h */,
 				D0DA0BE6217930E2007FE2AC /* WebGPUSwapChain.idl */,
+				D00487E5226A634200EED7D9 /* WebGPUSwapChainDescriptor.cpp */,
 				D0ADB27E2232F0C000A22935 /* WebGPUSwapChainDescriptor.h */,
 				D0EACF852193B02E000FA75C /* WebGPUTexture.cpp */,
 				D0EACF842193B02E000FA75C /* WebGPUTexture.h */,

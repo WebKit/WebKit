@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUSwapChainDescriptor.h"
 
 #if ENABLE(WEBGPU)
 
-#include "GPUTexture.h"
-#include <wtf/OptionSet.h>
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS CALayer;
-OBJC_CLASS CAMetalDrawable;
-OBJC_CLASS WebGPULayer;
+#include "Logging.h"
 
 namespace WebCore {
 
-class GPUDevice;
-
-struct GPUSwapChainDescriptor;
-
-enum class GPUTextureFormat;
-
-using PlatformDrawableSmartPtr = RetainPtr<CAMetalDrawable>;
-using PlatformLayer = CALayer;
-using PlatformSwapLayerSmartPtr = RetainPtr<WebGPULayer>;
-
-class GPUSwapChain : public RefCounted<GPUSwapChain> {
-public:
-    static RefPtr<GPUSwapChain> tryCreate(const GPUSwapChainDescriptor&, int width, int height);
-
-    RefPtr<GPUTexture> tryGetCurrentTexture();
-
-#if USE(METAL)
-    RetainPtr<CAMetalDrawable> takeDrawable();
-#endif
-
-    // For GPUCanvasContext.
-    PlatformLayer* platformLayer() const;
-
-    void present();
-    void reshape(int width, int height);
-    void destroy() { m_currentDrawable = nullptr; }
-
-private:
-    GPUSwapChain(PlatformSwapLayerSmartPtr&&, OptionSet<GPUTextureUsage::Flags>);
-
-    PlatformSwapLayerSmartPtr m_platformSwapLayer;
-    PlatformDrawableSmartPtr m_currentDrawable;
-    OptionSet<GPUTextureUsage::Flags> m_usage;
-};
+Optional<GPUSwapChainDescriptor> WebGPUSwapChainDescriptor::asGPUSwapChainDescriptor() const
+{
+    if (!device) {
+        LOG(WebGPU, "GPUCanvasContext::configureSwapChain(): Invalid GPUDevice!");
+        return WTF::nullopt;
+    }
+    
+    return GPUSwapChainDescriptor { makeRef(device->device()), *this };
+}
 
 } // namespace WebCore
 

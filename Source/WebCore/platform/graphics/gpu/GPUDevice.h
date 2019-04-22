@@ -28,6 +28,7 @@
 #if ENABLE(WEBGPU)
 
 #include "GPUQueue.h"
+#include "GPUSwapChain.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -44,7 +45,6 @@ class GPUPipelineLayout;
 class GPURenderPipeline;
 class GPUSampler;
 class GPUShaderModule;
-class GPUSwapChain;
 class GPUTexture;
 
 struct GPUBindGroupLayoutDescriptor;
@@ -78,18 +78,18 @@ public:
 
     RefPtr<GPUCommandBuffer> tryCreateCommandBuffer() const;
 
-    RefPtr<GPUSwapChain> tryCreateSwapChain(const GPUSwapChainDescriptor&, int width, int height) const;
-
     RefPtr<GPUQueue> tryGetQueue() const;
+    
     PlatformDevice* platformDevice() const { return m_platformDevice.get(); }
     GPUSwapChain* swapChain() const { return m_swapChain.get(); }
+    void setSwapChain(RefPtr<GPUSwapChain>&&);
 
 private:
     explicit GPUDevice(PlatformDeviceSmartPtr&&);
 
     PlatformDeviceSmartPtr m_platformDevice;
     mutable RefPtr<GPUQueue> m_queue;
-    mutable RefPtr<GPUSwapChain> m_swapChain;
+    RefPtr<GPUSwapChain> m_swapChain;
 };
 
 } // namespace WebCore

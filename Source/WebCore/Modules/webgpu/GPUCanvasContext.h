@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+struct WebGPUSwapChainDescriptor;
+
 class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(GPUCanvasContext);
 public:
@@ -41,7 +43,7 @@ public:
 
     HTMLCanvasElement& canvas() const { return downcast<HTMLCanvasElement>(canvasBase()); }
 
-    void replaceSwapChain(Ref<WebGPUSwapChain>&&);
+    Ref<WebGPUSwapChain> configureSwapChain(const WebGPUSwapChainDescriptor&);
 
 private:
     GPUCanvasContext(CanvasBase&);

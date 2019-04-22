@@ -155,20 +155,6 @@ Ref<WebGPUCommandEncoder> WebGPUDevice::createCommandEncoder() const
     return WebGPUCommandEncoder::create(WTFMove(commandBuffer));
 }
 
-Ref<WebGPUSwapChain> WebGPUDevice::createSwapChain(const WebGPUSwapChainDescriptor& descriptor) const
-{
-    if (!descriptor.context) {
-        LOG(WebGPU, "GPUSwapChain::create(): Invalid GPUCanvasContext!");
-        return WebGPUSwapChain::create(nullptr);
-    }
-
-    auto gpuSwapChain = m_device->tryCreateSwapChain(descriptor, descriptor.context->canvasBase().width(), descriptor.context->canvasBase().height());
-    auto newSwapChain = WebGPUSwapChain::create(gpuSwapChain.copyRef());
-    if (gpuSwapChain)
-        descriptor.context->replaceSwapChain(newSwapChain.copyRef());
-    return newSwapChain;
-}
-
 Ref<WebGPUQueue> WebGPUDevice::getQueue() const
 {
     if (!m_queue)

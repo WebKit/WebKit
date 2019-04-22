@@ -85,10 +85,10 @@ static RetainPtr<WebGPULayer> tryCreateWebGPULayer(MTLDevice *device, MTLPixelFo
     return layer;
 }
 
-RefPtr<GPUSwapChain> GPUSwapChain::tryCreate(const GPUDevice& device, const GPUSwapChainDescriptor& descriptor, int width, int height)
+RefPtr<GPUSwapChain> GPUSwapChain::tryCreate(const GPUSwapChainDescriptor& descriptor, int width, int height)
 {
-    if (!device.platformDevice()) {
-        LOG(WebGPU, "GPUSwapChain::setDevice(): Invalid GPUDevice!");
+    if (!descriptor.device->platformDevice()) {
+        LOG(WebGPU, "GPUSwapChain::tryCreate(): Invalid GPUDevice!");
         return nullptr;
     }
 
@@ -102,13 +102,15 @@ RefPtr<GPUSwapChain> GPUSwapChain::tryCreate(const GPUDevice& device, const GPUS
         return nullptr;
     }
 
-    auto layer = tryCreateWebGPULayer(device.platformDevice(), *pixelFormat, usageOptions);
+    auto layer = tryCreateWebGPULayer(descriptor.device->platformDevice(), *pixelFormat, usageOptions);
     if (!layer)
         return nullptr;
 
     setLayerShape(layer.get(), width, height);
 
-    return adoptRef(new GPUSwapChain(WTFMove(layer), usageOptions));
+    auto swapChain = adoptRef(new GPUSwapChain(WTFMove(layer), usageOptions));
+    descriptor.device->setSwapChain(swapChain.copyRef());
+    return swapChain;
 }
 
 GPUSwapChain::GPUSwapChain(RetainPtr<WebGPULayer>&& platformLayer, OptionSet<GPUTextureUsage::Flags> usageOptions)

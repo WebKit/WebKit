@@ -24,10 +24,29 @@
  */
 // https://github.com/gpuweb/gpuweb/blob/master/design/sketch.webidl
 
+typedef unsigned long GPUTextureUsageFlags;
+
+[
+    Conditional=WEBGPU,
+    EnabledAtRuntime=WebGPU,
+    ImplementedAs=WebGPUSwapChainDescriptor
+] dictionary WebGPUSwapChainDescriptor {
+    required WebGPUDevice device;
+    required GPUTextureFormat format;
+    GPUTextureUsageFlags usage; // FIXME: default is GPUTextureUsage.OUTPUT_ATTACHMENT.
+};
+
 [
     Conditional=WEBGPU,
     EnabledAtRuntime=WebGPU
 ] interface GPUCanvasContext {
     // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;
+
+    // Calling configureSwapChain a second time invalidates the previous one,
+    // and all of the textures it’s produced.
+    WebGPUSwapChain configureSwapChain(WebGPUSwapChainDescriptor descriptor);
+
+    // Not implemented yet.
+    // Promise<GPUTextureFormat> getSwapChainPreferredFormat(GPUDevice device);
 };
