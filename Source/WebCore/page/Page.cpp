@@ -2958,8 +2958,10 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
         channel->state = state;
         channel->level = level;
 
+#if USE(LIBWEBRTC)
         if (channel == &LogWebRTC && m_mainFrame->document())
             libWebRTCProvider().setEnableLogging(!m_mainFrame->document()->sessionID().isEphemeral());
+#endif
     }
 
     chrome().client().configureLoggingChannel(channelName, state, level);
