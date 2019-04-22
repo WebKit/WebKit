@@ -1212,7 +1212,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     RefPtr<WebProcessProxy> process;
     if (pageConfiguration->relatedPage()) {
         // Sharing processes, e.g. when creating the page via window.open().
-        process = &pageConfiguration->relatedPage()->process();
+        process = &pageConfiguration->relatedPage()->ensureRunningProcess();
         // We do not support several WebsiteDataStores sharing a single process.
         ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
         ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());

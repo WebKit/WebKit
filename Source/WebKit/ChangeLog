@@ -1,3 +1,24 @@
+2019-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Delayed WebProcessLaunch may break the _relatedWebView SPI
+        https://bugs.webkit.org/show_bug.cgi?id=197160
+
+        Reviewed by Alex Christensen.
+
+        Delayed WebProcessLaunch may break the _relatedWebView SPI. The breakage would happen if the client
+        would relate a WebView to another which has not launched its initial process yet.
+
+        To address the issue, when we need a running process for a WebView which has a related view, we need
+        to make sure the related view has a running process and use that process. Previously, we would share
+        the "dummy" process instead.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::launchProcess):
+        (WebKit::WebPageProxy::ensureRunningProcess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::createWebPage):
+
 2019-04-22  David Quesada  <david_quesada@apple.com>
 
         Remove linked-on-or-after check for download attribute handling

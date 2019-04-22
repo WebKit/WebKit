@@ -1,3 +1,14 @@
+2019-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Delayed WebProcessLaunch may break the _relatedWebView SPI
+        https://bugs.webkit.org/show_bug.cgi?id=197160
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2019-04-22  Dean Johnson  <dean_johnson@apple.com>
 
         Use curl to download packages for webkitpy autoinstaller

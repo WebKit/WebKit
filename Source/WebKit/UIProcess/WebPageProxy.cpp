@@ -726,7 +726,11 @@ void WebPageProxy::launchProcess(const RegistrableDomain& registrableDomain)
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     auto& processPool = m_process->processPool();
-    m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), this, registrableDomain);
+
+    if (auto* relatedPage = m_configuration->relatedPage())
+        m_process = relatedPage->ensureRunningProcess();
+    else
+        m_process = processPool.processForRegistrableDomain(m_websiteDataStore.get(), this, registrableDomain);
     m_hasRunningProcess = true;
 
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::Yes);
@@ -1070,6 +1074,14 @@ void WebPageProxy::addPlatformLoadParameters(LoadParameters&)
 {
 }
 #endif
+
+WebProcessProxy& WebPageProxy::ensureRunningProcess()
+{
+    if (!hasRunningProcess())
+        launchProcess({ });
+
+    return m_process;
+}
 
 RefPtr<API::Navigation> WebPageProxy::loadRequest(ResourceRequest&& request, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, API::Object* userData)
 {
