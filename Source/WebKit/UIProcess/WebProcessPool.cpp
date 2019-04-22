@@ -1210,18 +1210,13 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
     }
 
     RefPtr<WebProcessProxy> process;
-
-    if (m_isDelayedWebProcessLaunchDisabled) {
-        if (pageConfiguration->relatedPage()) {
-            // Sharing processes, e.g. when creating the page via window.open().
-            // Make sure the related page's process is not the dummy one.
-            process = &pageConfiguration->relatedPage()->ensureRunningProcess();
-            // We do not support several WebsiteDataStores sharing a single process.
-            ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
-            ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());
-        } else
-            process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
-    } else {
+    if (pageConfiguration->relatedPage()) {
+        // Sharing processes, e.g. when creating the page via window.open().
+        process = &pageConfiguration->relatedPage()->process();
+        // We do not support several WebsiteDataStores sharing a single process.
+        ASSERT(process.get() == m_dummyProcessProxy || &pageConfiguration->websiteDataStore()->websiteDataStore() == &process->websiteDataStore());
+        ASSERT(&pageConfiguration->relatedPage()->websiteDataStore() == &pageConfiguration->websiteDataStore()->websiteDataStore());
+    } else if (!m_isDelayedWebProcessLaunchDisabled) {
         // In the common case, we delay process launch until something is actually loaded in the page.
         if (!m_dummyProcessProxy) {
             auto dummyProcessProxy = WebProcessProxy::create(*this, nullptr, WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
@@ -1229,7 +1224,8 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
             m_processes.append(WTFMove(dummyProcessProxy));
         }
         process = m_dummyProcessProxy;
-    }
+    } else
+        process = &processForRegistrableDomain(pageConfiguration->websiteDataStore()->websiteDataStore(), nullptr, { });
 
     ASSERT(process);
 
