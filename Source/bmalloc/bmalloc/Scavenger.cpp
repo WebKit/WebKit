@@ -87,7 +87,7 @@ Scavenger::Scavenger(std::lock_guard<Mutex>&)
 
 void Scavenger::run()
 {
-    std::lock_guard<Mutex> lock(m_mutex);
+    std::lock_guard<Mutex> lock(mutex());
     runHoldingLock();
 }
 
@@ -99,7 +99,7 @@ void Scavenger::runHoldingLock()
 
 void Scavenger::runSoon()
 {
-    std::lock_guard<Mutex> lock(m_mutex);
+    std::lock_guard<Mutex> lock(mutex());
     runSoonHoldingLock();
 }
 
@@ -119,7 +119,7 @@ void Scavenger::didStartGrowing()
 
 void Scavenger::scheduleIfUnderMemoryPressure(size_t bytes)
 {
-    std::lock_guard<Mutex> lock(m_mutex);
+    std::lock_guard<Mutex> lock(mutex());
     scheduleIfUnderMemoryPressureHoldingLock(bytes);
 }
 
@@ -143,7 +143,7 @@ void Scavenger::scheduleIfUnderMemoryPressureHoldingLock(size_t bytes)
 
 void Scavenger::schedule(size_t bytes)
 {
-    std::lock_guard<Mutex> lock(m_mutex);
+    std::lock_guard<Mutex> lock(mutex());
     scheduleIfUnderMemoryPressureHoldingLock(bytes);
     
     if (willRunSoon())
@@ -174,7 +174,7 @@ inline void dumpStats()
 
 std::chrono::milliseconds Scavenger::timeSinceLastFullScavenge()
 {
-    std::unique_lock<Mutex> lock(m_mutex);
+    std::unique_lock<Mutex> lock(mutex());
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_lastFullScavengeTime);
 }
 
@@ -246,7 +246,7 @@ void Scavenger::scavenge()
     }
 
     {
-        std::unique_lock<Mutex> lock(m_mutex);
+        std::unique_lock<Mutex> lock(mutex());
         m_lastFullScavengeTime = std::chrono::steady_clock::now();
     }
 }
@@ -312,12 +312,12 @@ void Scavenger::threadRunLoop()
     
     while (true) {
         if (m_state == State::Sleep) {
-            std::unique_lock<Mutex> lock(m_mutex);
+            std::unique_lock<Mutex> lock(mutex());
             m_condition.wait(lock, [&]() { return m_state != State::Sleep; });
         }
         
         if (m_state == State::RunSoon) {
-            std::unique_lock<Mutex> lock(m_mutex);
+            std::unique_lock<Mutex> lock(mutex());
             m_condition.wait_for(lock, m_waitTime, [&]() { return m_state != State::RunSoon; });
         }
         

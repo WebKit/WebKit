@@ -35,14 +35,14 @@ AllIsoHeaps::AllIsoHeaps(const std::lock_guard<Mutex>&)
 
 void AllIsoHeaps::add(IsoHeapImplBase* heap)
 {
-    std::lock_guard<Mutex> locker(m_lock);
+    std::lock_guard<Mutex> locker(mutex());
     heap->m_next = m_head;
     m_head = heap;
 }
 
 IsoHeapImplBase* AllIsoHeaps::head()
 {
-    std::lock_guard<Mutex> locker(m_lock);
+    std::lock_guard<Mutex> locker(mutex());
     return m_head;
 }
 

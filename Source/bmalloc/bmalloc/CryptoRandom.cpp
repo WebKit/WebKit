@@ -74,7 +74,6 @@ private:
 
     ARC4Stream m_stream;
     int m_count;
-    Mutex m_mutex;
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
 DEFINE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
@@ -165,7 +164,7 @@ uint8_t ARC4RandomNumberGenerator::getByte()
 
 void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 {
-    std::lock_guard<Mutex> lock(m_mutex);
+    std::lock_guard<Mutex> lock(mutex());
 
     unsigned char* result = reinterpret_cast<unsigned char*>(buffer);
     stirIfNeeded();

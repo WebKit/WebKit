@@ -1,3 +1,33 @@
+2019-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [bmalloc] Use StaticPerProcess' mutex as bmalloc::Heap does with PerProcess
+        https://bugs.webkit.org/show_bug.cgi?id=197135
+
+        Reviewed by Darin Adler.
+
+        This patch leverages StaticPerProcess::mutex() for per process instance's lock in various classes,
+        as Heap does with PerProcess::mutex().
+
+        * bmalloc/AllIsoHeaps.cpp:
+        (bmalloc::AllIsoHeaps::add):
+        (bmalloc::AllIsoHeaps::head):
+        * bmalloc/AllIsoHeaps.h:
+        * bmalloc/CryptoRandom.cpp:
+        (bmalloc::ARC4RandomNumberGenerator::randomValues):
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::memalignLarge):
+        (bmalloc::DebugHeap::freeLarge):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::run):
+        (bmalloc::Scavenger::runSoon):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::timeSinceLastFullScavenge):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::threadRunLoop):
+        * bmalloc/Scavenger.h:
+
 2019-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [bmalloc] IsoHeap should have lower tier using shared IsoPage

@@ -149,7 +149,7 @@ void* DebugHeap::memalignLarge(size_t alignment, size_t size)
     if (!result)
         return nullptr;
     {
-        std::lock_guard<std::mutex> locker(m_lock);
+        std::lock_guard<Mutex> locker(mutex());
         m_sizeMap[result] = size;
     }
     return result;
@@ -162,7 +162,7 @@ void DebugHeap::freeLarge(void* base)
     
     size_t size;
     {
-        std::lock_guard<std::mutex> locker(m_lock);
+        std::lock_guard<Mutex> locker(mutex());
         size = m_sizeMap[base];
         size_t numErased = m_sizeMap.erase(base);
         RELEASE_BASSERT(numErased == 1);

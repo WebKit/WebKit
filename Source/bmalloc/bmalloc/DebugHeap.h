@@ -61,7 +61,6 @@ private:
     
     // This is the debug heap. We can use whatever data structures we like. It doesn't matter.
     size_t m_pageSize { 0 };
-    std::mutex m_lock;
     std::unordered_map<void*, size_t> m_sizeMap;
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(DebugHeap);

@@ -96,7 +96,6 @@ private:
     bool m_isProbablyGrowing { false };
     bool m_isInMiniMode { false };
     
-    Mutex m_mutex;
     Mutex m_scavengingMutex;
     std::condition_variable_any m_condition;
 

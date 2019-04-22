@@ -42,7 +42,6 @@ public:
     void forEach(const Func&);
     
 private:
-    Mutex m_lock;
     IsoHeapImplBase* m_head { nullptr };
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(AllIsoHeaps);
