@@ -1,3 +1,13 @@
+2019-04-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Use singular verb in failure description in case of single api test failure
+        https://bugs.webkit.org/show_bug.cgi?id=197013
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (AnalyzeAPITestsResults.analyzeResults):
+
 2019-04-22  Chris Dumez  <cdumez@apple.com>
 
         Delayed WebProcessLaunch may break the _relatedWebView SPI

@@ -807,7 +807,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures))
             self.finished(FAILURE)
             self.build.results = FAILURE
-            message = 'Found {} new API Tests failures: {}'.format(len(new_failures), new_failures_string)
+            pluralSuffix = 's' if len(new_failures) > 1 else ''
+            message = 'Found {} new API Test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
             self.descriptionDone = message
             self.build.buildFinished([message], FAILURE)
         else:
@@ -815,7 +816,8 @@ class AnalyzeAPITestsResults(buildstep.BuildStep):
             self.finished(SUCCESS)
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
-            message = 'Found {} pre-existing API tests failures'.format(len(clean_tree_failures))
+            pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
+            message = 'Found {} pre-existing API test failure{}'.format(len(clean_tree_failures), pluralSuffix)
             if flaky_failures:
                 message += '. Flaky tests: {}'.format(flaky_failures_string)
             self.build.buildFinished([message], SUCCESS)
