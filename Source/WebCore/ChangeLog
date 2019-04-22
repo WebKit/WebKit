@@ -1,3 +1,41 @@
+2019-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Introduce the concept of "opportunistic" stacking contexts
+        https://bugs.webkit.org/show_bug.cgi?id=197077
+
+        Reviewed by Zalan Bujtas.
+
+        Bring back a variant of some code removed in r236424, which allows a RenderLayer
+        to be stacking context for painting, without actually being on in terms of CSS.
+        
+        Internally, RenderLayer will call setIsOpportunisticStackingContext() to make a layer
+        into a stacking context for painting. External callers deal with isStackingContext()
+        or isCSSStackingContext().
+
+        Sadly we can't make m_forcedStackingContext (set on media element layers) trigger a
+        non-CSS stacking context; media controls use mix-blend-mode, and rely on the fake-stacking
+        media layer to be the "isolateBlending" ancestor.
+
+        No code uses this yet.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::shouldBeCSSStackingContext const):
+        (WebCore::RenderLayer::isStackingContextChanged):
+        (WebCore::RenderLayer::setIsOpportunisticStackingContext):
+        (WebCore::RenderLayer::setIsCSSStackingContext):
+        (WebCore::RenderLayer::updateAncestorChainHasBlendingDescendants):
+        (WebCore::RenderLayer::dirtyAncestorChainHasBlendingDescendants):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::outputPaintOrderTreeLegend):
+        (WebCore::outputPaintOrderTreeRecursive):
+        (WebCore::RenderLayer::shouldBeStackingContext const): Deleted.
+        (WebCore::RenderLayer::setIsStackingContext): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::compositingOpacity const):
+
 2019-04-22  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Move swap chain methods from GPUDevice to GPUCanvasContext

@@ -166,7 +166,15 @@ public:
     void removeOnlyThisLayer();
 
     bool isNormalFlowOnly() const { return m_isNormalFlowOnly; }
-    bool isStackingContext() const { return m_isStackingContext; }
+
+    // isStackingContext is true for layers that we've determined should be stacking contexts for painting.
+    // Not all stacking contexts are CSS stacking contexts.
+    bool isStackingContext() const { return isCSSStackingContext() || m_isOpportunisticStackingContext; }
+
+    // isCSSStackingContext is true for layers that are stacking contexts from a CSS perspective.
+    // isCSSStackingContext() => isStackingContext().
+    // FIXME: m_forcedStackingContext should affect isStackingContext(), not isCSSStackingContext(), but doing so breaks media control mix-blend-mode.
+    bool isCSSStackingContext() const { return m_isCSSStackingContext || m_forcedStackingContext; }
 
     // Gets the enclosing stacking context for this layer, excluding this layer itself.
     RenderLayer* stackingContext() const;
@@ -500,6 +508,7 @@ public:
 
     bool isRenderViewLayer() const { return m_isRenderViewLayer; }
     bool isForcedStackingContext() const { return m_forcedStackingContext; }
+    bool isOpportunisticStackingContext() const { return m_isOpportunisticStackingContext; }
 
     RenderLayerCompositor& compositor() const;
     
@@ -781,14 +790,14 @@ public:
     bool hasBlendMode() const { return renderer().hasBlendMode(); }
     BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
 
-    bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isStackingContext(); }
+    bool isolatesCompositedBlending() const { return m_hasNotIsolatedCompositedBlendingDescendants && isCSSStackingContext(); }
     bool hasNotIsolatedCompositedBlendingDescendants() const { return m_hasNotIsolatedCompositedBlendingDescendants; }
     void setHasNotIsolatedCompositedBlendingDescendants(bool hasNotIsolatedCompositedBlendingDescendants)
     {
         m_hasNotIsolatedCompositedBlendingDescendants = hasNotIsolatedCompositedBlendingDescendants;
     }
 
-    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isStackingContext(); }
+    bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
     
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
@@ -882,11 +891,15 @@ private:
     void dirtyPaintOrderListsOnChildChange(RenderLayer&);
 
     bool shouldBeNormalFlowOnly() const;
-    bool shouldBeStackingContext() const;
-    
+    bool shouldBeCSSStackingContext() const;
+
     // Return true if changed.
     bool setIsNormalFlowOnly(bool);
-    bool setIsStackingContext(bool);
+
+    bool setIsOpportunisticStackingContext(bool);
+    bool setIsCSSStackingContext(bool);
+    
+    void isStackingContextChanged();
 
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
@@ -1169,7 +1182,8 @@ private:
     const bool m_forcedStackingContext : 1;
 
     bool m_isNormalFlowOnly : 1;
-    bool m_isStackingContext : 1;
+    bool m_isCSSStackingContext : 1;
+    bool m_isOpportunisticStackingContext : 1;
 
     bool m_zOrderListsDirty : 1;
     bool m_normalFlowListDirty: 1;

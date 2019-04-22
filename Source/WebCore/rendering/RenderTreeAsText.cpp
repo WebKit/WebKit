@@ -712,7 +712,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         
     if (negativeZOrderLayers.size()) {
         if (behavior & RenderAsTextShowLayerNesting) {
-            ts << indent << " negative z-order list(" << negativeZOrderLayers.size() << ")\n";
+            ts << indent << " negative z-order list (" << negativeZOrderLayers.size() << ")\n";
             ts.increaseIndent();
         }
         
@@ -745,7 +745,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     auto normalFlowLayers = layer.normalFlowLayers();
     if (normalFlowLayers.size()) {
         if (behavior & RenderAsTextShowLayerNesting) {
-            ts << indent << " normal flow list(" << normalFlowLayers.size() << ")\n";
+            ts << indent << " normal flow list (" << normalFlowLayers.size() << ")\n";
             ts.increaseIndent();
         }
         
@@ -762,7 +762,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
 
         if (layerCount) {
             if (behavior & RenderAsTextShowLayerNesting) {
-                ts << indent << " positive z-order list(" << layerCount << ")\n";
+                ts << indent << " positive z-order list (" << layerCount << ")\n";
                 ts.increaseIndent();
             }
 

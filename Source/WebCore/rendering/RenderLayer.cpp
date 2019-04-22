@@ -271,6 +271,7 @@ void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     : m_isRenderViewLayer(rendererLayerModelObject.isRenderView())
     , m_forcedStackingContext(rendererLayerModelObject.isMedia())
+    , m_isOpportunisticStackingContext(false)
     , m_zOrderListsDirty(false)
     , m_normalFlowListDirty(true)
     , m_hadNegativeZOrderList(false)
@@ -317,7 +318,7 @@ RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
     , m_renderer(rendererLayerModelObject)
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
-    setIsStackingContext(shouldBeStackingContext());
+    setIsCSSStackingContext(shouldBeCSSStackingContext());
 
     m_isSelfPaintingLayer = shouldBeSelfPaintingLayer();
 
@@ -560,9 +561,9 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isInFlowRenderFragmentedFlow();
 }
 
-bool RenderLayer::shouldBeStackingContext() const
+bool RenderLayer::shouldBeCSSStackingContext() const
 {
-    return !renderer().style().hasAutoZIndex() || isRenderViewLayer() || isForcedStackingContext();
+    return !renderer().style().hasAutoZIndex() || isRenderViewLayer();
 }
 
 bool RenderLayer::setIsNormalFlowOnly(bool isNormalFlowOnly)
@@ -578,19 +579,34 @@ bool RenderLayer::setIsNormalFlowOnly(bool isNormalFlowOnly)
     return true;
 }
 
-bool RenderLayer::setIsStackingContext(bool isStackingContext)
+void RenderLayer::isStackingContextChanged()
 {
-    if (isStackingContext == m_isStackingContext)
-        return false;
-    
-    m_isStackingContext = isStackingContext;
-
     dirtyStackingContextZOrderLists();
-    if (isStackingContext)
+    if (isStackingContext())
         dirtyZOrderLists();
     else
         clearZOrderLists();
+}
 
+bool RenderLayer::setIsOpportunisticStackingContext(bool isStacking)
+{
+    bool wasStacking = isStackingContext();
+    m_isOpportunisticStackingContext = isStacking;
+    if (wasStacking == isStackingContext())
+        return false;
+
+    isStackingContextChanged();
+    return true;
+}
+
+bool RenderLayer::setIsCSSStackingContext(bool isCSSStackingContext)
+{
+    bool wasStacking = isStackingContext();
+    m_isCSSStackingContext = isCSSStackingContext;
+    if (wasStacking == isStackingContext())
+        return false;
+
+    isStackingContextChanged();
     return true;
 }
 
@@ -1135,7 +1151,7 @@ void RenderLayer::updateAncestorChainHasBlendingDescendants()
 
         layer->updateSelfPaintingLayer();
 
-        if (layer->isStackingContext())
+        if (layer->isCSSStackingContext())
             break;
     }
 }
@@ -1148,7 +1164,7 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
         
         layer->m_hasNotIsolatedBlendingDescendantsStatusDirty = true;
 
-        if (layer->isStackingContext())
+        if (layer->isCSSStackingContext())
             break;
     }
 }
@@ -1979,7 +1995,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         ancestor->beginTransparencyLayers(context, paintingInfo, dirtyRect);
     
     if (paintsWithTransparency(paintingInfo.paintBehavior)) {
-        ASSERT(isStackingContext());
+        ASSERT(isCSSStackingContext());
         m_usedTransparency = true;
         context.save();
         LayoutRect adjustedClipRect = paintingExtent(*this, paintingInfo.rootLayer, dirtyRect, paintingInfo.paintBehavior);
@@ -6364,10 +6380,10 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 {
     setIsNormalFlowOnly(shouldBeNormalFlowOnly());
 
-    if (setIsStackingContext(shouldBeStackingContext())) {
+    if (setIsCSSStackingContext(shouldBeCSSStackingContext())) {
 #if ENABLE(CSS_COMPOSITING)
         if (parent()) {
-            if (isStackingContext()) {
+            if (isCSSStackingContext()) {
                 if (!hasNotIsolatedBlendingDescendantsStatusDirty() && hasNotIsolatedBlendingDescendants())
                     parent()->dirtyAncestorChainHasBlendingDescendants();
             } else {
@@ -6755,7 +6771,7 @@ void showLayerTree(const WebCore::RenderObject* renderer)
 static void outputPaintOrderTreeLegend(TextStream& stream)
 {
     stream.nextLine();
-    stream << "(S)tacking Context, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant, (s)scrolling ancestor\n"
+    stream << "(S)tacking Context/(F)orced SC/O(P)portunistic SC, (N)ormal flow only, (O)verflow clip, (A)lpha (opacity or mask), has (B)lend mode, (I)solates blending, (T)ransform-ish, (F)ilter, Fi(X)ed position, (C)omposited, (c)omposited descendant, (s)scrolling ancestor\n"
         "Dirty (z)-lists, Dirty (n)ormal flow lists\n"
         "Traversal needs: requirements (t)raversal on descendants, (b)acking or hierarchy traversal on descendants, (r)equirements traversal on all descendants, requirements traversal on all (s)ubsequent layers, (h)ierarchy traversal on all descendants, update of paint (o)rder children\n"
         "Update needs:    post-(l)ayout requirements, (g)eometry, (k)ids geometry, (c)onfig, layer conne(x)ion, (s)crolling tree\n";
@@ -6771,7 +6787,7 @@ static void outputIdent(TextStream& stream, unsigned depth)
 
 static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::RenderLayer& layer, const char* prefix, unsigned depth = 0)
 {
-    stream << (layer.isStackingContext() ? "S" : "-");
+    stream << (layer.isCSSStackingContext() ? "S" : (layer.isForcedStackingContext() ? "F" : (layer.isOpportunisticStackingContext() ? "P" : "-")));
     stream << (layer.isNormalFlowOnly() ? "N" : "-");
     stream << (layer.renderer().hasOverflowClip() ? "O" : "-");
     stream << (layer.isTransparent() ? "A" : "-");
