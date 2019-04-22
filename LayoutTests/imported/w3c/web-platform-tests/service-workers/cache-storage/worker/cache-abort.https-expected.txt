@@ -1,11 +1,11 @@
 
 PASS put() on an already-aborted request should reject with AbortError 
 PASS put() synchronously followed by abort should reject with AbortError 
-FAIL put() followed by abort after headers received should reject with AbortError assert_throws: put should reject function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+PASS put() followed by abort after headers received should reject with AbortError 
 PASS add() on an already-aborted request should reject with AbortError 
 PASS add() synchronously followed by abort should reject with AbortError 
-FAIL add() followed by abort after headers received should reject with AbortError assert_throws: add should reject function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+PASS add() followed by abort after headers received should reject with AbortError 
 PASS addAll() on an already-aborted request should reject with AbortError 
 PASS addAll() synchronously followed by abort should reject with AbortError 
-FAIL addAll() followed by abort after headers received should reject with AbortError assert_throws: addAll should reject function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException AbortError: property "code" is equal to undefined, expected 20
+PASS addAll() followed by abort after headers received should reject with AbortError 
 

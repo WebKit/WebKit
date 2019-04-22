@@ -1,5 +1,24 @@
 2019-04-22  Youenn Fablet  <youenn@apple.com>
 
+        Cache API should return Abort error in case of putting an aborted fetch
+        https://bugs.webkit.org/show_bug.cgi?id=196757
+
+        Reviewed by Darin Adler.
+
+        In case of an aborted fetch, call consume callback with an AbortError.
+        Update the code that handles load cancelling as the loader callback is called.
+        Covered by rebased tests.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::addAbortSteps):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        (WebCore::FetchResponse::BodyLoader::BodyLoader):
+        (WebCore::FetchResponse::BodyLoader::~BodyLoader):
+        (WebCore::FetchResponse::stop):
+        * Modules/fetch/FetchResponse.h:
+
+2019-04-22  Youenn Fablet  <youenn@apple.com>
+
         Update libwebrtc logging when WebCore WebRTC logging is updated
         https://bugs.webkit.org/show_bug.cgi?id=197166
 
