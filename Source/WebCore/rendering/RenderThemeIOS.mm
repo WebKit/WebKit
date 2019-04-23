@@ -1418,14 +1418,7 @@ String RenderThemeIOS::mediaControlsBase64StringForIconNameAndType(const String&
 
 Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::Options> options) const
 {
-    const bool useSystemAppearance = options.contains(StyleColor::Options::UseSystemAppearance);
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
-
-    auto& cache = colorCache(options);
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>)
-#include <WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>
-#endif
 
     // The system color cache below can't handle visited links. The only color value
     // that cares about visited links is CSSValueWebkitLink, so handle it here by
@@ -1433,10 +1426,14 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     if (forVisitedLink && cssValueID == CSSValueWebkitLink)
         return RenderTheme::systemColor(cssValueID, options);
 
-    ASSERT_UNUSED(useSystemAppearance, !useSystemAppearance);
     ASSERT(!forVisitedLink);
 
+    auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>)
+#include <WebKitAdditions/RenderThemeIOSSystemColorAdditions.mm>
+#endif
+
         auto cssColorToSelector = [cssValueID] () -> SEL {
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>)
 #include <WebKitAdditions/RenderThemeIOSColorToSelectorAdditions.mm>

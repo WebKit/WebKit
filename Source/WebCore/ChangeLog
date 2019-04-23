@@ -1,3 +1,17 @@
+2019-04-23  Timothy Hatcher  <timothy@apple.com>
+
+        Speed up RenderTheme::systemColor on Speedometer2.
+        https://bugs.webkit.org/show_bug.cgi?id=197203
+        rdar://problem/50056756
+
+        Reviewed by Tim Horton.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemColor const): Remove some unused code. And fetch the cache after an early return.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::systemColor const): Avoid some allocations in LocalDefaultSystemAppearance
+        when a CSS color is in the system color cache.
+
 2019-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] element.focus() sometimes fails to reveal the focused element when it becomes editable dynamically

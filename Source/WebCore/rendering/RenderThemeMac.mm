@@ -604,14 +604,13 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
     const bool useDarkAppearance = options.contains(StyleColor::Options::UseDarkAppearance);
     const bool forVisitedLink = options.contains(StyleColor::Options::ForVisitedLink);
 
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
-
     auto& cache = colorCache(options);
 
     if (useSystemAppearance) {
         // Special handling for links and other system colors when the system appearance is desired.
-        auto systemAppearanceColor = [] (Color& color, SEL selector) -> Color {
+        auto systemAppearanceColor = [useDarkAppearance] (Color& color, SEL selector) -> Color {
             if (!color.isValid()) {
+                LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
                 auto systemColor = wtfObjCMsgSend<NSColor *>([NSColor class], selector);
                 color = semanticColorFromNSColor(systemColor);
             }
@@ -662,7 +661,9 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
 
     ASSERT(!forVisitedLink);
 
-    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options, &localAppearance] () -> Color {
+    return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options, useDarkAppearance] () -> Color {
+        LocalDefaultSystemAppearance localAppearance(useDarkAppearance);
+
         auto selectCocoaColor = [cssValueID] () -> SEL {
             switch (cssValueID) {
             case CSSValueActivecaption:
