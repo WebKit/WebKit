@@ -347,7 +347,7 @@ public:
     FocusedElementInformation information;
     bool userIsInteracting;
     bool blurPreviousNode;
-    bool changingActivityState;
+    OptionSet<WebCore::ActivityState::Flag> activityStateChanges;
     RefPtr<API::Object> userData;
 };
 
@@ -1907,7 +1907,7 @@ private:
 
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling);
 
-    void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData&);
+    void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData&);
     void elementDidBlur();
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReceiveEditorStateUpdateAfterFocus();

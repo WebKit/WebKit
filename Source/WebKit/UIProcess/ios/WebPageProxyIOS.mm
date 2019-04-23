@@ -408,7 +408,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     }
 
     if (auto arguments = std::exchange(m_deferredElementDidFocusArguments, nullptr))
-        pageClient().elementDidFocus(arguments->information, arguments->userIsInteracting, arguments->blurPreviousNode, arguments->changingActivityState, arguments->userData.get());
+        pageClient().elementDidFocus(arguments->information, arguments->userIsInteracting, arguments->blurPreviousNode, arguments->activityStateChanges, arguments->userData.get());
 }
 
 bool WebPageProxy::updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
@@ -927,18 +927,18 @@ void WebPageProxy::setIsShowingInputViewForFocusedElement(bool showingInputView)
     process().send(Messages::WebPage::SetIsShowingInputViewForFocusedElement(showingInputView), m_pageID);
 }
 
-void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData& userData)
+void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData& userData)
 {
     m_waitingForPostLayoutEditorStateUpdateAfterFocusingElement = true;
 
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
         // FIXME: We should try to eliminate m_deferredElementDidFocusArguments altogether, in favor of only deferring actions that are dependent on post-layout editor state information.
-        m_deferredElementDidFocusArguments = std::make_unique<ElementDidFocusArguments>(ElementDidFocusArguments { information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject });
+        m_deferredElementDidFocusArguments = std::make_unique<ElementDidFocusArguments>(ElementDidFocusArguments { information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject });
         return;
     }
 
-    pageClient().elementDidFocus(information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject);
+    pageClient().elementDidFocus(information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject);
 }
 
 void WebPageProxy::elementDidBlur()

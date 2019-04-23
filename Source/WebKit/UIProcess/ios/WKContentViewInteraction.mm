@@ -4946,7 +4946,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     }
 }
 
-- (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
+- (void)_elementDidFocus:(const WebKit::FocusedElementInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode activityStateChanges:(OptionSet<WebCore::ActivityState::Flag>)activityStateChanges userObject:(NSObject <NSSecureCoding> *)userObject
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, hasFocusedElement(_focusedElementInformation) };
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
@@ -4982,7 +4982,10 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 #endif
 
             if (self.isFirstResponder || _becomingFirstResponder) {
-                if (changingActivityState)
+                // When the software keyboard is being used to enter an url, only the focus activity state is changing.
+                // In this case, auto focus on the page being navigated to should be disabled, unless a hardware
+                // keyboard is attached.
+                if (activityStateChanges && activityStateChanges != WebCore::ActivityState::IsFocused)
                     return YES;
 
 #if PLATFORM(WATCHOS)

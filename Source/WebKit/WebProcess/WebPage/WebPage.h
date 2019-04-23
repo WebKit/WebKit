@@ -1757,7 +1757,7 @@ private:
     bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
     bool m_isTouchBarUpdateSupressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };
-    bool m_changingActivityState { false };
+    OptionSet<WebCore::ActivityState::Flag> m_lastActivityStateChanges;
 
 #if ENABLE(CONTEXT_MENUS)
     bool m_isShowingContextMenu { false };

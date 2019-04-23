@@ -1,3 +1,21 @@
+2019-04-23  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Input field on ddg.gg is auto focused when url is entered with the software keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=196740
+
+        Reviewed by Megan Gardner.
+
+        When an url for a page with an autofocused input field  is entered with the software keyboard,
+        the input field is auto selected, and the software keyboard reappears. This does not happen
+        when picking the url from favorites. After using the software keyboard to enter the url, the
+        activity state is being changed to focused. The method '_elementDidFocus' checks whether the
+        activity state changed, and allows the software keyboard to be shown in this case. To avoid
+        showing the software keyboard in this case, send the changing activity state bitfield to the
+        UI process, and check if the focus flag is the only flag set.
+  
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
 2019-04-23  Guy Lewin  <guy@lewin.co.il>
 
         Multiple File Input Icon Set Regardless of File List
