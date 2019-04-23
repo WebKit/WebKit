@@ -23,7 +23,7 @@
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
-from buildbot.steps import master, shell, transfer
+from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source import git
 from buildbot.steps.worker import CompositeStepMixin
 from twisted.internet import defer
@@ -43,7 +43,7 @@ class ConfigureBuild(buildstep.BuildStep):
     description = ["configuring build"]
     descriptionDone = ["Configured build"]
 
-    def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments):
+    def __init__(self, platform, configuration, architectures, buildOnly, triggers, additionalArguments):
         super(ConfigureBuild, self).__init__()
         self.platform = platform
         if platform != 'jsc-only':
@@ -52,6 +52,7 @@ class ConfigureBuild(buildstep.BuildStep):
         self.configuration = configuration
         self.architecture = " ".join(architectures) if architectures else None
         self.buildOnly = buildOnly
+        self.triggers = triggers
         self.additionalArguments = additionalArguments
 
     def start(self):
@@ -65,6 +66,8 @@ class ConfigureBuild(buildstep.BuildStep):
             self.setProperty('architecture', self.architecture, 'config.json')
         if self.buildOnly:
             self.setProperty("buildOnly", self.buildOnly, 'config.json')
+        if self.triggers:
+            self.setProperty('triggers', self.triggers, 'config.json')
         if self.additionalArguments:
             self.setProperty("additionalArguments", self.additionalArguments, 'config.json')
 
@@ -383,6 +386,23 @@ class UnApplyPatchIfRequired(CleanWorkingDirectory):
         return not self.doStepIf(step)
 
 
+class Trigger(trigger.Trigger):
+    def __init__(self, schedulerNames, **kwargs):
+        set_properties = self.propertiesToPassToTriggers() or {}
+        super(Trigger, self).__init__(schedulerNames=schedulerNames, set_properties=set_properties, **kwargs)
+
+    def propertiesToPassToTriggers(self):
+        return {
+            'patch_id': properties.Property('patch_id'),
+            'bug_id': properties.Property('bug_id'),
+            'configuration': properties.Property('configuration'),
+            'platform': properties.Property('platform'),
+            'fullPlatform': properties.Property('fullPlatform'),
+            'architecture': properties.Property('architecture'),
+            'owner': properties.Property('owner'),
+        }
+
+
 class TestWithFailureCount(shell.Test):
     failedTestsFormatString = "%d test%s failed"
     failedTestCount = 0
@@ -673,6 +693,14 @@ class UploadBuiltProduct(transfer.FileUpload):
         kwargs['mode'] = 0644
         kwargs['blocksize'] = 1024 * 256
         transfer.FileUpload.__init__(self, **kwargs)
+
+    def finished(self, results):
+        if results == SUCCESS:
+            triggers = self.getProperty('triggers', None)
+            if triggers:
+                self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
+
+        return super(UploadBuiltProduct, self).finished(results)
 
 
 class DownloadBuiltProduct(shell.ShellCommand):

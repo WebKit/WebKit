@@ -1,3 +1,20 @@
+2019-04-22  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-build] Trigger queues only after uploading the archive
+        https://bugs.webkit.org/show_bug.cgi?id=197180
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/factories.py:
+        (Factory.__init__):
+        (BuildFactory.__init__): Remove trigger step from factories.
+        (BuildFactory.propertiesToPassToTriggers): Deleted.
+        * BuildSlaveSupport/ews-build/steps.py:
+        (ConfigureBuild.__init__): Confiure triggers property.
+        (Trigger): Step to trigger other queues.
+        (Trigger.propertiesToPassToTriggers): Method to construct properties to pass to triggerred builds.
+        (UploadBuiltProduct.finished): Trigger builds after upload is successful.
+
 2019-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKContextCreateWithInjectedBundlePath
