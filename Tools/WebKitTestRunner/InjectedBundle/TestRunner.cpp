@@ -2453,7 +2453,7 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef data)
 
     auto& injectedBundle = InjectedBundle::singleton();
     // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
-    WKRetainPtr<WKDataRef> iconData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(injectedBundle.bundle(), context, data));
+    WKRetainPtr<WKDataRef> iconData = adoptWK(WKBundleCreateWKDataFromUInt8Array(injectedBundle.bundle(), context, data));
 
     static auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetOpenPanelFileURLsMediaIcon"));
     WKBundlePagePostMessage(page, messageName.get(), iconData.get());
