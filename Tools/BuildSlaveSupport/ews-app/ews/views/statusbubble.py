@@ -130,9 +130,14 @@ class StatusBubble(View):
         return ''
 
     def get_build_timestamp(self, build):
-        if not build.complete_at:  # In-progress build
-            return self._iso_time(build.step_set.last().started_at)
-        return self._iso_time(build.complete_at)
+        if build.complete_at:
+            return self._iso_time(build.complete_at)
+
+        recent_build_step = build.step_set.last()
+        if recent_build_step:
+            return self._iso_time(recent_build_step.started_at)
+
+        return self._iso_time(build.started_at)
 
     def _iso_time(self, time):
         return '[[' + datetime.datetime.fromtimestamp(time).isoformat() + 'Z]]'

@@ -1,3 +1,13 @@
+2019-04-23  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Exception while loading status-bubble when no build step has started
+        https://bugs.webkit.org/show_bug.cgi?id=196676
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble.get_build_timestamp): Check if build step is present before accessing its timestamp.
+
 2019-04-23  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Support running of JSC tests on remote playstation devices
