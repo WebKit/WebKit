@@ -107,7 +107,7 @@ typedef uint32_t WKStatisticsOptions;
 WK_EXPORT WKTypeID WKContextGetTypeID();
 
 WK_EXPORT WKContextRef WKContextCreate() WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextCreateWithConfiguration);
-WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
+WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path) WK_C_API_DEPRECATED_WITH_REPLACEMENT(WKContextCreateWithConfiguration);
 WK_EXPORT WKContextRef WKContextCreateWithConfiguration(WKContextConfigurationRef configuration);
 
 WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClientBase* client);

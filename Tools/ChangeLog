@@ -1,5 +1,16 @@
 2019-04-22  Alex Christensen  <achristensen@webkit.org>
 
+        Deprecate WKContextCreateWithInjectedBundlePath
+        https://bugs.webkit.org/show_bug.cgi?id=197169
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextWithInjectedBundle):
+        Use WKContextCreateWithConfiguration instead of WKContextCreateWithInjectedBundlePath after having set its injected bundle path.
+
+2019-04-22  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION(r230681) Do not use stored credentials if WKBundlePageResourceLoadClient.shouldUseCredentialStorage returns false
         https://bugs.webkit.org/show_bug.cgi?id=197093
         <rdar://problem/49708268>

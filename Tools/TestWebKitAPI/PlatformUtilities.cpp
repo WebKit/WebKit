@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 
+#include <WebKit/WKContextConfigurationRef.h>
 #include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
@@ -36,9 +37,9 @@ namespace Util {
 WKContextRef createContextWithInjectedBundle()
 {
     WKRetainPtr<WKStringRef> injectedBundlePath = adoptWK(createInjectedBundlePath());
-    WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
-
-    return context;
+    auto configuration = adoptWK(WKContextConfigurationCreate());
+    WKContextConfigurationSetInjectedBundlePath(configuration.get(), injectedBundlePath.get());
+    return WKContextCreateWithConfiguration(configuration.get());
 }
 
 WKDictionaryRef createInitializationDictionaryForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
