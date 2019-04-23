@@ -173,7 +173,7 @@ public:
     void setClient(ContentSecurityPolicyClient* client) { m_client = client; }
 
 private:
-    void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
+    void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), const WTF::OrdinalNumber& contextColumn = WTF::OrdinalNumber::beforeFirst(), JSC::ExecState* = nullptr) const;
     void updateSourceSelf(const SecurityOrigin&);
     void applyPolicyToScriptExecutionContext();
 

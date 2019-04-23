@@ -670,7 +670,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
 void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const String& violatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const URL& blockedURL, const String& consoleMessage, const String& sourceURL, const TextPosition& sourcePosition, JSC::ExecState* state) const
 {
-    logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, state);
+    logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
 
     if (!m_isReportingEnabled)
         return;
@@ -849,16 +849,15 @@ void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
     logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.");
 }
 
-void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, JSC::ExecState* state) const
+void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, const WTF::OrdinalNumber& contextColumn, JSC::ExecState* state) const
 {
     if (!m_isReportingEnabled)
         return;
 
-    // FIXME: <http://webkit.org/b/114317> ContentSecurityPolicy::logToConsole should include a column number
     if (m_client)
         m_client->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, 0);
     else if (m_scriptExecutionContext)
-        m_scriptExecutionContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, contextURL, contextLine.oneBasedInt(), 0, state);
+        m_scriptExecutionContext->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message, contextURL, contextLine.oneBasedInt(), contextColumn.oneBasedInt(), state);
 }
 
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const
