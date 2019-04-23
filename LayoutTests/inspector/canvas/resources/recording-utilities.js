@@ -100,7 +100,6 @@ TestPage.registerInitializer(() => {
             return;
         }
 
-        let stopped = false;
         let swizzled = false;
         let lastFrame = false;
 
@@ -108,7 +107,7 @@ TestPage.registerInitializer(() => {
         .then((event) => {
             lastFrame = true;
 
-            if (!stopped)
+            if (canvas.recordingActive)
                 CanvasAgent.stopRecording(canvas.identifier).catch(reject);
             else {
                 InspectorTest.evaluateInPage(`cancelActions()`)
@@ -131,8 +130,6 @@ TestPage.registerInitializer(() => {
         canvas.addEventListener(WI.Canvas.Event.RecordingProgress, handleRecordingProgress);
 
         canvas.awaitEvent(WI.Canvas.Event.RecordingStopped).then((event) => {
-            stopped = true;
-
             canvas.removeEventListener(WI.Canvas.Event.RecordingProgress, handleRecordingProgress);
 
             let recording = event.data.recording;

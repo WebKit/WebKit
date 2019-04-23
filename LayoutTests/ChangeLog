@@ -1,3 +1,10 @@
+2019-04-23  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, speculative fix for failing inspector/canvas/ tests.
+        <rdar://problem/48248697>
+
+        * inspector/canvas/resources/recording-utilities.js:
+
 2019-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         [iOS] element.focus() sometimes fails to reveal the focused element when it becomes editable dynamically
