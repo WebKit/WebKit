@@ -38,7 +38,7 @@ struct ShareDataWithParsedURL;
 
 - (instancetype)initWithView:(WKWebView *)view;
 
-- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
+- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL&)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
 - (void)dismiss;
 
 @property (nonatomic, weak) id <WKShareSheetDelegate> delegate;

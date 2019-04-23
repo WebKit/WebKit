@@ -586,7 +586,7 @@ bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, API::Open
 
 bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
-    [m_contentView _showShareSheet:shareData completionHandler:WTFMove(completionHandler)];
+    [m_contentView _showShareSheet:shareData inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
     return true;
 }
 

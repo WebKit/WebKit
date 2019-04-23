@@ -2782,7 +2782,7 @@ void WebViewImpl::showShareSheet(const WebCore::ShareDataWithParsedURL& data, WT
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:view]);
     [_shareSheet setDelegate:view];
     
-    [_shareSheet presentWithParameters:data completionHandler:WTFMove(completionHandler)];
+    [_shareSheet presentWithParameters:data inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
 }
     
 void WebViewImpl::shareSheetDidDismiss(WKShareSheet *shareSheet)

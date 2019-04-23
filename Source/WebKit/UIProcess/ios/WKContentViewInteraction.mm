@@ -5793,7 +5793,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _fileUploadPanel = nil;
 }
 
-- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (_shareSheet)
@@ -5802,7 +5802,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:_webView]);
     [_shareSheet setDelegate:self];
     
-    [_shareSheet presentWithParameters:data completionHandler:WTFMove(completionHandler)];
+    [_shareSheet presentWithParameters:data inRect:rect completionHandler:WTFMove(completionHandler)];
 #endif
 }
 
@@ -5903,8 +5903,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithURL:(NSURL *)url rect:(CGRect)boundingRect
 {
-    if (_textSelectionAssistant)
-        [_textSelectionAssistant showShareSheetFor:WTF::userVisibleString(url) fromRect:boundingRect];
+    WebCore::ShareDataWithParsedURL shareData;
+    shareData.url = { url };
+    [self _showShareSheet:shareData inRect: { [self convertRect:boundingRect toView:_webView] } completionHandler:[] (bool success) { }];
 }
 
 #if HAVE(APP_LINKS)

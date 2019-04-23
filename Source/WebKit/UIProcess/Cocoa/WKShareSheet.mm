@@ -68,7 +68,7 @@
     return self;
 }
 
-- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL &)data completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler
+- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL &)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler
 {
     auto shareDataArray = adoptNS([[NSMutableArray alloc] init]);
     
@@ -103,12 +103,17 @@
     
     // WKShareSheet can be released under NSSharingServicePicker delegate callbacks.
     RetainPtr<WKShareSheet> protector(self);
-    
-    NSPoint location = [NSEvent mouseLocation];
-    NSRect mouseLocationRect = NSMakeRect(location.x, location.y, 1.0, 1.0);
-    NSRect mouseLocationInWindow = [webView.window convertRectFromScreen:mouseLocationRect];
-    NSRect mouseLocationInView = [webView convertRect:mouseLocationInWindow fromView:nil];
-    [_sharingServicePicker showRelativeToRect:mouseLocationInView ofView:webView preferredEdge:NSMinYEdge];
+    NSRect presentationRect;
+
+    if (rect)
+        presentationRect = *rect;
+    else {
+        NSPoint location = [NSEvent mouseLocation];
+        NSRect mouseLocationRect = NSMakeRect(location.x, location.y, 1.0, 1.0);
+        NSRect mouseLocationInWindow = [webView.window convertRectFromScreen:mouseLocationRect];
+        presentationRect = [webView convertRect:mouseLocationInWindow fromView:nil];
+    }
+    [_sharingServicePicker showRelativeToRect:presentationRect ofView:webView preferredEdge:NSMinYEdge];
 #else
     _shareSheetViewController = adoptNS([[UIActivityViewController alloc] initWithActivityItems:shareDataArray.get() applicationActivities:nil]);
     [_shareSheetViewController setCompletionWithItemsHandler:^(NSString *, BOOL completed, NSArray *, NSError *) {
@@ -117,7 +122,11 @@
     }];
     
     UIPopoverPresentationController *popoverController = [_shareSheetViewController popoverPresentationController];
-    popoverController._centersPopoverIfSourceViewNotSet = YES;
+    if (rect) {
+        popoverController.sourceView = webView;
+        popoverController.sourceRect = *rect;
+    } else
+        popoverController._centersPopoverIfSourceViewNotSet = YES;
     
     _presentationViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView];
     [_presentationViewController presentViewController:_shareSheetViewController.get() animated:YES completion:nil];
