@@ -889,7 +889,28 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectUploadedFile('public_html/archives/mac-sierra-x86_64-release/1234.zip')
 
-        self.expectOutcome(result=SUCCESS, state_string='uploading release.zip')
+        self.expectOutcome(result=SUCCESS, state_string='Uploaded built product')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(UploadBuiltProduct())
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '1234')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            Expect('uploadFile', dict(
+                                        workersrc='WebKitBuild/release.zip', workdir='wkdir',
+                                        blocksize=1024 * 256, maxsize=None, keepstamp=False,
+                                        writer=ExpectRemoteRef(remotetransfer.FileWriter),
+                                     ))
+            + Expect.behavior(uploadFileWithContentsOfString('Dummy zip file content.'))
+            + 1,
+        )
+        self.expectUploadedFile('public_html/archives/mac-sierra-x86_64-release/1234.zip')
+
+        self.expectOutcome(result=FAILURE, state_string='Failed to upload built product')
         return self.runStep()
 
 

@@ -685,6 +685,7 @@ class UploadBuiltProduct(transfer.FileUpload):
     name = 'upload-built-product'
     workersrc = WithProperties('WebKitBuild/%(configuration)s.zip')
     masterdest = WithProperties('public_html/archives/%(fullPlatform)s-%(architecture)s-%(configuration)s/%(patch_id)s.zip')
+    descriptionDone = ['Uploaded built product']
     haltOnFailure = True
 
     def __init__(self, **kwargs):
@@ -701,6 +702,11 @@ class UploadBuiltProduct(transfer.FileUpload):
                 self.build.addStepsAfterCurrentStep([Trigger(schedulerNames=triggers)])
 
         return super(UploadBuiltProduct, self).finished(results)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {u'step': u'Failed to upload built product'}
+        return super(UploadBuiltProduct, self).getResultSummary()
 
 
 class DownloadBuiltProduct(shell.ShellCommand):

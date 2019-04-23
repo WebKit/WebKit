@@ -1,5 +1,19 @@
 2019-04-22  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Improve summary for UploadBuiltProduct step
+        https://bugs.webkit.org/show_bug.cgi?id=197182
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps.py:
+        (UploadBuiltProduct): Added descriptionDone.
+        (UploadBuiltProduct.getResultSummary): Overrided getResultSummary.
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestUploadBuiltProduct.test_success): Updated unit-test.
+        (TestUploadBuiltProduct.test_failure): Added unit-test for failure case.
+
+2019-04-22  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Trigger queues only after uploading the archive
         https://bugs.webkit.org/show_bug.cgi?id=197180
 
