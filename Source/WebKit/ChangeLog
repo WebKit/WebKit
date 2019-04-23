@@ -1,3 +1,22 @@
+2019-04-22  Dean Jackson  <dino@apple.com>
+
+        Use additional members and protocols from WebKitAdditions in WKContentViewInteraction
+        https://bugs.webkit.org/show_bug.cgi?id=197184
+        <rdar://problem/50113848>
+
+        Reviewed by Wenson Hsieh.
+
+        WebKitAdditions defines some macros to include additional members
+        and protocols for WKContentViewInteraction.
+
+        It also defines some new functions. Provide empty version
+        of those functions when WebKitAdditions is not available.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _registerPreview]):
+        (-[WKContentView _unregisterPreview]):
+
 2019-04-23  Tim Horton  <timothy_horton@apple.com>
 
         Action sheet shares a stringified URL instead of a URL object

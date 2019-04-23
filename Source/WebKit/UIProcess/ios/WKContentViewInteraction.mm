@@ -148,6 +148,10 @@ SOFT_LINK_CLASS(ManagedConfiguration, MCProfileConnection);
 SOFT_LINK_CONSTANT(ManagedConfiguration, MCFeatureDefinitionLookupAllowed, NSString *)
 #endif
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.h>)
+#import <WebKitAdditions/WKInteractionPreviewAdditions.h>
+#endif
+
 #if PLATFORM(WATCHOS)
 
 @interface WKContentView (WatchSupport) <WKFocusedFormControlViewDelegate, WKSelectMenuListViewControllerDelegate, WKTextInputListViewControllerDelegate>
@@ -7143,6 +7147,14 @@ static BOOL shouldUsePreviewForLongPress()
 {
     return NO;
 }
+
+- (void)_registerPreviewLongPress
+{
+}
+
+- (void)_unregisterPreviewLongPress
+{
+}
 #endif
 
 - (BOOL)shouldUsePreviewForLongPress
@@ -7155,19 +7167,27 @@ static BOOL shouldUsePreviewForLongPress()
     if (!_webView.allowsLinkPreview)
         return;
 
-    _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
-    [_previewItemController setDelegate:self];
-    _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
-    if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
-        _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
+    if (shouldUsePreviewForLongPress())
+        [self _registerPreviewLongPress];
+    else {
+        _previewItemController = adoptNS([[UIPreviewItemController alloc] initWithView:self]);
+        [_previewItemController setDelegate:self];
+        _previewGestureRecognizer = _previewItemController.get().presentationGestureRecognizer;
+        if ([_previewItemController respondsToSelector:@selector(presentationSecondaryGestureRecognizer)])
+            _previewSecondaryGestureRecognizer = _previewItemController.get().presentationSecondaryGestureRecognizer;
+    }
 }
 
 - (void)_unregisterPreview
 {
-    [_previewItemController setDelegate:nil];
-    _previewGestureRecognizer = nil;
-    _previewSecondaryGestureRecognizer = nil;
-    _previewItemController = nil;
+    if (shouldUsePreviewForLongPress())
+        [self _unregisterPreviewLongPress];
+    else {
+        [_previewItemController setDelegate:nil];
+        _previewGestureRecognizer = nil;
+        _previewSecondaryGestureRecognizer = nil;
+        _previewItemController = nil;
+    }
 }
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position

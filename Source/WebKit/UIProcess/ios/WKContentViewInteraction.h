@@ -57,6 +57,17 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/text/WTFString.h>
 
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKInteractionPreviewAdditions.h>)
+#import <WebKitAdditions/WKInteractionPreviewAdditions.h>
+#else
+#ifndef ADDITIONAL_LINK_PREVIEW_MEMBERS
+#define ADDITIONAL_LINK_PREVIEW_MEMBERS
+#endif
+#ifndef ADDITIONAL_LINK_PREVIEW_PROTOCOLS
+#define ADDITIONAL_LINK_PREVIEW_PROTOCOLS
+#endif
+#endif
+
 namespace API {
 class OpenPanelParameters;
 }
@@ -240,6 +251,7 @@ struct WKAutoCorrectionData {
     Vector<bool> _focusStateStack;
 #if HAVE(LINK_PREVIEW)
     RetainPtr<UIPreviewItemController> _previewItemController;
+    ADDITIONAL_LINK_PREVIEW_MEMBERS
 #endif
 
     std::unique_ptr<WebKit::SmartMagnificationController> _smartMagnificationController;
@@ -503,7 +515,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @end
 
 #if HAVE(LINK_PREVIEW)
-@interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate>
+@interface WKContentView (WKInteractionPreview) <UIPreviewItemDelegate ADDITIONAL_LINK_PREVIEW_PROTOCOLS>
 
 @property (nonatomic, readonly) BOOL shouldUsePreviewForLongPress;
 
