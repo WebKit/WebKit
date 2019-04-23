@@ -43,7 +43,9 @@ intead.
 import cPickle
 import logging
 import multiprocessing
+import os
 import Queue
+import signal
 import sys
 import time
 import traceback
@@ -62,7 +64,7 @@ def get(caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host
 
 
 class _MessagePool(object):
-    def __init__(self, caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host=None):
+    def __init__(self, caller, worker_factory, num_workers, worker_startup_delay_secs=0.0, host=None, timeout=30):
         self._caller = caller
         self._worker_factory = worker_factory
         self._num_workers = num_workers
@@ -72,6 +74,7 @@ class _MessagePool(object):
         self._host = host
         self._name = 'manager'
         self._running_inline = (self._num_workers == 1)
+        self._timeout = timeout
         if self._running_inline:
             self._messages_to_worker = Queue.Queue()
             self._messages_to_manager = Queue.Queue()
@@ -137,7 +140,15 @@ class _MessagePool(object):
         for worker in self._workers:
             if worker.is_alive():
                 worker.terminate()
-                worker.join()
+
+        deadline = time.time() + self._timeout
+        for worker in self._workers:
+            if worker.is_alive():
+                worker.join(timeout=max(deadline - time.time(), 0))
+            if worker.is_alive():
+                _log.error('{} failed to terminate, killing it'.format(worker.name))
+                os.kill(worker.ident, signal.SIGKILL)
+
         self._workers = []
         if not self._running_inline:
             # FIXME: This is a hack to get multiprocessing to not log tracebacks during shutdown :(.

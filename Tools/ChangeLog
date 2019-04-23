@@ -1,3 +1,15 @@
+2019-04-23  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Kill unresponsive worker processes
+        https://bugs.webkit.org/show_bug.cgi?id=197205
+        <rdar://problem/50104388>
+
+        Reviewed by Lucas Forschler.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool.__init__): Add close timeout.
+        (_MessagePool._close): Send termination before joining workers, kill unresponsive workers.
+
 2019-04-23  Alex Christensen  <achristensen@webkit.org>
 
         Add unit tests for WKWebView.serverTrust
