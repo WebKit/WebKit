@@ -1,3 +1,15 @@
+2019-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use target oriented design for WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=197173
+
+        Reviewed by Alex Christensen.
+
+        Override WebKit_DERIVED_SOUCES_DIR within WinCairo in support of a target
+        oriented design.
+
+        * Source/cmake/OptionsWinCairo.cmake:
+
 2019-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKitLegacy

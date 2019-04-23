@@ -82,7 +82,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
-    ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.c
+    ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
 
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitWebProcessEnumTypes.cpp
@@ -206,7 +206,7 @@ if (ENABLE_WEB_AUDIO)
     )
 endif ()
 
-file(WRITE ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.xml
+file(WRITE ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     "<?xml version=1.0 encoding=UTF-8?>\n"
     "<gresources>\n"
     "    <gresource prefix=\"/org/webkitwpe/resources\">\n"
@@ -216,9 +216,9 @@ file(WRITE ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.xml
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.c
-    DEPENDS ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.xml
-    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.c ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitResourcesGResourceBundle.xml
+    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
+    DEPENDS ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
+    COMMAND glib-compile-resources --generate --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/Resources --sourcedir=${CMAKE_SOURCE_DIR}/Source/WebCore/platform/audio/resources --target=${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.xml
     VERBATIM
 )
 

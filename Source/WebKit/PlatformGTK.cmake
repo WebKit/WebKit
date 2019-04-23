@@ -649,11 +649,11 @@ if (ENABLE_PLUGIN_PROCESS_GTK2)
         WebProcess/Plugins/Netscape/unix/NetscapePluginUnix.cpp
         WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp
 
-        ${DERIVED_SOURCES_WEBKIT_DIR}/AuxiliaryProcessMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/PluginControllerProxyMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/PluginProcessMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
-        ${DERIVED_SOURCES_WEBKIT_DIR}/WebProcessConnectionMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/AuxiliaryProcessMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/PluginControllerProxyMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/PluginProcessMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/NPObjectMessageReceiverMessageReceiver.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/WebProcessConnectionMessageReceiver.cpp
     )
 
     add_executable(WebKitPluginProcess2 ${PluginProcessGTK2_SOURCES})

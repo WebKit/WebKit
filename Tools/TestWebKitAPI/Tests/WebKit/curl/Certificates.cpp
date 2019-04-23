@@ -31,9 +31,6 @@
 #include <WebKit/WKCertificateInfo.h>
 #include <WebKit/WKCertificateInfoCurl.h>
 #include <WebKit/WKRetainPtr.h>
-#include <WebKit/WKSharedAPICast.h>
-
-using namespace WebCore;
 
 namespace TestWebKitAPI {
 

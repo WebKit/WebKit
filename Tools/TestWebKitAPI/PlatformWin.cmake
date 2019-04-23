@@ -217,7 +217,7 @@ if (ENABLE_WEBKIT)
     set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
     set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
 
-    add_dependencies(TestWebKit TestWebKitAPIBase)
+    add_dependencies(TestWebKit TestWebKitAPIBase WebKitFrameworkHeaders)
 endif ()
 
 set(test_main_SOURCES

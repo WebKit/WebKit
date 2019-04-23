@@ -53,6 +53,7 @@ set(WTF_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WTF/DerivedSources)
 set(JavaScriptCore_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/JavaScriptCore/DerivedSources)
 set(WebCore_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WebCore/DerivedSources)
 set(WebKitLegacy_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WebKitLegacy/DerivedSources)
+set(WebKit_DERIVED_SOURCES_DIR ${CMAKE_BINARY_DIR}/WebKit/DerivedSources)
 
 # Override scripts directories
 set(WTF_SCRIPTS_DIR ${CMAKE_BINARY_DIR}/WTF/Scripts)

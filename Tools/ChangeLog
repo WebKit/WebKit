@@ -1,3 +1,13 @@
+2019-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake][Win] Use target oriented design for WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=197173
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/PlatformWin.cmake: Add WebKitFrameworkHeaders as a dependency.
+        * TestWebKitAPI/Tests/WebKit/curl/Certificates.cpp: Remove unused header.
+
 2019-04-23  Chris Dumez  <cdumez@apple.com>
 
         [Process-Swap-On-Navigation] WebKit hangs when going back to a form submission's page due to Process-Swap-On-Navigation on iOS 12.2 and higher
