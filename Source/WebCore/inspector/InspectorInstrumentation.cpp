@@ -1091,15 +1091,20 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InstrumentingAge
 
 bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
-    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->webConsoleAgent() : nullptr;
-    return consoleAgent && consoleAgent->enabled();
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext)) {
+        if (auto* webConsoleAgent = instrumentingAgents->webConsoleAgent())
+            return webConsoleAgent->enabled();
+    }
+    return false;
 }
 
 bool InspectorInstrumentation::timelineAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
 {
-    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    return instrumentingAgents && instrumentingAgents->inspectorTimelineAgent();
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (auto* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext))
+        return instrumentingAgents->inspectorTimelineAgent();
+    return false;
 }
 
 void InspectorInstrumentation::didRequestAnimationFrameImpl(InstrumentingAgents& instrumentingAgents, int callbackId, Document& document)

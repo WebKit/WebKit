@@ -169,10 +169,8 @@ void PageDebuggerAgent::didAddEventListener(EventTarget& target, const AtomicStr
         return;
 
     auto& registeredListener = eventListeners.at(position);
-    if (m_registeredEventListeners.contains(registeredListener.get())) {
-        ASSERT_NOT_REACHED();
+    if (m_registeredEventListeners.contains(registeredListener.get()))
         return;
-    }
 
     JSC::ExecState* scriptState = target.scriptExecutionContext()->execState();
     if (!scriptState)
@@ -234,10 +232,8 @@ void PageDebuggerAgent::didPostMessage(const TimerBase& timer, JSC::ExecState& s
     if (!breakpointsActive())
         return;
 
-    if (m_postMessageTimers.contains(&timer)) {
-        ASSERT_NOT_REACHED();
+    if (m_postMessageTimers.contains(&timer))
         return;
-    }
 
     int postMessageIdentifier = m_nextPostMessageIdentifier++;
     m_postMessageTimers.set(&timer, postMessageIdentifier);

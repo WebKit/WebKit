@@ -1,3 +1,20 @@
+2019-04-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Debugger: remove ASSERT_NOT_REACHED where it's possible to reach
+        https://bugs.webkit.org/show_bug.cgi?id=197210
+        <rdar://problem/48462912>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::didAddEventListener):
+        (WebCore::PageDebuggerAgent::didPostMessage):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::consoleAgentEnabled):
+        (WebCore::InspectorInstrumentation::timelineAgentEnabled):
+        Drive-by: add additional `FAST_RETURN_IF_NO_FRONTENDS`.
+
 2019-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244556.
