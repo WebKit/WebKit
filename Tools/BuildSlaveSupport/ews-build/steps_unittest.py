@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +34,14 @@ from twisted.internet import error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
 
-from steps import *
+from steps import (AnalyzeAPITestsResults, ApplyPatch, ArchiveBuiltProduct, ArchiveTestResults,
+                   CheckOutSource, CheckPatchRelevance, CheckStyle, CleanBuild, CleanWorkingDirectory,
+                   CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, CompileWebKitToT, ConfigureBuild,
+                   DownloadBuiltProduct, ExtractBuiltProduct, ExtractTestResults, KillOldProcesses,
+                   PrintConfiguration, ReRunAPITests, ReRunJavaScriptCoreTests, RunAPITests, RunAPITestsWithoutPatch,
+                   RunBindingsTests, RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
+                   RunWebKitPyTests, RunWebKitTests, TestWithFailureCount, Trigger, UnApplyPatchIfRequired, UploadBuiltProduct,
+                   UploadTestResults, ValidatePatch)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild

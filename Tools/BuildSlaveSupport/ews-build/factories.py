@@ -24,7 +24,12 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import *
+from steps import (ApplyPatch, CheckOutSource, CheckPatchRelevance, CheckStyle,
+                   CompileJSCOnly, CompileJSCOnlyToT, CompileWebKit, ConfigureBuild,
+                   DownloadBuiltProduct, ExtractBuiltProduct, KillOldProcesses,
+                   PrintConfiguration, ReRunJavaScriptCoreTests, RunAPITests, RunBindingsTests,
+                   RunJavaScriptCoreTests, RunJavaScriptCoreTestsToT, RunWebKit1Tests, RunWebKitPerlTests,
+                   RunWebKitPyTests, RunWebKitTests, UnApplyPatchIfRequired, ValidatePatch)
 
 
 class Factory(factory.BuildFactory):

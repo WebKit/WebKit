@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2019 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,7 +30,10 @@ from buildbot.schedulers.trysched import Try_Userpass
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
 
-from factories import *
+from factories import (APITestsFactory, BindingsFactory, BuildFactory, Factory, GTKFactory,
+                       JSCTestsFactory, StyleFactory, TestFactory, WPEFactory, WebKitPerlFactory,
+                       WebKitPyFactory, WinCairoFactory, WindowsFactory, iOSBuildFactory, iOSTestsFactory,
+                       macOSBuildFactory, macOSWK1Factory, macOSWK2Factory)
 
 BUILDER_NAME_LENGTH_LIMIT = 70
 STEP_NAME_LENGTH_LIMIT = 50
