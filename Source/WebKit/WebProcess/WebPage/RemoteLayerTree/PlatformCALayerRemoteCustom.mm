@@ -35,8 +35,10 @@
 #import <WebCore/PlatformCALayerCocoa.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVPlayerLayer)
 
 namespace WebKit {
 using namespace WebCore;
@@ -103,8 +105,8 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
 
     if (layerType() == LayerTypeAVPlayerLayer) {
         
-        if ([platformLayer() isKindOfClass:PAL::getAVPlayerLayerClass()]) {
-            clonedLayer = adoptNS([PAL::allocAVPlayerLayerInstance() init]);
+        if ([platformLayer() isKindOfClass:getAVPlayerLayerClass()]) {
+            clonedLayer = adoptNS([allocAVPlayerLayerInstance() init]);
 
             AVPlayerLayer *destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
             AVPlayerLayer *sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());

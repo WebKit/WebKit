@@ -29,13 +29,17 @@
 #if PLATFORM(COCOA)
 
 #import "ContentType.h"
+#import <AVFoundation/AVAsset.h>
 #import <wtf/HashSet.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
 
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #if !PLATFORM(IOSMAC)
 SOFT_LINK_FRAMEWORK_OPTIONAL_PREFLIGHT(AVFoundation)
+#endif
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 #endif
 
 namespace WebCore {
@@ -81,7 +85,7 @@ bool AVFoundationMIMETypeCache::canDecodeType(const String& mimeType)
         return false;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:mimeType];
+    return [getAVURLAssetClass() isPlayableExtendedMIMEType:mimeType];
 #endif
 
     return false;
@@ -109,10 +113,10 @@ void AVFoundationMIMETypeCache::loadMIMETypes()
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [this] {
-        if (!PAL::AVFoundationLibrary())
+        if (!AVFoundationLibrary())
             return;
 
-        for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
+        for (NSString* type in [getAVURLAssetClass() audiovisualMIMETypes])
             m_cache->add(type);
 
         if (m_cacheTypeCallback)

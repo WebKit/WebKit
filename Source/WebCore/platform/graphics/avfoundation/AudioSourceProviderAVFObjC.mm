@@ -48,10 +48,14 @@
 #endif
 
 #import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
 
+SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_FRAMEWORK(MediaToolbox)
 SOFT_LINK_FRAMEWORK(AudioToolbox)
+
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS(AVFoundation, AVMutableAudioMix)
+SOFT_LINK_CLASS(AVFoundation, AVMutableAudioMixInputParameters)
 
 SOFT_LINK(AudioToolbox, AudioConverterConvertComplexBuffer, OSStatus, (AudioConverterRef inAudioConverter, UInt32 inNumberPCMFrames, const AudioBufferList* inInputData, AudioBufferList* outOutputData), (inAudioConverter, inNumberPCMFrames, inInputData, outOutputData))
 SOFT_LINK(AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))
@@ -203,7 +207,7 @@ void AudioSourceProviderAVFObjC::createMix()
     ASSERT(m_avPlayerItem);
     ASSERT(m_client);
 
-    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
+    m_avAudioMix = adoptNS([allocAVMutableAudioMixInstance() init]);
 
     MTAudioProcessingTapCallbacks callbacks = {
         0,
@@ -220,7 +224,7 @@ void AudioSourceProviderAVFObjC::createMix()
     ASSERT(tap);
     ASSERT(m_tap == tap);
 
-    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
+    RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
 
     CMPersistentTrackID trackID = m_avAssetTrack.get().trackID;

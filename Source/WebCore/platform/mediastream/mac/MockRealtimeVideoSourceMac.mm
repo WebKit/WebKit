@@ -46,8 +46,8 @@
 #import <QuartzCore/CATransaction.h>
 #import <objc/runtime.h>
 
-#import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
+#import "CoreVideoSoftLink.h"
 
 namespace WebCore {
 using namespace PAL;

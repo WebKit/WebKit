@@ -52,9 +52,31 @@
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
-#import "CoreVideoSoftLink.h"
+#pragma mark - Soft Linking
+
 #import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
+#import "CoreVideoSoftLink.h"
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAsset)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferAudioRenderer)
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferDisplayLayer)
+ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRenderSynchronizer)
+ALLOW_NEW_API_WITHOUT_GUARDS_END
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamDataParser)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVStreamSession);
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVVideoPerformanceMetrics)
+
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmSpectral, NSString*)
+SOFT_LINK_CONSTANT(AVFoundation, AVAudioTimePitchAlgorithmVarispeed, NSString*)
+
+#define AVAudioTimePitchAlgorithmSpectral getAVAudioTimePitchAlgorithmSpectral()
+#define AVAudioTimePitchAlgorithmVarispeed getAVAudioTimePitchAlgorithmVarispeed()
 
 #pragma mark -
 #pragma mark AVStreamSession
@@ -95,7 +117,7 @@ static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, cons
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
+    , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -179,7 +201,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isAvailable()
 {
-    return PAL::AVFoundationLibrary()
+    return AVFoundationLibrary()
         && isCoreMediaFrameworkAvailable()
         && getAVStreamDataParserClass()
         && getAVSampleBufferAudioRendererClass()
@@ -212,14 +234,14 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaSourceAVFObjC::supportsType(con
         return MediaPlayer::MayBeSupported;
 
     NSString *outputCodecs = codecs;
-    if ([PAL::getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
-        outputCodecs = [PAL::getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
+    if ([getAVStreamDataParserClass() respondsToSelector:@selector(outputMIMECodecParameterForInputMIMECodecParameter:)])
+        outputCodecs = [getAVStreamDataParserClass() outputMIMECodecParameterForInputMIMECodecParameter:outputCodecs];
 
     if (!contentTypeMeetsHardwareDecodeRequirements(parameters.type, parameters.contentTypesRequiringHardwareSupport))
         return MediaPlayer::IsNotSupported;
 
     NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)parameters.type.containerType(), (NSString *)outputCodecs];
-    return [PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
+    return [getAVURLAssetClass() isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
 
 #pragma mark -
@@ -697,7 +719,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
     if (m_sampleBufferDisplayLayer)
         return;
 
-    m_sampleBufferDisplayLayer = adoptNS([PAL::allocAVSampleBufferDisplayLayerInstance() init]);
+    m_sampleBufferDisplayLayer = adoptNS([allocAVSampleBufferDisplayLayerInstance() init]);
 #ifndef NDEBUG
     [m_sampleBufferDisplayLayer setName:@"MediaPlayerPrivateMediaSource AVSampleBufferDisplayLayer"];
 #endif
@@ -915,7 +937,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 #if HAVE(AVSTREAMSESSION)
 AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
 {
-    if (!getAVStreamSessionClass() || ![PAL::getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
+    if (!getAVStreamSessionClass() || ![getAVStreamSessionClass() instancesRespondToSelector:@selector(initWithStorageDirectoryAtURL:)])
         return nil;
 
     if (!m_streamSession) {
@@ -929,7 +951,7 @@ AVStreamSession* MediaPlayerPrivateMediaSourceAVFObjC::streamSession()
         }
 
         String storagePath = FileSystem::pathByAppendingComponent(storageDirectory, "SecureStop.plist");
-        m_streamSession = adoptNS([PAL::allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
+        m_streamSession = adoptNS([allocAVStreamSessionInstance() initWithStorageDirectoryAtURL:[NSURL fileURLWithPath:storagePath]]);
     }
     return m_streamSession.get();
 }

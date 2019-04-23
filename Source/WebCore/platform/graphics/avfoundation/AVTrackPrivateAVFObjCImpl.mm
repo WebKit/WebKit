@@ -35,13 +35,37 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
-
-#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <wtf/SoftLinking.h>
 
 @class AVMediaSelectionOption;
 @interface AVMediaSelectionOption (WebKitInternal)
 - (id)optionID;
 @end
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS(AVFoundation, AVAssetTrack)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItemTrack)
+SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
+SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
+SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
+
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicDescribesVideoForAccessibility, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicIsAuxiliaryContent, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
+
+#define AVMetadataItem getAVMetadataItemClass()
+
+#define AVMediaCharacteristicIsMainProgramContent getAVMediaCharacteristicIsMainProgramContent()
+#define AVMediaCharacteristicDescribesVideoForAccessibility getAVMediaCharacteristicDescribesVideoForAccessibility()
+#define AVMediaCharacteristicIsAuxiliaryContent getAVMediaCharacteristicIsAuxiliaryContent()
+#define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
+#define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
+#define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
 
 namespace WebCore {
 
@@ -88,22 +112,22 @@ void AVTrackPrivateAVFObjCImpl::setEnabled(bool enabled)
 AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 {
     if (m_assetTrack) {
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        if (canLoadAVMediaCharacteristicIsAuxiliaryContent() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (canLoadAVMediaCharacteristicDescribesVideoForAccessibility() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
             return AudioTrackPrivate::Description;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        if (canLoadAVMediaCharacteristicIsMainProgramContent() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Main;
         return AudioTrackPrivate::None;
     }
 
     if (m_mediaSelectionOption) {
         AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        if (canLoadAVMediaCharacteristicIsAuxiliaryContent() && [option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return AudioTrackPrivate::Alternative;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (canLoadAVMediaCharacteristicDescribesVideoForAccessibility() && [option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
             return AudioTrackPrivate::Description;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        if (canLoadAVMediaCharacteristicIsMainProgramContent() && [option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return AudioTrackPrivate::Main;
         return AudioTrackPrivate::None;
     }
@@ -115,26 +139,26 @@ AudioTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::audioKind() const
 VideoTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::videoKind() const
 {
     if (m_assetTrack) {
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (canLoadAVMediaCharacteristicDescribesVideoForAccessibility() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
             return VideoTrackPrivate::Sign;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+        if (canLoadAVMediaCharacteristicTranscribesSpokenDialogForAccessibility() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
             return VideoTrackPrivate::Captions;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        if (canLoadAVMediaCharacteristicIsAuxiliaryContent() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return VideoTrackPrivate::Alternative;
-        if ([m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        if (canLoadAVMediaCharacteristicIsMainProgramContent() && [m_assetTrack hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return VideoTrackPrivate::Main;
         return VideoTrackPrivate::None;
     }
 
     if (m_mediaSelectionOption) {
         AVMediaSelectionOption *option = m_mediaSelectionOption->avMediaSelectionOption();
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
+        if (canLoadAVMediaCharacteristicDescribesVideoForAccessibility() && [option hasMediaCharacteristic:AVMediaCharacteristicDescribesVideoForAccessibility])
             return VideoTrackPrivate::Sign;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+        if (canLoadAVMediaCharacteristicTranscribesSpokenDialogForAccessibility() && [option hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
             return VideoTrackPrivate::Captions;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
+        if (canLoadAVMediaCharacteristicIsAuxiliaryContent() && [option hasMediaCharacteristic:AVMediaCharacteristicIsAuxiliaryContent])
             return VideoTrackPrivate::Alternative;
-        if ([option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
+        if (canLoadAVMediaCharacteristicIsMainProgramContent() && [option hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent])
             return VideoTrackPrivate::Main;
         return VideoTrackPrivate::None;
     }
@@ -165,6 +189,9 @@ AtomicString AVTrackPrivateAVFObjCImpl::id() const
 
 AtomicString AVTrackPrivateAVFObjCImpl::label() const
 {
+    if (!canLoadAVMetadataCommonKeyTitle() || !canLoadAVMetadataKeySpaceCommon())
+        return emptyAtom();
+
     NSArray *commonMetadata = nil;
     if (m_assetTrack)
         commonMetadata = [m_assetTrack commonMetadata];
@@ -173,12 +200,12 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
     else
         ASSERT_NOT_REACHED();
 
-    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if (![titles count])
         return emptyAtom();
 
     // If possible, return a title in one of the user's preferred languages.
-    NSArray *titlesForPreferredLanguages = [PAL::getAVMetadataItemClass() metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
+    NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
     if ([titlesForPreferredLanguages count])
         return [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
     return [[titles objectAtIndex:0] stringValue];

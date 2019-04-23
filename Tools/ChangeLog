@@ -1,3 +1,17 @@
+2019-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r244556.
+        https://bugs.webkit.org/show_bug.cgi?id=197212
+
+        Causing build failures on multiple builders (Requested by
+        ShawnRoberts on #webkit).
+
+        Reverted changeset:
+
+        "Create AVFoundationSoftLink.{h,mm} to reduce duplicate code"
+        https://bugs.webkit.org/show_bug.cgi?id=197171
+        https://trac.webkit.org/changeset/244556
+
 2019-04-23  Alex Christensen  <achristensen@webkit.org>
 
         Fix iOS build.

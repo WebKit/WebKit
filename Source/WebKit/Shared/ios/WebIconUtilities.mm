@@ -34,11 +34,14 @@
 #import <CoreMedia/CoreMedia.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
-#import <pal/cf/CoreMediaSoftLink.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK(AVFoundation);
+SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator);
+SOFT_LINK_CLASS(AVFoundation, AVURLAsset);
 
 namespace WebKit {
 
@@ -117,8 +120,8 @@ UIImage* iconForVideoFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
-    RetainPtr<AVURLAsset> asset = adoptNS([PAL::allocAVURLAssetInstance() initWithURL:file options:nil]);
-    RetainPtr<AVAssetImageGenerator> generator = adoptNS([PAL::allocAVAssetImageGeneratorInstance() initWithAsset:asset.get()]);
+    RetainPtr<AVURLAsset> asset = adoptNS([allocAVURLAssetInstance() initWithURL:file options:nil]);
+    RetainPtr<AVAssetImageGenerator> generator = adoptNS([allocAVAssetImageGeneratorInstance() initWithAsset:asset.get()]);
     [generator setAppliesPreferredTrackTransform:YES];
 
     NSError *error = nil;

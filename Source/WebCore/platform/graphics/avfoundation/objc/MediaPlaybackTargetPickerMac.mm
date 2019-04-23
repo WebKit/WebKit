@@ -37,9 +37,14 @@
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/MainThread.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+typedef AVOutputContext AVOutputContextWKType;
+typedef AVOutputDeviceMenuController AVOutputDeviceMenuControllerWKType;
+
 
 SOFTLINK_AVKIT_FRAMEWORK()
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVOutputContext)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVOutputDeviceMenuController)
 
 using namespace WebCore;
@@ -82,7 +87,7 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetPickerMac::playbackTarget()
     return WebCore::MediaPlaybackTargetMac::create(context);
 }
 
-AVOutputDeviceMenuController *MediaPlaybackTargetPickerMac::devicePicker()
+AVOutputDeviceMenuControllerWKType *MediaPlaybackTargetPickerMac::devicePicker()
 {
     if (!getAVOutputDeviceMenuControllerClass())
         return nullptr;
@@ -90,7 +95,7 @@ AVOutputDeviceMenuController *MediaPlaybackTargetPickerMac::devicePicker()
     if (!m_outputDeviceMenuController) {
         LOG(Media, "MediaPlaybackTargetPickerMac::devicePicker - allocating picker");
 
-        RetainPtr<AVOutputContext> context = adoptNS([PAL::allocAVOutputContextInstance() init]);
+        RetainPtr<AVOutputContextWKType> context = adoptNS([allocAVOutputContextInstance() init]);
         m_outputDeviceMenuController = adoptNS([allocAVOutputDeviceMenuControllerInstance() initWithOutputContext:context.get()]);
 
         [m_outputDeviceMenuController.get() addObserver:m_outputDeviceMenuControllerDelegate.get() forKeyPath:externalOutputDeviceAvailableKeyName options:NSKeyValueObservingOptionNew context:nullptr];

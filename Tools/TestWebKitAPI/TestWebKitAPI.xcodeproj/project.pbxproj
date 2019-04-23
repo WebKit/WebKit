@@ -23,7 +23,6 @@
 
 /* Begin PBXBuildFile section */
 		041A1E34216FFDBC00789E0A /* PublicSuffix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 041A1E33216FFDBC00789E0A /* PublicSuffix.cpp */; };
-		0711DF52226A95FC003DD2F7 /* AVFoundationSoftLinkTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */; };
 		07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */; };
 		07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */; };
 		074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */; };
@@ -1337,7 +1336,6 @@
 /* Begin PBXFileReference section */
 		00CD9F6215BE312C002DA2CE /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
 		041A1E33216FFDBC00789E0A /* PublicSuffix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublicSuffix.cpp; sourceTree = "<group>"; };
-		0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLinkTest.mm; sourceTree = "<group>"; };
 		07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = enumerateMediaDevices.html; sourceTree = "<group>"; };
 		07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerateMediaDevices.cpp; sourceTree = "<group>"; };
 		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
@@ -3682,7 +3680,6 @@
 		CD89D0371C4EDB1300040A04 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
-				0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
@@ -4024,7 +4021,6 @@
 				CDC8E48D1BC5CB4500594FEC /* AudioSessionCategoryIOS.mm in Sources */,
 				7C83E0B91D0A64F100FEBCF3 /* AutoLayoutIntegration.mm in Sources */,
 				07CD32F62065B5430064A4BE /* AVFoundationPreference.mm in Sources */,
-				0711DF52226A95FC003DD2F7 /* AVFoundationSoftLinkTest.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
 				374B7A601DF36EEE00ACCB6C /* BundleEditingDelegate.mm in Sources */,

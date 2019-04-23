@@ -39,8 +39,42 @@
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemOutput.h>
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+
+SOFT_LINK_CLASS(AVFoundation, AVPlayer)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS(AVFoundation, AVMetadataItem)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItemLegibleOutput)
+#define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
+#define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
+#define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
+#define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
+#define AVMediaCharacteristicIsMainProgramContent getAVMediaCharacteristicIsMainProgramContent()
+#define AVMediaCharacteristicEasyToRead getAVMediaCharacteristicEasyToRead()
+
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeClosedCaption, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicLegible, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMetadataCommonKeyTitle, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaTypeSubtitle, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
+SOFT_LINK_CONSTANT(AVFoundation, AVMediaCharacteristicEasyToRead, NSString *)
+
+#define AVPlayer getAVPlayerClass()
+#define AVPlayerItem getAVPlayerItemClass()
+#define AVMetadataItem getAVMetadataItemClass()
+#define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
+#define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
+#define AVMetadataCommonKeyTitle getAVMetadataCommonKeyTitle()
+#define AVMetadataKeySpaceCommon getAVMetadataKeySpaceCommon()
+#define AVMediaTypeSubtitle getAVMediaTypeSubtitle()
+#define AVMediaCharacteristicTranscribesSpokenDialogForAccessibility getAVMediaCharacteristicTranscribesSpokenDialogForAccessibility()
+#define AVMediaCharacteristicDescribesMusicAndSoundForAccessibility getAVMediaCharacteristicDescribesMusicAndSoundForAccessibility()
 
 namespace WebCore {
 
@@ -136,10 +170,10 @@ AtomicString InbandTextTrackPrivateAVFObjC::label() const
 
     NSString *title = 0;
 
-    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:[m_mediaSelectionOption.get() commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [AVMetadataItem metadataItemsFromArray:[m_mediaSelectionOption.get() commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
-        NSArray *titlesForPreferredLanguages = [PAL::getAVMetadataItemClass() metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
+        NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
         if ([titlesForPreferredLanguages count])
             title = [[titlesForPreferredLanguages objectAtIndex:0] stringValue];
 
