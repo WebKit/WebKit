@@ -1,3 +1,15 @@
+2019-04-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Create AVFoundationSoftLink.{h,mm} to reduce duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=197171
+        <rdar://problem/47454979>
+
+        Reviewed by Youenn Fablet.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/AVFoundationSoftLink.h: Added.
+        * pal/cocoa/AVFoundationSoftLink.mm: Added.
+
 2019-04-15  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] WebCore derived sources should only be referenced inside WebCore

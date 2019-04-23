@@ -44,11 +44,8 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetContext.h>
 #import <objc/runtime.h>
-#import <pal/spi/mac/AVFoundationSPI.h>
-#import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
+#import <pal/cocoa/AVFoundationSoftLink.h>
 #endif
 
 namespace IPC {
@@ -580,16 +577,16 @@ bool ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode(Decoder& decode
 
 void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)
 {
-    if ([getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+    if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         encoder << target.avOutputContext();
 }
 
 bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, WebCore::MediaPlaybackTargetContext& target)
 {
-    if (![getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+    if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
         return false;
 
-    auto context = IPC::decode<AVOutputContext>(decoder, getAVOutputContextClass());
+    auto context = IPC::decode<AVOutputContext>(decoder, PAL::getAVOutputContextClass());
     if (!context)
         return false;
 

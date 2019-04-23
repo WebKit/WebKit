@@ -52,25 +52,12 @@
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Optional.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
-#import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
-
-#pragma mark - Soft Linking
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReader)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReaderSampleReferenceOutput)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVMediaCharacteristicVisual, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
-SOFT_LINK_CONSTANT_MAY_FAIL(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSString *)
-#define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
-#define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
-#define AVURLAssetUsesNoPersistentCacheKey getAVURLAssetUsesNoPersistentCacheKey()
+#import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 #pragma mark -
 
@@ -238,9 +225,6 @@ static NSURL *customSchemeURL()
 static NSDictionary *imageDecoderAssetOptions()
 {
     static NSDictionary *options = [] {
-        // FIXME: Are these keys really optional?
-        if (!canLoadAVURLAssetReferenceRestrictionsKey() || !canLoadAVURLAssetUsesNoPersistentCacheKey())
-            return [@{ } retain];
         return [@{
             AVURLAssetReferenceRestrictionsKey: @(AVAssetReferenceRestrictionForbidAll),
             AVURLAssetUsesNoPersistentCacheKey: @YES,
@@ -366,7 +350,7 @@ ImageDecoderAVFObjC::ImageDecoderAVFObjC(SharedBuffer& data, const String& mimeT
     : ImageDecoder()
     , m_mimeType(mimeType)
     , m_uti(WebCore::UTIFromMIMEType(mimeType))
-    , m_asset(adoptNS([allocAVURLAssetInstance() initWithURL:customSchemeURL() options:imageDecoderAssetOptions()]))
+    , m_asset(adoptNS([PAL::allocAVURLAssetInstance() initWithURL:customSchemeURL() options:imageDecoderAssetOptions()]))
     , m_loader(adoptNS([[WebCoreSharedBufferResourceLoaderDelegate alloc] initWithParent:this]))
     , m_decompressionSession(WebCoreDecompressionSession::createRGB())
 {
@@ -399,12 +383,6 @@ bool ImageDecoderAVFObjC::canDecodeType(const String& mimeType)
 
 AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()
 {
-    // FIXME: Is AVMediaCharacteristicVisual truly optional?
-    if (!canLoadAVMediaCharacteristicVisual()) {
-        LOG(Images, "ImageDecoderAVFObjC::firstEnabledTrack(%p) - AVMediaCharacteristicVisual is not supported", this);
-        return nil;
-    }
-
     NSArray<AVAssetTrack *> *videoTracks = [m_asset tracksWithMediaCharacteristic:AVMediaCharacteristicVisual];
     NSUInteger firstEnabledIndex = [videoTracks indexOfObjectPassingTest:^(AVAssetTrack *track, NSUInteger, BOOL*) {
         return track.enabled;
@@ -423,8 +401,8 @@ void ImageDecoderAVFObjC::readSamples()
     if (!m_sampleData.empty())
         return;
 
-    auto assetReader = adoptNS([allocAVAssetReaderInstance() initWithAsset:m_asset.get() error:nil]);
-    auto referenceOutput = adoptNS([allocAVAssetReaderSampleReferenceOutputInstance() initWithTrack:m_track.get()]);
+    auto assetReader = adoptNS([PAL::allocAVAssetReaderInstance() initWithAsset:m_asset.get() error:nil]);
+    auto referenceOutput = adoptNS([PAL::allocAVAssetReaderSampleReferenceOutputInstance() initWithTrack:m_track.get()]);
 
     referenceOutput.get().alwaysCopiesSampleData = NO;
     [assetReader addOutput:referenceOutput.get()];
