@@ -81,6 +81,7 @@ class RenderObject;
 class ScrollableArea;
 class ScrollView;
 class Widget;
+struct ScrollRectToVisibleOptions;
 
 enum class AccessibilityTextSource {
     Alternative,
@@ -882,6 +883,7 @@ public:
     IntPoint scrollPosition() const;
     IntSize scrollContentsSize() const;    
     IntRect scrollVisibleContentRect() const;
+    void scrollToMakeVisible(const ScrollRectToVisibleOptions&) const;
     
     bool lastKnownIsIgnoredValue();
     void setLastKnownIsIgnoredValue(bool);

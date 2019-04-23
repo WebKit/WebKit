@@ -3064,14 +3064,19 @@ bool AccessibilityObject::isOnscreen() const
 
 void AccessibilityObject::scrollToMakeVisible() const
 {
+    scrollToMakeVisible({ SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
+}
+
+void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& options) const
+{
     if (dispatchAccessibilityEventWithType(AccessibilityEventType::ScrollIntoView))
         return;
-    
+
     if (isScrollView() && parentObject())
         parentObject()->scrollToMakeVisible();
 
     if (auto* renderer = this->renderer())
-        renderer->scrollRectToVisible(boundingBoxRect(), false, { SelectionRevealMode::Reveal, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::Yes });
+        renderer->scrollRectToVisible(boundingBoxRect(), false, options);
 }
 
 void AccessibilityObject::scrollToMakeVisibleWithSubFocus(const IntRect& subfocus) const

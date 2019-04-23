@@ -36,77 +36,137 @@
 #include "AccessibilityObject.h"
 #include "FrameView.h"
 #include "IntRect.h"
+#include "RenderLayer.h"
 #include "WebKitAccessible.h"
 #include "WebKitAccessibleUtil.h"
 
 using namespace WebCore;
 
-static AccessibilityObject* core(AtkComponent* component)
+static IntPoint atkToContents(const AccessibilityObject& coreObject, AtkCoordType coordType, gint x, gint y)
 {
-    if (!WEBKIT_IS_ACCESSIBLE(component))
-        return 0;
+    auto* frameView = coreObject.documentFrameView();
+    if (!frameView)
+        return { x, y };
 
-    return &webkitAccessibleGetAccessibilityObject(WEBKIT_ACCESSIBLE(component));
-}
-
-static IntPoint atkToContents(AccessibilityObject* coreObject, AtkCoordType coordType, gint x, gint y)
-{
-    IntPoint pos(x, y);
-
-    FrameView* frameView = coreObject->documentFrameView();
-    if (frameView) {
-        switch (coordType) {
-        case ATK_XY_SCREEN:
-            return frameView->screenToContents(pos);
-        case ATK_XY_WINDOW:
-            return frameView->windowToContents(pos);
+    switch (coordType) {
+    case ATK_XY_SCREEN:
+        return frameView->screenToContents({ x, y });
+    case ATK_XY_WINDOW:
+        return frameView->windowToContents({ x, y });
 #if ATK_CHECK_VERSION(2, 30, 0)
-        case ATK_XY_PARENT:
-            RELEASE_ASSERT_NOT_REACHED();
+    case ATK_XY_PARENT:
+        RELEASE_ASSERT_NOT_REACHED();
 #endif
-        }
     }
 
-    return pos;
+    return { x, y };
 }
 
 static AtkObject* webkitAccessibleComponentRefAccessibleAtPoint(AtkComponent* component, gint x, gint y, AtkCoordType coordType)
 {
-    g_return_val_if_fail(ATK_IS_COMPONENT(component), 0);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component), 0);
+    auto* accessible = WEBKIT_ACCESSIBLE(component);
+    returnValIfWebKitAccessibleIsInvalid(accessible, nullptr);
 
-    IntPoint pos = atkToContents(core(component), coordType, x, y);
-
-    AccessibilityObject* target = downcast<AccessibilityObject>(core(component)->accessibilityHitTest(pos));
+    auto& coreObject = webkitAccessibleGetAccessibilityObject(accessible);
+    auto* target = downcast<AccessibilityObject>(coreObject.accessibilityHitTest(atkToContents(coreObject, coordType, x, y)));
     if (!target)
-        return 0;
-    g_object_ref(target->wrapper());
-    return ATK_OBJECT(target->wrapper());
+        return nullptr;
+
+    if (auto* wrapper = target->wrapper())
+        return ATK_OBJECT(g_object_ref(wrapper));
+
+    return nullptr;
 }
 
 static void webkitAccessibleComponentGetExtents(AtkComponent* component, gint* x, gint* y, gint* width, gint* height, AtkCoordType coordType)
 {
-    g_return_if_fail(ATK_IS_COMPONENT(component));
-    returnIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component));
+    auto* accessible = WEBKIT_ACCESSIBLE(component);
+    returnIfWebKitAccessibleIsInvalid(accessible);
 
-    IntRect rect = snappedIntRect(core(component)->elementRect());
-    contentsRelativeToAtkCoordinateType(core(component), coordType, rect, x, y, width, height);
+    auto& coreObject = webkitAccessibleGetAccessibilityObject(accessible);
+    contentsRelativeToAtkCoordinateType(&coreObject, coordType, snappedIntRect(coreObject.elementRect()), x, y, width, height);
 }
 
 static gboolean webkitAccessibleComponentGrabFocus(AtkComponent* component)
 {
-    g_return_val_if_fail(ATK_IS_COMPONENT(component), FALSE);
-    returnValIfWebKitAccessibleIsInvalid(WEBKIT_ACCESSIBLE(component), FALSE);
+    auto* accessible = WEBKIT_ACCESSIBLE(component);
+    returnValIfWebKitAccessibleIsInvalid(accessible, FALSE);
 
-    core(component)->setFocused(true);
-    return core(component)->isFocused();
+    auto& coreObject = webkitAccessibleGetAccessibilityObject(accessible);
+    coreObject.setFocused(true);
+    return coreObject.isFocused();
 }
+
+#if ATK_CHECK_VERSION(2, 30, 0)
+static gboolean webkitAccessibleComponentScrollTo(AtkComponent* component, AtkScrollType scrollType)
+{
+    auto* accessible = WEBKIT_ACCESSIBLE(component);
+    returnValIfWebKitAccessibleIsInvalid(accessible, FALSE);
+
+    ScrollAlignment alignX;
+    ScrollAlignment alignY;
+
+    switch (scrollType) {
+    case ATK_SCROLL_TOP_LEFT:
+        alignX = ScrollAlignment::alignLeftAlways;
+        alignY = ScrollAlignment::alignTopAlways;
+        break;
+    case ATK_SCROLL_BOTTOM_RIGHT:
+        alignX = ScrollAlignment::alignRightAlways;
+        alignY = ScrollAlignment::alignBottomAlways;
+        break;
+    case ATK_SCROLL_TOP_EDGE:
+    case ATK_SCROLL_BOTTOM_EDGE:
+        // Align to a particular edge is not supported, it's always the closest edge.
+        alignX = ScrollAlignment::alignCenterIfNeeded;
+        alignY = ScrollAlignment::alignToEdgeIfNeeded;
+        break;
+    case ATK_SCROLL_LEFT_EDGE:
+    case ATK_SCROLL_RIGHT_EDGE:
+        // Align to a particular edge is not supported, it's always the closest edge.
+        alignX = ScrollAlignment::alignToEdgeIfNeeded;
+        alignY = ScrollAlignment::alignCenterIfNeeded;
+        break;
+    case ATK_SCROLL_ANYWHERE:
+        alignX = ScrollAlignment::alignCenterIfNeeded;
+        alignY = ScrollAlignment::alignCenterIfNeeded;
+        break;
+    }
+
+    auto& coreObject = webkitAccessibleGetAccessibilityObject(accessible);
+    coreObject.scrollToMakeVisible({ SelectionRevealMode::Reveal, alignX, alignY, ShouldAllowCrossOriginScrolling::Yes });
+
+    return TRUE;
+}
+
+static gboolean webkitAccessibleComponentScrollToPoint(AtkComponent* component, AtkCoordType coordType, gint x, gint y)
+{
+    auto* accessible = WEBKIT_ACCESSIBLE(component);
+    returnValIfWebKitAccessibleIsInvalid(accessible, FALSE);
+
+    auto& coreObject = webkitAccessibleGetAccessibilityObject(accessible);
+
+    IntPoint point(x, y);
+    if (coordType == ATK_XY_SCREEN) {
+        if (auto* frameView = coreObject.documentFrameView())
+            point = frameView->contentsToWindow(frameView->screenToContents(point));
+    }
+
+    coreObject.scrollToGlobalPoint(point);
+
+    return TRUE;
+}
+#endif
 
 void webkitAccessibleComponentInterfaceInit(AtkComponentIface* iface)
 {
     iface->ref_accessible_at_point = webkitAccessibleComponentRefAccessibleAtPoint;
     iface->get_extents = webkitAccessibleComponentGetExtents;
     iface->grab_focus = webkitAccessibleComponentGrabFocus;
+#if ATK_CHECK_VERSION(2, 30, 0)
+    iface->scroll_to = webkitAccessibleComponentScrollTo;
+    iface->scroll_to_point = webkitAccessibleComponentScrollToPoint;
+#endif
 }
 
-#endif
+#endif // HAVE(ACCESSIBILITY)

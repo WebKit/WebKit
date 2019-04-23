@@ -1,3 +1,14 @@
+2019-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Implement AtkComponentIface scroll_to methods
+        https://bugs.webkit.org/show_bug.cgi?id=196856
+
+        Reviewed by Michael Catanzaro.
+
+        Remove expectations for tests that are passing now.
+
+        * platform/gtk/TestExpectations:
+
 2019-04-22  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Some dropdown menus may close without user gesture on americanexpress.com

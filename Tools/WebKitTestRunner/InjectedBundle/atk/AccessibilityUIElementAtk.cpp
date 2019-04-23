@@ -2332,14 +2332,24 @@ bool AccessibilityUIElement::setSelectedVisibleTextRange(AccessibilityTextMarker
 
 void AccessibilityUIElement::scrollToMakeVisible()
 {
-    // FIXME: implement
+#if ATK_CHECK_VERSION(2, 30, 0)
+    if (!ATK_IS_COMPONENT(m_element.get()))
+        return;
+
+    atk_component_scroll_to(ATK_COMPONENT(m_element.get()), ATK_SCROLL_ANYWHERE);
+#endif
 }
-    
+
 void AccessibilityUIElement::scrollToGlobalPoint(int x, int y)
 {
-    // FIXME: implement
+#if ATK_CHECK_VERSION(2, 30, 0)
+    if (!ATK_IS_COMPONENT(m_element.get()))
+        return;
+
+    atk_component_scroll_to_point(ATK_COMPONENT(m_element.get()), ATK_XY_WINDOW, x, y);
+#endif
 }
-    
+
 void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)
 {
     // FIXME: implement

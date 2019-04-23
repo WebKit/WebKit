@@ -817,8 +817,6 @@ webkit.org/b/131347 svg/text/hidpi-text-selection-rect-position.html [ ImageOnly
 # No support for Filters Level 2 on GTK yet
 webkit.org/b/169988 css3/filters/backdrop [ Skip ]
 
-webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Failure ]
-
 webkit.org/b/141423 fast/css/font-shorthand-from-longhands.html [ Failure ]
 webkit.org/b/141423 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/141423 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
@@ -907,6 +905,7 @@ webkit.org/b/146731 fast/backgrounds/hidpi-background-image-contain-cover-scale-
 
 # Text marker tests are not supported
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
+webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
 
 # WebKitGTK+ doesn't have killring support.
 webkit.org/b/152379 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
@@ -3110,14 +3109,6 @@ webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t424-hsl-basic-a.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
 
-webkit.org/b/148935 accessibility/scroll-to-global-point-iframe-nested.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-global-point-iframe.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-global-point-main-window.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-global-point-nested.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-make-visible-div-overflow.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-make-visible-iframe.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-make-visible-nested-2.html [ Failure ]
-webkit.org/b/148935 accessibility/scroll-to-make-visible-nested.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 
 webkit.org/b/149128 fast/text/control-characters [ ImageOnlyFailure ]

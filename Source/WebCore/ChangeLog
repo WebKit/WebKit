@@ -1,3 +1,35 @@
+2019-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATK] Implement AtkComponentIface scroll_to methods
+        https://bugs.webkit.org/show_bug.cgi?id=196856
+
+        Reviewed by Michael Catanzaro.
+
+        Implement scroll_to and scroll_to_point when ATK >= 2.30.
+
+        Fixes: accessibility/scroll-to-global-point-iframe-nested.html
+               accessibility/scroll-to-global-point-iframe.html
+               accessibility/scroll-to-global-point-main-window.html
+               accessibility/scroll-to-global-point-nested.html
+               accessibility/scroll-to-make-visible-div-overflow.html
+               accessibility/scroll-to-make-visible-iframe.html
+               accessibility/scroll-to-make-visible-nested-2.html
+               accessibility/scroll-to-make-visible-nested.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::scrollToMakeVisible const): Add new method receiving the
+        ScrollRectToVisibleOptions since ATK interface has a parameter to decide how to scroll.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        (atkToContents):
+        (webkitAccessibleComponentRefAccessibleAtPoint):
+        (webkitAccessibleComponentGetExtents):
+        (webkitAccessibleComponentGrabFocus):
+        (webkitAccessibleComponentScrollTo):
+        (webkitAccessibleComponentScrollToPoint):
+        (webkitAccessibleComponentInterfaceInit):
+        (core): Deleted.
+
 2019-04-22  Youenn Fablet  <youenn@apple.com>
 
         Update libwebrtc logging when WebCore WebRTC logging is updated

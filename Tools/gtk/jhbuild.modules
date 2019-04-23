@@ -281,38 +281,33 @@
             hash="sha256:ccf79ff3bd340254737ce4d28b87f0ccee4b3358cd3cd5cd11dc7b42f41b272a"/>
   </autotools>
 
-  <autotools id="atk"
-             autogen-sh="configure"
-             autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/atk/2.25/atk-2.25.2.tar.xz" version="2.25.2"
+  <meson id="atk" mesonargs="-Dintrospection=false">
+    <branch module="pub/GNOME/sources/atk/2.32/atk-2.32.0.tar.xz" version="2.32.0"
             repo="ftp.gnome.org"
-            hash="sha256:75ac1f63e845f895dec8d72d4645ef5f362e32c921cc78987f2f19c2ce212a24"/>
-  </autotools>
+            hash="sha256:cb41feda7fe4ef0daa024471438ea0219592baf7c291347e5a858bb64e4091cc"/>
+  </meson>
 
-  <autotools id="at-spi2-core"
-             autogen-sh="configure"
-             autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.25/at-spi2-core-2.25.4.tar.xz" version="2.25.4"
+  <meson id="at-spi2-core" mesonargs="-Dintrospection=no">
+    <branch module="pub/GNOME/sources/at-spi2-core/2.32/at-spi2-core-2.32.1.tar.xz" version="2.32.1"
             repo="ftp.gnome.org"
-            hash="sha256:baeccbf92e84e64bb4a853f076c27b78ab44edf1fa5414a9c6e59a9b180bc9d8">
+            hash="sha256:3c2aa937ebfaca2c86569bce9b16a34fbe20d69ef0c58846313b1c42f53b0d53">
     </branch>
     <dependencies>
       <dep package="glib"/>
     </dependencies>
-  </autotools>
+  </meson>
 
-  <autotools id="at-spi2-atk"
-             autogen-sh="configure">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.25/at-spi2-atk-2.25.3.tar.xz" version="2.25.3"
+  <meson id="at-spi2-atk">
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.32/at-spi2-atk-2.32.0.tar.xz" version="2.32.0"
             repo="ftp.gnome.org"
-            hash="sha256:b7aab1a4ee7182083fcfafb595b7b3fe4df34aa2230c775050fe6015b01f84e1">
+            hash="sha256:0b51e6d339fa2bcca3a3e3159ccea574c67b107f1ac8b00047fa60e34ce7a45c">
     </branch>
     <dependencies>
       <dep package="glib"/>
       <dep package="atk"/>
       <dep package="at-spi2-core"/>
     </dependencies>
-  </autotools>
+  </meson>
 
   <autotools id="libxml2" supports-non-srcdir-builds="no"
              autogen-sh="./autogen.sh; ./configure --with-python=no">
