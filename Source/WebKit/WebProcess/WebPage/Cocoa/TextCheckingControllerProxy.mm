@@ -163,6 +163,55 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(String ann
     }, removeCoreSpellingMarkers ? relevantMarkerTypes() : DocumentMarker::PlatformTextChecking);
 }
 
+AttributedString TextCheckingControllerProxy::annotatedSubstringBetweenPositions(const WebCore::VisiblePosition& start, const WebCore::VisiblePosition& end)
+{
+    RetainPtr<NSMutableAttributedString> string = adoptNS([[NSMutableAttributedString alloc] init]);
+    NSUInteger stringLength = 0;
+
+    RefPtr<Document> document = start.deepEquivalent().document();
+    if (!document)
+        return { };
+
+    auto entireRange = makeRange(start, end);
+    if (!entireRange)
+        return { };
+
+    RefPtr<Node> commonAncestor = entireRange->commonAncestorContainer();
+    size_t entireRangeLocation;
+    size_t entireRangeLength;
+    TextIterator::getLocationAndLengthFromRange(commonAncestor.get(), entireRange.get(), entireRangeLocation, entireRangeLength);
+
+    for (TextIterator it(start.deepEquivalent(), end.deepEquivalent()); !it.atEnd(); it.advance()) {
+        int currentTextLength = it.text().length();
+        if (!currentTextLength)
+            continue;
+
+        [string appendAttributedString:[[[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()] autorelease]];
+
+        RefPtr<Range> currentTextRange = it.range();
+        auto markers = document->markers().markersInRange(*currentTextRange, DocumentMarker::PlatformTextChecking);
+        for (const auto* marker : markers) {
+            if (!WTF::holds_alternative<DocumentMarker::PlatformTextCheckingData>(marker->data()))
+                continue;
+
+            auto& textCheckingData = WTF::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
+            auto subrange = TextIterator::subrange(*currentTextRange, marker->startOffset(), marker->endOffset() - marker->startOffset());
+
+            size_t subrangeLocation;
+            size_t subrangeLength;
+            TextIterator::getLocationAndLengthFromRange(commonAncestor.get(), &subrange.get(), subrangeLocation, subrangeLength);
+
+            ASSERT(subrangeLocation > entireRangeLocation);
+            ASSERT(subrangeLocation + subrangeLength < entireRangeLength);
+            [string addAttribute:textCheckingData.key value:textCheckingData.value range:NSMakeRange(subrangeLocation - entireRangeLocation, subrangeLength)];
+        }
+
+        stringLength += currentTextLength;
+    }
+
+    return string.autorelease();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)

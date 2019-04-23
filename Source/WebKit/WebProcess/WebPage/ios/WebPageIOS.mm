@@ -42,6 +42,7 @@
 #import "PrintInfo.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "SandboxUtilities.h"
+#import "TextCheckingControllerProxy.h"
 #import "UIKitSPI.h"
 #import "UserData.h"
 #import "ViewGestureGeometryCollector.h"
@@ -3573,7 +3574,10 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
     }
 
-    // FIXME: Support Annotation option.
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+    if (request.options.contains(DocumentEditingContextRequest::Options::Annotation))
+        context.annotatedText = m_textCheckingControllerProxy->annotatedSubstringBetweenPositions(contextBeforeStart, contextAfterEnd);
+#endif
 
     completionHandler(context);
 }

@@ -38,6 +38,10 @@ class Decoder;
 class Encoder;
 }
 
+namespace WebCore {
+class VisiblePosition;
+}
+
 namespace WebKit {
 
 class WebPage;
@@ -46,6 +50,8 @@ class TextCheckingControllerProxy : public IPC::MessageReceiver {
 public:
     TextCheckingControllerProxy(WebPage&);
     ~TextCheckingControllerProxy();
+
+    AttributedString annotatedSubstringBetweenPositions(const WebCore::VisiblePosition&, const WebCore::VisiblePosition&);
 
 private:
     // IPC::MessageReceiver

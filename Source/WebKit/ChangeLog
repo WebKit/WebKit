@@ -1,3 +1,19 @@
+2019-04-23  Tim Horton  <timothy_horton@apple.com>
+
+        Return annotated text checking strings via UIWKDocumentContext
+        https://bugs.webkit.org/show_bug.cgi?id=197177
+        <rdar://problem/49064839>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.h:
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::annotatedSubstringBetweenPositions):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestDocumentEditingContext):
+        Respect the UIWKDocumentRequestAnnotation flag, returning an attributed
+        string containing the platform text checking annotations.
+
 2019-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r244556.
