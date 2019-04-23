@@ -540,6 +540,11 @@ sub runJSCStressTests
 
     push(@jscStressDriverCmd, ("--verbose") x $verbose) if ($verbose > 0);
 
+    if (isPlayStation()) {
+        push(@jscStressDriverCmd, "--os=playstation");
+        push(@jscStressDriverCmd, "--no-copy");
+    }
+
     unshift @jscStressDriverCmd, wrapperPrefixIfNeeded() if shouldUseJhbuild();
 
     # End option processing, the rest of the arguments are tests

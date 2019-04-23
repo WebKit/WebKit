@@ -1,3 +1,25 @@
+2019-04-23  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Support running of JSC tests on remote playstation devices
+        https://bugs.webkit.org/show_bug.cgi?id=197170
+
+        Reviewed by Ross Kirsling.
+
+        Script changes
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests): Pass arguments for playstation to
+        run-jsc-stress-tests
+        * Scripts/run-jsc-stress-tests:
+        Handle $hostOS=="playstation" for determineArchitecture, turning
+        off $isFTLPlatform and runProfiler and defaulting test writer.
+        * Scripts/webkitdirs.pm:
+        (jscPath): PlayStation WebKit executables have .elf extension
+        (executableProductDir): PlayStation builds on Windows hosts but
+        uses bin directory rather than bin64/bin32 for executable output
+        location.
+        * Scripts/webkitruby/jsc-stress-test-writer-playstation.rb: Added.
+
 2019-04-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKit

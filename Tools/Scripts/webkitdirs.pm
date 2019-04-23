@@ -468,7 +468,11 @@ sub jscPath($)
     my ($productDir) = @_;
     my $jscName = "jsc";
     $jscName .= "_debug"  if configuration() eq "Debug_All";
-    $jscName .= ".exe" if (isAnyWindows());
+    if (isPlayStation()) {
+        $jscName .= ".elf";
+    } elsif (isAnyWindows()) {
+        $jscName .= ".exe";
+    }
     return "$productDir/$jscName" if -e "$productDir/$jscName";
     return "$productDir/JavaScriptCore.framework/Resources/$jscName";
 }
@@ -765,9 +769,9 @@ sub executableProductDir
     my $productDirectory = productDir();
 
     my $binaryDirectory;
-    if (isAnyWindows()) {
+    if (isAnyWindows() && !isPlayStation()) {
         $binaryDirectory = isWin64() ? "bin64" : "bin32";
-    } elsif (isGtk() || isJSCOnly() || isWPE()) {
+    } elsif (isGtk() || isJSCOnly() || isWPE() || isPlayStation()) {
         $binaryDirectory = "bin";
     } else {
         return $productDirectory;
