@@ -866,6 +866,48 @@ class TestCleanWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestUnApplyPatchIfRequired(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(UnApplyPatchIfRequired())
+        self.setProperty('patchFailedToBuild', True)
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/clean-webkit'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Unapplied patch')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(UnApplyPatchIfRequired())
+        self.setProperty('patchFailedToBuild', True)
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['Tools/Scripts/clean-webkit'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Unapplied patch (failure)')
+        return self.runStep()
+
+    def test_skip(self):
+        self.setupStep(UnApplyPatchIfRequired())
+        self.expectHidden(True)
+        self.expectOutcome(result=SKIPPED, state_string='Unapplied patch (skipped)')
+        return self.runStep()
+
+
 class TestArchiveBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
