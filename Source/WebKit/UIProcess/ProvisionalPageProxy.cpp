@@ -134,7 +134,7 @@ void ProvisionalPageProxy::cancel()
     ASSERT(m_mainFrame);
     auto error = WebKit::cancelledError(m_request);
     error.setType(WebCore::ResourceError::Type::Cancellation);
-    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), { }, m_navigationID, m_provisionalLoadURL, error, UserData { }); // Will delete |this|.
+    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), { }, m_navigationID, m_provisionalLoadURL, error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::initializeWebPage()
@@ -189,7 +189,7 @@ inline bool ProvisionalPageProxy::validateInput(uint64_t frameID, const Optional
     if (!m_mainFrame || m_mainFrame->frameID() != frameID)
         return false;
 
-    return !navigationID || *navigationID == m_navigationID;
+    return !navigationID || !*navigationID || *navigationID == m_navigationID;
 }
 
 void ProvisionalPageProxy::didCreateMainFrame(uint64_t frameID)
@@ -247,7 +247,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, uin
     m_page.didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
 }
 
-void ProvisionalPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, const UserData& userData)
+void ProvisionalPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData)
 {
     if (!validateInput(frameID, navigationID))
         return;
@@ -260,7 +260,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, cons
     if (auto* pageMainFrame = m_page.mainFrame())
         pageMainFrame->didFailProvisionalLoad();
 
-    m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, provisionalURL, error, userData); // Will delete |this|.
+    m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, provisionalURL, error, willContinueLoading, userData); // May delete |this|.
 }
 
 void ProvisionalPageProxy::didCommitLoadForFrame(uint64_t frameID, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, uint32_t frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool containsPluginDocument, Optional<WebCore::HasInsecureContent> forcedHasInsecureContent, const UserData& userData)
@@ -378,11 +378,14 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 
     if (decoder.messageName() == Messages::WebPageProxy::DidStartProgress::name()
         || decoder.messageName() == Messages::WebPageProxy::DidChangeProgress::name()
+        || decoder.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()
+        || decoder.messageName() == Messages::WebPageProxy::DidFinishProgress::name()
         || decoder.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessage::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithEnhancedPrivacy::name()
         || decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionary::name()
         || decoder.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
+        || decoder.messageName() == Messages::WebPageProxy::WillGoToBackForwardListItem::name()
 #if USE(QUICK_LOOK)
         || decoder.messageName() == Messages::WebPageProxy::DidStartLoadForQuickLookDocumentInMainFrame::name()
         || decoder.messageName() == Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame::name()

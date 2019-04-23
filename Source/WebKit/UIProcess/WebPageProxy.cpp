@@ -2778,7 +2778,6 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
     URL sourceURL = URL { URL(), pageLoadState().url() };
     if (auto* provisionalPage = provisionalPageProxy()) {
         if (provisionalPage->navigationID() == navigation->navigationID()) {
-            ASSERT(navigation->currentRequestIsRedirect());
             sourceProcess = provisionalPage->process();
             sourceURL = provisionalPage->provisionalURL();
         }
@@ -4038,17 +4037,17 @@ void WebPageProxy::didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&& 
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, const UserData& userData)
+void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData)
 {
     if (m_provisionalPage && m_provisionalPage->navigationID() == navigationID) {
         // The load did not fail, it is merely happening in a new provisional process.
         return;
     }
 
-    didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, provisionalURL, error, userData);
+    didFailProvisionalLoadForFrameShared(m_process.copyRef(), frameID, frameSecurityOrigin, navigationID, provisionalURL, error, willContinueLoading, userData);
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, const UserData& userData)
+void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData)
 {
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " in web process pid %i didFailProvisionalLoadForFrame to provisionalURL %s", m_pageID, process->processIdentifier(), provisionalURL.utf8().data());
     RELEASE_LOG_IF_ALLOWED(Process, "didFailProvisionalLoadForFrame: webPID = %i, pageID = %" PRIu64 ", frameID = %" PRIu64 ", domain = %s, code = %d", process->processIdentifier(), m_pageID, frameID, error.domain().utf8().data(), error.errorCode());
@@ -4095,7 +4094,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     m_failingProvisionalLoadURL = { };
 
     // If the provisional page's load fails then we destroy the provisional page.
-    if (m_provisionalPage && m_provisionalPage->mainFrame() == frame)
+    if (m_provisionalPage && m_provisionalPage->mainFrame() == frame && willContinueLoading == WillContinueLoading::No)
         m_provisionalPage = nullptr;
 }
 
@@ -4580,7 +4579,12 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
             navigation = m_navigationState->createLoadRequestNavigation(ResourceRequest(request), m_backForwardList->currentItem());
     }
 
-    uint64_t newNavigationID = navigation->navigationID();
+    navigationID = navigation->navigationID();
+
+    // Make sure the provisional page always has the latest navigationID.
+    if (m_provisionalPage && &m_provisionalPage->process() == process.ptr())
+        m_provisionalPage->setNavigationID(navigationID);
+
     navigation->setCurrentRequest(ResourceRequest(request), process->coreProcessIdentifier());
     navigation->setLastNavigationAction(navigationActionData);
     navigation->setOriginatingFrameInfo(originatingFrameInfoData);
@@ -4588,9 +4592,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request))
-        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(newNavigationID), WTF::nullopt, WTFMove(sender));
-#else
-    UNUSED_PARAM(newNavigationID);
+        return receivedPolicyDecision(PolicyAction::Ignore, m_navigationState->navigation(navigationID), WTF::nullopt, WTFMove(sender));
 #endif
 
     ShouldExpectSafeBrowsingResult shouldExpectSafeBrowsingResult = ShouldExpectSafeBrowsingResult::Yes;

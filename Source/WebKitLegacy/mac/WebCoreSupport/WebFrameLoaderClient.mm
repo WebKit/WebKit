@@ -724,7 +724,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent>)
         CallFrameLoadDelegate(implementations->didCommitLoadForFrameFunc, webView, @selector(webView:didCommitLoadForFrame:), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error, WillContinueLoading)
 {
     m_webFrame->_private->provisionalURL = nullptr;
 

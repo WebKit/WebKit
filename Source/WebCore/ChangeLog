@@ -1,3 +1,20 @@
+2019-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [Process-Swap-On-Navigation] WebKit hangs when going back to a form submission's page due to Process-Swap-On-Navigation on iOS 12.2 and higher
+        https://bugs.webkit.org/show_bug.cgi?id=197097
+        <rdar://problem/50048318>
+
+        Reviewed by Alex Christensen.
+
+        * loader/EmptyFrameLoaderClient.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        If we still have a provisional item (new load has been started or we did not clear it because we're about to retry),
+        then let the client know the load will continue by passing an extra flag with the didFailProvisionalLoad.
+
+        * loader/FrameLoaderClient.h:
+        * loader/FrameLoaderTypes.h:
+
 2019-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Implement AtkComponentIface scroll_to methods

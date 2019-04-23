@@ -94,7 +94,7 @@ public:
     void dispatchDidStartProvisionalLoad() override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
     void dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>) override;
-    void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&) override;
+    void dispatchDidFailProvisionalLoad(const WebCore::ResourceError&, WebCore::WillContinueLoading) override;
     void dispatchDidFailLoad(const WebCore::ResourceError&) override;
     void dispatchDidFinishDocumentLoad() override;
     void dispatchDidFinishLoad() override;

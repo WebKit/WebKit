@@ -70,6 +70,11 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
     return _urlSchemeTask->task().request().nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
 }
 
+- (BOOL)_requestOnlyIfCached
+{
+    return _urlSchemeTask->task().request().cachePolicy() == WebCore::ResourceRequestCachePolicy::ReturnCacheDataDontLoad;
+}
+
 - (void)didReceiveResponse:(NSURLResponse *)response
 {
     auto result = _urlSchemeTask->task().didReceiveResponse(response);

@@ -2465,7 +2465,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (!pdl->isLoadingInAPISense() || pdl->isStopping()) {
                 RELEASE_LOG_IF_ALLOWED("checkLoadCompleteForThisFrame: Failed provisional load (frame = %p, main = %d, isTimeout = %d, isCancellation = %d, errorCode = %d)", &m_frame, m_frame.isMainFrame(), error.isTimeout(), error.isCancellation(), error.errorCode());
                 m_provisionalLoadErrorBeingHandledURL = m_provisionalDocumentLoader->url();
-                m_client.dispatchDidFailProvisionalLoad(error);
+
+                m_client.dispatchDidFailProvisionalLoad(error, history().provisionalItem() ? WillContinueLoading::Yes : WillContinueLoading::No);
 #if ENABLE(CONTENT_FILTERING)
                 if (auto contentFilter = pdl->contentFilter())
                     contentFilter->handleProvisionalLoadFailure(error);

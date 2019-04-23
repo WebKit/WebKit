@@ -1,3 +1,60 @@
+2019-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [Process-Swap-On-Navigation] WebKit hangs when going back to a form submission's page due to Process-Swap-On-Navigation on iOS 12.2 and higher
+        https://bugs.webkit.org/show_bug.cgi?id=197097
+        <rdar://problem/50048318>
+
+        Reviewed by Alex Christensen.
+
+        The issue is that when doing a history navigation with form data, we try to resubmit the form.
+        We initially use the ReturnCacheDataDontLoad cache policy without prompting the user to get
+        cached data. If this fails, we sent a DidFailProvisionalLoadForFrame IPC to the UIProcess but
+        the WebContent process actually retries the load with ReturnCacheDataElseLoad cache policy.
+        This new load triggers a new decidePolicyForNavigationAction.
+
+        This would cause trouble with process-swapping because we normally destroy the
+        ProvisionalPageProxy as soon as we receive a DidFailProvisionalLoadForFrame IPC from the
+        provisional process. As a result, the provisional process would not be able to retry.
+
+        To address the issue, we add pass a flag with the DidFailProvisionalLoadForFrame IPC to
+        if the load will continue or not. When this flag is set, the UIProcess does not destroy
+        the provisional page.
+
+        * Scripts/webkit/messages.py:
+        Minor IPC message handler build fix.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl _onlyIfCached]):
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        Add new _onlyIfCached SPI to WKURLSchemeTaskPrivate to allow for API testing.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::cancel):
+        Pass WillContinueLoading flag.
+
+        (WebKit::ProvisionalPageProxy::validateInput):
+        Consider IPC with a navigationID of 0 as valid. When the navigation is triggered by the
+        WebContent process, it sends us a DecidePolicyForNavigationActionAsync IPC with a navigationID
+        of 0, until the UIProcess can generate a valid identifier.
+
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+
+        (WebKit::ProvisionalPageProxy::decidePolicyForNavigationActionAsync):
+        When the WebPageProxy has generated a navigationID for the new WebContent process-initiated
+        navigation, update m_navigationID so that follow-up IPC is considered valid.
+
+        * UIProcess/ProvisionalPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationActionAsyncShared):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2019-04-22  Zalan Bujtas  <zalan@apple.com>
 
         [ContentChangeObserver] Some dropdown menus may close without user gesture on americanexpress.com

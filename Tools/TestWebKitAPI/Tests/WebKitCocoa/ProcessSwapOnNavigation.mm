@@ -276,6 +276,11 @@ static RetainPtr<WKWebView> createdWebView;
         [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
     }
 
+    if ([(id<WKURLSchemeTaskPrivate>)task _requestOnlyIfCached]) {
+        [task didFailWithError:[NSError errorWithDomain:@"TestWebKitAPI" code:1 userInfo:nil]];
+        return;
+    }
+
     RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:finalURL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
     [task didReceiveResponse:response.get()];
 
@@ -4278,6 +4283,72 @@ TEST(ProcessSwap, NavigateToCrossSiteThenBackFromJS)
     EXPECT_NE(applePID, [webView _webProcessIdentifier]);
 }
 
+static const char* crossSiteFormSubmissionBytes = R"PSONRESOURCE(
+<body>
+<form action="pson://www.apple.com/main.html" method="post">
+Name: <input type="text" name="name" placeholder="Name">
+<input id="submitButton" type="submit">
+</form>
+</body>
+)PSONRESOURCE";
+
+TEST(ProcessSwap, SwapOnFormSubmission)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org/main.html" toData:crossSiteFormSubmissionBytes];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto webkitPID = [webView _webProcessIdentifier];
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
+
+    [webView evaluateJavaScript:@"submitButton.click()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    auto applePID = [webView _webProcessIdentifier];
+    EXPECT_NE(webkitPID, applePID);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
+
+    [webView reload];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_EQ(applePID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
+
+    [webView goForward];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    EXPECT_EQ(applePID, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main.html", [[webView URL] absoluteString]);
+
+    [webView goBack];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+#if !PLATFORM(IOS_FAMILY)
+    // This is not guaranteed on iOS because the WebProcess cache is disabled on devices with too little RAM.
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+#else
+    EXPECT_NE(applePID, [webView _webProcessIdentifier]);
+#endif
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main.html", [[webView URL] absoluteString]);
+}
 
 TEST(ProcessSwap, ClosePageAfterCrossSiteProvisionalLoad)
 {

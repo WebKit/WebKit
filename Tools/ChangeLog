@@ -1,3 +1,16 @@
+2019-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [Process-Swap-On-Navigation] WebKit hangs when going back to a form submission's page due to Process-Swap-On-Navigation on iOS 12.2 and higher
+        https://bugs.webkit.org/show_bug.cgi?id=197097
+        <rdar://problem/50048318>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+        (-[PSONScheme webView:startURLSchemeTask:]):
+
 2019-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Implement AtkComponentIface scroll_to methods

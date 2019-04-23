@@ -1,3 +1,15 @@
+2019-04-23  Chris Dumez  <cdumez@apple.com>
+
+        [Process-Swap-On-Navigation] WebKit hangs when going back to a form submission's page due to Process-Swap-On-Navigation on iOS 12.2 and higher
+        https://bugs.webkit.org/show_bug.cgi?id=197097
+        <rdar://problem/50048318>
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        * WebCoreSupport/WebFrameLoaderClient.h:
+
 2019-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKitLegacy
