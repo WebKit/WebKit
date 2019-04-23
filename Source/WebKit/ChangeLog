@@ -1,3 +1,15 @@
+2019-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] element.focus() sometimes fails to reveal the focused element when it becomes editable dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=197188
+
+        Reviewed by Wenson Hsieh.
+
+        Commit the scroll tree update before revealing the keyboard via editor state update.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::commitLayerTree):
+
 2019-04-23  Remy Demarest  <rdemarest@apple.com>
 
         Fix layout issues occuring when entering full screen mode.

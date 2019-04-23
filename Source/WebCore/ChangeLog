@@ -1,3 +1,29 @@
+2019-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] element.focus() sometimes fails to reveal the focused element when it becomes editable dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=197188
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by the scroll-to-reveal code triggered by Element::updateFocusAppearance updating
+        the scroll position via scrolling tree update in a layer tree commit which happens after
+        _zoomToRevealFocusedElement in WKContentView had already scrolled the frame view.
+
+        To fix this problem, we need to defer the editor state update until the layer commit (see r244494),
+        and update the scrolling tree before invoking WebPageProxy::editorStateChanged which brings up
+        the keyboard and scroll-to-reveal the caret in the UI process side.
+
+        We also avoid revealing the focus for the second time via Document::scheduleScrollToFocusedElement
+        in Element::updateFocusAppearance as this timer based scrolling also happens after we had already
+        revealed the caret in _zoomToRevealFocusedElement. This is a bit hacky but works for most cases since
+        we wouldn't bring up a keyboard if the focused element was not editable anyway.
+
+        Test: editing/selection/ios/scrolling-to-focused-element-inside-iframe.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance): Avoid scheduling a timer based reavel of the focused element
+        when we're already revealing the element via selection change.
+
 2019-04-23  Remy Demarest  <rdemarest@apple.com>
 
         Fix layout issues occuring when entering full screen mode.

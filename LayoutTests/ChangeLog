@@ -1,3 +1,15 @@
+2019-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [iOS] element.focus() sometimes fails to reveal the focused element when it becomes editable dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=197188
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test.
+
+        * editing/selection/ios/scrolling-to-focused-element-inside-iframe-expected.txt: Added.
+        * editing/selection/ios/scrolling-to-focused-element-inside-iframe.html: Added.
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Ad Click Attribution redirects to well-known location should not trigger a conversion if they are blocked by content blockers
