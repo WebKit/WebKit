@@ -56,6 +56,17 @@ WI.DOMNode = class DOMNode extends WI.Object
         else
             this.ownerDocument = doc;
 
+        this._frame = null;
+
+        // COMPATIBILITY (iOS 12.2): DOM.Node.frameId was changed to represent the owner frame, not the content frame.
+        if (InspectorBackend.domains.Timeline && !InspectorBackend.domains.Timeline.hasEvent("programmaticCaptureStarted")) {
+            if (payload.frameId)
+                this._frame = WI.networkManager.frameForIdentifier(payload.frameId);
+        }
+
+        if (!this._frame && this.ownerDocument)
+            this._frame = WI.networkManager.frameForIdentifier(this.ownerDocument.frameIdentifier);
+
         this._attributes = [];
         this._attributesMap = new Map;
         if (payload.attributes)
@@ -116,9 +127,6 @@ WI.DOMNode = class DOMNode extends WI.Object
             this._renumber();
         }
 
-        if (payload.frameId)
-            this._frameIdentifier = payload.frameId;
-
         if (this._nodeType === Node.ELEMENT_NODE) {
             // HTML and BODY from internal iframes should not overwrite top-level ones.
             if (this.ownerDocument && !this.ownerDocument.documentElement && this._nodeName === "HTML")
@@ -178,20 +186,9 @@ WI.DOMNode = class DOMNode extends WI.Object
 
     // Public
 
+    get frame() { return this._frame; }
     get domEvents() { return this._domEvents; }
     get lowPowerRanges() { return this._lowPowerRanges; }
-
-    get frameIdentifier()
-    {
-        return this._frameIdentifier || this.ownerDocument.frameIdentifier;
-    }
-
-    get frame()
-    {
-        if (!this._frame)
-            this._frame = WI.networkManager.frameForIdentifier(this.frameIdentifier);
-        return this._frame;
-    }
 
     get attached()
     {

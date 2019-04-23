@@ -145,11 +145,10 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
         let inspectedNode = WI.domManager.inspectedNode;
         if (inspectedNode) {
-            let frame = inspectedNode.ownerDocument.frame;
+            let frame = inspectedNode.frame;
             if (frame) {
                 if (this._shouldAutomaticallySelectExecutionContext)
                     executionContext = frame.pageExecutionContext;
-
                 preferredName = this._preferredNameForFrame(frame);
             }
         }

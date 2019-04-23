@@ -736,11 +736,8 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let isNonShadowEditable = !node.isInUserAgentShadowTree() && this.editable;
         let attached = node.attached;
 
-        if (event.target && event.target.tagName === "A") {
-            let url = event.target.href;
-            let frame = WI.networkManager.frameForIdentifier(node.frameIdentifier);
-            WI.appendContextMenuItemsForURL(contextMenu, url, {frame});
-        }
+        if (event.target && event.target.tagName === "A")
+            WI.appendContextMenuItemsForURL(contextMenu, event.target.href, {frame: node.frame});
 
         contextMenu.appendSeparator();
 
@@ -1276,7 +1273,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             attrSpanElement.append("=\u200B\"");
 
         if (name === "src" || /\bhref\b/.test(name)) {
-            let baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
+            let baseURL = node.frame ? node.frame.url : null;
             let rewrittenURL = absoluteURL(value, baseURL);
             value = value.insertWordBreakCharacters();
             if (!rewrittenURL) {
@@ -1292,7 +1289,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
                 attrSpanElement.appendChild(attrValueElement);
             }
         } else if (name === "srcset") {
-            let baseURL = node.ownerDocument ? node.ownerDocument.documentURL : null;
+            let baseURL = node.frame ? node.frame.url : null;
             attrValueElement = attrSpanElement.createChild("span", "html-attribute-value");
 
             // Leading whitespace.

@@ -59,6 +59,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "FullscreenManager.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -1561,19 +1562,16 @@ Ref<Inspector::Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* 
     }
 
     auto* pageAgent = m_instrumentingAgents.inspectorPageAgent();
+    if (pageAgent) {
+        if (auto* frameView = node->document().view())
+            value->setFrameId(pageAgent->frameId(&frameView->frame()));
+    }
 
     if (is<Element>(*node)) {
         Element& element = downcast<Element>(*node);
         value->setAttributes(buildArrayForElementAttributes(&element));
         if (is<HTMLFrameOwnerElement>(element)) {
-            HTMLFrameOwnerElement& frameOwner = downcast<HTMLFrameOwnerElement>(element);
-            if (pageAgent) {
-                Frame* frame = frameOwner.contentFrame();
-                if (frame)
-                    value->setFrameId(pageAgent->frameId(frame));
-            }
-            Document* document = frameOwner.contentDocument();
-            if (document)
+            if (auto* document = downcast<HTMLFrameOwnerElement>(element).contentDocument())
                 value->setContentDocument(buildObjectForNode(document, 0, nodesMap));
         }
 

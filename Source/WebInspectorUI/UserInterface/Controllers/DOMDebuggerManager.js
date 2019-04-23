@@ -170,10 +170,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         console.assert(node instanceof WI.DOMNode);
 
-        if (!node)
+        if (!node || !node.frame)
             return [];
 
-        let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(node.frameIdentifier);
+        let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(node.frame.id);
         if (!domBreakpointNodeIdentifierMap)
             return [];
 
@@ -397,10 +397,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         let nodeIdentifier = breakpoint.domNodeIdentifier;
         let node = WI.domManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for breakpoint.", breakpoint);
-        if (!node)
+        if (!node || !node.frame)
             return;
 
-        let frameIdentifier = node.frameIdentifier;
+        let frameIdentifier = node.frame.id;
         let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(frameIdentifier);
         console.assert(domBreakpointNodeIdentifierMap, "Missing DOM breakpoints for node parent frame.", node);
         if (!domBreakpointNodeIdentifierMap)
@@ -457,10 +457,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     {
         let node = WI.domManager.nodeForId(nodeIdentifier);
         console.assert(node, "Missing DOM node for nodeIdentifier.", nodeIdentifier);
-        if (!node)
+        if (!node || !node.frame)
             return;
 
-        let frameIdentifier = node.frameIdentifier;
+        let frameIdentifier = node.frame.id;
         let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(frameIdentifier);
         if (!domBreakpointNodeIdentifierMap) {
             domBreakpointNodeIdentifierMap = new Map;
@@ -611,10 +611,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     _nodeInserted(event)
     {
         let node = event.data.node;
-        if (node.nodeType() !== Node.ELEMENT_NODE || !node.ownerDocument)
+        if (node.nodeType() !== Node.ELEMENT_NODE || !node.frame)
             return;
 
-        let url = node.ownerDocument.documentURL;
+        let url = node.frame.url;
         let breakpoints = this._domBreakpointURLMap.get(url);
         if (!breakpoints)
             return;
@@ -633,10 +633,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
     _nodeRemoved(event)
     {
         let node = event.data.node;
-        if (node.nodeType() !== Node.ELEMENT_NODE || !node.ownerDocument)
+        if (node.nodeType() !== Node.ELEMENT_NODE || !node.frame)
             return;
 
-        let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(node.frameIdentifier);
+        let domBreakpointNodeIdentifierMap = this._domBreakpointFrameIdentifierMap.get(node.frame.id);
         if (!domBreakpointNodeIdentifierMap)
             return;
 
@@ -647,7 +647,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         domBreakpointNodeIdentifierMap.delete(node.id);
 
         if (!domBreakpointNodeIdentifierMap.size)
-            this._domBreakpointFrameIdentifierMap.delete(node.frameIdentifier);
+            this._domBreakpointFrameIdentifierMap.delete(node.frame.id);
 
         for (let breakpoint of breakpoints)
             breakpoint.domNodeIdentifier = null;
