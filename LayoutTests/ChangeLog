@@ -1,3 +1,21 @@
+2019-04-23  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r240727) [ Mac iOS ] Layout Test http/tests/workers/service/basic-register-exceptions.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=194368
+        <rdar://problem/47937467>
+
+        Reviewed by Alex Christensen.
+
+        Test was exiting sooner than the last registration was rejected.
+        Make sure that the test is run until the end in a more ordered way.
+
+        * http/tests/workers/service/basic-register-exceptions-expected.txt:
+        * http/tests/workers/service/resources/basic-register-exceptions.js:
+        (async.doTest):
+        (then): Deleted.
+        (catch): Deleted.
+        * platform/mac-wk2/TestExpectations:
+
 2019-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATK] Implement AtkComponentIface scroll_to methods
