@@ -65,6 +65,8 @@ AXEndTextMarkerForBounds
 AXStartTextMarkerForBounds
 AXLineTextMarkerRangeForTextMarker
 AXSelectTextWithCriteria
+AXSearchTextWithCriteria
+AXTextOperation
 
 ----------------------
 {{-1.000000, -1.000000}, {60.000000, 18.000000}}

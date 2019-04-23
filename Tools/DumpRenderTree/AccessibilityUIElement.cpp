@@ -279,6 +279,24 @@ static JSValueRef selectTextWithCriteriaCallback(JSContextRef context, JSObjectR
     return JSValueMakeString(context, result.get());
 }
 
+#if PLATFORM(MAC)
+static JSValueRef searchTextWithCriteriaCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSValueRef searchStrings = arguments[0];
+    JSRetainPtr<JSStringRef> startFrom;
+    if (argumentCount > 1)
+        startFrom = adopt(JSValueToStringCopy(context, arguments[1], exception));
+    JSRetainPtr<JSStringRef> direction;
+    if (argumentCount > 2)
+        direction = adopt(JSValueToStringCopy(context, arguments[2], exception));
+
+    return toAXElement(thisObject)->searchTextWithCriteria(context, searchStrings, startFrom.get(), direction.get());
+}
+#endif
+
 static JSValueRef indexOfChildCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 1)
@@ -1896,6 +1914,9 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "uiElementCountForSearchPredicate", uiElementCountForSearchPredicateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "uiElementForSearchPredicate", uiElementForSearchPredicateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectTextWithCriteria", selectTextWithCriteriaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(MAC)
+        { "searchTextWithCriteria", searchTextWithCriteriaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "linkedUIElementAtIndex", linkedUIElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "indexOfChild", indexOfChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

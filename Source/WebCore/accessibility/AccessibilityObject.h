@@ -305,30 +305,45 @@ struct PlainTextRange {
     bool isNull() const { return !start && !length; }
 };
 
-enum class AccessibilitySelectTextActivity {
-    FindAndReplace,
-    FindAndSelect,
-    FindAndCapitalize,
-    FindAndLowercase,
-    FindAndUppercase
+enum class AccessibilitySearchTextStartFrom {
+    Begin, // Search from the beginning of the element.
+    Selection, // Search from the position of the current selection.
+    End // Search from the end of the element.
 };
 
-enum class AccessibilitySelectTextAmbiguityResolution {
-    ClosestAfter,
-    ClosestBefore,
-    ClosestTo
+enum class AccessibilitySearchTextDirection {
+    Forward, // Occurrence after the starting range.
+    Backward, // Occurrence before the starting range.
+    Closest, // Closest occurrence to the starting range, whether after or before.
+    All // All occurrences
 };
 
-struct AccessibilitySelectTextCriteria {
-    AccessibilitySelectTextActivity activity;
-    AccessibilitySelectTextAmbiguityResolution ambiguityResolution;
-    String replacementString;
-    Vector<String> searchStrings;
-    
-    AccessibilitySelectTextCriteria(AccessibilitySelectTextActivity activity, AccessibilitySelectTextAmbiguityResolution ambiguityResolution, const String& replacementString)
-        : activity(activity)
-        , ambiguityResolution(ambiguityResolution)
-        , replacementString(replacementString)
+struct AccessibilitySearchTextCriteria {
+    Vector<String> searchStrings; // Text strings to search for.
+    AccessibilitySearchTextStartFrom start;
+    AccessibilitySearchTextDirection direction;
+
+    AccessibilitySearchTextCriteria()
+        : start(AccessibilitySearchTextStartFrom::Selection)
+        , direction(AccessibilitySearchTextDirection::Forward)
+    { }
+};
+
+enum class AccessibilityTextOperationType {
+    Select,
+    Replace,
+    Capitalize,
+    Lowercase,
+    Uppercase
+};
+
+struct AccessibilityTextOperation {
+    Vector<RefPtr<Range>> textRanges; // text on which perform the operation.
+    AccessibilityTextOperationType type;
+    String replacementText; // For type = replace.
+
+    AccessibilityTextOperation()
+        : type(AccessibilityTextOperationType::Select)
     { }
 };
 
@@ -607,12 +622,16 @@ public:
     virtual bool isDescendantOfBarrenParent() const { return false; }
 
     bool isDescendantOfRole(AccessibilityRole) const;
-    
+
     // Text selection
-    RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String>&) const;
+private:
+    RefPtr<Range> rangeOfStringClosestToRangeInDirection(Range*, AccessibilitySearchDirection, Vector<String> const&) const;
     RefPtr<Range> selectionRange() const;
-    String selectText(AccessibilitySelectTextCriteria*);
-    
+    RefPtr<Range> findTextRange(Vector<String> const& searchStrings, RefPtr<Range> const& start, AccessibilitySearchTextDirection) const;
+public:
+    Vector<RefPtr<Range>> findTextRanges(AccessibilitySearchTextCriteria const&) const;
+    Vector<String> performTextOperation(AccessibilityTextOperation const&);
+
     virtual AccessibilityObject* observableObject() const { return nullptr; }
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }
     virtual AccessibilityObject* titleUIElement() const { return nullptr; }

@@ -372,6 +372,112 @@ using namespace HTMLNames;
 #define NSAccessibilitySelectTextWithCriteriaParameterizedAttribute @"AXSelectTextWithCriteria"
 #endif
 
+// Text search
+
+#ifndef NSAccessibilitySearchTextWithCriteriaParameterizedAttribute
+/* Performs a text search with the given parameters.
+ Returns an NSArray of text marker ranges of the search hits.
+ */
+#define NSAccessibilitySearchTextWithCriteriaParameterizedAttribute @"AXSearchTextWithCriteria"
+#endif
+
+#ifndef NSAccessibilitySearchTextSearchStrings
+// NSArray of strings to search for.
+#define NSAccessibilitySearchTextSearchStrings @"AXSearchTextSearchStrings"
+#endif
+
+#ifndef NSAccessibilitySearchTextStartFrom
+// NSString specifying the start point of the search: selection, begin or end.
+#define NSAccessibilitySearchTextStartFrom @"AXSearchTextStartFrom"
+#endif
+
+#ifndef NSAccessibilitySearchTextStartFromBegin
+// Value for SearchTextStartFrom.
+#define NSAccessibilitySearchTextStartFromBegin @"AXSearchTextStartFromBegin"
+#endif
+
+#ifndef NSAccessibilitySearchTextStartFromSelection
+// Value for SearchTextStartFrom.
+#define NSAccessibilitySearchTextStartFromSelection @"AXSearchTextStartFromSelection"
+#endif
+
+#ifndef NSAccessibilitySearchTextStartFromEnd
+// Value for SearchTextStartFrom.
+#define NSAccessibilitySearchTextStartFromEnd @"AXSearchTextStartFromEnd"
+#endif
+
+#ifndef NSAccessibilitySearchTextDirection
+// NSString specifying the direction of the search: forward, backward, closest, all.
+#define NSAccessibilitySearchTextDirection @"AXSearchTextDirection"
+#endif
+
+#ifndef NSAccessibilitySearchTextDirectionForward
+// Value for SearchTextDirection.
+#define NSAccessibilitySearchTextDirectionForward @"AXSearchTextDirectionForward"
+#endif
+
+#ifndef NSAccessibilitySearchTextDirectionBackward
+// Value for SearchTextDirection.
+#define NSAccessibilitySearchTextDirectionBackward @"AXSearchTextDirectionBackward"
+#endif
+
+#ifndef NSAccessibilitySearchTextDirectionClosest
+// Value for SearchTextDirection.
+#define NSAccessibilitySearchTextDirectionClosest @"AXSearchTextDirectionClosest"
+#endif
+
+#ifndef NSAccessibilitySearchTextDirectionAll
+// Value for SearchTextDirection.
+#define NSAccessibilitySearchTextDirectionAll @"AXSearchTextDirectionAll"
+#endif
+
+// Text operations
+
+#ifndef NSAccessibilityTextOperationParameterizedAttribute
+// Performs an operation on the given text.
+#define NSAccessibilityTextOperationParameterizedAttribute @"AXTextOperation"
+#endif
+
+#ifndef NSAccessibilityTextOperationMarkerRanges
+// Text on which to perform operation.
+#define NSAccessibilityTextOperationMarkerRanges @"AXTextOperationMarkerRanges"
+#endif
+
+#ifndef NSAccessibilityTextOperationType
+// The type of operation to be performed: select, replace, capitalize....
+#define NSAccessibilityTextOperationType @"AXTextOperationType"
+#endif
+
+#ifndef NSAccessibilityTextOperationSelect
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationSelect @"TextOperationSelect"
+#endif
+
+#ifndef NSAccessibilityTextOperationReplace
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationReplace @"TextOperationReplace"
+#endif
+
+#ifndef NSAccessibilityTextOperationCapitalize
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationCapitalize @"Capitalize"
+#endif
+
+#ifndef NSAccessibilityTextOperationLowercase
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationLowercase @"Lowercase"
+#endif
+
+#ifndef NSAccessibilityTextOperationUppercase
+// Value for TextOperationType.
+#define NSAccessibilityTextOperationUppercase @"Uppercase"
+#endif
+
+#ifndef NSAccessibilityTextOperationReplacementString
+// Replacement text for operation replace.
+#define NSAccessibilityTextOperationReplacementString @"AXTextOperationReplacementString"
+#endif
+
 // Math attributes
 #define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
 #define NSAccessibilityMathRootIndexAttribute @"AXMathRootIndex"
@@ -504,39 +610,39 @@ static id AXTextMarkerRangeEnd(id range)
 
 #pragma mark Select text helpers
 
-static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(const NSDictionary *parameterizedAttribute)
+// To be deprecated.
+static std::pair<AccessibilitySearchTextCriteria, AccessibilityTextOperation> accessibilityTextCriteriaForParameterizedAttribute(const NSDictionary *parameterizedAttribute)
 {
+    AccessibilitySearchTextCriteria criteria;
+    AccessibilityTextOperation operation;
+
     NSString *activityParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextActivity];
     NSString *ambiguityResolutionParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextAmbiguityResolution];
     NSString *replacementStringParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextReplacementString];
     NSArray *searchStringsParameter = [parameterizedAttribute objectForKey:NSAccessibilitySelectTextSearchStrings];
-    
-    AccessibilitySelectTextActivity activity = AccessibilitySelectTextActivity::FindAndSelect;
+
     if ([activityParameter isKindOfClass:[NSString class]]) {
         if ([activityParameter isEqualToString:NSAccessibilitySelectTextActivityFindAndReplace])
-            activity = AccessibilitySelectTextActivity::FindAndReplace;
+            operation.type = AccessibilityTextOperationType::Replace;
         else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndCapitalize])
-            activity = AccessibilitySelectTextActivity::FindAndCapitalize;
+            operation.type = AccessibilityTextOperationType::Capitalize;
         else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndLowercase])
-            activity = AccessibilitySelectTextActivity::FindAndLowercase;
+            operation.type = AccessibilityTextOperationType::Lowercase;
         else if ([activityParameter isEqualToString:kAXSelectTextActivityFindAndUppercase])
-            activity = AccessibilitySelectTextActivity::FindAndUppercase;
+            operation.type = AccessibilityTextOperationType::Uppercase;
     }
-    
-    AccessibilitySelectTextAmbiguityResolution ambiguityResolution = AccessibilitySelectTextAmbiguityResolution::ClosestTo;
+
+    criteria.direction = AccessibilitySearchTextDirection::Closest;
     if ([ambiguityResolutionParameter isKindOfClass:[NSString class]]) {
         if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestAfterSelection])
-            ambiguityResolution = AccessibilitySelectTextAmbiguityResolution::ClosestAfter;
+            criteria.direction = AccessibilitySearchTextDirection::Forward;
         else if ([ambiguityResolutionParameter isEqualToString:NSAccessibilitySelectTextAmbiguityResolutionClosestBeforeSelection])
-            ambiguityResolution = AccessibilitySelectTextAmbiguityResolution::ClosestBefore;
+            criteria.direction = AccessibilitySearchTextDirection::Backward;
     }
-    
-    String replacementString;
+
     if ([replacementStringParameter isKindOfClass:[NSString class]])
-        replacementString = replacementStringParameter;
-    
-    AccessibilitySelectTextCriteria criteria(activity, ambiguityResolution, replacementString);
-    
+        operation.replacementText = replacementStringParameter;
+
     if ([searchStringsParameter isKindOfClass:[NSArray class]]) {
         size_t searchStringsCount = static_cast<size_t>([searchStringsParameter count]);
         criteria.searchStrings.reserveInitialCapacity(searchStringsCount);
@@ -545,8 +651,76 @@ static AccessibilitySelectTextCriteria accessibilitySelectTextCriteriaForCriteri
                 criteria.searchStrings.uncheckedAppend(searchString);
         }
     }
-    
+
+    return std::make_pair(criteria, operation);
+}
+
+static AccessibilitySearchTextCriteria accessibilitySearchTextCriteriaForParameterizedAttribute(const NSDictionary *params)
+{
+    AccessibilitySearchTextCriteria criteria;
+
+    NSArray *searchStrings = [params objectForKey:NSAccessibilitySearchTextSearchStrings];
+    NSString *start = [params objectForKey:NSAccessibilitySearchTextStartFrom];
+    NSString *direction = [params objectForKey:NSAccessibilitySearchTextDirection];
+
+    if ([searchStrings isKindOfClass:[NSArray class]]) {
+        size_t searchStringsCount = static_cast<size_t>([searchStrings count]);
+        criteria.searchStrings.reserveInitialCapacity(searchStringsCount);
+        for (NSString *searchString in searchStrings) {
+            if ([searchString isKindOfClass:[NSString class]])
+                criteria.searchStrings.uncheckedAppend(searchString);
+        }
+    }
+
+    if ([start isKindOfClass:[NSString class]]) {
+        if ([start isEqualToString:NSAccessibilitySearchTextStartFromBegin])
+            criteria.start = AccessibilitySearchTextStartFrom::Begin;
+        else if ([start isEqualToString:NSAccessibilitySearchTextStartFromEnd])
+            criteria.start = AccessibilitySearchTextStartFrom::End;
+    }
+
+    if ([direction isKindOfClass:[NSString class]]) {
+        if ([direction isEqualToString:NSAccessibilitySearchTextDirectionBackward])
+            criteria.direction = AccessibilitySearchTextDirection::Backward;
+        else if ([direction isEqualToString:NSAccessibilitySearchTextDirectionClosest])
+            criteria.direction = AccessibilitySearchTextDirection::Closest;
+        else if ([direction isEqualToString:NSAccessibilitySearchTextDirectionAll])
+            criteria.direction = AccessibilitySearchTextDirection::All;
+    }
+
     return criteria;
+}
+
+static AccessibilityTextOperation accessibilityTextOperationForParameterizedAttribute(WebAccessibilityObjectWrapper *obj, const NSDictionary *parameterizedAttribute)
+{
+    AccessibilityTextOperation operation;
+
+    NSArray *markerRanges = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationMarkerRanges];
+    NSString *operationType = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationType];
+    NSString *replacementString = [parameterizedAttribute objectForKey:NSAccessibilityTextOperationReplacementString];
+
+    if ([markerRanges isKindOfClass:[NSArray class]]) {
+        size_t count = static_cast<size_t>(markerRanges.count);
+        operation.textRanges.reserveInitialCapacity(count);
+        for (id markerRange : markerRanges)
+            operation.textRanges.append([obj rangeForTextMarkerRange:markerRange]);
+    }
+
+    if ([operationType isKindOfClass:[NSString class]]) {
+        if ([operationType isEqualToString:NSAccessibilityTextOperationReplace])
+            operation.type = AccessibilityTextOperationType::Replace;
+        else if ([operationType isEqualToString:NSAccessibilityTextOperationCapitalize])
+            operation.type = AccessibilityTextOperationType::Capitalize;
+        else if ([operationType isEqualToString:NSAccessibilityTextOperationLowercase])
+            operation.type = AccessibilityTextOperationType::Lowercase;
+        else if ([operationType isEqualToString:NSAccessibilityTextOperationUppercase])
+            operation.type = AccessibilityTextOperationType::Uppercase;
+    }
+
+    if ([replacementString isKindOfClass:[NSString class]])
+        operation.replacementText = replacementString;
+
+    return operation;
 }
 
 #pragma mark Text Marker helpers
@@ -3439,6 +3613,8 @@ IGNORE_WARNINGS_END
             NSAccessibilityStartTextMarkerForBoundsParameterizedAttribute,
             NSAccessibilityLineTextMarkerRangeForTextMarkerParameterizedAttribute,
             NSAccessibilitySelectTextWithCriteriaParameterizedAttribute,
+            NSAccessibilitySearchTextWithCriteriaParameterizedAttribute,
+            NSAccessibilityTextOperationParameterizedAttribute,
             nil];
     }
     
@@ -3990,10 +4166,41 @@ IGNORE_WARNINGS_END
     
     // dispatch
     if ([attribute isEqualToString:NSAccessibilitySelectTextWithCriteriaParameterizedAttribute]) {
-        AccessibilitySelectTextCriteria criteria = accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute(dictionary);
-        return m_object->selectText(&criteria);
+        // To be deprecated.
+        auto criteria = accessibilityTextCriteriaForParameterizedAttribute(dictionary);
+        criteria.second.textRanges = m_object->findTextRanges(criteria.first);
+        ASSERT(criteria.second.textRanges.size() <= 1);
+        Vector<String> result = m_object->performTextOperation(criteria.second);
+        ASSERT(result.size() <= 1);
+        if (result.size() > 0)
+            return result[0];
+        return String();
     }
-    
+
+    if ([attribute isEqualToString:NSAccessibilitySearchTextWithCriteriaParameterizedAttribute]) {
+        auto criteria = accessibilitySearchTextCriteriaForParameterizedAttribute(dictionary);
+        auto ranges = m_object->findTextRanges(criteria);
+        if (ranges.isEmpty())
+            return nil;
+        NSMutableArray *markers = [NSMutableArray arrayWithCapacity:ranges.size()];
+        for (auto range : ranges) {
+            if (id marker = [self textMarkerRangeFromRange:range])
+                [markers addObject:marker];
+        }
+        return markers;
+    }
+
+    if ([attribute isEqualToString:NSAccessibilityTextOperationParameterizedAttribute]) {
+        auto textOperation = accessibilityTextOperationForParameterizedAttribute(self, dictionary);
+        auto operationResult = m_object->performTextOperation(textOperation);
+        if (operationResult.isEmpty())
+            return nil;
+        NSMutableArray *result = [NSMutableArray arrayWithCapacity:operationResult.size()];
+        for (auto str : operationResult)
+            [result addObject:str];
+        return result;
+    }
+
     if ([attribute isEqualToString:NSAccessibilityUIElementCountForSearchPredicateParameterizedAttribute]) {
         AccessibilitySearchCriteria criteria = accessibilitySearchCriteriaForSearchPredicateParameterizedAttribute(dictionary);
         AccessibilityObject::AccessibilityChildrenVector results;

@@ -178,6 +178,18 @@ static NSString* attributesOfElement(id accessibilityObject)
     return attributesString;
 }
 
+template<typename T>
+static JSValueRef convertVectorToObjectArray(JSContextRef context, Vector<T> const& elements)
+{
+    JSValueRef arrayResult = JSObjectMakeArray(context, 0, 0, 0);
+    JSObjectRef arrayObj = JSValueToObject(context, arrayResult, 0);
+    size_t elementCount = elements.size();
+    for (size_t i = 0; i < elementCount; ++i)
+        JSObjectSetPropertyAtIndex(context, arrayObj, i, JSObjectMake(context, elements[i].getJSClass(), new T(elements[i])), 0);
+
+    return arrayResult;
+}
+
 static JSRetainPtr<JSStringRef> concatenateAttributeAndValue(NSString *attribute, NSString *value)
 {
     Vector<UniChar> buffer([attribute length]);
@@ -192,11 +204,15 @@ static JSRetainPtr<JSStringRef> concatenateAttributeAndValue(NSString *attribute
     return adopt(JSStringCreateWithCharacters(buffer.data(), buffer.size()));
 }
 
-static void convertNSArrayToVector(NSArray* array, Vector<AccessibilityUIElement>& elementVector)
+template<typename T>
+static Vector<T> convertNSArrayToVector(NSArray *array)
 {
-    NSUInteger count = [array count];
+    Vector<T> v;
+    NSUInteger count = array.count;
+    v.reserveInitialCapacity(count);
     for (NSUInteger i = 0; i < count; ++i)
-        elementVector.append(AccessibilityUIElement([array objectAtIndex:i]));
+        v.append([array objectAtIndex:i]);
+    return v;
 }
 
 static JSRetainPtr<JSStringRef> descriptionOfElements(Vector<AccessibilityUIElement>& elementVector)
@@ -255,11 +271,50 @@ static NSDictionary *selectTextParameterizedAttributeForCriteria(JSContextRef co
     return parameterizedAttribute;
 }
 
+#if PLATFORM(MAC)
+static NSDictionary *searchTextParameterizedAttributeForCriteria(JSContextRef context, JSValueRef searchStrings, JSStringRef startFrom, JSStringRef direction)
+{
+    NSMutableDictionary *parameterizedAttribute = [NSMutableDictionary dictionary];
+
+    if (searchStrings) {
+        NSMutableArray *searchStringsParameter = [NSMutableArray array];
+        if (JSValueIsString(context, searchStrings)) {
+            auto searchStringsString = adopt(JSValueToStringCopy(context, searchStrings, nullptr));
+            if (searchStringsString)
+                [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
+        } else if (JSValueIsObject(context, searchStrings)) {
+            JSObjectRef searchStringsArray = JSValueToObject(context, searchStrings, nullptr);
+            unsigned searchStringsArrayLength = 0;
+
+            auto lengthPropertyString = adopt(JSStringCreateWithUTF8CString("length"));
+            JSValueRef searchStringsArrayLengthValue = JSObjectGetProperty(context, searchStringsArray, lengthPropertyString.get(), nullptr);
+            if (searchStringsArrayLengthValue && JSValueIsNumber(context, searchStringsArrayLengthValue))
+                searchStringsArrayLength = static_cast<unsigned>(JSValueToNumber(context, searchStringsArrayLengthValue, nullptr));
+
+            for (unsigned i = 0; i < searchStringsArrayLength; ++i) {
+                auto searchStringsString = adopt(JSValueToStringCopy(context, JSObjectGetPropertyAtIndex(context, searchStringsArray, i, nullptr), nullptr));
+                if (searchStringsString)
+                    [searchStringsParameter addObject:[NSString stringWithJSStringRef:searchStringsString.get()]];
+            }
+        }
+        [parameterizedAttribute setObject:searchStringsParameter forKey:@"AXSearchTextSearchStrings"];
+    }
+
+    if (startFrom)
+        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:startFrom] forKey:@"AXSearchTextStartFrom"];
+
+    if (direction)
+        [parameterizedAttribute setObject:[NSString stringWithJSStringRef:direction] forKey:@"AXSearchTextDirection"];
+
+    return parameterizedAttribute;
+}
+#endif
+
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* linkedElements = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    convertNSArrayToVector(linkedElements, elementVector);
+    elementVector = convertNSArrayToVector<AccessibilityUIElement>(linkedElements);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -267,7 +322,7 @@ void AccessibilityUIElement::getDocumentLinks(Vector<AccessibilityUIElement>& el
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* linkElements = [m_element accessibilityAttributeValue:@"AXLinkUIElements"];
-    convertNSArrayToVector(linkElements, elementVector);
+    elementVector = convertNSArrayToVector<AccessibilityUIElement>(linkElements);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -275,7 +330,7 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& element
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    convertNSArrayToVector(children, elementVector);
+    elementVector = convertNSArrayToVector<AccessibilityUIElement>(children);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -283,7 +338,7 @@ void AccessibilityUIElement::getChildrenWithRange(Vector<AccessibilityUIElement>
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* children = [m_element accessibilityArrayAttributeValues:NSAccessibilityChildrenAttribute index:location maxCount:length];
-    convertNSArrayToVector(children, elementVector);
+    elementVector = convertNSArrayToVector<AccessibilityUIElement>(children);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -492,7 +547,7 @@ void AccessibilityUIElement::rowHeaders(Vector<AccessibilityUIElement>& elements
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityRowHeaderUIElementsAttribute];
     if ([value isKindOfClass:[NSArray class]])
-        convertNSArrayToVector(value, elements);
+        elements = convertNSArrayToVector<AccessibilityUIElement>(value);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -501,7 +556,7 @@ void AccessibilityUIElement::columnHeaders(Vector<AccessibilityUIElement>& eleme
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:NSAccessibilityColumnHeaderUIElementsAttribute];
     if ([value isKindOfClass:[NSArray class]])
-        convertNSArrayToVector(value, elements);
+        elements = convertNSArrayToVector<AccessibilityUIElement>(value);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -510,7 +565,7 @@ void AccessibilityUIElement::uiElementArrayAttributeValue(JSStringRef attribute,
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
     if ([value isKindOfClass:[NSArray class]])
-        convertNSArrayToVector(value, elements);
+        elements = convertNSArrayToVector<AccessibilityUIElement>(value);
     END_AX_OBJC_EXCEPTIONS
 }
 
@@ -1103,13 +1158,25 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectTextWithCriteria(JSContex
     return nullptr;
 }
 
+#if PLATFORM(MAC)
+JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef context, JSValueRef searchStrings, JSStringRef startFrom, JSStringRef direction)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSDictionary *parameterizedAttribute = searchTextParameterizedAttributeForCriteria(context, searchStrings, startFrom, direction);
+    id result = [m_element accessibilityAttributeValue:@"AXSearchTextWithCriteria" forParameter:parameterizedAttribute];
+    if ([result isKindOfClass:[NSArray class]])
+        return convertVectorToObjectArray<AccessibilityTextMarkerRange>(context, convertNSArrayToVector<AccessibilityTextMarkerRange>(result));
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+#endif
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumnHeaders()
 {
     // not yet defined in AppKit... odd
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* columnHeadersArray = [m_element accessibilityAttributeValue:@"AXColumnHeaderUIElements"];
-    Vector<AccessibilityUIElement> columnHeadersVector;
-    convertNSArrayToVector(columnHeadersArray, columnHeadersVector);
+    auto columnHeadersVector = convertNSArrayToVector<AccessibilityUIElement>(columnHeadersArray);
     return descriptionOfElements(columnHeadersVector);
     END_AX_OBJC_EXCEPTIONS
     
@@ -1120,8 +1187,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRowHeaders()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rowHeadersArray = [m_element accessibilityAttributeValue:@"AXRowHeaderUIElements"];
-    Vector<AccessibilityUIElement> rowHeadersVector;
-    convertNSArrayToVector(rowHeadersArray, rowHeadersVector);
+    auto rowHeadersVector = convertNSArrayToVector<AccessibilityUIElement>(rowHeadersArray);
     return descriptionOfElements(rowHeadersVector);
     END_AX_OBJC_EXCEPTIONS
     
@@ -1132,8 +1198,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfColumns()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* columnsArray = [m_element accessibilityAttributeValue:NSAccessibilityColumnsAttribute];
-    Vector<AccessibilityUIElement> columnsVector;
-    convertNSArrayToVector(columnsArray, columnsVector);
+    auto columnsVector = convertNSArrayToVector<AccessibilityUIElement>(columnsArray);
     return descriptionOfElements(columnsVector);
     END_AX_OBJC_EXCEPTIONS
     
@@ -1144,8 +1209,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfRows()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* rowsArray = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
-    Vector<AccessibilityUIElement> rowsVector;
-    convertNSArrayToVector(rowsArray, rowsVector);
+    auto rowsVector = convertNSArrayToVector<AccessibilityUIElement>(rowsArray);
     return descriptionOfElements(rowsVector);
     END_AX_OBJC_EXCEPTIONS
     
@@ -1156,8 +1220,7 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributesOfVisibleCells()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     NSArray* cellsArray = [m_element accessibilityAttributeValue:@"AXVisibleCells"];
-    Vector<AccessibilityUIElement> cellsVector;
-    convertNSArrayToVector(cellsArray, cellsVector);
+    auto cellsVector = convertNSArrayToVector<AccessibilityUIElement>(cellsArray);
     return descriptionOfElements(cellsVector);
     END_AX_OBJC_EXCEPTIONS
     

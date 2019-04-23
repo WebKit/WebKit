@@ -1,3 +1,40 @@
+2019-04-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        Accessibility text search and selection API enhancements.
+        https://bugs.webkit.org/show_bug.cgi?id=197095
+        <rdar://problem/48181791>
+
+        Reviewed by Chris Fleizach.
+
+        - Split the existing SelectTextWithCriteria API into two: search text API (SearchTextWithCriteria) and a text operation API (TextOperation: select, replace, capitalize...).
+        - This allows for more flexibility and extensibility.
+        - Added the ability to retrieve text markers for multiple search hits.
+        - Various code clean up and consolidation.
+        - Added LayoutTest for search API.
+        - Previous API is marked with "To be deprecated", and is implemented with new implementation. May be removed in a future change.
+
+        Test: accessibility/mac/search-text/search-text.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::rangeClosestToRange):
+        (WebCore::AccessibilityObject::rangeOfStringClosestToRangeInDirection const):
+        (WebCore::AccessibilityObject::findTextRange const):
+        (WebCore::AccessibilityObject::findTextRanges const):
+        (WebCore::AccessibilityObject::performTextOperation):
+        (WebCore::AccessibilityObject::frame const):
+        (WebCore::AccessibilityObject::selectText): Deleted.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilitySearchTextCriteria::AccessibilitySearchTextCriteria):
+        (WebCore::AccessibilityTextOperation::AccessibilityTextOperation):
+        (WebCore::AccessibilitySelectTextCriteria::AccessibilitySelectTextCriteria): Deleted.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (accessibilityTextCriteriaForParameterizedAttribute):
+        (accessibilitySearchTextCriteriaForParameterizedAttribute):
+        (accessibilityTextOperationForParameterizedAttribute):
+        (-[WebAccessibilityObjectWrapper IGNORE_WARNINGS_END]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+        (accessibilitySelectTextCriteriaForCriteriaParameterizedAttribute): Deleted.
+
 2019-04-23  Guy Lewin  <guy@lewin.co.il>
 
         Multiple File Input Icon Set Regardless of File List
