@@ -1,5 +1,17 @@
 2019-04-23  Aakash Jain  <aakash_jain@apple.com>
 
+        [ews-build] Add unit tests for CleanWorkingDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=197195
+
+        Reviewed by Lucas Forschler.
+
+        * BuildSlaveSupport/ews-build/steps_unittest.py:
+        (TestCleanWorkingDirectory):
+        (TestCleanWorkingDirectory.test_success):
+        (TestCleanWorkingDirectory.test_failure):
+
+2019-04-23  Aakash Jain  <aakash_jain@apple.com>
+
         [ews-build] Use explicit imports instead of wildcard imports
         https://bugs.webkit.org/show_bug.cgi?id=197194
 
