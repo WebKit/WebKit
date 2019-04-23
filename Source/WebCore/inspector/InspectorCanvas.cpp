@@ -57,6 +57,9 @@
 #include "RecordingSwizzleTypes.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
+#if ENABLE(CSS_TYPED_OM)
+#include "TypedOMCSSImageValue.h"
+#endif
 #if ENABLE(WEBGL)
 #include "WebGLRenderingContext.h"
 #endif
@@ -454,6 +457,22 @@ int InspectorCanvas::indexForData(DuplicateDataVariant data)
                 array->addItem(indexForData(scriptCallStack->at(i)));
             item = WTFMove(array);
         },
+#if ENABLE(CSS_TYPED_OM)
+        [&] (const RefPtr<TypedOMCSSImageValue>& cssImageValue) {
+            String dataURL = "data:,"_s;
+
+            if (auto* cachedImage = cssImageValue->image()) {
+                auto* image = cachedImage->image();
+                if (image && image != &Image::nullImage()) {
+                    auto imageBuffer = ImageBuffer::create(image->size(), RenderingMode::Unaccelerated);
+                    imageBuffer->context().drawImage(*image, FloatPoint(0, 0));
+                    dataURL = imageBuffer->toDataURL("image/png");
+                }
+            }
+
+            index = indexForData(dataURL);
+        },
+#endif
         [&] (const ScriptCallFrame& scriptCallFrame) {
             auto array = JSON::ArrayOf<double>::create();
             array->addItem(indexForData(scriptCallFrame.functionName()));
@@ -664,8 +683,7 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildAction(const String& name,
             [&] (const RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
 #endif
 #if ENABLE(CSS_TYPED_OM)
-            // FIXME implement: <https://bugs.webkit.org/show_bug.cgi?id=192609>.
-            [&] (const RefPtr<TypedOMCSSImageValue>&) { },
+            [&] (const RefPtr<TypedOMCSSImageValue>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
 #endif
             [&] (const RefPtr<ImageBitmap>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageBitmap); },
             [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },

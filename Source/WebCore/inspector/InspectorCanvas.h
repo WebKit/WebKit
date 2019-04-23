@@ -43,6 +43,9 @@ class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
+#if ENABLE(CSS_TYPED_OM)
+class TypedOMCSSImageValue;
+#endif
 
 typedef String ErrorString;
 
@@ -94,6 +97,9 @@ private:
         RefPtr<ImageData>,
         RefPtr<ImageBitmap>,
         RefPtr<Inspector::ScriptCallStack>,
+#if ENABLE(CSS_TYPED_OM)
+        RefPtr<TypedOMCSSImageValue>,
+#endif
         Inspector::ScriptCallFrame,
         String
     >;
