@@ -31,6 +31,7 @@
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkLoadClient.h"
 #include "NetworkResourceLoadParameters.h"
+#include <WebCore/AdClickAttribution.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
@@ -159,7 +160,7 @@ private:
     void logCookieInformation() const;
 #endif
 
-    void continueWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
+    void continueWillSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, Optional<WebCore::AdClickAttribution::Conversion>&&);
     void didFinishWithRedirectResponse(WebCore::ResourceResponse&&);
     WebCore::ResourceResponse sanitizeResponseIfPossible(WebCore::ResourceResponse&&, WebCore::ResourceResponse::SanitizationType);
 
@@ -169,6 +170,8 @@ private:
     void enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEvent::Init&&) final;
 
     void logSlowCacheRetrieveIfNeeded(const NetworkCache::Cache::RetrieveInfo&);
+
+    void handleAdClickAttributionConversion(WebCore::AdClickAttribution::Conversion&&, const URL&, const WebCore::ResourceRequest&);
 
     Optional<Seconds> validateCacheEntryForMaxAgeCapValidation(const WebCore::ResourceRequest&, const WebCore::ResourceRequest& redirectRequest, const WebCore::ResourceResponse&);
 

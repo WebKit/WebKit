@@ -1,3 +1,15 @@
+2019-04-23  John Wilander  <wilander@apple.com>
+
+        Ad Click Attribution redirects to well-known location should not trigger a conversion if they are blocked by content blockers
+        https://bugs.webkit.org/show_bug.cgi?id=197183
+        <rdar://problem/47763188>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/contentextensions/block-ad-click-attribution-expected.txt: Added.
+        * http/tests/contentextensions/block-ad-click-attribution.html: Added.
+        * http/tests/contentextensions/block-ad-click-attribution.html.json: Added.
+
 2019-04-23  Shawn Roberts  <sroberts@apple.com>
 
         fast/selectors/matches-backtracking.html is a flaky timeout

@@ -42,7 +42,6 @@
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebsiteDataStoreParameters.h"
-#include <WebCore/AdClickAttribution.h>
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/ContentSecurityPolicy.h>
@@ -581,29 +580,35 @@ Optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidatio
     return WTF::nullopt;
 }
 
+void NetworkResourceLoader::handleAdClickAttributionConversion(AdClickAttribution::Conversion&& conversion, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest)
+{
+    ASSERT(!sessionID().isEphemeral());
+
+    RegistrableDomain redirectDomain { redirectRequest.url() };
+    auto& firstPartyURL = redirectRequest.firstPartyForCookies();
+    NetworkSession* networkSession = nullptr;
+    // The redirect has to be done by the same registrable domain and it has to be a third-party request.
+    if (redirectDomain.matches(requestURL) && !redirectDomain.matches(firstPartyURL) && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
+        networkSession->convertAdClickAttribution(AdClickAttribution::Source { WTFMove(redirectDomain) }, AdClickAttribution::Destination { firstPartyURL }, WTFMove(conversion));
+}
+
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ++m_redirectCount;
 
-    auto& redirectURL = redirectRequest.url();
-    if (!sessionID().isEphemeral()) {
-        if (auto adClickConversion = AdClickAttribution::parseConversionRequest(redirectURL)) {
-            RegistrableDomain redirectDomain { redirectURL };
-            auto& firstPartyURL = redirectRequest.firstPartyForCookies();
-            NetworkSession* networkSession = nullptr;
-            // The redirect has to be done by the same registrable domain and it has to be a third-party request.
-            if (redirectDomain.matches(request.url()) && !redirectDomain.matches(firstPartyURL) && (networkSession = m_connection->networkProcess().networkSession(sessionID())))
-                networkSession->convertAdClickAttribution(AdClickAttribution::Source { WTFMove(redirectDomain) }, AdClickAttribution::Destination { firstPartyURL }, WTFMove(*adClickConversion));
-        }
-    }
+    Optional<AdClickAttribution::Conversion> adClickConversion;
+    if (!sessionID().isEphemeral())
+        adClickConversion = AdClickAttribution::parseConversionRequest(redirectRequest.url());
 
     auto maxAgeCap = validateCacheEntryForMaxAgeCapValidation(request, redirectRequest, redirectResponse);
     if (redirectResponse.source() == ResourceResponse::Source::Network && canUseCachedRedirect(request))
         m_cache->storeRedirect(request, redirectResponse, redirectRequest, maxAgeCap);
 
     if (m_networkLoadChecker) {
+        if (adClickConversion)
+            m_networkLoadChecker->enableContentExtensionsCheck();
         m_networkLoadChecker->storeRedirectionIfNeeded(request, redirectResponse);
-        m_networkLoadChecker->checkRedirection(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), this, [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy()](auto&& result) mutable {
+        m_networkLoadChecker->checkRedirection(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), this, [protectedThis = makeRef(*this), this, storedCredentialsPolicy = m_networkLoadChecker->storedCredentialsPolicy(), adClickConversion = WTFMove(adClickConversion)](auto&& result) mutable {
             if (!result.has_value()) {
                 if (result.error().isCancellation())
                     return;
@@ -631,17 +636,19 @@ void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request,
             }
 
             m_shouldRestartLoad = storedCredentialsPolicy != m_networkLoadChecker->storedCredentialsPolicy();
-            this->continueWillSendRedirectedRequest(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse));
+            this->continueWillSendRedirectedRequest(WTFMove(result->request), WTFMove(result->redirectRequest), WTFMove(result->redirectResponse), WTFMove(adClickConversion));
         });
         return;
     }
-    continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse));
+    continueWillSendRedirectedRequest(WTFMove(request), WTFMove(redirectRequest), WTFMove(redirectResponse), WTFMove(adClickConversion));
 }
 
-void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
+void NetworkResourceLoader::continueWillSendRedirectedRequest(ResourceRequest&& request, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse, Optional<AdClickAttribution::Conversion>&& adClickConversion)
 {
     ASSERT(!isSynchronous());
 
+    if (adClickConversion)
+        handleAdClickAttributionConversion(WTFMove(*adClickConversion), request.url(), redirectRequest);
     send(Messages::WebResourceLoader::WillSendRequest(redirectRequest, sanitizeResponseIfPossible(WTFMove(redirectResponse), ResourceResponse::SanitizationType::Redirection)));
 }
 

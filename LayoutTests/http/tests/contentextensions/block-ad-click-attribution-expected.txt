@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: Blocked by content extension
+CONSOLE MESSAGE: Cannot load image https://127.0.0.1:8443/adClickAttribution/resources/redirectToConversion.php?conversionData=12 due to access control checks.
+Tests that ad click attribution redirects to well-known location don't trigger a conversion if they are blocked by content blockers.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Conversion not received - timed out.
+
+Unconverted Ad Click Attributions:
+WebCore::AdClickAttribution 1
+Source: 127.0.0.1
+Destination: localhost
+Campaign ID: 3
+No conversion data.

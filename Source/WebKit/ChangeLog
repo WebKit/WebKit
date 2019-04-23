@@ -1,3 +1,35 @@
+2019-04-23  John Wilander  <wilander@apple.com>
+
+        Ad Click Attribution redirects to well-known location should not trigger a conversion if they are blocked by content blockers
+        https://bugs.webkit.org/show_bug.cgi?id=197183
+        <rdar://problem/47763188>
+
+        Reviewed by Alex Christensen.
+
+        Ad Click Attribution conversions are picked up in the redirect handler
+        in WebKit::NetworkResourceLoader. Content blocking typically happens in
+        the continued redirect request handling in the web content process and
+        a blocked request comes back empty.
+
+        We need to call the WebKit::NetworkLoadChecker in the network process
+        for these specific redirects, just like we do for Ping.
+
+        The change makes use of the existing function
+        NetworkLoadChecker::enableContentExtensionsCheck() for this purpose.
+
+        In essence, this change makes it possible to block all conversions made
+        to a "/.well-known/ad-click-attribution/" URL.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::handleAdClickAttributionConversion):
+            New convenience function.
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequest):
+            Now calls NetworkLoadChecker::enableContentExtensionsCheck() if
+            an Ad Click Attribution conversion was found in the redirect URL.
+        (WebKit::NetworkResourceLoader::continueWillSendRedirectedRequest):
+            If the request was not blocked, it will store any found conversion here.
+        * NetworkProcess/NetworkResourceLoader.h:
+
 2019-04-23  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Use target oriented design for WebKit
