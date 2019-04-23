@@ -1,3 +1,32 @@
+2019-04-23  Remy Demarest  <rdemarest@apple.com>
+
+        Fix layout issues occuring when entering full screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=197086
+        <rdar://problem/47733671>.
+
+        Reviewed by Darin Adler.
+
+        This issue is the result of changing the style mask of the window after entering
+        full screen mode. Safari adds an invisible toolbar to display the URL of the page
+        which ends up breaking the layout. Having that window use a style that includes a
+        titlebar fixes the bug.
+
+        * Platform/spi/mac/AppKitSPI.h:
+        Declare an SPI to be used in WKFullScreenWindowController.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::fullScreenWindow): Make the full screen window show a titlebar
+        and make the content view underlap the titlebar to match the current behavior.
+        Remove NSWindowStyleMaskBorderless which has no effects since it is equal to zero.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController initWithWindow:webView:page:]): Hide the titlebar
+        before beginning the animation to full screen.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Show the title
+        bar when in full screen instead of a blank bar.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Hide the title
+        bar to restore the initial setting.
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Ad Click Attribution redirects to well-known location should not trigger a conversion if they are blocked by content blockers

@@ -47,6 +47,10 @@
 - (void)setInspectorBar:(NSInspectorBar *)bar;
 @end
 
+@interface NSWindow (FullScreenSupport)
+@property CGFloat titlebarAlphaValue;
+@end
+
 #endif
 
 @interface NSInspectorBar (IPI)

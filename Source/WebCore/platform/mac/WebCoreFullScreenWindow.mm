@@ -53,6 +53,17 @@
     return self;
 }
 
+- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
+{
+    UNUSED_PARAM(screen);
+    return frameRect;
+}
+
+- (BOOL)canBecomeMainWindow
+{
+    return NO;
+}
+
 - (BOOL)canBecomeKeyWindow
 {
     return YES;
