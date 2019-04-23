@@ -914,6 +914,48 @@ class TestUploadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestDownloadBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(DownloadBuiltProduct())
+        self.setProperty('platform', 'ios')
+        self.setProperty('fullPlatform', 'ios-simulator-12')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '1234')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/download-built-product', '--platform=ios',  '--release', 'https://ews-build.webkit.org/archives/ios-simulator-12-x86_64-release/1234.zip'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Downloaded built product')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(DownloadBuiltProduct())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-sierra')
+        self.setProperty('configuration', 'debug')
+        self.setProperty('architecture', 'x86_64')
+        self.setProperty('patch_id', '123456')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python', 'Tools/BuildSlaveSupport/download-built-product', '--platform=mac',  '--debug', 'https://ews-build.webkit.org/archives/mac-sierra-x86_64-debug/123456.zip'],
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected failure.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Downloaded built product (failure)')
+        return self.runStep()
+
+
 class TestExtractBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
