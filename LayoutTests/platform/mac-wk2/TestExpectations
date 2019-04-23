@@ -944,3 +944,5 @@ webkit.org/b/196633 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSyn
 
 webkit.org/b/195961 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex7-event_order.html [ Pass Failure ]
 webkit.org/b/195961 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
+
+webkit.org/b/197068 [ Debug ] fast/selectors/matches-backtracking.html [ Pass Timeout ]

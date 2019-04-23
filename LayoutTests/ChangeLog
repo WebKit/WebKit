@@ -1,3 +1,12 @@
+2019-04-23  Shawn Roberts  <sroberts@apple.com>
+
+        fast/selectors/matches-backtracking.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=197068
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating expectations for flaky test
+
 2019-04-23  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r240727) [ Mac iOS ] Layout Test http/tests/workers/service/basic-register-exceptions.html is flaky
