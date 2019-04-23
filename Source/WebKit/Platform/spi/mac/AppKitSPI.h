@@ -47,12 +47,20 @@
 - (void)setInspectorBar:(NSInspectorBar *)bar;
 @end
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101400
 @interface NSWindow (FullScreenSupport)
 @property CGFloat titlebarAlphaValue;
 @end
+#endif
 
 #endif
 
 @interface NSInspectorBar (IPI)
 - (void)_update;
 @end
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101400
+@interface NSWindow (IPI)
+@property CGFloat titlebarAlphaValue;
+@end
+#endif

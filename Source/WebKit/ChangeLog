@@ -1,3 +1,12 @@
+2019-04-23  Remy Demarest  <rdemarest@apple.com>
+
+        Build fix after r244545.
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/mac/AppKitSPI.h:
+        The SPI was an IPI in High Sierra.
+
 2019-04-23  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Input field on ddg.gg is auto focused when url is entered with the software keyboard
