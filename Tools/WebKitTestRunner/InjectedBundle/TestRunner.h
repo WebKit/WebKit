@@ -455,6 +455,7 @@ public:
 
     // Open panel
     void setOpenPanelFiles(JSValueRef);
+    void setOpenPanelFilesMediaIcon(JSValueRef);
 
     // Modal alerts
     void setShouldDismissJavaScriptAlertsAsynchronously(bool);

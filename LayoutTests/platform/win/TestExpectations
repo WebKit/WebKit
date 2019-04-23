@@ -3633,6 +3633,7 @@ editing/selection/character-granularity-selected-range-after-dismissing-selectio
 fast/dom/FileList-iterator-using-open-panel.html [ Skip ]
 fast/forms/file/file-input-reset-using-open-panel.html [ Skip ]
 fast/forms/file/file-reset-in-change-using-open-panel.html [ Skip ]
+fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]
 fast/forms/file/get-file-upload-using-open-panel.html [ Skip ]
 fast/forms/file/input-file-value-using-open-panel.html [ Skip ]
 fast/forms/file/input-file-write-files-using-open-panel.html [ Skip ]

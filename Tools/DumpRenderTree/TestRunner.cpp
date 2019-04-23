@@ -1829,6 +1829,15 @@ static JSValueRef setOpenPanelFilesCallback(JSContextRef context, JSObjectRef fu
     return JSValueMakeUndefined(context);
 }
 
+#if PLATFORM(IOS_FAMILY)
+static JSValueRef SetOpenPanelFilesMediaIconCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount == 1)
+        static_cast<TestRunner*>(JSObjectGetPrivate(thisObject))->setOpenPanelFilesMediaIcon(context, arguments[0]);
+    return JSValueMakeUndefined(context);
+}
+#endif
+
 // Static Values
 
 static JSValueRef getTimeoutCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -2293,6 +2302,9 @@ JSStaticFunction* TestRunner::staticFunctions()
         { "setSpellCheckerLoggingEnabled", setSpellCheckerLoggingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setSpellCheckerResults", setSpellCheckerResultsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setOpenPanelFiles", setOpenPanelFilesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(IOS_FAMILY)
+        { "setOpenPanelFilesMediaIcon", SetOpenPanelFilesMediaIconCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { "forceImmediateCompletion", forceImmediateCompletionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
@@ -2525,6 +2537,23 @@ void TestRunner::setOpenPanelFiles(JSContextRef context, JSValueRef filesValue)
         m_openPanelFiles.push_back(fileBuffer.get());
     }
 }
+
+#if PLATFORM(IOS_FAMILY)
+void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef mediaIcon)
+{
+    // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
+    JSC::VM& vm = toJS(context)->vm();
+    JSC::JSLockHolder lock(vm);
+    
+    JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(vm, toJS(toJS(context), mediaIcon));
+    ASSERT(jsBufferView);
+    RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
+    const char* buffer = static_cast<const char*>(bufferView->baseAddress());
+    std::vector<char> mediaIconData(buffer, buffer + bufferView->byteLength());
+    
+    m_openPanelFilesMediaIcon = mediaIconData;
+}
+#endif
 
 void TestRunner::cleanup()
 {

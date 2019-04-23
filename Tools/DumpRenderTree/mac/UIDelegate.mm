@@ -385,12 +385,32 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
         [filePaths addObject:fileURL.path];
     }
 
+#if PLATFORM(IOS_FAMILY)
+    NSURL *firstURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:openPanelFiles[0].c_str()] relativeToURL:baseURL];
+    NSString *displayString = firstURL.lastPathComponent;
+    const std::vector<char>& iconData = gTestRunner->openPanelFilesMediaIcon();
+    CGImageRef imageRef;
+    if (!iconData.empty()) {
+        RetainPtr<CFDataRef> dataRef = adoptCF(CFDataCreate(nullptr, (unsigned char *)iconData.data(), iconData.size()));
+        RetainPtr<CGDataProviderRef> imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
+        imageRef = CGImageCreateWithJPEGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault);
+    }
+#endif
+
     if (allowMultipleFiles) {
+#if PLATFORM(IOS_FAMILY)
+        [resultListener chooseFilenames:filePaths.get() displayString:displayString iconImage:imageRef];
+#else
         [resultListener chooseFilenames:filePaths.get()];
+#endif
         return;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    [resultListener chooseFilename:[filePaths firstObject] displayString:displayString iconImage:imageRef];
+#else
     [resultListener chooseFilename:[filePaths firstObject]];
+#endif
 }
 
 #if !PLATFORM(IOS_FAMILY)

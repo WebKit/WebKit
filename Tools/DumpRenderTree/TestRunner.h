@@ -383,6 +383,11 @@ public:
     const std::vector<std::string>& openPanelFiles() const { return m_openPanelFiles; }
     void setOpenPanelFiles(JSContextRef, JSValueRef);
 
+#if PLATFORM(IOS_FAMILY)
+    const std::vector<char>& openPanelFilesMediaIcon() const { return m_openPanelFilesMediaIcon; }
+    void setOpenPanelFilesMediaIcon(JSContextRef, JSValueRef);
+#endif
+
     bool didCancelClientRedirect() const { return m_didCancelClientRedirect; }
     void setDidCancelClientRedirect(bool value) { m_didCancelClientRedirect = value; }
 
@@ -478,6 +483,9 @@ private:
     UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
 
     std::vector<std::string> m_openPanelFiles;
+#if PLATFORM(IOS_FAMILY)
+    std::vector<char> m_openPanelFilesMediaIcon;
+#endif
 
     static JSClassRef getJSClass();
     static JSStaticValue* staticValues();

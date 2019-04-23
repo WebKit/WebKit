@@ -2445,6 +2445,25 @@ void TestRunner::setOpenPanelFiles(JSValueRef filesValue)
     WKBundlePagePostMessage(page, messageName.get(), fileURLs.get());
 }
 
+#if PLATFORM(IOS_FAMILY)
+void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef data)
+{
+    WKBundlePageRef page = InjectedBundle::singleton().page()->page();
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page));
+
+    auto& injectedBundle = InjectedBundle::singleton();
+    // FIXME (123058): Use a JSC API to get buffer contents once such is exposed.
+    WKRetainPtr<WKDataRef> iconData(AdoptWK, WKBundleCreateWKDataFromUInt8Array(injectedBundle.bundle(), context, data));
+
+    static auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetOpenPanelFileURLsMediaIcon"));
+    WKBundlePagePostMessage(page, messageName.get(), iconData.get());
+}
+#else
+void TestRunner::setOpenPanelFilesMediaIcon(JSValueRef)
+{
+}
+#endif // PLATFORM(IOS_FAMILY)
+
 void TestRunner::removeAllSessionCredentials(JSValueRef callback)
 {
     cacheTestRunnerCallback(DidRemoveAllSessionCredentialsCallbackID, callback);

@@ -251,6 +251,11 @@ public:
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
 
+#if PLATFORM(IOS_FAMILY)
+    WKDataRef openPanelFileURLsMediaIcon() const { return m_openPanelFileURLsMediaIcon.get(); }
+    void setOpenPanelFileURLsMediaIcon(WKDataRef mediaIcon) { m_openPanelFileURLsMediaIcon = mediaIcon; }
+#endif
+
     void terminateNetworkProcess();
     void terminateServiceWorkerProcess();
 
@@ -560,6 +565,9 @@ private:
     bool m_didReceiveServerRedirectForProvisionalNavigation { false };
 
     WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
+#if PLATFORM(IOS_FAMILY)
+    WKRetainPtr<WKDataRef> m_openPanelFileURLsMediaIcon;
+#endif
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;
 

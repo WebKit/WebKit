@@ -419,7 +419,7 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
         m_fileListCreator = nullptr;
     });
 
-    if (icon)
+    if (icon && !m_fileList->isEmpty())
         iconLoaded(icon);
 }
 

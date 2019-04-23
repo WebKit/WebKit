@@ -27,6 +27,8 @@
 #include "WKOpenPanelResultListener.h"
 
 #include "APIArray.h"
+#include "APIData.h"
+#include "APIString.h"
 #include "WKAPICast.h"
 #include "WebOpenPanelResultListenerProxy.h"
 #include <wtf/URL.h>
@@ -53,6 +55,13 @@ static Vector<String> filePathsFromFileURLs(const API::Array& fileURLs)
 
     return filePaths;
 }
+
+#if PLATFORM(IOS_FAMILY)
+void WKOpenPanelResultListenerChooseMediaFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef, WKStringRef displayString, WKDataRef iconImageDataRef)
+{
+    toImpl(listenerRef)->chooseFiles(filePathsFromFileURLs(*toImpl(fileURLsRef)), toImpl(displayString)->string(), toImpl(iconImageDataRef));
+}
+#endif
 
 void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef)
 {

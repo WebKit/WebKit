@@ -340,6 +340,7 @@ interface TestRunner {
 
     // Open panel
     void setOpenPanelFiles(object filesArray);
+    void setOpenPanelFilesMediaIcon(object mediaIcon);
 
     // Modal alerts
     void setShouldDismissJavaScriptAlertsAsynchronously(boolean value);

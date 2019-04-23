@@ -61,6 +61,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKTextChecker.h>
+#include <WebKit/WKURL.h>
 #include <WebKit/WKUserContentControllerRef.h>
 #include <WebKit/WKUserContentExtensionStoreRef.h>
 #include <WebKit/WKUserMediaPermissionCheck.h>
@@ -199,13 +200,29 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         WKOpenPanelResultListenerCancel(resultListenerRef);
         return;
     }
+    
+    WKTypeRef firstItem = WKArrayGetItemAtIndex(fileURLs, 0);
+    
+#if PLATFORM(IOS_FAMILY)
+    WKStringRef displayString = WKURLCopyLastPathComponent(static_cast<WKURLRef>(firstItem));
+    WKDataRef mediaIcon = TestController::singleton().openPanelFileURLsMediaIcon();
+    
+    if (mediaIcon) {
+        if (WKOpenPanelParametersGetAllowsMultipleFiles(parameters)) {
+            WKOpenPanelResultListenerChooseMediaFiles(resultListenerRef, fileURLs, displayString, mediaIcon);
+            return;
+        }
+        
+        WKOpenPanelResultListenerChooseMediaFiles(resultListenerRef, adoptWK(WKArrayCreate(&firstItem, 1)).get(), displayString, mediaIcon);
+        return;
+    }
+#endif
 
     if (WKOpenPanelParametersGetAllowsMultipleFiles(parameters)) {
         WKOpenPanelResultListenerChooseFiles(resultListenerRef, fileURLs);
         return;
     }
 
-    WKTypeRef firstItem = WKArrayGetItemAtIndex(fileURLs, 0);
     WKOpenPanelResultListenerChooseFiles(resultListenerRef, adoptWK(WKArrayCreate(&firstItem, 1)).get());
 }
 
@@ -1005,6 +1022,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits);
 
     m_openPanelFileURLs = nullptr;
+#if PLATFORM(IOS_FAMILY)
+    m_openPanelFileURLsMediaIcon = nullptr;
+#endif
     
     statisticsResetToConsistentState();
     

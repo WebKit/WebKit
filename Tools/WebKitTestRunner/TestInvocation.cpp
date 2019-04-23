@@ -794,6 +794,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    if (WKStringIsEqualToUTF8CString(messageName, "SetOpenPanelFileURLsMediaIcon")) {
+        TestController::singleton().setOpenPanelFileURLsMediaIcon(static_cast<WKDataRef>(messageBody));
+        return;
+    }
+#endif
+
     ASSERT_NOT_REACHED();
 }
 

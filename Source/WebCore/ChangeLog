@@ -1,3 +1,18 @@
+2019-04-23  Guy Lewin  <guy@lewin.co.il>
+
+        Multiple File Input Icon Set Regardless of File List
+        https://bugs.webkit.org/show_bug.cgi?id=195537
+
+        Reviewed by Alexey Proskuryakov.
+
+        File input elements display icon with an empty file list after
+        resetting the file list in 'change' event handler - on iOS
+
+        Test: fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesChosen):
+
 2019-04-23  Eric Carlson  <eric.carlson@apple.com>
 
         Create AVFoundationSoftLink.{h,mm} to reduce duplicate code
