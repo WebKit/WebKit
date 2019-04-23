@@ -1,3 +1,18 @@
+2019-04-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove DeprecatedOptional
+        https://bugs.webkit.org/show_bug.cgi?id=197161
+
+        Reviewed by Darin Adler.
+
+        This was added in r209326 to be compatible with a shipping version of Safari.
+        We have released several versions of Safari since then, so do what the comments say and remove it.
+        The existence of this std::optional makes migrating to C++17 harder, and there's no reason to keep it.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DeprecatedOptional.h: Removed.
+
 2019-04-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [WTF] Generic memoryFootprint() implementation should use bmalloc on Linux

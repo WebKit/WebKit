@@ -270,14 +270,6 @@ void BackendDispatcher::reportProtocolError(Optional<long> relatedRequestId, Com
     m_protocolErrors.append(std::tuple<CommonErrorCode, String>(errorCode, errorMessage));
 }
 
-void BackendDispatcher::reportProtocolError(WTF::DeprecatedOptional<long> relatedRequestId, CommonErrorCode errorCode, const String& errorMessage)
-{
-    if (relatedRequestId)
-        reportProtocolError(relatedRequestId.value(), errorCode, errorMessage);
-    else
-        reportProtocolError(WTF::nullopt, errorCode, errorMessage);
-}
-
 template<typename T>
 T BackendDispatcher::getPropertyValue(JSON::Object* object, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(JSON::Value&, T&)> asMethod, const char* typeName)
 {
