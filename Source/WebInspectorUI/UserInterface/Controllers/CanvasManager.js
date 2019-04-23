@@ -34,7 +34,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         this._enabled = false;
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
-        this._importedRecordings = new Set;
+        this._savedRecordings = new Set;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
@@ -63,7 +63,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
     // Public
 
-    get importedRecordings() { return this._importedRecordings; }
+    get savedRecordings() { return this._savedRecordings; }
 
     get canvases()
     {
@@ -96,9 +96,9 @@ WI.CanvasManager = class CanvasManager extends WI.Object
             filename = filename.substring(0, extensionStart);
         recording.createDisplayName(filename);
 
-        this._importedRecordings.add(recording);
+        this._savedRecordings.add(recording);
 
-        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingImported, {recording, initiatedByUser: true});
+        this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingSaved, {recording, imported: true, initiatedByUser: true});
     }
 
     enable()
@@ -122,7 +122,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         this._canvasIdentifierMap.clear();
         this._shaderProgramIdentifierMap.clear();
-        this._importedRecordings.clear();
+        this._savedRecordings.clear();
 
         this._enabled = false;
     }
@@ -277,6 +277,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         for (let recording of canvas.recordingCollection) {
             recording.source = null;
             recording.createDisplayName(recording.displayName);
+            this._savedRecordings.add(recording);
+            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingSaved, {recording});
         }
 
         this.dispatchEventToListeners(WI.CanvasManager.Event.CanvasRemoved, {canvas});
@@ -301,5 +303,5 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 WI.CanvasManager.Event = {
     CanvasAdded: "canvas-manager-canvas-was-added",
     CanvasRemoved: "canvas-manager-canvas-was-removed",
-    RecordingImported: "canvas-manager-recording-imported",
+    RecordingSaved: "canvas-manager-recording-saved",
 };

@@ -77,6 +77,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
         this._importButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
+
+        this._savedRecordingsContentView = null;
+        this._savedRecordingsTreeOutline = null;
     }
 
     // Static
@@ -107,6 +110,12 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         contentView.element.addEventListener("mouseenter", this._contentViewMouseEnter);
         contentView.element.addEventListener("mouseleave", this._contentViewMouseLeave);
 
+        if (this._savedRecordingsContentView) {
+            // Ensure that the imported recordings are always last.
+            this.removeSubview(this._savedRecordingsContentView);
+            this.addSubview(this._savedRecordingsContentView);
+        }
+
         this._updateNavigationItems();
     }
 
@@ -125,10 +134,19 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateShowImageGrid, this);
         WI.settings.canvasRecordingAutoCaptureEnabled.addEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureEnabledChanged, this);
         WI.settings.canvasRecordingAutoCaptureFrameCount.addEventListener(WI.Setting.Event.Changed, this._handleCanvasRecordingAutoCaptureFrameCountChanged, this);
+
+        WI.canvasManager.addEventListener(WI.CanvasManager.Event.RecordingSaved, this._handleRecordingSaved, this);
+
+        if (this._savedRecordingsTreeOutline)
+            this._savedRecordingsTreeOutline.removeChildren();
+        for (let recording of WI.canvasManager.savedRecordings)
+            this._addSavedRecording(recording);
     }
 
     detached()
     {
+        WI.canvasManager.removeEventListener(null, null, this);
+
         WI.settings.canvasRecordingAutoCaptureFrameCount.removeEventListener(null, null, this);
         WI.settings.canvasRecordingAutoCaptureEnabled.removeEventListener(null, null, this);
         WI.settings.showImageGrid.removeEventListener(null, null, this);
@@ -261,6 +279,32 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
         return frameCount;
     }
 
+    _addSavedRecording(recording)
+    {
+        console.assert(!recording.source);
+
+        if (!this._savedRecordingsContentView) {
+            this._savedRecordingsContentView = new WI.ContentView;
+            this._savedRecordingsContentView.element.classList.add("canvas", "saved-recordings");
+            this.addSubview(this._savedRecordingsContentView);
+
+            let header = this._savedRecordingsContentView.element.appendChild(document.createElement("header"));
+            header.textContent = WI.UIString("Saved Recordings");
+        }
+
+        if (!this._savedRecordingsTreeOutline) {
+            const selectable = false;
+            this._savedRecordingsTreeOutline = new WI.TreeOutline(selectable);
+            this._savedRecordingsTreeOutline.addEventListener(WI.TreeOutline.Event.ElementClicked, this._handleSavedRecordingClicked, this);
+            this._savedRecordingsContentView.element.appendChild(this._savedRecordingsTreeOutline.element);
+        }
+
+        const subtitle = null;
+        let recordingTreeElement = new WI.GeneralTreeElement(["recording"], recording.displayName, subtitle, recording);
+        recordingTreeElement.selectable = false;
+        this._savedRecordingsTreeOutline.appendChild(recordingTreeElement);
+    }
+
     _handleRecordingAutoCaptureInput(event)
     {
         let frameCount = this._updateRecordingAutoCaptureInputElementSize();
@@ -291,5 +335,15 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
     _handleImportButtonNavigationItemClicked(event)
     {
         WI.FileUtilities.importJSON((result) => WI.canvasManager.processJSON(result));
+    }
+
+    _handleRecordingSaved(event)
+    {
+        this._addSavedRecording(event.data.recording);
+    }
+
+    _handleSavedRecordingClicked(event)
+    {
+        WI.showRepresentedObject(event.data.treeElement.representedObject);
     }
 };

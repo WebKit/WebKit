@@ -1,3 +1,49 @@
+2019-04-23  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Canvas: no obvious way of switching to the overview when viewing an imported recording
+        https://bugs.webkit.org/show_bug.cgi?id=197178
+        <rdar://problem/50106641>
+
+        Reviewed by Timothy Hatcher.
+
+        Expand the idea of "imported" recordings to include "saved" recordings, ones whose
+        underlying <canvas> was destroyed.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        (WI.CanvasTabContentView.prototype._addRecording):
+        (WI.CanvasTabContentView.prototype._handleRecordingSavedOrStopped): Added.
+        (WI.CanvasTabContentView.prototype.initialLayout): Deleted.
+        (WI.CanvasTabContentView.prototype._recordingImportedOrStopped): Deleted.
+        Make the "Saved Recordings" folder a child of the "Overview" so that the "Overview" path
+        component is always visible/clickable.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.contentViewAdded):
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype._addSavedRecording): Added.
+        (WI.CanvasOverviewContentView.prototype._handleRecordingSaved): Added.
+        (WI.CanvasOverviewContentView.prototype._handleSavedRecordingClicked): Added.
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas.saved-recordings): Added.
+        (.content-view.canvas-overview .content-view.canvas.saved-recordings .tree-outline): Added.
+        (.content-view.canvas-overview .content-view.canvas.saved-recordings .tree-outline > .item.recording > .icon): Added.
+        Add a card for "Saved Recordings" that mimics the style of regular canvas cards.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.get savedRecordings): Added.
+        (WI.CanvasManager.prototype.async processJSON):
+        (WI.CanvasManager.prototype.disable):
+        (WI.CanvasManager.prototype._removeCanvas):
+        (WI.CanvasManager.prototype.get importedRecordings): Deleted.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2019-04-22  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION: Sources: auto-continue breakpoint triangle is incorrectly positioned
