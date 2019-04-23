@@ -861,9 +861,9 @@ enum class AppReturnsToForeground { No, Yes };
 void downloadAtRate(double desiredKbps, unsigned speedMultiplier, AppReturnsToForeground returnToForeground = AppReturnsToForeground::No)
 {
     bool terminateServer = false;
-    TCPServer server([&](auto socket) {
+    TCPServer server([&](int socket) {
         respondSlowly(socket, desiredKbps, terminateServer);
-    });
+    }, 1);
     
     auto webView = webViewWithDownloadMonitorSpeedMultiplier(speedMultiplier);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];

@@ -1,3 +1,14 @@
+2019-04-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add unit tests for WKWebView.serverTrust
+        https://bugs.webkit.org/show_bug.cgi?id=197202
+
+        Reviewed by Youenn Fablet.
+
+        * libwebrtc.xcodeproj/project.pbxproj:
+        Move boringssl files from libwebrtc target to boringssl target.
+        Also, add pkcs7 files to boringssl static library.
+
 2019-04-08  Justin Fan  <justin_fan@apple.com>
 
         [Web GPU] Fix Web GPU experimental feature on iOS

@@ -29,6 +29,12 @@
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
+extern "C" {
+struct SSL;
+int SSL_read(SSL*, void*, int);
+int SSL_write(SSL*, const void*, int);
+}
+
 namespace TestWebKitAPI {
 
 class TCPServer {
@@ -37,13 +43,15 @@ public:
     using Port = uint16_t;
     static constexpr Port InvalidPort = 0;
     
-    TCPServer(Function<void(Socket)>&&, size_t connections = 1);
+    TCPServer(Function<void(Socket)>&&, size_t connections);
+    TCPServer(Function<void(SSL*)>&&);
     ~TCPServer();
     
     Port port() const { return m_port; }
     
 private:
     Optional<Socket> socketBindListen(size_t connections);
+    void listenForConnections(size_t connections);
 
     Port m_port { InvalidPort };
     std::thread m_listeningThread;

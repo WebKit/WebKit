@@ -72,7 +72,7 @@ static RetainPtr<NSData> createPDFWithLinkToURL(NSURL *url)
 
 TEST(WebKit, PDFLinkReferrer)
 {
-    TestWebKitAPI::TCPServer server([] (auto socket) {
+    TestWebKitAPI::TCPServer server([] (int socket) {
         char readBuffer[1000];
         memset(readBuffer, 0, 1000);
 
@@ -92,7 +92,7 @@ TEST(WebKit, PDFLinkReferrer)
         "HTTP/1.1 200 OK\r\n"
         "Content-Length: 0\r\n\r\n";
         ::write(socket, responseHeader, strlen(responseHeader));
-    });
+    }, 1);
 
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 

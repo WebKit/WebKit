@@ -230,7 +230,7 @@ TEST(WebKit, WKNavigationResponseDownloadAttribute)
                 "Content-Disposition: attachment; filename=fromHeader.txt;\r\n\r\n"
                 "Hello!"
             );
-        });
+        }, 1);
         auto delegate = adoptNS([NavigationResponseTestDelegate new]);
         auto webView = adoptNS([WKWebView new]);
         [webView setNavigationDelegate:delegate.get()];
