@@ -1,7 +1,7 @@
 <!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
 <html>
 <head>
-<title>This tests that we fire mouseout on synthetic click</title>
+<title>This tests that we fire mouseout on synthetic click unless the click is preventDefaulted</title>
 <script src="../../../../../resources/basic-gestures.js"></script>
 <style>
 #tapthis {
@@ -35,7 +35,7 @@ async function test() {
 </script>
 </head>
 <body onload="test()">
-<button id=tapthis>PASS if 'mouseout' text is shown below.</button>
+<div id=tapthis>PASS if 'mouseout' text is not shown below.</div>
 <div id=becomesVisible></div>
 <pre id=result></pre>
 <script>
@@ -46,12 +46,13 @@ becomesVisible.addEventListener("click", function( event ) {
 
 tapthis.addEventListener("mouseout", function( event ) {   
     result.innerHTML = result.innerHTML + " mouseout triggered ";
-    if (window.testRunner)
-        testRunner.notifyDone();
 }, false);
 
 tapthis.addEventListener("click", function( event ) {   
     result.innerHTML = result.innerHTML + " clicked ";
+    event.preventDefault();
+    if (window.testRunner)
+    	setTimeout("testRunner.notifyDone()", 0);
 }, false);
 </script>
 </body>

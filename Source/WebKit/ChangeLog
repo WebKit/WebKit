@@ -1,3 +1,17 @@
+2019-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Some dropdown menus may close without user gesture on americanexpress.com
+        https://bugs.webkit.org/show_bug.cgi?id=197175
+        <rdar://problem/49613013>
+
+        Reviewed by Simon Fraser.
+
+        Do not generate additional synthetic mouse events (e.g. mouseout in this case) when the content handles the click event. This helps cases when the synthetic mouseout ended up dismissing the dropdown menus.
+        However it won't regress cases like youtube.com, where sending mouseout is required to have the control bar dismissed on play. 
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+
 2019-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Deprecate WKContextCreateWithInjectedBundlePath

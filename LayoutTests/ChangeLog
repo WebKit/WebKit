@@ -1,3 +1,14 @@
+2019-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        [ContentChangeObserver] Some dropdown menus may close without user gesture on americanexpress.com
+        https://bugs.webkit.org/show_bug.cgi?id=197175
+        <rdar://problem/49613013>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/content-observation/mouse-out-event-should-not-fire-on-click-when-default-prevented-expected.txt: Added.
+        * fast/events/touch/ios/content-observation/mouse-out-event-should-not-fire-on-click-when-default-prevented.html: Added.
+
 2019-04-22  Justin Fan  <justin_fan@apple.com>
 
         [WebGPU] Move swap chain methods from GPUDevice to GPUCanvasContext
