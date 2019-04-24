@@ -205,6 +205,14 @@ Ref<SecurityOrigin> SecurityOrigin::createUnique()
     return origin;
 }
 
+Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, const String& filePath)
+{
+    ASSERT(!url.isLocalFile());
+    auto securityOrigin = SecurityOrigin::create(url);
+    securityOrigin->m_filePath = filePath;
+    return securityOrigin;
+}
+
 Ref<SecurityOrigin> SecurityOrigin::isolatedCopy() const
 {
     return adoptRef(*new SecurityOrigin(this));
@@ -362,7 +370,13 @@ bool SecurityOrigin::canDisplay(const URL& url) const
     if (SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(protocol))
         return equalIgnoringASCIICase(m_data.protocol, protocol) || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
-    if (SecurityPolicy::restrictAccessToLocal() && SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
+    if (!SecurityPolicy::restrictAccessToLocal())
+        return true;
+
+    if (url.isLocalFile() && url.fileSystemPath() == m_filePath)
+        return true;
+
+    if (SchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))
         return canLoadLocalResources() || SecurityPolicy::isAccessToURLWhiteListed(this, url);
 
     return true;

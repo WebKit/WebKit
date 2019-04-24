@@ -57,8 +57,10 @@ static NSURL * const pagesDocumentURL = [[NSBundle.mainBundle URLForResource:@"p
 - (instancetype)initWithExpectedFileURL:(NSURL *)fileURL previewMIMEType:(NSString *)mimeType responsePolicy:(WKNavigationResponsePolicy)responsePolicy;
 - (void)verifyDownload;
 
-@property (nonatomic) BOOL didStartQuickLookLoad;
-@property (nonatomic) BOOL didFinishQuickLookLoad;
+@property (nonatomic, readonly) BOOL didFailNavigation;
+@property (nonatomic, readonly) BOOL didFinishNavigation;
+@property (nonatomic, readonly) BOOL didFinishQuickLookLoad;
+@property (nonatomic, readonly) BOOL didStartQuickLookLoad;
 
 @end
 
@@ -107,6 +109,14 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
     return self;
 }
 
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
+{
+    _didFailNavigation = NO;
+    _didFinishNavigation = NO;
+    _didFinishQuickLookLoad = NO;
+    _didStartQuickLookLoad = NO;
+}
+
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler
 {
     EXPECT_TRUE(navigationResponse.canShowMIMEType);
@@ -134,11 +144,25 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
+    EXPECT_FALSE(_didFailNavigation);
+    EXPECT_FALSE(_didFinishNavigation);
+    _didFinishNavigation = YES;
+    isDone = true;
+}
+
+- (void)_webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error userInfo:(id<NSSecureCoding>)userInfo
+{
+    EXPECT_FALSE(_didFailNavigation);
+    EXPECT_FALSE(_didFinishNavigation);
+    _didFailNavigation = YES;
     isDone = true;
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
+    EXPECT_FALSE(_didFailNavigation);
+    EXPECT_FALSE(_didFinishNavigation);
+    _didFailNavigation = YES;
     isDone = true;
 }
 
@@ -206,7 +230,7 @@ static void readFile(NSURL *fileURL, NSUInteger& fileSize, RetainPtr<NSString>& 
 
 @end
 
-static void runTest(QuickLookDelegate *delegate, NSURLRequest *request, BOOL shouldDecidePolicyBeforeLoading)
+static RetainPtr<WKWebView> runTest(QuickLookDelegate *delegate, NSURLRequest *request, BOOL shouldDecidePolicyBeforeLoading)
 {
     auto processPool = adoptNS([[WKProcessPool alloc] init]);
     [processPool _setDownloadDelegate:delegate];
@@ -221,32 +245,38 @@ static void runTest(QuickLookDelegate *delegate, NSURLRequest *request, BOOL sho
 
     isDone = false;
     Util::run(&isDone);
+
+    return webView;
 }
 
-static void runTestDecideBeforeLoading(QuickLookDelegate *delegate, NSURLRequest *request)
+static RetainPtr<WKWebView> runTestDecideBeforeLoading(QuickLookDelegate *delegate, NSURLRequest *request)
 {
-    runTest(delegate, request, YES);
+    return runTest(delegate, request, YES);
 }
 
-static void runTestDecideAfterLoading(QuickLookDelegate *delegate, NSURLRequest *request)
+static RetainPtr<WKWebView> runTestDecideAfterLoading(QuickLookDelegate *delegate, NSURLRequest *request)
 {
-    runTest(delegate, request, NO);
+    return runTest(delegate, request, NO);
 }
 
 TEST(QuickLook, AllowResponseBeforeLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 TEST(QuickLook, AllowResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 @interface QuickLookAsyncDelegate : QuickLookDelegate
@@ -270,40 +300,50 @@ TEST(QuickLook, AsyncAllowResponseBeforeLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookAsyncDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 TEST(QuickLook, AsyncAllowResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookAsyncDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 TEST(QuickLook, CancelResponseBeforeLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:WKNavigationResponsePolicyCancel]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_FALSE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
     EXPECT_FALSE([delegate didFinishQuickLookLoad]);
+    EXPECT_FALSE([delegate didStartQuickLookLoad]);
+    EXPECT_TRUE([delegate didFailNavigation]);
 }
 
 TEST(QuickLook, CancelResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyCancel]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFailNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 TEST(QuickLook, DownloadResponseBeforeLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:_WKNavigationResponsePolicyBecomeDownload]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_FALSE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
     EXPECT_FALSE([delegate didFinishQuickLookLoad]);
+    EXPECT_FALSE([delegate didStartQuickLookLoad]);
+    EXPECT_TRUE([delegate didFailNavigation]);
 
     Util::run(&downloadIsDone);
     [delegate verifyDownload];
@@ -313,8 +353,10 @@ TEST(QuickLook, DownloadResponseAfterLoadingPreview)
 {
     auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:_WKNavigationResponsePolicyBecomeDownload]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
-    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFailNavigation]);
     EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 @interface QuickLookPasswordDelegate : QuickLookDelegate
@@ -336,7 +378,11 @@ TEST(QuickLook, RequestPasswordBeforeLoadingPreview)
     NSURL *passwordProtectedDocumentURL = [NSBundle.mainBundle URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
     auto delegate = adoptNS([[QuickLookPasswordDelegate alloc] initWithExpectedFileURL:passwordProtectedDocumentURL responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:passwordProtectedDocumentURL]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFinishQuickLookLoad]);
     EXPECT_TRUE([delegate didRequestPassword]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
 }
 
 TEST(QuickLook, RequestPasswordAfterLoadingPreview)
@@ -344,7 +390,37 @@ TEST(QuickLook, RequestPasswordAfterLoadingPreview)
     NSURL *passwordProtectedDocumentURL = [NSBundle.mainBundle URLForResource:@"password-protected" withExtension:@"pages" subdirectory:@"TestWebKitAPI.resources"];
     auto delegate = adoptNS([[QuickLookPasswordDelegate alloc] initWithExpectedFileURL:passwordProtectedDocumentURL previewMIMEType:pagesDocumentPreviewMIMEType responsePolicy:WKNavigationResponsePolicyAllow]);
     runTestDecideAfterLoading(delegate.get(), [NSURLRequest requestWithURL:passwordProtectedDocumentURL]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_FALSE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFinishQuickLookLoad]);
     EXPECT_TRUE([delegate didRequestPassword]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+}
+
+TEST(QuickLook, ReloadAndSameDocumentNavigation)
+{
+    auto delegate = adoptNS([[QuickLookDelegate alloc] initWithExpectedFileURL:pagesDocumentURL responsePolicy:WKNavigationResponsePolicyAllow]);
+    auto webView = runTestDecideBeforeLoading(delegate.get(), [NSURLRequest requestWithURL:pagesDocumentURL]);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+
+    isDone = false;
+    [webView evaluateJavaScript:@"window.location.reload()" completionHandler:nil];
+    Util::run(&isDone);
+    EXPECT_FALSE([delegate didFailNavigation]);
+    EXPECT_TRUE([delegate didFinishNavigation]);
+    EXPECT_TRUE([delegate didFinishQuickLookLoad]);
+    EXPECT_TRUE([delegate didStartQuickLookLoad]);
+
+    isDone = false;
+    [webView evaluateJavaScript:@"window.location = '#test'; window.location.hash" completionHandler:^(id _Nullable value, NSError * _Nullable error) {
+        EXPECT_NULL(error);
+        EXPECT_WK_STREQ(@"#test", value);
+        isDone = true;
+    }];
+    Util::run(&isDone);
 }
 
 @interface QuickLookFrameLoadDelegate : NSObject <WebFrameLoadDelegate>

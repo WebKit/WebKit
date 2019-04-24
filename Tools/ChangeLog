@@ -1,3 +1,23 @@
+2019-04-23  Andy Estes  <aestes@apple.com>
+
+        [iOS] QuickLook documents loaded from file: URLs should be allowed to perform same-document navigations
+        https://bugs.webkit.org/show_bug.cgi?id=196749
+        <rdar://problem/35773454>
+
+        Reviewed by Daniel Bates.
+
+        Added a new QuickLook API test and added new expectations to existing QuickLook tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/QuickLook.mm:
+        (-[QuickLookDelegate webView:didStartProvisionalNavigation:]):
+        (-[QuickLookDelegate webView:didFinishNavigation:]):
+        (-[QuickLookDelegate _webView:didFailNavigation:withError:userInfo:]):
+        (-[QuickLookDelegate webView:didFailProvisionalNavigation:withError:]):
+        (runTest):
+        (runTestDecideBeforeLoading):
+        (runTestDecideAfterLoading):
+        (TEST):
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Remove Ad Click Attribution data when removing website data

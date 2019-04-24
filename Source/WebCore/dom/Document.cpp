@@ -7225,10 +7225,13 @@ bool Document::shouldEnforceQuickLookSandbox() const
 
 void Document::applyQuickLookSandbox()
 {
-    const URL& responseURL = m_frame->loader().activeDocumentLoader()->responseURL();
+    auto& documentLoader = *m_frame->loader().activeDocumentLoader();
+    auto documentURL = documentLoader.documentURL();
+    auto& responseURL = documentLoader.responseURL();
+    ASSERT(!documentURL.protocolIs(QLPreviewProtocol));
     ASSERT(responseURL.protocolIs(QLPreviewProtocol));
 
-    auto securityOrigin = SecurityOrigin::create(responseURL);
+    auto securityOrigin = SecurityOrigin::createNonLocalWithAllowedFilePath(responseURL, documentURL.fileSystemPath());
     securityOrigin->setStorageBlockingPolicy(SecurityOrigin::BlockAllStorage);
     setSecurityOriginPolicy(SecurityOriginPolicy::create(WTFMove(securityOrigin)));
 
