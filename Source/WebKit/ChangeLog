@@ -1,3 +1,15 @@
+2019-04-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Fix syscall sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=197247
+        <rdar://problem/50026580>
+
+        Reviewed by Brent Fulgham.
+
+        A missing syscall in the sandbox of the WebContent process is causing a crash.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2019-04-24  John Wilander  <wilander@apple.com>
 
         Age out unconverted Ad Click Attributions after one week.
