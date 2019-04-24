@@ -1,3 +1,15 @@
+2019-04-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink DFG::MinifiedNode
+        https://bugs.webkit.org/show_bug.cgi?id=197224
+
+        Reviewed by Filip Pizlo.
+
+        Since it is kept alive with compiled DFG code, we should shrink it to save memory.
+        If it is effective, we should consider minimizing these OSR exit data more aggressively.
+
+        * dfg/DFGMinifiedNode.h:
+
 2019-04-23  Saam Barati  <sbarati@apple.com>
 
         LICM incorrectly assumes it'll never insert a node which provably OSR exits

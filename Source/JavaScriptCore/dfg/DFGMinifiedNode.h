@@ -90,8 +90,8 @@ private:
         return type == PhantomDirectArguments || type == PhantomClonedArguments;
     }
     
-    MinifiedID m_id;
     uint64_t m_info;
+    MinifiedID m_id;
     NodeType m_op;
 };
 
