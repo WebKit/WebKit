@@ -1,3 +1,15 @@
+2019-04-24  Cathie Chen  <cathiechen@igalia.com>
+
+        [Mac Debug] Layout Test resize-observer/observe-element-from-other-frame.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=197063
+
+        Reviewed by Ryosuke Niwa.
+
+        RenderingUpdate timer might be fired after ResizeTestHelper's. This would produce a flaky failure.
+        In order to reduce this failure, extend ResizeTestHelper.TIMEOUT like in bug 177484.
+
+        * resize-observer/resources/resizeTestHelper.js:
+
 2019-04-24  Truitt Savell  <tsavell@apple.com>
 
         Rebaseline js/dom/dom-static-property-for-in-iteration.html after r244581
