@@ -1,3 +1,13 @@
+2019-04-24  Greg V  <greg@unrelenting.technology>
+
+        Fix -Wc++11-narrowing on unsigned char platforms like FreeBSD/aarch64
+        https://bugs.webkit.org/show_bug.cgi?id=197148
+
+        Reviewed by Alex Christensen.
+
+        * contentextensions/DFACombiner.cpp:
+        * contentextensions/NFAToDFA.cpp:
+
 2019-04-24  Chris Dumez  <cdumez@apple.com>
 
         X-Frame-Options header should be ignored when frame-ancestors CSP directive is present
