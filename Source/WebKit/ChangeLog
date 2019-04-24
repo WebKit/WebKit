@@ -1,3 +1,28 @@
+2019-04-23  Keith Rollin  <krollin@apple.com>
+
+        Add Xcode version check for Header post-processing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=197116
+        <rdar://problem/50058968>
+
+        Reviewed by Brent Fulgham.
+
+        There are several places in our Xcode projects that post-process
+        header files after they've been exported. Because of XCBuild, we're
+        moving to a model where the post-processing is performed at the same
+        time the header files are exported, rather than as a distinct
+        post-processing step. This patch disables the distinct step when the
+        inline processing is available.
+
+        In practice, this means prefixing appropriate post-processing Custom
+        Build phases with:
+
+        if [ "${XCODE_VERSION_MAJOR}" -ge "1100" -a "${USE_NEW_BUILD_SYSTEM}" = "YES" ]; then
+            # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.
+            exit 0
+        fi
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Remove Ad Click Attribution data when removing website data
