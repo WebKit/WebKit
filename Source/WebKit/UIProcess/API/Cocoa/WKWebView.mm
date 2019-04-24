@@ -4704,6 +4704,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     return [NSURL _web_URLWithWTFString:_page->pageLoadState().unreachableURL()];
 }
 
+- (NSURL *)_mainFrameURL
+{
+    if (auto* frame = _page->mainFrame())
+        return frame->url();
+    return nil;
+}
+
 - (void)_loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)baseURL forUnreachableURL:(NSURL *)unreachableURL
 {
     NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];

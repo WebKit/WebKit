@@ -3936,6 +3936,8 @@ void WebPageProxy::didExplicitOpenForFrame(uint64_t frameID, URL&& url)
     if (frame->isMainFrame())
         m_pageLoadState.didExplicitOpen(transaction, url);
 
+    frame->didExplicitOpen(url);
+
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 

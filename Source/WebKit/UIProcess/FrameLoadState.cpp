@@ -40,6 +40,12 @@ void FrameLoadState::didStartProvisionalLoad(const URL& url)
     m_provisionalURL = url;
 }
 
+void FrameLoadState::didExplicitOpen(const URL& url)
+{
+    m_url = url;
+    m_provisionalURL = { };
+}
+
 void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 {
     ASSERT(m_state == State::Provisional);

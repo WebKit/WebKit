@@ -1,3 +1,16 @@
+2019-04-24  Chris Dumez  <cdumez@apple.com>
+
+        URL set by document.open() is communicated with the WebPageProxy but not the WebFrameProxy
+        https://bugs.webkit.org/show_bug.cgi?id=197214
+        <rdar://problem/49237544>
+
+        Reviewed by Alex Christensen.
+
+        Extend API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/OpenAndCloseWindow.mm:
+        (TEST):
+
 2019-04-24  Philippe Normand  <pnormand@igalia.com>
 
         [Build][GStreamer] Update to 1.16.0

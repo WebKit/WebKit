@@ -40,6 +40,7 @@ public:
     };
 
     void didStartProvisionalLoad(const URL&);
+    void didExplicitOpen(const URL&);
     void didReceiveServerRedirectForProvisionalLoad(const URL&);
     void didFailProvisionalLoad();
 
