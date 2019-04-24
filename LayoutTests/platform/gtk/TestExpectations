@@ -3158,7 +3158,7 @@ webkit.org/b/160246 fast/text/multiple-feature-properties.html [ ImageOnlyFailur
 
 webkit.org/b/160248 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 webkit.org/b/160248 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
-webkit.org/b/160248 fast/text/trailing-word.html [ ImageOnlyFailure ]
+webkit.org/b/160248 fast/text/trailing-word-detection.html [ Failure ]
 
 webkit.org/b/160249 fast/shrink-wrap/rect-shrink-wrap.html [ ImageOnlyFailure ]
 

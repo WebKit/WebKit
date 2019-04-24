@@ -155,7 +155,6 @@ WI.CSSKeywordCompletions.LonghandNamesForShorthandProperty = new Map;
 WI.CSSKeywordCompletions.InheritedProperties = new Set([
     // Compatibility (iOS 12): `inherited` didn't exist on `CSSPropertyInfo`
     "-apple-color-filter",
-    "-apple-trailing-word",
     "-webkit-animation-trigger",
     "-webkit-aspect-ratio",
     "-webkit-border-horizontal-spacing",
@@ -786,9 +785,6 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
     ],
     "-apple-pay-button-type": [
         "plain", "buy", "set-up", "donate", "check-out", "book", "subscribe",
-    ],
-    "-apple-trailing-word": [
-        "auto", "-webkit-partially-balanced",
     ],
     "-webkit-alt": [
         "attr()",

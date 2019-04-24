@@ -3000,7 +3000,7 @@ fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
 fast/text/combining-mark-paint.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-transformed.html [ ImageOnlyFailure ]
-fast/text/trailing-word.html [ ImageOnlyFailure ]
+fast/text/trailing-word-detection.html [ Failure ]
 
 # TestRunner::addChromeInputField() and focusWebView() not implemented
 fast/forms/focus-option-control-on-page.html [ Skip ]
