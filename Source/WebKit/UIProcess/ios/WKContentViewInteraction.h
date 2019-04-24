@@ -309,7 +309,7 @@ struct WKAutoCorrectionData {
     BOOL _isTapHighlightIDValid;
     BOOL _potentialTapInProgress;
     BOOL _isDoubleTapPending;
-    BOOL _highlightLongPressCanClick;
+    BOOL _longPressCanClick;
     BOOL _hasTapHighlightForPotentialTap;
     BOOL _selectionNeedsUpdate;
     BOOL _shouldRestoreSelection;

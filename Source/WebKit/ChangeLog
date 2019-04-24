@@ -1,3 +1,27 @@
+2019-04-24  Dean Jackson  <dino@apple.com>
+
+        Rename _highlightLongPressCanClick and only add gesture recognizer when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=197231
+        <rdar://problem/50164234>
+
+        Reviewed by Antoine Quint.
+
+        Rename _highlightLongPressCanClick to _longPressCanClick since it will be
+        used in other places.
+
+        Only attach the _highlightLongPressGestureRecognizer when we're not
+        using long presses for preview. This might revert in the future, if we
+        can set up an appropriate gesture resolution between the two.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _webTouchEvent:preventsNativeGestures:]):
+        (-[WKContentView _highlightLongPressRecognized:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        (-[WKContentView _presentedViewControllerForPreviewItemController:]):
+        (-[WKContentView _previewItemControllerDidCancelPreview:]):
+
 2019-04-24  chris fleizach  <cfleizach@apple.com>
 
         AX: Remove deprecated Accessibility Object Model events

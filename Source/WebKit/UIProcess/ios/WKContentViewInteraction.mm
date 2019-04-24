@@ -745,12 +745,15 @@ static inline bool hasFocusedElement(WebKit::FocusedElementInformation focusedEl
     _highlightLongPressGestureRecognizer = adoptNS([[_UIWebHighlightLongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_highlightLongPressRecognized:)]);
     [_highlightLongPressGestureRecognizer setDelay:highlightDelay];
     [_highlightLongPressGestureRecognizer setDelegate:self];
-    [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
 
 #if HAVE(LINK_PREVIEW)
     if (!self.shouldUsePreviewForLongPress)
 #endif
+    {
+        [self addGestureRecognizer:_highlightLongPressGestureRecognizer.get()];
+
         [self _createAndConfigureLongPressGestureRecognizer];
+    }
 
 #if ENABLE(DATA_INTERACTION)
     [self setupDragAndDropInteractions];
@@ -1392,7 +1395,7 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
 - (void)_webTouchEvent:(const WebKit::NativeWebTouchEvent&)touchEvent preventsNativeGestures:(BOOL)preventsNativeGesture
 {
     if (preventsNativeGesture) {
-        _highlightLongPressCanClick = NO;
+        _longPressCanClick = NO;
 
         _canSendTouchEventsAsynchronously = YES;
         [_touchEventGestureRecognizer setDefaultPrevented:YES];
@@ -2187,22 +2190,22 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
     switch ([gestureRecognizer state]) {
     case UIGestureRecognizerStateBegan:
-        _highlightLongPressCanClick = YES;
+        _longPressCanClick = YES;
         cancelPotentialTapIfNecessary(self);
         _page->tapHighlightAtPosition([gestureRecognizer startPoint], ++_latestTapID);
         _isTapHighlightIDValid = YES;
         break;
     case UIGestureRecognizerStateEnded:
-        if (_highlightLongPressCanClick && _positionInformation.isElement) {
+        if (_longPressCanClick && _positionInformation.isElement) {
             [self _attemptClickAtLocation:gestureRecognizer.startPoint modifierFlags:gestureRecognizerModifierFlags(gestureRecognizer)];
             [self _finishInteraction];
         } else
             [self _cancelInteraction];
-        _highlightLongPressCanClick = NO;
+        _longPressCanClick = NO;
         break;
     case UIGestureRecognizerStateCancelled:
         [self _cancelInteraction];
-        _highlightLongPressCanClick = NO;
+        _longPressCanClick = NO;
         break;
     default:
         break;
@@ -7195,7 +7198,7 @@ static BOOL shouldUsePreviewForLongPress()
 
 - (BOOL)_interactionShouldBeginFromPreviewItemController:(UIPreviewItemController *)controller forPosition:(CGPoint)position
 {
-    if (!_highlightLongPressCanClick)
+    if (!_longPressCanClick)
         return NO;
 
     WebKit::InteractionInformationRequest request(WebCore::roundedIntPoint(position));
@@ -7355,7 +7358,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
     bool isValidURLForImagePreview = !coreTargetURL.isEmpty() && (WTF::protocolIsInHTTPFamily(coreTargetURL) || WTF::protocolIs(coreTargetURL, "data"));
 
     if ([_previewItemController type] == UIPreviewItemTypeLink) {
-        _highlightLongPressCanClick = NO;
+        _longPressCanClick = NO;
         _page->startInteractionWithElementAtPosition(_positionInformation.request.point);
 
         // Treat animated images like a link preview
@@ -7507,7 +7510,7 @@ static NSString *previewIdentifierForElementAction(_WKElementAction *action)
 
 - (void)_previewItemControllerDidCancelPreview:(UIPreviewItemController *)controller
 {
-    _highlightLongPressCanClick = NO;
+    _longPressCanClick = NO;
     
     [_webView _didDismissForcePressPreview];
 }
