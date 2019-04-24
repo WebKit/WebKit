@@ -603,3 +603,16 @@ void browser_tab_leave_fullscreen(BrowserTab *tab)
         gtk_window_set_focus(window, focusWidget);
     }
 }
+
+void browser_tab_set_background_color(BrowserTab *tab, GdkRGBA *rgba)
+{
+    g_return_if_fail(BROWSER_IS_TAB(tab));
+    g_return_if_fail(rgba);
+
+    GdkRGBA viewRGBA;
+    webkit_web_view_get_background_color(tab->webView, &viewRGBA);
+    if (gdk_rgba_equal(rgba, &viewRGBA))
+        return;
+
+    webkit_web_view_set_background_color(tab->webView, rgba);
+}

@@ -1,3 +1,24 @@
+2019-04-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser: also set the passed bg-color when receiving arguments
+        https://bugs.webkit.org/show_bug.cgi?id=197156
+
+        Reviewed by Michael Catanzaro.
+
+        The background color is only set when MiniBrowser is launched without arguments. This regressed when tabs
+        support was added.
+
+        * MiniBrowser/gtk/BrowserTab.c:
+        (browser_tab_set_background_color): Set the passed in color as web view background color.
+        * MiniBrowser/gtk/BrowserTab.h:
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_init): Initialize backgroundColor.
+        (browser_window_append_view): Call browser_tab_set_background_color().
+        (browser_window_set_background_color): Save the passed in color. This function should now be called before tabs
+        are added.
+        * MiniBrowser/gtk/main.c:
+        (main): Call browser_window_set_background_color() before creating the tabs.
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Move Ad Click Attribution from internal feature to experimental feature
