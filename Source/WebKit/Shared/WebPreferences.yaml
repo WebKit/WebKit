@@ -1404,6 +1404,14 @@ ResizeObserverEnabled:
   category: experimental
   condition: ENABLE(RESIZE_OBSERVER)
 
+AdClickAttributionEnabled:
+    type: bool
+    defaultValue: false
+    humanReadableName: "Ad Click Attribution"
+    humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
+    webcoreBinding: RuntimeEnabledFeatures
+    category: experimental
+
 # For internal features:
 # The type should be boolean.
 # You must provide a humanReadableName and humanReadableDescription for all debug features. They
@@ -1599,14 +1607,6 @@ CSSLogicalEnabled:
   defaultValue: false
   humanReadableName: "CSS Logical Properties and Values"
   humanReadableDescription: "Enable CSS Logical Properties and Values"
-  webcoreBinding: RuntimeEnabledFeatures
-  category: internal
-
-AdClickAttributionEnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "Ad Click Attribution"
-  humanReadableDescription: "Enable Ad Click Attribution for Cross-Site Link Navigations"
   webcoreBinding: RuntimeEnabledFeatures
   category: internal
 

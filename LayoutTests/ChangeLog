@@ -1,5 +1,28 @@
 2019-04-23  John Wilander  <wilander@apple.com>
 
+        Move Ad Click Attribution from internal feature to experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=197218
+        <rdar://problem/47651691>
+
+        Reviewed by Brent Fulgham.
+
+        This patch removes the TestRunner instruction for turning on the internal
+        feature.
+
+        * http/tests/adClickAttribution/anchor-tag-attributes-validation.html:
+        * http/tests/adClickAttribution/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/adClickAttribution/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/adClickAttribution/second-attribution-converted-with-higher-priority.html:
+        * http/tests/adClickAttribution/second-attribution-converted-with-lower-priority.html:
+        * http/tests/adClickAttribution/second-conversion-with-higher-priority.html:
+        * http/tests/adClickAttribution/second-conversion-with-lower-priority.html:
+        * http/tests/adClickAttribution/send-attribution-conversion-request.html:
+        * http/tests/adClickAttribution/store-ad-click-attribution.html:
+        * http/tests/adClickAttribution/store-disabled-in-ephemeral-session.html:
+        * http/tests/contentextensions/block-ad-click-attribution.html:
+
+2019-04-23  John Wilander  <wilander@apple.com>
+
         Remove Ad Click Attribution data when removing website data
         https://bugs.webkit.org/show_bug.cgi?id=197215
         <rdar://problem/47668988>

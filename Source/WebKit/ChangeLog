@@ -1,3 +1,13 @@
+2019-04-23  John Wilander  <wilander@apple.com>
+
+        Move Ad Click Attribution from internal feature to experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=197218
+        <rdar://problem/47651691>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebPreferences.yaml:
+
 2019-04-23  Keith Rollin  <krollin@apple.com>
 
         Add Xcode version check for Header post-processing scripts
