@@ -3344,7 +3344,6 @@
 		A9D248010D757E6900FDF959 /* JSDOMPluginArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A9D247FD0D757E6900FDF959 /* JSDOMPluginArray.h */; };
 		A9D248070D757E7D00FDF959 /* JSDOMMimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = A9D248030D757E7D00FDF959 /* JSDOMMimeType.h */; };
 		A9D248090D757E7D00FDF959 /* JSDOMMimeTypeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A9D248050D757E7D00FDF959 /* JSDOMMimeTypeArray.h */; };
-		A9F2E0EB20475CDE00512855 /* AccessibleSetValueEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A9F2E0E820475CDC00512855 /* AccessibleSetValueEvent.h */; };
 		AA12DF491743DF83004DAFDF /* PlatformSpeechSynthesizerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAE3755D17429BCC006200C2 /* PlatformSpeechSynthesizerIOS.mm */; };
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AA2A5ACE16A485FD00975A25 /* SpeechSynthesisVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2A5AC716A485D500975A25 /* SpeechSynthesisVoice.h */; };
@@ -11903,9 +11902,6 @@
 		A9D248050D757E7D00FDF959 /* JSDOMMimeTypeArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMMimeTypeArray.h; sourceTree = "<group>"; };
 		A9EE448C210FC9AD00B6EAE6 /* AriaAttributes.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AriaAttributes.idl; sourceTree = "<group>"; };
 		A9EE448F210FD69A00B6EAE6 /* AccessibilityRole.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AccessibilityRole.idl; sourceTree = "<group>"; };
-		A9F2E0E720475CDC00512855 /* AccessibleSetValueEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibleSetValueEvent.cpp; sourceTree = "<group>"; };
-		A9F2E0E820475CDC00512855 /* AccessibleSetValueEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibleSetValueEvent.h; sourceTree = "<group>"; };
-		A9F2E0E920475CDE00512855 /* AccessibleSetValueEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AccessibleSetValueEvent.idl; sourceTree = "<group>"; };
 		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
 		AA2A5AB816A485D500975A25 /* DOMWindowSpeechSynthesis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowSpeechSynthesis.cpp; sourceTree = "<group>"; };
@@ -17261,9 +17257,6 @@
 				A91C9FBD1B6586DE00AFFD54 /* AccessibilityTree.h */,
 				A91C9FC01B659A6700AFFD54 /* AccessibilityTreeItem.cpp */,
 				A91C9FC11B659A6700AFFD54 /* AccessibilityTreeItem.h */,
-				A9F2E0E720475CDC00512855 /* AccessibleSetValueEvent.cpp */,
-				A9F2E0E820475CDC00512855 /* AccessibleSetValueEvent.h */,
-				A9F2E0E920475CDE00512855 /* AccessibleSetValueEvent.idl */,
 				A9EE448C210FC9AD00B6EAE6 /* AriaAttributes.idl */,
 				2981CAAF131822EC00D12F2A /* AXObjectCache.cpp */,
 				29A8121A0FBB9C1D00510293 /* AXObjectCache.h */,
@@ -28084,7 +28077,6 @@
 				29A812310FBB9C1D00510293 /* AccessibilityTableRow.h in Headers */,
 				A91C9FBF1B6586DE00AFFD54 /* AccessibilityTree.h in Headers */,
 				A91C9FC31B659A6700AFFD54 /* AccessibilityTreeItem.h in Headers */,
-				A9F2E0EB20475CDE00512855 /* AccessibleSetValueEvent.h in Headers */,
 				7C5222991E1DAE1C002CB8F7 /* ActiveDOMCallback.h in Headers */,
 				7CD0BA051B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h in Headers */,
 				E1C4DE690EA75C1E0023CCD6 /* ActiveDOMObject.h in Headers */,

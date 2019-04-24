@@ -200,11 +200,6 @@ static const Seconds delayBeforeNoVisibleContentsRectsLogging = 1_s;
 #endif // HAVE(TOUCH_BAR)
 #endif // PLATFORM(MAC)
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-#import "AccessibilitySupportSPI.h"
-#import <wtf/darwin/WeakLinking.h>
-#endif
-
 #if PLATFORM(MAC) && ENABLE(DRAG_SUPPORT)
 
 @interface WKWebView () <NSFilePromiseProviderDelegate, NSDraggingSource>
@@ -750,14 +745,6 @@ static void validate(WKWebViewConfiguration *configuration)
     _impl->setRequiresUserActionForEditingControlsManager([configuration _requiresUserActionForEditingControlsManager]);
 #endif
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    // Check _AXSWebAccessibilityEventsEnabled here to avoid compiler optimizing
-    // out the null check of kAXSWebAccessibilityEventsEnabledNotification.
-    if (!isNullFunctionPointer(_AXSWebAccessibilityEventsEnabled))
-        CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), accessibilityEventsEnabledChangedCallback, kAXSWebAccessibilityEventsEnabledNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
-    [self _updateAccessibilityEventsEnabled];
-#endif
-
     if (NSString *applicationNameForUserAgent = configuration.applicationNameForUserAgent)
         _page->setApplicationNameForUserAgent(applicationNameForUserAgent);
 
@@ -879,10 +866,6 @@ static void validate(WKWebViewConfiguration *configuration)
     [_scrollView setInternalDelegate:nil];
 
     CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), (CFStringRef)[NSString stringWithUTF8String:kGSEventHardwareKeyboardAvailabilityChangedNotification], nullptr);
-#endif
-
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge const void *)(self), nullptr, nullptr);
 #endif
 
     pageToViewMap().remove(_page.get());
@@ -3472,23 +3455,6 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 }
 
 #endif // PLATFORM(IOS_FAMILY)
-
-#if ENABLE(ACCESSIBILITY_EVENTS)
-
-static void accessibilityEventsEnabledChangedCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void*, CFDictionaryRef)
-{
-    ASSERT(observer);
-    WKWebView *webview = (__bridge WKWebView *)observer;
-    [webview _updateAccessibilityEventsEnabled];
-}
-
-- (void)_updateAccessibilityEventsEnabled
-{
-    if (!isNullFunctionPointer(_AXSWebAccessibilityEventsEnabled))
-        _page->updateAccessibilityEventsEnabled(_AXSWebAccessibilityEventsEnabled());
-}
-
-#endif
 
 #pragma mark OS X-specific methods
 

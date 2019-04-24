@@ -101,7 +101,6 @@ public:
     ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
-    ExceptionOr<void> setAccessibilityEventsEnabled(bool);
     ExceptionOr<void> setIncompleteImageBorderEnabled(bool);
 
     using FrameFlatteningValue = FrameFlattening;
@@ -195,9 +194,6 @@ private:
         bool m_deferredCSSParserEnabled;
         bool m_inputEventsEnabled;
         bool m_incompleteImageBorderEnabled;
-#if ENABLE(ACCESSIBILITY_EVENTS)
-        bool m_accessibilityEventsEnabled;
-#endif
         bool m_shouldDeactivateAudioSession;
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;

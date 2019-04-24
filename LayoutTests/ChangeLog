@@ -1,3 +1,22 @@
+2019-04-24  chris fleizach  <cfleizach@apple.com>
+
+        AX: Remove deprecated Accessibility Object Model events
+        https://bugs.webkit.org/show_bug.cgi?id=197073
+        <rdar://problem/50027819>
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/mac/AOM-event-accessiblesetvalue-expected.txt: Removed.
+        * accessibility/mac/AOM-event-accessiblesetvalue.html: Removed.
+        * accessibility/mac/AOM-events-all-expected.txt: Removed.
+        * accessibility/mac/AOM-events-all.html: Removed.
+        * accessibility/mac/AOM-events-expected.txt: Removed.
+        * accessibility/mac/AOM-events-webarea-crash-expected.txt: Removed.
+        * accessibility/mac/AOM-events-webarea-crash.html: Removed.
+        * accessibility/mac/AOM-events.html: Removed.
+        * accessibility/mac/replace-text-with-range-expected.txt: Replaced.
+        * accessibility/mac/replace-text-with-range.html: Replaced.
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Move Ad Click Attribution from internal feature to experimental feature

@@ -175,10 +175,6 @@ struct PrintInfo;
 #include <WebKitAdditions/WKWebViewInternalAdditions.h>
 #endif
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-- (void)_updateAccessibilityEventsEnabled;
-#endif
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(API::Attachment&)attachment;
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source;

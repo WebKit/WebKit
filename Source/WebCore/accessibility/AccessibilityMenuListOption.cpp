@@ -83,9 +83,6 @@ void AccessibilityMenuListOption::setSelected(bool selected)
     if (!canSetSelectedAttribute())
         return;
     
-    if (selected && dispatchAccessibilityEventWithType(AccessibilityEventType::Select))
-        return;
-
     downcast<HTMLOptionElement>(*m_element).setSelected(selected);
 }
 

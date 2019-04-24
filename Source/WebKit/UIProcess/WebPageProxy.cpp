@@ -3244,16 +3244,6 @@ void WebPageProxy::accessibilitySettingsDidChange()
     m_process->send(Messages::WebPage::AccessibilitySettingsDidChange(), m_pageID);
 }
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-void WebPageProxy::updateAccessibilityEventsEnabled(bool enabled)
-{
-    if (!hasRunningProcess())
-        return;
-
-    m_process->send(Messages::WebPage::UpdateAccessibilityEventsEnabled(enabled), m_pageID);
-}
-#endif
-
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     // This check is fine as the value is initialized in the web

@@ -42,8 +42,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAbstractWorker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibilityRole.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibleSetValueEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAccessibleSetValueEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAddressErrors.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSAesCbcCfbParams.cpp

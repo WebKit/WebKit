@@ -95,9 +95,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_deferredCSSParserEnabled(settings.deferredCSSParserEnabled())
     , m_inputEventsEnabled(settings.inputEventsEnabled())
     , m_incompleteImageBorderEnabled(settings.incompleteImageBorderEnabled())
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    , m_accessibilityEventsEnabled(settings.accessibilityEventsEnabled())
-#endif
     , m_shouldDeactivateAudioSession(PlatformMediaSessionManager::shouldDeactivateAudioSession())
     , m_userInterfaceDirectionPolicy(settings.userInterfaceDirectionPolicy())
     , m_systemLayoutDirection(settings.systemLayoutDirection())
@@ -205,9 +202,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setFrameFlattening(m_frameFlattening);
     settings.setIncompleteImageBorderEnabled(m_incompleteImageBorderEnabled);
     PlatformMediaSessionManager::setShouldDeactivateAudioSession(m_shouldDeactivateAudioSession);
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    settings.setAccessibilityEventsEnabled(m_accessibilityEventsEnabled);
-#endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
@@ -887,18 +881,6 @@ ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool sho
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
     RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled(enabled);
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setAccessibilityEventsEnabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    settings().setAccessibilityEventsEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
     return { };
 }
 

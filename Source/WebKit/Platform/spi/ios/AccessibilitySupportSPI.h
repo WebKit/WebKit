@@ -44,11 +44,6 @@ extern Boolean _AXSApplicationAccessibilityEnabled();
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 #endif
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-extern CFStringRef kAXSWebAccessibilityEventsEnabledNotification;
-extern Boolean _AXSWebAccessibilityEventsEnabled();
-#endif
-
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)
 extern CFStringRef kAXSFullKeyboardAccessEnabledNotification;
 extern Boolean _AXSFullKeyboardAccessEnabled();

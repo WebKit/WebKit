@@ -193,15 +193,6 @@ novalidate
 nowrap
 object
 onabort
-onaccessiblecontextmenu
-onaccessibleclick
-onaccessibledecrement
-onaccessibledismiss
-onaccessiblefocus
-onaccessibleincrement
-onaccessiblescrollintoview
-onaccessiblesetvalue
-onaccessibleselect
 onafterprint
 onanimationstart
 onanimationiteration

@@ -177,9 +177,6 @@ void AccessibilityListBoxOption::setSelected(bool selected)
     if (!canSetSelectedAttribute())
         return;
     
-    if (selected && dispatchAccessibilityEventWithType(AccessibilityEventType::Select))
-        return;
-    
     bool isOptionSelected = isSelected();
     if ((isOptionSelected && selected) || (!isOptionSelected && !selected))
         return;

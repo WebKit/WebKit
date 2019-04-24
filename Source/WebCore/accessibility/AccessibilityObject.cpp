@@ -33,7 +33,6 @@
 #include "AccessibilityRenderObject.h"
 #include "AccessibilityScrollView.h"
 #include "AccessibilityTable.h"
-#include "AccessibleSetValueEvent.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMTokenList.h"
@@ -1092,14 +1091,6 @@ bool AccessibilityObject::press()
     // Prefer the hit test element, if it is inside the target element.
     if (hitTestElement && hitTestElement->isDescendantOf(*pressElement))
         pressElement = hitTestElement;
-    
-    // dispatch accessibleclick event
-    if (auto* cache = axObjectCache()) {
-        if (auto* pressObject = cache->getOrCreate(pressElement)) {
-            if (pressObject->dispatchAccessibilityEventWithType(AccessibilityEventType::Click))
-                return true;
-        }
-    }
     
     UserGestureIndicator gestureIndicator(ProcessingUserGesture, document);
     
@@ -2257,73 +2248,6 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
     return nullAtom();
 }
 
-bool AccessibilityObject::shouldDispatchAccessibilityEvent() const
-{
-    bool shouldDispatch = RuntimeEnabledFeatures::sharedFeatures().accessibilityObjectModelEnabled();
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    return shouldDispatch &= this->page()->settings().accessibilityEventsEnabled();
-#endif
-    return shouldDispatch;
-}
-
-bool AccessibilityObject::dispatchAccessibilityEvent(Event& event) const
-{
-    if (!shouldDispatchAccessibilityEvent())
-        return false;
-    
-    Vector<Element*> eventPath;
-    for (auto* parentObject = this; parentObject; parentObject = parentObject->parentObject()) {
-        if (parentObject->isWebArea())
-            break;
-        if (auto* parentElement = parentObject->element())
-            eventPath.append(parentElement);
-    }
-    
-    if (!eventPath.size())
-        return false;
-    
-    EventDispatcher::dispatchEvent(eventPath, event);
-    
-    // return true if preventDefault() was called, so that we don't execute the fallback behavior.
-    return event.defaultPrevented();
-}
-
-bool AccessibilityObject::dispatchAccessibilityEventWithType(AccessibilityEventType type) const
-{
-    AtomicString eventName;
-    switch (type) {
-    case AccessibilityEventType::ContextMenu:
-        eventName = eventNames().accessiblecontextmenuEvent;
-        break;
-    case AccessibilityEventType::Click:
-        eventName = eventNames().accessibleclickEvent;
-        break;
-    case AccessibilityEventType::Decrement:
-        eventName = eventNames().accessibledecrementEvent;
-        break;
-    case AccessibilityEventType::Dismiss:
-        eventName = eventNames().accessibledismissEvent;
-        break;
-    case AccessibilityEventType::Focus:
-        eventName = eventNames().accessiblefocusEvent;
-        break;
-    case AccessibilityEventType::Increment:
-        eventName = eventNames().accessibleincrementEvent;
-        break;
-    case AccessibilityEventType::ScrollIntoView:
-        eventName = eventNames().accessiblescrollintoviewEvent;
-        break;
-    case AccessibilityEventType::Select:
-        eventName = eventNames().accessibleselectEvent;
-        break;
-    default:
-        return false;
-    }
-    
-    auto event = Event::create(eventName, Event::CanBubble::Yes, Event::IsCancelable::Yes);
-    return dispatchAccessibilityEvent(event);
-}
-    
 bool AccessibilityObject::replaceTextInRange(const String& replacementString, const PlainTextRange& range)
 {
     if (!renderer() || !is<Element>(node()))
@@ -2350,14 +2274,6 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     }
 
     return false;
-}
-    
-bool AccessibilityObject::dispatchAccessibleSetValueEvent(const String& value) const
-{
-    if (!canSetValueAttribute())
-        return false;
-    auto event = AccessibleSetValueEvent::create(eventNames().accessiblesetvalueEvent, value);
-    return dispatchAccessibilityEvent(event);
 }
 
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
@@ -3116,9 +3032,6 @@ void AccessibilityObject::scrollToMakeVisible() const
 
 void AccessibilityObject::scrollToMakeVisible(const ScrollRectToVisibleOptions& options) const
 {
-    if (dispatchAccessibilityEventWithType(AccessibilityEventType::ScrollIntoView))
-        return;
-
     if (isScrollView() && parentObject())
         parentObject()->scrollToMakeVisible();
 

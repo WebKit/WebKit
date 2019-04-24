@@ -1,3 +1,27 @@
+2019-04-24  chris fleizach  <cfleizach@apple.com>
+
+        AX: Remove deprecated Accessibility Object Model events
+        https://bugs.webkit.org/show_bug.cgi?id=197073
+        <rdar://problem/50027819>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/spi/ios/AccessibilitySupportSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView dealloc]):
+        (accessibilityEventsEnabledChangedCallback): Deleted.
+        (-[WKWebView _updateAccessibilityEventsEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/Cocoa/WKFullKeyboardAccessWatcher.mm:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateAccessibilityEventsEnabled): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updateAccessibilityEventsEnabled): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2019-04-23  John Wilander  <wilander@apple.com>
 
         Move Ad Click Attribution from internal feature to experimental feature

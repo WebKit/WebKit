@@ -30,10 +30,6 @@
 
 #import "WebProcessPool.h"
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-#import "AccessibilitySupportSPI.h"
-#endif
-
 #if PLATFORM(MAC)
 static NSString * const KeyboardUIModeDidChangeNotification = @"com.apple.KeyboardUIModeDidChange";
 static const CFStringRef AppleKeyboardUIMode = CFSTR("AppleKeyboardUIMode");

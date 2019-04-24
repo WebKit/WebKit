@@ -146,17 +146,6 @@
 
     // Non standard event handler (https://developer.apple.com/reference/webkitjs/element/1629580-onwebkitplaybacktargetavailabili).
     [NotEnumerable, Conditional=WIRELESS_PLAYBACK_TARGET] attribute EventHandler onwebkitplaybacktargetavailabilitychanged;
-
-    // Accessibility events.
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessiblecontextmenu;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibleclick;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibledecrement;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibledismiss;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessiblefocus;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibleincrement;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessiblescrollintoview;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessiblesetvalue;
-    [EnabledAtRuntime=AccessibilityObjectModel] attribute EventHandler onaccessibleselect;
 };
 
 dictionary ShadowRootInit {

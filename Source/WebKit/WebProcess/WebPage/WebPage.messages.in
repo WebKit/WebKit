@@ -250,9 +250,6 @@ messages -> WebPage LegacyReceiver {
     WindowScreenDidChange(uint32_t displayID)
 
     AccessibilitySettingsDidChange()
-#if ENABLE(ACCESSIBILITY_EVENTS)
-    UpdateAccessibilityEventsEnabled(bool enabled)
-#endif
 
     ScalePage(double scale, WebCore::IntPoint origin)
     ScalePageInViewCoordinates(double scale, WebCore::IntPoint centerInViewCoordinates)

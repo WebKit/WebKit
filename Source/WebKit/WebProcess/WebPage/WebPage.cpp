@@ -1998,13 +1998,6 @@ void WebPage::accessibilitySettingsDidChange()
     m_page->accessibilitySettingsDidChange();
 }
 
-#if ENABLE(ACCESSIBILITY_EVENTS)
-void WebPage::updateAccessibilityEventsEnabled(bool enabled)
-{
-    m_page->settings().setAccessibilityEventsEnabled(enabled);
-}
-#endif
-
 void WebPage::setUseFixedLayout(bool fixed)
 {
     // Do not overwrite current settings if initially setting it to false.

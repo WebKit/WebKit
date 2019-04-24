@@ -417,7 +417,6 @@ accessibility/AccessibilityTableHeaderContainer.cpp
 accessibility/AccessibilityTableRow.cpp
 accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
-accessibility/AccessibleSetValueEvent.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
 accessibility/isolatedtree/AXIsolatedTreeNode.cpp
 
@@ -2489,7 +2488,6 @@ JSHTMLElementWrapperFactory.cpp
 JSAbortController.cpp
 JSAbortSignal.cpp
 JSAbstractWorker.cpp
-JSAccessibleSetValueEvent.cpp
 JSAddressErrors.cpp
 JSAesCbcCfbParams.cpp
 JSAesCtrParams.cpp

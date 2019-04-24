@@ -227,15 +227,6 @@ HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
 
     static const QualifiedName* const table[] = {
         &onabortAttr.get(),
-        &onaccessiblecontextmenuAttr.get(),
-        &onaccessibleclickAttr.get(),
-        &onaccessibledecrementAttr.get(),
-        &onaccessibledismissAttr.get(),
-        &onaccessiblefocusAttr.get(),
-        &onaccessibleincrementAttr.get(),
-        &onaccessiblescrollintoviewAttr.get(),
-        &onaccessiblesetvalueAttr.get(),
-        &onaccessibleselectAttr.get(),
         &onanimationendAttr.get(),
         &onanimationiterationAttr.get(),
         &onanimationstartAttr.get(),
