@@ -3959,6 +3959,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
             return valueForScrollSnapAlignment(style.scrollSnapAlign());
 #endif
 
+#if ENABLE(CSS_TRAILING_WORD)
+        case CSSPropertyAppleTrailingWord:
+            return cssValuePool.createValue(style.trailingWord());
+#endif
+
 #if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:
             return cssValuePool.createValue(style.applePayButtonStyle());

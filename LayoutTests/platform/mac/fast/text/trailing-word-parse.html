@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div id="p"></div>
+  <script type="text/javascript">
+    function testPartiallyBalancedIsValid(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "1");
+      shouldBeEqualToString("declaration.getPropertyValue('-apple-trailing-word')", "-webkit-partially-balanced");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "-webkit-partially-balanced");
+      stylesheet.deleteRule(0);
+    }
+
+    function testEmptyIsNone(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "0");
+      shouldBeEqualToString("declaration.getPropertyValue('-apple-trailing-word')", "");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "auto");
+      stylesheet.deleteRule(0);
+    }
+
+    function testInitialIsNone(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "1");
+      shouldBeEqualToString("declaration.getPropertyValue('-apple-trailing-word')",  "initial");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "auto");
+      stylesheet.deleteRule(0);
+    }
+
+    function testInvalidRule(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "0");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "auto");
+      stylesheet.deleteRule(0);
+    }
+
+    function testNoneIsValid(stylesheet, target) {
+      cssRule = stylesheet.cssRules.item(0);
+      shouldBe("cssRule.type", "cssRule.STYLE_RULE");
+      declaration = cssRule.style;
+      shouldBe("declaration.length", "1");
+      shouldBeEqualToString("declaration.getPropertyValue('-apple-trailing-word')", "auto");
+      computedStyle = window.getComputedStyle(target, null);
+      shouldBeEqualToString("computedStyle.getPropertyCSSValue('-apple-trailing-word').cssText", "auto");
+      stylesheet.deleteRule(0);
+    }
+
+    var styleElement = document.createElement("style");
+    document.head.appendChild(styleElement);
+    stylesheet = styleElement.sheet;
+    var target = document.getElementById("p");
+
+    stylesheet.insertRule("#p { }", 0);
+    testEmptyIsNone(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: initial; }", 0);
+    testInitialIsNone(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: -apple-partially-balanced; }", 0);
+    testPartiallyBalancedIsValid(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: -apple-partially-balanced -apple-partially-balanced -apple-partially-balanced; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: garbage; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: garbage -apple-partially-balanced; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: -apple-partially-balanced garbage; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: garbage -apple-partially-balanced garbage; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: -apple-partially-balanced garbage -apple-partially-balanced; }", 0);
+    testInvalidRule(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: auto; }", 0);
+    testNoneIsValid(stylesheet, target);
+
+    stylesheet.insertRule("#p { -apple-trailing-word: ; }", 0);
+    testInvalidRule(stylesheet, target);
+  </script>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
+
