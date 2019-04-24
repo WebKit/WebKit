@@ -1,3 +1,60 @@
+2019-04-24  Alex Christensen  <achristensen@webkit.org>
+
+        WKContentRuleLists should have a maximum FileProtection of CompleteUnlessOpen
+        https://bugs.webkit.org/show_bug.cgi?id=197078
+        <rdar://problem/49564348>
+
+        Reviewed by Geoff Garen.
+
+        r242735 was a fix for crashes when using mmap'd memory in apps with default FileProtection of NSFileProtectionComplete.
+        It is more memory efficient and just as secure to reduce the FileProtection of these files to NSFileProtectionCompleteUnlessOpen.
+
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        (WebKit::NetworkCache::makeSafeToUseMemoryMapForPath):
+        (WebKit::NetworkCache::pathRegisteredAsUnsafeToMemoryMapForTesting): Deleted.
+        (WebKit::NetworkCache::registerPathAsUnsafeToMemoryMapForTesting): Deleted.
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheFileSystemCocoa.mm: Added.
+        (WebKit::NetworkCache::isSafeToUseMemoryMapForPath):
+        (WebKit::NetworkCache::makeSafeToUseMemoryMapForPath):
+        * Shared/WebCompiledContentRuleList.cpp:
+        (WebKit::WebCompiledContentRuleList::conditionsApplyOnlyToDomain const):
+        (WebKit::WebCompiledContentRuleList::filtersWithoutConditionsBytecode const):
+        (WebKit::WebCompiledContentRuleList::filtersWithConditionsBytecode const):
+        (WebKit::WebCompiledContentRuleList::topURLFiltersBytecode const):
+        (WebKit::WebCompiledContentRuleList::actions const):
+        (WebKit::WebCompiledContentRuleList::usesCopiedMemory const): Deleted.
+        * Shared/WebCompiledContentRuleList.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode const):
+        (WebKit::WebCompiledContentRuleListData::decode):
+        (WebKit::WebCompiledContentRuleListData::size const): Deleted.
+        (WebKit::WebCompiledContentRuleListData::dataPointer const): Deleted.
+        * Shared/WebCompiledContentRuleListData.h:
+        (WebKit::WebCompiledContentRuleListData::WebCompiledContentRuleListData):
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIContentRuleList.cpp:
+        (API::ContentRuleList::usesCopiedMemory const): Deleted.
+        * UIProcess/API/APIContentRuleList.h:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::openAndMapOrCopyContentRuleList):
+        (API::compiledToFile):
+        (API::createExtension):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        (API::ContentRuleListStore::readContentsOfFile): Deleted.
+        (API::MappedOrCopiedData::dataPointer const): Deleted.
+        * UIProcess/API/APIContentRuleListStore.h:
+        * UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm:
+        (API::ContentRuleListStore::readContentsOfFile): Deleted.
+        * UIProcess/API/Cocoa/WKContentRuleListStore.mm:
+        (+[WKContentRuleListStore _registerPathAsUnsafeToMemoryMapForTesting:]): Deleted.
+        * UIProcess/API/Cocoa/WKContentRuleListStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilter.mm:
+        (-[_WKUserContentFilter usesCopiedMemory]): Deleted.
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2019-04-24  David Kilzer  <ddkilzer@apple.com>
 
         Fix build due to missing SPI declaration of kAXSFullKeyboardAccessEnabledNotification

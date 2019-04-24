@@ -64,15 +64,6 @@ WTF::String ContentRuleListStore::defaultStorePath(bool legacyFilename)
     return contentRuleListStoreURL.absoluteURL.path.fileSystemRepresentation;
 }
 
-RefPtr<WebCore::SharedBuffer> ContentRuleListStore::readContentsOfFile(const String& filePath)
-{
-    ASSERT(!isMainThread());
-    NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:filePath isDirectory:NO]];
-    if (!data)
-        return nullptr;
-    return WebCore::SharedBuffer::create(data);
-}
-
 } // namespace API
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

@@ -28,14 +28,9 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
-#import "TestWKWebView.h"
 #import <WebKit/WKContentRuleList.h>
 #import <WebKit/WKContentRuleListStorePrivate.h>
-#import <WebKit/_WKUserContentFilterPrivate.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/text/StringBuilder.h>
-#import <wtf/text/StringConcatenate.h>
-#import <wtf/text/StringConcatenateNumbers.h>
 
 class WKContentRuleListStoreTest : public testing::Test {
 public:
@@ -383,101 +378,59 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
     TestWebKitAPI::Util::run(&receivedAlert);
 }
 
-@interface TestSchemeHandlerSubresourceShouldBeBlocked : NSObject <WKURLSchemeHandler>
-@end
-@implementation TestSchemeHandlerSubresourceShouldBeBlocked
-- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
-{
-    EXPECT_TRUE([task.request.URL.path isEqualToString:@"/shouldload"]);
-    [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil] autorelease]];
-    [task didFinish];
-}
-- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
-{
-    EXPECT_TRUE(false);
-}
-@end
-
+#if PLATFORM(IOS_FAMILY)
 TEST_F(WKContentRuleListStoreTest, UnsafeMMap)
 {
     RetainPtr<NSString> tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:@"UnsafeMMapTest"];
     RetainPtr<WKContentRuleListStore> store = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:tempDir.get() isDirectory:YES]];
-    static NSString *identifier = @"TestRuleList";
-    static NSString *fileName = @"ContentRuleList-TestRuleList";
+    static NSString *compiledIdentifier = @"CompiledRuleList";
+    static NSString *copiedIdentifier = @"CopiedRuleList";
     static NSString *ruleListSourceString = @"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"blockedsubresource\"}}]";
-    RetainPtr<NSString> filePath = [tempDir stringByAppendingPathComponent:fileName];
+    RetainPtr<NSString> compiledFilePath = [tempDir stringByAppendingPathComponent:@"ContentRuleList-CompiledRuleList"];
+    RetainPtr<NSString> copiedFilePath = [tempDir stringByAppendingPathComponent:@"ContentRuleList-CopiedRuleList"];
 
-    auto runTest = [&] (bool shouldUseCopiedMemory) {
-        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:filePath.get()]);
-        
-        __block bool doneCompiling = false;
-        __block RetainPtr<WKContentRuleList> ruleList;
-        [store compileContentRuleListForIdentifier:identifier encodedContentRuleList:ruleListSourceString completionHandler:^(WKContentRuleList *filter, NSError *error) {
-            EXPECT_NOT_NULL(filter);
-            EXPECT_NULL(error);
-            doneCompiling = true;
-            ruleList = filter;
-            EXPECT_TRUE([[[[_WKUserContentFilter alloc] _initWithWKContentRuleList:filter] autorelease] usesCopiedMemory] == shouldUseCopiedMemory);
-        }];
-        TestWebKitAPI::Util::run(&doneCompiling);
-        
-        EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:filePath.get()]);
+    __block bool doneCompiling = false;
+    [store compileContentRuleListForIdentifier:compiledIdentifier encodedContentRuleList:ruleListSourceString completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+        doneCompiling = true;
+    }];
+    TestWebKitAPI::Util::run(&doneCompiling);
 
-        auto handler = adoptNS([TestSchemeHandlerSubresourceShouldBeBlocked new]);
-        auto configuration = adoptNS([WKWebViewConfiguration new]);
-        [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testmmap"];
-        [[configuration userContentController] addContentRuleList:ruleList.get()];
-        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-        [webView synchronouslyLoadHTMLString:@"<html>main resource content</html>" baseURL:[NSURL URLWithString:@"testmmap://webkit.org/mainresource"]];
+    auto hasCompleteProtection = [] (const RetainPtr<NSString>& path) {
+        NSError *error = nil;
+        NSDictionary<NSFileAttributeKey, id> *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path.get() error:&error];
+        EXPECT_NULL(error);
+        return [[attributes objectForKey:NSFileProtectionKey] isEqualToString:NSFileProtectionComplete];
+    };
+    
+    NSError *error = nil;
+    [[NSFileManager defaultManager] copyItemAtPath:compiledFilePath.get() toPath:copiedFilePath.get() error:&error];
+    EXPECT_NULL(error);
+    EXPECT_FALSE(hasCompleteProtection(copiedFilePath));
+    [[NSFileManager defaultManager] setAttributes:@{ NSFileProtectionKey: NSFileProtectionComplete } ofItemAtPath:copiedFilePath.get() error:&error];
+    EXPECT_NULL(error);
+#if !PLATFORM(IOS_FAMILY_SIMULATOR)
+    EXPECT_TRUE(hasCompleteProtection(copiedFilePath));
+#endif
 
-        auto loadingShouldSucceed = [&] (NSString *resourcePath, NSString *shouldSucceed) {
-            __block bool doneEvaluating = false;
-            [webView evaluateJavaScript:[NSString stringWithFormat:@"var caught = false; var xhr = new XMLHttpRequest(); xhr.open('GET', '%@', false); try{ xhr.send() } catch(e) { caught = true; }; caught != %@ ? 'success' : 'failure'", resourcePath, shouldSucceed] completionHandler:^(id result, NSError *error) {
-                EXPECT_NULL(error);
-                EXPECT_TRUE([@"success" isEqualToString:result]);
-                doneEvaluating = true;
-            }];
-            TestWebKitAPI::Util::run(&doneEvaluating);
-        };
-        loadingShouldSucceed(@"/shouldload", @"true");
-        loadingShouldSucceed(@"/blockedsubresource", @"false");
-
-        [[configuration userContentController] removeContentRuleList:ruleList.get()];
-        
-        __block bool doneLookingUp = false;
-        [store lookUpContentRuleListForIdentifier:identifier completionHandler:^(WKContentRuleList *filter, NSError *error) {
-            EXPECT_NOT_NULL(filter);
-            EXPECT_NULL(error);
-            
-            doneLookingUp = true;
-            
-            EXPECT_TRUE([[[[_WKUserContentFilter alloc] _initWithWKContentRuleList:filter] autorelease] usesCopiedMemory] == shouldUseCopiedMemory);
-            ruleList = filter;
-        }];
-        TestWebKitAPI::Util::run(&doneLookingUp);
-
-        [[configuration userContentController] addContentRuleList:ruleList.get()];
-        loadingShouldSucceed(@"/shouldload", @"true");
-        loadingShouldSucceed(@"/blockedsubresource", @"false");
-
-        __block bool doneCheckingSource = false;
-        [store _getContentRuleListSourceForIdentifier:identifier completionHandler:^(NSString *source) {
-            EXPECT_TRUE([source isEqualToString:ruleListSourceString]);
-            doneCheckingSource = true;
-        }];
-        TestWebKitAPI::Util::run(&doneCheckingSource);
-        
-        __block bool doneRemoving = false;
-        [store removeContentRuleListForIdentifier:identifier completionHandler:^(NSError *error) {
+    __block bool doneLookingUp = false;
+    [store lookUpContentRuleListForIdentifier:copiedIdentifier completionHandler:^(WKContentRuleList *filter, NSError *error) {
+        EXPECT_NOT_NULL(filter);
+        EXPECT_NULL(error);
+        doneLookingUp = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLookingUp);
+    EXPECT_FALSE(hasCompleteProtection(copiedFilePath));
+    
+    __block bool doneRemoving = false;
+    [store removeContentRuleListForIdentifier:compiledIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        [store removeContentRuleListForIdentifier:copiedIdentifier completionHandler:^(NSError *error) {
             EXPECT_NULL(error);
             doneRemoving = true;
         }];
-        TestWebKitAPI::Util::run(&doneRemoving);
-
-        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:filePath.get()]);
-    };
-    
-    runTest(false);
-    [WKContentRuleListStore _registerPathAsUnsafeToMemoryMapForTesting:filePath.get()];
-    runTest(true);
+    }];
+    TestWebKitAPI::Util::run(&doneRemoving);
 }
+#endif // PLATFORM(IOS_FAMILY)

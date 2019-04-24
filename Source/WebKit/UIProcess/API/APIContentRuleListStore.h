@@ -76,8 +76,6 @@ public:
     void invalidateContentRuleListVersion(const WTF::String& identifier);
     void getContentRuleListSource(const WTF::String& identifier, CompletionHandler<void(WTF::String)>);
 
-    static RefPtr<WebCore::SharedBuffer> readContentsOfFile(const WTF::String& path);
-
 private:
     WTF::String defaultStorePath(bool legacyFilename);
     static ContentRuleListStore& legacyDefaultStore();

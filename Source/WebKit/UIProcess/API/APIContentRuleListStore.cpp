@@ -201,40 +201,14 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
     return metaData;
 }
 
-#if !PLATFORM(COCOA)
-RefPtr<WebCore::SharedBuffer> ContentRuleListStore::readContentsOfFile(const WTF::String& filePath)
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-#endif
-
-struct MappedOrCopiedData {
+struct MappedData {
     ContentRuleListMetaData metaData;
-    Variant<WebKit::NetworkCache::Data, RefPtr<WebCore::SharedBuffer>> data;
-    
-    const uint8_t* dataPointer() const
-    {
-        return WTF::switchOn(data, [] (const WebKit::NetworkCache::Data& data) {
-            return data.data();
-        }, [] (const RefPtr<WebCore::SharedBuffer>& sharedBuffer) {
-            return reinterpret_cast<const uint8_t*>(sharedBuffer->data());
-        });
-    }
+    WebKit::NetworkCache::Data data;
 };
 
-static Optional<MappedOrCopiedData> openAndMapOrCopyContentRuleList(const WTF::String& path)
+static Optional<MappedData> openAndMapOrCopyContentRuleList(const WTF::String& path)
 {
-    if (!WebKit::NetworkCache::isSafeToUseMemoryMapForPath(path)) {
-        RefPtr<WebCore::SharedBuffer> buffer = ContentRuleListStore::readContentsOfFile(path);
-        if (!buffer)
-            return WTF::nullopt;
-        auto metaData = decodeContentRuleListMetaData(*buffer);
-        if (!metaData)
-            return WTF::nullopt;
-        return {{ WTFMove(*metaData), { buffer.releaseNonNull() }}};
-    }
-
+    WebKit::NetworkCache::makeSafeToUseMemoryMapForPath(path);
     WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());
     if (fileData.isNull())
         return WTF::nullopt;
@@ -258,7 +232,7 @@ static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, Platform
     return success;
 }
 
-static Expected<MappedOrCopiedData, std::error_code> compiledToFile(WTF::String&& json, Vector<WebCore::ContentExtensions::ContentExtensionRule>&& parsedRules, const WTF::String& finalFilePath)
+static Expected<MappedData, std::error_code> compiledToFile(WTF::String&& json, Vector<WebCore::ContentExtensions::ContentExtensionRule>&& parsedRules, const WTF::String& finalFilePath)
 {
     using namespace WebCore::ContentExtensions;
 
@@ -411,34 +385,23 @@ static Expected<MappedOrCopiedData, std::error_code> compiledToFile(WTF::String&
         WTFLogAlways("Content Rule List compiling failed: Moving file failed.");
         return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
     }
-
-    if (!isSafeToUseMemoryMapForPath(finalFilePath)) {
-        auto contents = ContentRuleListStore::readContentsOfFile(finalFilePath);
-        if (!contents)
-            return makeUnexpected(ContentRuleListStore::Error::CompileFailed);
-        return {{ WTFMove(metaData), WTFMove(contents) }};
-    }
+    
+    makeSafeToUseMemoryMapForPath(finalFilePath);
     
     return {{ WTFMove(metaData), WTFMove(mappedData) }};
 }
 
-static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, MappedOrCopiedData&& data)
+static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, MappedData&& data)
 {
-    RefPtr<WebKit::SharedMemory> sharedMemory;
-    if (auto mappedFileData = WTF::get_if<WebKit::NetworkCache::Data>(data.data)) {
-        sharedMemory = mappedFileData->tryCreateSharedMemory();
+    auto sharedMemory = data.data.tryCreateSharedMemory();
 
-        // Content extensions are always compiled to files, and at this point the file
-        // has been already mapped, therefore tryCreateSharedMemory() cannot fail.
-        ASSERT(sharedMemory);
-    }
-    auto mappedOrCopiedFileData = sharedMemory ?
-        Variant<RefPtr<WebKit::SharedMemory>, RefPtr<WebCore::SharedBuffer>> { sharedMemory }
-        : Variant<RefPtr<WebKit::SharedMemory>, RefPtr<WebCore::SharedBuffer>> { WTFMove(WTF::get<RefPtr<WebCore::SharedBuffer>>(data.data)) };
+    // Content extensions are always compiled to files, and at this point the file
+    // has been already mapped, therefore tryCreateSharedMemory() cannot fail.
+    ASSERT(sharedMemory);
 
     const size_t headerAndSourceSize = ContentRuleListFileHeaderSize + data.metaData.sourceSize;
     auto compiledContentRuleListData = WebKit::WebCompiledContentRuleListData(
-        WTFMove(mappedOrCopiedFileData),
+        WTFMove(sharedMemory),
         ConditionsApplyOnlyToDomainOffset,
         headerAndSourceSize,
         data.metaData.actionsSize,
@@ -456,7 +419,7 @@ static Ref<API::ContentRuleList> createExtension(const WTF::String& identifier, 
         data.metaData.conditionedFiltersBytecodeSize
     );
     auto compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
-    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList), WTF::holds_alternative<WebKit::NetworkCache::Data>(data.data) ? WTF::get<WebKit::NetworkCache::Data>(data.data) : WebKit::NetworkCache::Data { });
+    return API::ContentRuleList::create(identifier, WTFMove(compiledContentRuleList), WTFMove(data.data));
 }
 
 void ContentRuleListStore::lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
@@ -588,14 +551,14 @@ void ContentRuleListStore::getContentRuleListSource(const WTF::String& identifie
                 complete({ });
                 return;
             }
-            bool is8Bit = contentRuleList->dataPointer()[ContentRuleListFileHeaderSize];
+            bool is8Bit = contentRuleList->data.data()[ContentRuleListFileHeaderSize];
             size_t start = ContentRuleListFileHeaderSize + sizeof(bool);
             size_t length = contentRuleList->metaData.sourceSize - sizeof(bool);
             if (is8Bit)
-                complete(WTF::String(contentRuleList->dataPointer() + start, length));
+                complete(WTF::String(contentRuleList->data.data() + start, length));
             else {
                 ASSERT(!(length % sizeof(UChar)));
-                complete(WTF::String(reinterpret_cast<const UChar*>(contentRuleList->dataPointer() + start), length / sizeof(UChar)));
+                complete(WTF::String(reinterpret_cast<const UChar*>(contentRuleList->data.data() + start), length / sizeof(UChar)));
             }
             return;
         }

@@ -145,51 +145,15 @@ void updateFileModificationTimeIfNeeded(const String& path)
 #endif
 }
 
-static String& pathRegisteredAsUnsafeToMemoryMapForTesting()
+#if !PLATFORM(IOS_FAMILY)
+bool isSafeToUseMemoryMapForPath(const String&)
 {
-    static NeverDestroyed<String> path;
-    return path.get();
-}
-
-void registerPathAsUnsafeToMemoryMapForTesting(const String& path)
-{
-    pathRegisteredAsUnsafeToMemoryMapForTesting() = path;
-}
-
-    
-bool isSafeToUseMemoryMapForPath(const String& path)
-{
-    if (path == pathRegisteredAsUnsafeToMemoryMapForTesting())
-        return false;
-
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    struct {
-        uint32_t length;
-        uint32_t protectionClass;
-    } attrBuffer;
-
-    attrlist attrList = { };
-    attrList.bitmapcount = ATTR_BIT_MAP_COUNT;
-    attrList.commonattr = ATTR_CMN_DATA_PROTECT_FLAGS;
-    int32_t error = getattrlist(FileSystem::fileSystemRepresentation(path).data(), &attrList, &attrBuffer, sizeof(attrBuffer), FSOPT_NOFOLLOW);
-    if (error) {
-        RELEASE_LOG_ERROR(Network, "Unable to get cache directory protection class, disabling use of shared mapped memory");
-        return false;
-    }
-
-    // For stricter protection classes shared maps could disappear when device is locked.
-    const uint32_t fileProtectionCompleteUntilFirstUserAuthentication = 3;
-    bool isSafe = attrBuffer.protectionClass >= fileProtectionCompleteUntilFirstUserAuthentication;
-
-    if (!isSafe)
-        RELEASE_LOG(Network, "Disallowing use of shared mapped memory due to container protection class %u", attrBuffer.protectionClass);
-
-    return isSafe;
-#else
-    UNUSED_PARAM(path);
     return true;
-#endif
 }
+void makeSafeToUseMemoryMapForPath(const String&)
+{
+}
+#endif
 
 }
 }

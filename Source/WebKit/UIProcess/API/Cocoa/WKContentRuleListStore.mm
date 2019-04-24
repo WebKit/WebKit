@@ -126,11 +126,6 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
 
 // For testing only.
 
-+ (void)_registerPathAsUnsafeToMemoryMapForTesting:(NSString *)filename
-{
-    WebKit::NetworkCache::registerPathAsUnsafeToMemoryMapForTesting(filename);
-}
-
 - (void)_removeAllContentRuleLists
 {
     _contentRuleListStore->synchronousRemoveAllContentRuleLists();

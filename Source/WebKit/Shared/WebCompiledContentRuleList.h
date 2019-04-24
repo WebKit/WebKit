@@ -40,8 +40,6 @@ public:
 
     const WebCompiledContentRuleListData& data() const { return m_data; }
 
-    bool usesCopiedMemory() const;
-    
 private:
     WebCompiledContentRuleList(WebCompiledContentRuleListData&&);
 

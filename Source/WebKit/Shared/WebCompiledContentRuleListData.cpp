@@ -34,31 +34,11 @@
 
 namespace WebKit {
 
-size_t WebCompiledContentRuleListData::size() const
-{
-    return WTF::switchOn(data, [] (const auto& sharedMemoryOrBuffer) {
-        return sharedMemoryOrBuffer->size();
-    });
-}
-
-const void* WebCompiledContentRuleListData::dataPointer() const
-{
-    return WTF::switchOn(data, [] (const auto& sharedMemoryOrBuffer) -> const void* {
-        return sharedMemoryOrBuffer->data();
-    });
-}
-
 void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 {
-    if (auto sharedMemory = WTF::get_if<RefPtr<SharedMemory>>(data)) {
-        encoder << true;
-        SharedMemory::Handle handle;
-        sharedMemory->get()->createHandle(handle, SharedMemory::Protection::ReadOnly);
-        encoder << handle;
-    } else {
-        encoder << false;
-        encoder << IPC::SharedBufferDataReference { *WTF::get<RefPtr<WebCore::SharedBuffer>>(data) };
-    }
+    SharedMemory::Handle handle;
+    data->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    encoder << handle;
 
     encoder << conditionsApplyOnlyToDomainOffset;
     encoder << actionsOffset;
@@ -73,24 +53,10 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
 
 Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
-    Variant<RefPtr<SharedMemory>, RefPtr<WebCore::SharedBuffer>> data;
-
-    Optional<bool> hasSharedMemory;
-    decoder >> hasSharedMemory;
-    if (!hasSharedMemory)
+    SharedMemory::Handle handle;
+    if (!decoder.decode(handle))
         return WTF::nullopt;
-
-    if (*hasSharedMemory) {
-        SharedMemory::Handle handle;
-        if (!decoder.decode(handle))
-            return WTF::nullopt;
-        data = { SharedMemory::map(handle, SharedMemory::Protection::ReadOnly) };
-    } else {
-        IPC::DataReference dataReference;
-        if (!decoder.decode(dataReference))
-            return WTF::nullopt;
-        data = { RefPtr<WebCore::SharedBuffer>(WebCore::SharedBuffer::create(dataReference.data(), dataReference.size())) };
-    }
+    RefPtr<SharedMemory> data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
 
     Optional<unsigned> conditionsApplyOnlyToDomainOffset;
     decoder >> conditionsApplyOnlyToDomainOffset;
